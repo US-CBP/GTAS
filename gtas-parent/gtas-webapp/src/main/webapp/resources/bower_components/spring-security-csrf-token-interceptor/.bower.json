@@ -1,0 +1,34 @@
+{
+  "name": "spring-security-csrf-token-interceptor",
+  "version": "0.1.5",
+  "authors": [
+    "Allan Ditzel <allan@allanditzel.com>"
+  ],
+  "description": "An AngularJS interceptor for the HTTP service that adds the Spring Security CSRF token to all requests (if available).",
+  "main": "src/spring-security-csrf-token-interceptor.js",
+  "keywords": [
+    "spring-security",
+    "csrf",
+    "token",
+    "http",
+    "interceptor"
+  ],
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/aditzel/spring-security-csrf-token-interceptor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.1.5",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.1.5",
+    "commit": "4eaff7b16cf8a535e46c7756e1a8b3806fede878"
+  },
+  "_source": "git://github.com/aditzel/spring-security-csrf-token-interceptor.git",
+  "_target": "~0.1.5",
+  "_originalSource": "spring-security-csrf-token-interceptor"
+}

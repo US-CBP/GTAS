@@ -1,0 +1,353 @@
+<style>
+    .bullet { font: 10px sans-serif; }
+    .bullet .marker { stroke: #000; stroke-width: 2px; }
+    .bullet .tick line { stroke: #666; stroke-width: .5px; }
+    .bullet .range.s0 { fill: #eee; }
+    .bullet .range.s1 { fill: #ddd; }
+    .bullet .range.s2flight { fill: #ccc; }
+    .bullet .measure.s0 { fill: lightsteelblue; }
+    .bullet .measure.s1 { fill: steelblue; }
+    .bullet .title { font-size: 14px; font-weight: bold; }
+    .bullet .subtitle { fill: #999; }
+    <!-- .bullet{font:10px sans-serif}.bullet .marker{stroke:#000;stroke-width:2px}.bullet .tick line{stroke:#666;stroke-width:.5px}.bullet .range.s0{fill:#eee}.bullet .range.s1{fill:#ddd}.bullet .range.s2{fill:#ccc}.bullet .measure.s0{fill:#b0c4de}.bullet .measure.s1{fill:#4682b4}.bullet .title{font-size:14px;font-weight:700}.bullet .subtitle{fill:#999} -->
+    .axis path,.axis line{fill:none;stroke:#000;shape-rendering:crispEdges}.bar{fill:steelblue}.x.axis path{display:none}
+
+</style>
+
+<body>
+<h2 class="col-md-12"><span style="text-align: center;" class="glyphicon glyphicon-dashboard"></span> {{'db.KeyMetrics' | translate}}</h2>
+<div class="column" style="padding-top: 90px;"></div>
+
+<div layout="column">
+            <span layout="column" layout-wrap class="clearfix" style="min-height: 20px;">
+
+                        <md-switch ng-model="sampleData"
+                                   class="md-primary"
+                                   ng-change="switchDashboard('dashboard')">
+                            {{'db.SampleData' | translate}}
+                        </md-switch>
+
+            </span>
+</div>
+
+<!-- Begin Flight Stats-->
+
+<div class="container-fluid">
+    <div class="column">
+
+        <div class="row">
+            <div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i>
+                    <span data-col="col-sm-offset-2"><label style="font-weight: bold;">
+                        {{'db.flightStats' | translate}}
+                    </label></span>
+
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-lg-2 col-md-5 col-md-offset-2">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-plane fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">126</div>
+                                            <div>{{'db.totalFlights' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-green">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-user fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">1200</div>
+                                            <div>{{'db.totalPassengers' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/passengers">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-red">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-bullseye fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">13</div>
+                                            <div>{{'db.ruleHits' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-yellow">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-thumbs-down fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">124</div>
+                                            <div>{{'db.watchHits' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!--<div class="column"></div>-->
+
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- End of Flight Stats-->
+
+<div class="column" style="padding-top: 90px;"></div>
+
+
+<div class="container-fluid">
+    <div class="column">
+
+        <div class="row">
+            <div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">
+                <div class="panel-heading">
+                    <i class="fa fa-bar-chart-o fa-fw"></i>
+                    <span data-col="col-sm-offset-2"><label style="font-weight: bold;">
+                        {{'db.totalMessages' | translate}}&nbsp;&#45;&#45; 480
+                    </label></span>
+
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="column" style="padding-top: 15px; padding-bottom: 75px; padding-left: 20px;">
+                                &nbsp;&nbsp;&nbsp;
+
+
+                                <div class="container">
+                                    <div sample-bar-chart></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="column" style="padding-top: 90px;"></div>
+
+<div class="container-fluid">
+    <div class="column">
+
+        <div class="panel panel-default col-lg-6" style="padding-left: 0;padding-right:0; margin-left: 2.3%;">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>
+                <span data-col="col-sm-offset-2"><label style="font-weight: bold;"> {{'db.topRuleHits' | translate}} </label></span>
+
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="row">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>{{'db.ruleName' | translate}}</th>
+                                <th>{{'db.hits' | translate}}</th>
+                                <th>{{'db.createdOn' | translate}}</th>
+                                <th>{{'db.createdBy' | translate}}</th>
+                                <th>{{'db.lastOn' | translate}}</th>
+                                <th>{{'db.lastBy' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>N-SSA-m8992</td>
+                                <td>556</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                                <td>12/1/1990</td>
+                                <td>bjones</td>
+                            </tr>
+                            <tr>
+                                <td>N-SSA-c4592</td>
+                                <td>767</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                                <td>12/1/1990</td>
+                                <td>bjones</td>
+                            </tr>
+
+                            <tr>
+                                <td>N-SSA-330012</td>
+                                <td>323</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                                <td>12/1/1990</td>
+                                <td>dsmith</td>
+                            </tr>
+                            <tr>
+                                <td>N-SSA-pcfdgdf</td>
+                                <td>988</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                                <td>12/1/1990</td>
+                                <td>dsmith</td>
+                            </tr>
+                            <tr>
+                                <td>N-SSA-34ssds2</td>
+                                <td>467</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                                <td>12/1/1990</td>
+                                <td>astark</td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+
+                </div>
+
+                <!-- /.row -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+
+
+        <div class="panel panel-default col-md-5" style="padding-left: 0;padding-right:0; margin-left: 2%;">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i>
+                <span data-col="col-sm-offset-2"><label style="font-weight: bold;"> {{'db.ytd' | translate}} </label></span>
+
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="row">
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>{{'db.airport' | translate}}</th>
+                                <th>{{'db.flights' | translate}}</th>
+                                <th>{{'db.watchLists' | translate}}</th>
+                                <th>{{'db.ruleHits' | translate}}</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>ORD</td>
+                                <td>440,210</td>
+                                <td>52256</td>
+                                <td>5560</td>
+
+                            </tr>
+                            <tr>
+                                <td>BOS</td>
+                                <td>323,210</td>
+                                <td>52256</td>
+                                <td>5560</td>
+
+                            </tr>
+                            <tr>
+                                <td>IAD</td>
+                                <td>140,210</td>
+                                <td>5256</td>
+                                <td>44560</td>
+
+                            </tr>
+                            <tr>
+                                <td>IAH</td>
+                                <td>240,210</td>
+                                <td>12256</td>
+                                <td>52560</td>
+
+                            </tr>
+
+                            <tr>
+                                <td>LAX</td>
+                                <td>440,210</td>
+                                <td>52256</td>
+                                <td>5560</td>
+
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+
+                </div>
+
+                <!-- /.row -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+
+    </div>
+</div>
+
+</body>
+

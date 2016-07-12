@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>gov.gtas</groupId>
+        <artifactId>gtas-parent</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>gtas-job-scheduler-war</artifactId>
+    <version>1.0.0-BUILD-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>gtas-job-scheduler Maven War file</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ruleservice.version>0.3-SNAPSHOT</ruleservice.version>
+        <loader.version>0.1-SNAPSHOT</loader.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.gtas</groupId>
+            <artifactId>gtas-rulesvc</artifactId>
+            <version>${ruleservice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>gov.gtas</groupId>
+            <artifactId>gtas-loader</artifactId>
+            <version>${loader.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>gtas-job-scheduler</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

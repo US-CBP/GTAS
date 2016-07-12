@@ -1,0 +1,165 @@
+<style>
+    .actions {
+        text-align: center;
+    }
+    .ui-grid {
+        width: 100%;
+    }
+    md-sidenav {
+        min-width: 450px !important;
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    section {
+        margin: 0 auto;
+    }
+</style>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="query">
+    <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">{{getToolbarText()}}</h2>
+    </md-toolbar>
+    <form name="queryForm" ng-submit="save.query.confirm()">
+        <md-content layout-padding>
+            <div layout="row" layout-wrap>
+                <md-input-container flex>
+                    <label>{{'qry.name' | translate}}</label>
+                    <input md-maxlength="20" autofocus required name="title" ng-model="query.title">
+                </md-input-container>
+            </div>
+            <div layout="row" layout-wrap>
+                <md-input-container flex>
+                    <label>{{'qry.desc' | translate}}</label>
+                    <input md-maxlength="100" name="description" ng-model="query.description">
+                </md-input-container>
+            </div>
+        </md-content>
+        <div class="actions">
+            <md-button type="button"
+                       ng-click="prompt.cancel()"
+                       ng-disabled="saving === true"
+                       class="md-raised pull-left">
+                <i class="glyphicon glyphicon-cancel"></i> {{'qry.cancel' | translate}}
+            </md-button>
+            <md-button type="submit"
+                       ng-disabled="saving === true"
+                       class="md-raised md-primary pull-right">
+                <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-filter"></i> {{'qry.confirm.save' | translate}}
+            </md-button>
+        </div>
+    </form>
+</md-sidenav>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="rule">
+    <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">{{getToolbarText()}}</h2>
+    </md-toolbar>
+    <form name="ruleForm" ng-submit="save.rule.confirm()">
+        <md-content layout-padding>
+            <div layout="row" layout-wrap>
+                <md-input-container flex>
+                    <label>{{'qry.name' | translate}}</label>
+                    <input md-maxlength="20" required name="title" ng-model="rule.title">
+                </md-input-container>
+            </div>
+            <div layout="row" layout-wrap>
+                <md-input-container flex>
+                    <label>{{'qry.desc' | translate}}</label>
+                    <input md-maxlength="100" name="description" ng-model="rule.description">
+                </md-input-container>
+            </div>
+            <div layout="row" layout-wrap>
+                <md-checkbox class="md-primary" required ng-model="rule.enabled" aria-label="Enabled">{{'user.status.enabled' | translate}}</md-checkbox>
+            </div>
+            <div layout="row" layout-wrap>
+                <md-datepicker ng-model="rule.startDate" md-placeholder="Start Date" ng-disabled="isUpdate() && !isCopy"></md-datepicker>
+            </div>
+            <div layout="row" layout-wrap>
+                <md-datepicker ng-model="rule.endDate" md-placeholder="End Date"></md-datepicker>
+            </div>
+        </md-content>
+        <div class="actions">
+            <md-button type="button"
+                       ng-click="prompt.cancel()"
+                       ng-disabled="saving === true"
+                       class="md-raised pull-left">
+                <i class="glyphicon glyphicon-cancel"></i> {{'qry.cancel' | translate}}
+            </md-button>
+            <md-button type="submit"
+                       ng-disabled="saving === true"
+                       class="md-raised md-primary pull-right">
+                <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-flag"></i> {{'qry.confirm.save' | translate}}
+            </md-button>
+        </div>
+    </form>
+</md-sidenav>
+<md-content flex="" layout-padding="" class="">
+    <div layout="column" layout-fill="" layout-align="top">
+        <div ng-if="mode == 'rule'">
+            <md-switch class="md-primary" aria-label="Rules:" ng-model="$scope.selectedMode" ng-true-value="'all'" ng-false-value="'rule'">
+                <p translate> {{selectedMode === "rule" ? "qry.myrules" : "qry.allrules"}}</p>
+            </md-switch>
+        </div>
+        <div ui-grid="qbGrid" ui-grid-pagination ui-grid-selection ui-grid-exporter class="grid" external-scopes="$scope"></div>
+        <section>
+            <h2>{{'qry.Conditions' | translate}}:</h2>
+            <div id="builder"></div>
+            <div class="actions">
+                <md-button href="#/query/flights"
+                           title="Launch Flight Query Results in new window"
+                           target="queryFlights"
+                           ng-click="executeQuery($event)"
+                           class="md-raised">
+                    <i class="glyphicon glyphicon-filter"></i><i class="glyphicon glyphicon-plane"></i> {{'qry.flights' | translate}}
+                </md-button>
+                <md-button href="#/query/passengers"
+                           title="Launch Passengers Query Results in new window"
+                           target="queryPassengers"
+                           ng-click="executeQuery($event)"
+                           class="md-raised">
+                    <i class="glyphicon glyphicon-filter"></i><i class="glyphicon glyphicon-user"></i>  {{'qry.passengers' | translate}}
+                </md-button>
+                <md-button ng-click="addNew()"
+                           ng-disabled="ruleId === null"
+                           class="md-raised pull-left">
+                    <i class="glyphicon glyphicon-plus"></i> {{'qry.add' | translate}} {{mode}}
+                </md-button>
+                <md-button ng-click="resetQueryBuilder()"
+                           class="md-raised pull-left">
+                    <i class="glyphicon glyphicon-minus"></i> {{'qry.clear' | translate}}
+                </md-button>
+                <md-button ng-click="prompt.save('rule')"
+                           ng-disabled="saving === true"
+                           ng-class="{'md-primary': mode === 'rule'}"
+                           class="md-raised pull-right">
+                    <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-flag"></i> {{'qry.saveas.rl' | translate}}
+                </md-button>
+                <md-button ng-click="copyRule()"
+                           ng-disabled="ruleId === null || saving === true"
+                           class="md-raised pull-right">
+                    <i class="glyphicon glyphicon-duplicate"></i> {{'qry.copy' | translate}} {{mode}}
+                </md-button>
+                <md-button ng-click="delete()"
+                           ng-disabled="ruleId === null"
+                           class="md-raised md-warn pull-right">
+                    <i class="glyphicon glyphicon-erase"></i> {{'qry.delete' | translate}}
+                </md-button>
+                <md-button ng-click="prompt.save('query')"
+                           ng-disabled="saving === true"
+                           ng-class="{'md-primary': mode === 'query'}"
+                           class="md-raised pull-right" type="submit">
+                    <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-filter"></i>  {{'qry.save.qry' | translate}}
+                </md-button>
+            </div>
+        </section>
+    </div>
+</md-content>
+<div>
+    <spinner name="html5spinner" ng-cloak="">
+        <div class="overlay"></div>
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <div class="please-wait">{{'wl.wait' | translate}}...</div>
+    </spinner>
+</div>

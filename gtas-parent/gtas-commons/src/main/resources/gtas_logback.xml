@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <!--  
+       This file contains the reusable configuration items for the logback logger.
+       It should be included in the logback configuration file.
+    -->
+    <property name="ROOT_LOG_LEVEL" value="WARN"/>
+    <property name="GTAS_LOG_LEVEL" value="WARN"/>
+    
+    <if condition='isDefined("OVERRIDE_GTAS_LOG_LEVEL")'>
+      <then>
+         <property name="GTAS_LOG_LEVEL" value="${OVERRIDE_GTAS_LOG_LEVEL}"/>
+      </then>
+    </if>
+    <if condition='isDefined("OVERRIDE_ROOT_LOG_LEVEL")'>
+      <then>
+         <property name="ROOT_LOG_LEVEL" value="${OVERRIDE_ROOT_LOG_LEVEL}"/>
+      </then>
+    </if>
+    <if condition='isDefined("CATALINA_HOME")'>
+      <then>
+        <property name="LOG_FILE" value="${CATALINA_HOME}/logs/gtas.log"/>
+      </then>
+      <else>
+        <property name="LOG_FILE"
+            value="./target/logs/gtas_build.log" />
+      </else>
+    </if>
+    
+    <property name="FILE_LOG_PATTERN"
+        value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } [%t] --- %-40.40logger{39} : %m%n" />
+
+    <appender name="FILE"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"><!-- Note PatternLayoutEncoder is default and could have been omitted -->
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      </encoder>    
+    </appender>
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <logger name="org.springframework.web" level="WARN" />
+    <logger name="org.apache.catalina.startup.DigesterFactory"
+        level="ERROR" />
+    <logger name="org.apache.catalina.util.LifecycleBase" level="ERROR" />
+    <logger name="org.hibernate.validator.internal.util.Version"
+        level="WARN" /> 
+        
+    <logger name="gov.gtas" level="${GTAS_LOG_LEVEL}" />
+    
+    <root level="${ROOT_LOG_LEVEL}">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC" />
+    </root>
+</included>

@@ -1,0 +1,24 @@
+<md-content>
+    <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
+        <md-tab label="{{'admin.manage' | translate}}" layout="column">
+            <div layout="column">
+                <div>
+                    <md-button ng-click="createUser()" class="md-raised pull-left md-primary md-raised]">
+                        <md-tooltip>{{'btn.add' | translate}}</md-tooltip>
+                        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
+                        {{'btn.add' | translate}}
+                    </md-button>
+                </div>
+                    <md-content class="md-padding">
+                        <div ui-grid="userGrid" ui-grid-pagination ui-grid-exporter class="grid" ></div>
+                    </md-content>
+            </div>
+        </md-tab>
+        <md-tab label = "{{'admin.auditlog' | translate}}">
+            <ng-include src="'admin/auditlog.html'"/>
+        </md-tab>
+        <md-tab label = "{{'admin.errorlog' | translate}}">
+            <ng-include src="'admin/errorlog.html'"/>
+        </md-tab>
+    </md-tabs>
+</md-content>

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "I",
+    "name": "Inbound"
+  },
+  {
+    "id": "O",
+    "name": "Outbound"
+  },
+  {
+    "id": "C",
+    "name": "Continuance (domestic or foreign)"
+  },
+  {
+    "id": "OTH",
+    "name": "Other"
+  }
+]

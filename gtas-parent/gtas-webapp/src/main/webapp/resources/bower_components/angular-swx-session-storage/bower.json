@@ -1,0 +1,48 @@
+{
+	"name": "angular-swx-session-storage",
+	"version": "1.0.2",
+	"authors": [
+		"Paul Massey, paul.massey@scriptwerx.io, http://www.scriptwerx.io"
+	],
+	"description": "Provides a key-value (string-object) session storage with expiry option (in minutes).",
+	"keywords": [
+		"AngularJS",
+		"Angular",
+		"Angular Session Storage",
+		"$sessionStorage",
+		"Angular Storage",
+		"Session Storage",
+		"JavaScript",
+		"Component",
+		"Components",
+		"Scriptwerx",
+		"Genoveus"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/scriptwerx/angular-swx-session-storage",
+	"ignore": [
+		".jshintrc",
+		".travis.yml",
+		".gitignore",
+		"package.json",
+		"gulpfile.js",
+		"angular-swx-session-storage.iml",
+		"**/*.md",
+		"bin",
+		"docs",
+		"src",
+		"lib",
+		"test",
+		"node_modules",
+		"bower_components"
+	],
+	"main": [
+		"./release/swx-session-storage.min.js"
+	],
+	"dependencies": {
+		"angular": ">=1.2 <=1.5.0"
+	},
+	"devDependencies": {
+		"angular-mocks": ">=1.2 <=1.5.0"
+	}
+}

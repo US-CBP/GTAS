@@ -1,0 +1,64 @@
+<style>
+section {
+border: 1px solid;
+border-color: LightGray;
+border-radius: 10px;
+padding-bottom: 20px;
+}
+.selectize-control {
+    margin-left: 8em;
+}
+.selectize-input input {
+    width: 264px !important;
+}
+</style>
+
+<form name="filterForm" ng-submit="setFilter()">
+
+ <section layout-padding layout-margin>
+    <div layout="column"  layout-align="space-around start">
+    <md-input-container>
+        <label>Origins</label>
+        <input ng-model="filter.originAirports" id="originAirports">
+    </md-input-container>
+    <md-input-container >
+        <label>Destinations</label>
+        <input ng-model="filter.destinationAirports" id="destinationAirports" >
+    </md-input-container>
+    </div>
+    <div layout="row" layout-align="space-around start">
+    <md-input-container >
+        <span flex="80"></span>
+        <label>Direction</label>
+        <md-select ng-model="filter.flightDirection">
+            <md-option ng-repeat="item in flightDirections" value="{{item.value}}">
+                {{item.label}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+    <md-input-container >
+        <label>ETA Start</label>
+        <md-select ng-model="filter.etaStart">
+            <md-option ng-repeat="item in etaStartDays" value="{{item.value}}">
+                {{item.label}}
+            </md-option>
+        </md-select>
+        </md-input-container >
+    <md-input-container >
+        <label>ETA End</label>
+        <md-select ng-model="filter.etaEnd">
+            <md-option ng-repeat="item in etaEndDays" value="{{item.value}}">
+                {{item.label}}
+            </md-option>
+        </md-select>
+    </md-input-container>
+    </div>
+
+    </md-input-container>
+ <div class="md-actions" layout="row" layout-align="end end;">
+        <span flex="80"></span>
+        <md-button href="#/user-settings" class="md-raised">Back</md-button>
+        <md-button class="md-raised md-primary" type="submit" ng-disabled="form.$invalid">Save</md-button>
+    </div>
+    </section>
+</form>

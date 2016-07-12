@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GTAS</title>
+    
+    <link rel="stylesheet" href="resources/bower_components/open-sans-fontface/open-sans.css" />
+    <link rel="stylesheet" href="resources/css/style-icomoon.css" />
+    <link rel="stylesheet" href="resources/bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="resources/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" />
+    <link rel="stylesheet" href="resources/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+    <link rel="stylesheet" href="resources/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css" />
+    <link rel="stylesheet" href="resources/bower_components/selectize/dist/css/selectize.bootstrap3.css" />
+    <link rel="stylesheet" href="resources/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
+    <link rel="stylesheet" href="resources/bower_components/angular-ui-grid/ui-grid.min.css" />
+    <link rel="stylesheet" href="resources/css/query-builder.default.css" />
+    <link rel="stylesheet" href="resources/bower_components/angular-material/angular-material.min.css" />
+    <link rel="stylesheet" href="resources/css/gtas.css" />
+    <link rel="stylesheet" href="resources/css/sb-admin-2.css" >
+    <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css" type="text/css">
+
+</head>
+
+<body>
+
+<header class="header" title="{{'gtas.title' | translate}}"></header>
+<nav data-ng-controller="NavCtrl">
+    <div class="nav navbar-nav navbar-right" ng-if="showNav()" style="margin: 0;">
+        <md-button class="md-button" ng-click="logout()">{{'login.logout' | translate}}</md-button>
+    </div>
+    <div class="nav navbar-nav navbar-right" ng-if="showNav() == false" style="margin: 0;">
+        <md-button class="md-button" onclick="window.close()">X</md-button>
+    </div>
+        <span data-ng-if="showNav()">
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
+                       class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}"
+                       ng-disabled="onRoute('dashboard')" href="#/dashboard"><i class="glyphicon glyphicon-dashboard"></i>  {{'dashboard.title' | translate}}</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('flights')}"
+                       ng-disabled="onRoute('flights')" href="#/flights"><i class="glyphicon glyphicon-plane"></i>  {{'menu.flights' | translate}}</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('passengers')}"
+                       ng-disabled="onRoute('passengers')" href="#/passengers"><i class="glyphicon glyphicon-user"></i>  {{'menu.passengers' | translate}}</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases')}"
+                       ng-disabled="onRoute('cases')" href="#/cases"><i class="glyphicon glyphicon-folder-close"></i>  Cases</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('queries')}"
+                       ng-disabled="onRoute('queries')" href="#/build/query"><i class="glyphicon glyphicon-filter"></i> {{'menu.queries' | translate}}</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('risks')}"
+                       ng-disabled="onRoute('risks')" href="#/build/rule"><i class="glyphicon glyphicon-flag"></i>  {{'menu.riskcriteria' | translate}}</md-button>
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('watchlists')}"
+                       ng-disabled="onRoute('watchlists')" href="#/watchlists"><i class="glyphicon glyphicon-eye-open"></i> {{'menu.watchlist' | translate}}</md-button>
+
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}"
+                       ng-disabled="onRoute('userSettings')" href="#/userSettings"><i class="glyphicon glyphicon-cog"></i> {{'menu.settings' | translate}}</md-button>
+
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('admin')}"
+                       ng-disabled="onRoute('admin')" href="#/admin"><i class="glyphicon glyphicon-edit"></i>  {{'menu.admin' | translate}}</md-button>
+
+
+            <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('upload')}"
+                       ng-disabled="onRoute('upload')" href="#/upload"><i class="glyphicon glyphicon-upload"></i>  {{'menu.upload' | translate}}</md-button>
+
+        </span>
+</nav>
+<!-- end of nav -->
+<div ui-view="nav"></div>
+<div ui-view="header"></div>
+<div class="content" ui-view=""></div>
+<div ui-view="footer"></div>
+
+
+
+<style>
+    .md-toast.error {
+        background-color: white;
+    }
+
+    .md-toast.success {
+        background-color: green;
+    }
+    
+    body,html{background-color: white;}
+    
+</style>
+
+<script src="resources/bower_components/angular/angular.js"></script>
+<script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
+<script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="resources/bower_components/moment/min/moment.min.js"></script>
+<script src="resources/bower_components/jquery/dist/jquery.js"></script>
+<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+<script src="resources/bower_components/bootbox/bootbox.js"></script>
+<script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+<script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
+<script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
+<script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
+<script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
+<script src="resources/bower_components/CSV-JS/csv.js"></script>
+<script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
+<script src="resources/bower_components/angular-material/angular-material.min.js"></script>
+<script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
+<script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
+<script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+<script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+<script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
+<script src='resources/js/query-builder.js'></script>
+<script src="resources/bower_components/d3/d3.min.js"></script>
+<script src="resources/bower_components/angular-translate/angular-translate.js"></script>
+<script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
+<script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+<script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
+    
+<script src='app.js'></script>
+<script src='login/AuthService.js'></script>
+<script src='login/LoginController.js'></script>
+<script src='common/directives.js'></script>
+<script src='common/filters.js'></script>
+<script src='common/services.js'></script>
+<script src='factory/ModalGridFactory.js'></script>
+<script src='factory/JqueryQueryBuilderWidget.js'></script>
+<script src='dashboard/DashboardController.js'></script>
+<script src='dashboard/DashboardService.js'></script>
+<script src='flights/FlightsModel.js'></script>
+<script src='flights/FlightsController.js'></script>
+<script src='flights/FlightsService.js'></script>
+<script src='pax/PaxModel.js'></script>
+<script src='pax/PaxController.js'></script>
+<script src='pax/PaxService.js'></script>
+<script src='pax/PaxFactory.js'></script>
+<script src='build/BuildController.js'></script>
+<script src='watchlists/WatchListController.js'></script>
+<script src='admin/AdminController.js'></script>
+<script src='admin/UserController.js'></script>
+<script src='admin/UploadController.js'></script>
+<script src='userSettings/UserSettingsController.js'></script>
+<script src='userSettings/FilterCtrl.js'></script>
+<script src='common/languagecontroller.js'></script>
+<script src='cases/CasesController.js'></script>
+
+<script type="text/ng-template" id="dialog1.tmpl.html">  
+<md-dialog ng-cloak>
+  <form>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <h2 class="md-title">Idle Timeout Warning</h2>
+        <div class="_md-dialog-content-body ng-scope"><p class="ng-binding">
+            You have been idle for too long. If you wish to maintain your session please click the button below</p>
+        </div>
+        <span idle-countdown="countdown"> You will be logged out automatically in <strong style="font-size:xx-large;">{{countdown}}</strong> seconds. </span>
+      </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <md-dialog-actions layout="row" class="layout-row">
+      
+      <md-button ng-click="dialog.hide()">Continue Session</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
+</script>
+
+<div>
+    <spinner name="html5spinner" ng-cloak="">
+        <div class="overlay"></div>
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <div class="please-wait">{{'wl.wait' | translate}}...</div>
+    </spinner>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "P",
+    "name": "Passenger"
+  },
+  {
+    "id": "C",
+    "name": "Crew"
+  },
+  {
+    "id": "I",
+    "name": "Intransit"
+  }
+]

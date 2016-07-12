@@ -1,0 +1,28 @@
+/*
+* Default rules for the GTAS system.
+* TODO: create Meta Rules and Rule Flow here - AB.
+*/
+package gov.gtas.rule;
+ 
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+
+global java.util.List resultList
+ 
+rule "R1 - Extract Passengers"
+    dialect "java"
+    when
+         f:Flight( passengers.size() > 0, destination != null, passCollection:passengers, dest:destination )
+    then
+        for(Object p:passCollection){
+          insert (p);
+        }
+end
+
+rule "R2 - List Passengers"
+    dialect "java"
+    when
+        p:Passenger( embarkation.equals("Timbuktu"), fn:firstName, ln:lastName )
+    then
+        resultList.add(p);
+end

@@ -1,0 +1,110 @@
+<style>
+    .actions {
+        text-align: center;
+    }
+
+    .ui-grid-viewport {
+        min-height: 330px !important;
+    }
+
+    .ui-grid-cell {
+        text-transform: uppercase;
+    }
+
+    .glyphicon-remove {
+        cursor: pointer;
+    }
+
+    md-input-container {
+        display: inline-block;
+        text-align: left;
+        width: 300px;
+    }
+
+    form {
+        padding: 2em 2em 0;
+    }
+</style>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="save">
+    <md-toolbar class="md-theme-light">
+        <h2 class="md-toolbar-tools">{{getSaveStateText(activeTab)}} {{activeTab}}</h2>
+    </md-toolbar>
+    <form name="watchlist" ng-submit="saveRow()">
+        <md-input-container ng-if="activeTab == 'Document'">
+            <label>{{'wl.doctype' | translate}}:</label>
+            <md-select ng-model="Document.documentType" required>
+                <md-option ng-repeat="docType in documentTypes" value="{{docType.id}}">
+                    {{docType.label}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container ng-if="activeTab == 'Document'">
+            <label>{{'wl.docnum' | translate}}:</label>
+            <input ng-model="Document.documentNumber" required>
+        </md-input-container>
+        <md-input-container ng-if="activeTab == 'Passenger'">
+            <label>{{'pass.firstname' | translate}}:</label>
+            <input ng-model="Passenger.firstName" required>
+        </md-input-container>
+        <md-input-container ng-if="activeTab == 'Passenger'">
+            <label>{{'pass.lastname' | translate}}:</label>
+            <input ng-model="Passenger.lastName" required>
+        </md-input-container>
+        <md-datepicker ng-if="activeTab == 'Passenger'" name="dob" ng-model="Passenger.dob"
+                       md-placeholder="Date of Birth" required></md-datepicker>
+        <div class="actions">
+            <md-button type="button"
+                       ng-if="$scope[$scope.activeTab].id !== null"
+                       class="md-raised md-warn pull-left"
+                       ng-click="removeRow()"
+                       ng-disabled="rowSelected === null">
+                <span class="glyphicon glyphicon-remove"></span> {{'wl.remove' | translate}}
+            </md-button>
+            <md-button class="md-raised md-primary pull-right" type="submit">
+                <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-eye-open"></i> {{getSaveStateText(activeTab)}}
+            </md-button>
+        </div>
+    </form>
+</md-sidenav>
+<md-tabs>
+    <md-tab ng-repeat="tab in tabs" label="{{tab.title}}" md-on-select="updateGrid(tab.title)"></md-tab>
+</md-tabs>
+<div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+<div class="actions">
+    <md-button ng-click="removeRows()"
+               ng-disabled="disableTrash"
+               class="md-raised md-warn pull-left">
+        <md-tooltip>{{'wl.select' | translate}} {{activeTab}}(s)</md-tooltip>
+        <i class="glyphicon glyphicon-trash"></i><i class="glyphicon glyphicon-{{icon}}"></i>
+    </md-button>
+    <md-button ng-click="updateWatchlistService()"
+               ng-disabled="updating === true"
+               class="md-raised md-primary pull-right">
+        <md-tooltip>{{'wl.title' | translate}}</md-tooltip>
+        <i class="glyphicon glyphicon-cloud-upload"></i> <i class="glyphicon glyphicon-cloud-download"></i> {{'wl.sync' | translate}}
+    </md-button>
+    <md-button ng-click="Add()"
+               class="md-raised pull-right">
+        <md-tooltip>{{'btn.add' | translate}} {{activeTab}}</md-tooltip>
+        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-{{icon}}"></i>
+    </md-button>
+    <button onclick="angular.element(document.querySelector('.ui-grid-icon-menu'))[0].click();" class="md-raised pull-right md-button md-ink-ripple" type="button">
+        <i class="glyphicon glyphicon-import"></i> Import CSV
+    </button>
+    <md-button ng-click="export('csv')" class="md-raised pull-right" type="button">
+        <i class="glyphicon glyphicon-export"></i> CSV
+    </md-button>
+    <md-button ng-click="export('pdf')" class="md-raised pull-right" type="button">
+        <i class="glyphicon glyphicon-save-file"></i> PDF
+    </md-button>
+</div>
+<div>
+    <spinner name="html5spinner" ng-cloak="">
+        <div class="overlay"></div>
+        <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+        <div class="please-wait">{{'wl.wait' | translate}}...</div>
+    </spinner>
+</div>

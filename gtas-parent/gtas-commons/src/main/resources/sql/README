@@ -1,0 +1,10 @@
+sources:
+
+carriers:
+https://www.census.gov/foreign-trade/reference/codes/aircarrier/acname.txt
+
+countries:
+http://www.nationsonline.org/oneworld/country_code_list.htm
+
+airports:
+http://openflights.org/data.html

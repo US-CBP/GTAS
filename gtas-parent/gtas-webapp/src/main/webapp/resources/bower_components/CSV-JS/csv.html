@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV.parse() Test</title>
+    <script src="csv.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+
+    <!-- prettify - http://code.google.com/p/google-code-prettify/ -->
+    <link href="//google-code-prettify.googlecode.com/svn/trunk/src/prettify.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="//google-code-prettify.googlecode.com/svn/trunk/src/prettify.js"></script>
+
+    <script>
+        $( function () {
+
+            $.ajax("csv.txt",
+                    {
+                        success : function (data, stats, xhr) {
+                            $('#input').text(data);
+                        }
+                    })
+                    .pipe( CSV.parse )
+                    .done( function(rows) {
+                        table("#table", rows );
+                        console.log(rows);
+                        $('#out')
+                                .addClass("prettyprint")
+                                .text( JSON.stringify(rows, null, " ") );
+                        window.prettyPrint()
+                    });
+
+            // dump to html for visualizing output
+            function table (el, data){
+                var t = $("<table  />").appendTo( el );
+                var row, value, tr, td, span, j, i;
+                for( i = 0; i < data.length; i++ ) {
+                    row = data[i];
+                    tr = $("<tr/>").appendTo(t);
+                    for( j = 0; j < row.length; j++ ) {
+                        td = $("<td />")
+                                .appendTo(tr);
+                        span = $('<span />')
+                                .appendTo(td)
+                                .text( String(row[j]) );
+                    }
+                }
+            }
+
+        })
+    </script>
+    <style>
+        #input {
+            background: #f0f0f0;
+        }
+        #table td {
+            background: white;
+            padding: 5px;
+            white-space: pre;
+        }
+        #table span {
+            background: #f0f0f0;
+        }
+        h2 {
+            border-bottom: 1px solid black;
+        }
+        h3 {
+            margin-bottom: 2px;
+            text-decoration: underline;
+        }
+        h4 {
+            font-style: italic;
+        }
+        ul,li, pre{
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+<h2>JavaScript CSV parser</h2>
+
+<h3>Use:</h3>
+<pre><code class="prettyprint">
+
+    // simple
+    var rows = CSV.parse( csv_text );
+
+    // w/ jQuery
+    $.ajax("csv.txt")
+        .pipe( CSV.parse )
+        .done( function(rows) {
+            //... do something
+        });</code></pre>
+
+<h3>Example:</h3>
+
+<h4>Input (<a href="csv.txt">link</a>):</h4>
+<pre id="input"></pre>
+
+<h4>Output as HTML Table:</h4>
+<div id="table"></div>
+
+<h4>Output as JSON:</h4>
+<pre><code id="out"></code></pre>
+
+<h3>About</h3>
+<div>
+    Author: <a href="https://github.com/gkindel">gkindel</a>
+    <br>
+     License:  <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a>
+    <br>
+    Further Reading:
+    <ul>
+        <li><a href="http://en.wikipedia.org/wiki/Comma-separated_values">http://en.wikipedia.org/wiki/Comma-separated_values</a></li>
+        <li><a href="http://www.ietf.org/rfc/rfc4180.txt">http://www.ietf.org/rfc/rfc4180.txt</a></li>
+    </ul>
+</div>
+</body>
+</html>
+

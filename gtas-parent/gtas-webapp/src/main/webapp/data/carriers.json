@@ -1,0 +1,3298 @@
+[
+  {
+    "id": "3Z",
+    "name": "Zoom Airways Limited (3Z)"
+  },
+  {
+    "id": "Z4",
+    "name": "Zoom Airlines Inc. (Z4)"
+  },
+  {
+    "id": "Q3",
+    "name": "Zambian Airways (Q3)"
+  },
+  {
+    "id": "K8",
+    "name": "Zambia Skyways Ltd. (K8)"
+  },
+  {
+    "id": "ZJ",
+    "name": "Zambezi Airlines (ZJ)"
+  },
+  {
+    "id": "IY",
+    "name": "Yemenia - Yemen Airways (IY)"
+  },
+  {
+    "id": "Y8",
+    "name": "Yangtze River Express Airlines Company (Y8)"
+  },
+  {
+    "id": "YC",
+    "name": "Yamal Airlines (YC)"
+  },
+  {
+    "id": "SE",
+    "name": "XL Airways France (SE)"
+  },
+  {
+    "id": "MF",
+    "name": "Xiamen Airlines (MF)"
+  },
+  {
+    "id": "T8",
+    "name": "Worldwide Jet Charter L.L.C. (T8)"
+  },
+  {
+    "id": "WO",
+    "name": "World Airways (WO)"
+  },
+  {
+    "id": "3W",
+    "name": "Woodgate Executive Air Charter UK Ltd. (3W)"
+  },
+  {
+    "id": "IW",
+    "name": "Wings Air (IW)"
+  },
+  {
+    "id": "WM",
+    "name": "Windward Islands Airways Int'l  N.V. (WM)"
+  },
+  {
+    "id": "7W",
+    "name": "Wind Rose Aviation Company (7W)"
+  },
+  {
+    "id": "WF",
+    "name": "Wideroe's Flyveselskap A.S. (WF)"
+  },
+  {
+    "id": "WS",
+    "name": "WestJet (WS)"
+  },
+  {
+    "id": "8O",
+    "name": "West Coast Air (8O)"
+  },
+  {
+    "id": "WH",
+    "name": "Webjet Linhas Aereas S/A (WH)"
+  },
+  {
+    "id": "G3",
+    "name": "VRG Linhas Aereas S.A. (G3)"
+  },
+  {
+    "id": "V6",
+    "name": "Voyager Airlines Ltd (V6)"
+  },
+  {
+    "id": "VI",
+    "name": "Volga-Dnepr Airline Joint Stock (VI)"
+  },
+  {
+    "id": "XF",
+    "name": "Vladivostok Air JSC (XF)"
+  },
+  {
+    "id": "ZG",
+    "name": "Viva Macau Limited (ZG)"
+  },
+  {
+    "id": "VK",
+    "name": "Virgin Nigeria Airways (VK)"
+  },
+  {
+    "id": "VA",
+    "name": "Virgin Blue International Airlines (VA)"
+  },
+  {
+    "id": "DJ",
+    "name": "Virgin Blue Airlines Pty Ltd (DJ)"
+  },
+  {
+    "id": "VS",
+    "name": "Virgin Atlantic Airways Limited (VS)"
+  },
+  {
+    "id": "VX",
+    "name": "Virgin America Inc. (VX)"
+  },
+  {
+    "id": "V5",
+    "name": "Vip Air, spol. S.r.o (V5)"
+  },
+  {
+    "id": "NN",
+    "name": "VIM Airlines (NN)"
+  },
+  {
+    "id": "VN",
+    "name": "Vietnam Airlines Corporation (VN)"
+  },
+  {
+    "id": "0V",
+    "name": "Vietnam Air Service Company (0V)"
+  },
+  {
+    "id": "V4",
+    "name": "Vensecar Internacional C.A. (V4)"
+  },
+  {
+    "id": "LC",
+    "name": "Varig Logistica S/A (LC)"
+  },
+  {
+    "id": "6Z",
+    "name": "Van Air Europe, a.s. (6Z)"
+  },
+  {
+    "id": "VF",
+    "name": "Valuair Ltd. (VF)"
+  },
+  {
+    "id": "HY",
+    "name": "Uzbekistan Havo Yullary - (HY)"
+  },
+  {
+    "id": "UT",
+    "name": "UTair Aviation Joint-Stock Company (UT)"
+  },
+  {
+    "id": "UR",
+    "name": "Utair - Express Limited Company (UR)"
+  },
+  {
+    "id": "UJ",
+    "name": "USA Jet Airlines, Inc. (UJ)"
+  },
+  {
+    "id": "US",
+    "name": "US Airways, Inc. (US)"
+  },
+  {
+    "id": "U6",
+    "name": "Ural Airlines (U6)"
+  },
+  {
+    "id": "5X",
+    "name": "UPS (5X)"
+  },
+  {
+    "id": "*u",
+    "name": "Unknown US Airline (*u)"
+  },
+  {
+    "id": "*f",
+    "name": "Unknown Foreign Airline (*f)"
+  },
+  {
+    "id": "*c",
+    "name": "Unknown Canadian Airline (*c)"
+  },
+  {
+    "id": "UV",
+    "name": "Universal Airways, Inc. (UV)"
+  },
+  {
+    "id": "EU",
+    "name": "United Eagle Airlines Co Ltd (EU)"
+  },
+  {
+    "id": "4H",
+    "name": "United Airways Bangladesh Ltd (4H)"
+  },
+  {
+    "id": "UA",
+    "name": "United Airlines, Inc. (UA)"
+  },
+  {
+    "id": "B7",
+    "name": "UNI Airways Corporation (B7)"
+  },
+  {
+    "id": "UF",
+    "name": "Ukrainian Mediterranean Airlines Ltd. (UF)"
+  },
+  {
+    "id": "PS",
+    "name": "Ukraine International Airlines (PS)"
+  },
+  {
+    "id": "VO",
+    "name": "Tyrolean Airways Tiroler Luftfahrt GmbH (VO)"
+  },
+  {
+    "id": "HK",
+    "name": "Turkuaz Airlines (HK)"
+  },
+  {
+    "id": "6T",
+    "name": "Turks Air (6T)"
+  },
+  {
+    "id": "T5",
+    "name": "Turkmenistan Airlines (T5)"
+  },
+  {
+    "id": "TK",
+    "name": "Turkish Airlines Inc. (TK)"
+  },
+  {
+    "id": "3T",
+    "name": "Turan Air Airline Company (3T)"
+  },
+  {
+    "id": "TU",
+    "name": "Tunisair (TU)"
+  },
+  {
+    "id": "5F",
+    "name": "Tunca Havacilik A.S. BestAir (5F)"
+  },
+  {
+    "id": "6B",
+    "name": "TUIfly Nordic AB (6B)"
+  },
+  {
+    "id": "OR",
+    "name": "TUI Airlines Nederland B.V. (OR)"
+  },
+  {
+    "id": "T4",
+    "name": "TRIP Transporte Aereos Regionais Do (T4)"
+  },
+  {
+    "id": "S5",
+    "name": "Trast Aero (S5)"
+  },
+  {
+    "id": "VW",
+    "name": "Transportes Aeromar, S.A. de C.V. (VW)"
+  },
+  {
+    "id": "QT",
+    "name": "Transportes Aereos Mercantiles (QT)"
+  },
+  {
+    "id": "VR",
+    "name": "Transportes Aereos de Cabo Verde (VR)"
+  },
+  {
+    "id": "9P",
+    "name": "Transportes Aereos Cielos Andinos S.A.C. (9P)"
+  },
+  {
+    "id": "LU",
+    "name": "Transporte Aereo S.A. (LU)"
+  },
+  {
+    "id": "9K",
+    "name": "Transport Africa (9K)"
+  },
+  {
+    "id": "TH",
+    "name": "Transmile Air Services Sdn. Bhd. (TH)"
+  },
+  {
+    "id": "T9",
+    "name": "Transcarga Int'l Airways, C.A. (T9)"
+  },
+  {
+    "id": "AL",
+    "name": "Transaviaexport Cargo Airline (AL)"
+  },
+  {
+    "id": "HV",
+    "name": "Transavia Airlines (HV)"
+  },
+  {
+    "id": "GE",
+    "name": "TransAsia Airways Corporation (GE)"
+  },
+  {
+    "id": "UN",
+    "name": "Transaero Airlines (UN)"
+  },
+  {
+    "id": "AX",
+    "name": "Trans States Airlines, Inc. (AX)"
+  },
+  {
+    "id": "T0",
+    "name": "Trans American Airlines, S.A. TACA PERU (T0)"
+  },
+  {
+    "id": "N4",
+    "name": "Trans Air Benin (N4)"
+  },
+  {
+    "id": "WI",
+    "name": "Tradewinds Airlines Inc. (WI)"
+  },
+  {
+    "id": "8P",
+    "name": "Trade Air Ltd. (8P)"
+  },
+  {
+    "id": "9D",
+    "name": "Toumai Air Tchad (9D)"
+  },
+  {
+    "id": "3V",
+    "name": "TNT Airways S.A. (3V)"
+  },
+  {
+    "id": "ZT",
+    "name": "Titan Airways Limited (ZT)"
+  },
+  {
+    "id": "3P",
+    "name": "Tiara Air N.V. (3P)"
+  },
+  {
+    "id": "BY",
+    "name": "Thomson Airways Limited (BY)"
+  },
+  {
+    "id": "MT",
+    "name": "Thomas Cook Airlines U.K. Limited (MT)"
+  },
+  {
+    "id": "DK",
+    "name": "Thomas Cook Airlines Scandinavia A/S (DK)"
+  },
+  {
+    "id": "TG",
+    "name": "Thai Airways International Public (TG)"
+  },
+  {
+    "id": "FD",
+    "name": "Thai AirAsia Co., Ltd. (FD)"
+  },
+  {
+    "id": "L6",
+    "name": "Tbilaviamsheni (L6)"
+  },
+  {
+    "id": "P5",
+    "name": "Taxi Fly Group S.A. (P5)"
+  },
+  {
+    "id": "3Z",
+    "name": "Tatonduk Outfitters Limited. (3Z)"
+  },
+  {
+    "id": "U9",
+    "name": "Tatarstan JSC Aircompany (U9)"
+  },
+  {
+    "id": "HJ",
+    "name": "Tasman Cargo Airlines PTY LTD (HJ)"
+  },
+  {
+    "id": "RO",
+    "name": "TAROM - Transporturile Aeriene Romane (RO)"
+  },
+  {
+    "id": "TP",
+    "name": "TAP - Air Portugal (TP)"
+  },
+  {
+    "id": "TQ",
+    "name": "Tandem Aero Ltd. (TQ)"
+  },
+  {
+    "id": "EQ",
+    "name": "TAME Linea Aerea del Ecuador (EQ)"
+  },
+  {
+    "id": "JJ",
+    "name": "TAM Linhas Aereas S.A. (JJ)"
+  },
+  {
+    "id": "PZ",
+    "name": "TAM - Transportes Aereos del (PZ)"
+  },
+  {
+    "id": "R9",
+    "name": "Taf Linhas Aereas S.A. (R9)"
+  },
+  {
+    "id": "TA",
+    "name": "Taca International Airlines, S.A. (TA)"
+  },
+  {
+    "id": "TI",
+    "name": "TACA Costa Rica Sociedad Anonima (TI)"
+  },
+  {
+    "id": "DT",
+    "name": "TAAG - Linhas Aereas de Angola (DT)"
+  },
+  {
+    "id": "RB",
+    "name": "Syrian Arab Airlines (RB)"
+  },
+  {
+    "id": "LX",
+    "name": "SWISS International Air Lines Ltd (LX)"
+  },
+  {
+    "id": "7J",
+    "name": "Swiftair (7J)"
+  },
+  {
+    "id": "Q7",
+    "name": "SWIFT AIR,L.L.C. (Q7)"
+  },
+  {
+    "id": "PY",
+    "name": "Surinam Airways Ltd. (PY)"
+  },
+  {
+    "id": "WG",
+    "name": "Sunwing Airlines Inc. (WG)"
+  },
+  {
+    "id": "XQ",
+    "name": "SunExpress (XQ)"
+  },
+  {
+    "id": "SD",
+    "name": "Sudan Airways Co. Ltd. (SD)"
+  },
+  {
+    "id": "NB",
+    "name": "Sterling Airlines A/S (NB)"
+  },
+  {
+    "id": "QP",
+    "name": "Starlight Airline (QP)"
+  },
+  {
+    "id": "2I",
+    "name": "Star Up S.A. (2I)"
+  },
+  {
+    "id": "2S",
+    "name": "Star Equatorial Airlines (2S)"
+  },
+  {
+    "id": "S6",
+    "name": "Star Air A/S (S6)"
+  },
+  {
+    "id": "UL",
+    "name": "SriLankan Airlines Limited (UL)"
+  },
+  {
+    "id": "9C",
+    "name": "Spring Airlines Limited Corporation (9C)"
+  },
+  {
+    "id": "NK",
+    "name": "Spirit Airlines (NK)"
+  },
+  {
+    "id": "JK",
+    "name": "Spanair S.A. (JK)"
+  },
+  {
+    "id": "WN",
+    "name": "Southwest Airlines Co. (WN)"
+  },
+  {
+    "id": "9S",
+    "name": "Southern Air Inc. (9S)"
+  },
+  {
+    "id": "G2",
+    "name": "South-East European Airlines (G2)"
+  },
+  {
+    "id": "SA",
+    "name": "South African Airways (SA)"
+  },
+  {
+    "id": "IE",
+    "name": "Solomon Airlines (IE)"
+  },
+  {
+    "id": "4S",
+    "name": "Solar Cargo, C.A. (4S)"
+  },
+  {
+    "id": "8R",
+    "name": "SOL S.A. Lineas Aereas (8R)"
+  },
+  {
+    "id": "VU",
+    "name": "Societe Nouvelle Air Ivoire (VU)"
+  },
+  {
+    "id": "OG",
+    "name": "Societe De Transport De L'Archipel (OG)"
+  },
+  {
+    "id": "MM",
+    "name": "Sociedad Aeronautica de Medellin (MM)"
+  },
+  {
+    "id": "XR",
+    "name": "Skywest Airlines Pty. Ltd. (XR)"
+  },
+  {
+    "id": "OO",
+    "name": "SkyWest  Airlines (OO)"
+  },
+  {
+    "id": "JZ",
+    "name": "Skyways AB (JZ)"
+  },
+  {
+    "id": "XT",
+    "name": "SkyStar Airways Company Limited (XT)"
+  },
+  {
+    "id": "5G",
+    "name": "Skyservice Airlines Inc. (5G)"
+  },
+  {
+    "id": "LQ",
+    "name": "Skynet Asia Airways Co., Ltd. (LQ)"
+  },
+  {
+    "id": "BC",
+    "name": "Skymark Airlines Inc. (BC)"
+  },
+  {
+    "id": "SX",
+    "name": "Skybus Airlines, LLC (SX)"
+  },
+  {
+    "id": "KI",
+    "name": "Sky Way Enterprises Inc. (KI)"
+  },
+  {
+    "id": "H2",
+    "name": "Sky Service S.A. dba Sky Airline (H2)"
+  },
+  {
+    "id": "UQ",
+    "name": "Sky Jet Aviation Ltd (UQ)"
+  },
+  {
+    "id": "GV",
+    "name": "Sky Gabon S.A. (GV)"
+  },
+  {
+    "id": "GQ",
+    "name": "Sky Express S.A. (GQ)"
+  },
+  {
+    "id": "XW",
+    "name": "Sky Express (XW)"
+  },
+  {
+    "id": "S9",
+    "name": "Sky Air World Pty Ltd (S9)"
+  },
+  {
+    "id": "SQ",
+    "name": "Singapore Airlines Limited (SQ)"
+  },
+  {
+    "id": "SQ",
+    "name": "Singapore Airlines Cargo Pte. Ltd. (SQ)"
+  },
+  {
+    "id": "MI",
+    "name": "SilkAir (S) Pte. Ltd. (MI)"
+  },
+  {
+    "id": "ZP",
+    "name": "Silk Way Airlines (ZP)"
+  },
+  {
+    "id": "FT",
+    "name": "Siem Reap Airways International (FT)"
+  },
+  {
+    "id": "3U",
+    "name": "Sichuan Airlines Co. Ltd. (3U)"
+  },
+  {
+    "id": "S7",
+    "name": "Siberia Airlines (S7)"
+  },
+  {
+    "id": "S5",
+    "name": "Shuttle America (S5)"
+  },
+  {
+    "id": "8S",
+    "name": "Shun Tak-China Travel Ship Mgmt. Ltd. (8S)"
+  },
+  {
+    "id": "J5",
+    "name": "Shenzhen Donghai Airlines Co., Ltd (J5)"
+  },
+  {
+    "id": "ZH",
+    "name": "Shenzhen Airlines (ZH)"
+  },
+  {
+    "id": "FM",
+    "name": "Shanghai Airlines Co. Ltd. (FM)"
+  },
+  {
+    "id": "F4",
+    "name": "Shanghai Airlines Cargo International (F4)"
+  },
+  {
+    "id": "SC",
+    "name": "Shandong Airlines (SC)"
+  },
+  {
+    "id": "6Q",
+    "name": "Sham Wings Airlines (6Q)"
+  },
+  {
+    "id": "NL",
+    "name": "Shaheen Air International (NL)"
+  },
+  {
+    "id": "UG",
+    "name": "SEVENAIR S.A. (UG)"
+  },
+  {
+    "id": "RZ",
+    "name": "Servicios Aereos Nacionales S.A. (RZ)"
+  },
+  {
+    "id": "YR",
+    "name": "Scenic Airlines, Inc. (YR)"
+  },
+  {
+    "id": "SK",
+    "name": "Scandinavian Airlines System (SAS) (SK)"
+  },
+  {
+    "id": "W7",
+    "name": "Sayakhat Airlines (W7)"
+  },
+  {
+    "id": "SV",
+    "name": "Saudi Arabian Airlines (SV)"
+  },
+  {
+    "id": "S4",
+    "name": "SATA International Servicos e (S4)"
+  },
+  {
+    "id": "SP",
+    "name": "SATA - Air Acores (SP)"
+  },
+  {
+    "id": "BU",
+    "name": "SAS Scandinavian Airlines Norge AS (BU)"
+  },
+  {
+    "id": "E5",
+    "name": "Samara Airlines (E5)"
+  },
+  {
+    "id": "ZS",
+    "name": "Sama Airways Ltd. (ZS)"
+  },
+  {
+    "id": "S8",
+    "name": "Sama Air LLC (S8)"
+  },
+  {
+    "id": "4Q",
+    "name": "Safi Airways Ltd. (4Q)"
+  },
+  {
+    "id": "FA",
+    "name": "Safair (Proprietary) Ltd. (FA)"
+  },
+  {
+    "id": "4Z",
+    "name": "SA  Airlink (4Z)"
+  },
+  {
+    "id": "FR",
+    "name": "Ryanair Ltd. (FR)"
+  },
+  {
+    "id": "RD",
+    "name": "Ryan International Airlines (RD)"
+  },
+  {
+    "id": "WB",
+    "name": "Rwandair Express (WB)"
+  },
+  {
+    "id": "RM",
+    "name": "Rutas Aereas, C.A. RUTACA (RM)"
+  },
+  {
+    "id": "RA",
+    "name": "Royal Nepal Airlines Corporation (RA)"
+  },
+  {
+    "id": "RJ",
+    "name": "Royal Jordanian (RJ)"
+  },
+  {
+    "id": "RZ",
+    "name": "Royal Falcon (RZ)"
+  },
+  {
+    "id": "6D",
+    "name": "Royal Daisy Airlines (6D)"
+  },
+  {
+    "id": "BI",
+    "name": "Royal Brunei Airlines Sdn. Bhd. (BI)"
+  },
+  {
+    "id": "SG",
+    "name": "Royal Airways Limited (SG)"
+  },
+  {
+    "id": "AT",
+    "name": "Royal Air Maroc (AT)"
+  },
+  {
+    "id": "WQ",
+    "name": "Romanian Aviation Company (WQ)"
+  },
+  {
+    "id": "ZL",
+    "name": "REGIONAL EXPRESS PTY LIMITED (ZL)"
+  },
+  {
+    "id": "YS",
+    "name": "Regional Compagnie Aerienne Europeenne (YS)"
+  },
+  {
+    "id": "FN",
+    "name": "Regional Air Lines (FN)"
+  },
+  {
+    "id": "2O",
+    "name": "Redemption Inc. (2O)"
+  },
+  {
+    "id": "RT",
+    "name": "RAK Airways (RT)"
+  },
+  {
+    "id": "R6",
+    "name": "RACSA Airlines (R6)"
+  },
+  {
+    "id": "QR",
+    "name": "Qatar Airways(Q.C.S.C) (QR)"
+  },
+  {
+    "id": "QF",
+    "name": "Qantas Airways Ltd. (QF)"
+  },
+  {
+    "id": "EB",
+    "name": "Pullmantur Air (EB)"
+  },
+  {
+    "id": "2P",
+    "name": "Puerto Rico Air Management Service Inc. (2P)"
+  },
+  {
+    "id": "SJ",
+    "name": "PT. Sriwijaya Air (SJ)"
+  },
+  {
+    "id": "9M",
+    "name": "PT. Megantara Air (9M)"
+  },
+  {
+    "id": "QZ",
+    "name": "PT. Indonesia AirAsia (QZ)"
+  },
+  {
+    "id": "I8",
+    "name": "PT. Indonesia Air Transport. Tbk (I8)"
+  },
+  {
+    "id": "RH",
+    "name": "PT Republic Express Airlines (RH)"
+  },
+  {
+    "id": "8F",
+    "name": "PT Cardig Air (8F)"
+  },
+  {
+    "id": "PB",
+    "name": "Provincial Airlines (PB)"
+  },
+  {
+    "id": "F3",
+    "name": "Propilot, Inc. (F3)"
+  },
+  {
+    "id": "U4",
+    "name": "Progress Multitrade Co., Ltd. (U4)"
+  },
+  {
+    "id": "PU",
+    "name": "Primeras Lineas Uruguayas de Navegacion (PU)"
+  },
+  {
+    "id": "FE",
+    "name": "Primaris Airlines, Inc. (FE)"
+  },
+  {
+    "id": "PM",
+    "name": "Prescott Support Company (PM)"
+  },
+  {
+    "id": "3X",
+    "name": "Premier Trans Aire Inc. (3X)"
+  },
+  {
+    "id": "NI",
+    "name": "Portugalia - Companhia Portuguesa de (NI)"
+  },
+  {
+    "id": "PD",
+    "name": "Porter Airlines Inc. (PD)"
+  },
+  {
+    "id": "M4",
+    "name": "Polar Airlines de Mexico S.A. de C.V. (M4)"
+  },
+  {
+    "id": "PO",
+    "name": "Polar Air Cargo Worldwide, Inc. (PO)"
+  },
+  {
+    "id": "P2",
+    "name": "Platnium Air Linhas Aereas Ltda. (P2)"
+  },
+  {
+    "id": "9E",
+    "name": "Pinnacle Airlines Inc. (9E)"
+  },
+  {
+    "id": "US",
+    "name": "Piedmont Airlines, Inc. (US)"
+  },
+  {
+    "id": "PR",
+    "name": "Philippine Airlines, Inc. (PR)"
+  },
+  {
+    "id": "KS",
+    "name": "Penair (KS)"
+  },
+  {
+    "id": "H9",
+    "name": "Pegasus Hava Tasimaciligi A.S. (H9)"
+  },
+  {
+    "id": "9Q",
+    "name": "PB Air Company Limited (9Q)"
+  },
+  {
+    "id": "P6",
+    "name": "Pascan Aviation Inc. (P6)"
+  },
+  {
+    "id": "I7",
+    "name": "Paramount Airways Pvt. Ltd. (I7)"
+  },
+  {
+    "id": "7Q",
+    "name": "Pan Am World Airways Dominicana (7Q)"
+  },
+  {
+    "id": "9P",
+    "name": "Palau National Airlines (9P)"
+  },
+  {
+    "id": "0P",
+    "name": "Palau Asia Pacific Air Inc. (0P)"
+  },
+  {
+    "id": "PK",
+    "name": "Pakistan International Airlines (PK)"
+  },
+  {
+    "id": "P8",
+    "name": "Pak West Airlines Inc. (P8)"
+  },
+  {
+    "id": "LW",
+    "name": "Pacific Wings, L.L.C. (LW)"
+  },
+  {
+    "id": "Q8",
+    "name": "Pacific East Asia Cargo Airlines, Inc. (Q8)"
+  },
+  {
+    "id": "3F",
+    "name": "Pacific Airways Inc. (3F)"
+  },
+  {
+    "id": "O7",
+    "name": "OzJet Airlines Pty Ltd (O7)"
+  },
+  {
+    "id": "OJ",
+    "name": "Overland Airways Limited (OJ)"
+  },
+  {
+    "id": "OX",
+    "name": "Orient Thai Airlines (OX)"
+  },
+  {
+    "id": "R2",
+    "name": "Orenburg Airlines Federal State (R2)"
+  },
+  {
+    "id": "EA",
+    "name": "Operador Aereo Andalus S.A. (EA)"
+  },
+  {
+    "id": "V8",
+    "name": "OOO \"Atran\" (V8)"
+  },
+  {
+    "id": "8Q",
+    "name": "Onur Havayollari Tasimacilik A.S. (8Q)"
+  },
+  {
+    "id": "OG",
+    "name": "One Two Go Airlines Co. Ltd. (OG)"
+  },
+  {
+    "id": "WY",
+    "name": "Oman Air (SAOG) (WY)"
+  },
+  {
+    "id": "OA",
+    "name": "Olympic Airlines (OA)"
+  },
+  {
+    "id": "OL",
+    "name": "OLT-Ostfriesische Lufttransport GmbH (OL)"
+  },
+  {
+    "id": "BK",
+    "name": "Okay Airways Company Limited (BK)"
+  },
+  {
+    "id": "O6",
+    "name": "Oceanair Linhas Aereas Ltda. (O6)"
+  },
+  {
+    "id": "N9",
+    "name": "Nova Airlines AB (N9)"
+  },
+  {
+    "id": "O9",
+    "name": "NOVA Airlines (O9)"
+  },
+  {
+    "id": "DY",
+    "name": "Norwegian Air Shuttle A.S. (DY)"
+  },
+  {
+    "id": "J3",
+    "name": "Northwestern Air Lease Ltd. (J3)"
+  },
+  {
+    "id": "NW",
+    "name": "Northwest Airlines, Inc. (NW)"
+  },
+  {
+    "id": "NC",
+    "name": "Northern Air Cargo, Inc. (NC)"
+  },
+  {
+    "id": "NS",
+    "name": "Northeastern Airlines Co. Ltd. (NS)"
+  },
+  {
+    "id": "NA",
+    "name": "North American Airlines, Inc. (NA)"
+  },
+  {
+    "id": "LF",
+    "name": "Nordic Airlink Holding AB dba flynordic (LF)"
+  },
+  {
+    "id": "KZ",
+    "name": "Nippon Cargo Airlines (KZ)"
+  },
+  {
+    "id": "9X",
+    "name": "New Axis Airways (9X)"
+  },
+  {
+    "id": "NO",
+    "name": "Neos S.P.A. (NO)"
+  },
+  {
+    "id": "M4",
+    "name": "Nayzak Air Transport Company (M4)"
+  },
+  {
+    "id": "ZN",
+    "name": "Naysa (ZN)"
+  },
+  {
+    "id": "ON",
+    "name": "Nauru Air Corporation (ON)"
+  },
+  {
+    "id": "9O",
+    "name": "National Airways Cameroon (9O)"
+  },
+  {
+    "id": "UE",
+    "name": "Nasair (UE)"
+  },
+  {
+    "id": "IC",
+    "name": "NACIL, dba Indian Airlines (IC)"
+  },
+  {
+    "id": "AI",
+    "name": "NACIL, dba Air India (AI)"
+  },
+  {
+    "id": "VZ",
+    "name": "MyTravel Airways Limited (VZ)"
+  },
+  {
+    "id": "8M",
+    "name": "Myanmar Airways International (8M)"
+  },
+  {
+    "id": "UB",
+    "name": "Myanma Airways (UB)"
+  },
+  {
+    "id": "8I",
+    "name": "MYAIR.com (8I)"
+  },
+  {
+    "id": "N8",
+    "name": "Murray Air Inc. (N8)"
+  },
+  {
+    "id": "XV",
+    "name": "MR Lines (XV)"
+  },
+  {
+    "id": "C2",
+    "name": "Mountain Air Cargo Inc. (C2)"
+  },
+  {
+    "id": "M9",
+    "name": "Motor-Sich JSC (M9)"
+  },
+  {
+    "id": "YM",
+    "name": "Montenegro Airlines (YM)"
+  },
+  {
+    "id": "ZB",
+    "name": "Monarch Airlines (ZB)"
+  },
+  {
+    "id": "2M",
+    "name": "Moldavian Airlines (2M)"
+  },
+  {
+    "id": "MW",
+    "name": "Mokulele Flight Service (MW)"
+  },
+  {
+    "id": "MB",
+    "name": "MNG Airlines Cargo (MB)"
+  },
+  {
+    "id": "SY",
+    "name": "MN Airlines LLC (SY)"
+  },
+  {
+    "id": "7G",
+    "name": "MK Airlines Limited (7G)"
+  },
+  {
+    "id": "7M",
+    "name": "Mistral Air S.r.l. (7M)"
+  },
+  {
+    "id": "MJ",
+    "name": "Mihin Lanka (Pvt) Ltd. (MJ)"
+  },
+  {
+    "id": "YX",
+    "name": "Midwest Airlines Inc. (YX)"
+  },
+  {
+    "id": "MG",
+    "name": "Midex Airlines (MG)"
+  },
+  {
+    "id": "ME",
+    "name": "Middle East Airlines AirLiban (ME)"
+  },
+  {
+    "id": "BH",
+    "name": "Mid Asia Airlines Limited (BH)"
+  },
+  {
+    "id": "OM",
+    "name": "MIAT - Mongolian Airlines (OM)"
+  },
+  {
+    "id": "XJ",
+    "name": "Mesaba Aviation Inc. (XJ)"
+  },
+  {
+    "id": "YV",
+    "name": "Mesa Airlines, Inc. (YV)"
+  },
+  {
+    "id": "MZ",
+    "name": "Merpati Nusantara Airlines (MZ)"
+  },
+  {
+    "id": "IG",
+    "name": "Meridiana S.p.A. (IG)"
+  },
+  {
+    "id": "U7",
+    "name": "Meridiana African Airlines (U) Limited (U7)"
+  },
+  {
+    "id": "4X",
+    "name": "Mercury Air Cargo, Inc. (4X)"
+  },
+  {
+    "id": "N5",
+    "name": "Mediterranean Aviation Company Ltd. (N5)"
+  },
+  {
+    "id": "VL",
+    "name": "Med View Airlines (NIG) Ltd. (VL)"
+  },
+  {
+    "id": "9Y",
+    "name": "MDLR Airlines Pvt. Ltd. (9Y)"
+  },
+  {
+    "id": "YD",
+    "name": "Mauritania Airways (YD)"
+  },
+  {
+    "id": "MP",
+    "name": "Martinair Holland N.V. (MP)"
+  },
+  {
+    "id": "AE",
+    "name": "Mandarin Airlines Ltd. (AE)"
+  },
+  {
+    "id": "MA",
+    "name": "Malev Hungarian Airlines  Limited (MA)"
+  },
+  {
+    "id": "MH",
+    "name": "Malaysia  Airline System Berhad (MH)"
+  },
+  {
+    "id": "W5",
+    "name": "Mahan Airlines (W5)"
+  },
+  {
+    "id": "IN",
+    "name": "Macedonian Airlnes (IN)"
+  },
+  {
+    "id": "VM",
+    "name": "Macair Jet S.A. (VM)"
+  },
+  {
+    "id": "L2",
+    "name": "Lynden Air Cargo, LLC (L2)"
+  },
+  {
+    "id": "5V",
+    "name": "Lviv Airlines (5V)"
+  },
+  {
+    "id": "LG",
+    "name": "Luxair (LG)"
+  },
+  {
+    "id": "L5",
+    "name": "Lufttransport AS (L5)"
+  },
+  {
+    "id": "CL",
+    "name": "Lufthansa CityLine GmbH (CL)"
+  },
+  {
+    "id": "LH",
+    "name": "Lufthansa Cargo AG (LH)"
+  },
+  {
+    "id": "8L",
+    "name": "Lucky Air Co. Ltd. (8L)"
+  },
+  {
+    "id": "LT",
+    "name": "LTU International Airways (LT)"
+  },
+  {
+    "id": "XO",
+    "name": "LTE International Airways S.A. (XO)"
+  },
+  {
+    "id": "LO",
+    "name": "LOT - Polish Airlines (LO)"
+  },
+  {
+    "id": "LM",
+    "name": "Livingston S.p.A. (LM)"
+  },
+  {
+    "id": "6M",
+    "name": "Linkair Express S.p.A (6M)"
+  },
+  {
+    "id": "LR",
+    "name": "Lineas Aereas Costarricenses S.A. (LR)"
+  },
+  {
+    "id": "QL",
+    "name": "Linea Aerea de Servicio Ejecutivo (QL)"
+  },
+  {
+    "id": "L7",
+    "name": "Linea Aerea Carguera de Colombia S.A. (L7)"
+  },
+  {
+    "id": "7D",
+    "name": "Limited Liability Company (7D)"
+  },
+  {
+    "id": "4V",
+    "name": "Lignes Aeriennes Congolaises (4V)"
+  },
+  {
+    "id": "LN",
+    "name": "Libyan Airlines (LN)"
+  },
+  {
+    "id": "LI",
+    "name": "LIAT (1974) Ltd. (LI)"
+  },
+  {
+    "id": "NG",
+    "name": "Lauda Air Luftfahrt AG (NG)"
+  },
+  {
+    "id": "LE",
+    "name": "Laparkan Airways, Inc. (LE)"
+  },
+  {
+    "id": "QV",
+    "name": "Lao Airlines (QV)"
+  },
+  {
+    "id": "IL",
+    "name": "LankAir Private Limited (IL)"
+  },
+  {
+    "id": "LP",
+    "name": "Lan Peru S.A. (LP)"
+  },
+  {
+    "id": "XL",
+    "name": "Lan Ecuador - Aerolane Lineas Aereas (XL)"
+  },
+  {
+    "id": "UC",
+    "name": "Lan Chile Cargo S.A. (UC)"
+  },
+  {
+    "id": "LA",
+    "name": "Lan Airlines S.A. (LA)"
+  },
+  {
+    "id": "TM",
+    "name": "LAM - Linhas Aereas de Mocambique (TM)"
+  },
+  {
+    "id": "N7",
+    "name": "Lagun Air (N7)"
+  },
+  {
+    "id": "WJ",
+    "name": "Labrador Airways Limited (WJ)"
+  },
+  {
+    "id": "JF",
+    "name": "L.A.B. Flying Service Inc. (JF)"
+  },
+  {
+    "id": "GO",
+    "name": "Kuzu Airlines Cargo (GO)"
+  },
+  {
+    "id": "KU",
+    "name": "Kuwait Airways (KU)"
+  },
+  {
+    "id": "VD",
+    "name": "Kunpeng Airlines Co., Ltd (VD)"
+  },
+  {
+    "id": "KY",
+    "name": "Kunming Airlines (KY)"
+  },
+  {
+    "id": "KE",
+    "name": "Korean Air Lines Co. Ltd. (KE)"
+  },
+  {
+    "id": "KL",
+    "name": "KLM Royal Dutch Airlines (KL)"
+  },
+  {
+    "id": "WA",
+    "name": "KLM Cityhopper (WA)"
+  },
+  {
+    "id": "KR",
+    "name": "Kitty Hawk Aircargo, Inc. (KR)"
+  },
+  {
+    "id": "Y9",
+    "name": "Kish Airlines (Y9)"
+  },
+  {
+    "id": "IT",
+    "name": "Kingfisher Airlines Limited (IT)"
+  },
+  {
+    "id": "YK",
+    "name": "Kibris Turk Hava Yollari (YK)"
+  },
+  {
+    "id": "KG",
+    "name": "Key Lime Air Corporation (KG)"
+  },
+  {
+    "id": "KQ",
+    "name": "Kenya Airways (KQ)"
+  },
+  {
+    "id": "3A",
+    "name": "Kenosha Aero, Inc. dba Alliance Airlines (3A)"
+  },
+  {
+    "id": "KD",
+    "name": "KD Avia Open Joint Stock Company (KD)"
+  },
+  {
+    "id": "E2",
+    "name": "Kampuchea Airlines (E2)"
+  },
+  {
+    "id": "RQ",
+    "name": "Kam Air (RQ)"
+  },
+  {
+    "id": "CB",
+    "name": "Kalitta Charters II, LLC (CB)"
+  },
+  {
+    "id": "K4",
+    "name": "Kalitta Air, LLC (K4)"
+  },
+  {
+    "id": "8K",
+    "name": "K-Mile Air Co. Ltd (8K)"
+  },
+  {
+    "id": "HO",
+    "name": "Juneyao Airlines Co,. Ltd. (HO)"
+  },
+  {
+    "id": "6J",
+    "name": "Jubba Airways (6J)"
+  },
+  {
+    "id": "DZ",
+    "name": "JSC \"Starline.kz\" (DZ)"
+  },
+  {
+    "id": "G7",
+    "name": "JSC \"KAPO Avia\" (G7)"
+  },
+  {
+    "id": "DV",
+    "name": "JSC \"Aircompany SCAT\" (DV)"
+  },
+  {
+    "id": "J4",
+    "name": "Jordan International Air Cargo (J4)"
+  },
+  {
+    "id": "R5",
+    "name": "Jordan Aviation (R5)"
+  },
+  {
+    "id": "HZ",
+    "name": "Joint- Stock Company \"Sakhalinskie\" (HZ)"
+  },
+  {
+    "id": "5M",
+    "name": "Joint Stock Company SIAT (Sibaviatrans) (5M)"
+  },
+  {
+    "id": "X9",
+    "name": "joint stock company Avion Express (X9)"
+  },
+  {
+    "id": "R3",
+    "name": "Joint Stock Company Aircompany \"Yakutia\" (R3)"
+  },
+  {
+    "id": "N3",
+    "name": "Joint Stock Company \"Omskavia\" Airlines (N3)"
+  },
+  {
+    "id": "DW",
+    "name": "Joint Stock Company \"Air Company\" (DW)"
+  },
+  {
+    "id": "3B",
+    "name": "Job Air s.r.o. (3B)"
+  },
+  {
+    "id": "GX",
+    "name": "JetX ehf, (Primera Air) (GX)"
+  },
+  {
+    "id": "JX",
+    "name": "Jett8 Airlines Cargo Pte Ltd. (JX)"
+  },
+  {
+    "id": "BL",
+    "name": "Jetstar Pacific Airlines (BL)"
+  },
+  {
+    "id": "3K",
+    "name": "Jetstar Asia Airways Pte Ltd (3K)"
+  },
+  {
+    "id": "0J",
+    "name": "JetClub AG (0J)"
+  },
+  {
+    "id": "LS",
+    "name": "Jet2.com Limited (LS)"
+  },
+  {
+    "id": "S2",
+    "name": "Jet Lite (India) Limited (S2)"
+  },
+  {
+    "id": "J0",
+    "name": "Jet Link Express Ltd. (J0)"
+  },
+  {
+    "id": "PP",
+    "name": "Jet Aviation Business Jets AG (PP)"
+  },
+  {
+    "id": "QJ",
+    "name": "Jet Airways Inc. (QJ)"
+  },
+  {
+    "id": "9W",
+    "name": "Jet Airways (India) Limited (9W)"
+  },
+  {
+    "id": "O2",
+    "name": "JET AIR Spolka z o.o. (O2)"
+  },
+  {
+    "id": "8J",
+    "name": "Jet 4 You (8J)"
+  },
+  {
+    "id": "JU",
+    "name": "Jat  Airways (JU)"
+  },
+  {
+    "id": "NU",
+    "name": "Japan Transocean Air Co. Ltd. (NU)"
+  },
+  {
+    "id": "JL",
+    "name": "Japan Airlines International Co., Ltd. (JL)"
+  },
+  {
+    "id": "JO",
+    "name": "JALways Co. Ltd. (JO)"
+  },
+  {
+    "id": "JC",
+    "name": "JAL Express (JC)"
+  },
+  {
+    "id": "JI",
+    "name": "Jade Cargo International Company Limited (JI)"
+  },
+  {
+    "id": "I3",
+    "name": "Ivoirienne De Transport Aerien (I3)"
+  },
+  {
+    "id": "6H",
+    "name": "Israir Airlines and Tourism Ltd. (6H)"
+  },
+  {
+    "id": "WC",
+    "name": "Islena de Inversiones S.A. de C.V. (WC)"
+  },
+  {
+    "id": "Q2",
+    "name": "Island Aviation Services Ltd. (Q2)"
+  },
+  {
+    "id": "IA",
+    "name": "Iraqi Airways (IA)"
+  },
+  {
+    "id": "EP",
+    "name": "Iran Aseman Airlines (EP)"
+  },
+  {
+    "id": "IR",
+    "name": "Iran Air (IR)"
+  },
+  {
+    "id": "I4",
+    "name": "Interstate Airlines B.V. (I4)"
+  },
+  {
+    "id": "3L",
+    "name": "InterSky Luftfahrt GmbH (3L)"
+  },
+  {
+    "id": "L8",
+    "name": "International Air Cargo Company(LoadAir) (L8)"
+  },
+  {
+    "id": "ID",
+    "name": "Interlink Airlines (Pty) Ltd. (ID)"
+  },
+  {
+    "id": "ZA",
+    "name": "Interavia Airlines (ZA)"
+  },
+  {
+    "id": "D6",
+    "name": "Inter-Aviation Services (D6)"
+  },
+  {
+    "id": "6E",
+    "name": "Inter Globe Aviation Private Limited (6E)"
+  },
+  {
+    "id": "6K",
+    "name": "Inter Express Hava Tasimacilik A.S. (6K)"
+  },
+  {
+    "id": "7I",
+    "name": "Insel Air International B.V. (7I)"
+  },
+  {
+    "id": "I2",
+    "name": "Industrieflug IPS (I2)"
+  },
+  {
+    "id": "IO",
+    "name": "Indochina Airlines (IO)"
+  },
+  {
+    "id": "IK",
+    "name": "IMAIR Airline (IK)"
+  },
+  {
+    "id": "4I",
+    "name": "IHY Izmir Havayollari A.S. (4I)"
+  },
+  {
+    "id": "FI",
+    "name": "Icelandair (FI)"
+  },
+  {
+    "id": "X8",
+    "name": "Icaro S.A. (X8)"
+  },
+  {
+    "id": "IB",
+    "name": "Iberia - Lineas Aereas de Espana (IB)"
+  },
+  {
+    "id": "II",
+    "name": "IBC Airways, Inc. (II)"
+  },
+  {
+    "id": "QX",
+    "name": "Horizon Air (QX)"
+  },
+  {
+    "id": "UO",
+    "name": "Hong Kong Express Airways Limited (UO)"
+  },
+  {
+    "id": "KA",
+    "name": "Hong Kong Dragon Airlines Limited (KA)"
+  },
+  {
+    "id": "HX",
+    "name": "Hong Kong Airlines Limited (HX)"
+  },
+  {
+    "id": "HB",
+    "name": "Homer Air Inc. (HB)"
+  },
+  {
+    "id": "HD",
+    "name": "Hokkaido Int'l Airlines Co., Ltd. (HD)"
+  },
+  {
+    "id": "HQ",
+    "name": "HMY Airways Inc. (HQ)"
+  },
+  {
+    "id": "8H",
+    "name": "Highland Airways Limited (8H)"
+  },
+  {
+    "id": "5K",
+    "name": "Hi Fly Transportes Aereos, S.A. (5K)"
+  },
+  {
+    "id": "EO",
+    "name": "Hewa Bora Airways (EO)"
+  },
+  {
+    "id": "DU",
+    "name": "Hemus Air (DU)"
+  },
+  {
+    "id": "HW",
+    "name": "Hello AG (HW)"
+  },
+  {
+    "id": "HT",
+    "name": "Hellenic Imperial Airways (HT)"
+  },
+  {
+    "id": "9I",
+    "name": "Helitrans AS (9I)"
+  },
+  {
+    "id": "JB",
+    "name": "Helijet International Inc. (JB)"
+  },
+  {
+    "id": "YO",
+    "name": "Heli Air Monaco (YO)"
+  },
+  {
+    "id": "HN",
+    "name": "Heavylift Cargo Airlines Pty. Limited (HN)"
+  },
+  {
+    "id": "HA",
+    "name": "Hawaiian Airlines, Inc. (HA)"
+  },
+  {
+    "id": "WP",
+    "name": "Hawaii Island Air, Inc. (WP)"
+  },
+  {
+    "id": "HF",
+    "name": "Hapag Lloyd Fluggesellschaft (HF)"
+  },
+  {
+    "id": "2H",
+    "name": "Hamsal Air Services Limited (2H)"
+  },
+  {
+    "id": "HU",
+    "name": "Hainan Airlines Company Limited (HU)"
+  },
+  {
+    "id": "HR",
+    "name": "Hahn Air Lines (HR)"
+  },
+  {
+    "id": "3M",
+    "name": "Gulfstream International Airlines, Inc. (3M)"
+  },
+  {
+    "id": "GF",
+    "name": "Gulf Air Company G.S.C. (GF)"
+  },
+  {
+    "id": "IF",
+    "name": "Gulf & Caribbean Cargo, Inc (IF)"
+  },
+  {
+    "id": "3R",
+    "name": "Gromov Flight Research Institute Airline (3R)"
+  },
+  {
+    "id": "IJ",
+    "name": "Great Wall Airlines Company Limited (IJ)"
+  },
+  {
+    "id": "ZK",
+    "name": "Great Lakes Aviation Ltd. (ZK)"
+  },
+  {
+    "id": "GD",
+    "name": "Grandstar Cargo International Airlines (GD)"
+  },
+  {
+    "id": "GS",
+    "name": "Grand China Express Co. Ltd. (GS)"
+  },
+  {
+    "id": "CN",
+    "name": "Grand China Air Co. , Ltd. (CN)"
+  },
+  {
+    "id": "G7",
+    "name": "GoJet Airlines LLC (G7)"
+  },
+  {
+    "id": "GK",
+    "name": "Go One Airways (GK)"
+  },
+  {
+    "id": "Z5",
+    "name": "GMG Airlines Ltd. (Z5)"
+  },
+  {
+    "id": "GH",
+    "name": "Globus LLC (GH)"
+  },
+  {
+    "id": "Y2",
+    "name": "Globespan Airways Limited (Y2)"
+  },
+  {
+    "id": "G0",
+    "name": "Ghana International Airlines Ltd. (G0)"
+  },
+  {
+    "id": "G5",
+    "name": "Gestair S.A. (G5)"
+  },
+  {
+    "id": "QB",
+    "name": "Georgian National Airlines (QB)"
+  },
+  {
+    "id": "A9",
+    "name": "Georgian Airways (A9)"
+  },
+  {
+    "id": "GT",
+    "name": "GB Airways Ltd. (GT)"
+  },
+  {
+    "id": "4G",
+    "name": "Gazpromavia Aviation Company Ltd. (4G)"
+  },
+  {
+    "id": "GA",
+    "name": "Garuda Indonesia (GA)"
+  },
+  {
+    "id": "GC",
+    "name": "Gambia International Airlines Ltd. (GC)"
+  },
+  {
+    "id": "GP",
+    "name": "Gadair European Airlines (GP)"
+  },
+  {
+    "id": "6G",
+    "name": "Gabon Airlines Cargo (6G)"
+  },
+  {
+    "id": "GY",
+    "name": "Gabon Airlines (GY)"
+  },
+  {
+    "id": "F6",
+    "name": "Futura Gael (F6)"
+  },
+  {
+    "id": "2F",
+    "name": "Frontier Flying Service, Inc. (2F)"
+  },
+  {
+    "id": "F9",
+    "name": "Frontier Airlines, Inc. (F9)"
+  },
+  {
+    "id": "Y0",
+    "name": "Friendship Airways (Y0)"
+  },
+  {
+    "id": "HK",
+    "name": "Four Star Aviation (HK)"
+  },
+  {
+    "id": "TE",
+    "name": "FlyLAL-Lithuanian Airlines (TE)"
+  },
+  {
+    "id": "7Y",
+    "name": "Flying Carpet Air Transport & Services (7Y)"
+  },
+  {
+    "id": "FY",
+    "name": "FlyFirefly Sdn. Bhd (FY)"
+  },
+  {
+    "id": "BE",
+    "name": "Flybe Limited (BE)"
+  },
+  {
+    "id": "F3",
+    "name": "Fly Excellent (F3)"
+  },
+  {
+    "id": "RF",
+    "name": "Florida West International Airways, Inc. (RF)"
+  },
+  {
+    "id": "5H",
+    "name": "Five Fourty Aviation Limited (5H)"
+  },
+  {
+    "id": "7F",
+    "name": "First Air (7F)"
+  },
+  {
+    "id": "AY",
+    "name": "Finnair Oyj (AY)"
+  },
+  {
+    "id": "FO",
+    "name": "Felix Airways (FO)"
+  },
+  {
+    "id": "FX",
+    "name": "FedEx (FX)"
+  },
+  {
+    "id": "FV",
+    "name": "Federal State Unitary Enterprise \"STC\" (FV)"
+  },
+  {
+    "id": "QE",
+    "name": "Fars Qeshm Airlines (QE)"
+  },
+  {
+    "id": "FC",
+    "name": "Falcon Express Cargo Airlines (FC)"
+  },
+  {
+    "id": "ZY",
+    "name": "Eznis Airways Co. Ltd. (ZY)"
+  },
+  {
+    "id": "XE",
+    "name": "ExpressJet Airlines, Inc. (XE)"
+  },
+  {
+    "id": "8D",
+    "name": "Expo Aviation (Pvt) Limited (8D)"
+  },
+  {
+    "id": "8K",
+    "name": "Exploits Valley Air Services (8K)"
+  },
+  {
+    "id": "MB",
+    "name": "Execaire (MB)"
+  },
+  {
+    "id": "EZ",
+    "name": "Evergreen International Airlines Inc. (EZ)"
+  },
+  {
+    "id": "7E",
+    "name": "Evergreen Helicopters International Inc. (7E)"
+  },
+  {
+    "id": "BR",
+    "name": "EVA Airways Corporation (BR)"
+  },
+  {
+    "id": "EW",
+    "name": "Eurowings AG (EW)"
+  },
+  {
+    "id": "QY",
+    "name": "European Air Transport N.V. (QY)"
+  },
+  {
+    "id": "4L",
+    "name": "Euroline (4L)"
+  },
+  {
+    "id": "GJ",
+    "name": "Eurofly S.p.A. (GJ)"
+  },
+  {
+    "id": "UI",
+    "name": "Eurocypria Airlines Ltd. (UI)"
+  },
+  {
+    "id": "5B",
+    "name": "Euro-Asia International JSC (5B)"
+  },
+  {
+    "id": "EY",
+    "name": "Etihad Airways (EY)"
+  },
+  {
+    "id": "ET",
+    "name": "Ethiopian Airlines Enterprise (ET)"
+  },
+  {
+    "id": "OV",
+    "name": "Estonian Air (OV)"
+  },
+  {
+    "id": "E7",
+    "name": "Estafeta Carga Aerea, S.A. de C.V (E7)"
+  },
+  {
+    "id": "B8",
+    "name": "Eritrean Airlines (B8)"
+  },
+  {
+    "id": "7H",
+    "name": "Era Aviation, Inc. (7H)"
+  },
+  {
+    "id": "EM",
+    "name": "Empire Airlines (EM)"
+  },
+  {
+    "id": "EK",
+    "name": "Emirates (EK)"
+  },
+  {
+    "id": "A0",
+    "name": "Elysair S.A.S. (A0)"
+  },
+  {
+    "id": "6S",
+    "name": "El Sol de America (6S)"
+  },
+  {
+    "id": "LY",
+    "name": "El Al Israel Airlines Ltd. (LY)"
+  },
+  {
+    "id": "MS",
+    "name": "Egyptair (MS)"
+  },
+  {
+    "id": "WK",
+    "name": "Edelweiss Air AG (WK)"
+  },
+  {
+    "id": "B5",
+    "name": "East African Safari Air Express Ltd. (B5)"
+  },
+  {
+    "id": "9H",
+    "name": "Dutch Antilles Express B.V. (9H)"
+  },
+  {
+    "id": "KB",
+    "name": "Druk Air Corporation Ltd. (KB)"
+  },
+  {
+    "id": "E3",
+    "name": "Domodedovo Airlines (E3)"
+  },
+  {
+    "id": "ZD",
+    "name": "Dolphin Air (ZD)"
+  },
+  {
+    "id": "Z6",
+    "name": "Dnieproavia  - Joint Stock Aviation Co. (Z6)"
+  },
+  {
+    "id": "ES",
+    "name": "DHL International B.S.C. ( c ) (ES)"
+  },
+  {
+    "id": "L3",
+    "name": "DHL de Guatemala S.A. (L3)"
+  },
+  {
+    "id": "D0",
+    "name": "DHL Air Limited (D0)"
+  },
+  {
+    "id": "D5",
+    "name": "DHL Aero Expreso S.A. (D5)"
+  },
+  {
+    "id": "LH",
+    "name": "Deutsche Lufthansa AG (LH)"
+  },
+  {
+    "id": "DL",
+    "name": "Delta Air Lines Inc. (DL)"
+  },
+  {
+    "id": "JD",
+    "name": "Deer Jet Co. Ltd. (JD)"
+  },
+  {
+    "id": "0D",
+    "name": "Darwin Airline SA Lugano (0D)"
+  },
+  {
+    "id": "DX",
+    "name": "Danish Air Transport (DX)"
+  },
+  {
+    "id": "9J",
+    "name": "Dana Airlines Limited (9J)"
+  },
+  {
+    "id": "H8",
+    "name": "Dalavia - Far East Airways Khabarovsk (H8)"
+  },
+  {
+    "id": "N2",
+    "name": "Daghestan Airlines (N2)"
+  },
+  {
+    "id": "D3",
+    "name": "Daallo Airlines (D3)"
+  },
+  {
+    "id": "OK",
+    "name": "Czech Airlines a.s., CSA (OK)"
+  },
+  {
+    "id": "CY",
+    "name": "Cyprus Airways Limited (CY)"
+  },
+  {
+    "id": "5R",
+    "name": "Custom Air Transport, Inc. (5R)"
+  },
+  {
+    "id": "CU",
+    "name": "Cubana de Aviacion S.A. (CU)"
+  },
+  {
+    "id": "OU",
+    "name": "Croatia Airlines (OU)"
+  },
+  {
+    "id": "7C",
+    "name": "Coyne Airways Ltd (7C)"
+  },
+  {
+    "id": "F5",
+    "name": "Cosmic Air Pvt. Ltd. (F5)"
+  },
+  {
+    "id": "SS",
+    "name": "CORSAIR (SS)"
+  },
+  {
+    "id": "7V",
+    "name": "Corporate Air Charters, Inc. (7V)"
+  },
+  {
+    "id": "V0",
+    "name": "CONVIASA (V0)"
+  },
+  {
+    "id": "CS",
+    "name": "Continental Micronesia, Inc. (CS)"
+  },
+  {
+    "id": "CO",
+    "name": "Continental Airlines, Inc. (CO)"
+  },
+  {
+    "id": "C3",
+    "name": "Contact-Air Flugdienst GmbH & Co. KG (C3)"
+  },
+  {
+    "id": "DE",
+    "name": "Condor Flugdienst GmbH (DE)"
+  },
+  {
+    "id": "Y4",
+    "name": "Concesionaria Vuela Compania De Aviacion (Y4)"
+  },
+  {
+    "id": "CP",
+    "name": "Compass Airlines Inc. (CP)"
+  },
+  {
+    "id": "CM",
+    "name": "Compania Panamena de Aviacion, S.A. (CM)"
+  },
+  {
+    "id": "MX",
+    "name": "Compania Mexicana de Aviacion (MX)"
+  },
+  {
+    "id": "5L",
+    "name": "Compania Boliviana de Transporte Aereo (5L)"
+  },
+  {
+    "id": "I5",
+    "name": "Compagnie Aerienne du Mali S.A. (I5)"
+  },
+  {
+    "id": "XK",
+    "name": "Compagnie Aerienne Corse (XK)"
+  },
+  {
+    "id": "OH",
+    "name": "Comair, Inc. (OH)"
+  },
+  {
+    "id": "MN",
+    "name": "Comair Ltd. (MN)"
+  },
+  {
+    "id": "9L",
+    "name": "Colgan Air (9L)"
+  },
+  {
+    "id": "C7",
+    "name": "Closed Joint Stock Company (C7)"
+  },
+  {
+    "id": "C4",
+    "name": "Click Airways (C4)"
+  },
+  {
+    "id": "WZ",
+    "name": "CJSC Airline 400 (WZ)"
+  },
+  {
+    "id": "ZM",
+    "name": "Cityline Hungary Kft (ZM)"
+  },
+  {
+    "id": "WX",
+    "name": "Cityjet (WX)"
+  },
+  {
+    "id": "CF",
+    "name": "City Airline AB (CF)"
+  },
+  {
+    "id": "QI",
+    "name": "Cimber Air A.S. (QI)"
+  },
+  {
+    "id": "AU",
+    "name": "Cielos del Sur S.A. (AU)"
+  },
+  {
+    "id": "A2",
+    "name": "Cielos del Peru, S.A. (A2)"
+  },
+  {
+    "id": "OQ",
+    "name": "Chongqing Airlines Co. Ltd (OQ)"
+  },
+  {
+    "id": "PN",
+    "name": "China West Air Co. Ltd. (PN)"
+  },
+  {
+    "id": "KN",
+    "name": "China United Airlines (KN)"
+  },
+  {
+    "id": "CZ",
+    "name": "China Southern Airlines (CZ)"
+  },
+  {
+    "id": "8Y",
+    "name": "China Postal Airlines Ltd. (8Y)"
+  },
+  {
+    "id": "MU",
+    "name": "China Eastern Airlines (MU)"
+  },
+  {
+    "id": "CK",
+    "name": "China Cargo Airlines Ltd. (CK)"
+  },
+  {
+    "id": "CI",
+    "name": "China Airlines (CI)"
+  },
+  {
+    "id": "RP",
+    "name": "Chautauqua Airlines Inc. (RP)"
+  },
+  {
+    "id": "C5",
+    "name": "Champlain Enterprises Inc. (C5)"
+  },
+  {
+    "id": "6C",
+    "name": "Cetrafrrique Air Express (C.A.E.) (6C)"
+  },
+  {
+    "id": "WE",
+    "name": "Centurion Air Cargo, Inc. (WE)"
+  },
+  {
+    "id": "9M",
+    "name": "Central Mountain Air Ltd. (9M)"
+  },
+  {
+    "id": "C2",
+    "name": "CEIBA Intercontinental S.A. (C2)"
+  },
+  {
+    "id": "5J",
+    "name": "CEBU Pacific Air (5J)"
+  },
+  {
+    "id": "KX",
+    "name": "Cayman Airways Limited (KX)"
+  },
+  {
+    "id": "CX",
+    "name": "Cathay Pacific Airways Ltd. (CX)"
+  },
+  {
+    "id": "XG",
+    "name": "Catair Lineas Aereas S.A.(Clickair S.A.) (XG)"
+  },
+  {
+    "id": "RV",
+    "name": "Caspian Airlines Service Company Ltd. (RV)"
+  },
+  {
+    "id": "BW",
+    "name": "Caribbean Airlines Limited (BW)"
+  },
+  {
+    "id": "3Q",
+    "name": "Carib Aviation Limited (3Q)"
+  },
+  {
+    "id": "CV",
+    "name": "Cargolux Airlines International S.A. (CV)"
+  },
+  {
+    "id": "W8",
+    "name": "Cargojet Airways Ltd. (W8)"
+  },
+  {
+    "id": "2G",
+    "name": "Cargoitalia S.p.A. (2G)"
+  },
+  {
+    "id": "BB",
+    "name": "Cargo B Airlines (BB)"
+  },
+  {
+    "id": "TL",
+    "name": "Capiteq Limited dba AIRNORTH (TL)"
+  },
+  {
+    "id": "PT",
+    "name": "Capital Cargo International (PT)"
+  },
+  {
+    "id": "5T",
+    "name": "Canadian North Inc. (5T)"
+  },
+  {
+    "id": "MO",
+    "name": "Calm Air International Ltd. (MO)"
+  },
+  {
+    "id": "5C",
+    "name": "C.A.L. Cargo Airlines Ltd. (5C)"
+  },
+  {
+    "id": "VE",
+    "name": "C.A.I. Second S.p.A. (VE)"
+  },
+  {
+    "id": "UZ",
+    "name": "Buraq Air Transport (BRQ) (UZ)"
+  },
+  {
+    "id": "FB",
+    "name": "Bulgaria Air (FB)"
+  },
+  {
+    "id": "SN",
+    "name": "Brussels Airlines N.V. (SN)"
+  },
+  {
+    "id": "BD",
+    "name": "British Midland Airways Ltd. (BD)"
+  },
+  {
+    "id": "BA",
+    "name": "British Airways p.l.c. (BA)"
+  },
+  {
+    "id": "DB",
+    "name": "Brit Air (DB)"
+  },
+  {
+    "id": "E6",
+    "name": "Bringer Air Cargo Taxi Aereo Ltda (E6)"
+  },
+  {
+    "id": "U5",
+    "name": "Brendan Airways, LLC (U5)"
+  },
+  {
+    "id": "BF",
+    "name": "Bluebird Cargo (BF)"
+  },
+  {
+    "id": "KF",
+    "name": "Blue1 Oy (KF)"
+  },
+  {
+    "id": "QW",
+    "name": "Blue Wings AG (QW)"
+  },
+  {
+    "id": "BV",
+    "name": "Blue Panorama Airlines S.p.A. (BV)"
+  },
+  {
+    "id": "BZ",
+    "name": "Blue Dart Aviation Ltd. (BZ)"
+  },
+  {
+    "id": "5Z",
+    "name": "Bismillah Airlines (5Z)"
+  },
+  {
+    "id": "B9",
+    "name": "BIMINI Island Air Inc. (B9)"
+  },
+  {
+    "id": "BG",
+    "name": "Biman Bangladesh Airlines (BG)"
+  },
+  {
+    "id": "5Q",
+    "name": "Best Aviation Ltd. (5Q)"
+  },
+  {
+    "id": "A8",
+    "name": "Benin Golf Air S.A. (A8)"
+  },
+  {
+    "id": "CH",
+    "name": "Bemidji Aviation Services, Inc. (CH)"
+  },
+  {
+    "id": "B3",
+    "name": "Bellview Airlines Limited (B3)"
+  },
+  {
+    "id": "LZ",
+    "name": "Belle Air Company (LZ)"
+  },
+  {
+    "id": "B2",
+    "name": "Belavia (B2)"
+  },
+  {
+    "id": "JV",
+    "name": "Bearskin Lake air services Ltd. (JV)"
+  },
+  {
+    "id": "3Y",
+    "name": "Baseops International, Inc. (3Y)"
+  },
+  {
+    "id": "B4",
+    "name": "Bankair Inc. (B4)"
+  },
+  {
+    "id": "PG",
+    "name": "Bangkok Airways Co. Ltd. (PG)"
+  },
+  {
+    "id": "2B",
+    "name": "Bahrain Air B.S.C. (2B)"
+  },
+  {
+    "id": "UP",
+    "name": "Bahamasair Holdings, Limited (UP)"
+  },
+  {
+    "id": "EC",
+    "name": "BA European Limited t/a Openskies (EC)"
+  },
+  {
+    "id": "CJ",
+    "name": "BA Cityflyer Limited (CJ)"
+  },
+  {
+    "id": "JA",
+    "name": "B & H Airlines (JA)"
+  },
+  {
+    "id": "AD",
+    "name": "Azul Linhas Aereas Brasileiras (AD)"
+  },
+  {
+    "id": "7A",
+    "name": "Aztec Worldwide Airlines Inc. (7A)"
+  },
+  {
+    "id": "J2",
+    "name": "Azerbaijan Hava Yollary (J2)"
+  },
+  {
+    "id": "9V",
+    "name": "Aviones de Oriente C.A. (AVIOR) (9V)"
+  },
+  {
+    "id": "HC",
+    "name": "Avient Cameroon S.A. (HC)"
+  },
+  {
+    "id": "Z3",
+    "name": "Avient Aviation (PVT) Limited (Z3)"
+  },
+  {
+    "id": "Q4",
+    "name": "Aviation Starlink Inc. (Q4)"
+  },
+  {
+    "id": "FP",
+    "name": "Aviation Services, Ltd. (FP)"
+  },
+  {
+    "id": "GU",
+    "name": "AVIATECA, S.A. (GU)"
+  },
+  {
+    "id": "4B",
+    "name": "Aviastar-TU Co.  Aviacompany (4B)"
+  },
+  {
+    "id": "7U",
+    "name": "Aviaenergo (7U)"
+  },
+  {
+    "id": "6A",
+    "name": "AVIACSA-Consorcio Aviaxsa, S.A. de C.V. (6A)"
+  },
+  {
+    "id": "ZR",
+    "name": "Aviacon Zitotrans Air Company JSC (ZR)"
+  },
+  {
+    "id": "2E",
+    "name": "Ave.com (2E)"
+  },
+  {
+    "id": "OS",
+    "name": "Austrian Airlines, Osterreichische (OS)"
+  },
+  {
+    "id": "XM",
+    "name": "Australian Air Express Pty. Ltd. (XM)"
+  },
+  {
+    "id": "GR",
+    "name": "Aurigny Air Services Limited (GR)"
+  },
+  {
+    "id": "IQ",
+    "name": "Augsburg Airways GmbH & Co. KG (IQ)"
+  },
+  {
+    "id": "IP",
+    "name": "Atyrau  Aue Joly (IP)"
+  },
+  {
+    "id": "KK",
+    "name": "Atlasjet Airlines Inc. (KK)"
+  },
+  {
+    "id": "5Y",
+    "name": "Atlas Air, Inc. (5Y)"
+  },
+  {
+    "id": "EV",
+    "name": "Atlantic Southeast Airlines, Inc. (EV)"
+  },
+  {
+    "id": "RC",
+    "name": "Atlantic Airways Faroe Islands (RC)"
+  },
+  {
+    "id": "7B",
+    "name": "Atlant-Soyuz (7B)"
+  },
+  {
+    "id": "8V",
+    "name": "Astral Aviation Ltd. (8V)"
+  },
+  {
+    "id": "5W",
+    "name": "Astraeus Ltd. (5W)"
+  },
+  {
+    "id": "ER",
+    "name": "Astar Air Cargo (ER)"
+  },
+  {
+    "id": "4K",
+    "name": "Askari Aviation (PVT) Ltd. (4K)"
+  },
+  {
+    "id": "OZ",
+    "name": "Asiana Airlines Inc. (OZ)"
+  },
+  {
+    "id": "OD",
+    "name": "Asia Alpha Airways (OD)"
+  },
+  {
+    "id": "8A",
+    "name": "Arrow Panama, S.A. (8A)"
+  },
+  {
+    "id": "JW",
+    "name": "Arrow Air Inc. (JW)"
+  },
+  {
+    "id": "U8",
+    "name": "Armavia (U8)"
+  },
+  {
+    "id": "IZ",
+    "name": "Arkia - Israeli Airlines Ltd (IZ)"
+  },
+  {
+    "id": "Q9",
+    "name": "Arik Niger (Q9)"
+  },
+  {
+    "id": "FG",
+    "name": "Ariana Afghan Airlines (FG)"
+  },
+  {
+    "id": "7S",
+    "name": "Arctic Transportation Services, Inc. (7S)"
+  },
+  {
+    "id": "5F",
+    "name": "Arctic Circle Air Service Inc. (5F)"
+  },
+  {
+    "id": "O4",
+    "name": "Antrak Air Limited (O4)"
+  },
+  {
+    "id": "G6",
+    "name": "Angkor Airways Corporation (G6)"
+  },
+  {
+    "id": "OY",
+    "name": "Andes Lineas Aereas S.A. (OY)"
+  },
+  {
+    "id": "9N",
+    "name": "ANA & JP Express Co. ltd (9N)"
+  },
+  {
+    "id": "MO",
+    "name": "Amiri Flight (MO)"
+  },
+  {
+    "id": "M6",
+    "name": "Amerijet International Inc. (M6)"
+  },
+  {
+    "id": "A8",
+    "name": "Ameriflight, LLC (A8)"
+  },
+  {
+    "id": "AA",
+    "name": "American Airlines Inc. (AA)"
+  },
+  {
+    "id": "Z8",
+    "name": "Amaszonas S.A. (Z8)"
+  },
+  {
+    "id": "5A",
+    "name": "Alpine Aviation Inc. (5A)"
+  },
+  {
+    "id": "4W",
+    "name": "Allied Air Ltd. (4W)"
+  },
+  {
+    "id": "CD",
+    "name": "Alliance Air (CD)"
+  },
+  {
+    "id": "NH",
+    "name": "All Nippon Airways Co. Ltd. (NH)"
+  },
+  {
+    "id": "AZ",
+    "name": "Alitalia-Compagnia Aerea Italiana S.p.A (AZ)"
+  },
+  {
+    "id": "LV",
+    "name": "Albanian Airlines MAK S.H.P.K. (LV)"
+  },
+  {
+    "id": "KO",
+    "name": "Alaska Central Express (KO)"
+  },
+  {
+    "id": "AS",
+    "name": "Alaska Airlines Inc. (AS)"
+  },
+  {
+    "id": "D4",
+    "name": "Alas Del Sur S.R.L (D4)"
+  },
+  {
+    "id": "2T",
+    "name": "Alajnihah For Air Transport (2T)"
+  },
+  {
+    "id": "6L",
+    "name": "Aklak Inc. (6L)"
+  },
+  {
+    "id": "SI",
+    "name": "AirX Limited dba Blue Islands (SI)"
+  },
+  {
+    "id": "FL",
+    "name": "AirTran Airways, Inc. (FL)"
+  },
+  {
+    "id": "M8",
+    "name": "Airmax S.A. (M8)"
+  },
+  {
+    "id": "CG",
+    "name": "Airlines of Papua New Guinea Limited (CG)"
+  },
+  {
+    "id": "P2",
+    "name": "AirKenya Express Limited (P2)"
+  },
+  {
+    "id": "*o",
+    "name": "Aircraft Under Their Own Power (*o)"
+  },
+  {
+    "id": "YQ",
+    "name": "Aircompany Polet (YQ)"
+  },
+  {
+    "id": "Y5",
+    "name": "Aircompany Asia Wings JSC (Y5)"
+  },
+  {
+    "id": "QH",
+    "name": "Aircompany \"Kyrgyzstan\" (QH)"
+  },
+  {
+    "id": "K9",
+    "name": "Aircompany \"Esen Air\" (K9)"
+  },
+  {
+    "id": "4Y",
+    "name": "Airbus Transport International (4Y)"
+  },
+  {
+    "id": "RU",
+    "name": "AirBridgeCargo Airlines Limited (RU)"
+  },
+  {
+    "id": "D7",
+    "name": "Airasia X Sdn. Bhd. (D7)"
+  },
+  {
+    "id": "AK",
+    "name": "Airasia Sdn Bhd. (AK)"
+  },
+  {
+    "id": "UM",
+    "name": "Air Zimbabwe (Pvt) Ltd. (UM)"
+  },
+  {
+    "id": "ZW",
+    "name": "Air Wisconsin Airlines Corporation (ZW)"
+  },
+  {
+    "id": "VL",
+    "name": "Air Via Ltd. (VL)"
+  },
+  {
+    "id": "NF",
+    "name": "Air Vanuatu (Operations) Limited (NF)"
+  },
+  {
+    "id": "3N",
+    "name": "Air Urga (3N)"
+  },
+  {
+    "id": "8C",
+    "name": "Air Transport International Ltd (8C)"
+  },
+  {
+    "id": "TS",
+    "name": "Air Transat (TS)"
+  },
+  {
+    "id": "8T",
+    "name": "Air Tindi Ltd. (8T)"
+  },
+  {
+    "id": "TC",
+    "name": "Air Tanzania Company Ltd. (TC)"
+  },
+  {
+    "id": "TN",
+    "name": "Air Tahiti Nui (TN)"
+  },
+  {
+    "id": "VT",
+    "name": "Air Tahiti (VT)"
+  },
+  {
+    "id": "SL",
+    "name": "Air Sylhet AG (SL)"
+  },
+  {
+    "id": "VP",
+    "name": "Air Speed Up (VP)"
+  },
+  {
+    "id": "4D",
+    "name": "Air Sinai (4D)"
+  },
+  {
+    "id": "HM",
+    "name": "Air Seychelles Limited (HM)"
+  },
+  {
+    "id": "V7",
+    "name": "Air Senegal International (V7)"
+  },
+  {
+    "id": "PJ",
+    "name": "Air Saint  Pierre (PJ)"
+  },
+  {
+    "id": "2P",
+    "name": "Air Philippines Corporation (2P)"
+  },
+  {
+    "id": "FJ",
+    "name": "Air Pacific Ltd. (FJ)"
+  },
+  {
+    "id": "AP",
+    "name": "Air One (AP)"
+  },
+  {
+    "id": "YW",
+    "name": "Air Nostrum L.A.M.S.A. (YW)"
+  },
+  {
+    "id": "4N",
+    "name": "Air North Charter and Trainung Ltd. (4N)"
+  },
+  {
+    "id": "PX",
+    "name": "Air Niugini Pty Limited (PX)"
+  },
+  {
+    "id": "EL",
+    "name": "Air Nippon Co. Ltd. (EL)"
+  },
+  {
+    "id": "7A",
+    "name": "Air Next Co., Ltd. (7A)"
+  },
+  {
+    "id": "NZ",
+    "name": "Air New Zealand Limited (NZ)"
+  },
+  {
+    "id": "XN",
+    "name": "Air Nepal International Pvt. Ltd. (XN)"
+  },
+  {
+    "id": "SW",
+    "name": "Air Namibia (SW)"
+  },
+  {
+    "id": "9U",
+    "name": "Air Moldova (9U)"
+  },
+  {
+    "id": "MC",
+    "name": "Air Mobility Command (MC)"
+  },
+  {
+    "id": "ZV",
+    "name": "Air Midwest (ZV)"
+  },
+  {
+    "id": "MK",
+    "name": "Air Mauritius (MK)"
+  },
+  {
+    "id": "MV",
+    "name": "Air Mascareignes Ltd. (MV)"
+  },
+  {
+    "id": "CW",
+    "name": "Air Marshall Islands, Inc. (CW)"
+  },
+  {
+    "id": "KM",
+    "name": "Air Malta p.l.c. (KM)"
+  },
+  {
+    "id": "QM",
+    "name": "Air Malawi Limited (QM)"
+  },
+  {
+    "id": "MD",
+    "name": "Air Madagascar (MD)"
+  },
+  {
+    "id": "NX",
+    "name": "Air Macau Company Limited (NX)"
+  },
+  {
+    "id": "L9",
+    "name": "Air Logistics L.L.C. d/b/a (L9)"
+  },
+  {
+    "id": "GW",
+    "name": "Air Lines of Kuban (GW)"
+  },
+  {
+    "id": "7F",
+    "name": "Air Kurfa (7F)"
+  },
+  {
+    "id": "JS",
+    "name": "Air Koryo (JS)"
+  },
+  {
+    "id": "JM",
+    "name": "Air Jamaica (JM)"
+  },
+  {
+    "id": "I9",
+    "name": "Air Italy S.p.A. (I9)"
+  },
+  {
+    "id": "3H",
+    "name": "Air Inuit Ltd/Ltee (3H)"
+  },
+  {
+    "id": "IX",
+    "name": "Air India Charters Limited (IX)"
+  },
+  {
+    "id": "NY",
+    "name": "Air Iceland (Flugfelag Islands) (NY)"
+  },
+  {
+    "id": "GL",
+    "name": "Air Greenland A/S (GL)"
+  },
+  {
+    "id": "4A",
+    "name": "Air Go Airlines S.A. (4A)"
+  },
+  {
+    "id": "AF",
+    "name": "Air France (AF)"
+  },
+  {
+    "id": "OF",
+    "name": "Air Finland Ltd. (OF)"
+  },
+  {
+    "id": "PC",
+    "name": "Air Fiji Ltd. (PC)"
+  },
+  {
+    "id": "UX",
+    "name": "Air Europa Lineas Aereas, S.A. (UX)"
+  },
+  {
+    "id": "N5",
+    "name": "Air Ecuador Airecu S.A. (N5)"
+  },
+  {
+    "id": "6D",
+    "name": "Air Dominicana S.A. (6D)"
+  },
+  {
+    "id": "EN",
+    "name": "Air Dolomiti S.p.A. (EN)"
+  },
+  {
+    "id": "YN",
+    "name": "Air Creebec (1994) Inc. (YN)"
+  },
+  {
+    "id": "AG",
+    "name": "Air Contractors (UK) Limited (AG)"
+  },
+  {
+    "id": "TI",
+    "name": "Air Continental Africa (TI)"
+  },
+  {
+    "id": "4J",
+    "name": "Air Company Somon Air (4J)"
+  },
+  {
+    "id": "GI",
+    "name": "Air Company ITEK-AIR Ltd. (GI)"
+  },
+  {
+    "id": "A7",
+    "name": "Air Comet S.A. (A7)"
+  },
+  {
+    "id": "CA",
+    "name": "Air China Cargo (CA)"
+  },
+  {
+    "id": "2Q",
+    "name": "Air Cargo Carriers, Inc. (2Q)"
+  },
+  {
+    "id": "TX",
+    "name": "Air Caraibes (TX)"
+  },
+  {
+    "id": "QK",
+    "name": "Air Canada Jazz (QK)"
+  },
+  {
+    "id": "AC",
+    "name": "Air Canada (AC)"
+  },
+  {
+    "id": "SB",
+    "name": "Air Caledonie International (SB)"
+  },
+  {
+    "id": "TY",
+    "name": "Air Caledonie (TY)"
+  },
+  {
+    "id": "BX",
+    "name": "Air Busan (BX)"
+  },
+  {
+    "id": "BP",
+    "name": "Air Botswana Corporation (BP)"
+  },
+  {
+    "id": "YL",
+    "name": "Air Bissau International Lda (YL)"
+  },
+  {
+    "id": "BM",
+    "name": "Air Bee S.p.A (BM)"
+  },
+  {
+    "id": "ZU",
+    "name": "Air Bashkortostan Ltd. (ZU)"
+  },
+  {
+    "id": "BT",
+    "name": "Air Baltic Corporation SIA (BT)"
+  },
+  {
+    "id": "W9",
+    "name": "Air Bagan Ltd. (W9)"
+  },
+  {
+    "id": "UU",
+    "name": "Air Austral (UU)"
+  },
+  {
+    "id": "CC",
+    "name": "Air Atlanta Icelandic (CC)"
+  },
+  {
+    "id": "KC",
+    "name": "Air Astana (KC)"
+  },
+  {
+    "id": "QN",
+    "name": "Air Armenia (QN)"
+  },
+  {
+    "id": "G9",
+    "name": "Air Arabia (G9)"
+  },
+  {
+    "id": "K7",
+    "name": "Air Almaty JSC (K7)"
+  },
+  {
+    "id": "AH",
+    "name": "Air Algerie (AH)"
+  },
+  {
+    "id": "ZI",
+    "name": "Aigle Azur (ZI)"
+  },
+  {
+    "id": "LD",
+    "name": "AHK Air Hong Kong Limited (LD)"
+  },
+  {
+    "id": "8U",
+    "name": "Afriqiyah Airways (8U)"
+  },
+  {
+    "id": "FK",
+    "name": "Africa West (FK)"
+  },
+  {
+    "id": "AV",
+    "name": "Aerovias del Continente Americano S.A (AV)"
+  },
+  {
+    "id": "QA",
+    "name": "Aerovias Caribe S.A. de C.V. (QA)"
+  },
+  {
+    "id": "M7",
+    "name": "Aerotransportes Mas de Carga (M7)"
+  },
+  {
+    "id": "6R",
+    "name": "Aerotransporte de Carga Union, S.A. de C (6R)"
+  },
+  {
+    "id": "6I",
+    "name": "Aerosyncro Aviation AB (6I)"
+  },
+  {
+    "id": "VV",
+    "name": "Aerosvit Airlines (VV)"
+  },
+  {
+    "id": "PQ",
+    "name": "Aerosur Paraguay S.A. (PQ)"
+  },
+  {
+    "id": "VH",
+    "name": "Aeropostal Alas de Venezuela C.A. (VH)"
+  },
+  {
+    "id": "WL",
+    "name": "Aeroperlas (WL)"
+  },
+  {
+    "id": "AM",
+    "name": "Aeromexico (AM)"
+  },
+  {
+    "id": "5D",
+    "name": "Aerolitoral S.A. de C.V. (5D)"
+  },
+  {
+    "id": "F2",
+    "name": "Aerolineas Regionales, S.A. de C.V (F2)"
+  },
+  {
+    "id": "2K",
+    "name": "Aerolineas Galapagos S.A. Aerogal (2K)"
+  },
+  {
+    "id": "DF",
+    "name": "Aerolineas de Baleares AeBal (DF)"
+  },
+  {
+    "id": "3I",
+    "name": "Aerolineas Austral Chile S.A. (3I)"
+  },
+  {
+    "id": "AR",
+    "name": "Aerolineas Argentinas (AR)"
+  },
+  {
+    "id": "5P",
+    "name": "Aerolinea Principal Chile S.A. (5P)"
+  },
+  {
+    "id": "KG",
+    "name": "Aerogaviota  S.A. (KG)"
+  },
+  {
+    "id": "5N",
+    "name": "AEROFLOT-NORD (5N)"
+  },
+  {
+    "id": "D9",
+    "name": "Aeroflot-Don (D9)"
+  },
+  {
+    "id": "SU",
+    "name": "Aeroflot Russian Airlines (SU)"
+  },
+  {
+    "id": "SU",
+    "name": "Aeroflot - Cargo (SU)"
+  },
+  {
+    "id": "A4",
+    "name": "Aerocomercial Oriente Norte Ltda (A4)"
+  },
+  {
+    "id": "7L",
+    "name": "Aerocaribbean S.A. (7L)"
+  },
+  {
+    "id": "P5",
+    "name": "Aero Republica S.A. (P5)"
+  },
+  {
+    "id": "P7",
+    "name": "Aero Regional Paraguaya S.A. (P7)"
+  },
+  {
+    "id": "M0",
+    "name": "Aero Mongolia (M0)"
+  },
+  {
+    "id": "7T",
+    "name": "Aero Express del Ecuador  - Trans AM (7T)"
+  },
+  {
+    "id": "AJ",
+    "name": "Aero Contractors Nigeria Limited (AJ)"
+  },
+  {
+    "id": "EE",
+    "name": "Aero Airlines A.S. (EE)"
+  },
+  {
+    "id": "4M",
+    "name": "Aero 2000 S.A. (4M)"
+  },
+  {
+    "id": "EI",
+    "name": "Aer Lingus Limited (EI)"
+  },
+  {
+    "id": "RE",
+    "name": "Aer Arann Express (RE)"
+  },
+  {
+    "id": "KH",
+    "name": "Aeko Kula, Inc. DBA Aloha Air Cargo (KH)"
+  },
+  {
+    "id": "A3",
+    "name": "Aegean Airlines S.A. (A3)"
+  },
+  {
+    "id": "JP",
+    "name": "Adria Airways - The Airline of Slovenia (JP)"
+  },
+  {
+    "id": "9T",
+    "name": "ACT Havayollari A.S. (9T)"
+  },
+  {
+    "id": "GB",
+    "name": "ABX Air, Inc. (GB)"
+  },
+  {
+    "id": "M3",
+    "name": "ABSA  -  Aerolinhas Brasileiras S.A. (M3)"
+  },
+  {
+    "id": "4O",
+    "name": "ABC Aerolineas S.A. de C.V. (4O)"
+  },
+  {
+    "id": "Q5",
+    "name": "40-Mile Air, Ltd. (Q5)"
+  }
+]
