@@ -5,7 +5,15 @@
  */
 package gov.gtas.services.security;
 
+import gov.gtas.model.Filter;
+import gov.gtas.model.Role;
+import gov.gtas.model.User;
+import gov.gtas.repository.FilterRepository;
+import gov.gtas.repository.UserRepository;
+import gov.gtas.services.Filter.FilterServiceUtil;
+
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -17,106 +25,114 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.model.Filter;
-import gov.gtas.model.User;
-import gov.gtas.repository.FilterRepository;
-import gov.gtas.repository.UserRepository;
-import gov.gtas.services.Filter.FilterServiceUtil;
-
+/**
+ * The Class UserServiceImpl.
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Resource
-    private UserRepository userRepository;
+	@Resource
+	private UserRepository userRepository;
 
-    @Resource
-    private FilterRepository filterRepository;
-    @Autowired
-    private FilterServiceUtil filterServiceUtil;
+	@Resource
+	private FilterRepository filterRepository;
+	@Autowired
+	private FilterServiceUtil filterServiceUtil;
 
-    @Autowired
-    private UserServiceUtil userServiceUtil;
+	@Autowired
+	private UserServiceUtil userServiceUtil;
 
-    private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
+	@Autowired
+	private RoleServiceUtil roleServiceUtil;
 
-    @Override
-    @Transactional
-    public UserData create(UserData userData) {
-        User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
-        userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
-        if (userData.getFilter() != null) {
-            Filter filterEntity = filterServiceUtil.mapFilterEntityFromFilterData(userData.getFilter());
-            userEntity.setFilter(filterEntity);
-        }
-        User newUserEntity = userRepository.save(userEntity);
-        UserData newUser = userServiceUtil.mapUserDataFromEntity(newUserEntity);
-        return newUser;
-    }
+	private Pattern BCRYPT_PATTERN = Pattern
+			.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
-    @Override
-    @Transactional
-    public void delete(String id) {
-        User userToDelete = userRepository.findOne(id);
-        if (userToDelete != null)
-            userRepository.delete(userToDelete);
-    }
+	@Override
+	@Transactional
+	public UserData create(UserData userData) {
+		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
+		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity
+				.getPassword()));
+		if (userData.getFilter() != null) {
+			Filter filterEntity = filterServiceUtil
+					.mapFilterEntityFromFilterData(userData.getFilter());
+			userEntity.setFilter(filterEntity);
+		}
+		if (userData.getRoles() != null) {
+			Set<Role> roleCollection = roleServiceUtil
+					.mapEntityCollectionFromRoleDataSet(userData.getRoles());
+			userEntity.setRoles(roleCollection);
+		}
+		User newUserEntity = userRepository.save(userEntity);
+		return userServiceUtil.mapUserDataFromEntity(newUserEntity);
+	}
 
-    @Override
-    @Transactional
-    public List<UserData> findAll() {
-        Iterable<User> usersCollection = userRepository.findAll();
-        List<UserData> users = userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
-        return users;
-    }
+	@Override
+	@Transactional
+	public void delete(String id) {
+		User userToDelete = userRepository.findOne(id);
+		if (userToDelete != null)
+			userRepository.delete(userToDelete);
+	}
 
-    @Override
-    @Transactional
-    public UserData update(UserData data) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        User entity = userRepository.findOne(data.getUserId());
-        User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
-        if (entity != null) {
-            entity.setFirstName(mappedEnity.getFirstName());
-            entity.setLastName(mappedEnity.getLastName());
-            if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
-                entity.setPassword(passwordEncoder.encode(mappedEnity.getPassword()));
-            } else {
-                entity.setPassword(mappedEnity.getPassword());
-            }
+	@Override
+	@Transactional
+	public List<UserData> findAll() {
+		Iterable<User> usersCollection = userRepository.findAll();
+		return userServiceUtil
+				.getUserDataListFromEntityCollection(usersCollection);
+	}
 
-            entity.setActive(mappedEnity.getActive());
-            entity.setRoles(mappedEnity.getRoles());
-            if (data.getFilter() != null) {
-                Filter filterEntity = filterRepository.getFilterByUserId(data.getFilter().getUserId());
-                Filter mappedEntity = filterServiceUtil.mapFilterEntityFromFilterData(data.getFilter());
+	@Override
+	@Transactional
+	public UserData update(UserData data) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		User entity = userRepository.findOne(data.getUserId());
+		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
+		if (entity != null) {
+			entity.setFirstName(mappedEnity.getFirstName());
+			entity.setLastName(mappedEnity.getLastName());
+			if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
+				entity.setPassword(passwordEncoder.encode(mappedEnity
+						.getPassword()));
+			} else {
+				entity.setPassword(mappedEnity.getPassword());
+			}
 
-                filterEntity.setUser(mappedEntity.getUser());
-                filterEntity.setOriginAirports(mappedEntity.getOriginAirports());
-                filterEntity.setDestinationAirports(mappedEntity.getDestinationAirports());
-                filterEntity.setEtaStart(mappedEntity.getEtaStart());
-                filterEntity.setEtaEnd(mappedEntity.getEtaEnd());
-                filterEntity.setFlightDirection(mappedEntity.getFlightDirection());
-                entity.setFilter(filterEntity);
-            }
-            User savedEntity = userRepository.save(entity);
-            UserData updatedUser = userServiceUtil.mapUserDataFromEntity(savedEntity);
-            return updatedUser;
-        }
-        return null;
-    }
+			entity.setActive(mappedEnity.getActive());
+			if (data.getRoles() != null) {
+				Set<Role> oRoles = entity.getRoles();
+				oRoles.clear();
+				Set<Role> roleCollection = roleServiceUtil
+						.mapEntityCollectionFromRoleDataSet(data.getRoles());
+				oRoles.addAll(roleCollection);
+				entity.setRoles(oRoles);
+			}
 
-    @Override
-    @Transactional
-    public UserData findById(String id) {
-        User userEntity = userRepository.findOne(id);
-        UserData userData = null;
-        if(userEntity != null){
-            userData = userServiceUtil.mapUserDataFromEntity(userEntity);
-        }
-        return userData;
+			if (data.getFilter() != null) {
+				Filter filterEntity = filterServiceUtil
+						.mapFilterEntityFromFilterData(data.getFilter());
+				entity.setFilter(filterEntity);
+			}
+			User savedEntity = userRepository.save(entity);
+			return userServiceUtil.mapUserDataFromEntity(savedEntity);
+		}
+		return null;
+	}
 
-    }
+	@Override
+	@Transactional
+	public UserData findById(String id) {
+		User userEntity = userRepository.findOne(id);
+		UserData userData = null;
+		if (userEntity != null) {
+			userData = userServiceUtil.mapUserDataFromEntity(userEntity);
+		}
+		return userData;
+
+	}
 }

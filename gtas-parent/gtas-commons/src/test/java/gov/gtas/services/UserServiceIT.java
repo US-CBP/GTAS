@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.services.Filter.FilterData;
@@ -24,203 +25,226 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.After;
+import javax.transaction.Transactional;
+
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
-        CachingConfig.class })
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+		CachingConfig.class })
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class UserServiceIT {
 
-    private static final String USER_ID = "iTest";
-    private static final String FIRST_NAME = "Integration";
-    private static final String LAST_NAME = "test";
-    private static final String PASSWORD = "$2a$10$VZaP2o9djsabv2x3DCjK.e8TRSNyjb972M9k4rtXlUAc4J0AEm7.C";
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    private static final DateFormat dateFormat = new SimpleDateFormat(
-            DATE_FORMAT);
+	private static final String USER_ID = "test";
+	private static final String FIRST_NAME = "Integration";
+	private static final String LAST_NAME = "test";
+	private static final String PASSWORD = "$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG";
+	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	private static final DateFormat dateFormat = new SimpleDateFormat(
+			DATE_FORMAT);
 
-    @Autowired
-    UserService userService;
+	@Autowired
+	UserService userService;
 
-    @Autowired
-    UserServiceUtil userServiceUtil;
+	@Autowired
+	UserServiceUtil userServiceUtil;
 
-    @Autowired
-    RoleService roleService;
+	@Autowired
+	RoleService roleService;
 
-    @Autowired
-    RoleServiceUtil roleServiceUtil;
+	@Autowired
+	RoleServiceUtil roleServiceUtil;
 
-    Set<RoleData> roles;
+	Set<RoleData> roles;
 
-    @Before
-    public void setUp() throws Exception {
-        roles = roleService.findAll();
+	@Before
+	public void setUp() throws Exception {
+		roles = roleService.findAll();
 
-    }
+	}
 
-    @After
-    public void tearDown() throws Exception {
-        // userService.delete(USER_ID);
-    }
+	@Test
+	public void testGetAllUser() {
+		List<UserData> users = userService.findAll();
+		assertNotNull(users);
+		users.forEach(r -> r.getRoles().forEach(
+				role -> System.out.println(role.getRoleDescription())));
+	}
 
-    @Test
-    public void testGetAllUser() {
-        // TBD
-        List<UserData> users = userService.findAll();
-        users.forEach(r -> r.getRoles().forEach(
-                role -> System.out.println(role.getRoleDescription())));
+	@Test
+	public void testGetSpecifUser() {
+		UserData user = userService.findById("test");
+		assertNotNull(user);
+		user.getRoles()
+				.forEach(r -> System.out.println(r.getRoleDescription()));
+	}
 
-    }
+	@Test
+	@Transactional
+	public void testCreateUserWithRoles() {
+		// Arrange
 
-    @Test
-    public void testGetSpecifUser() {
+		Stream<RoleData> streamRoles = roles.stream().filter(
+				r -> r.getRoleId() == 2);
+		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-        UserData user = userService.findById("bstygar");
-        user.getRoles()
-                .forEach(r -> System.out.println(r.getRoleDescription()));
-    }
+		System.out.println(authRoles);
+		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
+				1, authRoles, null);
 
-    @Test
-    public void testCreateUserWithRoles() {
-        // Arrange
+		UserData actualUser = null;
+		// Act
+		try {
+			actualUser = userService.create(expectedUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// Assert
+		assertEquals(expectedUser.getUserId(), actualUser.getUserId());
+	}
 
-        Stream<RoleData> streamRoles = roles.stream().filter(
-                r -> r.getRoleId() == 2);
-        Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
+	@Test
+	@Transactional
+	public void testCreateUserWithRolesAndFilter() {
+		// Arrange
 
-        System.out.println(authRoles);
-        UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-                1, authRoles, null);
+		Stream<RoleData> streamRoles = roles.stream().filter(
+				r -> r.getRoleId() == 2 || r.getRoleId() == 5);
+		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-        UserData actualUser = null;
-        // Act
-        try {
-            actualUser = userService.create(expectedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		Set<String> originAirports = new HashSet<String>();
 
-        // Assert
-        assertEquals(expectedUser, actualUser);
-    }
+		originAirports.add("HFN");
+		originAirports.add("HZK");
+		originAirports.add("IFJ");
 
-    @Test
-    public void testCreateUserWithRolesAndFilter() {
-        // Arrange
+		Set<String> destinationAirports = new HashSet<String>();
+		destinationAirports.add("KEF");
+		destinationAirports.add("PFJ");
+		destinationAirports.add("RKV");
+		int etaStart = -2;
+		int etaEnd = 2;
 
-        Stream<RoleData> streamRoles = roles.stream().filter(
-                r -> r.getRoleId() == 2 || r.getRoleId() == 7);
-        Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
+		FilterData filter = new FilterData("iTest99", "I", originAirports,
+				destinationAirports, etaStart, etaEnd);
 
-        Set<String> originAirports = new HashSet<String>();
+		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
+				1, authRoles, filter);
 
-        originAirports.add("HFN");
-        originAirports.add("HZK");
-        originAirports.add("IFJ");
+		UserData actualUser = null;
+		// Act
+		try {
+			actualUser = userService.create(expectedUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        Set<String> destinationAirports = new HashSet<String>();
-        destinationAirports.add("KEF");
-        destinationAirports.add("PFJ");
-        destinationAirports.add("RKV");
-        int etaStart = -2;
-        int etaEnd = 2;
+		// Assert
+		assertEquals(expectedUser.getUserId(), actualUser.getUserId());
+		assertEquals(expectedUser.getFilter(), actualUser.getFilter());
+	}
 
-        FilterData filter = new FilterData("iTest99", "I", originAirports,
-                destinationAirports, etaStart, etaEnd);
+	@Test
+	@Transactional
+	public void testUpdateUserWithOutFilters() {
 
-        UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-                1, authRoles, filter);
+		// Arrange
+		Stream<RoleData> streamRoles = roles.stream().filter(
+				r -> r.getRoleId() == 2);
+		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-        UserData actualUser = null;
-        // Act
-        try {
-            actualUser = userService.create(expectedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		System.out.println(authRoles);
+		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
+				1, authRoles, null);
 
-        // Assert
-        assertEquals(expectedUser, actualUser);
-    }
+		UserData actualUser = null;
+		try {
+			actualUser = userService.create(expectedUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// update lastname
+		UserData expectedUserU = new UserData("iTest99", PASSWORD, "test",
+				"100", 1, authRoles, null);
 
-    @Test
-    public void testUpdateUserWithOutFilters() {
-        // Arrange
+		UserData actualUserU = null;
+		// Act
+		try {
+			actualUserU = userService.update(expectedUserU);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        Stream<RoleData> streamRoles = roles.stream().filter(
-                r -> r.getRoleId() == 3 || r.getRoleId() == 2);
-        Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
+		// Assert
+		assertEquals(expectedUserU.getLastName(), actualUserU.getLastName());
+		assertEquals(expectedUserU.getRoles(), actualUserU.getRoles());
+	}
 
-        System.out.println(authRoles);
-        UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-                1, authRoles, null);
+	@Test
+	@Transactional
+	public void testUpdateUserWithFilters() {
+		// Arrange
 
-        UserData actualUser = null;
-        // Act
-        try {
-            actualUser = userService.update(expectedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		Stream<RoleData> streamRoles = roles.stream().filter(
+				r -> r.getRoleId() == 2 || r.getRoleId() == 5);
+		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-        // Assert
-        assertEquals(expectedUser, actualUser);
-    }
+		Set<String> originAirports = new HashSet<String>();
+		originAirports.add("HFN");
 
-    @Test
-    public void testFinduser() {
-        // Arrange
-        String userId = "iTest2";
+		Set<String> destinationAirports = new HashSet<String>();
+		destinationAirports.add("KEF");
 
-        // Act
-        UserData actualUser = userService.findById(userId);
+		int etaStart = -2;
+		int etaEnd = 2;
 
-        // Assert
-    }
+		FilterData filter = new FilterData("iTest99", "I", originAirports,
+				destinationAirports, etaStart, etaEnd);
 
-    @Test
-    public void testUpdateUserWithFilters() {
-        // Arrange
+		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
+				1, authRoles, filter);
 
-        Stream<RoleData> streamRoles = roles.stream().filter(
-                r -> r.getRoleId() == 1 || r.getRoleId() == 2);
-        Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
-        Set<String> originAirports = new HashSet<String>();
+		UserData actualUser = null;
+		// Act
+		try {
+			actualUser = userService.create(expectedUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        originAirports.add("GKA");
+		Stream<RoleData> streamRolesU = roles.stream().filter(
+				r -> r.getRoleId() == 2 || r.getRoleId() == 3);
+		Set<RoleData> authRolesU = streamRolesU.collect(Collectors.toSet());
+		originAirports.add("GKA");
 
-        Set<String> destinationAirports = new HashSet<String>();
-        destinationAirports.add("LAE");
-        int etaStart = -3;
-        int etaEnd = 3;
+		destinationAirports.add("LAE");
+		etaStart = -3;
+		etaEnd = 3;
 
-        FilterData filterData = new FilterData("iTest99", "O", originAirports,
-                destinationAirports, etaStart, etaEnd);
+		FilterData filterU = new FilterData("iTest99", "O", originAirports,
+				destinationAirports, etaStart, etaEnd);
 
-        System.out.println(authRoles);
-        UserData expectedUser = new UserData(USER_ID, PASSWORD, "test", "99",
-                1, authRoles, filterData);
+		System.out.println(authRoles);
+		UserData expectedUserU = new UserData("iTest99", PASSWORD, "test",
+				"99", 1, authRolesU, filterU);
 
-        UserData actualUser = null;
-        // Act
-        try {
-            actualUser = userService.update(expectedUser);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		UserData actualUserU = null;
+		// Act
+		try {
+			actualUserU = userService.update(expectedUserU);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        // Assert
-        assertEquals(expectedUser, actualUser);
-    }
+		// Assert
+		assertEquals(expectedUserU.getFilter(), actualUserU.getFilter());
+		assertEquals(expectedUserU.getRoles(), actualUserU.getRoles());
+	}
 
 }

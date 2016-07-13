@@ -30,12 +30,12 @@ public class RuleServiceDataGenUtils {
 
     public static final int TEST_ROLE1_ID = 1;
     public static final String TEST_ROLE1_DESCRIPTION = "admin";
-    public static final String TEST_USER1_ID = "adelorie";
-    public static final String TEST_USER3_ID = "bstygar";
+    public static final String TEST_USER1_ID = "test";
+    public static final String TEST_USER3_ID = "jtang";
 
     public static final int TEST_ROLE2_ID = 99;
     public static final String TEST_ROLE2_DESCRIPTION = "readonly";
-    public static final String TEST_USER2_ID = "pawnX";
+    public static final String TEST_USER2_ID = "svempati";
 
     private UserService userService;
 

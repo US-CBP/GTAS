@@ -5,6 +5,8 @@
  */
 package gov.gtas.services.security;
 
+import gov.gtas.model.Role;
+
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -12,22 +14,49 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Component;
 
-import gov.gtas.model.Role;
-
+/**
+ * The Class RoleServiceUtil.
+ */
 @Component
 public class RoleServiceUtil {
 
-    public Set<RoleData> getRoleDataSetFromEntityCollection(Iterable<Role> roleEntities) {
+	/**
+	 * Gets the role data set from entity collection.
+	 *
+	 * @param roleEntities the role entities
+	 * @return the role data set from entity collection
+	 */
+	public Set<RoleData> getRoleDataSetFromEntityCollection(
+			Iterable<Role> roleEntities) {
 
-        Set<RoleData> roles = StreamSupport.stream(roleEntities.spliterator(), false)
-                .map(new Function<Role, RoleData>() {
-                    @Override
-                    public RoleData apply(Role role) {
-                        return new RoleData(role.getRoleId(), role.getRoleDescription());
-                    }
-                }).collect(Collectors.toSet());
+		return StreamSupport
+				.stream(roleEntities.spliterator(), false)
+				.map(new Function<Role, RoleData>() {
+					@Override
+					public RoleData apply(Role role) {
+						return new RoleData(role.getRoleId(), role
+								.getRoleDescription());
+					}
+				}).collect(Collectors.toSet());
+	}
 
-        return roles;
-    }
+	/**
+	 * Map entity collection from role data set.
+	 *
+	 * @param roleDataSet the role data set
+	 * @return the sets the
+	 */
+	public Set<Role> mapEntityCollectionFromRoleDataSet(
+			Set<RoleData> roleDataSet) {
+		return StreamSupport
+				.stream(roleDataSet.spliterator(), false)
+				.map(new Function<RoleData, Role>() {
+					@Override
+					public Role apply(RoleData roleData) {
+						return new Role(roleData.getRoleId(), roleData
+								.getRoleDescription());
+					}
+				}).collect(Collectors.toSet());
+	}
 
 }
