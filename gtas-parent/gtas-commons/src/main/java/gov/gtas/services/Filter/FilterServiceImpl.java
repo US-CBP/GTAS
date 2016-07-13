@@ -5,6 +5,9 @@
  */
 package gov.gtas.services.Filter;
 
+import gov.gtas.model.Filter;
+import gov.gtas.repository.FilterRepository;
+
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -15,70 +18,92 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import gov.gtas.model.Filter;
-import gov.gtas.repository.FilterRepository;
-
+/**
+ * The Class FilterServiceImpl.
+ */
 @Service
 public class FilterServiceImpl implements FilterService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-    @Autowired
-    FilterServiceUtil filterServiceUtil;
-    @Resource
-    FilterRepository filterRepository;
+	@PersistenceContext
+	private EntityManager entityManager;
+	@Autowired
+	FilterServiceUtil filterServiceUtil;
+	@Resource
+	FilterRepository filterRepository;
 
-    @Override
-    @Transactional
-    public FilterData create(FilterData filterData) {
-        // TODO Auto-generated method stub
-        Filter filterEntity = filterServiceUtil.mapFilterEntityFromFilterData(filterData);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.services.Filter.FilterService#create(gov.gtas.services.Filter
+	 * .FilterData)
+	 */
+	@Override
+	@Transactional
+	public FilterData create(FilterData filterData) {
+		Filter filterEntity = filterServiceUtil
+				.mapFilterEntityFromFilterData(filterData);
 
-        Filter newFilterEntity = filterRepository.save(filterEntity);
-        FilterData newFilter = filterServiceUtil.mapFilterDataFromEntity(newFilterEntity);
-        return newFilter;
-    }
+		Filter newFilterEntity = filterRepository.save(filterEntity);
+		FilterData newFilter = filterServiceUtil
+				.mapFilterDataFromEntity(newFilterEntity);
+		return newFilter;
+	}
 
-    @Override
-    public void delete(String userId) {
-        // TODO Auto-generated method stub
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.services.Filter.FilterService#delete(java.lang.String)
+	 */
+	@Override
+	@Transactional
+	public void delete(String userId) {
+		Filter entity = filterRepository.getFilterByUserId(userId);
+		filterRepository.delete(entity);
+	}
 
-    }
+	/* (non-Javadoc)
+	 * @see gov.gtas.services.Filter.FilterService#findAll()
+	 */
+	@Override
+	public List<FilterData> findAll() {
+		return null;
+	}
 
-    @Override
-    public List<FilterData> findAll() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	/* (non-Javadoc)
+	 * @see gov.gtas.services.Filter.FilterService#update(gov.gtas.services.Filter.FilterData)
+	 */
+	@Override
+	@Transactional
+	public FilterData update(FilterData data) {
 
-    @Override
-    public FilterData update(FilterData data) {
+		Filter entity = filterRepository.getFilterByUserId(data.getUserId());
+		FilterData updatedFilter = null;
+		if (entity != null) {
+			Filter mappedEntity = filterServiceUtil
+					.mapFilterEntityFromFilterData(data);
+			entity.setUser(mappedEntity.getUser());
+			entity.setOriginAirports(mappedEntity.getOriginAirports());
+			entity.setDestinationAirports(mappedEntity.getDestinationAirports());
+			entity.setEtaStart(mappedEntity.getEtaStart());
+			entity.setEtaEnd(mappedEntity.getEtaEnd());
+			entity.setFlightDirection(mappedEntity.getFlightDirection());
 
-        Filter entity = filterRepository.getFilterByUserId(data.getUserId());
-        FilterData updatedFilter = null;
-        if (entity != null) {
-            Filter mappedEntity = filterServiceUtil.mapFilterEntityFromFilterData(data);
-            entity.setUser(mappedEntity.getUser());
-            entity.setOriginAirports(mappedEntity.getOriginAirports());
-            entity.setDestinationAirports(mappedEntity.getDestinationAirports());
-            entity.setEtaStart(mappedEntity.getEtaStart());
-            entity.setEtaEnd(mappedEntity.getEtaEnd());
-            entity.setFlightDirection(mappedEntity.getFlightDirection());
+			Filter savedEntity = filterRepository.save(entity);
+			updatedFilter = filterServiceUtil
+					.mapFilterDataFromEntity(savedEntity);
+		}
+		return updatedFilter;
 
-            Filter savedEntity = filterRepository.save(entity);
-            updatedFilter = filterServiceUtil.mapFilterDataFromEntity(savedEntity);
-        }
-        return updatedFilter;
+	}
 
-    }
-
-    @Override
-    public FilterData findById(String userId) {
-        Filter entity = filterRepository.getFilterByUserId(userId);
-        FilterData filter = null;
-        if (entity != null)
-            filter = filterServiceUtil.mapFilterDataFromEntity(entity);
-        return filter;
-    }
+	@Override
+	public FilterData findById(String userId) {
+		Filter entity = filterRepository.getFilterByUserId(userId);
+		FilterData filter = null;
+		if (entity != null)
+			filter = filterServiceUtil.mapFilterDataFromEntity(entity);
+		return filter;
+	}
 
 }

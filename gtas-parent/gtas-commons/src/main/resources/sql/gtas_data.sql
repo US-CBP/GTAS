@@ -6,6 +6,7 @@ INSERT INTO `role` VALUES ('2', 'Manage Queries');
 INSERT INTO `role` VALUES ('3', 'View Flight And Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
+INSERT INTO `role` VALUES ('6', 'Test');
 
 -- ----------------------------
 -- Records of user
@@ -19,6 +20,7 @@ INSERT INTO `user` VALUES ('jtaylor',1, 'Jon', 'Taylor', '$2a$10$0rGc.QzA0MH7MM7
 INSERT INTO `user` VALUES ('mcopenhafer',1, 'Mike', 'Copenhafer', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('gtas',1, 'GTAS', 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('admin',1, 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO `user` VALUES ('test',1, 'test', 'test', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
@@ -30,6 +32,7 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtang', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtaylor', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('mcopenhafer', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 1);
 
 -- ----------------------------
 -- Records of flight_direction

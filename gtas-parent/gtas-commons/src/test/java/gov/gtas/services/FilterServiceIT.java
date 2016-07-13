@@ -15,6 +15,8 @@ import gov.gtas.services.Filter.FilterServiceUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,92 +24,84 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
+/**
+ * The Class FilterServiceIT.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
-        CachingConfig.class })
+		CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FilterServiceIT {
 
-    @Autowired
-    FilterService filterService;
+	private final String USER_ID = "test";
 
-    @Autowired
-    FilterServiceUtil filterServiceUtil;
+	@Autowired
+	FilterService filterService;
 
-    @Test
-    public void testCreateUserFilter() {
-        // Arrange
+	@Autowired
+	FilterServiceUtil filterServiceUtil;
 
-        Set<String> originAirports = new HashSet<String>();
+	@Test
+	public void testCreateUserFilter() {
+		// Arrange
+		Set<String> originAirports = new HashSet<String>();
 
-        originAirports.add("GKA");
-        originAirports.add("MAG");
-        originAirports.add("HGU");
+		originAirports.add("GKA");
+		originAirports.add("MAG");
+		originAirports.add("HGU");
 
-        Set<String> destinationAirports = new HashSet<String>();
-        destinationAirports.add("LAE");
-        destinationAirports.add("POM");
-        destinationAirports.add("WWK");
-        int etaStart = -1;
-        int etaEnd = 1;
+		Set<String> destinationAirports = new HashSet<String>();
+		destinationAirports.add("LAE");
+		destinationAirports.add("POM");
+		destinationAirports.add("WWK");
+		int etaStart = -1;
+		int etaEnd = 1;
 
-        FilterData acutalFilter = null;
+		FilterData acutalFilter = null;
 
-        FilterData expectedFilter = new FilterData("bStygar", "I",
-                originAirports, destinationAirports, etaStart, etaEnd);
+		FilterData expectedFilter = new FilterData(USER_ID, "I",
+				originAirports, destinationAirports, etaStart, etaEnd);
 
-        // Act
-        try {
-            // acutalFilter = filterService.create(expectedFilter);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		// Act
+		try {
+			acutalFilter = filterService.create(expectedFilter);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        // Assert
-        assertEquals(expectedFilter, acutalFilter);
-    }
+		// Assert
+		assertEquals(expectedFilter, acutalFilter);
+	}
 
-    @Test
-    public void testgFilterByUserId() {
+	@Test
+	public void testUpdateFilter() {
+		// Arrange
+		FilterData existingFilter = filterService.findById(USER_ID);
 
-        // Arrange
-        String userId = "bStygar";
+		Set<String> originAirports = new HashSet<String>();
 
-        // Act
-        FilterData filterData = filterService.findById(userId);
+		originAirports.add("UAK");
+		originAirports.add("GOH");
+		originAirports.add("SFJ");
 
-        System.out.println(filterData);
-    }
+		Set<String> destinationAirports = new HashSet<String>();
+		destinationAirports.add("THU");
+		destinationAirports.add("AEY");
+		destinationAirports.add("EGS");
 
-    @Test
-    public void testUpdateFilter() {
-        // Arrange
-        String userId = "bStygar";
+		FilterData expectedFilter = new FilterData(existingFilter.getUserId(),
+				"O", originAirports, destinationAirports,
+				existingFilter.getEtaStart() - 2,
+				existingFilter.getEtaEnd() + 2);
 
-        FilterData existingFilter = filterService.findById(userId);
+		// Act
+		FilterData actualFilter = filterService.update(expectedFilter);
 
-        Set<String> originAirports = new HashSet<String>();
-
-        originAirports.add("UAK");
-        originAirports.add("GOH");
-        originAirports.add("SFJ");
-
-        Set<String> destinationAirports = new HashSet<String>();
-        destinationAirports.add("THU");
-        destinationAirports.add("AEY");
-        destinationAirports.add("EGS");
-
-        FilterData expectedFilter = new FilterData(existingFilter.getUserId(),
-                "O", originAirports, destinationAirports,
-                existingFilter.getEtaStart() - 2,
-                existingFilter.getEtaEnd() + 2);
-
-        // Act
-        FilterData actualFilter = filterService.update(expectedFilter);
-
-        System.out.println(actualFilter);
-
-    }
-
+		System.out.println(actualFilter);
+		// Assert
+		assertEquals(expectedFilter, actualFilter);
+		filterService.delete(USER_ID);
+	}
 }
