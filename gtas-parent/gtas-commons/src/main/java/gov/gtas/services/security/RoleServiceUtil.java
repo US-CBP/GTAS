@@ -10,6 +10,7 @@ import gov.gtas.model.Role;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Component;
@@ -28,9 +29,11 @@ public class RoleServiceUtil {
 	 */
 	public Set<RoleData> getRoleDataSetFromEntityCollection(
 			Iterable<Role> roleEntities) {
+		
+		Stream<Role> aStream = StreamSupport
+				.stream(roleEntities.spliterator(), false);
 
-		return StreamSupport
-				.stream(roleEntities.spliterator(), false)
+		Set<RoleData> rRoleDatas = (Set<RoleData>) aStream
 				.map(new Function<Role, RoleData>() {
 					@Override
 					public RoleData apply(Role role) {
@@ -38,6 +41,9 @@ public class RoleServiceUtil {
 								.getRoleDescription());
 					}
 				}).collect(Collectors.toSet());
+		aStream.close();
+		return rRoleDatas;
+		
 	}
 
 	/**
@@ -48,15 +54,19 @@ public class RoleServiceUtil {
 	 */
 	public Set<Role> mapEntityCollectionFromRoleDataSet(
 			Set<RoleData> roleDataSet) {
-		return StreamSupport
-				.stream(roleDataSet.spliterator(), false)
-				.map(new Function<RoleData, Role>() {
+		Stream<RoleData> aStream = StreamSupport
+				.stream(roleDataSet.spliterator(), false);
+		
+		Set<Role> rRoles = (Set<Role>) aStream.map(new Function<RoleData, Role>() {
 					@Override
 					public Role apply(RoleData roleData) {
 						return new Role(roleData.getRoleId(), roleData
 								.getRoleDescription());
 					}
 				}).collect(Collectors.toSet());
+		
+		aStream.close();
+		return rRoles;
 	}
 
 }
