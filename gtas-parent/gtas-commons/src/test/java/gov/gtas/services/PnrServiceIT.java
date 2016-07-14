@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
+import javax.transaction.Transactional;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,10 +35,12 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
 		CachingConfig.class })
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
 	@Autowired
@@ -62,15 +64,8 @@ public class PnrServiceIT {
 	@Autowired
 	private ApisMessageRepository apisMessageRepository;
 
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-
 	@Test
+	@Transactional
 	public void testPnrSave() {
 		Flight f = new Flight();
 		prepareFlightData(f);
@@ -85,7 +80,7 @@ public class PnrServiceIT {
 		pnr.getFlights().add(f);
 		pnrService.create(pnr);
 		assertNotNull(pnr.getId());
-		pnrService.delete(pnr.getId());
+		//pnrService.delete(pnr.getId());
 	}
 
 	private void preparePnr(Pnr pnr) {

@@ -23,11 +23,11 @@ public class WatchlistDataGenUtils {
 
     public static final int TEST_ROLE1_ID = 1;
     public static final String TEST_ROLE1_DESCRIPTION = "admin";
-    public static final String TEST_USER1_ID = "svempati";
+    public static final String TEST_USER1_ID = "test";
 
     public static final int TEST_ROLE2_ID = 99;
     public static final String TEST_ROLE2_DESCRIPTION = "readonly";
-    public static final String TEST_USER2_ID = "pawnX";
+    public static final String TEST_USER2_ID = "jtang";
 
     private UserService userService;
 

@@ -17,8 +17,6 @@ import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,15 +38,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 		CachingConfig.class })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class UserServiceIT {
-
-	private static final String USER_ID = "test";
-	private static final String FIRST_NAME = "Integration";
-	private static final String LAST_NAME = "test";
-	private static final String PASSWORD = "$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG";
-	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-	private static final DateFormat dateFormat = new SimpleDateFormat(
-			DATE_FORMAT);
-
 	@Autowired
 	UserService userService;
 
@@ -70,19 +59,17 @@ public class UserServiceIT {
 	}
 
 	@Test
+	@Transactional
 	public void testGetAllUser() {
 		List<UserData> users = userService.findAll();
 		assertNotNull(users);
-		users.forEach(r -> r.getRoles().forEach(
-				role -> System.out.println(role.getRoleDescription())));
 	}
 
 	@Test
+	@Transactional
 	public void testGetSpecifUser() {
 		UserData user = userService.findById("test");
 		assertNotNull(user);
-		user.getRoles()
-				.forEach(r -> System.out.println(r.getRoleDescription()));
 	}
 
 	@Test
@@ -95,8 +82,8 @@ public class UserServiceIT {
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		System.out.println(authRoles);
-		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-				1, authRoles, null);
+		UserData expectedUser = new UserData("iTest99", "password", "test",
+				"99", 1, authRoles, null);
 
 		UserData actualUser = null;
 		// Act
@@ -134,8 +121,8 @@ public class UserServiceIT {
 		FilterData filter = new FilterData("iTest99", "I", originAirports,
 				destinationAirports, etaStart, etaEnd);
 
-		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-				1, authRoles, filter);
+		UserData expectedUser = new UserData("iTest99", "password", "test",
+				"99", 1, authRoles, filter);
 
 		UserData actualUser = null;
 		// Act
@@ -160,17 +147,16 @@ public class UserServiceIT {
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		System.out.println(authRoles);
-		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-				1, authRoles, null);
+		UserData expectedUser = new UserData("iTest99", "password", "test",
+				"99", 1, authRoles, null);
 
-		UserData actualUser = null;
 		try {
-			actualUser = userService.create(expectedUser);
+			userService.create(expectedUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// update lastname
-		UserData expectedUserU = new UserData("iTest99", PASSWORD, "test",
+		UserData expectedUserU = new UserData("iTest99", "password", "test",
 				"100", 1, authRoles, null);
 
 		UserData actualUserU = null;
@@ -207,13 +193,12 @@ public class UserServiceIT {
 		FilterData filter = new FilterData("iTest99", "I", originAirports,
 				destinationAirports, etaStart, etaEnd);
 
-		UserData expectedUser = new UserData("iTest99", PASSWORD, "test", "99",
-				1, authRoles, filter);
+		UserData expectedUser = new UserData("iTest99", "password", "test",
+				"99", 1, authRoles, filter);
 
-		UserData actualUser = null;
 		// Act
 		try {
-			actualUser = userService.create(expectedUser);
+			userService.create(expectedUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -231,7 +216,7 @@ public class UserServiceIT {
 				destinationAirports, etaStart, etaEnd);
 
 		System.out.println(authRoles);
-		UserData expectedUserU = new UserData("iTest99", PASSWORD, "test",
+		UserData expectedUserU = new UserData("iTest99", "password", "test",
 				"99", 1, authRolesU, filterU);
 
 		UserData actualUserU = null;
