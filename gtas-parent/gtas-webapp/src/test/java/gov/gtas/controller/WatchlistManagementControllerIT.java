@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebAppConfiguration
 @TransactionConfiguration(defaultRollback = true)
 public class WatchlistManagementControllerIT {
-    private static final String TEST_USER = "adelorie";
+    private static final String TEST_USER = "test";
     private static final String WL_NAME = "TestWL123";
     private MockMvc mockMvc;
 
@@ -81,7 +81,7 @@ public class WatchlistManagementControllerIT {
     @Test
     @Transactional
     public void testGetWl() throws Exception {
-        watchlistService.createUpdateDeleteWatchlistItems("adelorie",
+        watchlistService.createUpdateDeleteWatchlistItems("test",
                 SampleDataGenerator.newWlWith2Items(WL_NAME));
 
         mockMvc.perform(get("/gtas/wl/PASSENGER/" + WL_NAME))

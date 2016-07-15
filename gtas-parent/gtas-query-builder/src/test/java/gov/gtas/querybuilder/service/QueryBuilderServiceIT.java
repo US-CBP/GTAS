@@ -69,7 +69,7 @@ public class QueryBuilderServiceIT {
     private static final String TITLE = "Integration Test";
     private static final String UPDATED_TITLE = "Updated Int. Test";
     private static final String DESCRIPTION = "A simple query created during integration test";
-    private static final String USER_ID = "ladebiyi";
+    private static final String USER_ID = "test";
 
     private static QueryObject query;
 
