@@ -5,26 +5,29 @@
  */
 package gov.gtas.common;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
 @Configuration 
 @ComponentScan("gov.gtas") 
 @EnableWebMvc
 public class AppConfiguration extends WebMvcConfigurerAdapter {  
-
+	 private static final Logger logger = LoggerFactory
+	            .getLogger(AppConfiguration.class);
     @Bean(name="gtasMessageSource")
     public MessageSource messageSource() {
         GtasResourceBundleMessageSource messageSource = new GtasResourceBundleMessageSource();
@@ -35,12 +38,28 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
     
     @Bean
     public LocaleResolver localeResolver(){
-        //String language=System.getProperty("site.language");
-        //if(StringUtils.isBlank(language)){
-            //language="en";
-        //}
+    	
+    	Properties prop = new Properties();
+    	InputStream input = null;
+    	String language="en";
+    	try {
+    		input =this.getClass().getClassLoader().getResourceAsStream("application.properties");
+    		prop.load(input);
+    		language=prop.getProperty("site.language");
+    		
+    	} catch (IOException ex) {
+    		//ex.printStackTrace();
+    	} finally {
+    		if (input != null) {
+    			try {
+    				input.close();
+    			} catch (IOException e) {
+    				//e.printStackTrace();
+    			}
+    		}
+    	}
         CookieLocaleResolver resolver = new CookieLocaleResolver();
-        resolver.setDefaultLocale(new Locale("en"));
+        resolver.setDefaultLocale(new Locale(language));
         resolver.setCookieName("myLocaleCookie");
         resolver.setCookieMaxAge(4800);
     return resolver;
