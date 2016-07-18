@@ -253,7 +253,7 @@ public class Flight extends BaseEntityAudit {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Flight))
             return false;
         final Flight other = (Flight)obj;
         return Objects.equals(this.carrier, other.carrier)

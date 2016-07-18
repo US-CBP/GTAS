@@ -22,80 +22,93 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "message")
-@Inheritance(strategy = InheritanceType.JOINED)  
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Message extends BaseEntity {
-    private static final long serialVersionUID = 1L;  
-    public Message() { }
-    
-    @Column(name = "create_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)  
-    private Date createDate;
-    
-    @Lob
-    private Clob raw;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "hash_code", unique = true)
-    private String hashCode;
+	public Message() {
+	}
 
-    @Column(name = "file_path", nullable = false)
-    private String filePath;
+	@Column(name = "create_date", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createDate;
 
-    @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = false)
-    private MessageStatus status;
+	@Lob
+	private Clob raw;
 
-    @Column(length = 4000)
-    private String error;
+	@Column(name = "hash_code", unique = true)
+	private String hashCode;
 
-    public Date getCreateDate() {
-        return createDate;
-    }
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-    public Clob getRaw() {
-        return raw;
-    }
-    public void setRaw(Clob raw) {
-        this.raw = raw;
-    }
-    public String getHashCode() {
-        return hashCode;
-    }
-    public void setHashCode(String hashCode) {
-        this.hashCode = hashCode;
-    }
-    public String getFilePath() {
-        return filePath;
-    }
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-    public MessageStatus getStatus() {
-        return status;
-    }
-    public void setStatus(MessageStatus status) {
-        this.status = status;
-    }    
-    public String getError() {
-        return error;
-    }
-    public void setError(String error) {
-        this.error = error;
-    }
-    
-    @Override
-    public int hashCode() {
-       return Objects.hash(this.hashCode);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (getClass() != obj.getClass())
-            return false;
-        final Message other = (Message)obj;
-        return Objects.equals(this.hashCode, other.hashCode);
-    }
+	@Column(name = "file_path", nullable = false)
+	private String filePath;
+
+	@Enumerated(EnumType.ORDINAL)
+	@Column(nullable = false)
+	private MessageStatus status;
+
+	@Column(length = 4000)
+	private String error;
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Clob getRaw() {
+		return raw;
+	}
+
+	public void setRaw(Clob raw) {
+		this.raw = raw;
+	}
+
+	public String getHashCode() {
+		return hashCode;
+	}
+
+	public void setHashCode(String hashCode) {
+		this.hashCode = hashCode;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public MessageStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MessageStatus status) {
+		this.status = status;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.hashCode);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Message))
+			return false;
+		final Message other = (Message) obj;
+		return Objects.equals(this.hashCode, other.hashCode);
+	}
 }

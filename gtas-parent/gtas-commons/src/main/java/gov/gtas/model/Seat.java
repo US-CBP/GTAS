@@ -15,75 +15,77 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "seat",
-    uniqueConstraints={@UniqueConstraint(columnNames={"number", "apis", "passenger_id", "flight_id"})}
-)
+@Table(name = "seat", uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"number", "apis", "passenger_id", "flight_id" }) })
 public class Seat extends BaseEntity {
-    private static final long serialVersionUID = 1L;
-    public Seat() { }
-    
-    @Column(nullable = false)
-    private String number;
-    
-    /** true if the seat number was derived from APIS data */
-    @Column(nullable = false)
-    private Boolean apis = Boolean.valueOf(false);
-    
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Passenger passenger;
+	private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Flight flight;
-    
-    public String getNumber() {
-        return number;
-    }
+	public Seat() {
+	}
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+	@Column(nullable = false)
+	private String number;
 
-    public Boolean getApis() {
-        return apis;
-    }
+	/** true if the seat number was derived from APIS data */
+	@Column(nullable = false)
+	private Boolean apis = Boolean.valueOf(false);
 
-    public void setApis(Boolean apis) {
-        this.apis = apis;
-    }
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private Passenger passenger;
 
-    public Passenger getPassenger() {
-        return passenger;
-    }
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private Flight flight;
 
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
-    
-    @Override
-    public int hashCode() {
-       return Objects.hash(this.number, this.apis, this.passenger, this.flight);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (getClass() != obj.getClass())
-            return false;
-        final Seat other = (Seat)obj;
-        return Objects.equals(this.number, other.number)
-                && Objects.equals(this.apis, other.apis)
-                && Objects.equals(this.passenger, other.passenger)
-                && Objects.equals(this.flight, other.flight);
-    }
+	public Boolean getApis() {
+		return apis;
+	}
+
+	public void setApis(Boolean apis) {
+		this.apis = apis;
+	}
+
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects
+				.hash(this.number, this.apis, this.passenger, this.flight);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Seat))
+			return false;
+		final Seat other = (Seat) obj;
+		return Objects.equals(this.number, other.number)
+				&& Objects.equals(this.apis, other.apis)
+				&& Objects.equals(this.passenger, other.passenger)
+				&& Objects.equals(this.flight, other.flight);
+	}
 }

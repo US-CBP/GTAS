@@ -120,7 +120,7 @@ public class Address extends BaseEntityAudit {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Address))
             return false;
         final Address other = (Address)obj;
         return Objects.equals(this.line1, other.line1)
