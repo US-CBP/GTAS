@@ -96,7 +96,7 @@ public class JPQLGenerator {
                         Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias() +
                         Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference() + " " + EntityEnum.FLIGHT.getAlias();
                         
-                if(joinEntities != null && !joinEntities.isEmpty()) {
+                if(!joinEntities.isEmpty()) {
                     
                     // remove Flight and Passenger from the List because it is already
                     // part of the queryPrefix statement
@@ -189,7 +189,7 @@ public class JPQLGenerator {
                 if(field.equalsIgnoreCase(Constants.IS_RULE_HIT) || field.equalsIgnoreCase(Constants.IS_WATCHLIST_HIT)) {
                     
                     joinEntities.remove(entityEnum);
-                    String value = (queryTerm.getValue() != null && queryTerm.getValue().length == 1) ? queryTerm.getValue()[0] : null;
+                    String value = (queryTerm.getValue() != null && queryTerm.getValue().length == 1) ? queryTerm.getValue()[0] : "0";
                     
                     if(queryType == EntityEnum.FLIGHT) {
                         // 1 - YES, 0 - NO

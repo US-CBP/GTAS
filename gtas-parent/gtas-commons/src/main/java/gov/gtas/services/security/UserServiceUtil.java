@@ -5,99 +5,117 @@
  */
 package gov.gtas.services.security;
 
-import java.util.List;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import gov.gtas.model.Filter;
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
 import gov.gtas.services.Filter.FilterData;
 import gov.gtas.services.Filter.FilterServiceUtil;
 
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 @Component
 public class UserServiceUtil {
 
-    @Autowired
-    private FilterServiceUtil filterServiceUtil;
+	@Autowired
+	private FilterServiceUtil filterServiceUtil;
 
-    public List<UserData> getUserDataListFromEntityCollection(Iterable<User> userEntities) {
+	public List<UserData> getUserDataListFromEntityCollection(
+			Iterable<User> userEntities) {
 
-        List<UserData> users = StreamSupport.stream(userEntities.spliterator(), false)
-                .map(new Function<User, UserData>() {
+		Stream<User> aStream = StreamSupport
+				.stream(userEntities.spliterator(), false);
 
-                    @Override
-                    public UserData apply(User user) {
+		List<UserData> users = (List<UserData>) aStream.map(
+				new Function<User, UserData>() {
 
-                        Set<RoleData> roles = user.getRoles().stream().map(new Function<Role, RoleData>() {
+					@Override
+					public UserData apply(User user) {
 
-                            @Override
-                            public RoleData apply(Role role) {
-                                return new RoleData(role.getRoleId(), role.getRoleDescription());
-                            }
+						Set<RoleData> roles = user.getRoles().stream()
+								.map(new Function<Role, RoleData>() {
 
-                        }).collect(Collectors.toSet());
-                        FilterData filterData = null;
-                        if (user.getFilter() != null) {
+									@Override
+									public RoleData apply(Role role) {
+										return new RoleData(role.getRoleId(),
+												role.getRoleDescription());
+									}
 
-                            filterData = filterServiceUtil.mapFilterDataFromEntity(user.getFilter());
+								}).collect(Collectors.toSet());
+						FilterData filterData = null;
+						if (user.getFilter() != null) {
 
-                        }
-                        return new UserData(user.getUserId(), user.getPassword(), user.getFirstName(),
-                                user.getLastName(), user.getActive(), roles, filterData);
-                    }
-                }).collect(Collectors.toList());
+							filterData = filterServiceUtil
+									.mapFilterDataFromEntity(user.getFilter());
 
-        return users;
-    }
+						}
+						return new UserData(user.getUserId(), user
+								.getPassword(), user.getFirstName(), user
+								.getLastName(), user.getActive(), roles,
+								filterData);
+					}
+				}).collect(Collectors.toList());
+		aStream.close();
+		return users;
+	}
 
-    public UserData mapUserDataFromEntity(User entity) {
+	public UserData mapUserDataFromEntity(User entity) {
 
-        // System.out.println(entity);
+		// System.out.println(entity);
 
-        Set<RoleData> roles = entity.getRoles().stream().map(new Function<Role, RoleData>() {
-            @Override
-            public RoleData apply(Role role) {
-                return new RoleData(role.getRoleId(), role.getRoleDescription());
-            }
-        }).collect(Collectors.toSet());
+		Set<RoleData> roles = entity.getRoles().stream()
+				.map(new Function<Role, RoleData>() {
+					@Override
+					public RoleData apply(Role role) {
+						return new RoleData(role.getRoleId(), role
+								.getRoleDescription());
+					}
+				}).collect(Collectors.toSet());
 
-        FilterData filterData = null;
+		FilterData filterData = null;
 
-        if (entity.getFilter() != null) {
-            filterData = filterServiceUtil.mapFilterDataFromEntity(entity.getFilter());
-        }
+		if (entity.getFilter() != null) {
+			filterData = filterServiceUtil.mapFilterDataFromEntity(entity
+					.getFilter());
+		}
 
-        UserData userData = new UserData(entity.getUserId(), entity.getPassword(), entity.getFirstName(),
-                entity.getLastName(), entity.getActive(), roles, filterData);
+		UserData userData = new UserData(entity.getUserId(),
+				entity.getPassword(), entity.getFirstName(),
+				entity.getLastName(), entity.getActive(), roles, filterData);
 
-        return userData;
-    }
+		return userData;
+	}
 
-    public User mapUserEntityFromUserData(UserData userData) {
+	public User mapUserEntityFromUserData(UserData userData) {
 
-        Set<Role> roles = userData.getRoles().stream().map(new Function<RoleData, Role>() {
-            @Override
-            public Role apply(RoleData roleData) {
-                return new Role(roleData.getRoleId(), roleData.getRoleDescription());
-            }
+		Set<Role> roles = userData.getRoles().stream()
+				.map(new Function<RoleData, Role>() {
+					@Override
+					public Role apply(RoleData roleData) {
+						return new Role(roleData.getRoleId(), roleData
+								.getRoleDescription());
+					}
 
-        }).collect(Collectors.toSet());
+				}).collect(Collectors.toSet());
 
-        Filter filter = null;
-        if (userData.getFilter() != null) {
+		Filter filter = null;
+		if (userData.getFilter() != null) {
 
-            filter = filterServiceUtil.mapFilterEntityFromFilterData(userData.getFilter());
-        }
+			filter = filterServiceUtil.mapFilterEntityFromFilterData(userData
+					.getFilter());
+		}
 
-        User user = new User(userData.getUserId(), userData.getPassword(), userData.getFirstName(),
-                userData.getLastName(), userData.getActive(), roles, filter);
+		User user = new User(userData.getUserId(), userData.getPassword(),
+				userData.getFirstName(), userData.getLastName(),
+				userData.getActive(), roles, filter);
 
-        return user;
-    }
+		return user;
+	}
 }
