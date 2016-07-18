@@ -33,7 +33,7 @@ import gov.gtas.parsers.exception.ParseException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CommonServicesConfig.class)
 @Transactional
-public class MessageGeneratorIT {
+public class MessageGeneratorApp {
 
     @Autowired
     private ServiceUtil svc;
