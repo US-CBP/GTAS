@@ -34,7 +34,9 @@
         <skip.unit.tests>false</skip.unit.tests>
         <spring.version>4.1.6.RELEASE</spring.version>
         <javadoc-plugin.version>2.10.3</javadoc-plugin.version>
-        <sonar-plugin.version>3.0.1</sonar-plugin.version>
+        <sonar-plugin.version>5.1</sonar-plugin.version>
+        <sonar.sources>pom.xml,src/main/java,src/test/java</sonar.sources>
+        <sonar.tests></sonar.tests>
     </properties>
 
     <modules>
