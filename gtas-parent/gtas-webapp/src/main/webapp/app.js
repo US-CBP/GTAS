@@ -43,8 +43,7 @@ var app;
     		$translateProvider.preferredLanguage('en');
     		$translateProvider.fallbackLanguage('en');
     		$translateProvider.useSanitizeValueStrategy('escape');
-    		
-        	
+ 
 		},
 		idleWatchConfig = function(IdleProvider, KeepaliveProvider, TitleProvider){
 			TitleProvider.enabled(false);
