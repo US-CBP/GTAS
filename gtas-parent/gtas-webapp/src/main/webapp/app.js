@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, Unisys Corporation.
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 var app;
@@ -43,7 +43,7 @@ var app;
     		$translateProvider.preferredLanguage('en');
     		$translateProvider.fallbackLanguage('en');
     		$translateProvider.useSanitizeValueStrategy('escape');
- 
+
 		},
 		idleWatchConfig = function(IdleProvider, KeepaliveProvider, TitleProvider){
 			TitleProvider.enabled(false);
@@ -100,23 +100,23 @@ var app;
         	   		Idle.watch();
            		}
            };
-           
+
            $rootScope.$on('IdleStart', function(){
         	   $rootScope.showConfirm();
            });
-           
+
            $rootScope.$on('IdleEnd', function(){
         	   //Keep session alive via small request
         	  userService.getUserData().then(console.log('No longer Idle'));
            });
-           
+
            $rootScope.$on('IdleTimeout', function(){
         	  $mdDialog.hide();
         	  $rootScope.userTimedout = true;
         	  $rootScope.$broadcast('unauthorizedEvent');
         	  window.location.href = APP_CONSTANTS.LOGIN_PAGE +"?userTimeout";
            });
-           
+
            $rootScope.showConfirm = function() {
         	   var confirm = $mdDialog.confirm({
 	        	   parent: angular.element(document.body),
@@ -131,20 +131,20 @@ var app;
 	            	   			'</div>'+
 	            	   		'</md-dialog-content>'+
 	            	   	'<md-dialog-actions layout="row">'+
-        	      '<md-dialog-actions layout="row" class="layout-row">'+      	  	  
+        	      '<md-dialog-actions layout="row" class="layout-row">'+
         	      '<md-button ng-click="dialog.hide()">Continue Session</md-button>'+
         	    '</md-dialog-actions>'+
         	  '</form>'+
         	  '</md-dialog>'})
-        	  
+
 	           $mdDialog.show(confirm).then(function() {
 	            	      Idle.watch();
 	            	    }, function() {
 	            	      return false;
-	            	    
+
 	           });
        	  };
-       	  
+
        	  $rootScope.hide = function(){
        		  $mdDialog.hide();
        	  };
@@ -285,7 +285,7 @@ var app;
                     },
                     resolve: {
                         flights: function (executeQueryService) {
-                           //removed return due to it being an empty call to the service, returning an erroneous 400 Bad Request. 
+                           //removed return due to it being an empty call to the service, returning an erroneous 400 Bad Request.
                            //Kept resolve rather than restructuring flights.html to not use flights entity as it was.
                         }
                     }
@@ -425,6 +425,14 @@ var app;
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
 
+            var originatorEv;
+
+            this.openMenu = function($mdOpenMenu, ev) {
+                originatorEv = ev;
+                $mdOpenMenu(ev);
+                originatorEv = null;
+            };
+
             var lookup = {
                 admin: {name: ['admin', 'addUser', 'modifyUser']},
                 dashboard: {name: ['dashboard']},
@@ -435,7 +443,7 @@ var app;
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},
                 upload: {name: ['upload']},
-                cases: {name: ['cases']}                
+                cases: {name: ['cases']}
             };
             $scope.onRoute = function (key) {
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);
