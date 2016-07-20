@@ -108,3 +108,7 @@ body{
 @media (max-width:550px){
 
 	}
+	
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
