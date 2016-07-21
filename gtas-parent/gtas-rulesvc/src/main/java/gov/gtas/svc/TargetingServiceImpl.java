@@ -226,11 +226,12 @@ public class TargetingServiceImpl implements TargetingService {
             logger.info("Db operations...");
             Iterator<Message> source = messageRepository.findByStatus(
                     MessageStatus.LOADED).iterator();
-            List<Message> loadedMessages = new ArrayList<Message>();
+            
+            List<Message> loadedMessages = new ArrayList<>();
             source.forEachRemaining(loadedMessages::add);
             Set<Flight> flights = new HashSet<Flight>();
             Set<Passenger> passengers = new HashSet<Passenger>();
-            if (loadedMessages != null) {
+            if (!loadedMessages.isEmpty()) {
                 logger.info("Loaded messages size -->" + loadedMessages.size());
                 for (Message message : loadedMessages) {
                     if (message instanceof ApisMessage) {
@@ -353,8 +354,7 @@ public class TargetingServiceImpl implements TargetingService {
                 ctx.getRuleServiceRequest(),
                 WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
 
-        if (udrResult == null && wlResult == null) {
-            boolean ruleExisting = false;
+        if (udrResult == null && wlResult == null) {           
             // currently only two knowledgebases: udr and Watchlist
             KnowledgeBase udrKb = rulePersistenceService
                     .findUdrKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
@@ -369,13 +369,12 @@ public class TargetingServiceImpl implements TargetingService {
                                     (RuleConstants.UDR_KNOWLEDGE_BASE_NAME
                                             + "/" + WatchlistConstants.WL_KNOWLEDGE_BASE_NAME));
                 } else { // No enabled but disabled wl rule exists
-                    ruleExisting = true;
+                	throw ErrorHandlerFactory.getErrorHandler().createException(
+                            RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
+                            RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE);
                 }
             } else { // No enabled but disabled udr rule exists
-                ruleExisting = true;
-            }
-            if (ruleExisting) {
-                throw ErrorHandlerFactory.getErrorHandler().createException(
+            	throw ErrorHandlerFactory.getErrorHandler().createException(
                         RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
                         RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE);
             }

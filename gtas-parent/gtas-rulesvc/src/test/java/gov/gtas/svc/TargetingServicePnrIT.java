@@ -45,24 +45,15 @@ import gov.gtas.testdatagen.PnrDataGenerator;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class TargetingServicePnrIT {
-    public static final String UDR_RULE_AUTHOR="adelorie";
+    public static final String UDR_RULE_AUTHOR="test";
 
     @Autowired
     TargetingService targetingService;
 
     @Resource
     private PnrRepository pnrRepository;
-
-    @Before
-    public void setUp() throws Exception {
-        
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
     
     @Test
     @Transactional
@@ -74,12 +65,6 @@ public class TargetingServicePnrIT {
         assertTrue(size1 == 4 || size1 == 2 );
         Passenger pax = pnr1.getPassengers().iterator().next();
         assertNotNull("Pax ID is null", pax.getId());
-//      Pnr pnr2 = itr.next();
-//      int size2 = pnr2.getPassengers().size();
-//      assertTrue(size2 == 4 || size2 == 2 );
-//      assertTrue(size1 != size2);
-//      pax = pnr2.getPassengers().iterator().next();
-//      assertNotNull("Pax ID is null", pax.getId());
     }
 
     @Test

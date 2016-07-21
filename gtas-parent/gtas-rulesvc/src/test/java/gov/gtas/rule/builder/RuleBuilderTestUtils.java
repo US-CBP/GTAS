@@ -35,8 +35,8 @@ import java.util.List;
 
 public class RuleBuilderTestUtils {
     public static final String UDR_RULE_TITLE="UDR_TEST_RULE";
-    public static final long UDR_RULE_ID=33L;
-    public static final long ENGINE_RULE_ID=21L;
+    public static final long UDR_RULE_ID=9999L;
+    public static final long ENGINE_RULE_ID=9999L;
     public static final int DOC_FLIGHT_CRITERIA_RULE_INDX=1;
     public static final int ENGINE_RULE_INDX2=2;
     public static final int ENGINE_RULE_INDX3=3;

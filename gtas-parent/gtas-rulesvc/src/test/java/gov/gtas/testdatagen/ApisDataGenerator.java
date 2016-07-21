@@ -33,13 +33,24 @@ public class ApisDataGenerator {
      */
     public static ApisMessage createSimpleTestApisMesssage(){
         ApisMessage msg = new ApisMessage();
-        msg.setId(123L);
+        msg.setId(9999L);
         msg.setFlights(createFlights());
         msg.setCreateDate(new Date());
         msg.setStatus(MessageStatus.LOADED);
+        fixPassengerReferences(msg);
         fixDocReferences(msg);
         return msg;
     }
+    
+    private static void fixPassengerReferences(ApisMessage msg){
+    	Set<Passenger> passengers = new HashSet<>();
+        for(Flight fl:msg.getFlights()){
+        	passengers.addAll(fl.getPassengers());
+        }
+        msg.setPassengers(passengers);
+    }
+    
+    
     private static void fixDocReferences(ApisMessage msg){
         for(Flight fl:msg.getFlights()){
             for(Passenger tr:fl.getPassengers()){
