@@ -98,8 +98,12 @@
         padding: 1em 0 0 0;
     }
 
-    .md-padding:first-child {
+    .md-padding:first-child{
         padding: 1em 0 0 1em;
+    }
+    
+    .md-padding:nth-child(2), .md-padding:nth-child(3){
+    	padding: 1em 3em 0 1em;
     }
 
     .filter-form {
@@ -148,7 +152,7 @@
         order: 2; /* NEW, Spec - Opera 12.1, Firefox 20+ */
 
         min-width: 15em;
-        max-width: 40%;
+        max-width: 30%;
         width: 20%;
 
         -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
@@ -166,7 +170,7 @@
         order: 3; /* NEW, Spec - Opera 12.1, Firefox 20+ */
 
         min-width: 15em;
-        max-width: 40%;
+        max-width: 30%;
         width: 20%;
 
         -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
@@ -186,7 +190,7 @@
         min-width: 5em;
         max-width: 5em;
         width: 5em;
-
+		
         -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
         -moz-box-flex: 1; /* Firefox 19- */
         -ms-flex: 1; /* TWEENER - IE 10 */
@@ -312,7 +316,7 @@
     </div>
     <div class="direction md-padding">
         <label for="direction">{{'flight.direction' | translate}}</label>
-        <md-input-container>
+        <md-input-container style="margin:14px 0;">
             <md-select id="direction" ng-model="model.direction">
                 <md-option ng-repeat="item in flightDirections" value="{{item.value}}">
                     <p translate> {{item.label}}</p>

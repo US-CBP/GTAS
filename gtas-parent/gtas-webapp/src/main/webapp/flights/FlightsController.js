@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter, 
-            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService) {
+            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, $timeout) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -268,7 +268,11 @@
             //temporary as flightService doesn't support multiple values yet
             //$scope.model.origin = self.origin.length ? self.origin.map(returnObjectId)[0] : '';
             //$scope.model.dest = self.destination ? self.destination.map(returnObjectId)[0] : '';
-            resolvePage();
+        	//There is a delay between datepicker being assigned a new date and it being applied properly to the ng-model;
+        	//A small delay insures that the model is updated before the service is called for unusually fast submit requests.
+        	$timeout(function(){
+        		resolvePage();
+        	},500);
         };
 
         $scope.reset = function () {
