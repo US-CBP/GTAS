@@ -24,6 +24,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- elastic -->
+            <dependency>
+                <groupId>org.elasticsearch</groupId>
+                <artifactId>elasticsearch</artifactId>
+                <version>2.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>18.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

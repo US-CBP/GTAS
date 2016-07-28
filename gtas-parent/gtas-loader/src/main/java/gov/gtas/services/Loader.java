@@ -32,6 +32,9 @@ public class Loader {
     @Autowired
     private PnrMessageService pnrLoader;
 
+    @Autowired
+    private ElasticIndexer indexer;
+    
     /**
      * Processes all the messages in a single file.
      * 
@@ -81,6 +84,7 @@ public class Loader {
         for (String rawMessage : rawMessages) {
             MessageVo parsedMessage = svc.parse(rawMessage);
             if (parsedMessage != null && svc.load(parsedMessage)) {
+        		indexer.indexRaw(parsedMessage);
                 successMsgCount++;
             } else {
                 failedMsgCount++;
