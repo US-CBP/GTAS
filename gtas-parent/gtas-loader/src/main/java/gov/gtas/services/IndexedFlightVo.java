@@ -16,10 +16,10 @@ public class IndexedFlightVo {
     private String originLocation;
     private String destination;
     private String destinationLocation;
-    
     private Date flightDate;
     private Date etd;
     private Date eta;
+    private String raw;
     
     public String getCarrier() {
         return carrier;
@@ -75,4 +75,10 @@ public class IndexedFlightVo {
     public void setDestinationLocation(String destinationLocation) {
         this.destinationLocation = destinationLocation;
     }
+	public String getRaw() {
+		return raw;
+	}
+	public void setRaw(String raw) {
+		this.raw = raw;
+	}
 }

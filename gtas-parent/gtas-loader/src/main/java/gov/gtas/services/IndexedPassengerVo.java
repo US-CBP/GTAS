@@ -21,6 +21,8 @@ public class IndexedPassengerVo {
     private Date dob;
     private String embarkation;
     private String debarkation;
+    private String raw;
+    
     public String getTitle() {
         return title;
     }
@@ -99,4 +101,10 @@ public class IndexedPassengerVo {
     public void setDebarkation(String debarkation) {
         this.debarkation = debarkation;
     }
+	public String getRaw() {
+		return raw;
+	}
+	public void setRaw(String raw) {
+		this.raw = raw;
+	}
 }

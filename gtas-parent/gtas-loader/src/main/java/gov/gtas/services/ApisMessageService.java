@@ -115,6 +115,7 @@ public class ApisMessageService extends MessageLoaderService {
         boolean ret = true;
         try {
             msgDao.save(m);
+    		indexer.indexApis(m);
         } catch (Exception e) {
             ret = false;
             handleException(e, MessageStatus.FAILED_LOADING);
