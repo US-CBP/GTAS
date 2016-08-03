@@ -56,13 +56,13 @@ public class ElasticIndexer {
 	public void indexPnr(Pnr pnr) {
 		String raw = LobUtils.convertClobToString(pnr.getRaw());
 		indexFlights(pnr.getFlights(), raw);
-		indexPassengers(pnr.getPassengers());
+		indexPassengers(pnr.getPassengers(), raw);
 	}
 
 	public void indexApis(ApisMessage apis) {
 		String raw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlights(apis.getFlights(), raw);
-		indexPassengers(apis.getPassengers());
+		indexPassengers(apis.getPassengers(), raw);
 	}
 	
 	private void indexFlights(Collection<Flight> flights, String raw) {
@@ -76,7 +76,7 @@ public class ElasticIndexer {
 		}
 	}
 
-	private void indexPassengers(Collection<Passenger> passengers) {
+	private void indexPassengers(Collection<Passenger> passengers, String raw) {
 		for (Passenger p : passengers) {
 			IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "passenger", String.valueOf(p.getId()));		
 			IndexedPassengerVo vo = new IndexedPassengerVo();
