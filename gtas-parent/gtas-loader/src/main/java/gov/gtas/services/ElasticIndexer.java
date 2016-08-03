@@ -81,6 +81,7 @@ public class ElasticIndexer {
 			IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "passenger", String.valueOf(p.getId()));		
 			IndexedPassengerVo vo = new IndexedPassengerVo();
 			BeanUtils.copyProperties(p, vo);
+			vo.setRaw(raw);
 			indexRequest.source(gson.toJson(vo));
 			IndexResponse response = this.client.index(indexRequest).actionGet();
 		}
