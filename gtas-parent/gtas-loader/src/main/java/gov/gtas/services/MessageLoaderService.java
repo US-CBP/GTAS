@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.parsers.vo.MessageVo;
+import gov.gtas.search.ElasticIndexer;
 
 @Service
 public abstract class MessageLoaderService {

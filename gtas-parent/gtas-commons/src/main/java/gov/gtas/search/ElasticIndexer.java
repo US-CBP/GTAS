@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.services;
+package gov.gtas.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
