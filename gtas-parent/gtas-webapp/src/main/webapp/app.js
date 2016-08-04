@@ -475,9 +475,7 @@ var app;
                     if (response.status === 200 || response.status === 403 || response.status === 405) {
                         var cookies = $cookies.getAll();
                         angular.forEach(cookies, function (v, k) {
-                            //if(APP_CONSTANTS.LOCALE_COOKIE_KEY != k) {
-                                $cookies.remove(k);
-                            //}
+                            $cookies.remove(k);
                         });
                         $sessionStorage.remove(APP_CONSTANTS.CURRENT_USER);
                         $rootScope.authenticated = false;

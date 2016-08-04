@@ -83,6 +83,12 @@
           ng-disabled="onRoute('passengers')" href="#/passengers" ng-click="this.close();">  <span><i class="glyphicon glyphicon-user"></i></span> &nbsp;  {{'menu.passengers' | translate}}
         </md-button>
       </md-menu-item>
+
+    <md-menu-item>
+      <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases')}"
+      ng-disabled="onRoute('cases')" href="#/cases" ng-click="this.close();"><span><i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases</span></md-button>
+    </md-menu-item>
+
     </md-menu-content>
   </md-menu>
 
@@ -96,10 +102,6 @@
 
   <md-menu-content class="dropdown">
 
-    <md-menu-item>
-      <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases')}"
-      ng-disabled="onRoute('cases')" href="#/cases" ng-click="this.close();"><span><i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases</span></md-button>
-    </md-menu-item>
     <md-menu-item>
       <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('queries')}"
       ng-disabled="onRoute('queries')" href="#/build/query" ng-click="this.close();"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;{{'menu.queries' | translate}}</span></md-button>
@@ -115,12 +117,6 @@
     <md-menu-item>
       <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('watchlists')}"
       ng-disabled="onRoute('watchlists')" href="#/watchlists" ng-click="this.close();"><span><i class="glyphicon glyphicon-eye-open"></i></span> &nbsp;{{'menu.watchlist' | translate}}</md-button>
-
-    </md-menu-item>
-    <md-menu-item>
-
-      <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('upload')}"
-      ng-disabled="onRoute('upload')" href="#/upload" ng-click="this.close();"><span><i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</md-button>
 
     </md-menu-item>
 
@@ -145,6 +141,11 @@
     <span><i class="glyphicon glyphicon-edit"></i></span>  &nbsp;{{'menu.admin' | translate}} </md-button>
 
   </md-menu-item>
+
+    <md-menu-item>
+      <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('upload')}"
+      ng-disabled="onRoute('upload')" href="#/upload" ng-click="this.close();"><span><i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</md-button>
+    </md-menu-item>
 
 </md-menu-content>
 </md-menu>

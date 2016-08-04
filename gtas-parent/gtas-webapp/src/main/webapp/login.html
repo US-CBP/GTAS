@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp"> <!-- ng-app="myApp"-->
+<html lang="en" ng-app="myApp">
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <meta charset="utf-8">
@@ -26,31 +26,6 @@
 
 <body>
 <header class="header" title="{{'gtas.title' | translate}}"></header>
-<div style="padding-top: 15px;text-align:right">
-<!----------------------------------------------------------------------------------- 
-<ul ng-controller="LanguageController">
-
-    <md-input-container>
-        <label>Country</label>
-        <md-select ng-model="country" ng-change="locale = null">
-            <md-option ng-repeat="s in list" ng-value="s">
-                {{s.name}}
-            </md-option>
-        </md-select>
-    </md-input-container>
-
-    <md-input-container>
-        <label>Locale</label>
-        <md-select ng-model="locale" ng-disabled="!country.version" ng-change="changeLanguage('en')">
-            <md-option ng-repeat="s in country.version" ng-value="s.id">
-                {{s.name}}
-            </md-option>
-        </md-select>
-    </md-input-container>
-
-</ul>
-------------------------------------------------------------------------------------------->
-</div>
    
 <div id="main" class="container" style="padding-top:100px"> 
     <form name="loginform" id="loginform" ng-controller="LoginController" ng-submit="login(credentials)">
