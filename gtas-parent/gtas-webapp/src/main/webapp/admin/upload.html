@@ -13,16 +13,18 @@
 }
 </style>
 
-<h2>{{'upload.title' | translate}}</h2>
-<div ngf-drop ngf-select ng-model="files" class="drop-box" 
-    ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
-    accept="text/plain">{{'upload.file.msg' | translate}}</div>
-<div ngf-no-file-drop>{{'upload.no.msg' | translate}}</div>
+<md-content layout-md="row" layout-padding="">
+    <h2>{{'upload.title' | translate}}</h2>
+    <div ngf-drop ngf-select ng-model="files" class="drop-box" 
+        ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="true"
+        accept="text/plain">{{'upload.file.msg' | translate}}</div>
+    <div ngf-no-file-drop>{{'upload.no.msg' | translate}}</div>
 
-<md-button class="md-raised md-warn" ng-click="deleteall()" type="button">{{'upload.delete' | translate}}</md-button>
+    <md-button class="md-raised md-warn" ng-click="deleteall()" type="button">{{'upload.delete' | translate}}</md-button>
 
-<h2>{{'upload.progress' | translate}}</h2>
-<ul>
-    <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
-</ul>
-<pre>{{log}}</pre>
+    <h2>{{'upload.progress' | translate}}</h2>
+    <ul>
+        <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}</li>
+    </ul>
+    <pre>{{log}}</pre>
+</md-content>
