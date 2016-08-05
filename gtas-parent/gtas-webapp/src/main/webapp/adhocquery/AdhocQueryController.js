@@ -5,6 +5,6 @@
  */
 app.controller('AdhocQueryCtrl', function ($scope) {
     'use strict;'
-		
+	
 });
 
