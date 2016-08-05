@@ -94,6 +94,10 @@
                 ng-disabled="onRoute('queries')" href="#/build/query" ng-click="this.close();"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;{{'menu.queries' | translate}}</span></md-button>
             </md-menu-item>
             <md-menu-item>
+              <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('adhocquery')}"
+                ng-disabled="onRoute('adhocquery')" href="#/adhocquery" ng-click="this.close();"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;Quick Query</span></md-button>
+            </md-menu-item>
+            <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('risks')}"
                 ng-disabled="onRoute('risks')" href="#/build/rule" ng-click="this.close();"><span><i class="glyphicon glyphicon-flag"></i></span> &nbsp;{{'menu.riskcriteria' | translate}}</md-button>
             </md-menu-item>

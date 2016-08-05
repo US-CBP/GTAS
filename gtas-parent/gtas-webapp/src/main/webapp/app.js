@@ -273,6 +273,17 @@ var app;
                         	}
                     	}
                 })
+                .state('adhocquery', {
+                    url: '/adhocquery',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    views: {
+                        '@': {
+                            controller: 'AdhocQueryCtrl',
+                            templateUrl: 'adhocquery/adhocquery.html'
+                        },
+                    }
+                })
                 .state('queryFlights', {
                     url: '/query/flights',
                     authenticate: true,
