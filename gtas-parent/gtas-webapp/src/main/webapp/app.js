@@ -450,6 +450,7 @@ var app;
                 flights: {name: ['flights']},
                 passengers: {name: ['paxAll', 'flightpax']},
                 queries: {mode: ['query']},
+                adhocquery: {name: ['adhocquery']},                
                 risks: {mode: ['rule']},
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},

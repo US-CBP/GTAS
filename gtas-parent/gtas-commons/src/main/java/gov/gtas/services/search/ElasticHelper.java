@@ -87,6 +87,8 @@ public class ElasticHelper {
 		for (SearchHit hit : results) {
 			System.out.println(hit.getId());
 			Map<String, Object> result = hit.getSource();
+			String firstName = (String)result.get("firstName");
+			System.out.println(firstName);
 		}	
 	}
 	
