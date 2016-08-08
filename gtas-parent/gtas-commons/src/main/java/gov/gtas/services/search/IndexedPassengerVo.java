@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.search;
+package gov.gtas.services.search;
 
 import java.util.Date;
 

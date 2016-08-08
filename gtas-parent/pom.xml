@@ -8,6 +8,19 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>GTAS Parent Project</name>
+    
+    <properties>
+        <jdk.version>1.8</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
+        <spring.version>4.1.6.RELEASE</spring.version>
+        <javadoc-plugin.version>2.10.3</javadoc-plugin.version>
+        <sonar-plugin.version>5.1</sonar-plugin.version>
+        <elasticsearch.version>2.3.2</elasticsearch.version>
+        <sonar.sources>src/main/java</sonar.sources>
+    </properties>    
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -29,26 +42,20 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>2.3.2</version>
+                <version>${elasticsearch.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>18.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.7.6</version>
+            </dependency>            
         </dependencies>
     </dependencyManagement>
-
-    <properties>
-        <jdk.version>1.8</jdk.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <skip.integration.tests>true</skip.integration.tests>
-        <skip.unit.tests>false</skip.unit.tests>
-        <spring.version>4.1.6.RELEASE</spring.version>
-        <javadoc-plugin.version>2.10.3</javadoc-plugin.version>
-        <sonar-plugin.version>5.1</sonar-plugin.version>
-        <sonar.sources>src/main/java</sonar.sources>
-    </properties>
 
     <modules>
         <module>gtas-parsers</module>

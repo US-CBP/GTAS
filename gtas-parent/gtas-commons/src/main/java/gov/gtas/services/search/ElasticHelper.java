@@ -3,21 +3,26 @@
  * 
  * Please see LICENSE.txt for details.
  */
-package gov.gtas.search;
+package gov.gtas.services.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +35,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.util.LobUtils;
 
 @Repository
-public class ElasticIndexer {
+public class ElasticHelper {
 	public static final String INDEX_NAME = "gtas";
 
 	private Client client;
@@ -55,8 +60,6 @@ public class ElasticIndexer {
 
 	public void indexPnr(Pnr pnr) {
 		String raw = LobUtils.convertClobToString(pnr.getRaw());
-//		indexFlights(pnr.getFlights(), raw);
-//		indexPassengers(pnr.getPassengers(), raw);
 		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), raw);
 	}
 
@@ -64,6 +67,27 @@ public class ElasticIndexer {
 		String raw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlights(apis.getFlights(), raw);
 		indexPassengers(apis.getPassengers(), raw);
+	}
+	
+	public void search(String query, int pageNumber) {
+		final int PAGE_SIZE = 10;
+        int startIndex = (pageNumber - 1) * PAGE_SIZE;
+
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
+                .setTypes("flightpax")
+			    .setSearchType(SearchType.QUERY_AND_FETCH)
+			    .setQuery(QueryBuilders.matchPhrasePrefixQuery("raw", query))
+			    .setFrom(startIndex)
+			    .setSize(PAGE_SIZE)
+			    .setExplain(true)
+			    .execute()
+			    .actionGet();
+		
+		SearchHit[] results = response.getHits().getHits();
+		for (SearchHit hit : results) {
+			System.out.println(hit.getId());
+			Map<String, Object> result = hit.getSource();
+		}	
 	}
 	
 	private void indexFlights(Collection<Flight> flights, String raw) {

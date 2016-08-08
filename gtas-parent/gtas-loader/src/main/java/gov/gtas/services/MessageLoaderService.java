@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.parsers.vo.MessageVo;
-import gov.gtas.search.ElasticIndexer;
+import gov.gtas.services.search.ElasticHelper;
 
 @Service
 public abstract class MessageLoaderService {
@@ -22,7 +22,7 @@ public abstract class MessageLoaderService {
     protected LoaderUtils utils;
 
     @Autowired
-    protected ElasticIndexer indexer;
+    protected ElasticHelper indexer;
 
     public abstract List<String> preprocess(String message);
     public abstract MessageVo parse(String message);

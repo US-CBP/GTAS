@@ -18,7 +18,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
 import gov.gtas.querybuilder.model.QueryRequest;
-import gov.gtas.search.SearchService;
+import gov.gtas.services.search.SearchService;
 
 @RestController
 @RequestMapping(Constants.SEARCH_SERVICE)
