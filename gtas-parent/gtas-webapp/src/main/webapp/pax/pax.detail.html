@@ -136,16 +136,18 @@
 	                	</div>
 	                	<div class="container" ng-repeat ="disp in passenger.dispositionHistory | orderBy:'createdAt':true">
 	                	<div style="padding: 10px;"></div>
-	                		<div>
-	                			<md-input-container class="col-sm-offset-2" style="padding-left:15px">
+	                		<div class="col-sm-7 col-sm-offset-2" style="display:table-cell;vertical-align:middle">
+	                			<md-input-container>
 	                                <md-select ng-model="passengerTempHistory" disabled>
 	                                    <md-option selected=selected>
                                         	{{disp.status}}
 	                                    </md-option>
 	                                </md-select>
                             	</md-input-container>
+                            	<div style="float:right;margin-top:30px">
                                 {{disp.createdBy}}
-                                ({{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}})                                
+                                ({{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}})    
+                                </div>                            
 	                		</div>
 	                		<div class="col-sm-7 col-sm-offset-2">
 	                			<textarea rows="7" style="min-width:100%;resize:none" disabled>{{disp.comments}}</textarea>

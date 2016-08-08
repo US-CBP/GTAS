@@ -15,7 +15,9 @@
                     'flightId':$scope.passenger.flightId,
                     'statusId':$scope.currentDispStatus,
                     'comments':$scope.currentDispComments,
-                    'user':user.data.userId
+                    'user':user.data.userId,
+                    'createdBy': user.data.userId,
+                    'createdAt': new Date()
                 };
 
         	spinnerService.show('html5spinner');
