@@ -55,8 +55,9 @@ public class ElasticIndexer {
 
 	public void indexPnr(Pnr pnr) {
 		String raw = LobUtils.convertClobToString(pnr.getRaw());
-		indexFlights(pnr.getFlights(), raw);
-		indexPassengers(pnr.getPassengers(), raw);
+//		indexFlights(pnr.getFlights(), raw);
+//		indexPassengers(pnr.getPassengers(), raw);
+		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), raw);
 	}
 
 	public void indexApis(ApisMessage apis) {
@@ -86,4 +87,23 @@ public class ElasticIndexer {
 			IndexResponse response = this.client.index(indexRequest).actionGet();
 		}
 	}
+
+	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {
+		for (Passenger p : passengers) {
+			for (Flight f : flights) {
+				String id = String.format("%s-%s", String.valueOf(p.getId()), String.valueOf(f.getId()));
+				IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "flightpax", id);		
+				FlightPassengerVo vo = new FlightPassengerVo();
+				BeanUtils.copyProperties(p, vo);
+				vo.setPassengerId(p.getId());
+				BeanUtils.copyProperties(f, vo);
+				vo.setFlightId(f.getId());
+				vo.setRaw(raw);
+				indexRequest.source(gson.toJson(vo));
+				IndexResponse response = this.client.index(indexRequest).actionGet();
+			}
+		}
+	}
+
+
 }

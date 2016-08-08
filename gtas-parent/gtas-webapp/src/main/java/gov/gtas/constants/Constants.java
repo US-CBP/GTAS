@@ -13,6 +13,11 @@ public final class Constants {
     public static final String RUN_QUERY_FLIGHT_URI = "/queryFlights";
     public static final String RUN_QUERY_PASSENGER_URI = "/queryPassengers";
     public static final String PATH_VARIABLE_ID = "/{id}";
+
+    // Search URI
+    public static final String SEARCH_SERVICE = "/search";
+    public static final String RUN_SEARCH_FLIGHT_URI = "/queryFlights";
+    public static final String RUN_SEARCH_PASSENGER_URI = "/queryPassengers";
     
     //UDR URI
     public static final String UDR_ROOT = "/udr";
