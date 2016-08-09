@@ -6,10 +6,10 @@
 package gov.gtas.json;
 
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
 
 import java.io.Serializable;
-
 
 /**
  * JSON object class to convey audit action target information.
@@ -21,18 +21,53 @@ public class AuditActionTarget implements Serializable {
 	private String targetName;
 	private String targetId;
 
+	/**
+	 * Instantiates a new audit action target.
+	 *
+	 * @param user
+	 *            the user
+	 */
 	public AuditActionTarget(User user) {
 		this.targetType = "USER";
 		this.targetName = user.getFirstName() + " " + user.getLastName();
 		this.targetId = user.getUserId();
 	}
 
+	/**
+	 * Instantiates a new audit action target.
+	 *
+	 * @param passenger
+	 *            the passenger
+	 */
+	public AuditActionTarget(Passenger passenger) {
+		this.targetType = "PASSENGER";
+		this.targetName = null;
+		this.targetId = String.valueOf(passenger.getId());
+	}
+
+	/**
+	 * Instantiates a new audit action target.
+	 *
+	 * @param type
+	 *            the type
+	 * @param name
+	 *            the name
+	 * @param id
+	 *            the id
+	 */
 	public AuditActionTarget(AuditActionType type, String name, String id) {
 		this.targetType = computeType(type);
 		this.targetName = name;
 		this.targetId = id;
 	}
 
+	/**
+	 * Compute type.
+	 *
+	 * @param type
+	 *            the type
+	 * @return the string
+	 */
 	private String computeType(AuditActionType type) {
 		switch (type) {
 		case CREATE_UDR:
@@ -121,8 +156,10 @@ public class AuditActionTarget implements Serializable {
 	@Override
 	public String toString() {
 		StringBuilder bldr = new StringBuilder();
-		bldr.append("{\"type\":\"").append(this.targetType).append("\",")
-				.append("\"name\":\"").append(this.targetName).append("\",");
+		bldr.append("{\"type\":\"").append(this.targetType).append("\",");
+		if (this.targetName != null) {
+			bldr.append("\"name\":\"").append(this.targetName).append("\",");
+		}
 		if (this.targetId != null) {
 			bldr.append("\"id\":\"").append(this.targetId).append("\"}");
 		} else {
