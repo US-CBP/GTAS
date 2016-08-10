@@ -7,7 +7,9 @@ package gov.gtas.services.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +35,7 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
 import gov.gtas.util.LobUtils;
+import gov.gtas.vo.passenger.PassengerVo;
 
 @Repository
 public class ElasticHelper {
@@ -65,11 +68,30 @@ public class ElasticHelper {
 
 	public void indexApis(ApisMessage apis) {
 		String raw = LobUtils.convertClobToString(apis.getRaw());		
-		indexFlights(apis.getFlights(), raw);
-		indexPassengers(apis.getPassengers(), raw);
+		indexFlightPax(apis.getFlights(), apis.getPassengers(), raw);
 	}
 	
-	public void search(String query, int pageNumber) {
+	public List<PassengerVo> searchPassengers(String query, int pageNumber) {
+		List<PassengerVo> rv = new ArrayList<>();
+		SearchHit[] results = search(query, pageNumber);
+		for (SearchHit hit : results) {
+			Map<String, Object> result = hit.getSource();
+			PassengerVo vo = new PassengerVo();
+
+			System.out.println(hit.getId());
+			int paxId = (Integer)result.get("passengerId");
+			vo.setId(new Long(paxId));
+			int flightId = (Integer)result.get("flightId");
+			vo.setFlightId(String.valueOf(flightId));
+			vo.setFirstName((String)result.get("firstName"));
+			vo.setLastName((String)result.get("lastName"));
+			vo.setMiddleName((String)result.get("middleName"));
+		}	
+
+		return rv;
+	}
+	
+	private SearchHit[] search(String query, int pageNumber) {
 		final int PAGE_SIZE = 10;
         int startIndex = (pageNumber - 1) * PAGE_SIZE;
 
@@ -83,13 +105,7 @@ public class ElasticHelper {
 			    .execute()
 			    .actionGet();
 		
-		SearchHit[] results = response.getHits().getHits();
-		for (SearchHit hit : results) {
-			System.out.println(hit.getId());
-			Map<String, Object> result = hit.getSource();
-			String firstName = (String)result.get("firstName");
-			System.out.println(firstName);
-		}	
+		return response.getHits().getHits();
 	}
 	
 	private void indexFlights(Collection<Flight> flights, String raw) {

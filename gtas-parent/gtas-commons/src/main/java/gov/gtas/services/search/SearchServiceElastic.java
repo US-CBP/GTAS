@@ -5,7 +5,6 @@
  */
 package gov.gtas.services.search;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,7 @@ public class SearchServiceElastic implements SearchService {
 	private ElasticHelper elastic;
 	
 	@Override
-	public List<PassengerVo> findPassengers(String query) {
-		elastic.search(query, 1);
-		return new ArrayList<>();
+	public List<PassengerVo> findPassengers(String query, int pageNumber) {
+		return elastic.searchPassengers(query, pageNumber);
 	}
 }

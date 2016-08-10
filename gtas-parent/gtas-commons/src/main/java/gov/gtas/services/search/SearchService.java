@@ -10,5 +10,5 @@ import java.util.List;
 import gov.gtas.vo.passenger.PassengerVo;
 
 public interface SearchService {
-    public List<PassengerVo> findPassengers(String query);
+    public List<PassengerVo> findPassengers(String query, int pageNumber);
 }
