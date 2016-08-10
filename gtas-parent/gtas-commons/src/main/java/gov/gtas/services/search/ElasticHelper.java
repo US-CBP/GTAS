@@ -77,6 +77,7 @@ public class ElasticHelper {
 		for (SearchHit hit : results) {
 			Map<String, Object> result = hit.getSource();
 			PassengerVo vo = new PassengerVo();
+			rv.add(vo);
 
 			System.out.println(hit.getId());
 			int paxId = (Integer)result.get("passengerId");
