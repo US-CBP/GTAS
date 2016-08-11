@@ -6,7 +6,6 @@
 package gov.gtas.services.search;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,14 +18,15 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
@@ -37,20 +37,23 @@ import gov.gtas.model.Pnr;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.passenger.PassengerVo;
 
-@Repository
+@Service
 public class ElasticHelper {
+	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	public static final String INDEX_NAME = "gtas";
 
-	private Client client;
+	private TransportClient client;
 	
 	private Gson gson = new Gson();
 
 	@PostConstruct
 	public void initIt() throws Exception {
-		try {
-			this.client = TransportClient.builder().build().addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-		} catch (UnknownHostException | NoNodeAvailableException e) {
-			e.printStackTrace();
+		this.client = TransportClient.builder().build();
+		this.client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+		List<DiscoveryNode> nodes = this.client.connectedNodes();
+		if (nodes.isEmpty()) {
+			logger.warn("ElasticSearch not available");
+			this.client = null;			
 		}
 	}
 
@@ -60,19 +63,27 @@ public class ElasticHelper {
 			this.client.close();
 		}
 	}
+	
+	public boolean isDown() {
+		return this.client == null;
+	}
 
 	public void indexPnr(Pnr pnr) {
+		if (isDown()) { return; }
 		String raw = LobUtils.convertClobToString(pnr.getRaw());
 		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), raw);
 	}
 
 	public void indexApis(ApisMessage apis) {
+		if (isDown()) { return; }
 		String raw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), raw);
 	}
 	
 	public List<PassengerVo> searchPassengers(String query, int pageNumber) {
 		List<PassengerVo> rv = new ArrayList<>();
+		if (isDown()) { return rv; }
+
 		SearchHit[] results = search(query, pageNumber);
 		for (SearchHit hit : results) {
 			Map<String, Object> result = hit.getSource();
@@ -111,28 +122,6 @@ public class ElasticHelper {
 		return response.getHits().getHits();
 	}
 	
-	private void indexFlights(Collection<Flight> flights, String raw) {
-		for (Flight f : flights) {
-			IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "flight", String.valueOf(f.getId()));		
-			IndexedFlightVo vo = new IndexedFlightVo();
-			BeanUtils.copyProperties(f, vo);
-			vo.setRaw(raw);
-			indexRequest.source(gson.toJson(vo));
-			IndexResponse response = this.client.index(indexRequest).actionGet();
-		}
-	}
-
-	private void indexPassengers(Collection<Passenger> passengers, String raw) {
-		for (Passenger p : passengers) {
-			IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "passenger", String.valueOf(p.getId()));		
-			IndexedPassengerVo vo = new IndexedPassengerVo();
-			BeanUtils.copyProperties(p, vo);
-			vo.setRaw(raw);
-			indexRequest.source(gson.toJson(vo));
-			IndexResponse response = this.client.index(indexRequest).actionGet();
-		}
-	}
-
 	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {
 		for (Passenger p : passengers) {
 			for (Flight f : flights) {
@@ -149,6 +138,4 @@ public class ElasticHelper {
 			}
 		}
 	}
-
-
 }

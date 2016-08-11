@@ -122,7 +122,7 @@ public class PnrMessageService extends MessageLoaderService {
         boolean ret = true;
         try {
             msgDao.save(m);
-    		indexer.indexPnr(m);            
+        	indexer.indexPnr(m);
         } catch (Exception e) {
             ret = false;
             handleException(e, MessageStatus.FAILED_LOADING);
