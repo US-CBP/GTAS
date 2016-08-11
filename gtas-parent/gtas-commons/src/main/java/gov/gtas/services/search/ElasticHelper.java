@@ -87,6 +87,8 @@ public class ElasticHelper {
 			vo.setFirstName((String)result.get("firstName"));
 			vo.setLastName((String)result.get("lastName"));
 			vo.setMiddleName((String)result.get("middleName"));
+			String flightNumber = (String)result.get("carrier") + (String)result.get("flightNumber");
+			vo.setFlightNumber(flightNumber);
 		}	
 
 		return rv;

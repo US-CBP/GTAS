@@ -9,6 +9,13 @@
     </md-input-container>
   </div>
 
-  <md-button class="md-raised">Find Passengers</md-button>
+  <md-button class="md-raised" ng-click="searchPax()">Find Passengers</md-button>
   <md-button class="md-raised">Find Flights</md-button>
+
+  <div id="resultsGrid" ui-grid="resultsGrid"
+     ui-grid-pagination
+     ui-grid-expandable
+     ui-grid-auto-resize
+     class="grid"></div>
+
 </md-content>
