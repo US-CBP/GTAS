@@ -41,7 +41,15 @@ public class AuditActionTarget implements Serializable {
 	 */
 	public AuditActionTarget(Passenger passenger) {
 		this.targetType = "PASSENGER";
-		this.targetName = null;
+		StringBuilder sb = new StringBuilder();
+		if (passenger.getFirstName() != null) {
+			sb.append(passenger.getFirstName());
+		} else if (passenger.getMiddleName() != null) {
+			sb.append(" " + passenger.getMiddleName());
+		} else if (passenger.getLastName() != null) {
+			sb.append(" " + passenger.getLastName());
+		}
+		this.targetName = sb.toString();
 		this.targetId = String.valueOf(passenger.getId());
 	}
 
@@ -94,8 +102,7 @@ public class AuditActionTarget implements Serializable {
 			return "RULE ENGINE";
 		case UPDATE_DASHBOARD_RUN:
 			return "DASHBOARD";
-		case MESSAGE_INGEST:
-		case MESSAGE_PARSING:
+		case MESSAGE_INGEST_PARSING:
 			return "API/PNR MESSAGE";
 		case RULE_HIT:
 			return "RULE";

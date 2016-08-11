@@ -275,12 +275,14 @@ public class AuditLogPersistenceServiceIT {
 
 		Passenger testPassenger = new Passenger();
 		testPassenger.setId(99990L);
-
+		testPassenger.setFirstName("JJ");
+		testPassenger.setMiddleName("Marc");
+		testPassenger.setLastName("Strong");
 		AuditActionTarget target = new AuditActionTarget(testPassenger);
 		AuditActionData actionData = new AuditActionData();
 		actionData.addProperty("testProperty",
 				String.valueOf(testPassenger.getId()));
-		String message = "Message Loader run on " + new Date();
+		String message = "Passenger rule hit run on " + new Date();
 		testTarget.create(AuditActionType.RULE_HIT, target, actionData,
 				message, user.getUserId());
 
