@@ -283,7 +283,7 @@ public class AuditLogPersistenceServiceIT {
 		actionData.addProperty("testProperty",
 				String.valueOf(testPassenger.getId()));
 		String message = "Passenger rule hit run on " + new Date();
-		testTarget.create(AuditActionType.RULE_HIT, target, actionData,
+		testTarget.create(AuditActionType.RULE_HIT_CASE_OPEN, target, actionData,
 				message, user.getUserId());
 
 		List<AuditRecord> recList = testTarget.findByTarget(target.toString());

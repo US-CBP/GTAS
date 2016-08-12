@@ -104,10 +104,8 @@ public class AuditActionTarget implements Serializable {
 			return "DASHBOARD";
 		case MESSAGE_INGEST_PARSING:
 			return "API/PNR MESSAGE";
-		case RULE_HIT:
-			return "RULE";
-		case CASE_OPEN:
-			return "CASE MANAGEMENT";
+		case RULE_HIT_CASE_OPEN:
+			return "RULE & CASE MANAGEMENT";
 		case DISPOSITION_STATUS_CHANGE:
 			return "DISPOSITION";
 		default:
