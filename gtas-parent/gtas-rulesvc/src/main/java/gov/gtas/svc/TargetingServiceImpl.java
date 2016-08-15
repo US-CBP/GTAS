@@ -20,7 +20,6 @@ import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.enumtype.YesNoEnum;
-import gov.gtas.error.ErrorHandler;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -33,7 +32,6 @@ import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
-import gov.gtas.model.User;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -51,7 +49,6 @@ import gov.gtas.rule.RuleService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.HitsSummaryService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.services.udr.RulePersistenceService;
@@ -69,7 +66,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,8 +134,6 @@ public class TargetingServiceImpl implements TargetingService {
 
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private UserServiceUtil userServiceUtil;
 
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
@@ -581,36 +575,35 @@ public class TargetingServiceImpl implements TargetingService {
 		try {
 			AuditActionTarget target = new AuditActionTarget(passenger);
 			AuditActionData actionData = new AuditActionData();
-			StringBuilder sb = new StringBuilder();
-			if (passenger.getFirstName() != null) {
-				sb.append(passenger.getFirstName());
-			} else if (passenger.getMiddleName() != null) {
-				sb.append(" " + passenger.getMiddleName());
-			} else if (passenger.getLastName() != null) {
-				sb.append(" " + passenger.getLastName());
-			}
-			actionData.addProperty("Passenger Name", sb.toString());
+
+			actionData.addProperty("Embarkation", passenger.getEmbarkation());
+			actionData.addProperty("EmbarkCountry",
+					passenger.getEmbarkCountry());
+			actionData.addProperty("Debarkation", passenger.getDebarkation());
+			actionData.addProperty("DebarkCountry",
+					passenger.getDebarkCountry());
+			actionData.addProperty("CitizenshipCountry",
+					passenger.getCitizenshipCountry());
 			actionData.addProperty("PassengerType",
 					passenger.getPassengerType());
 
-			// 
+			//
 			String message = "API/PNR MESSAGE Ingest and Parsing  "
 					+ passenger.getCreatedAt();
-			String targetStr = target != null ? target.toString()
-					: StringUtils.EMPTY;
-			String actionDataStr = actionData != null ? actionData.toString()
-					: StringUtils.EMPTY;
 			auditLogRepository.save(new AuditRecord(
-					AuditActionType.MESSAGE_INGEST_PARSING, targetStr,
-					Status.SUCCESS, message, actionDataStr,
-					fetchUser(GTAS_APPLICATION_USERID), passenger.getCreatedAt()));
+					AuditActionType.MESSAGE_INGEST_PARSING, target.toString(),
+					Status.SUCCESS, message, actionData.toString(),
+					userService.fetchUser(GTAS_APPLICATION_USERID), passenger
+							.getCreatedAt()));
 			//
 			String message2 = "Passenger Rule Hit and Case Open run on "
-					+ new Date();			
-			auditLogRepository.save(new AuditRecord(
-					AuditActionType.RULE_HIT_CASE_OPEN, targetStr,
-					Status.SUCCESS, message2, actionDataStr,
-					fetchUser(GTAS_APPLICATION_USERID), new Date()));
+					+ new Date();
+			auditLogRepository
+					.save(new AuditRecord(AuditActionType.RULE_HIT_CASE_OPEN,
+							target.toString(), Status.SUCCESS, message2,
+							actionData.toString(), userService
+									.fetchUser(GTAS_APPLICATION_USERID),
+							new Date()));
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
@@ -645,27 +638,5 @@ public class TargetingServiceImpl implements TargetingService {
 		hitDetail.setParent(hitsSummary);
 		logger.info("Exiting createHitDetail().");
 		return hitDetail;
-	}
-
-	/**
-	 * Fetches the user object and throws an unchecked exception if the user
-	 * cannot be found.
-	 * 
-	 * @param userId
-	 *            the ID of the user to fetch.
-	 * @return the user fetched from the DB.
-	 */
-	private User fetchUser(final String userId) {
-		UserData userData = userService.findById(userId);
-		User user = null;
-		if (userData != null) {
-			user = userServiceUtil.mapUserEntityFromUserData(userData);
-		}
-		if (user == null || user.getUserId() == null) {
-			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
-					CommonErrorConstants.INVALID_USER_ID_ERROR_CODE, userId);
-		}
-		return user;
 	}
 }

@@ -6,19 +6,14 @@
 package gov.gtas.services;
 
 import static gov.gtas.constant.AuditLogConstants.AUDIT_LOG_WARNING_CANNOT_CONVERT_JSON_TO_STRING;
-import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
-import gov.gtas.error.ErrorHandler;
-import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
 import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
-import gov.gtas.services.security.UserServiceUtil;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -34,6 +29,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * The Class AuditLogPersistenceServiceImpl.
+ */
 @Service
 public class AuditLogPersistenceServiceImpl implements
 		AuditLogPersistenceService {
@@ -46,8 +44,6 @@ public class AuditLogPersistenceServiceImpl implements
 
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private UserServiceUtil userServiceUtil;
 
 	@Override
 	public AuditRecord create(AuditRecord aRec) {
@@ -71,7 +67,7 @@ public class AuditLogPersistenceServiceImpl implements
 
 	@Override
 	public List<AuditRecord> findByUser(String userId) {
-		User user = fetchUser(userId);
+		User user = userService.fetchUser(userId);
 		return auditLogRepository.findByUser(user);
 	}
 
@@ -83,7 +79,7 @@ public class AuditLogPersistenceServiceImpl implements
 	@Override
 	public List<AuditRecord> findByUserAndActionType(
 			AuditActionType actionType, String userId) {
-		User user = fetchUser(userId);
+		User user = userService.fetchUser(userId);
 		return auditLogRepository.findByUserAndActionType(user, actionType);
 	}
 
@@ -96,7 +92,7 @@ public class AuditLogPersistenceServiceImpl implements
 	 */
 	@Override
 	public List<AuditRecord> findByUserAndTarget(String userId, String target) {
-		User user = fetchUser(userId);
+		User user = userService.fetchUser(userId);
 		return auditLogRepository.findByUserAndTarget(user, target);
 	}
 
@@ -185,7 +181,7 @@ public class AuditLogPersistenceServiceImpl implements
 	@Override
 	public AuditRecord create(AuditActionType actionType, String target,
 			Object actionData, String message, String userId) {
-		User user = fetchUser(userId);
+		User user = userService.fetchUser(userId);
 		return create(actionType, target, actionData, message, user);
 	}
 
@@ -205,11 +201,11 @@ public class AuditLogPersistenceServiceImpl implements
 		boolean byUser = !StringUtils.isEmpty(userId);
 		Date today = new Date();
 		if (dateFrom != null && byUser && action != null) {
-			User user = fetchUser(userId);
+			User user = userService.fetchUser(userId);
 			ret = auditLogRepository.findByUserActionTimestampRange(user,
 					action, dateFrom, dateTo != null ? dateTo : today);
 		} else if (dateFrom != null && byUser) {
-			User user = fetchUser(userId);
+			User user = userService.fetchUser(userId);
 			ret = auditLogRepository.findByUserTimestampRange(user, dateFrom,
 					dateTo != null ? dateTo : today);
 		} else if (dateFrom != null && action != null) {
@@ -219,37 +215,15 @@ public class AuditLogPersistenceServiceImpl implements
 			ret = auditLogRepository.findByTimestampRange(dateFrom,
 					dateTo != null ? dateTo : today);
 		} else if (byUser && action != null) {
-			User user = fetchUser(userId);
+			User user = userService.fetchUser(userId);
 			ret = auditLogRepository.findByUserAndActionType(user, action);
 		} else if (byUser) {
-			User user = fetchUser(userId);
+			User user = userService.fetchUser(userId);
 			ret = auditLogRepository.findByUser(user);
 		} else if (action != null) {
 			ret = auditLogRepository.findByActionType(action);
 		}
 		return ret;
-	}
-
-	/**
-	 * Fetches the user object and throws an unchecked exception if the user
-	 * cannot be found.
-	 * 
-	 * @param userId
-	 *            the ID of the user to fetch.
-	 * @return the user fetched from the DB.
-	 */
-	private User fetchUser(final String userId) {
-		UserData userData = userService.findById(userId);
-		User user = null;
-		if (userData != null) {
-			user = userServiceUtil.mapUserEntityFromUserData(userData);
-		}
-		if (user == null || user.getUserId() == null) {
-			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
-					CommonErrorConstants.INVALID_USER_ID_ERROR_CODE, userId);
-		}
-		return user;
 	}
 
 }
