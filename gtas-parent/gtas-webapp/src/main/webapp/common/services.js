@@ -117,7 +117,11 @@
                     'SUSPEND_USER',
                     'DELETE_USER',
                     'TARGETING_RUN',
-                    'LOADER_RUN'
+                    'LOADER_RUN',
+                    'UPDATE_DASHBOARD_RUN',
+                    'MESSAGE_INGEST_PARSING',
+                    'RULE_HIT_CASE_OPEN',
+                    'DISPOSITION_STATUS_CHANGE'
                 ]
             };
         })
