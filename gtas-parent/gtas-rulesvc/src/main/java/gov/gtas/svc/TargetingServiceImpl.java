@@ -576,12 +576,6 @@ public class TargetingServiceImpl implements TargetingService {
 			AuditActionTarget target = new AuditActionTarget(passenger);
 			AuditActionData actionData = new AuditActionData();
 
-			actionData.addProperty("Embarkation", passenger.getEmbarkation());
-			actionData.addProperty("EmbarkCountry",
-					passenger.getEmbarkCountry());
-			actionData.addProperty("Debarkation", passenger.getDebarkation());
-			actionData.addProperty("DebarkCountry",
-					passenger.getDebarkCountry());
 			actionData.addProperty("CitizenshipCountry",
 					passenger.getCitizenshipCountry());
 			actionData.addProperty("PassengerType",
