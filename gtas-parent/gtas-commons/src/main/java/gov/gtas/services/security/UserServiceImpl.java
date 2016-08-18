@@ -6,7 +6,6 @@
 package gov.gtas.services.security;
 
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.error.ErrorHandler;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.Filter;
 import gov.gtas.model.Role;
@@ -147,18 +146,14 @@ public class UserServiceImpl implements UserService {
 	 *            the ID of the user to fetch.
 	 * @return the user fetched from the DB.
 	 */
+	@Override
 	public User fetchUser(final String userId) {
 		UserData userData = findById(userId);
-		User user = null;
-		if (userData != null) {
-			user = userServiceUtil.mapUserEntityFromUserData(userData);
-		}
-		if (user.getUserId() == null) {
-			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
+		if (userData == null) {
+			throw ErrorHandlerFactory.getErrorHandler().createException(
 					CommonErrorConstants.INVALID_USER_ID_ERROR_CODE, userId);
 		}
-		return user;
+		return userServiceUtil.mapUserEntityFromUserData(userData);
 	}
 
 }

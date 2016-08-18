@@ -21,17 +21,27 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * The Class UserServiceUtil.
+ */
 @Component
 public class UserServiceUtil {
 
 	@Autowired
 	private FilterServiceUtil filterServiceUtil;
 
+	/**
+	 * Gets the user data list from entity collection.
+	 *
+	 * @param userEntities
+	 *            the user entities
+	 * @return the user data list from entity collection
+	 */
 	public List<UserData> getUserDataListFromEntityCollection(
 			Iterable<User> userEntities) {
 
-		Stream<User> aStream = StreamSupport
-				.stream(userEntities.spliterator(), false);
+		Stream<User> aStream = StreamSupport.stream(userEntities.spliterator(),
+				false);
 
 		List<UserData> users = (List<UserData>) aStream.map(
 				new Function<User, UserData>() {
@@ -66,10 +76,14 @@ public class UserServiceUtil {
 		return users;
 	}
 
+	/**
+	 * Map user data from entity.
+	 *
+	 * @param entity
+	 *            the entity
+	 * @return the user data
+	 */
 	public UserData mapUserDataFromEntity(User entity) {
-
-		// System.out.println(entity);
-
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(new Function<Role, RoleData>() {
 					@Override
@@ -86,13 +100,18 @@ public class UserServiceUtil {
 					.getFilter());
 		}
 
-		UserData userData = new UserData(entity.getUserId(),
-				entity.getPassword(), entity.getFirstName(),
-				entity.getLastName(), entity.getActive(), roles, filterData);
-
-		return userData;
+		return new UserData(entity.getUserId(), entity.getPassword(),
+				entity.getFirstName(), entity.getLastName(),
+				entity.getActive(), roles, filterData);
 	}
 
+	/**
+	 * Map user entity from user data.
+	 *
+	 * @param userData
+	 *            the user data
+	 * @return the user
+	 */
 	public User mapUserEntityFromUserData(UserData userData) {
 
 		Set<Role> roles = userData.getRoles().stream()
@@ -112,10 +131,8 @@ public class UserServiceUtil {
 					.getFilter());
 		}
 
-		User user = new User(userData.getUserId(), userData.getPassword(),
+		return new User(userData.getUserId(), userData.getPassword(),
 				userData.getFirstName(), userData.getLastName(),
 				userData.getActive(), roles, filter);
-
-		return user;
 	}
 }
