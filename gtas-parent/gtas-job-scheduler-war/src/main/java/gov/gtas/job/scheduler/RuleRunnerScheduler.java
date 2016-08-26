@@ -63,7 +63,13 @@ public class RuleRunnerScheduler {
 			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
 			targetingService.updateFlightHitCounts(uniqueFlights);
 		} catch (Exception exception) {
-			logger.error(exception.getCause().getMessage());
+			String msg = null;
+			if (exception.getCause() != null) {
+				msg = exception.getCause().getMessage();
+			} else {
+				msg = exception.getMessage();
+			}
+			logger.error(msg);
 			ErrorDetailInfo errInfo = ErrorHandlerFactory.createErrorDetails(
 					RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE,
 					exception);
