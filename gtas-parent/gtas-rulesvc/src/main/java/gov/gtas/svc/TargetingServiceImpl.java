@@ -20,6 +20,7 @@ import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.enumtype.YesNoEnum;
+import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -50,7 +51,6 @@ import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.HitsSummaryService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.security.UserService;
-import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.TargetingResultUtils;
@@ -334,18 +334,31 @@ public class TargetingServiceImpl implements TargetingService {
 		logger.info("Entering analyzeLoadedMessages()");
 		Iterator<Message> source = messageRepository.findByStatus(
 				MessageStatus.LOADED).iterator();
-		List<Message> target = new ArrayList<Message>();
+		List<Message> target = new ArrayList<>();
 		source.forEachRemaining(target::add);
-
-		RuleExecutionContext ctx = executeRules(target);
-
-		logger.info("updating messages status from loaded to analyzed.");
-		if (updateProcesssedMessageStat) {
-			for (Message message : target) {
-				message.setStatus(MessageStatus.ANALYZED);
+		RuleExecutionContext ctx = null;
+		try {
+			ctx = executeRules(target);
+			logger.info("updating messages status from loaded to analyzed.");
+			if (updateProcesssedMessageStat) {
+				for (Message message : target) {
+					message.setStatus(MessageStatus.ANALYZED);
+				}
+			}
+			logger.info("Exiting analyzeLoadedMessages()");
+			return ctx;
+		} catch (CommonServiceException cse) {
+			if (cse.getErrorCode().equals(
+					RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
+					|| cse.getErrorCode().equals(
+							RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE)) {
+				logger.info("************************");
+				logger.info(cse.getMessage());
+				logger.info("************************");
+			} else {
+				throw cse;
 			}
 		}
-		logger.info("Exiting analyzeLoadedMessages()");
 		return ctx;
 	}
 
@@ -441,24 +454,31 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#runningRuleEngine()
+	 */
 	@Transactional
 	public Set<Long> runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
-		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
-		RuleExecutionStatistics ruleExeStatus = ruleRunningResult
-				.getRuleExecutionStatistics();
-		if (logger.isInfoEnabled()) {
-			logger.info("TargetingServiceImpl.runningRuleEngine() - Total Rules fired. --> "
-					+ ruleExeStatus.getTotalRulesFired());
-		}
-
-		List<HitsSummary> hitsSummary = storeHitsInfo(ruleRunningResult);
 		Set<Long> uniqueFlights = new HashSet<>();
-		for (HitsSummary s : hitsSummary) {
-			passengerService.createDisposition(s);
-			uniqueFlights.add(s.getFlight().getId());
+		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
+		if (ruleRunningResult != null) {
+			RuleExecutionStatistics ruleExeStatus = ruleRunningResult
+					.getRuleExecutionStatistics();
+			if (logger.isInfoEnabled()) {
+				logger.info("TargetingServiceImpl.runningRuleEngine() - Total Rules fired. --> "
+						+ ruleExeStatus.getTotalRulesFired());
+			}
+
+			List<HitsSummary> hitsSummary = storeHitsInfo(ruleRunningResult);
+			for (HitsSummary s : hitsSummary) {
+				passengerService.createDisposition(s);
+				uniqueFlights.add(s.getFlight().getId());
+			}
+			writeAuditLogForTargetingRun(ruleRunningResult);
 		}
-		writeAuditLogForTargetingRun(ruleRunningResult);
 		logger.info("Exiting runningRuleEngine().");
 		return uniqueFlights;
 	}
@@ -586,8 +606,8 @@ public class TargetingServiceImpl implements TargetingService {
 					+ passenger.getCreatedAt();
 			auditLogRepository.save(new AuditRecord(
 					AuditActionType.MESSAGE_INGEST_PARSING, target.toString(),
-					Status.SUCCESS, message, actionData.toString(),
-					userService.fetchUser(GTAS_APPLICATION_USERID), passenger
+					Status.SUCCESS, message, actionData.toString(), userService
+							.fetchUser(GTAS_APPLICATION_USERID), passenger
 							.getCreatedAt()));
 			//
 			String message2 = "Passenger Rule Hit and Case Open run on "
