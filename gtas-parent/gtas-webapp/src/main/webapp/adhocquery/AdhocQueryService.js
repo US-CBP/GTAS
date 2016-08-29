@@ -16,12 +16,12 @@ app.service("adhocQueryService", function ($http, $q) {
         return dfd.promise;
     }
 
-    function getPassengers(query, page) {
+    function getPassengers(query, page, pageSize) {
         var dfd = $q.defer();
         dfd.resolve($http({
             method: 'get',
             url: "/gtas/search/queryPassengers",
-            params: { query: query, pageNumber: page }
+            params: { query: query, pageNumber: page, pageSize: pageSize }
         }));
         return dfd.promise;
     }

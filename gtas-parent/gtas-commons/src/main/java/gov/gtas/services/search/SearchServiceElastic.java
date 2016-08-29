@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.vo.passenger.PassengerVo;
 
 @Service
@@ -18,7 +19,7 @@ public class SearchServiceElastic implements SearchService {
 	private ElasticHelper elastic;
 	
 	@Override
-	public List<PassengerVo> findPassengers(String query, int pageNumber) {
-		return elastic.searchPassengers(query, pageNumber);
+	public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize) {
+		return elastic.searchPassengers(query, pageNumber, pageSize);
 	}
 }

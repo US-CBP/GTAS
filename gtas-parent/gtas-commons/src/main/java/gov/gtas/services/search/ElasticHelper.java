@@ -23,6 +23,7 @@ import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -34,6 +35,7 @@ import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
+import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.passenger.PassengerVo;
 
@@ -80,12 +82,13 @@ public class ElasticHelper {
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), raw);
 	}
 	
-	public List<PassengerVo> searchPassengers(String query, int pageNumber) {
-		List<PassengerVo> rv = new ArrayList<>();
-		if (isDown()) { return rv; }
+	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize) {
+		ArrayList<PassengerVo> rv = new ArrayList<>();
+		if (isDown()) { return new AdhocQueryDto(null,null,0); }
 
-		SearchHit[] results = search(query, pageNumber);
-		for (SearchHit hit : results) {
+		SearchHits results = search(query, pageNumber, pageSize);
+		SearchHit[] resultsArry = results.getHits();
+		for (SearchHit hit : resultsArry) {
 			Map<String, Object> result = hit.getSource();
 			PassengerVo vo = new PassengerVo();
 			rv.add(vo);
@@ -102,24 +105,25 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 		}	
 
-		return rv;
+		return new AdhocQueryDto(rv,null,results.getTotalHits());
 	}
 	
-	private SearchHit[] search(String query, int pageNumber) {
-		final int PAGE_SIZE = 10;
-        int startIndex = (pageNumber - 1) * PAGE_SIZE;
+	private SearchHits search(String query, int pageNumber, int pageSize) {
+        int startIndex = (pageNumber - 1) * pageSize;
 
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes("flightpax")
-			    .setSearchType(SearchType.QUERY_AND_FETCH)
+			    .setSearchType(SearchType.QUERY_THEN_FETCH)
 			    .setQuery(QueryBuilders.matchPhrasePrefixQuery("raw", query))
 			    .setFrom(startIndex)
-			    .setSize(PAGE_SIZE)
+			    .setSize(pageSize)
 			    .setExplain(true)
 			    .execute()
 			    .actionGet();
 		
-		return response.getHits().getHits();
+		response.getHits().getTotalHits();
+		
+		return response.getHits();
 	}
 	
 	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {

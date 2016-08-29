@@ -7,8 +7,9 @@ package gov.gtas.services.search;
 
 import java.util.List;
 
+import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.vo.passenger.PassengerVo;
 
 public interface SearchService {
-    public List<PassengerVo> findPassengers(String query, int pageNumber);
+    public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize);
 }

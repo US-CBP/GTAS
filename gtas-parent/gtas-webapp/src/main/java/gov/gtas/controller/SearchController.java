@@ -19,8 +19,8 @@ import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
+import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.services.search.SearchService;
-import gov.gtas.vo.passenger.PassengerVo;
 
 @RestController
 @RequestMapping(Constants.SEARCH_SERVICE)
@@ -33,9 +33,10 @@ public class SearchController {
     @RequestMapping(value = Constants.RUN_SEARCH_PASSENGER_URI, method=RequestMethod.GET)
     public JsonServiceResponse runPassengerQuery(
     		@RequestParam(value = "query") String query,
-    		@RequestParam(value = "pageNumber") Integer pageNumber) throws InvalidQueryException {
+    		@RequestParam(value = "pageNumber") Integer pageNumber,
+    		@RequestParam(value="pageSize") Integer pageSize) throws InvalidQueryException {
         logger.info("Executing search query: ");
-        List<PassengerVo> pax = searchService.findPassengers(query, pageNumber);
-        return new JsonServiceResponse(Status.SUCCESS, "success" , pax);
+        AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize);
+        return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
     }       
 }
