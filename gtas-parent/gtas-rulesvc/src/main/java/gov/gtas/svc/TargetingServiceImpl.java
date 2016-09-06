@@ -146,6 +146,13 @@ public class TargetingServiceImpl implements TargetingService {
 		ruleService = rulesvc;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.svc.TargetingService#analyzeApisMessage(gov.gtas.model.ApisMessage
+	 * )
+	 */
 	@Override
 	@Transactional
 	public RuleServiceResult analyzeApisMessage(ApisMessage message) {
@@ -166,6 +173,13 @@ public class TargetingServiceImpl implements TargetingService {
 		return res;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.svc.TargetingService#applyRules(gov.gtas.bo.RuleServiceRequest,
+	 * java.lang.String)
+	 */
 	@Override
 	public RuleServiceResult applyRules(RuleServiceRequest request,
 			String drlRules) {
@@ -175,6 +189,11 @@ public class TargetingServiceImpl implements TargetingService {
 		return res;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#analyzeApisMessage(long)
+	 */
 	@Override
 	@Transactional
 	public RuleServiceResult analyzeApisMessage(long messageId) {
@@ -189,6 +208,11 @@ public class TargetingServiceImpl implements TargetingService {
 		return res;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#analyzeLoadedApisMessage()
+	 */
 	@Override
 	@Transactional
 	public List<RuleHitDetail> analyzeLoadedApisMessage() {
@@ -205,6 +229,11 @@ public class TargetingServiceImpl implements TargetingService {
 		return ret;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#analyzeLoadedPnr()
+	 */
 	@Override
 	@Transactional
 	public List<RuleHitDetail> analyzeLoadedPnr() {
@@ -221,6 +250,13 @@ public class TargetingServiceImpl implements TargetingService {
 		return ret;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#preProcessing()
+	 */
+	@Override
+	@Transactional
 	public void preProcessing() {
 		logger.info("Entering preProcessing()");
 		// check if there are rules (undeleted & enabled)
@@ -239,8 +275,8 @@ public class TargetingServiceImpl implements TargetingService {
 
 			List<Message> loadedMessages = new ArrayList<>();
 			source.forEachRemaining(loadedMessages::add);
-			Set<Flight> flights = new HashSet<Flight>();
-			Set<Passenger> passengers = new HashSet<Passenger>();
+			Set<Flight> flights = new HashSet<>();
+			Set<Passenger> passengers = new HashSet<>();
 			if (!loadedMessages.isEmpty()) {
 				logger.info("Loaded messages size -->" + loadedMessages.size());
 				for (Message message : loadedMessages) {
@@ -260,6 +296,19 @@ public class TargetingServiceImpl implements TargetingService {
 		logger.info("Exiting preProcessing()");
 	}
 
+	/**
+	 * Delete related records.
+	 *
+	 * @param ruleList
+	 *            the rule list
+	 * @param target
+	 *            the target
+	 * @param flights
+	 *            the flights
+	 * @param passengers
+	 *            the passengers
+	 */
+	@Transactional
 	private void deleteRelatedRecords(List<UdrRule> ruleList,
 			List<WatchlistItem> target, Set<Flight> flights,
 			Set<Passenger> passengers) {
@@ -327,6 +376,11 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#analyzeLoadedMessages(boolean)
+	 */
 	@Override
 	@Transactional
 	public RuleExecutionContext analyzeLoadedMessages(
@@ -362,6 +416,13 @@ public class TargetingServiceImpl implements TargetingService {
 		return ctx;
 	}
 
+	/**
+	 * Execute rules.
+	 *
+	 * @param target
+	 *            the target
+	 * @return the rule execution context
+	 */
 	private RuleExecutionContext executeRules(List<Message> target) {
 		logger.debug("Entering executeRules().");
 
@@ -389,8 +450,8 @@ public class TargetingServiceImpl implements TargetingService {
 							.getErrorHandler()
 							.createException(
 									RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE,
-									(RuleConstants.UDR_KNOWLEDGE_BASE_NAME
-											+ "/" + WatchlistConstants.WL_KNOWLEDGE_BASE_NAME));
+									RuleConstants.UDR_KNOWLEDGE_BASE_NAME
+											+ "/" + WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
 				} else { // No enabled but disabled wl rule exists
 					throw ErrorHandlerFactory
 							.getErrorHandler()
@@ -423,18 +484,37 @@ public class TargetingServiceImpl implements TargetingService {
 		return ctx;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#retrieveApisMessage(gov.gtas.model.
+	 * MessageStatus)
+	 */
 	@Override
 	@Transactional
 	public List<ApisMessage> retrieveApisMessage(MessageStatus messageStatus) {
 		return apisMsgRepository.findByStatus(messageStatus);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.svc.TargetingService#retrievePnr(gov.gtas.model.MessageStatus)
+	 */
 	@Override
 	@Transactional
 	public List<Pnr> retrievePnr(MessageStatus messageStatus) {
 		return pnrMsgRepository.findByStatus(messageStatus);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.svc.TargetingService#updateApisMessage(gov.gtas.model.ApisMessage
+	 * , gov.gtas.model.MessageStatus)
+	 */
 	@Override
 	@Transactional
 	public void updateApisMessage(ApisMessage message,
@@ -445,6 +525,12 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#updatePnr(gov.gtas.model.Pnr,
+	 * gov.gtas.model.MessageStatus)
+	 */
 	@Override
 	@Transactional
 	public void updatePnr(Pnr message, MessageStatus messageStatus) {
@@ -460,6 +546,7 @@ public class TargetingServiceImpl implements TargetingService {
 	 * @see gov.gtas.svc.TargetingService#runningRuleEngine()
 	 */
 	@Transactional
+	@Override
 	public Set<Long> runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
 		Set<Long> uniqueFlights = new HashSet<>();
@@ -483,10 +570,16 @@ public class TargetingServiceImpl implements TargetingService {
 		return uniqueFlights;
 	}
 
+	/**
+	 * Write audit log for targeting run.
+	 *
+	 * @param targetingResult
+	 *            the targeting result
+	 */
 	private void writeAuditLogForTargetingRun(
 			RuleExecutionContext targetingResult) {
 		try {
-			Set<Long> passengerHits = new HashSet<Long>();
+			Set<Long> passengerHits = new HashSet<>();
 			int ruleHits = 0;
 			int wlHits = 0;
 			for (TargetSummaryVo hit : targetingResult.getTargetingResult()) {
@@ -511,7 +604,13 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.svc.TargetingService#updateFlightHitCounts(java.util.Set)
+	 */
 	@Transactional
+	@Override
 	public void updateFlightHitCounts(Set<Long> flights) {
 		logger.info("Entering updateFlightHitCounts().");
 		if (CollectionUtils.isEmpty(flights)) {
@@ -525,11 +624,18 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/**
+	 * Store hits info.
+	 *
+	 * @param ruleRunningResult
+	 *            the rule running result
+	 * @return the list
+	 */
 	private List<HitsSummary> storeHitsInfo(
 			RuleExecutionContext ruleRunningResult) {
 		logger.info("Entering storeHitsInfo().");
 
-		List<HitsSummary> hitsSummaryList = new ArrayList<HitsSummary>();
+		List<HitsSummary> hitsSummaryList = new ArrayList<>();
 		Collection<TargetSummaryVo> results = ruleRunningResult
 				.getTargetingResult();
 
@@ -576,7 +682,7 @@ public class TargetingServiceImpl implements TargetingService {
 
 		hitsSummary.setRuleHitCount(hitSummmaryVo.getRuleHitCount());
 		hitsSummary.setWatchListHitCount(hitSummmaryVo.getWatchlistHitCount());
-		List<HitDetail> detailList = new ArrayList<HitDetail>();
+		List<HitDetail> detailList = new ArrayList<>();
 		for (TargetDetailVo hdv : hitSummmaryVo.getHitDetails()) {
 			detailList.add(createHitDetail(hitsSummary, hdv));
 		}
@@ -623,6 +729,15 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
+	/**
+	 * Creates the hit detail.
+	 *
+	 * @param hitsSummary
+	 *            the hits summary
+	 * @param hitDetailVo
+	 *            the hit detail vo
+	 * @return the hit detail
+	 */
 	private HitDetail createHitDetail(HitsSummary hitsSummary,
 			TargetDetailVo hitDetailVo) {
 		logger.info("Entering createHitDetail().");

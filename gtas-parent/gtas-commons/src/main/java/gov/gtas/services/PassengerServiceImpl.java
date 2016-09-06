@@ -256,7 +256,7 @@ public class PassengerServiceImpl implements PassengerService {
 					AuditActionType.DISPOSITION_STATUS_CHANGE, target
 							.toString(), Status.SUCCESS, message, actionData
 							.toString(), userService.fetchUser(GTAS_APPLICATION_USERID),
-					passenger.getCreatedAt()));
+					new Date()));
 
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
