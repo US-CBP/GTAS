@@ -176,8 +176,7 @@ public class QueryBuilderService {
         }
             
         try {
-            PassengerQueryVo resultList = queryRepository.getPassengersByDynamicQuery(queryRequest);
-            
+        	PassengerQueryVo resultList = queryRepository.getPassengersByDynamicQuery(queryRequest);
             if(resultList == null) {
                 return new PassengersPageDto(passengerList, totalCount);
             }

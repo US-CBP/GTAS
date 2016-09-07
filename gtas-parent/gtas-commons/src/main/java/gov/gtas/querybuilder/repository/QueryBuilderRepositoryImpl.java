@@ -310,7 +310,6 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
             String operator = queryTerm.getOperator();
             String value = (queryTerm.getValue() != null && queryTerm.getValue().length == 1) ? queryTerm.getValue()[0]:null;
             EntityEnum entityEnum = EntityEnum.getEnum(queryTerm.getEntity());
-            
             // These four operators don't have any value ex. where firstname IS NULL
             // field isRuleHit doesn't have any value either
             if(!OperatorEnum.IS_EMPTY.toString().equalsIgnoreCase(operator) &&
@@ -336,7 +335,13 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
                                 query.setParameter(positionalParameter.intValue(), Long.parseLong(values.get(0)));
                                 positionalParameter.increment();
                                 query.setParameter(positionalParameter.intValue(), Long.parseLong(values.get(1)));
-                            } else {
+                            }
+                            else if(entityEnum == EntityEnum.PNR && field.equalsIgnoreCase(Constants.PNR_ID)){
+                            	query.setParameter(positionalParameter.intValue(), Long.parseLong(values.get(0)));
+                            	positionalParameter.increment();
+                            	query.setParameter(positionalParameter.intValue(), Long.parseLong(values.get(1)));
+                            }
+                            else {
                                 query.setParameter(positionalParameter.intValue(), Integer.parseInt(values.get(0)));
                                 positionalParameter.increment();
                                 query.setParameter(positionalParameter.intValue(), Integer.parseInt(values.get(1)));
@@ -382,7 +387,17 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
                                 }
                             }
                             query.setParameter(positionalParameter.intValue(), vals);
-                        } else {
+                        } 
+                        else if(entityEnum == EntityEnum.PNR && field.equalsIgnoreCase(Constants.PNR_ID)){
+                        	List<Long> vals = new ArrayList<>();
+                            if(values != null) {
+                                for(String val : values) {
+                                    vals.add(Long.parseLong(val));
+                                }
+                            }
+                            query.setParameter(positionalParameter.intValue(), vals);
+                        }
+                        else {
                             List<Integer> vals = new ArrayList<>();
                             if(values != null) {
                                 for(String val : values) {
@@ -439,7 +454,11 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
                     if(TypeEnum.INTEGER.toString().equalsIgnoreCase(type)) {
                         if(entityEnum == EntityEnum.HITS && field.equalsIgnoreCase(Constants.HITS_ID)) {
                             query.setParameter(positionalParameter.intValue(), Long.parseLong(value));
-                        } else {
+                        } 
+                        else if(entityEnum == EntityEnum.PNR && field.equalsIgnoreCase(Constants.PNR_ID)){
+                        	query.setParameter(positionalParameter.intValue(), Long.parseLong(value));
+                        }
+                        else {
                             query.setParameter(positionalParameter.intValue(), Integer.parseInt(value));
                         }
                     }

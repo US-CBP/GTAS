@@ -41,6 +41,7 @@ public final class Constants {
     
     public static final String IS_RULE_HIT = "isRuleHit";
     public static final String HITS_ID = "id";
+    public static final String PNR_ID = "id";
     public static final String IS_WATCHLIST_HIT = "isWatchListHit";
     public static final String EXISTS_HITS_PREFIX = "exists (select";
     public static final String NOT_EXISTS_HITS_PREFIX = "not exists (select";

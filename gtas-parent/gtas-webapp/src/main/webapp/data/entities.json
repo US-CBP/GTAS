@@ -983,6 +983,15 @@
         "dataSource": "form_of_payment_types"
       },
       {
+        "id": "Pnr.id",
+        "label": "Pnr Id",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL"
+        ]
+      },
+      {
         "id": "Pnr.origin",
         "label": "Origin - Airport",
         "type": "string",
