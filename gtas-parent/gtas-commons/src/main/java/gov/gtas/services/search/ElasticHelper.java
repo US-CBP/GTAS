@@ -93,7 +93,6 @@ public class ElasticHelper {
 			PassengerVo vo = new PassengerVo();
 			rv.add(vo);
 
-			System.out.println(hit.getId());
 			int paxId = (Integer)result.get("passengerId");
 			vo.setId(new Long(paxId));
 			int flightId = (Integer)result.get("flightId");

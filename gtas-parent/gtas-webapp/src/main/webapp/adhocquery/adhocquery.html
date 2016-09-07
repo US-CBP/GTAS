@@ -1,21 +1,23 @@
-
-<md-content layout-md="row" layout-padding="">
+<div layout="column" layout-margin>
   <h2>Quick Query</h2>
 
-  <div>
+  <div flex>
     <md-input-container class="md-block">
       <label>Query</label>
       <input ng-model="query">
     </md-input-container>
   </div>
 
-  <md-button class="md-raised" ng-click="initSearchPax()">Find Passengers</md-button>
-  <md-button class="md-raised">Find Flights</md-button>
+  <div flex>
+    <md-button class="md-raised" ng-click="initSearchPax()">Find Passengers</md-button>
+  </div>
 
-  <div id="resultsGrid" ui-grid="resultsGrid"
-     ui-grid-pagination
-     ui-grid-expandable
-     ui-grid-auto-resize
-     class="grid"></div>
-
-</md-content>
+  <div flex>
+    <div id="resultsGrid" 
+      ui-grid="resultsGrid" 
+      ui-grid-pagination 
+      ui-grid-expandable 
+      ui-grid-auto-resize 
+      class="grid"></div>
+  </div>
+</div>
