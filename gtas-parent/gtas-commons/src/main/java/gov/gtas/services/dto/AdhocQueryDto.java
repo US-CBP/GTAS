@@ -6,32 +6,26 @@
 package gov.gtas.services.dto;
 
 import java.util.List;
-import gov.gtas.vo.passenger.FlightVo;
+
 import gov.gtas.vo.passenger.PassengerVo;
 
-
-//Multipurpose object that should be able to return either passengers or flights alongside their total number of hits for adhoc query
 public class AdhocQueryDto {
+	/** a single page of search results */
 	private List<PassengerVo> passengers;
-	private List<FlightVo> flights;
+	
+	/** total hits returned by search engine */
 	private long totalHits;
 	
-	public AdhocQueryDto(List<PassengerVo> pass, List<FlightVo> flights, long l){
-		this.flights = flights;
+	public AdhocQueryDto(List<PassengerVo> pass, long totalHits){
 		this.passengers = pass;
-		this.totalHits = l;
+		this.totalHits = totalHits;
 	}
 
 	public List<PassengerVo> getPassengers() {
 		return passengers;
 	}
 
-	public List<FlightVo> getFlights() {
-		return flights;
-	}
-
 	public long getTotalHits() {
 		return totalHits;
 	}
-	
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -95,7 +96,7 @@ public class ElasticHelper {
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize) {
 		ArrayList<PassengerVo> rv = new ArrayList<>();
 		if (isDown()) { 
-			return new AdhocQueryDto(null,null,0); 
+			return new AdhocQueryDto(null, 0); 
 		}
 
 		SearchHits results = search(query, pageNumber, pageSize);
@@ -109,14 +110,17 @@ public class ElasticHelper {
 			vo.setId(new Long(paxId));
 			int flightId = (Integer)result.get("flightId");
 			vo.setFlightId(String.valueOf(flightId));
+			vo.setPassengerType((String)result.get("passengerType"));
 			vo.setFirstName((String)result.get("firstName"));
 			vo.setLastName((String)result.get("lastName"));
 			vo.setMiddleName((String)result.get("middleName"));
 			String flightNumber = (String)result.get("carrier") + (String)result.get("flightNumber");
 			vo.setFlightNumber(flightNumber);
+			vo.setFlightOrigin((String)result.get("origin"));
+			vo.setFlightDestination((String)result.get("destination"));
 		}	
 
-		return new AdhocQueryDto(rv, null, results.getTotalHits());
+		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
 	private SearchHits search(String query, int pageNumber, int pageSize) {
