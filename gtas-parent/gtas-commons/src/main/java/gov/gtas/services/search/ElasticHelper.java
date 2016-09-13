@@ -15,7 +15,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
@@ -43,48 +42,61 @@ import gov.gtas.vo.passenger.PassengerVo;
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	public static final String INDEX_NAME = "gtas";
+	public static final String FLIGHTPAX_TYPE = "flightpax";
 
 	private TransportClient client;
 	
-	private Gson gson = new Gson();
-
 	@PostConstruct
-	public void initIt() throws Exception {
+	public void initClient() throws Exception {
+		logger.info("ElasticSearch Client Init");		
 		this.client = TransportClient.builder().build();
 		this.client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
 		List<DiscoveryNode> nodes = this.client.connectedNodes();
 		if (nodes.isEmpty()) {
-			logger.warn("ElasticSearch not available");
-			this.client = null;			
+			logger.warn("Init failed: ElasticSearch not available");
+			closeClient();
+			this.client = null;
 		}
 	}
 
 	@PreDestroy
-	public void shutdown() {
-		if (this.client != null) {
-			this.client.close();
+	public void closeClient() {
+		logger.info("Closing ElasticSearch client");		
+		if (isDown()) { 
+			return; 
 		}
+		this.client.close();
 	}
 	
 	public boolean isDown() {
-		return this.client == null;
+		boolean isDown = this.client == null;
+		if (isDown) {
+			logger.warn("ElasticSearch not available");
+		}
+		return isDown;
 	}
 
 	public void indexPnr(Pnr pnr) {
-		if (isDown()) { return; }
+		if (isDown()) { 
+			return; 
+		}
 		String raw = LobUtils.convertClobToString(pnr.getRaw());
 		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), raw);
 	}
 
 	public void indexApis(ApisMessage apis) {
-		if (isDown()) { return; }
+		if (isDown()) {
+			return;
+		}
 		String raw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), raw);
 	}
 	
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize) {
 		ArrayList<PassengerVo> rv = new ArrayList<>();
-		if (isDown()) { return new AdhocQueryDto(null,null,0); }
+		if (isDown()) { 
+			return new AdhocQueryDto(null,null,0); 
+		}
 
 		SearchHits results = search(query, pageNumber, pageSize);
 		SearchHit[] resultsArry = results.getHits();
@@ -104,14 +116,13 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 		}	
 
-		return new AdhocQueryDto(rv,null,results.getTotalHits());
+		return new AdhocQueryDto(rv, null, results.getTotalHits());
 	}
 	
 	private SearchHits search(String query, int pageNumber, int pageSize) {
         int startIndex = (pageNumber - 1) * pageSize;
-
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
-                .setTypes("flightpax")
+                .setTypes(FLIGHTPAX_TYPE)
 			    .setSearchType(SearchType.QUERY_THEN_FETCH)
 			    .setQuery(QueryBuilders.matchPhrasePrefixQuery("raw", query))
 			    .setFrom(startIndex)
@@ -120,16 +131,15 @@ public class ElasticHelper {
 			    .execute()
 			    .actionGet();
 		
-		response.getHits().getTotalHits();
-		
 		return response.getHits();
 	}
 	
 	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {
+		Gson gson = new Gson();
 		for (Passenger p : passengers) {
 			for (Flight f : flights) {
-				String id = String.format("%s-%s", String.valueOf(p.getId()), String.valueOf(f.getId()));
-				IndexRequest indexRequest = new IndexRequest(INDEX_NAME, "flightpax", id);		
+				String id = String.format("%s-%s", String.valueOf(f.getId()), String.valueOf(p.getId()));
+				IndexRequest indexRequest = new IndexRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);		
 				FlightPassengerVo vo = new FlightPassengerVo();
 				BeanUtils.copyProperties(p, vo);
 				vo.setPassengerId(p.getId());
@@ -137,7 +147,7 @@ public class ElasticHelper {
 				vo.setFlightId(f.getId());
 				vo.setRaw(raw);
 				indexRequest.source(gson.toJson(vo));
-				IndexResponse response = this.client.index(indexRequest).actionGet();
+				client.index(indexRequest).actionGet();
 			}
 		}
 	}
