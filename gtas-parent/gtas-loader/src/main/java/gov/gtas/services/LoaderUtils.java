@@ -217,6 +217,14 @@ public class LoaderUtils {
         Agency a = new Agency();
         a.setCreatedBy(LOADER_USER);
         BeanUtils.copyProperties(vo, a);
+        if(StringUtils.isNotBlank(vo.getCity())){
+        	String cityCode=vo.getCity();
+        	Airport aPort=airportService.getAirportByThreeLetterCode(vo.getCity());
+        	if(aPort !=null && StringUtils.isNotBlank(aPort.getCity())){
+        		cityCode=aPort.getCity();
+        	}
+        	a.setCity(cityCode);
+        }
         return a;
     }
     

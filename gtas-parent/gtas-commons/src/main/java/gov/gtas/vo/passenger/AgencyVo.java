@@ -11,8 +11,15 @@ public class AgencyVo {
     private String identifier;
     private String country;
     private String phone;
+    private String city;
     
-    public String getName() {
+    public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getName() {
         return name;
     }
     public void setName(String name) {

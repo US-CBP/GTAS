@@ -129,6 +129,7 @@ public class PnrGen {
         String id=""+GenUtil.getRandomNumber(9999);
         sb.append("TIF+"+pax.getLastName()+"+"+pax.getFirstName()+":A:"+id+":"+pax.getId()+"'"+newline);
         sb.append("FTI+"+dto.getCarrier()+":8"+GenUtil.getRandomNumber(999999)+":::ELITE'"+newline);
+        sb.append("IFT+4:28+"+dto.getCarrier()+"+CTCT ATL "+ph+" STA TRAVEL'"+newline);
         sb.append("IFT+4:15:9+"+dto.getEmbark()+" "+dto.getCarrier()+" X/"+dto.getDebark()+" "+dto.getCarrier()+" GBP/IT END ROE0."+GenUtil.getRandomNumber(999)+"'"+newline);
         sb.append("REF+:"+GenUtil.getRandomNumber(999999999)+"P'"+newline);
         sb.append("FAR+N+++++MIL24'"+newline);
@@ -144,7 +145,8 @@ public class PnrGen {
         sb.append("TXD++6.10::USD'"+newline);
         sb.append("DAT+710:"+dto.getToDay()+"'"+newline);
         sb.append("FOP+CC:::"+GenUtil.getCcNum()+newline);
-        sb.append("IFT+4:43+"+pax.getLastName()+" "+pax.getFirstName()+"+"+add+"+"+ph+"'"+newline); 
+        sb.append("IFT+4:28+"+dto.getCarrier()+"+CTCT ATL "+ph+" STA TRAVEL'"+newline);
+        //sb.append("IFT+4:43+"+pax.getLastName()+" "+pax.getFirstName()+"+"+add+"+"+ph+"'"+newline); 
         dto.setStartDate(GenUtil.getDepArlTime(1));
         dto.setEndDate(GenUtil.getDepArlTime(6));
         sb.append("TVL+"+dto.getStartDate()+":"+dto.getEndDate()+"+"+dto.getEmbark()+"+"+dto.getDebark()+"+"+dto.getCarrier()+"+"+dto.getFlightNum()+":B'"+newline);
@@ -162,8 +164,10 @@ public class PnrGen {
         sb.append("RCI+"+dto.getCarrier()+":"+GenUtil.getRecordLocator()+"'"+newline);
         sb.append("SSR+AVML:HK:2:"+dto.getCarrier()+"'"+newline);
         sb.append("DAT+700:"+GenUtil.getDate()+"+710:"+GenUtil.getTicketDate()+"'"+newline);
-        sb.append("IFT+4:28::"+dto.getCarrier()+"+THIS PASSENGER IS A VIP'"+newline);
+        //sb.append("IFT+4:28::"+dto.getCarrier()+"+THIS PASSENGER IS A VIP'"+newline);
         sb.append("IFT+4:28::"+dto.getCarrier()+"+CTCR "+ph+"'"+newline);
+        //IFT+4:28+TN CTCT AKL 64 9 309 9723 STA TRAVEL
+        sb.append("IFT+4:28::"+dto.getCarrier()+"+CTCT ATL "+ph+" STA TRAVEL'"+newline);
         sb.append("ORG+"+dto.getCarrier()+":"+dto.getEmbark()+"+52519950:LON+++A+GB:GBP+D050517'"+newline);
         sb.append("ADD++"+add+"'"+newline);
         sb.append("EBD+USD:40.00+1::N'"+newline);
@@ -176,8 +180,8 @@ public class PnrGen {
         sb.append("RCI+"+carrier+":"+GenUtil.getRecordLocator()+"'"+newline);
         sb.append("SSR+AVML:HK:2:"+carrier+"'"+newline);
         sb.append("DAT+700:"+GenUtil.getDate()+"+710:"+GenUtil.getTicketDate()+"'"+newline);
-        sb.append("IFT+4:28::"+carrier+"+THIS PASSENGER IS A VIP'"+newline);
-        sb.append("IFT+4:28::"+carrier+"+CTCR "+ph+"'"+newline);
+        //sb.append("IFT+4:28::"+carrier+"+THIS PASSENGER IS A VIP'"+newline);
+        //sb.append("IFT+4:28::"+carrier+"+CTCR "+ph+"'"+newline);
         sb.append("ORG+"+carrier+":"+orig+"+52519950:LON+++A+GB:GBP+D050517'"+newline);
         sb.append("ADD++"+add+"'"+newline);
         sb.append("EBD+USD:40.00+1::N'"+newline);

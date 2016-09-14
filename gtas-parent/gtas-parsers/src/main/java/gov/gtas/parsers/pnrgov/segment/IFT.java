@@ -23,13 +23,15 @@ import gov.gtas.parsers.edifact.Segment;
  * UA LAX 01.82 487.27 UA DEN 487.27 USD976.36 ENDXFDEN3LAX+3')
  * <li>OSI information.(IFT+4:28::KL+CTC 7732486972-U‘)
  * <li>Sponsor information.(IFT+4:43+TIMOTHY SIMS+2234 MAIN STREET ATLANTA, GA
- * 30067+770 5632891‘)
+ * IFT+4:28+AM CTCT BOG 571 600 5830 A'
+ * IFT+4:28+AM CTCP BOG 571 600 5820 A PBX* 30067+770 5632891')
  * </ul>
  */
 public class IFT extends Segment {
     public static final String CONTACT_EMAIL = "CTCE";
     public static final String CONTACT_ADDR = "CTCA";
     public static final String CONTACT = "CTC";
+    public static final String CONTACT_CITY = "CTCT";
     
     private String iftCode;
     
@@ -58,7 +60,7 @@ public class IFT extends Segment {
             this.pricingIndicator = c.getElement(2);
             this.airline = c.getElement(3);
             this.freeTextLanguageCode = c.getElement(4);
-            
+           // IFT+4:28+AM CTCP BOG 571 600 5820 A PBX* 30067+770 5632891'
             for (int i=1; i<numComposites(); i++) {
                 c = getComposite(i);
                 if (c != null) {

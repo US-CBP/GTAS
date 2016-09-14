@@ -219,7 +219,7 @@ public class MessageGeneratorApp {
         }
     }
     private void buildFlightList(List<FlightDto> flightList){
-        for(int i=0;i < 10;i++){
+        for(int i=0;i < 1;i++){
             FlightDto dto = new FlightDto();
             String carrier=GenUtil.getCarrier();
             String origin=GenUtil.getAirport();

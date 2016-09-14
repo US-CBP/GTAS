@@ -606,7 +606,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (ift.isOtherServiceInfo()) {
             List<String> msgs = ift.getMessages();
             for (String txt : msgs) {
-                extractContactInfo(txt);
+            	extractContactInfo(txt);
             }
         }
     }
@@ -615,32 +615,59 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (StringUtils.isBlank(txt)) {
             return;
         }
-        
         if (txt.contains(IFT.CONTACT_EMAIL)) {
-            String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
+        	String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
             if (StringUtils.isNotBlank(tmp)) {
                 EmailVo email = new EmailVo();
                 email.setAddress(tmp);
                 parsedMessage.getEmails().add(email);
             }
         } else if (txt.contains(IFT.CONTACT_ADDR)) {
-            String tmp = getContactInfo(IFT.CONTACT_ADDR, txt);
+        	String tmp = getContactInfo(IFT.CONTACT_ADDR, txt);
             if (StringUtils.isNotBlank(tmp)) {
                 AddressVo addr = new AddressVo();
                 addr.setLine1(tmp);
                 parsedMessage.getAddresses().add(addr);
             }
         } else if (txt.contains(IFT.CONTACT)) {
-            // The remaining contact types are telephone numbers
+        	// The remaining contact types are telephone numbers
             String tmp = ParseUtils.prepTelephoneNumber(txt);
             if (StringUtils.isNotBlank(tmp)) {
                 PhoneVo phone = new PhoneVo();
                 phone.setNumber(tmp);
                 parsedMessage.getPhoneNumbers().add(phone);
-            }                    
+            }
+            if(txt.contains(IFT.CONTACT_CITY)){
+            	String[] tmpArray=getAgencyInfo(txt);
+            	AgencyVo a=new AgencyVo();
+            	StringBuilder sb=new StringBuilder();
+            	String name="";
+            	for(int i =0;i<tmpArray.length;i++){
+            		String s=tmpArray[i];
+            		if(i ==0 ){
+               			continue;
+            		}
+            		else if(i == 1 && s.length() ==3){
+            			a.setCity(s);
+            			a.setLocation(s);
+            		}
+            		else if(i > 2){
+            			sb.append(s);
+            			sb.append(" ");
+            		}
+            	}
+            	if(StringUtils.isNotBlank(tmp) || StringUtils.isNotBlank(name) || StringUtils.isNotBlank(a.getCity())){
+            		a.setName(sb.toString());
+            		a.setPhone(tmp);
+            		parsedMessage.getAgencies().add(a);
+            	}
+            }
         }
     }
     
+    private String[] getAgencyInfo(String text){
+    	return text.split(" ");
+    }
     private String getContactInfo(String ctcCode, String text) {
         return text.replace(ctcCode, "").replace("\\s+", "");
     }
@@ -655,6 +682,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         agencyVo.setLocation(org.getLocationCode());
         agencyVo.setIdentifier(org.getTravelAgentIdentifier());
         agencyVo.setCountry(org.getOriginatorCountryCode());
+        if(StringUtils.isNotEmpty(org.getAgentLocationCode())){
+        	agencyVo.setCity(org.getAgentLocationCode());
+        }else{
+        	agencyVo.setCity(org.getLocationCode());
+        }
+ 
         if (agencyVo.isValid()) {
             parsedMessage.getAgencies().add(agencyVo);
         }

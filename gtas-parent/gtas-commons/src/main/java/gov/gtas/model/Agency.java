@@ -40,13 +40,24 @@ public class Agency extends BaseEntityAudit {
 
     private String phone;
     
+    private String city;
+    
     @ManyToMany(
         mappedBy = "agencies",
         targetEntity = Pnr.class
     )
     private Set<Pnr> pnrs = new HashSet<>();
     
-    public String getName() {
+    
+    public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getName() {
         return name;
     }
 
