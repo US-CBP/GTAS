@@ -6,14 +6,17 @@
 package gov.gtas.services.search;
 
 import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -30,6 +33,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Flight;
@@ -44,6 +48,9 @@ public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	public static final String INDEX_NAME = "gtas";
 	public static final String FLIGHTPAX_TYPE = "flightpax";
+
+	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
+	private static SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
 
 	private TransportClient client;
 	
@@ -118,6 +125,14 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 			vo.setFlightOrigin((String)result.get("origin"));
 			vo.setFlightDestination((String)result.get("destination"));
+			try {
+				Date etd = dateParser.parse((String)result.get("etd"));
+				vo.setEtd(etd);
+				Date eta = dateParser.parse((String)result.get("eta"));
+				vo.setEta(eta);
+			} catch (java.text.ParseException e) {
+				e.printStackTrace();
+			}
 		}	
 
 		return new AdhocQueryDto(rv, results.getTotalHits());
@@ -139,7 +154,9 @@ public class ElasticHelper {
 	}
 	
 	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder()
+				.setDateFormat(DATE_FORMAT)
+				.create();
 		for (Passenger p : passengers) {
 			for (Flight f : flights) {
 				String id = String.format("%s-%s", String.valueOf(f.getId()), String.valueOf(p.getId()));

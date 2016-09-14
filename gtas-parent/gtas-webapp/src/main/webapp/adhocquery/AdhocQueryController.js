@@ -58,6 +58,26 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
             name: 'flightNumber',
             displayName: 'pass.flight', headerCellFilter: 'translate',
             cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
+        },
+        {
+            field: 'flightOrigin',
+            name: 'flightOrigin',
+            displayName: 'pass.origin', headerCellFilter: 'translate'
+        },
+        {
+            field: 'flightDestination',
+            name: 'flightDestination',
+            displayName: 'pass.destination', headerCellFilter: 'translate'
+        },
+        {
+            field: 'etd',
+            name: 'etd',
+            displayName: 'pass.etd', headerCellFilter: 'translate'
+        },
+        {
+            field: 'eta',
+            name: 'eta',
+            displayName: 'pass.eta', headerCellFilter: 'translate'
         }
     ];
     
