@@ -21,13 +21,17 @@ public class LobUtils {
     private static final Logger logger = LoggerFactory.getLogger(LobUtils.class);
     
     public static String convertClobToString(Clob clob) {
+    	if (clob == null) {
+    		return null;
+    	}
+    	
         StringBuilder sb = null;
         try {
             Reader reader = clob.getCharacterStream();
             int c = -1;
             sb = new StringBuilder();
             while((c = reader.read()) != -1) {
-                 sb.append(((char)c));
+                 sb.append((char)c);
             }
         } catch (SQLException | IOException e) {
             logger.error(ErrorUtils.getStacktrace(e));
@@ -38,6 +42,10 @@ public class LobUtils {
     }
 
     public static Clob createClob(String s) {
+    	if (s == null) {
+    		return null;
+    	}
+    	
         Clob rv = null;
         try {
             rv = new SerialClob(s.toCharArray());
