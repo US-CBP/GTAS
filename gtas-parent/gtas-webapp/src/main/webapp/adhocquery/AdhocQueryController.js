@@ -5,7 +5,6 @@
  */
 app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
     'use strict;'
-	//init
 	
 	$scope.pageSize = 10;
 	$scope.pageNumber = 1;
@@ -81,16 +80,10 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
         }
     ];
     
-    //For button press.
-    $scope.initSearchPax = function(){
-    	$scope.searchPax($scope.query, 1, 10);
-    }
-    
-    $scope.searchPax = function (query, pageNumber, pageSize) {
-        return adhocQueryService.getPassengers(query, pageNumber, pageSize).then(function (response) {
-            console.log(response.data.result);
+    $scope.search = function (query, pageNumber, pageSize) {
+        return adhocQueryService.getPassengers($scope.query, $scope.pageNumber, $scope.pageSize).then(function (response) {
             $scope.resultsGrid.data = response.data.result.passengers;
-            $scope.resultsGrid.totalItems = response.data.result.totalhits;
+            $scope.resultsGrid.totalItems = response.data.result.totalHits;
         });
     }
 });

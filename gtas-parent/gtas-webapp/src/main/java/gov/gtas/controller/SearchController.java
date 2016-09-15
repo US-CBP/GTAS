@@ -5,8 +5,6 @@
  */
 package gov.gtas.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ public class SearchController {
     		@RequestParam(value = "query") String query,
     		@RequestParam(value = "pageNumber") Integer pageNumber,
     		@RequestParam(value="pageSize") Integer pageSize) throws InvalidQueryException {
-        logger.info("Executing search query: ");
         AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize);
         return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
     }       
