@@ -16,14 +16,14 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -88,16 +88,16 @@ public class ElasticHelper {
 		if (isDown()) { 
 			return; 
 		}
-		String raw = LobUtils.convertClobToString(pnr.getRaw());
-		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), raw);
+		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
+		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw);
 	}
 
 	public void indexApis(ApisMessage apis) {
 		if (isDown()) {
 			return;
 		}
-		String raw = LobUtils.convertClobToString(apis.getRaw());		
-		indexFlightPax(apis.getFlights(), apis.getPassengers(), raw);
+		String apisRaw = LobUtils.convertClobToString(apis.getRaw());		
+		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
 	}
 	
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize) {
@@ -140,10 +140,14 @@ public class ElasticHelper {
 	
 	private SearchHits search(String query, int pageNumber, int pageSize) {
         int startIndex = (pageNumber - 1) * pageSize;
+        QueryBuilder qb = QueryBuilders
+        		.multiMatchQuery(query, "apis", "pnr")
+        		.type(MatchQueryBuilder.Type.PHRASE_PREFIX);
+        
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes(FLIGHTPAX_TYPE)
 			    .setSearchType(SearchType.QUERY_THEN_FETCH)
-			    .setQuery(QueryBuilders.matchPhrasePrefixQuery("raw", query))
+			    .setQuery(qb)
 			    .setFrom(startIndex)
 			    .setSize(pageSize)
 			    .setExplain(true)
@@ -153,7 +157,7 @@ public class ElasticHelper {
 		return response.getHits();
 	}
 	
-	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String raw) {
+	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String apis, String pnr) {
 		Gson gson = new GsonBuilder()
 				.setDateFormat(DATE_FORMAT)
 				.create();
@@ -166,7 +170,12 @@ public class ElasticHelper {
 				vo.setPassengerId(p.getId());
 				BeanUtils.copyProperties(f, vo);
 				vo.setFlightId(f.getId());
-				vo.setRaw(raw);
+				if (apis != null) {
+					vo.setApis(apis);
+				}
+				if (pnr != null) {
+					vo.setPnr(pnr);
+				}
 				indexRequest.source(gson.toJson(vo));
 				client.index(indexRequest).actionGet();
 			}

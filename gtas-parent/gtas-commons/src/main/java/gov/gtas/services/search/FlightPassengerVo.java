@@ -22,21 +22,18 @@ public class FlightPassengerVo {
 
     // pax
     private Long passengerId;
-    private String title;    
     private String firstName;
     private String middleName;
     private String lastName;
-    private String suffix;
     private String gender;
     private String citizenshipCountry;
     private String residencyCountry;
     private String passengerType;
     private Integer age;
     private Date dob;
-    private String embarkation;
-    private String debarkation;
     
-    private String raw;
+    private String apis;
+    private String pnr;
     
     public Long getFlightId() {
 		return flightId;
@@ -104,12 +101,6 @@ public class FlightPassengerVo {
     public void setDestinationLocation(String destinationLocation) {
         this.destinationLocation = destinationLocation;
     }
-	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
-	}
 	public String getFirstName() {
 		return firstName;
 	}
@@ -127,12 +118,6 @@ public class FlightPassengerVo {
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-	public String getSuffix() {
-		return suffix;
-	}
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
 	}
 	public String getGender() {
 		return gender;
@@ -170,22 +155,16 @@ public class FlightPassengerVo {
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
-	public String getEmbarkation() {
-		return embarkation;
+	public String getApis() {
+		return apis;
 	}
-	public void setEmbarkation(String embarkation) {
-		this.embarkation = embarkation;
+	public void setApis(String apis) {
+		this.apis = apis;
 	}
-	public String getDebarkation() {
-		return debarkation;
+	public String getPnr() {
+		return pnr;
 	}
-	public void setDebarkation(String debarkation) {
-		this.debarkation = debarkation;
-	}
-	public String getRaw() {
-		return raw;
-	}
-	public void setRaw(String raw) {
-		this.raw = raw;
+	public void setPnr(String pnr) {
+		this.pnr = pnr;
 	}
 }
