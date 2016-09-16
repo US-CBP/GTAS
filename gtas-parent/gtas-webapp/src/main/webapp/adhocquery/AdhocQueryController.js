@@ -61,12 +61,12 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
         {
             field: 'flightOrigin',
             name: 'flightOrigin',
-            displayName: 'pass.origin', headerCellFilter: 'translate'
+            displayName: 'flight.origin', headerCellFilter: 'translate'
         },
         {
             field: 'flightDestination',
             name: 'flightDestination',
-            displayName: 'pass.destination', headerCellFilter: 'translate'
+            displayName: 'flight.destination', headerCellFilter: 'translate'
         },
         {
             field: 'etd',
