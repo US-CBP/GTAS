@@ -6,22 +6,18 @@
 app.service("adhocQueryService", function ($http, $q) {
     'use strict';
 
-    function getFlights(query, page) {
-        var dfd = $q.defer();
-        dfd.resolve($http({
-            method: 'get',
-            url: "/gtas/search/queryFlights",
-            params: { query: query, pageNumber: page }
-        }));
-        return dfd.promise;
-    }
-
-    function getPassengers(query, page, pageSize) {
+    function getPassengers(query, page, pageSize, sort) {
         var dfd = $q.defer();
         dfd.resolve($http({
             method: 'get',
             url: "/gtas/search/queryPassengers",
-            params: { query: query, pageNumber: page, pageSize: pageSize }
+            params: { 
+                query: query, 
+                pageNumber: page, 
+                pageSize: pageSize, 
+                column: sort.column,
+                dir: sort.dir 
+            }
         }));
         return dfd.promise;
     }
@@ -39,7 +35,6 @@ app.service("adhocQueryService", function ($http, $q) {
 
     // Return public API.
     return ({
-        getFlights: getFlights,
         getPassengers: getPassengers
     });
 });

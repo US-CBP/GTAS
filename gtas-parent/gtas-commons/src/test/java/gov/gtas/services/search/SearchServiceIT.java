@@ -26,6 +26,6 @@ public class SearchServiceIT {
 
 	@Test
 	public void testSearch() {
-		searchService.findPassengers("garywilliam", 1, 10);
+		searchService.findPassengers("garywilliam", 1, 10, "firstName", "desc");
 	}
 }

@@ -30,7 +30,15 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
             gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                 $scope.pageNumber = newPage;
                 $scope.pageSize = pageSize;
-                $scope.searchPax($scope.query, newPage, pageSize);
+                $scope.searchPax();
+            });
+
+            gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+                if (typeof sortColumns !== 'undefined' && sortColumns.length > 0) {
+                    $scope.sort.column = sortColumns[0].name;
+                    $scope.sort.dir = sortColumns[0].sort.direction;
+                    $scope.searchPax();
+                }
             });
         }
     };
@@ -59,13 +67,13 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
             cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
         },
         {
-            field: 'flightOrigin',
-            name: 'flightOrigin',
+            field: 'origin',
+            name: 'origin',
             displayName: 'flight.origin', headerCellFilter: 'translate'
         },
         {
-            field: 'flightDestination',
-            name: 'flightDestination',
+            field: 'destination',
+            name: 'destination',
             displayName: 'flight.destination', headerCellFilter: 'translate'
         },
         {
@@ -79,14 +87,17 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
             displayName: 'pass.eta', headerCellFilter: 'translate'
         }
     ];
+
+    var defaultSort = {
+        column: 'firstName', 
+        dir: 'desc'
+    };
+    $scope.sort = defaultSort;
     
-    //For button press.
-    $scope.initSearchPax = function(){
-    	$scope.searchPax($scope.query, $scope.pageNumber, $scope.pageSize);
-    }
-    
-    $scope.searchPax = function (query, pageNumber, pageSize) {
-        return adhocQueryService.getPassengers($scope.query, pageNumber, pageSize).then(function (response) {
+    $scope.searchPax = function () {
+        return adhocQueryService
+        .getPassengers($scope.query, $scope.pageNumber, $scope.pageSize, $scope.sort)
+        .then(function (response) {
             $scope.resultsGrid.data = response.data.result.passengers;
             $scope.resultsGrid.totalItems = response.data.result.totalHits;
         });

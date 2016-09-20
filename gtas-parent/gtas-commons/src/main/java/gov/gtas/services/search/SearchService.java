@@ -5,11 +5,8 @@
  */
 package gov.gtas.services.search;
 
-import java.util.List;
-
 import gov.gtas.services.dto.AdhocQueryDto;
-import gov.gtas.vo.passenger.PassengerVo;
 
 public interface SearchService {
-    public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize);
+    public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize, String column, String dir);
 }

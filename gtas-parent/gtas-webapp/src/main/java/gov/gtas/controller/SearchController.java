@@ -32,8 +32,11 @@ public class SearchController {
     public JsonServiceResponse runPassengerQuery(
     		@RequestParam(value = "query") String query,
     		@RequestParam(value = "pageNumber") Integer pageNumber,
-    		@RequestParam(value="pageSize") Integer pageSize) throws InvalidQueryException {
-        AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize);
+    		@RequestParam(value="pageSize") Integer pageSize,
+    		@RequestParam(value = "column") String column,
+    		@RequestParam(value = "dir") String dir) throws InvalidQueryException {
+    	
+        AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize, column, dir);
         return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
     }       
 }

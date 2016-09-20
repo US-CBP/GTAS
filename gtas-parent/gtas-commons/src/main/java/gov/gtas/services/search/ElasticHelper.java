@@ -27,6 +27,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +42,6 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
 import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.util.LobUtils;
-import gov.gtas.vo.passenger.PassengerVo;
 
 @Service
 public class ElasticHelper {
@@ -100,31 +100,31 @@ public class ElasticHelper {
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
 	}
 	
-	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize) {
-		ArrayList<PassengerVo> rv = new ArrayList<>();
+	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
+		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		if (isDown()) { 
 			return new AdhocQueryDto(null, 0); 
 		}
-
-		SearchHits results = search(query, pageNumber, pageSize);
+		
+		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
 		for (SearchHit hit : resultsArry) {
 			Map<String, Object> result = hit.getSource();
-			PassengerVo vo = new PassengerVo();
+			FlightPassengerVo vo = new FlightPassengerVo();
 			rv.add(vo);
 
 			int paxId = (Integer)result.get("passengerId");
-			vo.setId(new Long(paxId));
+			vo.setPassengerId(new Long(paxId));
 			int flightId = (Integer)result.get("flightId");
-			vo.setFlightId(String.valueOf(flightId));
+			vo.setFlightId(new Long(flightId));
 			vo.setPassengerType((String)result.get("passengerType"));
 			vo.setFirstName((String)result.get("firstName"));
 			vo.setLastName((String)result.get("lastName"));
 			vo.setMiddleName((String)result.get("middleName"));
 			String flightNumber = (String)result.get("carrier") + (String)result.get("flightNumber");
 			vo.setFlightNumber(flightNumber);
-			vo.setFlightOrigin((String)result.get("origin"));
-			vo.setFlightDestination((String)result.get("destination"));
+			vo.setOrigin((String)result.get("origin"));
+			vo.setDestination((String)result.get("destination"));
 			try {
 				Date etd = dateParser.parse((String)result.get("etd"));
 				vo.setEtd(etd);
@@ -138,7 +138,9 @@ public class ElasticHelper {
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
-	private SearchHits search(String query, int pageNumber, int pageSize) {
+	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
+		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
+		
         int startIndex = (pageNumber - 1) * pageSize;
         QueryBuilder qb = QueryBuilders
         		.multiMatchQuery(query, "apis", "pnr")
@@ -150,6 +152,7 @@ public class ElasticHelper {
 			    .setQuery(qb)
 			    .setFrom(startIndex)
 			    .setSize(pageSize)
+			    .addSort(column, sortOrder)
 			    .setExplain(true)
 			    .execute()
 			    .actionGet();

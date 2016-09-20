@@ -16,7 +16,7 @@ public class SearchServiceElastic implements SearchService {
 	private ElasticHelper elastic;
 	
 	@Override
-	public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize) {
-		return elastic.searchPassengers(query, pageNumber, pageSize);
+	public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
+		return elastic.searchPassengers(query, pageNumber, pageSize, column, dir);
 	}
 }
