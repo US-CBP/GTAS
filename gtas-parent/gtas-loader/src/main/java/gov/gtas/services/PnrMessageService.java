@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
+import gov.gtas.model.DwellTime;
 import gov.gtas.model.EdifactMessage;
+import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Pnr;
@@ -88,6 +91,9 @@ public class PnrMessageService extends MessageLoaderService {
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setPnr(pnr);
             }
+            if(pnr.getFlightLegs() != null && pnr.getFlightLegs().size() >0){
+            	createDwellTime(pnr);
+            }
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -98,7 +104,51 @@ public class PnrMessageService extends MessageLoaderService {
         }
         return success;
     }
-
+    
+    private void createDwellTime(Pnr pnr){
+    	
+    	List<FlightLeg> legs=pnr.getFlightLegs();
+    	Flight firstFlight=null;
+    	Flight secondFlight=null;
+    	Flight thirdFlight=null;
+    	Flight fourthFlight=null;
+    	Flight fifthFlight=null;
+    	
+    	for(int i=0;i<legs.size();i++){
+            switch (i) {
+            case 0:
+            	firstFlight=legs.get(0).getFlight();
+                break;
+            case 1:
+            	secondFlight=legs.get(1).getFlight();
+                break;
+            case 2:
+            	thirdFlight=legs.get(2).getFlight();
+                break;
+            case 3:
+            	fourthFlight=legs.get(3).getFlight();
+                break;
+            case 4:
+            	fifthFlight=legs.get(4).getFlight();
+            	break;
+            }      
+    	}
+    	setDwelTime(firstFlight,secondFlight,pnr);
+    	setDwelTime(secondFlight,thirdFlight,pnr);
+    	setDwelTime(thirdFlight,fourthFlight,pnr);
+    	setDwelTime(fourthFlight,fifthFlight,pnr);
+    }
+    private void setDwelTime(Flight firstFlight,Flight secondFlight,Pnr pnr){
+ 
+    	if(firstFlight != null && secondFlight != null 
+    			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
+    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))){
+    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    		d.setFlyingFrom(firstFlight.getOrigin());
+    		d.setFlyingTo(secondFlight.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
     private void handleException(Exception e, MessageStatus status) {
         // set all the collections to null so we can save the message itself
         pnr.setFlights(null);
@@ -110,7 +160,6 @@ public class PnrMessageService extends MessageLoaderService {
         pnr.setEmails(null);
         pnr.setFrequentFlyers(null);
         pnr.setPhones(null);
-
         pnr.setStatus(status);
         String stacktrace = ErrorUtils.getStacktrace(e);
         pnr.setError(stacktrace);

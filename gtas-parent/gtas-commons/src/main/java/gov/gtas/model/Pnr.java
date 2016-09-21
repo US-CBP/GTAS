@@ -107,8 +107,25 @@ public class Pnr extends Message {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<FlightLeg> flightLegs = new ArrayList<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
+    private List<DwellTime> dwellTimes = new ArrayList<>();
 
-    public void addFlightLeg(FlightLeg leg) {
+    public void addDwellTime(DwellTime dwellTime){
+    	dwellTimes.add(dwellTime);
+    }
+    
+    public List<DwellTime> getDwellTimes() {
+		return dwellTimes;
+	}
+
+
+	public void setDwellTimes(List<DwellTime> dwellTimes) {
+		dwellTimes = dwellTimes;
+	}
+
+
+	public void addFlightLeg(FlightLeg leg) {
         flightLegs.add(leg);
     }
 
