@@ -5,13 +5,16 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.Flight;
+import gov.gtas.services.dto.FlightsRequestDto;
+
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import gov.gtas.model.Flight;
-import gov.gtas.services.dto.FlightsRequestDto;
-
+/**
+ * The Interface FlightRepositoryCustom.
+ */
 public interface FlightRepositoryCustom {
     /**
      * Return all flights by criteria
@@ -20,5 +23,10 @@ public interface FlightRepositoryCustom {
      */
     public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
     
+    /**
+     * Delete all messages.
+     *
+     * @throws Exception the exception
+     */
     public void deleteAllMessages() throws Exception ;
 }
