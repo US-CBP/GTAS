@@ -17,6 +17,13 @@ public class SearchServiceElastic implements SearchService {
 	
 	@Override
 	public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
-		return elastic.searchPassengers(query, pageNumber, pageSize, column, dir);
+		AdhocQueryDto rv = null;
+		try {
+			rv = elastic.searchPassengers(query, pageNumber, pageSize, column, dir);
+		} catch (Exception e) {
+			return new AdhocQueryDto("Search not available!");
+		}
+
+		return rv;
 	}
 }

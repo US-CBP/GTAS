@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
+app.controller('AdhocQueryCtrl', function ($scope, $mdToast, adhocQueryService) {
     'use strict;'
 	
 	$scope.pageSize = 10;
@@ -88,6 +88,14 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
         }
     ];
 
+    $scope.msgToast = function(error){
+        $mdToast.show($mdToast.simple()
+            .content(error)
+            .position('top right')
+            .hideDelay(4000)
+            .parent($scope.toastParent));
+    };
+
     var defaultSort = {
         column: 'firstName', 
         dir: 'desc'
@@ -98,8 +106,15 @@ app.controller('AdhocQueryCtrl', function ($scope, adhocQueryService) {
         return adhocQueryService
         .getPassengers($scope.query, $scope.pageNumber, $scope.pageSize, $scope.sort)
         .then(function (response) {
-            $scope.resultsGrid.data = response.data.result.passengers;
-            $scope.resultsGrid.totalItems = response.data.result.totalHits;
+            var result = response.data.result;
+            $scope.resultsGrid.data = result.passengers;
+            $scope.resultsGrid.totalItems = result.totalHits;
+
+            if (result.error !== null) {
+                $scope.msgToast(result.error);
+            } else {
+                $scope.msgToast($scope.resultsGrid.totalItems + " results found");
+            }
         });
     }
 });

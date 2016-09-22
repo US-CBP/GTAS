@@ -115,7 +115,7 @@ public class ElasticHelper {
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
 		initClient();
 		if (isDown()) { 
-			return new AdhocQueryDto(null, 0); 
+			return new AdhocQueryDto("Search service is not available");
 		}
 		
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
