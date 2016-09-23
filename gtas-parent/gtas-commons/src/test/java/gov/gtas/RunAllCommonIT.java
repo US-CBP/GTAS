@@ -5,6 +5,7 @@
  */
 package gov.gtas;
 
+import gov.gtas.repository.FlightRepositoryIT;
 import gov.gtas.repository.HitsSummaryRepositoryIT;
 import gov.gtas.repository.ServiceRepositoryIT;
 import gov.gtas.services.AuditLogPersistenceServiceIT;
@@ -23,6 +24,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		DashboardCountsIT.class, AuditLogPersistenceServiceIT.class,
 		ServiceRepositoryIT.class, RulePersistenceServiceIT.class,
 		UserServiceIT.class, PnrServiceIT.class,
-		WatchlistPersistenceServiceIT.class })
+		WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class })
 public class RunAllCommonIT {
 }
