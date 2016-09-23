@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('AdhocQueryCtrl', function ($scope, $mdToast, adhocQueryService) {
+app.controller('AdhocQueryCtrl', function ($scope, $mdToast, uiGridConstants, adhocQueryService) {
     'use strict;'
 	
 	$scope.pageSize = 10;
@@ -48,7 +48,10 @@ app.controller('AdhocQueryCtrl', function ($scope, $mdToast, adhocQueryService) 
             field: 'lastName',
             name: 'lastName',
             displayName: 'pass.lastname', headerCellFilter: 'translate',
-            cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+            cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>',
+            sort: {
+                direction: uiGridConstants.ASC
+            }
         },
         {
             field: 'firstName',
@@ -97,8 +100,8 @@ app.controller('AdhocQueryCtrl', function ($scope, $mdToast, adhocQueryService) 
     };
 
     var defaultSort = {
-        column: 'firstName', 
-        dir: 'desc'
+        column: 'lastName', 
+        dir: 'asc'
     };
     $scope.sort = defaultSort;
     
