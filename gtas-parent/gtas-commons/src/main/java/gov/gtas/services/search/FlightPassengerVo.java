@@ -36,7 +36,6 @@ public class FlightPassengerVo {
     private String citizenshipCountry;
     private String residencyCountry;
     private String passengerType;
-    private Integer age;
     private Date dob;
     
     private String apis;
@@ -149,12 +148,6 @@ public class FlightPassengerVo {
 	}
 	public void setPassengerType(String passengerType) {
 		this.passengerType = passengerType;
-	}
-	public Integer getAge() {
-		return age;
-	}
-	public void setAge(Integer age) {
-		this.age = age;
 	}
 	public Date getDob() {
 		return dob;
