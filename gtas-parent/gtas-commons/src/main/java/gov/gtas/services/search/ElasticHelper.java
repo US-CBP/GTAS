@@ -16,12 +16,17 @@ import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -82,6 +87,16 @@ public class ElasticHelper {
 			logger.warn("Init failed: ElasticSearch not available");
 			closeClient();
 		}
+		
+		initIndex();
+	}
+	
+	public void initIndex() {
+		boolean indexExists = client.admin().indices().prepareExists(INDEX_NAME).execute().actionGet().isExists();
+	    if (!indexExists) {
+			logger.info("ElasticSearch: Initializing index " + INDEX_NAME);
+	    	client.admin().indices().prepareCreate(INDEX_NAME).execute().actionGet();
+	    }
 	}
 
 	@PreDestroy
@@ -192,20 +207,49 @@ public class ElasticHelper {
 		for (Passenger p : passengers) {
 			for (Flight f : flights) {
 				String id = createElasticId(f.getId(), p.getId());
-				IndexRequest indexRequest = new IndexRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);		
-				FlightPassengerVo vo = new FlightPassengerVo();
-				BeanUtils.copyProperties(p, vo);
-				vo.setPassengerId(p.getId());
-				BeanUtils.copyProperties(f, vo);
-				vo.setFlightId(f.getId());
-				if (apis != null) {
-					vo.setApis(apis);
+				
+				GetRequest getRequest = new GetRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);
+				GetResponse response = client.get(getRequest).actionGet();
+				if (response.isExists()) {
+					// update
+					UpdateRequest updateRequest = new UpdateRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);
+					String field;
+					String val;
+					if (apis != null) {
+						field = "apis";
+						val = apis;
+					} else {
+						field = "pnr";
+						val = pnr;
+					}
+					
+					try {
+						XContentBuilder builder = XContentFactory.jsonBuilder()
+							.startObject()
+				            .field(field, val)
+					        .endObject();
+						updateRequest.doc(builder);
+						client.update(updateRequest).get();
+					} catch (Exception e) {
+						logger.error("error: ", e);
+					}
+					
+				} else {
+					// index new
+					IndexRequest indexRequest = new IndexRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);		
+					FlightPassengerVo vo = new FlightPassengerVo();
+					BeanUtils.copyProperties(p, vo);
+					vo.setPassengerId(p.getId());
+					BeanUtils.copyProperties(f, vo);
+					vo.setFlightId(f.getId());
+					if (apis != null) {
+						vo.setApis(apis);
+					} else {
+						vo.setPnr(pnr);
+					}
+					indexRequest.source(gson.toJson(vo));
+					client.index(indexRequest).actionGet();
 				}
-				if (pnr != null) {
-					vo.setPnr(pnr);
-				}
-				indexRequest.source(gson.toJson(vo));
-				client.index(indexRequest).actionGet();
 			}
 		}
 	}
