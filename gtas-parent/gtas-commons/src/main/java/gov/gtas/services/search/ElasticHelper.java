@@ -28,6 +28,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -186,7 +187,7 @@ public class ElasticHelper {
         int startIndex = (pageNumber - 1) * pageSize;
         QueryBuilder qb = QueryBuilders
         		.multiMatchQuery(query, searchFields)
-        		.type(MatchQueryBuilder.Type.PHRASE_PREFIX);
+        		.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
         
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes(FLIGHTPAX_TYPE)
