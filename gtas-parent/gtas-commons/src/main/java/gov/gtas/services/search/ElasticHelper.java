@@ -78,7 +78,7 @@ public class ElasticHelper {
 		try {
 			this.client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			logger.error("unknown elastic host", e);
 			closeClient();
 		}
 
@@ -159,7 +159,7 @@ public class ElasticHelper {
 				Date eta = dateParser.parse((String)result.get("eta"));
 				vo.setEta(eta);
 			} catch (java.text.ParseException e) {
-				e.printStackTrace();
+				logger.error("date parsing error", e);
 			}
 		}	
 
@@ -181,9 +181,11 @@ public class ElasticHelper {
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		
+		final String[] searchFields = {"apis", "pnr", "firstName", "lastName", "carrier", "flightNumber", "origin", "destination"};
+		
         int startIndex = (pageNumber - 1) * pageSize;
         QueryBuilder qb = QueryBuilders
-        		.multiMatchQuery(query, "apis", "pnr")
+        		.multiMatchQuery(query, searchFields)
         		.type(MatchQueryBuilder.Type.PHRASE_PREFIX);
         
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
