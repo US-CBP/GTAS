@@ -108,20 +108,21 @@ public class Pnr extends Message {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<FlightLeg> flightLegs = new ArrayList<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
-    private List<DwellTime> dwellTimes = new ArrayList<>();
+    @ManyToMany(targetEntity = DwellTime.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
+    private Set<DwellTime> dwellTimes = new HashSet<>();
 
     public void addDwellTime(DwellTime dwellTime){
     	dwellTimes.add(dwellTime);
     }
     
-    public List<DwellTime> getDwellTimes() {
+    public Set<DwellTime> getDwellTimes() {
 		return dwellTimes;
 	}
 
 
-	public void setDwellTimes(List<DwellTime> dwellTimes) {
-		dwellTimes = dwellTimes;
+	public void setDwellTimes(Set<DwellTime> dwellTimes) {
+		this.dwellTimes = dwellTimes;
 	}
 
 

@@ -1,10 +1,11 @@
 package gov.gtas.model;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.Column;
@@ -12,15 +13,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "pnr_dwell_time")
-public class DwellTime  {
+@Table(name = "dwell_time")
+public class DwellTime  implements Serializable{
 
 	 private static final long serialVersionUID = 1L;  
 	    public DwellTime() { }
@@ -29,7 +29,7 @@ public class DwellTime  {
 	    	this.arrivalTime=arrival;
 	    	this.departureTime=departure;
 	    	this.location=airport;
-	    	this.pnr=pnr;
+	    	this.pnrs.add(pnr);
 	    	long diff = this.departureTime.getTime() - this.arrivalTime.getTime(); 
 	    	int minutes=(int)TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
 	    	DecimalFormat df = new DecimalFormat("#.##");      
@@ -39,7 +39,7 @@ public class DwellTime  {
 	    @Id
 	    @GeneratedValue(strategy = GenerationType.AUTO)
 	    @Column(name = "id")
-	    private Integer id;
+	    private Long id;
 	    
 	    @Column(name ="arrival_time")
 	    @Temporal(TemporalType.TIMESTAMP)
@@ -52,9 +52,11 @@ public class DwellTime  {
 	    @Column(name = "arrival_airport", length = 3)
 	    private String location;
 	    
-	    @ManyToOne
-	    @JoinColumn(name = "pnr_id", nullable = false)
-	    private Pnr pnr;
+	    @ManyToMany(
+	            mappedBy = "dwellTimes",
+	            targetEntity = Pnr.class
+	        )
+	    private Set<Pnr> pnrs=new HashSet<Pnr>();
 	    
 	    @Column(name ="dwell_time")
 	    private Double dwellTime;
@@ -82,11 +84,11 @@ public class DwellTime  {
 			this.flyingTo = flyingTo;
 		}
 
-		public Integer getId() {
+		public Long getId() {
 			return id;
 		}
 
-		public void setId(Integer id) {
+		public void setId(Long id) {
 			this.id = id;
 		}
 
@@ -114,13 +116,6 @@ public class DwellTime  {
 			this.location = location;
 		}
 
-		public Pnr getPnr() {
-			return pnr;
-		}
-
-		public void setPnr(Pnr pnr) {
-			this.pnr = pnr;
-		}
 
 		public Double getDwellTime() {
 			return dwellTime;
@@ -130,9 +125,17 @@ public class DwellTime  {
 			this.dwellTime = dwellTime;
 		}
 
+		public Set<Pnr> getPnrs() {
+			return pnrs;
+		}
+
+		public void setPnrs(Set<Pnr> pnrs) {
+			this.pnrs = pnrs;
+		}
+
 		@Override
 	    public int hashCode() {
-	       return Objects.hash(this.id, this.pnr.getId());
+	       return Objects.hash(this.location,this.flyingFrom,this.flyingTo,this.id);
 	    }
 	    
 	    @Override
@@ -142,6 +145,9 @@ public class DwellTime  {
 	        if (!(obj instanceof DwellTime))
 	            return false;
 	        final DwellTime other = (DwellTime)obj;
-	        return Objects.equals(this.id, other.id);
+	        return Objects.equals(this.id, other.id)
+	        		&& Objects.equals(this.location,other.location)
+	        		&& Objects.equals(this.flyingFrom,other.flyingFrom)
+	        		&& Objects.equals(this.flyingTo,other.flyingTo);
 	    }    
 }

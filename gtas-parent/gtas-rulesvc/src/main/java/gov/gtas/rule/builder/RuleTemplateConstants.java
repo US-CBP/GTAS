@@ -25,7 +25,7 @@ public class RuleTemplateConstants {
     public static final String FREQUENT_FLYER_VARIABLE_NAME = "$ff";
     public static final String PNR_VARIABLE_NAME = "$pnr";
     public static final String SEAT_VARIABLE_NAME = "$seat";
-
+    public static final String DWELL_TIME_VARIABLE_NAME = "$dwell";
     public static final String LINK_VARIABLE_SUFFIX = "link";
     public static final String LINK_PNR_ID = "pnrId";
     public static final String LINK_ATTRIBUTE_ID = "linkAttributeId";

@@ -14,6 +14,7 @@ import gov.gtas.bo.match.PnrFrequentFlyerLink;
 import gov.gtas.bo.match.PnrPassengerLink;
 import gov.gtas.bo.match.PnrPhoneLink;
 import gov.gtas.bo.match.PnrTravelAgencyLink;
+import gov.gtas.bo.match.PnrDwellTimeLink;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
@@ -37,6 +38,7 @@ public class PnrRuleConditionBuilder {
     private CreditCardConditionBuilder creditCardConditionBuilder;
     private FrequentFlyerConditionBuilder frequentFlyerConditionBuilder;
     private TravelAgencyConditionBuilder travelAgencyConditionBuilder;
+    private DwellTimeConditionBuilder dwellTimeConditionBuilder;
     private PnrConditionBuilder pnrConditionBuilder;
 
     public PnrRuleConditionBuilder(
@@ -45,6 +47,10 @@ public class PnrRuleConditionBuilder {
             switch (entry.getKey()) {
             case PNR:
                 this.pnrConditionBuilder = new PnrConditionBuilder(
+                        entry.getValue());
+                break;
+            case DWELL_TIME:
+                this.dwellTimeConditionBuilder = new DwellTimeConditionBuilder(
                         entry.getValue());
                 break;
             case TRAVEL_AGENCY:
@@ -123,7 +129,12 @@ public class PnrRuleConditionBuilder {
                     PnrTravelAgencyLink.class.getSimpleName(), pnrVarName,
                     travelAgencyConditionBuilder);
         }
-
+        if (!dwellTimeConditionBuilder.isEmpty()) {
+            addLinkCondition(linkStringBuilder,
+            		dwellTimeConditionBuilder.getLinkVariableName(),
+                    PnrDwellTimeLink.class.getSimpleName(), pnrVarName,
+                    dwellTimeConditionBuilder);
+        }
         return linkStringBuilder.toString();
     }
 
@@ -157,7 +168,8 @@ public class PnrRuleConditionBuilder {
         parentStringBuilder.append(creditCardConditionBuilder.build());
         parentStringBuilder.append(travelAgencyConditionBuilder.build());
         parentStringBuilder.append(frequentFlyerConditionBuilder.build());
-
+        parentStringBuilder.append(dwellTimeConditionBuilder.build());
+        
         String linkConditions = generatePnrLinks();
         if (pnrConditionBuilder.isEmpty()
                 && StringUtils.isNotEmpty(linkConditions)) {
@@ -186,6 +198,7 @@ public class PnrRuleConditionBuilder {
         travelAgencyConditionBuilder.reset();
         frequentFlyerConditionBuilder.reset();
         pnrConditionBuilder.reset();
+        dwellTimeConditionBuilder.reset();
     }
 
     /**
@@ -221,6 +234,10 @@ public class PnrRuleConditionBuilder {
                 break;
             case TRAVEL_AGENCY:
                 travelAgencyConditionBuilder.addCondition(opCode,
+                        trm.getField(), attributeType, trm.getValue());
+                break;
+             case DWELL_TIME:
+            	dwellTimeConditionBuilder.addCondition(opCode,
                         trm.getField(), attributeType, trm.getValue());
                 break;
             case FREQUENT_FLYER:

@@ -16,6 +16,7 @@ import gov.gtas.querybuilder.constants.Constants;
 import gov.gtas.querybuilder.mappings.AddressMapping;
 import gov.gtas.querybuilder.mappings.CreditCardMapping;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
+import gov.gtas.querybuilder.mappings.DwellTimeMapping;
 import gov.gtas.querybuilder.mappings.EmailMapping;
 import gov.gtas.querybuilder.mappings.FlightMapping;
 import gov.gtas.querybuilder.mappings.FrequentFlyerMapping;
@@ -168,6 +169,9 @@ public class QueryValidationUtils {
                         break;
                     case Constants.PNR:
                         validField = validateField(PNRMapping.values(), field);
+                        break;
+                    case Constants.DWELLTIME:
+                        validField = validateField(DwellTimeMapping.values(), field);
                         break;
                     case Constants.AGENCY:
                         validField = validateField(TravelAgencyMapping.values(), field);

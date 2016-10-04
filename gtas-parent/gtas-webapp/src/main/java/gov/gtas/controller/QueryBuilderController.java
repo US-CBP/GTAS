@@ -173,7 +173,7 @@ public class QueryBuilderController {
         qbMap.put(EntityEnum.PHONE.getEntityName(), getMapping(EntityEnum.PHONE));
         qbMap.put(EntityEnum.PNR.getEntityName(), getMapping(EntityEnum.PNR));
         qbMap.put(EntityEnum.TRAVEL_AGENCY.getEntityName(), getMapping(EntityEnum.TRAVEL_AGENCY));
-        
+        qbMap.put(EntityEnum.DWELL_TIME.getEntityName(), getMapping(EntityEnum.DWELL_TIME));
         return qbMap;
     }
     

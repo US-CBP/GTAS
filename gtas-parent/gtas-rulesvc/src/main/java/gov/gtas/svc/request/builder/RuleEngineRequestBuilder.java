@@ -10,6 +10,7 @@ import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceRequestType;
 import gov.gtas.bo.match.PnrAddressLink;
 import gov.gtas.bo.match.PnrCreditCardLink;
+import gov.gtas.bo.match.PnrDwellTimeLink;
 import gov.gtas.bo.match.PnrEmailLink;
 import gov.gtas.bo.match.PnrFrequentFlyerLink;
 import gov.gtas.bo.match.PnrPassengerLink;
@@ -20,6 +21,7 @@ import gov.gtas.model.Agency;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
+import gov.gtas.model.DwellTime;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
@@ -59,6 +61,7 @@ public class RuleEngineRequestBuilder {
     private final Set<Long> creditCardIdSet;
     private final Set<Long> frequentFlyerIdSet;
     private final Set<Long> travelAgencyIdSet;
+    private final Set<Long> dwellTimeIdSet;
 
     private final Set<PassengerFlightTuple> passengerFlightSet;
 
@@ -76,7 +79,7 @@ public class RuleEngineRequestBuilder {
         this.phoneIdSet = new HashSet<Long>();
         this.travelAgencyIdSet = new HashSet<Long>();
         this.passengerFlightSet = new HashSet<PassengerFlightTuple>();
-
+        this.dwellTimeIdSet=new HashSet<Long>();
         this.requestType = null;
     }
 
@@ -141,7 +144,7 @@ public class RuleEngineRequestBuilder {
             addFrequentFlyerObjects(pnr, pnr.getFrequentFlyers());
             addPassengerObjects(pnr, pnr.getPassengers());
             addTravelAgencyObjects(pnr, pnr.getAgencies());
-
+            addDwellTimeObjects(pnr, pnr.getDwellTimes());
             // add the passenger flight tuples
             if (pnr.getFlights() != null && pnr.getPassengers() != null) {
                 for (Flight flight : pnr.getFlights()) {
@@ -273,6 +276,22 @@ public class RuleEngineRequestBuilder {
         }
     }
 
+    private void addDwellTimeObjects(final Pnr pnr,
+            final Collection<DwellTime> dwellTimes) {
+        if (CollectionUtils.isEmpty(dwellTimes)) {
+            return;
+        }
+        for (DwellTime a : dwellTimes) {
+            Long id = a.getId();
+            if (!this.dwellTimeIdSet.contains(id)) {
+                requestObjectList.add(a);
+                requestObjectList.add(new PnrDwellTimeLink(pnr.getId(), a
+                        .getId()));
+                this.dwellTimeIdSet.add(id);
+            }
+        }
+    }
+    
     private void addTravelAgencyObjects(final Pnr pnr,
             final Collection<Agency> agencies) {
         if (CollectionUtils.isEmpty(agencies)) {

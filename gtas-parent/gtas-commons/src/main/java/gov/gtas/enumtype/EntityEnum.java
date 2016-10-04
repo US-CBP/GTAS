@@ -18,7 +18,8 @@ public enum EntityEnum {
         PASSENGER("PASSENGER", "Passenger", "p", ".passengers"),
         PHONE ("PHONE", "Phone", "ph", ".phones"),
         PNR ("PNR", "Pnr", "pnr", ".pnrs"),
-        TRAVEL_AGENCY ("TRAVEL AGENCY", "Agency", "ag", ".agencies");
+        TRAVEL_AGENCY ("TRAVEL AGENCY", "Agency", "ag", ".agencies"),
+		DWELL_TIME ("DWELL TIME", "DwellTime", "dwell", ".dwellTimes");
         
         private String friendlyName;
         private String entityName;

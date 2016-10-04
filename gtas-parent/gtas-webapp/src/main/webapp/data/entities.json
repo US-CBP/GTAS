@@ -1084,6 +1084,43 @@
       }
     ]
   },
+   "DwellTime": {
+    "label": "DWELL TIME",
+    "columns": [
+      {
+        "id": "DwellTime.location",
+        "label": "Location",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN",
+          "BEGINS_WITH",
+          "NOT_BEGINS_WITH",
+          "CONTAINS",
+          "NOT_CONTAINS",
+          "ENDS_WITH",
+          "NOT_ENDS_WITH"
+        ]                        
+      },
+      {
+        "id": "DwellTime.dwellTime",
+        "label": "Lay over Time",
+        "type": "double",
+       	"operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]                           
+      }
+    ]
+  },
   "Agency": {
     "label": "TRAVEL AGENCY",
     "columns": [

@@ -50,6 +50,9 @@ public class QueryBuilderMappingFactory {
           else if(modelType == EntityEnum.TRAVEL_AGENCY) {
               return createQueryBuilderMapping(EntityEnum.TRAVEL_AGENCY, TravelAgencyMapping.values());
           }
+          else if(modelType == EntityEnum.DWELL_TIME) {
+              return createQueryBuilderMapping(EntityEnum.DWELL_TIME, DwellTimeMapping.values());
+          }
           
           return null;
        }

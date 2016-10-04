@@ -118,6 +118,10 @@ public class JPQLGenerator {
                 }
                 
                 query = queryPrefix + join + " " + Constants.WHERE + " " + where;
+                if(isDwellQuery(joinEntities)){
+                	query += " and dwell.location = f.destination";
+                }
+                
             }
             
             logger.info("Parsed Query: " + query);
@@ -342,6 +346,9 @@ public class JPQLGenerator {
             case Constants.AGENCY:
                 joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.TRAVEL_AGENCY.getEntityReference() + " " + EntityEnum.TRAVEL_AGENCY.getAlias();
                 break;
+            case Constants.DWELLTIME:
+                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference() + " " + EntityEnum.DWELL_TIME.getAlias();
+                break;
             case Constants.CREDITCARD:
                 joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.CREDIT_CARD.getEntityReference() + " " + EntityEnum.CREDIT_CARD.getAlias();
                 break;
@@ -395,12 +402,30 @@ public class JPQLGenerator {
                 
                 if(entityEnum == EntityEnum.ADDRESS || entityEnum == EntityEnum.CREDIT_CARD ||
                     entityEnum == EntityEnum.EMAIL || entityEnum == EntityEnum.FREQUENT_FLYER ||
-                    entityEnum == EntityEnum.PHONE || entityEnum == EntityEnum.PNR || entityEnum == EntityEnum.TRAVEL_AGENCY) {
+                    entityEnum == EntityEnum.PHONE || entityEnum == EntityEnum.PNR || entityEnum == EntityEnum.TRAVEL_AGENCY
+                    || entityEnum == EntityEnum.DWELL_TIME) {
                     return true;
                 }
             }
         }
         
         return false;
+    }
+    
+    private static boolean isDwellQuery(List<EntityEnum> entity){
+        if(entity != null && !entity.isEmpty()) {
+            Iterator<EntityEnum> it = entity.iterator();
+            
+            while(it.hasNext()) {
+                EntityEnum entityEnum = it.next();
+                
+                if(entityEnum == EntityEnum.DWELL_TIME) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    	
     }
 }

@@ -31,6 +31,7 @@ public final class Constants {
     public static final String PHONE = "PHONE";
     public static final String PNR = "PNR";
     public static final String AGENCY = "AGENCY";
+    public static final String DWELLTIME = "DWELLTIME";
     
     public static final String QUERYOBJECT_OBJECTNAME = "queryObject";
     public static final String USERQUERY_OBJECTNAME = "userQuery";
