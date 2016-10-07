@@ -5,7 +5,7 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.Whitelist;
+import gov.gtas.vo.WhitelistVo;
 
 import java.util.List;
 
@@ -14,16 +14,16 @@ import java.util.List;
  */
 public interface WhitelistService {
 
-	/*
+	/**
 	 * Find and return the list of all Whitelist that have the "delete flag" set
 	 * to * "N".
-	 * 
-	 * @return list of all whitelist.
+	 *
+	 * @return list of all whitelists.
 	 */
-	public List<Whitelist> getAllWhitelists();
+	public List<WhitelistVo> getAllWhitelists();
 
 	/**
-	 * Deletes a whitelist. The object is not physically deleted, but a
+	 * Deletes a existing whitelist. The object is not physically deleted, but a
 	 * "delete flag" is set to indicate it is no longer in use.
 	 * 
 	 * @param id
@@ -31,32 +31,29 @@ public interface WhitelistService {
 	 * @param userId
 	 *            the user Id of the person deleting the whitelist (usually also
 	 *            the whitelist editor.).
-	 * @return the deleted whitelist.
 	 */
-	public Whitelist delete(Long id, String userId);
+	public void delete(Long id, String userId);
 
 	/**
-	 * Creates a Whitelist.
+	 * Creates a new Whitelist.
 	 * 
-	 * @param whitelist
-	 *            the Whitelist object to persist in the DB.
+	 * @param wlv
+	 *            the WhitelistVo to create a new whitelist.
 	 * @param userId
 	 *            the user Id of the person persisting the whitelist (usually
 	 *            also the whitelist editor.)
-	 * @return the persisted whitelist.
 	 */
-	public Whitelist create(Whitelist rule, String userId);
+	public void create(WhitelistVo wlv, String userId);
 
 	/**
-	 * Updates a whitelist.
+	 * Updates a existing whitelist.
 	 * 
-	 * @param whitelist
-	 *            the Whitelist to update.
+	 * @param wlv
+	 *            the WhitelistVo to update the existing whitelist.
 	 * @param userId
 	 *            the editor Id of the person updating the whitelist (usually
 	 *            also the whitelist editor).
-	 * @return the updated Whitelist.
 	 */
-	public Whitelist update(Whitelist whitelist, String userId);
+	public void update(WhitelistVo wlv, String userId);
 
 }
