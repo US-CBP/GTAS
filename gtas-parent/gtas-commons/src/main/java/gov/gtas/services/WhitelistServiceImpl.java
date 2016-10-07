@@ -89,6 +89,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 		BeanUtils.copyProperties(newWl, wlv);
 		newWl.setId(null);
 		User userEntity = userRepository.findOne(userId);
+		newWl.setDeleted(YesNoEnum.N);
 		newWl.setWhiteListEditor(userEntity);
 		whitelistRepository.save(newWl);
 	}
