@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.model.Whitelist;
 import gov.gtas.vo.WhitelistVo;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public interface WhitelistService {
 	 *            the user Id of the person persisting the whitelist (usually
 	 *            also the whitelist editor.)
 	 */
-	public void create(WhitelistVo wlv, String userId);
+	public Whitelist create(WhitelistVo wlv, String userId);
 
 	/**
 	 * Updates a existing whitelist.

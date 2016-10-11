@@ -15,12 +15,10 @@ import gov.gtas.vo.WhitelistVo;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +31,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(WhitelistServiceImpl.class);
 
-	@Resource
+	@Autowired
 	private WhitelistRepository whitelistRepository;
 
 	@Autowired
@@ -50,12 +48,30 @@ public class WhitelistServiceImpl implements WhitelistService {
 		List<Whitelist> whitelists = whitelistRepository
 				.findAllbydeleted(YesNoEnum.N);
 		List<WhitelistVo> wlvList = new ArrayList<>();
-		whitelists.forEach(wl -> {
-			WhitelistVo wlv = new WhitelistVo();
-			BeanUtils.copyProperties(wlv, wl);
-			wlvList.add(wlv);
-		});
+		if (whitelists != null) {
+			whitelists.forEach(wl -> {
+				WhitelistVo wlv = mapWhitelistVoFromWhitelist(wl);
+				wlvList.add(wlv);
+			});
+		}
 		return wlvList;
+	}
+
+	private WhitelistVo mapWhitelistVoFromWhitelist(Whitelist wl) {
+		WhitelistVo wlv = new WhitelistVo();
+		wlv.setFirstName(wl.getFirstName());
+		wlv.setMiddleName(wl.getMiddleName());
+		wlv.setLastName(wl.getLastName());
+		wlv.setGender(wl.getGender());
+		wlv.setDob(wl.getDob());
+		wlv.setCitizenshipCountry(wl.getCitizenshipCountry());
+		wlv.setResidencyCountry(wl.getResidencyCountry());
+		wlv.setDocumentType(wl.getDocumentType());
+		wlv.setDocumentNumber(wl.getDocumentNumber());
+		wlv.setExpirationDate(wl.getExpirationDate());
+		wlv.setIssuanceDate(wl.getIssuanceDate());
+		wlv.setIssuanceCountry(wl.getIssuanceCountry());
+		return wlv;
 	}
 
 	/*
@@ -84,14 +100,29 @@ public class WhitelistServiceImpl implements WhitelistService {
 	 */
 	@Override
 	@Transactional
-	public void create(WhitelistVo wlv, String userId) {
-		Whitelist newWl = new Whitelist();
-		BeanUtils.copyProperties(newWl, wlv);
-		newWl.setId(null);
+	public Whitelist create(WhitelistVo wlv, String userId) {
+		Whitelist newWl = mapWhitelistfromWhitelistVo(wlv);
 		User userEntity = userRepository.findOne(userId);
 		newWl.setDeleted(YesNoEnum.N);
 		newWl.setWhiteListEditor(userEntity);
-		whitelistRepository.save(newWl);
+		return whitelistRepository.save(newWl);
+	}
+
+	private Whitelist mapWhitelistfromWhitelistVo(WhitelistVo wlv) {
+		Whitelist newWl = new Whitelist();
+		newWl.setFirstName(wlv.getFirstName());
+		newWl.setMiddleName(wlv.getMiddleName());
+		newWl.setLastName(wlv.getLastName());
+		newWl.setGender(wlv.getGender());
+		newWl.setDob(wlv.getDob());
+		newWl.setCitizenshipCountry(wlv.getCitizenshipCountry());
+		newWl.setResidencyCountry(wlv.getResidencyCountry());
+		newWl.setDocumentType(wlv.getDocumentType());
+		newWl.setDocumentNumber(wlv.getDocumentNumber());
+		newWl.setExpirationDate(wlv.getExpirationDate());
+		newWl.setIssuanceDate(wlv.getIssuanceDate());
+		newWl.setIssuanceCountry(wlv.getIssuanceCountry());
+		return newWl;
 	}
 
 	/*
