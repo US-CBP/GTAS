@@ -130,8 +130,10 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         p.setDob(pdt.getDob());
         p.setAge(DateUtils.calculateAge(pdt.getDob()));
         p.setGender(pdt.getGender());
-        PersonStatus status = pdt.getPersonStatus();
+        p.setEmbarkation(pdt.getIataEmbarkationAirport());
+        p.setDebarkation(pdt.getIataDebarkationAirport());
 
+        PersonStatus status = pdt.getPersonStatus();
         if (status == null) {
 		p.setPassengerType("P");
         } else {
@@ -156,7 +158,6 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         } else if (docType == DocType.VISA) {
 		d.setDocumentType("V");
         }
-//        System.out.println("\t" + p);
     }
 
     private void processReportingParty(CTA cta) {
