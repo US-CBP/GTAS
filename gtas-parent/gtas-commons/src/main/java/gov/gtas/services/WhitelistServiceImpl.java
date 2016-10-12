@@ -46,7 +46,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	@Transactional
 	public List<WhitelistVo> getAllWhitelists() {
 		List<Whitelist> whitelists = whitelistRepository
-				.findAllbydeleted(YesNoEnum.N);
+				.findBydeleted(YesNoEnum.N);
 		List<WhitelistVo> wlvList = new ArrayList<>();
 		if (whitelists != null) {
 			whitelists.forEach(wl -> {
