@@ -1,6 +1,13 @@
+/*
+ * All GTAS code is Copyright 2016, Unisys Corporation.
+ * 
+ * Please see LICENSE.txt for details.
+ */
 package gov.gtas.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.model.Whitelist;
@@ -48,6 +55,17 @@ public class WhitelistPersistenceServiceIT {
 	public void testCreateWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		assertNotNull(wl);
+	}
+
+	@Transactional
+	@Test()
+	public void testDeleteWhitelist() {
+		Whitelist wl = whitelistService.create(testwlv, "test");
+		List<WhitelistVo> uWlvs = whitelistService.getAllWhitelists();
+		assertNotNull(uWlvs);
+		whitelistService.delete(wl.getId(), "test");
+		List<WhitelistVo> uWlvs2 = whitelistService.getAllWhitelists();
+		assertTrue(uWlvs2.isEmpty());
 	}
 
 	private WhitelistVo createWhitelistTestData() {
