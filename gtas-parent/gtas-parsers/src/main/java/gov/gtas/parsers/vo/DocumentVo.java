@@ -8,6 +8,8 @@ package gov.gtas.parsers.vo;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import gov.gtas.validators.Validatable;
 
@@ -53,4 +55,8 @@ public class DocumentVo implements Validatable {
         return StringUtils.isNotBlank(this.documentNumber) 
                && StringUtils.isNotBlank(this.documentType);
     }    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
 }

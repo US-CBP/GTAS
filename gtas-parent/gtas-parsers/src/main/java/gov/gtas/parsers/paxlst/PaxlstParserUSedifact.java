@@ -19,6 +19,7 @@ import gov.gtas.parsers.paxlst.segment.usedifact.PDT.DocType;
 import gov.gtas.parsers.paxlst.segment.usedifact.PDT.PersonStatus;
 import gov.gtas.parsers.paxlst.segment.usedifact.TDT;
 import gov.gtas.parsers.paxlst.segment.usedifact.UNS;
+import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.DocumentVo;
@@ -72,8 +73,10 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
 	}
 
     private void processFlight(TDT tdt) throws ParseException {
-        String flightNumber = FlightUtils.padFlightNumberWithZeroes(tdt.getC_flightNumber());
-        String carrier = tdt.getC_airlineCode();
+        String dest = null;
+        String origin = null;
+        Date eta = null;
+        Date etd = null;
         
         for (;;) {
             LOC loc = getConditionalSegment(LOC.class);
@@ -81,33 +84,39 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
                 break;
             }
 
-            FlightVo f = new FlightVo();
-            f.setFlightNumber(flightNumber);
-            f.setCarrier(carrier);
-            
             LocCode locCode = loc.getLocationCode();
-            String  airport = loc.getIataAirportCode();
+            String airport = loc.getIataAirportCode();
             if (locCode == LocCode.DEPARTURE) {
-                f.setOrigin(airport);
+                origin = airport;
             } else if (locCode == LocCode.ARRIVAL) {
-                f.setDestination(airport);
+                dest = airport;
             }
 
-            // corresponding DTM must exist
-            DTM dtm = getMandatorySegment(DTM.class);
+            DTM dtm = getConditionalSegment(DTM.class);
             DtmCode dtmCode = dtm.getDtmCode();
-            Date etd = null;
-            Date eta = null;
             if (dtmCode == DtmCode.DEPARTURE_DATETIME) {
                 etd = dtm.getC_dateTime();
             } else if (dtmCode == DtmCode.ARRIVAL_DATETIME) {
             	eta = dtm.getC_dateTime();
             }
             
-            f.setEtd(etd);
-            f.setEta(eta);
-            f.setFlightDate(FlightUtils.determineFlightDate(etd, eta, parsedMessage.getTransmissionDate()));
-            parsedMessage.addFlight(f);
+            if (origin != null && dest != null) {
+                FlightVo f = new FlightVo();
+
+                f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tdt.getC_flightNumber()));
+                f.setCarrier(tdt.getC_airlineCode());
+                f.setOrigin(origin);
+                f.setDestination(dest);
+                f.setEta(eta);
+                f.setEtd(etd);
+                f.setFlightDate(FlightUtils.determineFlightDate(etd, eta, parsedMessage.getTransmissionDate()));
+
+                if (f.isValid()) {
+                    parsedMessage.addFlight(f);
+                } else {
+                    throw new ParseException("Invalid flight: " + f);
+                }
+            }
         }
     }
 
@@ -115,19 +124,25 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         PassengerVo p = new PassengerVo();
         parsedMessage.addPax(p);
 
-        p.setFirstName(pdt.getLastName());
+        p.setFirstName(pdt.getFirstName());
         p.setLastName(pdt.getLastName());
         p.setMiddleName(pdt.getC_middleNameOrInitial());
         p.setDob(pdt.getDob());
+        p.setAge(DateUtils.calculateAge(pdt.getDob()));
         p.setGender(pdt.getGender());
         PersonStatus status = pdt.getPersonStatus();
-        p.setPassengerType(status.toString());
-        if (status == PersonStatus.CREW) {
-            p.setPassengerType("C");
-        } else if (status == PersonStatus.IN_TRANSIT){
-            p.setPassengerType("I");
+
+        if (status == null) {
+		p.setPassengerType("P");
         } else {
-            p.setPassengerType("P");
+	        p.setPassengerType(status.toString());
+	        if (status == PersonStatus.CREW) {
+	            p.setPassengerType("C");
+	        } else if (status == PersonStatus.IN_TRANSIT){
+	            p.setPassengerType("I");
+	        } else {
+	            p.setPassengerType("P");
+	        }
         }
 
         DocumentVo d = new DocumentVo();

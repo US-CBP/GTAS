@@ -36,9 +36,9 @@ public final class PaxlstParserUSedifactTest {
 			"CTA+IC+:FRED? SAMPLES+1-703-644-5200:TE+1-703-566-8224:FX'" +
 			"TDT++SA812+40+SA'" +
 			"LOC+005+NZAKL:50'" +
-			"DTM+136+1030+M05'" +
+			"DTM+136+020131+1030+M05'" +
 			"LOC+008+USLAX:50'" +
-			"DTM+132+2200+M05'" +
+			"DTM+132+020131+2200+M05'" +
 			"UNS+D'" +
 			"PDT+P/182345345:990909:US+MANGUS:SIMON:P:590429:M+PAX+NZAKL:USLAX'" +
 			"PDT+P/122222345:970902:US+FEFE:THEODORE:C:560704:U+PAX+NZAKL:USLAX'" +
@@ -47,10 +47,39 @@ public final class PaxlstParserUSedifactTest {
 			"UNT+000011+0201312359'" +
 			"UNE+1+0201312359'" +
 			"UNZ+1+0201312359'";
-        
+
         ApisMessageVo vo = parser.parse(apis);
         List<FlightVo> flights = vo.getFlights();
-        assertEquals(2, flights.size());
+        assertEquals(1, flights.size());
+        assertEquals(4, vo.getPassengers().size());
         System.out.println(vo);
+    }
+
+    /**
+     * TODO
+     * @throws ParseException
+     */
+    @Test
+    public void testProgressiveFlightDtm() throws ParseException {
+        String apis =
+		"UNA:+.? '" +
+			"UNB+UNOA:1+SAMPLEAIR:NZ+USCS:US+020131:2359+0201312359++CEDIPAX+A+++0'" +
+			"UNG+PAXLST+SAMPLCOMM:NZ+TECS:US+020131:2359+0201312359+NZ+001:000'" +
+			"UNH+0201312359+PAXLST:001:000:NZ+SA812/020131/2300+01:C'" +
+			"CTA+IC+:FRED-SAMPLE+1-703-644-5200:TE+1-703-566-8224:FX'" +
+			"TDT++SA812+40+SA'" +
+			"LOC+5+NZAKL:50'" +
+			"DTM+136+020131+2200+M10'" +
+			"LOC+PT+USHNL:50'" +
+			"DTM+132+020131+1900+P8'" +
+			"LOC+PT+USLAX:50'" +
+			"DTM+132+020131+2300+P5'" +
+			"LOC+8+USJFK:50'" +
+			"DTM+132+900101+0400+P2'" +
+			"UNS+D'" +
+			"PDT+P/121234324:980701:US+JONES:INDIANA::351230'" +
+			"UNT+000008+0201312359'" +
+			"UNE+1+0201312359'" +
+			"UNZ+1+0201312359'";
     }
 }
