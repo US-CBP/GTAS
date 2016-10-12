@@ -27,34 +27,25 @@ public class DTM extends Segment {
     
     public DTM(List<Composite> composites) throws ParseException {
         super(DTM.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                switch (c.getElement(0)) {
-                case "136":
-                    this.dtmCode = DtmCode.DEPARTURE_DATETIME;
-                    break;
-                case "132":
-                    this.dtmCode = DtmCode.ARRIVAL_DATETIME;
-                    break;
-                default:
-                    logger.error("unknown dtm code: " + c.getElement(0));
-                    return;
-                }
-                break;
-                
-            case 1:
-                this.date = c.getElement(0);
-                break;
-            case 2:
-                this.time = c.getElement(0);
-                break;
-            case 3:
-                // TODO: handle timezone
-                break;
-            }
+        Composite c = getComposite(0);
+        switch (c.getElement(0)) {
+        case "136":
+            this.dtmCode = DtmCode.DEPARTURE_DATETIME;
+            break;
+        case "132":
+            this.dtmCode = DtmCode.ARRIVAL_DATETIME;
+            break;
+        default:
+            logger.error("unknown dtm code: " + c.getElement(0));
+            return;
         }
+        
+        c = getComposite(1);
+        this.date = c.getElement(0);
+        c = getComposite(2);
+        this.time = c.getElement(0);        
+        c = getComposite(3);
+        // TODO: handle timezone
         
         String tmp = this.date + this.time;
         this.c_dateTime = ParseUtils.parseDateTime(tmp, DateUtils.DT_FORMAT_YEAR_FIRST);

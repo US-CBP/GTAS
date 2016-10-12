@@ -77,6 +77,7 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         String origin = null;
         Date eta = null;
         Date etd = null;
+        boolean ptFound = false;
         
         for (;;) {
             LOC loc = getConditionalSegment(LOC.class);
@@ -86,18 +87,38 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
 
             LocCode locCode = loc.getLocationCode();
             String airport = loc.getIataAirportCode();
-            if (locCode == LocCode.DEPARTURE) {
-                origin = airport;
-            } else if (locCode == LocCode.ARRIVAL) {
+            
+            if (dest != null && ptFound) {
+            	// new flight's origin is last flight's dest
+            	origin = dest;
                 dest = airport;
+            } else {
+	            if (locCode == LocCode.DEPARTURE) {
+	                origin = airport;
+	            } else if (locCode == LocCode.ARRIVAL) {
+	                dest = airport;
+	            } else if (locCode == LocCode.PLACE_OF_TRANSIT) {
+	            	ptFound = true;
+	            	dest = airport;
+	            }
             }
 
             DTM dtm = getConditionalSegment(DTM.class);
-            DtmCode dtmCode = dtm.getDtmCode();
-            if (dtmCode == DtmCode.DEPARTURE_DATETIME) {
-                etd = dtm.getC_dateTime();
-            } else if (dtmCode == DtmCode.ARRIVAL_DATETIME) {
-            	eta = dtm.getC_dateTime();
+            if (dtm != null) {
+	            DtmCode dtmCode = dtm.getDtmCode();
+	            Date dateTime = dtm.getC_dateTime();
+
+	            if (eta != null && ptFound) {
+	            	// new flight's etd is last flight's eta
+	            	etd = eta;
+	            	eta = dateTime;
+	            } else {
+		            if (dtmCode == DtmCode.DEPARTURE_DATETIME) {
+		                etd = dateTime;
+		            } else if (dtmCode == DtmCode.ARRIVAL_DATETIME) {
+		            	eta = dateTime;
+		            }
+	            }
             }
             
             if (origin != null && dest != null) {
@@ -127,8 +148,10 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         p.setFirstName(pdt.getFirstName());
         p.setLastName(pdt.getLastName());
         p.setMiddleName(pdt.getC_middleNameOrInitial());
-        p.setDob(pdt.getDob());
-        p.setAge(DateUtils.calculateAge(pdt.getDob()));
+        if (pdt.getDob() != null) {
+	        p.setDob(pdt.getDob());
+	        p.setAge(DateUtils.calculateAge(pdt.getDob()));
+        }
         p.setGender(pdt.getGender());
         p.setEmbarkation(pdt.getIataEmbarkationAirport());
         p.setDebarkation(pdt.getIataDebarkationAirport());

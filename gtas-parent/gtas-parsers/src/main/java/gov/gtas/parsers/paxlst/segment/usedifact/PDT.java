@@ -8,6 +8,8 @@ package gov.gtas.parsers.paxlst.segment.usedifact;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 import gov.gtas.parsers.exception.ParseException;
@@ -65,7 +67,7 @@ public class PDT extends Segment {
                     this.documentNumber = tmp[1];
                 }
                 
-                if (c.getElement(1) != null) {                    
+                if (StringUtils.isNotBlank(c.getElement(1))) {
                     this.c_dateOfExpiration = ParseUtils.parseDateTime(c.getElement(1), DATE_FORMAT);
                 }
                 
@@ -77,7 +79,9 @@ public class PDT extends Segment {
                 this.firstName = c.getElement(1);
                 this.c_middleNameOrInitial = c.getElement(2);
                 
-                this.dob = ParseUtils.parseDateTime(c.getElement(3), DATE_FORMAT);
+                if (StringUtils.isNotBlank(c.getElement(3))) {
+                	this.dob = ParseUtils.parseDateTime(c.getElement(3), DATE_FORMAT);
+            	}
                 this.gender = c.getElement(4);
                 break;
             

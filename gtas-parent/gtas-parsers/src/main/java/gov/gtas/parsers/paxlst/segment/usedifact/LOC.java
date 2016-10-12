@@ -28,7 +28,7 @@ public class LOC extends Segment {
 
         // location code
         Composite c = getComposite(0);
-	String code = c.getElement(0);
+        String code = c.getElement(0);
         switch (code) {
         case "5":
         case "005":
