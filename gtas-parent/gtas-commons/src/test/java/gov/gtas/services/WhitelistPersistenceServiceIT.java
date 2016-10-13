@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.config.CachingConfig;
@@ -65,6 +66,21 @@ public class WhitelistPersistenceServiceIT {
 		whitelistService.delete(wl.getId(), "test");
 		List<WhitelistVo> uWlvs2 = whitelistService.getAllWhitelists();
 		assertTrue(uWlvs2.isEmpty());
+	}
+
+	@Transactional
+	@Test()
+	public void testUpdateWhitelist() {
+		Whitelist wl = whitelistService.create(testwlv, "test");
+		List<WhitelistVo> wlvs = whitelistService.getAllWhitelists();
+		WhitelistVo rWlv = wlvs.get(0);
+		rWlv.setId(wl.getId());
+		rWlv.setDocumentNumber("222");
+		whitelistService.update(rWlv, "test");
+		List<WhitelistVo> uWlvs = whitelistService.getAllWhitelists();
+		assertNotNull(uWlvs);
+		WhitelistVo rWlv2 = uWlvs.get(0);
+		assertEquals("222", rWlv2.getDocumentNumber());
 	}
 
 	private WhitelistVo createWhitelistTestData() {

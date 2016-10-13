@@ -26,6 +26,7 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
@@ -50,11 +51,14 @@ import gov.gtas.rule.RuleService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.HitsSummaryService;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.WhitelistService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.udr.RulePersistenceService;
+import gov.gtas.svc.request.builder.PassengerFlightTuple;
 import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.TargetingResultUtils;
 import gov.gtas.svc.util.TargetingServiceUtils;
+import gov.gtas.vo.WhitelistVo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -131,6 +135,9 @@ public class TargetingServiceImpl implements TargetingService {
 
 	@Autowired
 	private AuditRecordRepository auditLogRepository;
+
+	@Autowired
+	private WhitelistService whitelistService;
 
 	@Autowired
 	private UserService userService;
@@ -428,7 +435,18 @@ public class TargetingServiceImpl implements TargetingService {
 
 		RuleExecutionContext ctx = TargetingServiceUtils
 				.createPnrApisRequestContext(target);
-
+		Set<PassengerFlightTuple> newPfs = new HashSet<>();
+		// retrieve whitelists
+		List<WhitelistVo> wVos = whitelistService.getAllWhitelists();
+		Set<PassengerFlightTuple> pfs = ctx.getPaxFlightTuples();
+		if (!wVos.isEmpty()) {
+			for (PassengerFlightTuple pf : pfs) {
+				if (!filteringWhitelist(wVos, pf.getPassenger()))
+					newPfs.add(new PassengerFlightTuple(pf.getPassenger(), pf
+							.getFlight()));
+			}
+			ctx.setPaxFlightTuples(newPfs);
+		}
 		logger.debug("Running Rule set.");
 		// default knowledge Base is the UDR KB
 		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx
@@ -451,7 +469,8 @@ public class TargetingServiceImpl implements TargetingService {
 							.createException(
 									RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE,
 									RuleConstants.UDR_KNOWLEDGE_BASE_NAME
-											+ "/" + WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
+											+ "/"
+											+ WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
 				} else { // No enabled but disabled wl rule exists
 					throw ErrorHandlerFactory
 							.getErrorHandler()
@@ -482,6 +501,45 @@ public class TargetingServiceImpl implements TargetingService {
 
 		logger.debug("Exiting executeRules().");
 		return ctx;
+	}
+
+	/**
+	 * Filtering whitelist.
+	 *
+	 * @param wVos
+	 *            the w vos
+	 * @param passenger
+	 *            the passenger
+	 * @return true, if successful
+	 */
+	private boolean filteringWhitelist(List<WhitelistVo> wVos,
+			Passenger passenger) {
+		Set<Document> docs = passenger.getDocuments();
+		List<WhitelistVo> pwlVos = new ArrayList<>();
+		docs.forEach(doc -> {
+			WhitelistVo pwl = new WhitelistVo();
+			pwl.setFirstName(passenger.getFirstName());
+			pwl.setMiddleName(passenger.getMiddleName());
+			pwl.setLastName(passenger.getLastName());
+			pwl.setGender(passenger.getGender());
+			pwl.setDob(passenger.getDob());
+			pwl.setCitizenshipCountry(passenger.getCitizenshipCountry());
+			pwl.setResidencyCountry(passenger.getResidencyCountry());
+			pwl.setDocumentType(doc.getDocumentType());
+			pwl.setDocumentNumber(doc.getDocumentNumber());
+			pwl.setExpirationDate(doc.getExpirationDate());
+			pwl.setIssuanceDate(doc.getIssuanceDate());
+			pwl.setIssuanceCountry(doc.getIssuanceCountry());
+			pwlVos.add(pwl);
+		});
+		for (WhitelistVo newwl : pwlVos) {
+			for (WhitelistVo wlv : wVos) {
+				if (newwl.equals(wlv))
+					return true;
+			}
+		}
+		return false;
+
 	}
 
 	/*

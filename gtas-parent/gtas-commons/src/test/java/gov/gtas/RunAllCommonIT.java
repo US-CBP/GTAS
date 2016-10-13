@@ -14,6 +14,7 @@ import gov.gtas.services.PnrServiceIT;
 import gov.gtas.services.RulePersistenceServiceIT;
 import gov.gtas.services.UserServiceIT;
 import gov.gtas.services.WatchlistPersistenceServiceIT;
+import gov.gtas.services.WhitelistPersistenceServiceIT;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -24,6 +25,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		DashboardCountsIT.class, AuditLogPersistenceServiceIT.class,
 		ServiceRepositoryIT.class, RulePersistenceServiceIT.class,
 		UserServiceIT.class, PnrServiceIT.class,
-		WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class })
+		WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class,
+		WhitelistPersistenceServiceIT.class })
 public class RunAllCommonIT {
 }
