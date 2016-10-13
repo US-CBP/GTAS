@@ -22,7 +22,10 @@ public class TDT extends Segment {
             Composite c = getComposite(i);
             switch (i) {
             case 1:
-                this.c_flightNumber = c.getElement(0);
+            	String flightNumberWithCarrier = c.getElement(0);
+                this.c_flightNumber = flightNumberWithCarrier.substring(2);
+                this.c_airlineCode = flightNumberWithCarrier.substring(0, 2);
+                               
                 if (this.c_flightNumber != null && this.c_flightNumber.endsWith("C")) {
                     isCrewOnlyManifest = true;
                 } else {
@@ -33,7 +36,8 @@ public class TDT extends Segment {
                 this.c_modeOfTransport = c.getElement(0);
                 break;
             case 3:
-                this.c_airlineCode = c.getElement(0);
+            	// obtain carrier from the flight number in 2nd composite above.
+                // this.c_airlineCode = c.getElement(0);
                 break;
             }
         }
