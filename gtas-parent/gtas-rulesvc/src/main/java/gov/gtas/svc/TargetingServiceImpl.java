@@ -54,7 +54,6 @@ import gov.gtas.services.PassengerService;
 import gov.gtas.services.WhitelistService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.udr.RulePersistenceService;
-import gov.gtas.svc.request.builder.PassengerFlightTuple;
 import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.TargetingResultUtils;
 import gov.gtas.svc.util.TargetingServiceUtils;
@@ -435,18 +434,6 @@ public class TargetingServiceImpl implements TargetingService {
 
 		RuleExecutionContext ctx = TargetingServiceUtils
 				.createPnrApisRequestContext(target);
-		Set<PassengerFlightTuple> newPfs = new HashSet<>();
-		// retrieve whitelists
-		List<WhitelistVo> wVos = whitelistService.getAllWhitelists();
-		Set<PassengerFlightTuple> pfs = ctx.getPaxFlightTuples();
-		if (!wVos.isEmpty()) {
-			for (PassengerFlightTuple pf : pfs) {
-				if (!filteringWhitelist(wVos, pf.getPassenger()))
-					newPfs.add(new PassengerFlightTuple(pf.getPassenger(), pf
-							.getFlight()));
-			}
-			ctx.setPaxFlightTuples(newPfs);
-		}
 		logger.debug("Running Rule set.");
 		// default knowledge Base is the UDR KB
 		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx
@@ -514,6 +501,7 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	private boolean filteringWhitelist(List<WhitelistVo> wVos,
 			Passenger passenger) {
+		if (wVos.isEmpty()) return false;
 		Set<Document> docs = passenger.getDocuments();
 		List<WhitelistVo> pwlVos = new ArrayList<>();
 		docs.forEach(doc -> {
@@ -612,13 +600,9 @@ public class TargetingServiceImpl implements TargetingService {
 		if (ruleRunningResult != null) {
 			RuleExecutionStatistics ruleExeStatus = ruleRunningResult
 					.getRuleExecutionStatistics();
-			if (logger.isInfoEnabled()) {
-				logger.info("TargetingServiceImpl.runningRuleEngine() - Total Rules fired. --> "
-						+ ruleExeStatus.getTotalRulesFired());
-			}
 
-			List<HitsSummary> hitsSummary = storeHitsInfo(ruleRunningResult);
-			for (HitsSummary s : hitsSummary) {
+			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult);
+			for (HitsSummary s : hitsSummaryList) {
 				passengerService.createDisposition(s);
 				uniqueFlights.add(s.getFlight().getId());
 			}
@@ -640,10 +624,21 @@ public class TargetingServiceImpl implements TargetingService {
 			Set<Long> passengerHits = new HashSet<>();
 			int ruleHits = 0;
 			int wlHits = 0;
+			List<WhitelistVo> wVos = whitelistService.getAllWhitelists();
 			for (TargetSummaryVo hit : targetingResult.getTargetingResult()) {
-				ruleHits += hit.getRuleHitCount();
-				wlHits += hit.getWatchlistHitCount();
-				passengerHits.add(hit.getPassengerId());
+				Passenger foundPassenger = passengerRepository.findOne(hit
+						.getPassengerId());
+				if (!wVos.isEmpty()) {
+					if (!filteringWhitelist(wVos, foundPassenger)) {
+						ruleHits += hit.getRuleHitCount();
+						wlHits += hit.getWatchlistHitCount();
+						passengerHits.add(hit.getPassengerId());
+					}
+				} else {
+					ruleHits += hit.getRuleHitCount();
+					wlHits += hit.getWatchlistHitCount();
+					passengerHits.add(hit.getPassengerId());
+				}	
 			}
 			AuditActionTarget target = new AuditActionTarget(
 					AuditActionType.TARGETING_RUN, "GTAS Rule Engine", null);
@@ -697,13 +692,15 @@ public class TargetingServiceImpl implements TargetingService {
 		Collection<TargetSummaryVo> results = ruleRunningResult
 				.getTargetingResult();
 
-		logger.info("Total new hits summary records --> " + results.size());
 		Iterator<TargetSummaryVo> iter = results.iterator();
 		while (iter.hasNext()) {
 			TargetSummaryVo ruleDetail = iter.next();
 			HitsSummary hitsSummary = constructHitsInfo(ruleDetail);
-			hitsSummaryList.add(hitsSummary);
+			if (hitsSummary != null) {
+				hitsSummaryList.add(hitsSummary);
+			}
 		}
+		logger.info("Total new hits summary records --> " + hitsSummaryList.size());
 		hitsSummaryRepository.save(hitsSummaryList);
 
 		logger.info("Exiting storeHitsInfo().");
@@ -716,13 +713,23 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	private HitsSummary constructHitsInfo(TargetSummaryVo hitSummmaryVo) {
 		logger.info("Entering constructHitsInfo().");
+		List<WhitelistVo> wVos = whitelistService.getAllWhitelists();
 		HitsSummary hitsSummary = new HitsSummary();
 		Passenger foundPassenger = passengerRepository.findOne(hitSummmaryVo
 				.getPassengerId());
 		if (foundPassenger != null) {
 			logger.info("Found passenger.");
-			hitsSummary.setPassenger(foundPassenger);
-			writeAuditLogForTargetingPassenger(foundPassenger);
+			if (!wVos.isEmpty()) {
+				if (!filteringWhitelist(wVos, foundPassenger)) {
+					hitsSummary.setPassenger(foundPassenger);
+					writeAuditLogForTargetingPassenger(foundPassenger);
+				} else {
+					return null;
+				}
+			} else {
+				hitsSummary.setPassenger(foundPassenger);
+				writeAuditLogForTargetingPassenger(foundPassenger);
+			}
 		} else {
 			logger.debug("No passenger found. --> ");
 		}
