@@ -179,7 +179,7 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
         if (docType == DocType.PASSPORT) {
             d.setDocumentType("P");
         } else if (docType == DocType.VISA) {
-		d.setDocumentType("V");
+        	d.setDocumentType("V");
         }
     }
 
