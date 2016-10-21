@@ -196,7 +196,7 @@ public class MessageGeneratorApp {
         
         for(FlightDto f : flightList){
             List<PaxDto> paxList = new ArrayList<PaxDto>();
-            int j=GenUtil.getRandomNumber(99)+100;
+            int j=GenUtil.getRandomNumber(9)+10;
             //int j=2;
             for(int i=1;i<=j;i++){
                 PaxDto pax= new PaxDto();

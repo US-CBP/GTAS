@@ -31,11 +31,15 @@ public class PnrUtils {
     public static Date parseDateTime(String dt) {
         final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_DAY_FIRST;
         final String DATE_TIME_FORMAT = DateUtils.DT_FORMAT_DAY_FIRST;
-
+        final String DATE_TIME_FORMAT_SEC = DateUtils.DT_FORMAT_DAY_FIRST_SEC;
+        
         if (dt.length() == DATE_ONLY_FORMAT.length()) {
             return ParseUtils.parseDateTime(dt, DATE_ONLY_FORMAT);
         } else if (dt.length() == DATE_TIME_FORMAT.length()) {
             return ParseUtils.parseDateTime(dt, DATE_TIME_FORMAT);
+        }
+        else if(dt.length() == DATE_TIME_FORMAT_SEC.length()){
+        	return ParseUtils.parseDateTime(dt, DATE_TIME_FORMAT_SEC);
         }
 
         return null;

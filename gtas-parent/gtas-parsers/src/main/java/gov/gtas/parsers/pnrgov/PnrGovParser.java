@@ -103,6 +103,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         RCI rci = getMandatorySegment(RCI.class);
         ReservationControlInfo controlInfo = rci.getReservations().get(0);
         parsedMessage.setRecordLocator(controlInfo.getReservationControlNumber());
+        if(controlInfo.getTimeCreated() != null){
+        	parsedMessage.setReservationCreateDate(controlInfo.getTimeCreated());
+        }
 
         for (;;) {
             SSR ssr = getConditionalSegment(SSR.class, "SSR");

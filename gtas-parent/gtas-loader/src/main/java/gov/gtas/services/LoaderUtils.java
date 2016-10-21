@@ -166,8 +166,8 @@ public class LoaderUtils {
     }
 
     public void convertPnrVo(Pnr pnr, PnrVo vo) throws ParseException {
-        BeanUtils.copyProperties(vo, pnr);
-        
+    	
+    	BeanUtils.copyProperties(vo, pnr);
         Airport origin = getAirport(vo.getOrigin());
         String originCountry = null;
         if (origin != null) {

@@ -112,7 +112,20 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    public void addDwellTime(DwellTime dwellTime){
+    @Column(name = "resrvation_create_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date reservationCreateDate;
+    
+    
+    public Date getReservationCreateDate() {
+		return reservationCreateDate;
+	}
+
+	public void setReservationCreateDate(Date reservationCreateDate) {
+		this.reservationCreateDate = reservationCreateDate;
+	}
+
+	public void addDwellTime(DwellTime dwellTime){
     	dwellTimes.add(dwellTime);
     }
     

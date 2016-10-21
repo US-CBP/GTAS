@@ -161,7 +161,8 @@ public class PnrGen {
         String add=GenUtil.getAddress();
         String ph=GenUtil.getPhoneNumber();
         sb.append("SRC'"+newline);
-        sb.append("RCI+"+dto.getCarrier()+":"+GenUtil.getRecordLocator()+"'"+newline);
+        //RCI+TZ:W9TEND::230513:181348'
+        sb.append("RCI+"+dto.getCarrier()+":"+GenUtil.getRecordLocator()+"::230516:181348"+"'"+newline);
         sb.append("SSR+AVML:HK:2:"+dto.getCarrier()+"'"+newline);
         sb.append("DAT+700:"+GenUtil.getDate()+"+710:"+GenUtil.getTicketDate()+"'"+newline);
         //sb.append("IFT+4:28::"+dto.getCarrier()+"+THIS PASSENGER IS A VIP'"+newline);

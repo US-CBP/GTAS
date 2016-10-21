@@ -113,6 +113,7 @@ public class RCI extends Segment {
             if (dt != null) {
                 if (c.getElement(4) != null) {
                     dt += c.getElement(4);
+                    
                 }
                 r.setTimeCreated(PnrUtils.parseDateTime(dt));
             }
