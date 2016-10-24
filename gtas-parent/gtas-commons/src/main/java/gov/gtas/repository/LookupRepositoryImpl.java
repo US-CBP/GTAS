@@ -112,12 +112,12 @@ public class LookupRepositoryImpl implements LookUpRepository {
     @Transactional
     @Cacheable(value = "app_configuration", key = "#option")
     public String getAppConfigOption(String option) {
-        return appConfigRepository.findByOption(option).getValue();
+    	AppConfiguration opt = appConfigRepository.findByOption(option);
+    	return (opt != null) ? opt.getValue() : null;
     }
 
     @Transactional
     public void deleteCountryDb(Country country) {
         countryRepository.delete(country);
     }
-
 }

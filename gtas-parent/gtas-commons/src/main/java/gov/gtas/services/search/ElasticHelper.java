@@ -27,7 +27,6 @@ import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -66,33 +65,40 @@ public class ElasticHelper {
     @Autowired
     private LookUpRepository lookupRepo;
 
-	public void initClient() {
+	////////////////////////////////////////////////////////////////////
+	// init methods
+	
+    public void initClient() {
 		if (isUp()) {
 			return;
 		}
 
         String hostname = lookupRepo.getAppConfigOption(AppConfigurationRepository.ELASTIC_HOSTNAME);
-        int port = Integer.valueOf(lookupRepo.getAppConfigOption(AppConfigurationRepository.ELASTIC_PORT));
-		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
+        String portStr = lookupRepo.getAppConfigOption(AppConfigurationRepository.ELASTIC_PORT);
+        if (hostname == null || portStr == null) {
+    		logger.info("ElasticSearch configuration not found");
+        	return;
+        }
 
-		this.client = TransportClient.builder().build();
+		int port = Integer.valueOf(portStr);
+		client = TransportClient.builder().build();
+		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
 		try {
-			this.client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
+			client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
 		} catch (UnknownHostException e) {
 			logger.error("unknown elastic host", e);
 			closeClient();
+			return;
 		}
 
-		List<DiscoveryNode> nodes = this.client.connectedNodes();
+		List<DiscoveryNode> nodes = client.connectedNodes();
 		if (nodes.isEmpty()) {
 			logger.warn("Init failed: ElasticSearch not available");
 			closeClient();
+			return;
 		}
 		
-		initIndex();
-	}
-	
-	public void initIndex() {
+		// initialize index
 		boolean indexExists = client.admin().indices().prepareExists(INDEX_NAME).execute().actionGet().isExists();
 	    if (!indexExists) {
 			logger.info("ElasticSearch: Initializing index " + INDEX_NAME);
@@ -106,15 +112,28 @@ public class ElasticHelper {
 		if (isDown()) { 
 			return; 
 		}
-		this.client.close();
-		this.client = null;
+		client.close();
+		client = null;
 	}
 	
+	
+	public boolean isUp() {
+		return !isDown();
+	}
+
+	public boolean isDown() {
+		return client == null;
+	}		
+
+	////////////////////////////////////////////////////////////////////
+
 	public void indexPnr(Pnr pnr) {
 		initClient();
-		if (isDown()) { 
-			return; 
+		if (isDown()) {
+			logger.warn("ElasticSearch not available");			
+			return;
 		}
+
 		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
 		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw);
 	}
@@ -122,8 +141,10 @@ public class ElasticHelper {
 	public void indexApis(ApisMessage apis) {
 		initClient();
 		if (isDown()) {
+			logger.warn("ElasticSearch not available");			
 			return;
 		}
+		
 		String apisRaw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
 	}
@@ -167,18 +188,9 @@ public class ElasticHelper {
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
-	public boolean isUp() {
-		return !isDown();
-	}
-
-	public boolean isDown() {
-		boolean isDown = this.client == null;
-		if (isDown) {
-			logger.warn("ElasticSearch not available");
-		}
-		return isDown;
-	}
-
+	////////////////////////////////////////////////////////////////////
+	// helpers
+	
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		
