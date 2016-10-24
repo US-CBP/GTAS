@@ -20,6 +20,7 @@ import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.MessageRepository;
+import gov.gtas.services.search.ElasticHelper;
 
 @Service
 public class Loader {
@@ -31,6 +32,9 @@ public class Loader {
 
     @Autowired
     private PnrMessageService pnrLoader;
+
+    @Autowired
+    protected ElasticHelper indexer;
 
     /**
      * Processes all the messages in a single file.
@@ -74,6 +78,13 @@ public class Loader {
             msgDao.save(m);
             return null;
         }
+        
+		indexer.initClient();
+		if (indexer.isDown()) {
+			svc.setUseIndexer(false);
+		} else {
+			svc.setUseIndexer(true);
+		}
         
         int successMsgCount = 0;
         int failedMsgCount = 0;

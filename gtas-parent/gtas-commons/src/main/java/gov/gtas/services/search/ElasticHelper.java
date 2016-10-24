@@ -128,23 +128,11 @@ public class ElasticHelper {
 	////////////////////////////////////////////////////////////////////
 
 	public void indexPnr(Pnr pnr) {
-		initClient();
-		if (isDown()) {
-			logger.warn("ElasticSearch not available");			
-			return;
-		}
-
 		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
 		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw);
 	}
 
 	public void indexApis(ApisMessage apis) {
-		initClient();
-		if (isDown()) {
-			logger.warn("ElasticSearch not available");			
-			return;
-		}
-		
 		String apisRaw = LobUtils.convertClobToString(apis.getRaw());		
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
 	}

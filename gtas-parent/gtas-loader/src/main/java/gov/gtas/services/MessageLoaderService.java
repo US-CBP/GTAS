@@ -21,9 +21,6 @@ public abstract class MessageLoaderService {
     @Autowired
     protected LoaderUtils utils;
 
-    @Autowired
-    protected ElasticHelper indexer;
-
     public abstract List<String> preprocess(String message);
     public abstract MessageVo parse(String message);
     public abstract boolean load(MessageVo parsedMessage);
@@ -35,4 +32,15 @@ public abstract class MessageLoaderService {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
+
+    // indexer
+
+    @Autowired
+    protected ElasticHelper indexer;
+
+    protected boolean useIndexer;
+
+	public void setUseIndexer(boolean useIndexer) {
+		this.useIndexer = useIndexer;
+	} 
 }
