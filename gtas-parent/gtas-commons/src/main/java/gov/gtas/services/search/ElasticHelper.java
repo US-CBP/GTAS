@@ -51,6 +51,11 @@ import gov.gtas.repository.LookUpRepository;
 import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.util.LobUtils;
 
+/**
+ * Methods for interfacing with elastic search engine: indexing
+ * and search.  Clients are responsible for initializing the client
+ * prior to usage.  
+ */
 @Service
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
@@ -126,6 +131,7 @@ public class ElasticHelper {
 	}		
 
 	////////////////////////////////////////////////////////////////////
+	// index, search
 
 	public void indexPnr(Pnr pnr) {
 		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
@@ -137,12 +143,7 @@ public class ElasticHelper {
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
 	}
 	
-	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
-		initClient();
-		if (isDown()) { 
-			return new AdhocQueryDto("Search service is not available");
-		}
-		
+	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {	
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
