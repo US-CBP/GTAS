@@ -227,7 +227,22 @@ public class LoaderUtils {
         }
         return a;
     }
-    
+
+    public Airport getAirport(String code) throws ParseException {
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        
+        if (code.length() == 3) {
+            return airportService.getAirportByThreeLetterCode(code);
+        } else if (code.length() == 4) {
+            return airportService.getAirportByFourLetterCode(code);
+        }
+
+        logger.warn("Unknown airport code: " + code);
+        return null;
+    }
+
     /**
      * try returning ISO_3 code
      */
@@ -252,21 +267,6 @@ public class LoaderUtils {
         return code;
     }
     
-    private Airport getAirport(String code) throws ParseException {
-        if (StringUtils.isBlank(code)) {
-            return null;
-        }
-        
-        if (code.length() == 3) {
-            return airportService.getAirportByThreeLetterCode(code);
-        } else if (code.length() == 4) {
-            return airportService.getAirportByFourLetterCode(code);
-        }
-
-        logger.warn("Unknown airport code: " + code);
-        return null;
-    }
-
     private static String[] getNullPropertyNames (Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();

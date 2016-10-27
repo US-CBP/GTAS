@@ -7,10 +7,10 @@ package gov.gtas.services;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,11 @@ import gov.gtas.model.EdifactMessage;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.edifact.EdifactParser;
+import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.PnrGovParser;
 import gov.gtas.parsers.pnrgov.PnrUtils;
 import gov.gtas.parsers.vo.MessageVo;
@@ -38,6 +41,9 @@ public class PnrMessageService extends MessageLoaderService {
     @Autowired
     private PnrRepository msgDao;
     
+    @Autowired
+    private LoaderUtils utils;
+
     private Pnr pnr;
 
     @Override
@@ -88,12 +94,15 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.processPnr(pnr, vo);
             loaderRepo.processFlightsAndPassengers(vo.getFlights(), vo.getPassengers(), 
                     pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs());
+            
+            // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setPnr(pnr);
             }
-            if(pnr.getFlightLegs() != null && pnr.getFlightLegs().size() >0){
-            	createDwellTime(pnr);
-            }
+            
+            updatePaxEmbarkDebark(pnr);
+        	calculateDwellTimes(pnr);
+            
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -105,9 +114,34 @@ public class PnrMessageService extends MessageLoaderService {
         return success;
     }
     
-    private void createDwellTime(Pnr pnr){
-    	
+    private void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
+    	List<FlightLeg> legs = pnr.getFlightLegs();
+    	if (CollectionUtils.isEmpty(legs)) {
+    		return;
+    	}
+    	String embark = legs.get(0).getFlight().getOrigin();
+    	String debark = legs.get(legs.size() - 1).getFlight().getDestination();
+    	for (Passenger p : pnr.getPassengers()) {
+    		p.setEmbarkation(embark);
+    		Airport airport = utils.getAirport(embark);
+    		if (airport != null) {
+    			p.setEmbarkCountry(airport.getCountry());
+    		}
+    		
+    		p.setDebarkation(debark);
+    		airport = utils.getAirport(debark);
+    		if (airport != null) {
+    			p.setDebarkCountry(airport.getCountry());
+    		}
+    	}
+    }
+    
+    private void calculateDwellTimes(Pnr pnr){
     	List<FlightLeg> legs=pnr.getFlightLegs();
+        if (CollectionUtils.isEmpty(legs)) {
+        	return;
+        }
+        
     	Flight firstFlight=null;
     	Flight secondFlight=null;
     	Flight thirdFlight=null;
