@@ -8,7 +8,7 @@ package gov.gtas.vo.passenger;
 public class CaseVo {
     private Long passengerId;
     private Long flightId;
-    private String lastName;
+	private String lastName;
     private String firstName;
     private String middleName;
     private String flightNumber;

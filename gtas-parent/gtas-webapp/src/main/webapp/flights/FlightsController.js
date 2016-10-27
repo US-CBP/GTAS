@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter, 
-            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, $timeout) {
+            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, $timeout) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -150,9 +150,12 @@
             useExternalSorting: true,
             useExternalFiltering: true,
             enableHorizontalScrollbar: 0,
-            enableVerticalScrollbar: 0,
+            enableVerticalScrollbar: 1,
             enableColumnMenus: false,
+            enableExpandableRowHeader: false,
             exporterCsvFilename: 'Flights.csv',
+            expandableRowHeight: 200,
+            expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
             onRegisterApi: function (gridApi) {
                 $scope.gridApi = gridApi;
@@ -179,6 +182,39 @@
                         resolvePage();
                     }
                 });
+                
+                gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                    if (row.isExpanded) {
+                 	   row.entity.subGridOptions = {
+                 			  columnDefs: $scope.passengerSubGridColumnDefs,
+                 			  enableHorizontalScrollbar: 0,
+                              enableVerticalScrollbar: 1,
+                              
+                 	   }
+                 	   
+                 	   var request ={
+                 			   dest:row.entity.destination,
+                 			   direction:row.entity.direction,
+                 			   etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
+                 			   etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                 			   flightNumber:row.entity.fullFlightNumber,
+                 			   origin: row.entity.origin,
+                 			   lastname:"",
+                 			   pageNumber:1,
+                 			   pageSize:10
+                 	   };	   
+                 	   
+                 	   paxService.getPax(row.entity.id, request).then(function(data){
+                 		   var passengerHitList = [];
+                 		   $.each(data.data.passengers, function(index,value){
+                 			 if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
+                 				 passengerHitList.push(value);
+                 			 }
+                 		   });
+                 		   row.entity.subGridOptions.data=passengerHitList;
+                 	   });
+                    }
+                });
             }
         };
         //Front-end pagination configuration object for gridUi
@@ -193,13 +229,46 @@
                 enableHorizontalScrollbar: 0,
                 enableVerticalScrollbar: 1,
                 enableColumnMenus: false,
+                enableExpandableRowHeader: false,
                 exporterCsvFilename: 'Flights.csv',
+                expandableRowHeight: 200,
+                expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
                     
                onRegisterApi: function (gridApi) {
                    $scope.gridApi = gridApi;
                    
                    gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                        $scope.model.pageSize = pageSize;
+                   });
+                   
+                   gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                       if (row.isExpanded) {
+                     	   row.entity.subGridOptions = {
+                     			   columnDefs: $scope.passengerSubGridColumnDefs	   
+                     	   }
+                     	   
+                     	   var request ={
+                     			   dest:row.entity.destination,
+                     			   direction:row.entity.direction,
+                     			   etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
+                     			   etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                     			   flightNumber:row.entity.fullFlightNumber,
+                     			   origin: row.entity.origin,
+                     			   lastname:"",
+                     			   pageNumber:1,
+                     			   pageSize:10
+                     	   };	   
+                     	   
+                     	  paxService.getPax(row.entity.id, request).then(function(data){
+                    		   var passengerHitList = [];
+                    		   $.each(data.data.passengers, function(index,value){
+                    			 if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
+                    				 passengerHitList.push(value);
+                    			 }
+                    		   });
+                    		   row.entity.subGridOptions.data=passengerHitList;
+                     	  });
+                        }
                    });
                }
         }
@@ -238,7 +307,8 @@
             {
                 name: 'fullFlightNumber',
                 displayName: 'flight.flight', headerCellFilter: 'translate',
-                width: 70
+                width: 70,
+                cellTemplate:'<md-button ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled="row.entity.ruleHitCount === 0 && row.entity.listHitCount === 0" >{{COL_FIELD}}</md-button>'
             },
             {
                 name: 'etaLocalTZ', displayName:'pass.eta', headerCellFilter: 'translate',
@@ -256,6 +326,49 @@
         
         $scope.flightsQueryGrid.columnDefs = $scope.flightsGrid.columnDefs;
 
+        $scope.passengerSubGridColumnDefs = 
+        	[
+             {
+                 name: 'onRuleHitList', displayName: 'H', width: 50,
+                 cellClass: "rule-hit",
+                 sort: {
+                     direction: uiGridConstants.DESC,
+                     priority: 0
+                 },
+                 cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+             },
+             {
+                 name: 'onWatchList', displayName: 'L', width: 70,
+                 cellClass: gridService.anyWatchlistHit,
+                 sort: {
+                     direction: uiGridConstants.DESC,
+                     priority: 1
+                 },
+                 cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
+             },
+             {name: 'passengerType', displayName:'doc.type', headerCellFilter: 'translate', width: 50},
+             {
+                 name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
+                 cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+             },
+             {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
+             {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},
+             {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
+             {
+                 name: 'eta',
+                 sort: {
+                     direction: uiGridConstants.DESC,
+                     priority: 2
+                 },
+                 displayName:'pass.eta', headerCellFilter: 'translate',
+                 visible: (stateName === 'paxAll')
+             },
+             {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
+             {name: 'gender', displayName:'doc.gender', headerCellFilter: 'translate', width: 50},
+             {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
+             {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75}
+         ];     
+        
         $scope.queryPassengersOnSelectedFlight = function (row_entity) {
             $state.go('passengers', {
                 flightNumber: row_entity.flightNumber,

@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +44,15 @@ import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
+import gov.gtas.model.Role;
 import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.UserService;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
@@ -80,6 +84,9 @@ public class PassengerDetailsController {
     @Autowired
     private PnrService pnrService;
 
+    @Autowired
+    private UserService uService;
+    
     private static final String EMPTY_STRING = "";
 
     @ResponseBody
@@ -158,6 +165,7 @@ public class PassengerDetailsController {
                 dvo.setCreatedAt(d.getCreatedAt());
                 dvo.setStatus(d.getStatus().getName());
                 dvo.setCreatedBy(d.getCreatedBy());
+                dvo.setStatusId(d.getStatus().getId());
                 history.add(dvo);
             }
             vo.setDispositionHistory(history);          
@@ -222,14 +230,37 @@ public class PassengerDetailsController {
     
     @RequestMapping(value = "/disposition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody JsonServiceResponse createDisposition(@RequestBody DispositionData disposition) {
-        pService.createDisposition(disposition);
-        return new JsonServiceResponse(Status.SUCCESS, "Create disposition successful");
+        JsonServiceResponse response = checkIfValidCaseStatusAction(disposition);
+        if(response.getStatus().equals(Status.SUCCESS)){
+        	pService.createDisposition(disposition);
+        }
+        return response;
     }
 
     @RequestMapping(value = "/allcases", method = RequestMethod.GET)
     public @ResponseBody List<CaseVo> getAllDispositions() {
         return pService.getAllDispositions();
-    }   
+    }
+    
+    @RequestMapping(value="/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(@RequestBody DispositionStatus ds){
+    	pService.createOrEditDispositionStatus(ds);
+    	return new JsonServiceResponse(Status.SUCCESS, "Creation or Edit of disposition status successful");
+    }
+    
+    @RequestMapping(value="/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody JsonServiceResponse deleteDispositionStatus(@RequestBody DispositionStatus ds){
+    	if(!isRemovableDispositionStatus(ds)){
+    		return new JsonServiceResponse(Status.FAILURE, "This status is irremovable");
+    	}
+    	try{
+    		pService.deleteDispositionStatus(ds);
+    	}catch(ConstraintViolationException e){
+    		return new JsonServiceResponse(Status.FAILURE,"Case already exists with " + ds.getName() + ". You may not remove this status");
+    	}
+    	return new JsonServiceResponse(Status.SUCCESS, "Deletion of disposition status successful");
+    }
+    
     
     /**
      * Util method to map PNR model object to VO
@@ -405,5 +436,107 @@ public class PassengerDetailsController {
             e.printStackTrace();
         }
     }
-
+    
+    private boolean isRemovableDispositionStatus(DispositionStatus ds){
+    	//Prevent deletion of any of the original disp status ids (New, Closed, Open, Re-opened, Pending Closure)
+    		if(ds.getId() <= 5L){
+    			return false;
+    		}
+    	return true;
+    }
+    
+    private JsonServiceResponse checkIfValidCaseStatusAction(DispositionData disposition){
+    	 DispositionStatus currentDispStatus = getCurrentDispositionStatus(disposition);
+    	
+    	if(currentDispStatus == null){ //if no history
+    		//Conditions: Action cannot close
+    		if(disposition.getStatusId().equals(3L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current Status: Unknown. May not be set to CLOSE");
+    		}
+    		return new JsonServiceResponse(Status.SUCCESS, "Successful status change from Unknown");
+    	}
+    	
+    	if(currentDispStatus.getId().equals(1L)){ //if existing status is New...
+    		//Conditions: Action can NOT be re-open, new, or closed
+    		if(disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L) || disposition.getStatusId().equals(4L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current Status: NEW. Cannot be set to RE-OPEN or CLOSED");
+    		} else{
+    			return new JsonServiceResponse(Status.SUCCESS, "Successful state change from NEW");
+    		}
+    	}
+    	
+    	if(currentDispStatus.getId().equals(2L)){ //If existing status is Open...
+    		//Conditions: Action can NOT be set to re-open or closed.
+    		if(disposition.getStatusId().equals(2L) || disposition.getStatusId().equals(3L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current status: OPEN. Cannot be set to CLOSED or RE-OPEN");
+    		} else {
+    			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from OPEN");
+    		}
+    	}
+    	
+    	if(currentDispStatus.getId().equals(3L)){//If existing status is Closed
+    		//Conditions: Action may only be set to 'Re-open' AND be admin
+    		boolean isAdmin = false;
+    		if(disposition.getStatusId().equals(4L)){//If is re-open
+    			for(RoleData r :uService.findById(disposition.getUser()).getRoles()){ //determine if current user is Admin
+    				if(r.getRoleId() == 1){
+    					isAdmin = true;
+    				}
+    			}
+    			if(isAdmin){
+    				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from CLOSED");
+    			} else{
+    				return new JsonServiceResponse(Status.FAILURE, "Current status: CLOSED. Only administrators may RE-OPEN a CLOSED status");
+    			}
+    		} else{
+    			return new JsonServiceResponse(Status.FAILURE, "Current status: CLOSED. May only be set to RE-OPEN.");
+    		}
+    	}
+    	
+    	if(currentDispStatus.getId().equals(4L)){//If existing status is Re-open
+    		//Conditions: Action may not be set to Open, New or Closed
+    		if(disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L) || disposition.getStatusId().equals(3L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current status: RE-OPEN. Cannot be set to OPEN or CLOSED");
+    		} else{
+    			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from RE-OPEN");
+    		}
+    	}
+    	
+    	if(currentDispStatus.getId().equals(5L)){//If existing status is Pending Closure
+    		//Conditions: Action may not be set to Open or New
+    		if(disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current status: PENDING CLOSURE. Cannot be set to OPEN");
+    		}else{
+    			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from PENDING CLOSURE");
+    		}
+    	}
+    	//If the current status is not of the base 5, then we have no hard rule set for them other than do not set to close or new
+    	if(currentDispStatus.getId() > 5L){
+    		if(disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L)){
+    			return new JsonServiceResponse(Status.FAILURE, "Current status: Custom. Cannot be set to NEW or CLOSED");
+    		} else{
+    			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from custom status");
+    		}
+    	}
+    	
+    	//If the current id of the disposition is < 1 there is a problem with the database.
+    	return new JsonServiceResponse(Status.FAILURE, "Current status is "+currentDispStatus.getId()+" and breaks expected conventions");
+    	
+    }
+    
+    private DispositionStatus getCurrentDispositionStatus(DispositionData disposition){
+    	List<Disposition> dispList = pService.getPassengerDispositionHistory(disposition.getPassengerId(), disposition.getFlightId());
+    	Disposition mostRecentDisposition = null;
+    	
+    	for(Disposition d:dispList){
+    		if(mostRecentDisposition == null || mostRecentDisposition.getCreatedAt().before(d.getCreatedAt())){
+    			mostRecentDisposition = d;
+    		}
+    	}
+    	if(mostRecentDisposition != null){
+    		return mostRecentDisposition.getStatus();
+    	} else{
+    		return null;
+    	}
+    }
 }

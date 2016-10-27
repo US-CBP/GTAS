@@ -209,6 +209,18 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return new ArrayList<>();
 	}
+	
+	@Transactional
+	@Override
+	public void createOrEditDispositionStatus(DispositionStatus ds){
+		dispositionStatusRepo.save(ds);
+	}
+	
+	@Transactional
+	@Override
+	public void deleteDispositionStatus(DispositionStatus ds){
+		dispositionStatusRepo.delete(ds);
+	}
 
 	/* (non-Javadoc)
 	 * @see gov.gtas.services.PassengerService#createDisposition(gov.gtas.services.DispositionData)

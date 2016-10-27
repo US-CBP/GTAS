@@ -40,11 +40,25 @@
             	dfd.resolve($http.get("/gtas/allcases"));
             	return dfd.promise;
             }
+            
+            function createOrEditDispositionStatus(dispStatusObj){
+            	var dfd = $q.defer();
+            	dfd.resolve($http.post("/gtas/createoreditdispstatus",dispStatusObj));
+            	return dfd.promise;
+            }
+            
+            function deleteDispositionStatus(dispStatusObj){
+            	var dfd = $q.defer();
+            	dfd.resolve($http.post("/gtas/deletedispstatus", dispStatusObj));
+            	return dfd.promise;
+            }
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 createDisposition: createDisposition,
-                getAllCases:getAllCases
+                getAllCases:getAllCases,
+                createOrEditDispositionStatus:createOrEditDispositionStatus,
+                deleteDispositionStatus:deleteDispositionStatus
             });
         })
         .service("paxService", function (userService, $rootScope, $http, $q) {

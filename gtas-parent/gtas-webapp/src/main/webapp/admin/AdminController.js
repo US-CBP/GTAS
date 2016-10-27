@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userService, auditService, errorService, $location, $mdToast, $document, $http) {
+app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userService, auditService, caseService, errorService, $location, $mdToast, $document, $http) {
     'use strict';
     var that = this;
     this.successToast = function(msg){
@@ -130,4 +130,77 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
           .hideDelay(0)
           .parent($scope.toastParent));
     };
+    
+    $scope.dispObj = {};
+    
+    $scope.saveOrEditStatus= function(){
+    	caseService.createOrEditDispositionStatus($scope.createDispStatusVo())
+    	.then(function(response){
+    		//produce success message
+    		console.log(response);
+    		if(response.status === 200){
+    			$scope.errorToast(response.data.message);
+    			$scope.loadDispStatuses();
+    		}else{
+    			$scope.errorToast(response.data.message);
+    		}
+    	});
+    };
+    
+    $scope.deleteStatus = function(){
+    	caseService.deleteDispositionStatus($scope.createDispStatusVo())
+    	.then(function(response){
+    		//produce success message
+    		if(response.status === 200){
+    			$scope.errorToast(response.data.message);
+    			$scope.loadDispStatuses();
+    		}else{
+    			$scope.errorToast(response.data.statusText);
+    		}
+    	}).error(function(response){
+    		$scope.errorToast(response.data.statusText + " You may not remove a status already saved to an existing case");
+    	});
+    	
+    };
+    
+    $scope.loadDispStatuses = function(){
+	    caseService.getDispositionStatuses()
+	    .then(function(response){
+	    	$scope.dispositionStatus = response.data;
+	    	$scope.dispObj.currentDispStatus = '-1';
+	    	$scope.dispObj.currentStatusName = '';
+	    	$scope.dispObj.currentStatusDescription = '';
+	    });
+    }
+    
+    $scope.adjustUiForStatusObj = function(dispId){
+    		$scope.dispObj.currentStatusName = '';
+    	    $scope.dispObj.currentStatusDescription = '';
+    	    
+	    	$.each($scope.dispositionStatus, function(index,value){
+	    		if(value.id.toString() === dispId){
+	    			$scope.dispObj.currentStatusDescription = value.description;
+	    			$scope.dispObj.currentStatusName = value.name;
+	    			return value;
+	    		}
+	    	});
+    };
+    
+    $scope.createDispStatusVo = function(){
+    	var dispId = null;
+    	if($scope.dispObj.currentDispStatus != '-1' ){
+    		dispId = $scope.dispObj.currentDispStatus;
+    	}
+    		
+    	var dispVo = {
+    			name:$scope.dispObj.currentStatusName,
+    			description:$scope.dispObj.currentStatusDescription,
+    			id:dispId
+    	};
+    	
+    	return dispVo;
+    }
+    
+    $scope.loadDispStatuses();
+    
 });

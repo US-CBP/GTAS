@@ -29,6 +29,9 @@ public interface PassengerService {
     public List<DispositionStatus> getDispositionStatuses();
     public List<CaseVo> getAllDispositions();
     
+    public void createOrEditDispositionStatus(DispositionStatus ds);
+    public void deleteDispositionStatus(DispositionStatus ds);
+    
     /**
      * 
      * @param flightId optional

@@ -10,7 +10,15 @@ import gov.gtas.vo.BaseVo;
 public class DispositionVo extends BaseVo {
     private String comments;
     private String status;
-    public String getComments() {
+    private Long statusId;
+    
+    public Long getStatusId() {
+		return statusId;
+	}
+	public void setStatusId(Long statusId) {
+		this.statusId = statusId;
+	}
+	public String getComments() {
         return comments;
     }
     public void setComments(String comments) {
