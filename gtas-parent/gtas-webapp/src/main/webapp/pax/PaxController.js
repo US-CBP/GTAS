@@ -8,6 +8,7 @@
     app.controller('PassengerDetailCtrl', function ($scope, passenger, $mdToast, spinnerService, user, paxDetailService, caseService) {
         $scope.passenger = passenger.data;
         $scope.isLoadingFlightHistory = true;        
+        $scope.isClosedCase = false;
         
         $scope.saveDisposition = function(){
         	var disposition = {
@@ -34,15 +35,81 @@
         				$.extend(disposition,status);
         			}
         		});
-        		if($scope.passenger.dispositionHistory != null && typeof $scope.passenger.dispositionHistory.length != "undefined"){
+        		if($scope.passenger.dispositionHistory != null && typeof $scope.passenger.dispositionHistory.length != "undefined"
+        			&& response.data.status.toUpperCase() === "SUCCESS"){
         			//Add to disposition length without service calling if success
         			$scope.passenger.dispositionHistory.push(disposition);
         		} else{
         			$scope.passenger.dispositionHistory = [disposition];
         		}
         	});
+        }  
+        
+     var getMostRecentCase = function(dispHistory){
+    	var mostRecentCase = null;
+     	$.each(dispHistory, function(index,value){
+     		if(mostRecentCase === null || mostRecentCase.createdAt < value.createdAt){
+     			mostRecentCase = value;
+     		}
+     	});
+     	return mostRecentCase;
+     }   
+        
+     var isCaseDisabled = function(dispHistory, user){
+    	 
+    	 //Find if most recent case is closed
+        	var mostRecentCase = getMostRecentCase(dispHistory);
+         //If Closed, find out if current user is Admin
+        	if(mostRecentCase != null && mostRecentCase.statusId == 2){
+        	  	var isAdmin = false;
+            	$.each(user.data.roles,function(index,value){
+            		if(value.roleId === 1){
+            			isAdmin = true;
+            		}
+            	});
+         //If user is admin do not disable, else disable
+        		if(isAdmin){
+        			return false;
+        		} else return true;
+        	} else return false; //if not closed do not disable
         }
         
+       	$scope.isClosedCase = isCaseDisabled($scope.passenger.dispositionHistory, user);
+       	
+       	$scope.isCaseDropdownItemDisabled = function(statusId){
+       		var mostRecentCase = getMostRecentCase($scope.passenger.dispositionHistory);
+       		if(mostRecentCase != null){
+       			if(mostRecentCase.statusId == 1){
+       				if(statusId == 3 || statusId == 4 || statusId == 1){
+       					return true;
+       				}
+       			}else if(mostRecentCase.statusId == 2){
+	       			if(statusId == 3 || statusId == 4 || statusId == 1){
+	       				return true;
+	       			}
+	       		}else if(mostRecentCase.statusId == 3){
+	       			if(statusId != 4 || statusId == 1){
+	       				return true;
+	       			}
+	       		}else if(mostRecentCase.statusId == 4){
+	       			 if(statusId == 2 || statusId == 3 || statusId == 1){
+	       				 return true;
+	       			 }
+	       		}else if(mostRecentCase.statusId == 5){
+	       			if(statusId == 2 || statusId == 1){
+	       				return true;
+	       			}
+	       		} else if(mostRecentCase.statusId > 5){
+	       			if(statusId == 1 || statusId == 3){
+	       				return true
+	       			}
+	       		}
+       			return false;
+       		} if(statusId == 1){
+       			return false;
+       		} else{ return true;}
+       	};
+       	
         caseService.getDispositionStatuses()
         .then(function(response){
         	$scope.dispositionStatus = response.data;
@@ -59,7 +126,6 @@
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                               jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
                                               $timeout, paxModel, $http, spinnerService) {
-        
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -282,6 +348,25 @@
             }    
         };
 
+      	$scope.hitTooltipData = ['Loading...'];
+        
+        $scope.resetHitTooltip = function(){
+        	$scope.hitTooltipData = ['Loading...'];
+        };
+        
+    	$scope.getHitTooltipData = function(row){
+    		var dataList = [];
+    		paxService.getRuleHits(row.entity.id).then(function (data){
+    			$.each(data,function(index,value){
+    				dataList.push(value.ruleDesc);
+    			});
+    			if(dataList.length === 0){
+    				dataList = "No Description Available";
+    			}
+    			$scope.hitTooltipData = dataList;
+    		});
+    	};
+        
         if (stateName === 'queryPassengers') {
             $scope.passengerQueryGrid.columnDefs = [
                 {
@@ -294,7 +379,9 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScore.resetHitTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
+                    	+'<md-tooltip class="tt-multiline" md-visible="true" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
+                    	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'L', width: 70,
@@ -380,7 +467,9 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScore.resetHitTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
+                	+'<md-tooltip class="tt-multiline" md-direction="right" ng-repeat="item in grid.appScope.hitTooltipData"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
+                	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'L', width: 70,
