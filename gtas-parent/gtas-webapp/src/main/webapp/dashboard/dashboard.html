@@ -15,20 +15,21 @@
 </style>
 
 <body>
-<h2 class="col-md-12"><span style="text-align: center;" class="glyphicon glyphicon-dashboard"></span> {{'db.KeyMetrics' | translate}}</h2>
+<!--<h2 class="col-md-12"><span style="text-align: center;" class="glyphicon glyphicon-dashboard"></span> {{'db.KeyMetrics' | translate}}</h2>-->
+
 <div class="column" style="padding-top: 90px;"></div>
 
 <!-- Begin Flight Stats-->
 
-<div layout="column">
-            <span layout="column" layout-wrap class="clearfix" style="min-height: 20px;">
-                        <md-switch ng-model="sampleData"
-                                   class="md-primary"
-                                   ng-change="switchDashboard('dash')">
-                            {{'db.SampleData' | translate}}
-                        </md-switch>
-            </span>
-</div>
+<!--<div layout="column">-->
+<!--<span layout="column" layout-wrap class="clearfix" style="min-height: 20px;">-->
+<!--<md-switch ng-model="sampleData"-->
+<!--class="md-primary"-->
+<!--ng-change="switchDashboard('dash')">-->
+<!--{{'db.SampleData' | translate}}-->
+<!--</md-switch>-->
+<!--</span>-->
+<!--</div>-->
 
 <div class="container-fluid">
     <div class="column">
@@ -45,100 +46,100 @@
                 <!-- /.panel-heading -->
                 <div class="panel-body">
 
-<div class="row">
-    <div class="col-lg-2 col-md-5 col-md-offset-2">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-plane fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{numberOfFlights}}</div>
-                        <div>{{'db.totalFlights' | translate}}</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/flights">
-                <div class="panel-footer">
-                    <span class="pull-left">{{'db.viewDetails' | translate}}</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-2 col-md-5">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-user fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{numberOfPassengers}}</div>
-                        <div>{{'db.totalPassengers' | translate}}</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/passengers">
-                <div class="panel-footer">
-                    <span class="pull-left">{{'db.viewDetails' | translate}}</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+                    <div class="row">
+                        <div class="col-lg-2 col-md-5 col-md-offset-2">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-plane fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">{{numberOfFlights}}</div>
+                                            <div>{{'db.totalFlights' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-green">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-user fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">{{numberOfPassengers}}</div>
+                                            <div>{{'db.totalPassengers' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/passengers">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
 
-    <!--<div class="column"></div>-->
-    <div class="col-lg-2 col-md-5">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-bullseye fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{numberOfRuleHits}}</div>
-                        <div>{{'db.ruleHits' | translate}}</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/flights">
-                <div class="panel-footer">
-                    <span class="pull-left">{{'db.viewDetails' | translate}}</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+                        <!--<div class="column"></div>-->
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-red">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-flag-o fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">{{numberOfRuleHits}}</div>
+                                            <div>{{'db.ruleHits' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
 
-    <div class="col-lg-2 col-md-5">
-        <div class="panel panel-yellow">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-thumbs-down fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{numberOfWatchListHits}}</div>
-                        <div>{{'db.watchHits' | translate}}</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/flights">
-                <div class="panel-footer">
-                    <span class="pull-left">{{'db.viewDetails' | translate}}</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+                        <div class="col-lg-2 col-md-5">
+                            <div class="panel panel-yellow">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <i class="fa fa-eye fa-5x"></i>
+                                        </div>
+                                        <div class="col-xs-9 text-right">
+                                            <div class="huge">{{numberOfWatchListHits}}</div>
+                                            <div>{{'db.watchHits' | translate}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#/flights">
+                                    <div class="panel-footer">
+                                        <span class="pull-left">{{'db.viewDetails' | translate}}</span>
+                                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
 
-</div>
+                    </div>
 
 
                 </div>
@@ -150,44 +151,44 @@
 
 <!-- End of Flight Stats-->
 
-<div class="column" style="padding-top: 90px;"></div>
+<!--<div class="column" style="padding-top: 90px;"></div>-->
 
 
-<div class="container-fluid">
-    <div class="column">
+<!--<div class="container-fluid">-->
+<!--<div class="column">-->
 
-        <div class="row">
-            <div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">
-                <div class="panel-heading">
-                    <i class="fa fa-bar-chart-o fa-fw"></i>
-                    <span data-col="col-sm-offset-2"><label style="font-weight: bold;">
-                        {{'db.totalMessages' | translate}}&nbsp
-                    </label></span>
+<!--<div class="row">-->
+<!--<div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">-->
+<!--<div class="panel-heading">-->
+<!--<i class="fa fa-bar-chart-o fa-fw"></i>-->
+<!--<span data-col="col-sm-offset-2"><label style="font-weight: bold;">-->
+<!--{{'db.totalMessages' | translate}}&nbsp-->
+<!--</label></span>-->
 
-                </div>
-                <!-- /.panel-heading -->
-                <div class="panel-body">
-                    <div class="row">
+<!--</div>-->
+<!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+<!--<div class="panel-body">-->
+<!--<div class="row">-->
 
-                        <div class="col-lg-6">
-                            <div class="column" style="padding-top: 15px; padding-bottom: 75px; padding-left: 20px;">
-                                &nbsp;&nbsp;&nbsp;
+<!--<div class="col-lg-6">-->
+<!--<div class="column" style="padding-top: 15px; padding-bottom: 75px; padding-left: 20px;">-->
+<!--&nbsp;&nbsp;&nbsp;-->
 
 
-                                <div class="container">
-                                    <div bar-chart></div>
-                                </div>
-                            </div>
+<!--<div class="container">-->
+<!--<div bar-chart></div>-->
+<!--</div>-->
+<!--</div>-->
 
-                        </div>
+<!--</div>-->
 
-                    </div>
-                </div>
-            </div>
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
-        </div>
-    </div>
-</div>
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
 
 <div class="column" style="padding-top: 90px;"></div>
