@@ -60,8 +60,6 @@ public class UploadController {
         flightRespository.deleteAllMessages();
     }
     
-    private static String INDIR = "gtas_in/";
-
     /**
      * for writing uploaded files to disk.
      * @param file
@@ -69,11 +67,12 @@ public class UploadController {
      */
     private void writeFile(MultipartFile file) throws IOException {
         FileOutputStream output = null;
+        String uploadDir = lookupRepo.getAppConfigOption(AppConfigurationRepository.UPLOAD_DIR);
 
         try {
             if (!file.isEmpty()) {
                 byte[] bytes = file.getBytes();
-                String filename = INDIR + file.getOriginalFilename();
+                String filename = uploadDir + File.separator + file.getOriginalFilename();
                 output = new FileOutputStream(new File(filename));
                 IOUtils.write(bytes, output);
            }

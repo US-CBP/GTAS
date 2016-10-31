@@ -15,6 +15,8 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
 
     public static String ELASTIC_HOSTNAME = "ELASTIC_HOSTNAME";
     public static String ELASTIC_PORT = "ELASTIC_PORT";
+    
+    public static String UPLOAD_DIR = "UPLOAD_DIR";
 
     public AppConfiguration findByOption(String option);
 }

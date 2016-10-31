@@ -49,6 +49,7 @@ insert into app_configuration (opt, val, description) values('HOME_COUNTRY', 'US
 insert into app_configuration (opt, val, description) values('ELASTIC_HOSTNAME','localhost','ElasticSearch hostname');
 insert into app_configuration (opt, val, description) values('ELASTIC_PORT','9300','ElasticSearch port');
 insert into app_configuration (opt, val, description) values('QUEUE', 'gtasQ', 'queue name for storing incoming messages');
+insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\MESSAGE', 'directory for uploading files from UI');
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
 
 -- ----------------------------
