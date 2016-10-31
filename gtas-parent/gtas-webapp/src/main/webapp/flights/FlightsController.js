@@ -346,7 +346,7 @@
                  },
                  cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
              },
-             {name: 'passengerType', displayName:'doc.type', headerCellFilter: 'translate', width: 50},
+             {name: 'passengerType', displayName:'T', headerCellFilter: 'translate', width: 50},
              {
                  name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
                  cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
@@ -364,7 +364,7 @@
                  visible: (stateName === 'paxAll')
              },
              {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
-             {name: 'gender', displayName:'doc.gender', headerCellFilter: 'translate', width: 50},
+             {name: 'gender', displayName:'G', headerCellFilter: 'translate', width: 50},
              {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
              {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75}
          ];     

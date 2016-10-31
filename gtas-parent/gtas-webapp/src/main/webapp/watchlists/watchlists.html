@@ -31,6 +31,7 @@
     </md-toolbar>
     <form name="watchlist" ng-submit="saveRow()">
         <md-input-container ng-if="activeTab == 'Document'">
+        <i class="glyphicon glyphicon-file"></i>
             <label>{{'wl.doctype' | translate}}:</label>
             <md-select ng-model="Document.documentType" required>
                 <md-option ng-repeat="docType in documentTypes" value="{{docType.id}}">
@@ -67,7 +68,7 @@
     </form>
 </md-sidenav>
 <md-tabs>
-    <md-tab ng-repeat="tab in tabs" label="{{tab.title}}" md-on-select="updateGrid(tab.title)"></md-tab>
+    <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)"><md-tab-label><span ng-bind-html="tab.icon"></span><span>&nbsp;{{tab.title}}</span></md-tab-label></md-tab>
 </md-tabs>
 <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
 <div class="actions">

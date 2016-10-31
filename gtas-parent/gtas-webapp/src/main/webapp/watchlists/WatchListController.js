@@ -5,7 +5,7 @@
  */
 (function () {
     'use strict';
-    app.controller('WatchListController', function ($scope, gridOptionsLookupService, $q, watchListService, $mdSidenav, $interval, spinnerService, $timeout, $mdDialog) {
+    app.controller('WatchListController', function ($scope, gridOptionsLookupService, $q, watchListService, $mdSidenav, $interval, spinnerService, $timeout, $mdDialog, $sce) {
         var watchlist = {},
             tabs = [],
             model = {
@@ -178,7 +178,15 @@
         };
 
         Object.keys(watchlist.types).forEach(function (key) {
-            tabs.push({title: key});
+        	var glyphicon = null;
+        	if(key === "Passenger"){
+        		glyphicon = $sce.trustAsHtml('<i class="glyphicon glyphicon-user"></i>');
+        	} else if( key === "Document"){
+        		glyphicon = $sce.trustAsHtml('<i class="glyphicon glyphicon-file"></i>');
+        	} else{
+        		glyphicon = null;
+        	}
+            tabs.push({title: key, icon: glyphicon});
         });
 
         $scope.tabs = tabs;

@@ -637,7 +637,11 @@
                  */
                 colorHits = function (grid, row, col) {
                     if (grid.getCellValue(row, col) > 0) {
-                        return 'red';
+                    	if(col.field === 'ruleHitCount'){
+                    		return 'red';
+                    	}else if(col.field === 'listHitCount'){
+                    		return 'yellow';
+                    	}
                     }
                 },
                 ruleHit = function (grid, row, col) {
