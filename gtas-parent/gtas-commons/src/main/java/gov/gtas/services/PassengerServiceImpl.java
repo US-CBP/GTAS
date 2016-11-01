@@ -5,13 +5,9 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
-import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.Status;
-import gov.gtas.error.ErrorHandler;
-import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
@@ -28,7 +24,6 @@ import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.vo.passenger.CaseVo;
@@ -209,25 +204,29 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return new ArrayList<>();
 	}
-	
+
 	@Transactional
 	@Override
-	public void createOrEditDispositionStatus(DispositionStatus ds){
+	public void createOrEditDispositionStatus(DispositionStatus ds) {
 		dispositionStatusRepo.save(ds);
 	}
-	
+
 	@Transactional
 	@Override
-	public void deleteDispositionStatus(DispositionStatus ds){
+	public void deleteDispositionStatus(DispositionStatus ds) {
 		dispositionStatusRepo.delete(ds);
 	}
 
-	/* (non-Javadoc)
-	 * @see gov.gtas.services.PassengerService#createDisposition(gov.gtas.services.DispositionData)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.services.PassengerService#createDisposition(gov.gtas.services
+	 * .DispositionData)
 	 */
 	@Transactional
 	@Override
-	public void createDisposition(DispositionData disposition) {
+	public void createDisposition(DispositionData disposition, User loggedinUser) {
 		Disposition d = new Disposition();
 		d.setCreatedAt(new Date());
 		d.setCreatedBy(disposition.getUser());
@@ -243,15 +242,16 @@ public class PassengerServiceImpl implements PassengerService {
 		d.setStatus(status);
 
 		dispositionRepo.save(d);
-		writeAuditLogForDisposition(disposition.getPassengerId());
+		writeAuditLogForDisposition(disposition.getPassengerId(), loggedinUser);
 	}
 
 	/**
 	 * Write audit log for disposition.
 	 *
-	 * @param passengerId the passenger id
+	 * @param passengerId
+	 *            the passenger id
 	 */
-	private void writeAuditLogForDisposition(Long pId) {
+	private void writeAuditLogForDisposition(Long pId, User loggedinUser) {
 		Passenger passenger = findById(pId);
 		try {
 			AuditActionTarget target = new AuditActionTarget(passenger);
@@ -267,17 +267,13 @@ public class PassengerServiceImpl implements PassengerService {
 			auditLogRepository.save(new AuditRecord(
 					AuditActionType.DISPOSITION_STATUS_CHANGE, target
 							.toString(), Status.SUCCESS, message, actionData
-							.toString(), userService.fetchUser(GTAS_APPLICATION_USERID),
-					new Date()));
+							.toString(), loggedinUser, new Date()));
 
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
 	}
 
-	/**
-	 * TODO: figure out how we can obtain the id of 'NEW' status
-	 */
 	@Override
 	public void createDisposition(HitsSummary hit) {
 		Disposition d = new Disposition();

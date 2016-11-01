@@ -5,16 +5,17 @@
  */
 package gov.gtas.services;
 
-import java.util.List;
-
 import gov.gtas.model.Disposition;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.User;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.PassengerVo;
+
+import java.util.List;
 
 public interface PassengerService {
     public Passenger create(Passenger passenger);
@@ -24,7 +25,7 @@ public interface PassengerService {
     public List<Passenger> getPassengersByLastName(String lastName);
     
     public List<Disposition> getPassengerDispositionHistory(Long passengerId, Long flightId);
-    public void createDisposition(DispositionData disposition);
+    public void createDisposition(DispositionData disposition, User user);
     public void createDisposition(HitsSummary hit);
     public List<DispositionStatus> getDispositionStatuses();
     public List<CaseVo> getAllDispositions();

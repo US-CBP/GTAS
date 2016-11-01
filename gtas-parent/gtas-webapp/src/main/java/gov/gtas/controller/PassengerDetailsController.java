@@ -47,6 +47,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.model.Role;
 import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
@@ -232,7 +233,8 @@ public class PassengerDetailsController {
     public @ResponseBody JsonServiceResponse createDisposition(@RequestBody DispositionData disposition) {
         JsonServiceResponse response = checkIfValidCaseStatusAction(disposition);
         if(response.getStatus().equals(Status.SUCCESS)){
-        	pService.createDisposition(disposition);
+        	String userId = GtasSecurityUtils.fetchLoggedInUserId();
+        	pService.createDisposition(disposition, uService.fetchUser(userId));
         }
         return response;
     }
