@@ -5,6 +5,8 @@
  */
 package gov.gtas.vo;
 
+import gov.gtas.model.Whitelist;
+
 import java.util.Date;
 
 /**
@@ -243,6 +245,50 @@ public class WhitelistVo {
 				return false;
 		} else if (!residencyCountry.equals(other.residencyCountry))
 			return false;
+		return true;
+	}
+
+	/**
+	 * Custom equals -- compare ONLY required fields
+	 *
+	 * @param obj
+	 *            the obj
+	 * @return true, if successful
+	 */
+	public boolean customEquals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Whitelist other = (Whitelist) obj;
+		if (dob == null) {
+			if (other.getDob() != null)
+				return false;
+		} else if (!dob.equals(other.getDob()))
+			return false;
+		if (documentNumber == null) {
+			if (other.getDocumentNumber() != null)
+				return false;
+		} else if (!documentNumber.equals(other.getDocumentNumber()))
+			return false;
+		if (expirationDate == null) {
+			if (other.getExpirationDate() != null)
+				return false;
+		} else if (!expirationDate.equals(other.getExpirationDate()))
+			return false;
+		if (firstName == null) {
+			if (other.getFirstName() != null)
+				return false;
+		} else if (!firstName.equals(other.getFirstName()))
+			return false;
+		if (lastName == null) {
+			if (other.getLastName() != null)
+				return false;
+		} else if (!lastName.equals(other.getLastName()))
+			return false;
+
 		return true;
 	}
 

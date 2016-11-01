@@ -501,7 +501,8 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	private boolean filteringWhitelist(List<WhitelistVo> wVos,
 			Passenger passenger) {
-		if (wVos.isEmpty()) return false;
+		if (wVos.isEmpty())
+			return false;
 		Set<Document> docs = passenger.getDocuments();
 		List<WhitelistVo> pwlVos = new ArrayList<>();
 		docs.forEach(doc -> {
@@ -522,7 +523,7 @@ public class TargetingServiceImpl implements TargetingService {
 		});
 		for (WhitelistVo newwl : pwlVos) {
 			for (WhitelistVo wlv : wVos) {
-				if (newwl.equals(wlv))
+				if (newwl.customEquals(wlv))
 					return true;
 			}
 		}
@@ -638,7 +639,7 @@ public class TargetingServiceImpl implements TargetingService {
 					ruleHits += hit.getRuleHitCount();
 					wlHits += hit.getWatchlistHitCount();
 					passengerHits.add(hit.getPassengerId());
-				}	
+				}
 			}
 			AuditActionTarget target = new AuditActionTarget(
 					AuditActionType.TARGETING_RUN, "GTAS Rule Engine", null);
@@ -700,7 +701,8 @@ public class TargetingServiceImpl implements TargetingService {
 				hitsSummaryList.add(hitsSummary);
 			}
 		}
-		logger.info("Total new hits summary records --> " + hitsSummaryList.size());
+		logger.info("Total new hits summary records --> "
+				+ hitsSummaryList.size());
 		hitsSummaryRepository.save(hitsSummaryList);
 
 		logger.info("Exiting storeHitsInfo().");
