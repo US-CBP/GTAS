@@ -101,6 +101,11 @@ var app;
            		}
            };
 
+           $rootScope.selectedTab = '';
+           $rootScope.setSelectedTab = function(tabName){
+        	   $rootScope.selectedTab = tabName;
+           }
+           
            $rootScope.$on('IdleStart', function(){
         	   $rootScope.showConfirm();
            });
@@ -467,7 +472,7 @@ var app;
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
             });
-
+          
             $rootScope.$on('unauthorizedEvent', function () {
                 $sessionStorage.remove(APP_CONSTANTS.CURRENT_USER);
                 window.location = APP_CONSTANTS.LOGIN_PAGE;

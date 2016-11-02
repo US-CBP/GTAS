@@ -25,6 +25,10 @@
     .ng-cloak {
       display: none !important;
     }
+    .nav-item-selected{
+      border-bottom-width:2px !important;
+      border-bottom-color:red !important;
+    }
   </style>
 
 </head>
@@ -56,19 +60,19 @@
         <span style="color: black;" data-ng-if="showNav()">
 
           <!-- View Flights -->
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('flights')}"
-                     ng-disabled="onRoute('flights')" href="#/flights" ng-click="this.close();">
+          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('flights'), 'nav-item-selected':selectedTab==='flights'}"
+                     ng-disabled="onRoute('flights')" href="#/flights" ng-click="this.close(); setSelectedTab('flights')">
                 <span><i class="fa fa-plane"></i></span> &nbsp;{{'menu.flights' | translate}}
               </md-button>
 
           <!-- View Passengers -->
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('passengers')}"
-                     ng-disabled="onRoute('passengers')" href="#/passengers" ng-click="this.close();"> <span><i class="glyphicon glyphicon-user"></i></span> &nbsp; {{'menu.passengers' | translate}}
+          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('passengers'), 'nav-item-selected':selectedTab==='passengers'}"
+                     ng-disabled="onRoute('passengers')" href="#/passengers" ng-click="this.close(); setSelectedTab('passengers')"> <span><i class="glyphicon glyphicon-user"></i></span> &nbsp; {{'menu.passengers' | translate}}
               </md-button>
 
           <!-- View Cases -->
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases')}"
-                     ng-disabled="onRoute('cases')" href="#/cases" ng-click="this.close();"
+          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases'), 'nav-item-selected':selectedTab==='cases'}"
+                     ng-disabled="onRoute('cases')" href="#/cases" ng-click="this.close(); setSelectedTab('cases')"
                      style="padding-right:20px; border-right: 1px solid #ccc;">
             <span><i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases</span></md-button>
 
@@ -81,20 +85,20 @@
           <md-menu-content class="dropdown">
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('queries')}"
-                ng-disabled="onRoute('queries')" href="#/build/query" ng-click="this.close();"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;{{'menu.queries' | translate}}</span></md-button>
+                ng-disabled="onRoute('queries')" href="#/build/query" ng-click="this.close(); setSelectedTab('query')"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;{{'menu.queries' | translate}}</span></md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('adhocquery')}"
-                ng-disabled="onRoute('adhocquery')" href="#/adhocquery" ng-click="this.close();"><span><i class="glyphicon glyphicon-search"></i> &nbsp;Quick Query</span></md-button>
+                ng-disabled="onRoute('adhocquery')" href="#/adhocquery" ng-click="this.close(); setSelectedTab('adhocquery')"><span><i class="glyphicon glyphicon-search"></i> &nbsp;Quick Query</span></md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('risks')}"
-                ng-disabled="onRoute('risks')" href="#/build/rule" ng-click="this.close();">
+                ng-disabled="onRoute('risks')" href="#/build/rule" ng-click="this.close(); setSelectedTab('rules')">
                 <span><i class="glyphicon glyphicon-flag"></i></span> &nbsp;{{'menu.riskcriteria' | translate}}</md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('watchlists')}"
-                ng-disabled="onRoute('watchlists')" href="#/watchlists" ng-click="this.close();"><span><i class="glyphicon glyphicon-eye-open"></i></span> &nbsp;{{'menu.watchlist' | translate}}</md-button>
+                ng-disabled="onRoute('watchlists')" href="#/watchlists" ng-click="this.close(); setSelectedTab('watchlist')"><span><i class="glyphicon glyphicon-eye-open"></i></span> &nbsp;{{'menu.watchlist' | translate}}</md-button>
             </md-menu-item>
           </md-menu-content>
         </md-menu>
@@ -108,24 +112,25 @@
           <md-menu-content class="dropdown">
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('admin')}" ng-disabled="onRoute('admin')"
-                href="#/admin" ng-click="this.close();">
+                href="#/admin" ng-click="setSelectedTab('admin');this.close();">
                 <span><i class="glyphicon glyphicon-edit"></i></span> &nbsp;{{'menu.admin' | translate}} </md-button>
             </md-menu-item>
             <md-menu-item>
               <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('upload')}" ng-disabled="onRoute('upload')"
-                href="#/upload" ng-click="this.close();"><span><i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</md-button>
+                href="#/upload" ng-click="setSelectedTab('upload');this.close();"><span><i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</md-button>
             </md-menu-item>
           </md-menu-content>
         </md-menu>
 
         <!--  SETTINGS -->
           <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
-                     class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}" ng-disabled="onRoute('userSettings')"
-                     href="#/userSettings" ng-click="this.close();">
+                     class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings'), 'nav-item-selected':selectedTab==='userSettings'}" ng-disabled="onRoute('userSettings')"
+                     href="#/userSettings" ng-click="this.close(); setSelectedTab('userSettings')">
                 <span><i class="fa fa-cogs" style="vertical-align: middle;"></i></span> &nbsp;{{'menu.settings'
                 | translate}}
             <!--glyphicon glyphicon-plane -->
               </md-button>
+              
         </span>
       </div>
     </div>

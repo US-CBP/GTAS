@@ -3,9 +3,26 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('CasesCtrl', function ($scope, newCases) {
+app.controller('CasesCtrl', function ($scope, newCases, $sce) {
 		'use strict;'
 		
+	$scope.hitTypeIcon = function(hitType){
+		var icons = '&nbsp;';
+		
+		if(hitType.includes('R')){
+			icons += '<i class="glyphicon glyphicon-flag" style="color:red"></i>&nbsp;';
+		}
+		if(hitType.includes('P')){
+			icons += '<i class="glyphicon glyphicon-user" style="color:rgb(255, 176, 22)"></i>&nbsp;';
+		}
+		if(hitType.includes('D')){
+			icons += '<i class="glyphicon glyphicon-file" style="color:rgb(255, 176, 22)"></i>';
+		}
+		return $sce.trustAsHtml(icons);
+	};
+	
+
+	
 	$scope.casesGrid = {
 			data: newCases.data,
             paginationPageSizes: [10, 15, 25],
@@ -44,10 +61,33 @@ app.controller('CasesCtrl', function ($scope, newCases) {
                                        displayName:'pass.middlename', headerCellFilter: 'translate'
                                    },
                                    {
+                                	   field:'hitType',
+                                	   name: 'hitType',
+                                	   displayName:'Hit Type',
+                                	   cellTemplate:'<div ng-bind-html="grid.appScope.hitTypeIcon(COL_FIELD)"></div>'
+                                   },
+                                   {
                                        field: 'flightNumber',
                                        name: 'flightNumber',
                                        displayName:'pass.flight', headerCellFilter: 'translate',
                                        cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
+                                   },
+                                   {
+                                	   field: 'flightEtd',
+                                	   name: 'flightEtd',
+                                	   displayName: 'pass.etd', headerCellFilter: 'translate',
+                                	   cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"'
+                                   },
+                                   {
+                                	   field: 'flightEta',
+                                	   name: 'flightEta',
+                                	   displayName: 'pass.eta', headerCellFilter: 'translate',
+                                	   cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"'
+                                   },
+                                   {
+                                	   field: 'flightDirection',
+                                       name: 'flightDirection',
+                                       displayName:'Direction'
                                    },
                                    {
                                        field: 'createDate',

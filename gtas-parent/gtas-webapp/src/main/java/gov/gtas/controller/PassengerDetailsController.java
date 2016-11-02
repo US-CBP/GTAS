@@ -41,6 +41,7 @@ import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
+import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
@@ -50,6 +51,7 @@ import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
+import gov.gtas.services.HitsSummaryService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
 import gov.gtas.services.security.RoleData;
@@ -87,6 +89,9 @@ public class PassengerDetailsController {
 
     @Autowired
     private UserService uService;
+    
+    @Autowired
+    private HitsSummaryService hService;
     
     private static final String EMPTY_STRING = "";
 
@@ -241,7 +246,21 @@ public class PassengerDetailsController {
 
     @RequestMapping(value = "/allcases", method = RequestMethod.GET)
     public @ResponseBody List<CaseVo> getAllDispositions() {
-        return pService.getAllDispositions();
+    	List<CaseVo> cList = pService.getAllDispositions();
+    	for(CaseVo c : cList){
+    		Flight f = fService.findById(c.getFlightId());
+    		c.setFlightEta(f.getEta());
+    		c.setFlightEtd(f.getEtd());
+    		c.setFlightDirection(f.getDirection());
+    		for(HitsSummary h : hService.findByFlightIdAndPassengerIdAndUdrRule(c.getFlightId(), c.getPassengerId())){
+    			if(c.getHitType() != null){
+    				c.setHitType(c.getHitType() + h.getHitType());
+    			} else {
+    				c.setHitType(h.getHitType());
+    			}
+    		}
+    	}	
+        return cList;
     }
     
     @RequestMapping(value="/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

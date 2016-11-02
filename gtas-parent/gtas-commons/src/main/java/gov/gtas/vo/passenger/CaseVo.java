@@ -5,9 +5,15 @@
  */
 package gov.gtas.vo.passenger;
 
+import java.util.Date;
+
 public class CaseVo {
     private Long passengerId;
     private Long flightId;
+    private String hitType;
+    private Date flightEta;
+    private Date flightEtd;
+    private String flightDirection;
 	private String lastName;
     private String firstName;
     private String middleName;
@@ -15,7 +21,25 @@ public class CaseVo {
     private String createDate; 
     private String status;
     
-    public Long getPassengerId() {
+    public String getHitType() {
+		return hitType;
+	}
+	public void setHitType(String hitType) {
+		this.hitType = hitType;
+	}
+	public Date getFlightEta() {
+		return flightEta;
+	}
+	public void setFlightEta(Date flightEta) {
+		this.flightEta = flightEta;
+	}
+	public Date getFlightEtd() {
+		return flightEtd;
+	}
+	public void setFlightEtd(Date flightEtd) {
+		this.flightEtd = flightEtd;
+	}
+	public Long getPassengerId() {
         return passengerId;
     }
     public void setPassengerId(Long passengerId) {
@@ -63,4 +87,10 @@ public class CaseVo {
     public void setStatus(String status) {
         this.status = status;
     }
+	public String getFlightDirection() {
+		return flightDirection;
+	}
+	public void setFlightDirection(String flightDirection) {
+		this.flightDirection = flightDirection;
+	}
 }
