@@ -11,96 +11,112 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "role")
 public class Role implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public Role() {
+	public Role() {
 
-    }
+	}
 
-    public Role(int roleId, String roleDescription) {
-        this.roleId = roleId;
-        this.roleDescription = roleDescription;
-    }
+	public Role(int roleId, String roleDescription) {
+		this.roleId = roleId;
+		this.roleDescription = roleDescription;
+	}
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "role_id")
+	private Integer roleId;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "role_id")
-    private Integer roleId;
+	@Override
+	public String toString() {
+		return "Role [roleId=" + roleId + ", roleDescription="
+				+ roleDescription + "]";
+	}
 
-    @Override
-    public String toString() {
-        return "Role [roleId=" + roleId + ", roleDescription=" + roleDescription + "]";
-    }
+	@Column(name = "role_description")
+	private String roleDescription;
 
-    @Column(name = "role_description")
-    private String roleDescription;
+	public Integer getRoleId() {
+		return roleId;
+	}
 
-    public Integer getRoleId() {
-        return roleId;
-    }
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
-    }
+	public String getRoleDescription() {
+		return roleDescription;
+	}
 
-    public String getRoleDescription() {
-        return roleDescription;
-    }
+	public void setRoleDescription(String roleDescription) {
+		this.roleDescription = roleDescription;
+	}
 
-    public void setRoleDescription(String roleDescription) {
-        this.roleDescription = roleDescription;
-    }
+	@ManyToMany(mappedBy = "roles", targetEntity = User.class)
+	private Set<User> users = new HashSet<User>();
 
-    @ManyToMany(mappedBy = "roles", targetEntity = User.class)
-    private Set<User> users = new HashSet<User>();
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+	private Set<Privilege> privileges;
 
-    public Set<User> getUsers() {
-        return users;
-    }
+	public Set<User> getUsers() {
+		return users;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((roleDescription == null) ? 0 : roleDescription.hashCode());
-        result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((roleDescription == null) ? 0 : roleDescription.hashCode());
+		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Role other = (Role) obj;
-        if (roleDescription == null) {
-            if (other.roleDescription != null)
-                return false;
-        } else if (!roleDescription.equals(other.roleDescription))
-            return false;
-        if (roleId == null) {
-            if (other.roleId != null)
-                return false;
-        } else if (!roleId.equals(other.roleId))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		if (roleDescription == null) {
+			if (other.roleDescription != null)
+				return false;
+		} else if (!roleDescription.equals(other.roleDescription))
+			return false;
+		if (roleId == null) {
+			if (other.roleId != null)
+				return false;
+		} else if (!roleId.equals(other.roleId))
+			return false;
+		return true;
+	}
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
+	public void setUsers(Set<User> users) {
+		this.users = users;
+	}
+
+	public Set<Privilege> getPrivileges() {
+		return privileges;
+	}
+
+	public void setPrivileges(Set<Privilege> privileges) {
+		this.privileges = privileges;
+	}
 
 }
