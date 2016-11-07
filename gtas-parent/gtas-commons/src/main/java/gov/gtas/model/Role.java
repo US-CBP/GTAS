@@ -11,12 +11,9 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -67,10 +64,6 @@ public class Role implements Serializable {
 	@ManyToMany(mappedBy = "roles", targetEntity = User.class)
 	private Set<User> users = new HashSet<User>();
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "role_privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-	private Set<Privilege> privileges;
-
 	public Set<User> getUsers() {
 		return users;
 	}
@@ -109,14 +102,6 @@ public class Role implements Serializable {
 
 	public void setUsers(Set<User> users) {
 		this.users = users;
-	}
-
-	public Set<Privilege> getPrivileges() {
-		return privileges;
-	}
-
-	public void setPrivileges(Set<Privilege> privileges) {
-		this.privileges = privileges;
 	}
 
 }
