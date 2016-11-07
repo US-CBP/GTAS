@@ -70,8 +70,10 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
         CsrfTokenResponseHeaderBindingFilter csrfTokenFilter = new CsrfTokenResponseHeaderBindingFilter();
         http.addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-        .csrf().csrfTokenRepository(csrfTokenRepository())
-        ;
+        .csrf().csrfTokenRepository(csrfTokenRepository());
+		
+		http
+                .csrf().disable();
 
         http
             .authorizeRequests()
