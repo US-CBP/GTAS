@@ -11,7 +11,7 @@ after_success:
 - cd ..
 - chmod 600 deploy_key
 - mv deploy_key ~/.ssh/id_rsa
-- scp gtas-webapp/target/gtas.war $DEPLOY_USER@$DEPLOY_HOST:.
+- scp gtas-parent/gtas-webapp/target/gtas.war $DEPLOY_USER@$DEPLOY_HOST:.
 env:
   global:
   - secure: aNl+gzahWteiwstiqaudTzlyal6PhIUXWpyaTzNo0zqQy7WaSrlNlU2+LtCkBYwe/n061PRK44Eow6OBgC/ItgnMON6n2Q7M6R93sJxMflUSnoLgJ4vSw7K4miy6tcomNqo1nm5PX0WPucpbwOzS/r3nGfed1nZQLcqgUCwJJsKr6nqtLSKRJUn4kAASgU03EJzcVznKzFdRVN73UoLSfFlzfEibDAWbZE5pg2Hd5ZSrs2R9iZNJqzyA/mMEwNHXVU6tMYlQl9LxCqahfToL7QZKEMpO3TlGqC/CxmvNJ5V30QgwOSQZdJ9Xj1mz3SasR3Db8PJHmstMRF6rxG03J5sSVEY4rWqEiDA+x3PEvJUKXF5VwnS10K2VYsd7j4H3eG1Adsyh2RHrQ6NkbrbWGZy+wTscOipwP/Wh81JG6bt1u8QFT0NA29xkKAa20DrUrgZciw7xjt/bjtCzO4sp948ATTo84AhN37woCMD0upDfDRqTo7EleKa2cuIGQfyZhsiPyFpdYTslcIJ2scRs5TimOyIS+GGSkxmaQH1qx0WFQ+zhZLxiKETuu9QqhpEzui7WtNzZxrvQdGUq2OUPnGUWZq61V6j2oXsLOIffytnmIN1r68w+QdXd6AVu8QLVHBm90Ywr8PNFzCMOuWud+J7oph+pdFjcSSd7KqaskVw=
