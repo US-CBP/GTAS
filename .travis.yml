@@ -1,30 +1,23 @@
 language: java
-
 sudo: false
-
 jdk:
-  - oraclejdk8
-
-notifications:
-  slack: 
-    rooms:
-      - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
-    on_success: change
-    on_failure: always
-
-  email:
-    recipients:
-      - david.j.ertel@cbp.dhs.gov
-      - maneesh.lekkala@gmail.com
-      - taylorjwdev@gmail.com
-      - jtangfed@gmail.com
-      - vempatisvr@gmail.com
-      - mikecope@gmail.com
-    on_success: change
-    on_failure: always
-
+- oraclejdk8
 before_script:
-  - cd gtas-parent
-
-script: mvn clean verify
-
+- cd gtas-parent
+- sed -i 's/admin/$DB_PASS/' gtas-commons/src/main/resources/hibernate.properties
+- sed -i 's/localhost/$DB_HOST/' gtas-commons/src/main/resources/hibernate.properties
+script: mvn clean package
+after_success:
+- chmod 600 deploy_key
+- mv deploy_key ~/.ssh/id_rsa
+- scp gtas-webapp/target/gtas.war $DEPLOY_USER@DEPLOY_HOST:.
+env:
+  global:
+  - secure: aNl+gzahWteiwstiqaudTzlyal6PhIUXWpyaTzNo0zqQy7WaSrlNlU2+LtCkBYwe/n061PRK44Eow6OBgC/ItgnMON6n2Q7M6R93sJxMflUSnoLgJ4vSw7K4miy6tcomNqo1nm5PX0WPucpbwOzS/r3nGfed1nZQLcqgUCwJJsKr6nqtLSKRJUn4kAASgU03EJzcVznKzFdRVN73UoLSfFlzfEibDAWbZE5pg2Hd5ZSrs2R9iZNJqzyA/mMEwNHXVU6tMYlQl9LxCqahfToL7QZKEMpO3TlGqC/CxmvNJ5V30QgwOSQZdJ9Xj1mz3SasR3Db8PJHmstMRF6rxG03J5sSVEY4rWqEiDA+x3PEvJUKXF5VwnS10K2VYsd7j4H3eG1Adsyh2RHrQ6NkbrbWGZy+wTscOipwP/Wh81JG6bt1u8QFT0NA29xkKAa20DrUrgZciw7xjt/bjtCzO4sp948ATTo84AhN37woCMD0upDfDRqTo7EleKa2cuIGQfyZhsiPyFpdYTslcIJ2scRs5TimOyIS+GGSkxmaQH1qx0WFQ+zhZLxiKETuu9QqhpEzui7WtNzZxrvQdGUq2OUPnGUWZq61V6j2oXsLOIffytnmIN1r68w+QdXd6AVu8QLVHBm90Ywr8PNFzCMOuWud+J7oph+pdFjcSSd7KqaskVw=
+  - secure: gHNV02tLSiiA/Rh3O2j+IRL1/IYXkZ0NkUFpGfcSK2L+CcIJaImrAHVr8xchsBFvCct0We3Vrmm6fA/rAUbrcrX1Ql3CIEfIj8O+Z0XQPmM9nXLTPNko0PZ/AQJ3ugLcEbv/frmq0A364hQcvU75t1TkqTcx4jgbniMKEJAtyaZZvYKY6/n03sv17RKc/5sZDY6bsHo2GjmY+5YB4DSdaOx/XJXotnbKxd/jz4dqfRLnppLK6Toyn9wo12X6R/DnvbGcHwG21F/yHj86T+rgw3vIoaSkRmDwHcj+8M3Aa0QMCQ+yCIZR/YRmHyu6tsTFsq0UMwOSi4VByHWTIaErRklps9ekRe/jvPrDQHJVrzoAzuZKSx45F2nLY1ZpEryeUS6SzYXaFzLMTrtE7k0tP4sGmVYXqCd4U/nQwzgM9QgBIFES0WyRgtIB8RifJKNGcTOsueIkEPMGmQrM+qrYwkOWNhakziFWIyKwN3aFdEJG5YCtTsMbx6rJdVDN9vNU2KDx5znvr3H5/8m0O7iY1qQU64YzDq1Sp4t24SDIZupcH5gWYaDOOLeUmEVWFbST5X1zo04xvWqLbzGS+N3cl0ve8T3sxjjzkGJraSDk4jucT9YmJ3YHXbOaLR80z20JOBvbfUtiOyBgoEu83Ja/Uh+52FOCOm35Vmaq1pR9g9Q=
+  - secure: KzxEAvrpgjKkykKGSW4I8frkFvfpGFElwyTfGUdTO8R4KG/rK8LPxrlKJ2n9wjjBsH6aXTyHEBR9wYp+O3KX41uvr4HfeTEKL8m0AnPzmBPvXcOsGTqgfGMG56GJBtmrC45PEL90Wwm8hPyh7APahOXO5oekBS68YdUWNHUGLm7sL7FynpWoFuAafLPXdrkrtwGLs2KH7bzjFiAg3Yo1N7CeVi6g7AY9KpDSlX+gtmdVXV4HMok78FBfAbahzWvLom9mri/sYaLAHYwDA5nqGMPxN0ony0JcshdvRW3BAF7pkZc7lC4fPTmA9EsV3WD+sGn+uEemlFojHVlDSA9omVK0aPQ+UjyqR9qhU0DXC6HZJ+i5jp15S79aRglQN2y2DWBurx9UA5ioBV54ECZO6f75xwY94BQfsZMI5JrwBTSh8BpiPdan3qEIeCMMepvAdxxjYZwbx8FF1yLu4/UiXxKHvnoAMQQB9yOtAvJzoHW3CzD3hUiqCs5Vq2JB1b1/oaG5Kf78pzm6NSOE85/xSJH0MnV7pwtNZ7QSk3/SVFzMhd+5LqjP+gZ3MAEvx/3a/X3oPdrRUAGYyGEU73tsn/Jf+sySMOQyIrGukd5PsJlvN7Cq2u4jy2fhZYYVbWDPONYFuyzKJmLzqDcTRlH1M7l0xYwVGaW/aGynOCLEElA=
+  - secure: ico2AKHG76H9PCwRRchxqSz/PP6Jp8a/43Yhx8CXFNrDLStcpj30R49UfshqVHaWTLGmXTdUDV+wcNqDbCKZNZxlfIW3N7mlBPpNKZ86rbXiXo6SaID+toyWJkLZFxH59luCWQcRM/DwxzsdAjo+tFXjUKEc1sz2iANHNVJdPGczlQdK/Pu9R3coAI92KQecNPHj8XZUJiYp3a6sw9quyK/I909zRHBEIrzYI2vMZRfhgm3xeZJs0H+Zn4mFYi0IZ2ylX68X6WnD+wjtNKl7WUXU5wnLH5SxItIs0RX4IV7c1aKlHztdsJFU0IAoELfQdpBGeNcCDoEkSyn9Hz5VHWlH9gOiTTUpA7XkqrzrtF07hueODgyKPYuMqNi1cwF+wUJDxoumXXZWCsrFhfYc3feQ2Zvo+jGzR21t8ky0faCETL4+IzFrf2U9CsbZjBuLUA9TQ7lZ9f265WNOzYgF+bZzFHALHYrgAyaoaFdasx7eRDur5Ltn1yXt4+plDRuODR0PU5uySuXK20IqYkPo7wJCm+85QYk9b+p0UMcUSyyJq++A0QTOl2UBVTlsFaALMH9SR2He2ngWicpzFE9SWz/CJa0uAo5qMEJCreuBUF+VAua8d8ujn5NwaNHpJx6f0T7Bklw3WQxwdH0X1Yr4TkF3H7M1FokI5wYI6lLpABs=
+before_install:
+- echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- openssl aes-256-cbc -K $encrypted_ea9b11edcea7_key -iv $encrypted_ea9b11edcea7_iv
+  -in deploy_key.enc -out deploy_key -d
