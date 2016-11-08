@@ -8,6 +8,7 @@ before_script:
 - sed -i 's/localhost/'"$DB_HOST"'/' gtas-commons/src/main/resources/hibernate.properties
 script: mvn clean package
 after_success:
+- cd ..
 - chmod 600 deploy_key
 - mv deploy_key ~/.ssh/id_rsa
 - scp gtas-webapp/target/gtas.war $DEPLOY_USER@$DEPLOY_HOST:.
