@@ -37,6 +37,7 @@ env:
   - secure: RdWl2bsGh8W7kQvWE9V/EoX98tDokHjkX3az+Za8KKkJrnXM3ZNiWhlgDYfVZbvntNR/S4Qq901F1F+/HH2+z/YtBmckDl469dBOLNGnCWPpTJ+DSqeBuJYW7y+l01LQ+yO+/OXERHaRg6C8WObiQpBO4xVvCBYxqMDLVMRGpXZ+MeyEZOH7JtZv5rb+x4pkbJ+5/ocI2hO170hU2bp8EQ0oaJAxIjeTQ5k1wrmfGQTLEMbsSsbz2BXxU/waDcohBVbv6uwZc6p+VXwCqcfNoKDnl1Gsl//r5i2CEPwfXoOBe0tfxevGOqGJbu7Xqg5ccMvQi+jk+hziJC+x6ahKLx/RX3JSjihYiQeIuOuIdQeZsKkJXXH70pubzRgUYBYwH3+i3aIdX/xtnlywhTDKOaJzY7thDkPfXLCAIegI2OJ6nnBLE0+0iZgm/ZsCaJKShf7B4NVWm5tTsBTklvhAwDni48ndqTM4ONpPEfTSey1uEumOehaPu7zqdeGeSIGDuDQfW1Va5jP7BJ0P+KNfiMMY81DuZAB0X1W9IObGzMZWVxSkcy+AeLsKykVZEnxO6S7gkvU9t0ULGQvf8PQcrFRZPos6chn4NBcw0SUxBs0r71BUDHsNUbZTEVobZ+rSgz/BoNfXJf/Lui3cbHErjNfYf1AC9GObsGM77bQG4BI=
   - secure: sPxYLYzup/dB9DBA+Exg/4B3L4+d5zgpKjV1mpt/4BBEG/tp7hapZuV3I2mmjwpZRpL68fDlwi1Rsuptukll1U2wde3idM5NeTKPNX1M7wh1Q04Kzto3sHfdM2NDRlEadg67sBpi2tOCh1zj1aRZghG7THIsCvtrS3a97Tm7NuqpS2b+PnjO98aqRGkRnm4C4RJ64JdLEQVS5AmVHV9c9UvBtAhimB4Tt6QYoyaN6u9zZ7m6f5keAFjuggArQYQN0md1tViCdW8vhDEFnZUR9GajyjYpEKgBPwKDkOm1sLMPG6DMpB8datGUhkAK5KIaNprTkSa9QQPiYfgr/+S/UzfeChO0qR+TU1WKduPH6inehSVNox+HOCtDiYxsC/ry3pL7fb6jtBaVxrHsKNOTQRa+hBGcYKfG5BGMg1XKSCWlJx63bYTw8Sem5UaQ1ev+UP40/uCh3bEdWnf1ococRkNxJUrCZyI8HY7qFIlYXxR8DU6zlXgKDTGiuZUYX5QbK2OvGYHVMB9esehyjiv4odZQqMv5ih6zQzR0wGskWv+KNCmtJ6XVK+435ll2HqiqHZe8CcFCUVNFSwZGNYor2Vazt+6m2xvDu4LsIvP3LR2AEIFZRcxwbvquYO6yV4z/OXGJB9RpXgQmsSUqSpcVPCV+oSrWK0L6IpRlvEkRX30=
 before_install:
+- if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
 - openssl aes-256-cbc -K $encrypted_ea9b11edcea7_key -iv $encrypted_ea9b11edcea7_iv
-  -in deploy_key.enc -out deploy_key -d
+  -in deploy_key.enc -out deploy_key -d; fi
 - echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
