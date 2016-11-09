@@ -38,6 +38,6 @@ env:
   - secure: sPxYLYzup/dB9DBA+Exg/4B3L4+d5zgpKjV1mpt/4BBEG/tp7hapZuV3I2mmjwpZRpL68fDlwi1Rsuptukll1U2wde3idM5NeTKPNX1M7wh1Q04Kzto3sHfdM2NDRlEadg67sBpi2tOCh1zj1aRZghG7THIsCvtrS3a97Tm7NuqpS2b+PnjO98aqRGkRnm4C4RJ64JdLEQVS5AmVHV9c9UvBtAhimB4Tt6QYoyaN6u9zZ7m6f5keAFjuggArQYQN0md1tViCdW8vhDEFnZUR9GajyjYpEKgBPwKDkOm1sLMPG6DMpB8datGUhkAK5KIaNprTkSa9QQPiYfgr/+S/UzfeChO0qR+TU1WKduPH6inehSVNox+HOCtDiYxsC/ry3pL7fb6jtBaVxrHsKNOTQRa+hBGcYKfG5BGMg1XKSCWlJx63bYTw8Sem5UaQ1ev+UP40/uCh3bEdWnf1ococRkNxJUrCZyI8HY7qFIlYXxR8DU6zlXgKDTGiuZUYX5QbK2OvGYHVMB9esehyjiv4odZQqMv5ih6zQzR0wGskWv+KNCmtJ6XVK+435ll2HqiqHZe8CcFCUVNFSwZGNYor2Vazt+6m2xvDu4LsIvP3LR2AEIFZRcxwbvquYO6yV4z/OXGJB9RpXgQmsSUqSpcVPCV+oSrWK0L6IpRlvEkRX30=
 before_install:
 - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]] ; then
-- openssl aes-256-cbc -K $encrypted_ea9b11edcea7_key -iv $encrypted_ea9b11edcea7_iv
-  -in deploy_key.enc -out deploy_key -d; fi
+    openssl aes-256-cbc -K $encrypted_ea9b11edcea7_key -iv $encrypted_ea9b11edcea7_iv -in deploy_key.enc -out deploy_key -d; 
+  fi
 - echo -e "Host $DEPLOY_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
