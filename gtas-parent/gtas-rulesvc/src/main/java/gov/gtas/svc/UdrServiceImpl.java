@@ -13,9 +13,7 @@ import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.YesNoEnum;
-import gov.gtas.error.ErrorHandler;
 import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.error.UdrServiceErrorHandler;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.json.JsonServiceResponse;
@@ -47,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
@@ -55,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -85,6 +83,8 @@ public class UdrServiceImpl implements UdrService {
 	private RuleManagementService ruleManagementService;
 
 	@Override
+	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public UdrSpecification fetchUdr(String userId, String title) {
 		UdrRule fetchedRule = rulePersistenceService.findByTitleAndAuthor(
 				title, userId);
@@ -105,6 +105,8 @@ public class UdrServiceImpl implements UdrService {
 	}
 
 	@Override
+	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public UdrSpecification fetchUdr(Long id) {
 		UdrRule fetchedRule = rulePersistenceService.findById(id);
 		if (fetchedRule == null) {
@@ -186,6 +188,7 @@ public class UdrServiceImpl implements UdrService {
 
 	@Override
 	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public JsonServiceResponse copyUdr(String userId, Long udrId) {
 		// fetch the UDR
 		UdrSpecification udrToCopy = fetchUdr(udrId);

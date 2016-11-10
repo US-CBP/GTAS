@@ -7,8 +7,11 @@ package gov.gtas.services.security;
 
 import java.util.Set;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 public interface RoleService {
 
-    public Set<RoleData> findAll();
+	@PreAuthorize("hasAuthority('Admin')")
+	public Set<RoleData> findAll();
 
 }

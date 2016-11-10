@@ -12,90 +12,101 @@ import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 /**
  * The Persistence Layer service for Watch lists.
  */
 public interface WatchlistPersistenceService {
-    /**
-     * Creates or Updates a Watch List.
-     * 
-     * @param wlName
-     *            the name of the watch list object to persist in the DB.
-     * @param entity
-     *            the entity (e.g., PASSENGER) for the watch list.
-     * @param createUpdateList
-     *            the list of watch list items to be added or updated.
-     * @param deleteList
-     *            the list of watch list items to be deleted.
-     * @param userId
-     *            the id of the user persisting the rule (usually also the WL author.)
-     * @return the id's of the watch list and the updated items.
-     */
-    public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
-            List<WatchlistItem> createUpdateList, List<WatchlistItem> deleteList,
-            String userId);
+	/**
+	 * Creates or Updates a Watch List.
+	 * 
+	 * @param wlName
+	 *            the name of the watch list object to persist in the DB.
+	 * @param entity
+	 *            the entity (e.g., PASSENGER) for the watch list.
+	 * @param createUpdateList
+	 *            the list of watch list items to be added or updated.
+	 * @param deleteList
+	 *            the list of watch list items to be deleted.
+	 * @param userId
+	 *            the id of the user persisting the rule (usually also the WL
+	 *            author.)
+	 * @return the id's of the watch list and the updated items.
+	 */
+	@PreAuthorize("hasAuthority('Admin')")
+	public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
+			List<WatchlistItem> createUpdateList,
+			List<WatchlistItem> deleteList, String userId);
 
-    /**
-     * Find and return the list of all watch lists.
-     * 
-     * @return list of all watch lists.
-     */
-    public List<Watchlist> findAllSummary();
+	/**
+	 * Find and return the list of all watch lists.
+	 * 
+	 * @return list of all watch lists.
+	 */
+	@PreAuthorize("hasAuthority('Admin')")
+	public List<Watchlist> findAllSummary();
 
-    /**
-     * Find and return the list of all watch list items.
-     * 
-     * @param watchlistName
-     *            the name of the watch list
-     * @return list of all watch list items.
-     */
-    public List<WatchlistItem> findWatchlistItems(String watchlistName);
+	/**
+	 * Find and return the list of all watch list items.
+	 * 
+	 * @param watchlistName
+	 *            the name of the watch list
+	 * @return list of all watch list items.
+	 */
+	@PreAuthorize("hasAuthority('Admin')")
+	public List<WatchlistItem> findWatchlistItems(String watchlistName);
 
-    /**
-     * Find and return the list of all watch list items for all watch lists.
-     * 
-     * @return list of all watch list items.
-     */
-    public Iterable<WatchlistItem> findAllWatchlistItems();
+	/**
+	 * Find and return the list of all watch list items for all watch lists.
+	 * 
+	 * @return list of all watch list items.
+	 */
+	@PreAuthorize("hasAuthority('Admin')")
+	public Iterable<WatchlistItem> findAllWatchlistItems();
 
-    /**
-     * Find and return the list of all non-compiled watch lists.
-     * (Either the compile time stamp is null, or it is before the edit time stamp.)
-     * 
-     * @return list of all non-compiled watch lists.
-     */
-//  public List<Watchlist> findUncompiledWatchlists();
+	/**
+	 * Find and return the list of all non-compiled watch lists. (Either the
+	 * compile time stamp is null, or it is before the edit time stamp.)
+	 * 
+	 * @return list of all non-compiled watch lists.
+	 */
+	// public List<Watchlist> findUncompiledWatchlists();
 
-    /**
-     * Fetches a Watch list by its name. 
-     * 
-     * @param name
-     *            the name of the watch list to fetch.
-     * @return the fetched watch list or null.
-     */
-    public Watchlist findByName(String name);
+	/**
+	 * Fetches a Watch list by its name.
+	 * 
+	 * @param name
+	 *            the name of the watch list to fetch.
+	 * @return the fetched watch list or null.
+	 */
+	public Watchlist findByName(String name);
 
-    /**
-     * Deletes a Watch list by its name. 
-     * (Note: this operation will throw an exception if the watch list contains items.)
-     * @param name
-     *            the name of the watch list to delete.
-     * @param forceFlag
-     *            If forceFlag is true then the watch list with its items will be deleted
-     *            whether it is empty or not.
-     *            Otherwise the watch list will only be deleted if it is empty.
-     * @param userId
-     *            the id of the user requesting the delete.
-     * @return the deleted watch list or null, if the watchlist could not be found.
-     */
-    public Watchlist deleteWatchlist(String name, boolean forceFlag, String userId);
+	/**
+	 * Deletes a Watch list by its name. (Note: this operation will throw an
+	 * exception if the watch list contains items.)
+	 * 
+	 * @param name
+	 *            the name of the watch list to delete.
+	 * @param forceFlag
+	 *            If forceFlag is true then the watch list with its items will
+	 *            be deleted whether it is empty or not. Otherwise the watch
+	 *            list will only be deleted if it is empty.
+	 * @param userId
+	 *            the id of the user requesting the delete.
+	 * @return the deleted watch list or null, if the watchlist could not be
+	 *         found.
+	 */
+	@PreAuthorize("hasAuthority('Admin')")
+	public Watchlist deleteWatchlist(String name, boolean forceFlag,
+			String userId);
 
-    /**
-     * Fetches all log entries for a Watch list by its name. 
-     * 
-     * @param watchlistName
-     *            the name of the watch list.
-     * @return the fetched watch list log entries.
-     */
-    public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName);
+	/**
+	 * Fetches all log entries for a Watch list by its name.
+	 * 
+	 * @param watchlistName
+	 *            the name of the watch list.
+	 * @return the fetched watch list log entries.
+	 */
+	public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName);
 }

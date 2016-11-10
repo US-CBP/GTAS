@@ -80,6 +80,7 @@ public class WatchlistManagementControllerIT {
 
     @Test
     @Transactional
+    @WithUserDetails(TEST_USER)
     public void testGetWl() throws Exception {
         watchlistService.createUpdateDeleteWatchlistItems("test",
                 SampleDataGenerator.newWlWith2Items(WL_NAME));
@@ -100,6 +101,7 @@ public class WatchlistManagementControllerIT {
 
     @Test
     @Transactional
+    @WithUserDetails(TEST_USER)
     public void testGetEmptyWl() throws Exception {
         /*
          * Get on any watch list name will return an empty watch list if it does

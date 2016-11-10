@@ -88,6 +88,7 @@ public class WatchlistServiceImpl implements WatchlistService {
     }
 
     @Override
+    @Transactional
     public List<WatchlistSpec> fetchAllWatchlists() {
         List<Watchlist> summary = watchlistPersistenceService.findAllSummary();
         List<WatchlistSpec> ret = new LinkedList<WatchlistSpec>();

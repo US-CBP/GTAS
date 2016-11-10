@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 /**
@@ -207,6 +208,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 
 	@Override
 	@Transactional(TxType.SUPPORTS)
+	@PreAuthorize("hasAuthority('Admin')")
 	public UdrRule findByTitleAndAuthor(String title, String authorUserId) {
 		return udrRuleRepository
 				.getUdrRuleByTitleAndAuthor(title, authorUserId);

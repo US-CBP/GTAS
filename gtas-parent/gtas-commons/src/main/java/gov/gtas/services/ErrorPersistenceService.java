@@ -10,12 +10,19 @@ import gov.gtas.error.ErrorDetailInfo;
 import java.util.Date;
 import java.util.List;
 
-public interface ErrorPersistenceService {
-    public ErrorDetailInfo create(ErrorDetailInfo error);
-    public ErrorDetailInfo findById(Long id);
+import org.springframework.security.access.prepost.PreAuthorize;
 
-    public List<ErrorDetailInfo> findByDateRange(Date dateFrom, Date dateTo);
-    public List<ErrorDetailInfo> findByDateFrom(Date dateFrom);
-    public List<ErrorDetailInfo> findByCode(String code);
+public interface ErrorPersistenceService {
+	public ErrorDetailInfo create(ErrorDetailInfo error);
+
+	public ErrorDetailInfo findById(Long id);
+
+	@PreAuthorize("hasAuthority('Admin')")
+	public List<ErrorDetailInfo> findByDateRange(Date dateFrom, Date dateTo);
+
+	public List<ErrorDetailInfo> findByDateFrom(Date dateFrom);
+
+	@PreAuthorize("hasAuthority('Admin')")
+	public List<ErrorDetailInfo> findByCode(String code);
 
 }

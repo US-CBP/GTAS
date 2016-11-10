@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public UserData create(UserData userData) {
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity
@@ -75,6 +77,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public void delete(String id) {
 		User userToDelete = userRepository.findOne(id);
 		if (userToDelete != null)
@@ -83,6 +86,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public List<UserData> findAll() {
 		Iterable<User> usersCollection = userRepository.findAll();
 		return userServiceUtil
@@ -91,6 +95,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
+	@PreAuthorize("hasAuthority('Admin')")
 	public UserData update(UserData data) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		User entity = userRepository.findOne(data.getUserId());
@@ -147,6 +152,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the user fetched from the DB.
 	 */
 	@Override
+	@PreAuthorize("hasAuthority('Admin')")
 	public User fetchUser(final String userId) {
 		UserData userData = findById(userId);
 		if (userData == null) {
