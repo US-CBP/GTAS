@@ -22,8 +22,8 @@ before_script:
 - cd gtas-parent
 - sed -i 's/admin/'"$DB_PASS"'/' gtas-commons/src/main/resources/hibernate.properties
 - sed -i 's/localhost/'"$DB_HOST"'/' gtas-commons/src/main/resources/hibernate.properties
-- sed -i 's%message.dir.origin=.*$%message.dir.origin=/usr/share/gtas/in%' gtas-job-scheduler-war/src/main/resources/jobScheduler.properties
-- sed -i 's%message.dir.processed=.*$%message.dir.processed=/usr/share/gtas/out%'
+- sed -i 's%message.dir.origin=.*$%message.dir.origin=/usr/share/gtas/dev/in%' gtas-job-scheduler-war/src/main/resources/jobScheduler.properties
+- sed -i 's%message.dir.processed=.*$%message.dir.processed=/usr/share/gtas/dev/out%'
   gtas-job-scheduler-war/src/main/resources/jobScheduler.properties
 script: mvn clean package
 after_success:
