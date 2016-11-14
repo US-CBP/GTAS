@@ -30,7 +30,7 @@ after_success:
 - cd ..
 - chmod 600 deploy_key
 - mv deploy_key ~/.ssh/id_rsa
-- scp gtas-parent/gtas-webapp/target/gtas.war gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war
+- scp -F ~/.ssh/config gtas-parent/gtas-webapp/target/gtas.war gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war
   $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH
 env:
   global:
