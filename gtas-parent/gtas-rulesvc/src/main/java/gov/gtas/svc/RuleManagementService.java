@@ -11,6 +11,8 @@ import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.Collection;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 /**
  * Interface specification for the rule management service.
  */
@@ -35,6 +37,7 @@ public interface RuleManagementService {
 	 *            the knowledge base name.
 	 * @return the DRL rules as a string.
 	 */
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List')")
 	String fetchDrlRulesFromKnowledgeBase(String kbName);
 
 	/**
@@ -42,6 +45,7 @@ public interface RuleManagementService {
 	 * 
 	 * @return the DRL rules as a string.
 	 */
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
 	String fetchDefaultDrlRulesFromKnowledgeBase();
 
 	/**

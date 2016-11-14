@@ -52,7 +52,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -84,7 +83,6 @@ public class UdrServiceImpl implements UdrService {
 
 	@Override
 	@Transactional
-	@PreAuthorize("hasAuthority('Admin')")
 	public UdrSpecification fetchUdr(String userId, String title) {
 		UdrRule fetchedRule = rulePersistenceService.findByTitleAndAuthor(
 				title, userId);
@@ -106,7 +104,6 @@ public class UdrServiceImpl implements UdrService {
 
 	@Override
 	@Transactional
-	@PreAuthorize("hasAuthority('Admin')")
 	public UdrSpecification fetchUdr(Long id) {
 		UdrRule fetchedRule = rulePersistenceService.findById(id);
 		if (fetchedRule == null) {
@@ -188,7 +185,6 @@ public class UdrServiceImpl implements UdrService {
 
 	@Override
 	@Transactional
-	@PreAuthorize("hasAuthority('Admin')")
 	public JsonServiceResponse copyUdr(String userId, Long udrId) {
 		// fetch the UDR
 		UdrSpecification udrToCopy = fetchUdr(udrId);

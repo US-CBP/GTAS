@@ -17,29 +17,46 @@ import gov.gtas.vo.passenger.PassengerVo;
 
 import java.util.List;
 
-public interface PassengerService {
-    public Passenger create(Passenger passenger);
-    public Passenger update(Passenger passenger) ;
-    
-    public Passenger findById(Long id);
-    public List<Passenger> getPassengersByLastName(String lastName);
-    
-    public List<Disposition> getPassengerDispositionHistory(Long passengerId, Long flightId);
-    public void createDisposition(DispositionData disposition, User user);
-    public void createDisposition(HitsSummary hit);
-    public List<DispositionStatus> getDispositionStatuses();
-    public List<CaseVo> getAllDispositions();
-    
-    public void createOrEditDispositionStatus(DispositionStatus ds);
-    public void deleteDispositionStatus(DispositionStatus ds);
-    
-    /**
-     * 
-     * @param flightId optional
-     * @param request
-     * @return
-     */
-    public PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
+import org.springframework.security.access.prepost.PreAuthorize;
 
-    public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
+public interface PassengerService {
+	public Passenger create(Passenger passenger);
+
+	public Passenger update(Passenger passenger);
+
+	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	public Passenger findById(Long id);
+
+	public List<Passenger> getPassengersByLastName(String lastName);
+
+	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	public List<Disposition> getPassengerDispositionHistory(Long passengerId,
+			Long flightId);
+
+	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	public void createDisposition(DispositionData disposition, User user);
+
+	public void createDisposition(HitsSummary hit);
+
+	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	public List<DispositionStatus> getDispositionStatuses();
+
+	public List<CaseVo> getAllDispositions();
+
+	public void createOrEditDispositionStatus(DispositionStatus ds);
+
+	public void deleteDispositionStatus(DispositionStatus ds);
+
+	/**
+	 * 
+	 * @param flightId
+	 *            optional
+	 * @param request
+	 * @return
+	 */
+	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	public PassengersPageDto getPassengersByCriteria(Long flightId,
+			PassengersRequestDto request);
+
+	public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
 }

@@ -26,7 +26,7 @@ public interface WatchlistService {
 	 *            the name of the watch list.
 	 * @return the Watch list object.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
 	WatchlistSpec fetchWatchlist(String wlName);
 
 	/**
@@ -39,7 +39,7 @@ public interface WatchlistService {
 	 *            inserted/updated/deleted.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
 	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
 			WatchlistSpec wlToCreateUpdateDelete);
 
@@ -62,7 +62,7 @@ public interface WatchlistService {
 	 * 
 	 * @return the list of all available watch list objects.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
 	List<WatchlistSpec> fetchAllWatchlists();
 
 	/**
@@ -80,6 +80,7 @@ public interface WatchlistService {
 	 * 
 	 * @return the list of all available watch list objects.
 	 */
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
 	JsonServiceResponse activateAllWatchlists();
 
 	/**
@@ -92,5 +93,6 @@ public interface WatchlistService {
 	 *            the name of the watch list to be deleted.
 	 * @return the delete result.
 	 */
+	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
 	JsonServiceResponse deleteWatchlist(String userId, String wlName);
 }
