@@ -28,7 +28,7 @@ import gov.gtas.services.security.UserData;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })
 @WebAppConfiguration
-public class UserDataValidatorTest {
+public class UserDataValidatorIT {
 
     private static final String USER_ID = "vtammineni";
     private static final String PASSWORD = "passowrd";
