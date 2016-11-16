@@ -1,5 +1,5 @@
 -- ----------------------------
--- Records of role
+-- Roles
 -- ----------------------------
 INSERT INTO `role` VALUES ('1', 'Admin');
 INSERT INTO `role` VALUES ('2', 'Manage Queries');
@@ -9,7 +9,7 @@ INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'Test');
 
 -- ----------------------------
--- Records of user
+-- Users
 -- ----------------------------
 -- password is 'password'
 INSERT INTO `user` VALUES ('nsamha', 1,'Nael', 'Samha', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
@@ -62,12 +62,9 @@ INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour
 INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour_1`, `hour_2`, `hour_3`, `hour_4`, `hour_5`, `hour_6`, `hour_7`, `hour_8`, `hour_9`, `hour_10`, `hour_11`, `hour_12`, `hour_13`, `hour_14`, `hour_15`, `hour_16`, `hour_17`, `hour_18`, `hour_19`, `hour_20`, `hour_21`, `hour_22`, `hour_23`, `hour_24`) VALUES
 (2, CURRENT_TIMESTAMP, 'PNR', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
--- ----------------------------
--- Case mgmt: disposition statuses
--- ----------------------------
-
-INSERT INTO `disposition_status` (`id`, `name`, `description`) VALUES (1, 'NEW', 'NEW');
-INSERT INTO `disposition_status` (`id`, `name`, `description`) VALUES (2, 'Arrest on Site', 'Arrest on Site');
-INSERT INTO `disposition_status` (`id`, `name`, `description`) VALUES (3, 'Investigate In-person', 'Investigate In-person');
-INSERT INTO `disposition_status` (`id`, `name`, `description`) VALUES (4, 'Requires Review', 'Requires Review');
-INSERT INTO `disposition_status` (`id`, `name`, `description`) VALUES (5, 'Under Review', 'Under Review');
+/*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
+insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
+insert into disposition_status(id, name, description) values(2, 'OPEN', 'Case is open');
+insert into disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
+insert into disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
+insert into disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');

@@ -1,4 +1,12 @@
-sources:
+Run scripts in this order:
+
+countries.sql
+carriers.sql
+airports.sql
+views.sql
+gtas_data.sql
+
+Sources:
 
 carriers:
 https://www.census.gov/foreign-trade/reference/codes/aircarrier/acname.txt
