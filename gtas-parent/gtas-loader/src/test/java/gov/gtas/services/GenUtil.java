@@ -373,4 +373,11 @@ public class GenUtil {
         PaxDto dto=watchList.get(select);
         return dto;
     }
+    public static String getPnrCreateDate(){
+    	//230516:181348
+    	Calendar cal = Calendar.getInstance();
+    	Date date=cal.getTime();
+    	SimpleDateFormat df = new SimpleDateFormat("ddMMyy:HHmmss");
+    	return df.format(date);
+    }
 }
