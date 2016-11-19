@@ -2,12 +2,12 @@ language: java
 sudo: false
 jdk:
 - oraclejdk8
-notifications:
-  slack:
-    rooms:
-    - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
-    on_success: change
-    on_failure: always
+#notifications:
+#  slack:
+#    rooms:
+#    - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
+#    on_success: change
+#    on_failure: always
 #  email:
 #    recipients:
 #    - david.j.ertel@cbp.dhs.gov
