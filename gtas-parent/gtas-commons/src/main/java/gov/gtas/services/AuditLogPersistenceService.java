@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -31,7 +32,7 @@ public interface AuditLogPersistenceService {
 
 	public AuditRecord findById(Long id);
 
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public List<AuditRecord> findByUserActionDateRange(String userId,
 			AuditActionType action, Date dateFrom, Date dateTo);
 

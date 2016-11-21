@@ -5,6 +5,7 @@
  */
 package gov.gtas.svc;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 
@@ -26,7 +27,7 @@ public interface WatchlistService {
 	 *            the name of the watch list.
 	 * @return the Watch list object.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	WatchlistSpec fetchWatchlist(String wlName);
 
 	/**
@@ -39,7 +40,7 @@ public interface WatchlistService {
 	 *            inserted/updated/deleted.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
 			WatchlistSpec wlToCreateUpdateDelete);
 
@@ -53,7 +54,7 @@ public interface WatchlistService {
 	 *            inserted/updated/deleted.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse createUpdateWatchlistItems(String userId,
 			WatchlistSpec wlToCreateUpdate);
 
@@ -62,7 +63,7 @@ public interface WatchlistService {
 	 * 
 	 * @return the list of all available watch list objects.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	List<WatchlistSpec> fetchAllWatchlists();
 
 	/**
@@ -80,7 +81,7 @@ public interface WatchlistService {
 	 * 
 	 * @return the list of all available watch list objects.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse activateAllWatchlists();
 
 	/**
@@ -93,6 +94,6 @@ public interface WatchlistService {
 	 *            the name of the watch list to be deleted.
 	 * @return the delete result.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Watch List')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse deleteWatchlist(String userId, String wlName);
 }

@@ -5,6 +5,7 @@
  */
 package gov.gtas.services.udr;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.model.BaseEntity;
 import gov.gtas.model.User;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -16,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * The Persistence Layer service for UDR (User Defined Rule). Since an UDR can
@@ -107,6 +110,7 @@ public interface RulePersistenceService {
 	 *            the author's user Id.
 	 * @return the fetched rule or null.
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public UdrRule findByTitleAndAuthor(String title, String authorUserId);
 
 	/**

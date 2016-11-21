@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.error.ErrorDetailInfo;
 
 import java.util.Date;
@@ -17,12 +18,12 @@ public interface ErrorPersistenceService {
 
 	public ErrorDetailInfo findById(Long id);
 
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public List<ErrorDetailInfo> findByDateRange(Date dateFrom, Date dateTo);
 
 	public List<ErrorDetailInfo> findByDateFrom(Date dateFrom);
 
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public List<ErrorDetailInfo> findByCode(String code);
 
 }

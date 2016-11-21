@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.services.dto.FlightsPageDto;
@@ -24,7 +25,7 @@ public interface FlightService {
 
 	public Flight findById(Long id);
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public FlightsPageDto findAll(FlightsRequestDto dto);
 
 	public Flight getUniqueFlightByCriteria(String carrier,

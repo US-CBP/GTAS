@@ -5,6 +5,7 @@
  */
 package gov.gtas.svc;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.udr.json.JsonUdrListElement;
 import gov.gtas.model.udr.json.UdrSpecification;
@@ -29,7 +30,7 @@ public interface UdrService {
 	 *            the title of the UDR.
 	 * @return the JSON UDR object.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	UdrSpecification fetchUdr(String userId, String title);
 
 	/**
@@ -40,7 +41,7 @@ public interface UdrService {
 	 *            the id of the UDR record in the DB.
 	 * @return the JSON UDR object.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	UdrSpecification fetchUdr(Long id);
 
 	/**
@@ -51,7 +52,7 @@ public interface UdrService {
 	 *            the userId of the author.
 	 * @return the list of JSON UDR summary objects.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	List<JsonUdrListElement> fetchUdrSummaryList(String userId);
 
 	/**
@@ -59,7 +60,7 @@ public interface UdrService {
 	 * 
 	 * @return the list of JSON UDR summary objects.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	List<JsonUdrListElement> fetchUdrSummaryList();
 
 	/**
@@ -72,7 +73,7 @@ public interface UdrService {
 	 *            the JSON UDR object to be inserted into tte DB.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	JsonServiceResponse createUdr(String userId, UdrSpecification udrToCreate);
 
 	/**
@@ -84,7 +85,7 @@ public interface UdrService {
 	 *            the id of the UDR object to be copied.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	JsonServiceResponse copyUdr(String userId, Long udrId);
 
 	/**
@@ -96,7 +97,7 @@ public interface UdrService {
 	 *            the updated object image to use for replacing the DB object.
 	 * @return the updated object.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	JsonServiceResponse updateUdr(String userId, UdrSpecification udrToUpdate);
 
 	/**
@@ -108,7 +109,7 @@ public interface UdrService {
 	 *            the id of the UDR record in the DB to be deleted.
 	 * @return the service response JSON format.
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Rules')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	JsonServiceResponse deleteUdr(String userId, Long id);
 
 	public void recompileRules(final String kbName, String userId);

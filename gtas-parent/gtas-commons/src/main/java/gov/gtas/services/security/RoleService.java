@@ -5,13 +5,15 @@
  */
 package gov.gtas.services.security;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
+
 import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface RoleService {
 
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public Set<RoleData> findAll();
 
 }

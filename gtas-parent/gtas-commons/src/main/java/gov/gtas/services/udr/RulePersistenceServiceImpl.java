@@ -208,7 +208,6 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 
 	@Override
 	@Transactional(TxType.SUPPORTS)
-	@PreAuthorize("hasAuthority('Admin')")
 	public UdrRule findByTitleAndAuthor(String title, String authorUserId) {
 		return udrRuleRepository
 				.getUdrRuleByTitleAndAuthor(title, authorUserId);

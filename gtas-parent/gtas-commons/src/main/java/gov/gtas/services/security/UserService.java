@@ -5,9 +5,12 @@
  */
 package gov.gtas.services.security;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.model.User;
 
 import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
  * The Interface UserService.
@@ -20,6 +23,7 @@ public interface UserService {
 	 * @param userData the user data
 	 * @return the user data
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public UserData create(UserData user);
 
 	/**
@@ -27,6 +31,7 @@ public interface UserService {
 	 *
 	 * @param id the user id
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void delete(String id);
 
 	/**
@@ -34,6 +39,7 @@ public interface UserService {
 	 *
 	 * @return the list
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public List<UserData> findAll();
 
 	/**
@@ -42,6 +48,7 @@ public interface UserService {
 	 * @param userData the user data
 	 * @return the updated user data
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public UserData update(UserData user);
 
 	/**
@@ -58,5 +65,6 @@ public interface UserService {
 	 * @param userId the user id
 	 * @return the user
 	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public User fetchUser(final String userId);
 }

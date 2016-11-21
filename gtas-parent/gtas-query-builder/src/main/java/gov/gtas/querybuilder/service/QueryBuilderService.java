@@ -5,6 +5,7 @@
  */
 package gov.gtas.querybuilder.service;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
@@ -64,7 +65,7 @@ public class QueryBuilderService {
 	 * @throws QueryAlreadyExistsException
 	 * @throws InvalidQueryException
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public IUserQueryResult saveQuery(String userId,
 			UserQueryRequest queryRequest) throws QueryAlreadyExistsException,
 			InvalidQueryException {
@@ -86,7 +87,7 @@ public class QueryBuilderService {
 		return result;
 	}
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public IUserQueryResult editQuery(String userId,
 			UserQueryRequest queryRequest) throws QueryAlreadyExistsException,
 			QueryDoesNotExistException, InvalidQueryException {
@@ -110,7 +111,7 @@ public class QueryBuilderService {
 		return result;
 	}
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public List<IUserQueryResult> listQueryByUser(String userId)
 			throws InvalidQueryException {
 		List<IUserQueryResult> result = new ArrayList<>();
@@ -125,7 +126,7 @@ public class QueryBuilderService {
 		return result;
 	}
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public void deleteQuery(String userId, int id)
 			throws QueryDoesNotExistException, InvalidQueryException {
 
@@ -139,7 +140,7 @@ public class QueryBuilderService {
 		}
 	}
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public FlightsPageDto runFlightQuery(QueryRequest queryRequest)
 			throws InvalidQueryException {
 		List<FlightVo> flightList = new ArrayList<>();
@@ -186,7 +187,7 @@ public class QueryBuilderService {
 		return new FlightsPageDto(flightList, totalCount);
 	}
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'Manage Queries')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest)
 			throws InvalidQueryException {
 		List<PassengerVo> passengerList = new ArrayList<>();

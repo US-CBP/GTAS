@@ -5,6 +5,7 @@
  */
 package gov.gtas.services.watchlist;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.watchlist.Watchlist;
@@ -34,7 +35,7 @@ public interface WatchlistPersistenceService {
 	 *            author.)
 	 * @return the id's of the watch list and the updated items.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
 			List<WatchlistItem> createUpdateList,
 			List<WatchlistItem> deleteList, String userId);
@@ -44,7 +45,7 @@ public interface WatchlistPersistenceService {
 	 * 
 	 * @return list of all watch lists.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public List<Watchlist> findAllSummary();
 
 	/**
@@ -54,7 +55,7 @@ public interface WatchlistPersistenceService {
 	 *            the name of the watch list
 	 * @return list of all watch list items.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public List<WatchlistItem> findWatchlistItems(String watchlistName);
 
 	/**
@@ -62,7 +63,7 @@ public interface WatchlistPersistenceService {
 	 * 
 	 * @return list of all watch list items.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public Iterable<WatchlistItem> findAllWatchlistItems();
 
 	/**
@@ -97,7 +98,7 @@ public interface WatchlistPersistenceService {
 	 * @return the deleted watch list or null, if the watchlist could not be
 	 *         found.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public Watchlist deleteWatchlist(String name, boolean forceFlag,
 			String userId);
 

@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
 import gov.gtas.model.Disposition;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
@@ -24,23 +25,24 @@ public interface PassengerService {
 
 	public Passenger update(Passenger passenger);
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public Passenger findById(Long id);
 
 	public List<Passenger> getPassengersByLastName(String lastName);
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<Disposition> getPassengerDispositionHistory(Long passengerId,
 			Long flightId);
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public void createDisposition(DispositionData disposition, User user);
 
 	public void createDisposition(HitsSummary hit);
 
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<DispositionStatus> getDispositionStatuses();
 
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<CaseVo> getAllDispositions();
 
 	public void createOrEditDispositionStatus(DispositionStatus ds);
@@ -54,7 +56,7 @@ public interface PassengerService {
 	 * @param request
 	 * @return
 	 */
-	@PreAuthorize("hasAnyAuthority('Admin', 'View Flight And Passenger')")
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public PassengersPageDto getPassengersByCriteria(Long flightId,
 			PassengersRequestDto request);
 
