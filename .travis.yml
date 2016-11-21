@@ -2,22 +2,22 @@ language: java
 sudo: false
 jdk:
 - oraclejdk8
-#notifications:
-#  slack:
-#    rooms:
-#    - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
-#    on_success: change
-#    on_failure: always
-#  email:
-#    recipients:
-#    - david.j.ertel@cbp.dhs.gov
-#    - maneesh.lekkala@gmail.com
-#    - taylorjwdev@gmail.com
-#    - jtangfed@gmail.com
-#    - vempatisvr@gmail.com
-#    - mikecope@gmail.com
-#    on_success: change
-#    on_failure: always
+notifications:
+  slack:
+    rooms:
+    - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
+    on_success: change
+    on_failure: always
+  email:
+    recipients:
+    - david.j.ertel@cbp.dhs.gov
+    - maneesh.lekkala@gmail.com
+    - taylorjwdev@gmail.com
+    - jtangfed@gmail.com
+    - vempatisvr@gmail.com
+    - mikecope@gmail.com
+    on_success: change
+    on_failure: always
 before_script:
 - cd gtas-parent
 - sed -i 's/admin/'"$DB_PASS"'/' gtas-commons/src/main/resources/hibernate.properties
