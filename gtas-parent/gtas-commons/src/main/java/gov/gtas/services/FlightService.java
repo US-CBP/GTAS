@@ -36,6 +36,7 @@ public interface FlightService {
 
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate);
 
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(
 			String firstName, String lastName, Set<Document> documents);
 

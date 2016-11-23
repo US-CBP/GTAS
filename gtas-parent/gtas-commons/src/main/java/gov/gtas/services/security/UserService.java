@@ -65,6 +65,5 @@ public interface UserService {
 	 * @param userId the user id
 	 * @return the user
 	 */
-	@PreAuthorize(PRIVILEGE_ADMIN)
 	public User fetchUser(final String userId);
 }
