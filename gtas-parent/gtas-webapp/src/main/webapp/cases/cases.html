@@ -1,6 +1,48 @@
+<md-content layout-padding="">
+	<form ng-submit="filter()">
+		<div layout-gt-sm="row">
+			<md-input-container class="md-block" flex-gt-sm="">
+				<label>Name</label>
+				<input ng-model="myfilter.name">
+			</md-input-container>
+			<div flex="5" hide-xs="" hide-sm="">
+				<!-- Spacer //-->
+			</div>
 
-<div id="casesGrid" ui-grid="casesGrid"
-     ui-grid-pagination
-     ui-grid-expandable
-     ui-grid-auto-resize
-     class="grid"></div>
+			<md-input-container>
+				<label>Flight</label>
+				<input ng-model="myfilter.flight">
+			</md-input-container>
+			<div flex="5" hide-xs="" hide-sm="">
+				<!-- Spacer //-->
+			</div>
+
+			<md-input-container>
+				<label>Status</label>
+				<md-select ng-model="myfilter.status">
+					<md-option ng-repeat="d in dispositionStatuses" value="{{d.id}}">
+						{{d.name}}
+					</md-option>
+				</md-select>
+			</md-input-container>
+
+			<md-button class="md-primary" aria-label="reset" ng-click="reset()" type="button">
+				<md-tooltip>{{'flight.reset' | translate}}</md-tooltip>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+					<path d="M14 12c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2z"></path>
+					<path d="M12 3c-4.97 0-9 4.03-9 9H0l4 4 4-4H5c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.51 0-2.91-.49-4.06-1.3l-1.42 1.44C8.04 20.3 9.94 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path>
+				</svg>
+			</md-button>
+			<md-button class="md-primary" type="submit">
+				<md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+					<path d="M10 18h4v-2h-4v2z"></path>
+					<path d="M3 6v2h18V6H3z"></path>
+					<path d="M6 13h12v-2H6v2z"></path>
+				</svg>
+			</md-button>
+		</div>
+	</form>
+</md-content>
+
+<div id="casesGrid" ui-grid="casesGrid" ui-grid-pagination ui-grid-expandable ui-grid-auto-resize class="grid"></div>
