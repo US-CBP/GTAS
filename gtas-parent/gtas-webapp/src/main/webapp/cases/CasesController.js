@@ -8,15 +8,16 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
 
     $scope.hitTypeIcon = function (hitType) {
         var icons = '&nbsp;';
-
-        if (hitType.includes('R')) {
-            icons += '<i class="glyphicon glyphicon-flag" style="color:red"></i>&nbsp;';
-        }
-        if (hitType.includes('P')) {
-            icons += '<i class="glyphicon glyphicon-user" style="color:rgb(255, 176, 22)"></i>&nbsp;';
-        }
-        if (hitType.includes('D')) {
-            icons += '<i class="glyphicon glyphicon-file" style="color:rgb(255, 176, 22)"></i>';
+        if (hitType) {
+            if (hitType.includes('R')) {
+                icons += '<i class="glyphicon glyphicon-flag" style="color:red"></i>&nbsp;';
+            }
+            if (hitType.includes('P')) {
+                icons += '<i class="glyphicon glyphicon-user" style="color:rgb(255, 176, 22)"></i>&nbsp;';
+            }
+            if (hitType.includes('D')) {
+                icons += '<i class="glyphicon glyphicon-file" style="color:rgb(255, 176, 22)"></i>';
+            }
         }
         return $sce.trustAsHtml(icons);
     };
@@ -25,22 +26,11 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
         $scope.dispositionStatuses = response.data;
     });
 
-    $scope.reset = function () {
-        $scope.myfilter = {};
-    }
-
-    $scope.filter = function () {
-        console.log($scope.myfilter);
-    }
-
     $scope.casesGrid = {
         data: newCases.data,
         paginationPageSizes: [10, 15, 25],
         paginationPageSize: 10,
-        paginationCurrentPage: 1,
-        useExternalPagination: false,
-        useExternalSorting: false,
-        useExternalFiltering: false,
+        enableFiltering: true,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 0,
         enableColumnMenus: false,
@@ -87,13 +77,15 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
             field: 'flightEtd',
             name: 'flightEtd',
             displayName: 'pass.etd', headerCellFilter: 'translate',
-            cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"'
+            cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
+            enableFiltering: false
         },
         {
             field: 'flightEta',
             name: 'flightEta',
             displayName: 'pass.eta', headerCellFilter: 'translate',
-            cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"'
+            cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
+            enableFiltering: false
         },
         {
             field: 'flightDirection',
@@ -104,7 +96,8 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
             field: 'createDate',
             name: 'createDate',
             displayName: 'Last Updated',
-            cellFilter: 'date'
+            cellFilter: 'date',
+            enableFiltering: false
         },
         {
             field: 'status',
