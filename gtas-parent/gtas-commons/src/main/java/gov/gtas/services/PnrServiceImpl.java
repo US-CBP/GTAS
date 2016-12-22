@@ -180,11 +180,9 @@ public class PnrServiceImpl implements PnrService {
 		if (source.getFlightLegs() != null && source.getFlightLegs().size() > 0) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
 			for (FlightLeg fl : _tempFL) {
-
-				if (!target.getFlightLegs().contains(fl)) {
+				if (!checkFlightLegExistence(target.getFlightLegs(), fl)) {
 					target.getFlightLegs().add(fl);
 				}
-
 			}
 		}
 
@@ -201,6 +199,17 @@ public class PnrServiceImpl implements PnrService {
 
 	}
 
+	private boolean checkFlightLegExistence(List<FlightLeg> flightLegs, FlightLeg fl) {
+		boolean flag = false;		
+		for (FlightLeg leg: flightLegs) {
+			if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getPnr()).equals(fl.getPnr())) {
+				flag=true;
+				break;
+			} 
+		}
+		return flag;
+	}
+	
 	private Address getExistingAddress(Address a, Set<Address> addresses) {
 		Address chk = null;
 		if (addresses != null && addresses.size() > 0) {

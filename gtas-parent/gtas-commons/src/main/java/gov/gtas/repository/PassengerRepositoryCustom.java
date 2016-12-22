@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.PassengersRequestDto;
 
 public interface PassengerRepositoryCustom {
@@ -21,4 +22,12 @@ public interface PassengerRepositoryCustom {
     public Pair<Long, List<Object[]>> findByCriteria(Long flightId, PassengersRequestDto request);
     
     public List<Object[]> findAllDispositions();
+
+	/**
+	 * Find Passengers by attributes.
+	 *
+	 * @param passengerId retrieve the passenger and then extract its attributes.
+	 * @return the list
+	 */
+	public List<Passenger> findByAttributes(Long passengerId);
 }

@@ -5,6 +5,13 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.Flight;
+import gov.gtas.model.HitsSummary;
+import gov.gtas.model.Passenger;
+import gov.gtas.services.PassengerService;
+import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.services.dto.SortOptionsDto;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,19 +32,15 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
-import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.services.dto.SortOptionsDto;
 
 public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
     private static final Logger logger = LoggerFactory.getLogger(PassengerRepositoryImpl.class);
@@ -45,6 +48,41 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
     @PersistenceContext
     private EntityManager em;
     
+    @Autowired
+	private PassengerService pService;
+  
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * gov.gtas.repository.PassengerRepositoryCustom#findByAttributes(java.lang
+	 * .Long)
+	 */
+	@Override
+	@Transactional
+	public List<Passenger> findByAttributes(Long pId) {
+		Passenger pax = em.find(Passenger.class, pId);
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
+		Root<Passenger> root = paxcq.from(Passenger.class);
+
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
+		if (StringUtils.isNotBlank(pax.getFirstName())) {
+			String likeString = String.format("%%%s%%", pax
+					.getFirstName().toUpperCase());
+			predicates.add(cb.like(root.<String> get("firstName"), likeString));
+		}
+		if (StringUtils.isNotBlank(pax.getLastName())) {
+			String likeString = String.format("%%%s%%", pax.getLastName()
+					.toUpperCase());
+			predicates.add(cb.like(root.<String> get("lastName"), likeString));
+		}
+		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
+		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
+		return paxtq.getResultList();
+	}
+	
     /**
      * This was an especially difficult query to construct mainly because of a
      * bug in hibernate. See https://hibernate.atlassian.net/browse/HHH-7321.
