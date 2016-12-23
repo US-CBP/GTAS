@@ -51,6 +51,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -228,6 +229,24 @@ public class PassengerDetailsController {
 		return flightHistoryVo;
 	}
 
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
+	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
+			@RequestParam(value = "paxId") String paxId,
+			@RequestParam(value = "docId") String docId) {
+		List<Flight> flightList = pService
+				.getTravelHistory(Long.valueOf(paxId));
+		List<FlightVo> flightVoList = new LinkedList<>();
+
+		flightList.stream().forEach((flight) -> {
+			FlightVo flightVo = new FlightVo();
+			copyModelToVo(flight, flightVo);
+			flightVoList.add(flightVo);
+		});
+		return flightVoList;
+	}
+	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
 	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
 		return pService.getDispositionStatuses();

@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
 import gov.gtas.model.Disposition;
+import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
@@ -61,4 +62,7 @@ public interface PassengerService {
 			PassengersRequestDto request);
 
 	public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
+	
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	public List<Flight> getTravelHistory(Long pId);
 }

@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -320,5 +321,16 @@ public class PassengerServiceImpl implements PassengerService {
 				}
 			}
 		}
+	}
+	
+	@Override
+	@Transactional
+	public List<Flight> getTravelHistory(Long pId) {
+		LinkedList<Flight> flights = new LinkedList<>();
+		List<Passenger> paxL = passengerRespository.findByAttributes(pId);
+		paxL.stream().forEach((pax) -> {
+			flights.addAll(pax.getFlights());
+		});
+		return flights;
 	}
 }
