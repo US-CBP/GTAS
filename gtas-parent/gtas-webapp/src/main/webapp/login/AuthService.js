@@ -29,18 +29,6 @@
             var postData = preparePostData(credentials);
             sessionId = $cookies.get("JSESSIONID");
 
-            $http({
-                method: 'GET',
-                url: ''
-                ,
-                headers: {
-                    "JSESSIONID":""+sessionId,
-                    "X-CSRF-TOKEN" : ""+csrfToken,
-                    "Content-Type": "application/x-www-form-urlencoded",
-                    "X-Login-Ajax-call": 'true'
-                }
-            });
-
             return $http({
                 method: 'POST',
                 url: 'authenticate',
