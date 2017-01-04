@@ -51,10 +51,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -229,22 +229,27 @@ public class PassengerDetailsController {
 		return flightHistoryVo;
 	}
 
+	/**
+	 * Gets the travel history by passenger and document.
+	 *
+	 * @param paxId
+	 *            the passenger id
+	 * @param docId
+	 *            the doc id
+	 * @return the travel history by passenger and document
+	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
 			@RequestParam(value = "paxId") String paxId,
 			@RequestParam(value = "docId") String docId) {
-		List<Flight> flightList = pService
-				.getTravelHistory(Long.valueOf(paxId));
-		List<FlightVo> flightVoList = new LinkedList<>();
-
-		flightList.stream().forEach((flight) -> {
-			FlightVo flightVo = new FlightVo();
-			copyModelToVo(flight, flightVo);
-			flightVoList.add(flightVo);
-		});
-		return flightVoList;
+		return pService.getTravelHistory(Long.valueOf(paxId)).stream()
+				.map(flight -> {
+					FlightVo flightVo = new FlightVo();
+					copyModelToVo(flight, flightVo);
+					return flightVo;
+				}).collect(Collectors.toCollection(ArrayList::new));
 	}
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)

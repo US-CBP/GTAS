@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -326,11 +328,7 @@ public class PassengerServiceImpl implements PassengerService {
 	@Override
 	@Transactional
 	public List<Flight> getTravelHistory(Long pId) {
-		LinkedList<Flight> flights = new LinkedList<>();
-		List<Passenger> paxL = passengerRespository.findByAttributes(pId);
-		paxL.stream().forEach((pax) -> {
-			flights.addAll(pax.getFlights());
-		});
-		return flights;
+		return passengerRespository.findByAttributes(pId).stream()
+				.map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
 	}
 }
