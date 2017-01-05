@@ -327,8 +327,8 @@ public class PassengerServiceImpl implements PassengerService {
 	
 	@Override
 	@Transactional
-	public List<Flight> getTravelHistory(Long pId) {
-		return passengerRespository.findByAttributes(pId).stream()
+	public List<Flight> getTravelHistory(Long pId, String docNum) {
+		return passengerRespository.findByAttributes(pId, docNum).stream()
 				.map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
 	}
 }

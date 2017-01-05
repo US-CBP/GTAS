@@ -51,6 +51,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -243,13 +244,13 @@ public class PassengerDetailsController {
 	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
 			@RequestParam(value = "paxId") String paxId,
-			@RequestParam(value = "docId") String docId) {
-		return pService.getTravelHistory(Long.valueOf(paxId)).stream()
+			@RequestParam(value = "docNum") String docNum) {
+		return pService.getTravelHistory(Long.valueOf(paxId), docNum).stream()
 				.map(flight -> {
 					FlightVo flightVo = new FlightVo();
 					copyModelToVo(flight, flightVo);
 					return flightVo;
-				}).collect(Collectors.toCollection(ArrayList::new));
+				}).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)

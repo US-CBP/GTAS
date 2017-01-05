@@ -27,7 +27,8 @@ public interface PassengerRepositoryCustom {
 	 * Find Passengers by attributes.
 	 *
 	 * @param passengerId retrieve the passenger and then extract its attributes.
+	 * @param docNum the document number
 	 * @return the list
 	 */
-	public List<Passenger> findByAttributes(Long passengerId);
+	public List<Passenger> findByAttributes(Long passengerId, String docNum);
 }

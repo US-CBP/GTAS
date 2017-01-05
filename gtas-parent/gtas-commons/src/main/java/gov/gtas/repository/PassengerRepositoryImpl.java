@@ -60,17 +60,16 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	 */
 	@Override
 	@Transactional
-	public List<Passenger> findByAttributes(Long pId) {
+	public List<Passenger> findByAttributes(Long pId, String docNum) {
 		Passenger pax = em.find(Passenger.class, pId);
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
 		Root<Passenger> root = paxcq.from(Passenger.class);
-
 		List<Predicate> predicates = new ArrayList<>();
 		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
 		if (StringUtils.isNotBlank(pax.getFirstName())) {
-			String likeString = String.format("%%%s%%", pax
-					.getFirstName().toUpperCase());
+			String likeString = String.format("%%%s%%", pax.getFirstName()
+					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("firstName"), likeString));
 		}
 		if (StringUtils.isNotBlank(pax.getLastName())) {
@@ -78,6 +77,11 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("lastName"), likeString));
 		}
+//		if (StringUtils.isNotBlank(docNum)) {
+//			String likeString = String.format("%%%s%%", docNum.toUpperCase());
+//			predicates.add(cb.like(
+//					root.join("documents").get("documentNumber"), likeString));
+//		}
 		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
 		return paxtq.getResultList();

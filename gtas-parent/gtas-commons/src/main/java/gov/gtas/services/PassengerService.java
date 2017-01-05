@@ -51,11 +51,11 @@ public interface PassengerService {
 	public void deleteDispositionStatus(DispositionStatus ds);
 
 	/**
-	 * 
-	 * @param flightId
-	 *            optional
-	 * @param request
-	 * @return
+	 * Gets the passengers by criteria.
+	 *
+	 * @param flightId            optional
+	 * @param request the request
+	 * @return the passengers by criteria
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public PassengersPageDto getPassengersByCriteria(Long flightId,
@@ -63,6 +63,13 @@ public interface PassengerService {
 
 	public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
 	
+	/**
+	 * Gets the travel history.
+	 *
+	 * @param pId the id
+	 * @param docNum the doc num
+	 * @return the travel history
+	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getTravelHistory(Long pId);
+	public List<Flight> getTravelHistory(Long pId, String docNum);
 }
