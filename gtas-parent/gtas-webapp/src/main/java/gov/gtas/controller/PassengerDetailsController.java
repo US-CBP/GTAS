@@ -30,6 +30,7 @@ import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
+import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
@@ -48,7 +49,9 @@ import gov.gtas.vo.passenger.PnrVo;
 import gov.gtas.vo.passenger.SeatVo;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -73,6 +76,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.google.common.base.Strings;
 
 @Controller
 public class PassengerDetailsController {
@@ -235,18 +240,31 @@ public class PassengerDetailsController {
 	 *
 	 * @param paxId
 	 *            the passenger id
-	 * @param docId
-	 *            the doc id
+	 * @param docNum
+	 *            the doc num
+	 * @param docIssuCountry
+	 *            the doc issu country
+	 * @param docExpiration
+	 *            the doc expiration
 	 * @return the travel history by passenger and document
+	 * @throws ParseException
 	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
 			@RequestParam(value = "paxId") String paxId,
-			@RequestParam(value = "docNum") String docNum) {
-		return pService.getTravelHistory(Long.valueOf(paxId), docNum).stream()
-				.map(flight -> {
+			@RequestParam(value = "docNum") String docNum,
+			@RequestParam(value = "docIssuCountry") String docIssuCountry,
+			@RequestParam(value = "docExpiration") String docExpiration)
+			throws ParseException {
+		Date docExpDate = null;
+		if (!Strings.isNullOrEmpty(docExpiration)) {
+			docExpDate = DateCalendarUtils.parseJsonDate(docExpiration);
+		}
+		return pService
+				.getTravelHistory(Long.valueOf(paxId), docNum, docIssuCountry,
+						docExpDate).stream().map(flight -> {
 					FlightVo flightVo = new FlightVo();
 					copyModelToVo(flight, flightVo);
 					return flightVo;

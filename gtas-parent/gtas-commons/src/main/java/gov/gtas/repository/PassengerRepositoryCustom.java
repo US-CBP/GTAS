@@ -5,12 +5,13 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.Passenger;
+import gov.gtas.services.dto.PassengersRequestDto;
+
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
-
-import gov.gtas.model.Passenger;
-import gov.gtas.services.dto.PassengersRequestDto;
 
 public interface PassengerRepositoryCustom {
     /**
@@ -26,9 +27,16 @@ public interface PassengerRepositoryCustom {
 	/**
 	 * Find Passengers by attributes.
 	 *
-	 * @param passengerId retrieve the passenger and then extract its attributes.
-	 * @param docNum the document number
+	 * @param passengerId
+	 *            retrieve the passenger and then extract its attributes.
+	 * @param docNum
+	 *            the document number
+	 * @param docIssuCountry
+	 *            the doc issu country
+	 * @param docExpDate
+	 *            the doc exp date
 	 * @return the list
 	 */
-	public List<Passenger> findByAttributes(Long passengerId, String docNum);
+	public List<Passenger> findByAttributes(Long passengerId, String docNum,
+			String docIssuCountry, Date docExpDate);
 }

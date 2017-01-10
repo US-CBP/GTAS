@@ -17,6 +17,7 @@ import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.PassengerVo;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -68,8 +69,10 @@ public interface PassengerService {
 	 *
 	 * @param pId the id
 	 * @param docNum the doc num
+	 * @param docIssuCountry the doc issu country
+	 * @param docExpirationDate the doc expiration date
 	 * @return the travel history
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getTravelHistory(Long pId, String docNum);
+	public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
 }

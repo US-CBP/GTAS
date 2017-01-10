@@ -34,7 +34,6 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -327,8 +326,11 @@ public class PassengerServiceImpl implements PassengerService {
 	
 	@Override
 	@Transactional
-	public List<Flight> getTravelHistory(Long pId, String docNum) {
-		return passengerRespository.findByAttributes(pId, docNum).stream()
-				.map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
+	public List<Flight> getTravelHistory(Long pId, String docNum,
+			String docIssuCountry, Date docExpDate) {
+		List<Passenger> paxL = passengerRespository.findByAttributes(pId,
+				docNum, docIssuCountry, docExpDate);
+		return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream)
+				.collect(Collectors.toList());
 	}
 }

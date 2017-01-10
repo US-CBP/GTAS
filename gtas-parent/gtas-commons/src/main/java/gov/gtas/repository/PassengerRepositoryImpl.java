@@ -60,12 +60,15 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	 */
 	@Override
 	@Transactional
-	public List<Passenger> findByAttributes(Long pId, String docNum) {
+	public List<Passenger> findByAttributes(Long pId, String docNum,
+			String docIssuCountry, Date docExpDate) {
+		//NOTE: for perfect 7 
 		Passenger pax = em.find(Passenger.class, pId);
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
 		Root<Passenger> root = paxcq.from(Passenger.class);
 		List<Predicate> predicates = new ArrayList<>();
+		// passenger-related
 		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
 		if (StringUtils.isNotBlank(pax.getFirstName())) {
 			String likeString = String.format("%%%s%%", pax.getFirstName()
@@ -77,11 +80,30 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("lastName"), likeString));
 		}
-//		if (StringUtils.isNotBlank(docNum)) {
-//			String likeString = String.format("%%%s%%", docNum.toUpperCase());
-//			predicates.add(cb.like(
-//					root.join("documents").get("documentNumber"), likeString));
-//		}
+		if (StringUtils.isNotBlank(pax.getGender())) {
+			String likeString = String.format("%%%s%%", pax.getGender()
+					.toUpperCase());
+			predicates.add(cb.like(root.<String> get("gender"), likeString));
+		}
+		if (pax.getDob() != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), pax.getDob()));
+		}
+		// document-related
+		if (StringUtils.isNotBlank(docNum)) {
+			String likeString = String.format("%%%s%%", docNum.toUpperCase());
+			predicates.add(cb.like(
+					root.join("documents").get("documentNumber"), likeString));
+		}
+		if (StringUtils.isNotBlank(docIssuCountry)) {
+			String likeString = String.format("%%%s%%",
+					docIssuCountry.toUpperCase());
+			predicates.add(cb.like(root.join("documents")
+					.get("issuanceCountry"), likeString));
+		}
+		if (docExpDate != null) {
+			predicates.add(cb.equal(root.join("documents")
+					.get("expirationDate"), docExpDate));
+		}
 		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
 		return paxtq.getResultList();
