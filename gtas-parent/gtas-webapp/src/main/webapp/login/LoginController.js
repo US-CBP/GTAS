@@ -116,7 +116,7 @@ $scope.login = function (credentials) {
                 
                 if (angular.isDefined(user)) {
                     console.log("$scope.currentUser has data");
-                    Session.create(user.firstName, user.userId,
+                    Session.create(user.firstName, user.lastName, user.userId,
                         user.roles);
                     $sessionStorage.put(APP_CONSTANTS.CURRENT_USER, user);
                     //window.location.href = APP_CONSTANTS.HOME_PAGE;

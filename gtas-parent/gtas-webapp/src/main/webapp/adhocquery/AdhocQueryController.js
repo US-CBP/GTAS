@@ -3,13 +3,21 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('AdhocQueryCtrl', function ($scope, $mdToast, uiGridConstants, adhocQueryService) {
+app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, uiGridConstants, adhocQueryService, searchBarResults) {
     'use strict;'
 	
 	$scope.pageSize = 10;
 	$scope.pageNumber = 1;
-
+	var _content = $rootScope.searchBarContent.content;
+	
+	$scope.query = { 
+		content : function(newQueryString){
+			return arguments.length ? (_content = newQueryString) : _content;
+			}
+		}
+	
     $scope.resultsGrid = {
+    	data: searchBarResults != null ? searchBarResults.data.result.passengers :null,
     	paginationPageSizes: [10, 15, 25],
         paginationPageSize: $scope.pageSize,
         paginationCurrentPage: $scope.pageNumber,
@@ -107,7 +115,7 @@ app.controller('AdhocQueryCtrl', function ($scope, $mdToast, uiGridConstants, ad
     
     $scope.searchPax = function () {
         return adhocQueryService
-        .getPassengers($scope.query, $scope.pageNumber, $scope.pageSize, $scope.sort)
+        .getPassengers(_content, $scope.pageNumber, $scope.pageSize, $scope.sort)
         .then(function (response) {
             var result = response.data.result;
             $scope.resultsGrid.data = result.passengers;

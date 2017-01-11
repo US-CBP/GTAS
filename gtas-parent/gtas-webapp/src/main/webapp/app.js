@@ -77,7 +77,7 @@ var app;
                 return moment(date).format('YYYY-MM-DD');
             };
         },
-        initialize = function ($rootScope, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog) {
+        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog) {
             $rootScope.ROLES = USER_ROLES;
             $rootScope.$on('$stateChangeStart',
 
@@ -94,6 +94,23 @@ var app;
                         event.preventDefault();
                     }
                 });
+            
+           $rootScope.currentlyLoggedInUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
+            
+           $rootScope.searchBarContent = {
+        		   content : ""
+           };
+           
+           $rootScope.currentLocation ={ 
+        		   val:$location.path()
+           };
+           
+           $rootScope.searchBarQuery = function(){
+        	   if($rootScope.currentLocation.val != '/adhocquery' && typeof $rootScope.searchBarContent != 'undefined' && $rootScope.searchBarContent.content != '' && $rootScope.searchBarContent.content.length > 1){
+        		   window.location.href = APP_CONSTANTS.HOME_PAGE + "#/adhocquery";
+        	   }
+           };
+            
            $rootScope.triggerIdle = function(){
         	   	//Prevent triggers pre-login
         	   	if(Idle.running()){
@@ -104,7 +121,7 @@ var app;
            $rootScope.selectedTab = '';
            $rootScope.setSelectedTab = function(tabName){
         	   $rootScope.selectedTab = tabName;
-           }
+           };
            
            $rootScope.$on('IdleStart', function(){
         	   $rootScope.showConfirm();
@@ -286,7 +303,21 @@ var app;
                         '@': {
                             controller: 'AdhocQueryCtrl',
                             templateUrl: 'adhocquery/adhocquery.html'
-                        },
+                        }
+                    },
+                    resolve:{
+                    	searchBarResults: function(adhocQueryService, $rootScope){
+                    		var defaultSort = {
+                    				column:'firstName',
+                    				dir:'desc'
+                    		};
+                    		
+                    		if(typeof $rootScope.searchBarContent != 'undefined' && $rootScope.searchBarContent.content.length > 0){
+                    			return adhocQueryService.getPassengers($rootScope.searchBarContent.content, 1, 10, defaultSort);
+                    		} else{
+                    			return adhocQueryService.getPassengers('', 1, 10, defaultSort);
+                    		}
+                    	}
                     }
                 })
                 .state('queryFlights', {
@@ -495,6 +526,7 @@ var app;
                             $cookies.remove(k);
                         });
                         $sessionStorage.remove(APP_CONSTANTS.CURRENT_USER);
+                        $rootScope.currentlyLoggedInUser = '';
                         $rootScope.authenticated = false;
                         window.location = APP_CONSTANTS.LOGIN_PAGE;
                     }

@@ -29,6 +29,16 @@
       border-bottom-width:2px !important;
       border-bottom-color:red !important;
     }
+    .adhocquery-search-bar{
+   	  background-color: #fff;
+      height: 34px;
+      margin-right: -8px;
+      font-family: Roboto,Calibri,Tahoma,Arial,sans-serif;
+    }
+    .adhocquery-search-bar:hover{
+      background-color: rgba(0, 0, 0, 0.08);
+    }
+    
   </style>
 
 </head>
@@ -37,7 +47,7 @@
 
 <!-- HOME -->
 <a href="#/dashboard">
-  <header class="header" title="{{'gtas.title' | translate}}">
+  <header class="header">
    </header>
 </a>
 
@@ -51,7 +61,24 @@
               <span><i class="fa fa-stack-overflow"></i></span>&nbsp;Feedback</md-button>
           </div>
           <div class="nav navbar-nav navbar-right" ng-if="showNav()" style="margin: 0;">
-            <md-button class="md-button" ng-click="logout()">{{'login.logout' | translate}}</md-button>
+          	<md-menu md-position-mode="target-right target" md-offset="2 42">
+          		<md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
+          		{{currentlyLoggedInUser.lastName}}, {{currentlyLoggedInUser.firstName}}
+          		<span style="color: black;" class="caret"></span>
+          		</md-button>
+          		<md-menu-content class="dropdown">
+	          		<md-menu-item>
+	          			<md-button class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}" ng-click="logout()">{{'login.logout' | translate}}</md-button>
+	          		</md-menu-item>
+	          		<md-menu-item>
+			          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
+			                     class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}" ng-disabled="onRoute('userSettings')"
+			                     href="#/userSettings" ng-click="this.close()">
+			                {{'menu.settings' | translate}}			            
+			          </md-button>
+	          		</md-menu-item>
+          		</md-menu-content>
+          	</md-menu>
           </div>
           <div class="nav navbar-nav navbar-right" ng-if="showNav() == false" style="margin: 0;">
             <md-button class="md-button" onclick="window.close()">X</md-button>
@@ -77,7 +104,7 @@
             <span><i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases</span></md-button>
 
         <!-- MANAGE -->
-        <md-menu md-offset="2 42">
+        <md-menu data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES}}, {{ROLES.MANAGE_RULES}} ]"md-offset="2 42">
           <md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
             Manage&nbsp;
             <span style="color: black;" class="caret"></span>
@@ -104,7 +131,7 @@
         </md-menu>
 
         <!-- ADMIN -->
-        <md-menu md-offset="2 42">
+        <md-menu data-has-role="[{{ ROLES.ADMIN }}]" md-offset="2 42">
           <md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
             Admin&nbsp;
             <span style="color: black;" class="caret"></span>
@@ -121,22 +148,18 @@
             </md-menu-item>
           </md-menu-content>
         </md-menu>
-
-        <!--  SETTINGS -->
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
-                     class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings'), 'nav-item-selected':selectedTab==='userSettings'}" ng-disabled="onRoute('userSettings')"
-                     href="#/userSettings" ng-click="this.close(); setSelectedTab('userSettings')">
-                <span><i class="fa fa-cogs" style="vertical-align: middle;"></i></span> &nbsp;{{'menu.settings'
-                | translate}}
-            <!--glyphicon glyphicon-plane -->
-              </md-button>
-              
+                         
+        <!-- QUICK QUERY -->	        
+		        <span class="nav navbar-nav" style="position:absolute">
+		        <input style="vertical-align:webkit-baseline-middle;"placeholder="Search" data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" label="SEARCH" class="adhocquery-search-bar" ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress ="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')">
+		        </input>
+		        <button ng-click="searchBarQuery() && setSelectedTab('adhocquery')" aria-label="Search" class="btn btn-primary"><i class="fa fa-search"></i></button>
+		        </span>
         </span>
+        </div>
       </div>
     </div>
   </nav>
-
-
   <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard" ></div>
   <div class="content" ui-view=""></div>
