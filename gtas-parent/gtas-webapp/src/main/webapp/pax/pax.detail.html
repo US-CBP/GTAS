@@ -547,13 +547,12 @@
                         <div class="container">
                             <div style="padding: 10px;"></div>
                             <div class="row">
-
+								
                                 <div class="row"
                                      ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
-                                    <div style="padding: 10px;"></div>
                                     <span class="col-sm-offset-1"
                                           style="margin-left:3.5%; font-weight: bold;">&nbsp;{{ 'doc.doc' | translate}}# : {{ key }}</span>
-
+									<div class="col-sm-offset-1">Current PNR Itinerary</div>
                                     <div style="padding: 15px;"></div>
                                     <table class="table table-striped">
                                         <thead>
@@ -576,6 +575,38 @@
                                             <td style="text-align: center">{{j.origin}}</td>
                                             <td style="text-align: center">{{j.destinationCountry}}</td>
                                             <td style="text-align: center">{{j.destination}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <span ng-repeat-end></span>
+
+                                <div class="row"
+                                     ng-repeat-start="flight in passenger.fullFlightHistoryVo">
+                                    <div style="padding: 10px;"></div>
+                                    <span class="col-sm-offset-1">Total Flight History</span>
+                                    <div style="padding: 15px;"></div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr class="text-center" style="text-align: center">
+                                            <th style="text-align: center">{{ 'flight.carrieflight' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.eta' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.etd' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.origin' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.originairport' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.destination' | translate}}</th>
+                                            <th style="text-align: center">{{ 'pass.destinationairport' | translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="k in flight track by $index">
+                                            <td style="text-align: center">{{k.fullFlightNumber}}</td>
+                                            <td style="text-align: center">{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                                            <td style="text-align: center">{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                            <td style="text-align: center">{{k.originCountry}}</td>
+                                            <td style="text-align: center">{{k.origin}}</td>
+                                            <td style="text-align: center">{{k.destinationCountry}}</td>
+                                            <td style="text-align: center">{{k.destination}}</td>
                                         </tr>
                                         </tbody>
                                     </table>

@@ -117,10 +117,39 @@
         
         paxDetailService.getPaxFlightHistory($scope.passenger.paxId)
         .then(function(response){
-            $scope.isLoadingFlightHistory = false;
+        	$scope.getPaxFullTravelHistory($scope.passenger);
             $scope.passenger.flightHistoryVo = response.data;
         });
         
+        $scope.getPaxFullTravelHistory= function(passenger){
+        	var doc = passenger.documents[0];
+        	if(typeof doc != 'undefined' || doc.length < 1){
+        		var docNum = doc.documentNumber;
+        		var docExp = doc.expirationDate;
+        		var docIssuCountry = doc.issuanceCountry;
+        		paxDetailService.getPaxFullTravelHistory(passenger.paxId, docNum, docIssuCountry, docExp).then(function(response){
+        			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
+        			for(var arry in $scope.passenger.flightHistoryVo.flightHistoryMap){
+        				parseOutDuplicateFlights($scope.passenger.flightHistoryVo.flightHistoryMap[arry], $scope.passenger.fullFlightHistoryVo.map)
+        			}
+        			$scope.isLoadingFlightHistory = false;
+        		});
+        	} else{
+        		console.log("doc  was undefined, halting full travel history call");
+        		$scope.isLoadingFlightHistory = false;
+        	}
+        };
+    var parseOutDuplicateFlights = function(currentPNRFlightArray, totalFlightArray){
+    	 
+    	$.each(currentPNRFlightArray, function(index,value){
+    		$.each(totalFlightArray, function(i,v){
+    			if(value.id === v.id){
+    				currentPNRFlightArray.splice(index,1);
+    				return;
+    			}
+    		});
+    	});
+    }
         
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,

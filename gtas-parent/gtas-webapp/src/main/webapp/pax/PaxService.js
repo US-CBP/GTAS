@@ -18,9 +18,17 @@
                 dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId));
                 return dfd.promise;
             }
+            
+            function getPaxFullTravelHistory(paxId, docNum, docIssuCountry, docExpiration){
+            	var dfd = $q.defer();
+            	dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&docNum=" + docNum 
+            			+ "&docIssuCountry=" + docIssuCountry + "&docExpiration="+docExpiration));
+            	return dfd.promise;
+            }
 
             return ({getPaxDetail: getPaxDetail,
-                    getPaxFlightHistory: getPaxFlightHistory});
+                    getPaxFlightHistory: getPaxFlightHistory,
+                    getPaxFullTravelHistory: getPaxFullTravelHistory});
         })
         .service('caseService', function ($http, $q) {
             function createDisposition(disposition) {
