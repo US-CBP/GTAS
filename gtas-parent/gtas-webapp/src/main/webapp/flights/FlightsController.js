@@ -201,9 +201,9 @@
                  			   origin: row.entity.origin,
                  			   lastname:"",
                  			   pageNumber:1,
-                 			   pageSize:10
+                 			   pageSize:5000
                  	   };	   
-                 	   
+                 	  spinnerService.show('html5spinner');
                  	   paxService.getPax(row.entity.id, request).then(function(data){
                  		   var passengerHitList = [];
                  		   $.each(data.data.passengers, function(index,value){
@@ -212,6 +212,7 @@
                  			 }
                  		   });
                  		   row.entity.subGridOptions.data=passengerHitList;
+                 		  spinnerService.hide('html5spinner');
                  	   });
                     }
                 });
@@ -256,16 +257,18 @@
                      			   origin: row.entity.origin,
                      			   lastname:"",
                      			   pageNumber:1,
-                     			   pageSize:10
+                     			   pageSize:5000
                      	   };	   
                      	   
                      	  paxService.getPax(row.entity.id, request).then(function(data){
+                     		 spinnerService.show('html5spinner');
                     		   var passengerHitList = [];
                     		   $.each(data.data.passengers, function(index,value){
                     			 if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
                     				 passengerHitList.push(value);
                     			 }
                     		   });
+                    		   spinnerService.show('html5spinner');
                     		   row.entity.subGridOptions.data=passengerHitList;
                      	  });
                         }
@@ -311,13 +314,18 @@
                 cellTemplate:'<md-button ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled="row.entity.ruleHitCount === 0 && row.entity.listHitCount === 0" >{{COL_FIELD}}</md-button>'
             },
             {
-                name: 'etaLocalTZ', displayName:'pass.eta', headerCellFilter: 'translate',
+            	name:'carrier',
+            	displayName: 'flight.carrier',
+                width:50
+            },
+            {
+                name: 'eta', displayName:'pass.eta', headerCellFilter: 'translate',
                 sort: {
                     direction: uiGridConstants.DESC,
                     priority: 2
                 }
             },
-            {name: 'etdLocalTZ', displayName:'pass.etd', headerCellFilter: 'translate'},
+            {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate'},
             {name: 'origin', displayName:'flight.origin', headerCellFilter: 'translate'},
             {name: 'originCountry', displayName:'doc.country', headerCellFilter: 'translate'},
             {name: 'destination', displayName:'flight.destination', headerCellFilter: 'translate'},

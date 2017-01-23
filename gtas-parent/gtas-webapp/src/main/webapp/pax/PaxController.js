@@ -140,14 +140,20 @@
         	}
         };
     var parseOutDuplicateFlights = function(currentPNRFlightArray, totalFlightArray){
-    	 
+    	var duplicateIndexes = []; 
     	$.each(currentPNRFlightArray, function(index,value){
     		$.each(totalFlightArray, function(i,v){
     			if(value.id === v.id){
-    				currentPNRFlightArray.splice(index,1);
+    				if(duplicateIndexes.indexOf(index) === -1){
+    					duplicateIndexes.push(index);
+    				}
     				return;
-    			}
+    			};
     		});
+    	});
+    	
+    	$.each(duplicateIndexes, function(index,value){
+    		currentPNRFlightArray.splice(value, 1);
     	});
     }
         
