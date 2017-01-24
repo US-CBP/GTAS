@@ -54,13 +54,13 @@
      	});
      	return mostRecentCase;
      }   
-        
-     var isCaseDisabled = function(dispHistory, user){
+
+       $scope.isCaseDisabled = function(dispHistory){
     	 
     	 //Find if most recent case is closed
         	var mostRecentCase = getMostRecentCase(dispHistory);
          //If Closed, find out if current user is Admin
-        	if(mostRecentCase != null && mostRecentCase.statusId == 2){
+        	if(mostRecentCase != null && mostRecentCase.statusId == 3){
         	  	var isAdmin = false;
             	$.each(user.data.roles,function(index,value){
             		if(value.roleId === 1){
@@ -72,9 +72,7 @@
         			return false;
         		} else return true;
         	} else return false; //if not closed do not disable
-        }
-        
-       	$scope.isClosedCase = isCaseDisabled($scope.passenger.dispositionHistory, user);
+        };
        	
        	$scope.isCaseDropdownItemDisabled = function(statusId){
        		var mostRecentCase = getMostRecentCase($scope.passenger.dispositionHistory);
@@ -88,7 +86,7 @@
 	       				return true;
 	       			}
 	       		}else if(mostRecentCase.statusId == 3){
-	       			if(statusId != 4 || statusId == 1){
+	       			if(statusId != 4){
 	       				return true;
 	       			}
 	       		}else if(mostRecentCase.statusId == 4){
@@ -415,7 +413,7 @@
                         priority: 0
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScore.resetHitTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
-                    	+'<md-tooltip class="tt-multiline" md-visible="true" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
+                    	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
                     	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
@@ -456,12 +454,12 @@
                 {
                     field: 'flightOrigin',
                     name: 'flightOrigin',
-                    displayName:'pass.origin', headerCellFilter: 'translate'
+                    displayName:'pass.originairport', headerCellFilter: 'translate'
                 },
                 {
                     field: 'flightDestination',
                     name: 'flightDestination',
-                    displayName:'pass.destination', headerCellFilter: 'translate'
+                    displayName:'pass.destinationairport', headerCellFilter: 'translate'
                 },
                 {
                     field: 'etaLocalTZ',
