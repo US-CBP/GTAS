@@ -39,16 +39,17 @@
             $scope.credentials.endDate = tomorrow.format('YYYY-MM-DD');
             $scope.credentials.beforeDate = yesterday.format('YYYY-MM-DD');
 
-            $scope.getFlightAndHitsCount = function (credentials) {
-
-                dashboardService.getFlightAndHitsCount(credentials.startDate,credentials.endDate ).then(function (data){
+            $scope.getFlightsAndPassengersAndHitsCount = function (credentials) {
+            	// two arguments were used before but get date info from server side now.
+                dashboardService.getFlightsAndPassengersAndHitsCount(credentials.startDate,credentials.endDate ).then(function (data){
                     $scope.numberOfFlights = data.data.flightsCount;
                     $scope.numberOfRuleHits = data.data.ruleHitsCount;
                     $scope.numberOfWatchListHits = data.data.watchListCount;
+                    $scope.numberOfPassengers = data.data.passengersCount;
                 });
             };
 
-            $scope.getFlightAndHitsCount($scope.credentials);
+            $scope.getFlightsAndPassengersAndHitsCount($scope.credentials);
 
 
             $scope.getMessagesCount = function (credentials) {

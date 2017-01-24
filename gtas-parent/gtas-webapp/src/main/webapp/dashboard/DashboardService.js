@@ -8,11 +8,11 @@
     app
         .service("dashboardService", function ($rootScope, $http, $q) {
 
-            function getFlightAndHitsCount(startDate, endDate) {
+            function getFlightsAndPassengersAndHitsCount(startDate, endDate) {
                 var dfd = $q.defer();
                 dfd.resolve($http({
                     method: 'get',
-                    url: '/gtas/getFlightsAndHitsCount',
+                    url: '/gtas/getFlightsAndPassengersAndHitsCount',
                     params: {
                         startDate: startDate,
                         endDate: endDate
@@ -66,7 +66,7 @@
 
             // Return public API.
             return ({
-                getFlightAndHitsCount: getFlightAndHitsCount,
+            	getFlightsAndPassengersAndHitsCount: getFlightsAndPassengersAndHitsCount,
                 getMessagesCount: getMessagesCount,
                 getYtdAirportStats: getYtdAirportStats,
                 getYtdRulesCount: getYtdRulesCount

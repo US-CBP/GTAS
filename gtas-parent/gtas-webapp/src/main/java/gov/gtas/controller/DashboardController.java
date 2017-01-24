@@ -5,21 +5,37 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.*;
-import gov.gtas.services.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.web.bind.annotation.*;
+import gov.gtas.model.DashboardMessageStats;
+import gov.gtas.model.Flight;
+import gov.gtas.model.HitsSummary;
+import gov.gtas.model.Message;
+import gov.gtas.model.Pnr;
+import gov.gtas.model.YTDAirportStatistics;
+import gov.gtas.model.YTDRules;
+import gov.gtas.services.FlightService;
+import gov.gtas.services.HitsSummaryService;
+import gov.gtas.services.MessageService;
+import gov.gtas.services.MessageStatisticsService;
+import gov.gtas.services.PassengerService;
+import gov.gtas.services.PnrService;
+import gov.gtas.services.YTDStatisticsService;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DashboardController {
@@ -48,34 +64,50 @@ public class DashboardController {
     private static final String commaStringToAppend = ", ";
     private static final String EMPTY_STRING="";
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndHitsCount")
-    public HashMap<String, Integer> getFlightsAndHitsCount(
-            @RequestParam(value="startDate", required=false) String startDate,
-            @RequestParam(value="endDate", required=false) String endDate) throws ParseException{
+	/**
+	 * Gets the flights, passengers and hits count.
+	 *
+	 * @param startDate
+	 *            the start date
+	 * @param endDate
+	 *            the end date
+	 * @return the flights, passengers and hits count
+	 * @throws ParseException
+	 *             the parse exception
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCount")
+	public Map<String, AtomicInteger> getFlightsAndPassengersAndHitsCount(
+			@RequestParam(value = "startDate", required = false) String startDate,
+			@RequestParam(value = "endDate", required = false) String endDate)
+			throws ParseException {
+		// passed in arguments not used currently.
+		HashMap<String, AtomicInteger> flightsAndPassengersAndHitsCount = new HashMap<>();
+		int ruleHits = 0, watchListHits = 0;
+		List<Flight> flightList = flightService.getFlightsThreeDaysForward();
+		long passengersCount = flightList.stream().map(flight -> {
+			return flight.getPassengerCount();
+		}).collect(Collectors.counting());
 
-        HashMap _flightAndHitsCount = new HashMap<String, Integer>();
-        int ruleHits=0, watchListHits=0, flights = 0;
-        List<HitsSummary> _tempHitsSummary = new ArrayList<HitsSummary>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		for (Flight flight : flightList) {
+			List<HitsSummary> hitsSummaryList = hitsSummaryService
+					.findHitsByFlightId(flight.getId());
+			for (HitsSummary summ : hitsSummaryList) {
+				ruleHits = summ.getRuleHitCount() + ruleHits;
+				watchListHits = summ.getWatchListHitCount() + watchListHits;
+			}
+		}
 
-        List<Flight> _tempFlightList = flightService.getFlightsThreeDaysForward();
-        flights = Integer.valueOf(_tempFlightList.size());
+		flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
+				flightList.size()));
+		flightsAndPassengersAndHitsCount.put("ruleHitsCount",
+				new AtomicInteger(ruleHits));
+		flightsAndPassengersAndHitsCount.put("watchListCount",
+				new AtomicInteger(watchListHits));
+		flightsAndPassengersAndHitsCount.put("passengersCount",
+				new AtomicInteger((int) passengersCount));
 
-        for(Flight _tempFlight : _tempFlightList) {
-            _tempHitsSummary = hitsSummaryService.findHitsByFlightId(_tempFlight.getId());
-                for(HitsSummary summ : _tempHitsSummary){
-                    ruleHits = summ.getRuleHitCount() + ruleHits;
-                    watchListHits = summ.getWatchListHitCount() + watchListHits;
-                }
-        }
-
-        _flightAndHitsCount.put("flightsCount", new Integer(flights));
-        _flightAndHitsCount.put("ruleHitsCount", new Integer(ruleHits));
-        _flightAndHitsCount.put("watchListCount", new Integer(watchListHits));
-
-
-        return _flightAndHitsCount;
-    }
+		return flightsAndPassengersAndHitsCount;
+	}
 
     class MessageCount implements Serializable {
         String STATE = EMPTY_STRING;
