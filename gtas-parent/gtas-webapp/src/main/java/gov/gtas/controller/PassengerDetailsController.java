@@ -22,6 +22,7 @@ import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
+import gov.gtas.repository.SeatRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
@@ -59,6 +60,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -98,8 +101,11 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private HitsSummaryService hService;
+	
+	@Resource
+	private SeatRepository seatRepository;
 
-	private static final String EMPTY_STRING = "";
+	static final String EMPTY_STRING = "";
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
@@ -116,20 +122,20 @@ public class PassengerDetailsController {
 		Long id = Long.valueOf(paxId);
 		Passenger t = pService.findById(id);
 		Flight _tempFlight = fService.findById(Long.parseLong(flightId));
-		Flight theFlight = null;
+   
 		if (flightId != null && _tempFlight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(_tempFlight.getFlightNumber());
 			vo.setCarrier(_tempFlight.getCarrier());
 			vo.setFlightOrigin(_tempFlight.getOrigin());
 			vo.setFlightDestination(_tempFlight.getDestination());
-			vo.setFlightETA((_tempFlight.getEta() != null) ? _tempFlight
-					.getEta().toString() : EMPTY_STRING);
-			vo.setFlightETD((_tempFlight.getEtd() != null) ? _tempFlight
-					.getEtd().toString() : EMPTY_STRING);
+			vo.setFlightETA((_tempFlight.getEta() != null) ? DateCalendarUtils.formatJsonDateTime(_tempFlight
+					.getEta()) : EMPTY_STRING);
+			vo.setFlightETD((_tempFlight.getEtd() != null) ? DateCalendarUtils.formatJsonDateTime(_tempFlight
+					.getEtd()) : EMPTY_STRING);
 			vo.setFlightId(_tempFlight.getId().toString());
-			theFlight = _tempFlight;
+			Seat aSeat= seatRepository.findByFlightIdAndPassenger(_tempFlight.getId(), t.getId());
+			vo.setSeat(aSeat.getNumber());
 		}
-
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
 		vo.setLastName(t.getLastName());
@@ -145,15 +151,6 @@ public class PassengerDetailsController {
 		vo.setResidencyCountry(t.getResidencyCountry());
 		vo.setSuffix(t.getSuffix());
 		vo.setTitle(t.getTitle());
-
-		for (Seat s : t.getSeatAssignments()) {
-			if (s.getFlight().getId() == theFlight.getId()) {
-				if (s.getApis()) {
-					vo.setSeat(s.getNumber());
-					break;
-				}
-			}
-		}
 
 		_tempIter = t.getDocuments().iterator();
 		while (_tempIter.hasNext()) {

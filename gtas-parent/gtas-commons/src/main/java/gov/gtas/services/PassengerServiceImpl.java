@@ -15,6 +15,7 @@ import gov.gtas.model.Disposition;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.Seat;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.AuditRecordRepository;
@@ -22,6 +23,7 @@ import gov.gtas.repository.DispositionRepository;
 import gov.gtas.repository.DispositionStatusRepository;
 import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.services.security.UserService;
@@ -70,6 +72,9 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Resource
 	private DispositionRepository dispositionRepo;
+	
+	@Resource
+	private SeatRepository seatRepository;
 
 	@Autowired
 	private AuditRecordRepository auditLogRepository;
@@ -109,8 +114,11 @@ public class PassengerServiceImpl implements PassengerService {
 
 			PassengerVo vo = new PassengerVo();
 			BeanUtils.copyProperties(p, vo);
+			Seat aSeat= seatRepository.findByFlightIdAndPassenger(f.getId(), p.getId());
+			vo.setSeat(aSeat.getNumber());			
 			rv.add(vo);
 			count++;
+			
 
 			if (hit != null) {
 				String hitType = hit.getHitType();
