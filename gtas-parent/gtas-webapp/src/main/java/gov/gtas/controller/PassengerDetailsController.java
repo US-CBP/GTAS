@@ -133,7 +133,7 @@ public class PassengerDetailsController {
 			vo.setFlightETD((_tempFlight.getEtd() != null) ? DateCalendarUtils.formatJsonDateTime(_tempFlight
 					.getEtd()) : EMPTY_STRING);
 			vo.setFlightId(_tempFlight.getId().toString());
-			Seat aSeat= seatRepository.findByFlightIdAndPassenger(_tempFlight.getId(), t.getId());
+			Seat aSeat= seatRepository.findByFlightIdAndPassengerId(_tempFlight.getId(), t.getId());
 			vo.setSeat(aSeat.getNumber());
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
@@ -442,7 +442,7 @@ public class PassengerDetailsController {
 				flVo.setOriginAirport(fl.getFlight().getOrigin());
 				flVo.setDestinationAirport(fl.getFlight().getDestination());
 				flVo.setFlightDate(fl.getFlight().getFlightDate().toString());
-				flVo.setEtd(fl.getFlight().getEtd().toString());
+				flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEtd()));
 				target.getFlightLegs().add(flVo);
 			}
 		}

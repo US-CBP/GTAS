@@ -114,11 +114,11 @@ public class PassengerServiceImpl implements PassengerService {
 
 			PassengerVo vo = new PassengerVo();
 			BeanUtils.copyProperties(p, vo);
-			Seat aSeat= seatRepository.findByFlightIdAndPassenger(f.getId(), p.getId());
-			vo.setSeat(aSeat.getNumber());			
+			Seat aSeat = seatRepository.findByFlightIdAndPassengerId(f.getId(),
+					p.getId());
+			vo.setSeat(aSeat.getNumber());
 			rv.add(vo);
 			count++;
-			
 
 			if (hit != null) {
 				String hitType = hit.getHitType();

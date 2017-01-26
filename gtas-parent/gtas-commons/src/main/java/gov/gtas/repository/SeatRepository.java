@@ -15,7 +15,17 @@ import org.springframework.data.repository.query.Param;
  * The Interface SeatRepository.
  */
 public interface SeatRepository extends CrudRepository<Seat, Long> {
+
+	/**
+	 * Find by flight id and passenger id.
+	 *
+	 * @param flightId
+	 *            the flight id
+	 * @param passengerId
+	 *            the passenger id
+	 * @return the Seat object
+	 */
 	@Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.passenger.id = :passengerId")
-	public Seat findByFlightIdAndPassenger(@Param("flightId") Long flightId,
+	Seat findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 }
