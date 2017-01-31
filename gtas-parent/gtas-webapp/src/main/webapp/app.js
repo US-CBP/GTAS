@@ -101,6 +101,10 @@ var app;
         		   content : ""
            };
            
+           $rootScope.$on('$locationChangeSuccess', function(event){
+        	   $rootScope.currentLocation.val = $location.path();
+           });
+           
            $rootScope.currentLocation ={ 
         		   val:$location.path()
            };
@@ -513,7 +517,7 @@ var app;
                 $scope.logout();
                 window.location = APP_CONSTANTS.LOGIN_PAGE;
             });
-
+            
             $scope.logout = function () {
 
                 $http({

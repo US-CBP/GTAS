@@ -315,7 +315,7 @@
             },
             {
             	name:'carrier',
-            	displayName: 'flight.carrier',
+            	displayName: 'flight.carrier', headerCellFilter: 'translate',
                 width:50
             },
             {

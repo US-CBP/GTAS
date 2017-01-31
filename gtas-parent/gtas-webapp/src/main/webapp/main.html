@@ -150,11 +150,11 @@
         </md-menu>
                          
         <!-- QUICK QUERY -->	        
-		        <span class="nav navbar-nav" style="position:absolute">
+		 	<span class="nav navbar-nav" style="position:absolute">
 		        <input style="vertical-align:webkit-baseline-middle;"placeholder="Search" data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" label="SEARCH" class="adhocquery-search-bar" ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress ="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')">
 		        </input>
-		        <button ng-click="searchBarQuery() && setSelectedTab('adhocquery')" aria-label="Search" class="btn btn-primary"><i class="fa fa-search"></i></button>
-		        </span>
+		        <button ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-click="searchBarQuery() && setSelectedTab('adhocquery')" aria-label="Search" class="btn btn-primary"><i class="fa fa-search"></i></button>
+			</span>
         </span>
         </div>
       </div>

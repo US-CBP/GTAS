@@ -17,7 +17,8 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, uiGridC
 		}
 	
     $scope.resultsGrid = {
-    	data: searchBarResults != null ? searchBarResults.data.result.passengers :null,
+    	data: typeof searchBarResults != "undefined" && searchBarResults != null ? searchBarResults.data.result.passengers :null,
+    	totalItems: typeof searchBarResults != "undefined" && searchBarResults != null ? searchBarResults.data.result.totalHits :null,
     	paginationPageSizes: [10, 15, 25],
         paginationPageSize: $scope.pageSize,
         paginationCurrentPage: $scope.pageNumber,
