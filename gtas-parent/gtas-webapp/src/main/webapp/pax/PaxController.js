@@ -453,12 +453,12 @@
                 },
                 {
                     field: 'flightOrigin',
-                    name: 'flightOrigin',
+                    name: 'flightOriginairport',
                     displayName:'pass.originairport', headerCellFilter: 'translate'
                 },
                 {
                     field: 'flightDestination',
-                    name: 'flightDestination',
+                    name: 'flightDestinationairport',
                     displayName:'pass.destinationairport', headerCellFilter: 'translate'
                 },
                 {
