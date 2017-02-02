@@ -7,6 +7,8 @@ package gov.gtas.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Index;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -195,19 +197,29 @@ public class MessageGeneratorApp {
     private void buildPassengerList(List<FlightDto> flightList){
         
         for(FlightDto f : flightList){
+        	int counter=1;
             List<PaxDto> paxList = new ArrayList<PaxDto>();
             int j=GenUtil.getRandomNumber(9)+10;
             //int j=2;
             for(int i=1;i<=j;i++){
                 PaxDto pax= new PaxDto();
                 pax.setId(i);
-                if(i == 2 ){//watch list data
-                    pax=GenUtil.getPaxDto();
+                if(i == 2 && counter==1){//watch list data
+                    //pax=GenUtil.getPaxDto();
+                	pax.setFirstName("HISTORY");
+                	pax.setLastName("TEST");
+                	pax.setDob("12JUL82");
+                	pax.setGender("M");
                 }
                 else{
                     pax.setFirstName(GenUtil.getFirstName());
                     pax.setLastName(GenUtil.getLastName());
                     pax.setDob(GenUtil.getBirthDate());
+            		//@Index(name = "first_name_index", columnList = "first_name"),
+            		//@Index(name = "last_name_index", columnList = "last_name"),
+            		//@Index(name = "middle_name_index", columnList = "middle_name"),
+            		//@Index(name = "gender_index", columnList = "gender"),
+            		//@Index(name = "dob_index", columnList = "dob") })
                 }
                 pax.setEmbark(f.getEmbark());
                 pax.setDebark(f.getDebark());
@@ -216,6 +228,7 @@ public class MessageGeneratorApp {
             }
             f.setPaxList(paxList);
             //System.out.println("################"+f.getPaxList().size()); 
+            counter++;
         }
     }
     private void buildFlightList(List<FlightDto> flightList){
