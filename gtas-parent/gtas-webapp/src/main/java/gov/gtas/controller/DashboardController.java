@@ -83,12 +83,11 @@ public class DashboardController {
 		// passed in arguments not used currently.
 		HashMap<String, AtomicInteger> flightsAndPassengersAndHitsCount = new HashMap<>();
 		List<Flight> flightList = flightService.getFlightsThreeDaysForward();
-		
-		int ruleHits = 0; 
+		Integer paxCount = flightList.stream().collect(
+				Collectors.summingInt(flight -> flight.getPassengerCount()));
+		int ruleHits = 0;
 		int watchListHits = 0;
-		int paxCount = 0;
 		for (Flight flight : flightList) {
-			paxCount = flight.getPassengerCount() + paxCount;
 			List<HitsSummary> hitsSummaryList = hitsSummaryService
 					.findHitsByFlightId(flight.getId());
 			for (HitsSummary summ : hitsSummaryList) {
@@ -103,7 +102,7 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("watchListCount",
 				new AtomicInteger(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount",
-				new AtomicInteger((int) paxCount));
+				new AtomicInteger(paxCount));
 
 		return flightsAndPassengersAndHitsCount;
 	}
