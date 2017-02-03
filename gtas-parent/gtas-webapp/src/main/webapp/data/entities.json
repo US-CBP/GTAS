@@ -217,7 +217,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "input": "select",
         "multiple": true,
@@ -236,7 +238,9 @@
           "GREATER",
           "GREATER_OR_EQUAL",
           "BETWEEN",
-          "NOT_BETWEEN"
+          "NOT_BETWEEN",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "plugin": "datepicker"
       },
@@ -252,7 +256,9 @@
           "GREATER",
           "GREATER_OR_EQUAL",
           "BETWEEN",
-          "NOT_BETWEEN"
+          "NOT_BETWEEN",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "plugin": "datepicker"
       },
@@ -270,7 +276,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ]                     
       },
       {
@@ -281,7 +289,9 @@
           "EQUAL",
           "NOT_EQUAL",
           "IN",
-          "NOT_IN"
+          "NOT_IN",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "input": "select",
         "multiple": true,
@@ -616,7 +626,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "input": "select",
         "multiple": true,
@@ -637,7 +649,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "input": "select",
         "multiple": true,
@@ -677,7 +691,9 @@
           "GREATER",
           "GREATER_OR_EQUAL",
           "BETWEEN",
-          "NOT_BETWEEN"
+          "NOT_BETWEEN",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "plugin": "datepicker"
       },
@@ -695,7 +711,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ],
         "input": "select",
         "multiple": true,
@@ -758,7 +776,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ]                       
       },
       {
@@ -775,7 +795,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ]                      
       },
       {
@@ -792,7 +814,9 @@
           "CONTAINS",
           "NOT_CONTAINS",
           "ENDS_WITH",
-          "NOT_ENDS_WITH"
+          "NOT_ENDS_WITH",
+          "IS_NULL",
+          "IS_NOT_NULL"
         ]                        
       },
       {
