@@ -83,6 +83,7 @@ public class DashboardController {
 		// passed in arguments not used currently.
 		HashMap<String, AtomicInteger> flightsAndPassengersAndHitsCount = new HashMap<>();
 		List<Flight> flightList = flightService.getFlightsThreeDaysForward();
+		
 		int ruleHits = 0; 
 		int watchListHits = 0;
 		int paxCount = 0;
