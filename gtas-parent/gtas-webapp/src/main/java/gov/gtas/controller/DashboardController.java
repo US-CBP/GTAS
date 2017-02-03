@@ -82,13 +82,12 @@ public class DashboardController {
 			throws ParseException {
 		// passed in arguments not used currently.
 		HashMap<String, AtomicInteger> flightsAndPassengersAndHitsCount = new HashMap<>();
-		int ruleHits = 0, watchListHits = 0;
 		List<Flight> flightList = flightService.getFlightsThreeDaysForward();
-		long passengersCount = flightList.stream().map(flight -> {
-			return flight.getPassengerCount();
-		}).collect(Collectors.counting());
-
+		int ruleHits = 0; 
+		int watchListHits = 0;
+		int paxCount = 0;
 		for (Flight flight : flightList) {
+			paxCount = flight.getPassengerCount() + paxCount;
 			List<HitsSummary> hitsSummaryList = hitsSummaryService
 					.findHitsByFlightId(flight.getId());
 			for (HitsSummary summ : hitsSummaryList) {
@@ -96,7 +95,6 @@ public class DashboardController {
 				watchListHits = summ.getWatchListHitCount() + watchListHits;
 			}
 		}
-
 		flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
 				flightList.size()));
 		flightsAndPassengersAndHitsCount.put("ruleHitsCount",
@@ -104,7 +102,7 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("watchListCount",
 				new AtomicInteger(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount",
-				new AtomicInteger((int) passengersCount));
+				new AtomicInteger((int) paxCount));
 
 		return flightsAndPassengersAndHitsCount;
 	}
