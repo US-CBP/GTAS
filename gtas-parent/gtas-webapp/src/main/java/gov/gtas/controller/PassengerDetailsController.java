@@ -134,7 +134,11 @@ public class PassengerDetailsController {
 					.getEtd()) : EMPTY_STRING);
 			vo.setFlightId(_tempFlight.getId().toString());
 			Seat aSeat= seatRepository.findByFlightIdAndPassengerId(_tempFlight.getId(), t.getId());
-			vo.setSeat(aSeat.getNumber());
+			if (aSeat != null) {
+				vo.setSeat(aSeat.getNumber());
+			} else {
+				vo.setSeat("");
+			}	
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
