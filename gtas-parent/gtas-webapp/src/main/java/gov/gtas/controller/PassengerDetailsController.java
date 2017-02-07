@@ -16,7 +16,6 @@ import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
@@ -290,23 +289,7 @@ public class PassengerDetailsController {
 
 	@RequestMapping(value = "/allcases", method = RequestMethod.GET)
 	public @ResponseBody List<CaseVo> getAllDispositions() {
-		List<CaseVo> cList = pService.getAllDispositions();
-		for (CaseVo c : cList) {
-			Flight f = fService.findById(c.getFlightId());
-			c.setFlightEta(f.getEta());
-			c.setFlightEtd(f.getEtd());
-			c.setFlightDirection(f.getDirection());
-			for (HitsSummary h : hService
-					.findByFlightIdAndPassengerIdAndUdrRule(c.getFlightId(),
-							c.getPassengerId())) {
-				if (c.getHitType() != null) {
-					c.setHitType(c.getHitType() + h.getHitType());
-				} else {
-					c.setHitType(h.getHitType());
-				}
-			}
-		}
-		return cList;
+		return pService.getAllDispositions();
 	}
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

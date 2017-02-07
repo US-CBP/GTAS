@@ -48,10 +48,17 @@ public class HitsSummaryServiceImpl implements HitsSummaryService {
         return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(fightId, passengerId, listHitTypes);
     }
     
-    public List<HitsSummary> findByFlightIdAndPassengerIdAndCombinedWithUdrRule(
-            Long fightId, Long passengerId) {
-        List<String> listHitTypes = Arrays.asList("RPD", "RP", "RD");
-        return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(fightId, passengerId, listHitTypes);
-    }
-    
+	public List<HitsSummary> findByFlightIdAndPassengerIdAndCombinedWithUdrRule(
+			Long fightId, Long passengerId) {
+		List<String> listHitTypes = Arrays.asList("RPD", "RP", "RD");
+		return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(
+				fightId, passengerId, listHitTypes);
+	}
+
+	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId,
+			Long passengerId) {
+		return hitsSummaryRepository.findByFlightIdAndPassengerId(fightId,
+				passengerId);
+	}
+
 }

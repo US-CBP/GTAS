@@ -21,6 +21,7 @@ import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.AuditRecordRepository;
 import gov.gtas.repository.DispositionRepository;
 import gov.gtas.repository.DispositionStatusRepository;
+import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.SeatRepository;
@@ -85,6 +86,9 @@ public class PassengerServiceImpl implements PassengerService {
 	@Autowired
 	private UserServiceUtil userServiceUtil;
 
+	@Resource
+	private FlightRepository flightRespository;
+	
 	@Override
 	@Transactional
 	public Passenger create(Passenger passenger) {
@@ -157,21 +161,34 @@ public class PassengerServiceImpl implements PassengerService {
 		for (Object[] objs : cases) {
 			CaseVo vo = new CaseVo();
 			rv.add(vo);
-			vo.setPassengerId(((BigInteger) objs[0]).longValue());
-			vo.setFlightId(((BigInteger) objs[1]).longValue());
+			Long passengerId = ((BigInteger) objs[0]).longValue();
+			vo.setPassengerId(passengerId);
+			Long flightId = ((BigInteger) objs[1]).longValue();
+			vo.setFlightId(flightId);
 			vo.setFirstName((String) objs[2]);
 			vo.setLastName((String) objs[3]);
 			vo.setMiddleName((String) objs[4]);
 			vo.setFlightNumber((String) objs[5]);
 
+			Flight f = flightRespository.findOne(flightId);
+			vo.setFlightEta(f.getEta());
+			vo.setFlightEtd(f.getEtd());
+			vo.setFlightDirection(f.getDirection());
+
 			Timestamp ts = (Timestamp) objs[6];
 			String datetime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
 					.format(ts);
 			vo.setCreateDate(datetime);
-
 			vo.setStatus((String) objs[7]);
+			for (HitsSummary h : hitsSummaryRepository
+					.findByFlightIdAndPassengerId(flightId, passengerId)) {
+				if (vo.getHitType() != null) {
+					vo.setHitType(vo.getHitType() + h.getHitType());
+				} else {
+					vo.setHitType(h.getHitType());
+				}
+			}
 		}
-
 		return rv;
 	}
 
