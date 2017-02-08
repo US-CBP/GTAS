@@ -60,6 +60,7 @@ import gov.gtas.svc.util.TargetingServiceUtils;
 import gov.gtas.vo.WhitelistVo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -724,13 +725,13 @@ public class TargetingServiceImpl implements TargetingService {
 			if (!wVos.isEmpty()) {
 				if (!filteringWhitelist(wVos, foundPassenger)) {
 					hitsSummary.setPassenger(foundPassenger);
-					writeAuditLogForTargetingPassenger(foundPassenger);
+					writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString());
 				} else {
 					return null;
 				}
 			} else {
 				hitsSummary.setPassenger(foundPassenger);
-				writeAuditLogForTargetingPassenger(foundPassenger);
+				writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString());
 			}
 		} else {
 			logger.debug("No passenger found. --> ");
@@ -764,7 +765,8 @@ public class TargetingServiceImpl implements TargetingService {
 	 * @param passenger
 	 *            the passenger
 	 */
-	private void writeAuditLogForTargetingPassenger(Passenger passenger) {
+	private void writeAuditLogForTargetingPassenger(Passenger passenger,
+			String hitType) {
 		try {
 			AuditActionTarget target = new AuditActionTarget(passenger);
 			AuditActionData actionData = new AuditActionData();
@@ -783,8 +785,10 @@ public class TargetingServiceImpl implements TargetingService {
 							.fetchUser(GTAS_APPLICATION_USERID), passenger
 							.getCreatedAt()));
 			//
-			String message2 = "Passenger Rule Hit and Case Open run on "
-					+ new Date();
+			String message2 = new StringBuffer("Passenger Rule Hit with ")
+					.append(hitType).append(" HitType and Case Open run on ")
+					.append(Calendar.getInstance().getTime()).toString();
+
 			auditLogRepository
 					.save(new AuditRecord(AuditActionType.RULE_HIT_CASE_OPEN,
 							target.toString(), Status.SUCCESS, message2,
