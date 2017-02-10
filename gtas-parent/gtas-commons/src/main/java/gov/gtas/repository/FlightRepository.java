@@ -5,6 +5,8 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.Flight;
+
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +17,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
-import gov.gtas.model.Flight;
 
 public interface FlightRepository extends PagingAndSortingRepository<Flight, Long>, FlightRepositoryCustom {
     @Query("SELECT f FROM Flight f WHERE f.carrier = :carrier "
@@ -73,8 +73,5 @@ public interface FlightRepository extends PagingAndSortingRepository<Flight, Lon
     @Transactional
     @Query("update Flight set listHitCount = (select count(distinct passenger) from HitsSummary where flight.id = :flightId and watchListHitCount > 0) where id = :flightId")
     public Integer updateListHitCountForFlight(@Param("flightId") Long flightId);
-
-    @Query("SELECT f FROM Flight f WHERE f.flightDate >= CURRENT_DATE AND f.flightDate <= CURRENT_DATE+3")
-    public List<Flight> getFlightsThreeDaysForward();
 
 }

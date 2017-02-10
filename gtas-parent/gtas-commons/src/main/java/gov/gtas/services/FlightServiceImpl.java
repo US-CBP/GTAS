@@ -21,14 +21,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The Class FlightServiceImpl.
@@ -37,8 +39,11 @@ import org.springframework.stereotype.Service;
 public class FlightServiceImpl implements FlightService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(FlightServiceImpl.class);
-	@Resource
+	@Autowired
 	private FlightRepository flightRespository;
+	
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	@Transactional
@@ -140,8 +145,11 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
 	public List<Flight> getFlightsThreeDaysForward() {
-		return flightRespository.getFlightsThreeDaysForward();
+		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY";
+		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+				.getResultList();
 	}
-
 }
