@@ -12,7 +12,8 @@ app.service("paxModel", [function () {
         ],
         startDate = new Date(),
         endDate = new Date();
-    endDate.setDate(endDate.getDate() + 3);
+    
+    	endDate.setDate(endDate.getDate() + 3);
 
     this.initial = function (params) {
         return {

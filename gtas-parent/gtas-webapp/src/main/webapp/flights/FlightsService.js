@@ -7,11 +7,15 @@ app.service("flightService", function ($http, $q) {
     'use strict';
 
     function getFlights(pageRequest) {
+    	//This converts the date to the appropriate time, i.e. 00:00:00 on the start, and 23:59:59 on the end without impacting the front end visuals
+    	var tmp = jQuery.extend({},pageRequest);
+    	tmp.etaStart = new Date(Date.UTC(tmp.etaStart.getUTCFullYear(), tmp.etaStart.getMonth(), tmp.etaStart.getDate(),0,0,0));
+    	tmp.etaEnd = new Date(Date.UTC(tmp.etaEnd.getUTCFullYear(), tmp.etaEnd.getMonth(), tmp.etaEnd.getDate(),23,59,59));
         var dfd = $q.defer();
         dfd.resolve($http({
             method: 'post',
             url: "/gtas/flights/",
-            data: pageRequest
+            data: tmp
         }));
         return dfd.promise;
     }

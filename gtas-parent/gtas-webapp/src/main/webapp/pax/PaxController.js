@@ -610,20 +610,5 @@
 
         getPage();
         mapAirports();
-        
-        //These two watches establish the range of clock times the start/end dates are set to.
-        //Datepicker automatically sets it to 0:00:00 if passed a date with no time, 
-        //however our initial dates for the model carry with it a time and must be overridden
-        $scope.$watch("model.etaStart", function (newValue) {
-            newValue.setHours(0);
-            newValue.setMinutes(0);
-            newValue.setSeconds(0);     
-        });
-        //End date is set to the maximum clock time
-        $scope.$watch("model.etaEnd", function (newValue) {
-            newValue.setHours(23);
-            newValue.setMinutes(59);
-            newValue.setSeconds(59);
-        });
     });
 }());
