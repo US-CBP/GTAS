@@ -22,14 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "passenger", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"passenger_type", "first_name", "last_name", "middle_name", "gender",
-		"dob" }) }, indexes = {
-		@Index(name = "first_name_index", columnList = "first_name"),
-		@Index(name = "last_name_index", columnList = "last_name"),
-		@Index(name = "middle_name_index", columnList = "middle_name"),
-		@Index(name = "gender_index", columnList = "gender"),
-		@Index(name = "dob_index", columnList = "dob") })
+@Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
 

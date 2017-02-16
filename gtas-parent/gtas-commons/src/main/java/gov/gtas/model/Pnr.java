@@ -27,9 +27,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "pnr",
-        indexes = {@Index(name = "record_locator_index",  columnList="record_locator")}
-)
+@Table(name = "pnr")
 public class Pnr extends Message {
     private static final long serialVersionUID = 1L;
 

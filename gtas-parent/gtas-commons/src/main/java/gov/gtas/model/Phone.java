@@ -16,9 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "phone",
-    uniqueConstraints={@UniqueConstraint(columnNames={"number"})}
-)
+@Table(name = "phone")
 public class Phone extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;  
     public Phone() { }

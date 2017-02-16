@@ -26,14 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "flight",
-    uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})},
-    indexes = {@Index(name = "carrier_index",  columnList="carrier"),
-        @Index(name = "flight_number_index", columnList="flight_number"),
-        @Index(name="flight_date_index", columnList="flight_date"),
-        @Index(name="origin_index", columnList="origin"),
-        @Index(name="destination_index", columnList="destination")}
-)
+@Table(name = "flight")
 public class Flight extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;  
     public Flight() { }
