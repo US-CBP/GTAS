@@ -5,8 +5,6 @@
  */
 package gov.gtas.security;
 
-import javax.sql.DataSource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +44,6 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private SecurityUserDetailsService userDetailsService;
-
-	@Autowired
-	DataSource dataSource;
 
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*",

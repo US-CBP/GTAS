@@ -52,10 +52,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
@@ -65,8 +65,6 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.exception.ConstraintViolationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -83,8 +81,6 @@ import com.google.common.base.Strings;
 
 @Controller
 public class PassengerDetailsController {
-	private static final Logger logger = LoggerFactory
-			.getLogger(PassengerDetailsController.class);
 
 	@Autowired
 	private PassengerService pService;
@@ -113,11 +109,6 @@ public class PassengerDetailsController {
 			@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Iterator _tempIter;
-		List _tempPnrList = new ArrayList();
-		List<FlightVo> _tempFlightVoList = new ArrayList<FlightVo>();
-		HashMap<Document, List<Flight>> _tempFlightHistoryMap = new HashMap<Document, List<Flight>>();
-
 		Long id = Long.valueOf(paxId);
 		Passenger t = pService.findById(id);
 		Flight _tempFlight = fService.findById(Long.parseLong(flightId));
@@ -150,14 +141,14 @@ public class PassengerDetailsController {
 		vo.setDob(t.getDob());
 		vo.setEmbarkation(t.getEmbarkation());
 		vo.setEmbarkCountry(t.getEmbarkCountry());
-		vo.setGender(t.getGender() != null ? t.getGender().toString() : "");
+		vo.setGender(t.getGender() != null ? t.getGender() : "");
 		vo.setResidencyCountry(t.getResidencyCountry());
 		vo.setSuffix(t.getSuffix());
 		vo.setTitle(t.getTitle());
 
-		_tempIter = t.getDocuments().iterator();
-		while (_tempIter.hasNext()) {
-			Document d = (Document) _tempIter.next();
+		Iterator<Document> docIter = t.getDocuments().iterator();
+		while (docIter.hasNext()) {
+			Document d = docIter.next();
 			DocumentVo docVo = new DocumentVo();
 			docVo.setDocumentNumber(d.getDocumentNumber());
 			docVo.setDocumentType(d.getDocumentType());
@@ -184,11 +175,11 @@ public class PassengerDetailsController {
 		}
 
 		// Gather PNR Details
-		_tempPnrList = pnrService.findPnrByPassengerIdAndFlightId(t.getId(),
+		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(t.getId(),
 				new Long(flightId));
 
-		if (_tempPnrList.size() >= 1) {
-			vo.setPnrVo(mapPnrToPnrVo((Pnr) _tempPnrList.get(0)));
+		if (!pnrList.isEmpty()) {
+			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));
 		}
 
 		return vo;
@@ -200,34 +191,29 @@ public class PassengerDetailsController {
 	public FlightHistoryVo getFlightHistoryByPassengerAndDocuments(
 			@RequestParam(value = "paxId") String paxId) {
 
-		HashMap<Document, List<Flight>> _tempFlightHistoryMap = new HashMap<Document, List<Flight>>();
 		FlightHistoryVo flightHistoryVo = new FlightHistoryVo();
-		List<FlightVo> _tempFlightVoList = new ArrayList<FlightVo>();
-
-		PassengerVo vo = new PassengerVo();
-
-		Long id = Long.valueOf(paxId);
-		Passenger t = pService.findById(id);
+		List<FlightVo> flightVoList = new ArrayList<>();
+		Passenger t = pService.findById(Long.valueOf(paxId));
 
 		// Gather Flight History Details
-		_tempFlightHistoryMap = fService.getFlightsByPassengerNameAndDocument(
+		Map<Document, List<Flight>> flightHistoryMap = fService.getFlightsByPassengerNameAndDocument(
 				t.getFirstName(), t.getLastName(), t.getDocuments());
 
-		for (Document document : _tempFlightHistoryMap.keySet()) {
+		for (Document document : flightHistoryMap.keySet()) {
 			for (Document doc : t.getDocuments()) {
 				if ((document.getDocumentNumber() != null)
 						&& (document.getDocumentNumber().equals(
 								doc.getDocumentNumber()) && (document
 								.getDocumentType().equalsIgnoreCase(doc
 								.getDocumentType())))) {
-					_tempFlightVoList.clear();
-					for (Flight flight : _tempFlightHistoryMap.get(document)) {
+					flightVoList.clear();
+					for (Flight flight : flightHistoryMap.get(document)) {
 						FlightVo _tempFlightVo = new FlightVo();
 						copyModelToVo(flight, _tempFlightVo);
-						_tempFlightVoList.add(_tempFlightVo);
+						flightVoList.add(_tempFlightVo);
 					}
 					flightHistoryVo.getFlightHistoryMap().put(
-							doc.getDocumentNumber(), _tempFlightVoList);
+							doc.getDocumentNumber(), flightVoList);
 				}
 			}
 		}
@@ -347,7 +333,7 @@ public class PassengerDetailsController {
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		parseRawMessageToList(target);
 
-		if (source.getAddresses() != null && source.getAddresses().size() > 0) {
+		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
 			while (it.hasNext()) {
 				Address a = (Address) it.next();
@@ -357,13 +343,9 @@ public class PassengerDetailsController {
 
 					BeanUtils.copyProperties(aVo, a);
 
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
+				} catch (IllegalAccessException | InvocationTargetException e) {
 					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} 
 
 				target.getAddresses().add(aVo);
 
@@ -379,48 +361,46 @@ public class PassengerDetailsController {
 			}
 		}
 
-		if (source.getCreditCards() != null
-				&& source.getCreditCards().size() > 0) {
-			Iterator it1 = source.getCreditCards().iterator();
+		if (!source.getCreditCards().isEmpty()) {
+			Iterator<CreditCard> it1 = source.getCreditCards().iterator();
 			while (it1.hasNext()) {
-				CreditCard cc = (CreditCard) it1.next();
+				CreditCard cc = it1.next();
 				CreditCardVo cVo = new CreditCardVo();
 				copyModelToVo(cc, cVo);
 				target.getCreditCards().add(cVo);
 			}
 		}
-		if (source.getFrequentFlyers() != null
-				&& source.getFrequentFlyers().size() > 0) {
-			Iterator it2 = source.getFrequentFlyers().iterator();
+		if (!source.getFrequentFlyers().isEmpty()) {
+			Iterator<FrequentFlyer> it2 = source.getFrequentFlyers().iterator();
 			while (it2.hasNext()) {
-				FrequentFlyer ff = (FrequentFlyer) it2.next();
+				FrequentFlyer ff = it2.next();
 				FrequentFlyerVo fVo = new FrequentFlyerVo();
 				copyModelToVo(ff, fVo);
 				target.getFrequentFlyerDetails().add(fVo);
 			}
 		}
 
-		if (source.getEmails() != null && source.getEmails().size() > 0) {
-			Iterator it3 = source.getEmails().iterator();
+		if (!source.getEmails().isEmpty()) {
+			Iterator<Email> it3 = source.getEmails().iterator();
 			while (it3.hasNext()) {
-				Email e = (Email) it3.next();
+				Email e = it3.next();
 				EmailVo eVo = new EmailVo();
 				copyModelToVo(e, eVo);
 				target.getEmails().add(eVo);
 			}
 		}
 
-		if (source.getPhones() != null && source.getPhones().size() > 0) {
-			Iterator it4 = source.getPhones().iterator();
+		if (!source.getPhones().isEmpty()) {
+			Iterator<Phone> it4 = source.getPhones().iterator();
 			while (it4.hasNext()) {
-				Phone p = (Phone) it4.next();
+				Phone p = it4.next();
 				PhoneVo pVo = new PhoneVo();
 				copyModelToVo(p, pVo);
 				target.getPhoneNumbers().add(pVo);
 			}
 		}
 
-		if (source.getFlightLegs() != null && source.getFlightLegs().size() > 0) {
+		if (!source.getFlightLegs().isEmpty()) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
 			for (FlightLeg fl : _tempFL) {
 				FlightLegVo flVo = new FlightLegVo();
@@ -434,7 +414,7 @@ public class PassengerDetailsController {
 			}
 		}
 
-		if (source.getPassengers() != null && source.getPassengers().size() > 0) {
+		if (!source.getPassengers().isEmpty()) {
 			Iterator it4 = source.getPassengers().iterator();
 			while (it4.hasNext()) {
 				Passenger p = (Passenger) it4.next();
@@ -472,7 +452,7 @@ public class PassengerDetailsController {
 		if (targetVo != null && targetVo.getRaw() != null) {
 			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),
 					"\n");
-			ArrayList<String> _tempList = new ArrayList<String>();
+			ArrayList<String> _tempList = new ArrayList<>();
 			while (_tempStr.hasMoreTokens()) {
 				_tempList.add(_tempStr.nextToken());
 			}
@@ -489,13 +469,9 @@ public class PassengerDetailsController {
 
 		try {
 			BeanUtils.copyProperties(target, source);
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 	}
 
 	private boolean isRemovableDispositionStatus(DispositionStatus ds) {
