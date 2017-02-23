@@ -109,25 +109,24 @@ public class PassengerDetailsController {
 			@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Long id = Long.valueOf(paxId);
-		Passenger t = pService.findById(id);
-		Flight _tempFlight = fService.findById(Long.parseLong(flightId));
-   
-		if (flightId != null && _tempFlight.getId().toString().equals(flightId)) {
-			vo.setFlightNumber(_tempFlight.getFlightNumber());
-			vo.setCarrier(_tempFlight.getCarrier());
-			vo.setFlightOrigin(_tempFlight.getOrigin());
-			vo.setFlightDestination(_tempFlight.getDestination());
-			vo.setFlightETA((_tempFlight.getEta() != null) ? DateCalendarUtils.formatJsonDateTime(_tempFlight
-					.getEta()) : EMPTY_STRING);
-			vo.setFlightETD((_tempFlight.getEtd() != null) ? DateCalendarUtils.formatJsonDateTime(_tempFlight
-					.getEtd()) : EMPTY_STRING);
-			vo.setFlightId(_tempFlight.getId().toString());
-			Seat aSeat= seatRepository.findByFlightIdAndPassengerId(_tempFlight.getId(), t.getId());
-			if (aSeat != null) {
-				vo.setSeat(aSeat.getNumber());
-			} else {
-				vo.setSeat("");
+		Passenger t = pService.findById(Long.valueOf(paxId));
+		Flight flight = fService.findById(Long.parseLong(flightId));
+
+		if (flightId != null && flight.getId().toString().equals(flightId)) {
+			vo.setFlightNumber(flight.getFlightNumber());
+			vo.setCarrier(flight.getCarrier());
+			vo.setFlightOrigin(flight.getOrigin());
+			vo.setFlightDestination(flight.getDestination());
+			vo.setFlightETA((flight.getEta() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getEta()) : EMPTY_STRING);
+			vo.setFlightETD((flight.getEtd() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getEtd()) : EMPTY_STRING);
+			vo.setFlightId(flight.getId().toString());
+			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
+					flight.getId(), t.getId());
+			if (!seatList.isEmpty()) {
+				vo.setSeatNumList(seatList.stream().map(seat -> seat.getNumber())
+						.collect(Collectors.toList()));
 			}	
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
@@ -158,7 +157,7 @@ public class PassengerDetailsController {
 			vo.addDocument(docVo);
 		}
 
-		List<Disposition> cases = pService.getPassengerDispositionHistory(id,
+		List<Disposition> cases = pService.getPassengerDispositionHistory(Long.valueOf(paxId),
 				Long.parseLong(flightId));
 		if (CollectionUtils.isNotEmpty(cases)) {
 			List<DispositionVo> history = new ArrayList<>();
@@ -175,8 +174,8 @@ public class PassengerDetailsController {
 		}
 
 		// Gather PNR Details
-		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(t.getId(),
-				new Long(flightId));
+		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(
+				t.getId(), new Long(flightId));
 
 		if (!pnrList.isEmpty()) {
 			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));
@@ -189,7 +188,7 @@ public class PassengerDetailsController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
 	public FlightHistoryVo getFlightHistoryByPassengerAndDocuments(
-			@RequestParam(value = "paxId") String paxId) {
+			@RequestParam String paxId) {
 
 		FlightHistoryVo flightHistoryVo = new FlightHistoryVo();
 		List<FlightVo> flightVoList = new ArrayList<>();
@@ -239,10 +238,10 @@ public class PassengerDetailsController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
 	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
-			@RequestParam(value = "paxId") String paxId,
-			@RequestParam(value = "docNum") String docNum,
-			@RequestParam(value = "docIssuCountry") String docIssuCountry,
-			@RequestParam(value = "docExpiration") String docExpiration)
+			@RequestParam String paxId,
+			@RequestParam String docNum,
+			@RequestParam String docIssuCountry,
+			@RequestParam String docExpiration)
 			throws ParseException {
 		Date docExpDate = null;
 		if (!Strings.isNullOrEmpty(docExpiration)) {

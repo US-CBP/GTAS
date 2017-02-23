@@ -5,6 +5,8 @@
  */
 package gov.gtas.repository;
 
+import java.util.List;
+
 import gov.gtas.model.Seat;
 
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +28,6 @@ public interface SeatRepository extends CrudRepository<Seat, Long> {
 	 * @return the Seat object
 	 */
 	@Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.passenger.id = :passengerId")
-	Seat findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
+	List<Seat> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 }
