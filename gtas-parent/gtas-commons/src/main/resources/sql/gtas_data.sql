@@ -40,7 +40,9 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 1);
 
 INSERT INTO `flight_direction` VALUES (1,'I', 'Inbound');
 INSERT INTO `flight_direction` VALUES (2,'O', 'Outbound');
-INSERT INTO `flight_direction` VALUES (3,'A', 'Any');
+INSERT INTO `flight_direction` VALUES (3,'C', 'Continuance');
+INSERT INTO `flight_direction` VALUES (4,'OTH', 'Other');
+INSERT INTO `flight_direction` VALUES (5,'A', 'Any');
 
 -- ----------------------------
 -- Records of app_configuration
