@@ -9,6 +9,5 @@ public enum FlightDirectionCode {
     I,   // inbound
     O,   // outbound
     C,   // continuance
-    A,   // Any
-    OTH  // other (possible over flight, etc.)
+    A  // Any
 }
