@@ -22,7 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 public class FlightDirection extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "code", length = 3, nullable = false)
+    @Column(name = "code", length = 1, nullable = false)
     private String code;
 
     @Column(name = "description")
