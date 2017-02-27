@@ -161,7 +161,7 @@ public class LoaderUtils {
         } else if (homeCountry.equals(destCountry)) {
             f.setDirection(FlightDirectionCode.I.name());                        
         } else {
-            f.setDirection(FlightDirectionCode.OTH.name());
+            f.setDirection(FlightDirectionCode.A.name());
         }
     }
 
