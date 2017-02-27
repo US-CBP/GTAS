@@ -169,6 +169,9 @@ public class RuleConditionBuilderHelper {
             case NOT_BETWEEN:
                 addConditionValues(attributeType, values, bldr);
                 break;
+            case IS_NULL:
+            case IS_NOT_NULL:
+            	break;
             default:
                 // single value
                 addConditionValue(attributeType, values[0], bldr);

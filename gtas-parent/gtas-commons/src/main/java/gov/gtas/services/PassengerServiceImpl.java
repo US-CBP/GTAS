@@ -122,7 +122,7 @@ public class PassengerServiceImpl implements PassengerService {
 					f.getId(), p.getId());
 			if (!seatList.isEmpty()) {
 				vo.setSeatNumList(seatList.stream().map(seat -> seat.getNumber())
-						.collect(Collectors.toList()));
+						.distinct().collect(Collectors.toList()));
 			}	
 			rv.add(vo);
 			count++;

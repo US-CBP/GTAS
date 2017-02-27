@@ -126,7 +126,7 @@ public class PassengerDetailsController {
 					flight.getId(), t.getId());
 			if (!seatList.isEmpty()) {
 				vo.setSeatNumList(seatList.stream().map(seat -> seat.getNumber())
-						.collect(Collectors.toList()));
+						.distinct().collect(Collectors.toList()));
 			}	
 		}
 		vo.setPaxId(String.valueOf(t.getId()));

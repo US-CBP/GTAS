@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.model.Whitelist;
 import gov.gtas.vo.WhitelistVo;
 
@@ -15,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 /**
  * The Interface WhitelistService.
  */
+@PreAuthorize(PRIVILEGE_ADMIN)
 public interface WhitelistService {
 
 	/**
@@ -23,7 +25,6 @@ public interface WhitelistService {
 	 *
 	 * @return list of all whitelists.
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
 	public List<WhitelistVo> getAllWhitelists();
 
 	/**
@@ -36,7 +37,6 @@ public interface WhitelistService {
 	 *            the user Id of the person deleting the whitelist (usually also
 	 *            the whitelist editor.).
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
 	public void delete(Long id, String userId);
 
 	/**
@@ -48,7 +48,6 @@ public interface WhitelistService {
 	 *            the user Id of the person persisting the whitelist (usually
 	 *            also the whitelist editor.)
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
 	public Whitelist create(WhitelistVo wlv, String userId);
 
 	/**
@@ -60,7 +59,6 @@ public interface WhitelistService {
 	 *            the editor Id of the person updating the whitelist (usually
 	 *            also the whitelist editor).
 	 */
-	@PreAuthorize("hasAuthority('Admin')")
 	public void update(WhitelistVo wlv, String userId);
 
 }

@@ -15,6 +15,7 @@ import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
@@ -36,6 +37,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
         "classpath:hibernate.properties" })
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
+@Import(AsyncConfig.class)
 public class CommonServicesConfig {
 
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "hibernate.connection.driver_class";

@@ -8,6 +8,7 @@ package gov.gtas.repository;
 import static gov.gtas.constant.FlightCategoryConstants.ALL_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.DOMESTIC_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.INTERNATIONAL_FLIGHTS;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.model.Flight;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
@@ -35,6 +36,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -48,12 +50,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
-
-	/**
-	 * Instantiates a new flight repository impl.
-	 */
-	public FlightRepositoryImpl() {
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -186,26 +182,41 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 	@Override
 	@Transactional
+	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteAllMessages() throws Exception {
-		String[] sqlScript = { "delete from document",
+		String[] sqlScript = { 
+				"delete from user_query",
+				"delete from disposition",							
 				"delete from hit_detail", "delete from hits_summary",
-				"delete from disposition", "delete from pnr_passenger",
+				"delete from  document",				
 				"delete from apis_message_passenger",
-				"delete from flight_passenger", "delete from pnr_flight",
+				"delete from flight_passenger", 
 				"delete from apis_message_flight", "delete from flight_leg",
-				"delete from seat", "delete from flight",
-				"delete from pnr_agency", "delete from pnr_credit_card",
-				"delete from pnr_frequent_flyer", "delete from pnr_phone",
-				"delete from pnr_email", "delete from pnr_address",
+				"delete from seat", 
 				"delete from apis_message_reporting_party",
-				"delete from reporting_party", "delete from agency",
-				"delete from credit_card", "delete from frequent_flyer",
-				"delete from phone", "delete from email",
-				"delete from address", 
+				"delete from reporting_party",
+				"delete from apis_message",			
+				"delete from pnr_passenger", 
+				"delete from pnr_flight", "delete from flight",
+				"delete from pnr_agency", "delete from agency",
+				"delete from pnr_credit_card", "delete from credit_card",
+				"delete from pnr_frequent_flyer", "delete from frequent_flyer",
+				"delete from pnr_phone", "delete from phone",
+				"delete from pnr_email", "delete from email",
+				"delete from pnr_address",				
 				"delete from pnr_dwelltime",
-				"delete from pnr",
-				"delete from apis_message", "delete from message",
-				"delete from passenger" };
+				"delete from address", "delete from dwell_time",
+				"delete from  pnr",
+				"delete from  message",
+				"delete from  passenger",
+				"delete from white_list",			
+				"delete from rule_meta", "delete from rule",
+				"delete from udr_rule",
+				"delete from wl_item", "delete from watch_list",
+				"delete from knowledge_base",				
+				"delete from loader_audit_logs",
+				"delete from error_detail",
+				"delete from audit_log"};
 
 		Session session = em.unwrap(Session.class);
 		for (String sql : sqlScript) {
