@@ -5,8 +5,6 @@
  */
 package gov.gtas.vo.passenger;
 
-import gov.gtas.vo.BaseVo;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +14,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import gov.gtas.vo.BaseVo;
 
 public class PassengerVo extends BaseVo {
     private static final SimpleDateFormat dtFormat = new SimpleDateFormat(FlightVo.DATE_FORMAT);
@@ -37,7 +37,7 @@ public class PassengerVo extends BaseVo {
     private String embarkCountry;
     private String debarkCountry;
     private Boolean deleted = Boolean.FALSE;
-    private List<String> seatNumList = new ArrayList<>();
+    private String seat;
     private String paxId;
     
     // flight info
@@ -257,6 +257,12 @@ public class PassengerVo extends BaseVo {
     public void setDebarkCountry(String debarkCountry) {
         this.debarkCountry = debarkCountry;
     }
+    public String getSeat() {
+        return seat;
+    }
+    public void setSeat(String seat) {
+        this.seat = seat;
+    }
     public void setDocuments(List<DocumentVo> documents) {
         this.documents = documents;
     }
@@ -295,13 +301,8 @@ public class PassengerVo extends BaseVo {
     }
     public void setDispositionHistory(List<DispositionVo> dispositionHistory) {
         this.dispositionHistory = dispositionHistory;
-    }   
-	public List<String> getSeatNumList() {
-		return seatNumList;
-	}
-	public void setSeatNumList(List<String> seatNumList) {
-		this.seatNumList = seatNumList;
-	}
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 

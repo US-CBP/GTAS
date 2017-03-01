@@ -5,49 +5,6 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Disposition;
-import gov.gtas.model.Document;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.Seat;
-import gov.gtas.model.lookup.DispositionStatus;
-import gov.gtas.repository.SeatRepository;
-import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.DispositionData;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.HitsSummaryService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrService;
-import gov.gtas.services.security.RoleData;
-import gov.gtas.services.security.UserService;
-import gov.gtas.util.DateCalendarUtils;
-import gov.gtas.util.LobUtils;
-import gov.gtas.vo.passenger.AddressVo;
-import gov.gtas.vo.passenger.AgencyVo;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.CreditCardVo;
-import gov.gtas.vo.passenger.DispositionVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.EmailVo;
-import gov.gtas.vo.passenger.FlightHistoryVo;
-import gov.gtas.vo.passenger.FlightLegVo;
-import gov.gtas.vo.passenger.FlightVo;
-import gov.gtas.vo.passenger.FrequentFlyerVo;
-import gov.gtas.vo.passenger.PassengerVo;
-import gov.gtas.vo.passenger.PhoneVo;
-import gov.gtas.vo.passenger.PnrVo;
-import gov.gtas.vo.passenger.SeatVo;
-
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -79,6 +36,48 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.google.common.base.Strings;
 
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.Address;
+import gov.gtas.model.Agency;
+import gov.gtas.model.CreditCard;
+import gov.gtas.model.Disposition;
+import gov.gtas.model.Document;
+import gov.gtas.model.Email;
+import gov.gtas.model.Flight;
+import gov.gtas.model.FlightLeg;
+import gov.gtas.model.FrequentFlyer;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.Phone;
+import gov.gtas.model.Pnr;
+import gov.gtas.model.Seat;
+import gov.gtas.model.lookup.DispositionStatus;
+import gov.gtas.repository.SeatRepository;
+import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.DispositionData;
+import gov.gtas.services.FlightService;
+import gov.gtas.services.PassengerService;
+import gov.gtas.services.PnrService;
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.UserService;
+import gov.gtas.util.DateCalendarUtils;
+import gov.gtas.util.LobUtils;
+import gov.gtas.vo.passenger.AddressVo;
+import gov.gtas.vo.passenger.AgencyVo;
+import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.CreditCardVo;
+import gov.gtas.vo.passenger.DispositionVo;
+import gov.gtas.vo.passenger.DocumentVo;
+import gov.gtas.vo.passenger.EmailVo;
+import gov.gtas.vo.passenger.FlightHistoryVo;
+import gov.gtas.vo.passenger.FlightLegVo;
+import gov.gtas.vo.passenger.FlightVo;
+import gov.gtas.vo.passenger.FrequentFlyerVo;
+import gov.gtas.vo.passenger.PassengerVo;
+import gov.gtas.vo.passenger.PhoneVo;
+import gov.gtas.vo.passenger.PnrVo;
+import gov.gtas.vo.passenger.SeatVo;
+
 @Controller
 public class PassengerDetailsController {
 
@@ -93,9 +92,6 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private UserService uService;
-
-	@Autowired
-	private HitsSummaryService hService;
 	
 	@Resource
 	private SeatRepository seatRepository;
@@ -124,9 +120,14 @@ public class PassengerDetailsController {
 			vo.setFlightId(flight.getId().toString());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
-			if (!seatList.isEmpty()) {
-				vo.setSeatNumList(seatList.stream().map(seat -> seat.getNumber())
-						.distinct().collect(Collectors.toList()));
+			if (!seatList.isEmpty()) {			
+				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
+						.distinct().collect(Collectors.toList());
+				if (seats.size() == 1) {
+					vo.setSeat(seats.get(0));
+				} else {
+					vo.setSeat("");
+				}
 			}	
 		}
 		vo.setPaxId(String.valueOf(t.getId()));

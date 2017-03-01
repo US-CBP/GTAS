@@ -5,6 +5,27 @@
  */
 package gov.gtas.services;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.Status;
@@ -31,27 +52,6 @@ import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.PassengerVo;
-
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
-
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 /**
  * The Class PassengerServiceImpl.
@@ -119,11 +119,16 @@ public class PassengerServiceImpl implements PassengerService {
 			PassengerVo vo = new PassengerVo();
 			BeanUtils.copyProperties(p, vo);
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
-					f.getId(), p.getId());
-			if (!seatList.isEmpty()) {
-				vo.setSeatNumList(seatList.stream().map(seat -> seat.getNumber())
-						.distinct().collect(Collectors.toList()));
-			}	
+					f.getId(), p.getId());			
+			if (!seatList.isEmpty()) {				
+				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
+						.distinct().collect(Collectors.toList());
+				if (seats.size() == 1) {
+					vo.setSeat(seats.get(0));
+				} else {
+					vo.setSeat("");
+				}
+			}			
 			rv.add(vo);
 			count++;
 
