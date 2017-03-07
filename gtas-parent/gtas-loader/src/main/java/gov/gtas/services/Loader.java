@@ -101,7 +101,7 @@ public class Loader {
     }
 
     private boolean exceedsMaxSize(File f) {
-        final int MAX_SIZE = 64000; // bytes
+        final long MAX_SIZE = 4294967295l; // raw column can accommodate 4294967295 bytes 
         double numBytes = f.length();
         return numBytes > MAX_SIZE;
     }
