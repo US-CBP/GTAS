@@ -32,7 +32,8 @@
     "selectize": "latest",
     "spring-security-csrf-token-interceptor": "latest",
     "ng-idle": "~1.2.0",
-    "open-sans-fontface": "^1.4.2"
+    "open-sans-fontface": "^1.4.2",
+    "angular-chart.js": "^1.1.1"
   },
   "devDependencies": {
     "awesome-bootstrap-checkbox": "^0.3.0",
