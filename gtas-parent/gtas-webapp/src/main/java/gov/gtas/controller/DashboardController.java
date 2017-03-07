@@ -161,14 +161,14 @@ public class DashboardController {
         int apisMessageCount=0, pnrMessageCount=0;
         int clockTicks = 24;
 
-//        List<Message> _tempApisList = apisMessageService.getAPIsByDates(sdf.parse(startDate), sdf.parse(endDate));
-//        List<Pnr> _tempPnrList = pnrService.getPNRsByDates(sdf.parse(startDate), sdf.parse(endDate));
+        List<Message> _tempApisList = apisMessageService.getAPIsByDates(sdf.parse(startDate), sdf.parse(endDate));
+        List<Pnr> _tempPnrList = pnrService.getPNRsByDates(sdf.parse(startDate), sdf.parse(endDate));
 
         DashboardMessageStats apisStatistics = messageStatsService.getDashboardAPIMessageStats();
         DashboardMessageStats pnrStatistics = messageStatsService.getDashboardPNRMessageStats();
 
-//        apisMessageCount = _tempApisList.size();
-//        pnrMessageCount = _tempPnrList.size();
+        apisMessageCount = _tempApisList.size();
+        pnrMessageCount = _tempPnrList.size();
 
         MessageCount mc = new MessageCount(stateLabel,EMPTY_STRING,EMPTY_STRING);
         for(int i=0; i<clockTicks; i++){

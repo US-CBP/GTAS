@@ -11,6 +11,7 @@ notifications:
   email:
     recipients:
     - david.j.ertel@cbp.dhs.gov
+    - maneesh.lekkala@gmail.com
     - taylorjwdev@gmail.com
     - jtangfed@gmail.com
     - vempatisvr@gmail.com
