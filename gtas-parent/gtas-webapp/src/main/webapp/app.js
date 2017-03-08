@@ -34,7 +34,8 @@ var app;
             'swxSessionStorage',
             'ngCookies',
             'pascalprecht.translate',
-            'ngIdle'
+            'ngIdle',
+            'chart.js'
         ],
         language = function ($translateProvider) {
 
