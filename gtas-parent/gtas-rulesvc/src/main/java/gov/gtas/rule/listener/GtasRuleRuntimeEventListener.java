@@ -53,7 +53,6 @@ public class GtasRuleRuntimeEventListener extends
 	 */
 	@Override
 	public void objectInserted(ObjectInsertedEvent event) {
-		logger.info("entering objectInserted()");
 		this.ruleExecutionStatistics.incrementTotalObjectsModified();
 		this.ruleExecutionStatistics.addInsertedObject(event.getObject());
 	}
@@ -67,7 +66,6 @@ public class GtasRuleRuntimeEventListener extends
 	 */
 	@Override
 	public void objectUpdated(ObjectUpdatedEvent event) {
-		logger.info("entering objectUpdated()");
 		this.ruleExecutionStatistics.incrementTotalObjectsModified();
 		this.ruleExecutionStatistics.addModifiedObject(event.getObject());
 	}
@@ -81,7 +79,6 @@ public class GtasRuleRuntimeEventListener extends
 	 */
 	@Override
 	public void objectDeleted(ObjectDeletedEvent event) {
-		logger.info("entering objectDeleted()");
 		this.ruleExecutionStatistics.incrementTotalObjectsModified();
 		this.ruleExecutionStatistics.addDeletedObject(event.getOldObject());
 	}

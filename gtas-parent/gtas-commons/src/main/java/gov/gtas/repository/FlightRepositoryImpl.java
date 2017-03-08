@@ -208,12 +208,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from address", "delete from dwell_time",
 				"delete from  pnr",
 				"delete from  message",
-				"delete from  passenger",
-				"delete from white_list",			
-				"delete from rule_meta", "delete from rule",
-				"delete from udr_rule",
-				"delete from wl_item", "delete from watch_list",
-				"delete from knowledge_base",				
+				"delete from  passenger",				
 				"delete from loader_audit_logs",
 				"delete from error_detail",
 				"delete from audit_log"};

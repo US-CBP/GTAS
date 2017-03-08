@@ -37,7 +37,7 @@ public class PassengerVo extends BaseVo {
     private String embarkCountry;
     private String debarkCountry;
     private Boolean deleted = Boolean.FALSE;
-    private String seat;
+    private String seat = "";
     private String paxId;
     
     // flight info

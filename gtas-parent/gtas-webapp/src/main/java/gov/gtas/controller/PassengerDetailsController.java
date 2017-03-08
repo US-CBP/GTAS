@@ -120,15 +120,13 @@ public class PassengerDetailsController {
 			vo.setFlightId(flight.getId().toString());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
-			if (!seatList.isEmpty()) {			
+			if (CollectionUtils.isNotEmpty(seatList)) {			
 				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
 						.distinct().collect(Collectors.toList());
 				if (seats.size() == 1) {
 					vo.setSeat(seats.get(0));
-				} else {
-					vo.setSeat("");
 				}
-			}	
+			}
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());

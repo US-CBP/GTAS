@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.HitTypeEnum;
@@ -119,16 +119,14 @@ public class PassengerServiceImpl implements PassengerService {
 			PassengerVo vo = new PassengerVo();
 			BeanUtils.copyProperties(p, vo);
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
-					f.getId(), p.getId());			
-			if (!seatList.isEmpty()) {				
+					f.getId(), p.getId());	
+			if (CollectionUtils.isNotEmpty(seatList)) {					
 				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
 						.distinct().collect(Collectors.toList());
 				if (seats.size() == 1) {
 					vo.setSeat(seats.get(0));
-				} else {
-					vo.setSeat("");
 				}
-			}			
+			}
 			rv.add(vo);
 			count++;
 
