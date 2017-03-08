@@ -117,14 +117,14 @@ public class PnrUtils {
             doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
         }
         
-        processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10));
+        processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10),p.getGender());
         
         if (tif.getTravelerDetails().size() > 0) {
             TravelerDetails td = tif.getTravelerDetails().get(0);
             p.setTravelerReferenceNumber(td.getTravelerReferenceNumber());            
 
             PassengerVo tmp = new PassengerVo();
-            processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null);
+            processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null,p.getGender());
             p.setTitle(tmp.getTitle());
             p.setSuffix(tmp.getSuffix());
         }
@@ -262,7 +262,7 @@ public class PnrUtils {
     private static final String[] SUFFIXES = { "JR", "SR", "II", "III", "IV", "V", "VI", "VII", "VIII" };
     private static final String[] PREFIXES = { "MR", "MRS", "MS", "DR", "MISS", "SIR", "MADAM", "MAYOR", "PRESIDENT" };
     
-    private static void processNames(PassengerVo p, String last, String first, String middle) {
+    private static void processNames(PassengerVo p, String last, String first, String middle,String gender) {
         p.setFirstName(first);
         p.setMiddleName(middle);
         p.setLastName(last);
@@ -276,10 +276,18 @@ public class PnrUtils {
                     firstName = first.substring(0, first.length() - prefix.length()).trim();
                 }
                 
-                if (firstName != null) {
+                if (firstName != null ) {
                     p.setTitle(prefix);
                     p.setFirstName(firstName);
-                    break;
+                    System.out.println("######################"+prefix);
+                    System.out.println("######################"+firstName);
+                    if(StringUtils.isNotEmpty(gender) && "F".equalsIgnoreCase(gender) && "MR".equalsIgnoreCase(prefix)){
+                    	System.out.println("######################"+prefix); 
+                    	continue;
+                    }else{
+                    	break;
+                    }
+                    
                 }
             }
         }
