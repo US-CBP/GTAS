@@ -279,11 +279,8 @@ public class PnrUtils {
                 if (firstName != null ) {
                     p.setTitle(prefix);
                     p.setFirstName(firstName);
-                    System.out.println("######################"+prefix);
-                    System.out.println("######################"+firstName);
                     if(StringUtils.isNotEmpty(gender) && "F".equalsIgnoreCase(gender) && "MR".equalsIgnoreCase(prefix)){
-                    	System.out.println("######################"+prefix); 
-                    	continue;
+                       	continue;
                     }else{
                     	break;
                     }
