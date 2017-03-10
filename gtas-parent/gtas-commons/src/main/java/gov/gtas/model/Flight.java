@@ -26,7 +26,8 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "flight")
+@Table(name = "flight",
+uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})})
 public class Flight extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;  
     public Flight() { }

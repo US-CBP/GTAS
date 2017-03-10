@@ -16,7 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "frequent_flyer")
+@Table(name = "frequent_flyer",
+uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "number"})}
+)
 public class FrequentFlyer extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;  
     public FrequentFlyer() { }
