@@ -185,7 +185,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteAllMessages() throws Exception {
 		String[] sqlScript = { 
-				"delete from user_query",
 				"delete from disposition",							
 				"delete from hit_detail", "delete from hits_summary",
 				"delete from  document",				
