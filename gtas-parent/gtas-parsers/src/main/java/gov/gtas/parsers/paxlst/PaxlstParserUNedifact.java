@@ -8,6 +8,7 @@ package gov.gtas.parsers.paxlst;
 import java.util.Date;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
@@ -383,22 +384,25 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
     /**
      * Segment group 5: Passenger documents
      */
-    private void processDocument(PassengerVo p, DOC doc) throws ParseException {
-        DocumentVo d = new DocumentVo();
-        p.addDocument(d);
-        d.setDocumentType(doc.getDocCode());
-        d.setDocumentNumber(doc.getDocumentIdentifier());
-        
-        for (;;) {
-            DTM dtm = getConditionalSegment(DTM.class);
-            if (dtm == null) {
-                break;
-            }
-            DtmCode dtmCode = dtm.getDtmCode();
-            if (dtmCode == DtmCode.PASSPORT_EXPIRATION_DATE) {
-                d.setExpirationDate(dtm.getDtmValue());
-            }
-        }
+	private void processDocument(PassengerVo p, DOC doc) throws ParseException {
+		DocumentVo d = new DocumentVo();
+
+		d.setDocumentType(doc.getDocCode());
+		if (!StringUtils.isEmpty(doc.getDocumentIdentifier())) {
+			d.setDocumentNumber(doc.getDocumentIdentifier());
+			p.addDocument(d);
+		}
+
+		for (;;) {
+			DTM dtm = getConditionalSegment(DTM.class);
+			if (dtm == null) {
+				break;
+			}
+			DtmCode dtmCode = dtm.getDtmCode();
+			if (dtmCode == DtmCode.PASSPORT_EXPIRATION_DATE) {
+				d.setExpirationDate(dtm.getDtmValue());
+			}
+		}
         
         for (;;) {
             GEI gei = getConditionalSegment(GEI.class);
@@ -439,6 +443,6 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (qty == null) {
                 break;
             }
-        }   
+        }  
     }
 }

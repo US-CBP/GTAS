@@ -39,4 +39,19 @@ public interface PassengerRepositoryCustom {
 	 */
 	public List<Passenger> findByAttributes(Long passengerId, String docNum,
 			String docIssuCountry, Date docExpDate);
+	
+	
+	/**
+	 * Find existing passenger by attributes.
+	 *
+	 * @param firstName            the first name
+	 * @param lastName            the last name
+	 * @param middleName the middle name
+	 * @param gender            the gender
+	 * @param dob            the dob
+	 * @param passengerType            the passenger type
+	 * @return true, if successful
+	 */
+	public boolean findExistingPassengerByAttributes(String firstName,
+			String lastName, String middleName, String gender, Date dob, String passengerType);
 }

@@ -5,17 +5,6 @@
  */
 package gov.gtas.services;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.ApisMessage;
@@ -53,12 +42,19 @@ import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PhoneRepository;
 import gov.gtas.repository.ReportingPartyRepository;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 
 @Repository
 public class LoaderRepository {
-    @PersistenceContext 
-    private EntityManager entityManager;
-    
+   
     @Autowired
     private ReportingPartyRepository rpDao;
     
@@ -200,23 +196,25 @@ public class LoaderRepository {
             flightLegs.add(leg);
         }
                
-        // create any new passengers
-        for (PassengerVo pvo : passengers) {
-            if (existingPassengers.contains(pvo)) {
-                continue;
-            }
-            
-            Passenger newPassenger = utils.createNewPassenger(pvo);
-            for (DocumentVo dvo : pvo.getDocuments()) {
-                newPassenger.addDocument(utils.createNewDocument(dvo));
-            }
-            passengerDao.save(newPassenger);
-            messagePassengers.add(newPassenger);
-            
-            for (Flight f : messageFlights) {
-                createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
-            }
-        }
+		// create any new passengers
+		for (PassengerVo pvo : passengers) {
+			if (passengerDao.findExistingPassengerByAttributes(
+					pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
+					pvo.getGender(), pvo.getDob(), pvo.getPassengerType())) {
+				continue;
+			}
+
+			Passenger newPassenger = utils.createNewPassenger(pvo);
+			for (DocumentVo dvo : pvo.getDocuments()) {
+				newPassenger.addDocument(utils.createNewDocument(dvo));
+			}
+			passengerDao.save(newPassenger);
+			messagePassengers.add(newPassenger);
+
+			for (Flight f : messageFlights) {
+				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
+			}
+		}
         
         // assoc all passengers w/ flights, update pax counts
         for (Flight f : messageFlights) {

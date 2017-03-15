@@ -50,14 +50,66 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
     
     @Autowired
 	private PassengerService pService;
-  
+ 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see gov.gtas.repository.PassengerRepositoryCustom#
+	 * findExistingPassengerByAttributes(java.lang.String, java.lang.String,
+	 * java.lang.String, java.util.Date, java.lang.String)
+	 */
+	@Override
+	@Transactional
+	public boolean findExistingPassengerByAttributes(String firstName,
+			String lastName, String middleName, String gender, Date dob,
+			String passengerType) {
+		boolean found = true;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
+		Root<Passenger> root = paxcq.from(Passenger.class);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (StringUtils.isNotBlank(firstName)) {
+			String likeString = String
+					.format("%%%s%%", firstName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("firstName"), likeString));
+		}
+		if (StringUtils.isNotBlank(middleName)) {
+			String likeString = String.format("%%%s%%", middleName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("middleName"), likeString));
+		}
+		if (StringUtils.isNotBlank(lastName)) {
+			String likeString = String.format("%%%s%%", lastName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("lastName"), likeString));
+		}
+		if (StringUtils.isNotBlank(gender)) {
+			String likeString = String.format("%%%s%%", gender.toUpperCase());
+			predicates.add(cb.like(root.<String> get("gender"), likeString));
+		}
+		if (dob != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), dob));
+		}
+		if (StringUtils.isNotBlank(passengerType)) {
+			String likeString = String.format("%%%s%%",
+					passengerType.toUpperCase());
+			predicates.add(cb.like(root.<String> get("passengerType"),
+					likeString));
+		}
+		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
+		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
+		if (CollectionUtils.isEmpty(paxtq.getResultList())) {
+			found = false;
+		}
+		return found;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
 	 * gov.gtas.repository.PassengerRepositoryCustom#findByAttributes(java.lang
 	 * .Long)
-	 */
+	 */  
 	@Override
 	@Transactional
 	public List<Passenger> findByAttributes(Long pId, String docNum,
