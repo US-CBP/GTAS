@@ -18,8 +18,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "document", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"document_type", "document_number", "issuance_date", "issuance_country" }) })
+@Table(name = "document",uniqueConstraints = { @UniqueConstraint(columnNames = {
+		"document_type", "document_number"}) })
 public class Document extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -96,8 +96,8 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.documentType, this.documentNumber,
-				this.issuanceCountry);
+		return Objects.hash( this.documentNumber
+				);
 	}
 
 	@Override
@@ -107,8 +107,6 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentType, other.documentType)
-				&& Objects.equals(this.documentNumber, other.documentNumber)
-				&& Objects.equals(this.issuanceCountry, other.issuanceCountry);
+		return Objects.equals(this.documentNumber, other.documentNumber);
 	}
 }

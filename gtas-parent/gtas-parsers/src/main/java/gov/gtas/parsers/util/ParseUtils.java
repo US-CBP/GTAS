@@ -14,6 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.gtas.parsers.vo.DocumentVo;
+
 public final class ParseUtils {
     private static final Logger logger = LoggerFactory.getLogger(ParseUtils.class);
 
@@ -76,5 +78,8 @@ public final class ParseUtils {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+    public static boolean isValidDocument(DocumentVo d) {
+    	return (StringUtils.isNotEmpty(d.getDocumentNumber()) && StringUtils.isNotEmpty(d.getDocumentType()));
     }
 }
