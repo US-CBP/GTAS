@@ -22,9 +22,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.List;
 
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,16 +131,20 @@ public class LoaderScheduler {
 			File f = entry.toFile();
 			return !f.isHidden() && f.isFile();
 		};
-
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(
 				incomingDir, filter)) {
-			for (final Iterator<Path> it = stream.iterator(); it.hasNext();) {
-				Path p = it.next();
-				File f = p.toFile();
-				processSingleFile(f, stats);
-				f.renameTo(new File(outgoingDir.toFile() + File.separator
-						+ f.getName()));
+			List<File> files = new ArrayList<>();
+			for (Path entry : stream) {
+				files.add(entry.toFile());
 			}
+			Collections.sort(files,
+					LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+			files.stream().forEach(
+					f -> {
+						processSingleFile(f, stats);
+						f.renameTo(new File(outgoingDir.toFile()
+								+ File.separator + f.getName()));
+					});
 			stream.close();
 		} catch (IOException ex) {
 			logger.error("IOException:" + ex.getMessage(), ex);
