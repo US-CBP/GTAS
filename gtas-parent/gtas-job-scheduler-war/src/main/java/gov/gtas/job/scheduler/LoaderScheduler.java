@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
@@ -80,6 +81,9 @@ public class LoaderScheduler {
 
 	@Value("${inputType}")
 	private String inputType;
+	
+	@Value("${maxNumofFiles}")
+	private int maxNumofFiles;
 
 	/**
 	 * Loader Scheduler running on configured schedule
@@ -133,9 +137,11 @@ public class LoaderScheduler {
 		};
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(
 				incomingDir, filter)) {
+
+			final Iterator<Path> iterator = stream.iterator();
 			List<File> files = new ArrayList<>();
-			for (Path entry : stream) {
-				files.add(entry.toFile());
+			for (int i = 0; iterator.hasNext() && i < maxNumofFiles; i++) {
+				files.add(iterator.next().toFile());
 			}
 			Collections.sort(files,
 					LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
