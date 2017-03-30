@@ -1,5 +1,5 @@
 insert into country(name, iso2, iso3, iso_numeric) values ('Afghanistan', 'AF', 'AFG', '004');
-insert into country(name, iso2, iso3, iso_numeric) values ('Aland Islands', 'AX', 'ALA', '248');
+insert into country(name, iso2, iso3, iso_numeric) values ('Ã…land Islands', 'AX', 'ALA', '248');
 insert into country(name, iso2, iso3, iso_numeric) values ('Albania', 'AL', 'ALB', '008');
 insert into country(name, iso2, iso3, iso_numeric) values ('Algeria', 'DZ', 'DZA', '012');
 insert into country(name, iso2, iso3, iso_numeric) values ('American Samoa', 'AS', 'ASM', '016');
@@ -54,7 +54,7 @@ insert into country(name, iso2, iso3, iso_numeric) values ('Congo (Brazzaville)'
 insert into country(name, iso2, iso3, iso_numeric) values ('Congo, Democratic Republic of the', 'CD', 'COD', '180');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cook Islands', 'CK', 'COK', '184');
 insert into country(name, iso2, iso3, iso_numeric) values ('Costa Rica', 'CR', 'CRI', '188');
-insert into country(name, iso2, iso3, iso_numeric) values ('Côte d''Ivoire', 'CI', 'CIV', '384');
+insert into country(name, iso2, iso3, iso_numeric) values ('CÃ´te d\'Ivoire', 'CI', 'CIV', '384');
 insert into country(name, iso2, iso3, iso_numeric) values ('Croatia', 'HR', 'HRV', '191');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cuba', 'CU', 'CUB', '192');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cyprus', 'CY', 'CYP', '196');
@@ -178,11 +178,11 @@ insert into country(name, iso2, iso3, iso_numeric) values ('Poland', 'PL', 'POL'
 insert into country(name, iso2, iso3, iso_numeric) values ('Portugal', 'PT', 'PRT', '620');
 insert into country(name, iso2, iso3, iso_numeric) values ('Puerto Rico', 'PR', 'PRI', '630');
 insert into country(name, iso2, iso3, iso_numeric) values ('Qatar', 'QA', 'QAT', '634');
-insert into country(name, iso2, iso3, iso_numeric) values ('Réunion', 'RE', 'REU', '638');
+insert into country(name, iso2, iso3, iso_numeric) values ('RÃ©union', 'RE', 'REU', '638');
 insert into country(name, iso2, iso3, iso_numeric) values ('Romania', 'RO', 'ROU', '642');
 insert into country(name, iso2, iso3, iso_numeric) values ('Russian Federation', 'RU', 'RUS', '643');
 insert into country(name, iso2, iso3, iso_numeric) values ('Rwanda', 'RW', 'RWA', '646');
-insert into country(name, iso2, iso3, iso_numeric) values ('Saint-Barthélemy', 'BL', 'BLM', '652');
+insert into country(name, iso2, iso3, iso_numeric) values ('Saint-BarthÃ©lemy', 'BL', 'BLM', '652');
 insert into country(name, iso2, iso3, iso_numeric) values ('Saint Helena', 'SH', 'SHN', '654');
 insert into country(name, iso2, iso3, iso_numeric) values ('Saint Kitts and Nevis', 'KN', 'KNA', '659');
 insert into country(name, iso2, iso3, iso_numeric) values ('Saint Lucia', 'LC', 'LCA', '662');

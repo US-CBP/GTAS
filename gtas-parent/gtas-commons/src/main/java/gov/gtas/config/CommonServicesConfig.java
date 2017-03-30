@@ -110,10 +110,12 @@ public class CommonServicesConfig {
     @Resource
     private Environment env;
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		PropertySourcesPlaceholderConfigurer pspc = new PropertySourcesPlaceholderConfigurer();
+		pspc.setIgnoreUnresolvablePlaceholders(true);
+		return pspc;
+	}
 
     @Bean
     public DataSource dataSource() {
