@@ -198,13 +198,22 @@ public class LoaderRepository {
                
 		// create any new passengers
 		for (PassengerVo pvo : passengers) {
-			if (passengerDao.findExistingPassengerByAttributes(
-					pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
-					pvo.getGender(), pvo.getDob(), pvo.getPassengerType())) {
-				continue;
+			
+//			if (passengerDao.findExistingPassengerByAttributes(
+//					pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
+//					pvo.getGender(), pvo.getDob(), pvo.getPassengerType())) {
+//				
+//				continue;
+//			}
+			Passenger newPassenger=(Passenger)passengerDao.findExistingPassengerWithAttributes(pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
+					pvo.getGender(), pvo.getDob(), pvo.getPassengerType());
+			
+			if(newPassenger != null){
+				utils.updatePassenger(pvo, newPassenger);
+			}else{
+				newPassenger = utils.createNewPassenger(pvo);
 			}
-
-			Passenger newPassenger = utils.createNewPassenger(pvo);
+			
 			for (DocumentVo dvo : pvo.getDocuments()) {
 				newPassenger.addDocument(utils.createNewDocument(dvo));
 			}

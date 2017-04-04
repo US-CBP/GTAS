@@ -54,4 +54,7 @@ public interface PassengerRepositoryCustom {
 	 */
 	public boolean findExistingPassengerByAttributes(String firstName,
 			String lastName, String middleName, String gender, Date dob, String passengerType);
+	
+	public Passenger findExistingPassengerWithAttributes(String firstName,
+			String lastName, String middleName, String gender, Date dob, String passengerType);
 }

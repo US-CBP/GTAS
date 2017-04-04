@@ -341,4 +341,47 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
     private boolean isFlightColumn(String c) {
         return flightColumns.contains(c);
     }
+
+	@Override
+	public Passenger findExistingPassengerWithAttributes(String firstName, String lastName, String middleName,
+			String gender, Date dob, String passengerType) {
+		Passenger existing = null;
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Passenger> paxcq = cb.createQuery(Passenger.class);
+		Root<Passenger> root = paxcq.from(Passenger.class);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (StringUtils.isNotBlank(firstName)) {
+			String likeString = String
+					.format("%%%s%%", firstName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("firstName"), likeString));
+		}
+		if (StringUtils.isNotBlank(middleName)) {
+			String likeString = String.format("%%%s%%", middleName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("middleName"), likeString));
+		}
+		if (StringUtils.isNotBlank(lastName)) {
+			String likeString = String.format("%%%s%%", lastName.toUpperCase());
+			predicates.add(cb.like(root.<String> get("lastName"), likeString));
+		}
+		if (StringUtils.isNotBlank(gender)) {
+			String likeString = String.format("%%%s%%", gender.toUpperCase());
+			predicates.add(cb.like(root.<String> get("gender"), likeString));
+		}
+		if (dob != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), dob));
+		}
+		if (StringUtils.isNotBlank(passengerType)) {
+			String likeString = String.format("%%%s%%",
+					passengerType.toUpperCase());
+			predicates.add(cb.like(root.<String> get("passengerType"),
+					likeString));
+		}
+		paxcq.select(root).where(predicates.toArray(new Predicate[] {}));
+		TypedQuery<Passenger> paxtq = em.createQuery(paxcq);
+		if (!CollectionUtils.isEmpty(paxtq.getResultList())) {
+			existing = (Passenger)paxtq.getResultList().get(0);
+		}
+		return existing;
+	}
 }
