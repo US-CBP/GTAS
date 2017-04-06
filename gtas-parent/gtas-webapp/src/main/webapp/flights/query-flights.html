@@ -13,6 +13,8 @@
         ui-grid="flightsGrid"
         ui-grid-pagination
         ui-grid-auto-resize
+        ui-grid-expandable
+        ui-grid-exporter
         ng-style="getTableHeight()"
         class="grid"></div>
         
@@ -20,5 +22,10 @@
         ui-grid="flightsQueryGrid"
         ui-grid-pagination
         ui-grid-auto-resize
+        ui-grid-expandable
+        ui-grid-exporter
         ng-style="getTableHeight()"
         class="grid"></div>
+<md-button ng-click="export('csv')" class="md-raised pull-right" type="button">
+    <i class="glyphicon glyphicon-export"></i> CSV
+</md-button>

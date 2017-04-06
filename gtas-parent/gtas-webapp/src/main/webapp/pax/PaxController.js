@@ -5,10 +5,18 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, passenger, $mdToast, spinnerService, user, paxDetailService, caseService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService) {
         $scope.passenger = passenger.data;
         $scope.isLoadingFlightHistory = true;        
         $scope.isClosedCase = false;
+        $scope.ruleHits = ruleHits;
+        
+        //Removes extraneous characters from rule hit descriptions
+        if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
+        	$.each($scope.ruleHits[0].hitsDetailsList, function(index,value){
+        		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
+        	});
+    	}
         
         $scope.saveDisposition = function(){
         	var disposition = {
@@ -154,7 +162,47 @@
     		currentPNRFlightArray.splice(value, 1);
     	});
     }
-        
+    //Adds user from pax detail page to watchlist.
+    $scope.addEntityToWatchlist = function(){
+    	spinnerService.show('html5spinner');
+    	var terms = [];
+    	//Add passenger firstName, lastName, dob to wlservice call
+   		terms.push({entity: "PASSENGER", field: "firstName", type: "string", value: $scope.passenger.firstName});
+   		terms.push({entity: "PASSENGER", field: "lastName", type: "string", value: $scope.passenger.lastName});
+   		terms.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
+   		watchListService.addItem("Passenger", "PASSENGER", null, terms).then(function(){
+   			terms = [];
+   	    	//Add documentType and documentNumber to wlservice call
+   			$.each($scope.passenger.documents, function(index,value){
+   	    		if(value.documentType === "P" || value.documentType === "V"){
+   	    			terms.push({entity: "DOCUMENT", field: "documentType", type: "string", value: value.documentType});
+   	        		terms.push({entity: "DOCUMENT", field: "documentNumber", type: "string", value: value.documentNumber});
+   	   	    		watchListService.addItem("Document", "DOCUMENT", null, terms).then(function(response){
+   	   	    			//Compiles after each document add.
+   	   	    			watchListService.compile();
+   	   	    			//clear out terms list
+   	   	    			terms = [];
+   	   	    			$spinnerService.hide('html5spinner');
+   	   	    		});
+   	   			}
+   	   		});
+   		});
+    };
+    
+    $scope.showConfirm = function () {
+        var confirm = $mdDialog.confirm()
+            .title('WARNING: Please Confirm The Watchlist Addition')
+            .textContent('This will add both the current passenger and their applicable documents to the watchlist.')
+            .ariaLabel('Add To Watchlist Warning')
+            .ok('Confirm Addition')
+            .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function () {
+            $scope.addEntityToWatchlist();
+        }, function () {
+            return false;
+        });
+    };
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                               jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
@@ -165,6 +213,16 @@
              .position('top right')
              .hideDelay(4000)
              .parent($scope.toastParent));
+        };
+        
+        var exporter = {
+                'csv': function () {
+                    $scope.gridApi.exporter.csvExport('all', 'all');
+                }
+        };
+        
+        $scope.export = function (format) {
+            exporter[format]();
         };
         
         function createFilterFor(query) {
@@ -434,7 +492,7 @@
                     field: 'lastName',
                     name: 'lastName',
                     displayName:'pass.lastname', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'firstName',
@@ -516,7 +574,7 @@
                 {name: 'passengerType', displayName:'T', width: 50},
                 {
                     name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
                 },
                 {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
                 {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},

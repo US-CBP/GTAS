@@ -427,6 +427,9 @@ var app;
                         },
                         user: function (userService) {
                             return userService.getUserData();
+                        },
+                        ruleHits: function(paxService, $stateParams){
+                        	return paxService.getRuleHits($stateParams.paxId);
                         }
                     }
                 })

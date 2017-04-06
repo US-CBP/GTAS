@@ -35,6 +35,10 @@
                 <div class="col-sm-4">{{'pass.destination' | translate}}:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
                 <div class="col-sm-4">{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
             </div>
+            <div class="row">
+            	<md-button type="submit" class="md-raised md-primary col-sm-offset-6 fa fa-eye" 
+            	ng-click="showConfirm()"> Add To Watchlist</md-button>
+            </div>
         </div>
     </div>
     <!-- END OF SPAN 12 -->
@@ -85,7 +89,6 @@
                                 <th style="text-align: center">{{'doc.doc' | translate}} #</th>
                                 <th style="text-align: center">{{'doc.type' | translate}}</th>
                                 <th style="text-align: center">{{'doc.iss.country' | translate}}</th>
-                                <th style="text-align: center">{{'doc.iss.date' | translate}}</th>
                                 <th style="text-align: center">{{'doc.exp.date' | translate}}</th>
                             </tr>
                             </thead>
@@ -94,17 +97,35 @@
                                 <td style="text-align: center">{{doc.documentNumber}}</td>
                                 <td style="text-align: center">{{doc.documentType}}</td>
                                 <td style="text-align: center">{{doc.issuanceCountry}}</td>
-                                <td style="text-align: center">{{doc.issuanceDate}}</td>
                                 <td style="text-align: center">{{doc.expirationDate}}</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                     <div style="padding: 30px;"></div>
-
-                    <div>
-                        <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
+                    
+					<div ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
+                        <h2 class="col-sm-offset-1"><strong>Hits Summary</strong></h2>
+                        	<div class="row">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr class="text-center" style="text-align: center">
+                                            <th style="text-align: center">Title</th>
+                                            <th style="text-align: center">Conditions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="j in ruleHits[0].hitsDetailsList track by $index">
+                                            <td style="text-align: center">{{j.title}}</td>
+                                            <td style="text-align: center">{{j.ruleConditions}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                             </div>
                     </div>
+                    
+                        <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
+                    
 	                <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
 	                	<div class="container">
 	                	<div style="padding: 10px;"></div>
@@ -267,23 +288,15 @@
                                                             <thead>
                                                             <tr class="text-center" style="text-align: center">
                                                                 <th style="text-align: center">{{'doc.type' | translate}}</th>
-                                                                <th style="text-align: center">{{'doc.name' | translate}}</th>
                                                                 <th style="text-align: center">{{'doc.country' | translate}}</th>
                                                                 <th style="text-align: center">{{'doc.Number' | translate}}</th>
-                                                                <th style="text-align: center">{{'doc.gender' | translate}}</th>
-                                                                <th style="text-align: center">{{'doc.dob' | translate}}</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
                                                             <tr ng-repeat="doc in passenger.documents">
                                                                 <td style="text-align: center">{{doc.documentType}}</td>
-                                                                <td style="text-align: center"></td>
-                                                                <td style="text-align: center">{{doc.issuanceCountry}}
-                                                                </td>
-                                                                <td style="text-align: center">{{doc.documentNumber}}
-                                                                </td>
-                                                                <td style="text-align: center"></td>
-                                                                <td style="text-align: center"></td>
+                                                                <td style="text-align: center">{{doc.issuanceCountry}}</td>
+                                                                <td style="text-align: center">{{doc.documentNumber}}</td>
                                                             </tr>
                                                             </tbody>
                                                         </table>
