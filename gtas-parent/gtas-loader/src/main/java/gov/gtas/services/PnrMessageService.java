@@ -147,7 +147,11 @@ public class PnrMessageService extends MessageLoaderService {
     	Flight thirdFlight=null;
     	Flight fourthFlight=null;
     	Flight fifthFlight=null;
-    	
+    	Flight sixthFlight=null;
+    	Flight seventhFlight=null;
+    	Flight eighthFlight=null;
+    	Flight ninethFlight=null;
+    	Flight tenthFlight=null;
     	for(int i=0;i<legs.size();i++){
             switch (i) {
             case 0:
@@ -165,12 +169,33 @@ public class PnrMessageService extends MessageLoaderService {
             case 4:
             	fifthFlight=legs.get(4).getFlight();
             	break;
-            }      
+            case 5:
+            	sixthFlight=legs.get(5).getFlight();
+            	break;
+            case 6:
+            	seventhFlight=legs.get(6).getFlight();
+            	break;
+            case 7:
+            	eighthFlight=legs.get(7).getFlight();
+            	break;
+            case 8:
+            	ninethFlight=legs.get(8).getFlight();
+            	break;
+            case 9:
+            	tenthFlight=legs.get(9).getFlight();
+            	break;
+            } 
+ 
     	}
     	setDwelTime(firstFlight,secondFlight,pnr);
     	setDwelTime(secondFlight,thirdFlight,pnr);
     	setDwelTime(thirdFlight,fourthFlight,pnr);
     	setDwelTime(fourthFlight,fifthFlight,pnr);
+    	setDwelTime(fifthFlight,sixthFlight,pnr);
+    	setDwelTime(sixthFlight,seventhFlight,pnr);
+    	setDwelTime(seventhFlight,eighthFlight,pnr);
+    	setDwelTime(eighthFlight,ninethFlight,pnr);
+    	setDwelTime(ninethFlight,tenthFlight,pnr);
     }
     private void setDwelTime(Flight firstFlight,Flight secondFlight,Pnr pnr){
  

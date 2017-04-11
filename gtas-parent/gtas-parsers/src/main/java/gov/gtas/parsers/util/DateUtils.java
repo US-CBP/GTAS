@@ -40,6 +40,9 @@ public final class DateUtils {
     }
     
     public static Integer calculateAge(Date dob) {
+    	if(dob == null){
+    		return 0;
+    	}
         Calendar cal = Calendar.getInstance();
         cal.setTime(dob);
         int year = cal.get(Calendar.YEAR);
