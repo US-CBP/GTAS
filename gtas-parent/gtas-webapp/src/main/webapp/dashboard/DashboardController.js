@@ -7,46 +7,32 @@
 (function () {
     'use strict';
     app.controller('DashboardController',
-        function($state, $scope, $rootScope, $q, $stateParams, dashboardService, $mdToast, sampleData, ytdRuleHits, ytdAirportStats) {
+        function ($state, $scope, $rootScope, $q, $stateParams, dashboardService, $mdToast, sampleData, ytdRuleHits, ytdAirportStats) {
 
-            var stubChartData = [[],[]];
+            var stubChartData = [[], []];
 
-            //$scope.data = stubChartData;
+            $scope.colors = ['#337ab7', '#5cb85c', '#dfdfdf'];
 
-          //  $scope.refreshAPIPNRStats = function(data){
-                $scope.colors = ['#337ab7', '#5cb85c', '#dfdfdf'];
 
-                $scope.labels = ['12 - 1 AM', '1 - 2 AM', '2 - 3 AM', '3 - 4 AM', '4 - 5 AM', '5 - 6 AM', '6 - 7 AM', '7 - 8 AM', '8 - 9 AM'
-                    , '9 - 10 AM', '10 - 11 AM', '11 - 12 PM', '12 - 1 PM', '1 - 2 PM', '2 - 3 PM', '3 - 4 PM', '4 - 5 PM'
-                    , '5 - 6 PM', '6 - 7 PM', '7 - 8 PM', '8 - 9 PM', '9 - 10 PM', '10 - 11 PM', '11 - 12 AM'];
+            $scope.data = [[], []];
 
-                // $scope.data = [
-                //     [65, 59, 80, 81, 0, 55, 40, 65, 59, 80, 0, 0, 55, 40, 65, 59, 80, 81, 56, 55, 40, 33, 23, 55],
-                //     [28, 48, 40, 19, 86, 27, 90, 28, 48, 40, 0, 86, 27, 90, 0, 48, 40, 19, 86, 27, 90, 21, 99, 77]
-                // ];
-
-                $scope.data = [[],[]];
-
-                $scope.datasetOverride = [
-                    {
-                        label: "APIs",
-                        borderWidth: 1,
-                        type: 'bar'
-                    },
-                    {
-                        label: "PNR",
-                        borderWidth: 3,
-                        hoverBackgroundColor: "rgba(255,99,132,0.4)",
-                        hoverBorderColor: "rgba(255,99,132,1)",
-                        type: 'line'
-                    }
-                ];
-           // } // END of refresh Stats
-
-            //$scope.refreshAPIPNRStats(stubChartData);
+            $scope.datasetOverride = [
+                {
+                    label: "APIs",
+                    borderWidth: 1,
+                    type: 'bar'
+                },
+                {
+                    label: "PNR",
+                    borderWidth: 3,
+                    hoverBackgroundColor: "rgba(255,99,132,0.4)",
+                    hoverBorderColor: "rgba(255,99,132,1)",
+                    type: 'line'
+                }
+            ];
 
             $scope.sampleData = sampleData;
-            $scope.switchDashboard= function(input){
+            $scope.switchDashboard = function (input) {
                 //$scope.sampleData = !$scope.sampleData;
                 $state.go(input);
             }
@@ -56,6 +42,7 @@
             $scope.numberOfPassengers = 0;
             $scope.numberOfApisMessages = 0;
             $scope.numberOfPNRMessages = 0;
+            $scope.flightsList = [];
             $scope.rulesList = ytdRuleHits;
             $scope.airportStats = ytdAirportStats;
             $scope.credentials = {
@@ -75,73 +62,141 @@
             $scope.credentials.endDate = tomorrow.format('YYYY-MM-DD');
             $scope.credentials.beforeDate = yesterday.format('YYYY-MM-DD');
 
+            var arrOfLats = [];
+            var arrOfLongs = [];
+            var imagesArrOfAirports = [];
+            var anchorLat = [38.944533];
+            var anchorLong = [-77.455811];
+
+
+            //------------------- AM CHARTS NEW SECTION ------------------
+
+            /**
+             * SVG path for target icon
+             */
+            var targetSVG = "M9,0C4.029,0,0,4.029,0,9s4.029,9,9,9s9-4.029,9-9S13.971,0,9,0z M9,15.93 c-3.83,0-6.93-3.1-6.93-6.93S5.17,2.07,9,2.07s6.93,3.1,6.93,6.93S12.83,15.93,9,15.93 M12.5,9c0,1.933-1.567,3.5-3.5,3.5S5.5,10.933,5.5,9S7.067,5.5,9,5.5 S12.5,7.067,12.5,9z";
+
+            /**
+             * SVG path for plane icon
+             */
+            var planeSVG = "M19.671,8.11l-2.777,2.777l-3.837-0.861c0.362-0.505,0.916-1.683,0.464-2.135c-0.518-0.517-1.979,0.278-2.305,0.604l-0.913,0.913L7.614,8.804l-2.021,2.021l2.232,1.061l-0.082,0.082l1.701,1.701l0.688-0.687l3.164,1.504L9.571,18.21H6.413l-1.137,1.138l3.6,0.948l1.83,1.83l0.947,3.598l1.137-1.137V21.43l3.725-3.725l1.504,3.164l-0.687,0.687l1.702,1.701l0.081-0.081l1.062,2.231l2.02-2.02l-0.604-2.689l0.912-0.912c0.326-0.326,1.121-1.789,0.604-2.306c-0.452-0.452-1.63,0.101-2.135,0.464l-0.861-3.838l2.777-2.777c0.947-0.947,3.599-4.862,2.62-5.839C24.533,4.512,20.618,7.163,19.671,8.11z";
+
+            /**
+             * Create the map
+             */
+
+            var map = AmCharts.makeChart("chartdiv", {
+                "type": "map",
+                "theme": "light",
+                "dataProvider": {
+                    "map": "worldLow",
+                    "linkToObject": "WashDC",
+                    "images": [{
+                        "id": "WashDC",
+                        "color": "#000000",
+                        "svgPath": targetSVG,
+                        "title": "IAD",
+                        "latitude": anchorLat[0],
+                        "longitude": anchorLong[0],
+                        "scale": 1.5,
+                        "zoomLevel": 2.74,
+                        "zoomLongitude": -20.1341,
+                        "zoomLatitude": 49.1712,
+
+                        "lines": [],
+
+                        "images": [{
+                            "label": "Flights To IAD",
+                            "svgPath": planeSVG,
+                            "left": 100,
+                            "top": 45,
+                            "labelShiftY": 5,
+                            "color": "#D35400",
+                            "labelColor": "#D35400",
+                            "labelRollOverColor": "#D35400",
+                            "labelFontSize": 20
+                        }
+                        ]
+
+                    } // end of "images" object
+                        , {
+
+                        }
+                    ] // end of "images" array
+                },
+
+                "areasSettings": {
+                    "unlistedAreasColor": "#616A6B"
+                },
+
+                "imagesSettings": {
+                    "color": "#D35400",
+                    "rollOverColor": "#273746",
+                    "selectedColor": "#000000"
+                },
+
+                "linesSettings": {
+                    "color": "#D35400",
+                    "alpha": 0.9
+                },
+
+                "balloon": {
+                    "drop": true
+                },
+
+                "backgroundZoomsToTop": true,
+                "linesAboveImages": true,
+
+                "export": {
+                    "enabled": false
+                }
+            });
+
             $scope.getFlightsAndPassengersAndHitsCount = function (credentials) {
-            	// two arguments were used before but get date info from server side now.
-                dashboardService.getFlightsAndPassengersAndHitsCount(credentials.startDate,credentials.endDate ).then(function (data){
+                // two arguments were used before but get date info from server side now.
+                dashboardService.getFlightsAndPassengersAndHitsCount(credentials.startDate, credentials.endDate).then(function (data) {
                     $scope.numberOfFlights = data.data.flightsCount;
                     $scope.numberOfRuleHits = data.data.ruleHitsCount;
                     $scope.numberOfWatchListHits = data.data.watchListCount;
                     $scope.numberOfPassengers = data.data.passengersCount;
-                });
+                    $scope.flightsList = data.data.flightsList;
+
+                    if($scope.flightsList) {
+                        $scope.flightsList.forEach((elem) => {
+
+                            if(elem.hits
+                    )
+                        {
+                            map["dataProvider"]["images"].push({
+                                "svgPath": targetSVG,
+                                "title": elem.airportCodeStr,
+                                "color": "#CC0000",
+                                "latitude": elem.latitude,
+                                "longitude": elem.longitude
+                            })
+                        }
+                    else
+                        {
+                            map["dataProvider"]["images"].push({
+                                "svgPath": targetSVG,
+                                "color": "#273746",
+                                "title": elem.airportCodeStr,
+                                "latitude": elem.latitude,
+                                "longitude": elem.longitude
+                            })
+                        }
+
+                        //)
+                    })
+                        ;
+                    }
+                    map.validateData();
+                }); // end of dashboard service
             };
 
             $scope.getFlightsAndPassengersAndHitsCount($scope.credentials);
 
-
-            $scope.getMessagesCount = function (credentials) {
-
-            var jsonData =  dashboardService.getMessagesCount(credentials.beforeDate,credentials.startDate ).then(function (data){
-                    //$scope.numberOfApisMessages = data.data.apisMessageCount;
-                    //$scope.numberOfPNRMessages = data.data.pnrMessageCount;
-
-                // process Promise
-                var ople = Object.keys(data);
-                var apiARR = [], pnrARR = [];
-
-                ople.forEach(function(num_ber) {
-                    var items = Object.keys(data[num_ber]);
-                    items.forEach(function(item) {
-                        if(item === 'api'){
-                            apiARR.push(data[num_ber][item]);
-                        } else if(item === 'pnr'){
-                            pnrARR.push(data[num_ber][item].trim());
-                        }
-                        //var value = data[num_ber][api];
-                        //var valuePNR = data[num_ber][pnr];
-                        //console.log(num_ber+': '+item+' = '+value);
-                    }); // end of items forEach
-                    //console.log('api array '+apiARR.join());
-                }); // end outer forEach
-                // end process Promise
-
-                stubChartData[0] = [];
-                stubChartData[1] = [];
-                JSON.parse(JSON.stringify(apiARR), (key, value) => {
-                    stubChartData[0].push(value); // log the current property name, the last is "".
-                //return parseInt(value);     // return the unchanged property value.
-                });
-
-                JSON.parse(JSON.stringify(pnrARR), (key, value) => {
-                        stubChartData[1].push(value); // log the current property name, the last is "".
-                //return parseInt(value);     // return the unchanged property value.
-                 });
-
-
-                 $scope.data = stubChartData;
-               // $scope.refreshAPIPNRStats(stubChartData);
-                });
-                return jsonData;
-            };
-            $scope.getMessagesCount($scope.credentials);
-
-
-            $scope.$on('chart-update', function (evt, chart) {
-                console.log('>>> Updated >>>' + chart);
-            });
-
-          });
-
-
+        }); // end of controller
 
 }());
 

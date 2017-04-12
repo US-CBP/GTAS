@@ -427,9 +427,6 @@ var app;
                         },
                         user: function (userService) {
                             return userService.getUserData();
-                        },
-                        ruleHits: function(paxService, $stateParams){
-                        	return paxService.getRuleHits($stateParams.paxId);
                         }
                     }
                 })
@@ -1330,6 +1327,27 @@ var app;
                 }
             }
         })// END of Sample Data Bar Chart Directive
+
+
+        // amcharts directive
+
+
+    .directive('myElem',
+        function () {
+            return {
+                restrict: 'E',
+                replace:true,
+
+                template: '<div id="chartdiv" style="min-width: 310px; height: 400px; margin: 0 auto"></div>',
+                 link: function (scope, element, attrs) {
+
+                }//end watch
+            }
+        })
+
+
+
+    // END amchanrts directive
 
         .controller('NavCtrl', NavCtrl)
 
