@@ -182,7 +182,7 @@
    	   	    			watchListService.compile();
    	   	    			//clear out terms list
    	   	    			terms = [];
-   	   	    			$spinnerService.hide('html5spinner');
+   	   	    			spinnerService.hide('html5spinner');
    	   	    		});
    	   			}
    	   		});
