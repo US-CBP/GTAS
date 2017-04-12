@@ -201,7 +201,9 @@ public class PnrMessageService extends MessageLoaderService {
  
     	if(firstFlight != null && secondFlight != null 
     			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))){
+    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
+    			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
+    		
     	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondFlight.getDestination());

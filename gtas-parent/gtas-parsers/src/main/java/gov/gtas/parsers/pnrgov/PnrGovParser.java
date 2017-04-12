@@ -213,7 +213,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 ssrDocs.add(ssr);
             } else if (SSR.DOCA.equals(code)) {
                 AddressVo addr = PnrUtils.createAddress(ssr);
-                if (addr.isValid()) {
+                if (addr != null && addr.isValid()) {
                     parsedMessage.getAddresses().add(addr);
                 }
             } else if (SSR.DOCO.equals(code)) {
