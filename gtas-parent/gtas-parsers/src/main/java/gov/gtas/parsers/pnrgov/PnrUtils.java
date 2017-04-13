@@ -361,8 +361,14 @@ public class PnrUtils {
 
 	private static List<String> splitSsrFreeText(SSR ssr) {
 		if (ssr.getFreeText() != null) {
+			String chkString=ssr.getFreeText();
+			//issue in passenger's gender #304 code fix
+			if(chkString.startsWith("//P")){
+				chkString=chkString.substring(0, chkString.length());
+			}
 			List<String> strs = new ArrayList<>();
-			for (String s : ssr.getFreeText().split("/")) {
+			//for (String s : ssr.getFreeText().split("/")) {
+			for (String s : chkString.split("/")) {
 				strs.add(s.trim());
 			}
 			return strs;
