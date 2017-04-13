@@ -30,10 +30,15 @@ public class DwellTime  implements Serializable{
 	    	this.departureTime=departure;
 	    	this.location=airport;
 	    	this.pnrs.add(pnr);
-	    	long diff = this.departureTime.getTime() - this.arrivalTime.getTime(); 
-	    	int minutes=(int)TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
-	    	DecimalFormat df = new DecimalFormat("#.##");      
-	    	this.dwellTime = Double.valueOf(df.format((double) minutes / 60));
+	    	//java.lang.NullPointerException issue #307 code fix
+	    	if(this.departureTime != null && this.arrivalTime != null){
+		    	long diff = this.departureTime.getTime() - this.arrivalTime.getTime(); 
+		    	if(diff > 0){
+			    	int minutes=(int)TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+			    	DecimalFormat df = new DecimalFormat("#.##");      
+			    	this.dwellTime = Double.valueOf(df.format((double) minutes / 60));
+		    	}
+	    	}
 	    }
 	    
 	    @Id
