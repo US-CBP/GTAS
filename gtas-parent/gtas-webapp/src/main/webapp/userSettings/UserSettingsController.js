@@ -35,6 +35,22 @@ app.controller('UserSettingsController', function ($scope, $state, $interval,$ht
     };
     init();
 
+    $scope.displayPasswordRules = function(){
+    	$mdToast.show({
+    		hideDelay   : 0,
+            position    : 'top right',
+            ok:"OK",
+            template    : '<md-toast style="height:100%"><div class="md-toast-content" style="height:100%">Password Criteria:'+
+    			'<ul><li>10 to 20 characters</li>'+
+    			'<li>At least one special character (!@#$%^&*)</li>'+
+    			'<li>At least one number</li>'+
+    			'<li>At least one letter</li>'+
+    			'<li>At least one upper case character</li>'+
+    			'<li>At least one lower case character</li>'+
+    			'</ul></div></md-toast>'
+       });
+    };
+    
 
     //---------------------------------------- Filter JS -----------------------
 

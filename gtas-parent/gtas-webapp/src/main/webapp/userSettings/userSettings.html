@@ -65,7 +65,7 @@ section {
                     </md-input-container>
                     <md-input-container style="padding-top: 0.5px; padding-bottom: 0.5px;">
                         <label>{{'user.newpassword' | translate}}</label>
-                        <input ng-model="userCredentials.newPassword" type="password" name="newPassword" >
+                        <input ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/" ng-focus="displayPasswordRules()" ng-blur="hideToast()" ng-model="userCredentials.newPassword" type="password" name="newPassword" >
                     </md-input-container>
                     <md-input-container style="padding-top: 0.5px; padding-bottom: 0.5px;">
                         <label>{{'user.confirmpassword' | translate}}</label>

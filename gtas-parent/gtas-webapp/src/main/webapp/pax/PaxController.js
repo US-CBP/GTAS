@@ -135,8 +135,9 @@
         		var docIssuCountry = doc.issuanceCountry;
         		paxDetailService.getPaxFullTravelHistory(passenger.paxId, docNum, docIssuCountry, docExp).then(function(response){
         			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
+        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap);
         			for(var arry in $scope.passenger.flightHistoryVo.flightHistoryMap){
-        				parseOutDuplicateFlights($scope.passenger.flightHistoryVo.flightHistoryMap[arry], $scope.passenger.fullFlightHistoryVo.map)
+        				$scope.passenger.fullFlightHistoryVo.map = parseOutDuplicateFlights($scope.passenger.fullFlightHistoryVo.map, $scope.passenger.flightHistoryVo.flightHistoryMap[arry])
         			}
         			$scope.isLoadingFlightHistory = false;
         		});
@@ -147,6 +148,7 @@
         };
     var parseOutDuplicateFlights = function(currentPNRFlightArray, totalFlightArray){
     	var duplicateIndexes = []; 
+    	var duplicateFreeFlightArray = [];
     	$.each(currentPNRFlightArray, function(index,value){
     		$.each(totalFlightArray, function(i,v){
     			if(value.id === v.id){
@@ -158,10 +160,49 @@
     		});
     	});
     	
-    	$.each(duplicateIndexes, function(index,value){
-    		currentPNRFlightArray.splice(value, 1);
+    	
+    	$.each(currentPNRFlightArray, function(i,v){
+    		var notDupe = true;
+    		$.each(duplicateIndexes, function(index,value){
+    			if(value === i){
+    				notDupe = false;
+    				return;
+    			}
+    		});
+    		if(notDupe){
+    			duplicateFreeFlightArray.push(v);
+    		}
     	});
+    	return duplicateFreeFlightArray;
     }
+    //Multiple documents on the same PNR pull and show the same flights on the flight history tab
+    //This function will remove all duplicate flights from a given Map, remove all documents that have 0 flights, and return a new fully parsed map
+    var parseDuplicateDocumentFlights = function(flightHistoryMap){
+    	var longest = 0;
+		var longestIndex = -1;
+		//Insure we maintain the largest amount of flight information by defining a psuedo 'primary' doc
+    	$.each(flightHistoryMap, function(index,value){
+    		if(value.length > longest){
+    			longest = value.length;
+    			longestIndex = index;    
+    		};
+    	});
+    	//Remove duplicates from all non-primary documents
+    	$.each(flightHistoryMap, function(index,value){
+    		if(index != longestIndex){
+    			flightHistoryMap[index] = parseOutDuplicateFlights(value, flightHistoryMap[longestIndex]);
+    		}
+    	});
+    	//Remove documents with no flights now
+    	var fullyParsedMap = {};
+    	$.each(flightHistoryMap, function(index,value){
+    		if(value.length != 0){
+    			fullyParsedMap[index] = value;
+    		}
+    	});
+    	return fullyParsedMap;
+    }
+    
     //Adds user from pax detail page to watchlist.
     $scope.addEntityToWatchlist = function(){
     	spinnerService.show('html5spinner');
@@ -224,6 +265,10 @@
         $scope.export = function (format) {
             exporter[format]();
         };
+        
+        $.getJSON('./data/countries.json', function(data){
+        	$scope.countryList = data;
+        });
         
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
@@ -438,11 +483,18 @@
                 });
             }    
         };
-
+        
+        $scope.getCountryTooltipData = function(field){
+        	if(field != null && typeof field != 'undefined' && field != ''){
+        		return paxService.getCountryNameByCountryCode(field, $scope.countryList);
+        	}
+        }
+        
       	$scope.hitTooltipData = ['Loading...'];
         
-        $scope.resetHitTooltip = function(){
+        $scope.resetTooltip = function(){
         	$scope.hitTooltipData = ['Loading...'];
+        	$('md-tooltip').remove();
         };
         
     	$scope.getHitTooltipData = function(row){
@@ -470,7 +522,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScore.resetHitTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
                     	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
                     	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
@@ -546,7 +598,10 @@
                 {
                     name: 'citizenshipCountry',
                     displayName:'add.Country', headerCellFilter: 'translate',
-                    width: 75
+                    width: 75,
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
+                    	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+                    	+'</md-button>'
                 }
             ];
         } else {
@@ -558,7 +613,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScore.resetHitTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
                 	+'<md-tooltip class="tt-multiline" md-direction="right" ng-repeat="item in grid.appScope.hitTooltipData"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
                 	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
@@ -591,7 +646,10 @@
                 {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
                 {name: 'gender', displayName:'G', width: 50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
-                {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75}
+                {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75, 
+                	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
+                	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+                	+'</md-button>'}
             ];
         }
 

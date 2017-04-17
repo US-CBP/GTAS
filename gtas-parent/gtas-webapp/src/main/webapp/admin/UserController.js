@@ -57,7 +57,27 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
             });
             setUser();
         };
-
+    
+   $scope.displayPasswordRules = function(){
+    	$mdToast.show({
+    		hideDelay   : 0,
+            position    : 'top right',
+            ok:"OK",
+            template    : '<md-toast style="height:100%"><div class="md-toast-content" style="height:100%">Password Criteria:'+
+    			'<ul><li>10 to 20 characters</li>'+
+    			'<li>At least one special character (!@#$%^&*)</li>'+
+    			'<li>At least one number</li>'+
+    			'<li>At least one letter</li>'+
+    			'<li>At least one upper case character</li>'+
+    			'<li>At least one lower case character</li>'+
+    			'</ul></div></md-toast>'
+       });
+    };
+    
+    $scope.hideToast = function(){
+    	$mdToast.hide();
+    };
+    
     $scope.setNonAdminRoles = function (roleToggled) {
         if (roleToggled.roleDescription === ADMIN) {
             $scope.roles.forEach(function (role) {
@@ -71,6 +91,10 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
 
     $scope.saveUser = function () {
         $scope.user.userId = $scope.user.userId.trim();
+        if (angular.isUndefined($scope.user.password)){
+        	$scope.displayPasswordRules();
+        	return;
+        }
         $scope.user.password = $scope.user.password.trim();
         if ($scope.user.userId.length === 0 || $scope.user.password.length === 0) {
             alertUser('userId or password cannot be blank space(s)');

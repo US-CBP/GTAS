@@ -2,16 +2,16 @@
     <form name="userForm" ng-submit="saveUser()">
         <div layout layout-sm="column">
             <md-input-container flex><label>{{'user.useId' | translate}}</label>
-                <input ng-model="user.userId" id="userId" ng-disabled="action === 'updateUser'" autocomplete="off" style="width: 300px;">
+                <input required ng-model="user.userId" id="userId" ng-disabled="action === 'updateUser'" autocomplete="off" style="width: 300px;">
             </md-input-container>
             <md-input-container flex><label>{{'user.password' | translate}}</label>
-                <input ng-model="user.password" id="password" type="password" type="search"  autocomplete="off" required style="width: 300px;">
+                <input ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/" ng-focus="displayPasswordRules()" ng-blur="hideToast()" ng-model="user.password" id="password" type="password" type="search"  autocomplete="off" required style="width: 300px;">
             </md-input-container>
         </div>
         <div layout layout-sm="column">
-            <md-input-container flex><label>{{'user.firstname' | translate}}</label> <input ng-model="user.firstName" autocomplete="off" required style="width: 300px;">
+            <md-input-container flex><label>{{'user.firstname' | translate}}</label> <input required ng-model="user.firstName" autocomplete="off" required style="width: 300px;">
             </md-input-container>
-            <md-input-container flex><label>{{'user.lastname' | translate}}</label> <input ng-model="user.lastName" required style="width: 300px;">
+            <md-input-container flex><label>{{'user.lastname' | translate}}</label> <input required ng-model="user.lastName" required style="width: 300px;">
             </md-input-container>
         </div>
 

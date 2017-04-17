@@ -23,12 +23,27 @@
                 $scope.gridApi.exporter.pdfExport('all', 'all');
             }
         };
+        
+        $.getJSON('./data/countries.json', function(data){
+        	$scope.countryList = data;
+        });
+        
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
             return function filterFn(contact) {
                 return (contact.lowerCasedName.indexOf(lowercaseQuery) >= 0);
             };
         }
+        
+        $scope.resetCountryTooltip = function(){
+        	$('md-tooltip').remove();
+        };
+        
+        $scope.getCountryTooltipData = function(field){
+        	if(field != null && typeof field != 'undefined' && field != ''){
+        		return paxService.getCountryNameByCountryCode(field, $scope.countryList);
+        	}
+        };
 
         /* Search for airports. */
         function querySearch(query) {
@@ -327,9 +342,15 @@
             },
             {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate'},
             {name: 'origin', displayName:'flight.origin', headerCellFilter: 'translate'},
-            {name: 'originCountry', displayName:'doc.country', headerCellFilter: 'translate'},
+            {name: 'originCountry', displayName:'doc.country', headerCellFilter: 'translate',
+                cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+            	+'</md-button>'},
             {name: 'destination', displayName:'flight.destination', headerCellFilter: 'translate'},
-            {name: 'destinationCountry', displayName:'add.Country', headerCellFilter: 'translate'}
+            {name: 'destinationCountry', displayName:'add.Country', headerCellFilter: 'translate',
+                cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+            	+'</md-button>'}
         ];
         
         $scope.flightsQueryGrid.columnDefs = $scope.flightsGrid.columnDefs;
