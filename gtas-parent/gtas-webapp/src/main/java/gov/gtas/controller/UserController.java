@@ -5,15 +5,27 @@
  */
 package gov.gtas.controller;
 
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.validator.UserDataValidator;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.validation.Valid;
 
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+import org.passay.LengthRule;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.RuleResult;
+import org.passay.UsernameRule;
+import org.passay.WhitespaceRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +62,31 @@ public class UserController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public UserData createUser(@RequestBody @Valid UserData userData) {
-		return userService.create(userData);
+	public JsonServiceResponse createUser(@RequestBody @Valid UserData userData) {
+		UserData rUserData = userData;
+		Validator validator = this.new Validator();
+		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
+			rUserData = userService.create(userData);
+			return new JsonServiceResponse(Status.SUCCESS,
+					validator.getErrMessage(), rUserData);
+		} else {
+			return new JsonServiceResponse(Status.FAILURE,
+					validator.getErrMessage(), rUserData);
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public UserData updateUser(@RequestBody @Valid UserData userData) {
-		return userService.update(userData);
+	public JsonServiceResponse updateUser(@RequestBody @Valid UserData userData) {
+		UserData rUserData = userData;
+		Validator validator = this.new Validator();
+		if (validator.isValid(userData.getPassword(), userData.getPassword())) {
+			rUserData = userService.update(userData);
+			return new JsonServiceResponse(Status.SUCCESS,
+					validator.getErrMessage(), rUserData);
+		} else {
+			return new JsonServiceResponse(Status.FAILURE,
+					validator.getErrMessage(), rUserData);
+		}
 	}
 
 	@ResponseStatus(HttpStatus.OK)
@@ -65,4 +95,37 @@ public class UserController {
 		return userService.findById(principal.getName());
 	}
 
+	private class Validator {
+		private String errMessage;
+		boolean status = false;
+
+		public boolean isValid(final String password, final String userName) {
+			final PasswordValidator validator = new PasswordValidator(
+					Arrays.asList(
+							new LengthRule(10, 20),
+							new CharacterRule(EnglishCharacterData.UpperCase, 1),
+							new CharacterRule(EnglishCharacterData.LowerCase, 1),
+							new UsernameRule(), new CharacterRule(
+									EnglishCharacterData.Digit, 1),
+							new CharacterRule(EnglishCharacterData.Special, 1),
+							new WhitespaceRule()));
+			PasswordData pd = new PasswordData(password);
+			pd.setUsername(userName);
+			final RuleResult result = validator.validate(pd);
+			if (result.isValid()) {
+				status = true;
+			} else {
+				StringJoiner sj = new StringJoiner("\n");
+				for (String msg : validator.getMessages(result)) {
+					sj.add(msg);
+				}
+				errMessage = sj.toString();
+			}
+			return status;
+		}
+
+		public String getErrMessage() {
+			return errMessage;
+		}
+	}
 }

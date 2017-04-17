@@ -146,8 +146,13 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
+        </dependency>     
+        <!-- password validation -->
+        <dependency>
+            <groupId>org.passay</groupId>
+            <artifactId>passay</artifactId>
+            <version>1.2.0</version>
         </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>junit</groupId>
