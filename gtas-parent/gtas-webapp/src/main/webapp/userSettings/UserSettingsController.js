@@ -34,7 +34,11 @@ app.controller('UserSettingsController', function ($scope, $state, $interval,$ht
         $scope.error=false;
     };
     init();
-
+    
+    $scope.hideToast = function(){
+    	$mdToast.hide();
+    };
+    
     $scope.displayPasswordRules = function(){
     	$mdToast.show({
     		hideDelay   : 0,
