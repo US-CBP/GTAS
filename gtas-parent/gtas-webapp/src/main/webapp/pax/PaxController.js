@@ -614,7 +614,7 @@
                         priority: 0
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
-                	+'<md-tooltip class="tt-multiline" md-direction="right" ng-repeat="item in grid.appScope.hitTooltipData"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
+                	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
                 	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
