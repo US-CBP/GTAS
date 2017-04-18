@@ -3,9 +3,10 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
+app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridService) {
     'use strict;'
-
+	$scope.pageSize = 10;
+	
     $scope.hitTypeIcon = function (hitType) {
         var icons = '&nbsp;';
         if (hitType) {
@@ -29,21 +30,23 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
     $scope.casesGrid = {
         data: newCases.data,
         paginationPageSizes: [10, 15, 25],
-        paginationPageSize: 10,
+        paginationPageSize: $scope.pageSize,
         enableFiltering: true,
         enableHorizontalScrollbar: 0,
         enableVerticalScrollbar: 0,
         enableColumnMenus: false,
         multiSelect: false,
         enableExpandableRowHeader: false,
-        minRowsToShow: 10,
-        expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-
+        
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
+            
+            gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                $scope.pageSize = pageSize;
+            });
         }
     };
-
+    
     $scope.casesGrid.columnDefs = [
         {
             field: 'lastName',
@@ -105,5 +108,9 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService) {
             displayName: 'Status'
         }
     ];
+    
+    $scope.getTableHeight = function(){
+    	return gridService.calculateGridHeight($scope.pageSize);
+    };
 });
 
