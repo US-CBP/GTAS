@@ -667,16 +667,16 @@ public class TargetingServiceImpl implements TargetingService {
 	@Transactional
 	@Override
 	public void updateFlightHitCounts(Set<Long> flights) {
-		logger.info("Entering updateFlightHitCounts().");
-		if (CollectionUtils.isEmpty(flights)) {
-			logger.info("no flight");
-			return;
-		}
-		logger.info("update rule hit count on flights.");
-		for (Long flightId : flights) {
-			flightRepository.updateRuleHitCountForFlight(flightId);
-			flightRepository.updateListHitCountForFlight(flightId);
-		}
+//		logger.info("Entering updateFlightHitCounts().");
+//		if (CollectionUtils.isEmpty(flights)) {
+//			logger.info("no flight");
+//			return;
+//		}
+//		logger.info("update rule hit count on flights.");
+
+//			flightRepository.updateRuleHitCountForFlight(flightId);
+//			flightRepository.updateListHitCountForFlight(flightId);
+//		}
 	}
 
 	/**
