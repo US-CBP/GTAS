@@ -12,8 +12,6 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.svc.TargetingService;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -47,12 +45,7 @@ public class RuleRunner {
 
 		try {
 			targetingService.preProcessing();
-			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
-			if (logger.isInfoEnabled()) {
-				logger.info("updating hit counts for flight ids {} ",
-						uniqueFlights);
-			}
-			targetingService.updateFlightHitCounts(uniqueFlights);
+			targetingService.runningRuleEngine();
 			logger.info("Exiting main().");
 		} catch (Exception exception) {
 			logger.debug(exception.getMessage());

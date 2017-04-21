@@ -7,7 +7,6 @@ package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
 import gov.gtas.bo.CompositeRuleServiceResult;
-import gov.gtas.bo.RuleExecutionStatistics;
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
@@ -595,23 +594,16 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	@Transactional
 	@Override
-	public Set<Long> runningRuleEngine() {
+	public void runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
-		Set<Long> uniqueFlights = new HashSet<>();
 		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
 		if (ruleRunningResult != null) {
-			RuleExecutionStatistics ruleExeStatus = ruleRunningResult
-					.getRuleExecutionStatistics();
-
 			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult);
 			for (HitsSummary s : hitsSummaryList) {
 				passengerService.createDisposition(s);
-				uniqueFlights.add(s.getFlight().getId());
 			}
 			writeAuditLogForTargetingRun(ruleRunningResult);
 		}
-		logger.info("Exiting runningRuleEngine().");
-		return uniqueFlights;
 	}
 
 	/**

@@ -81,10 +81,8 @@ public interface TargetingService {
     /**
      * Running Rule Engine through Scheduler.
      * 
-     * @return list of unique flight id's that were updated
-     * 
      */
-    public Set<Long> runningRuleEngine();
+    public void runningRuleEngine();
 
     /**
      * Update the rule and watchlist hit counts for a set of flight id's.

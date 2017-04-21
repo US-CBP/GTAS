@@ -11,8 +11,6 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.svc.TargetingService;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +58,7 @@ public class RuleRunnerScheduler {
 		logger.info("entering jobScheduling()");
 		try {
 			targetingService.preProcessing();
-			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
-			targetingService.updateFlightHitCounts(uniqueFlights);
+			targetingService.runningRuleEngine();
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
 			ErrorDetailInfo errInfo = ErrorHandlerFactory.createErrorDetails(
