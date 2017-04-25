@@ -79,7 +79,7 @@ public class UserController {
 	public JsonServiceResponse updateUser(@RequestBody @Valid UserData userData) {
 		UserData rUserData = userData;
 		Validator validator = this.new Validator();
-		if (validator.isValid(userData.getPassword(), userData.getPassword())) {
+		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.update(userData);
 			return new JsonServiceResponse(Status.SUCCESS,
 					validator.getErrMessage(), rUserData);
