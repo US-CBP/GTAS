@@ -129,7 +129,7 @@
         
         $scope.getPaxFullTravelHistory= function(passenger){
         	var doc = passenger.documents[0];
-        	if(typeof doc != 'undefined' || doc.length < 1){
+        	if(typeof doc != 'undefined' && doc.documentNumber.length > 0){
         		var docNum = doc.documentNumber;
         		var docExp = doc.expirationDate;
         		var docIssuCountry = doc.issuanceCountry;
@@ -150,14 +150,18 @@
     	var duplicateIndexes = []; 
     	var duplicateFreeFlightArray = [];
     	$.each(currentPNRFlightArray, function(index,value){
-    		$.each(totalFlightArray, function(i,v){
-    			if(value.id === v.id){
-    				if(duplicateIndexes.indexOf(index) === -1){
-    					duplicateIndexes.push(index);
-    				}
-    				return;
-    			};
-    		});
+    		if(angular.isDefined(value) && value != null){
+	    		$.each(totalFlightArray, function(i,v){
+	    			if(angular.isDefined(v) && v != null){
+		    			if(value.id === v.id){
+		    				if(duplicateIndexes.indexOf(index) === -1){
+		    					duplicateIndexes.push(index);
+		    				}
+		    				return;
+		    			};
+	    			}
+	    		});
+    		}
     	});
     	
     	
@@ -515,8 +519,8 @@
                 {
                     field: 'onRuleHitList',
                     name: 'onRuleHitList',
-                    displayName: 'H',
-                    width: 50,
+                    displayName: 'Rule Hits',
+                    width: 90,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -527,7 +531,7 @@
                     	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
-                    name: 'onWatchList', displayName: 'L', width: 70,
+                    name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
                     cellClass: gridService.anyWatchlistHit,
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -597,7 +601,7 @@
                 },
                 {
                     name: 'citizenshipCountry',
-                    displayName:'add.Country', headerCellFilter: 'translate',
+                    displayName:'pass.citizenship', headerCellFilter: 'translate',
                     width: 75,
                     cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                     	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
@@ -607,7 +611,7 @@
         } else {
             $scope.passengerGrid.columnDefs = [
                 {
-                    name: 'onRuleHitList', displayName: 'H', width: 50,
+                    name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -618,7 +622,7 @@
                 	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
                 },
                 {
-                    name: 'onWatchList', displayName: 'L', width: 70,
+                    name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
                     cellClass: gridService.anyWatchlistHit,
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -646,7 +650,7 @@
                 {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
                 {name: 'gender', displayName:'G', width: 50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
-                {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75, 
+                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width: 75, 
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}

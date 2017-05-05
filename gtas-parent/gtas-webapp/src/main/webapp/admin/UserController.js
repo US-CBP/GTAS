@@ -10,8 +10,9 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
         adminIndex,
         ADMIN = 'Admin',
         setUser = function () {
-            var setRole, userSelectedRoles, selectedUser = JSON.parse(localStorage['lastSelectedUser']);
-            if (selectedUser !== undefined && selectedUser.userId === $stateParams.userId) {
+            var setRole, userSelectedRoles, selectedUser;
+            if(angular.isDefined(localStorage['lastSelectedUser'])){selectedUser = JSON.parse(localStorage['lastSelectedUser'])};
+            if (angular.isDefined(selectedUser) && selectedUser.userId === $stateParams.userId) {
                 userSelectedRoles = selectedUser.roles.map(function (role) { return role.roleDescription; });
                 setRole = function (role) { role.selected = userSelectedRoles.indexOf(role.roleDescription) >= 0; };
                 $scope.user = selectedUser;

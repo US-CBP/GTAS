@@ -295,15 +295,15 @@
             {
                 name: 'passengerCount',
                 field: 'passengerCount',
-                displayName: 'P',
+                displayName: 'Passengers',
                 width: 100,
                 enableFiltering: false,
                 cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, destination: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
             },
             {
                 name: 'ruleHitCount',
-                displayName: 'H',
-                width: 50,
+                displayName: 'Rule Hits',
+                width: 90,
                 enableFiltering: false,
                 cellClass: gridService.colorHits,
                 sort: {
@@ -313,8 +313,8 @@
             },
             {
                 name: 'listHitCount',
-                displayName: 'L',
-                width: 50,
+                displayName: 'Watchlist Hits',
+                width: 125,
                 enableFiltering: false,
                 cellClass: gridService.colorHits,
                 sort: {
@@ -323,7 +323,7 @@
                 }
             },
             {
-                name: 'fullFlightNumber',
+                name: 'flightNumber',
                 displayName: 'flight.flight', headerCellFilter: 'translate',
                 width: 70,
                 cellTemplate:'<md-button ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled="row.entity.ruleHitCount === 0 && row.entity.listHitCount === 0" >{{COL_FIELD}}</md-button>'
@@ -331,7 +331,7 @@
             {
             	name:'carrier',
             	displayName: 'flight.carrier', headerCellFilter: 'translate',
-                width:50
+            	width: 70
             },
             {
                 name: 'eta', displayName:'pass.eta', headerCellFilter: 'translate',
@@ -358,7 +358,7 @@
         $scope.passengerSubGridColumnDefs = 
         	[
              {
-                 name: 'onRuleHitList', displayName: 'H', width: 50,
+                 name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
                  cellClass: "rule-hit",
                  sort: {
                      direction: uiGridConstants.DESC,
@@ -367,7 +367,7 @@
                  cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
              },
              {
-                 name: 'onWatchList', displayName: 'L', width: 70,
+                 name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
                  cellClass: gridService.anyWatchlistHit,
                  sort: {
                      direction: uiGridConstants.DESC,
