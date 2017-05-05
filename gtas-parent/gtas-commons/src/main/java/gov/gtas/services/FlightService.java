@@ -41,4 +41,8 @@ public interface FlightService {
 			String firstName, String lastName, Set<Document> documents);
 
 	public List<Flight> getFlightsThreeDaysForward();
+
+	public List<Flight> getFlightsThreeDaysForwardInbound();
+
+	public List<Flight> getFlightsThreeDaysForwardOutbound();
 }

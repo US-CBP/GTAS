@@ -37,12 +37,22 @@
                 $state.go(input);
             }
             $scope.numberOfFlights = 0;
+            $scope.numberOfFlightsInbound = 0;
+            $scope.numberOfFlightsOutbound = 0;
             $scope.numberOfRuleHits = 0;
+            $scope.numberOfRuleHitsInbound = 0;
+            $scope.numberOfRuleHitsOutbound = 0;
             $scope.numberOfWatchListHits = 0;
+            $scope.numberOfWatchListHitsInbound = 0;
+            $scope.numberOfWatchListHitsOutbound = 0;
             $scope.numberOfPassengers = 0;
+            $scope.numberOfPassengersInbound = 0;
+            $scope.numberOfPassengersOutbound = 0;
             $scope.numberOfApisMessages = 0;
             $scope.numberOfPNRMessages = 0;
             $scope.flightsList = [];
+            $scope.flightsListInbound = [];
+            $scope.flightsListOutbound = [];
             $scope.rulesList = ytdRuleHits;
             $scope.airportStats = ytdAirportStats;
             $scope.credentials = {
@@ -153,16 +163,57 @@
             });
 
             $scope.getFlightsAndPassengersAndHitsCount = function (credentials) {
-                // two arguments were used before but get date info from server side now.
-                dashboardService.getFlightsAndPassengersAndHitsCount(credentials.startDate, credentials.endDate).then(function (data) {
-                    $scope.numberOfFlights = data.data.flightsCount;
-                    $scope.numberOfRuleHits = data.data.ruleHitsCount;
-                    $scope.numberOfWatchListHits = data.data.watchListCount;
-                    $scope.numberOfPassengers = data.data.passengersCount;
-                    $scope.flightsList = data.data.flightsList;
 
-                    if($scope.flightsList) {
-                        $scope.flightsList.forEach((elem) => {
+                // inbound flights request
+                dashboardService.getFlightsAndPassengersAndHitsCountInbound(credentials.startDate, credentials.endDate).then(function (data) {
+                    $scope.numberOfFlightsInbound = data.data.flightsCount;
+                    $scope.numberOfRuleHitsInbound = data.data.ruleHitsCount;
+                    $scope.numberOfWatchListHitsInbound = data.data.watchListCount;
+                    $scope.numberOfPassengersInbound = data.data.passengersCount;
+                    $scope.flightsListInbound = data.data.flightsList;
+
+                    if($scope.flightsListInbound) {
+                        $scope.flightsListInbound.forEach((elem) => {
+
+                            if(elem.hits
+                    )
+                        {
+                            map["dataProvider"]["images"].push({
+                                "svgPath": targetSVG,
+                                "title": elem.airportCodeStr,
+                                "color": "#CC0000",
+                                "latitude": elem.latitude,
+                                "longitude": elem.longitude
+                            })
+                        }
+                    else
+                        {
+                            map["dataProvider"]["images"].push({
+                                "svgPath": targetSVG,
+                                "color": "#273746",
+                                "title": elem.airportCodeStr,
+                                "latitude": elem.latitude,
+                                "longitude": elem.longitude
+                            })
+                        }
+
+                        //)
+                    })
+                        ;
+                    }
+                    //map.validateData();
+                }); // end of dashboard service
+
+                // outbound flights request
+                dashboardService.getFlightsAndPassengersAndHitsCountOutbound(credentials.startDate, credentials.endDate).then(function (data) {
+                    $scope.numberOfFlightsOutbound = data.data.flightsCount;
+                    $scope.numberOfRuleHitsOutbound = data.data.ruleHitsCount;
+                    $scope.numberOfWatchListHitsOutbound = data.data.watchListCount;
+                    $scope.numberOfPassengersOutbound = data.data.passengersCount;
+                    $scope.flightsListOutbound = data.data.flightsList;
+
+                    if($scope.flightsListOutbound) {
+                        $scope.flightsListOutbound.forEach((elem) => {
 
                             if(elem.hits
                     )
@@ -192,6 +243,7 @@
                     }
                     map.validateData();
                 }); // end of dashboard service
+
             };
 
             $scope.getFlightsAndPassengersAndHitsCount($scope.credentials);

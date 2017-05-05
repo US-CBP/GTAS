@@ -21,6 +21,32 @@
                 return dfd.promise;
             }
 
+            function getFlightsAndPassengersAndHitsCountInbound(startDate, endDate) {
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'get',
+                    url: '/gtas/getFlightsAndPassengersAndHitsCountInbound',
+                    params: {
+                        startDate: startDate,
+                        endDate: endDate
+                    }
+                }));
+                return dfd.promise;
+            }
+
+            function getFlightsAndPassengersAndHitsCountOutbound(startDate, endDate) {
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'get',
+                    url: '/gtas/getFlightsAndPassengersAndHitsCountOutbound',
+                    params: {
+                        startDate: startDate,
+                        endDate: endDate
+                    }
+                }));
+                return dfd.promise;
+            }
+
             function getMessagesCount(startDate, endDate) {
 
                     var request = $http({
@@ -67,6 +93,8 @@
             // Return public API.
             return ({
             	getFlightsAndPassengersAndHitsCount: getFlightsAndPassengersAndHitsCount,
+                getFlightsAndPassengersAndHitsCountInbound: getFlightsAndPassengersAndHitsCountInbound,
+                getFlightsAndPassengersAndHitsCountOutbound: getFlightsAndPassengersAndHitsCountOutbound,
                 getMessagesCount: getMessagesCount,
                 getYtdAirportStats: getYtdAirportStats,
                 getYtdRulesCount: getYtdRulesCount

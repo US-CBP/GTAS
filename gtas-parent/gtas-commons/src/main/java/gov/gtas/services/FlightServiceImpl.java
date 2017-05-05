@@ -169,4 +169,22 @@ public class FlightServiceImpl implements FlightService {
 		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
 				.getResultList();
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Flight> getFlightsThreeDaysForwardInbound() {
+		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I'";
+		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+				.getResultList();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Flight> getFlightsThreeDaysForwardOutbound() {
+		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY  AND direction = 'O'";
+		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+				.getResultList();
+	}
 }

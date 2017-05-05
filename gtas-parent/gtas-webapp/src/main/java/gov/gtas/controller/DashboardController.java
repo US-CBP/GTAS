@@ -80,14 +80,16 @@ public class DashboardController {
 	 * @throws ParseException
 	 *             the parse exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCount")
-	public Map<String, Object> getFlightsAndPassengersAndHitsCount(
+	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountInbound")
+	public Map<String, Object> getFlightsAndPassengersAndHitsCountInbound(
 			@RequestParam(value = "startDate", required = false) String startDate,
 			@RequestParam(value = "endDate", required = false) String endDate)
 			throws ParseException {
 		// passed in arguments not used currently.
 		HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
-		List<Flight> flightList = flightService.getFlightsThreeDaysForward();
+
+		List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
+
 		Integer paxCount = flightList.stream().collect(
 				Collectors.summingInt(flight -> flight.getPassengerCount()));
 		int ruleHits = 0;
@@ -129,6 +131,69 @@ public class DashboardController {
 
 		return flightsAndPassengersAndHitsCount;
 	}
+
+    /**
+     * Gets the flights, passengers and hits count.
+     *
+     * @param startDate
+     *            the start date
+     * @param endDate
+     *            the end date
+     * @return the flights, passengers and hits count
+     * @throws ParseException
+     *             the parse exception
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountOutbound")
+    public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate)
+            throws ParseException {
+        // passed in arguments not used currently.
+        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
+
+        List<Flight> flightList = flightService.getFlightsThreeDaysForwardOutbound();
+
+        Integer paxCount = flightList.stream().collect(
+                Collectors.summingInt(flight -> flight.getPassengerCount()));
+        int ruleHits = 0;
+        int watchListHits = 0;
+        AirportVO _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
+        Airport _tempAirport = new Airport();
+        List<AirportVO> _tempAirportList = new ArrayList<AirportVO>();
+
+        for (Flight flight : flightList) {
+            List<HitsSummary> hitsSummaryList = hitsSummaryService
+                    .findHitsByFlightId(flight.getId());
+
+            _tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
+            _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
+            _tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
+            _tempAirportVO.setAirportName(_tempAirport.getCity());
+            _tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
+            _tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
+            if(flight.getRuleHitCount()>0 || flight.getListHitCount()>0){
+                _tempAirportVO.setHits(true);
+            }
+            _tempAirportList.add(_tempAirportVO);
+            for (HitsSummary summ : hitsSummaryList) {
+                ruleHits = summ.getRuleHitCount() + ruleHits;
+                watchListHits = summ.getWatchListHitCount() + watchListHits;
+            }
+        }
+        flightsAndPassengersAndHitsCount.put("flightsCount", ((Object)new AtomicInteger(
+                flightList.size())));
+        flightsAndPassengersAndHitsCount.put("ruleHitsCount",
+                ((Object)new AtomicInteger(ruleHits)));
+        flightsAndPassengersAndHitsCount.put("watchListCount",
+                ((Object)new AtomicInteger(watchListHits)));
+        flightsAndPassengersAndHitsCount.put("passengersCount",
+                ((Object)new AtomicInteger(paxCount)));
+
+        flightsAndPassengersAndHitsCount.put("flightsList",
+                _tempAirportList);
+
+        return flightsAndPassengersAndHitsCount;
+    }
 
     class MessageCount implements Serializable {
         String STATE = EMPTY_STRING;
