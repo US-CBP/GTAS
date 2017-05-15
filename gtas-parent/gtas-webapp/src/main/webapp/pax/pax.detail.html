@@ -266,9 +266,9 @@
                                                             </thead>
                                                             <tbody>
                                                             <tr ng-repeat="pass in passenger.pnrVo.passengers">
-                                                                <td style="text-align: center">{{ pass.firstName }}</td>
-                                                                <td style="text-align: center">{{ pass.middleName }}</td>
-                                                                <td style="text-align: center">{{ pass.lastName }}</td>
+                                                                <td style="text-align: center">{{ pass.firstname }}</td>
+                                                                <td style="text-align: center">{{ pass.middlename }}</td>
+                                                                <td style="text-align: center">{{ pass.lastname }}</td>
                                                                 <td style="text-align: center">{{ pass.gender }}</td>
                                                                 <td style="text-align: center">{{ pass.age }}</td>
                                                             </tr>
@@ -518,8 +518,8 @@
                                                                style="border-collapse: separate; text-align: center;">
                                                             <thead>
                                                             <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'pass.last' | translate}}</th>
-                                                                <th style="text-align: center">{{'pass.first' | translate}}</th>
+                                                                <th style="text-align: center">{{'pass.lastname' | translate}}</th>
+                                                                <th style="text-align: center">{{'pass.firstname' | translate}}</th>
                                                                 <th style="text-align: center">{{'flight.flight' | translate}}#</th>
                                                                 <th style="text-align: center">{{'pnr.seat' | translate}}#</th>
                                                             </tr>

@@ -25,7 +25,9 @@
         	return newSeats;
         };
         
-        $scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
+        if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
+        	$scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
+    	}
         
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
