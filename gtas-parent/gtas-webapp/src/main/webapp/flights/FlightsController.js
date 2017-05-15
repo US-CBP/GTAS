@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter, 
-            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, $timeout) {
+            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -24,25 +24,19 @@
             }
         };
         
-        $.getJSON('./data/countries.json', function(data){
-        	$scope.countryList = data;
-        });
-        
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
             return function filterFn(contact) {
                 return (contact.lowerCasedName.indexOf(lowercaseQuery) >= 0);
             };
         }
+        //Service call for tooltip data
+        $scope.getCodeTooltipData = function(field, type){
+        	return codeTooltipService.getCodeTooltipData(field,type);
+        }
         
         $scope.resetCountryTooltip = function(){
         	$('md-tooltip').remove();
-        };
-        
-        $scope.getCountryTooltipData = function(field){
-        	if(field != null && typeof field != 'undefined' && field != ''){
-        		return paxService.getCountryNameByCountryCode(field, $scope.countryList);
-        	}
         };
 
         /* Search for airports. */
@@ -331,8 +325,10 @@
             {
             	name:'carrier',
             	displayName: 'flight.carrier', headerCellFilter: 'translate',
-            	width: 70
-            },
+            	width: 70,
+            	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                    +'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
+                    +'</md-button>'},
             {
                 name: 'eta', displayName:'pass.eta', headerCellFilter: 'translate',
                 sort: {
@@ -341,15 +337,21 @@
                 }
             },
             {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate'},
-            {name: 'origin', displayName:'flight.origin', headerCellFilter: 'translate'},
+            {name: 'origin', displayName:'flight.origin', headerCellFilter: 'translate',
+            	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                +'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+                +'</md-button>'},
             {name: 'originCountry', displayName:'doc.country', headerCellFilter: 'translate',
                 cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
             	+'</md-button>'},
-            {name: 'destination', displayName:'flight.destination', headerCellFilter: 'translate'},
+            {name: 'destination', displayName:'flight.destination', headerCellFilter: 'translate',
+            	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+            	+'</md-button>'},
             {name: 'destinationCountry', displayName:'add.Country', headerCellFilter: 'translate',
                 cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+            	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
             	+'</md-button>'}
         ];
         

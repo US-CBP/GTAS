@@ -68,7 +68,7 @@
                             <div style="padding: 10px;"></div>
                             <div class="row col-md-offset-1">
                                 <div class="col-sm-2 capitalize">&nbsp;&nbsp;&nbsp;<span style="text-decoration: underline;">{{'flight.flight' | translate}}:&nbsp; <strong>{{
-                                    passenger.flightNumber }}</strong></span></div>
+                                    passenger.carrier + passenger.flightNumber }}</strong></span></div>
                                 <div class="col-sm-2">{{'pass.originairport' | translate}}:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
                                 <div class="col-sm-2">{{'pass.destinationairport' | translate}}:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
                                 <div class="col-sm-2">{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD }}</strong></div>
@@ -260,6 +260,8 @@
                                                                 <th style="text-align: center">{{'pnr.first' | translate}}</th>
                                                                 <th style="text-align: center">{{'pnr.middle' | translate}}</th>
                                                                 <th style="text-align: center">{{'pnr.last' | translate}}</th>
+                                                                <th style="text-align: center">{{'pass.gender' | translate}}</th>
+                                                                <th style="text-align: center">Age</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
@@ -267,6 +269,8 @@
                                                                 <td style="text-align: center">{{ pass.firstName }}</td>
                                                                 <td style="text-align: center">{{ pass.middleName }}</td>
                                                                 <td style="text-align: center">{{ pass.lastName }}</td>
+                                                                <td style="text-align: center">{{ pass.gender }}</td>
+                                                                <td style="text-align: center">{{ pass.age }}</td>
                                                             </tr>
                                                             </tbody>
                                                         </table>
@@ -514,14 +518,16 @@
                                                                style="border-collapse: separate; text-align: center;">
                                                             <thead>
                                                             <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'doc.name' | translate}}</th>
+                                                                <th style="text-align: center">{{'pass.last' | translate}}</th>
+                                                                <th style="text-align: center">{{'pass.first' | translate}}</th>
                                                                 <th style="text-align: center">{{'flight.flight' | translate}}#</th>
                                                                 <th style="text-align: center">{{'pnr.seat' | translate}}#</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
                                                             <tr ng-repeat="sa in passenger.pnrVo.seatAssignments">
-                                                                <td style="text-align: center">{{ sa.firstName }} {{ sa.lastName }}</td>
+                                                                <td style="text-align: center">{{ sa.lastName }}</td>
+                                                                <td style="text-align: center">{{ sa.firstName }}</td>
                                                                 <td style="text-align: center">{{ sa.flightNumber }}</td>
                                                                 <td style="text-align: center">{{ sa.number }}</td>
                                                             </tr>

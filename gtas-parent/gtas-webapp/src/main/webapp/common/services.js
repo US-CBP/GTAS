@@ -1024,5 +1024,37 @@
             return ({
                 load: load
             });
+        })
+        //Tooltip service attempting to be generic
+        .service("codeTooltipService", function($rootScope){
+        	
+            function getCodeTooltipData(field, type){
+            	if(field != null && typeof field != 'undefined' && field != ''){
+            		if(type === 'country'){
+            			return getFullNameByCodeAndCodeList(field, $rootScope.countriesList);
+            		} 
+            		else if(type === 'airport'){
+            			return getFullNameByCodeAndCodeList(field, $rootScope.airportsList);
+            		}
+            		else if(type === 'carrier'){
+            			return getFullNameByCodeAndCodeList(field, $rootScope.carriersList);
+            		}
+            	}
+            };
+        	        	
+            //Used for countries/airports/carriers, pass in code + code list, return full name
+            function getFullNameByCodeAndCodeList(code, codeList){
+            	var fullName = '';
+            	$.each(codeList, function(index,value){
+            		if(value.id === code){
+            			fullName = value.name;
+            			return;
+            		}
+            	});
+            	return fullName;
+            };
+        	return({
+        		getCodeTooltipData:getCodeTooltipData
+        	});
         });
 }());

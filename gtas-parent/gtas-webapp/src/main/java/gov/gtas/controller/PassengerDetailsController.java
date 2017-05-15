@@ -420,6 +420,8 @@ public class PassengerDetailsController {
 				pVo.setLastName(p.getLastName());
 				pVo.setFirstName(p.getFirstName());
 				pVo.setMiddleName(p.getMiddleName());
+				pVo.setAge(p.getAge());
+				pVo.setGender(p.getGender());
 				target.getPassengers().add(pVo);
 
 				Set<Seat> seats = p.getSeatAssignments();

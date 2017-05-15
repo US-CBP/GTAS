@@ -161,17 +161,6 @@
             function broadcastRuleID(ruleID) {
                 $rootScope.$broadcast('ruleIDBroadcast', ruleID);
             }
-            
-            function getCountryNameByCountryCode(countryCode, countryList){
-            	var fullCountryName = '';
-            	$.each(countryList, function(index,value){
-            		if(value.id === countryCode){
-            			fullCountryName = value.name;
-            			return;
-            		}
-            	});
-            	return fullCountryName;
-            }
 
             // Return public API.
             return ({
@@ -181,8 +170,7 @@
                 getRuleHits: getRuleHits,
                 getPaxDetail: getPaxDetail,
                 broadcastRuleID: broadcastRuleID,
-                getPassengersBasedOnUser: getPassengersBasedOnUser,
-                getCountryNameByCountryCode:getCountryNameByCountryCode
+                getPassengersBasedOnUser: getPassengersBasedOnUser
             });
         });
 }());

@@ -5,11 +5,27 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
         $scope.isLoadingFlightHistory = true;        
         $scope.isClosedCase = false;
         $scope.ruleHits = ruleHits;
+        
+        //Bandaid: Parses out seat arrangements not for the particular PNR, returns new seat array. This should be handled on the back-end.
+        var parseOutExtraSeats = function(seats, flightLegs){
+        	var newSeats = [];
+        	$.each(seats, function(index,value){
+        		$.each(flightLegs, function(i,v){
+        			if(value.flightNumber === v.flightNumber){
+        				newSeats.push(value);
+        				return;
+        			}
+        		});
+        	});
+        	return newSeats;
+        };
+        
+        $scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
         
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
@@ -17,6 +33,10 @@
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
     	}
+        
+        $scope.getCodeTooltipData = function(field,type){
+        	return codeTooltipService.getCodeTooltipData(field,type);
+        };
         
         $scope.saveDisposition = function(){
         	var disposition = {
@@ -248,10 +268,11 @@
             return false;
         });
     };
+    
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                               jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
-                                              $timeout, paxModel, $http, spinnerService) {
+                                              $timeout, paxModel, $http, codeTooltipService, spinnerService) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -269,10 +290,6 @@
         $scope.export = function (format) {
             exporter[format]();
         };
-        
-        $.getJSON('./data/countries.json', function(data){
-        	$scope.countryList = data;
-        });
         
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
@@ -488,10 +505,8 @@
             }    
         };
         
-        $scope.getCountryTooltipData = function(field){
-        	if(field != null && typeof field != 'undefined' && field != ''){
-        		return paxService.getCountryNameByCountryCode(field, $scope.countryList);
-        	}
+        $scope.getCodeTooltipData = function(field, type){
+        	return codeTooltipService.getCodeTooltipData(field,type);
         }
         
       	$scope.hitTooltipData = ['Loading...'];
@@ -604,7 +619,7 @@
                     displayName:'pass.citizenship', headerCellFilter: 'translate',
                     width: 75,
                     cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
-                    	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+                    	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                     	+'</md-button>'
                 }
             ];
@@ -652,7 +667,7 @@
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
                 {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width: 75, 
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
-                	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCountryTooltipData(COL_FIELD)}}</div></md-tooltip>{{COL_FIELD}}'
+                	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}
             ];
         }

@@ -101,6 +101,23 @@ var app;
            $rootScope.searchBarContent = {
         		   content : ""
            };
+           //For tooltips
+           $.getJSON('./data/countries.json', function(data){
+        	   $rootScope.countriesList = data;
+           });
+           
+           //For tooltips
+           $.getJSON('./data/airports.json', function(data){
+        	   $rootScope.airportsList = data;
+           });
+           
+           //For tooltips
+           $.getJSON('./data/carriers.json', function(data){
+        	  $rootScope.carriersList = data; 
+           });
+           
+            
+           $rootScope.airportsList = 
            
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
