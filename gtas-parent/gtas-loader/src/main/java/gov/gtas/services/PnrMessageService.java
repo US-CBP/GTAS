@@ -5,8 +5,10 @@
  */
 package gov.gtas.services;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
@@ -99,10 +101,9 @@ public class PnrMessageService extends MessageLoaderService {
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setPnr(pnr);
             }
-            
+            calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
-        	calculateDwellTimes(pnr);
-            
+  
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -114,13 +115,29 @@ public class PnrMessageService extends MessageLoaderService {
         return success;
     }
     
+
     private void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
     	List<FlightLeg> legs = pnr.getFlightLegs();
     	if (CollectionUtils.isEmpty(legs)) {
     		return;
     	}
     	String embark = legs.get(0).getFlight().getOrigin();
+    	Date firstDeparture=legs.get(0).getFlight().getEtd();
     	String debark = legs.get(legs.size() - 1).getFlight().getDestination();
+    	Date finalArrival=legs.get(legs.size() - 1).getFlight().getEta();
+    	//Origin / Destination Country Issue #356 code fix.
+    	if(legs.size() <=2 && (embark.equals(debark))){
+    		debark=legs.get(0).getFlight().getDestination();
+    		finalArrival=legs.get(0).getFlight().getEta();
+    	}
+    	else if(legs.size() >2 && (embark.equals(debark))){
+    		DwellTime d=getMaxDwelltime(pnr);
+    		if(d != null && d.getFlyingTo() != null){
+    			debark=d.getFlyingTo();
+    			finalArrival=d.getArrivalTime();
+    		}
+    	}
+    	setTripDurationTimeForPnr(pnr,firstDeparture,finalArrival);
     	for (Passenger p : pnr.getPassengers()) {
     		p.setEmbarkation(embark);
     		Airport airport = utils.getAirport(embark);
@@ -209,6 +226,41 @@ public class PnrMessageService extends MessageLoaderService {
     		d.setFlyingTo(secondFlight.getDestination());
     		pnr.addDwellTime(d);
     	}
+    }
+    
+    private DwellTime getMaxDwelltime(Pnr pnr) {
+        Double highest = 0.0;
+        DwellTime dt = new DwellTime();
+        for (DwellTime d : pnr.getDwellTimes()) {
+            highest = d.getDwellTime();
+            if (highest == null) {
+                continue;
+            }
+            dt = d;
+            for (DwellTime dChk : pnr.getDwellTimes()) {
+                if (dChk.getDwellTime() != null) {
+                    if (dChk.getDwellTime().equals(highest) || dChk.getDwellTime() < highest) {
+                        continue;
+                    } else if ((dChk.getDwellTime() > highest) && (highest > 12)) {
+                        return dChk;
+                    }
+                }
+
+            }
+        }
+        return dt;
+    }
+    
+    private void setTripDurationTimeForPnr(Pnr pnr,Date firstDeparture,Date finalArrival){
+    	if(firstDeparture != null && finalArrival != null){
+	    	long diff = finalArrival.getTime() - firstDeparture.getTime(); 
+	    	if(diff > 0){
+		    	int minutes=(int)TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS);
+		    	DecimalFormat df = new DecimalFormat("#.##");      
+		    	pnr.setTripDuration(Double.valueOf(df.format((double) minutes / 60)));
+	    	}
+    	}
+
     }
     private void handleException(Exception e, MessageStatus status) {
         // set all the collections to null so we can save the message itself

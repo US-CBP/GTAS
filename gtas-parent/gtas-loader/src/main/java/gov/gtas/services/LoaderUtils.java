@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
+import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
@@ -37,6 +39,7 @@ import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
+import gov.gtas.parsers.vo.EmailVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.FrequentFlyerVo;
 import gov.gtas.parsers.vo.PassengerVo;
@@ -51,13 +54,13 @@ public class LoaderUtils {
     private static final Logger logger = LoggerFactory.getLogger(LoaderUtils.class);
 
     private static final String LOADER_USER = "SYSTEM";
-    
+
     @Autowired
     private AirportService airportService;
 
     @Autowired
     private CountryService countryService;
-    
+
     @Autowired
     private LookUpRepository lookupRepo;
 
@@ -67,11 +70,14 @@ public class LoaderUtils {
         updatePassenger(vo, p);
         return p;
     }
-    
+
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
         p.setUpdatedBy(LOADER_USER);
-        
+        if (vo.getAddress() != null) {
+            p.setAddress(vo.getAddress());
+        }
+
         if (vo.getDebarkation() != null) {
             String airportCode = vo.getDebarkation();
             p.setDebarkation(airportCode);
@@ -80,7 +86,7 @@ public class LoaderUtils {
                 p.setDebarkCountry(debark.getCountry());
             }
         }
-        
+
         if (vo.getEmbarkation() != null) {
             String airportCode = vo.getEmbarkation();
             p.setEmbarkation(airportCode);
@@ -89,11 +95,11 @@ public class LoaderUtils {
                 p.setEmbarkCountry(embark.getCountry());
             }
         }
-        
+
         if (vo.getCitizenshipCountry() != null) {
             p.setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
         }
-        
+
         if (vo.getResidencyCountry() != null) {
             p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
@@ -108,24 +114,24 @@ public class LoaderUtils {
     public void updateDocument(DocumentVo vo, Document d) throws ParseException {
         BeanUtils.copyProperties(vo, d, getNullPropertyNames(vo));
     }
-        
+
     public ReportingParty createNewReportingParty(ReportingPartyVo vo) {
         ReportingParty rp = new ReportingParty();
         updateReportingParty(vo, rp);
         return rp;
     }
-    
+
     public void updateReportingParty(ReportingPartyVo vo, ReportingParty rp) {
         BeanUtils.copyProperties(vo, rp);
     }
-    
+
     public Flight createNewFlight(FlightVo vo) throws ParseException {
         Flight f = new Flight();
         f.setCreatedBy(LOADER_USER);
         updateFlight(vo, f);
         return f;
     }
-    
+
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
         f.setUpdatedBy(LOADER_USER);
         String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);
@@ -139,51 +145,59 @@ public class LoaderUtils {
         if (vo.getEtd() != null) {
             f.setEtdDate(DateUtils.stripTime(vo.getEtd()));
         }
-
+        f.setMarketingFlight(vo.isMarketingFlight());
+        if(vo.isCodeShareFlight()){
+        	f.setOperatingFlight(true);
+        	CodeShareFlight cs = new CodeShareFlight();
+        	cs.setOperatingFlight(f);
+        	cs.setMarketingFlightNumber(vo.getMarketingFlightNumber());
+        	f.getCodeShareFlights().add(cs);
+        	
+        }
         Airport dest = getAirport(f.getDestination());
         String destCountry = null;
         if (dest != null) {
             destCountry = dest.getCountry();
             f.setDestinationCountry(destCountry);
         }
-        
+
         Airport origin = getAirport(f.getOrigin());
         String originCountry = null;
         if (origin != null) {
             originCountry = origin.getCountry();
             f.setOriginCountry(originCountry);
         }
-        
+
         if (homeCountry.equals(originCountry) && homeCountry.equals(destCountry)) {
             f.setDirection(FlightDirectionCode.C.name());
         } else if (homeCountry.equals(originCountry)) {
-            f.setDirection(FlightDirectionCode.O.name());            
+            f.setDirection(FlightDirectionCode.O.name());
         } else if (homeCountry.equals(destCountry)) {
-            f.setDirection(FlightDirectionCode.I.name());                        
+            f.setDirection(FlightDirectionCode.I.name());
         } else {
             f.setDirection(FlightDirectionCode.A.name());
         }
     }
 
     public void convertPnrVo(Pnr pnr, PnrVo vo) throws ParseException {
-    	
-    	BeanUtils.copyProperties(vo, pnr);
+
+        BeanUtils.copyProperties(vo, pnr);
         Airport origin = getAirport(vo.getOrigin());
         String originCountry = null;
         if (origin != null) {
             originCountry = origin.getCountry();
             pnr.setOriginCountry(originCountry);
         }
-        
+
         pnr.setPassengerCount(vo.getPassengers().size());
         if (vo.getDateBooked() != null && vo.getDepartureDate() != null) {
             // NB: won't work for leap years
-            long diff = vo.getDepartureDate().getTime() - vo.getDateBooked().getTime(); 
-            int days = (int)TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+            long diff = vo.getDepartureDate().getTime() - vo.getDateBooked().getTime();
+            int days = (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
             pnr.setDaysBookedBeforeTravel(days);
         }
     }
-    
+
     public Address convertAddressVo(AddressVo vo) throws ParseException {
         Address addr = new Address();
         addr.setCreatedBy(LOADER_USER);
@@ -191,7 +205,7 @@ public class LoaderUtils {
         addr.setCountry(normalizeCountryCode(vo.getCountry()));
         return addr;
     }
-    
+
     public Phone convertPhoneVo(PhoneVo vo) {
         Phone p = new Phone();
         p.setCreatedBy(LOADER_USER);
@@ -205,25 +219,32 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, cc);
         return cc;
     }
-    
+
     public FrequentFlyer convertFrequentFlyerVo(FrequentFlyerVo vo) {
         FrequentFlyer ff = new FrequentFlyer();
         ff.setCreatedBy(LOADER_USER);
         BeanUtils.copyProperties(vo, ff);
         return ff;
     }
+
+    public Email convertEmailVo(EmailVo vo) {
+        Email e = new Email();
+        e.setCreatedBy(LOADER_USER);
+        e.setAddress(vo.getAddress());
+        return e;
+    }
     
     public Agency convertAgencyVo(AgencyVo vo) {
         Agency a = new Agency();
         a.setCreatedBy(LOADER_USER);
         BeanUtils.copyProperties(vo, a);
-        if(StringUtils.isNotBlank(vo.getCity())){
-        	String cityCode=vo.getCity();
-        	Airport aPort=airportService.getAirportByThreeLetterCode(vo.getCity());
-        	if(aPort !=null && StringUtils.isNotBlank(aPort.getCity())){
-        		cityCode=aPort.getCity();
-        	}
-        	a.setCity(cityCode);
+        if (StringUtils.isNotBlank(vo.getCity())) {
+            String cityCode = vo.getCity();
+            Airport aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
+            if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
+                cityCode = aPort.getCity();
+            }
+            a.setCity(cityCode);
         }
         return a;
     }
@@ -232,7 +253,7 @@ public class LoaderUtils {
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        
+
         if (code.length() == 3) {
             return airportService.getAirportByThreeLetterCode(code);
         } else if (code.length() == 4) {
@@ -250,7 +271,7 @@ public class LoaderUtils {
         if (StringUtils.isBlank(code)) {
             return null;
         }
-        
+
         if (code.length() == 2) {
             Country c = countryService.getCountryByTwoLetterCode(code);
             if (c != null) {
@@ -262,19 +283,20 @@ public class LoaderUtils {
                 return code;
             }
         }
-        
+
         logger.warn("Unknown country code: " + code);
         return code;
     }
-    
-    private static String[] getNullPropertyNames (Object source) {
+
+    private static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
         Set<String> emptyNames = new HashSet<String>();
-        for(java.beans.PropertyDescriptor pd : pds) {
+        for (java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
-            if (srcValue == null) emptyNames.add(pd.getName());
+            if (srcValue == null)
+                emptyNames.add(pd.getName());
         }
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);

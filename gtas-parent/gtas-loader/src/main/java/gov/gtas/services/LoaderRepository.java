@@ -8,8 +8,11 @@ package gov.gtas.services;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.ApisMessage;
+import gov.gtas.model.Bag;
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
+import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
@@ -24,6 +27,7 @@ import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
+import gov.gtas.parsers.vo.EmailVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.FrequentFlyerVo;
 import gov.gtas.parsers.vo.PassengerVo;
@@ -33,6 +37,7 @@ import gov.gtas.parsers.vo.ReportingPartyVo;
 import gov.gtas.parsers.vo.SeatVo;
 import gov.gtas.repository.AddressRepository;
 import gov.gtas.repository.AgencyRepository;
+import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.CreditCardRepository;
 import gov.gtas.repository.DocumentRepository;
 import gov.gtas.repository.FlightRepository;
@@ -43,6 +48,7 @@ import gov.gtas.repository.PhoneRepository;
 import gov.gtas.repository.ReportingPartyRepository;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -87,6 +93,9 @@ public class LoaderRepository {
     
     @Autowired
     private LoaderUtils utils;
+    
+    @Autowired
+    private BagRepository bagDao;
     
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -161,6 +170,10 @@ public class LoaderRepository {
                 pnr.addAgency(existingAgency);
             }
         }
+        for (EmailVo evo : vo.getEmails()) {
+        	Email email = utils.convertEmailVo(evo);
+        	pnr.addEmail(email);
+        }
     }
 
     @Transactional
@@ -174,6 +187,16 @@ public class LoaderRepository {
             Flight currentFlight = null;
             if (existingFlight != null) {
                 currentFlight = existingFlight;
+                if(fvo.isCodeShareFlight() ){
+                	currentFlight.setOperatingFlight(true);
+                	CodeShareFlight cs = new CodeShareFlight();
+                	cs.setOperatingFlight(currentFlight);
+                	cs.setMarketingFlightNumber(fvo.getMarketingFlightNumber());
+                	if(notExist(currentFlight.getCodeShareFlights(),cs)){
+                		currentFlight.getCodeShareFlights().add(cs);
+                	}
+                	
+                }
                 for (PassengerVo pvo : passengers) {
                     Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
                     if (existingPassenger != null) {
@@ -181,6 +204,7 @@ public class LoaderRepository {
                         messagePassengers.add(existingPassenger);
                         existingPassengers.add(pvo);
                         createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, existingFlight);
+                        createBags(pvo.getBags(), existingPassenger, existingFlight);
                     }
                 }
                 
@@ -217,24 +241,54 @@ public class LoaderRepository {
 			for (DocumentVo dvo : pvo.getDocuments()) {
 				newPassenger.addDocument(utils.createNewDocument(dvo));
 			}
+			
 			passengerDao.save(newPassenger);
 			messagePassengers.add(newPassenger);
 
 			for (Flight f : messageFlights) {
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
+				createBags(pvo.getBags(), newPassenger, f);
 			}
 		}
         
         // assoc all passengers w/ flights, update pax counts
         for (Flight f : messageFlights) {
+        	
             for (Passenger p : messagePassengers) {
                 f.addPassenger(p);
             }
             
             f.setPassengerCount(f.getPassengers().size());
+            if(f.isOperatingFlight()){
+            	for(CodeShareFlight cs:f.getCodeShareFlights()){
+            		Flight ff=getMarketingFlight(cs.getMarketingFlightNumber(),messageFlights);
+            		if(ff != null && ff.getId() != null){
+            			cs.setMarketingFlightId(ff.getId());
+            		}
+            		
+            	}
+            }
         }
     }
     
+    private Flight getMarketingFlight(String fnum,Set<Flight> flights){
+    	for(Flight cf:flights){
+    		if(fnum.equals(cf.getFlightNumber())){
+    			return cf;
+    		}
+    	}
+		return null;
+    }
+    
+    private boolean notExist(Set<CodeShareFlight> flights,CodeShareFlight cs){
+    	boolean chk=true;
+    	for(CodeShareFlight csf:flights){
+    		if(csf.getMarketingFlightNumber().equals(cs.getMarketingFlightNumber())){
+    			chk= false;
+    		}
+    	}
+    	return chk;
+    }
     /**
      * Create a single seat assignment for the given passenger, flight
      * combination. TODO: Inefficient to have to pass in the entire list of seat
@@ -259,6 +313,16 @@ public class LoaderRepository {
         }
     }
 
+    public void createBags(List<String> bagIds, Passenger p, Flight f) {       
+        for (String bagId: bagIds) {
+            Bag bag = new Bag();
+            bag.setBagId(bagId);
+            bag.setFlightId(f.getId());
+            bag.setPassengerId(p.getId());
+            bagDao.save(bag);
+        }     
+    }
+    
     private void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
