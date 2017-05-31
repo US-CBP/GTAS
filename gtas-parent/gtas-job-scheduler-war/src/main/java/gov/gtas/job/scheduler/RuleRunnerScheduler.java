@@ -5,17 +5,17 @@
  */
 package gov.gtas.job.scheduler;
 
-import gov.gtas.constant.RuleServiceConstants;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.svc.TargetingService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import gov.gtas.constant.RuleServiceConstants;
+import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.svc.TargetingService;
 
 /**
  * Rule Runner Scheduler class. Using Spring's Scheduled annotation for
@@ -26,8 +26,7 @@ import org.springframework.stereotype.Component;
 public class RuleRunnerScheduler {
 
 	/** The Constant logger. */
-	private static final Logger logger = LoggerFactory
-			.getLogger(RuleRunnerScheduler.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleRunnerScheduler.class);
 
 	/** The targeting service. */
 	private TargetingService targetingService;
@@ -44,8 +43,7 @@ public class RuleRunnerScheduler {
 	 *            the error persistence service
 	 */
 	@Autowired
-	public RuleRunnerScheduler(TargetingService targetingService,
-			ErrorPersistenceService errorPersistenceService) {
+	public RuleRunnerScheduler(TargetingService targetingService, ErrorPersistenceService errorPersistenceService) {
 		this.targetingService = targetingService;
 		this.errorPersistenceService = errorPersistenceService;
 	}
@@ -61,9 +59,8 @@ public class RuleRunnerScheduler {
 			targetingService.runningRuleEngine();
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
-			ErrorDetailInfo errInfo = ErrorHandlerFactory.createErrorDetails(
-					RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE,
-					exception);
+			ErrorDetailInfo errInfo = ErrorHandlerFactory
+					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
 			errorPersistenceService.create(errInfo);
 		}
 		logger.info("exiting jobScheduling()");
