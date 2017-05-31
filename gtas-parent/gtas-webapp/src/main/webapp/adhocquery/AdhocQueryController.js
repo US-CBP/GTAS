@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, uiGridConstants, adhocQueryService, searchBarResults) {
+app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, uiGridConstants, adhocQueryService, searchBarResults, gridService) {
     'use strict;'
 	
 	$scope.pageSize = 10;
@@ -112,6 +112,11 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, uiGridC
         column: 'lastName', 
         dir: 'asc'
     };
+    
+    $scope.getTableHeight = function(){
+    	return gridService.calculateGridHeight($scope.pageSize);
+    };
+    
     $scope.sort = defaultSort;
     
     $scope.searchPax = function () {

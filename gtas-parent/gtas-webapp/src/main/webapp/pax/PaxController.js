@@ -25,8 +25,29 @@
         	return newSeats;
         };
         
+        //Bandaid: Re-orders TVL lines for flight legs, making sure it is ordered by date.
+        var reorderTVLdata = function(flightLegs){
+        	var orderedTvlData = [];
+        	
+        	//Sorts flightLeg objects based on etd
+        	flightLegs.sort(function(a,b){
+        		if(a.etd < b.etd) return -1;
+        		if(a.etd > b.etd) return 1;
+        		else return 0;
+        	});
+        	//sets each flightLeg# to the newly sorted index value
+        	$.each(flightLegs, function(index,value){
+        		value.legNumber = index+1; //+1 because 0th flight leg doesn't read well to normal humans
+        	});
+        	
+        	orderedTvlData = flightLegs;
+        	
+        	return orderedTvlData
+        };
+        
         if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
         	$scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
+        	$scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
     	}
         
         //Removes extraneous characters from rule hit descriptions
