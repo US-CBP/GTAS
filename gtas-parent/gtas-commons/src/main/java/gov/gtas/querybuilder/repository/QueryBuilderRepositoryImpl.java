@@ -470,6 +470,14 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
                     }
                     else if(TypeEnum.DATETIME.toString().equalsIgnoreCase(type)) {
                         query.setParameter(positionalParameter.intValue(), dtFormat.parse(value), TemporalType.DATE);
+                    }else if(TypeEnum.BOOLEAN.toString().equalsIgnoreCase(type) && entityEnum == EntityEnum.FLIGHT){
+                    	//For Marketing Flights/Operating Flights
+                    	//0 = False 1 = True
+                    	if(value.equals("0")){
+                    		query.setParameter(positionalParameter.intValue(), Boolean.FALSE);
+                    	} else if(value.equals("1")){
+                    		query.setParameter(positionalParameter.intValue(), Boolean.TRUE);
+                    	}
                     }
                     else {
                         query.setParameter(positionalParameter.intValue(), value);

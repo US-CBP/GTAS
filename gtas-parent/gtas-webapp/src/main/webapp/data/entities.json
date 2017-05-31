@@ -506,6 +506,28 @@
           "ENDS_WITH",
           "NOT_ENDS_WITH"
         ]                      
+      },
+      {
+        "id": "Flight.isOperatingFlight",
+        "label": "Is Operating Flight",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      },
+      {
+        "id": "Flight.isMarketingFlight",
+        "label": "Is Marketing Flight",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
       }
     ]
   },
