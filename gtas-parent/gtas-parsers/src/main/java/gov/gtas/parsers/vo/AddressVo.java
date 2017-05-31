@@ -19,8 +19,17 @@ public class AddressVo implements Validatable {
     private String country;
     private String postalCode;
     private String phoneNumber;
+    private String email;
     
-    public String getType() {
+    
+    
+    public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getType() {
         return type;
     }
     public void setType(String type) {

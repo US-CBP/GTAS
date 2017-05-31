@@ -29,6 +29,8 @@ import gov.gtas.parsers.edifact.Segment;
  * <p>
  * Ex:The contact address is 4532 Wilson Street, Philadelphia, zip code 34288
  * (ADD++700:4532 WILSON STREET:PHILADELPHIA:PA::US:34288’)
+ * EMAIL
+ * (ADD++700:::::::EK CTCE SOME.ABC//YAHOO.COM)
  */
 public class ADD extends Segment {
     private String addressType;
@@ -42,6 +44,7 @@ public class ADD extends Segment {
     private String postalCode;
 
     private String telephone;
+    private String email;
 
     public ADD(List<Composite> composites) {
         super(ADD.class.getSimpleName(), composites);
@@ -62,10 +65,18 @@ public class ADD extends Segment {
             if (freeText != null) {
                 this.telephone = freeText;
             }
+            if(freeText != null && freeText.contains("CTCE")){
+            	this.email = freeText;
+            }
         }
     }
 
-    public String getAddressType() {
+    
+    public String getEmail() {
+		return email;
+	}
+
+	public String getAddressType() {
         return addressType;
     }
 

@@ -618,6 +618,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
         }
         else{
+        	//gets executed for email format IFT+CTCE SOME.MCCLAUGHRY//GMAIL.COM
         	 List<String> msgs = ift.getMessages();
              for (String txt : msgs) {
             	 if(StringUtils.isNotBlank(txt) && txt.startsWith(IFT.CONTACT_EMAIL)){
@@ -639,6 +640,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		}
              EmailVo email = new EmailVo();
              email.setAddress(tmp);
+             if(tmp.indexOf("@") != -1){
+            	 email.setDomain(tmp.substring(tmp.indexOf("@")+1, tmp.length()));
+             }
+            
              parsedMessage.getEmails().add(email);
          }
     }
@@ -646,13 +651,17 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (StringUtils.isBlank(txt)) {
             return;
         }
+        
         if (txt.contains(IFT.CONTACT_EMAIL)) {
-        	String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
-            if (StringUtils.isNotBlank(tmp)) {
-                EmailVo email = new EmailVo();
-                email.setAddress(tmp);
-                parsedMessage.getEmails().add(email);
-            }
+        	//gets executed for email format IFT+4:28::YY+CTCE SOMEBODY//GMAIL.COM'
+//        	String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
+//            if (StringUtils.isNotBlank(tmp)) {
+//                EmailVo email = new EmailVo();
+//                email.setAddress(tmp);
+//                parsedMessage.getEmails().add(email);
+//            }
+        	extractEmailInfo(txt);
+        	
         } else if (txt.contains(IFT.CONTACT_ADDR)) {
         	String tmp = getContactInfo(IFT.CONTACT_ADDR, txt);
             if (StringUtils.isNotBlank(tmp)) {
@@ -734,7 +743,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if (p.isValid()) {
                 parsedMessage.getPhoneNumbers().add(p);
             }
-        }        
+        } 
+        if(StringUtils.isNotBlank(address.getEmail())){
+        	extractEmailInfo(address.getEmail());
+        }
     }
     
     private PassengerVo findPaxByReferenceNumber(String refNumber) {

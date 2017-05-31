@@ -231,6 +231,7 @@ public class LoaderUtils {
         Email e = new Email();
         e.setCreatedBy(LOADER_USER);
         e.setAddress(vo.getAddress());
+        e.setDomain(vo.getDomain());
         return e;
     }
     

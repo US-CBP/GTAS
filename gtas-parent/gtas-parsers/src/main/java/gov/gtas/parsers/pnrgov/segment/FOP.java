@@ -36,6 +36,7 @@ import gov.gtas.parsers.util.ParseUtils;
 public class FOP extends Segment {
     private static final String CREDIT_CARD_TYPE = "CC";
     private static final String CASH_TYPE = "CA";
+    private static final String MISC_TYPE = "MS";
     
     public class Payment {
         private String paymentType;
@@ -45,6 +46,8 @@ public class FOP extends Segment {
         private Date expirationDate;
         private boolean isCreditCard;
         private boolean isCash;
+        private boolean isMiscelleneous;
+        
         public String getPaymentType() {
             return paymentType;
         }
@@ -87,6 +90,13 @@ public class FOP extends Segment {
         public void setCash(boolean isCash) {
             this.isCash = isCash;
         }
+		public boolean isMiscelleneous() {
+			return isMiscelleneous;
+		}
+		public void setMiscelleneous(boolean isMiscelleneous) {
+			this.isMiscelleneous = isMiscelleneous;
+		}
+        
     }
     
     private List<Payment> payments = new ArrayList<>();
@@ -110,6 +120,29 @@ public class FOP extends Segment {
                 }
             } else if (CASH_TYPE.equals(p.paymentType)) {
                 p.isCash = true;
+            }
+            else if(MISC_TYPE.equals(p.paymentType)){
+            	p.isMiscelleneous = true;
+            	if(c.numElements() > 1){
+            		if(c.getElement(1) != null && CREDIT_CARD_TYPE.equals(c.getElement(1) )){
+            			//FOP+MS+CC:::VI:XXXXXX3842:0818'
+            			Payment p1 = new Payment();
+            			p1.paymentType = c.getElement(1);
+            			p1.isCreditCard = true;
+                        p1.vendorCode = c.getElement(4);
+                        p1.accountNumber = c.getElement(5);
+                        String d1 = c.getElement(6);
+                        if (d1 != null) {
+                        	//Credit Card Holder #353 code fix
+                            p1.expirationDate = ParseUtils.parseDateTime(d1, "MMyy"); 
+                        }
+                        this.payments.add(p1);
+            		}
+            		p.vendorCode = c.getElement(3);
+            	}
+            	
+            	//FOP+MS'
+            	
             }
             p.paymentAmount = c.getElement(2);
         }

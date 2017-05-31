@@ -206,6 +206,7 @@ public class PnrUtils {
 		rv.setCountry(add.getCountryCode());
 		rv.setPostalCode(add.getPostalCode());
 		rv.setPhoneNumber(ParseUtils.prepTelephoneNumber(add.getTelephone()));
+		rv.setEmail(add.getEmail());
 		return rv;
 	}
 

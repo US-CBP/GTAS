@@ -25,7 +25,8 @@ import gov.gtas.parsers.edifact.Segment;
  * <li>Sponsor information.(IFT+4:43+TIMOTHY SIMS+2234 MAIN STREET ATLANTA, GA
  * IFT+4:28+AM CTCT BOG 571 600 5830 A'
  * IFT+4:28+AM CTCP BOG 571 600 5820 A PBX* 30067+770 5632891')
- * IFT+CTCE JAMIE..MCCLAUGHRY//GMAIL.COM
+ * IFT+CTCE SOME.MCCLAUGHRY//GMAIL.COM
+ * IFT+4:28::YY+CTCE SOMEBODY//GMAIL.COM'
  * </ul>
  */
 public class IFT extends Segment {
@@ -51,24 +52,23 @@ public class IFT extends Segment {
     /** Free text message */
     private List<String> messages = new ArrayList<>();
 
-    /** Email Text-is always produce one composite and one element..*/
+    /** Email Text-some time produce one composite and one element IF ..*/
+    //IFT+4:28::YY+CTCE SOMEBODY//GMAIL.COM'
     private String emailText;
     
     public IFT(List<Composite> composites) {
         super(IFT.class.getSimpleName(), composites);
 
         Composite c = getComposite(0);
+       
         if (c != null) {
-        	if(c.getElement(0) != null && c.getElement(0).startsWith(CONTACT_EMAIL)){
-        		this.emailText=c.getElement(0);
-        	}
             this.iftCode = c.getElement(0);
             this.freetextType = c.getElement(1);
             this.pricingIndicator = c.getElement(2);
             this.airline = c.getElement(3);
             this.freeTextLanguageCode = c.getElement(4);
-           // IFT+4:28+AM CTCP BOG 571 600 5820 A PBX* 30067+770 5632891'
-            //email address #330 fix
+            // IFT+4:28+AM CTCP BOG 571 600 5820 A PBX* 30067+770 5632891'
+            //email address #330 fix//if format is IFT+CTCE SOME.MCCLAUGHRY//GMAIL.COM
             if(numComposites() == 1){
             	c = getComposite(0);
             	messages.add(c.getElement(0));
@@ -76,7 +76,7 @@ public class IFT extends Segment {
             for (int i=1; i<numComposites(); i++) {
             	c = getComposite(i);
             	if (c != null) {
-                	messages.add(c.getElement(0));
+            		messages.add(c.getElement(0));
                 }
             }
         }
@@ -113,7 +113,7 @@ public class IFT extends Segment {
     public boolean isOtherServiceInfo() {
         return "4".equals(this.iftCode) && "28".equals(this.freetextType);
     }
-
+    
 	public String getEmailText() {
 		return emailText;
 	}
