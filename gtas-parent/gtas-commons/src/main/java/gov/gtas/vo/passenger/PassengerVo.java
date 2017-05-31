@@ -39,6 +39,7 @@ public class PassengerVo extends BaseVo {
     private Boolean deleted = Boolean.FALSE;
     private String seat = "";
     private String paxId;
+    private List<String> bagIds;
     
     // flight info
     private String flightId;
@@ -361,5 +362,11 @@ public class PassengerVo extends BaseVo {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
+    }
+    public List<String> getBagIds() {
+        return bagIds;
+    }
+    public void setBagIds(List<String> bagIds) {
+        this.bagIds = bagIds;
     }
 }

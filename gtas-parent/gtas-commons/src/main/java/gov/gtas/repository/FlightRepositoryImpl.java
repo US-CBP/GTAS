@@ -211,7 +211,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from loader_audit_logs",
 				"delete from error_detail",
 				"delete from audit_log",
-				"delete from dashboard_message_stats"};
+				"delete from dashboard_message_stats",
+				"delete from bag"};
 
 		Session session = em.unwrap(Session.class);
 		for (String sql : sqlScript) {

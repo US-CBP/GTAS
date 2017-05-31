@@ -70,7 +70,7 @@ public class Pnr extends Message {
 
     @Column(name = "form_of_payment")
     private String formOfPayment;
-
+    
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
@@ -114,8 +114,19 @@ public class Pnr extends Message {
     @Temporal(TemporalType.TIMESTAMP)
     private Date reservationCreateDate;
     
+    @Column(name = "trip_duration")
+    private Double tripDuration;
+
     
-    public Date getReservationCreateDate() {
+    public Double getTripDuration() {
+		return tripDuration;
+	}
+
+	public void setTripDuration(Double duration) {
+		this.tripDuration = duration;
+	}
+
+	public Date getReservationCreateDate() {
 		return reservationCreateDate;
 	}
 
@@ -379,4 +390,5 @@ public class Pnr extends Message {
         return Objects.equals(this.recordLocator, other.recordLocator)
                 && Objects.equals(this.carrier, other.carrier);
     }
+
 }

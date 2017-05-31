@@ -56,31 +56,36 @@ public class FlightServiceImpl implements FlightService {
 		return flightRespository.save(flight);
 	}
 
-	@Override
-	@Transactional
-	public FlightsPageDto findAll(FlightsRequestDto dto) {
-		List<FlightVo> vos = new ArrayList<>();
-		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
-		for (Flight f : tuple.getRight()) {
-			FlightVo vo = new FlightVo();
-			BeanUtils.copyProperties(f, vo);
-			Long fId = f.getId();
-			int rCount = 0;
-			int wCount = 0;
-			List<HitsSummary> hList = hitsSummaryRepository
-					.findHitsByFlightId(fId);
-			for (HitsSummary hs : hList) {
-				rCount += hs.getRuleHitCount();
-				wCount += hs.getWatchListHitCount();
-			}
-			vo.setListHitCount(wCount);
-			vo.setRuleHitCount(rCount);
+    @Override
+    @Transactional
+    public FlightsPageDto findAll(FlightsRequestDto dto) {
+        List<FlightVo> vos = new ArrayList<>();
+        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+        for (Flight f : tuple.getRight()) {
+            Long fId = f.getId();
+            int rCount = 0;
+            int wCount = 0;
+            List<HitsSummary> hList = hitsSummaryRepository.findHitsByFlightId(fId);
+            for (HitsSummary hs : hList) {
+                rCount += hs.getRuleHitCount();
+                wCount += hs.getWatchListHitCount();
+            }
+            f.setListHitCount(wCount);
+            f.setRuleHitCount(rCount);
+        }
+        flightRespository.flush();
 
-			vos.add(vo);
-		}
+        Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
+        for (Flight f : tuple2.getRight()) {
+            FlightVo vo = new FlightVo();
+            BeanUtils.copyProperties(f, vo);
+            vo.setListHitCount(f.getListHitCount());
+            vo.setRuleHitCount(f.getRuleHitCount());
+            vos.add(vo);
+        }
 
-		return new FlightsPageDto(vos, tuple.getLeft());
-	}
+        return new FlightsPageDto(vos, tuple.getLeft());
+    }  
 
 	@Override
 	@Transactional

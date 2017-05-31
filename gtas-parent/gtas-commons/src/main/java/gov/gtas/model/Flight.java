@@ -5,6 +5,7 @@
  */
 package gov.gtas.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
@@ -14,7 +15,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -38,8 +38,30 @@ public class Flight extends BaseEntityAudit {
     @Size(min = 4, max = 4)
     @Column(name = "flight_number", length = 4, nullable = false)
     private String flightNumber;
+    
+    @Column(name = "marketing_flight")
+    private boolean isMarketingFlight=false;
+   
+    @Column(name = "operating_flight")
+    private boolean isOperatingFlight=false;
 
-    /** combination of carrier and flight number used for reporting */
+    public boolean isMarketingFlight() {
+		return isMarketingFlight;
+	}
+
+	public void setMarketingFlight(boolean isMarketingFlight) {
+		this.isMarketingFlight = isMarketingFlight;
+	}
+
+	public boolean isOperatingFlight() {
+		return isOperatingFlight;
+	}
+
+	public void setOperatingFlight(boolean isOperatingFlight) {
+		this.isOperatingFlight = isOperatingFlight;
+	}
+
+	/** combination of carrier and flight number used for reporting */
     @Column(name = "full_flight_number")
     private String fullFlightNumber;   
     
@@ -76,6 +98,14 @@ public class Flight extends BaseEntityAudit {
     @Temporal(TemporalType.TIMESTAMP)
     private Date eta;
     
+    @Column(name = "utc_etd")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar utcEtd;
+ 
+    @Column(name = "utc_eta")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar utcEta;
+    
     @Column(length = 1, nullable = false)
     private String direction;
     
@@ -92,6 +122,9 @@ public class Flight extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operatingFlight")
+    private Set<CodeShareFlight> codeShareFlights = new HashSet<>();
     
     @Column(name = "passenger_count", nullable = false)
     private Integer passengerCount = Integer.valueOf(0);
@@ -119,7 +152,17 @@ public class Flight extends BaseEntityAudit {
     public void setPassengers(Set<Passenger> passengers) {
         this.passengers = passengers;
     }
-    public String getFlightNumber() {
+    
+    public Set<CodeShareFlight> getCodeShareFlights() {
+		return codeShareFlights;
+	}
+
+	public void setCodeShareFlights(Set<CodeShareFlight> shareFlights) {
+		this.codeShareFlights = shareFlights;
+	}
+
+	
+	public String getFlightNumber() {
         return flightNumber;
     }
     public void setFlightNumber(String flightNumber) {
@@ -238,7 +281,7 @@ public class Flight extends BaseEntityAudit {
         this.etaDate = etaDate;
     }
 
-    @Override
+	@Override
     public int hashCode() {
        return Objects.hash(this.carrier, this.flightNumber, this.flightDate, this.origin, this.destination);
     }
