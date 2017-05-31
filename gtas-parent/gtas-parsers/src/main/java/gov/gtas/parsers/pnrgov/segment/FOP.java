@@ -35,6 +35,7 @@ import gov.gtas.parsers.util.ParseUtils;
  */
 public class FOP extends Segment {
     private static final String CREDIT_CARD_TYPE = "CC";
+    private static final String CASH_TYPE = "CA";
     
     public class Payment {
         private String paymentType;
@@ -43,6 +44,7 @@ public class FOP extends Segment {
         private String accountNumber;
         private Date expirationDate;
         private boolean isCreditCard;
+        private boolean isCash;
         public String getPaymentType() {
             return paymentType;
         }
@@ -79,6 +81,12 @@ public class FOP extends Segment {
         public void setCreditCard(boolean isCreditCard) {
             this.isCreditCard = isCreditCard;
         }
+        public boolean isCash() {
+            return isCash;
+        }
+        public void setCash(boolean isCash) {
+            this.isCash = isCash;
+        }
     }
     
     private List<Payment> payments = new ArrayList<>();
@@ -91,14 +99,19 @@ public class FOP extends Segment {
             this.payments.add(p);
             
             p.paymentType = c.getElement(0);
-            p.isCreditCard = CREDIT_CARD_TYPE.equals(p.paymentType);
-            p.paymentAmount = c.getElement(2);
-            p.vendorCode = c.getElement(3);
-            p.accountNumber = c.getElement(4);
-            String d = c.getElement(5);
-            if (d != null) {
-                p.expirationDate = ParseUtils.parseDateTime(d, "mmyy"); 
+            if (CREDIT_CARD_TYPE.equals(p.paymentType)) {
+                p.isCreditCard = true;
+                p.vendorCode = c.getElement(3);
+                p.accountNumber = c.getElement(4);
+                String d = c.getElement(5);
+                if (d != null) {
+                	//Credit Card Holder #353 code fix
+                    p.expirationDate = ParseUtils.parseDateTime(d, "MMyy"); 
+                }
+            } else if (CASH_TYPE.equals(p.paymentType)) {
+                p.isCash = true;
             }
+            p.paymentAmount = c.getElement(2);
         }
     }
 

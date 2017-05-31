@@ -21,8 +21,30 @@ public class FlightVo implements Validatable {
     private Date flightDate;
     private Date etd;
     private Date eta;
+    private String marketingFlightNumber;
+    private boolean isCodeShareFlight=false;
+    private boolean isMarketingFlight=false;
     
-    public String getCarrier() {
+    
+    public boolean isMarketingFlight() {
+		return isMarketingFlight;
+	}
+	public void setMarketingFlight(boolean isMarketingFlight) {
+		this.isMarketingFlight = isMarketingFlight;
+	}
+	public String getMarketingFlightNumber() {
+		return marketingFlightNumber;
+	}
+	public void setMarketingFlightNumber(String mingFlightNumber) {
+		this.marketingFlightNumber = mingFlightNumber;
+	}
+	public boolean isCodeShareFlight() {
+		return isCodeShareFlight;
+	}
+	public void setCodeShareFlight(boolean isCodeShareFlight) {
+		this.isCodeShareFlight = isCodeShareFlight;
+	}
+	public String getCarrier() {
         return carrier;
     }
     public void setCarrier(String carrier) {

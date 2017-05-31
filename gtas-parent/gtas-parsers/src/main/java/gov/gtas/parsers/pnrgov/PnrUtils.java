@@ -5,6 +5,17 @@
  */
 package gov.gtas.parsers.pnrgov;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.segment.ADD;
@@ -18,20 +29,8 @@ import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.PhoneVo;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class PnrUtils {
-	private static final Logger logger = LoggerFactory
-			.getLogger(PnrUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(PnrUtils.class);
 
 	public static Date parseDateTime(String dt) {
 		final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_DAY_FIRST;
@@ -85,15 +84,13 @@ public class PnrUtils {
 	 * / /   /         /   /GBR/12JUL64/M//JONES/WILLIAMNEVELL
 	 * </pre>
 	 */
-	public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif)
-			throws ParseException {
+	public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif) throws ParseException {
 		SSR bestSsr = null;
 		for (SSR ssr : ssrDocs) {
 			String ssrText = ssr.getFreeText();
 			if (ssrText == null) {
 				continue;
-			} else if (bestSsr == null
-					|| ssrText.length() > bestSsr.getFreeText().length()) {
+			} else if (bestSsr == null || ssrText.length() > bestSsr.getFreeText().length()) {
 				bestSsr = ssr;
 			}
 		}
@@ -111,8 +108,7 @@ public class PnrUtils {
 		p.setPassengerType("P");
 		DocumentVo doc = new DocumentVo();
 		if (StringUtils.isNotEmpty(safeGet(strs, 1))
-				|| (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils
-						.isEmpty(safeGet(strs, 2)))) {
+				|| (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 2)))) {
 			doc.setDocumentType(safeGet(strs, 1));
 			doc.setIssuanceCountry(safeGet(strs, 2));
 			doc.setDocumentNumber(safeGet(strs, 3));
@@ -126,14 +122,11 @@ public class PnrUtils {
 			p.setGender(safeGet(strs, 6));
 			d = safeGet(strs, 7);
 			if (StringUtils.isNotBlank(d)) {
-				doc.setExpirationDate(ParseUtils.parseDateTime(d,
-						DOC_DATE_FORMAT));
+				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
 			}
 
-			processNames(p, safeGet(strs, 8), safeGet(strs, 9),
-					safeGet(strs, 10), p.getGender());
-		} else if (StringUtils.isEmpty(safeGet(strs, 1))
-				&& StringUtils.isNotEmpty(safeGet(strs, 2))) {
+			processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10), p.getGender());
+		} else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))) {
 			doc.setDocumentType(safeGet(strs, 2));
 			doc.setIssuanceCountry(safeGet(strs, 3));
 			doc.setDocumentNumber(safeGet(strs, 4));
@@ -147,16 +140,17 @@ public class PnrUtils {
 			p.setGender(safeGet(strs, 7));
 			d = safeGet(strs, 8);
 			if (StringUtils.isNotBlank(d)) {
-				doc.setExpirationDate(ParseUtils.parseDateTime(d,
-						DOC_DATE_FORMAT));
+				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
 			}
 
-			processNames(p, safeGet(strs, 9), safeGet(strs, 10),
-					safeGet(strs, 11), p.getGender());
+			processNames(p, safeGet(strs, 9), safeGet(strs, 10), safeGet(strs, 11), p.getGender());
 		}
 
-		if (StringUtils.isNotBlank(doc.getDocumentType())
-				&& StringUtils.isNotBlank(doc.getDocumentNumber())) {
+		if (StringUtils.isNotBlank(doc.getDocumentType()) && StringUtils.isNotBlank(doc.getDocumentNumber())) {
+			// FIX for issue #316
+			if (StringUtils.isBlank(p.getCitizenshipCountry())) {
+				p.setCitizenshipCountry(doc.getIssuanceCountry());
+			}
 			p.addDocument(doc);
 		} else {
 			// ToDo: logger invalid document
@@ -167,10 +161,14 @@ public class PnrUtils {
 			p.setTravelerReferenceNumber(td.getTravelerReferenceNumber());
 
 			PassengerVo tmp = new PassengerVo();
-			if (tif.getTravelerSurname() != null
-					&& td.getTravelerGivenName() != null)
-				processNames(tmp, tif.getTravelerSurname(),
-						td.getTravelerGivenName(), null, p.getGender());
+			if (tif.getTravelerSurname() != null && td.getTravelerGivenName() != null)
+				processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null, p.getGender());
+			if (StringUtils.isNoneBlank(tif.getTravelerSurname())) {
+				p.setLastName(tmp.getLastName());
+			}
+			if (StringUtils.isNoneBlank(td.getTravelerGivenName())) {
+				p.setFirstName(tmp.getFirstName());
+			}
 			p.setTitle(tmp.getTitle());
 			p.setSuffix(tmp.getSuffix());
 		}
@@ -223,8 +221,8 @@ public class PnrUtils {
 		AddressVo rv = new AddressVo();
 		rv.setCountry(safeGet(strs, 2));
 		rv.setLine1(safeGet(strs, 3));
-		rv.setLine2(safeGet(strs, 4));
-		rv.setCity(safeGet(strs, 5));
+		rv.setCity(safeGet(strs, 4));
+		rv.setState(safeGet(strs, 5));
 		rv.setPostalCode(safeGet(strs, 6));
 		return rv;
 	}
@@ -245,8 +243,7 @@ public class PnrUtils {
 	 * @return text of the nth PNR; null if does not exist.
 	 */
 	public static String getSinglePnr(EdifactLexer lexer, int index) {
-		String regex = String.format("SRC\\s*\\%c", lexer.getUna()
-				.getSegmentTerminator());
+		String regex = String.format("SRC\\s*\\%c", lexer.getUna().getSegmentTerminator());
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(lexer.getMessage());
 		boolean found = false;
@@ -293,8 +290,7 @@ public class PnrUtils {
 			if (pnr == null) {
 				break;
 			} else {
-				StringBuffer buff = new StringBuffer(lexer.getUna()
-						.getSegmentText());
+				StringBuffer buff = new StringBuffer(lexer.getUna().getSegmentText());
 				buff.append(header).append(pnr).append(footer);
 				rv.add(buff.toString());
 			}
@@ -310,13 +306,10 @@ public class PnrUtils {
 		return list.get(i);
 	}
 
-	private static final String[] SUFFIXES = { "JR", "SR", "II", "III", "IV",
-			"V", "VI", "VII", "VIII" };
-	private static final String[] PREFIXES = { "MR", "MRS", "MS", "DR", "MISS",
-			"SIR", "MADAM", "MAYOR", "PRESIDENT" };
+	private static final String[] SUFFIXES = { "JR", "SR", "II", "III", "IV", "V", "VI", "VII", "VIII" };
+	private static final String[] PREFIXES = { "MR", "MRS", "MS", "DR", "MISS", "SIR", "MADAM", "MAYOR", "PRESIDENT" };
 
-	private static void processNames(PassengerVo p, String last, String first,
-			String middle, String gender) {
+	private static void processNames(PassengerVo p, String last, String first, String middle, String gender) {
 		p.setFirstName(first);
 		p.setMiddleName(middle);
 		p.setLastName(last);
@@ -327,15 +320,13 @@ public class PnrUtils {
 				if (first.startsWith(prefix)) {
 					firstName = first.substring(prefix.length()).trim();
 				} else if (first.endsWith(prefix)) {
-					firstName = first.substring(0,
-							first.length() - prefix.length()).trim();
+					firstName = first.substring(0, first.length() - prefix.length()).trim();
 				}
 
 				if (firstName != null) {
 					p.setTitle(prefix);
 					p.setFirstName(firstName);
-					if (StringUtils.isNotEmpty(gender)
-							&& "F".equalsIgnoreCase(gender)
+					if (StringUtils.isNotEmpty(gender) && "F".equalsIgnoreCase(gender)
 							&& "MR".equalsIgnoreCase(prefix)) {
 						continue;
 					} else {
@@ -350,8 +341,7 @@ public class PnrUtils {
 			for (String suffix : SUFFIXES) {
 				if (last.endsWith(suffix)) {
 					p.setSuffix(suffix);
-					String lastName = last.substring(0,
-							last.length() - suffix.length()).trim();
+					String lastName = last.substring(0, last.length() - suffix.length()).trim();
 					p.setLastName(lastName);
 					break;
 				}
@@ -361,14 +351,8 @@ public class PnrUtils {
 
 	private static List<String> splitSsrFreeText(SSR ssr) {
 		if (ssr.getFreeText() != null) {
-			String chkString=ssr.getFreeText();
-			//issue in passenger's gender #304 code fix
-			if(chkString.startsWith("//P")){
-				chkString=chkString.substring(0, chkString.length());
-			}
 			List<String> strs = new ArrayList<>();
-			//for (String s : ssr.getFreeText().split("/")) {
-			for (String s : chkString.split("/")) {
+			for (String s : ssr.getFreeText().split("/")) {
 				strs.add(s.trim());
 			}
 			return strs;

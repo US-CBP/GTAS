@@ -5,7 +5,10 @@
  */
 package gov.gtas.parsers.paxlst;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -41,11 +44,11 @@ import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
 import gov.gtas.parsers.vo.SeatVo;
 
-public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {   
+public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
     public PaxlstParserUNedifact() {
         this.parsedMessage = new ApisMessageVo();
     }
-    
+
     protected String getPayloadText() throws ParseException {
         return lexer.getMessagePayload("BGM", "UNT");
     }
@@ -82,7 +85,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
             processFlight(tdt);
         }
-        
+
         for (;;) {
             NAD nad = getConditionalSegment(NAD.class);
             if (nad == null) {
@@ -90,7 +93,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
             processPax(nad);
         }
-        
+
         getMandatorySegment(CNT.class);
     }
 
@@ -128,7 +131,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             // and not something we handle.
             throw new ParseException("Master crew lists (MCLs) not handled at this time");
         }
-        
+
         String dest = null;
         String origin = null;
         Date eta = null;
@@ -140,8 +143,8 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (dtm == null) {
                 break;
             }
-        }       
-        
+        }
+
         // Segment group 3: loc-dtm loop
         for (;;) {
             LOC loc = getConditionalSegment(LOC.class);
@@ -204,7 +207,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 if (f.isValid()) {
                     parsedMessage.addFlight(f);
                 } else {
-                    throw new ParseException("Invalid flight: " + f); 
+                    throw new ParseException("Invalid flight: " + f);
                 }
 
                 dest = null;
@@ -215,7 +218,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
         }
     }
-    
+
     /**
      * Segment group 4: passenger details
      */
@@ -225,7 +228,9 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         p.setFirstName(nad.getFirstName());
         p.setLastName(nad.getLastName());
         p.setMiddleName(nad.getMiddleName());
-        
+
+        createPassengerAddress(nad, p);
+
         String paxType = null;
         if (nad.getNadCode() == null) {
             paxType = "P";
@@ -250,7 +255,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         } else {
             throw new ParseException("Invalid passenger: " + nad);
         }
-        
+
         for (;;) {
             ATT att = getConditionalSegment(ATT.class);
             if (att == null) {
@@ -297,6 +302,26 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (ftx == null) {
                 break;
             }
+            String bagId = ftx.getBagId();
+            if (bagId != null) {
+                p.setBagId(bagId);
+                List<String> bags = new ArrayList<>();
+                bags.add(bagId);
+                if (ftx.getNumBags() != null) {
+                    p.setBagNum(ftx.getNumBags());
+                    int numBags = Integer.parseInt(ftx.getNumBags());
+                    String airlineCode = bagId.substring(0, Math.min(bagId.length(), 2));
+                    int startNum = getNum(bagId);
+
+                    StringBuffer sb = new StringBuffer();
+                    for (int i = 0; i < numBags - 1; i++) {
+                        sb.setLength(0);
+                        String temp = sb.append(airlineCode).append(++startNum).toString();
+                        bags.add(temp);
+                    }
+                }
+                p.setBags(bags);
+            }
         }
 
         String birthCountry = null;
@@ -324,7 +349,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         }
 
         getConditionalSegment(COM.class);
-        
+
         for (;;) {
             EMP emp = getConditionalSegment(EMP.class);
             if (emp == null) {
@@ -362,11 +387,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 if (seat.isValid()) {
                     p.getSeatAssignments().add(seat);
                 }
-                
+
                 break;
 
             case CUSTOMER_REF_NUMBER:
-                // possibly freq flyer # 
+                // possibly freq flyer #
                 break;
             }
         }
@@ -380,15 +405,52 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         }
     }
 
+    private void createPassengerAddress(NAD nad, PassengerVo p) {
+        StringJoiner sj = new StringJoiner(" ");
+        if (nad.getNumberAndStreetIdentifier() != null) {
+            sj.add(nad.getNumberAndStreetIdentifier());
+        }
+        if (nad.getCity() != null) {
+            sj.add(nad.getCity());
+        }
+        if (nad.getCountrySubCode() != null) {
+            sj.add(nad.getCountrySubCode());
+        }
+        if (nad.getPostalCode() != null) {
+            sj.add(nad.getPostalCode());
+        }
+        if (nad.getCountryCode() != null) {
+            sj.add(nad.getCountryCode());
+        }
+        p.setAddress(sj.toString());
+    }
+
+    private int getNum(String s) {
+        int res = 0;
+        int p = 1;
+        int i = s.length() - 1;
+        while (i >= 0) {
+            int d = s.charAt(i) - '0';
+            if (d >= 0 && d <= 9)
+                res += d * p;
+            else
+                break;
+            i--;
+            p *= 10;
+        }
+
+        return res;
+    }
+
     /**
      * Segment group 5: Passenger documents
      */
     private void processDocument(PassengerVo p, DOC doc) throws ParseException {
         DocumentVo d = new DocumentVo();
-       
+
         d.setDocumentType(doc.getDocCode());
         d.setDocumentNumber(doc.getDocumentIdentifier());
-        
+
         for (;;) {
             DTM dtm = getConditionalSegment(DTM.class);
             if (dtm == null) {
@@ -399,20 +461,20 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 d.setExpirationDate(dtm.getDtmValue());
             }
         }
-        
+
         for (;;) {
             GEI gei = getConditionalSegment(GEI.class);
             if (gei == null) {
                 break;
             }
-        }        
+        }
 
         for (;;) {
             RFF rff = getConditionalSegment(RFF.class);
             if (rff == null) {
                 break;
             }
-        }        
+        }
 
         for (;;) {
             LOC loc = getConditionalSegment(LOC.class);
@@ -424,14 +486,15 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 d.setIssuanceCountry(loc.getLocationNameCode());
 
                 if (p.getCitizenshipCountry() == null) {
-                    // wasn't set by NAD:LOC, so derive it here from issuance country
+                    // wasn't set by NAD:LOC, so derive it here from issuance
+                    // country
                     if ("P".equals(d.getDocumentType())) {
                         p.setCitizenshipCountry(d.getIssuanceCountry());
                     }
                 }
             }
         }
-        
+
         getConditionalSegment(CPI.class);
 
         for (;;) {
@@ -439,12 +502,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (qty == null) {
                 break;
             }
-        } 
-        if(ParseUtils.isValidDocument(d)){
-        	p.addDocument(d);
         }
-        
-    }
-    
-}
+        if (ParseUtils.isValidDocument(d)) {
+            p.addDocument(d);
+        }
 
+    }
+
+}

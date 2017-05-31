@@ -8,6 +8,9 @@ package gov.gtas.parsers.edifact;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import gov.gtas.parsers.edifact.segment.UNA;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.EdifactUtils;
@@ -17,6 +20,7 @@ import gov.gtas.parsers.util.TextUtils;
  * Class for tokenizing Edifact files
  */
 public final class EdifactLexer {
+    private static final Logger logger = LoggerFactory.getLogger(EdifactLexer.class);
     private final UNA una;
     
     private final String message;
@@ -36,7 +40,11 @@ public final class EdifactLexer {
      */
     public int getStartOfSegment(String segmentName) {
         String format = "%s\\s*(\\%c|\\%c)";
-        String regex = String.format(format, segmentName, this.una.getDataElementSeparator(),  this.una.getSegmentTerminator());
+        if (segmentName.equalsIgnoreCase("UNT")) {
+            format = "%s\\s*(\\%c[0-9]|\\%c)";
+        }
+        String regex = String.format(format, segmentName, this.una.getDataElementSeparator(),
+                this.una.getSegmentTerminator());
         return TextUtils.indexOfRegex(regex, this.message);
     }
     

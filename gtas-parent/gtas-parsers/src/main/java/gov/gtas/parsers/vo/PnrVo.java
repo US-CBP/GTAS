@@ -28,6 +28,7 @@ public class PnrVo extends MessageVo implements Validatable {
     private Integer passengerCount;
     private Integer bagCount;
     private String formOfPayment;
+
     private Integer daysBookedBeforeTravel;
     
     private List<FlightVo> flights = new ArrayList<>();
@@ -226,4 +227,5 @@ public class PnrVo extends MessageVo implements Validatable {
         }
         return true;
     }
+
 }

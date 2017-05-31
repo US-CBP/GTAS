@@ -45,7 +45,7 @@ public class ADD extends Segment {
 
     public ADD(List<Composite> composites) {
         super(ADD.class.getSimpleName(), composites);
-        
+
         Composite c = getComposite(1);
         if (c != null) {
             this.addressType = c.getElement(0);
@@ -56,9 +56,10 @@ public class ADD extends Segment {
             // not recorded
             this.countryCode = c.getElement(5);
             this.postalCode = c.getElement(6);
-            
+
             String freeText = c.getElement(7);
-            if (freeText != null && freeText.contains("CTC")) {
+            // if (freeText != null && freeText.contains("CTC")) {
+            if (freeText != null) {
                 this.telephone = freeText;
             }
         }

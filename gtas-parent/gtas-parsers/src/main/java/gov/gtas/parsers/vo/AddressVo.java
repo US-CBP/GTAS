@@ -74,8 +74,15 @@ public class AddressVo implements Validatable {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
     @Override
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.line1);
+        boolean status = true;
+        if (this.getCountry() != null && this.getCountry().length() > 3) 
+            status=false;
+        if (!StringUtils.isNotBlank(this.line1)) {
+            status = false;
+        }
+        return status;
     }
 }
