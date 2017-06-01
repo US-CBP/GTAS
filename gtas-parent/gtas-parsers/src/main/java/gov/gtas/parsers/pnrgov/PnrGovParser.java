@@ -638,6 +638,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		if(tmp.indexOf("//") != -1){
     			tmp=tmp.replace("//", "@");
     		}
+    		if(tmp.indexOf("EK ") != -1){
+    			tmp=tmp.replace("EK ", "");
+    		}
              EmailVo email = new EmailVo();
              email.setAddress(tmp);
              if(tmp.indexOf("@") != -1){
@@ -654,12 +657,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         
         if (txt.contains(IFT.CONTACT_EMAIL)) {
         	//gets executed for email format IFT+4:28::YY+CTCE SOMEBODY//GMAIL.COM'
-//        	String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
-//            if (StringUtils.isNotBlank(tmp)) {
-//                EmailVo email = new EmailVo();
-//                email.setAddress(tmp);
-//                parsedMessage.getEmails().add(email);
-//            }
         	extractEmailInfo(txt);
         	
         } else if (txt.contains(IFT.CONTACT_ADDR)) {

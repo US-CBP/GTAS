@@ -30,7 +30,11 @@ import gov.gtas.parsers.util.ParseUtils;
  * <li>Form of payment is cash.(FOP+CA::731.00')
  * <li>Form of payment is Government receipt(FOP+GR::200.00::AB123456')
  * <li>Old form of payment was VISA card with an expiration date of August,
- * 2013(FOP+CC:2:628.32:VI:4235792300387826:0813’)
+ * 2013
+ * (FOP+CC:2:628.32:VI:4235792300387826:0813')
+ * Miscellaneous payment segment
+ * FOP+MS+CC:::MA:XXXXXXXX0338:0219'
+ * FOP+MS'
  * </ul>
  */
 public class FOP extends Segment {
@@ -107,7 +111,6 @@ public class FOP extends Segment {
         for (Composite c : composites) {
             Payment p = new Payment();
             this.payments.add(p);
-            
             p.paymentType = c.getElement(0);
             if (CREDIT_CARD_TYPE.equals(p.paymentType)) {
                 p.isCreditCard = true;
@@ -123,28 +126,8 @@ public class FOP extends Segment {
             }
             else if(MISC_TYPE.equals(p.paymentType)){
             	p.isMiscelleneous = true;
-            	if(c.numElements() > 1){
-            		if(c.getElement(1) != null && CREDIT_CARD_TYPE.equals(c.getElement(1) )){
-            			//FOP+MS+CC:::VI:XXXXXX3842:0818'
-            			Payment p1 = new Payment();
-            			p1.paymentType = c.getElement(1);
-            			p1.isCreditCard = true;
-                        p1.vendorCode = c.getElement(4);
-                        p1.accountNumber = c.getElement(5);
-                        String d1 = c.getElement(6);
-                        if (d1 != null) {
-                        	//Credit Card Holder #353 code fix
-                            p1.expirationDate = ParseUtils.parseDateTime(d1, "MMyy"); 
-                        }
-                        this.payments.add(p1);
-            		}
-            		p.vendorCode = c.getElement(3);
-            	}
-            	
-            	//FOP+MS'
-            	
-            }
-            p.paymentAmount = c.getElement(2);
+           	}
+           p.paymentAmount = c.getElement(2);
         }
     }
 
