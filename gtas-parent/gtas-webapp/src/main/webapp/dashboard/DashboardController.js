@@ -8,14 +8,9 @@
     'use strict';
     app.controller('DashboardController',
         function ($state, $scope, $rootScope, $q, $stateParams, dashboardService, $mdToast, sampleData, ytdRuleHits, ytdAirportStats) {
-
             var stubChartData = [[], []];
-
             $scope.colors = ['#337ab7', '#5cb85c', '#dfdfdf'];
-
-
             $scope.data = [[], []];
-
             $scope.datasetOverride = [
                 {
                     label: "APIs",
@@ -33,7 +28,7 @@
 
             $scope.sampleData = sampleData;
             $scope.switchDashboard = function (input) {
-                //$scope.sampleData = !$scope.sampleData;
+                // $scope.sampleData = !$scope.sampleData;
                 $state.go(input);
             }
             $scope.numberOfFlights = 0;
@@ -79,7 +74,7 @@
             var anchorLong = [-77.455811];
 
 
-            //------------------- AM CHARTS NEW SECTION ------------------
+            // ------------------- AM CHARTS NEW SECTION ------------------
 
             /**
              * SVG path for target icon
@@ -173,35 +168,32 @@
                     $scope.flightsListInbound = data.data.flightsList;
 
                     if($scope.flightsListInbound) {
-                        $scope.flightsListInbound.forEach((elem) => {
-
-                            if(elem.hits
-                    )
+                      $scope.flightsListInbound.forEach(function(elem){
+                      if(elem.hits)
+                      {
+                        map["dataProvider"]["images"].push({
+                            "svgPath": targetSVG,
+                            "title": elem.airportCodeStr,
+                            "color": "#CC0000",
+                            "latitude": elem.latitude,
+                            "longitude": elem.longitude
+                        })
+                      }
+                      else
                         {
-                            map["dataProvider"]["images"].push({
-                                "svgPath": targetSVG,
-                                "title": elem.airportCodeStr,
-                                "color": "#CC0000",
-                                "latitude": elem.latitude,
-                                "longitude": elem.longitude
-                            })
-                        }
-                    else
-                        {
-                            map["dataProvider"]["images"].push({
-                                "svgPath": targetSVG,
-                                "color": "#273746",
-                                "title": elem.airportCodeStr,
-                                "latitude": elem.latitude,
-                                "longitude": elem.longitude
-                            })
+                          map["dataProvider"]["images"].push({
+                              "svgPath": targetSVG,
+                              "color": "#273746",
+                              "title": elem.airportCodeStr,
+                              "latitude": elem.latitude,
+                              "longitude": elem.longitude
+                          })
                         }
 
-                        //)
-                    })
-                        ;
+                        // )
+                    });
                     }
-                    //map.validateData();
+                    // map.validateData();
                 }); // end of dashboard service
 
                 // outbound flights request
@@ -213,10 +205,8 @@
                     $scope.flightsListOutbound = data.data.flightsList;
 
                     if($scope.flightsListOutbound) {
-                        $scope.flightsListOutbound.forEach((elem) => {
-
-                            if(elem.hits
-                    )
+                        $scope.flightsListOutbound.forEach(function(elem) {
+                        if(elem.hits)
                         {
                             map["dataProvider"]["images"].push({
                                 "svgPath": targetSVG,
@@ -224,9 +214,9 @@
                                 "color": "#CC0000",
                                 "latitude": elem.latitude,
                                 "longitude": elem.longitude
-                            })
+                            });
                         }
-                    else
+                        else
                         {
                             map["dataProvider"]["images"].push({
                                 "svgPath": targetSVG,
@@ -234,12 +224,9 @@
                                 "title": elem.airportCodeStr,
                                 "latitude": elem.latitude,
                                 "longitude": elem.longitude
-                            })
+                            });
                         }
-
-                        //)
-                    })
-                        ;
+                    });
                     }
                     map.validateData();
                 }); // end of dashboard service
