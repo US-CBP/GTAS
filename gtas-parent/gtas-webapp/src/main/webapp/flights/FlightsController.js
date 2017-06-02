@@ -417,6 +417,9 @@
         	$timeout(function(){
         		resolvePage();
         	},500);
+            if($scope.gridApi.pagination.getPage() > 1){
+                $scope.gridApi.pagination.seek(1);
+            }
         };
 
         $scope.reset = function () {

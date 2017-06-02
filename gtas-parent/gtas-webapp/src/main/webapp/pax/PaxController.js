@@ -752,6 +752,9 @@
 
         $scope.filter = function () {
             resolvePage();
+            if($scope.gridApi.pagination.getPage() > 1){
+                $scope.gridApi.pagination.seek(1);
+            }
         };
 
         $scope.reset = function () {
