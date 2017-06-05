@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -132,6 +133,28 @@ public class LoaderUtils {
         return f;
     }
 
+    public void calculateValidVisaDays(Flight f,Passenger p){
+    	Date etd = f.getEtdDate();
+    	Date docExpDate=null;
+    	int validdays=0;
+    	for(Document d : p.getDocuments()){
+    		if(d.getExpirationDate() != null && d.getExpirationDate().after(etd) ){
+    			docExpDate=d.getExpirationDate();
+    			break;
+    		}
+    		else{
+    			if(docExpDate ==null){
+    				docExpDate=d.getExpirationDate();
+    			}
+    		}
+    	}
+    	if(etd != null && docExpDate != null){
+     		validdays=DateUtils.calculateValidVisaPeriod(etd, docExpDate);
+    		p.setNumberOfDaysVisaValid(validdays);
+    	}
+    	
+    }
+    
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
         f.setUpdatedBy(LOADER_USER);
         String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);

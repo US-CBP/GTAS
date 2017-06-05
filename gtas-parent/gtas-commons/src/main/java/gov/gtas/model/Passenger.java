@@ -67,6 +67,10 @@ public class Passenger extends BaseEntityAudit {
     /** calculated field */
     private Integer age;
 
+    /** calculated field */
+    @Column(name = "days_visa_valid")
+    private Integer numberOfDaysVisaValid;
+    
     private String embarkation;
 
     private String debarkation;
@@ -268,7 +272,16 @@ public class Passenger extends BaseEntityAudit {
         this.seatAssignments = seatAssignments;
     }
 
-    @Override
+    
+    public Integer getNumberOfDaysVisaValid() {
+		return numberOfDaysVisaValid;
+	}
+
+	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
+		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         // int result = super.hashCode();

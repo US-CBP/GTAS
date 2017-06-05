@@ -255,7 +255,9 @@ public class LoaderRepository {
         for (Flight f : messageFlights) {
         	
             for (Passenger p : messagePassengers) {
+            	utils.calculateValidVisaDays(f,p);
                 f.addPassenger(p);
+                
             }
             
             f.setPassengerCount(f.getPassengers().size());

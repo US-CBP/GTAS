@@ -53,5 +53,14 @@ public final class DateUtils {
         LocalDate birthday = LocalDate.of(year, month + 1, day);  // cal is 0-based. yuck
         Period p = Period.between(birthday, today);
         return p.getYears();
-    }    
+    }  
+    
+    public static Integer calculateValidVisaPeriod(Date etd,Date expDt) {
+    	if(etd == null || expDt == null){
+    		return 0;
+    	}
+    	long etdMillis = etd.getTime();
+    	long expMillis = expDt.getTime();
+        return (int)Math.round((expMillis - etdMillis)/(24 * 60 * 60 * 1000));
+    }   
 }
