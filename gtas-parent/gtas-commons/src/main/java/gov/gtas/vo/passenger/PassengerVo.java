@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import gov.gtas.model.Bag;
 import gov.gtas.vo.BaseVo;
 
 public class PassengerVo extends BaseVo {
@@ -366,7 +367,7 @@ public class PassengerVo extends BaseVo {
     public List<String> getBagIds() {
         return bagIds;
     }
-    public void setBagIds(List<String> bagIds) {
-        this.bagIds = bagIds;
+    public void setBagIds(List<String> bagIds2) {
+        this.bagIds = bagIds2;
     }
 }

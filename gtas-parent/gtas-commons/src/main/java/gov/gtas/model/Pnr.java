@@ -65,8 +65,8 @@ public class Pnr extends Message {
     @Column(name = "passenger_count")
     private Integer passengerCount;
 
-    @Column(name = "excess_bag_count")
-    private Integer excess_bag_count;
+    @Column(name = "bag_count")
+    private Integer bagCount;
     
     @Column(name = "total_bag_count")
     private Integer total_bag_count;
@@ -82,12 +82,12 @@ public class Pnr extends Message {
 		this.total_bag_weight = total_bag_weight;
 	}
 
-	public Integer getExcess_bag_count() {
-		return excess_bag_count;
+	public Integer getBagCount() {
+		return bagCount;
 	}
 
-	public void setExcess_bag_count(Integer excess_bag_count) {
-		this.excess_bag_count = excess_bag_count;
+	public void setBagCount(Integer bagCount) {
+		this.bagCount = bagCount;
 	}
 
 	public Integer getTotal_bag_count() {
