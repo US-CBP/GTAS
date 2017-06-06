@@ -30,8 +30,18 @@ public class Bag extends BaseEntity {
 	@JoinColumn(nullable = false)
 	private Flight flight;
 	
+    @Column(name = "weight", nullable = false)
+	private float weight;
 
-    public Passenger getPassenger() {
+    public float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+
+	public Passenger getPassenger() {
 		return passenger;
 	}
 
