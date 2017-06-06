@@ -65,10 +65,40 @@ public class Pnr extends Message {
     @Column(name = "passenger_count")
     private Integer passengerCount;
 
-    @Column(name = "bag_count")
-    private Integer bagCount;
+    @Column(name = "excess_bag_count")
+    private Integer excess_bag_count;
+    
+    @Column(name = "total_bag_count")
+    private Integer total_bag_count;
 
-    @Column(name = "form_of_payment")
+	@Column(name = "total_bag_weight")
+    private float total_bag_weight;
+
+    public float getTotal_bag_weight() {
+		return total_bag_weight;
+	}
+
+	public void setTotal_bag_weight(float total_bag_weight) {
+		this.total_bag_weight = total_bag_weight;
+	}
+
+	public Integer getExcess_bag_count() {
+		return excess_bag_count;
+	}
+
+	public void setExcess_bag_count(Integer excess_bag_count) {
+		this.excess_bag_count = excess_bag_count;
+	}
+
+	public Integer getTotal_bag_count() {
+		return total_bag_count;
+	}
+
+	public void setTotal_bag_count(Integer total_bag_count) {
+		this.total_bag_count = total_bag_count;
+	}
+
+	@Column(name = "form_of_payment")
     private String formOfPayment;
     
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.ALL })
@@ -331,14 +361,6 @@ public class Pnr extends Message {
 
     public void setPassengerCount(Integer passengerCount) {
         this.passengerCount = passengerCount;
-    }
-
-    public Integer getBagCount() {
-        return bagCount;
-    }
-
-    public void setBagCount(Integer bagCount) {
-        this.bagCount = bagCount;
     }
 
     public String getFormOfPayment() {
