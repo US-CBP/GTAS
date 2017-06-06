@@ -7,6 +7,8 @@ package gov.gtas.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -20,29 +22,32 @@ public class Bag extends BaseEntity {
     @Column(name = "bag_identification", nullable = false)
     private String bagId;
 
-    @Column(name = "flight_id")
-    private Long flightId;
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private Passenger passenger;
 
-    @Column(name = "passenger_id")
-    private Long passengerId;
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private Flight flight;
+	
 
-    public Long getFlightId() {
-        return flightId;
-    }
+    public Passenger getPassenger() {
+		return passenger;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
 
-    public Long getPassengerId() {
-        return passengerId;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public void setPassengerId(Long passengerId) {
-        this.passengerId = passengerId;
-    }
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
-    public String getBagId() {
+	public String getBagId() {
         return bagId;
     }
 

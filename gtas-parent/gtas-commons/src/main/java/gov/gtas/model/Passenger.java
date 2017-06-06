@@ -103,10 +103,13 @@ public class Passenger extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<Bag> bags = new HashSet<>();
 
     @Column(name = "address")
     private String address;
-
+      
     public void addDocument(Document d) {
         this.documents.add(d);
         d.setPassenger(this);
