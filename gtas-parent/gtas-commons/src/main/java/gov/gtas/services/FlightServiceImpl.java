@@ -8,8 +8,10 @@ package gov.gtas.services;
 
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
+import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.FlightRepository;
+import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.vo.passenger.FlightVo;
@@ -42,6 +44,9 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private FlightRepository flightRespository;
 
+	@Autowired
+	private HitsSummaryRepository hitsSummaryRepository;
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -51,19 +56,36 @@ public class FlightServiceImpl implements FlightService {
 		return flightRespository.save(flight);
 	}
 
-	@Override
-	@Transactional
-	public FlightsPageDto findAll(FlightsRequestDto dto) {
-		List<FlightVo> vos = new ArrayList<>();
-		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
-		for (Flight f : tuple.getRight()) {
-			FlightVo vo = new FlightVo();
-			BeanUtils.copyProperties(f, vo);
-			vos.add(vo);
-		}
+    @Override
+    @Transactional
+    public FlightsPageDto findAll(FlightsRequestDto dto) {
+        List<FlightVo> vos = new ArrayList<>();
+        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+        for (Flight f : tuple.getRight()) {
+            Long fId = f.getId();
+            int rCount = 0;
+            int wCount = 0;
+            List<HitsSummary> hList = hitsSummaryRepository.findHitsByFlightId(fId);
+            for (HitsSummary hs : hList) {
+                rCount += hs.getRuleHitCount();
+                wCount += hs.getWatchListHitCount();
+            }
+            f.setListHitCount(wCount);
+            f.setRuleHitCount(rCount);
+        }
+        flightRespository.flush();
 
-		return new FlightsPageDto(vos, tuple.getLeft());
-	}
+        Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
+        for (Flight f : tuple2.getRight()) {
+            FlightVo vo = new FlightVo();
+            BeanUtils.copyProperties(f, vo);
+            vo.setListHitCount(f.getListHitCount());
+            vo.setRuleHitCount(f.getRuleHitCount());
+            vos.add(vo);
+        }
+
+        return new FlightsPageDto(vos, tuple.getLeft());
+    }
 
 	@Override
 	@Transactional
