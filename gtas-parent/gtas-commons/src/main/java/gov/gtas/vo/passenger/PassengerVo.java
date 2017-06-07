@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import gov.gtas.model.Bag;
 import gov.gtas.vo.BaseVo;
 
 public class PassengerVo extends BaseVo {
@@ -40,7 +39,6 @@ public class PassengerVo extends BaseVo {
     private Boolean deleted = Boolean.FALSE;
     private String seat = "";
     private String paxId;
-    private List<String> bagIds;
     
     // flight info
     private String flightId;
@@ -66,10 +64,11 @@ public class PassengerVo extends BaseVo {
     // co-pax?
     private List<PassengerVo> passengers;
     private List<DocumentVo> documents = new ArrayList<>();
+    private List<BagVo> bags = new ArrayList<>();
     private FlightHistoryVo flightHistoryVo;
     private PnrVo pnrVo;
-    
-    private List<DispositionVo> dispositionHistory;
+
+	private List<DispositionVo> dispositionHistory;
     
     public String getPaxId() {
         return paxId;
@@ -168,6 +167,12 @@ public class PassengerVo extends BaseVo {
     }
     public List<DocumentVo> getDocuments() {
         return documents;
+    }
+    public void addBag(BagVo b) {
+        bags.add(b);
+    }
+    public List<BagVo> getBags() {
+        return bags;
     }
     public String getTitle() {
         return title;
@@ -363,11 +368,5 @@ public class PassengerVo extends BaseVo {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
-    }
-    public List<String> getBagIds() {
-        return bagIds;
-    }
-    public void setBagIds(List<String> bagIds2) {
-        this.bagIds = bagIds2;
     }
 }

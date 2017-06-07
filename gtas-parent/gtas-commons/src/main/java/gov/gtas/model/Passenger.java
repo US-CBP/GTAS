@@ -247,7 +247,15 @@ public class Passenger extends BaseEntityAudit {
         return documents;
     }
 
-    public void setDocuments(Set<Document> documents) {
+    public Set<Bag> getBags() {
+		return bags;
+	}
+
+	public void setBags(Set<Bag> bags) {
+		this.bags = bags;
+	}
+
+	public void setDocuments(Set<Document> documents) {
         this.documents = documents;
     }
 

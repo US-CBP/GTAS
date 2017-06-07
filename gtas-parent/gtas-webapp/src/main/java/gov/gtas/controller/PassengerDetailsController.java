@@ -40,6 +40,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.Bag;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Document;
@@ -52,6 +53,7 @@ import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
+import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.DispositionData;
@@ -64,6 +66,7 @@ import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
+import gov.gtas.vo.passenger.BagVo;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.CreditCardVo;
 import gov.gtas.vo.passenger.DispositionVo;
@@ -92,6 +95,9 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private UserService uService;
+	
+	@Resource
+	private BagRepository bagRepository;
 	
 	@Resource
 	private SeatRepository seatRepository;
@@ -155,6 +161,19 @@ public class PassengerDetailsController {
 			docVo.setIssuanceDate(d.getIssuanceDate());
 			vo.addDocument(docVo);
 		}
+		
+		Iterator<Bag> bagIter = t.getBags().iterator();
+		while (bagIter.hasNext()) {
+			Bag b = bagIter.next();
+			BagVo bagVo = new BagVo();
+			bagVo.setBagId(b.getBagId());
+			bagVo.setData_source(b.getData_source());
+			bagVo.setFirstName(b.getPassenger().getFirstName());
+			bagVo.setLastName(b.getPassenger().getLastName());
+			bagVo.setFlightNumber(b.getFlight().getFlightNumber());
+			vo.addBag(bagVo);
+		}
+
 
 		List<Disposition> cases = pService.getPassengerDispositionHistory(Long.valueOf(paxId),
 				Long.parseLong(flightId));
@@ -329,6 +348,8 @@ public class PassengerDetailsController {
 		target.setPassengerCount(source.getPassengerCount());
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
+		target.setTotalbagCount(source.getTotal_bag_count());
+		target.setTotalbagWeight(source.getTotal_bag_weight());
 		parseRawMessageToList(target);
 
 		if (!source.getAddresses().isEmpty()) {
