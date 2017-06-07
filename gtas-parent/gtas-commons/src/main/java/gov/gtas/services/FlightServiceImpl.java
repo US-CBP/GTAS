@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, Unisys Corporation.
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 
@@ -8,10 +8,8 @@ package gov.gtas.services;
 
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
-import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.vo.passenger.FlightVo;
@@ -43,10 +41,7 @@ public class FlightServiceImpl implements FlightService {
 			.getLogger(FlightServiceImpl.class);
 	@Autowired
 	private FlightRepository flightRespository;
-	
-	@Autowired
-	private HitsSummaryRepository hitsSummaryRepository;
-	
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -56,36 +51,19 @@ public class FlightServiceImpl implements FlightService {
 		return flightRespository.save(flight);
 	}
 
-    @Override
-    @Transactional
-    public FlightsPageDto findAll(FlightsRequestDto dto) {
-        List<FlightVo> vos = new ArrayList<>();
-        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
-        for (Flight f : tuple.getRight()) {
-            Long fId = f.getId();
-            int rCount = 0;
-            int wCount = 0;
-            List<HitsSummary> hList = hitsSummaryRepository.findHitsByFlightId(fId);
-            for (HitsSummary hs : hList) {
-                rCount += hs.getRuleHitCount();
-                wCount += hs.getWatchListHitCount();
-            }
-            f.setListHitCount(wCount);
-            f.setRuleHitCount(rCount);
-        }
-        flightRespository.flush();
+	@Override
+	@Transactional
+	public FlightsPageDto findAll(FlightsRequestDto dto) {
+		List<FlightVo> vos = new ArrayList<>();
+		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+		for (Flight f : tuple.getRight()) {
+			FlightVo vo = new FlightVo();
+			BeanUtils.copyProperties(f, vo);
+			vos.add(vo);
+		}
 
-        Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
-        for (Flight f : tuple2.getRight()) {
-            FlightVo vo = new FlightVo();
-            BeanUtils.copyProperties(f, vo);
-            vo.setListHitCount(f.getListHitCount());
-            vo.setRuleHitCount(f.getRuleHitCount());
-            vos.add(vo);
-        }
-
-        return new FlightsPageDto(vos, tuple.getLeft());
-    }  
+		return new FlightsPageDto(vos, tuple.getLeft());
+	}
 
 	@Override
 	@Transactional
@@ -180,7 +158,8 @@ public class FlightServiceImpl implements FlightService {
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I'";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('I') AND csfl.operating_flight_id = fl.id";
+		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
 				.getResultList();
 	}
 
@@ -189,7 +168,8 @@ public class FlightServiceImpl implements FlightService {
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY  AND direction = 'O'";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('O') AND csfl.operating_flight_id = fl.id";
+		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
 				.getResultList();
 	}
 }
