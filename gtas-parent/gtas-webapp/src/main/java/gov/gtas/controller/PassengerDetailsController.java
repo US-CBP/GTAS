@@ -348,12 +348,9 @@ public class PassengerDetailsController {
 		target.setPassengerCount(source.getPassengerCount());
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
-<<<<<<< HEAD
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
-=======
 		target.setTotalbagCount(source.getTotal_bag_count());
 		target.setTotalbagWeight(source.getTotal_bag_weight());
->>>>>>> bag-passenger-relationship
 		parseRawMessageToList(target);
 
 

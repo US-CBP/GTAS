@@ -115,7 +115,7 @@ public class PassengerServiceImpl implements PassengerService {
 
             PassengerVo vo = new PassengerVo();
             BeanUtils.copyProperties(p, vo);
-<<<<<<< HEAD
+
             
             Iterator<Document> docIter = p.getDocuments().iterator();
     		while (docIter.hasNext()) {
@@ -129,11 +129,6 @@ public class PassengerServiceImpl implements PassengerService {
     			vo.addDocument(docVo);
     		}
             
-            List<String> bagIds = bagRespository.findByFlightIdAndPassenger(f.getId(), p.getId());
-            if (bagIds != null) {
-                vo.setBagIds(bagIds);
-=======
-
             List<Bag> bagList = bagRespository.findByFlightIdAndPassengerId(f.getId(), p.getId());
             if (CollectionUtils.isNotEmpty(bagList)) {
                 List<String> bags = bagList.stream().map(bag -> bag.getBagId()).distinct()
@@ -141,7 +136,7 @@ public class PassengerServiceImpl implements PassengerService {
                 if (bags.size() == 1) {
                     vo.setSeat(bags.get(0));
                 }
->>>>>>> bag-passenger-relationship
+
             }
             
             List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(f.getId(), p.getId());
@@ -178,6 +173,7 @@ public class PassengerServiceImpl implements PassengerService {
         }
 
         return new PassengersPageDto(rv, tuple.getLeft());
+       
     }
 
     @Override
