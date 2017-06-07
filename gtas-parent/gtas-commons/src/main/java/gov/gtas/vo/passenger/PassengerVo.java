@@ -39,7 +39,6 @@ public class PassengerVo extends BaseVo {
     private Boolean deleted = Boolean.FALSE;
     private String seat = "";
     private String paxId;
-    private List<String> bagIds;
     
     // flight info
     private String flightId;
@@ -67,8 +66,8 @@ public class PassengerVo extends BaseVo {
     private List<DocumentVo> documents = new ArrayList<>();
     private FlightHistoryVo flightHistoryVo;
     private PnrVo pnrVo;
-    
-    private List<DispositionVo> dispositionHistory;
+
+	private List<DispositionVo> dispositionHistory;
     
     public String getPaxId() {
         return paxId;
@@ -168,6 +167,7 @@ public class PassengerVo extends BaseVo {
     public List<DocumentVo> getDocuments() {
         return documents;
     }
+
     public String getTitle() {
         return title;
     }
@@ -362,11 +362,5 @@ public class PassengerVo extends BaseVo {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
-    }
-    public List<String> getBagIds() {
-        return bagIds;
-    }
-    public void setBagIds(List<String> bagIds) {
-        this.bagIds = bagIds;
     }
 }

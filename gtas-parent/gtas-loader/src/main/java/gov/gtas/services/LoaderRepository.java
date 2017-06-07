@@ -319,8 +319,8 @@ public class LoaderRepository {
         for (String bagId: bagIds) {
             Bag bag = new Bag();
             bag.setBagId(bagId);
-            bag.setFlightId(f.getId());
-            bag.setPassengerId(p.getId());
+            bag.setFlight(f);
+            bag.setPassenger(p);
             bagDao.save(bag);
         }     
     }

@@ -26,6 +26,33 @@ public class PnrVo extends MessageVo {
     private Date departureDate;
     private Integer passengerCount;
     private Integer bagCount;
+    private List<BagVo> bags = new ArrayList<>();
+    
+    
+    public void addBag(BagVo b) {
+        bags.add(b);
+    }
+    public List<BagVo> getBags() {
+        return bags;
+    }
+    public Integer getTotalbagCount() {
+		return totalbagCount;
+	}
+   
+	public void setTotalbagCount(Integer totalbagCount) {
+		this.totalbagCount = totalbagCount;
+	}
+
+	public float getTotalbagWeight() {
+		return totalbagWeight;
+	}
+
+	public void setTotalbagWeight(float totalbagWeight) {
+		this.totalbagWeight = totalbagWeight;
+	}
+
+	private Integer totalbagCount;
+    private float totalbagWeight;
     private String formOfPayment;
     private String updateMode;
     private String raw;

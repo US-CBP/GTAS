@@ -33,6 +33,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.Bag;
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
@@ -114,6 +115,7 @@ public class PassengerServiceImpl implements PassengerService {
 
             PassengerVo vo = new PassengerVo();
             BeanUtils.copyProperties(p, vo);
+<<<<<<< HEAD
             
             Iterator<Document> docIter = p.getDocuments().iterator();
     		while (docIter.hasNext()) {
@@ -130,6 +132,16 @@ public class PassengerServiceImpl implements PassengerService {
             List<String> bagIds = bagRespository.findByFlightIdAndPassenger(f.getId(), p.getId());
             if (bagIds != null) {
                 vo.setBagIds(bagIds);
+=======
+
+            List<Bag> bagList = bagRespository.findByFlightIdAndPassengerId(f.getId(), p.getId());
+            if (CollectionUtils.isNotEmpty(bagList)) {
+                List<String> bags = bagList.stream().map(bag -> bag.getBagId()).distinct()
+                        .collect(Collectors.toList());
+                if (bags.size() == 1) {
+                    vo.setSeat(bags.get(0));
+                }
+>>>>>>> bag-passenger-relationship
             }
             
             List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(f.getId(), p.getId());
