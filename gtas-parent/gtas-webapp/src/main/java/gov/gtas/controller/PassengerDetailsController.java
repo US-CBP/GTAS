@@ -329,6 +329,7 @@ public class PassengerDetailsController {
 		target.setPassengerCount(source.getPassengerCount());
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
+		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		parseRawMessageToList(target);
 
 		if (!source.getAddresses().isEmpty()) {

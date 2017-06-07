@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.Disposition;
+import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
@@ -50,6 +52,7 @@ import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerVo;
 
 /**
@@ -111,7 +114,19 @@ public class PassengerServiceImpl implements PassengerService {
 
             PassengerVo vo = new PassengerVo();
             BeanUtils.copyProperties(p, vo);
-
+            
+            Iterator<Document> docIter = p.getDocuments().iterator();
+    		while (docIter.hasNext()) {
+    			Document d = docIter.next();
+    			DocumentVo docVo = new DocumentVo();
+    			docVo.setDocumentNumber(d.getDocumentNumber());
+    			docVo.setDocumentType(d.getDocumentType());
+    			docVo.setIssuanceCountry(d.getIssuanceCountry());
+    			docVo.setExpirationDate(d.getExpirationDate());
+    			docVo.setIssuanceDate(d.getIssuanceDate());
+    			vo.addDocument(docVo);
+    		}
+            
             List<String> bagIds = bagRespository.findByFlightIdAndPassenger(f.getId(), p.getId());
             if (bagIds != null) {
                 vo.setBagIds(bagIds);

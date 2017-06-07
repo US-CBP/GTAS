@@ -55,8 +55,8 @@
         	$.each($scope.ruleHits[0].hitsDetailsList, function(index,value){
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
-    	}
-        
+    	}        
+       
         $scope.getCodeTooltipData = function(field,type){
         	return codeTooltipService.getCodeTooltipData(field,type);
         };
@@ -178,7 +178,7 @@
         		var docIssuCountry = doc.issuanceCountry;
         		paxDetailService.getPaxFullTravelHistory(passenger.paxId, docNum, docIssuCountry, docExp).then(function(response){
         			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
-        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap);
+        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap); //Remove duplicates amongst the documents        			
         			for(var arry in $scope.passenger.flightHistoryVo.flightHistoryMap){
         				$scope.passenger.fullFlightHistoryVo.map = parseOutDuplicateFlights($scope.passenger.fullFlightHistoryVo.map, $scope.passenger.flightHistoryVo.flightHistoryMap[arry])
         			}
@@ -220,6 +220,10 @@
     			duplicateFreeFlightArray.push(v);
     		}
     	});
+    	
+    	//Bandaid: Re-order TVL lines so that dates are in correct order for all duplicateFreeArrays
+    	duplicateFreeFlightArray = reorderTVLdata(duplicateFreeFlightArray);
+    	
     	return duplicateFreeFlightArray;
     }
     //Multiple documents on the same PNR pull and show the same flights on the flight history tab
@@ -238,8 +242,17 @@
     	$.each(flightHistoryMap, function(index,value){
     		if(index != longestIndex){
     			flightHistoryMap[index] = parseOutDuplicateFlights(value, flightHistoryMap[longestIndex]);
-    		}
+    		}		       	
+        	
+    		//Bandaid: Sometimes flighthistory and the pnr flight legs do not match, this compares and parses them out if they do not exist in the pnrVo.flightLegs object arry
+        	flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
+        	
+        	//Bandaid: Re-order TVL lines so that dates are in correct order based on etd
+        	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);    		
     	});
+    	
+    	
+    	
     	//Remove documents with no flights now
     	var fullyParsedMap = {};
     	$.each(flightHistoryMap, function(index,value){
@@ -247,7 +260,26 @@
     			fullyParsedMap[index] = value;
     		}
     	});
+    	
     	return fullyParsedMap;
+    }
+    
+    //PNR flight legs were not matching with flight history, 
+    //this will compare the lists and remove from flight history flights that do not appear in the list under the PNR flightlegs
+    var parseOutNonMatchingFlightHistoryToPNRFlights = function(flightHistoryFlightsArry, PNRFlightsArry){
+    	if(!angular.isDefined(flightHistoryFlightsArry) || flightHistoryFlightsArry == null || !angular.isDefined(PNRFlightsArry) || PNRFlightsArry == null){
+    		return;
+    	}
+    	
+    	var parsedFlightHistory = [];
+    	$.each(PNRFlightsArry, function(index,value){
+    		$.each(flightHistoryFlightsArry, function(i,v){
+    			if(v.fullFlightNumber === value.flightNumber){ //If flighthistory has flight that is in pnr leg, set aside in new verified array
+    				parsedFlightHistory.push(v);
+    			}
+    		});
+    	});
+    	return parsedFlightHistory;
     }
     
     //Adds user from pax detail page to watchlist.
@@ -598,6 +630,11 @@
                     displayName:'pass.middlename', headerCellFilter: 'translate'
                 },
                 {
+                	field: 'documents[0].documentNumber',
+                	name:'documentNumber',
+                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                },
+                {
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName:'pass.flight', headerCellFilter: 'translate',
@@ -675,6 +712,11 @@
                 },
                 {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
                 {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},
+                {
+                	field: 'documents[0].documentNumber',
+                	name:'documentNumber',
+                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                },
                 {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
                 {
                     name: 'eta',

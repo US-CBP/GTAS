@@ -195,7 +195,8 @@
 
                                     </div>
                                     <div class="col-sm-4">
-                                         {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date }}</strong>
+                                         {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date }}</strong></br>
+                                         {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
 
                                     </div>
                                 </div>
@@ -320,10 +321,11 @@
                                                     <div class="accordion-body packageDetails1" id="accordion1">
                                                         <table class="table table-condensed">
                                                             <thead>
-                                                            <tr class="text-center" style="text-align: center">
+      														<tr class="text-center" style="text-align: center">
                                                                 <th style="text-align: center">{{'add.city' | translate}}</th>
                                                                 <th style="text-align: center">{{'add.state' | translate}}</th>
                                                                 <th style="text-align: center">{{'add.Country' | translate}}</th>
+                                                                <th style="text-align: center">{{'add.Street' | translate}}</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody ng-repeat="addr in passenger.pnrVo.addresses track by $index">
@@ -331,6 +333,7 @@
                                                                 <td style="text-align: center">{{ addr.city }}</td>
                                                                 <td style="text-align: center">{{ addr.state }}</td>
                                                                 <td style="text-align: center">{{ addr.country }}</td>
+                                                                <td style="text-align: center">{{ addr.line1 }}</td>
                                                             </tr>
                                                             </tbody>
                                                         </table>
@@ -571,7 +574,7 @@
                                      ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
                                     <span class="col-sm-offset-1"
                                           style="margin-left:3.5%; font-weight: bold;">&nbsp;{{ 'doc.doc' | translate}}# : {{ key }}</span>
-									<div class="col-sm-offset-1">Current PNR Itinerary</div>
+									<div class="col-sm-offset-1">Current Itinerary</div>
                                     <div style="padding: 15px;"></div>
                                     <table class="table table-striped">
                                         <thead>
@@ -588,8 +591,8 @@
                                         <tbody>
                                         <tr ng-repeat="j in value track by $index">
                                             <td style="text-align: center">{{j.fullFlightNumber}}</td>
-                                            <td style="text-align: center">{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                            <td style="text-align: center">{{j.etaLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
+                                            <td style="text-align: center">{{j.etdLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
                                             <td style="text-align: center">{{j.originCountry}}</td>
                                             <td style="text-align: center">{{j.origin}}</td>
                                             <td style="text-align: center">{{j.destinationCountry}}</td>
