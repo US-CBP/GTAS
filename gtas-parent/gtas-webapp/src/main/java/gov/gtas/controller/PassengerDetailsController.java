@@ -161,18 +161,6 @@ public class PassengerDetailsController {
 			docVo.setIssuanceDate(d.getIssuanceDate());
 			vo.addDocument(docVo);
 		}
-		
-		Iterator<Bag> bagIter = t.getBags().iterator();
-		while (bagIter.hasNext()) {
-			Bag b = bagIter.next();
-			BagVo bagVo = new BagVo();
-			bagVo.setBagId(b.getBagId());
-			bagVo.setData_source(b.getData_source());
-			bagVo.setFirstName(b.getPassenger().getFirstName());
-			bagVo.setLastName(b.getPassenger().getLastName());
-			bagVo.setFlightNumber(b.getFlight().getFlightNumber());
-			vo.addBag(bagVo);
-		}
 
 
 		List<Disposition> cases = pService.getPassengerDispositionHistory(Long.valueOf(paxId),
@@ -197,8 +185,20 @@ public class PassengerDetailsController {
 
 		if (!pnrList.isEmpty()) {
 			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));
+			
+			PnrVo tempVo = vo.getPnrVo();			
+			Iterator<Bag> bagIter = t.getBags().iterator();
+			while (bagIter.hasNext()) {
+				Bag b = bagIter.next();
+				if(b.getData_source().equals("pnr")){
+					BagVo bagVo = new BagVo();
+					bagVo.setBagId(b.getBagId());
+					bagVo.setData_source(b.getData_source());
+					tempVo.addBag(bagVo);
+					vo.setPnrVo(tempVo);
+				}
+			}			
 		}
-
 		return vo;
 	}
 
@@ -351,6 +351,7 @@ public class PassengerDetailsController {
 		target.setTotalbagCount(source.getTotal_bag_count());
 		target.setTotalbagWeight(source.getTotal_bag_weight());
 		parseRawMessageToList(target);
+
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();

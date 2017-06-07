@@ -64,7 +64,6 @@ public class PassengerVo extends BaseVo {
     // co-pax?
     private List<PassengerVo> passengers;
     private List<DocumentVo> documents = new ArrayList<>();
-    private List<BagVo> bags = new ArrayList<>();
     private FlightHistoryVo flightHistoryVo;
     private PnrVo pnrVo;
 
@@ -168,12 +167,7 @@ public class PassengerVo extends BaseVo {
     public List<DocumentVo> getDocuments() {
         return documents;
     }
-    public void addBag(BagVo b) {
-        bags.add(b);
-    }
-    public List<BagVo> getBags() {
-        return bags;
-    }
+
     public String getTitle() {
         return title;
     }
