@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, Unisys Corporation.
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 
@@ -43,10 +43,10 @@ public class FlightServiceImpl implements FlightService {
 			.getLogger(FlightServiceImpl.class);
 	@Autowired
 	private FlightRepository flightRespository;
-	
+
 	@Autowired
 	private HitsSummaryRepository hitsSummaryRepository;
-	
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -85,7 +85,7 @@ public class FlightServiceImpl implements FlightService {
         }
 
         return new FlightsPageDto(vos, tuple.getLeft());
-    }  
+    }
 
 	@Override
 	@Transactional
@@ -180,7 +180,8 @@ public class FlightServiceImpl implements FlightService {
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I'";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('I') AND csfl.operating_flight_id = fl.id";
+		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
 				.getResultList();
 	}
 
@@ -189,7 +190,8 @@ public class FlightServiceImpl implements FlightService {
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY  AND direction = 'O'";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class)
+		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('O') AND csfl.operating_flight_id = fl.id";
+		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
 				.getResultList();
 	}
 }
