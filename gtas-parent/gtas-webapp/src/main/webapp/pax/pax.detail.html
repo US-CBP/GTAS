@@ -504,11 +504,13 @@
                                                          <thead>
                                                             <tr class="text-center" style="text-align: center">
                                                                 <th style="text-align: center">{{'pnr.bagid' | translate}}</th>
+                                                                <th style="text-align: center">{{'pnr.dest' | translate}}</th>
                                                               </tr>
                                                             </thead>
                                                         <tbody>
                                                                 <tr ng-repeat="bags in passenger.pnrVo.bags">
-                                                                        <td style="text-align: center">{{bags.bagId}}</td>                        
+                                                                        <td style="text-align: center">{{bags.bagId}}</td> 
+                                                                        <td style="text-align: center">{{bags.destination}}</td>                      
                                                                 </tr>
                                                             </tbody>
                                                         </table>

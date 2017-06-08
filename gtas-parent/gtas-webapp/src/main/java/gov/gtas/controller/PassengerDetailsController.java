@@ -194,6 +194,7 @@ public class PassengerDetailsController {
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
 					bagVo.setData_source(b.getData_source());
+					bagVo.setDestination(b.getDestination());
 					tempVo.addBag(bagVo);
 					vo.setPnrVo(tempVo);
 				}

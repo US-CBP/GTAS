@@ -8,6 +8,14 @@ package gov.gtas.vo.passenger;
 public class BagVo{
     private String bagId;
     private String data_source;
+    private String destination;
+    
+	public String getDestination() {
+		return destination;
+	}
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
 	public String getBagId() {
 		return bagId;
 	}

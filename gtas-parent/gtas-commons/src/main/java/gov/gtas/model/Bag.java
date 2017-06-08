@@ -32,7 +32,17 @@ public class Bag extends BaseEntity {
 	
     @Column(name = "data_source", nullable = false)
     private String data_source;
+    
+    private String destination;
 
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
 
 	public String getData_source() {
 		return data_source;

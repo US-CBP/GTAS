@@ -129,16 +129,6 @@ public class PassengerServiceImpl implements PassengerService {
     			vo.addDocument(docVo);
     		}
             
-            List<Bag> bagList = bagRespository.findByFlightIdAndPassengerId(f.getId(), p.getId());
-            if (CollectionUtils.isNotEmpty(bagList)) {
-                List<String> bags = bagList.stream().map(bag -> bag.getBagId()).distinct()
-                        .collect(Collectors.toList());
-                if (bags.size() == 1) {
-                    vo.setSeat(bags.get(0));
-                }
-
-            }
-            
             List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(f.getId(), p.getId());
             if (CollectionUtils.isNotEmpty(seatList)) {
                 List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
