@@ -489,10 +489,30 @@
                                                 </td>
                                             </tr>
                                             <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
+                                                data-target=".packageDetails1">                                   
                                                 <td><strong>{{'pnr.baggage' | translate}} ({{ passenger.pnrVo.bagCount }})</strong></td>
+                                                <td><strong>{{'pnr.totalbags' | translate}} ({{ passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})</strong></td>
+                                          		<td><strong>{{'pnr.totalweight' | translate}} ({{ passenger.pnrVo.totalbagWeight}})</strong></td>
                                                 <td></td>
                                                 <td>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="accordion-body packageDetails1" id="accordion1">
+                                                        <table class="table table-condensed">
+                                                         <thead>
+                                                            <tr class="text-center" style="text-align: center">
+                                                                <th style="text-align: center">{{'pnr.bagid' | translate}}</th>
+                                                              </tr>
+                                                            </thead>
+                                                        <tbody>
+                                                                <tr ng-repeat="bags in passenger.pnrVo.bags">
+                                                                        <td style="text-align: center">{{bags.bagId}}</td>                        
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <tr>
