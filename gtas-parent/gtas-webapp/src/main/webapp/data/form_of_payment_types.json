@@ -5,7 +5,11 @@
   },
   {
     "id": "CA",
-    "name": "Cash or Check"
+    "name": "Cash"
+  },
+  {
+    "id": "CK",
+    "name": "Check"
   },
   {
     "id": "MS",

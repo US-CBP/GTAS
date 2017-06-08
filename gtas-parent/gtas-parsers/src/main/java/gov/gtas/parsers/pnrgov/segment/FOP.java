@@ -40,6 +40,7 @@ import gov.gtas.parsers.util.ParseUtils;
 public class FOP extends Segment {
     private static final String CREDIT_CARD_TYPE = "CC";
     private static final String CASH_TYPE = "CA";
+    private static final String CHECK_TYPE = "CK";
     private static final String MISC_TYPE = "MS";
     
     public class Payment {
@@ -50,6 +51,7 @@ public class FOP extends Segment {
         private Date expirationDate;
         private boolean isCreditCard;
         private boolean isCash;
+        private boolean isCheck;
         private boolean isMiscelleneous;
         
         public String getPaymentType() {
@@ -100,6 +102,12 @@ public class FOP extends Segment {
 		public void setMiscelleneous(boolean isMiscelleneous) {
 			this.isMiscelleneous = isMiscelleneous;
 		}
+		public boolean isCheck() {
+			return isCheck;
+		}
+		public void setCheck(boolean isCheck) {
+			this.isCheck = isCheck;
+		}
         
     }
     
@@ -127,6 +135,9 @@ public class FOP extends Segment {
             else if(MISC_TYPE.equals(p.paymentType)){
             	p.isMiscelleneous = true;
            	}
+            else if(CHECK_TYPE.equals(p.paymentType)){
+            	p.isCheck = true;
+            }
            p.paymentAmount = c.getElement(2);
         }
     }
