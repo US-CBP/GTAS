@@ -18,8 +18,15 @@ public class ApisMessageVo{
     private String portOfFirstArrival; 
     private int bagCount;
     private List<BagVo> bags = new ArrayList<>();
+    private boolean apisRecordExists = false;
     
     
+	public boolean isApisRecordExists() {
+		return apisRecordExists;
+	}
+	public void setApisRecordExists(boolean apisRecordExists) {
+		this.apisRecordExists = apisRecordExists;
+	}
 	public String getTravelerType() {
 		return travelerType;
 	}

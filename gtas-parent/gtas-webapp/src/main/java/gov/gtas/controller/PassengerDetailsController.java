@@ -212,6 +212,7 @@ public class PassengerDetailsController {
 		if(!apisList.isEmpty()) {
 			ApisMessage apis = apisList.get(0);
 			ApisMessageVo apisVo = new ApisMessageVo();
+			apisVo.setApisRecordExists(true);
 			apisVo.setDebarkation(apis.getDebarkation());
 			apisVo.setEmbarkation(apis.getEmbarkation());
 			apisVo.setTravelerType(apis.getTravelerType());

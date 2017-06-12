@@ -176,7 +176,42 @@
 	                	</div>
 	                </div>
                 </md-tab>
-
+                
+                <!-- APIs Tab -->
+                <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
+                	<md-tab-body>
+                		<div style="padding: 10px;"></div>
+                        <div class="span12">
+                            <div class="container" style="height:100%;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; {{'apis.embarkation' | translate}}:&nbsp; <span
+                                                style="text-decoration: underline;"><strong>{{ passenger.apisMessageVo.embarkation }}</strong></span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.debarkation}}</strong>
+                                    </div>
+                                    <div class="col-sm-4">
+                                         {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date }}</strong></br>
+                                         {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
+                                    </div>
+                                </div>                                                                <div class="row">
+                                    <div class="col-sm-4">
+                                        &nbsp;&nbsp;&nbsp;&nbsp; {{'apis.port' | translate}}:&nbsp; <span
+                                                style="text-decoration: underline;"><strong>{{ passenger.apisMessageVo.portOfFirstArrival }}</strong></span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.residenceCountry}}</strong>
+                                    </div>
+                                    <div class="col-sm-4">
+                          				 {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.travelerType}}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                	</md-tab-body>                
+                </md-tab>      
+            
                 <!-- PNR Tab -->
                 <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists">
                     <md-tab-body>
