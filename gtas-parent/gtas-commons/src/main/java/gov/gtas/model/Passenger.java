@@ -110,7 +110,18 @@ public class Passenger extends BaseEntityAudit {
     @Column(name = "address")
     private String address;
       
-    public void addDocument(Document d) {
+    
+    public Set<ApisMessage> getApisMessage() {
+		return apisMessage;
+	}
+
+	public void setApisMessage(Set<ApisMessage> apisMessage) {
+		this.apisMessage = apisMessage;
+	}
+	public void addApisMessage(ApisMessage apisMessage) {
+    }
+	
+	public void addDocument(Document d) {
         this.documents.add(d);
         d.setPassenger(this);
     }

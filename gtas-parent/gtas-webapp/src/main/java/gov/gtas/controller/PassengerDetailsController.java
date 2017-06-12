@@ -40,6 +40,7 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Bag;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Disposition;
@@ -53,6 +54,7 @@ import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
+import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -64,8 +66,10 @@ import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
+import gov.gtas.vo.BaseVo;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
+import gov.gtas.vo.passenger.ApisMessageVo;
 import gov.gtas.vo.passenger.BagVo;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.CreditCardVo;
@@ -101,6 +105,9 @@ public class PassengerDetailsController {
 	
 	@Resource
 	private SeatRepository seatRepository;
+	
+	@Resource
+	private ApisMessageRepository apisMessageRepository;
 
 	static final String EMPTY_STRING = "";
 
@@ -196,9 +203,53 @@ public class PassengerDetailsController {
 					bagVo.setData_source(b.getData_source());
 					bagVo.setDestination(b.getDestination());
 					tempVo.addBag(bagVo);
-					vo.setPnrVo(tempVo);
 				}
-			}			
+			}
+			vo.setPnrVo(tempVo);
+		}
+		
+		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(new Long(flightId), t.getId());
+		if(!apisList.isEmpty()) {
+			ApisMessage apis = apisList.get(0);
+			ApisMessageVo apisVo = new ApisMessageVo();
+			apisVo.setDebarkation(apis.getDebarkation());
+			apisVo.setEmbarkation(apis.getEmbarkation());
+			apisVo.setTravelerType(apis.getTravelerType());
+			apisVo.setPortOfFirstArrival(apis.getPortOfFirstArrival());
+			apisVo.setResidenceCountry(apis.getResidenceCountry());
+			
+			Iterator<Bag> bagIter = t.getBags().iterator();
+			while (bagIter.hasNext()) {
+				Bag b = bagIter.next();
+				if(b.getData_source().equals("apis")){
+					BagVo bagVo = new BagVo();
+					bagVo.setBagId(b.getBagId());
+					bagVo.setData_source(b.getData_source());
+					bagVo.setDestination(b.getDestination());
+					apisVo.addBag(bagVo);
+				}
+			}
+			
+			Iterator<Phone> phoneIter = apis.getPhones().iterator();
+			while(phoneIter.hasNext()) {
+				Phone p = phoneIter.next();
+				PhoneVo pVo = new PhoneVo();
+				pVo.setNumber(p.getNumber());
+				apisVo.addPhoneNumber(pVo);
+			}
+			
+			AddressVo add = new AddressVo();
+			Address installAdd = apis.getInstallationAddress();
+			add.setLine1(installAdd.getLine1());
+			add.setLine2(installAdd.getLine2());
+			add.setLine3(installAdd.getLine3());
+			add.setCity(installAdd.getCity());
+			add.setCountry(installAdd.getCountry());
+			add.setPostalCode(installAdd.getPostalCode());
+			add.setState(installAdd.getState());
+			apisVo.setInstallationAddress(add);
+			
+			vo.setApisMessageVo(apisVo);
 		}
 		return vo;
 	}

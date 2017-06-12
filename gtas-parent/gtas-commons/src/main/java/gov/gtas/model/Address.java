@@ -9,9 +9,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -41,11 +43,22 @@ public class Address extends BaseEntityAudit {
     @Column(name = "postal_code")
     private String postalCode;
 
-    @ManyToMany(
+    public Set<ApisMessage> getApisMessage() {
+		return apisMessage;
+	}
+
+	public void setApisMessage(Set<ApisMessage> apisMessage) {
+		this.apisMessage = apisMessage;
+	}
+
+	@ManyToMany(
         mappedBy = "addresses",
         targetEntity = Pnr.class
     )
     private Set<Pnr> pnrs = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress")
+    private Set<ApisMessage> apisMessage = new HashSet<>();
 
     public String getLine1() {
         return line1;

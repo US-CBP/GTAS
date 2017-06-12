@@ -66,6 +66,7 @@ public class PassengerVo extends BaseVo {
     private List<DocumentVo> documents = new ArrayList<>();
     private FlightHistoryVo flightHistoryVo;
     private PnrVo pnrVo;
+    private ApisMessageVo apisMessageVo;
 
 	private List<DispositionVo> dispositionHistory;
     
@@ -303,8 +304,14 @@ public class PassengerVo extends BaseVo {
     public void setDispositionHistory(List<DispositionVo> dispositionHistory) {
         this.dispositionHistory = dispositionHistory;
     }
-
-    @Override
+    
+	public ApisMessageVo getApisMessageVo() {
+		return apisMessageVo;
+	}
+	public void setApisMessageVo(ApisMessageVo apisMessageVo) {
+		this.apisMessageVo = apisMessageVo;
+	}
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
     }

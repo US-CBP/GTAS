@@ -27,7 +27,28 @@ public class PnrVo extends MessageVo {
     private Integer passengerCount;
     private Integer bagCount;
     private List<BagVo> bags = new ArrayList<>();
+   
+	private Integer totalbagCount;
+    private float totalbagWeight;
+    private String formOfPayment;
+    private String updateMode;
+    private String raw;
+    private List<String> rawList = new ArrayList<String>();
+    private Integer daysBookedBeforeTravel;
+    private boolean pnrRecordExists = false; 
+    private List<FlightVo> flights = new ArrayList<>();
+    private List<PassengerVo> passengers = new ArrayList<>();
+
+    private List<AddressVo> addresses = new ArrayList<>();
+    private List<PhoneVo> phoneNumbers = new ArrayList<>();
+    private List<CreditCardVo> creditCards = new ArrayList<>();
+    private List<FrequentFlyerVo> frequentFlyerDetails = new ArrayList<>();
+    private List<EmailVo> emails = new ArrayList<>();
+    private List<AgencyVo> agencies = new ArrayList<>();
+    private List<FlightLegVo> flightLegs = new ArrayList<>();
     
+    /** seat assignments in this pnr.  for display purposes only */
+    private List<SeatVo> seatAssignments = new ArrayList<>();
     
     public void addBag(BagVo b) {
         bags.add(b);
@@ -50,28 +71,6 @@ public class PnrVo extends MessageVo {
 	public void setTotalbagWeight(float totalbagWeight) {
 		this.totalbagWeight = totalbagWeight;
 	}
-
-	private Integer totalbagCount;
-    private float totalbagWeight;
-    private String formOfPayment;
-    private String updateMode;
-    private String raw;
-    private List<String> rawList = new ArrayList<String>();
-    private Integer daysBookedBeforeTravel;
-    private boolean pnrRecordExists = false; 
-    private List<FlightVo> flights = new ArrayList<>();
-    private List<PassengerVo> passengers = new ArrayList<>();
-
-    private List<AddressVo> addresses = new ArrayList<>();
-    private List<PhoneVo> phoneNumbers = new ArrayList<>();
-    private List<CreditCardVo> creditCards = new ArrayList<>();
-    private List<FrequentFlyerVo> frequentFlyerDetails = new ArrayList<>();
-    private List<EmailVo> emails = new ArrayList<>();
-    private List<AgencyVo> agencies = new ArrayList<>();
-    private List<FlightLegVo> flightLegs = new ArrayList<>();
-    
-    /** seat assignments in this pnr.  for display purposes only */
-    private List<SeatVo> seatAssignments = new ArrayList<>();
     
     public PnrVo() {
         this.bagCount = 0;

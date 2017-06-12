@@ -25,13 +25,28 @@ public class Phone extends BaseEntityAudit {
     
     @Column(nullable = false)
     private String number;
-    
-    @ManyToMany(
+
+	@ManyToMany(
         mappedBy = "phones",
         targetEntity = Pnr.class
     )
     private Set<Pnr> pnrs = new HashSet<>();
+    
+    @ManyToMany(
+            mappedBy = "phones",
+            targetEntity = Pnr.class
+        )
+    private Set<ApisMessage> apisMessages = new HashSet<>();
 
+    
+    public Set<ApisMessage> getApisMessages() {
+		return apisMessages;
+	}
+
+	public void setApisMessages(Set<ApisMessage> apisMessages) {
+		this.apisMessages = apisMessages;
+	}
+	
     public String getNumber() {
         return number;
     }

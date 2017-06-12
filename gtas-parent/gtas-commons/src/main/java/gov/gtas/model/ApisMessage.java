@@ -9,12 +9,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.FetchMode;
@@ -43,8 +45,95 @@ public class ApisMessage extends Message {
             CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "apis_message_passenger", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
+    
+    @Column(name= "traveler_type")
+    private String travelerType;
+    
+    @Column(name= "residence_country")
+    private String residenceCountry;
+    
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Phone.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "apis_phone", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
+    private Set<Phone> phones = new HashSet<>();
+    
+    @ManyToOne
+    @JoinColumn(name="installation_address")
+    private Address installationAddress;
+    
+    private String embarkation;
+    private String debarkation;
+    
+    @Column(name="port_of_first_arrival")
+    private String portOfFirstArrival; 
+    
+    @Column(name="bag_count")
+    private int bagCount;    
+    
+    public int getBagCount() {
+		return bagCount;
+	}
 
-    public void addReportingParty(ReportingParty rp) {
+	public void setBagCount(int bagCount) {
+		this.bagCount = bagCount;
+	}
+
+	public String getTravelerType() {
+		return travelerType;
+	}
+
+	public void setTravelerType(String travelerType) {
+		this.travelerType = travelerType;
+	}
+
+	public String getResidenceCountry() {
+		return residenceCountry;
+	}
+
+	public void setResidenceCountry(String residenceCountry) {
+		this.residenceCountry = residenceCountry;
+	}
+
+	public Set<Phone> getPhones() {
+		return phones;
+	}
+
+	public void setPhones(Set<Phone> phones) {
+		this.phones = phones;
+	}
+
+	public Address getInstallationAddress() {
+		return installationAddress;
+	}
+
+	public void setInstallationAddress(Address installationAddress) {
+		this.installationAddress = installationAddress;
+	}
+
+	public String getEmbarkation() {
+		return embarkation;
+	}
+
+	public void setEmbarkation(String embarkation) {
+		this.embarkation = embarkation;
+	}
+
+	public String getDebarkation() {
+		return debarkation;
+	}
+
+	public void setDebarkation(String debarkation) {
+		this.debarkation = debarkation;
+	}
+
+	public String getPortOfFirstArrival() {
+		return portOfFirstArrival;
+	}
+
+	public void setPortOfFirstArrival(String portOfFirstArrival) {
+		this.portOfFirstArrival = portOfFirstArrival;
+	}
+
+	public void addReportingParty(ReportingParty rp) {
         if (this.reportingParties == null) {
             this.reportingParties = new HashSet<>();
         }
