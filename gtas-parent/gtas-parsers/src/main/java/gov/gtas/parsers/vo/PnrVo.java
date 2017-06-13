@@ -27,13 +27,15 @@ public class PnrVo extends MessageVo implements Validatable {
     private Date departureDate;
     private Integer passengerCount;
     private Integer bagCount;
+    private Double baggageWeight;
+    private String baggageUnit;
     private String formOfPayment;
 
     private Integer daysBookedBeforeTravel;
     
     private List<FlightVo> flights = new ArrayList<>();
     private List<PassengerVo> passengers = new ArrayList<>();
-
+    private List<BagVo> bags = new ArrayList<>();
     private List<AddressVo> addresses = new ArrayList<>();
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
     private List<CreditCardVo> creditCards = new ArrayList<>();
@@ -42,7 +44,32 @@ public class PnrVo extends MessageVo implements Validatable {
     private List<AgencyVo> agencies = new ArrayList<>();
     private Date reservationCreateDate;
     
-    public PnrVo() {
+    
+    public List<BagVo> getBags() {
+		return bags;
+	}
+
+	public void setBags(List<BagVo> bags) {
+		this.bags = bags;
+	}
+
+	public Double getBaggageWeight() {
+		return baggageWeight;
+	}
+
+	public void setBaggageWeight(Double bWeight) {
+		this.baggageWeight = bWeight;
+	}
+
+	public String getBaggageUnit() {
+		return baggageUnit;
+	}
+
+	public void setBaggageUnit(String baggageUnit) {
+		this.baggageUnit = baggageUnit;
+	}
+
+	public PnrVo() {
         this.bagCount = 0;
         this.passengerCount = 0;
     }

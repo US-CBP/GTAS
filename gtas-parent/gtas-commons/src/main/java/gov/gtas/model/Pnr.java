@@ -68,6 +68,12 @@ public class Pnr extends Message {
     @Column(name = "bag_count")
     private Integer bagCount;
     
+    @Column(name = "baggage_weight")
+    private Double baggageWeight;
+    
+    @Column(name = "baggage_unit")
+    private String baggageUnit;
+    
     @Column(name = "total_bag_count")
     private Integer total_bag_count;
 
@@ -395,7 +401,23 @@ public class Pnr extends Message {
         this.flightLegs = flightLegs;
     }
 
-    @Override
+    public Double getBaggageWeight() {
+		return baggageWeight;
+	}
+
+	public void setBaggageWeight(Double bWeight) {
+		this.baggageWeight = bWeight;
+	}
+
+	public String getBaggageUnit() {
+		return baggageUnit;
+	}
+
+	public void setBaggageUnit(String baggageUnit) {
+		this.baggageUnit = baggageUnit;
+	}
+
+	@Override
     public int hashCode() {
         return Objects.hash(this.recordLocator, this.carrier);
     }

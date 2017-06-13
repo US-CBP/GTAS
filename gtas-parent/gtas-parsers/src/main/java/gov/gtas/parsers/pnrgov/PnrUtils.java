@@ -360,4 +360,30 @@ public class PnrUtils {
 		}
 		return null;
 	}
+	public static String getBagTagFromElement(String tagNumber,int counter){
+		if(StringUtils.isBlank(tagNumber)){
+			return "0";
+		}
+		tagNumber=tagNumber.replaceAll("\\s", "").trim();
+		Long value= (Long.valueOf(tagNumber))+counter;
+		return value.toString();
+	}
+	public static PassengerVo getPaxFromTIF(TIF tif,List<PassengerVo> passengers){
+		PassengerVo thePax = passengers.get(0);
+        if (tif != null) {
+            // try finding pax based on tif info
+            String surname = tif.getTravelerSurname();
+            List<TravelerDetails> td = tif.getTravelerDetails();
+            if (CollectionUtils.isNotEmpty(td)) {
+                String firstName = td.get(0).getTravelerGivenName();
+                for (PassengerVo pax : passengers) {
+                    if (surname.equals(pax.getLastName()) && firstName.equals(pax.getFirstName())) {
+                        thePax = pax;
+                        break;
+                    }
+                }
+            }
+        }
+        return thePax;
+	}
 }
