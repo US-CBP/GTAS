@@ -30,11 +30,32 @@ public class Bag extends BaseEntity {
 	@JoinColumn(nullable = false)
 	private Flight flight;
 	
-    @Column(name = "data_source", nullable = false)
+    @Column(name = "data_source")
     private String data_source;
     
     private String destination;
 
+    @Column(name = "destination_airport")
+	private String destinationAirport;
+    
+    @Column(name = "airline")
+	private String airline;
+
+	public String getDestinationAirport() {
+		return destinationAirport;
+	}
+
+	public void setDestinationAirport(String destinationAirport) {
+		this.destinationAirport = destinationAirport;
+	}
+
+	public String getAirline() {
+		return airline;
+	}
+
+	public void setAirline(String airline) {
+		this.airline = airline;
+	}
 
 	public String getDestination() {
 		return destination;

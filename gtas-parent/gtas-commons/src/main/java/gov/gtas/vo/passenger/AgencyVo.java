@@ -12,7 +12,7 @@ public class AgencyVo {
     private String country;
     private String phone;
     private String city;
-    
+
     public String getCity() {
 		return city;
 	}

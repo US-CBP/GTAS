@@ -39,7 +39,7 @@ public class Attachment implements Serializable {
 	@Column(name="filename")
 	private String filename;
 
-	@Column(name="content")
+	@Column(name="content", length=2000000)
 	@Lob
 	private Blob content;
 	

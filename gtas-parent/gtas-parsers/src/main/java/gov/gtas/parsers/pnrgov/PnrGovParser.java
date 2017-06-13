@@ -56,6 +56,7 @@ import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
+import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.EmailVo;
@@ -536,25 +537,40 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (tbd == null) {
             return;
         }
-        
+        TIF tif1 = getConditionalSegment(TIF.class);    
         Integer n = tbd.getNumBags();
+        Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
         if (n != null) {
-            parsedMessage.setBagCount(parsedMessage.getBagCount() + n);
-        } else {
-            for (BagDetails bd : tbd.getBagDetails()) {
-                Integer tmp = bd.getNumConsecutiveTags();
-                if(tmp != null){
-                   Integer curCount = parsedMessage.getBagCount();
-                   if(curCount != null){
-                      parsedMessage.setBagCount(curCount + tmp);
-                   } else {
-                       parsedMessage.setBagCount(tmp);
-                   }
-                }
-            }
+            parsedMessage.setBagCount(n);
+            parsedMessage.setBaggageWeight(weight);
+            parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
+        parsedMessage.setBags(getBagVosFromTBD(tbd.getBagDetails(),tif1));
     }
     
+    private List<BagVo> getBagVosFromTBD(List<BagDetails> bDetails,TIF tif){
+    	if(bDetails == null || bDetails.size()==0){
+    		return null;
+    	}
+    	List<BagVo> bags = new ArrayList();
+    	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
+    	for (BagDetails bd : bDetails){
+    		BagVo bvo=new BagVo();
+    		if(bd.isMemberPool()){
+    			bvo.setAirline(parsedMessage.getCarrier());
+    			bvo.setBagId(bd.getTagNumber());
+    			bvo.setData_source("PNR");
+    			bvo.setDestinationAirport(pvo.getDebarkation());
+    			bvo.setFirstName(pvo.getFirstName());
+    			bvo.setLastName(pvo.getLastName());
+    		}
+    		else{
+    			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
+    		}
+    		bags.add(bvo);
+    	}
+    	return bags;
+    }
     private void processGroup8_SplitPassenger(EQN eqn) throws ParseException {
         getMandatorySegment(RCI.class);
     }

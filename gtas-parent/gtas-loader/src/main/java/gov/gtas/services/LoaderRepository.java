@@ -25,6 +25,7 @@ import gov.gtas.model.Seat;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
+import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.EmailVo;
@@ -54,6 +55,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -324,7 +326,47 @@ public class LoaderRepository {
             bagDao.save(bag);
         }     
     }
-    
+ 
+    public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) { 
+    	
+    	for(Flight f : pnr.getFlights()){
+    		
+    		for(BagVo b : pvo.getBags()){
+    			
+    			if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
+    				for(Passenger p: f.getPassengers()){
+    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) && 
+    							StringUtils.equals(p.getLastName(), b.getLastName())){
+    						 Bag bag = new Bag();
+    	    		         bag.setBagId(b.getBagId());
+    	    		         bag.setAirline(b.getAirline());
+    	    		         bag.setData_source(b.getData_source());
+    	    		         bag.setDestinationAirport(b.getDestinationAirport());
+    	    		         bag.setFlight(f);
+    	    		         bag.setPassenger(p);
+    	    		         bagDao.save(bag);    						
+    					}
+    				}
+    			}
+    			if(b.getDestinationAirport() == null){
+    				for(Passenger p: f.getPassengers()){
+    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) && 
+    							StringUtils.equals(p.getLastName(), b.getLastName())){
+    						 Bag bag = new Bag();
+    	    		         bag.setBagId(b.getBagId());
+    	    		         bag.setAirline(f.getCarrier());
+    	    		         bag.setData_source(b.getData_source());
+    	    		         bag.setDestinationAirport(f.getDestination());
+    	    		         bag.setFlight(f);
+    	    		         bag.setPassenger(p);
+    	    		         bagDao.save(bag);    						
+    					}
+    				}    				
+    			}
+    		}
+    	}
+     
+    }
     private void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {

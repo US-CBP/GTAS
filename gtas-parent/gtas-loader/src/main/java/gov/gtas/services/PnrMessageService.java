@@ -103,7 +103,7 @@ public class PnrMessageService extends MessageLoaderService {
             }
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
-  
+            loaderRepo.createBagsFromPnrVo(vo,pnr);
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {

@@ -110,6 +110,8 @@ public class PnrServiceImpl implements PnrService {
 
 	private void mapPnr(Pnr source, Pnr target) {
 		target.setBagCount(source.getBagCount());
+		target.setBaggageUnit(source.getBaggageUnit());
+		target.setBaggageWeight(source.getBaggageWeight());
 		target.setDateBooked(source.getDateBooked());
 		target.setCarrier(source.getCarrier());
 		target.setDaysBookedBeforeTravel(source.getDaysBookedBeforeTravel());
