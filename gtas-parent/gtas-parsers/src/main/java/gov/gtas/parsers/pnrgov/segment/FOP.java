@@ -127,7 +127,7 @@ public class FOP extends Segment {
                 String d = c.getElement(5);
                 if (d != null) {
                 	//Credit Card Holder #353 code fix
-                    p.expirationDate = ParseUtils.parseDateTime(d, "MMyy"); 
+                    p.expirationDate = ParseUtils.parseExpirationDateForCC(d, "MMyy"); 
                 }
             } else if (CASH_TYPE.equals(p.paymentType)) {
                 p.isCash = true;

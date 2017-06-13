@@ -7,6 +7,7 @@ package gov.gtas.parsers.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -54,6 +55,22 @@ public final class ParseUtils {
         try {
             DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
             return timeFormat.parse(dt);
+        } catch (java.text.ParseException pe) {
+            logger.warn(String.format("Could not parse date %s using format %s", dt, format));
+        }
+        
+        return null;
+    }
+
+    public static Date parseExpirationDateForCC(String dt, String format) {
+        try {
+            DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+            Date parsedDate=timeFormat.parse(dt);
+            Calendar c = Calendar.getInstance();
+            c.setTime(parsedDate);
+            int daysInMonth = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            c.add(Calendar.DATE, daysInMonth-1);
+            return c.getTime();
         } catch (java.text.ParseException pe) {
             logger.warn(String.format("Could not parse date %s using format %s", dt, format));
         }
