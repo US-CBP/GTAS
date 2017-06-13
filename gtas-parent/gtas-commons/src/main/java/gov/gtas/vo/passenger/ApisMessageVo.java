@@ -8,7 +8,9 @@ package gov.gtas.vo.passenger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApisMessageVo{
+import gov.gtas.vo.MessageVo;
+
+public class ApisMessageVo extends MessageVo{
 	private String travelerType;
 	private String residenceCountry;
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
@@ -19,7 +21,6 @@ public class ApisMessageVo{
     private int bagCount;
     private List<BagVo> bags = new ArrayList<>();
     private boolean apisRecordExists = false;
-    
     
 	public boolean isApisRecordExists() {
 		return apisRecordExists;

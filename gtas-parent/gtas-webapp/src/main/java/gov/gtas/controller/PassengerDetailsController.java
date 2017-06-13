@@ -218,6 +218,7 @@ public class PassengerDetailsController {
 			apisVo.setTravelerType(apis.getTravelerType());
 			apisVo.setPortOfFirstArrival(apis.getPortOfFirstArrival());
 			apisVo.setResidenceCountry(apis.getResidenceCountry());
+			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 			
 			Iterator<Bag> bagIter = t.getBags().iterator();
 			while (bagIter.hasNext()) {
