@@ -127,6 +127,13 @@ public class ApisMessageService extends MessageLoaderService {
     }
 
     private boolean isUSEdifactFile(String msg) {
-        return (msg.contains("CDT") || msg.contains("PDT"));
+    	//review of Citizenship from foreign APIS Issue #387 fix
+    	//Both UNS and PDT are mandatory for USEDIFACT.CDT doesn't exist in spec
+    	if(((msg.contains("PDT+P")) || (msg.contains("PDT+V")) || (msg.contains("PDT+A")))
+    			&& (msg.contains("UNS"))){
+    		return true;
+    	}
+        //return (msg.contains("CDT") || msg.contains("PDT"));
+    	return false;
     }
 }
