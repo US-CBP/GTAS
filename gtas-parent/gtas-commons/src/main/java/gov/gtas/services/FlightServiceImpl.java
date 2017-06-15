@@ -181,7 +181,8 @@ public class FlightServiceImpl implements FlightService {
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I'";
 		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('I') AND csfl.operating_flight_id = fl.id";
-		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
+		String codeShareQueryFix = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I' AND ((marketing_flight = FALSE AND operating_flight = FALSE) OR operating_flight = TRUE)";
+		return (List<Flight>) em.createNativeQuery(codeShareQueryFix, Flight.class)
 				.getResultList();
 	}
 
@@ -191,7 +192,8 @@ public class FlightServiceImpl implements FlightService {
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
 		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY  AND direction = 'O'";
 		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('O') AND csfl.operating_flight_id = fl.id";
-		return (List<Flight>) em.createNativeQuery(sqlStrForCodeShare, Flight.class)
+		String codeShareQueryFix = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'O' AND ((marketing_flight = FALSE AND operating_flight = FALSE) OR operating_flight = TRUE)";
+		return (List<Flight>) em.createNativeQuery(codeShareQueryFix, Flight.class)
 				.getResultList();
 	}
 }
