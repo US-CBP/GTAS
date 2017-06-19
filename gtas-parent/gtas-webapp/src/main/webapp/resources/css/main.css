@@ -83,23 +83,6 @@ body{
     clear: both;
 }
 
-/*  Top  */
-.top{
-    width: 100%;
-    height: auto;
-    overflow: hidden;
-    display: block;
-    position: relative;
-	padding-top: 8px;
-	padding-bottom: 10px;
-	border-bottom: 2px solid #fff;
-    background-color: #96adbd;
-	font-family: 'ABeeZee', sans-serif;
-	font-size:	36px;
-	color: #fff;
-	text-shadow: -3px 0px 3px rgba(70, 70, 70, 1);
-}
-
 /*  Responsive code  */
 @media (max-width:1100px){
 

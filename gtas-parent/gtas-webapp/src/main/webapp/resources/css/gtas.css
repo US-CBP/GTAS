@@ -1,7 +1,9 @@
 h2 {
     font-size: 1.2em;
 }
-
+body {
+	padding-top:0px !important;
+}
 /* applies same font across different plugins */
 * {
     font-family: 'Open Sans', sans-serif;
