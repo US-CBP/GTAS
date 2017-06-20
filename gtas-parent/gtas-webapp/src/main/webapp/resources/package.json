@@ -1,0 +1,7 @@
+{
+  "name": "gtas-webapp",
+  "version": "1.0.0",
+  "dependencies": {
+    "cbp-theme": "^1.1.1"
+  }
+}
