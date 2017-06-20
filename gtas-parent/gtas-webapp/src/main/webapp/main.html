@@ -28,7 +28,7 @@
 		<div class="container-fluid">
 		  <div class="navbar-header">
 		    <a class="navbar-brand" href="#/dashboard">
-		      <div class="brand">Global Travel Assessment System</div>
+		      <div class="gtas-brand"></div>
 		      <div class="dhs-brand"></div>
 		    </a>		    
 		    <button data-target="#navbar-user-info" data-toggle="collapse" type="button" class="navbar-toggle">
@@ -46,19 +46,19 @@
 		        </a>
 		        <ul class="dropdown-menu" role="menu">
 		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
-		          	<i class="glyphicon glyphicon-filter"></i> 
+		          	<i class="fa fa-filter" aria-hidden="true"></i>
 		          	&nbsp;{{'menu.queries' | translate}}</a>
 		          </li>
 		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/adhocquery">
-		          	<i class="glyphicon glyphicon-search"></i> 
+		          	<i class="fa fa-search" aria-hidden="true"></i>
 		          	&nbsp;Quick Query</a>
 		          </li>
 		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
-		          	<i class="glyphicon glyphicon-flag"></i>
+		          	<i class="fa fa-flag" aria-hidden="true"></i>
 		          	&nbsp;{{'menu.riskcriteria' | translate}}</a>
 		          </li>
 		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
-		          	<i class="glyphicon glyphicon-eye-open"></i></span> 
+		          	<i class="fa fa-eye" aria-hidden="true"></i> 
 		          	&nbsp;{{'menu.watchlist' | translate}}</a>
 		          </li>
 		        </ul>
@@ -69,11 +69,11 @@
 		        </a>
 		        <ul class="dropdown-menu" role="menu">
 		          <li><a href="#/admin">
-		          	<i class="glyphicon glyphicon-edit"></i></span> &nbsp;{{'menu.admin' | translate}}</a>
-		          </li>
+		          	<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+					&nbsp;{{'menu.admin' | translate}}</a></li>
 		          <li><a href="#/upload">
-		          	<i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</a>
-		          </li>
+		          	<i class="fa fa-upload" aria-hidden="true"></i>
+		          	&nbsp;{{'menu.upload' | translate}}</a></li>
 		        </ul>
 		      </li>
 		      <li>
@@ -107,7 +107,7 @@
 	<div data-ng-controller="NavCtrl" role="navigation" class="app-header">
 	    <div class="container-fluid">
 	      <div class="navbar-header">
-	        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subnav">
 	        <span class="sr-only">Toggle Application Navigation</span>
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
@@ -115,25 +115,22 @@
 	        </button>
 	      </div>
 	
-	      <!-- Collect the nav links, forms, and other content for toggling -->
-	      <div class="collapse navbar-collapse">
+	      <!-- Flights, Passengers, Cases Tab -->
+	      <div id="subnav" class="collapse navbar-collapse">
 	        <div class="nav navbar-nav">
 	          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" 
 	          	class="nav nav-tabs nav-tabs-light" role="tablist">
-	          	<li>
-	              <a ng-class="{'active':selectedTab==='flights'}" ng-click="setSelectedTab('flights')" href="#/flights" role="tab" data-toggle="tab">{{'menu.flights' | translate}}</a>
-	            </li>   
-	            <li class="passengers">
-	              <a ng-click="setSelectedTab('passengers')" 
-	              	href="#/passengers" role="tab" data-toggle="tab">
-	              	<i class="glyphicon glyphicon-user"></i></span> &nbsp; {{'menu.passengers' | translate}}
-	              </a>
-	            </li>
-	            <li>
-	              <a ng-class="{'nav-item-selected':selectedTab==='cases'}" class="cases" ng-click="setSelectedTab('cases')" href="#/cases" role="tab" data-toggle="tab">
-	              	<i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases
-	              </a>
-	            </li>      
+	          	<li><a ng-disabled="onRoute('flights')" ng-class="{'nav-item-selected':selectedTab==='flights'}"
+	              	ng-click="setSelectedTab('flights')" href="#/flights" role="tab" data-toggle="tab">
+	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>   
+	            <li><a ng-disabled="onRoute('passengers')" ng-class="{'nav-item-selected':selectedTab==='passengers'}" 
+	              	ng-click="setSelectedTab('passengers')" href="#/passengers" role="tab" data-toggle="tab">
+	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; {{'menu.passengers' | translate}}
+	              </a></li>
+	            <li><a ng-disabled="onRoute('cases')"  ng-class="{'nav-item-selected':selectedTab==='cases'}" 
+	              	ng-click="setSelectedTab('cases')" href="#/cases" role="tab" data-toggle="tab">
+	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
+	              </a></li>      
 	          </ul>
 	        </div>
 	
@@ -160,111 +157,6 @@
 	      </div>
 	    </div>
 	</div>
-
-  <!--  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div data-ng-controller="NavCtrl">
-        <span style="color: black;">
-
-          <div class="nav navbar-nav navbar-right" ng-if="showNav()" style="margin: 0;">
-            <md-button class="md-button" target="_blank" href="https://github.com/US-CBP/GTAS/issues">
-              <span><i class="fa fa-stack-overflow"></i></span>&nbsp;Feedback</md-button>
-          </div>
-          <div class="nav navbar-nav navbar-right" ng-if="showNav()" style="margin: 0;">
-          	<md-menu md-position-mode="target-right target" md-offset="2 42">
-          		<md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
-          		{{currentlyLoggedInUser.lastName}}, {{currentlyLoggedInUser.firstName}}
-          		<span style="color: black;" class="caret"></span>
-          		</md-button>
-          		<md-menu-content class="dropdown">
-	          		<md-menu-item>
-	          			<md-button class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}" ng-click="logout()">{{'login.logout' | translate}}</md-button>
-	          		</md-menu-item>
-	          		<md-menu-item>
-			          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
-			                     class="md-button" ng-class="{'md-raised md-primary': onRoute('userSettings')}" ng-disabled="onRoute('userSettings')"
-			                     href="#/userSettings" ng-click="this.close()">
-			                {{'menu.settings' | translate}}			            
-			          </md-button>
-	          		</md-menu-item>
-          		</md-menu-content>
-          	</md-menu>
-          </div>
-          <div class="nav navbar-nav navbar-right" ng-if="showNav() == false" style="margin: 0;">
-            <md-button class="md-button" onclick="window.close()">X</md-button>
-          </div>
-        </span>
-        <span style="color: black;" data-ng-if="showNav()">
-
-
-
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('passengers'), 'nav-item-selected':selectedTab==='passengers'}"
-                     ng-disabled="onRoute('passengers')" href="#/passengers" ng-click="this.close(); setSelectedTab('passengers')"> <span><i class="glyphicon glyphicon-user"></i></span> &nbsp; {{'menu.passengers' | translate}}
-              </md-button>
-
-          <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('cases'), 'nav-item-selected':selectedTab==='cases'}"
-                     ng-disabled="onRoute('cases')" href="#/cases" ng-click="this.close(); setSelectedTab('cases')"
-                     style="padding-right:20px; border-right: 1px solid #ccc;">
-            <span><i class="glyphicon glyphicon-folder-close"></i> &nbsp;Cases</span></md-button>
-
-       
-        <md-menu data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES}}, {{ROLES.MANAGE_RULES}} ]"md-offset="2 42">
-          <md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
-            Manage&nbsp;
-            <span style="color: black;" class="caret"></span>
-          </md-button>
-          <md-menu-content class="dropdown">
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('queries')}"
-                ng-disabled="onRoute('queries')" href="#/build/query" ng-click="this.close(); setSelectedTab('query')"><span><i class="glyphicon glyphicon-filter"></i> &nbsp;{{'menu.queries' | translate}}</span></md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('adhocquery')}"
-                ng-disabled="onRoute('adhocquery')" href="#/adhocquery" ng-click="this.close(); setSelectedTab('adhocquery')"><span><i class="glyphicon glyphicon-search"></i> &nbsp;Quick Query</span></md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('risks')}"
-                ng-disabled="onRoute('risks')" href="#/build/rule" ng-click="this.close(); setSelectedTab('rules')">
-                <span><i class="glyphicon glyphicon-flag"></i></span> &nbsp;{{'menu.riskcriteria' | translate}}</md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('watchlists')}"
-                ng-disabled="onRoute('watchlists')" href="#/watchlists" ng-click="this.close(); setSelectedTab('watchlist')"><span><i class="glyphicon glyphicon-eye-open"></i></span> &nbsp;{{'menu.watchlist' | translate}}</md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-
-
-        <md-menu data-has-role="[{{ ROLES.ADMIN }}]" md-offset="2 42">
-          <md-button ng-click="$mdOpenMenu()" class="md-button" ng-class="{'md-raised md-primary': onRoute('dashboard')}" href="">
-            Admin&nbsp;
-            <span style="color: black;" class="caret"></span>
-          </md-button>
-          <md-menu-content class="dropdown">
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('admin')}" ng-disabled="onRoute('admin')"
-                href="#/admin" ng-click="setSelectedTab('admin');this.close();">
-                <span><i class="glyphicon glyphicon-edit"></i></span> &nbsp;{{'menu.admin' | translate}} </md-button>
-            </md-menu-item>
-            <md-menu-item>
-              <md-button data-has-role="[{{ ROLES.ADMIN }}]" class="md-button" ng-class="{'md-raised md-primary': onRoute('upload')}" ng-disabled="onRoute('upload')"
-                href="#/upload" ng-click="setSelectedTab('upload');this.close();"><span><i class="glyphicon glyphicon-upload"></i></span> &nbsp;{{'menu.upload' | translate}}</md-button>
-            </md-menu-item>
-          </md-menu-content>
-        </md-menu>
-                         
-  	        
-		 	<span class="nav navbar-nav" style="position:absolute">
-		        <input style="vertical-align:webkit-baseline-middle;"placeholder="Search" data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" label="SEARCH" class="adhocquery-search-bar" ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress ="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')">
-		        </input>
-		        <button ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-click="searchBarQuery() && setSelectedTab('adhocquery')" aria-label="Search" class="btn btn-primary"><i class="fa fa-search"></i></button>
-			</span>
-        </span>
-        </div>
-      </div>
-    </div>
-  </nav>
-  -->
   <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard" ></div>
   <div class="content" ui-view=""></div>

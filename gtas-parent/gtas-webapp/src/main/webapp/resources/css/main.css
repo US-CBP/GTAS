@@ -37,60 +37,13 @@ body{
 .tg td.tick img{width:23px; margin: 0 auto;}
 .tg th.id{padding:5px 5px;font-weight: bold;border-style:solid;border-width:1px;overflow:hidden;word-break:normal}
 
-/*  Header  */
-@media (min-width:1000px){
-    header{
-        display: block;
-        background: rgb(0, 128, 128);; 
-    }
-	header .app-menu{
-	margin-left:-50px; 
-	background:#dee3ed; 
-	width:340px;
-	}
-	
-    header .logo{
-        margin-top: 5px;
-		margin-left: 15px;
-    }
-	header .logo img{
-	width:200px;
-	}
-	header li.quick{
-	font-family: 'ABeeZee', sans-serif;
-	background-color: #2b2f3a;
-	width:300px;
-	height:auto;
-	padding-top:2px;
-	padding-bottom:2px;
-	color:#fff;
-	text-align:center;
-	list-style-type:none;
-	margin-left:-30px;
-	margin-top:20px;
+.gtas-brand:before {
+	content: 'Global Travel Assessment System'
 }
-/*  Main  */
-.main{
-    width: 100%;
-    height: 100%;
-    padding-left: 340px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 55;
-    background: #f6f6f6;
-    clear: both;
-}
-
-/*  Responsive code  */
-@media (max-width:1100px){
-
-    }
-
 @media (max-width:550px){
-
-	}
+		.gtas-brand:before {
+	content: 'GTAS'
+}
 	
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none !important;
