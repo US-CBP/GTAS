@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="resources/bower_components/open-sans-fontface/open-sans.css" />
     <link rel="stylesheet" href="resources/css/style-icomoon.css" />
     <link rel="stylesheet" href="resources/bower_components/bootstrap/dist/css/bootstrap.css" />
+    	<link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
     <link rel="stylesheet" href="resources/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" />
     <link rel="stylesheet" href="resources/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
     <link rel="stylesheet" href="resources/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css" />
@@ -23,11 +24,10 @@
     <link rel="stylesheet" href="resources/css/login.css" />
     <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="resources/bower_components/font-awesome-animation/dist/font-awesome-animation.min.css">
-</head>
+ </head>
 
 <body>
-    <header class="header" title="{{'gtas.title' | translate}}"></header>
-
+   <header class="header" title="{{'gtas.title' | translate}}"></header>
     <div id="main" class="container" style="padding-top:100px">
         <form name="loginform" id="loginform" ng-controller="LoginController" ng-submit="login(credentials)">
             <p class="login-username">
@@ -78,6 +78,9 @@
     <script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
     <script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
     <script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+    <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
+	<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>	
+
 
     <script src='app.js'></script>
     <script src='common/directives.js'></script>
