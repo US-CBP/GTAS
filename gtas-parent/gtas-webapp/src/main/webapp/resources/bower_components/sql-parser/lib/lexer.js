@@ -50,6 +50,27 @@
       return this.tokens.push([name, value, this.currentLine]);
     };
 
+    Lexer.prototype.tokenizeFromStringRegex = function(name, regex, part, lengthPart, output) {
+      var match, partMatch;
+      if (part == null) {
+        part = 0;
+      }
+      if (lengthPart == null) {
+        lengthPart = part;
+      }
+      if (output == null) {
+        output = true;
+      }
+      if (!(match = regex.exec(this.chunk))) {
+        return 0;
+      }
+      partMatch = match[part].replace(/''/g, "'");
+      if (output) {
+        this.token(name, partMatch);
+      }
+      return match[lengthPart].length;
+    };
+
     Lexer.prototype.tokenizeFromRegex = function(name, regex, part, lengthPart, output) {
       var match, partMatch;
       if (part == null) {
@@ -100,7 +121,7 @@
     };
 
     Lexer.prototype.keywordToken = function() {
-      return this.tokenizeFromWord('SELECT') || this.tokenizeFromWord('DISTINCT') || this.tokenizeFromWord('FROM') || this.tokenizeFromWord('WHERE') || this.tokenizeFromWord('GROUP') || this.tokenizeFromWord('ORDER') || this.tokenizeFromWord('BY') || this.tokenizeFromWord('HAVING') || this.tokenizeFromWord('LIMIT') || this.tokenizeFromWord('JOIN') || this.tokenizeFromWord('LEFT') || this.tokenizeFromWord('RIGHT') || this.tokenizeFromWord('INNER') || this.tokenizeFromWord('OUTER') || this.tokenizeFromWord('ON') || this.tokenizeFromWord('AS') || this.tokenizeFromWord('UNION') || this.tokenizeFromWord('ALL') || this.tokenizeFromWord('LIMIT') || this.tokenizeFromWord('OFFSET') || this.tokenizeFromWord('FETCH') || this.tokenizeFromWord('ROW') || this.tokenizeFromWord('ROWS') || this.tokenizeFromWord('ONLY') || this.tokenizeFromWord('NEXT') || this.tokenizeFromWord('FIRST');
+      return this.tokenizeFromWord('SELECT') || this.tokenizeFromWord('INSERT') || this.tokenizeFromWord('INTO') || this.tokenizeFromWord('DEFAULT') || this.tokenizeFromWord('VALUES') || this.tokenizeFromWord('DISTINCT') || this.tokenizeFromWord('FROM') || this.tokenizeFromWord('WHERE') || this.tokenizeFromWord('GROUP') || this.tokenizeFromWord('ORDER') || this.tokenizeFromWord('BY') || this.tokenizeFromWord('HAVING') || this.tokenizeFromWord('LIMIT') || this.tokenizeFromWord('JOIN') || this.tokenizeFromWord('LEFT') || this.tokenizeFromWord('RIGHT') || this.tokenizeFromWord('INNER') || this.tokenizeFromWord('OUTER') || this.tokenizeFromWord('ON') || this.tokenizeFromWord('AS') || this.tokenizeFromWord('UNION') || this.tokenizeFromWord('ALL') || this.tokenizeFromWord('LIMIT') || this.tokenizeFromWord('OFFSET') || this.tokenizeFromWord('FETCH') || this.tokenizeFromWord('ROW') || this.tokenizeFromWord('ROWS') || this.tokenizeFromWord('ONLY') || this.tokenizeFromWord('NEXT') || this.tokenizeFromWord('FIRST');
     };
 
     Lexer.prototype.dotToken = function() {
@@ -160,11 +181,11 @@
     };
 
     Lexer.prototype.parameterToken = function() {
-      return this.tokenizeFromRegex('PARAMETER', PARAMETER);
+      return this.tokenizeFromRegex('PARAMETER', PARAMETER, 1, 0);
     };
 
     Lexer.prototype.stringToken = function() {
-      return this.tokenizeFromRegex('STRING', STRING, 1, 0) || this.tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0);
+      return this.tokenizeFromStringRegex('STRING', STRING, 1, 0) || this.tokenizeFromRegex('DBLSTRING', DBLSTRING, 1, 0);
     };
 
     Lexer.prototype.parensToken = function() {
@@ -188,11 +209,11 @@
         return 0;
       }
       partMatch = match[0];
-      newlines = partMatch.replace(/[^\n]/, '').length;
-      this.currentLine += newlines;
       if (this.preserveWhitespace) {
-        this.token(name, partMatch);
+        this.token('WHITESPACE', partMatch);
       }
+      newlines = partMatch.match(/\n/g, '');
+      this.currentLine += (newlines != null ? newlines.length : void 0) || 0;
       return partMatch.length;
     };
 
@@ -216,7 +237,7 @@
 
     BOOLEAN = ['TRUE', 'FALSE', 'NULL'];
 
-    MATH = ['+', '-'];
+    MATH = ['+', '-', '||', '&&'];
 
     MATH_MULTI = ['/', '*'];
 
@@ -226,13 +247,13 @@
 
     WHITESPACE = /^[ \n\r]+/;
 
-    LITERAL = /^`?([a-z_][a-z0-9_]{0,})`?/i;
+    LITERAL = /^`?([a-z_][a-z0-9_]{0,}(\:(number|float|string|date|boolean))?)`?/i;
 
-    PARAMETER = /^\$[0-9]+/;
+    PARAMETER = /^\$([a-z0-9_]+(\:(number|float|string|date|boolean))?)/;
 
     NUMBER = /^[0-9]+(\.[0-9]+)?/;
 
-    STRING = /^'([^\\']*(?:\\.[^\\']*)*)'/;
+    STRING = /^'((?:[^\\']+?|\\.|'')*)'(?!')/;
 
     DBLSTRING = /^"([^\\"]*(?:\\.[^\\"]*)*)"/;
 

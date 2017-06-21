@@ -1,19 +1,21 @@
 /*!
- * Angular Material Design
+ * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.0.7-master-d86efaf
+ * v1.1.4-master-75237c6
  */
-goog.provide('ng.material.components.fabShared');
-goog.require('ng.material.core');
+goog.provide('ngmaterial.components.fabShared');
+goog.require('ngmaterial.core');
 (function() {
   'use strict';
 
+  MdFabController['$inject'] = ["$scope", "$element", "$animate", "$mdUtil", "$mdConstant", "$timeout"];
   angular.module('material.components.fabShared', ['material.core'])
     .controller('MdFabController', MdFabController);
 
   function MdFabController($scope, $element, $animate, $mdUtil, $mdConstant, $timeout) {
     var vm = this;
+    var initialAnimationAttempts = 0;
 
     // NOTE: We use async eval(s) below to avoid conflicts with any existing digest loops
 
@@ -34,12 +36,23 @@ goog.require('ng.material.core');
       $scope.$evalAsync("vm.isOpen = !vm.isOpen");
     };
 
-    setupDefaults();
-    setupListeners();
-    setupWatchers();
+    /*
+     * AngularJS Lifecycle hook for newer AngularJS versions.
+     * Bindings are not guaranteed to have been assigned in the controller, but they are in the $onInit hook.
+     */
+    vm.$onInit = function() {
+      setupDefaults();
+      setupListeners();
+      setupWatchers();
 
-    var initialAnimationAttempts = 0;
-    fireInitialAnimations();
+      fireInitialAnimations();
+    };
+
+    // For AngularJS 1.4 and older, where there are no lifecycle hooks but bindings are pre-assigned,
+    // manually call the $onInit hook.
+    if (angular.version.major === 1 && angular.version.minor <= 4) {
+      this.$onInit();
+    }
 
     function setupDefaults() {
       // Set the default direction to 'down' if none is specified
@@ -52,7 +65,7 @@ goog.require('ng.material.core');
       resetActionIndex();
 
       // Add an animations waiting class so we know not to run
-      $element.addClass('_md-animations-waiting');
+      $element.addClass('md-animations-waiting');
     }
 
     function setupListeners() {
@@ -152,7 +165,7 @@ goog.require('ng.material.core');
         // Fire our animation
         $animate.addClass($element, '_md-animations-ready').then(function() {
           // Remove the waiting class
-          $element.removeClass('_md-animations-waiting');
+          $element.removeClass('md-animations-waiting');
         });
       }
 
@@ -301,7 +314,6 @@ goog.require('ng.material.core');
       return $element.find('md-fab-actions');
     }
   }
-  MdFabController.$inject = ["$scope", "$element", "$animate", "$mdUtil", "$mdConstant", "$timeout"];
 })();
 
 (function() {
@@ -312,6 +324,8 @@ goog.require('ng.material.core');
    *
    * @type {number}
    */
+  MdFabSpeedDialFlingAnimation['$inject'] = ["$timeout"];
+  MdFabSpeedDialScaleAnimation['$inject'] = ["$timeout"];
   var cssAnimationDuration = 300;
 
   /**
@@ -323,7 +337,6 @@ goog.require('ng.material.core');
     .module('material.components.fabSpeedDial', [
       'material.core',
       'material.components.fabShared',
-      'material.components.fabTrigger',
       'material.components.fabActions'
     ])
 
@@ -383,16 +396,16 @@ goog.require('ng.material.core');
    * <hljs lang="html">
    * <md-fab-speed-dial md-direction="up" class="md-fling">
    *   <md-fab-trigger>
-   *     <md-button aria-label="Add..."><md-icon icon="/img/icons/plus.svg"></md-icon></md-button>
+   *     <md-button aria-label="Add..."><md-icon md-svg-src="/img/icons/plus.svg"></md-icon></md-button>
    *   </md-fab-trigger>
    *
    *   <md-fab-actions>
    *     <md-button aria-label="Add User">
-   *       <md-icon icon="/img/icons/user.svg"></md-icon>
+   *       <md-icon md-svg-src="/img/icons/user.svg"></md-icon>
    *     </md-button>
    *
    *     <md-button aria-label="Add Group">
-   *       <md-icon icon="/img/icons/group.svg"></md-icon>
+   *       <md-icon md-svg-src="/img/icons/group.svg"></md-icon>
    *     </md-button>
    *   </md-fab-actions>
    * </md-fab-speed-dial>
@@ -429,7 +442,7 @@ goog.require('ng.material.core');
 
     function runAnimation(element) {
       // Don't run if we are still waiting and we are not ready
-      if (element.hasClass('_md-animations-waiting') && !element.hasClass('_md-animations-ready')) {
+      if (element.hasClass('md-animations-waiting') && !element.hasClass('_md-animations-ready')) {
         return;
       }
 
@@ -512,9 +525,8 @@ goog.require('ng.material.core');
         runAnimation(element);
         delayDone(done);
       }
-    }
+    };
   }
-  MdFabSpeedDialFlingAnimation.$inject = ["$timeout"];
 
   function MdFabSpeedDialScaleAnimation($timeout) {
     function delayDone(done) { $timeout(done, cssAnimationDuration, false); }
@@ -556,9 +568,8 @@ goog.require('ng.material.core');
         runAnimation(element);
         delayDone(done);
       }
-    }
+    };
   }
-  MdFabSpeedDialScaleAnimation.$inject = ["$timeout"];
 })();
 
-ng.material.components.fabShared = angular.module("material.components.fabShared");
+ngmaterial.components.fabShared = angular.module("material.components.fabShared");

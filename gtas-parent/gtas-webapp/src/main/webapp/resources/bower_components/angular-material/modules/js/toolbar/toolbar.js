@@ -1,8 +1,8 @@
 /*!
- * Angular Material Design
+ * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.0.7-master-d86efaf
+ * v1.1.4-master-75237c6
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -11,6 +11,7 @@
  * @ngdoc module
  * @name material.components.toolbar
  */
+mdToolbarDirective['$inject'] = ["$$rAF", "$mdConstant", "$mdUtil", "$mdTheming", "$animate"];
 angular.module('material.components.toolbar', [
   'material.core',
   'material.components.content'
@@ -37,10 +38,7 @@ angular.module('material.components.toolbar', [
  *   <md-toolbar>
  *
  *     <div class="md-toolbar-tools">
- *       <span>My App's Title</span>
- *
- *       <!-- fill up the space between left and right area -->
- *       <span flex></span>
+ *       <h2 md-truncate flex>My App's Title</h2>
  *
  *       <md-button>
  *         Right Bar Button
@@ -53,6 +51,30 @@ angular.module('material.components.toolbar', [
  *   </md-content>
  * </div>
  * </hljs>
+ *
+ * <i><b>Note:</b> The code above shows usage with the `md-truncate` component which provides an
+ * ellipsis if the title is longer than the width of the Toolbar.</i>
+ *
+ * ## CSS & Styles
+ *
+ * The `<md-toolbar>` provides a few custom CSS classes that you may use to enhance the
+ * functionality of your toolbar.
+ *
+ * <div>
+ * <docs-css-api-table>
+ *
+ *   <docs-css-selector code="md-toolbar .md-toolbar-tools">
+ *     The `md-toolbar-tools` class provides quite a bit of automatic styling for your toolbar
+ *     buttons and text. When applied, it will center the buttons and text vertically for you.
+ *   </docs-css-selector>
+ *
+ * </docs-css-api-table>
+ * </div>
+ *
+ * ### Private Classes
+ *
+ * Currently, the only private class is the `md-toolbar-transitions` class. All other classes are
+ * considered public.
  *
  * @param {boolean=} md-scroll-shrink Whether the header should shrink away as
  * the user scrolls down, and reveal itself as the user scrolls up.
@@ -67,6 +89,7 @@ angular.module('material.components.toolbar', [
  * @param {number=} md-shrink-speed-factor How much to change the speed of the toolbar's
  * shrinking by. For example, if 0.25 is given then the toolbar will shrink
  * at one fourth the rate at which the user scrolls down. Default 0.5.
+ *
  */
 
 function mdToolbarDirective($$rAF, $mdConstant, $mdUtil, $mdTheming, $animate) {
@@ -74,12 +97,16 @@ function mdToolbarDirective($$rAF, $mdConstant, $mdUtil, $mdTheming, $animate) {
 
   return {
     template: '',
-
     restrict: 'E',
 
     link: function(scope, element, attr) {
 
+      element.addClass('_md');     // private md component indicator for styling
       $mdTheming(element);
+
+      $mdUtil.nextTick(function () {
+        element.addClass('_md-toolbar-transitions');     // adding toolbar transitions after digest
+      }, false);
 
       if (angular.isDefined(attr.mdScrollShrink)) {
         setupScrollShrink();
@@ -202,14 +229,14 @@ function mdToolbarDirective($$rAF, $mdConstant, $mdUtil, $mdTheming, $animate) {
           contentElement.on('scroll', debouncedContentScroll);
           contentElement.attr('scroll-shrink', 'true');
 
-          $$rAF(updateToolbarHeight);
+          $mdUtil.nextTick(updateToolbarHeight, false);
 
           return function disableScrollShrink() {
             contentElement.off('scroll', debouncedContentScroll);
             contentElement.attr('scroll-shrink', 'false');
 
-            $$rAF(updateToolbarHeight);
-          }
+            updateToolbarHeight();
+          };
         }
 
         /**
@@ -239,6 +266,5 @@ function mdToolbarDirective($$rAF, $mdConstant, $mdUtil, $mdTheming, $animate) {
   };
 
 }
-mdToolbarDirective.$inject = ["$$rAF", "$mdConstant", "$mdUtil", "$mdTheming", "$animate"];
 
 })(window, window.angular);

@@ -9,6 +9,7 @@ Sifter is a client and server-side library (via [UMD](https://github.com/umdjs/u
 * **Supports díåcritîçs.**<br>For example, if searching for "montana" and an item in the set has a value of "montaña", it will still be matched. Sorting will also play nicely with diacritics.
 * **Smart scoring.**<br>Items are scored / sorted intelligently depending on where a match is found in the string (how close to the beginning) and what percentage of the string matches.
 * **Multi-field sorting.**<br>When scores aren't enough to go by – like when getting results for an empty query – it can sort by one or more fields. For example, sort by a person's first name and last name without actually merging the properties to a single string.
+* **Nested properties.**<br>Allows to search and sort on nested properties so you can perform search on complex objects without flattening them simply by using dot-notation to reference fields (ie. `nested.property`).
 
 ```sh
 $ npm install sifter # node.js
@@ -79,38 +80,43 @@ Performs a search for `query` with the provided `options`.
 <table width="100%">
 	<tr>
 		<th align="left">Option</th>
-		<th>Type</th>
+		<th align="left">Type</th>
 		<th align="left" width="100%">Description</th>
 	</tr>
 	<tr>
-		<td valign="top">"fields"</td>
+		<td valign="top"><code>fields</code></td>
 		<td valign="top">array</td>
 		<td valign="top">An array of property names to be searched.</td>
 	</tr>
 	<tr>
-		<td valign="top">"limit"</td>
+		<td valign="top"><code>limit</code></td>
 		<td valign="top">integer</td>
 		<td valign="top">The maximum number of results to return.</td>
 	</tr>
 	<tr>
-		<td valign="top">"sort"</td>
+		<td valign="top"><code>sort</code></td>
 		<td valign="top">array</td>
-		<td valign="top">An array of fields to sort by. Each item should be an object containing at least a "field" property. Optionally, "direction" can be set to "asc" or "desc". The order of the array defines the sort precedence.<br><br>Unless present, a special "$score" property will be automatically added to the beginning of the sort list. This will make results sorted primarily by match quality (descending).</td>
+		<td valign="top">An array of fields to sort by. Each item should be an object containing at least a <code>"field"</code> property. Optionally, <code>direction</code> can be set to <code>"asc"</code> or <code>"desc"</code>. The order of the array defines the sort precedence.<br><br>Unless present, a special <code>"$score"</code> property will be automatically added to the beginning of the sort list. This will make results sorted primarily by match quality (descending).</td>
 	</tr>
 	<tr>
-		<td valign="top">"sort_empty"</td>
+		<td valign="top"><code>sort_empty</code></td>
 		<td valign="top">array</td>
 		<td valign="top">Optional. Defaults to "sort" setting. If provided, these sort settings are used when no query is present.</td>
 	</tr>
 	<tr>
-		<td valign="top">"filter"</td>
+		<td valign="top"><code>filter</code></td>
 		<td valign="top">boolean</td>
 		<td valign="top">If <code>false</code>, items with a score of zero will <em>not</em> be filtered out of the result-set.</td>
 	</tr>
 	<tr>
-		<td valign="top">"conjunction"</td>
+		<td valign="top"><code>conjunction</code></td>
 		<td valign="top">string</td>
-		<td valign="top">Determines how multiple search terms are joined ("and" or "or").</td>
+		<td valign="top">Determines how multiple search terms are joined (<code>"and"</code> or <code>"or"</code>, defaults to <code>"or"</code>).</td>
+	</tr>
+	<tr>
+		<td valign="top"><code>nesting</code></td>
+		<td valign="top">boolean</td>
+		<td valign="top">If <code>true</code>, nested fields will be available for search and sort using dot-notation to reference them (e.g. <code>nested.property</code>)<br><em>Warning: can reduce performance</em></td>
 	</tr>
 </table>
 

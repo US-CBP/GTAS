@@ -22,7 +22,7 @@
     "tag": "v3.1.2",
     "commit": "b83ce1454d8268c42567716448428bc4d124a490"
   },
-  "_source": "git://github.com/codetunnel/angular-spinners.git",
-  "_target": "*",
+  "_source": "https://github.com/codetunnel/angular-spinners.git",
+  "_target": "~3.1.2",
   "_originalSource": "angular-spinners"
 }

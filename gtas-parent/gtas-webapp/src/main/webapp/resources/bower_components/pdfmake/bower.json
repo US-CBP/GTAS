@@ -18,17 +18,18 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "Gruntfile.js",
     "dev-playground",
     "gulpfile.js",
     "webpack.config.js",
     "README.md",
-    "bootstrap",
     "bower.json",
     "examples",
     "node_modules",
     "package.json",
     "src",
-    "tests"
+    "tests",
+    "yarn.lock",
+    "composer.json",
+    ".travis.yml"
   ]
 }

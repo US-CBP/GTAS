@@ -2,6 +2,7 @@
 
 [![Bower version](https://badge.fury.io/bo/jquery-extendext.svg)](http://badge.fury.io/bo/jquery-extendext)
 [![Build Status](https://travis-ci.org/mistic100/jQuery.extendext.svg?branch=master)](https://travis-ci.org/mistic100/jQuery.extendext)
+[![Coverage Status](https://coveralls.io/repos/mistic100/jQuery.extendext/badge.svg)](https://coveralls.io/r/mistic100/jQuery.extendext)
 
 jQuery.extend with configurable behaviour for arrays.
 

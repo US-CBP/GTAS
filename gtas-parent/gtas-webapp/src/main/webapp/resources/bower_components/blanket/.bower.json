@@ -11,7 +11,7 @@
     "tag": "v1.1.7",
     "commit": "6fcbe1663394c8f7700f782574b791b61184737b"
   },
-  "_source": "git://github.com/alex-seville/blanket.git",
+  "_source": "https://github.com/alex-seville/blanket.git",
   "_target": "^1.1.0",
   "_originalSource": "blanket"
 }

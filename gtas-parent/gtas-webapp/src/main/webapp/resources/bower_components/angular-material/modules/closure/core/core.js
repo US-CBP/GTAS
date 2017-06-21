@@ -1,24 +1,30 @@
 /*!
- * Angular Material Design
+ * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.0.7-master-d86efaf
+ * v1.1.4-master-75237c6
  */
-goog.provide('ng.material.core');
+goog.provide('ngmaterial.core');
 
 
 
 
-goog.require('ng.ngAnimate');
+
+
 /**
  * Initialization function that validates environment
  * requirements.
  */
+DetectNgTouch['$inject'] = ["$log", "$injector"];
+MdCoreConfigure['$inject'] = ["$provide", "$mdThemingProvider"];
+rAFDecorator['$inject'] = ["$delegate"];
+qDecorator['$inject'] = ["$delegate"];
 angular
   .module('material.core', [
     'ngAnimate',
     'material.core.animate',
     'material.core.layout',
+    'material.core.interaction',
     'material.core.gestures',
     'material.core.theming'
   ])
@@ -35,19 +41,19 @@ function DetectNgTouch($log, $injector) {
   if ( $injector.has('$swipe') ) {
     var msg = "" +
       "You are using the ngTouch module. \n" +
-      "Angular Material already has mobile click, tap, and swipe support... \n" +
-      "ngTouch is not supported with Angular Material!";
+      "AngularJS Material already has mobile click, tap, and swipe support... \n" +
+      "ngTouch is not supported with AngularJS Material!";
     $log.warn(msg);
   }
 }
-DetectNgTouch.$inject = ["$log", "$injector"];
 
 /**
  * ngInject
  */
 function MdCoreConfigure($provide, $mdThemingProvider) {
 
-  $provide.decorator('$$rAF', ["$delegate", rAFDecorator]);
+  $provide.decorator('$$rAF', ['$delegate', rAFDecorator]);
+  $provide.decorator('$q', ['$delegate', qDecorator]);
 
   $mdThemingProvider.theme('default')
     .primaryPalette('indigo')
@@ -55,7 +61,6 @@ function MdCoreConfigure($provide, $mdThemingProvider) {
     .warnPalette('deep-orange')
     .backgroundPalette('grey');
 }
-MdCoreConfigure.$inject = ["$provide", "$mdThemingProvider"];
 
 /**
  * ngInject
@@ -90,9 +95,27 @@ function rAFDecorator($delegate) {
   };
   return $delegate;
 }
-rAFDecorator.$inject = ["$delegate"];
 
-angular.module('material.core')
+/**
+ * ngInject
+ */
+function qDecorator($delegate) {
+  /**
+   * Adds a shim for $q.resolve for AngularJS version that don't have it,
+   * so we don't have to think about it.
+   *
+   * via https://github.com/angular/angular.js/pull/11987
+   */
+
+  // TODO(crisbeto): this won't be necessary once we drop AngularJS 1.3
+  if (!$delegate.resolve) {
+    $delegate.resolve = $delegate.when;
+  }
+  return $delegate;
+}
+
+
+MdAutofocusDirective['$inject'] = ["$parse"];angular.module('material.core')
   .directive('mdAutofocus', MdAutofocusDirective)
 
   // Support the deprecated md-auto-focus and md-sidenav-focus as well
@@ -107,7 +130,7 @@ angular.module('material.core')
  * @description
  *
  * `[md-autofocus]` provides an optional way to identify the focused element when a `$mdDialog`,
- * `$mdBottomSheet`, or `$mdSidenav` opens or upon page load for input-like elements.
+ * `$mdBottomSheet`, `$mdMenu` or `$mdSidenav` opens or upon page load for input-like elements.
  *
  * When one of these opens, it will find the first nested element with the `[md-autofocus]`
  * attribute directive and optional expression. An expression may be specified as the directive
@@ -184,21 +207,116 @@ angular.module('material.core')
  * </div>
  * </hljs>
  **/
-function MdAutofocusDirective() {
+function MdAutofocusDirective($parse) {
   return {
     restrict: 'A',
+    link: {
+      pre: preLink
+    }
+  };
 
-    link: postLink
+  function preLink(scope, element, attr) {
+    var attrExp = attr.mdAutoFocus || attr.mdAutofocus || attr.mdSidenavFocus;
+
+    // Initially update the expression by manually parsing the expression as per $watch source.
+    updateExpression($parse(attrExp)(scope));
+
+    // Only watch the expression if it is not empty.
+    if (attrExp) {
+      scope.$watch(attrExp, updateExpression);
+    }
+
+    /**
+     * Updates the autofocus class which is used to determine whether the attribute
+     * expression evaluates to true or false.
+     * @param {string|boolean} value Attribute Value
+     */
+    function updateExpression(value) {
+
+      // Rather than passing undefined to the jqLite toggle class function we explicitly set the
+      // value to true. Otherwise the class will be just toggled instead of being forced.
+      if (angular.isUndefined(value)) {
+        value = true;
+      }
+
+      element.toggleClass('md-autofocus', !!value);
+    }
   }
+
 }
 
-function postLink(scope, element, attrs) {
-  var attr = attrs.mdAutoFocus || attrs.mdAutofocus || attrs.mdSidenavFocus;
+/**
+ * @ngdoc module
+ * @name material.core.colorUtil
+ * @description
+ * Color Util
+ */
+angular
+  .module('material.core')
+  .factory('$mdColorUtil', ColorUtilFactory);
 
-  // Setup a watcher on the proper attribute to update a class we can check for in $mdUtil
-  scope.$watch(attr, function(canAutofocus) {
-    element.toggleClass('_md-autofocus', canAutofocus);
-  });
+function ColorUtilFactory() {
+  /**
+   * Converts hex value to RGBA string
+   * @param color {string}
+   * @returns {string}
+   */
+  function hexToRgba (color) {
+    var hex   = color[ 0 ] === '#' ? color.substr(1) : color,
+      dig   = hex.length / 3,
+      red   = hex.substr(0, dig),
+      green = hex.substr(dig, dig),
+      blue  = hex.substr(dig * 2);
+    if (dig === 1) {
+      red += red;
+      green += green;
+      blue += blue;
+    }
+    return 'rgba(' + parseInt(red, 16) + ',' + parseInt(green, 16) + ',' + parseInt(blue, 16) + ',0.1)';
+  }
+
+  /**
+   * Converts rgba value to hex string
+   * @param color {string}
+   * @returns {string}
+   */
+  function rgbaToHex(color) {
+    color = color.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+
+    var hex = (color && color.length === 4) ? "#" +
+    ("0" + parseInt(color[1],10).toString(16)).slice(-2) +
+    ("0" + parseInt(color[2],10).toString(16)).slice(-2) +
+    ("0" + parseInt(color[3],10).toString(16)).slice(-2) : '';
+
+    return hex.toUpperCase();
+  }
+
+  /**
+   * Converts an RGB color to RGBA
+   * @param color {string}
+   * @returns {string}
+   */
+  function rgbToRgba (color) {
+    return color.replace(')', ', 0.1)').replace('(', 'a(');
+  }
+
+  /**
+   * Converts an RGBA color to RGB
+   * @param color {string}
+   * @returns {string}
+   */
+  function rgbaToRgb (color) {
+    return color
+      ? color.replace('rgba', 'rgb').replace(/,[^\),]+\)/, ')')
+      : 'rgb(0,0,0)';
+  }
+
+  return {
+    rgbaToHex: rgbaToHex,
+    hexToRgba: hexToRgba,
+    rgbToRgba: rgbToRgba,
+    rgbaToRgb: rgbaToRgb
+  };
 }
 
 angular.module('material.core')
@@ -208,14 +326,74 @@ angular.module('material.core')
  * Factory function that creates the grab-bag $mdConstant service.
  * ngInject
  */
-function MdConstantFactory($sniffer) {
+function MdConstantFactory() {
 
-  var webkit = /webkit/i.test($sniffer.vendorPrefix);
+  var prefixTestEl = document.createElement('div');
+  var vendorPrefix = getVendorPrefix(prefixTestEl);
+  var isWebkit = /webkit/i.test(vendorPrefix);
+  var SPECIAL_CHARS_REGEXP = /([:\-_]+(.))/g;
+
   function vendorProperty(name) {
-    return webkit ?  ('webkit' + name.charAt(0).toUpperCase() + name.substring(1)) : name;
+    // Add a dash between the prefix and name, to be able to transform the string into camelcase.
+    var prefixedName = vendorPrefix + '-' + name;
+    var ucPrefix = camelCase(prefixedName);
+    var lcPrefix = ucPrefix.charAt(0).toLowerCase() + ucPrefix.substring(1);
+
+    return hasStyleProperty(prefixTestEl, name)     ? name     :       // The current browser supports the un-prefixed property
+           hasStyleProperty(prefixTestEl, ucPrefix) ? ucPrefix :       // The current browser only supports the prefixed property.
+           hasStyleProperty(prefixTestEl, lcPrefix) ? lcPrefix : name; // Some browsers are only supporting the prefix in lowercase.
   }
 
-  return {
+  function hasStyleProperty(testElement, property) {
+    return angular.isDefined(testElement.style[property]);
+  }
+
+  function camelCase(input) {
+    return input.replace(SPECIAL_CHARS_REGEXP, function(matches, separator, letter, offset) {
+      return offset ? letter.toUpperCase() : letter;
+    });
+  }
+
+  function getVendorPrefix(testElement) {
+    var prop, match;
+    var vendorRegex = /^(Moz|webkit|ms)(?=[A-Z])/;
+
+    for (prop in testElement.style) {
+      if (match = vendorRegex.exec(prop)) {
+        return match[0];
+      }
+    }
+  }
+
+  var self = {
+    isInputKey : function(e) { return (e.keyCode >= 31 && e.keyCode <= 90); },
+    isNumPadKey : function(e) { return (3 === e.location && e.keyCode >= 97 && e.keyCode <= 105); },
+    isMetaKey: function(e) { return (e.keyCode >= 91 && e.keyCode <= 93); },
+    isFnLockKey: function(e) { return (e.keyCode >= 112 && e.keyCode <= 145); },
+    isNavigationKey : function(e) {
+      var kc = self.KEY_CODE, NAVIGATION_KEYS =  [kc.SPACE, kc.ENTER, kc.UP_ARROW, kc.DOWN_ARROW];
+      return (NAVIGATION_KEYS.indexOf(e.keyCode) != -1);
+    },
+    hasModifierKey: function(e) {
+      return e.ctrlKey || e.metaKey || e.altKey;
+    },
+
+    /**
+     * Maximum size, in pixels, that can be explicitly set to an element. The actual value varies
+     * between browsers, but IE11 has the very lowest size at a mere 1,533,917px. Ideally we could
+     * compute this value, but Firefox always reports an element to have a size of zero if it
+     * goes over the max, meaning that we'd have to binary search for the value.
+     */
+    ELEMENT_MAX_PIXELS: 1533917,
+
+    /**
+     * Priority for a directive that should run before the directives from ngAria.
+     */
+    BEFORE_NG_ARIA: 210,
+
+    /**
+     * Common Keyboard actions and their associated keycode.
+     */
     KEY_CODE: {
       COMMA: 188,
       SEMICOLON : 186,
@@ -234,10 +412,15 @@ function MdConstantFactory($sniffer) {
       BACKSPACE: 8,
       DELETE: 46
     },
+
+    /**
+     * Vendor prefixed CSS properties to be used to support the given functionality in older browsers
+     * as well.
+     */
     CSS: {
       /* Constants */
-      TRANSITIONEND: 'transitionend' + (webkit ? ' webkitTransitionEnd' : ''),
-      ANIMATIONEND: 'animationend' + (webkit ? ' webkitAnimationEnd' : ''),
+      TRANSITIONEND: 'transitionend' + (isWebkit ? ' webkitTransitionEnd' : ''),
+      ANIMATIONEND: 'animationend' + (isWebkit ? ' webkitAnimationEnd' : ''),
 
       TRANSFORM: vendorProperty('transform'),
       TRANSFORM_ORIGIN: vendorProperty('transformOrigin'),
@@ -249,6 +432,7 @@ function MdConstantFactory($sniffer) {
       ANIMATION_TIMING: vendorProperty('animationTimingFunction'),
       ANIMATION_DIRECTION: vendorProperty('animationDirection')
     },
+
     /**
      * As defined in core/style/variables.scss
      *
@@ -259,17 +443,20 @@ function MdConstantFactory($sniffer) {
      *
      */
     MEDIA: {
-      'xs'    : '(max-width: 599px)'                         ,
-      'gt-xs' : '(min-width: 600px)'                         ,
-      'sm'    : '(min-width: 600px) and (max-width: 959px)'  ,
-      'gt-sm' : '(min-width: 960px)'                         ,
-      'md'    : '(min-width: 960px) and (max-width: 1279px)' ,
-      'gt-md' : '(min-width: 1280px)'                        ,
-      'lg'    : '(min-width: 1280px) and (max-width: 1919px)',
-      'gt-lg' : '(min-width: 1920px)'                        ,
-      'xl'    : '(min-width: 1920px)'                        ,
+      'xs'        : '(max-width: 599px)'                         ,
+      'gt-xs'     : '(min-width: 600px)'                         ,
+      'sm'        : '(min-width: 600px) and (max-width: 959px)'  ,
+      'gt-sm'     : '(min-width: 960px)'                         ,
+      'md'        : '(min-width: 960px) and (max-width: 1279px)' ,
+      'gt-md'     : '(min-width: 1280px)'                        ,
+      'lg'        : '(min-width: 1280px) and (max-width: 1919px)',
+      'gt-lg'     : '(min-width: 1920px)'                        ,
+      'xl'        : '(min-width: 1920px)'                        ,
+      'landscape' : '(orientation: landscape)'                   ,
+      'portrait'  : '(orientation: portrait)'                    ,
       'print' : 'print'
     },
+
     MEDIA_PRIORITY: [
       'xl',
       'gt-lg',
@@ -280,11 +467,14 @@ function MdConstantFactory($sniffer) {
       'sm',
       'gt-xs',
       'xs',
+      'landscape',
+      'portrait',
       'print'
     ]
   };
+
+  return self;
 }
-MdConstantFactory.$inject = ["$sniffer"];
 
   angular
     .module('material.core')
@@ -514,7 +704,8 @@ MdConstantFactory.$inject = ["$sniffer"];
   }
 
 
-angular.module('material.core')
+
+mdMediaFactory['$inject'] = ["$mdConstant", "$rootScope", "$window"];angular.module('material.core')
 .factory('$mdMedia', mdMediaFactory);
 
 /**
@@ -574,13 +765,21 @@ angular.module('material.core')
  *      <td>(min-width: 1920px)</td>
  *    </tr>
  *    <tr>
+ *      <td>landscape</td>
+ *      <td>landscape</td>
+ *    </tr>
+ *    <tr>
+ *      <td>portrait</td>
+ *      <td>portrait</td>
+ *    </tr>
+ *    <tr>
  *      <td>print</td>
  *      <td>print</td>
  *    </tr>
  *    </tbody>
  *  </table>
  *
- *  See Material Design's <a href="https://www.google.com/design/spec/layout/adaptive-ui.html">Layout - Adaptive UI</a> for more details.
+ *  See Material Design's <a href="https://material.google.com/layout/responsive-ui.html">Layout - Adaptive UI</a> for more details.
  *
  *  <a href="https://www.google.com/design/spec/layout/adaptive-ui.html">
  *  <img src="https://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0B8olV15J7abPSGFxemFiQVRtb1k/layout_adaptive_breakpoints_01.png" width="100%" height="100%"></img>
@@ -600,9 +799,9 @@ angular.module('material.core')
  *   $scope.anotherCustom = $mdMedia('max-width: 300px');
  * });
  * </hljs>
- * ngInject
  */
 
+/* ngInject */
 function mdMediaFactory($mdConstant, $rootScope, $window) {
   var queries = {};
   var mqls = {};
@@ -690,7 +889,7 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
     });
 
     return function unwatch() {
-      unwatchFns.forEach(function(fn) { fn(); })
+      unwatchFns.forEach(function(fn) { fn(); });
     };
   }
 
@@ -700,7 +899,103 @@ function mdMediaFactory($mdConstant, $rootScope, $window) {
         (normalizeCache[attrName] = attrs.$normalize(attrName));
   }
 }
-mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
+
+angular
+  .module('material.core')
+  .config( ["$provide", function($provide) {
+    $provide.decorator('$mdUtil', ['$delegate', function ($delegate) {
+
+      // Inject the prefixer into our original $mdUtil service.
+      $delegate.prefixer = MdPrefixer;
+
+      return $delegate;
+    }]);
+  }]);
+
+function MdPrefixer(initialAttributes, buildSelector) {
+  var PREFIXES = ['data', 'x'];
+
+  if (initialAttributes) {
+    // The prefixer also accepts attributes as a parameter, and immediately builds a list or selector for
+    // the specified attributes.
+    return buildSelector ? _buildSelector(initialAttributes) : _buildList(initialAttributes);
+  }
+
+  return {
+    buildList: _buildList,
+    buildSelector: _buildSelector,
+    hasAttribute: _hasAttribute,
+    removeAttribute: _removeAttribute
+  };
+
+  function _buildList(attributes) {
+    attributes = angular.isArray(attributes) ? attributes : [attributes];
+
+    attributes.forEach(function(item) {
+      PREFIXES.forEach(function(prefix) {
+        attributes.push(prefix + '-' + item);
+      });
+    });
+
+    return attributes;
+  }
+
+  function _buildSelector(attributes) {
+    attributes = angular.isArray(attributes) ? attributes : [attributes];
+
+    return _buildList(attributes)
+      .map(function(item) {
+        return '[' + item + ']';
+      })
+      .join(',');
+  }
+
+  function _hasAttribute(element, attribute) {
+    element = _getNativeElement(element);
+
+    if (!element) {
+      return false;
+    }
+
+    var prefixedAttrs = _buildList(attribute);
+
+    for (var i = 0; i < prefixedAttrs.length; i++) {
+      if (element.hasAttribute(prefixedAttrs[i])) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function _removeAttribute(element, attribute) {
+    element = _getNativeElement(element);
+
+    if (!element) {
+      return;
+    }
+
+    _buildList(attribute).forEach(function(prefixedAttribute) {
+      element.removeAttribute(prefixedAttribute);
+    });
+  }
+
+  /**
+   * Transforms a jqLite or DOM element into a HTML element.
+   * This is useful when supporting jqLite elements and DOM elements at
+   * same time.
+   * @param element {JQLite|Element} Element to be parsed
+   * @returns {HTMLElement} Parsed HTMLElement
+   */
+  function _getNativeElement(element) {
+    element =  element[0] || element;
+
+    if (element.nodeType) {
+      return element;
+    }
+  }
+
+}
 
 /*
  * This var has to be outside the angular factory, otherwise when
@@ -708,6 +1003,7 @@ mdMediaFactory.$inject = ["$mdConstant", "$rootScope", "$window"];
  * will create its own instance of this array and the app's IDs
  * will not be unique.
  */
+UtilFactory['$inject'] = ["$document", "$timeout", "$compile", "$rootScope", "$$mdAnimate", "$interpolate", "$log", "$rootElement", "$window", "$$rAF"];
 var nextUniqueId = 0;
 
 /**
@@ -723,7 +1019,7 @@ angular
 /**
  * ngInject
  */
-function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $interpolate, $log, $rootElement, $window) {
+function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $interpolate, $log, $rootElement, $window, $$rAF) {
   // Setup some core variables for the processTemplate method
   var startSymbol = $interpolate.startSymbol(),
     endSymbol = $interpolate.endSymbol(),
@@ -747,11 +1043,44 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
     return hasValue;
   };
 
+  function validateCssValue(value) {
+    return !value       ? '0'   :
+      hasPx(value) || hasPercent(value) ? value : value + 'px';
+  }
+
+  function hasPx(value) {
+    return String(value).indexOf('px') > -1;
+  }
+
+  function hasPercent(value) {
+    return String(value).indexOf('%') > -1;
+
+  }
+
   var $mdUtil = {
     dom: {},
-    now: window.performance ?
+    now: window.performance && window.performance.now ?
       angular.bind(window.performance, window.performance.now) : Date.now || function() {
       return new Date().getTime();
+    },
+
+    /**
+     * Cross-version compatibility method to retrieve an option of a ngModel controller,
+     * which supports the breaking changes in the AngularJS snapshot (SHA 87a2ff76af5d0a9268d8eb84db5755077d27c84c).
+     * @param {!angular.ngModelCtrl} ngModelCtrl
+     * @param {!string} optionName
+     * @returns {Object|undefined}
+     */
+    getModelOption: function (ngModelCtrl, optionName) {
+      if (!ngModelCtrl.$options) {
+        return;
+      }
+
+      var $options = ngModelCtrl.$options;
+
+      // The newer versions of AngularJS introduced a `getOption function and made the option values no longer
+      // visible on the $options object.
+      return $options.getOption ? $options.getOption(optionName) : $options[optionName]
     },
 
     /**
@@ -765,22 +1094,29 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
       if ( arguments.length == 0 ) return ltr ? 'ltr' : 'rtl';
 
       // If mutator
+      var elem = angular.element(element);
+
       if ( ltr && angular.isDefined(lValue)) {
-        angular.element(element).css(property, validate(lValue));
+        elem.css(property, validateCssValue(lValue));
       }
       else if ( !ltr && angular.isDefined(rValue)) {
-        angular.element(element).css(property, validate(rValue) );
+        elem.css(property, validateCssValue(rValue) );
       }
+    },
 
-        // Internal utils
+    bidiProperty: function (element, lProperty, rProperty, value) {
+      var ltr = !($document[0].dir == 'rtl' || $document[0].body.dir == 'rtl');
 
-        function validate(value) {
-          return !value       ? '0'   :
-                 hasPx(value) ? value : value + 'px';
-        }
-        function hasPx(value) {
-          return String(value).indexOf('px') > -1;
-        }
+      var elem = angular.element(element);
+
+      if ( ltr && angular.isDefined(lProperty)) {
+        elem.css(lProperty, validateCssValue(value));
+        elem.css(rProperty, '');
+      }
+      else if ( !ltr && angular.isDefined(rProperty)) {
+        elem.css(rProperty, validateCssValue(value) );
+        elem.css(lProperty, '');
+      }
     },
 
     clientRect: function(element, offsetParent, isOffsetRect) {
@@ -816,18 +1152,12 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
     },
 
     /**
-     * Calculate the positive scroll offset
-     * TODO: Check with pinch-zoom in IE/Chrome;
-     *       https://code.google.com/p/chromium/issues/detail?id=496285
+     * Determines the absolute position of the viewport.
+     * Useful when making client rectangles absolute.
+     * @returns {number}
      */
-    scrollTop: function(element) {
-      element = angular.element(element || $document[0].body);
-
-      var body = (element[0] == $document[0].body) ? $document[0].body : undefined;
-      var scrollTop = body ? body.scrollTop + body.parentElement.scrollTop : 0;
-
-      // Calculate the positive scroll offset
-      return scrollTop || Math.abs(element[0].getBoundingClientRect().top);
+    getViewportTop: function() {
+      return window.scrollY || window.pageYOffset || 0;
     },
 
     /**
@@ -838,14 +1168,14 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      * @returns {*}
      */
     findFocusTarget: function(containerEl, attributeVal) {
-      var AUTO_FOCUS = '[md-autofocus]';
+      var AUTO_FOCUS = this.prefixer('md-autofocus', true);
       var elToFocus;
 
       elToFocus = scanForFocusable(containerEl, attributeVal || AUTO_FOCUS);
 
       if ( !elToFocus && attributeVal != AUTO_FOCUS) {
         // Scan for deprecated attribute
-        elToFocus = scanForFocusable(containerEl, '[md-auto-focus]');
+        elToFocus = scanForFocusable(containerEl, this.prefixer('md-auto-focus', true));
 
         if ( !elToFocus ) {
           // Scan for fallback to 'universal' API
@@ -867,9 +1197,9 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
           items.length && angular.forEach(items, function(it) {
             it = angular.element(it);
 
-            // Check the element for the _md-autofocus class to ensure any associated expression
+            // Check the element for the md-autofocus class to ensure any associated expression
             // evaluated to true.
-            var isFocusable = it.hasClass('_md-autofocus');
+            var isFocusable = it.hasClass('md-autofocus');
             if (isFocusable) elFound = it;
           });
         }
@@ -877,42 +1207,66 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
       }
     },
 
-    // Disables scroll around the passed element.
-    disableScrollAround: function(element, parent) {
-      $mdUtil.disableScrollAround._count = $mdUtil.disableScrollAround._count || 0;
-      ++$mdUtil.disableScrollAround._count;
-      if ($mdUtil.disableScrollAround._enableScrolling) return $mdUtil.disableScrollAround._enableScrolling;
-      element = angular.element(element);
-      var body = $document[0].body,
-        restoreBody = disableBodyScroll(),
-        restoreElement = disableElementScroll(parent);
+    /**
+     * Disables scroll around the passed parent element.
+     * @param element Unused
+     * @param {!Element|!angular.JQLite} parent Element to disable scrolling within.
+     *   Defaults to body if none supplied.
+     * @param options Object of options to modify functionality
+     *   - disableScrollMask Boolean of whether or not to create a scroll mask element or
+     *     use the passed parent element.
+     */
+    disableScrollAround: function(element, parent, options) {
+      options = options || {};
 
-      return $mdUtil.disableScrollAround._enableScrolling = function() {
-        if (!--$mdUtil.disableScrollAround._count) {
+      $mdUtil.disableScrollAround._count = Math.max(0, $mdUtil.disableScrollAround._count || 0);
+      $mdUtil.disableScrollAround._count++;
+
+      if ($mdUtil.disableScrollAround._restoreScroll) {
+        return $mdUtil.disableScrollAround._restoreScroll;
+      }
+
+      var body = $document[0].body;
+      var restoreBody = disableBodyScroll();
+      var restoreElement = disableElementScroll(parent);
+
+      return $mdUtil.disableScrollAround._restoreScroll = function() {
+        if (--$mdUtil.disableScrollAround._count <= 0) {
           restoreBody();
           restoreElement();
-          delete $mdUtil.disableScrollAround._enableScrolling;
+          delete $mdUtil.disableScrollAround._restoreScroll;
         }
       };
 
-      // Creates a virtual scrolling mask to absorb touchmove, keyboard, scrollbar clicking, and wheel events
+      /**
+       * Creates a virtual scrolling mask to prevent touchmove, keyboard, scrollbar clicking,
+       * and wheel events
+       */
       function disableElementScroll(element) {
-        element = angular.element(element || body)[0];
-        var zIndex = 50;
-        var scrollMask = angular.element(
-          '<div class="md-scroll-mask">' +
-          '  <div class="md-scroll-mask-bar"></div>' +
-          '</div>').css('z-index', zIndex);
-        element.appendChild(scrollMask[0]);
+        element = angular.element(element || body);
+
+        var scrollMask;
+
+        if (options.disableScrollMask) {
+          scrollMask = element;
+        } else {
+          scrollMask = angular.element(
+            '<div class="md-scroll-mask">' +
+            '  <div class="md-scroll-mask-bar"></div>' +
+            '</div>');
+          element.append(scrollMask);
+        }
 
         scrollMask.on('wheel', preventDefault);
         scrollMask.on('touchmove', preventDefault);
 
-        return function restoreScroll() {
+        return function restoreElementScroll() {
           scrollMask.off('wheel');
           scrollMask.off('touchmove');
-          scrollMask[0].parentNode.removeChild(scrollMask[0]);
-          delete $mdUtil.disableScrollAround._enableScrolling;
+
+          if (!options.disableScrollMask) {
+            scrollMask[0].parentNode.removeChild(scrollMask[0]);
+          }
         };
 
         function preventDefault(e) {
@@ -920,47 +1274,53 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
         }
       }
 
-      // Converts the body to a position fixed block and translate it to the proper scroll
-      // position
+      // Converts the body to a position fixed block and translate it to the proper scroll position
       function disableBodyScroll() {
-        var htmlNode = body.parentNode;
-        var restoreHtmlStyle = htmlNode.style.cssText || '';
-        var restoreBodyStyle = body.style.cssText || '';
-        var scrollOffset = $mdUtil.scrollTop(body);
-        var clientWidth = body.clientWidth;
+        var documentElement = $document[0].documentElement;
 
-        if (body.scrollHeight > body.clientHeight + 1) {
-          applyStyles(body, {
+        var prevDocumentStyle = documentElement.style.cssText || '';
+        var prevBodyStyle = body.style.cssText || '';
+
+        var viewportTop = $mdUtil.getViewportTop();
+        var clientWidth = body.clientWidth;
+        var hasVerticalScrollbar = body.scrollHeight > body.clientHeight + 1;
+
+        if (hasVerticalScrollbar) {
+          angular.element(body).css({
             position: 'fixed',
             width: '100%',
-            top: -scrollOffset + 'px'
-          });
-
-          applyStyles(htmlNode, {
-            overflowY: 'scroll'
+            top: -viewportTop + 'px'
           });
         }
 
-        if (body.clientWidth < clientWidth) applyStyles(body, {overflow: 'hidden'});
+        if (body.clientWidth < clientWidth) {
+          body.style.overflow = 'hidden';
+        }
+
+        // This should be applied after the manipulation to the body, because
+        // adding a scrollbar can potentially resize it, causing the measurement
+        // to change.
+        if (hasVerticalScrollbar) {
+          documentElement.style.overflowY = 'scroll';
+        }
 
         return function restoreScroll() {
-          body.style.cssText = restoreBodyStyle;
-          htmlNode.style.cssText = restoreHtmlStyle;
-          body.scrollTop = scrollOffset;
-          htmlNode.scrollTop = scrollOffset;
+          // Reset the inline style CSS to the previous.
+          body.style.cssText = prevBodyStyle;
+          documentElement.style.cssText = prevDocumentStyle;
+
+          // The body loses its scroll position while being fixed.
+          body.scrollTop = viewportTop;
         };
       }
 
-      function applyStyles(el, styles) {
-        for (var key in styles) {
-          el.style[key] = styles[key];
-        }
-      }
     },
+
     enableScrolling: function() {
-      var method = this.disableScrollAround._enableScrolling;
-      method && method();
+      var restoreFn = this.disableScrollAround._restoreScroll;
+      restoreFn && restoreFn();
     },
+
     floatingScrollbars: function() {
       if (this.floatingScrollbars.cached === undefined) {
         var tempNode = angular.element('<div><div></div></div>').css({
@@ -1175,19 +1535,29 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
      * getClosest replicates jQuery.closest() to walk up the DOM tree until it finds a matching nodeName
      *
      * @param el Element to start walking the DOM from
-     * @param tagName Tag name to find closest to el, such as 'form'
+     * @param check Either a string or a function. If a string is passed, it will be evaluated against
+     * each of the parent nodes' tag name. If a function is passed, the loop will call it with each of
+     * the parents and will use the return value to determine whether the node is a match.
      * @param onlyParent Only start checking from the parent element, not `el`.
      */
-    getClosest: function getClosest(el, tagName, onlyParent) {
+    getClosest: function getClosest(el, validateWith, onlyParent) {
+      if ( angular.isString(validateWith) ) {
+        var tagName = validateWith.toUpperCase();
+        validateWith = function(el) {
+          return el.nodeName.toUpperCase() === tagName;
+        };
+      }
+
       if (el instanceof angular.element) el = el[0];
-      tagName = tagName.toUpperCase();
       if (onlyParent) el = el.parentNode;
       if (!el) return null;
+
       do {
-        if (el.nodeName === tagName) {
+        if (validateWith(el)) {
           return el;
         }
       } while (el = el.parentNode);
+
       return null;
     },
 
@@ -1291,7 +1661,7 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
       var queue = nextTick.queue || [];
 
       //-- add callback to the queue
-      queue.push(callback);
+      queue.push({scope: scope, callback: callback});
 
       //-- set default value for digest
       if (digest == null) digest = true;
@@ -1310,16 +1680,18 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
        * Trigger digest if necessary
        */
       function processQueue() {
-        var skip = scope && scope.$$destroyed;
-        var queue = !skip ? nextTick.queue : [];
-        var digest = !skip ? nextTick.digest : null;
+        var queue = nextTick.queue;
+        var digest = nextTick.digest;
 
         nextTick.queue = [];
         nextTick.timeout = null;
         nextTick.digest = false;
 
-        queue.forEach(function(callback) {
-          callback();
+        queue.forEach(function(queueItem) {
+          var skip = queueItem.scope && queueItem.scope.$$destroyed;
+          if (!skip) {
+            queueItem.callback();
+          }
         });
 
         if (digest) $rootScope.$digest();
@@ -1366,6 +1738,34 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
     },
 
     /**
+     * Checks if the current browser is natively supporting the `sticky` position.
+     * @returns {string} supported sticky property name
+     */
+    checkStickySupport: function() {
+      var stickyProp;
+      var testEl = angular.element('<div>');
+      $document[0].body.appendChild(testEl[0]);
+
+      var stickyProps = ['sticky', '-webkit-sticky'];
+      for (var i = 0; i < stickyProps.length; ++i) {
+        testEl.css({
+          position: stickyProps[i],
+          top: 0,
+          'z-index': 2
+        });
+
+        if (testEl.css('position') == stickyProps[i]) {
+          stickyProp = stickyProps[i];
+          break;
+        }
+      }
+
+      testEl.remove();
+
+      return stickyProp;
+    },
+
+    /**
      * Parses an attribute value, mostly a string.
      * By default checks for negated values and returns `false´ if present.
      * Negated values are: (native falsy) and negative strings like:
@@ -1378,8 +1778,88 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
       return value === '' || !!value && (negatedCheck === false || value !== 'false' && value !== '0');
     },
 
-    hasComputedStyle: hasComputedStyle
+    hasComputedStyle: hasComputedStyle,
+
+    /**
+     * Returns true if the parent form of the element has been submitted.
+     *
+     * @param element An AngularJS or HTML5 element.
+     *
+     * @returns {boolean}
+     */
+    isParentFormSubmitted: function(element) {
+      var parent = $mdUtil.getClosest(element, 'form');
+      var form = parent ? angular.element(parent).controller('form') : null;
+
+      return form ? form.$submitted : false;
+    },
+
+    /**
+     * Animate the requested element's scrollTop to the requested scrollPosition with basic easing.
+     *
+     * @param {!HTMLElement} element The element to scroll.
+     * @param {number} scrollEnd The new/final scroll position.
+     * @param {number=} duration Duration of the scroll. Default is 1000ms.
+     */
+    animateScrollTo: function(element, scrollEnd, duration) {
+      var scrollStart = element.scrollTop;
+      var scrollChange = scrollEnd - scrollStart;
+      var scrollingDown = scrollStart < scrollEnd;
+      var startTime = $mdUtil.now();
+
+      $$rAF(scrollChunk);
+
+      function scrollChunk() {
+        var newPosition = calculateNewPosition();
+
+        element.scrollTop = newPosition;
+
+        if (scrollingDown ? newPosition < scrollEnd : newPosition > scrollEnd) {
+          $$rAF(scrollChunk);
+        }
+      }
+
+      function calculateNewPosition() {
+        var easeDuration = duration || 1000;
+        var currentTime = $mdUtil.now() - startTime;
+
+        return ease(currentTime, scrollStart, scrollChange, easeDuration);
+      }
+
+      function ease(currentTime, start, change, duration) {
+        // If the duration has passed (which can occur if our app loses focus due to $$rAF), jump
+        // straight to the proper position
+        if (currentTime > duration) {
+          return start + change;
+        }
+
+        var ts = (currentTime /= duration) * currentTime;
+        var tc = ts * currentTime;
+
+        return start + change * (-2 * tc + 3 * ts);
+      }
+    },
+
+    /**
+     * Provides an easy mechanism for removing duplicates from an array.
+     *
+     *    var myArray = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4];
+     *
+     *    $mdUtil.uniq(myArray) => [1, 2, 3, 4]
+     *
+     * @param {array} array The array whose unique values should be returned.
+     *
+     * @returns {array} A copy of the array containing only unique values.
+     */
+    uniq: function(array) {
+      if (!array) { return; }
+
+      return array.filter(function(value, index, self) {
+        return self.indexOf(value) === index;
+      });
+    }
   };
+
 
 // Instantiate other namespace utility methods
 
@@ -1392,7 +1872,6 @@ function UtilFactory($document, $timeout, $compile, $rootScope, $$mdAnimate, $in
   }
 
 }
-UtilFactory.$inject = ["$document", "$timeout", "$compile", "$rootScope", "$$mdAnimate", "$interpolate", "$log", "$rootElement", "$window"];
 
 /*
  * Since removing jQuery from the demos, some code that uses `element.focus()` is broken.
@@ -1412,20 +1891,78 @@ angular.element.prototype.blur = angular.element.prototype.blur || function() {
     return this;
   };
 
+/**
+ * @ngdoc module
+ * @name material.core.aria
+ * @description
+ * Aria Expectations for AngularJS Material components.
+ */
+MdAriaService['$inject'] = ["$$rAF", "$log", "$window", "$interpolate"];
+angular
+  .module('material.core')
+  .provider('$mdAria', MdAriaProvider);
 
+/**
+ * @ngdoc service
+ * @name $mdAriaProvider
+ * @module material.core.aria
+ *
+ * @description
+ *
+ * Modify options of the `$mdAria` service, which will be used by most of the AngularJS Material
+ * components.
+ *
+ * You are able to disable `$mdAria` warnings, by using the following markup.
+ *
+ * <hljs lang="js">
+ *   app.config(function($mdAriaProvider) {
+ *     // Globally disables all ARIA warnings.
+ *     $mdAriaProvider.disableWarnings();
+ *   });
+ * </hljs>
+ *
+ */
+function MdAriaProvider() {
 
-angular.module('material.core')
-  .service('$mdAria', AriaService);
+  var config = {
+    /** Whether we should show ARIA warnings in the console if labels are missing on the element */
+    showWarnings: true
+  };
+
+  return {
+    disableWarnings: disableWarnings,
+    $get: ["$$rAF", "$log", "$window", "$interpolate", function($$rAF, $log, $window, $interpolate) {
+      return MdAriaService.apply(config, arguments);
+    }]
+  };
+
+  /**
+   * @ngdoc method
+   * @name $mdAriaProvider#disableWarnings
+   * @description Disables all ARIA warnings generated by AngularJS Material.
+   */
+  function disableWarnings() {
+    config.showWarnings = false;
+  }
+}
 
 /*
  * ngInject
  */
-function AriaService($$rAF, $log, $window, $interpolate) {
+function MdAriaService($$rAF, $log, $window, $interpolate) {
+
+  // Load the showWarnings option from the current context and store it inside of a scope variable,
+  // because the context will be probably lost in some function calls.
+  var showWarnings = this.showWarnings;
 
   return {
     expect: expect,
     expectAsync: expectAsync,
-    expectWithText: expectWithText
+    expectWithText: expectWithText,
+    expectWithoutText: expectWithoutText,
+    getText: getText,
+    hasAriaLabel: hasAriaLabel,
+    parentHasAriaLabel: parentHasAriaLabel
   };
 
   /**
@@ -1447,7 +1984,7 @@ function AriaService($$rAF, $log, $window, $interpolate) {
       defaultValue = angular.isString(defaultValue) ? defaultValue.trim() : '';
       if (defaultValue.length) {
         element.attr(attrName, defaultValue);
-      } else {
+      } else if (showWarnings) {
         $log.warn('ARIA: Attribute "', attrName, '", required for accessibility, is missing on node:', node);
       }
 
@@ -1465,9 +2002,9 @@ function AriaService($$rAF, $log, $window, $interpolate) {
 
   function expectWithText(element, attrName) {
     var content = getText(element) || "";
-    var hasBinding = content.indexOf($interpolate.startSymbol())>-1;
+    var hasBinding = content.indexOf($interpolate.startSymbol()) > -1;
 
-    if ( hasBinding ) {
+    if (hasBinding) {
       expectAsync(element, attrName, function() {
         return getText(element);
       });
@@ -1476,8 +2013,36 @@ function AriaService($$rAF, $log, $window, $interpolate) {
     }
   }
 
+  function expectWithoutText(element, attrName) {
+    var content = getText(element);
+    var hasBinding = content.indexOf($interpolate.startSymbol()) > -1;
+
+    if ( !hasBinding && !content) {
+      expect(element, attrName, content);
+    }
+  }
+
   function getText(element) {
-    return (element.text() || "").trim();
+    element = element[0] || element;
+    var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    var text = '';
+
+    var node;
+    while (node = walker.nextNode()) {
+      if (!isAriaHiddenNode(node)) {
+        text += node.textContent;
+      }
+    }
+
+    return text.trim() || '';
+
+    function isAriaHiddenNode(node) {
+      while (node.parentNode && (node = node.parentNode) !== element) {
+        if (node.getAttribute && node.getAttribute('aria-hidden') === 'true') {
+          return true;
+        }
+      }
+    }
   }
 
   function childHasAttribute(node, attrName) {
@@ -1489,12 +2054,12 @@ function AriaService($$rAF, $log, $window, $interpolate) {
       return (style.display === 'none');
     }
 
-    if(hasChildren) {
+    if (hasChildren) {
       var children = node.childNodes;
-      for(var i=0; i<children.length; i++){
+      for (var i=0; i < children.length; i++) {
         var child = children[i];
-        if(child.nodeType === 1 && child.hasAttribute(attrName)) {
-          if(!isHidden(child)){
+        if (child.nodeType === 1 && child.hasAttribute(attrName)) {
+          if (!isHidden(child)) {
             hasAttr = true;
           }
         }
@@ -1502,159 +2067,496 @@ function AriaService($$rAF, $log, $window, $interpolate) {
     }
     return hasAttr;
   }
-}
-AriaService.$inject = ["$$rAF", "$log", "$window", "$interpolate"];
 
-angular
-  .module('material.core')
-  .service('$mdCompiler', mdCompilerService);
-
-function mdCompilerService($q, $http, $injector, $compile, $controller, $templateCache) {
-  /* jshint validthis: true */
-
-  /*
-   * @ngdoc service
-   * @name $mdCompiler
-   * @module material.core
-   * @description
-   * The $mdCompiler service is an abstraction of angular's compiler, that allows the developer
-   * to easily compile an element with a templateUrl, controller, and locals.
-   *
-   * @usage
-   * <hljs lang="js">
-   * $mdCompiler.compile({
-   *   templateUrl: 'modal.html',
-   *   controller: 'ModalCtrl',
-   *   locals: {
-   *     modal: myModalInstance;
-   *   }
-   * }).then(function(compileData) {
-   *   compileData.element; // modal.html's template in an element
-   *   compileData.link(myScope); //attach controller & scope to element
-   * });
-   * </hljs>
+  /**
+   * Check if expected element has aria label attribute
+   * @param element
    */
+  function hasAriaLabel(element) {
+    var node = angular.element(element)[0] || element;
 
-   /*
-    * @ngdoc method
-    * @name $mdCompiler#compile
-    * @description A helper to compile an HTML template/templateUrl with a given controller,
-    * locals, and scope.
-    * @param {object} options An options object, with the following properties:
-    *
-    *    - `controller` - `{(string=|function()=}` Controller fn that should be associated with
-    *      newly created scope or the name of a registered controller if passed as a string.
-    *    - `controllerAs` - `{string=}` A controller alias name. If present the controller will be
-    *      published to scope under the `controllerAs` name.
-    *    - `template` - `{string=}` An html template as a string.
-    *    - `templateUrl` - `{string=}` A path to an html template.
-    *    - `transformTemplate` - `{function(template)=}` A function which transforms the template after
-    *      it is loaded. It will be given the template string as a parameter, and should
-    *      return a a new string representing the transformed template.
-    *    - `resolve` - `{Object.<string, function>=}` - An optional map of dependencies which should
-    *      be injected into the controller. If any of these dependencies are promises, the compiler
-    *      will wait for them all to be resolved, or if one is rejected before the controller is
-    *      instantiated `compile()` will fail..
-    *      * `key` - `{string}`: a name of a dependency to be injected into the controller.
-    *      * `factory` - `{string|function}`: If `string` then it is an alias for a service.
-    *        Otherwise if function, then it is injected and the return value is treated as the
-    *        dependency. If the result is a promise, it is resolved before its value is
-    *        injected into the controller.
-    *
-    * @returns {object=} promise A promise, which will be resolved with a `compileData` object.
-    * `compileData` has the following properties:
-    *
-    *   - `element` - `{element}`: an uncompiled element matching the provided template.
-    *   - `link` - `{function(scope)}`: A link function, which, when called, will compile
-    *     the element and instantiate the provided controller (if given).
-    *   - `locals` - `{object}`: The locals which will be passed into the controller once `link` is
-    *     called. If `bindToController` is true, they will be coppied to the ctrl instead
-    *   - `bindToController` - `bool`: bind the locals to the controller, instead of passing them in.
-    */
-  this.compile = function(options) {
-    var templateUrl = options.templateUrl;
-    var template = options.template || '';
-    var controller = options.controller;
-    var controllerAs = options.controllerAs;
-    var resolve = angular.extend({}, options.resolve || {});
-    var locals = angular.extend({}, options.locals || {});
-    var transformTemplate = options.transformTemplate || angular.identity;
-    var bindToController = options.bindToController;
-
-    // Take resolve values and invoke them.
-    // Resolves can either be a string (value: 'MyRegisteredAngularConst'),
-    // or an invokable 'factory' of sorts: (value: function ValueGetter($dependency) {})
-    angular.forEach(resolve, function(value, key) {
-      if (angular.isString(value)) {
-        resolve[key] = $injector.get(value);
-      } else {
-        resolve[key] = $injector.invoke(value);
-      }
-    });
-    //Add the locals, which are just straight values to inject
-    //eg locals: { three: 3 }, will inject three into the controller
-    angular.extend(resolve, locals);
-
-    if (templateUrl) {
-      resolve.$template = $http.get(templateUrl, {cache: $templateCache})
-        .then(function(response) {
-          return response.data;
-        });
-    } else {
-      resolve.$template = $q.when(template);
+    /* Check if compatible node type (ie: not HTML Document node) */
+    if (!node.hasAttribute) {
+      return false;
     }
 
-    // Wait for all the resolves to finish if they are promises
-    return $q.all(resolve).then(function(locals) {
+    /* Check label or description attributes */
+    return node.hasAttribute('aria-label') || node.hasAttribute('aria-labelledby') || node.hasAttribute('aria-describedby');
+  }
 
-      var compiledData;
-      var template = transformTemplate(locals.$template, options);
-      var element = options.element || angular.element('<div>').html(template.trim()).contents();
-      var linkFn = $compile(element);
+  /**
+   * Check if expected element's parent has aria label attribute and has valid role and tagName
+   * @param element
+   * @param {optional} level Number of levels deep search should be performed
+   */
+  function parentHasAriaLabel(element, level) {
+    level = level || 1;
+    var node = angular.element(element)[0] || element;
+    if (!node.parentNode) {
+      return false;
+    }
+    if (performCheck(node.parentNode)) {
+      return true;
+    }
+    level--;
+    if (level) {
+      return parentHasAriaLabel(node.parentNode, level);
+    }
+    return false;
 
-      // Return a linking function that can be used later when the element is ready
-      return compiledData = {
-        locals: locals,
-        element: element,
-        link: function link(scope) {
-          locals.$scope = scope;
-
-          //Instantiate controller if it exists, because we have scope
-          if (controller) {
-            var invokeCtrl = $controller(controller, locals, true);
-            if (bindToController) {
-              angular.extend(invokeCtrl.instance, locals);
-            }
-            var ctrl = invokeCtrl();
-            //See angular-route source for this logic
-            element.data('$ngControllerController', ctrl);
-            element.children().data('$ngControllerController', ctrl);
-
-            if (controllerAs) {
-              scope[controllerAs] = ctrl;
-            }
-
-            // Publish reference to this controller
-            compiledData.controller = ctrl;
-          }
-          return linkFn(scope);
+    function performCheck(parentNode) {
+      if (!hasAriaLabel(parentNode)) {
+        return false;
+      }
+      /* Perform role blacklist check */
+      if (parentNode.hasAttribute('role')) {
+        switch(parentNode.getAttribute('role').toLowerCase()) {
+          case 'command':
+          case 'definition':
+          case 'directory':
+          case 'grid':
+          case 'list':
+          case 'listitem':
+          case 'log':
+          case 'marquee':
+          case 'menu':
+          case 'menubar':
+          case 'note':
+          case 'presentation':
+          case 'separator':
+          case 'scrollbar':
+          case 'status':
+          case 'tablist':
+            return false;
         }
-      };
-    });
-
-  };
+      }
+      /* Perform tagName blacklist check */
+      switch(parentNode.tagName.toLowerCase()) {
+        case 'abbr':
+        case 'acronym':
+        case 'address':
+        case 'applet':
+        case 'audio':
+        case 'b':
+        case 'bdi':
+        case 'bdo':
+        case 'big':
+        case 'blockquote':
+        case 'br':
+        case 'canvas':
+        case 'caption':
+        case 'center':
+        case 'cite':
+        case 'code':
+        case 'col':
+        case 'data':
+        case 'dd':
+        case 'del':
+        case 'dfn':
+        case 'dir':
+        case 'div':
+        case 'dl':
+        case 'em':
+        case 'embed':
+        case 'fieldset':
+        case 'figcaption':
+        case 'font':
+        case 'h1':
+        case 'h2':
+        case 'h3':
+        case 'h4':
+        case 'h5':
+        case 'h6':
+        case 'hgroup':
+        case 'html':
+        case 'i':
+        case 'ins':
+        case 'isindex':
+        case 'kbd':
+        case 'keygen':
+        case 'label':
+        case 'legend':
+        case 'li':
+        case 'map':
+        case 'mark':
+        case 'menu':
+        case 'object':
+        case 'ol':
+        case 'output':
+        case 'pre':
+        case 'presentation':
+        case 'q':
+        case 'rt':
+        case 'ruby':
+        case 'samp':
+        case 'small':
+        case 'source':
+        case 'span':
+        case 'status':
+        case 'strike':
+        case 'strong':
+        case 'sub':
+        case 'sup':
+        case 'svg':
+        case 'tbody':
+        case 'td':
+        case 'th':
+        case 'thead':
+        case 'time':
+        case 'tr':
+        case 'track':
+        case 'tt':
+        case 'ul':
+        case 'var':
+          return false;
+      }
+      return true;
+    }
+  }
 }
-mdCompilerService.$inject = ["$q", "$http", "$injector", "$compile", "$controller", "$templateCache"];
 
-var HANDLERS = {};
+/**
+ * @ngdoc module
+ * @name material.core.compiler
+ * @description
+ * AngularJS Material template and element compiler.
+ */
+MdCompilerService['$inject'] = ["$q", "$templateRequest", "$injector", "$compile", "$controller"];
+angular
+  .module('material.core')
+  .service('$mdCompiler', MdCompilerService);
+
+/**
+ * @ngdoc service
+ * @name $mdCompiler
+ * @module material.core.compiler
+ * @description
+ * The $mdCompiler service is an abstraction of AngularJS's compiler, that allows developers
+ * to easily compile an element with options like in a Directive Definition Object.
+ *
+ * > The compiler powers a lot of components inside of AngularJS Material.
+ * > Like the `$mdPanel` or `$mdDialog`.
+ *
+ * @usage
+ *
+ * Basic Usage with a template
+ *
+ * <hljs lang="js">
+ *   $mdCompiler.compile({
+ *     templateUrl: 'modal.html',
+ *     controller: 'ModalCtrl',
+ *     locals: {
+ *       modal: myModalInstance;
+ *     }
+ *   }).then(function (compileData) {
+ *     compileData.element; // Compiled DOM element
+ *     compileData.link(myScope); // Instantiate controller and link element to scope.
+ *   });
+ * </hljs>
+ *
+ * Example with a content element
+ *
+ * <hljs lang="js">
+ *
+ *   // Create a virtual element and link it manually.
+ *   // The compiler doesn't need to recompile the element each time.
+ *   var myElement = $compile('<span>Test</span>')(myScope);
+ *
+ *   $mdCompiler.compile({
+ *     contentElement: myElement
+ *   }).then(function (compileData) {
+ *     compileData.element // Content Element (same as above)
+ *     compileData.link // This does nothing when using a contentElement.
+ *   });
+ * </hljs>
+ *
+ * > Content Element is a significant performance improvement when the developer already knows that the
+ * > compiled element will be always the same and the scope will not change either.
+ *
+ * The `contentElement` option also supports DOM elements which will be temporary removed and restored
+ * at its old position.
+ *
+ * <hljs lang="js">
+ *   var domElement = document.querySelector('#myElement');
+ *
+ *   $mdCompiler.compile({
+ *     contentElement: myElement
+ *   }).then(function (compileData) {
+ *     compileData.element // Content Element (same as above)
+ *     compileData.link // This does nothing when using a contentElement.
+ *   });
+ * </hljs>
+ *
+ * The `$mdCompiler` can also query for the element in the DOM itself.
+ *
+ * <hljs lang="js">
+ *   $mdCompiler.compile({
+ *     contentElement: '#myElement'
+ *   }).then(function (compileData) {
+ *     compileData.element // Content Element (same as above)
+ *     compileData.link // This does nothing when using a contentElement.
+ *   });
+ * </hljs>
+ *
+ */
+function MdCompilerService($q, $templateRequest, $injector, $compile, $controller) {
+  /** @private @const {!angular.$q} */
+  this.$q = $q;
+
+  /** @private @const {!angular.$templateRequest} */
+  this.$templateRequest = $templateRequest;
+
+  /** @private @const {!angular.$injector} */
+  this.$injector = $injector;
+
+  /** @private @const {!angular.$compile} */
+  this.$compile = $compile;
+
+  /** @private @const {!angular.$controller} */
+  this.$controller = $controller;
+}
+
+/**
+ * @ngdoc method
+ * @name $mdCompiler#compile
+ * @description
+ *
+ * A method to compile a HTML template with the AngularJS compiler.
+ * The `$mdCompiler` is wrapper around the AngularJS compiler and provides extra functionality
+ * like controller instantiation or async resolves.
+ *
+ * @param {!Object} options An options object, with the following properties:
+ *
+ *    - `controller` - `{string|Function}` Controller fn that should be associated with
+ *         newly created scope or the name of a registered controller if passed as a string.
+ *    - `controllerAs` - `{string=}` A controller alias name. If present the controller will be
+ *         published to scope under the `controllerAs` name.
+ *    - `contentElement` - `{string|Element}`: Instead of using a template, which will be
+ *         compiled each time, you can also use a DOM element.<br/>
+ *    - `template` - `{string=}` An html template as a string.
+ *    - `templateUrl` - `{string=}` A path to an html template.
+ *    - `transformTemplate` - `{function(template)=}` A function which transforms the template after
+ *        it is loaded. It will be given the template string as a parameter, and should
+ *        return a a new string representing the transformed template.
+ *    - `resolve` - `{Object.<string, function>=}` - An optional map of dependencies which should
+ *        be injected into the controller. If any of these dependencies are promises, the compiler
+ *        will wait for them all to be resolved, or if one is rejected before the controller is
+ *        instantiated `compile()` will fail..
+ *      * `key` - `{string}`: a name of a dependency to be injected into the controller.
+ *      * `factory` - `{string|function}`: If `string` then it is an alias for a service.
+ *        Otherwise if function, then it is injected and the return value is treated as the
+ *        dependency. If the result is a promise, it is resolved before its value is
+ *        injected into the controller.
+ *
+ * @returns {Object} promise A promise, which will be resolved with a `compileData` object.
+ * `compileData` has the following properties:
+ *
+ *   - `element` - `{element}`: an uncompiled element matching the provided template.
+ *   - `link` - `{function(scope)}`: A link function, which, when called, will compile
+ *     the element and instantiate the provided controller (if given).
+ *   - `locals` - `{object}`: The locals which will be passed into the controller once `link` is
+ *     called. If `bindToController` is true, they will be coppied to the ctrl instead
+ *
+ */
+MdCompilerService.prototype.compile = function(options) {
+
+  if (options.contentElement) {
+    return this._prepareContentElement(options);
+  } else {
+    return this._compileTemplate(options);
+  }
+
+};
+
+/**
+ * Instead of compiling any template, the compiler just fetches an existing HTML element from the DOM and
+ * provides a restore function to put the element back it old DOM position.
+ * @param {!Object} options Options to be used for the compiler.
+ * @private
+ */
+MdCompilerService.prototype._prepareContentElement = function(options) {
+
+  var contentElement = this._fetchContentElement(options);
+
+  return this.$q.resolve({
+    element: contentElement.element,
+    cleanup: contentElement.restore,
+    locals: {},
+    link: function() {
+      return contentElement.element;
+    }
+  });
+
+};
+
+/**
+ * Compiles a template by considering all options and waiting for all resolves to be ready.
+ * @param {!Object} options Compile options
+ * @returns {!Object} Compile data with link function.
+ * @private
+ */
+MdCompilerService.prototype._compileTemplate = function(options) {
+
+  var self = this;
+  var templateUrl = options.templateUrl;
+  var template = options.template || '';
+  var resolve = angular.extend({}, options.resolve);
+  var locals = angular.extend({}, options.locals);
+  var transformTemplate = options.transformTemplate || angular.identity;
+
+  // Take resolve values and invoke them.
+  // Resolves can either be a string (value: 'MyRegisteredAngularConst'),
+  // or an invokable 'factory' of sorts: (value: function ValueGetter($dependency) {})
+  angular.forEach(resolve, function(value, key) {
+    if (angular.isString(value)) {
+      resolve[key] = self.$injector.get(value);
+    } else {
+      resolve[key] = self.$injector.invoke(value);
+    }
+  });
+
+  // Add the locals, which are just straight values to inject
+  // eg locals: { three: 3 }, will inject three into the controller
+  angular.extend(resolve, locals);
+
+  if (templateUrl) {
+    resolve.$$ngTemplate = this.$templateRequest(templateUrl);
+  } else {
+    resolve.$$ngTemplate = this.$q.when(template);
+  }
+
+
+  // Wait for all the resolves to finish if they are promises
+  return this.$q.all(resolve).then(function(locals) {
+
+    var template = transformTemplate(locals.$$ngTemplate, options);
+    var element = options.element || angular.element('<div>').html(template.trim()).contents();
+
+    return self._compileElement(locals, element, options);
+  });
+
+};
+
+/**
+ * Method to compile an element with the given options.
+ * @param {!Object} locals Locals to be injected to the controller if present
+ * @param {!JQLite} element Element to be compiled and linked
+ * @param {!Object} options Options to be used for linking.
+ * @returns {!Object} Compile data with link function.
+ * @private
+ */
+MdCompilerService.prototype._compileElement = function(locals, element, options) {
+  var self = this;
+  var ngLinkFn = this.$compile(element);
+
+  var compileData = {
+    element: element,
+    cleanup: element.remove.bind(element),
+    locals: locals,
+    link: linkFn
+  };
+
+  function linkFn(scope) {
+    locals.$scope = scope;
+
+    // Instantiate controller if the developer provided one.
+    if (options.controller) {
+
+      var injectLocals = angular.extend(locals, {
+        $element: element
+      });
+
+      var invokeCtrl = self.$controller(options.controller, injectLocals, true, options.controllerAs);
+
+      if (options.bindToController) {
+        angular.extend(invokeCtrl.instance, locals);
+      }
+
+      var ctrl = invokeCtrl();
+
+      // Unique identifier for AngularJS Route ngView controllers.
+      element.data('$ngControllerController', ctrl);
+      element.children().data('$ngControllerController', ctrl);
+
+      // Expose the instantiated controller to the compile data
+      compileData.controller = ctrl;
+    }
+
+    // Invoke the AngularJS $compile link function.
+    return ngLinkFn(scope);
+  }
+
+  return compileData;
+
+};
+
+/**
+ * Fetches an element removing it from the DOM and using it temporary for the compiler.
+ * Elements which were fetched will be restored after use.
+ * @param {!Object} options Options to be used for the compilation.
+ * @returns {{element: !JQLite, restore: !Function}}
+ * @private
+ */
+MdCompilerService.prototype._fetchContentElement = function(options) {
+
+  var contentEl = options.contentElement;
+  var restoreFn = null;
+
+  if (angular.isString(contentEl)) {
+    contentEl = document.querySelector(contentEl);
+    restoreFn = createRestoreFn(contentEl);
+  } else {
+    contentEl = contentEl[0] || contentEl;
+
+    // When the element is visible in the DOM, then we restore it at close of the dialog.
+    // Otherwise it will be removed from the DOM after close.
+    if (document.contains(contentEl)) {
+      restoreFn = createRestoreFn(contentEl);
+    } else {
+      restoreFn = function() {
+        if (contentEl.parentNode) {
+          contentEl.parentNode.removeChild(contentEl);
+        }
+      }
+    }
+  }
+
+  return {
+    element: angular.element(contentEl),
+    restore: restoreFn
+  };
+
+  function createRestoreFn(element) {
+    var parent = element.parentNode;
+    var nextSibling = element.nextElementSibling;
+
+    return function() {
+      if (!nextSibling) {
+        // When the element didn't had any sibling, then it can be simply appended to the
+        // parent, because it plays no role, which index it had before.
+        parent.appendChild(element);
+      } else {
+        // When the element had a sibling, which marks the previous position of the element
+        // in the DOM, we insert it correctly before the sibling, to have the same index as
+        // before.
+        parent.insertBefore(element, nextSibling);
+      }
+    }
+  }
+};
+
+
+
+MdGesture['$inject'] = ["$$MdGestureHandler", "$$rAF", "$timeout"];
+attachToDocument['$inject'] = ["$mdGesture", "$$MdGestureHandler"];var HANDLERS = {};
 
 /* The state of the current 'pointer'
  * The pointer represents the state of the current touch.
  * It contains normalized x and y coordinates from DOM events,
  * as well as other information abstracted from the DOM.
  */
- 
-var pointer, lastPointer, forceSkipClickHijack = false;
+
+var pointer, lastPointer, forceSkipClickHijack = false, maxClickDistance = 6;
 
 /**
  * The position of the most recent click if that click was on a label element.
@@ -1669,7 +2571,7 @@ angular
   .module('material.core.gestures', [ ])
   .provider('$mdGesture', MdGestureProvider)
   .factory('$$MdGestureHandler', MdGestureHandler)
-  .run( attachToDocument );
+  .run(attachToDocument );
 
 /**
    * @ngdoc service
@@ -1680,6 +2582,7 @@ angular
    * In some scenarios on Mobile devices (without jQuery), the click events should NOT be hijacked.
    * `$mdGestureProvider` is used to configure the Gesture module to ignore or skip click hijacking on mobile
    * devices.
+   * You can also change max click distance (6px by default) if you have issues on some touch screens.
    *
    * <hljs lang="js">
    *   app.config(function($mdGestureProvider) {
@@ -1687,6 +2590,9 @@ angular
    *     // For mobile devices without jQuery loaded, do not
    *     // intercept click events during the capture phase.
    *     $mdGestureProvider.skipClickHijack();
+   *
+   *     // If hijcacking clicks, change default 6px click distance
+   *     $mdGestureProvider.setMaxClickDistance(12);
    *
    *   });
    * </hljs>
@@ -1700,6 +2606,10 @@ MdGestureProvider.prototype = {
   // $mdGesture service is instantiated...
   skipClickHijack: function() {
     return forceSkipClickHijack = true;
+  },
+
+  setMaxClickDistance: function(clickDistance) {
+    maxClickDistance = parseInt(clickDistance);
   },
 
   /**
@@ -1721,6 +2631,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
   var userAgent = navigator.userAgent || navigator.vendor || window.opera;
   var isIos = userAgent.match(/ipad|iphone|ipod/i);
   var isAndroid = userAgent.match(/android/i);
+  var touchActionProperty = getTouchAction();
   var hasJQuery =  (typeof window.jQuery !== 'undefined') && (angular.element === window.jQuery);
 
   var self = {
@@ -1731,7 +2642,6 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
   };
 
   if (self.isHijackingClicks) {
-    var maxClickDistance = 6;
     self.handler('click', {
       options: {
         maxDistance: maxClickDistance
@@ -1756,7 +2666,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
 
           return (element.getAttribute('tabindex') != '-1') &&
               !element.hasAttribute('DISABLED') &&
-              (element.hasAttribute('tabindex') || element.hasAttribute('href') ||
+              (element.hasAttribute('tabindex') || element.hasAttribute('href') || element.isContentEditable ||
               (focusableElements.indexOf(element.nodeName) != -1));
         }
       }
@@ -1817,7 +2727,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
    * Register handlers. These listen to touch/start/move events, interpret them,
    * and dispatch gesture events depending on options & conditions. These are all
    * instances of GestureHandler.
-   * @see GestureHandler 
+   * @see GestureHandler
    */
   return self
     /*
@@ -1863,7 +2773,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
         // If we don't preventDefault touchmove events here, Android will assume we don't
         // want to listen to anymore touch events. It will start scrolling and stop sending
         // touchmove events.
-        ev.preventDefault();
+        if (!touchActionProperty && ev.type === 'touchmove') ev.preventDefault();
 
         // If the user moves greater than <maxDistance> pixels, stop the hold timer
         // set in onStart
@@ -1882,7 +2792,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
      * The drag handler dispatches a drag event if the user holds and moves his finger greater than
      * <minDistance> px in the x or y direction, depending on options.horizontal.
      * The drag will be cancelled if the user moves his finger greater than <minDistance>*<cancelMultiplier> in
-     * the perpindicular direction. Eg if the drag is horizontal and the user moves his finger <minDistance>*<cancelMultiplier>
+     * the perpendicular direction. Eg if the drag is horizontal and the user moves his finger <minDistance>*<cancelMultiplier>
      * pixels vertically, this handler won't consider the move part of a drag.
      */
     .handler('drag', {
@@ -1890,6 +2800,18 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
         minDistance: 6,
         horizontal: true,
         cancelMultiplier: 1.5
+      },
+      onSetup: function(element, options) {
+        if (touchActionProperty) {
+          // We check for horizontal to be false, because otherwise we would overwrite the default opts.
+          this.oldTouchAction = element[0].style[touchActionProperty];
+          element[0].style[touchActionProperty] = options.horizontal ? 'pan-y' : 'pan-x';
+        }
+      },
+      onCleanup: function(element) {
+        if (this.oldTouchAction) {
+          element[0].style[touchActionProperty] = this.oldTouchAction;
+        }
       },
       onStart: function (ev) {
         // For drag, require a parent to be registered with $mdGesture.register()
@@ -1901,7 +2823,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
         // If we don't preventDefault touchmove events here, Android will assume we don't
         // want to listen to anymore touch events. It will start scrolling and stop sending
         // touchmove events.
-        ev.preventDefault();
+        if (!touchActionProperty && ev.type === 'touchmove') ev.preventDefault();
 
         if (!this.state.dragPointer) {
           if (this.state.options.horizontal) {
@@ -1925,7 +2847,7 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
           this.dispatchDragMove(ev);
         }
       },
-      // Only dispatch dragmove events every frame; any more is unnecessray
+      // Only dispatch dragmove events every frame; any more is unnecessary
       dispatchDragMove: $$rAF.throttle(function (ev) {
         // Make sure the drag didn't stop while waiting for the next frame
         if (this.state.isRunning) {
@@ -1966,8 +2888,20 @@ function MdGesture($$MdGestureHandler, $$rAF, $timeout) {
       }
     });
 
+  function getTouchAction() {
+    var testEl = document.createElement('div');
+    var vendorPrefixes = ['', 'webkit', 'Moz', 'MS', 'ms', 'o'];
+
+    for (var i = 0; i < vendorPrefixes.length; i++) {
+      var prefix = vendorPrefixes[i];
+      var property = prefix ? prefix + 'TouchAction' : 'touchAction';
+      if (angular.isDefined(testEl.style[property])) {
+        return property;
+      }
+    }
+  }
+
 }
-MdGesture.$inject = ["$$MdGestureHandler", "$$rAF", "$timeout"];
 
 /**
  * MdGestureHandler
@@ -1995,6 +2929,8 @@ function MdGestureHandler() {
     dispatchEvent: hasJQuery ?  jQueryDispatchEvent : nativeDispatchEvent,
 
     // These are overridden by the registered handler
+    onSetup: angular.noop,
+    onCleanup: angular.noop,
     onStart: angular.noop,
     onMove: angular.noop,
     onEnd: angular.noop,
@@ -2044,7 +2980,7 @@ function MdGestureHandler() {
       return null;
     },
 
-    // Called from $mdGesture.register when an element reigsters itself with a handler.
+    // Called from $mdGesture.register when an element registers itself with a handler.
     // Store the options the user gave on the DOMElement itself. These options will
     // be retrieved with getNearestParent when the handler starts.
     registerElement: function (element, options) {
@@ -2053,11 +2989,15 @@ function MdGestureHandler() {
       element[0].$mdGesture[this.name] = options || {};
       element.on('$destroy', onDestroy);
 
+      self.onSetup(element, options || {});
+
       return onDestroy;
 
       function onDestroy() {
         delete element[0].$mdGesture[self.name];
         element.off('$destroy', onDestroy);
+
+        self.onCleanup(element, options || {});
       }
     }
   };
@@ -2141,11 +3081,11 @@ function attachToDocument( $mdGesture, $$MdGestureHandler ) {
   if (!isInitialized && $mdGesture.isHijackingClicks ) {
     /*
      * If hijack clicks is true, we preventDefault any click that wasn't
-     * sent by ngMaterial. This is because on older Android & iOS, a false, or 'ghost',
+     * sent by AngularJS Material. This is because on older Android & iOS, a false, or 'ghost',
      * click event will be sent ~400ms after a touchend event happens.
      * The only way to know if this click is real is to prevent any normal
      * click events, and add a flag to events sent by material so we know not to prevent those.
-     * 
+     *
      * Two exceptions to click events that should be prevented are:
      *  - click events sent by the keyboard (eg form submit)
      *  - events that originate from an Ionic app
@@ -2169,8 +3109,10 @@ function attachToDocument( $mdGesture, $$MdGestureHandler ) {
 
   function clickHijacker(ev) {
     var isKeyClick = ev.clientX === 0 && ev.clientY === 0;
+    var isSubmitEvent = ev.target && ev.target.type === 'submit';
     if (!isKeyClick && !ev.$material && !ev.isIonicTap
-      && !isInputEventFromLabelClick(ev)) {
+      && !isInputEventFromLabelClick(ev)
+      && !isSubmitEvent) {
       ev.preventDefault();
       ev.stopPropagation();
       lastLabelClickPos = null;
@@ -2267,7 +3209,6 @@ function attachToDocument( $mdGesture, $$MdGestureHandler ) {
   }
 
 }
-attachToDocument.$inject = ["$mdGesture", "$$MdGestureHandler"];
 
 // ********************
 // Module Functions
@@ -2353,6 +3294,157 @@ function getEventPoint(ev) {
     ev;
 }
 
+/**
+ * @ngdoc module
+ * @name material.core.interaction
+ * @description
+ * User interaction detection to provide proper accessibility.
+ */
+MdInteractionService['$inject'] = ["$timeout", "$mdUtil"];
+angular
+  .module('material.core.interaction', [])
+  .service('$mdInteraction', MdInteractionService);
+
+
+/**
+ * @ngdoc service
+ * @name $mdInteraction
+ * @module material.core.interaction
+ *
+ * @description
+ *
+ * Service which keeps track of the last interaction type and validates them for several browsers.
+ * The service hooks into the document's body and listens for touch, mouse and keyboard events.
+ *
+ * The most recent interaction type can be retrieved by calling the `getLastInteractionType` method.
+ *
+ * Here is an example markup for using the interaction service.
+ *
+ * <hljs lang="js">
+ *   var lastType = $mdInteraction.getLastInteractionType();
+ *
+ *   if (lastType === 'keyboard') {
+ *     // We only restore the focus for keyboard users.
+ *     restoreFocus();
+ *   }
+ * </hljs>
+ *
+ */
+function MdInteractionService($timeout, $mdUtil) {
+  this.$timeout = $timeout;
+  this.$mdUtil = $mdUtil;
+
+  this.bodyElement = angular.element(document.body);
+  this.isBuffering = false;
+  this.bufferTimeout = null;
+  this.lastInteractionType = null;
+  this.lastInteractionTime = null;
+
+  // Type Mappings for the different events
+  // There will be three three interaction types
+  // `keyboard`, `mouse` and `touch`
+  // type `pointer` will be evaluated in `pointerMap` for IE Browser events
+  this.inputEventMap = {
+    'keydown': 'keyboard',
+    'mousedown': 'mouse',
+    'mouseenter': 'mouse',
+    'touchstart': 'touch',
+    'pointerdown': 'pointer',
+    'MSPointerDown': 'pointer'
+  };
+
+  // IE PointerDown events will be validated in `touch` or `mouse`
+  // Index numbers referenced here: https://msdn.microsoft.com/library/windows/apps/hh466130.aspx
+  this.iePointerMap = {
+    2: 'touch',
+    3: 'touch',
+    4: 'mouse'
+  };
+
+  this.initializeEvents();
+}
+
+/**
+ * Initializes the interaction service, by registering all interaction events to the
+ * body element.
+ */
+MdInteractionService.prototype.initializeEvents = function() {
+  // IE browsers can also trigger pointer events, which also leads to an interaction.
+  var pointerEvent = 'MSPointerEvent' in window ? 'MSPointerDown' : 'PointerEvent' in window ? 'pointerdown' : null;
+
+  this.bodyElement.on('keydown mousedown', this.onInputEvent.bind(this));
+
+  if ('ontouchstart' in document.documentElement) {
+    this.bodyElement.on('touchstart', this.onBufferInputEvent.bind(this));
+  }
+
+  if (pointerEvent) {
+    this.bodyElement.on(pointerEvent, this.onInputEvent.bind(this));
+  }
+
+};
+
+/**
+ * Event listener for normal interaction events, which should be tracked.
+ * @param event {MouseEvent|KeyboardEvent|PointerEvent|TouchEvent}
+ */
+MdInteractionService.prototype.onInputEvent = function(event) {
+  if (this.isBuffering) {
+    return;
+  }
+
+  var type = this.inputEventMap[event.type];
+
+  if (type === 'pointer') {
+    type = this.iePointerMap[event.pointerType] || event.pointerType;
+  }
+
+  this.lastInteractionType = type;
+  this.lastInteractionTime = this.$mdUtil.now();
+};
+
+/**
+ * Event listener for interaction events which should be buffered (touch events).
+ * @param event {TouchEvent}
+ */
+MdInteractionService.prototype.onBufferInputEvent = function(event) {
+  this.$timeout.cancel(this.bufferTimeout);
+
+  this.onInputEvent(event);
+  this.isBuffering = true;
+
+  // The timeout of 650ms is needed to delay the touchstart, because otherwise the touch will call
+  // the `onInput` function multiple times.
+  this.bufferTimeout = this.$timeout(function() {
+    this.isBuffering = false;
+  }.bind(this), 650, false);
+
+};
+
+/**
+ * @ngdoc method
+ * @name $mdInteraction#getLastInteractionType
+ * @description Retrieves the last interaction type triggered in body.
+ * @returns {string|null} Last interaction type.
+ */
+MdInteractionService.prototype.getLastInteractionType = function() {
+  return this.lastInteractionType;
+};
+
+/**
+ * @ngdoc method
+ * @name $mdInteraction#isUserInvoked
+ * @description Method to detect whether any interaction happened recently or not.
+ * @param {number=} checkDelay Time to check for any interaction to have been triggered.
+ * @returns {boolean} Whether there was any interaction or not.
+ */
+MdInteractionService.prototype.isUserInvoked = function(checkDelay) {
+  var delay = angular.isNumber(checkDelay) ? checkDelay : 15;
+
+  // Check for any interaction to be within the specified check time.
+  return this.lastInteractionTime >= this.$mdUtil.now() - delay;
+};
+
 angular.module('material.core')
   .provider('$$interimElement', InterimElementProvider);
 
@@ -2381,8 +3473,8 @@ angular.module('material.core')
  */
 
 function InterimElementProvider() {
+  InterimElementFactory['$inject'] = ["$document", "$q", "$rootScope", "$timeout", "$rootElement", "$animate", "$mdUtil", "$mdCompiler", "$mdTheming", "$injector", "$exceptionHandler"];
   createInterimElementProvider.$get = InterimElementFactory;
-  InterimElementFactory.$inject = ["$document", "$q", "$$q", "$rootScope", "$timeout", "$rootElement", "$animate", "$mdUtil", "$mdCompiler", "$mdTheming", "$injector"];
   return createInterimElementProvider;
 
   /**
@@ -2391,6 +3483,7 @@ function InterimElementProvider() {
    * as well as configuration of 'preset' methods (eg dialog.basic(): basic is a preset method)
    */
   function createInterimElementProvider(interimFactoryName) {
+    factory['$inject'] = ["$$interimElement", "$injector"];
     var EXPOSED_METHODS = ['onHide', 'onShow', 'onRemove'];
 
     var customMethods = {};
@@ -2409,11 +3502,10 @@ function InterimElementProvider() {
      * all interim elements will come with the 'build' preset
      */
     provider.addPreset('build', {
-      methods: ['controller', 'controllerAs', 'resolve',
-        'template', 'templateUrl', 'themable', 'transformTemplate', 'parent']
+      methods: ['controller', 'controllerAs', 'resolve', 'multiple',
+        'template', 'templateUrl', 'themable', 'transformTemplate', 'parent', 'contentElement']
     });
 
-    factory.$inject = ["$$interimElement", "$injector"];
     return provider;
 
     /**
@@ -2601,8 +3693,8 @@ function InterimElementProvider() {
   }
 
   /* ngInject */
-  function InterimElementFactory($document, $q, $$q, $rootScope, $timeout, $rootElement, $animate,
-                                 $mdUtil, $mdCompiler, $mdTheming, $injector ) {
+  function InterimElementFactory($document, $q, $rootScope, $timeout, $rootElement, $animate,
+                                 $mdUtil, $mdCompiler, $mdTheming, $injector, $exceptionHandler) {
     return function createInterimElementService() {
       var SHOW_CANCELLED = false;
 
@@ -2614,15 +3706,20 @@ function InterimElementProvider() {
        * A service used to control inserting and removing an element into the DOM.
        *
        */
-      var service, stack = [];
+
+      var service;
+
+      var showPromises = []; // Promises for the interim's which are currently opening.
+      var hidePromises = []; // Promises for the interim's which are currently hiding.
+      var showingInterims = []; // Interim elements which are currently showing up.
 
       // Publish instance $$interimElement service;
       // ... used as $mdDialog, $mdToast, $mdMenu, and $mdSelect
 
       return service = {
         show: show,
-        hide: hide,
-        cancel: cancel,
+        hide: waitForInterim(hide),
+        cancel: waitForInterim(cancel),
         destroy : destroy,
         $injector_: $injector
       };
@@ -2643,26 +3740,47 @@ function InterimElementProvider() {
       function show(options) {
         options = options || {};
         var interimElement = new InterimElement(options || {});
-        var hideExisting = !options.skipHide && stack.length ? service.hide() : $q.when(true);
 
-        // This hide()s only the current interim element before showing the next, new one
-        // NOTE: this is not reversible (e.g. interim elements are not stackable)
+        // When an interim element is currently showing, we have to cancel it.
+        // Just hiding it, will resolve the InterimElement's promise, the promise should be
+        // rejected instead.
+        var hideAction = options.multiple ? $q.resolve() : $q.all(showPromises);
 
-        hideExisting.finally(function() {
+        if (!options.multiple) {
+          // Wait for all opening interim's to finish their transition.
+          hideAction = hideAction.then(function() {
+            // Wait for all closing and showing interim's to be completely closed.
+            var promiseArray = hidePromises.concat(showingInterims.map(service.cancel));
+            return $q.all(promiseArray);
+          });
+        }
 
-          stack.push(interimElement);
-          interimElement
+        var showAction = hideAction.then(function() {
+
+          return interimElement
             .show()
-            .catch(function( reason ) {
-              //$log.error("InterimElement.show() error: " + reason );
-              return reason;
+            .catch(function(reason) { return reason; })
+            .finally(function() {
+              showPromises.splice(showPromises.indexOf(showAction), 1);
+              showingInterims.push(interimElement);
             });
 
         });
 
+        showPromises.push(showAction);
+
+        // In AngularJS 1.6+, exceptions inside promises will cause a rejection. We need to handle
+        // the rejection and only log it if it's an error.
+        interimElement.deferred.promise.catch(function(fault) {
+          if (fault instanceof Error) {
+            $exceptionHandler(fault);
+          }
+
+          return fault;
+        });
+
         // Return a promise that will be resolved when the interim
         // element is hidden or cancelled...
-
         return interimElement.deferred.promise;
       }
 
@@ -2679,27 +3797,30 @@ function InterimElementProvider() {
        *
        */
       function hide(reason, options) {
-        if ( !stack.length ) return $q.when(reason);
         options = options || {};
 
         if (options.closeAll) {
-          var promise = $q.all(stack.reverse().map(closeElement));
-          stack = [];
-          return promise;
+          // We have to make a shallow copy of the array, because otherwise the map will break.
+          return $q.all(showingInterims.slice().reverse().map(closeElement));
         } else if (options.closeTo !== undefined) {
-          return $q.all(stack.splice(options.closeTo).map(closeElement));
-        } else {
-          var interim = stack.pop();
-          return closeElement(interim);
+          return $q.all(showingInterims.slice(options.closeTo).map(closeElement));
         }
 
+        // Hide the latest showing interim element.
+        return closeElement(showingInterims[showingInterims.length - 1]);
+
         function closeElement(interim) {
-          interim
+
+          var hideAction = interim
             .remove(reason, false, options || { })
-            .catch(function( reason ) {
-              //$log.error("InterimElement.hide() error: " + reason );
-              return reason;
+            .catch(function(reason) { return reason; })
+            .finally(function() {
+              hidePromises.splice(hidePromises.indexOf(hideAction), 1);
             });
+
+          showingInterims.splice(showingInterims.indexOf(interim), 1);
+          hidePromises.push(hideAction);
+
           return interim.deferred.promise;
         }
       }
@@ -2717,43 +3838,76 @@ function InterimElementProvider() {
        *
        */
       function cancel(reason, options) {
-        var interim = stack.pop();
-        if ( !interim ) return $q.when(reason);
+        var interim = showingInterims.pop();
+        if (!interim) {
+          return $q.when(reason);
+        }
 
-        interim
-          .remove(reason, true, options || { })
-          .catch(function( reason ) {
-            //$log.error("InterimElement.cancel() error: " + reason );
-            return reason;
+        var cancelAction = interim
+          .remove(reason, true, options || {})
+          .catch(function(reason) { return reason; })
+          .finally(function() {
+            hidePromises.splice(hidePromises.indexOf(cancelAction), 1);
           });
 
-        return interim.deferred.promise;
+        hidePromises.push(cancelAction);
+
+        // Since AngularJS 1.6.7, promises will be logged to $exceptionHandler when the promise
+        // is not handling the rejection. We create a pseudo catch handler, which will prevent the
+        // promise from being logged to the $exceptionHandler.
+        return interim.deferred.promise.catch(angular.noop);
+      }
+
+      /**
+       * Creates a function to wait for at least one interim element to be available.
+       * @param callbackFn Function to be used as callback
+       * @returns {Function}
+       */
+      function waitForInterim(callbackFn) {
+        return function() {
+          var fnArguments = arguments;
+
+          if (!showingInterims.length) {
+            // When there are still interim's opening, then wait for the first interim element to
+            // finish its open animation.
+            if (showPromises.length) {
+              return showPromises[0].finally(function () {
+                return callbackFn.apply(service, fnArguments);
+              });
+            }
+
+            return $q.when("No interim elements currently showing up.");
+          }
+
+          return callbackFn.apply(service, fnArguments);
+        };
       }
 
       /*
        * Special method to quick-remove the interim element without animations
        * Note: interim elements are in "interim containers"
        */
-      function destroy(target) {
-        var interim = !target ? stack.shift() : null;
-        var cntr = angular.element(target).length ? angular.element(target)[0].parentNode : null;
+      function destroy(targetEl) {
+        var interim = !targetEl ? showingInterims.shift() : null;
 
-        if (cntr) {
-            // Try to find the interim element in the stack which corresponds to the supplied DOM element.
-            var filtered = stack.filter(function(entry) {
-                  var currNode = entry.options.element[0];
-                  return  (currNode === cntr);
-                });
+        var parentEl = angular.element(targetEl).length && angular.element(targetEl)[0].parentNode;
 
-            // Note: this function might be called when the element already has been removed, in which
-            //       case we won't find any matches. That's ok.
-            if (filtered.length > 0) {
-              interim = filtered[0];
-              stack.splice(stack.indexOf(interim), 1);
-            }
+        if (parentEl) {
+          // Try to find the interim in the stack which corresponds to the supplied DOM element.
+          var filtered = showingInterims.filter(function(entry) {
+            return entry.options.element[0] === parentEl;
+          });
+
+          // Note: This function might be called when the element already has been removed,
+          // in which case we won't find any matches.
+          if (filtered.length) {
+            interim = filtered[0];
+            showingInterims.splice(showingInterims.indexOf(interim), 1);
+          }
         }
 
-        return interim ? interim.remove(SHOW_CANCELLED, false, {'$destroy':true}) : $q.when(SHOW_CANCELLED);
+        return interim ? interim.remove(SHOW_CANCELLED, false, { '$destroy': true }) :
+                         $q.when(SHOW_CANCELLED);
       }
 
       /*
@@ -2777,16 +3931,22 @@ function InterimElementProvider() {
          * Use optional autoHided and transition-in effects
          */
         function createAndTransitionIn() {
-          return $q(function(resolve, reject){
+          return $q(function(resolve, reject) {
+
+            // Trigger onCompiling callback before the compilation starts.
+            // This is useful, when modifying options, which can be influenced by developers.
+            options.onCompiling && options.onCompiling(options);
 
             compileElement(options)
               .then(function( compiledData ) {
                 element = linkElement( compiledData, options );
 
-                showAction = showElement(element, options, compiledData.controller)
-                  .then(resolve, rejectAll );
+                // Expose the cleanup function from the compiler.
+                options.cleanupElement = compiledData.cleanup;
 
-              }, rejectAll);
+                showAction = showElement(element, options, compiledData.controller)
+                  .then(resolve, rejectAll);
+              }).catch(rejectAll);
 
             function rejectAll(fault) {
               // Force the '$md<xxx>.show()' promise to reject
@@ -2820,15 +3980,11 @@ function InterimElementProvider() {
             });
 
           } else {
-
-            $q.when(showAction)
-                .finally(function() {
-                  hideElement(options.element, options).then(function() {
-
-                    (isCancelled && rejectAll(response)) || resolveAll(response);
-
-                  }, rejectAll);
-                });
+            $q.when(showAction).finally(function() {
+              hideElement(options.element, options).then(function() {
+                isCancelled ? rejectAll(response) : resolveAll(response);
+              }, rejectAll);
+            });
 
             return self.deferred.promise;
           }
@@ -2959,14 +4115,14 @@ function InterimElementProvider() {
             autoHideTimer = $timeout(service.hide, options.hideDelay) ;
             cancelAutoHide = function() {
               $timeout.cancel(autoHideTimer);
-            }
+            };
           }
 
           // Cache for subsequent use
           options.cancelAutoHide = function() {
             cancelAutoHide();
             options.cancelAutoHide = undefined;
-          }
+          };
         }
 
         /**
@@ -2979,7 +4135,12 @@ function InterimElementProvider() {
           // Trigger onComplete callback when the `show()` finishes
           var notifyComplete = options.onComplete || angular.noop;
 
-          notifyShowing(options.scope, element, options, controller);
+          // Necessary for consistency between AngularJS 1.5 and 1.6.
+          try {
+            notifyShowing(options.scope, element, options, controller);
+          } catch (e) {
+            return $q.reject(e);
+          }
 
           return $q(function (resolve, reject) {
             try {
@@ -2990,10 +4151,9 @@ function InterimElementProvider() {
                   startAutoHide();
 
                   resolve(element);
+                }, reject);
 
-                }, reject );
-
-            } catch(e) {
+            } catch (e) {
               reject(e.message);
             }
           });
@@ -3002,34 +4162,33 @@ function InterimElementProvider() {
         function hideElement(element, options) {
           var announceRemoving = options.onRemoving || angular.noop;
 
-          return $$q(function (resolve, reject) {
+          return $q(function (resolve, reject) {
             try {
               // Start transitionIn
-              var action = $$q.when( options.onRemove(options.scope, element, options) || true );
+              var action = $q.when( options.onRemove(options.scope, element, options) || true );
 
               // Trigger callback *before* the remove operation starts
               announceRemoving(element, action);
 
-              if ( options.$destroy == true ) {
-
+              if (options.$destroy) {
                 // For $destroy, onRemove should be synchronous
                 resolve(element);
 
+                if (!options.preserveScope && options.scope ) {
+                  // scope destroy should still be be done after the current digest is done
+                  action.then( function() { options.scope.$destroy(); });
+                }
               } else {
-
                 // Wait until transition-out is done
                 action.then(function () {
-
                   if (!options.preserveScope && options.scope ) {
                     options.scope.$destroy();
                   }
 
                   resolve(element);
-
-                }, reject );
+                }, reject);
               }
-
-            } catch(e) {
+            } catch (e) {
               reject(e.message);
             }
           });
@@ -3079,7 +4238,7 @@ function InterimElementProvider() {
   /**
    *   registerLayoutAPI()
    *
-   *   The original ngMaterial Layout solution used attribute selectors and CSS.
+   *   The original AngularJS Material Layout solution used attribute selectors and CSS.
    *
    *  ```html
    *  <div layout="column"> My Content </div>
@@ -3145,8 +4304,25 @@ function InterimElementProvider() {
 
     // Register other, special directive functions for the Layout features:
     module
-      .directive('mdLayoutCss'  , disableLayoutDirective )
-      .directive('ngCloak'      ,  buildCloakInterceptor('ng-cloak'))
+
+      .provider('$$mdLayout'     , function() {
+        // Publish internal service for Layouts
+        return {
+          $get : angular.noop,
+          validateAttributeValue : validateAttributeValue,
+          validateAttributeUsage : validateAttributeUsage,
+          /**
+           * Easy way to disable/enable the Layout API.
+           * When disabled, this stops all attribute-to-classname generations
+           */
+          disableLayouts  : function(isDisabled) {
+            config.enabled =  (isDisabled !== true);
+          }
+        };
+      })
+
+      .directive('mdLayoutCss'        , disableLayoutDirective )
+      .directive('ngCloak'            , buildCloakInterceptor('ng-cloak'))
 
       .directive('layoutWrap'   , attributeWithoutValue('layout-wrap'))
       .directive('layoutNowrap' , attributeWithoutValue('layout-nowrap'))
@@ -3170,7 +4346,10 @@ function InterimElementProvider() {
       .directive('hideLtMd'       , warnAttrNotSupported('hide-lt-md'))
       .directive('hideLtLg'       , warnAttrNotSupported('hide-lt-lg'))
       .directive('showLtMd'       , warnAttrNotSupported('show-lt-md'))
-      .directive('showLtLg'       , warnAttrNotSupported('show-lt-lg'));
+      .directive('showLtLg'       , warnAttrNotSupported('show-lt-lg'))
+
+      // Determine if
+      .config( detectDisabledLayouts );
 
     /**
      * Converts snake_case to camelCase.
@@ -3186,6 +4365,21 @@ function InterimElementProvider() {
     }
 
   }
+
+
+  /**
+    * Detect if any of the HTML tags has a [md-layouts-disabled] attribute;
+    * If yes, then immediately disable all layout API features
+    *
+    * Note: this attribute should be specified on either the HTML or BODY tags
+    */
+   /**
+    * ngInject
+    */
+   function detectDisabledLayouts() {
+     var isDisabled = !!document.querySelector('[md-layouts-disabled]');
+     config.enabled = !isDisabled;
+   }
 
   /**
    * Special directive that will disable ALL Layout conversions of layout
@@ -3208,19 +4402,18 @@ function InterimElementProvider() {
    *
    */
   function disableLayoutDirective() {
+    // Return a 1x-only, first-match attribute directive
+    config.enabled = false;
+
     return {
       restrict : 'A',
-      priority : '900',
-      compile  : function(element, attr) {
-        config.enabled = false;
-        return angular.noop;
-      }
+      priority : '900'
     };
   }
 
   /**
    * Tail-hook ngCloak to delay the uncloaking while Layout transformers
-   * finish processing. Eliminates flicker with Material.Layoouts
+   * finish processing. Eliminates flicker with Material.Layouts
    */
   function buildCloakInterceptor(className) {
     return [ '$timeout', function($timeout){
@@ -3249,8 +4442,8 @@ function InterimElementProvider() {
 
   // *********************************************************************************
   //
-  // These functions create registration functions for ngMaterial Layout attribute directives
-  // This provides easy translation to switch ngMaterial attribute selectors to
+  // These functions create registration functions for AngularJS Material Layout attribute directives
+  // This provides easy translation to switch AngularJS Material attribute selectors to
   // CLASS selectors and directives; which has huge performance implications
   // for IE Browsers
   //
@@ -3300,12 +4493,12 @@ function InterimElementProvider() {
       var unwatch = attrs.$observe(attrs.$normalize(className), updateFn);
 
       updateFn(getNormalizedAttrValue(className, attrs, ""));
-      scope.$on("$destroy", function() { unwatch() });
+      scope.$on("$destroy", function() { unwatch(); });
     }
   }
 
   /**
-   * Creates a registration function for ngMaterial Layout attribute directive.
+   * Creates a registration function for AngularJS Material Layout attribute directive.
    * This is a `simple` transpose of attribute usage to class usage; where we ignore
    * any attribute value
    */
@@ -3370,7 +4563,7 @@ function InterimElementProvider() {
       var value = validateAttributeValue(className, newValue || "");
       if ( angular.isDefined(value) ) {
         if (lastClass) element.removeClass(lastClass);
-        lastClass = !value ? className : className + "-" + value.replace(WHITESPACE, "-");
+        lastClass = !value ? className : className + "-" + value.trim().replace(WHITESPACE, "-");
         element.addClass(lastClass);
       }
     };
@@ -3417,7 +4610,7 @@ function InterimElementProvider() {
    * fallback value
    */
   function validateAttributeValue(className, value, updateFn) {
-    var origValue = value;
+    var origValue;
 
     if (!needsInterpolation(value)) {
       switch (className.replace(SUFFIXES,"")) {
@@ -3462,7 +4655,7 @@ function InterimElementProvider() {
       }
     }
 
-    return value;
+    return value ? value.trim() : "";
   }
 
   /**
@@ -3489,7 +4682,7 @@ function InterimElementProvider() {
 
   function getNormalizedAttrValue(className, attrs, defaultVal) {
     var normalizedAttr = attrs.$normalize(className);
-    return attrs[normalizedAttr] ? attrs[normalizedAttr].replace(WHITESPACE, "-") : defaultVal || null;
+    return attrs[normalizedAttr] ? attrs[normalizedAttr].trim().replace(WHITESPACE, "-") : defaultVal || null;
   }
 
   function findIn(item, list, replaceWith) {
@@ -3513,7 +4706,7 @@ function InterimElementProvider() {
 
     attrValue = (attrValue || "");
 
-    if ( attrValue.indexOf("-") == 0 || attrValue.indexOf(" ") == 0) {
+    if ( attrValue.indexOf("-") === 0 || attrValue.indexOf(" ") === 0) {
       // For missing main-axis values
       attrValue = "none" + attrValue;
     }
@@ -3536,6 +4729,216 @@ function InterimElementProvider() {
 
 })();
 
+/**
+ * @ngdoc module
+ * @name material.core.liveannouncer
+ * @description
+ * AngularJS Material Live Announcer to provide accessibility for Voice Readers.
+ */
+MdLiveAnnouncer['$inject'] = ["$timeout"];
+angular
+  .module('material.core')
+  .service('$mdLiveAnnouncer', MdLiveAnnouncer);
+
+/**
+ * @ngdoc service
+ * @name $mdLiveAnnouncer
+ * @module material.core.liveannouncer
+ *
+ * @description
+ *
+ * Service to announce messages to supported screenreaders.
+ *
+ * > The `$mdLiveAnnouncer` service is internally used for components to provide proper accessibility.
+ *
+ * <hljs lang="js">
+ *   module.controller('AppCtrl', function($mdLiveAnnouncer) {
+ *     // Basic announcement (Polite Mode)
+ *     $mdLiveAnnouncer.announce('Hey Google');
+ *
+ *     // Custom announcement (Assertive Mode)
+ *     $mdLiveAnnouncer.announce('Hey Google', 'assertive');
+ *   });
+ * </hljs>
+ *
+ */
+function MdLiveAnnouncer($timeout) {
+  /** @private @const @type {!angular.$timeout} */
+  this._$timeout = $timeout;
+
+  /** @private @const @type {!HTMLElement} */
+  this._liveElement = this._createLiveElement();
+
+  /** @private @const @type {!number} */
+  this._announceTimeout = 100;
+}
+
+/**
+ * @ngdoc method
+ * @name $mdLiveAnnouncer#announce
+ * @description Announces messages to supported screenreaders.
+ * @param {string} message Message to be announced to the screenreader
+ * @param {'off'|'polite'|'assertive'} politeness The politeness of the announcer element.
+ */
+MdLiveAnnouncer.prototype.announce = function(message, politeness) {
+  if (!politeness) {
+    politeness = 'polite';
+  }
+
+  var self = this;
+
+  self._liveElement.textContent = '';
+  self._liveElement.setAttribute('aria-live', politeness);
+
+  // This 100ms timeout is necessary for some browser + screen-reader combinations:
+  // - Both JAWS and NVDA over IE11 will not announce anything without a non-zero timeout.
+  // - With Chrome and IE11 with NVDA or JAWS, a repeated (identical) message won't be read a
+  //   second time without clearing and then using a non-zero delay.
+  // (using JAWS 17 at time of this writing).
+  self._$timeout(function() {
+    self._liveElement.textContent = message;
+  }, self._announceTimeout, false);
+};
+
+/**
+ * Creates a live announcer element, which listens for DOM changes and announces them
+ * to the screenreaders.
+ * @returns {!HTMLElement}
+ * @private
+ */
+MdLiveAnnouncer.prototype._createLiveElement = function() {
+  var liveEl = document.createElement('div');
+
+  liveEl.classList.add('md-visually-hidden');
+  liveEl.setAttribute('role', 'status');
+  liveEl.setAttribute('aria-atomic', 'true');
+  liveEl.setAttribute('aria-live', 'polite');
+
+  document.body.appendChild(liveEl);
+
+  return liveEl;
+};
+
+/**
+ * @ngdoc service
+ * @name $$mdMeta
+ * @module material.core.meta
+ *
+ * @description
+ *
+ * A provider and a service that simplifies meta tags access
+ *
+ * Note: This is intended only for use with dynamic meta tags such as browser color and title.
+ * Tags that are only processed when the page is rendered (such as `charset`, and `http-equiv`)
+ * will not work since `$$mdMeta` adds the tags after the page has already been loaded.
+ *
+ * ```js
+ * app.config(function($$mdMetaProvider) {
+ *   var removeMeta = $$mdMetaProvider.setMeta('meta-name', 'content');
+ *   var metaValue  = $$mdMetaProvider.getMeta('meta-name'); // -> 'content'
+ *
+ *   removeMeta();
+ * });
+ *
+ * app.controller('myController', function($$mdMeta) {
+ *   var removeMeta = $$mdMeta.setMeta('meta-name', 'content');
+ *   var metaValue  = $$mdMeta.getMeta('meta-name'); // -> 'content'
+ *
+ *   removeMeta();
+ * });
+ * ```
+ *
+ * @returns {$$mdMeta.$service}
+ *
+ */
+angular.module('material.core.meta', [])
+  .provider('$$mdMeta', function () {
+    var head = angular.element(document.head);
+    var metaElements = {};
+
+    /**
+     * Checks if the requested element was written manually and maps it
+     *
+     * @param {string} name meta tag 'name' attribute value
+     * @returns {boolean} returns true if there is an element with the requested name
+     */
+    function mapExistingElement(name) {
+      if (metaElements[name]) {
+        return true;
+      }
+
+      var element = document.getElementsByName(name)[0];
+
+      if (!element) {
+        return false;
+      }
+
+      metaElements[name] = angular.element(element);
+
+      return true;
+    }
+
+    /**
+     * @ngdoc method
+     * @name $$mdMeta#setMeta
+     *
+     * @description
+     * Creates meta element with the 'name' and 'content' attributes,
+     * if the meta tag is already created than we replace the 'content' value
+     *
+     * @param {string} name meta tag 'name' attribute value
+     * @param {string} content meta tag 'content' attribute value
+     * @returns {function} remove function
+     *
+     */
+    function setMeta(name, content) {
+      mapExistingElement(name);
+
+      if (!metaElements[name]) {
+        var newMeta = angular.element('<meta name="' + name + '" content="' + content + '"/>');
+        head.append(newMeta);
+        metaElements[name] = newMeta;
+      }
+      else {
+        metaElements[name].attr('content', content);
+      }
+
+      return function () {
+        metaElements[name].attr('content', '');
+        metaElements[name].remove();
+        delete metaElements[name];
+      };
+    }
+
+    /**
+     * @ngdoc method
+     * @name $$mdMeta#getMeta
+     *
+     * @description
+     * Gets the 'content' attribute value of the wanted meta element
+     *
+     * @param {string} name meta tag 'name' attribute value
+     * @returns {string} content attribute value
+     */
+    function getMeta(name) {
+      if (!mapExistingElement(name)) {
+        throw Error('$$mdMeta: could not find a meta tag with the name \'' + name + '\'');
+      }
+
+      return metaElements[name].attr('content');
+    }
+
+    var module = {
+      setMeta: setMeta,
+      getMeta: getMeta
+    };
+
+    return angular.extend({}, module, {
+      $get: function () {
+        return module;
+      }
+    });
+  });
   /**
    * @ngdoc module
    * @name material.core.componentRegistry
@@ -3544,6 +4947,7 @@ function InterimElementProvider() {
    * A component instance registration service.
    * Note: currently this as a private service in the SideNav component.
    */
+  ComponentRegistry['$inject'] = ["$log", "$q"];
   angular.module('material.core')
     .factory('$mdComponentRegistry', ComponentRegistry);
 
@@ -3564,8 +4968,8 @@ function InterimElementProvider() {
       /**
        * Used to print an error when an instance for a handle isn't found.
        */
-      notFoundError: function(handle) {
-        $log.error('No instance found for handle', handle);
+      notFoundError: function(handle, msgContext) {
+        $log.error( (msgContext || "") + 'No instance found for handle', handle);
       },
       /**
        * Return all registered instances as an array.
@@ -3660,7 +5064,6 @@ function InterimElementProvider() {
     }
 
   }
-  ComponentRegistry.$inject = ["$log", "$q"];
 
 (function() {
   'use strict';
@@ -3678,6 +5081,7 @@ function InterimElementProvider() {
    * @param {object=} options (Optional) Configuration options to override the default ripple configuration
    */
 
+  MdButtonInkRipple['$inject'] = ["$mdInkRipple"];
   angular.module('material.core')
     .factory('$mdButtonInkRipple', MdButtonInkRipple);
 
@@ -3701,11 +5105,10 @@ function InterimElementProvider() {
         return {
           isMenuItem: element.hasClass('md-menu-item'),
           dimBackground: true
-        }
+        };
       }
-    };
+    }
   }
-  MdButtonInkRipple.$inject = ["$mdInkRipple"];;
 })();
 
 (function() {
@@ -3724,6 +5127,7 @@ function InterimElementProvider() {
    * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
    */
 
+  MdCheckboxInkRipple['$inject'] = ["$mdInkRipple"];
   angular.module('material.core')
     .factory('$mdCheckboxInkRipple', MdCheckboxInkRipple);
 
@@ -3738,9 +5142,8 @@ function InterimElementProvider() {
         dimBackground: false,
         fitRipple: true
       }, options));
-    };
+    }
   }
-  MdCheckboxInkRipple.$inject = ["$mdInkRipple"];;
 })();
 
 (function() {
@@ -3759,6 +5162,7 @@ function InterimElementProvider() {
    * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
    */
 
+  MdListInkRipple['$inject'] = ["$mdInkRipple"];
   angular.module('material.core')
     .factory('$mdListInkRipple', MdListInkRipple);
 
@@ -3774,9 +5178,8 @@ function InterimElementProvider() {
         outline: false,
         rippleSize: 'full'
       }, options));
-    };
+    }
   }
-  MdListInkRipple.$inject = ["$mdInkRipple"];;
 })();
 
 /**
@@ -3785,8 +5188,10 @@ function InterimElementProvider() {
  * @description
  * Ripple
  */
+InkRippleCtrl['$inject'] = ["$scope", "$element", "rippleOptions", "$window", "$timeout", "$mdUtil", "$mdColorUtil"];
+InkRippleDirective['$inject'] = ["$mdButtonInkRipple", "$mdCheckboxInkRipple"];
 angular.module('material.core')
-    .factory('$mdInkRipple', InkRippleService)
+    .provider('$mdInkRipple', InkRippleProvider)
     .directive('mdInkRipple', InkRippleDirective)
     .directive('mdNoInk', attrNoDirective)
     .directive('mdNoBar', attrNoDirective)
@@ -3837,7 +5242,6 @@ function InkRippleDirective ($mdButtonInkRipple, $mdCheckboxInkRipple) {
     }
   };
 }
-InkRippleDirective.$inject = ["$mdButtonInkRipple", "$mdCheckboxInkRipple"];
 
 /**
  * @ngdoc service
@@ -3866,44 +5270,72 @@ InkRippleDirective.$inject = ["$mdButtonInkRipple", "$mdCheckboxInkRipple"];
  *   }
  * });
  * </hljs>
+ *
+ * ### Disabling ripples globally
+ * If you want to disable ink ripples globally, for all components, you can call the
+ * `disableInkRipple` method in your app's config.
+ *
+ * <hljs lang="js">
+ * app.config(function ($mdInkRippleProvider) {
+ *   $mdInkRippleProvider.disableInkRipple();
+ * });
  */
 
-/**
- * @ngdoc method
- * @name $mdInkRipple#attach
- *
- * @description
- * Attaching given scope, element and options to inkRipple controller
- *
- * @param {object=} scope Scope within the current context
- * @param {object=} element The element the ripple effect should be applied to
- * @param {object=} options (Optional) Configuration options to override the defaultRipple configuration
- * * `center` -  Whether the ripple should start from the center of the container element
- * * `dimBackground` - Whether the background should be dimmed with the ripple color
- * * `colorElement` - The element the ripple should take its color from, defined by css property `color`
- * * `fitRipple` - Whether the ripple should fill the element
- */
-function InkRippleService ($injector) {
-  return { attach: attach };
-  function attach (scope, element, options) {
-    if (element.controller('mdNoInk')) return angular.noop;
-    return $injector.instantiate(InkRippleCtrl, {
-      $scope:        scope,
-      $element:      element,
-      rippleOptions: options
-    });
+function InkRippleProvider () {
+  var isDisabledGlobally = false;
+
+  return {
+    disableInkRipple: disableInkRipple,
+    $get: ["$injector", function($injector) {
+      return { attach: attach };
+
+      /**
+       * @ngdoc method
+       * @name $mdInkRipple#attach
+       *
+       * @description
+       * Attaching given scope, element and options to inkRipple controller
+       *
+       * @param {object=} scope Scope within the current context
+       * @param {object=} element The element the ripple effect should be applied to
+       * @param {object=} options (Optional) Configuration options to override the defaultRipple configuration
+       * * `center` -  Whether the ripple should start from the center of the container element
+       * * `dimBackground` - Whether the background should be dimmed with the ripple color
+       * * `colorElement` - The element the ripple should take its color from, defined by css property `color`
+       * * `fitRipple` - Whether the ripple should fill the element
+       */
+      function attach (scope, element, options) {
+        if (isDisabledGlobally || element.controller('mdNoInk')) return angular.noop;
+        return $injector.instantiate(InkRippleCtrl, {
+          $scope:        scope,
+          $element:      element,
+          rippleOptions: options
+        });
+      }
+    }]
+  };
+
+  /**
+   * @ngdoc method
+   * @name $mdInkRipple#disableInkRipple
+   *
+   * @description
+   * A config-time method that, when called, disables ripples globally.
+   */
+  function disableInkRipple () {
+    isDisabledGlobally = true;
   }
 }
-InkRippleService.$inject = ["$injector"];
 
 /**
  * Controller used by the ripple service in order to apply ripples
  * ngInject
  */
-function InkRippleCtrl ($scope, $element, rippleOptions, $window, $timeout, $mdUtil) {
+function InkRippleCtrl ($scope, $element, rippleOptions, $window, $timeout, $mdUtil, $mdColorUtil) {
   this.$window    = $window;
   this.$timeout   = $timeout;
   this.$mdUtil    = $mdUtil;
+  this.$mdColorUtil    = $mdColorUtil;
   this.$scope     = $scope;
   this.$element   = $element;
   this.options    = rippleOptions;
@@ -3922,7 +5354,6 @@ function InkRippleCtrl ($scope, $element, rippleOptions, $window, $timeout, $mdU
 
   this.bindEvents();
 }
-InkRippleCtrl.$inject = ["$scope", "$element", "rippleOptions", "$window", "$timeout", "$mdUtil"];
 
 
 /**
@@ -3984,39 +5415,12 @@ InkRippleCtrl.prototype.calculateColor = function () {
 
 InkRippleCtrl.prototype._parseColor = function parseColor (color, multiplier) {
   multiplier = multiplier || 1;
+  var colorUtil = this.$mdColorUtil;
 
   if (!color) return;
   if (color.indexOf('rgba') === 0) return color.replace(/\d?\.?\d*\s*\)\s*$/, (0.1 * multiplier).toString() + ')');
-  if (color.indexOf('rgb') === 0) return rgbToRGBA(color);
-  if (color.indexOf('#') === 0) return hexToRGBA(color);
-
-  /**
-   * Converts hex value to RGBA string
-   * @param color {string}
-   * @returns {string}
-   */
-  function hexToRGBA (color) {
-    var hex   = color[ 0 ] === '#' ? color.substr(1) : color,
-      dig   = hex.length / 3,
-      red   = hex.substr(0, dig),
-      green = hex.substr(dig, dig),
-      blue  = hex.substr(dig * 2);
-    if (dig === 1) {
-      red += red;
-      green += green;
-      blue += blue;
-    }
-    return 'rgba(' + parseInt(red, 16) + ',' + parseInt(green, 16) + ',' + parseInt(blue, 16) + ',0.1)';
-  }
-
-  /**
-   * Converts an RGB color to RGBA
-   * @param color {string}
-   * @returns {string}
-   */
-  function rgbToRGBA (color) {
-    return color.replace(')', ', 0.1)').replace('(', 'a(');
-  }
+  if (color.indexOf('rgb') === 0) return colorUtil.rgbToRgba(color);
+  if (color.indexOf('#') === 0) return colorUtil.hexToRgba(color);
 
 };
 
@@ -4140,6 +5544,7 @@ InkRippleCtrl.prototype.createRipple = function (left, top) {
   if (!this.isRippleAllowed()) return;
 
   var ctrl        = this;
+  var colorUtil   = ctrl.$mdColorUtil;
   var ripple      = angular.element('<div class="md-ripple"></div>');
   var width       = this.$element.prop('clientWidth');
   var height      = this.$element.prop('clientHeight');
@@ -4154,8 +5559,8 @@ InkRippleCtrl.prototype.createRipple = function (left, top) {
     background:      'black',
     width:           size + 'px',
     height:          size + 'px',
-    backgroundColor: rgbaToRGB(color),
-    borderColor:     rgbaToRGB(color)
+    backgroundColor: colorUtil.rgbaToRgb(color),
+    borderColor:     colorUtil.rgbaToRgb(color)
   });
   this.lastRipple = ripple;
 
@@ -4179,12 +5584,6 @@ InkRippleCtrl.prototype.createRipple = function (left, top) {
     }, DURATION, false);
 
   }, false);
-
-  function rgbaToRGB (color) {
-    return color
-        ? color.replace('rgba', 'rgb').replace(/,[^\),]+\)/, ')')
-        : 'rgb(0,0,0)';
-  }
 
   function getSize (fit, x, y) {
     return fit
@@ -4219,6 +5618,7 @@ InkRippleCtrl.prototype.removeRipple = function (ripple) {
   if (index < 0) return;
   this.ripples.splice(this.ripples.indexOf(ripple), 1);
   ripple.removeClass('md-ripple-active');
+  ripple.addClass('md-ripple-remove');
   if (this.ripples.length === 0) this.container.css({ backgroundColor: '' });
   // use a 2-second timeout in order to allow for the animation to finish
   // we don't actually care how long the animation takes
@@ -4262,6 +5662,7 @@ function attrNoDirective () {
    * @param {object=} options (Optional) Configuration options to override the defaultripple configuration
    */
 
+  MdTabInkRipple['$inject'] = ["$mdInkRipple"];
   angular.module('material.core')
     .factory('$mdTabInkRipple', MdTabInkRipple);
 
@@ -4277,9 +5678,8 @@ function attrNoDirective () {
         outline: false,
         rippleSize: 'full'
       }, options));
-    };
+    }
   }
-  MdTabInkRipple.$inject = ["$mdInkRipple"];;
 })();
 
 angular.module('material.core.theming.palette', [])
@@ -4600,7 +6000,7 @@ angular.module('material.core.theming.palette', [])
     'A400': '#8d6e63',
     'A700': '#5d4037',
     'contrastDefaultColor': 'light',
-    'contrastDarkColors': '50 100 200',
+    'contrastDarkColors': '50 100 200 A100 A200',
     'contrastStrongLightColors': '300 400'
   },
   'grey': {
@@ -4619,7 +6019,7 @@ angular.module('material.core.theming.palette', [])
     'A400': '#303030',
     'A700': '#616161',
     'contrastDefaultColor': 'dark',
-    'contrastLightColors': '600 700 800 900'
+    'contrastLightColors': '600 700 800 900 A200 A400 A700'
   },
   'blue-grey': {
     '50': '#eceff1',
@@ -4637,16 +6037,43 @@ angular.module('material.core.theming.palette', [])
     'A400': '#78909c',
     'A700': '#455a64',
     'contrastDefaultColor': 'light',
-    'contrastDarkColors': '50 100 200 300 700',
+    'contrastDarkColors': '50 100 200 300 A100 A200',
     'contrastStrongLightColors': '400 500 700'
   }
 });
 
-angular.module('material.core.theming', ['material.core.theming.palette'])
+(function(angular) {
+  'use strict';
+/**
+ * @ngdoc module
+ * @name material.core.theming
+ * @description
+ * Theming
+ */
+detectDisabledThemes['$inject'] = ["$mdThemingProvider"];
+ThemingDirective['$inject'] = ["$mdTheming", "$interpolate", "$parse", "$mdUtil", "$q", "$log"];
+ThemableDirective['$inject'] = ["$mdTheming"];
+ThemingProvider['$inject'] = ["$mdColorPalette", "$$mdMetaProvider"];
+generateAllThemes['$inject'] = ["$injector", "$mdTheming"];
+angular.module('material.core.theming', ['material.core.theming.palette', 'material.core.meta'])
   .directive('mdTheme', ThemingDirective)
   .directive('mdThemable', ThemableDirective)
+  .directive('mdThemesDisabled', disableThemesDirective )
   .provider('$mdTheming', ThemingProvider)
+  .config( detectDisabledThemes )
   .run(generateAllThemes);
+
+/**
+ * Detect if the HTML or the BODY tags has a [md-themes-disabled] attribute
+ * If yes, then immediately disable all theme stylesheet generation and DOM injection
+ */
+/**
+ * ngInject
+ */
+function detectDisabledThemes($mdThemingProvider) {
+  var isDisabled = !!document.querySelector('[md-themes-disabled]');
+  $mdThemingProvider.disableTheming(isDisabled);
+}
 
 /**
  * @ngdoc service
@@ -4654,13 +6081,102 @@ angular.module('material.core.theming', ['material.core.theming.palette'])
  * @module material.core.theming
  *
  * @description Provider to configure the `$mdTheming` service.
+ *
+ * ### Default Theme
+ * The `$mdThemingProvider` uses by default the following theme configuration:
+ *
+ * - Primary Palette: `Blue`
+ * - Accent Palette: `Pink`
+ * - Warn Palette: `Deep-Orange`
+ * - Background Palette: `Grey`
+ *
+ * If you don't want to use the `md-theme` directive on the elements itself, you may want to overwrite
+ * the default theme.<br/>
+ * This can be done by using the following markup.
+ *
+ * <hljs lang="js">
+ *   myAppModule.config(function($mdThemingProvider) {
+ *     $mdThemingProvider
+ *       .theme('default')
+ *       .primaryPalette('blue')
+ *       .accentPalette('teal')
+ *       .warnPalette('red')
+ *       .backgroundPalette('grey');
+ *   });
+ * </hljs>
+ *
+
+ * ### Dynamic Themes
+ *
+ * By default, if you change a theme at runtime, the `$mdTheming` service will not detect those changes.<br/>
+ * If you have an application, which changes its theme on runtime, you have to enable theme watching.
+ *
+ * <hljs lang="js">
+ *   myAppModule.config(function($mdThemingProvider) {
+ *     // Enable theme watching.
+ *     $mdThemingProvider.alwaysWatchTheme(true);
+ *   });
+ * </hljs>
+ *
+ * ### Custom Theme Styles
+ *
+ * Sometimes you may want to use your own theme styles for some custom components.<br/>
+ * You are able to register your own styles by using the following markup.
+ *
+ * <hljs lang="js">
+ *   myAppModule.config(function($mdThemingProvider) {
+ *     // Register our custom stylesheet into the theming provider.
+ *     $mdThemingProvider.registerStyles(STYLESHEET);
+ *   });
+ * </hljs>
+ *
+ * The `registerStyles` method only accepts strings as value, so you're actually not able to load an external
+ * stylesheet file into the `$mdThemingProvider`.
+ *
+ * If it's necessary to load an external stylesheet, we suggest using a bundler, which supports including raw content,
+ * like [raw-loader](https://github.com/webpack/raw-loader) for `webpack`.
+ *
+ * <hljs lang="js">
+ *   myAppModule.config(function($mdThemingProvider) {
+ *     // Register your custom stylesheet into the theming provider.
+ *     $mdThemingProvider.registerStyles(require('../styles/my-component.theme.css'));
+ *   });
+ * </hljs>
+ *
+ * ### Browser color
+ *
+ * Enables browser header coloring
+ * for more info please visit:
+ * https://developers.google.com/web/fundamentals/design-and-ui/browser-customization/theme-color
+ *
+ * Options parameter: <br/>
+ * `theme`   - A defined theme via `$mdThemeProvider` to use the palettes from. Default is `default` theme. <br/>
+ * `palette` - Can be any one of the basic material design palettes, extended defined palettes and 'primary',
+ *             'accent', 'background' and 'warn'. Default is `primary`. <br/>
+ * `hue`     - The hue from the selected palette. Default is `800`<br/>
+ *
+ * <hljs lang="js">
+ *   myAppModule.config(function($mdThemingProvider) {
+ *     // Enable browser color
+ *     $mdThemingProvider.enableBrowserColor({
+ *       theme: 'myTheme', // Default is 'default'
+ *       palette: 'accent', // Default is 'primary', any basic material palette and extended palettes are available
+ *       hue: '200' // Default is '800'
+ *     });
+ *   });
+ * </hljs>
  */
 
 /**
  * @ngdoc method
+ * @name $mdThemingProvider#registerStyles
+ * @param {string} styles The styles to be appended to AngularJS Material's built in theme css.
+ */
+/**
+ * @ngdoc method
  * @name $mdThemingProvider#setNonce
  * @param {string} nonceValue The nonce to be added as an attribute to the theme style tags.
- * Setting a value allows the use CSP policy without using the unsafe-inline directive.
+ * Setting a value allows the use of CSP policy without using the unsafe-inline directive.
  */
 
 /**
@@ -4674,6 +6190,17 @@ angular.module('material.core.theming', ['material.core.theming.palette'])
  * @name $mdThemingProvider#alwaysWatchTheme
  * @param {boolean} watch Whether or not to always watch themes for changes and re-apply
  * classes when they change. Default is `false`. Enabling can reduce performance.
+ */
+
+/**
+ * @ngdoc method
+ * @name $mdThemingProvider#enableBrowserColor
+ * @param {Object=} options Options object for the browser color<br/>
+ * `theme`   - A defined theme via `$mdThemeProvider` to use the palettes from. Default is `default` theme. <br/>
+ * `palette` - Can be any one of the basic material design palettes, extended defined palettes and 'primary',
+ *             'accent', 'background' and 'warn'. Default is `primary`. <br/>
+ * `hue`     - The hue from the selected palette. Default is `800`<br/>
+ * @returns {Function} remove function of the browser color
  */
 
 /* Some Example Valid Theming Expressions
@@ -4705,8 +6232,9 @@ var GENERATED = { };
 
 // In memory storage of defined themes and color palettes (both loaded by CSS, and user specified)
 var PALETTES;
-var THEMES;
 
+// Text Colors on light and dark backgrounds
+// @see https://www.google.com/design/spec/style/color.html#color-text-background-colors
 var DARK_FOREGROUND = {
   name: 'dark',
   '1': 'rgba(0,0,0,0.87)',
@@ -4773,43 +6301,125 @@ var VALID_HUE_VALUES = [
   '700', '800', '900', 'A100', 'A200', 'A400', 'A700'
 ];
 
-// Whether or not themes are to be generated on-demand (vs. eagerly).
-var generateOnDemand = false;
+var themeConfig = {
+  disableTheming : false,   // Generate our themes at run time; also disable stylesheet DOM injection
+  generateOnDemand : false, // Whether or not themes are to be generated on-demand (vs. eagerly).
+  registeredStyles : [],    // Custom styles registered to be used in the theming of custom components.
+  nonce : null              // Nonce to be added as an attribute to the generated themes style tags.
+};
 
-// Nonce to be added as an attribute to the generated themes style tags.
-var nonce = null;
-
-function ThemingProvider($mdColorPalette) {
+/**
+ *
+ */
+function ThemingProvider($mdColorPalette, $$mdMetaProvider) {
+  ThemingService['$inject'] = ["$rootScope", "$mdUtil", "$q", "$log"];
   PALETTES = { };
-  THEMES = { };
+  var THEMES = { };
 
   var themingProvider;
-  var defaultTheme = 'default';
+
   var alwaysWatchTheme = false;
+  var defaultTheme = 'default';
 
   // Load JS Defined Palettes
   angular.extend(PALETTES, $mdColorPalette);
 
   // Default theme defined in core.js
 
-  ThemingService.$inject = ["$rootScope", "$log"];
+  /**
+   * Adds `theme-color` and `msapplication-navbutton-color` meta tags with the color parameter
+   * @param {string} color Hex value of the wanted browser color
+   * @returns {Function} Remove function of the meta tags
+   */
+  var setBrowserColor = function (color) {
+    // Chrome, Firefox OS and Opera
+    var removeChrome = $$mdMetaProvider.setMeta('theme-color', color);
+    // Windows Phone
+    var removeWindows = $$mdMetaProvider.setMeta('msapplication-navbutton-color', color);
+
+    return function () {
+      removeChrome();
+      removeWindows();
+    };
+  };
+
+  /**
+   * Enables browser header coloring
+   * for more info please visit:
+   * https://developers.google.com/web/fundamentals/design-and-ui/browser-customization/theme-color
+   *
+   * The default color is `800` from `primary` palette of the `default` theme
+   *
+   * options are:
+   * `theme`   - A defined theme via `$mdThemeProvider` to use the palettes from. Default is `default` theme
+   * `palette` - Can be any one of the basic material design palettes, extended defined palettes and 'primary',
+   *             'accent', 'background' and 'warn'. Default is `primary`
+   * `hue`     - The hue from the selected palette. Default is `800`
+   *
+   * @param {Object=} options Options object for the browser color
+   * @returns {Function} remove function of the browser color
+   */
+  var enableBrowserColor = function (options) {
+    options = angular.isObject(options) ? options : {};
+
+    var theme = options.theme || 'default';
+    var hue = options.hue || '800';
+
+    var palette = PALETTES[options.palette] ||
+      PALETTES[THEMES[theme].colors[options.palette || 'primary'].name];
+
+    var color = angular.isObject(palette[hue]) ? palette[hue].hex : palette[hue];
+
+    return setBrowserColor(color);
+  };
+
   return themingProvider = {
     definePalette: definePalette,
     extendPalette: extendPalette,
     theme: registerTheme,
 
-    setNonce: function(nonceValue) {
-      nonce = nonceValue;
+    /**
+     * return a read-only clone of the current theme configuration
+     */
+    configuration : function() {
+      return angular.extend( { }, themeConfig, {
+        defaultTheme : defaultTheme,
+        alwaysWatchTheme : alwaysWatchTheme,
+        registeredStyles : [].concat(themeConfig.registeredStyles)
+      });
     },
+
+    /**
+     * Easy way to disable theming without having to use
+     * `.constant("$MD_THEME_CSS","");` This disables
+     * all dynamic theme style sheet generations and injections...
+     */
+    disableTheming: function(isDisabled) {
+      themeConfig.disableTheming = angular.isUndefined(isDisabled) || !!isDisabled;
+    },
+
+    registerStyles: function(styles) {
+      themeConfig.registeredStyles.push(styles);
+    },
+
+    setNonce: function(nonceValue) {
+      themeConfig.nonce = nonceValue;
+    },
+
+    generateThemesOnDemand: function(onDemand) {
+      themeConfig.generateOnDemand = onDemand;
+    },
+
     setDefaultTheme: function(theme) {
       defaultTheme = theme;
     },
+
     alwaysWatchTheme: function(alwaysWatch) {
       alwaysWatchTheme = alwaysWatch;
     },
-    generateThemesOnDemand: function(onDemand) {
-      generateOnDemand = onDemand;
-    },
+
+    enableBrowserColor: enableBrowserColor,
+
     $get: ThemingService,
     _LIGHT_DEFAULT_HUES: LIGHT_DEFAULT_HUES,
     _DARK_DEFAULT_HUES: DARK_DEFAULT_HUES,
@@ -4960,25 +6570,117 @@ function ThemingProvider($mdColorPalette) {
   /**
    * @ngdoc service
    * @name $mdTheming
+   * @module material.core.theming
    *
    * @description
    *
-   * Service that makes an element apply theming related classes to itself.
+   * Service that makes an element apply theming related <b>classes</b> to itself.
    *
-   * ```js
+   * <hljs lang="js">
    * app.directive('myFancyDirective', function($mdTheming) {
    *   return {
    *     restrict: 'e',
    *     link: function(scope, el, attrs) {
    *       $mdTheming(el);
+   *
+   *       $mdTheming.defineTheme('myTheme', {
+   *         primary: 'blue',
+   *         accent: 'pink',
+   *         dark: true
+   *       })
    *     }
    *   };
    * });
-   * ```
-   * @param {el=} element to apply theming to
+   * </hljs>
+   * @param {element=} element to apply theming to
    */
+
+  /**
+   * @ngdoc property
+   * @name $mdTheming#THEMES
+   * @description
+   * Property to get all the themes defined
+   * @returns {Object} All the themes defined with their properties
+   */
+
+  /**
+   * @ngdoc property
+   * @name $mdTheming#PALETTES
+   * @description
+   * Property to get all the palettes defined
+   * @returns {Object} All the palettes defined with their colors
+   */
+
+  /**
+   * @ngdoc method
+   * @name $mdTheming#registered
+   * @description
+   * Determine is specified theme name is a valid, registered theme
+   * @param {string} themeName the theme to check if registered
+   * @returns {boolean} whether the theme is registered or not
+   */
+
+  /**
+   * @ngdoc method
+   * @name $mdTheming#defaultTheme
+   * @description
+   * Returns the default theme
+   * @returns {string} The default theme
+   */
+
+  /**
+   * @ngdoc method
+   * @name $mdTheming#generateTheme
+   * @description
+   * Lazy generate themes - by default, every theme is generated when defined.
+   * You can disable this in the configuration section using the
+   * `$mdThemingProvider.generateThemesOnDemand(true);`
+   *
+   * The theme name that is passed in must match the name of the theme that was defined as part of the configuration block.
+   *
+   * @param name {string} theme name to generate
+   */
+
+  /**
+   * @ngdoc method
+   * @name $mdTheming#setBrowserColor
+   * @description
+   * Sets browser header coloring
+   * for more info please visit:
+   * https://developers.google.com/web/fundamentals/design-and-ui/browser-customization/theme-color
+   *
+   * The default color is `800` from `primary` palette of the `default` theme
+   *
+   * options are:<br/>
+   * `theme`   - A defined theme via `$mdThemeProvider` to use the palettes from. Default is `default` theme.<br/>
+   * `palette` - Can be any one of the basic material design palettes, extended defined palettes and 'primary',
+   *             'accent', 'background' and 'warn'. Default is `primary`<br/>
+   * `hue`     - The hue from the selected palette. Default is `800`
+   *
+   * @param {Object} options Options object for the browser color
+   * @returns {Function} remove function of the browser color
+   */
+
+  /**
+   * @ngdoc method
+   * @name $mdTheming#defineTheme
+   * @description
+   * Dynamically define a theme by an options object
+   *
+   * options are:<br/>
+   * `primary`    - The primary palette of the theme.<br/>
+   * `accent`     - The accent palette of the theme.<br/>
+   * `warn`       - The warn palette of the theme.<br/>
+   * `background` - The background palette of the theme.<br/>
+   * `dark`       - Indicates if it's a dark theme.<br/>
+   *
+   * @param {String} name Theme name to define
+   * @param {Object} options Theme definition options
+   * @returns {Promise<string>} A resolved promise with the theme name
+   */
+
   /* ngInject */
-  function ThemingService($rootScope, $log) {
+  function ThemingService($rootScope, $mdUtil, $q, $log) {
         // Allow us to be invoked via a linking function signature.
     var applyTheme = function (scope, el) {
           if (el === undefined) { el = scope; scope = undefined; }
@@ -4986,11 +6688,51 @@ function ThemingProvider($mdColorPalette) {
           applyTheme.inherit(el, el);
         };
 
-    applyTheme.THEMES = angular.extend({}, THEMES);
+    Object.defineProperty(applyTheme, 'THEMES', {
+      get: function () {
+        return angular.extend({}, THEMES);
+      }
+    });
+    Object.defineProperty(applyTheme, 'PALETTES', {
+      get: function () {
+        return angular.extend({}, PALETTES);
+      }
+    });
+    Object.defineProperty(applyTheme, 'ALWAYS_WATCH', {
+      get: function () {
+        return alwaysWatchTheme;
+      }
+    });
     applyTheme.inherit = inheritTheme;
     applyTheme.registered = registered;
     applyTheme.defaultTheme = function() { return defaultTheme; };
-    applyTheme.generateTheme = function(name) { generateTheme(name, nonce); };
+    applyTheme.generateTheme = function(name) { generateTheme(THEMES[name], name, themeConfig.nonce); };
+    applyTheme.defineTheme = function(name, options) {
+      options = options || {};
+
+      var theme = registerTheme(name);
+
+      if (options.primary) {
+        theme.primaryPalette(options.primary);
+      }
+      if (options.accent) {
+        theme.accentPalette(options.accent);
+      }
+      if (options.warn) {
+        theme.warnPalette(options.warn);
+      }
+      if (options.background) {
+        theme.backgroundPalette(options.background);
+      }
+      if (options.dark){
+        theme.dark();
+      }
+
+      this.generateTheme(name);
+
+      return $q.resolve(name);
+    };
+    applyTheme.setBrowserColor = enableBrowserColor;
 
     return applyTheme;
 
@@ -5006,20 +6748,32 @@ function ThemingProvider($mdColorPalette) {
      * Get theme name for the element, then update with Theme CSS class
      */
     function inheritTheme (el, parent) {
-      var ctrl = parent.controller('mdTheme');
-      var attrThemeValue = el.attr('md-theme-watch');
-      var watchTheme = (alwaysWatchTheme || angular.isDefined(attrThemeValue)) && attrThemeValue != 'false';
+      var ctrl = parent.controller('mdTheme') || el.data('$mdThemeController');
 
       updateThemeClass(lookupThemeName());
 
-      el.on('$destroy', watchTheme ? $rootScope.$watch(lookupThemeName, updateThemeClass) : angular.noop );
+      if (ctrl) {
+        var watchTheme = alwaysWatchTheme ||
+                         ctrl.$shouldWatch ||
+                         $mdUtil.parseAttributeBoolean(el.attr('md-theme-watch'));
+
+        var unwatch = ctrl.registerChanges(function (name) {
+          updateThemeClass(name);
+
+          if (!watchTheme) {
+            unwatch();
+          }
+          else {
+            el.on('$destroy', unwatch);
+          }
+        });
+      }
 
       /**
        * Find the theme name from the parent controller or element data
        */
       function lookupThemeName() {
         // As a few components (dialog) add their controllers later, we should also watch for a controller init.
-        ctrl = parent.controller('mdTheme') || el.data('$mdThemeController');
         return ctrl && ctrl.$mdTheme || (defaultTheme == 'default' ? '' : defaultTheme);
       }
 
@@ -5046,34 +6800,131 @@ function ThemingProvider($mdColorPalette) {
 
   }
 }
-ThemingProvider.$inject = ["$mdColorPalette"];
 
-function ThemingDirective($mdTheming, $interpolate, $log) {
+function ThemingDirective($mdTheming, $interpolate, $parse, $mdUtil, $q, $log) {
   return {
-    priority: 100,
+    priority: 101, // has to be more than 100 to be before interpolation (issue on IE)
     link: {
       pre: function(scope, el, attrs) {
+        var registeredCallbacks = [];
+
+        var startSymbol = $interpolate.startSymbol();
+        var endSymbol = $interpolate.endSymbol();
+
+        var theme = attrs.mdTheme.trim();
+
+        var hasInterpolation =
+          theme.substr(0, startSymbol.length) === startSymbol &&
+          theme.lastIndexOf(endSymbol) === theme.length - endSymbol.length;
+
+        var oneTimeOperator = '::';
+        var oneTimeBind = attrs.mdTheme
+            .split(startSymbol).join('')
+            .split(endSymbol).join('')
+            .trim()
+            .substr(0, oneTimeOperator.length) === oneTimeOperator;
+
         var ctrl = {
-          $setTheme: function(theme) {
+          registerChanges: function (cb, context) {
+            if (context) {
+              cb = angular.bind(context, cb);
+            }
+
+            registeredCallbacks.push(cb);
+
+            return function () {
+              var index = registeredCallbacks.indexOf(cb);
+
+              if (index > -1) {
+                registeredCallbacks.splice(index, 1);
+              }
+            };
+          },
+          $setTheme: function (theme) {
             if (!$mdTheming.registered(theme)) {
               $log.warn('attempted to use unregistered theme \'' + theme + '\'');
             }
+
             ctrl.$mdTheme = theme;
-          }
+
+            // Iterating backwards to support unregistering during iteration
+            // http://stackoverflow.com/a/9882349/890293
+            // we don't use `reverse()` of array because it mutates the array and we don't want it to get re-indexed
+            for (var i = registeredCallbacks.length; i--;) {
+              registeredCallbacks[i](theme);
+            }
+          },
+          $shouldWatch: $mdUtil.parseAttributeBoolean(el.attr('md-theme-watch')) ||
+                        $mdTheming.ALWAYS_WATCH ||
+                        (hasInterpolation && !oneTimeBind)
         };
+
         el.data('$mdThemeController', ctrl);
-        ctrl.$setTheme($interpolate(attrs.mdTheme)(scope));
-        attrs.$observe('mdTheme', ctrl.$setTheme);
+
+        var getTheme = function () {
+          var interpolation = $interpolate(attrs.mdTheme)(scope);
+          return $parse(interpolation)(scope) || interpolation;
+        };
+
+        var setParsedTheme = function (theme) {
+          if (typeof theme === 'string') {
+            return ctrl.$setTheme(theme);
+          }
+
+          $q.when( angular.isFunction(theme) ?  theme() : theme )
+            .then(function(name){
+              ctrl.$setTheme(name);
+            });
+        };
+
+        setParsedTheme(getTheme());
+
+        var unwatch = scope.$watch(getTheme, function(theme) {
+          if (theme) {
+            setParsedTheme(theme);
+
+            if (!ctrl.$shouldWatch) {
+              unwatch();
+            }
+          }
+        });
       }
     }
   };
 }
-ThemingDirective.$inject = ["$mdTheming", "$interpolate", "$log"];
+
+/**
+ * Special directive that will disable ALL runtime Theme style generation and DOM injection
+ *
+ * <link rel="stylesheet" href="angular-material.min.css">
+ * <link rel="stylesheet" href="angular-material.themes.css">
+ *
+ * <body md-themes-disabled>
+ *  ...
+ * </body>
+ *
+ * Note: Using md-themes-css directive requires the developer to load external
+ * theme stylesheets; e.g. custom themes from Material-Tools:
+ *
+ *       `angular-material.themes.css`
+ *
+ * Another option is to use the ThemingProvider to configure and disable the attribute
+ * conversions; this would obviate the use of the `md-themes-css` directive
+ *
+ */
+function disableThemesDirective() {
+  themeConfig.disableTheming = true;
+
+  // Return a 1x-only, first-match attribute directive
+  return {
+    restrict : 'A',
+    priority : '900'
+  };
+}
 
 function ThemableDirective($mdTheming) {
   return $mdTheming;
 }
-ThemableDirective.$inject = ["$mdTheming"];
 
 function parseRules(theme, colorType, rules) {
   checkValidPalette(theme, colorType);
@@ -5082,10 +6933,10 @@ function parseRules(theme, colorType, rules) {
   var generatedRules = [];
   var color = theme.colors[colorType];
 
-  var themeNameRegex = new RegExp('.md-' + theme.name + '-theme', 'g');
+  var themeNameRegex = new RegExp('\\.md-' + theme.name + '-theme', 'g');
   // Matches '{{ primary-color }}', etc
   var hueRegex = new RegExp('(\'|")?{{\\s*(' + colorType + ')-(color|contrast)-?(\\d\\.?\\d*)?\\s*}}(\"|\')?','g');
-  var simpleVariableRegex = /'?"?\{\{\s*([a-zA-Z]+)-(A?\d+|hue\-[0-3]|shadow)-?(\d\.?\d*)?(contrast)?\s*\}\}'?"?/g;
+  var simpleVariableRegex = /'?"?\{\{\s*([a-zA-Z]+)-(A?\d+|hue\-[0-3]|shadow|default)-?(\d\.?\d*)?(contrast)?\s*\}\}'?"?/g;
   var palette = PALETTES[color.name];
 
   // find and replace simple variables where we use a specific hue, not an entire palette
@@ -5099,9 +6950,13 @@ function parseRules(theme, colorType, rules) {
         return theme.foregroundPalette[hue] || theme.foregroundPalette['1'];
       }
     }
-    if (hue.indexOf('hue') === 0) {
+
+    // `default` is also accepted as a hue-value, because the background palettes are
+    // using it as a name for the default hue.
+    if (hue.indexOf('hue') === 0 || hue === 'default') {
       hue = theme.colors[colorType].hues[hue];
     }
+
     return rgba( (PALETTES[ theme.colors[colorType].name ][hue] || '')[contrast ? 'contrast' : 'value'], opacity );
   });
 
@@ -5118,9 +6973,10 @@ function parseRules(theme, colorType, rules) {
     // Don't apply a selector rule to the default theme, making it easier to override
     // styles of the base-component
     if (theme.name == 'default') {
-      var themeRuleRegex = /((?:(?:(?: |>|\.|\w|-|:|\(|\)|\[|\]|"|'|=)+) )?)((?:(?:\w|\.|-)+)?)\.md-default-theme((?: |>|\.|\w|-|:|\(|\)|\[|\]|"|'|=)*)/g;
-      newRule = newRule.replace(themeRuleRegex, function(match, prefix, target, suffix) {
-        return match + ', ' + prefix + target + suffix;
+      var themeRuleRegex = /((?:\s|>|\.|\w|-|:|\(|\)|\[|\]|"|'|=)*)\.md-default-theme((?:\s|>|\.|\w|-|:|\(|\)|\[|\]|"|'|=)*)/g;
+
+      newRule = newRule.replace(themeRuleRegex, function(match, start, end) {
+        return match + ', ' + start + end;
       });
     }
     generatedRules.push(newRule);
@@ -5132,10 +6988,13 @@ function parseRules(theme, colorType, rules) {
 var rulesByType = {};
 
 // Generate our themes at run time given the state of THEMES and PALETTES
-function generateAllThemes($injector) {
+function generateAllThemes($injector, $mdTheming) {
   var head = document.head;
   var firstChild = head ? head.firstElementChild : null;
-  var themeCss = $injector.has('$MD_THEME_CSS') ? $injector.get('$MD_THEME_CSS') : '';
+  var themeCss = !themeConfig.disableTheming && $injector.has('$MD_THEME_CSS') ? $injector.get('$MD_THEME_CSS') : '';
+
+  // Append our custom registered styles to the theme stylesheet.
+  themeCss += themeConfig.registeredStyles.join('');
 
   if ( !firstChild ) return;
   if (themeCss.length === 0) return; // no rules, so no point in running this expensive task
@@ -5149,7 +7008,7 @@ function generateAllThemes($injector) {
   // Break the CSS into individual rules
   var rules = themeCss
                   .split(/\}(?!(\}|'|"|;))/)
-                  .filter(function(rule) { return rule && rule.length; })
+                  .filter(function(rule) { return rule && rule.trim().length; })
                   .map(function(rule) { return rule.trim() + '}'; });
 
 
@@ -5184,11 +7043,11 @@ function generateAllThemes($injector) {
 
   // If themes are being generated on-demand, quit here. The user will later manually
   // call generateTheme to do this on a theme-by-theme basis.
-  if (generateOnDemand) return;
+  if (themeConfig.generateOnDemand) return;
 
-  angular.forEach(THEMES, function(theme) {
-    if (!GENERATED[theme.name]) {
-      generateTheme(theme.name, nonce);
+  angular.forEach($mdTheming.THEMES, function(theme) {
+    if (!GENERATED[theme.name] && !($mdTheming.defaultTheme() !== 'default' && theme.name === 'default')) {
+      generateTheme(theme, theme.name, themeConfig.nonce);
     }
   });
 
@@ -5229,6 +7088,7 @@ function generateAllThemes($injector) {
       }
 
       palette[hueName] = {
+        hex: palette[hueName],
         value: rgbValue,
         contrast: getContrastColor()
       };
@@ -5252,10 +7112,8 @@ function generateAllThemes($injector) {
     });
   }
 }
-generateAllThemes.$inject = ["$injector"];
 
-function generateTheme(name, nonce) {
-  var theme = THEMES[name];
+function generateTheme(theme, name, nonce) {
   var head = document.head;
   var firstChild = head ? head.firstElementChild : null;
 
@@ -5277,12 +7135,6 @@ function generateTheme(name, nonce) {
         }
       }
     });
-
-
-    if (theme.colors.primary.name == theme.colors.accent.name) {
-      console.warn('$mdThemingProvider: Using the same palette for primary and' +
-                   ' accent. This violates the material design spec.');
-    }
 
     GENERATED[theme.name] = true;
   }
@@ -5336,6 +7188,9 @@ function rgba(rgbArray, opacity) {
     'rgb(' + rgbArray.join(',') + ')';
 }
 
+
+})(window.angular);
+
 // Polyfill angular < 1.4 (provide $animateCss)
 angular
   .module('material.core')
@@ -5359,10 +7214,12 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
      *
      */
     translate3d : function( target, from, to, options ) {
-      return $animateCss(target,{
-        from:from,
-        to:to,
-        addClass:options.transitionInClass
+      return $animateCss(target, {
+        from: from,
+        to: to,
+        addClass: options.transitionInClass,
+        removeClass: options.transitionOutClass,
+        duration: options.duration
       })
       .start()
       .then(function(){
@@ -5377,59 +7234,68 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
         return $animateCss(target, {
            to: newFrom || from,
            addClass: options.transitionOutClass,
-           removeClass: options.transitionInClass
+           removeClass: options.transitionInClass,
+           duration: options.duration
         }).start();
 
       }
-  },
+    },
 
     /**
      * Listen for transitionEnd event (with optional timeout)
      * Announce completion or failure via promise handlers
      */
     waitTransitionEnd: function (element, opts) {
-        var TIMEOUT = 3000; // fallback is 3 secs
+      var TIMEOUT = 3000; // fallback is 3 secs
 
-        return $q(function(resolve, reject){
-          opts = opts || { };
+      return $q(function(resolve, reject){
+        opts = opts || { };
 
-          var timer = $timeout(finished, opts.timeout || TIMEOUT);
-          element.on($mdConstant.CSS.TRANSITIONEND, finished);
+        // If there is no transition is found, resolve immediately
+        //
+        // NOTE: using $mdUtil.nextTick() causes delays/issues
+        if (noTransitionFound(opts.cachedTransitionStyles)) {
+          TIMEOUT = 0;
+        }
 
-          /**
-           * Upon timeout or transitionEnd, reject or resolve (respectively) this promise.
-           * NOTE: Make sure this transitionEnd didn't bubble up from a child
-           */
-          function finished(ev) {
-            if ( ev && ev.target !== element[0]) return;
+        var timer = $timeout(finished, opts.timeout || TIMEOUT);
+        element.on($mdConstant.CSS.TRANSITIONEND, finished);
 
-            if ( ev  ) $timeout.cancel(timer);
-            element.off($mdConstant.CSS.TRANSITIONEND, finished);
+        /**
+         * Upon timeout or transitionEnd, reject or resolve (respectively) this promise.
+         * NOTE: Make sure this transitionEnd didn't bubble up from a child
+         */
+        function finished(ev) {
+          if ( ev && ev.target !== element[0]) return;
 
-            // Never reject since ngAnimate may cause timeouts due missed transitionEnd events
-            resolve();
+          if ( ev  ) $timeout.cancel(timer);
+          element.off($mdConstant.CSS.TRANSITIONEND, finished);
 
-          }
+          // Never reject since ngAnimate may cause timeouts due missed transitionEnd events
+          resolve();
 
-        });
-      },
+        }
 
-    /**
-     * Calculate the zoom transform from dialog to origin.
-     *
-     * We use this to set the dialog position immediately;
-     * then the md-transition-in actually translates back to
-     * `translate3d(0,0,0) scale(1.0)`...
-     *
-     * NOTE: all values are rounded to the nearest integer
-     */
-    calculateZoomToOrigin: function (element, originator) {
+        /**
+         * Checks whether or not there is a transition.
+         *
+         * @param styles The cached styles to use for the calculation. If null, getComputedStyle()
+         * will be used.
+         *
+         * @returns {boolean} True if there is no transition/duration; false otherwise.
+         */
+        function noTransitionFound(styles) {
+          styles = styles || window.getComputedStyle(element[0]);
+
+          return styles.transitionDuration == '0s' || (!styles.transition && !styles.transitionProperty);
+        }
+
+      });
+    },
+
+    calculateTransformValues: function (element, originator) {
       var origin = originator.element;
       var bounds = originator.bounds;
-
-      var zoomTemplate = "translate3d( {centerX}px, {centerY}px, 0 ) scale( {scaleX}, {scaleY} )";
-      var buildZoom = angular.bind(null, $mdUtil.supplant, zoomTemplate);
-      var zoomStyle = buildZoom({centerX: 0, centerY: 0, scaleX: 0.5, scaleY: 0.5});
 
       if (origin || bounds) {
         var originBnds = origin ? self.clientRect(origin) || currentBounds() : self.copyRect(bounds);
@@ -5437,17 +7303,14 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
         var dialogCenterPt = self.centerPointFor(dialogRect);
         var originCenterPt = self.centerPointFor(originBnds);
 
-        // Build the transform to zoom from the dialog center to the origin center
-
-        zoomStyle = buildZoom({
+        return {
           centerX: originCenterPt.x - dialogCenterPt.x,
           centerY: originCenterPt.y - dialogCenterPt.y,
-          scaleX: Math.round(100 * Math.min(0.5, originBnds.width / dialogRect.width))/100,
-          scaleY: Math.round(100 * Math.min(0.5, originBnds.height / dialogRect.height))/100
-        });
+          scaleX: Math.round(100 * Math.min(0.5, originBnds.width / dialogRect.width)) / 100,
+          scaleY: Math.round(100 * Math.min(0.5, originBnds.height / dialogRect.height)) / 100
+        };
       }
-
-      return zoomStyle;
+      return {centerX: 0, centerY: 0, scaleX: 0.5, scaleY: 0.5};
 
       /**
        * This is a fallback if the origin information is no longer valid, then the
@@ -5459,6 +7322,33 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
 
         return parent ? self.clientRect(parent) : null;
       }
+    },
+
+    /**
+     * Calculate the zoom transform from dialog to origin.
+     *
+     * We use this to set the dialog position immediately;
+     * then the md-transition-in actually translates back to
+     * `translate3d(0,0,0) scale(1.0)`...
+     *
+     * NOTE: all values are rounded to the nearest integer
+     */
+    calculateZoomToOrigin: function (element, originator) {
+      var zoomTemplate = "translate3d( {centerX}px, {centerY}px, 0 ) scale( {scaleX}, {scaleY} )";
+      var buildZoom = angular.bind(null, $mdUtil.supplant, zoomTemplate);
+
+      return buildZoom(self.calculateTransformValues(element, originator));
+    },
+
+    /**
+     * Calculate the slide transform from panel to origin.
+     * NOTE: all values are rounded to the nearest integer
+     */
+    calculateSlideToOrigin: function (element, originator) {
+      var slideTemplate = "translate3d( {centerX}px, {centerY}px, 0 )";
+      var buildSlide = angular.bind(null, $mdUtil.supplant, slideTemplate);
+
+      return buildSlide(self.calculateTransformValues(element, originator));
     },
 
     /**
@@ -5484,6 +7374,9 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
             case 'transformOrigin':
               convertToVendor(key, $mdConstant.CSS.TRANSFORM_ORIGIN, value);
               break;
+            case 'font-size':
+              css['font-size'] = value; // font sizes aren't always in px
+              break;
           }
         }
       });
@@ -5508,7 +7401,7 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
 
       if (addTransition) {
         transition = transition || "all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important";
-        css['transition'] = transition;
+        css.transition = transition;
       }
 
       return css;
@@ -5523,7 +7416,7 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
       destination = destination || {};
 
       angular.forEach('left top right bottom width height'.split(' '), function (key) {
-        destination[key] = Math.round(source[key])
+        destination[key] = Math.round(source[key]);
       });
 
       destination.width = destination.width || (destination.right - destination.left);
@@ -5556,15 +7449,14 @@ function AnimateDomUtils($mdUtil, $q, $timeout, $mdConstant, $animateCss) {
     }
 
   };
-};
+}
 
-
-"use strict";
 
 if (angular.version.minor >= 4) {
   angular.module('material.core.animate', []);
 } else {
 (function() {
+  "use strict";
 
   var forEach = angular.forEach;
 
@@ -5579,7 +7471,7 @@ if (angular.version.minor >= 4) {
   var $$ForceReflowFactory = ['$document', function($document) {
     return function() {
       return $document[0].body.clientWidth + 1;
-    }
+    };
   }];
 
   var $$rAFMutexFactory = ['$$rAF', function($$rAF) {
@@ -5693,6 +7585,22 @@ if (angular.version.minor >= 4) {
       }
     };
 
+    // Polyfill AnimateRunner.all which is used by input animations
+    AnimateRunner.all = function(runners, callback) {
+      var count = 0;
+      var status = true;
+      forEach(runners, function(runner) {
+        runner.done(onProgress);
+      });
+
+      function onProgress(response) {
+        status = status && response;
+        if (++count === runners.length) {
+          callback(status);
+        }
+      }
+    };
+
     return AnimateRunner;
   }];
 
@@ -5701,36 +7609,44 @@ if (angular.version.minor >= 4) {
     .factory('$$forceReflow', $$ForceReflowFactory)
     .factory('$$AnimateRunner', $$AnimateRunnerFactory)
     .factory('$$rAFMutex', $$rAFMutexFactory)
-    .factory('$animateCss', ['$window', '$$rAF', '$$AnimateRunner', '$$forceReflow', '$$jqLite', '$timeout',
-                     function($window,   $$rAF,   $$AnimateRunner,   $$forceReflow,   $$jqLite,   $timeout) {
+    .factory('$animateCss', ['$window', '$$rAF', '$$AnimateRunner', '$$forceReflow', '$$jqLite', '$timeout', '$animate',
+                     function($window,   $$rAF,   $$AnimateRunner,   $$forceReflow,   $$jqLite,   $timeout, $animate) {
 
       function init(element, options) {
 
         var temporaryStyles = [];
         var node = getDomNode(element);
+        var areAnimationsAllowed = node && $animate.enabled();
 
-        if (options.transitionStyle) {
-          temporaryStyles.push([PREFIX + 'transition', options.transitionStyle]);
+        var hasCompleteStyles = false;
+        var hasCompleteClasses = false;
+
+        if (areAnimationsAllowed) {
+          if (options.transitionStyle) {
+            temporaryStyles.push([PREFIX + 'transition', options.transitionStyle]);
+          }
+
+          if (options.keyframeStyle) {
+            temporaryStyles.push([PREFIX + 'animation', options.keyframeStyle]);
+          }
+
+          if (options.delay) {
+            temporaryStyles.push([PREFIX + 'transition-delay', options.delay + 's']);
+          }
+
+          if (options.duration) {
+            temporaryStyles.push([PREFIX + 'transition-duration', options.duration + 's']);
+          }
+
+          hasCompleteStyles = options.keyframeStyle ||
+              (options.to && (options.duration > 0 || options.transitionStyle));
+          hasCompleteClasses = !!options.addClass || !!options.removeClass;
+
+          blockTransition(element, true);
         }
 
-        if (options.keyframeStyle) {
-          temporaryStyles.push([PREFIX + 'animation', options.keyframeStyle]);
-        }
+        var hasCompleteAnimation = areAnimationsAllowed && (hasCompleteStyles || hasCompleteClasses);
 
-        if (options.delay) {
-          temporaryStyles.push([PREFIX + 'transition-delay', options.delay + 's']);
-        }
-
-        if (options.duration) {
-          temporaryStyles.push([PREFIX + 'transition-duration', options.duration + 's']);
-        }
-
-        var hasCompleteStyles = options.keyframeStyle ||
-                                (options.to && (options.duration > 0 || options.transitionStyle));
-        var hasCompleteClasses = !!options.addClass || !!options.removeClass;
-        var hasCompleteAnimation = hasCompleteStyles || hasCompleteClasses;
-
-        blockTransition(element, true);
         applyAnimationFromStyles(element, options);
 
         var animationClosed = false;
@@ -5833,7 +7749,7 @@ if (angular.version.minor >= 4) {
               return runner;
             }
           }
-        }
+        };
       }
 
       function applyClasses(element, options) {
@@ -5849,7 +7765,7 @@ if (angular.version.minor >= 4) {
 
       function computeTimings(element) {
         var node = getDomNode(element);
-        var cs = $window.getComputedStyle(node)
+        var cs = $window.getComputedStyle(node);
         var tdr = parseMaxTime(cs[prop('transitionDuration')]);
         var adr = parseMaxTime(cs[prop('animationDuration')]);
         var tdy = parseMaxTime(cs[prop('transitionDelay')]);
@@ -5963,8 +7879,8 @@ if (angular.version.minor >= 4) {
 }
 
 (function(){ 
-angular.module("material.core").constant("$MD_THEME_CSS", "/*  Only used with Theme processes */html.md-THEME_NAME-theme, body.md-THEME_NAME-theme {  color: '{{foreground-1}}';  background-color: '{{background-color}}'; }md-autocomplete.md-THEME_NAME-theme {  background: '{{background-A100}}'; }  md-autocomplete.md-THEME_NAME-theme[disabled]:not([md-floating-label]) {    background: '{{background-100}}'; }  md-autocomplete.md-THEME_NAME-theme button md-icon path {    fill: '{{background-600}}'; }  md-autocomplete.md-THEME_NAME-theme button:after {    background: '{{background-600-0.3}}'; }.md-autocomplete-suggestions-container.md-THEME_NAME-theme {  background: '{{background-A100}}'; }  .md-autocomplete-suggestions-container.md-THEME_NAME-theme li {    color: '{{background-900}}'; }    .md-autocomplete-suggestions-container.md-THEME_NAME-theme li .highlight {      color: '{{background-600}}'; }    .md-autocomplete-suggestions-container.md-THEME_NAME-theme li:hover, .md-autocomplete-suggestions-container.md-THEME_NAME-theme li.selected {      background: '{{background-200}}'; }md-backdrop {  background-color: '{{background-900-0.0}}'; }  md-backdrop.md-opaque.md-THEME_NAME-theme {    background-color: '{{background-900-1.0}}'; }md-bottom-sheet.md-THEME_NAME-theme {  background-color: '{{background-50}}';  border-top-color: '{{background-300}}'; }  md-bottom-sheet.md-THEME_NAME-theme.md-list md-list-item {    color: '{{foreground-1}}'; }  md-bottom-sheet.md-THEME_NAME-theme .md-subheader {    background-color: '{{background-50}}'; }  md-bottom-sheet.md-THEME_NAME-theme .md-subheader {    color: '{{foreground-1}}'; }.md-button.md-THEME_NAME-theme:not([disabled]):hover {  background-color: '{{background-500-0.2}}'; }.md-button.md-THEME_NAME-theme:not([disabled]).md-focused {  background-color: '{{background-500-0.2}}'; }.md-button.md-THEME_NAME-theme:not([disabled]).md-icon-button:hover {  background-color: transparent; }.md-button.md-THEME_NAME-theme.md-fab {  background-color: '{{accent-color}}';  color: '{{accent-contrast}}'; }  .md-button.md-THEME_NAME-theme.md-fab md-icon {    color: '{{accent-contrast}}'; }  .md-button.md-THEME_NAME-theme.md-fab:not([disabled]):hover {    background-color: '{{accent-A700}}'; }  .md-button.md-THEME_NAME-theme.md-fab:not([disabled]).md-focused {    background-color: '{{accent-A700}}'; }.md-button.md-THEME_NAME-theme.md-primary {  color: '{{primary-color}}'; }  .md-button.md-THEME_NAME-theme.md-primary.md-raised, .md-button.md-THEME_NAME-theme.md-primary.md-fab {    color: '{{primary-contrast}}';    background-color: '{{primary-color}}'; }    .md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]) md-icon, .md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]) md-icon {      color: '{{primary-contrast}}'; }    .md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]):hover, .md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]):hover {      background-color: '{{primary-600}}'; }    .md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]).md-focused, .md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]).md-focused {      background-color: '{{primary-600}}'; }  .md-button.md-THEME_NAME-theme.md-primary:not([disabled]) md-icon {    color: '{{primary-color}}'; }.md-button.md-THEME_NAME-theme.md-fab {  background-color: '{{accent-color}}';  color: '{{accent-contrast}}'; }  .md-button.md-THEME_NAME-theme.md-fab:not([disabled]) .md-icon {    color: '{{accent-contrast}}'; }  .md-button.md-THEME_NAME-theme.md-fab:not([disabled]):hover {    background-color: '{{accent-A700}}'; }  .md-button.md-THEME_NAME-theme.md-fab:not([disabled]).md-focused {    background-color: '{{accent-A700}}'; }.md-button.md-THEME_NAME-theme.md-raised {  color: '{{background-900}}';  background-color: '{{background-50}}'; }  .md-button.md-THEME_NAME-theme.md-raised:not([disabled]) md-icon {    color: '{{background-900}}'; }  .md-button.md-THEME_NAME-theme.md-raised:not([disabled]):hover {    background-color: '{{background-50}}'; }  .md-button.md-THEME_NAME-theme.md-raised:not([disabled]).md-focused {    background-color: '{{background-200}}'; }.md-button.md-THEME_NAME-theme.md-warn {  color: '{{warn-color}}'; }  .md-button.md-THEME_NAME-theme.md-warn.md-raised, .md-button.md-THEME_NAME-theme.md-warn.md-fab {    color: '{{warn-contrast}}';    background-color: '{{warn-color}}'; }    .md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]) md-icon, .md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]) md-icon {      color: '{{warn-contrast}}'; }    .md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]):hover, .md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]):hover {      background-color: '{{warn-600}}'; }    .md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]).md-focused, .md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]).md-focused {      background-color: '{{warn-600}}'; }  .md-button.md-THEME_NAME-theme.md-warn:not([disabled]) md-icon {    color: '{{warn-color}}'; }.md-button.md-THEME_NAME-theme.md-accent {  color: '{{accent-color}}'; }  .md-button.md-THEME_NAME-theme.md-accent.md-raised, .md-button.md-THEME_NAME-theme.md-accent.md-fab {    color: '{{accent-contrast}}';    background-color: '{{accent-color}}'; }    .md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]) md-icon, .md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]) md-icon {      color: '{{accent-contrast}}'; }    .md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]):hover, .md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]):hover {      background-color: '{{accent-A700}}'; }    .md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]).md-focused, .md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]).md-focused {      background-color: '{{accent-A700}}'; }  .md-button.md-THEME_NAME-theme.md-accent:not([disabled]) md-icon {    color: '{{accent-color}}'; }.md-button.md-THEME_NAME-theme[disabled], .md-button.md-THEME_NAME-theme.md-raised[disabled], .md-button.md-THEME_NAME-theme.md-fab[disabled], .md-button.md-THEME_NAME-theme.md-accent[disabled], .md-button.md-THEME_NAME-theme.md-warn[disabled] {  color: '{{foreground-3}}';  cursor: default; }  .md-button.md-THEME_NAME-theme[disabled] md-icon, .md-button.md-THEME_NAME-theme.md-raised[disabled] md-icon, .md-button.md-THEME_NAME-theme.md-fab[disabled] md-icon, .md-button.md-THEME_NAME-theme.md-accent[disabled] md-icon, .md-button.md-THEME_NAME-theme.md-warn[disabled] md-icon {    color: '{{foreground-3}}'; }.md-button.md-THEME_NAME-theme.md-raised[disabled], .md-button.md-THEME_NAME-theme.md-fab[disabled] {  background-color: '{{foreground-4}}'; }.md-button.md-THEME_NAME-theme[disabled] {  background-color: transparent; }a.md-THEME_NAME-theme:not(.md-button).md-primary {  color: '{{primary-color}}'; }  a.md-THEME_NAME-theme:not(.md-button).md-primary:hover {    color: '{{primary-700}}'; }a.md-THEME_NAME-theme:not(.md-button).md-accent {  color: '{{accent-color}}'; }  a.md-THEME_NAME-theme:not(.md-button).md-accent:hover {    color: '{{accent-700}}'; }a.md-THEME_NAME-theme:not(.md-button).md-accent {  color: '{{accent-color}}'; }  a.md-THEME_NAME-theme:not(.md-button).md-accent:hover {    color: '{{accent-A700}}'; }a.md-THEME_NAME-theme:not(.md-button).md-warn {  color: '{{warn-color}}'; }  a.md-THEME_NAME-theme:not(.md-button).md-warn:hover {    color: '{{warn-700}}'; }md-card.md-THEME_NAME-theme {  background-color: '{{background-hue-1}}';  border-radius: 2px; }  md-card.md-THEME_NAME-theme .md-card-image {    border-radius: 2px 2px 0 0; }  md-card.md-THEME_NAME-theme md-card-header md-card-avatar md-icon {    color: '{{background-color}}';    background-color: '{{foreground-3}}'; }  md-card.md-THEME_NAME-theme md-card-header md-card-header-text .md-subhead {    color: '{{foreground-2}}'; }  md-card.md-THEME_NAME-theme md-card-title md-card-title-text:not(:only-child) .md-subhead {    color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme .md-ripple {  color: '{{accent-A700}}'; }md-checkbox.md-THEME_NAME-theme.md-checked .md-ripple {  color: '{{background-600}}'; }md-checkbox.md-THEME_NAME-theme.md-checked.md-focused ._md-container:before {  background-color: '{{accent-color-0.26}}'; }md-checkbox.md-THEME_NAME-theme .md-ink-ripple {  color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme.md-checked .md-ink-ripple {  color: '{{accent-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme ._md-icon {  border-color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme.md-checked ._md-icon {  background-color: '{{accent-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme.md-checked ._md-icon:after {  border-color: '{{accent-contrast-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-ripple {  color: '{{primary-600}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ripple {  color: '{{background-600}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-ink-ripple {  color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple {  color: '{{primary-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary ._md-icon {  border-color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked ._md-icon {  background-color: '{{primary-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked.md-focused ._md-container:before {  background-color: '{{primary-color-0.26}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked ._md-icon:after {  border-color: '{{primary-contrast-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-indeterminate[disabled] ._md-container {  color: '{{foreground-3}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn .md-ripple {  color: '{{warn-600}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn .md-ink-ripple {  color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple {  color: '{{warn-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn ._md-icon {  border-color: '{{foreground-2}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked ._md-icon {  background-color: '{{warn-color-0.87}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked.md-focused:not([disabled]) ._md-container:before {  background-color: '{{warn-color-0.26}}'; }md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked ._md-icon:after {  border-color: '{{background-200}}'; }md-checkbox.md-THEME_NAME-theme[disabled] ._md-icon {  border-color: '{{foreground-3}}'; }md-checkbox.md-THEME_NAME-theme[disabled].md-checked ._md-icon {  background-color: '{{foreground-3}}'; }md-checkbox.md-THEME_NAME-theme[disabled].md-checked ._md-icon:after {  border-color: '{{background-200}}'; }md-checkbox.md-THEME_NAME-theme[disabled] ._md-label {  color: '{{foreground-3}}'; }md-chips.md-THEME_NAME-theme .md-chips {  box-shadow: 0 1px '{{foreground-4}}'; }  md-chips.md-THEME_NAME-theme .md-chips.md-focused {    box-shadow: 0 2px '{{primary-color}}'; }  md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input {    color: '{{foreground-1}}'; }    md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input::-webkit-input-placeholder {      color: '{{foreground-3}}'; }    md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input:-moz-placeholder {      color: '{{foreground-3}}'; }    md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input::-moz-placeholder {      color: '{{foreground-3}}'; }    md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input:-ms-input-placeholder {      color: '{{foreground-3}}'; }    md-chips.md-THEME_NAME-theme .md-chips ._md-chip-input-container input::-webkit-input-placeholder {      color: '{{foreground-3}}'; }md-chips.md-THEME_NAME-theme md-chip {  background: '{{background-300}}';  color: '{{background-800}}'; }  md-chips.md-THEME_NAME-theme md-chip md-icon {    color: '{{background-700}}'; }  md-chips.md-THEME_NAME-theme md-chip.md-focused {    background: '{{primary-color}}';    color: '{{primary-contrast}}'; }    md-chips.md-THEME_NAME-theme md-chip.md-focused md-icon {      color: '{{primary-contrast}}'; }  md-chips.md-THEME_NAME-theme md-chip._md-chip-editing {    background: transparent;    color: '{{background-800}}'; }md-chips.md-THEME_NAME-theme md-chip-remove .md-button md-icon path {  fill: '{{background-500}}'; }.md-contact-suggestion span.md-contact-email {  color: '{{background-400}}'; }md-content.md-THEME_NAME-theme {  color: '{{foreground-1}}';  background-color: '{{background-hue-1}}'; }/** Theme styles for mdCalendar. */.md-calendar.md-THEME_NAME-theme {  background: '{{background-A100}}';  color: '{{background-A200-0.87}}'; }  .md-calendar.md-THEME_NAME-theme tr:last-child td {    border-bottom-color: '{{background-200}}'; }.md-THEME_NAME-theme .md-calendar-day-header {  background: '{{background-300}}';  color: '{{background-A200-0.87}}'; }.md-THEME_NAME-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator {  border: 1px solid '{{primary-500}}'; }.md-THEME_NAME-theme .md-calendar-date.md-calendar-date-today.md-calendar-date-disabled {  color: '{{primary-500-0.6}}'; }.md-THEME_NAME-theme .md-calendar-date.md-focus .md-calendar-date-selection-indicator {  background: '{{background-hue-1}}'; }.md-THEME_NAME-theme .md-calendar-date-selection-indicator:hover {  background: '{{background-300}}'; }.md-THEME_NAME-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator,.md-THEME_NAME-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator {  background: '{{primary-500}}';  color: '{{primary-500-contrast}}';  border-color: transparent; }.md-THEME_NAME-theme .md-calendar-date-disabled,.md-THEME_NAME-theme .md-calendar-month-label-disabled {  color: '{{foreground-3}}'; }/** Theme styles for mdDatepicker. */.md-THEME_NAME-theme .md-datepicker-input {  color: '{{foreground-1}}'; }  .md-THEME_NAME-theme .md-datepicker-input::-webkit-input-placeholder {    color: '{{foreground-3}}'; }  .md-THEME_NAME-theme .md-datepicker-input:-moz-placeholder {    color: '{{foreground-3}}'; }  .md-THEME_NAME-theme .md-datepicker-input::-moz-placeholder {    color: '{{foreground-3}}'; }  .md-THEME_NAME-theme .md-datepicker-input:-ms-input-placeholder {    color: '{{foreground-3}}'; }  .md-THEME_NAME-theme .md-datepicker-input::-webkit-input-placeholder {    color: '{{foreground-3}}'; }.md-THEME_NAME-theme .md-datepicker-input-container {  border-bottom-color: '{{background-300}}'; }  .md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-focused {    border-bottom-color: '{{primary-500}}'; }  .md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-invalid {    border-bottom-color: '{{warn-A700}}'; }.md-THEME_NAME-theme .md-datepicker-calendar-pane {  border-color: '{{background-hue-1}}'; }.md-THEME_NAME-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle {  border-top-color: '{{foreground-3}}'; }.md-THEME_NAME-theme .md-datepicker-triangle-button:hover .md-datepicker-expand-triangle {  border-top-color: '{{foreground-2}}'; }.md-THEME_NAME-theme .md-datepicker-open .md-datepicker-calendar-icon {  fill: '{{primary-500}}'; }.md-THEME_NAME-theme .md-datepicker-open .md-datepicker-input-container,.md-THEME_NAME-theme .md-datepicker-input-mask-opaque {  background: '{{background-hue-1}}'; }.md-THEME_NAME-theme .md-datepicker-calendar {  background: '{{background-A100}}'; }md-dialog.md-THEME_NAME-theme {  border-radius: 4px;  background-color: '{{background-hue-1}}'; }  md-dialog.md-THEME_NAME-theme.md-content-overflow .md-actions, md-dialog.md-THEME_NAME-theme.md-content-overflow md-dialog-actions {    border-top-color: '{{foreground-4}}'; }md-divider.md-THEME_NAME-theme {  border-top-color: '{{foreground-4}}'; }.layout-row > md-divider.md-THEME_NAME-theme,.layout-xs-row > md-divider.md-THEME_NAME-theme, .layout-gt-xs-row > md-divider.md-THEME_NAME-theme,.layout-sm-row > md-divider.md-THEME_NAME-theme, .layout-gt-sm-row > md-divider.md-THEME_NAME-theme,.layout-md-row > md-divider.md-THEME_NAME-theme, .layout-gt-md-row > md-divider.md-THEME_NAME-theme,.layout-lg-row > md-divider.md-THEME_NAME-theme, .layout-gt-lg-row > md-divider.md-THEME_NAME-theme,.layout-xl-row > md-divider.md-THEME_NAME-theme {  border-right-color: '{{foreground-4}}'; }md-icon.md-THEME_NAME-theme {  color: '{{foreground-2}}'; }  md-icon.md-THEME_NAME-theme.md-primary {    color: '{{primary-color}}'; }  md-icon.md-THEME_NAME-theme.md-accent {    color: '{{accent-color}}'; }  md-icon.md-THEME_NAME-theme.md-warn {    color: '{{warn-color}}'; }md-input-container.md-THEME_NAME-theme .md-input {  color: '{{foreground-1}}';  border-color: '{{foreground-4}}'; }  md-input-container.md-THEME_NAME-theme .md-input::-webkit-input-placeholder {    color: '{{foreground-3}}'; }  md-input-container.md-THEME_NAME-theme .md-input:-moz-placeholder {    color: '{{foreground-3}}'; }  md-input-container.md-THEME_NAME-theme .md-input::-moz-placeholder {    color: '{{foreground-3}}'; }  md-input-container.md-THEME_NAME-theme .md-input:-ms-input-placeholder {    color: '{{foreground-3}}'; }  md-input-container.md-THEME_NAME-theme .md-input::-webkit-input-placeholder {    color: '{{foreground-3}}'; }md-input-container.md-THEME_NAME-theme > md-icon {  color: '{{foreground-1}}'; }md-input-container.md-THEME_NAME-theme label,md-input-container.md-THEME_NAME-theme ._md-placeholder {  color: '{{foreground-3}}'; }md-input-container.md-THEME_NAME-theme label.md-required:after {  color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-focused):not(.md-input-invalid) label.md-required:after {  color: '{{foreground-2}}'; }md-input-container.md-THEME_NAME-theme .md-input-messages-animation, md-input-container.md-THEME_NAME-theme .md-input-message-animation {  color: '{{warn-A700}}'; }  md-input-container.md-THEME_NAME-theme .md-input-messages-animation .md-char-counter, md-input-container.md-THEME_NAME-theme .md-input-message-animation .md-char-counter {    color: '{{foreground-1}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-has-value label {  color: '{{foreground-2}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused .md-input {  border-color: '{{primary-color}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused label {  color: '{{primary-color}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused md-icon {  color: '{{primary-color}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-accent .md-input {  border-color: '{{accent-color}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-accent label {  color: '{{accent-color}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-warn .md-input {  border-color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-warn label {  color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme.md-input-invalid .md-input {  border-color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme.md-input-invalid label {  color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme.md-input-invalid .md-input-message-animation, md-input-container.md-THEME_NAME-theme.md-input-invalid .md-char-counter {  color: '{{warn-A700}}'; }md-input-container.md-THEME_NAME-theme .md-input[disabled],md-input-container.md-THEME_NAME-theme .md-input [disabled] {  border-bottom-color: transparent;  color: '{{foreground-3}}';  background-image: linear-gradient(to right, \"{{foreground-3}}\" 0%, \"{{foreground-3}}\" 33%, transparent 0%);  background-image: -ms-linear-gradient(left, transparent 0%, \"{{foreground-3}}\" 100%); }md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text h3, md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text h4,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text h3,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text h4 {  color: '{{foreground-1}}'; }md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text p,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text p {  color: '{{foreground-2}}'; }md-list.md-THEME_NAME-theme ._md-proxy-focus.md-focused div._md-no-style {  background-color: '{{background-100}}'; }md-list.md-THEME_NAME-theme md-list-item .md-avatar-icon {  background-color: '{{foreground-3}}';  color: '{{background-color}}'; }md-list.md-THEME_NAME-theme md-list-item > md-icon {  color: '{{foreground-2}}'; }  md-list.md-THEME_NAME-theme md-list-item > md-icon.md-highlight {    color: '{{primary-color}}'; }    md-list.md-THEME_NAME-theme md-list-item > md-icon.md-highlight.md-accent {      color: '{{accent-color}}'; }md-menu-content.md-THEME_NAME-theme {  background-color: '{{background-A100}}'; }  md-menu-content.md-THEME_NAME-theme md-menu-item {    color: '{{background-A200-0.87}}'; }    md-menu-content.md-THEME_NAME-theme md-menu-item md-icon {      color: '{{background-A200-0.54}}'; }    md-menu-content.md-THEME_NAME-theme md-menu-item .md-button[disabled] {      color: '{{background-A200-0.25}}'; }      md-menu-content.md-THEME_NAME-theme md-menu-item .md-button[disabled] md-icon {        color: '{{background-A200-0.25}}'; }  md-menu-content.md-THEME_NAME-theme md-menu-divider {    background-color: '{{background-A200-0.11}}'; }md-menu-bar.md-THEME_NAME-theme > button.md-button {  color: '{{foreground-2}}';  border-radius: 2px; }md-menu-bar.md-THEME_NAME-theme md-menu._md-open > button, md-menu-bar.md-THEME_NAME-theme md-menu > button:focus {  outline: none;  background: '{{background-200}}'; }md-menu-bar.md-THEME_NAME-theme._md-open:not(._md-keyboard-mode) md-menu:hover > button {  background-color: '{{ background-500-0.2}}'; }md-menu-bar.md-THEME_NAME-theme:not(._md-keyboard-mode):not(._md-open) md-menu button:hover,md-menu-bar.md-THEME_NAME-theme:not(._md-keyboard-mode):not(._md-open) md-menu button:focus {  background: transparent; }md-menu-content.md-THEME_NAME-theme .md-menu > .md-button:after {  color: '{{background-A200-0.54}}'; }md-menu-content.md-THEME_NAME-theme .md-menu._md-open > .md-button {  background-color: '{{ background-500-0.2}}'; }md-toolbar.md-THEME_NAME-theme.md-menu-toolbar {  background-color: '{{background-A100}}';  color: '{{background-A200}}'; }  md-toolbar.md-THEME_NAME-theme.md-menu-toolbar md-toolbar-filler {    background-color: '{{primary-color}}';    color: '{{background-A100-0.87}}'; }    md-toolbar.md-THEME_NAME-theme.md-menu-toolbar md-toolbar-filler md-icon {      color: '{{background-A100-0.87}}'; }md-progress-circular.md-THEME_NAME-theme path {  stroke: '{{primary-color}}'; }md-progress-circular.md-THEME_NAME-theme.md-warn path {  stroke: '{{warn-color}}'; }md-progress-circular.md-THEME_NAME-theme.md-accent path {  stroke: '{{accent-color}}'; }md-progress-linear.md-THEME_NAME-theme ._md-container {  background-color: '{{primary-100}}'; }md-progress-linear.md-THEME_NAME-theme ._md-bar {  background-color: '{{primary-color}}'; }md-progress-linear.md-THEME_NAME-theme.md-warn ._md-container {  background-color: '{{warn-100}}'; }md-progress-linear.md-THEME_NAME-theme.md-warn ._md-bar {  background-color: '{{warn-color}}'; }md-progress-linear.md-THEME_NAME-theme.md-accent ._md-container {  background-color: '{{accent-A100}}'; }md-progress-linear.md-THEME_NAME-theme.md-accent ._md-bar {  background-color: '{{accent-color}}'; }md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-warn ._md-bar1 {  background-color: '{{warn-100}}'; }md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-warn ._md-dashed:before {  background: radial-gradient(\"{{warn-100}}\" 0%, \"{{warn-100}}\" 16%, transparent 42%); }md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-accent ._md-bar1 {  background-color: '{{accent-A100}}'; }md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-accent ._md-dashed:before {  background: radial-gradient(\"{{accent-A100}}\" 0%, \"{{accent-A100}}\" 16%, transparent 42%); }md-radio-button.md-THEME_NAME-theme ._md-off {  border-color: '{{foreground-2}}'; }md-radio-button.md-THEME_NAME-theme ._md-on {  background-color: '{{accent-color-0.87}}'; }md-radio-button.md-THEME_NAME-theme.md-checked ._md-off {  border-color: '{{accent-color-0.87}}'; }md-radio-button.md-THEME_NAME-theme.md-checked .md-ink-ripple {  color: '{{accent-color-0.87}}'; }md-radio-button.md-THEME_NAME-theme ._md-container .md-ripple {  color: '{{accent-A700}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary ._md-on, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary ._md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary ._md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary ._md-on {  background-color: '{{primary-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked ._md-off {  border-color: '{{primary-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple {  color: '{{primary-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary ._md-container .md-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary ._md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary ._md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary ._md-container .md-ripple {  color: '{{primary-600}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn ._md-on, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn ._md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn ._md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn ._md-on {  background-color: '{{warn-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked ._md-off, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked ._md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked ._md-off {  border-color: '{{warn-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-ink-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple {  color: '{{warn-color-0.87}}'; }md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn ._md-container .md-ripple, md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn ._md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn ._md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn ._md-container .md-ripple {  color: '{{warn-600}}'; }md-radio-group.md-THEME_NAME-theme[disabled],md-radio-button.md-THEME_NAME-theme[disabled] {  color: '{{foreground-3}}'; }  md-radio-group.md-THEME_NAME-theme[disabled] ._md-container ._md-off,  md-radio-button.md-THEME_NAME-theme[disabled] ._md-container ._md-off {    border-color: '{{foreground-3}}'; }  md-radio-group.md-THEME_NAME-theme[disabled] ._md-container ._md-on,  md-radio-button.md-THEME_NAME-theme[disabled] ._md-container ._md-on {    border-color: '{{foreground-3}}'; }md-radio-group.md-THEME_NAME-theme .md-checked .md-ink-ripple {  color: '{{accent-color-0.26}}'; }md-radio-group.md-THEME_NAME-theme.md-primary .md-checked:not([disabled]) .md-ink-ripple, md-radio-group.md-THEME_NAME-theme .md-checked:not([disabled]).md-primary .md-ink-ripple {  color: '{{primary-color-0.26}}'; }md-radio-group.md-THEME_NAME-theme .md-checked.md-primary .md-ink-ripple {  color: '{{warn-color-0.26}}'; }md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked ._md-container:before {  background-color: '{{accent-color-0.26}}'; }md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty).md-primary .md-checked ._md-container:before,md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked.md-primary ._md-container:before {  background-color: '{{primary-color-0.26}}'; }md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty).md-warn .md-checked ._md-container:before,md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked.md-warn ._md-container:before {  background-color: '{{warn-color-0.26}}'; }md-select.md-THEME_NAME-theme[disabled] ._md-select-value {  border-bottom-color: transparent;  background-image: linear-gradient(to right, \"{{foreground-3}}\" 0%, \"{{foreground-3}}\" 33%, transparent 0%);  background-image: -ms-linear-gradient(left, transparent 0%, \"{{foreground-3}}\" 100%); }md-select.md-THEME_NAME-theme ._md-select-value {  border-bottom-color: '{{foreground-4}}'; }  md-select.md-THEME_NAME-theme ._md-select-value._md-select-placeholder {    color: '{{foreground-3}}'; }md-select.md-THEME_NAME-theme.ng-invalid.ng-dirty ._md-select-value {  color: '{{warn-A700}}' !important;  border-bottom-color: '{{warn-A700}}' !important; }md-select.md-THEME_NAME-theme:not([disabled]):focus ._md-select-value {  border-bottom-color: '{{primary-color}}';  color: '{{ foreground-1 }}'; }  md-select.md-THEME_NAME-theme:not([disabled]):focus ._md-select-value._md-select-placeholder {    color: '{{ foreground-1 }}'; }md-select.md-THEME_NAME-theme:not([disabled]):focus.md-accent ._md-select-value {  border-bottom-color: '{{accent-color}}'; }md-select.md-THEME_NAME-theme:not([disabled]):focus.md-warn ._md-select-value {  border-bottom-color: '{{warn-color}}'; }md-select.md-THEME_NAME-theme[disabled] ._md-select-value {  color: '{{foreground-3}}'; }  md-select.md-THEME_NAME-theme[disabled] ._md-select-value._md-select-placeholder {    color: '{{foreground-3}}'; }md-select-menu.md-THEME_NAME-theme md-content {  background: '{{background-A100}}'; }  md-select-menu.md-THEME_NAME-theme md-content md-optgroup {    color: '{{background-600-0.87}}'; }  md-select-menu.md-THEME_NAME-theme md-content md-option {    color: '{{background-900-0.87}}'; }    md-select-menu.md-THEME_NAME-theme md-content md-option[disabled] ._md-text {      color: '{{background-400-0.87}}'; }    md-select-menu.md-THEME_NAME-theme md-content md-option:not([disabled]):focus, md-select-menu.md-THEME_NAME-theme md-content md-option:not([disabled]):hover {      background: '{{background-200}}'; }    md-select-menu.md-THEME_NAME-theme md-content md-option[selected] {      color: '{{primary-500}}'; }      md-select-menu.md-THEME_NAME-theme md-content md-option[selected]:focus {        color: '{{primary-600}}'; }      md-select-menu.md-THEME_NAME-theme md-content md-option[selected].md-accent {        color: '{{accent-color}}'; }        md-select-menu.md-THEME_NAME-theme md-content md-option[selected].md-accent:focus {          color: '{{accent-A700}}'; }._md-checkbox-enabled.md-THEME_NAME-theme .md-ripple {  color: '{{primary-600}}'; }._md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-ripple {  color: '{{background-600}}'; }._md-checkbox-enabled.md-THEME_NAME-theme .md-ink-ripple {  color: '{{foreground-2}}'; }._md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-ink-ripple {  color: '{{primary-color-0.87}}'; }._md-checkbox-enabled.md-THEME_NAME-theme ._md-icon {  border-color: '{{foreground-2}}'; }._md-checkbox-enabled.md-THEME_NAME-theme[selected] ._md-icon {  background-color: '{{primary-color-0.87}}'; }._md-checkbox-enabled.md-THEME_NAME-theme[selected].md-focused ._md-container:before {  background-color: '{{primary-color-0.26}}'; }._md-checkbox-enabled.md-THEME_NAME-theme[selected] ._md-icon:after {  border-color: '{{primary-contrast-0.87}}'; }._md-checkbox-enabled.md-THEME_NAME-theme .md-indeterminate[disabled] ._md-container {  color: '{{foreground-3}}'; }._md-checkbox-enabled.md-THEME_NAME-theme md-option ._md-text {  color: '{{background-900-0.87}}'; }md-sidenav.md-THEME_NAME-theme, md-sidenav.md-THEME_NAME-theme md-content {  background-color: '{{background-hue-1}}'; }md-slider.md-THEME_NAME-theme ._md-track {  background-color: '{{foreground-3}}'; }md-slider.md-THEME_NAME-theme ._md-track-ticks {  color: '{{background-contrast}}'; }md-slider.md-THEME_NAME-theme ._md-focus-ring {  background-color: '{{accent-A200-0.2}}'; }md-slider.md-THEME_NAME-theme ._md-disabled-thumb {  border-color: '{{background-color}}';  background-color: '{{background-color}}'; }md-slider.md-THEME_NAME-theme._md-min ._md-thumb:after {  background-color: '{{background-color}}';  border-color: '{{foreground-3}}'; }md-slider.md-THEME_NAME-theme._md-min ._md-focus-ring {  background-color: '{{foreground-3-0.38}}'; }md-slider.md-THEME_NAME-theme._md-min[md-discrete] ._md-thumb:after {  background-color: '{{background-contrast}}';  border-color: transparent; }md-slider.md-THEME_NAME-theme._md-min[md-discrete] ._md-sign {  background-color: '{{background-400}}'; }  md-slider.md-THEME_NAME-theme._md-min[md-discrete] ._md-sign:after {    border-top-color: '{{background-400}}'; }md-slider.md-THEME_NAME-theme._md-min[md-discrete][md-vertical] ._md-sign:after {  border-top-color: transparent;  border-left-color: '{{background-400}}'; }md-slider.md-THEME_NAME-theme ._md-track._md-track-fill {  background-color: '{{accent-color}}'; }md-slider.md-THEME_NAME-theme ._md-thumb:after {  border-color: '{{accent-color}}';  background-color: '{{accent-color}}'; }md-slider.md-THEME_NAME-theme ._md-sign {  background-color: '{{accent-color}}'; }  md-slider.md-THEME_NAME-theme ._md-sign:after {    border-top-color: '{{accent-color}}'; }md-slider.md-THEME_NAME-theme[md-vertical] ._md-sign:after {  border-top-color: transparent;  border-left-color: '{{accent-color}}'; }md-slider.md-THEME_NAME-theme ._md-thumb-text {  color: '{{accent-contrast}}'; }md-slider.md-THEME_NAME-theme.md-warn ._md-focus-ring {  background-color: '{{warn-200-0.38}}'; }md-slider.md-THEME_NAME-theme.md-warn ._md-track._md-track-fill {  background-color: '{{warn-color}}'; }md-slider.md-THEME_NAME-theme.md-warn ._md-thumb:after {  border-color: '{{warn-color}}';  background-color: '{{warn-color}}'; }md-slider.md-THEME_NAME-theme.md-warn ._md-sign {  background-color: '{{warn-color}}'; }  md-slider.md-THEME_NAME-theme.md-warn ._md-sign:after {    border-top-color: '{{warn-color}}'; }md-slider.md-THEME_NAME-theme.md-warn[md-vertical] ._md-sign:after {  border-top-color: transparent;  border-left-color: '{{warn-color}}'; }md-slider.md-THEME_NAME-theme.md-warn ._md-thumb-text {  color: '{{warn-contrast}}'; }md-slider.md-THEME_NAME-theme.md-primary ._md-focus-ring {  background-color: '{{primary-200-0.38}}'; }md-slider.md-THEME_NAME-theme.md-primary ._md-track._md-track-fill {  background-color: '{{primary-color}}'; }md-slider.md-THEME_NAME-theme.md-primary ._md-thumb:after {  border-color: '{{primary-color}}';  background-color: '{{primary-color}}'; }md-slider.md-THEME_NAME-theme.md-primary ._md-sign {  background-color: '{{primary-color}}'; }  md-slider.md-THEME_NAME-theme.md-primary ._md-sign:after {    border-top-color: '{{primary-color}}'; }md-slider.md-THEME_NAME-theme.md-primary[md-vertical] ._md-sign:after {  border-top-color: transparent;  border-left-color: '{{primary-color}}'; }md-slider.md-THEME_NAME-theme.md-primary ._md-thumb-text {  color: '{{primary-contrast}}'; }md-slider.md-THEME_NAME-theme[disabled] ._md-thumb:after {  border-color: transparent; }md-slider.md-THEME_NAME-theme[disabled]:not(._md-min) ._md-thumb:after, md-slider.md-THEME_NAME-theme[disabled][md-discrete] ._md-thumb:after {  background-color: '{{foreground-3}}';  border-color: transparent; }md-slider.md-THEME_NAME-theme[disabled][readonly] ._md-sign {  background-color: '{{background-400}}'; }  md-slider.md-THEME_NAME-theme[disabled][readonly] ._md-sign:after {    border-top-color: '{{background-400}}'; }md-slider.md-THEME_NAME-theme[disabled][readonly][md-vertical] ._md-sign:after {  border-top-color: transparent;  border-left-color: '{{background-400}}'; }md-slider.md-THEME_NAME-theme[disabled][readonly] ._md-disabled-thumb {  border-color: transparent;  background-color: transparent; }md-slider-container[disabled] > *:first-child:not(md-slider),md-slider-container[disabled] > *:last-child:not(md-slider) {  color: '{{foreground-3}}'; }.md-subheader.md-THEME_NAME-theme {  color: '{{ foreground-2-0.23 }}';  background-color: '{{background-hue-2}}'; }  .md-subheader.md-THEME_NAME-theme.md-primary {    color: '{{primary-color}}'; }  .md-subheader.md-THEME_NAME-theme.md-accent {    color: '{{accent-color}}'; }  .md-subheader.md-THEME_NAME-theme.md-warn {    color: '{{warn-color}}'; }md-switch.md-THEME_NAME-theme .md-ink-ripple {  color: '{{background-500}}'; }md-switch.md-THEME_NAME-theme ._md-thumb {  background-color: '{{background-50}}'; }md-switch.md-THEME_NAME-theme ._md-bar {  background-color: '{{background-500}}'; }md-switch.md-THEME_NAME-theme.md-checked .md-ink-ripple {  color: '{{accent-color}}'; }md-switch.md-THEME_NAME-theme.md-checked ._md-thumb {  background-color: '{{accent-color}}'; }md-switch.md-THEME_NAME-theme.md-checked ._md-bar {  background-color: '{{accent-color-0.5}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-focused ._md-thumb:before {  background-color: '{{accent-color-0.26}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-primary .md-ink-ripple {  color: '{{primary-color}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-primary ._md-thumb {  background-color: '{{primary-color}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-primary ._md-bar {  background-color: '{{primary-color-0.5}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-primary.md-focused ._md-thumb:before {  background-color: '{{primary-color-0.26}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-warn .md-ink-ripple {  color: '{{warn-color}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-warn ._md-thumb {  background-color: '{{warn-color}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-warn ._md-bar {  background-color: '{{warn-color-0.5}}'; }md-switch.md-THEME_NAME-theme.md-checked.md-warn.md-focused ._md-thumb:before {  background-color: '{{warn-color-0.26}}'; }md-switch.md-THEME_NAME-theme[disabled] ._md-thumb {  background-color: '{{background-400}}'; }md-switch.md-THEME_NAME-theme[disabled] ._md-bar {  background-color: '{{foreground-4}}'; }md-tabs.md-THEME_NAME-theme md-tabs-wrapper {  background-color: transparent;  border-color: '{{foreground-4}}'; }md-tabs.md-THEME_NAME-theme .md-paginator md-icon {  color: '{{primary-color}}'; }md-tabs.md-THEME_NAME-theme md-ink-bar {  color: '{{accent-color}}';  background: '{{accent-color}}'; }md-tabs.md-THEME_NAME-theme .md-tab {  color: '{{foreground-2}}'; }  md-tabs.md-THEME_NAME-theme .md-tab[disabled], md-tabs.md-THEME_NAME-theme .md-tab[disabled] md-icon {    color: '{{foreground-3}}'; }  md-tabs.md-THEME_NAME-theme .md-tab.md-active, md-tabs.md-THEME_NAME-theme .md-tab.md-active md-icon, md-tabs.md-THEME_NAME-theme .md-tab.md-focused, md-tabs.md-THEME_NAME-theme .md-tab.md-focused md-icon {    color: '{{primary-color}}'; }  md-tabs.md-THEME_NAME-theme .md-tab.md-focused {    background: '{{primary-color-0.1}}'; }  md-tabs.md-THEME_NAME-theme .md-tab .md-ripple-container {    color: '{{accent-A100}}'; }md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper {  background-color: '{{accent-color}}'; }  md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{accent-A100}}'; }    md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{accent-contrast}}'; }    md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{accent-contrast-0.1}}'; }  md-tabs.md-THEME_NAME-theme.md-accent > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {    color: '{{primary-600-1}}';    background: '{{primary-600-1}}'; }md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper {  background-color: '{{primary-color}}'; }  md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{primary-100}}'; }    md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{primary-contrast}}'; }    md-tabs.md-THEME_NAME-theme.md-primary > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{primary-contrast-0.1}}'; }md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper {  background-color: '{{warn-color}}'; }  md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{warn-100}}'; }    md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{warn-contrast}}'; }    md-tabs.md-THEME_NAME-theme.md-warn > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{warn-contrast-0.1}}'; }md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper {  background-color: '{{primary-color}}'; }  md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{primary-100}}'; }    md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{primary-contrast}}'; }    md-toolbar > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{primary-contrast-0.1}}'; }md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper {  background-color: '{{accent-color}}'; }  md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{accent-A100}}'; }    md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{accent-contrast}}'; }    md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{accent-contrast-0.1}}'; }  md-toolbar.md-accent > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-ink-bar {    color: '{{primary-600-1}}';    background: '{{primary-600-1}}'; }md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper {  background-color: '{{warn-color}}'; }  md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]) {    color: '{{warn-100}}'; }    md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active, md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-active md-icon, md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused, md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused md-icon {      color: '{{warn-contrast}}'; }    md-toolbar.md-warn > md-tabs.md-THEME_NAME-theme > md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item:not([disabled]).md-focused {      background: '{{warn-contrast-0.1}}'; }md-toast.md-THEME_NAME-theme .md-toast-content {  background-color: #323232;  color: '{{background-50}}'; }  md-toast.md-THEME_NAME-theme .md-toast-content .md-button {    color: '{{background-50}}'; }    md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight {      color: '{{accent-color}}'; }      md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight.md-primary {        color: '{{primary-color}}'; }      md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight.md-warn {        color: '{{warn-color}}'; }md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar) {  background-color: '{{primary-color}}';  color: '{{primary-contrast}}'; }  md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar) md-icon {    color: '{{primary-contrast}}';    fill: '{{primary-contrast}}'; }  md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar) .md-button[disabled] md-icon {    color: '{{primary-contrast-0.26}}';    fill: '{{primary-contrast-0.26}}'; }  md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent {    background-color: '{{accent-color}}';    color: '{{accent-contrast}}'; }    md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent .md-ink-ripple {      color: '{{accent-contrast}}'; }    md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent md-icon {      color: '{{accent-contrast}}';      fill: '{{accent-contrast}}'; }    md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent .md-button[disabled] md-icon {      color: '{{accent-contrast-0.26}}';      fill: '{{accent-contrast-0.26}}'; }  md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-warn {    background-color: '{{warn-color}}';    color: '{{warn-contrast}}'; }md-tooltip.md-THEME_NAME-theme {  color: '{{background-A100}}'; }  md-tooltip.md-THEME_NAME-theme ._md-content {    background-color: '{{foreground-2}}'; }"); 
+angular.module("material.core").constant("$MD_THEME_CSS", "md-autocomplete.md-THEME_NAME-theme{background:\"{{background-A100}}\"}md-autocomplete.md-THEME_NAME-theme[disabled]:not([md-floating-label]){background:\"{{background-100}}\"}md-autocomplete.md-THEME_NAME-theme button md-icon path{fill:\"{{background-600}}\"}md-autocomplete.md-THEME_NAME-theme button:after{background:\"{{background-600-0.3}}\"}.md-autocomplete-suggestions-container.md-THEME_NAME-theme{background:\"{{background-A100}}\"}.md-autocomplete-suggestions-container.md-THEME_NAME-theme li{color:\"{{background-900}}\"}.md-autocomplete-suggestions-container.md-THEME_NAME-theme li .highlight{color:\"{{background-600}}\"}.md-autocomplete-suggestions-container.md-THEME_NAME-theme li.selected,.md-autocomplete-suggestions-container.md-THEME_NAME-theme li:hover{background:\"{{background-200}}\"}md-backdrop{background-color:\"{{background-900-0.0}}\"}md-backdrop.md-opaque.md-THEME_NAME-theme{background-color:\"{{background-900-1.0}}\"}md-bottom-sheet.md-THEME_NAME-theme{background-color:\"{{background-50}}\";border-top-color:\"{{background-300}}\"}md-bottom-sheet.md-THEME_NAME-theme.md-list md-list-item{color:\"{{foreground-1}}\"}md-bottom-sheet.md-THEME_NAME-theme .md-subheader{background-color:\"{{background-50}}\";color:\"{{foreground-1}}\"}.md-button.md-THEME_NAME-theme:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme:not([disabled]):hover{background-color:\"{{background-500-0.2}}\"}.md-button.md-THEME_NAME-theme:not([disabled]).md-icon-button:hover{background-color:transparent}.md-button.md-THEME_NAME-theme.md-fab md-icon{color:\"{{accent-contrast}}\"}.md-button.md-THEME_NAME-theme.md-primary{color:\"{{primary-color}}\"}.md-button.md-THEME_NAME-theme.md-primary.md-fab,.md-button.md-THEME_NAME-theme.md-primary.md-raised{color:\"{{primary-contrast}}\";background-color:\"{{primary-color}}\"}.md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]) md-icon,.md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]) md-icon{color:\"{{primary-contrast}}\"}.md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-primary.md-fab:not([disabled]):hover,.md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-primary.md-raised:not([disabled]):hover{background-color:\"{{primary-600}}\"}.md-button.md-THEME_NAME-theme.md-primary:not([disabled]) md-icon{color:\"{{primary-color}}\"}.md-button.md-THEME_NAME-theme.md-fab{background-color:\"{{accent-color}}\";color:\"{{accent-contrast}}\"}.md-button.md-THEME_NAME-theme.md-fab:not([disabled]) .md-icon{color:\"{{accent-contrast}}\"}.md-button.md-THEME_NAME-theme.md-fab:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-fab:not([disabled]):hover{background-color:\"{{accent-A700}}\"}.md-button.md-THEME_NAME-theme.md-raised{color:\"{{background-900}}\";background-color:\"{{background-50}}\"}.md-button.md-THEME_NAME-theme.md-raised:not([disabled]) md-icon{color:\"{{background-900}}\"}.md-button.md-THEME_NAME-theme.md-raised:not([disabled]):hover{background-color:\"{{background-50}}\"}.md-button.md-THEME_NAME-theme.md-raised:not([disabled]).md-focused{background-color:\"{{background-200}}\"}.md-button.md-THEME_NAME-theme.md-warn{color:\"{{warn-color}}\"}.md-button.md-THEME_NAME-theme.md-warn.md-fab,.md-button.md-THEME_NAME-theme.md-warn.md-raised{color:\"{{warn-contrast}}\";background-color:\"{{warn-color}}\"}.md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]) md-icon,.md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]) md-icon{color:\"{{warn-contrast}}\"}.md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-warn.md-fab:not([disabled]):hover,.md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-warn.md-raised:not([disabled]):hover{background-color:\"{{warn-600}}\"}.md-button.md-THEME_NAME-theme.md-warn:not([disabled]) md-icon{color:\"{{warn-color}}\"}.md-button.md-THEME_NAME-theme.md-accent{color:\"{{accent-color}}\"}.md-button.md-THEME_NAME-theme.md-accent.md-fab,.md-button.md-THEME_NAME-theme.md-accent.md-raised{color:\"{{accent-contrast}}\";background-color:\"{{accent-color}}\"}.md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]) md-icon,.md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]) md-icon{color:\"{{accent-contrast}}\"}.md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-accent.md-fab:not([disabled]):hover,.md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]).md-focused,.md-button.md-THEME_NAME-theme.md-accent.md-raised:not([disabled]):hover{background-color:\"{{accent-A700}}\"}.md-button.md-THEME_NAME-theme.md-accent:not([disabled]) md-icon{color:\"{{accent-color}}\"}.md-button.md-THEME_NAME-theme.md-accent[disabled],.md-button.md-THEME_NAME-theme.md-fab[disabled],.md-button.md-THEME_NAME-theme.md-raised[disabled],.md-button.md-THEME_NAME-theme.md-warn[disabled],.md-button.md-THEME_NAME-theme[disabled]{color:\"{{foreground-3}}\";cursor:default}.md-button.md-THEME_NAME-theme.md-accent[disabled] md-icon,.md-button.md-THEME_NAME-theme.md-fab[disabled] md-icon,.md-button.md-THEME_NAME-theme.md-raised[disabled] md-icon,.md-button.md-THEME_NAME-theme.md-warn[disabled] md-icon,.md-button.md-THEME_NAME-theme[disabled] md-icon{color:\"{{foreground-3}}\"}.md-button.md-THEME_NAME-theme.md-fab[disabled],.md-button.md-THEME_NAME-theme.md-raised[disabled]{background-color:\"{{foreground-4}}\"}.md-button.md-THEME_NAME-theme[disabled]{background-color:transparent}._md a.md-THEME_NAME-theme:not(.md-button).md-primary{color:\"{{primary-color}}\"}._md a.md-THEME_NAME-theme:not(.md-button).md-primary:hover{color:\"{{primary-700}}\"}._md a.md-THEME_NAME-theme:not(.md-button).md-accent{color:\"{{accent-color}}\"}._md a.md-THEME_NAME-theme:not(.md-button).md-accent:hover{color:\"{{accent-A700}}\"}._md a.md-THEME_NAME-theme:not(.md-button).md-warn{color:\"{{warn-color}}\"}._md a.md-THEME_NAME-theme:not(.md-button).md-warn:hover{color:\"{{warn-700}}\"}md-card.md-THEME_NAME-theme{color:\"{{foreground-1}}\";background-color:\"{{background-hue-1}}\";border-radius:2px}md-card.md-THEME_NAME-theme .md-card-image{border-radius:2px 2px 0 0}md-card.md-THEME_NAME-theme md-card-header md-card-avatar md-icon{color:\"{{background-color}}\";background-color:\"{{foreground-3}}\"}md-card.md-THEME_NAME-theme md-card-header md-card-header-text .md-subhead,md-card.md-THEME_NAME-theme md-card-title md-card-title-text:not(:only-child) .md-subhead{color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme .md-ripple{color:\"{{accent-A700}}\"}md-checkbox.md-THEME_NAME-theme.md-checked .md-ripple{color:\"{{background-600}}\"}md-checkbox.md-THEME_NAME-theme.md-checked.md-focused .md-container:before{background-color:\"{{accent-color-0.26}}\"}md-checkbox.md-THEME_NAME-theme .md-ink-ripple{color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme.md-checked .md-ink-ripple{color:\"{{accent-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not(.md-checked) .md-icon{border-color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme.md-checked .md-icon{background-color:\"{{accent-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme.md-checked .md-icon:after{border-color:\"{{accent-contrast-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-ripple{color:\"{{primary-600}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ripple{color:\"{{background-600}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-ink-ripple{color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple{color:\"{{primary-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary:not(.md-checked) .md-icon{border-color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-icon{background-color:\"{{primary-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked.md-focused .md-container:before{background-color:\"{{primary-color-0.26}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-icon:after{border-color:\"{{primary-contrast-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-primary .md-indeterminate[disabled] .md-container{color:\"{{foreground-3}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn .md-ripple{color:\"{{warn-600}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn .md-ink-ripple{color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple{color:\"{{warn-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn:not(.md-checked) .md-icon{border-color:\"{{foreground-2}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-icon{background-color:\"{{warn-color-0.87}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked.md-focused:not([disabled]) .md-container:before{background-color:\"{{warn-color-0.26}}\"}md-checkbox.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-icon:after{border-color:\"{{background-200}}\"}md-checkbox.md-THEME_NAME-theme[disabled]:not(.md-checked) .md-icon{border-color:\"{{foreground-3}}\"}md-checkbox.md-THEME_NAME-theme[disabled].md-checked .md-icon{background-color:\"{{foreground-3}}\"}md-checkbox.md-THEME_NAME-theme[disabled].md-checked .md-icon:after{border-color:\"{{background-200}}\"}md-checkbox.md-THEME_NAME-theme[disabled] .md-icon:after{border-color:\"{{foreground-3}}\"}md-checkbox.md-THEME_NAME-theme[disabled] .md-label{color:\"{{foreground-3}}\"}md-chips.md-THEME_NAME-theme .md-chips{box-shadow:0 1px \"{{foreground-4}}\"}md-chips.md-THEME_NAME-theme .md-chips.md-focused{box-shadow:0 2px \"{{primary-color}}\"}md-chips.md-THEME_NAME-theme .md-chips .md-chip-input-container input{color:\"{{foreground-1}}\"}md-chips.md-THEME_NAME-theme .md-chips .md-chip-input-container input:-moz-placeholder,md-chips.md-THEME_NAME-theme .md-chips .md-chip-input-container input::-moz-placeholder{color:\"{{foreground-3}}\"}md-chips.md-THEME_NAME-theme .md-chips .md-chip-input-container input:-ms-input-placeholder{color:\"{{foreground-3}}\"}md-chips.md-THEME_NAME-theme .md-chips .md-chip-input-container input::-webkit-input-placeholder{color:\"{{foreground-3}}\"}md-chips.md-THEME_NAME-theme md-chip{background:\"{{background-300}}\";color:\"{{background-800}}\"}md-chips.md-THEME_NAME-theme md-chip md-icon{color:\"{{background-700}}\"}md-chips.md-THEME_NAME-theme md-chip.md-focused{background:\"{{primary-color}}\";color:\"{{primary-contrast}}\"}md-chips.md-THEME_NAME-theme md-chip.md-focused md-icon{color:\"{{primary-contrast}}\"}md-chips.md-THEME_NAME-theme md-chip._md-chip-editing{background:transparent;color:\"{{background-800}}\"}md-chips.md-THEME_NAME-theme md-chip-remove .md-button md-icon path{fill:\"{{background-500}}\"}.md-contact-suggestion span.md-contact-email{color:\"{{background-400}}\"}md-content.md-THEME_NAME-theme{color:\"{{foreground-1}}\";background-color:\"{{background-default}}\"}.md-calendar.md-THEME_NAME-theme{background:\"{{background-A100}}\";color:\"{{background-A200-0.87}}\"}.md-calendar.md-THEME_NAME-theme tr:last-child td{border-bottom-color:\"{{background-200}}\"}.md-THEME_NAME-theme .md-calendar-day-header{background:\"{{background-300}}\";color:\"{{background-A200-0.87}}\"}.md-THEME_NAME-theme .md-calendar-date.md-calendar-date-today .md-calendar-date-selection-indicator{border:1px solid \"{{primary-500}}\"}.md-THEME_NAME-theme .md-calendar-date.md-calendar-date-today.md-calendar-date-disabled{color:\"{{primary-500-0.6}}\"}.md-calendar-date.md-focus .md-THEME_NAME-theme .md-calendar-date-selection-indicator,.md-THEME_NAME-theme .md-calendar-date-selection-indicator:hover{background:\"{{background-300}}\"}.md-THEME_NAME-theme .md-calendar-date.md-calendar-selected-date .md-calendar-date-selection-indicator,.md-THEME_NAME-theme .md-calendar-date.md-focus.md-calendar-selected-date .md-calendar-date-selection-indicator{background:\"{{primary-500}}\";color:\"{{primary-500-contrast}}\";border-color:transparent}.md-THEME_NAME-theme .md-calendar-date-disabled,.md-THEME_NAME-theme .md-calendar-month-label-disabled{color:\"{{background-A200-0.435}}\"}.md-THEME_NAME-theme .md-datepicker-input{color:\"{{foreground-1}}\"}.md-THEME_NAME-theme .md-datepicker-input:-moz-placeholder,.md-THEME_NAME-theme .md-datepicker-input::-moz-placeholder{color:\"{{foreground-3}}\"}.md-THEME_NAME-theme .md-datepicker-input:-ms-input-placeholder{color:\"{{foreground-3}}\"}.md-THEME_NAME-theme .md-datepicker-input::-webkit-input-placeholder{color:\"{{foreground-3}}\"}.md-THEME_NAME-theme .md-datepicker-input-container{border-bottom-color:\"{{foreground-4}}\"}.md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-focused{border-bottom-color:\"{{primary-color}}\"}.md-accent .md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-focused{border-bottom-color:\"{{accent-color}}\"}.md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-invalid,.md-warn .md-THEME_NAME-theme .md-datepicker-input-container.md-datepicker-focused{border-bottom-color:\"{{warn-A700}}\"}.md-THEME_NAME-theme .md-datepicker-calendar-pane{border-color:\"{{background-hue-1}}\"}.md-THEME_NAME-theme .md-datepicker-triangle-button .md-datepicker-expand-triangle{border-top-color:\"{{foreground-2}}\"}.md-THEME_NAME-theme .md-datepicker-open .md-datepicker-calendar-icon{color:\"{{primary-color}}\"}.md-accent .md-THEME_NAME-theme .md-datepicker-open .md-datepicker-calendar-icon,.md-THEME_NAME-theme .md-datepicker-open.md-accent .md-datepicker-calendar-icon{color:\"{{accent-color}}\"}.md-THEME_NAME-theme .md-datepicker-open.md-warn .md-datepicker-calendar-icon,.md-warn .md-THEME_NAME-theme .md-datepicker-open .md-datepicker-calendar-icon{color:\"{{warn-A700}}\"}.md-THEME_NAME-theme .md-datepicker-calendar{background:\"{{background-A100}}\"}.md-THEME_NAME-theme .md-datepicker-input-mask-opaque{box-shadow:0 0 0 9999px \"{{background-hue-1}}\"}.md-THEME_NAME-theme .md-datepicker-open .md-datepicker-input-container{background:\"{{background-hue-1}}\"}md-dialog.md-THEME_NAME-theme{border-radius:4px;background-color:\"{{background-hue-1}}\";color:\"{{foreground-1}}\"}md-dialog.md-THEME_NAME-theme.md-content-overflow .md-actions,md-dialog.md-THEME_NAME-theme.md-content-overflow md-dialog-actions,md-divider.md-THEME_NAME-theme{border-top-color:\"{{foreground-4}}\"}.layout-gt-lg-row>md-divider.md-THEME_NAME-theme,.layout-gt-md-row>md-divider.md-THEME_NAME-theme,.layout-gt-sm-row>md-divider.md-THEME_NAME-theme,.layout-gt-xs-row>md-divider.md-THEME_NAME-theme,.layout-lg-row>md-divider.md-THEME_NAME-theme,.layout-md-row>md-divider.md-THEME_NAME-theme,.layout-row>md-divider.md-THEME_NAME-theme,.layout-sm-row>md-divider.md-THEME_NAME-theme,.layout-xl-row>md-divider.md-THEME_NAME-theme,.layout-xs-row>md-divider.md-THEME_NAME-theme{border-right-color:\"{{foreground-4}}\"}md-icon.md-THEME_NAME-theme{color:\"{{foreground-2}}\"}md-icon.md-THEME_NAME-theme.md-primary{color:\"{{primary-color}}\"}md-icon.md-THEME_NAME-theme.md-accent{color:\"{{accent-color}}\"}md-icon.md-THEME_NAME-theme.md-warn{color:\"{{warn-color}}\"}md-input-container.md-THEME_NAME-theme .md-input{color:\"{{foreground-1}}\";border-color:\"{{foreground-4}}\"}md-input-container.md-THEME_NAME-theme .md-input:-moz-placeholder,md-input-container.md-THEME_NAME-theme .md-input::-moz-placeholder{color:\"{{foreground-3}}\"}md-input-container.md-THEME_NAME-theme .md-input:-ms-input-placeholder{color:\"{{foreground-3}}\"}md-input-container.md-THEME_NAME-theme .md-input::-webkit-input-placeholder{color:\"{{foreground-3}}\"}md-input-container.md-THEME_NAME-theme>md-icon{color:\"{{foreground-1}}\"}md-input-container.md-THEME_NAME-theme .md-placeholder,md-input-container.md-THEME_NAME-theme label{color:\"{{foreground-3}}\"}md-input-container.md-THEME_NAME-theme label.md-required:after{color:\"{{warn-A700}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-focused):not(.md-input-invalid) label.md-required:after{color:\"{{foreground-2}}\"}md-input-container.md-THEME_NAME-theme .md-input-message-animation,md-input-container.md-THEME_NAME-theme .md-input-messages-animation{color:\"{{warn-A700}}\"}md-input-container.md-THEME_NAME-theme .md-input-message-animation .md-char-counter,md-input-container.md-THEME_NAME-theme .md-input-messages-animation .md-char-counter{color:\"{{foreground-1}}\"}md-input-container.md-THEME_NAME-theme.md-input-focused .md-input:-moz-placeholder,md-input-container.md-THEME_NAME-theme.md-input-focused .md-input::-moz-placeholder{color:\"{{foreground-2}}\"}md-input-container.md-THEME_NAME-theme.md-input-focused .md-input:-ms-input-placeholder{color:\"{{foreground-2}}\"}md-input-container.md-THEME_NAME-theme.md-input-focused .md-input::-webkit-input-placeholder{color:\"{{foreground-2}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-has-value label{color:\"{{foreground-2}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused .md-input,md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-resized .md-input{border-color:\"{{primary-color}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused label,md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused md-icon{color:\"{{primary-color}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-accent .md-input{border-color:\"{{accent-color}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-accent label,md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-accent md-icon{color:\"{{accent-color}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-warn .md-input{border-color:\"{{warn-A700}}\"}md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-warn label,md-input-container.md-THEME_NAME-theme:not(.md-input-invalid).md-input-focused.md-warn md-icon{color:\"{{warn-A700}}\"}md-input-container.md-THEME_NAME-theme.md-input-invalid .md-input{border-color:\"{{warn-A700}}\"}md-input-container.md-THEME_NAME-theme.md-input-invalid .md-char-counter,md-input-container.md-THEME_NAME-theme.md-input-invalid .md-input-message-animation,md-input-container.md-THEME_NAME-theme.md-input-invalid label{color:\"{{warn-A700}}\"}[disabled] md-input-container.md-THEME_NAME-theme .md-input,md-input-container.md-THEME_NAME-theme .md-input[disabled]{border-bottom-color:transparent;color:\"{{foreground-3}}\";background-image:linear-gradient(90deg,\"{{foreground-3}}\" 0,\"{{foreground-3}}\" 33%,transparent 0);background-image:-ms-linear-gradient(left,transparent 0,\"{{foreground-3}}\" 100%)}md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text h3,md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text h4,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text h3,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text h4{color:\"{{foreground-1}}\"}md-list.md-THEME_NAME-theme md-list-item.md-2-line .md-list-item-text p,md-list.md-THEME_NAME-theme md-list-item.md-3-line .md-list-item-text p{color:\"{{foreground-2}}\"}md-list.md-THEME_NAME-theme .md-proxy-focus.md-focused div.md-no-style{background-color:\"{{background-100}}\"}md-list.md-THEME_NAME-theme md-list-item .md-avatar-icon{background-color:\"{{foreground-3}}\";color:\"{{background-color}}\"}md-list.md-THEME_NAME-theme md-list-item>md-icon{color:\"{{foreground-2}}\"}md-list.md-THEME_NAME-theme md-list-item>md-icon.md-highlight{color:\"{{primary-color}}\"}md-list.md-THEME_NAME-theme md-list-item>md-icon.md-highlight.md-accent{color:\"{{accent-color}}\"}md-menu-content.md-THEME_NAME-theme{background-color:\"{{background-A100}}\"}md-menu-content.md-THEME_NAME-theme md-menu-item{color:\"{{background-A200-0.87}}\"}md-menu-content.md-THEME_NAME-theme md-menu-item md-icon{color:\"{{background-A200-0.54}}\"}md-menu-content.md-THEME_NAME-theme md-menu-item .md-button[disabled],md-menu-content.md-THEME_NAME-theme md-menu-item .md-button[disabled] md-icon{color:\"{{background-A200-0.25}}\"}md-menu-content.md-THEME_NAME-theme md-menu-divider{background-color:\"{{background-A200-0.11}}\"}md-menu-bar.md-THEME_NAME-theme>button.md-button{color:\"{{foreground-2}}\";border-radius:2px}md-menu-bar.md-THEME_NAME-theme md-menu.md-open>button,md-menu-bar.md-THEME_NAME-theme md-menu>button:focus{outline:none;background:\"{{background-200}}\"}md-menu-bar.md-THEME_NAME-theme.md-open:not(.md-keyboard-mode) md-menu:hover>button{background-color:\"{{ background-500-0.2}}\"}md-menu-bar.md-THEME_NAME-theme:not(.md-keyboard-mode):not(.md-open) md-menu button:focus,md-menu-bar.md-THEME_NAME-theme:not(.md-keyboard-mode):not(.md-open) md-menu button:hover{background:transparent}md-menu-content.md-THEME_NAME-theme .md-menu>.md-button:after{color:\"{{background-A200-0.54}}\"}md-menu-content.md-THEME_NAME-theme .md-menu.md-open>.md-button{background-color:\"{{ background-500-0.2}}\"}md-toolbar.md-THEME_NAME-theme.md-menu-toolbar{background-color:\"{{background-A100}}\";color:\"{{background-A200}}\"}md-toolbar.md-THEME_NAME-theme.md-menu-toolbar md-toolbar-filler{background-color:\"{{primary-color}}\";color:\"{{background-A100-0.87}}\"}md-toolbar.md-THEME_NAME-theme.md-menu-toolbar md-toolbar-filler md-icon{color:\"{{background-A100-0.87}}\"}md-nav-bar.md-THEME_NAME-theme .md-nav-bar{background-color:transparent;border-color:\"{{foreground-4}}\"}md-nav-bar.md-THEME_NAME-theme .md-button._md-nav-button.md-unselected{color:\"{{foreground-2}}\"}md-nav-bar.md-THEME_NAME-theme md-nav-ink-bar{color:\"{{accent-color}}\";background:\"{{accent-color}}\"}md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar{background-color:\"{{accent-color}}\"}md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar .md-button._md-nav-button{color:\"{{accent-A100}}\"}md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar .md-button._md-nav-button.md-active,md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{accent-contrast}}\"}md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{accent-contrast-0.1}}\"}md-nav-bar.md-THEME_NAME-theme.md-accent>.md-nav-bar md-nav-ink-bar{color:\"{{primary-600-1}}\";background:\"{{primary-600-1}}\"}md-nav-bar.md-THEME_NAME-theme.md-warn>.md-nav-bar{background-color:\"{{warn-color}}\"}md-nav-bar.md-THEME_NAME-theme.md-warn>.md-nav-bar .md-button._md-nav-button{color:\"{{warn-100}}\"}md-nav-bar.md-THEME_NAME-theme.md-warn>.md-nav-bar .md-button._md-nav-button.md-active,md-nav-bar.md-THEME_NAME-theme.md-warn>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{warn-contrast}}\"}md-nav-bar.md-THEME_NAME-theme.md-warn>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{warn-contrast-0.1}}\"}md-nav-bar.md-THEME_NAME-theme.md-primary>.md-nav-bar{background-color:\"{{primary-color}}\"}md-nav-bar.md-THEME_NAME-theme.md-primary>.md-nav-bar .md-button._md-nav-button{color:\"{{primary-100}}\"}md-nav-bar.md-THEME_NAME-theme.md-primary>.md-nav-bar .md-button._md-nav-button.md-active,md-nav-bar.md-THEME_NAME-theme.md-primary>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{primary-contrast}}\"}md-nav-bar.md-THEME_NAME-theme.md-primary>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{primary-contrast-0.1}}\"}md-toolbar>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar{background-color:\"{{primary-color}}\"}md-toolbar>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button{color:\"{{primary-100}}\"}md-toolbar>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-active,md-toolbar>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{primary-contrast}}\"}md-toolbar>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{primary-contrast-0.1}}\"}md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar{background-color:\"{{accent-color}}\"}md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button{color:\"{{accent-A100}}\"}md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-active,md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{accent-contrast}}\"}md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{accent-contrast-0.1}}\"}md-toolbar.md-accent>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar md-nav-ink-bar{color:\"{{primary-600-1}}\";background:\"{{primary-600-1}}\"}md-toolbar.md-warn>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar{background-color:\"{{warn-color}}\"}md-toolbar.md-warn>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button{color:\"{{warn-100}}\"}md-toolbar.md-warn>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-active,md-toolbar.md-warn>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{color:\"{{warn-contrast}}\"}md-toolbar.md-warn>md-nav-bar.md-THEME_NAME-theme>.md-nav-bar .md-button._md-nav-button.md-focused{background:\"{{warn-contrast-0.1}}\"}._md-panel-backdrop.md-THEME_NAME-theme{background-color:\"{{background-900-1.0}}\"}md-progress-circular.md-THEME_NAME-theme path{stroke:\"{{primary-color}}\"}md-progress-circular.md-THEME_NAME-theme.md-warn path{stroke:\"{{warn-color}}\"}md-progress-circular.md-THEME_NAME-theme.md-accent path{stroke:\"{{accent-color}}\"}md-progress-linear.md-THEME_NAME-theme .md-container{background-color:\"{{primary-100}}\"}md-progress-linear.md-THEME_NAME-theme .md-bar{background-color:\"{{primary-color}}\"}md-progress-linear.md-THEME_NAME-theme.md-warn .md-container{background-color:\"{{warn-100}}\"}md-progress-linear.md-THEME_NAME-theme.md-warn .md-bar{background-color:\"{{warn-color}}\"}md-progress-linear.md-THEME_NAME-theme.md-accent .md-container{background-color:\"{{accent-100}}\"}md-progress-linear.md-THEME_NAME-theme.md-accent .md-bar{background-color:\"{{accent-color}}\"}md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-warn .md-bar1{background-color:\"{{warn-100}}\"}md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-warn .md-dashed:before{background:radial-gradient(\"{{warn-100}}\" 0,\"{{warn-100}}\" 16%,transparent 42%)}md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-accent .md-bar1{background-color:\"{{accent-100}}\"}md-progress-linear.md-THEME_NAME-theme[md-mode=buffer].md-accent .md-dashed:before{background:radial-gradient(\"{{accent-100}}\" 0,\"{{accent-100}}\" 16%,transparent 42%)}md-radio-button.md-THEME_NAME-theme .md-off{border-color:\"{{foreground-2}}\"}md-radio-button.md-THEME_NAME-theme .md-on{background-color:\"{{accent-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme.md-checked .md-off{border-color:\"{{accent-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme.md-checked .md-ink-ripple{color:\"{{accent-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme .md-container .md-ripple{color:\"{{accent-A700}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-on,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-on,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-on{background-color:\"{{primary-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-off{border-color:\"{{primary-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary.md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary.md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-checked .md-ink-ripple{color:\"{{primary-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-primary .md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-primary .md-container .md-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-primary .md-container .md-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-primary .md-container .md-ripple{color:\"{{primary-600}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-on,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-on,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-on,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-on{background-color:\"{{warn-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-off,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-off,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-off{border-color:\"{{warn-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-ink-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn.md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn.md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-checked .md-ink-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-checked .md-ink-ripple{color:\"{{warn-color-0.87}}\"}md-radio-button.md-THEME_NAME-theme:not([disabled]).md-warn .md-container .md-ripple,md-radio-button.md-THEME_NAME-theme:not([disabled]) .md-warn .md-container .md-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]).md-warn .md-container .md-ripple,md-radio-group.md-THEME_NAME-theme:not([disabled]) .md-warn .md-container .md-ripple{color:\"{{warn-600}}\"}md-radio-button.md-THEME_NAME-theme[disabled],md-radio-group.md-THEME_NAME-theme[disabled]{color:\"{{foreground-3}}\"}md-radio-button.md-THEME_NAME-theme[disabled] .md-container .md-off,md-radio-button.md-THEME_NAME-theme[disabled] .md-container .md-on,md-radio-group.md-THEME_NAME-theme[disabled] .md-container .md-off,md-radio-group.md-THEME_NAME-theme[disabled] .md-container .md-on{border-color:\"{{foreground-3}}\"}md-radio-group.md-THEME_NAME-theme .md-checked .md-ink-ripple{color:\"{{accent-color-0.26}}\"}md-radio-group.md-THEME_NAME-theme .md-checked:not([disabled]).md-primary .md-ink-ripple,md-radio-group.md-THEME_NAME-theme.md-primary .md-checked:not([disabled]) .md-ink-ripple{color:\"{{primary-color-0.26}}\"}md-radio-group.md-THEME_NAME-theme .md-checked.md-primary .md-ink-ripple{color:\"{{warn-color-0.26}}\"}md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked .md-container:before{background-color:\"{{accent-color-0.26}}\"}md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked.md-primary .md-container:before,md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty).md-primary .md-checked .md-container:before{background-color:\"{{primary-color-0.26}}\"}md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty) .md-checked.md-warn .md-container:before,md-radio-group.md-THEME_NAME-theme.md-focused:not(:empty).md-warn .md-checked .md-container:before{background-color:\"{{warn-color-0.26}}\"}md-input-container md-select.md-THEME_NAME-theme .md-select-value span:first-child:after{color:\"{{warn-A700}}\"}md-input-container:not(.md-input-focused):not(.md-input-invalid) md-select.md-THEME_NAME-theme .md-select-value span:first-child:after{color:\"{{foreground-3}}\"}md-input-container.md-input-focused:not(.md-input-has-value) md-select.md-THEME_NAME-theme .md-select-value,md-input-container.md-input-focused:not(.md-input-has-value) md-select.md-THEME_NAME-theme .md-select-value.md-select-placeholder{color:\"{{primary-color}}\"}md-input-container.md-input-invalid md-select.md-THEME_NAME-theme .md-select-value{color:\"{{warn-A700}}\"!important;border-bottom-color:\"{{warn-A700}}\"!important}md-input-container.md-input-invalid md-select.md-THEME_NAME-theme.md-no-underline .md-select-value{border-bottom-color:transparent!important}md-select.md-THEME_NAME-theme[disabled] .md-select-value{border-bottom-color:transparent;background-image:linear-gradient(90deg,\"{{foreground-3}}\" 0,\"{{foreground-3}}\" 33%,transparent 0);background-image:-ms-linear-gradient(left,transparent 0,\"{{foreground-3}}\" 100%)}md-select.md-THEME_NAME-theme .md-select-value{border-bottom-color:\"{{foreground-4}}\"}md-select.md-THEME_NAME-theme .md-select-value.md-select-placeholder{color:\"{{foreground-3}}\"}md-select.md-THEME_NAME-theme .md-select-value span:first-child:after{color:\"{{warn-A700}}\"}md-select.md-THEME_NAME-theme.md-no-underline .md-select-value{border-bottom-color:transparent!important}md-select.md-THEME_NAME-theme.ng-invalid.ng-touched .md-select-value{color:\"{{warn-A700}}\"!important;border-bottom-color:\"{{warn-A700}}\"!important}md-select.md-THEME_NAME-theme.ng-invalid.ng-touched.md-no-underline .md-select-value{border-bottom-color:transparent!important}md-select.md-THEME_NAME-theme:not([disabled]):focus .md-select-value{border-bottom-color:\"{{primary-color}}\";color:\"{{ foreground-1 }}\"}md-select.md-THEME_NAME-theme:not([disabled]):focus .md-select-value.md-select-placeholder{color:\"{{ foreground-1 }}\"}md-select.md-THEME_NAME-theme:not([disabled]):focus.md-no-underline .md-select-value{border-bottom-color:transparent!important}md-select.md-THEME_NAME-theme:not([disabled]):focus.md-accent .md-select-value{border-bottom-color:\"{{accent-color}}\"}md-select.md-THEME_NAME-theme:not([disabled]):focus.md-warn .md-select-value{border-bottom-color:\"{{warn-color}}\"}md-select.md-THEME_NAME-theme[disabled] .md-select-icon,md-select.md-THEME_NAME-theme[disabled] .md-select-value,md-select.md-THEME_NAME-theme[disabled] .md-select-value.md-select-placeholder{color:\"{{foreground-3}}\"}md-select.md-THEME_NAME-theme .md-select-icon{color:\"{{foreground-2}}\"}md-select-menu.md-THEME_NAME-theme md-content{background:\"{{background-A100}}\"}md-select-menu.md-THEME_NAME-theme md-content md-optgroup{color:\"{{background-600-0.87}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option{color:\"{{background-900-0.87}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option[disabled] .md-text{color:\"{{background-400-0.87}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option:not([disabled]):focus,md-select-menu.md-THEME_NAME-theme md-content md-option:not([disabled]):hover{background:\"{{background-200}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option[selected]{color:\"{{primary-500}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option[selected]:focus{color:\"{{primary-600}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option[selected].md-accent{color:\"{{accent-color}}\"}md-select-menu.md-THEME_NAME-theme md-content md-option[selected].md-accent:focus{color:\"{{accent-A700}}\"}.md-checkbox-enabled.md-THEME_NAME-theme .md-ripple{color:\"{{primary-600}}\"}.md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-ripple{color:\"{{background-600}}\"}.md-checkbox-enabled.md-THEME_NAME-theme .md-ink-ripple{color:\"{{foreground-2}}\"}.md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-ink-ripple{color:\"{{primary-color-0.87}}\"}.md-checkbox-enabled.md-THEME_NAME-theme:not(.md-checked) .md-icon{border-color:\"{{foreground-2}}\"}.md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-icon{background-color:\"{{primary-color-0.87}}\"}.md-checkbox-enabled.md-THEME_NAME-theme[selected].md-focused .md-container:before{background-color:\"{{primary-color-0.26}}\"}.md-checkbox-enabled.md-THEME_NAME-theme[selected] .md-icon:after{border-color:\"{{primary-contrast-0.87}}\"}.md-checkbox-enabled.md-THEME_NAME-theme .md-indeterminate[disabled] .md-container{color:\"{{foreground-3}}\"}.md-checkbox-enabled.md-THEME_NAME-theme md-option .md-text{color:\"{{background-900-0.87}}\"}md-sidenav.md-THEME_NAME-theme,md-sidenav.md-THEME_NAME-theme md-content{background-color:\"{{background-hue-1}}\"}md-slider.md-THEME_NAME-theme .md-track{background-color:\"{{foreground-3}}\"}md-slider.md-THEME_NAME-theme .md-track-ticks{color:\"{{background-contrast}}\"}md-slider.md-THEME_NAME-theme .md-focus-ring{background-color:\"{{accent-A200-0.2}}\"}md-slider.md-THEME_NAME-theme .md-disabled-thumb{border-color:\"{{background-color}}\";background-color:\"{{background-color}}\"}md-slider.md-THEME_NAME-theme.md-min .md-thumb:after{background-color:\"{{background-color}}\";border-color:\"{{foreground-3}}\"}md-slider.md-THEME_NAME-theme.md-min .md-focus-ring{background-color:\"{{foreground-3-0.38}}\"}md-slider.md-THEME_NAME-theme.md-min[md-discrete] .md-thumb:after{background-color:\"{{background-contrast}}\";border-color:transparent}md-slider.md-THEME_NAME-theme.md-min[md-discrete] .md-sign{background-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme.md-min[md-discrete] .md-sign:after{border-top-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme.md-min[md-discrete][md-vertical] .md-sign:after{border-top-color:transparent;border-left-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme .md-track.md-track-fill{background-color:\"{{accent-color}}\"}md-slider.md-THEME_NAME-theme .md-thumb:after{border-color:\"{{accent-color}}\";background-color:\"{{accent-color}}\"}md-slider.md-THEME_NAME-theme .md-sign{background-color:\"{{accent-color}}\"}md-slider.md-THEME_NAME-theme .md-sign:after{border-top-color:\"{{accent-color}}\"}md-slider.md-THEME_NAME-theme[md-vertical] .md-sign:after{border-top-color:transparent;border-left-color:\"{{accent-color}}\"}md-slider.md-THEME_NAME-theme .md-thumb-text{color:\"{{accent-contrast}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-focus-ring{background-color:\"{{warn-200-0.38}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-track.md-track-fill{background-color:\"{{warn-color}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-thumb:after{border-color:\"{{warn-color}}\";background-color:\"{{warn-color}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-sign{background-color:\"{{warn-color}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-sign:after{border-top-color:\"{{warn-color}}\"}md-slider.md-THEME_NAME-theme.md-warn[md-vertical] .md-sign:after{border-top-color:transparent;border-left-color:\"{{warn-color}}\"}md-slider.md-THEME_NAME-theme.md-warn .md-thumb-text{color:\"{{warn-contrast}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-focus-ring{background-color:\"{{primary-200-0.38}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-track.md-track-fill{background-color:\"{{primary-color}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-thumb:after{border-color:\"{{primary-color}}\";background-color:\"{{primary-color}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-sign{background-color:\"{{primary-color}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-sign:after{border-top-color:\"{{primary-color}}\"}md-slider.md-THEME_NAME-theme.md-primary[md-vertical] .md-sign:after{border-top-color:transparent;border-left-color:\"{{primary-color}}\"}md-slider.md-THEME_NAME-theme.md-primary .md-thumb-text{color:\"{{primary-contrast}}\"}md-slider.md-THEME_NAME-theme[disabled] .md-thumb:after{border-color:transparent}md-slider.md-THEME_NAME-theme[disabled]:not(.md-min) .md-thumb:after,md-slider.md-THEME_NAME-theme[disabled][md-discrete] .md-thumb:after{background-color:\"{{foreground-3}}\";border-color:transparent}md-slider.md-THEME_NAME-theme[disabled][readonly] .md-sign{background-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme[disabled][readonly] .md-sign:after{border-top-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme[disabled][readonly][md-vertical] .md-sign:after{border-top-color:transparent;border-left-color:\"{{background-400}}\"}md-slider.md-THEME_NAME-theme[disabled][readonly] .md-disabled-thumb{border-color:transparent;background-color:transparent}md-slider-container[disabled]>:first-child:not(md-slider),md-slider-container[disabled]>:last-child:not(md-slider){color:\"{{foreground-3}}\"}.md-subheader.md-THEME_NAME-theme{color:\"{{ foreground-2-0.23 }}\";background-color:\"{{background-default}}\"}.md-subheader.md-THEME_NAME-theme.md-primary{color:\"{{primary-color}}\"}.md-subheader.md-THEME_NAME-theme.md-accent{color:\"{{accent-color}}\"}.md-subheader.md-THEME_NAME-theme.md-warn{color:\"{{warn-color}}\"}md-switch.md-THEME_NAME-theme .md-ink-ripple{color:\"{{background-500}}\"}md-switch.md-THEME_NAME-theme .md-thumb{background-color:\"{{background-50}}\"}md-switch.md-THEME_NAME-theme .md-bar{background-color:\"{{background-500}}\"}md-switch.md-THEME_NAME-theme.md-checked .md-ink-ripple{color:\"{{accent-color}}\"}md-switch.md-THEME_NAME-theme.md-checked .md-thumb{background-color:\"{{accent-color}}\"}md-switch.md-THEME_NAME-theme.md-checked .md-bar{background-color:\"{{accent-color-0.5}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-focused .md-thumb:before{background-color:\"{{accent-color-0.26}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-primary .md-ink-ripple{color:\"{{primary-color}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-primary .md-thumb{background-color:\"{{primary-color}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-primary .md-bar{background-color:\"{{primary-color-0.5}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-primary.md-focused .md-thumb:before{background-color:\"{{primary-color-0.26}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-warn .md-ink-ripple{color:\"{{warn-color}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-warn .md-thumb{background-color:\"{{warn-color}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-warn .md-bar{background-color:\"{{warn-color-0.5}}\"}md-switch.md-THEME_NAME-theme.md-checked.md-warn.md-focused .md-thumb:before{background-color:\"{{warn-color-0.26}}\"}md-switch.md-THEME_NAME-theme[disabled] .md-thumb{background-color:\"{{background-400}}\"}md-switch.md-THEME_NAME-theme[disabled] .md-bar{background-color:\"{{foreground-4}}\"}md-tabs.md-THEME_NAME-theme md-tabs-wrapper{background-color:transparent;border-color:\"{{foreground-4}}\"}md-tabs.md-THEME_NAME-theme .md-paginator md-icon{color:\"{{primary-color}}\"}md-tabs.md-THEME_NAME-theme md-ink-bar{color:\"{{accent-color}}\";background:\"{{accent-color}}\"}md-tabs.md-THEME_NAME-theme .md-tab{color:\"{{foreground-2}}\"}md-tabs.md-THEME_NAME-theme .md-tab[disabled],md-tabs.md-THEME_NAME-theme .md-tab[disabled] md-icon{color:\"{{foreground-3}}\"}md-tabs.md-THEME_NAME-theme .md-tab.md-active,md-tabs.md-THEME_NAME-theme .md-tab.md-active md-icon,md-tabs.md-THEME_NAME-theme .md-tab.md-focused,md-tabs.md-THEME_NAME-theme .md-tab.md-focused md-icon{color:\"{{primary-color}}\"}md-tabs.md-THEME_NAME-theme .md-tab.md-focused{background:\"{{primary-color-0.1}}\"}md-tabs.md-THEME_NAME-theme .md-tab .md-ripple-container{color:\"{{accent-A100}}\"}md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper{background-color:\"{{accent-color}}\"}md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{accent-A100}}\"}md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{accent-contrast}}\"}md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{accent-contrast-0.1}}\"}md-tabs.md-THEME_NAME-theme.md-accent>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-ink-bar{color:\"{{primary-600-1}}\";background:\"{{primary-600-1}}\"}md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper{background-color:\"{{primary-color}}\"}md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{primary-100}}\"}md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{primary-contrast}}\"}md-tabs.md-THEME_NAME-theme.md-primary>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{primary-contrast-0.1}}\"}md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper{background-color:\"{{warn-color}}\"}md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{warn-100}}\"}md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{warn-contrast}}\"}md-tabs.md-THEME_NAME-theme.md-warn>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{warn-contrast-0.1}}\"}md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper{background-color:\"{{primary-color}}\"}md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{primary-100}}\"}md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{primary-contrast}}\"}md-toolbar>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{primary-contrast-0.1}}\"}md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper{background-color:\"{{accent-color}}\"}md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{accent-A100}}\"}md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{accent-contrast}}\"}md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{accent-contrast-0.1}}\"}md-toolbar.md-accent>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-ink-bar{color:\"{{primary-600-1}}\";background:\"{{primary-600-1}}\"}md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper{background-color:\"{{warn-color}}\"}md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]),md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]) md-icon{color:\"{{warn-100}}\"}md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active,md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-active md-icon,md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused,md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused md-icon{color:\"{{warn-contrast}}\"}md-toolbar.md-warn>md-tabs.md-THEME_NAME-theme>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item:not([disabled]).md-focused{background:\"{{warn-contrast-0.1}}\"}md-toast.md-THEME_NAME-theme .md-toast-content{background-color:#323232;color:\"{{background-50}}\"}md-toast.md-THEME_NAME-theme .md-toast-content .md-button{color:\"{{background-50}}\"}md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight{color:\"{{accent-color}}\"}md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight.md-primary{color:\"{{primary-color}}\"}md-toast.md-THEME_NAME-theme .md-toast-content .md-button.md-highlight.md-warn{color:\"{{warn-color}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar){background-color:\"{{primary-color}}\";color:\"{{primary-contrast}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar) md-icon{color:\"{{primary-contrast}}\";fill:\"{{primary-contrast}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar) .md-button[disabled] md-icon{color:\"{{primary-contrast-0.26}}\";fill:\"{{primary-contrast-0.26}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent{background-color:\"{{accent-color}}\";color:\"{{accent-contrast}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent .md-ink-ripple{color:\"{{accent-contrast}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent md-icon{color:\"{{accent-contrast}}\";fill:\"{{accent-contrast}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-accent .md-button[disabled] md-icon{color:\"{{accent-contrast-0.26}}\";fill:\"{{accent-contrast-0.26}}\"}md-toolbar.md-THEME_NAME-theme:not(.md-menu-toolbar).md-warn{background-color:\"{{warn-color}}\";color:\"{{warn-contrast}}\"}.md-panel.md-tooltip.md-THEME_NAME-theme{color:\"{{background-700-contrast}}\";background-color:\"{{background-700}}\"}body.md-THEME_NAME-theme,html.md-THEME_NAME-theme{color:\"{{foreground-1}}\";background-color:\"{{background-color}}\"}"); 
 })();
 
 
-ng.material.core = angular.module("material.core");
+ngmaterial.core = angular.module("material.core");
