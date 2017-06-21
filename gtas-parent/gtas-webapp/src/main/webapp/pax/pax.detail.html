@@ -36,7 +36,7 @@
                 <div class="col-sm-4">{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
             </div>
             <div class="row">
-            	<md-button type="submit" class="md-raised md-primary col-sm-offset-6 fa fa-eye" 
+            	<md-button type="submit" class="md-raised md-primary col-sm-offset-6 fa fa-eye"
             	ng-click="showConfirm()"> Add To Watchlist</md-button>
             </div>
         </div>
@@ -103,7 +103,7 @@
                         </table>
                     </div>
                     <div style="padding: 30px;"></div>
-                    
+
 					<div ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                         <h2 class="col-sm-offset-1"><strong>Hits Summary</strong></h2>
                         	<div class="row">
@@ -123,9 +123,9 @@
                                     </table>
                              </div>
                     </div>
-                    
+
                         <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
-                    
+
 	                <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
 	                	<div class="container">
 	                	<div style="padding: 10px;"></div>
@@ -167,8 +167,8 @@
                             	</md-input-container>
                             	<div style="float:right;margin-top:30px">
                                 {{disp.createdBy}}
-                                ({{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}})    
-                                </div>                            
+                                ({{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}})
+                                </div>
 	                		</div>
 	                		<div class="col-sm-7 col-sm-offset-2">
 	                			<textarea rows="7" style="min-width:100%;resize:none" disabled>{{disp.comments}}</textarea>
@@ -176,7 +176,7 @@
 	                	</div>
 	                </div>
                 </md-tab>
-                
+
                 <!-- APIs Tab -->
                 <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
                 	<md-tab-body>
@@ -194,7 +194,7 @@
                                     <div class="col-sm-4">
                                          {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
                                     </div>
-                                </div>            
+                                </div>
                                 <div class="row">
                                     <div class="col-sm-4">
                                         &nbsp;&nbsp;&nbsp;&nbsp; {{'apis.port' | translate}}:&nbsp; <span>
@@ -213,14 +213,14 @@
                         <!-- LEFT DIV -->
                         <div class="col-lg-6" style="min-height: 200px; min-width: 40px; height: 100%; ">
                 			<div class="span6">
-                				<div class="container">
+                				<div>
                 					<div id="OrderPackages">
                                         <table id="tableSearchResults"
                                                class="table table-hover table-striped table-condensed">
                                             <tbody>
-                                            <thead>                                             
+                                            <thead>
                                          		<tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
+                                                data-target=".packageDetails1">
 	                                                <td><strong>{{'apis.totalbags' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})</strong></td>
 	                                                <td></td>
 	                                                <td>
@@ -228,7 +228,7 @@
                                             	</tr>
                                             </thead>
                                             <tr>
-                                            </tr>		
+                                            </tr>
                                             <tr>
                                                 <td colspan="6">
                                                     <div class="accordion-body packageDetails1" id="accordion1">
@@ -241,8 +241,8 @@
                                                             </thead>
                                                         	<tbody>
                                                                 <tr ng-repeat="bags in passenger.apisMessageVo.bags">
-                                                                        <td style="text-align: center">{{bags.bagId}}</td> 
-                                                                        <td style="text-align: center">{{bags.destination}}</td>                      
+                                                                        <td style="text-align: center">{{bags.bagId}}</td>
+                                                                        <td style="text-align: center">{{bags.destination}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -254,7 +254,7 @@
                                       </div>
                                      </div>
                                     </div>
-                                   </div>                       
+                                   </div>
                        <!-- RIGHT DIV -->
                         <div class="col-lg-6" style="min-height: 200px; min-width: 40px; height: 100%; ">
                 			<div class="span6">
@@ -263,9 +263,9 @@
                                         <table id="tableSearchResults"
                                                class="table table-hover table-striped table-condensed">
                                             <tbody>
-                                            <thead>                                             
+                                            <thead>
                                          		<tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
+                                                data-target=".packageDetails1">
 	                                                <td><strong>{{'apis.phone' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})</strong></td>
 	                                                <td></td>
 	                                                <td>
@@ -273,7 +273,7 @@
                                             	</tr>
                                             </thead>
                                             <tr>
-                                            </tr>		
+                                            </tr>
                                             <tr>
                                                 <td colspan="6">
                                                     <div class="accordion-body packageDetails1" id="accordion1">
@@ -285,7 +285,7 @@
                                                             </thead>
                                                         	<tbody>
                                                                 <tr ng-repeat="phone in passenger.apisMessageVo.phoneNumbers">
-                                                                        <td style="text-align: center">{{phone.number}}</td>                   
+                                                                        <td style="text-align: center">{{phone.number}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -297,11 +297,11 @@
                                       </div>
                                      </div>
                                     </div>
-                                   </div>      
-                                         
-                	</md-tab-body>                
-                </md-tab>      
-            
+                                   </div>
+
+                	</md-tab-body>
+                </md-tab>
+
                 <!-- PNR Tab -->
                 <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists">
                     <md-tab-body>
@@ -614,7 +614,7 @@
                                                 </td>
                                             </tr>
                                             <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
+                                                data-target=".packageDetails1">
                                                 <td><strong>{{'pnr.baggage' | translate}} ({{ passenger.pnrVo.bagCount }})</strong></td>
                                                 <td><strong>{{'pnr.totalbags' | translate}} ({{ passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})</strong></td>
                                           		<td><strong>{{'pnr.totalweight' | translate}} ({{ passenger.pnrVo.totalbagWeight}})</strong></td>
@@ -634,8 +634,8 @@
                                                             </thead>
                                                         <tbody>
                                                                 <tr ng-repeat="bags in passenger.pnrVo.bags">
-                                                                        <td style="text-align: center">{{bags.bagId}}</td> 
-                                                                        <td style="text-align: center">{{bags.destination}}</td>                      
+                                                                        <td style="text-align: center">{{bags.bagId}}</td>
+                                                                        <td style="text-align: center">{{bags.destination}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -708,7 +708,7 @@
                     </md-tab-body>
                 </md-tab>
 
-                <!-- Flight History Tab -->                
+                <!-- Flight History Tab -->
                 <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
                 </md-tab>
                 <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
@@ -716,7 +716,7 @@
                         <div class="container">
                             <div style="padding: 10px;"></div>
                             <div class="row">
-								
+
                                 <div class="row"
                                      ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
                                     <span class="col-sm-offset-1"
