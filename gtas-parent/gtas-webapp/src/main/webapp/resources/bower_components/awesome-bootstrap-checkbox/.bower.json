@@ -25,7 +25,7 @@
     "tag": "v0.3.7",
     "commit": "a6965c962fa906fda4e3292bfacf2c877c717a53"
   },
-  "_source": "git://github.com/flatlogic/awesome-bootstrap-checkbox.git",
+  "_source": "https://github.com/flatlogic/awesome-bootstrap-checkbox.git",
   "_target": "^0.3.0",
   "_originalSource": "awesome-bootstrap-checkbox"
 }

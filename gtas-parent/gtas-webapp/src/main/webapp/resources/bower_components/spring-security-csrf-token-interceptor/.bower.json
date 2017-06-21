@@ -28,7 +28,7 @@
     "tag": "0.1.5",
     "commit": "4eaff7b16cf8a535e46c7756e1a8b3806fede878"
   },
-  "_source": "git://github.com/aditzel/spring-security-csrf-token-interceptor.git",
+  "_source": "https://github.com/aditzel/spring-security-csrf-token-interceptor.git",
   "_target": "~0.1.5",
   "_originalSource": "spring-security-csrf-token-interceptor"
 }

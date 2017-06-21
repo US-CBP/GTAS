@@ -208,6 +208,8 @@
         return new Op($2, $1, $3);
       }), o('SUB_SELECT_UNARY_OP SubSelectExpression', function() {
         return new UnaryOp($1, $2);
+      }), o('SubSelectExpression'), o('WhitepaceList', function() {
+        return new WhitepaceList($1);
       }), o('Value')
     ],
     BetweenExpression: [
@@ -221,6 +223,14 @@
       })
     ],
     Value: [o('Literal'), o('Number'), o('String'), o('Function'), o('UserFunction'), o('Boolean'), o('Parameter')],
+    WhitepaceList: [
+      o('Value Value', function() {
+        return [$1, $2];
+      }), o('WhitepaceList Value', function() {
+        $1.push($2);
+        return $1;
+      })
+    ],
     List: [
       o('ArgumentList', function() {
         return new ListValue($1);
@@ -261,7 +271,9 @@
       })
     ],
     UserFunction: [
-      o("LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN", function() {
+      o("LITERAL LEFT_PAREN RIGHT_PAREN", function() {
+        return new FunctionValue($1, null, true);
+      }), o("LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN", function() {
         return new FunctionValue($1, $3, true);
       })
     ],
@@ -275,7 +287,7 @@
     ArgumentList: [
       o('Expression', function() {
         return [$1];
-      }), o('ArgumentList SEPARATOR Value', function() {
+      }), o('ArgumentList SEPARATOR Expression', function() {
         return $1.concat($3);
       })
     ],

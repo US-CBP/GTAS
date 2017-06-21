@@ -32,7 +32,7 @@
     "tag": "v0.0.3",
     "commit": "d8671e6cc769938648f8735610534427cdeeaf67"
   },
-  "_source": "git://github.com/brianreavis/microplugin.js.git",
-  "_target": "0.0.x",
+  "_source": "https://github.com/brianreavis/microplugin.js.git",
+  "_target": "0.0.3",
   "_originalSource": "microplugin"
 }

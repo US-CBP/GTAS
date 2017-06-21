@@ -41,7 +41,7 @@
     "tag": "v3.0.3",
     "commit": "6f89ca8fa3d91c5e167a2107a7dcc649a1ad97f7"
   },
-  "_source": "git://github.com/angular-ui/bower-ui-grid.git",
+  "_source": "https://github.com/angular-ui/bower-ui-grid.git",
   "_target": "3.0.3",
   "_originalSource": "angular-ui-grid"
 }

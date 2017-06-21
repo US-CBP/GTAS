@@ -49,7 +49,7 @@
     "branch": "slate",
     "commit": "ab78fe0047f55cdc29b9b53950ce58c357bc87bb"
   },
-  "_source": "git://github.com/dbtek/bootswatch-dist.git",
+  "_source": "https://github.com/dbtek/bootswatch-dist.git",
   "_target": "slate",
   "_originalSource": "bootswatch-dist"
 }
