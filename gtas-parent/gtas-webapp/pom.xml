@@ -146,7 +146,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-        </dependency>     
+        </dependency>
         <!-- password validation -->
         <dependency>
             <groupId>org.passay</groupId>
@@ -224,6 +224,15 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
+                    <execution>
+                      <id>bower install</id>
+                      <goals>
+                          <goal>bower</goal>
+                      </goals>
+                      <configuration>
+                          <arguments>install</arguments>
+                      </configuration>
+                  </execution>
                 </executions>
             </plugin>
             <plugin>
