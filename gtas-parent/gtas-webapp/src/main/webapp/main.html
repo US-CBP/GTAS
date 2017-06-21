@@ -22,7 +22,8 @@
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
 </head>
-<body ng-cloak>
+
+<body>
 	<div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
 		<div class="container-fluid">
 		  <div class="navbar-header">
@@ -69,7 +70,7 @@
 		        <ul class="dropdown-menu" role="menu">
 		          <li><a href="#/admin">
 		          	<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-					    &nbsp;{{'menu.admin' | translate}}</a></li>
+					&nbsp;{{'menu.admin' | translate}}</a></li>
 		          <li><a href="#/upload">
 		          	<i class="fa fa-upload" aria-hidden="true"></i>
 		          	&nbsp;{{'menu.upload' | translate}}</a></li>
@@ -120,14 +121,14 @@
 	          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
 	          	class="nav nav-tabs nav-tabs-light" role="tablist">
 	          	<li><a ng-disabled="onRoute('flights')" ng-class="{'nav-item-selected':selectedTab==='flights'}"
-	              	ng-click="setSelectedTab('flights')" href="#/flights" role="tab">
+	              	ng-click="setSelectedTab('flights')" href="#/flights" role="tab" data-toggle="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>
 	            <li><a ng-disabled="onRoute('passengers')" ng-class="{'nav-item-selected':selectedTab==='passengers'}"
-	              	ng-click="setSelectedTab('passengers')" href="#/passengers" role="tab">
+	              	ng-click="setSelectedTab('passengers')" href="#/passengers" role="tab" data-toggle="tab">
 	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; {{'menu.passengers' | translate}}
 	              </a></li>
 	            <li><a ng-disabled="onRoute('cases')"  ng-class="{'nav-item-selected':selectedTab==='cases'}"
-	              	ng-click="setSelectedTab('cases')" href="#/cases" role="tab">
+	              	ng-click="setSelectedTab('cases')" href="#/cases" role="tab" data-toggle="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
 	              </a></li>
 	          </ul>
