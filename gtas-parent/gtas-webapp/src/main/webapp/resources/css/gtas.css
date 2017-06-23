@@ -1,10 +1,65 @@
-h2 {
-    font-size: 1.2em;
+
+
+/*Sizing Styles */
+.sm-pad{
+  padding: 5px;
 }
-/* applies same font across different plugins */
-* {
-    font-family: 'Open Sans', sans-serif;
+.fixed-width-sm {
+  width: 176px;
 }
+
+
+/*Positioning Styles */
+.flex {
+  display: flex;
+}
+.justify-around {
+  justify-content: space-around;
+}
+.flex-center{
+  justify-content: center;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.align-items-center{
+  align-items: center;
+}
+.txt-right {
+  text-align: right;
+}
+.upper-cnt {
+  margin-top: 50px;
+}
+
+/* Card Styles */
+.gtas-card-container .cbp-card  {
+    min-height: inherit;
+}
+.gtas-card-container .cbp-card__title {
+  padding: 10px;
+}
+.cbp-card .txt-color {
+  color: #333333;
+}
+
+/*Color Setup */
+.primary-outline {
+  outline: #00416a 2px solid;
+}
+.success-outline {
+  outline: #008000 2px solid;
+}
+.warning-outline {
+  outline: #F09511 2px solid;
+}
+.danger-outline {
+  outline: #A00000 2px solid;
+}
+
+
+
+
 
 /* BEGIN IE css patches */
 /*md-input-container .md-input { flex: none !important; }*/
@@ -233,4 +288,3 @@ nav a[disabled] {
     font-family: 'Open Sans', sans-serif; font-size: larger; font-weight: bold;
     position: static;
 }
-
