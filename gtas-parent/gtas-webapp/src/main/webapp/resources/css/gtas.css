@@ -1,5 +1,3 @@
-
-
 /*Sizing Styles */
 .sm-pad{
   padding: 5px;
@@ -29,7 +27,7 @@
   text-align: right;
 }
 .upper-cnt {
-  margin-top: 50px;
+  margin-top: 70px;
 }
 
 /* Card Styles */
@@ -58,7 +56,13 @@
 }
 
 
-
+/*Custom Components*/
+.h-label{
+	background-color: #00416a;
+    display: inline;
+    padding: 8px;
+    color: white;
+}
 
 
 /* BEGIN IE css patches */
