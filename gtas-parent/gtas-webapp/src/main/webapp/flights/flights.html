@@ -1,273 +1,227 @@
-<style>
-    .grid .ui-grid-row .red {
-        color: red;
-        font-weight: bold;
-    }
-    
-    .grid .ui-grid-row .yellow {
-        color: rgb(255, 176, 22);
-        font-weight: bold;
-    }
-
-    form [disabled],
-    form [disabled] span {
-        color: #000 !important;
-    }
-
-    .md-button {
-        min-width: 30px
-    }
-
-    .md-virtual-repeat-container {
-        overflow: auto;
-        width: 25em;
-    }
-
-    .md-virtual-repeat-container .md-virtual-repeat-scroller {
-        overflow: auto;
-        width: 25em;
-    }
-
-    .md-contact-suggestion {
-        min-width: 25em;
-    }
-
-    .md-contact-suggestion span.md-contact-email {
-        overflow: visible !important;
-    }
-
-    .md-contact-suggestion .md-contact-name {
-        display: none !important;
-    }
-
-    .md-padding {
-        padding: 1em 1em 0 0;
-    }
-
-    .md-padding:first-child, .md-padding:nth-child(2) {
-        padding: 1em 3em 0 1em;
-    }
-
-    .filter-form {
-        display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
-        display: -moz-box; /* OLD - Firefox 19- (doesn't work very well) */
-        display: -ms-flexbox; /* TWEENER - IE 10 */
-        display: -webkit-flex; /* NEW - Chrome */
-        display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
-        overflow-x: hidden;
-        overflow-y: hidden;
-    }
-
-    .filter-form label {
-        margin-bottom: 0;
-    }
-
-    .destination label,
-    .origin label {
-        margin-bottom: 1px;
-    }
-
-    .origin {
-        -webkit-box-ordinal-group: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 1; /* OLD - Firefox 19- */
-        -ms-flex-order: 1; /* TWEENER - IE 10 */
-        -webkit-order: 1; /* NEW - Chrome */
-        order: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 20em;
-        max-width: 30%;
-        width: 20%;
-		
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* OLD - Firefox 19- */
-        -webkit-flex: 1; /* Chrome */
-        -ms-flex: 1; /* IE 10 */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .destination {
-        -webkit-box-ordinal-group: 2; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 2; /* OLD - Firefox 19- */
-        -ms-flex-order: 2; /* TWEENER - IE 10 */
-        -webkit-order: 2; /* NEW - Chrome */
-        order: 2; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 20em;
-        max-width: 30%;
-        width: 20%;
-		
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* OLD - Firefox 19- */
-        -webkit-flex: 1; /* Chrome */
-        -ms-flex: 1; /* IE 10 */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .flight {
-        -webkit-box-ordinal-group: 3; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 3; /* OLD - Firefox 19- */
-        -ms-flex-order: 3; /* TWEENER - IE 10 */
-        -webkit-order: 3; /* NEW - Chrome */
-        order: 3; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 7em;
-        max-width: 7em;
-        width: 7em;
-
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* Firefox 19- */
-        -ms-flex: 1; /* TWEENER - IE 10 */
-        -webkit-flex: 1; /* NEW - Chrome */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .direction {
-        -webkit-box-ordinal-group: 4; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 4; /* OLD - Firefox 19- */
-        -ms-flex-order: 4; /* TWEENER - IE 10 */
-        -webkit-order: 4; /* NEW - Chrome */
-        order: 4; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 6em;
-        max-width: 8em;
-        width: 10%;
-		
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* Firefox 19- */
-        -ms-flex: 1; /* TWEENER - IE 10 */
-        -webkit-flex: 1; /* NEW - Chrome */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .start-date {
-        -webkit-box-ordinal-group: 5; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 5; /* OLD - Firefox 19- */
-        -ms-flex-order: 5; /* TWEENER - IE 10 */
-        -webkit-order: 5; /* NEW - Chrome */
-        order: 5; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 12em;
-        max-width: 12em;
-        width: 20%;
-
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* Firefox 19- */
-        -ms-flex: 1; /* TWEENER - IE 10 */
-        -webkit-flex: 1; /* NEW - Chrome */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .end-date {
-        -webkit-box-ordinal-group: 6; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 6; /* OLD - Firefox 19- */
-        -ms-flex-order: 6; /* TWEENER - IE 10 */
-        -webkit-order: 6; /* NEW - Chrome */
-        order: 6; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 12em;
-        max-width: 12em;
-        width: 20%;
-
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* Firefox 19- */
-        -ms-flex: 1; /* TWEENER - IE 10 */
-        -webkit-flex: 1; /* NEW - Chrome */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-
-    .start-date label,
-    .end-date label {
-        display: block;
-        text-align: center;
-        padding-bottom: 1em;
-    }
-
-    .md-button.md-icon-button {
-        width: 32px;
-        margin: 0;
-        padding: 0;
-    }
-
-    .actions {
-        -webkit-box-ordinal-group: 7; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-ordinal-group: 7; /* OLD - Firefox 19- */
-        -ms-flex-order: 7; /* TWEENER - IE 10 */
-        -webkit-order: 7; /* NEW - Chrome */
-        order: 7; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-
-        min-width: 4em;
-        max-width: 4em;
-        width: 4em;
-
-        -webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-        -moz-box-flex: 1; /* Firefox 19- */
-        -ms-flex: 1; /* TWEENER - IE 10 */
-        -webkit-flex: 1; /* NEW - Chrome */
-        flex: 1; /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    }
-</style>
-
-<form ng-submit="filter()" class="chipsdemoContactChips filter-form">
-    <md-content class="md-padding autocomplete origin" layout="column">
-        <label>{{'flight.origin' | translate}}</label>
-        <md-contact-chips ng-model="model.origin" md-contacts="flights.querySearch($query)" md-contact-name="id"
-                          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                          filter-selected="flights.filterSelected">
+<form ng-submit="filter()" class="flex justify-around upper-cnt">
+    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
+        <label class="cbp-text-field-label mdl-textfield__label static-label">
+          {{'flight.origin' | translate}}
+        </label>
+        <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
+          md-contacts="flights.querySearch($query)" md-contact-name="id"
+          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+          filter-selected="flights.filterSelected">
         </md-contact-chips>
-    </md-content>
-    <md-content class="md-padding autocomplete destination" layout="column">
-        <label>{{'flight.destination' | translate}}</label>
-        <md-contact-chips ng-model="model.dest" md-contacts="flights.querySearch($query)" md-contact-name="id"
-                          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                          filter-selected="flights.filterSelected">
+    </div>
+    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
+        <label class="cbp-text-field-label mdl-textfield__label static-label">
+          {{'flight.destination' | translate}}
+        </label>
+        <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
+          md-contacts="flights.querySearch($query)" md-contact-name="id"
+          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+          filter-selected="flights.filterSelected">
         </md-contact-chips>
-    </md-content>
-    <div class="flight md-padding">
-        <label for="flightNumber">{{'flight.flight' | translate}}</label>
-        <md-input-container>
-            <input  style="height:30px" id="flightNumber" ng-model="model.flightNumber">
-        </md-input-container>
     </div>
-    <div class="direction md-padding">
-        <label for="direction">{{'flight.direction' | translate}}</label>
-        <md-input-container style="margin:14px 0;">
-            <md-select id="direction" ng-model="model.direction">
-                <md-option ng-repeat="item in flightDirections" value="{{item.value}}">
-                    <p translate> {{item.label}}</p>
-                </md-option>
-            </md-select>
-        </md-input-container>
+    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
+      <label class="cbp-text-field-label mdl-textfield__label static-label" for="flightNumber">
+        {{'flight.flight' | translate}}
+      </label>
+      <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+        aria-required="true" id="flightNumber" ng-model="model.flightNumber" />
     </div>
-    <div class="start-date md-padding">
-        <label for="startDate">{{'flight.startdate' | translate}}</label>
-        <md-datepicker id="startDate" ng-model="model.etaStart" md-placeholder="Start Date"></md-datepicker>
+    <div class="mdl-selectfield mdl-js-selectfield">
+      <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
+        ng-model="model.direction">
+        <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
+          {{item.label}}
+        </option>
+      </select>
+      <label class="mdl-textfield__label static-label" for="direction">
+        {{'flight.direction' | translate}}
+      </label>
     </div>
-    <div class="end-date md-padding">
-        <label for="endDate">{{'flight.enddate' | translate}}</label>
-        <md-datepicker id="endDate" ng-model="model.etaEnd" md-placeholder="End Date"></md-datepicker>
+    <div class="cbp-datepicker">
+      <md-datepicker id="startDate" md-hide-icons="calendar" ng-model="model.etaStart"></md-datepicker>
+      <label class="mdl-textfield__label static-label" for="startDate">
+        {{'flight.startdate' | translate}}
+      </label>
     </div>
-    <div class="actions">
-        <md-button class="md-primary" aria-label="reset" ng-click="reset()" type="button">
-            <md-tooltip>{{'flight.reset' | translate}}</md-tooltip>
-            <!--<i class="glyphicon glyphicon-remove-sign"></i>-->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                <path d="M14 12c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2z"></path>
-                <path d="M12 3c-4.97 0-9 4.03-9 9H0l4 4 4-4H5c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.51 0-2.91-.49-4.06-1.3l-1.42 1.44C8.04 20.3 9.94 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path>
-            </svg>
-            <!--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>-->
-        </md-button>
-        <md-button class="md-primary" type="submit">
-            <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
-            <!--<i class="glyphicon glyphicon-filter"></i>-->
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                <path d="M10 18h4v-2h-4v2z"></path>
-                <path d="M3 6v2h18V6H3z"></path>
-                <path d="M6 13h12v-2H6v2z"></path>
-            </svg>
-        </md-button>
+    <div class="cbp-datepicker">
+      <md-datepicker id="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
+      <label class="mdl-textfield__label static-label" for="endDate">
+        {{'flight.enddate' | translate}}
+      </label>
+    </div>
+    <div>
+      <button type="button" ng-click="reset()" class="btn btn-icon-only btn-hover">
+        <md-tooltip>{{'flight.reset' | translate}}</md-tooltip>
+        <i class="fa fa-undo"></i>
+      </button>
+      <button type="submit" class="btn btn-icon-only btn-hover">
+        <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
+        <i class="fa fa-search"></i>
+      </button>
     </div>
 </form>
+<div class="cbp-sidebar sidebar after-double-header">
+  <div class="row">
+    <div class="col-md-12 pull-left">
+      <form class="filters" _lpchecked="1">
+        <div class="filter-list" role="tablist">
+          <h1 class="filter-heading">Filters <a href="#" class="filters-clear">Clear Filters</a></h1>
+          <h2 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup8" aria-controls="filterGroup8" class="filter-group-title">
+          Year <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          </h2>
+          <div id="filterGroup8" class="collapse in">
+            <div class="filter-group-content">
+              <div class="form-group">
+                <ul class="list-unstyled">
+                  <li><a href="#">2014</a></li>
+                  <li><a href="#">2013</a></li>
+                  <li><a href="#">2012</a></li>
+                  <li><a href="#">2011</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <h3 aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title collapsed">
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          Mode of Transportation
+          </h3>
+          <div id="filterGroup2" class="collapse" aria-expanded="false" style="height: 0px;">
+            <div class="filter-group-content">
+              <div class="form-group">
+                <div class="checkbox">
+                  <label for="conveytype-truck" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                    <input id="conveytype-truck" checked="" type="checkbox" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Truck</span>
+                    <span class="text-muted">(13)</span>
+                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
+                </div>
+                <div class="checkbox">
+                  <label for="conveytype-air" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                    <input id="conveytype-air" type="checkbox" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Air</span>
+                    <span class="text-muted">(45)</span>
+                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
+                </div>
+                <div class="checkbox">
+                  <label for="conveytype-sea" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                    <input id="conveytype-sea" type="checkbox" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Sea</span>
+                    <span class="text-muted">(18)</span>
+                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
+                </div>
+                <div class="checkbox">
+                  <label for="conveytype-rail" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                    <input id="conveytype-rail" type="checkbox" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Rail</span>
+                    <span class="text-muted">(32)</span>
+                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
+                </div>
+                <div class="checkbox">
+                  <label for="conveytype-fixed" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
+                    <input id="conveytype-fixed" type="checkbox" class="mdl-checkbox__input">
+                    <span class="mdl-checkbox__label">Fixed</span>
+                    <span class="text-muted">(43)</span>
+                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
+                </div>
+              </div>
+              <a href="" style="margin-left: 21px; display: block; margin-top: -5px;">Show 12 more...</a>
+            </div>
+          </div>
+          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Date range
+          </h3>
+          <div id="filterGroup1" class="collapse in" aria-expanded="true" style="">
+            <div class="filter-group-content">
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded is-dirty" data-upgraded=",MaterialTextfield">
+                    <label for="startRange" class="mdl-textfield__label"><i class="fa fa-calendar-o fa-fw"></i>&nbsp;Start</label>
+                    <input type="text" id="startRange" class="datepicker mdl-textfield__input hasDatepicker" data-inputmask=" 'alias' : 'mdl-mask-datepicker' " size="10">
+                  </div>
+                </div>
+                <div class="form-group col-sm-6">
+                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded" data-upgraded=",MaterialTextfield">
+                    <label for="endRange" class="mdl-textfield__label"><i class="fa fa-calendar-o fa-fw"></i>&nbsp;End</label>
+                    <input type="text" id="endRange" class="datepicker mdl-textfield__input hasDatepicker" data-inputmask=" 'alias' : 'mdl-mask-datepicker' " size="10">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3 aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title collapsed">
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Distance
+          </h3>
+          <div id="filterGroup5" class="collapse" aria-expanded="false" style="height: 0px;">
+            <div class="filter-group-content">
+              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
+                <select class="mdl-selectfield__select" id="distance">
+                  <option value=""></option>
+                  <option value="5">Within 5 miles</option>
+                  <option value="255">Within 25 miles</option>
+                </select>
+                <label class="mdl-selectfield__label" for="distance">Distance</label>
+              </div>
+            </div>
+          </div>
+          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Name
+          </h3>
+          <div id="filterGroup6" class="collapse in">
+            <div class="filter-group-content">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded" data-upgraded=",MaterialTextfield">
+                <label for="serange" class="mdl-textfield__label"><i class="fa fa-search fa-fw"></i>&nbsp;Search</label>
+                <input type="text" id="serange" class="mdl-textfield__input" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAfBJREFUWAntVk1OwkAUZkoDKza4Utm61iP0AqyIDXahN2BjwiHYGU+gizap4QDuegWN7lyCbMSlCQjU7yO0TOlAi6GwgJc0fT/fzPfmzet0crmD7HsFBAvQbrcrw+Gw5fu+AfOYvgylJ4TwCoVCs1ardYTruqfj8fgV5OUMSVVT93VdP9dAzpVvm5wJHZFbg2LQ2pEYOlZ/oiDvwNcsFoseY4PBwMCrhaeCJyKWZU37KOJcYdi27QdhcuuBIb073BvTNL8ln4NeeR6NRi/wxZKQcGurQs5oNhqLshzVTMBewW/LMU3TTNlO0ieTiStjYhUIyi6DAp0xbEdgTt+LE0aCKQw24U4llsCs4ZRJrYopB6RwqnpA1YQ5NGFZ1YQ41Z5S8IQQdP5laEBRJcD4Vj5DEsW2gE6s6g3d/YP/g+BDnT7GNi2qCjTwGd6riBzHaaCEd3Js01vwCPIbmWBRx1nwAN/1ov+/drgFWIlfKpVukyYihtgkXNp4mABK+1GtVr+SBhJDbBIubVw+Cd/TDgKO2DPiN3YUo6y/nDCNEIsqTKH1en2tcwA9FKEItyDi3aIh8Gl1sRrVnSDzNFDJT1bAy5xpOYGn5fP5JuL95ZjMIn1ya7j5dPGfv0A5eAnpZUY3n5jXcoec5J67D9q+VuAPM47D3XaSeL4AAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
+              </div>
+            </div>
+          </div>
+          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup3" aria-controls="filterGroup3" class="filter-group-title">
+            Chart Colors <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          </h3>
+          <div id="filterGroup3" class="collapse in">
+            <div class="filter-group-content">
+              <div class="form-group">
+                <div style="background-color: #E00000;" class="filter-color"></div>
+                <div style="background-color: #009CDE;" class="filter-color"></div>
+                <div style="background-color: #1BAB00;" class="filter-color active"></div>
+                <div style="background-color: #BB16A3;" class="filter-color"></div>
+                <div style="background-color: #F3CE37;" class="filter-color"></div>
+                <div style="background-color: #A7A8AA;" class="filter-color"></div>
+              </div>
+            </div>
+          </div>
+          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup7" aria-controls="filterGroup7" class="filter-group-title">
+            Tags <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          </h3>
+          <div id="filterGroup7" class="collapse in">
+            <div class="filter-group-content">
+              <div class="form-group">
+                <ul id="tagsExample" class="list-unstyled">
+                  <li class="tag tag-default">
+                    Assignment
+                    <a href="#" class="fa fa-close fa-muted" data-dismiss="tag" aria-label="Close"></a>
+                  </li>
+                  <li class="tag tag-default">
+                    Change of name
+                    <a href="#" class="fa fa-close fa-muted" data-dismiss="tag" aria-label="Close"></a>
+                  </li>
+                </ul>
+                <div class="input-group">
+                  <div class="mdl-textfield mdl-js-textfield is-upgraded" style="width: 100%;" data-upgraded=",MaterialTextfield">
+                    <label for="tag" class="mdl-textfield__label"><i class="fa fa-tag fa-fw"></i>&nbsp;Enter Tag</label>
+                    <input type="text" id="tag" class="mdl-textfield__input">
+                  </div>
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default tag-example-button">Add</button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <div layout="row"
      ui-grid="flightsGrid"
@@ -279,9 +233,9 @@
      ng-style="getTableHeight()"
      class="grid"></div>
 
-<md-button ng-click="export('csv')" class="md-raised pull-right" type="button">
+<md-button ng-click="export('csv')" type="button">
     <i class="glyphicon glyphicon-export"></i> CSV
 </md-button>
-<md-button ng-click="export('pdf')" class="md-raised pull-right" type="button">
+<md-button ng-click="export('pdf')" type="button">
     <i class="glyphicon glyphicon-save-file"></i> PDF
 </md-button>
