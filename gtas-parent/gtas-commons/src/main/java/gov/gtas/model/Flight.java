@@ -41,17 +41,9 @@ public class Flight extends BaseEntityAudit {
     
     @Column(name = "marketing_flight")
     private boolean isMarketingFlight=false;
-   
+    
     @Column(name = "operating_flight")
     private boolean isOperatingFlight=false;
-
-    public boolean isMarketingFlight() {
-		return isMarketingFlight;
-	}
-
-	public void setMarketingFlight(boolean isMarketingFlight) {
-		this.isMarketingFlight = isMarketingFlight;
-	}
 
 	public boolean isOperatingFlight() {
 		return isOperatingFlight;
@@ -123,8 +115,6 @@ public class Flight extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "operatingFlight")
-    private Set<CodeShareFlight> codeShareFlights = new HashSet<>();
     
     @Column(name = "passenger_count", nullable = false)
     private Integer passengerCount = Integer.valueOf(0);
@@ -153,15 +143,7 @@ public class Flight extends BaseEntityAudit {
         this.passengers = passengers;
     }
     
-    public Set<CodeShareFlight> getCodeShareFlights() {
-		return codeShareFlights;
-	}
 
-	public void setCodeShareFlights(Set<CodeShareFlight> shareFlights) {
-		this.codeShareFlights = shareFlights;
-	}
-
-	
 	public String getFlightNumber() {
         return flightNumber;
     }
@@ -280,6 +262,15 @@ public class Flight extends BaseEntityAudit {
     public void setEtaDate(Date etaDate) {
         this.etaDate = etaDate;
     }
+
+    
+	public boolean isMarketingFlight() {
+		return isMarketingFlight;
+	}
+
+	public void setMarketingFlight(boolean isMarketingFlight) {
+		this.isMarketingFlight = isMarketingFlight;
+	}
 
 	@Override
     public int hashCode() {

@@ -26,6 +26,7 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
 import gov.gtas.parsers.vo.BagVo;
+import gov.gtas.parsers.vo.CodeShareVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.EmailVo;
@@ -176,6 +177,11 @@ public class LoaderRepository {
         	Email email = utils.convertEmailVo(evo);
         	pnr.addEmail(email);
         }
+        for(CodeShareVo cso : vo.getCodeshares()){
+        	CodeShareFlight cs = utils.convertCodeShare(cso);
+        	cs.getPnrs().add(pnr);
+        	pnr.getCodeshares().add(cs);
+        }
     }
 
     @Transactional
@@ -191,13 +197,6 @@ public class LoaderRepository {
                 currentFlight = existingFlight;
                 if(fvo.isCodeShareFlight() ){
                 	currentFlight.setOperatingFlight(true);
-                	CodeShareFlight cs = new CodeShareFlight();
-                	cs.setOperatingFlight(currentFlight);
-                	cs.setMarketingFlightNumber(fvo.getMarketingFlightNumber());
-                	if(notExist(currentFlight.getCodeShareFlights(),cs)){
-                		currentFlight.getCodeShareFlights().add(cs);
-                	}
-                	
                 }
                 for (PassengerVo pvo : passengers) {
                     Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
@@ -255,44 +254,16 @@ public class LoaderRepository {
         
         // assoc all passengers w/ flights, update pax counts
         for (Flight f : messageFlights) {
-        	
             for (Passenger p : messagePassengers) {
             	utils.calculateValidVisaDays(f,p);
                 f.addPassenger(p);
                 
             }
-            
             f.setPassengerCount(f.getPassengers().size());
-            if(f.isOperatingFlight()){
-            	for(CodeShareFlight cs:f.getCodeShareFlights()){
-            		Flight ff=getMarketingFlight(cs.getMarketingFlightNumber(),messageFlights);
-            		if(ff != null && ff.getId() != null){
-            			cs.setMarketingFlightId(ff.getId());
-            		}
-            		
-            	}
-            }
         }
     }
     
-    private Flight getMarketingFlight(String fnum,Set<Flight> flights){
-    	for(Flight cf:flights){
-    		if(fnum.equals(cf.getFlightNumber())){
-    			return cf;
-    		}
-    	}
-		return null;
-    }
-    
-    private boolean notExist(Set<CodeShareFlight> flights,CodeShareFlight cs){
-    	boolean chk=true;
-    	for(CodeShareFlight csf:flights){
-    		if(csf.getMarketingFlightNumber().equals(cs.getMarketingFlightNumber())){
-    			chk= false;
-    		}
-    	}
-    	return chk;
-    }
+
     /**
      * Create a single seat assignment for the given passenger, flight
      * combination. TODO: Inefficient to have to pass in the entire list of seat

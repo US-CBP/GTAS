@@ -42,10 +42,19 @@ public class PnrVo extends MessageVo implements Validatable {
     private List<FrequentFlyerVo> frequentFlyerDetails = new ArrayList<>();
     private List<EmailVo> emails = new ArrayList<>();
     private List<AgencyVo> agencies = new ArrayList<>();
+    private List<CodeShareVo> codeshares = new ArrayList<>();
     private Date reservationCreateDate;
     
     
-    public List<BagVo> getBags() {
+    public List<CodeShareVo> getCodeshares() {
+		return codeshares;
+	}
+
+	public void setCodeshares(List<CodeShareVo> codeshares) {
+		this.codeshares = codeshares;
+	}
+
+	public List<BagVo> getBags() {
 		return bags;
 	}
 

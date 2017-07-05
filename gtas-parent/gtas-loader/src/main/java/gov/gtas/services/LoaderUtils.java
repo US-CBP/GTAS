@@ -38,6 +38,7 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
+import gov.gtas.parsers.vo.CodeShareVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.EmailVo;
@@ -171,11 +172,6 @@ public class LoaderUtils {
         f.setMarketingFlight(vo.isMarketingFlight());
         if(vo.isCodeShareFlight()){
         	f.setOperatingFlight(true);
-        	CodeShareFlight cs = new CodeShareFlight();
-        	cs.setOperatingFlight(f);
-        	cs.setMarketingFlightNumber(vo.getMarketingFlightNumber());
-        	f.getCodeShareFlights().add(cs);
-        	
         }
         Airport dest = getAirport(f.getDestination());
         String destCountry = null;
@@ -257,7 +253,13 @@ public class LoaderUtils {
         e.setDomain(vo.getDomain());
         return e;
     }
-    
+    public CodeShareFlight convertCodeShare(CodeShareVo vo){
+    	CodeShareFlight csf = new CodeShareFlight();
+    	csf.setMarketingFlightNumber(vo.getFullMarketingFlightNumber());
+    	csf.setOperatingFlightNumber(vo.getFullOperatingFlightNumber());
+		return csf;
+    	
+    }    
     public Agency convertAgencyVo(AgencyVo vo) {
         Agency a = new Agency();
         a.setCreatedBy(LOADER_USER);

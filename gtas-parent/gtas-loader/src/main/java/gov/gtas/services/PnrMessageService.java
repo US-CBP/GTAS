@@ -8,6 +8,7 @@ package gov.gtas.services;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.DwellTime;
 import gov.gtas.model.EdifactMessage;
 import gov.gtas.model.Flight;
@@ -104,6 +106,7 @@ public class PnrMessageService extends MessageLoaderService {
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
             loaderRepo.createBagsFromPnrVo(vo,pnr);
+            setCodeShareFlights(pnr);
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -225,6 +228,18 @@ public class PnrMessageService extends MessageLoaderService {
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondFlight.getDestination());
     		pnr.addDwellTime(d);
+    	}
+    }
+
+    private void setCodeShareFlights(Pnr pnr){
+    	Set<Flight> flights=pnr.getFlights();
+    	Set<CodeShareFlight> codeshares=pnr.getCodeshares();
+    	for(Flight f : flights){
+    		for(CodeShareFlight cs : codeshares){
+    			if(cs.getOperatingFlightNumber().equals(f.getFullFlightNumber())){
+    				cs.setOperatingFlightId(f.getId());
+    			}
+    		}
     	}
     }
     

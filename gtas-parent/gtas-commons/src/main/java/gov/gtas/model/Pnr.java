@@ -139,6 +139,10 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_agency", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "agency_id"))
     private Set<Agency> agencies = new HashSet<>();
 
+    @ManyToMany(targetEntity = CodeShareFlight.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "pnr_codeshares", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "codeshare_id"))
+    private Set<CodeShareFlight> codeshares = new HashSet<>();
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<FlightLeg> flightLegs = new ArrayList<>();
     
@@ -154,7 +158,15 @@ public class Pnr extends Message {
     private Double tripDuration;
 
     
-    public Double getTripDuration() {
+    public Set<CodeShareFlight> getCodeshares() {
+		return codeshares;
+	}
+
+	public void setCodeshares(Set<CodeShareFlight> codeshares) {
+		this.codeshares = codeshares;
+	}
+
+	public Double getTripDuration() {
 		return tripDuration;
 	}
 

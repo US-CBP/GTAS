@@ -57,6 +57,7 @@ import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
 import gov.gtas.parsers.vo.BagVo;
+import gov.gtas.parsers.vo.CodeShareVo;
 import gov.gtas.parsers.vo.CreditCardVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.EmailVo;
@@ -364,24 +365,28 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
             // codeshare flight: create a separate flight with the same
             // details except use the codeshare carrier and flight number.
-            TVL cs_tvl = getMandatorySegment(TVL.class);
-            
-            FlightVo csFlight = new FlightVo();
-            csFlight.setCarrier(tvl.getOperatingCarrier());
-            csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
-            csFlight.setDestination(tvl.getDestination());
-            csFlight.setOrigin(tvl.getOrigin());
-            csFlight.setEta(tvl.getEta());
-            csFlight.setEtd(tvl.getEtd());
-            csFlight.setFlightDate(flightDate);
-            csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
-            csFlight.setCodeShareFlight(true);
-            f.setMarketingFlight(true);
-            if (csFlight.isValid()) {
-                parsedMessage.getFlights().add(csFlight);
-            } else {
-                throw new ParseException("Invalid flight: " + csFlight);
-            }
+        	 TVL cs_tvl = getMandatorySegment(TVL.class);
+             CodeShareVo cso=new CodeShareVo(tvl.getCarrier(),FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber())
+             		,tvl.getOperatingCarrier(),FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
+             FlightVo csFlight = new FlightVo();
+             csFlight.setCarrier(tvl.getOperatingCarrier());
+             csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
+             csFlight.setDestination(tvl.getDestination());
+             csFlight.setOrigin(tvl.getOrigin());
+             csFlight.setEta(tvl.getEta());
+             csFlight.setEtd(tvl.getEtd());
+             csFlight.setFlightDate(flightDate);
+             csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
+             csFlight.setCodeShareFlight(true);
+             //f.setMarketingFlight(true);
+             parsedMessage.getCodeshares().add(cso);
+             if (csFlight.isValid()) {
+                 parsedMessage.getFlights().add(csFlight);
+                 parsedMessage.getFlights().remove(f);
+               
+             } else {
+                 throw new ParseException("Invalid flight: " + csFlight);
+             }
             
             processFlightSegments(tvl);
         }
