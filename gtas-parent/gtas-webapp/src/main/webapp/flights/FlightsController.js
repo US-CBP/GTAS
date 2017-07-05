@@ -1,11 +1,11 @@
 /*
  * All GTAS code is Copyright 2016, Unisys Corporation.
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
     'use strict';
-    app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter, 
+    app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter,
             flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
@@ -14,7 +14,7 @@
              .hideDelay(4000)
              .parent($scope.toastParent));
         };
-        
+
         var exporter = {
             'csv': function () {
                 $scope.gridApi.exporter.csvExport('all', 'all');
@@ -23,7 +23,7 @@
                 $scope.gridApi.exporter.pdfExport('all', 'all');
             }
         };
-        
+
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
             return function filterFn(contact) {
@@ -34,7 +34,7 @@
         $scope.getCodeTooltipData = function(field, type){
         	return codeTooltipService.getCodeTooltipData(field,type);
         }
-        
+
         $scope.resetCountryTooltip = function(){
         	$('md-tooltip').remove();
         };
@@ -75,7 +75,7 @@
                 else{
                     setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
                 }
-                
+
             },
             update = function (data) {
                 flights = data;
@@ -158,7 +158,8 @@
             useExternalPagination: true,
             useExternalSorting: true,
             useExternalFiltering: true,
-            enableHorizontalScrollbar: 0,
+            enableHorizontalScrollbar: true,
+            enableColumnResizing: true,
             enableVerticalScrollbar: 1,
             enableColumnMenus: false,
             enableExpandableRowHeader: false,
@@ -191,16 +192,16 @@
                         resolvePage();
                     }
                 });
-                
+
                 gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
                     if (row.isExpanded) {
                  	   row.entity.subGridOptions = {
                  			  columnDefs: $scope.passengerSubGridColumnDefs,
                  			  enableHorizontalScrollbar: 0,
                               enableVerticalScrollbar: 1,
-                              
+
                  	   }
-                 	   
+
                  	   var request ={
                  			   dest:row.entity.destination,
                  			   direction:row.entity.direction,
@@ -211,7 +212,7 @@
                  			   lastname:"",
                  			   pageNumber:1,
                  			   pageSize:5000
-                 	   };	   
+                 	   };
                  	  spinnerService.show('html5spinner');
                  	   paxService.getPax(row.entity.id, request).then(function(data){
                  		   var passengerHitList = [];
@@ -243,20 +244,20 @@
                 exporterCsvFilename: 'Flights.csv',
                 expandableRowHeight: 200,
                 expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-                    
+
                onRegisterApi: function (gridApi) {
                    $scope.gridApi = gridApi;
-                   
+
                    gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                        $scope.model.pageSize = pageSize;
                    });
-                   
+
                    gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
                        if (row.isExpanded) {
                      	   row.entity.subGridOptions = {
-                     			   columnDefs: $scope.passengerSubGridColumnDefs	   
+                     			   columnDefs: $scope.passengerSubGridColumnDefs
                      	   }
-                     	   
+
                      	   var request ={
                      			   dest:row.entity.destination,
                      			   direction:row.entity.direction,
@@ -267,8 +268,8 @@
                      			   lastname:"",
                      			   pageNumber:1,
                      			   pageSize:5000
-                     	   };	   
-                     	   
+                     	   };
+
                      	  paxService.getPax(row.entity.id, request).then(function(data){
                      		 spinnerService.show('html5spinner');
                     		   var passengerHitList = [];
@@ -354,10 +355,10 @@
             	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
             	+'</md-button>'}
         ];
-        
+
         $scope.flightsQueryGrid.columnDefs = $scope.flightsGrid.columnDefs;
 
-        $scope.passengerSubGridColumnDefs = 
+        $scope.passengerSubGridColumnDefs =
         	[
              {
                  name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
@@ -398,8 +399,8 @@
              {name: 'gender', displayName:'G', headerCellFilter: 'translate', width: 50},
              {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
              {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75}
-         ];     
-        
+         ];
+
         $scope.queryPassengersOnSelectedFlight = function (row_entity) {
             $state.go('passengers', {
                 flightNumber: row_entity.flightNumber,
@@ -433,6 +434,15 @@
             } // Sets minimal height for front-end pagination controlled variant of grid
             return gridService.calculateGridHeight($scope.model.pageSize);
         };
+        $scope.toggleDiv = function(div) {
+          var element = document.getElementById(div);
+          if(element.classList.contains("active")){
+            element.classList.remove("active");
+          }
+          else {
+            element.className +=" active";
+          }
+        }
         resolvePage();
         mapAirports();
     });

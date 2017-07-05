@@ -1,218 +1,94 @@
-<form ng-submit="filter()" class="flex justify-around upper-cnt">
-    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
-        <label class="cbp-text-field-label mdl-textfield__label static-label">
-          {{'flight.origin' | translate}}
-        </label>
-        <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
-          md-contacts="flights.querySearch($query)" md-contact-name="id"
-          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-          filter-selected="flights.filterSelected">
-        </md-contact-chips>
-    </div>
-    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
-        <label class="cbp-text-field-label mdl-textfield__label static-label">
-          {{'flight.destination' | translate}}
-        </label>
-        <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
-          md-contacts="flights.querySearch($query)" md-contact-name="id"
-          md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-          filter-selected="flights.filterSelected">
-        </md-contact-chips>
-    </div>
-    <div class="cbp-text-field mdl-textfield mdl-js-textfield">
-      <label class="cbp-text-field-label mdl-textfield__label static-label" for="flightNumber">
-        {{'flight.flight' | translate}}
-      </label>
-      <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
-        aria-required="true" id="flightNumber" ng-model="model.flightNumber" />
-    </div>
-    <div class="mdl-selectfield mdl-js-selectfield">
-      <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
-        ng-model="model.direction">
-        <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
-          {{item.label}}
-        </option>
-      </select>
-      <label class="mdl-textfield__label static-label" for="direction">
-        {{'flight.direction' | translate}}
-      </label>
-    </div>
-    <div class="cbp-datepicker">
-      <md-datepicker id="startDate" md-hide-icons="calendar" ng-model="model.etaStart"></md-datepicker>
-      <label class="mdl-textfield__label static-label" for="startDate">
-        {{'flight.startdate' | translate}}
-      </label>
-    </div>
-    <div class="cbp-datepicker">
-      <md-datepicker id="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
-      <label class="mdl-textfield__label static-label" for="endDate">
-        {{'flight.enddate' | translate}}
-      </label>
-    </div>
-    <div>
-      <button type="button" ng-click="reset()" class="btn btn-icon-only btn-hover">
-        <md-tooltip>{{'flight.reset' | translate}}</md-tooltip>
-        <i class="fa fa-undo"></i>
-      </button>
-      <button type="submit" class="btn btn-icon-only btn-hover">
-        <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
-        <i class="fa fa-search"></i>
-      </button>
-    </div>
-</form>
-<div class="cbp-sidebar sidebar after-double-header">
+<div id="cbp-sidebar" ng-submit="filter()" class="cbp-sidebar sidebar after-double-header">
   <div class="row">
-    <div class="col-md-12 pull-left">
+    <div class="col-xs-12 pull-left">
       <form class="filters" _lpchecked="1">
         <div class="filter-list" role="tablist">
-          <h1 class="filter-heading">Filters <a href="#" class="filters-clear">Clear Filters</a></h1>
-          <h2 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup8" aria-controls="filterGroup8" class="filter-group-title">
-          Year <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          <h1 class="filter-heading">Filters
+            <button type="submit" class="btn btn-icon-only btn-hover">
+              <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
+              <i class="fa fa-search"></i>
+            </button>
+            <a href="#" ng-click="reset()" class="filters-clear">Clear Filters</a>
+          </h1>
+          <h2 aria-expanded="true" data-toggle="collapse" role="tab"
+            data-target="#filterGroup8" aria-controls="filterGroup8" class="filter-group-title">
+            {{'flight.origin' | translate}}
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
           </h2>
           <div id="filterGroup8" class="collapse in">
             <div class="filter-group-content">
               <div class="form-group">
-                <ul class="list-unstyled">
-                  <li><a href="#">2014</a></li>
-                  <li><a href="#">2013</a></li>
-                  <li><a href="#">2012</a></li>
-                  <li><a href="#">2011</a></li>
-                </ul>
+                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
+                  md-contacts="flights.querySearch($query)" md-contact-name="id"
+                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                  filter-selected="flights.filterSelected">
+                </md-contact-chips>
               </div>
             </div>
           </div>
           <h3 aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title collapsed">
             <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          Mode of Transportation
+            {{'flight.destination' | translate}}
           </h3>
           <div id="filterGroup2" class="collapse" aria-expanded="false" style="height: 0px;">
             <div class="filter-group-content">
               <div class="form-group">
-                <div class="checkbox">
-                  <label for="conveytype-truck" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-checked is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
-                    <input id="conveytype-truck" checked="" type="checkbox" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Truck</span>
-                    <span class="text-muted">(13)</span>
-                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
-                </div>
-                <div class="checkbox">
-                  <label for="conveytype-air" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
-                    <input id="conveytype-air" type="checkbox" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Air</span>
-                    <span class="text-muted">(45)</span>
-                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
-                </div>
-                <div class="checkbox">
-                  <label for="conveytype-sea" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
-                    <input id="conveytype-sea" type="checkbox" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Sea</span>
-                    <span class="text-muted">(18)</span>
-                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
-                </div>
-                <div class="checkbox">
-                  <label for="conveytype-rail" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
-                    <input id="conveytype-rail" type="checkbox" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Rail</span>
-                    <span class="text-muted">(32)</span>
-                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
-                </div>
-                <div class="checkbox">
-                  <label for="conveytype-fixed" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect mdl-js-ripple-effect--ignore-events is-upgraded" data-upgraded=",MaterialCheckbox,MaterialRipple">
-                    <input id="conveytype-fixed" type="checkbox" class="mdl-checkbox__input">
-                    <span class="mdl-checkbox__label">Fixed</span>
-                    <span class="text-muted">(43)</span>
-                  <span class="mdl-checkbox__focus-helper"></span><span class="mdl-checkbox__box-outline"><span class="mdl-checkbox__tick-outline"></span></span><span class="mdl-checkbox__ripple-container mdl-js-ripple-effect mdl-ripple--center" data-upgraded=",MaterialRipple"><span class="mdl-ripple"></span></span></label>
-                </div>
+                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
+                  md-contacts="flights.querySearch($query)" md-contact-name="id"
+                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                  filter-selected="flights.filterSelected">
+                </md-contact-chips>
               </div>
-              <a href="" style="margin-left: 21px; display: block; margin-top: -5px;">Show 12 more...</a>
             </div>
           </div>
           <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Date range
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+            {{'flight.flight' | translate}}
           </h3>
           <div id="filterGroup1" class="collapse in" aria-expanded="true" style="">
             <div class="filter-group-content">
-              <div class="row">
-                <div class="form-group col-sm-6">
-                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded is-dirty" data-upgraded=",MaterialTextfield">
-                    <label for="startRange" class="mdl-textfield__label"><i class="fa fa-calendar-o fa-fw"></i>&nbsp;Start</label>
-                    <input type="text" id="startRange" class="datepicker mdl-textfield__input hasDatepicker" data-inputmask=" 'alias' : 'mdl-mask-datepicker' " size="10">
-                  </div>
+                <div class="form-group">
+                  <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                    aria-required="true" id="flightNumber" ng-model="model.flightNumber" />
                 </div>
-                <div class="form-group col-sm-6">
-                  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded" data-upgraded=",MaterialTextfield">
-                    <label for="endRange" class="mdl-textfield__label"><i class="fa fa-calendar-o fa-fw"></i>&nbsp;End</label>
-                    <input type="text" id="endRange" class="datepicker mdl-textfield__input hasDatepicker" data-inputmask=" 'alias' : 'mdl-mask-datepicker' " size="10">
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <h3 aria-expanded="false" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title collapsed">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Distance
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> {{'flight.direction' | translate}}
           </h3>
           <div id="filterGroup5" class="collapse" aria-expanded="false" style="height: 0px;">
             <div class="filter-group-content">
               <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
-                <select class="mdl-selectfield__select" id="distance">
-                  <option value=""></option>
-                  <option value="5">Within 5 miles</option>
-                  <option value="255">Within 25 miles</option>
+                <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
+                  ng-model="model.direction">
+                  <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
+                    {{item.label}}
+                  </option>
                 </select>
-                <label class="mdl-selectfield__label" for="distance">Distance</label>
               </div>
             </div>
           </div>
           <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
-          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Name
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Date Range
           </h3>
           <div id="filterGroup6" class="collapse in">
             <div class="filter-group-content">
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label is-upgraded" data-upgraded=",MaterialTextfield">
-                <label for="serange" class="mdl-textfield__label"><i class="fa fa-search fa-fw"></i>&nbsp;Search</label>
-                <input type="text" id="serange" class="mdl-textfield__input" style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAfBJREFUWAntVk1OwkAUZkoDKza4Utm61iP0AqyIDXahN2BjwiHYGU+gizap4QDuegWN7lyCbMSlCQjU7yO0TOlAi6GwgJc0fT/fzPfmzet0crmD7HsFBAvQbrcrw+Gw5fu+AfOYvgylJ4TwCoVCs1ardYTruqfj8fgV5OUMSVVT93VdP9dAzpVvm5wJHZFbg2LQ2pEYOlZ/oiDvwNcsFoseY4PBwMCrhaeCJyKWZU37KOJcYdi27QdhcuuBIb073BvTNL8ln4NeeR6NRi/wxZKQcGurQs5oNhqLshzVTMBewW/LMU3TTNlO0ieTiStjYhUIyi6DAp0xbEdgTt+LE0aCKQw24U4llsCs4ZRJrYopB6RwqnpA1YQ5NGFZ1YQ41Z5S8IQQdP5laEBRJcD4Vj5DEsW2gE6s6g3d/YP/g+BDnT7GNi2qCjTwGd6riBzHaaCEd3Js01vwCPIbmWBRx1nwAN/1ov+/drgFWIlfKpVukyYihtgkXNp4mABK+1GtVr+SBhJDbBIubVw+Cd/TDgKO2DPiN3YUo6y/nDCNEIsqTKH1en2tcwA9FKEItyDi3aIh8Gl1sRrVnSDzNFDJT1bAy5xpOYGn5fP5JuL95ZjMIn1ya7j5dPGfv0A5eAnpZUY3n5jXcoec5J67D9q+VuAPM47D3XaSeL4AAAAASUVORK5CYII=&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%; cursor: auto;">
-              </div>
-            </div>
-          </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup3" aria-controls="filterGroup3" class="filter-group-title">
-            Chart Colors <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          </h3>
-          <div id="filterGroup3" class="collapse in">
-            <div class="filter-group-content">
-              <div class="form-group">
-                <div style="background-color: #E00000;" class="filter-color"></div>
-                <div style="background-color: #009CDE;" class="filter-color"></div>
-                <div style="background-color: #1BAB00;" class="filter-color active"></div>
-                <div style="background-color: #BB16A3;" class="filter-color"></div>
-                <div style="background-color: #F3CE37;" class="filter-color"></div>
-                <div style="background-color: #A7A8AA;" class="filter-color"></div>
-              </div>
-            </div>
-          </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup7" aria-controls="filterGroup7" class="filter-group-title">
-            Tags <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          </h3>
-          <div id="filterGroup7" class="collapse in">
-            <div class="filter-group-content">
-              <div class="form-group">
-                <ul id="tagsExample" class="list-unstyled">
-                  <li class="tag tag-default">
-                    Assignment
-                    <a href="#" class="fa fa-close fa-muted" data-dismiss="tag" aria-label="Close"></a>
-                  </li>
-                  <li class="tag tag-default">
-                    Change of name
-                    <a href="#" class="fa fa-close fa-muted" data-dismiss="tag" aria-label="Close"></a>
-                  </li>
-                </ul>
-                <div class="input-group">
-                  <div class="mdl-textfield mdl-js-textfield is-upgraded" style="width: 100%;" data-upgraded=",MaterialTextfield">
-                    <label for="tag" class="mdl-textfield__label"><i class="fa fa-tag fa-fw"></i>&nbsp;Enter Tag</label>
-                    <input type="text" id="tag" class="mdl-textfield__input">
+              <div class="row">
+                <div class="form-group col-sm-6">
+                  <div class="cbp-datepicker">
+                    <md-datepicker id="startDate" md-hide-icons="calendar" ng-model="model.etaStart"></md-datepicker>
+                    <label class="mdl-textfield__label static-label" for="startDate">
+                      {{'flight.startdate' | translate}}
+                    </label>
                   </div>
-                  <span class="input-group-btn">
-                    <button type="submit" class="btn btn-default tag-example-button">Add</button>
-                  </span>
+                </div>
+                <div class="form-group col-sm-6">
+                  <div class="cbp-datepicker">
+                    <md-datepicker id="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
+                    <label class="mdl-textfield__label static-label" for="endDate">
+                      {{'flight.enddate' | translate}}
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,20 +98,28 @@
     </div>
   </div>
 </div>
-
-<div layout="row"
+<div class="upper-cnt "layout="row"
      ui-grid="flightsGrid"
      ui-grid-pagination
      ui-grid-auto-resize
      ui-grid-exporter
      ui-grid-expandable
      ui-grid-move-columns
+     ui-grid-resize-columns
      ng-style="getTableHeight()"
-     class="grid"></div>
-
-<md-button ng-click="export('csv')" type="button">
-    <i class="glyphicon glyphicon-export"></i> CSV
-</md-button>
-<md-button ng-click="export('pdf')" type="button">
-    <i class="glyphicon glyphicon-save-file"></i> PDF
-</md-button>
+     class="grid">
+</div>
+<div class="pull-right">
+  <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
+     <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+     <md-tooltip>Export CSV</md-tooltip>
+  </button>
+  <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
+    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+    <md-tooltip>Export PDF</md-tooltip>
+  </button>
+  <button type="button" ng-click="toggleDiv('cbp-sidebar')" class="btn btn-icon-only btn-hover">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+    <md-tooltip>Toggle Side-Menu</md-tooltip>
+  </button>
+</div>

@@ -27,7 +27,7 @@
   text-align: right;
 }
 .upper-cnt {
-  margin-top: 70px;
+  margin-top: 30px;
 }
 
 /* Card Styles */
@@ -108,32 +108,77 @@
   border-bottom-width: 1px !important;
 }
 .cbp-datepicker .md-datepicker-input {
-  height: 56px;
+  height: 39px;
+  padding: 0px 5px;
 }
 .cbp-datepicker .md-datepicker-input:hover{
   background-color: rgba(20,96,170,.1)!important;
 }
 .cbp-datepicker .md-datepicker-triangle-button{
-  top: 10px;
   bottom: 0px;
   background-color: inherit !important;
 }
 .cbp-non-chip-input {
-  height: 57px;
   border-bottom-color: rgb(85, 85, 85) !important;
 }
 .cbp-non-chip-input:focus {
   outline: inherit;
 }
-.sidebar {
+#cbp-sidebar {
   margin-top: 0px !important;
+  z-index: 2 !important;
+  transform: translateX(-350px);
+  transition: .5s ease-in-out;
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+}
+#cbp-sidebar.active {
+  transform: translateX(0px)
+}
+.sidebar {
+    z-index: 1;
+    position: absolute;
+    height: 82vh;
+    padding: 10px;
+    width: inherit;
+    margin-top: 51px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+/*UI-Grid Overrides*/
+.ui-grid {
+  width: 99%;
+  /*height: 420px !important;*/
+  height: 72vh !important;
+  margin: auto;
+}
+.ui-grid-top-panel {
+   background: #f0f0f0;
+   border-bottom: #d4d4d4 1.5px solid;
+   outline: 1px solid #f0f0f0;
+}
+.ui-grid-header-cell {
+ border-right: inherit;
+ padding: 10px 5px;
+ color: rgb(85, 85, 85);
+}
+.ui-grid-header-cell:hover {
+  background: #e3e3e3;
+}
+/*ui-grid cell styling*/
+.ui-grid .md-button {
+    line-height: 20px;
+    min-height: 20px;
+    min-width: inherit;
+}
+.ui-grid-cell-contents {
+  text-align: center;
 }
 
 
-
 /* BEGIN IE css patches */
-/*md-input-container .md-input { flex: none !important; }*/
-
 .md-select-label :first-child{
     flex-basis: auto;
     max-width: 100%;
@@ -205,13 +250,4 @@
     text-align: center;
     border-radius: 50%;
     border: solid 2px #050;
-}
-
-.md-sidenav-left,
-.md-sidenav-right {
-    min-width: 400px;
-    left: 100%;
-    top: 0;
-    -webkit-transform: translate3d(-100%,0,0);
-    transform: translate3d(-100%,0,0);
 }
