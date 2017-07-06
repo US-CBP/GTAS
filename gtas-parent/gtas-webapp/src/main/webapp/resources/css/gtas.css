@@ -5,8 +5,6 @@
 .fixed-width-sm {
   width: 176px;
 }
-
-
 /*Positioning Styles */
 .flex {
   display: flex;
@@ -27,10 +25,13 @@
   text-align: right;
 }
 .upper-cnt {
-  margin-top: 30px;
+  margin-top: 0px;
 }
-
-/* Card Styles */
+@media (max-width : 1200px) {
+  .upper-cnt {
+    margin-top: 52px !important;
+  }
+}
 .gtas-card-container .cbp-card  {
     min-height: inherit;
 }

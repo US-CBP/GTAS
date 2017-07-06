@@ -1,21 +1,9 @@
-<div ng-include="'views/sidepanel.html'"></div>
-<div class="upper-cnt "layout="row"
-     ui-grid="flightsGrid"
-     ui-grid-pagination
-     ui-grid-exporter
-     ui-grid-expandable
-     ui-grid-move-columns
-     ui-grid-auto-resize
-     ui-grid-resize-columns
-     ng-style="getTableHeight()"
-     class="grid">
-</div>
 <div class="pull-right">
   <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
      <i class="fa fa-file-excel-o" aria-hidden="true"></i>
      <md-tooltip>Export CSV</md-tooltip>
   </button>
-  <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
+  <button type="button" ng-click="export('pdf')" class="btn btn-icon-only btn-hover">
     <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
     <md-tooltip>Export PDF</md-tooltip>
   </button>

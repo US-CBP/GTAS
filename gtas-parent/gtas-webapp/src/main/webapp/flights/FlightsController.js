@@ -291,14 +291,12 @@
                 name: 'passengerCount',
                 field: 'passengerCount',
                 displayName: 'Passengers',
-                width: 100,
                 enableFiltering: false,
                 cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, destination: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
             },
             {
                 name: 'ruleHitCount',
                 displayName: 'Rule Hits',
-                width: 90,
                 enableFiltering: false,
                 cellClass: gridService.colorHits,
                 sort: {
@@ -309,7 +307,6 @@
             {
                 name: 'listHitCount',
                 displayName: 'Watchlist Hits',
-                width: 125,
                 enableFiltering: false,
                 cellClass: gridService.colorHits,
                 sort: {
@@ -320,13 +317,11 @@
             {
                 name: 'flightNumber',
                 displayName: 'flight.flight', headerCellFilter: 'translate',
-                width: 70,
                 cellTemplate:'<md-button ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled="row.entity.ruleHitCount === 0 && row.entity.listHitCount === 0" >{{COL_FIELD}}</md-button>'
             },
             {
             	name:'carrier',
             	displayName: 'flight.carrier', headerCellFilter: 'translate',
-            	width: 70,
             	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                     +'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
                     +'</md-button>'},
@@ -361,7 +356,7 @@
         $scope.passengerSubGridColumnDefs =
         	[
              {
-                 name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
+                 name: 'onRuleHitList', displayName: 'Rule Hits',
                  cellClass: "rule-hit",
                  sort: {
                      direction: uiGridConstants.DESC,
@@ -370,7 +365,7 @@
                  cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
              },
              {
-                 name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
+                 name: 'onWatchList', displayName: 'Watchlist Hits',
                  cellClass: gridService.anyWatchlistHit,
                  sort: {
                      direction: uiGridConstants.DESC,
@@ -378,7 +373,7 @@
                  },
                  cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
              },
-             {name: 'passengerType', displayName:'T', headerCellFilter: 'translate', width: 50},
+             {name: 'passengerType', displayName:'T', headerCellFilter: 'translate'},
              {
                  name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
                  cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
@@ -396,9 +391,9 @@
                  visible: (stateName === 'paxAll')
              },
              {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
-             {name: 'gender', displayName:'G', headerCellFilter: 'translate', width: 50},
+             {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
              {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
-             {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate', width: 75}
+             {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate'}
          ];
 
         $scope.queryPassengersOnSelectedFlight = function (row_entity) {
