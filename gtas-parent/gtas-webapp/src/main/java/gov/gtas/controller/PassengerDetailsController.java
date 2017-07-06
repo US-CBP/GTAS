@@ -197,7 +197,7 @@ public class PassengerDetailsController {
 			Iterator<Bag> bagIter = t.getBags().iterator();
 			while (bagIter.hasNext()) {
 				Bag b = bagIter.next();
-				if(b.getData_source().equals("pnr")){
+				if(b.getData_source().equalsIgnoreCase("pnr")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
 					bagVo.setData_source(b.getData_source());
@@ -223,7 +223,7 @@ public class PassengerDetailsController {
 			Iterator<Bag> bagIter = t.getBags().iterator();
 			while (bagIter.hasNext()) {
 				Bag b = bagIter.next();
-				if(b.getData_source().equals("apis")){
+				if(b.getData_source().equalsIgnoreCase("apis")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
 					bagVo.setData_source(b.getData_source());
@@ -239,19 +239,20 @@ public class PassengerDetailsController {
 				pVo.setNumber(p.getNumber());
 				apisVo.addPhoneNumber(pVo);
 			}
-			
-			AddressVo add = new AddressVo();
-			Address installAdd = apis.getInstallationAddress();
-			add.setLine1(installAdd.getLine1());
-			add.setLine2(installAdd.getLine2());
-			add.setLine3(installAdd.getLine3());
-			add.setCity(installAdd.getCity());
-			add.setCountry(installAdd.getCountry());
-			add.setPostalCode(installAdd.getPostalCode());
-			add.setState(installAdd.getState());
-			apisVo.setInstallationAddress(add);
-			
-			vo.setApisMessageVo(apisVo);
+			if(apis.getInstallationAddress() != null){
+				AddressVo add = new AddressVo();
+				Address installAdd = apis.getInstallationAddress();
+				add.setLine1(installAdd.getLine1());
+				add.setLine2(installAdd.getLine2());
+				add.setLine3(installAdd.getLine3());
+				add.setCity(installAdd.getCity());
+				add.setCountry(installAdd.getCountry());
+				add.setPostalCode(installAdd.getPostalCode());
+				add.setState(installAdd.getState());
+				apisVo.setInstallationAddress(add);
+				vo.setApisMessageVo(apisVo);				
+			}
+
 		}
 		return vo;
 	}

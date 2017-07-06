@@ -292,6 +292,9 @@ public class LoaderRepository {
         for (String bagId: bagIds) {
             Bag bag = new Bag();
             bag.setBagId(bagId);
+            bag.setData_source("APIS");
+            bag.setDestinationAirport(f.getDestination());
+            bag.setAirline(f.getCarrier());
             bag.setFlight(f);
             bag.setPassenger(p);
             bagDao.save(bag);
