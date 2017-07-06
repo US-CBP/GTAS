@@ -7,11 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GTAS</title>
-
     <link rel="stylesheet" href="resources/bower_components/open-sans-fontface/open-sans.css" />
     <link rel="stylesheet" href="resources/css/style-icomoon.css" />
     <link rel="stylesheet" href="resources/bower_components/bootstrap/dist/css/bootstrap.css" />
-    	<link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
     <link rel="stylesheet" href="resources/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" />
     <link rel="stylesheet" href="resources/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
     <link rel="stylesheet" href="resources/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css" />
@@ -28,84 +27,91 @@
 
 <body>
    <header class="header" title="{{'gtas.title' | translate}}"></header>
-    <div id="main" class="container" style="padding-top:100px">
-        <form name="loginform" id="loginform" ng-controller="LoginController" ng-submit="login(credentials)">
-            <p class="login-username">
-                <label for="user_login">{{'login.user' | translate}}</label> <input type="text" class="input" id="user_login"
-                    placeholder="Username" ng-model="credentials.j_username" autocomplete="off" required name="j_username" id="j_username"
-                    disabled/>
-            </p>
-            <p class="login-password">
-                <label for="user_pass">{{'login.password' | translate}}</label> <input type="password" class="input" id="user_pass"
-                    placeholder="Password" ng-model="credentials.j_password" id="Password" name="password" required disabled/>
-            </p>
-            <p class="login-submit">
-                <input type="submit" name="wp-submit" id="wp-submit" class="button-primary" value="Go" />
-            </p>
+   <div class="login-container cbp-card-container gtas-card-container">
+     <div class="cbp-card cbp-card-shadow">
+       <h3 class="login-header">Login</h3>
+       <div class="panel-body">
+         <form role="form" id="loginform" class="form"
+          ng-controller="LoginController" ng-submit="login(credentials)">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-textfield--full-width">
+              <input class="mdl-textfield__input" type="text" pattern="[A-Z,a-z]*"
+                id="user_login" ng-model="credentials.j_username"
+                autocomplete="off" required name="j_username" id="j_username" disabled>
+              <label class="mdl-textfield__label" for="user_login">{{'Username' | translate}}</label>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-textfield--full-width">
+              <input class="mdl-textfield__input" type="password" pattern="[A-Z,a-z]*"
+                id="user_pass" ng-model="credentials.j_password"
+                id="Password" name="password" required disabled>
+              <label class="mdl-textfield__label" for="user_pass">{{'Password' | translate}}</label>
+          </div>
+          <button type="submit" name="wp-submit" id="wp-submit" class="pull-right btn btn-primary">
+            <i class="fa fa-sign-in" aria-hidden="true"></i>
+          </button>
         </form>
-
-    </div>
-
-    <script src="resources/bower_components/angular/angular.js"></script>
-    <script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
-    <script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-    <script src="resources/bower_components/moment/min/moment.min.js"></script>
-    <script src="resources/bower_components/jquery/dist/jquery.js"></script>
-    <script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-    <script src="resources/bower_components/bootbox/bootbox.js"></script>
-    <script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
-    <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
-    <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-    <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-    <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-    <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
-    <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
-    <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
-    <script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
-    <script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
-    <script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
-    <script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
-    <script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
-    <script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
-    <script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
-    <script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
-    <script src='resources/js/query-builder.js'></script>
-    <script src="resources/bower_components/angular-translate/angular-translate.js"></script>
-    <script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
-    <script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
-    <script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
-    <script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
-    <script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
-    <script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-    <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
-	<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>	
-
-
-    <script src='app.js'></script>
-    <script src='common/directives.js'></script>
-    <script src='common/filters.js'></script>
-    <script src='common/services.js'></script>
-    <script src='factory/ModalGridFactory.js'></script>
-    <script src='factory/JqueryQueryBuilderWidget.js'></script>
-    <script src='dashboard/DashboardController.js'></script>
-    <script src='flights/FlightsModel.js'></script>
-    <script src='flights/FlightsController.js'></script>
-    <script src='flights/FlightsService.js'></script>
-    <script src='pax/PaxModel.js'></script>
-    <script src='pax/PaxController.js'></script>
-    <script src='pax/PaxService.js'></script>
-    <script src='pax/PaxFactory.js'></script>
-    <script src='build/BuildController.js'></script>
-    <script src='watchlists/WatchListController.js'></script>
-    <script src='admin/AdminController.js'></script>
-    <script src='admin/UserController.js'></script>
-    <script src='admin/UploadController.js'></script>
-    <script src='login/AuthService.js'></script>
-    <script src='login/LoginController.js'></script>
-    <script src='userSettings/UserSettingsController.js'></script>
-    <script src='userSettings/FilterCtrl.js'></script>
-    <script src='common/languagecontroller.js'></script>
+       </div>
+     </div>
+   </div>
 </body>
+<script src="resources/bower_components/angular/angular.js"></script>
+<script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
+<script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="resources/bower_components/moment/min/moment.min.js"></script>
+<script src="resources/bower_components/jquery/dist/jquery.js"></script>
+<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+<script src="resources/bower_components/bootbox/bootbox.js"></script>
+<script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+<script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
+<script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
+<script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
+<script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
+<script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
+<script src="resources/bower_components/angular-material/angular-material.min.js"></script>
+<script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
+<script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
+<script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+<script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+<script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
+<script src='resources/js/query-builder.js'></script>
+<script src="resources/bower_components/angular-translate/angular-translate.js"></script>
+<script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
+<script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+<script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
+<script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
+<script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
+<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
+
+
+<script src='app.js'></script>
+<script src='common/directives.js'></script>
+<script src='common/filters.js'></script>
+<script src='common/services.js'></script>
+<script src='factory/ModalGridFactory.js'></script>
+<script src='factory/JqueryQueryBuilderWidget.js'></script>
+<script src='dashboard/DashboardController.js'></script>
+<script src='flights/FlightsModel.js'></script>
+<script src='flights/FlightsController.js'></script>
+<script src='flights/FlightsService.js'></script>
+<script src='pax/PaxModel.js'></script>
+<script src='pax/PaxController.js'></script>
+<script src='pax/PaxService.js'></script>
+<script src='pax/PaxFactory.js'></script>
+<script src='build/BuildController.js'></script>
+<script src='watchlists/WatchListController.js'></script>
+<script src='admin/AdminController.js'></script>
+<script src='admin/UserController.js'></script>
+<script src='admin/UploadController.js'></script>
+<script src='login/AuthService.js'></script>
+<script src='login/LoginController.js'></script>
+<script src='userSettings/UserSettingsController.js'></script>
+<script src='userSettings/FilterCtrl.js'></script>
+<script src='common/languagecontroller.js'></script>
 
 </html>
