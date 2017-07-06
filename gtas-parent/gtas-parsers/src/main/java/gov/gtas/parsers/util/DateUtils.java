@@ -52,6 +52,9 @@ public final class DateUtils {
         LocalDate today = LocalDate.now();
         LocalDate birthday = LocalDate.of(year, month + 1, day);  // cal is 0-based. yuck
         Period p = Period.between(birthday, today);
+        if(p.getYears() < 0){
+        	return 0;
+        }
         return p.getYears();
     }  
     
