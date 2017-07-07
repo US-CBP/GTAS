@@ -1,3 +1,7 @@
+<button id="sidebar-toggle" type="button" ng-click="toggleDiv('cbp-sidebar'); toggleDiv('sidebar-toggle')"
+  class="btn btn-icon-only btn-primary">
+  <i class="fa fa-arrow-right" aria-hidden="true"></i>
+</button>
 <div id="cbp-sidebar" ng-submit="filter()" class="cbp-sidebar sidebar after-double-header">
   <div class="row">
     <div class="col-xs-12 pull-left">
@@ -74,7 +78,7 @@
           <div id="filterGroup6" class="collapse in">
             <div class="filter-group-content">
               <div class="row">
-                <div class="form-group col-sm-6">
+                <div class="form-group col-xs-6">
                   <div class="cbp-datepicker">
                     <md-datepicker id="startDate" md-hide-icons="calendar" ng-model="model.etaStart"></md-datepicker>
                     <label class="mdl-textfield__label static-label" for="startDate">
@@ -82,7 +86,7 @@
                     </label>
                   </div>
                 </div>
-                <div class="form-group col-sm-6">
+                <div class="form-group col-xs-6">
                   <div class="cbp-datepicker">
                     <md-datepicker id="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
                     <label class="mdl-textfield__label static-label" for="endDate">

@@ -134,17 +134,32 @@
   -o-transition: .5s ease-in-out;
 }
 #cbp-sidebar.active {
-  transform: translateX(0px)
+  transform: translateX(0px);
 }
 .sidebar {
-    z-index: 1;
-    position: absolute;
-    height: 82vh;
-    padding: 10px;
-    width: inherit;
-    margin-top: 51px;
-    overflow-y: scroll;
-    overflow-x: hidden;
+  z-index: 1;
+  position: absolute;
+  height: 82vh;
+  padding: 10px;
+  width: 350px;
+  margin-top: 51px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#sidebar-toggle {
+  position: absolute;
+  z-index: 5;
+  left: 0px;
+  top: 50vh;
+  transition: .5s ease-in-out;
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+}
+#sidebar-toggle.active {
+  -ms-transform: translateX(348px) rotate(180deg); /* IE 9 */
+  -webkit-transform: translateX(348px) rotate(180deg); /* Chrome, Safari, Opera */
+  transform: translateX(348px) rotate(180deg);
 }
 
 /*UI-Grid Overrides*/
