@@ -163,10 +163,10 @@ public class PnrUtils {
 			PassengerVo tmp = new PassengerVo();
 			if (tif.getTravelerSurname() != null && td.getTravelerGivenName() != null)
 				processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null, p.getGender());
-			if (StringUtils.isNoneBlank(tif.getTravelerSurname())) {
+			if (StringUtils.isNoneBlank(tif.getTravelerSurname()) && StringUtils.isBlank(p.getLastName())) {
 				p.setLastName(tmp.getLastName());
 			}
-			if (StringUtils.isNoneBlank(td.getTravelerGivenName())) {
+			if (StringUtils.isNoneBlank(td.getTravelerGivenName()) && StringUtils.isBlank(p.getFirstName())) {
 				p.setFirstName(tmp.getFirstName());
 			}
 			p.setTitle(tmp.getTitle());
