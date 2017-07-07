@@ -25,7 +25,7 @@
   text-align: right;
 }
 .upper-cnt {
-  margin-top: 0px;
+  margin-top: 20px;
 }
 @media (max-width : 1200px) {
   .upper-cnt {
@@ -55,7 +55,6 @@
 .danger-outline {
   outline: #A00000 2px solid;
 }
-
 
 /*Custom Components*/
 .h-label{

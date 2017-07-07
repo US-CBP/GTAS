@@ -27,22 +27,22 @@
 
 <body>
    <header class="header" title="{{'gtas.title' | translate}}"></header>
-   <div class="login-container cbp-card-container gtas-card-container">
+   <div ng-cloak class="login-container cbp-card-container gtas-card-container">
      <div class="cbp-card cbp-card-shadow">
        <h3 class="login-header">Login</h3>
        <div class="panel-body">
          <form role="form" id="loginform" class="form"
           ng-controller="LoginController" ng-submit="login(credentials)">
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-textfield--full-width">
-              <input class="mdl-textfield__input" type="text" pattern="[A-Z,a-z]*"
+              <input class="mdl-textfield__input" type="text"
                 id="user_login" ng-model="credentials.j_username"
-                autocomplete="off" required name="j_username" id="j_username" disabled>
+                name="username" autocomplete="off" required disabled>
               <label class="mdl-textfield__label" for="user_login">{{'Username' | translate}}</label>
           </div>
           <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-textfield--full-width">
-              <input class="mdl-textfield__input" type="password" pattern="[A-Z,a-z]*"
+              <input class="mdl-textfield__input" type="password"
                 id="user_pass" ng-model="credentials.j_password"
-                id="Password" name="password" required disabled>
+                name="password" required disabled>
               <label class="mdl-textfield__label" for="user_pass">{{'Password' | translate}}</label>
           </div>
           <button type="submit" name="wp-submit" id="wp-submit" class="pull-right btn btn-primary">

@@ -337,9 +337,12 @@
         };
 
         var exporter = {
-                'csv': function () {
-                    $scope.gridApi.exporter.csvExport('all', 'all');
-                }
+          'csv': function () {
+              $scope.gridApi.exporter.csvExport('all', 'all');
+          },
+          'pdf': function () {
+              $scope.gridApi.exporter.pdfExport('all', 'all');
+          }
         };
 
         $scope.export = function (format) {
