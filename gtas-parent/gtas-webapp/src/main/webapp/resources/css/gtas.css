@@ -157,9 +157,14 @@
   -o-transition: .5s ease-in-out;
 }
 #sidebar-toggle.active {
-  -ms-transform: translateX(348px) rotate(180deg); /* IE 9 */
-  -webkit-transform: translateX(348px) rotate(180deg); /* Chrome, Safari, Opera */
-  transform: translateX(348px) rotate(180deg);
+  -ms-transform: translateX(348px); /* IE 9 */
+  -webkit-transform: translateX(348px); /* Chrome, Safari, Opera */
+  transform: translateX(348px);
+}
+#sidebar-toggle.active i {
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg); /* IE 9 */
+  -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
 }
 
 /*UI-Grid Overrides*/

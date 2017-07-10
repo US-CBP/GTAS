@@ -10,17 +10,4 @@
      ng-style="getTableHeight()"
      class="grid">
 </div>
-<div class="pull-right">
-  <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
-     <i class="fa fa-file-excel-o" aria-hidden="true"></i>
-     <md-tooltip>Export CSV</md-tooltip>
-  </button>
-  <button type="button" ng-click="export('csv')" class="btn btn-icon-only btn-hover">
-    <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
-    <md-tooltip>Export PDF</md-tooltip>
-  </button>
-  <button type="button" ng-click="toggleDiv('cbp-sidebar')" class="btn btn-icon-only btn-hover">
-    <i class="fa fa-bars" aria-hidden="true"></i>
-    <md-tooltip>Toggle Side-Menu</md-tooltip>
-  </button>
-</div>
+<div ng-include="'views/footerbuttons.html'"></div>

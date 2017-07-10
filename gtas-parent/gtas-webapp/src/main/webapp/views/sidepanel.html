@@ -5,7 +5,7 @@
 <div id="cbp-sidebar" ng-submit="filter()" class="cbp-sidebar sidebar after-double-header">
   <div class="row">
     <div class="col-xs-12 pull-left">
-      <form class="filters" _lpchecked="1">
+      <form name="sideForm" class="filters" _lpchecked="1">
         <div class="filter-list" role="tablist">
           <h1 class="filter-heading">Filters
             <button type="submit" class="btn btn-icon-only btn-hover">
@@ -80,18 +80,29 @@
               <div class="row">
                 <div class="form-group col-xs-6">
                   <div class="cbp-datepicker">
-                    <md-datepicker id="startDate" md-hide-icons="calendar" ng-model="model.etaStart"></md-datepicker>
+                    <md-datepicker id="startDate" name="startDate" md-hide-icons="calendar"
+                      ng-model="model.etaStart" required></md-datepicker>
                     <label class="mdl-textfield__label static-label" for="startDate">
                       {{'flight.startdate' | translate}}
                     </label>
+                    <div class="validation-messages" ng-messages="sideForm.startDate.$error">
+                      <div ng-message="valid" class="alert alert-danger" role="alert">
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="form-group col-xs-6">
                   <div class="cbp-datepicker">
-                    <md-datepicker id="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
+                    <md-datepicker id="endDate" name="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
                     <label class="mdl-textfield__label static-label" for="endDate">
                       {{'flight.enddate' | translate}}
                     </label>
+                    <div class="validation-messages" ng-messages="sideForm.endDate.$error">
+                      <div ng-message="valid" class="alert alert-danger" role="alert">
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
