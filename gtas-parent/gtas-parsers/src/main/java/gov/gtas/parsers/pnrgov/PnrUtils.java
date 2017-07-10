@@ -169,6 +169,9 @@ public class PnrUtils {
 			if (StringUtils.isNoneBlank(td.getTravelerGivenName()) && StringUtils.isBlank(p.getFirstName())) {
 				p.setFirstName(tmp.getFirstName());
 			}
+			if(StringUtils.isNotBlank(p.getMiddleName())){
+				checkMiddleNameForExtraChars(p);
+			}
 			p.setTitle(tmp.getTitle());
 			p.setSuffix(tmp.getSuffix());
 		}
@@ -176,6 +179,13 @@ public class PnrUtils {
 		return p;
 	}
 
+	//Handling names with a 1 #478 code fix
+	private static void checkMiddleNameForExtraChars(PassengerVo p){
+		String tmp=p.getMiddleName();
+		if(p.getMiddleName().indexOf("-1") != -1){
+			p.setMiddleName(p.getMiddleName().substring(0,p.getMiddleName().indexOf("-1")));
+		}
+	}
 	public static DocumentVo createVisa(SSR ssr) {
 		List<String> strs = splitSsrFreeText(ssr);
 		if (CollectionUtils.isEmpty(strs)) {
@@ -386,4 +396,5 @@ public class PnrUtils {
         }
         return thePax;
 	}
+
 }
