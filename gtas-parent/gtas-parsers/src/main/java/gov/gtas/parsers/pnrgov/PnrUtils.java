@@ -317,7 +317,7 @@ public class PnrUtils {
 		return list.get(i);
 	}
 
-	private static final String[] SUFFIXES = { "JR", "SR", "II", "III", "IV", "V", "VI", "VII", "VIII" };
+	private static final String[] SUFFIXES = { "JR", "SR"};
 	private static final String[] PREFIXES = { "MR", "MRS", "MS", "DR", "MISS", "SIR", "MADAM", "MAYOR", "PRESIDENT" };
 
 	private static void processNames(PassengerVo p, String last, String first, String middle, String gender) {
