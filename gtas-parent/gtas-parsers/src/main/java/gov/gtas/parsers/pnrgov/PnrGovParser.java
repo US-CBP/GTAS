@@ -662,6 +662,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		if(tmp.indexOf("EK ") != -1){
     			tmp=tmp.replace("EK ", "");
     		}
+    		if(tmp.indexOf("..") != -1){
+    			tmp=tmp.replace("..", "_");
+    		}
              EmailVo email = new EmailVo();
              email.setAddress(tmp);
              if(tmp.indexOf("@") != -1){
