@@ -1,5 +1,5 @@
 /*
- * All GTAS code is Copyright 2016, Unisys Corporation.
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
  * 
  * Please see LICENSE.txt for details.
  */
@@ -192,6 +192,17 @@
                 });
                 return (request.then(handleSuccess, handleError));
             }
+            
+            function getRuleHitsByFlightAndPax(passengerId, flightId) {
+                var request = $http({
+                    method: "get",
+                    url: "/gtas/hit/passenger" + (passengerId ? "?passengerId=" + passengerId : "") + (flightId ? "&flightId=" + flightId : ""),
+                    params: {
+                        action: "get"
+                    }
+                });
+                return (request.then(handleSuccess, handleError));
+            }
 
             function broadcastRuleID(ruleID) {
                 $rootScope.$broadcast('ruleIDBroadcast', ruleID);
@@ -203,6 +214,7 @@
                 getAllPax: getAllPax,
                 broadcast: broadcast,
                 getRuleHits: getRuleHits,
+                getRuleHitsByFlightAndPax: getRuleHitsByFlightAndPax,
                 getPaxDetail: getPaxDetail,
                 broadcastRuleID: broadcastRuleID,
                 getPassengersBasedOnUser: getPassengersBasedOnUser

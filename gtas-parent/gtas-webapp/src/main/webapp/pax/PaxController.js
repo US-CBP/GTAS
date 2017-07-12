@@ -5,7 +5,7 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, slides, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
         $scope.isLoadingFlightHistory = true;        
         $scope.isClosedCase = false;
