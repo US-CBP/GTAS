@@ -69,6 +69,8 @@ public class PassengerVo extends BaseVo {
     private ApisMessageVo apisMessageVo;
 
 	private List<DispositionVo> dispositionHistory;
+	
+	private List<AttachmentVo> attachments;
     
     public String getPaxId() {
         return paxId;
@@ -310,6 +312,12 @@ public class PassengerVo extends BaseVo {
 	}
 	public void setApisMessageVo(ApisMessageVo apisMessageVo) {
 		this.apisMessageVo = apisMessageVo;
+	}
+	public List<AttachmentVo> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(List<AttachmentVo> attachments) {
+		this.attachments = attachments;
 	}
 	@Override
     public String toString() {

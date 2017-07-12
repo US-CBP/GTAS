@@ -1,12 +1,12 @@
 /*
- * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ * All GTAS code is Copyright 2016, Unisys Corporation.
  * 
  * Please see LICENSE.txt for details.
  */
 (function () {
     'use strict';
     app
-        .service('paxDetailService', function ($http, $q) {
+        .service('paxDetailService', function ($http, $q, Upload) {
             function getPaxDetail(paxId, flightId) {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/passengers/passenger/" + paxId + "/details?flightId=" + flightId));
@@ -25,10 +25,45 @@
             			+ "&docIssuCountry=" + docIssuCountry + "&docExpiration="+docExpiration));
             	return dfd.promise;
             }
+            
+            function getPaxAttachments(paxId){
+            	var dfd = $q.defer();
+            	dfd.resolve($http.get('/gtas/getattachments?paxId='+ paxId));
+            	return dfd.promise;
+            }
+            
+            function savePaxAttachments(username, password, description, paxId, file){
+            	if (!file.$error) {
+                    Upload.upload({
+                        url: '/gtas/uploadattachments',
+                        data: {
+                          username: username,
+                          password: password,
+                          desc: description,
+                          paxId: paxId,
+                          file: file  
+                        }
+                    }).progress(function (evt) {
+                    	//progress tracker potentially
+                    }).success(function (data, status, headers, config) {
+                        return "success";
+                    });
+            	}
+            };
+            
+            function deleteAttachment(attId){
+            	 var dfd = $q.defer();
+                 dfd.resolve($http.post("/gtas/deleteattachment", attId));
+                 return dfd.promise;
+            }
 
             return ({getPaxDetail: getPaxDetail,
                     getPaxFlightHistory: getPaxFlightHistory,
-                    getPaxFullTravelHistory: getPaxFullTravelHistory});
+                    getPaxFullTravelHistory: getPaxFullTravelHistory,
+                    getPaxAttachments: getPaxAttachments,
+                    savePaxAttachments: savePaxAttachments,
+                    deleteAttachment: deleteAttachment
+                    });
         })
         .service('caseService', function ($http, $q) {
             function createDisposition(disposition) {

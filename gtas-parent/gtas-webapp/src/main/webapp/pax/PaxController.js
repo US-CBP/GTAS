@@ -5,11 +5,37 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, slides, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
         $scope.isLoadingFlightHistory = true;        
         $scope.isClosedCase = false;
         $scope.ruleHits = ruleHits;
+        
+        $scope.slides = [];
+        
+        $scope.getAttachment = function(paxId){
+        	//TO-DO add specific pax-id here to grab from current passenger
+        	paxDetailService.getPaxAttachments(paxId).then(function(data){
+        		var attList = '';
+        		$.each(data.data, function(index,value){
+        			var slideString = '';
+        			if(index === 0){
+        				slideString += '<slide active="'+value.active+'">';
+        			} else{
+        				slideString += '<slide>';
+        			}
+        			slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
+        			attList += slideString;
+        		});
+        		$scope.slides = attList;
+        		$scope.showAttachments(attList);
+        	});
+        };
+        
+        $scope.uploadAttachment = function(){
+        	//TO-DO add specific pax information here as well as credentials of some kind to insure we don't get arbitrary uploads.
+        	paxDetailService.savePaxAttachments('name','pw',$scope.attachmentDesc,$scope.passenger.paxId,$scope.attachment);
+        };
         
         //Bandaid: Parses out seat arrangements not for the particular PNR, returns new seat array. This should be handled on the back-end.
         var parseOutExtraSeats = function(seats, flightLegs){
@@ -245,7 +271,9 @@
     		}		       	
         	
     		//Bandaid: Sometimes flighthistory and the pnr flight legs do not match, this compares and parses them out if they do not exist in the pnrVo.flightLegs object arry
-        	flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
+        	if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
+        		flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
+        	}
         	
         	//Bandaid: Re-order TVL lines so that dates are in correct order based on etd
         	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);    		
@@ -309,6 +337,7 @@
    		});
     };
     
+    //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()
             .title('WARNING: Please Confirm The Watchlist Addition')
@@ -323,6 +352,19 @@
             return false;
         });
     };
+    
+    //dialog function for image display dialog
+    $scope.showAttachments = function(attachmentList) {
+        $mdDialog.show({
+          template:'<md-dialog><md-dialog-content>'+
+          '<div><carousel>'+
+              	attachmentList+
+            '</carousel></div>'+          
+          '</md-dialog-content></md-dialog>',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true
+        })
+      };
     
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,

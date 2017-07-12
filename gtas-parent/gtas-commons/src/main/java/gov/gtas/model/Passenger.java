@@ -95,7 +95,7 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Attachment> attachments = new HashSet<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
@@ -301,6 +301,14 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
 		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
+	}
+	
+    public Set<Attachment> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(Set<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	@Override
