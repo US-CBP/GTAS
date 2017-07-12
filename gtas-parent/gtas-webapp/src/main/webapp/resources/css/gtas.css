@@ -2,12 +2,36 @@
 .sm-pad{
   padding: 5px;
 }
+.no-margin-top {
+  margin-top: 0px;
+}
+.no-pad-top {
+  padding-top: 0px !important;
+}
+.no-pad-btm {
+  padding-bottom: 0px !important;
+}
+.md-margin-top {
+  margin-top: 20px;
+}
 .fixed-width-sm {
-  width: 176px;
+  width: 176px !important;
+}
+.fixed-width-md{
+  width: 450px !important;
+}
+.half-width {
+  width: 49% !important;
+}
+.full-width {
+  width: 100% !important;
 }
 /*Positioning Styles */
 .flex {
   display: flex;
+}
+.flex-vert {
+  flex-direction: column;
 }
 .justify-around {
   justify-content: space-around;
@@ -34,6 +58,7 @@
 }
 .gtas-card-container .cbp-card  {
     min-height: inherit;
+    max-height: 800px;
 }
 .gtas-card-container .cbp-card__title {
   padding: 10px;
@@ -63,7 +88,12 @@
   padding: 8px;
   color: white;
 }
-
+.alt-label {
+  background-color: #1460AA;
+  display: inline;
+  padding: 8px;
+  color: white;
+}
 /*Angular-materials cbp overrides */
 .cbp-input, .md-chips {
   display: inherit;
@@ -123,6 +153,9 @@
 }
 .cbp-non-chip-input:focus {
   outline: inherit;
+}
+.static-label {
+  top: 0px !important;
 }
 #cbp-sidebar {
   margin-top: 0px !important;
