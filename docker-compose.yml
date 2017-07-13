@@ -1,0 +1,44 @@
+version: '3.3'
+
+services:
+  # mavenbuildgtas:
+  #   environment:
+  #     JDBC_URL: jdbc:mariadb://mariahost:3306/gtas?useUnicode=true&characterEncoding=UTF-8
+  #     JDBC_USER: root
+  #     JDBC_PASS: admin
+  #   build:
+  #     context: .
+  #     dockerfile: maven.Dockerfile
+  #   volumes:
+  #     - "./gtas-parent:/project"
+  #   links:
+  #     - mariahost
+
+  mariahost:
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: gtas
+    build:
+      context: ./gtas-parent/gtas-commons
+      dockerfile: db.Dockerfile
+    # volumes:
+       #- ./gtas-parent/gtas-commons/db:/var/lib/mysql
+      #  - "./gtas-parent/gtas-commons/target/:/docker-entrypoint-initdb.d"
+      #  - "./gtas-parent/gtas-commons/src/main/resources/sql:/docker-entrypoint-initdb.d"
+    ports:
+      - "3306:3306"
+    container_name: mariahost
+
+  tomcatgtas:
+    links:
+      - mariahost
+    build:
+      context: .
+      dockerfile: /gtas-parent/docker/tomcat.Dockerfile
+    # volumes:
+    #    #- ./gtas-parent/gtas-commons/db:/var/lib/mysql
+    #    - "./gtas-parent/gtas-webapp/target/gtas.war:/usr/local/tomcat/webapps/"
+    #    - "./gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war:/usr/local/tomcat/webapps/"
+    ports:
+      - "8091:8080"
+    container_name: tomcat

@@ -1,0 +1,11 @@
+*.pptx
+*.zip
+gtas-parent/**/target/**
+!gtas-parent/pom.xml
+!gtas-parent/docker/**
+!gtas-parent/gtas-commons/target/**
+!gtas-parent/gtas-commons/**
+!gtas-parent/gtas-commons/target/**
+gtas-parent/gtas-commons/db/**
+!gtas-parent/gtas-webapp/target/**
+!gtas-parent/gtas-job-scheduler-war/target/**

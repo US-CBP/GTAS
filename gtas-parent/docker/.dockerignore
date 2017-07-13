@@ -1,0 +1,8 @@
+../**/*
+gtas-parent/**/target/**
+!../pom.xml
+!../../gtas-parent/gtas-commons/target/**
+!../../gtas-parent/gtas-commons/**
+../../gtas-parent/gtas-commons/db/**
+!../../gtas-parent/gtas-webapp/target/**
+!../../gtas-parent/gtas-job-scheduler-war/target/**
