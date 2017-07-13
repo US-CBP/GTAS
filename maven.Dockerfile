@@ -3,7 +3,6 @@ FROM maven:latest
 RUN mkdir -p /project
 
 VOLUME gtas-parent /project
-VOLUME C:\Users\GTAS7\.m2 /root/.m2
 COPY gtas-parent /project
 WORKDIR /project
 
