@@ -6,9 +6,11 @@
 package gov.gtas.services.search;
 
 import java.util.Date;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import gov.gtas.model.Address;
 import gov.gtas.vo.passenger.FlightVo;
 
 public class FlightPassengerVo {
@@ -37,6 +39,7 @@ public class FlightPassengerVo {
     private String residencyCountry;
     private String passengerType;
     private Date dob;
+    private Set<Address> addresses;
     
     private String apis;
     private String pnr;
@@ -167,4 +170,11 @@ public class FlightPassengerVo {
 	public void setPnr(String pnr) {
 		this.pnr = pnr;
 	}
+	public Set<Address> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(Set<Address> set) {
+		this.addresses = set;
+	}
+	
 }

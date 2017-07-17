@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import gov.gtas.model.Address;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
@@ -135,12 +137,12 @@ public class ElasticHelper {
 
 	public void indexPnr(Pnr pnr) {
 		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
-		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw);
+		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw, null, pnr);
 	}
 
 	public void indexApis(ApisMessage apis) {
 		String apisRaw = LobUtils.convertClobToString(apis.getRaw());		
-		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null);
+		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null,apis,null);
 	}
 	
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {	
@@ -164,6 +166,7 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 			vo.setOrigin((String)result.get("origin"));
 			vo.setDestination((String)result.get("destination"));
+			vo.setAddresses((Set<Address>) result.get("addresses"));
 			try {
 				Date etd = dateParser.parse((String)result.get("etd"));
 				vo.setEtd(etd);
@@ -183,7 +186,7 @@ public class ElasticHelper {
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		
-		final String[] searchFields = {"apis", "pnr", "firstName", "lastName", "carrier", "flightNumber", "origin", "destination"};
+		final String[] searchFields = {"apis", "pnr", "firstName", "lastName", "carrier", "flightNumber", "origin", "destination","addresses"};
 		
         int startIndex = (pageNumber - 1) * pageSize;
         QueryBuilder qb = QueryBuilders
@@ -204,7 +207,7 @@ public class ElasticHelper {
 		return response.getHits();
 	}
 	
-	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String apis, String pnr) {
+	private void indexFlightPax(Collection<Flight> flights, Collection<Passenger> passengers, String apis, String pnr, ApisMessage am, Pnr pm) {
 		Gson gson = new GsonBuilder()
 				.setDateFormat(DATE_FORMAT)
 				.create();
@@ -250,6 +253,7 @@ public class ElasticHelper {
 						vo.setApis(apis);
 					} else {
 						vo.setPnr(pnr);
+						vo.setAddresses(pm.getAddresses());
 					}
 					indexRequest.source(gson.toJson(vo));
 					client.index(indexRequest).actionGet();
