@@ -39,9 +39,11 @@
             	<md-button type="submit" class="md-raised md-primary col-sm-offset-6 fa fa-eye" 
             	ng-click="showConfirm()"> Add To Watchlist</md-button>
             </div>
+            
         </div>
     </div>
     <!-- END OF SPAN 12 -->
+
 
     <div class="container" style="padding: 10px;">
         <div class="row">
@@ -115,7 +117,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="j in ruleHits[0].hitsDetailsList track by $index">
+                                        <tr ng-repeat="j in ruleHits track by $index">
                                             <td style="text-align: center">{{j.title}}</td>
                                             <td style="text-align: center; max-width:150px">{{j.ruleConditions}}</td>
                                         </tr>
@@ -124,7 +126,7 @@
                              </div>
                     </div>
                     
-                        <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
+                    <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
                     
 	                <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
 	                	<div class="container">

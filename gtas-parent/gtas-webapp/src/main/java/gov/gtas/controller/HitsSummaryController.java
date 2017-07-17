@@ -7,6 +7,7 @@ package gov.gtas.controller;
 
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitsSummary;
 import gov.gtas.services.HitsSummaryService;
 
 import java.util.ArrayList;
@@ -42,6 +43,25 @@ public class HitsSummaryController {
         return getHitDetailsMapped(hitsSummaryService.findByPassengerId(Long
                 .parseLong(id)));
     }
+    
+    @RequestMapping(value = "/hit/flightpassenger", method = RequestMethod.GET)
+	@Transactional
+	public @ResponseBody List<HitDetailVo> getRulesByPassengerAndFlight(
+			@RequestParam(value = "passengerId") String passengerId,
+			@RequestParam(value = "flightId") String flightId){
+    	
+    	List<HitsSummary> tempSumList = hitsSummaryService.findByFlightIdAndPassengerId(Long.parseLong(flightId), Long.parseLong(passengerId));
+    	List<HitDetail> tempDetList = new ArrayList<HitDetail>();
+    	
+    	//Multiple summaries can exist for the same flight/pax combination. We will break open the summaries to get the hit details,
+    	//then combine those lists into a singular list in order to convert it into our dto list
+    	
+    	for(HitsSummary h : tempSumList){
+    		tempDetList.addAll(h.getHitdetails());
+    	};
+		
+		return getHitDetailsMapped(tempDetList);
+	};
 
     @Transactional
     public List<HitDetailVo> getHitDetailsMapped(

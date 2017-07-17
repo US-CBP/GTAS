@@ -196,17 +196,31 @@
             function getRuleHitsByFlightAndPax(passengerId, flightId) {
                 var request = $http({
                     method: "get",
-                    url: "/gtas/hit/passenger" + (passengerId ? "?passengerId=" + passengerId : "") + (flightId ? "&flightId=" + flightId : ""),
+                    url: "/gtas/hit/flightpassenger" + (passengerId ? "?passengerId=" + passengerId : "") + (flightId ? "&flightId=" + flightId : ""),
                     params: {
                         action: "get"
                     }
                 });
-                return (request.then(handleSuccess, handleError));
+                
+                return (request.then(function(res){
+                	return formatHitDetails(res);
+                }));
             }
 
             function broadcastRuleID(ruleID) {
                 $rootScope.$broadcast('ruleIDBroadcast', ruleID);
             }
+            
+            //Open up rule hits summaries to break apart details for display.
+            function formatHitDetails(ruleSummaryHits){
+            	var ruleHitsList = [];
+            	if(angular.isDefined(ruleSummaryHits) && ruleSummaryHits.data.length > 0){   	  
+            	  $.each(ruleSummaryHits.data, function(index,value){
+            		  ruleHitsList.push(value.hitsDetailsList[0]); //First object in this 'array' contains the values needed for the front-end display
+            	  });
+              	}
+            	return ruleHitsList;
+              };
 
             // Return public API.
             return ({

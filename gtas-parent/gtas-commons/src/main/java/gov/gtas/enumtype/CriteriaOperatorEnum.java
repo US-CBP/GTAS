@@ -12,7 +12,7 @@ public enum CriteriaOperatorEnum {
   GREATER(">", "is greater than", false),
   LESS("<", "is less than", false),
   GREATER_OR_EQUAL(">=", "is greater than or equal to", false),
-  LESS_OR_EQUAL("<=", "is lesss than or equal to", false),
+  LESS_OR_EQUAL("<=", "is less than or equal to", false),
   IN("in", "is one of", true),
   NOT_IN("not in", "is not one of", true),
   BETWEEN("", "is between", true),

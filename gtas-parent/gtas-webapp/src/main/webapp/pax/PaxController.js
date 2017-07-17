@@ -78,7 +78,7 @@
         
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
-        	$.each($scope.ruleHits[0].hitsDetailsList, function(index,value){
+        	$.each($scope.ruleHits, function(index,value){
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
     	}        
@@ -365,7 +365,7 @@
           clickOutsideToClose:true
         })
       };
-    
+      
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                               jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,

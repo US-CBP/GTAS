@@ -446,7 +446,7 @@ var app;
                             return userService.getUserData();
                         },
                         ruleHits: function(paxService, $stateParams){
-                        	return paxService.getRuleHits($stateParams.paxId);
+                        	return paxService.getRuleHitsByFlightAndPax($stateParams.paxId, $stateParams.flightId);
                         }
                     }
                 })
