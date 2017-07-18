@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+
+  tomcatgtas:
+    container_name: tomcat
+    build:
+      context: .
+      dockerfile: tomcat.Dockerfile
+    volumes:
+      -  //C/db/:/usr/local/tomcat/webapps:rw
+
+    ports:
+      - "8080:8080"
+
+  mariahost:
+    # image: mariadb:latest
+    environment:
+      #MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: gtas
+    build:
+       context: .
+       dockerfile: db.Dockerfile
+    container_name: mariahost
+    volumes:
+     -  //C/db/mariadb/data:/var/lib/mysql:rw
+     - //C/db/init_db:/docker-entrypoint-initdb.d:ro
+
+    ports:
+       - "3306:3306"
+    healthcheck:
+      test: "/usr/bin/mysqladmin --user=root --password=admin status"
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: mvn.Dockerfile
+    links:
+         - mariahost:mariahost
+
+networks:
+  default:
+    external:
+      name: gtas_default
