@@ -84,8 +84,8 @@
   <!--Table panels -->
   <div class="panel">
     <div class="container">
-      <div class="row">
-        <div class="col-md-6">
+      <div class="flex flex-center">
+        <div ng-if="rulesList.length>0" class="fixed-width-md sm-pad ">
           <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
             <thead>
               <tr>
@@ -110,7 +110,7 @@
             </table>
           </div>
         </div>
-        <div class="col-md-6">
+        <div ng-if="airportStats.length>0" class="fixed-width-md sm-pad">
           <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
             <thead>
               <tr>
