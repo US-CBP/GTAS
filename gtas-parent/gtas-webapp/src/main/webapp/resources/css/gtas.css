@@ -113,6 +113,17 @@
 .flight-num {
   margin-top: 10px;
 }
+/*Custom paxdetail*/
+.center-btn{
+  margin: 15px auto !important;
+  display: block !important;
+}
+.seven-table td{
+  width: 15%;
+}
+.seven-table th{
+  width: 10%;
+}
 /*Angular-materials cbp overrides */
 .cbp-input, .md-chips {
   display: inherit;

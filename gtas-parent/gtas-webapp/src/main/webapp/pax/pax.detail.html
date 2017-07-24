@@ -16,8 +16,9 @@
         <div>{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
     </div>
   </div>
-  <md-button type="submit" class="btn btn-default fa fa-eye"
-    ng-click="showConfirm()"> Add To Watchlist</md-button>
+  <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
+    <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+  </button>
   <section>
     <div class="panel panel-default">
       <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
@@ -35,8 +36,8 @@
                 <div>{{'pass.destinationairport' | translate}}:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
               </div>
               <div>
-                <div>{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD }}</strong></div>
-                <div>{{'pass.eta' | translate}}:&nbsp; <strong>{{ passenger.flightETA }}</strong></div>
+                <div>{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</strong></div>
+                <div>{{'pass.eta' | translate}}:&nbsp; <strong>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</strong></div>
               </div>
             </div>
             <div class="flex justify-around flex-wrap" >
@@ -272,11 +273,11 @@
                 {{'pnr.recordlocator' | translate}}:&nbsp;<strong>{{passenger.pnrVo.recordLocator }}</strong>
               </div>
               <div>
-                {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date}}</strong>
+                {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
               </div>
               <div>
-                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date }}</strong></br>
-                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
+                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd' }}</strong></br>
+                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
               </div>
             </div>
             <div class="flex flex-center">
@@ -295,7 +296,6 @@
                             <th>{{'flight.flight' | translate}}#</th>
                             <th>{{'pass.originairport' | translate}}</th>
                             <th>{{'pass.destinationairport' | translate}}</th>
-                            <th>{{'pnr.flightdate' | translate}}</th>
                             <th>{{'pass.etd' | translate}}</th>
                           </tr>
                         </thead>
@@ -308,7 +308,6 @@
                               <td>{{doc.flightNumber }}</td>
                               <td>{{doc.originAirport }}</td>
                               <td>{{doc.destinationAirport }}</td>
-                              <td>{{doc.flightDate }}</td>
                               <td>{{doc.etd }}</td>
                             </tr>
                           </tbody>
@@ -651,83 +650,92 @@
           </md-tab-body>
         </md-tab>
 
-                <!-- Flight History Tab -->
-                <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
-                </md-tab>
-                <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
-                    <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
-                        <div class="container">
-                            <div style="padding: 10px;"></div>
-                            <div class="row">
-
-                                <div class="row"
-                                     ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
-                                    <span class="col-sm-offset-1"
-                                          style="margin-left:3.5%; font-weight: bold;">&nbsp;{{ 'doc.doc' | translate}}# : {{ key }}</span>
-									<div class="col-sm-offset-1">Current Itinerary</div>
-                                    <div style="padding: 15px;"></div>
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr class="text-center" style="text-align: center">
-                                            <th style="text-align: center">{{ 'flight.carrieflight' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.eta' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.etd' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.origin' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.originairport' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destination' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destinationairport' | translate}}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="j in value track by $index">
-                                            <td style="text-align: center">{{j.fullFlightNumber}}</td>
-                                            <td style="text-align: center">{{j.etaLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{j.etdLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{j.originCountry}}</td>
-                                            <td style="text-align: center">{{j.origin}}</td>
-                                            <td style="text-align: center">{{j.destinationCountry}}</td>
-                                            <td style="text-align: center">{{j.destination}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <span ng-repeat-end></span>
-
-                                <div class="row"
-                                     ng-repeat-start="flight in passenger.fullFlightHistoryVo">
-                                    <span class="col-sm-offset-1">Total Flight History</span>
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr class="text-center" style="text-align: center">
-                                            <th>{{ 'flight.carrieflight' | translate}}</th>
-                                            <th>{{ 'pass.eta' | translate}}</th>
-                                            <th>{{ 'pass.etd' | translate}}</th>
-                                            <th>{{ 'pass.origin' | translate}}</th>
-                                            <th>{{ 'pass.originairport' | translate}}</th>
-                                            <th>{{ 'pass.destination' | translate}}</th>
-                                            <th>{{ 'pass.destinationairport' | translate}}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="k in flight track by $index">
-                                            <td>{{k.fullFlightNumber}}</td>
-                                            <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td>{{k.originCountry}}</td>
-                                            <td>{{k.origin}}</td>
-                                            <td>{{k.destinationCountry}}</td>
-                                            <td>{{k.destination}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <span ng-repeat-end></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="padding: 30px;"></div>
-                </md-tab>
-            </md-tabs>
-        </div>
-    </section>
+        <!-- Flight History Tab -->
+        <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
+        </md-tab>
+        <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
+          <md-tab-body>
+            <!--Current Itinerary!-->
+            <div class="cbp-card-container gtas-card-container md-pad full-width ">
+              <div class="cbp-card cbp-card-shadow" ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
+                <h3 class="h-label no-margin-top" >
+                  Current Itinerary: {{ key }}
+                </h3>
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert seven-table">
+                  <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                    <thead>
+                      <tr>
+                        <th>{{'flight.carrieflight' | translate}}</th>
+                        <th>{{'pass.eta' | translate}}</th>
+                        <th>{{'pass.etd' | translate}}</th>
+                        <th>{{'pass.origin' | translate}}</th>
+                        <th>{{'pass.originairport' | translate}}</th>
+                        <th>{{'pass.destination' | translate}}</th>
+                        <th>{{'pass.destinationairport' | translate}}</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div class="floating-table-body">
+                    <table class="cbp-table-selectable mdl-js-data-table">
+                      <tbody>
+                        <tr ng-repeat="j in value track by $index">
+                            <td>{{j.fullFlightNumber}}</td>
+                            <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{j.originCountry}}</td>
+                            <td>{{j.origin}}</td>
+                            <td>{{j.destinationCountry}}</td>
+                            <td>{{j.destination}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <span ng-repeat-end></span>
+            </div>
+            <!--Seat Information!-->
+            <div class="cbp-card-container gtas-card-container md-pad full-width ">
+              <div class="cbp-card cbp-card-shadow" ng-repeat-start="flight in passenger.fullFlightHistoryVo">
+                <h3 class="h-label no-margin-top" >
+                  Total Flight History
+                </h3>
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert seven-table">
+                  <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                    <thead>
+                      <tr>
+                        <th>{{'flight.carrieflight' | translate}}</th>
+                        <th>{{'pass.eta' | translate}}</th>
+                        <th>{{'pass.etd' | translate}}</th>
+                        <th>{{'pass.origin' | translate}}</th>
+                        <th>{{'pass.originairport' | translate}}</th>
+                        <th>{{'pass.destination' | translate}}</th>
+                        <th>{{'pass.destinationairport' | translate}}</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div class="floating-table-body">
+                    <table class="cbp-table-selectable mdl-js-data-table">
+                      <tbody>
+                        <tr ng-repeat="k in flight track by $index">
+                            <td>{{k.fullFlightNumber}}</td>
+                            <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{k.originCountry}}</td>
+                            <td>{{k.origin}}</td>
+                            <td>{{k.destinationCountry}}</td>
+                            <td>{{k.destination}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <span ng-repeat-end></span>
+            </div>
+          </md-tab-body>
+        </md-tab>
+      </md-tabs>
+    </div>
+  </section>
 </div>
