@@ -2,6 +2,9 @@
 .sm-pad{
   padding: 5px;
 }
+.md-pad{
+  padding: 20px;
+}
 .no-margin-top {
   margin-top: 0px;
 }
@@ -26,9 +29,18 @@
 .full-width {
   width: 100% !important;
 }
+.tble-width-l {
+  width: 125px !important;
+}
+.tble-width-m {
+  width: 100px !important;
+}
 /*Positioning Styles */
 .flex {
   display: flex;
+}
+.flex-line {
+  display: inline-flex;
 }
 .flex-vert {
   flex-direction: column;
@@ -93,6 +105,13 @@
   display: inline;
   padding: 8px;
   color: white;
+}
+/*Custom flightpax*/
+.flight-info * {
+  font-family:  'Courier New';
+}
+.flight-num {
+  margin-top: 10px;
 }
 /*Angular-materials cbp overrides */
 .cbp-input, .md-chips {
@@ -172,7 +191,7 @@
 .sidebar {
   z-index: 1;
   position: absolute;
-  height: 82vh;
+  height: 85vh;
   padding: 10px;
   width: 350px;
   margin-top: 51px;
@@ -204,7 +223,7 @@
 .ui-grid {
   width: 99%;
   /*height: 420px !important;*/
-  height: 72vh !important;
+  height: 85vh !important;
   margin: auto;
 }
 .ui-grid-top-panel {

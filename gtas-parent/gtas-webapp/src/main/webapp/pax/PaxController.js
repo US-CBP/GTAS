@@ -251,8 +251,6 @@
         	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);
     	});
 
-
-
     	//Remove documents with no flights now
     	var fullyParsedMap = {};
     	$.each(flightHistoryMap, function(index,value){
@@ -388,12 +386,40 @@
                     };
                 });
             },
+            //Parses Passengers object for front-end in flightpax
+            paxPassParser = function(passengers){
+              var pax = {};
+              //Obtain aggregate values
+              if (passengers.length>0){
+                pax.passCount=0;
+                pax.crewCount=0;
+                pax.hitCount=0;
+                pax.openCaseCount=0;
+                pax.closedCaseCount=0;
+                for(var i=0; i<passengers.length; i++){
+                  if(passengers[i].passengerType==="P"){
+                    pax.passCount+=1;
+                  }
+                  if(passengers[i].passengerType==="C"){
+                    pax.crewCount+=1;
+                  }
+                  if(passengers[i].onWatchList || passengers[i].onRuleHitList ||passengers[i].onWatchListDoc){
+                    pax.hitCount+=1;
+                  }
+                }
+                pax.eta = Date.parse(passengers[0].eta);
+                pax.etd = Date.parse(passengers[0].etd);
+              }
+              $scope.pax = pax;
+            },
             setPassengersGrid = function (grid, response) {
                 //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
                 var data = stateName === 'queryPassengers' ? response.data.result : response.data;
                 setSubGridOptions(data, $scope);
                 grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
                 grid.data = data.passengers;
+                //Add specific passenger info to scope for paxDetail
+                stateName === 'queryPassengers' ? null : paxPassParser(grid.data);
                 if(!grid.data || grid.data.length == 0){
                     $scope.errorToast('No results found for selected filter criteria');
                 }
@@ -688,7 +714,7 @@
         } else {
             $scope.passengerGrid.columnDefs = [
                 {
-                    name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
+                    name: 'onRuleHitList', displayName: 'Rule Hits', width: 100,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -717,9 +743,8 @@
                 {
                 	field: 'documents[0].documentNumber',
                 	name:'documentNumber',
-                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                	displayName:'pass.docNum', headerCellFilter: 'translate', width:130
                 },
-                {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
                 {
                     name: 'eta',
                     sort: {
@@ -730,9 +755,9 @@
                     visible: (stateName === 'paxAll')
                 },
                 {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
-                {name: 'gender', displayName:'Gender'},
+                {name: 'gender', displayName:'G', width:50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
-                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width: 75,
+                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width:120,
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}

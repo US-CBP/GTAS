@@ -4,7 +4,46 @@
 	Query Results: Passengers
 </h3>
 <div data-ng-if="stateName === 'paxAll'" ng-include="'views/sidepanel.html'"></div>
-<div data-ng-if="stateName === 'flightpax'" ng-include="'views/flightpax.html'"></div>
+<div class="upper-cnt" data-ng-if="stateName === 'flightpax'">
+	<div class="flex justify-around align-items-center md-pad">
+		<div class="flight-info">
+			<div class="flex primary-outline">
+				<span class="sm-pad flight-num">{{model.flightNumber}}</span>
+				<span class="sm-pad">
+					<div>{{model.origin[0].id}} {{pax.etd | date:'yyyy-MM-dd HHmm'}}</div>
+					<div>{{model.dest[0].id}} {{pax.eta | date:'yyyy-MM-dd HHmm'}}</div>
+				</span>
+			</div>
+		</div>
+		<div class="md sm-pad ">
+			<table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+				<thead>
+					<tr>
+						<th scope="col" class="tble-width-l">Passengers</th>
+						<th scope="col" class="tble-width-m">Crew</th>
+						<th scope="col" class="tble-width-m">Hit Count</th>
+						<th scope="col" class="tble-width-m">Open Case</th>
+						<th scope="col" class="tble-width-l">Closed Case</th>
+					</tr>
+				</thead>
+			</table>
+			<div class="floating-table-body" style="max-height: 200px;">
+				<table class="cbp-table-selectable mdl-js-data-table">
+					<tbody>
+						<tr>
+							<!--Match width to header !-->
+							<td class="tble-width-l">{{pax.passCount}}</td>
+							<td class="tble-width-m">{{pax.crewCount}}</td>
+							<td class="tble-width-m">{{pax.hitCount}}</td>
+							<td class="tble-width-m">{{pax.openCaseCount}}</td>
+							<td class="tble-width-l">{{pax.closedCaseCount}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
 <!--TODO Remove #id=builder after removing dependency !-->
 <div style="display:none;" id="builder"></div>
 <div class="upper-cnt" ng-if="stateName != 'queryPassengers'"
