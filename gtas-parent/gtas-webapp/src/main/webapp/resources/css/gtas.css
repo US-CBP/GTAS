@@ -124,6 +124,18 @@
 .seven-table th{
   width: 10%;
 }
+.five-table td {
+  width: 20%;
+}
+.four-table td {
+  width: 25%;
+}
+.three-table td {
+  width: 33%;
+}
+.two-table td {
+  width: 50%;
+}
 /*Angular-materials cbp overrides */
 .cbp-input, .md-chips {
   display: inherit;

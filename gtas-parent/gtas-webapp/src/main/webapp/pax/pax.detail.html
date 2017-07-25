@@ -276,14 +276,14 @@
                 {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
               </div>
               <div>
-                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd' }}</strong></br>
+                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
                 {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
               </div>
             </div>
             <div class="flex flex-center">
               <div class="flex flex-vert half-width align-items-center">
-                <!--Itenerary!-->
-                <div class="cbp-card-container gtas-card-container full-width ">
+                <!--Itinerary!-->
+                <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.itenerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})
@@ -303,7 +303,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="doc in passenger.pnrVo.flightLegs">
+                            <tr ng-repeat="doc in passenger.pnrVo.flightLegs | orderBy: '-etd'">
                               <td>{{doc.legNumber }}</td>
                               <td>{{doc.flightNumber }}</td>
                               <td>{{doc.originAirport }}</td>
@@ -317,7 +317,7 @@
                   </div>
                 </div>
                 <!--PNR Names!-->
-                <div class="cbp-card-container gtas-card-container full-width ">
+                <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.names' | translate}}  ({{ passenger.pnrVo.passengers.length }})
@@ -351,12 +351,12 @@
                   </div>
                 </div>
                 <!--Documents!-->
-                <div class="cbp-card-container gtas-card-container full-width ">
+                <div class="cbp-card-container gtas-card-container full-width">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.documents' | translate}} ({{ passenger.documents.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert three-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -386,7 +386,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -470,7 +470,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'cc.creditcards' | translate}} ({{passenger.pnrVo.creditCards.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -504,7 +504,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'ff.FrequentFlyers' | translate}} ({{passenger.pnrVo.frequentFlyerDetails.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -555,7 +555,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.seatinformation' | translate}}
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -587,7 +587,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'tt.travelagencies' | translate}} ({{ passenger.pnrVo.agencies.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert five-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -623,7 +623,7 @@
                       {{'pnr.totalbags' | translate}} ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
                       {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.totalbagWeight}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
