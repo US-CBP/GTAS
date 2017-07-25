@@ -386,6 +386,7 @@
                     };
                 });
             },
+            //TODO There is probably a better location to put this
             //Parses Passengers object for front-end in flightpax
             paxPassParser = function(passengers){
               var pax = {};

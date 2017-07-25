@@ -22,7 +22,7 @@
   <section>
     <div class="panel panel-default">
       <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
-        <!--Passenger Detail!-->
+        <!--Passenger Detail Tab!-->
         <md-tab label="{{'pass.details' | translate}}">
           <div class="sm-pad">
             <div class="span12 flex justify-around flex-wrap">
@@ -141,7 +141,6 @@
             </div>
           </div>
         </md-tab>
-
         <!-- APIs Tab -->
         <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
           <md-tab-body>
@@ -605,7 +604,6 @@
             </div>
           </md-tab-body>
         </md-tab>
-
         <!-- Flight History Tab -->
         <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
         </md-tab>

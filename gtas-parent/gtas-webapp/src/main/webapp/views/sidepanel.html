@@ -22,10 +22,17 @@
           <div id="filterGroup8" class="collapse in">
             <div class="filter-group-content">
               <div class="form-group">
+                <!--Flights!-->
                 <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
                   md-contacts="flights.querySearch($query)" md-contact-name="id"
                   md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="flights.filterSelected">
+                  filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'">
+                </md-contact-chips>
+                <!--Passengers!-->
+                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
+                  md-contacts="searchSort($query)" md-contact-name="id"
+                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                  filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
                 </md-contact-chips>
               </div>
             </div>
@@ -37,10 +44,17 @@
           <div id="filterGroup2" class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
               <div class="form-group">
+                <!--Flights!-->
                 <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
                   md-contacts="flights.querySearch($query)" md-contact-name="id"
                   md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="flights.filterSelected">
+                  filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'" >
+                </md-contact-chips>
+                <!--Passengers!-->
+                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
+                  md-contacts="searchSort($query)" md-contact-name="id"
+                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                  filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
                 </md-contact-chips>
               </div>
             </div>
