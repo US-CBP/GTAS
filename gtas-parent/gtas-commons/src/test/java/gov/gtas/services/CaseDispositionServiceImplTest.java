@@ -30,7 +30,7 @@ public class CaseDispositionServiceImplTest {
 
     @Test
     public void testCreateCase() throws Exception {
-        caseDispService.create((new Long(18)).longValue(), (new Long(18)).longValue(), (new Long(18)).longValue());
+        assertTrue((caseDispService.create((new Long(18)).longValue(), (new Long(18)).longValue(), (new Long(18)).longValue())) instanceof Object);
     }
 
 }
