@@ -85,11 +85,18 @@
 .upper-cnt {
   margin-top: 20px !important;
 }
+.upper-cnt-nav {
+  margin-top: 0px !important;
+}
 @media (max-width : 1200px) {
   .upper-cnt {
     margin-top: 52px !important;
   }
+  .upper-cnt-nav {
+    margin-top: 52px !important;
+  }
 }
+
 .gtas-card-container .cbp-card  {
     min-height: inherit;
     max-height: 800px;

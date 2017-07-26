@@ -1,5 +1,5 @@
 <div data-ng-if="stateName === 'paxAll'" ng-include="'views/sidepanel.html'"></div>
-<div class="upper-cnt" data-ng-if="stateName === 'flightpax'">
+<div class="upper-cnt-nav" data-ng-if="stateName === 'flightpax'">
 	<div class="flex justify-around align-items-center md-pad">
 		<div class="flight-info">
 			<div class="flex primary-outline">
@@ -41,7 +41,7 @@
 </div>
 <!--TODO Remove #id=builder after removing dependency !-->
 <div style="display:none;" id="builder"></div>
-<div class="upper-cnt" ng-if="stateName != 'queryPassengers'"
+<div class="upper-cnt-nav" ng-if="stateName != 'queryPassengers'"
      id="grid1" ui-grid="passengerGrid"
      ui-grid-pagination
      ui-grid-expandable
