@@ -5,19 +5,10 @@
  */
 package gov.gtas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.JoinColumn;
+import javax.persistence.*;
 
 
-import java.util.Date;
-import java.util.Objects;
-
-import gov.gtas.model.lookup.DispositionStatus;
+import java.util.Set;
 
 @Entity
 @Table(name = "hits_disposition")
@@ -26,57 +17,41 @@ public class HitsDisposition extends BaseEntityAudit {
 
     public HitsDisposition() { }
 
+    public HitsDisposition(Long hit){
+        this.hit_id = hit;
+    }
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name="hit_id")
+    private long hit_id;
+
     @Column(name = "disp_id", nullable = false)
     private String disp_id;
-
-    @Column(nullable = false)
-    private String number;
-
-    @Column(name = "created_on")
-    @Temporal(TemporalType.DATE)
-    private Date created_on;
-
-    @Column(name = "updated_on")
-    @Temporal(TemporalType.DATE)
-    private Date updated_on;
 
     @Column(name = "description")
     private String description;
 
-  /*  @ManyToOne
+    @OneToMany
+    @JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
+    private Set<HitsDispositionComments> dispComments;
+    /*@ManyToOne
     @JoinColumn(name = "case_id", nullable = false)
-    private Cases case;*/
+    private Case case;*/
 
-    public String getDisp_id() {
-        return disp_id;
+//    public String getDisp_id() {
+//        return disp_id;
+//    }
+//
+//    public void setDisp_id(String disp_id) {
+//        this.disp_id = disp_id;
+//    }
+
+    public Set<HitsDispositionComments> getDispComments() {
+        return dispComments;
     }
 
-    public void setDisp_id(String disp_id) {
-        this.disp_id = disp_id;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public Date getCreated_on() {
-        return created_on;
-    }
-
-    public void setCreated_on(Date created_on) {
-        this.created_on = created_on;
-    }
-
-    public Date getUpdated_on() {
-        return updated_on;
-    }
-
-    public void setUpdated_on(Date updated_on) {
-        this.updated_on = updated_on;
+    public void setDispComments(Set<HitsDispositionComments> dispComments) {
+        this.dispComments = dispComments;
     }
 
     public String getDescription() {
@@ -85,5 +60,21 @@ public class HitsDisposition extends BaseEntityAudit {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public long getHit_id() {
+        return hit_id;
+    }
+
+    public void setHit_id(long hit_id) {
+        this.hit_id = hit_id;
+    }
+
+    public String getDisp_id() {
+        return disp_id;
+    }
+
+    public void setDisp_id(String disp_id) {
+        this.disp_id = disp_id;
     }
 }
