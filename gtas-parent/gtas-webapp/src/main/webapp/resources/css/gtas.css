@@ -14,6 +14,9 @@
 .no-pad-btm {
   padding-bottom: 0px !important;
 }
+.md-margin{
+  margin: 20px;
+}
 .md-margin-top {
   margin-top: 20px;
 }
@@ -38,12 +41,31 @@
 /*Positioning Styles */
 .flex {
   display: flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+/*Internet Explorer Specific Styles*/
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .ie-fix-sm{
+        min-height: 70px;
+    }
+    .ie-fix-md {
+      min-height: 200px;
+    }
+    .ie-fix-lg {
+      min-height: 400px;
+    }
 }
 .flex-line {
   display: inline-flex;
 }
 .flex-vert {
   flex-direction: column;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
 }
 .justify-around {
   justify-content: space-around;
@@ -61,7 +83,7 @@
   text-align: right;
 }
 .upper-cnt {
-  margin-top: 20px;
+  margin-top: 20px !important;
 }
 @media (max-width : 1200px) {
   .upper-cnt {
@@ -100,6 +122,13 @@
   padding: 8px;
   color: white;
 }
+.block-label {
+  display: block;
+  padding: 8px;
+  color: white;
+  background-color: #00416a;
+  margin-bottom: 0px;
+}
 .alt-label {
   background-color: #1460AA;
   display: inline;
@@ -108,7 +137,7 @@
 }
 /*Custom flightpax*/
 .flight-info * {
-  font-family:  'Courier New';
+  font-family:  'consolas';
 }
 .flight-num {
   margin-top: 10px;
@@ -269,6 +298,9 @@
     min-width: inherit;
 }
 .ui-grid-cell-contents {
+  text-align: center;
+}
+.ui-grid-cell {
   text-align: center;
 }
 

@@ -620,7 +620,7 @@
                     field: 'onRuleHitList',
                     name: 'onRuleHitList',
                     displayName: 'Rule Hits',
-                    width: 90,
+                    width: 100,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -662,13 +662,13 @@
                 {
                 	field: 'documents[0].documentNumber',
                 	name:'documentNumber',
-                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                	displayName:'pass.docNum', headerCellFilter: 'translate', width: 120
                 },
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName:'pass.flight', headerCellFilter: 'translate',
-                    cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
+                    cellTemplate: '<span>{{row.entity.carrier}}{{COL_FIELD}}</span>'
                 },
                 {
                     field: 'flightOrigin',
@@ -697,7 +697,8 @@
                 {
                     field: 'gender',
                     name: 'gender',
-                    displayName:'Gender'},
+                    displayName:'G',
+                    width: 50},
                 {
                     name: 'dob',
                     displayName:'pass.dob', headerCellFilter: 'translate',

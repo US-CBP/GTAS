@@ -1,14 +1,4 @@
-<style>
-    .grid .ui-grid-row .red {
-        color: red;
-        font-weight: bold;
-    }
-    h3 {
-        font-size: 1.5em;
-        margin: .5em;
-    }
-</style>
-<h3><i class="glyphicon glyphicon-filter"></i><i class="glyphicon glyphicon-plane"></i> {{'qry.flightstitle' | translate}}</h3>
+<h3 class="block-label upper-cnt">{{'qry.flightstitle' | translate}}</h3>
 <div ng-if="stateName != 'queryFlights'"
         ui-grid="flightsGrid"
         ui-grid-pagination
@@ -18,7 +8,6 @@
         ui-grid-move-columns
         ng-style="getTableHeight()"
         class="grid"></div>
-        
 <div ng-if="stateName === 'queryFlights'"
         ui-grid="flightsQueryGrid"
         ui-grid-pagination
@@ -28,6 +17,4 @@
         ui-grid-move-columns
         ng-style="getTableHeight()"
         class="grid"></div>
-<md-button ng-click="export('csv')" class="md-raised pull-right" type="button">
-    <i class="glyphicon glyphicon-export"></i> CSV
-</md-button>
+<div ng-include="'views/footerbuttons.html'"></div>

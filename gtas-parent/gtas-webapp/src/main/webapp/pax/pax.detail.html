@@ -44,7 +44,7 @@
               <div class="fixed-width-md cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Documents</h3>
-                  <div class="panel-body flex flex-vert">
+                  <div class="panel-body flex flex-vert ie-fix-md">
                     <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                       <thead>
                         <tr>
@@ -96,7 +96,7 @@
               <div class="fixed-width-md cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Disposition</h3>
-                  <div class="panel-body flex flex-vert">
+                  <div class="panel-body flex flex-vert ie-fix-md">
                     <div class="mdl-selectfield mdl-js-selectfield" data-upgraded=",MaterialSelectfield">
                       <select class="cbp-non-chip-input mdl-selectfield__select" id="disposition"
                         ng-model="currentDispStatus" ng-disabled="isCaseDisabled(passenger.dispositionHistory)">
@@ -129,7 +129,7 @@
                 class="fixed-width-md cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="alt-label no-margin-top" >{{disp.status}}</h3>
-                  <div class="no-pad-top panel-body flex flex-vert">
+                  <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                     <span class="sm-pad">
                       {{disp.createdBy}}
                       {{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}}
@@ -159,14 +159,14 @@
               </div>
             </div>
             <div class="flex flex-center">
-              <div class="flex flex-vert half-width align-items-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
                 <!--Total Bags!-->
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'apis.totalbags' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -189,14 +189,14 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-vert half-width align-items-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
                 <!--Phone Numbers!-->
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'apis.phone' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -236,14 +236,14 @@
               </div>
             </div>
             <div class="flex flex-center">
-              <div class="flex flex-vert half-width align-items-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
                 <!--Itinerary!-->
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.itenerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -277,7 +277,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.names' | translate}}  ({{ passenger.pnrVo.passengers.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -311,7 +311,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.documents' | translate}} ({{ passenger.documents.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert three-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md three-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -341,7 +341,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -373,7 +373,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'phone.phonenumbers' | translate}} ({{ passenger.pnrVo.phoneNumbers.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -399,7 +399,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'email.emailaddresses' | translate}} ({{passenger.pnrVo.emails.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -425,7 +425,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'cc.creditcards' | translate}} ({{passenger.pnrVo.creditCards.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -459,7 +459,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'ff.FrequentFlyers' | translate}} ({{passenger.pnrVo.frequentFlyerDetails.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert two-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -482,14 +482,14 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-vert half-width align-items-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
                 <!--RawPNR!-->
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       Raw PNR
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-lg">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                       </table>
                       <div class="floating-table-body">
@@ -510,7 +510,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.seatinformation' | translate}}
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert four-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -542,7 +542,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'tt.travelagencies' | translate}} ({{ passenger.pnrVo.agencies.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert five-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md five-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -578,7 +578,7 @@
                       {{'pnr.totalbags' | translate}} ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
                       {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.totalbagWeight}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert two-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
@@ -615,7 +615,7 @@
                 <h3 class="h-label no-margin-top" >
                   Current Itinerary: {{ key }}
                 </h3>
-                <div class="no-pad-top no-pad-btm panel-body flex flex-vert seven-table">
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md seven-table">
                   <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                     <thead>
                       <tr>
@@ -654,7 +654,7 @@
                 <h3 class="h-label no-margin-top" >
                   Total Flight History
                 </h3>
-                <div class="no-pad-top no-pad-btm panel-body flex flex-vert seven-table">
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md seven-table">
                   <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                     <thead>
                       <tr>

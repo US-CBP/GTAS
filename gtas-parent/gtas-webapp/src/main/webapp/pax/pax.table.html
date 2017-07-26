@@ -1,8 +1,3 @@
-<h3 data-ng-if="stateName === 'queryPassengers'">
-	<i class="glyphicon glyphicon-filter"></i>
-	<i class="glyphicon glyphicon-user"></i>
-	Query Results: Passengers
-</h3>
 <div data-ng-if="stateName === 'paxAll'" ng-include="'views/sidepanel.html'"></div>
 <div class="upper-cnt" data-ng-if="stateName === 'flightpax'">
 	<div class="flex justify-around align-items-center md-pad">
@@ -56,7 +51,8 @@
 		 ui-grid-resize-columns
      ng-style="getTableHeight()"
      class="grid"></div>
-<div class="upper-cnt" ng-if="stateName === 'queryPassengers'"
+<h3 data-ng-if="stateName === 'queryPassengers'"class="block-label upper-cnt">Query Results: Passengers</h3>
+<div ng-if="stateName === 'queryPassengers'"
      id="grid1" ui-grid="passengerQueryGrid"
      ui-grid-pagination
      ui-grid-expandable
