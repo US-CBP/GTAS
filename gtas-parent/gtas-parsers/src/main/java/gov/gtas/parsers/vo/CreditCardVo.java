@@ -16,8 +16,23 @@ public class CreditCardVo implements Validatable {
     private String number;
     private Date expiration;
     private String accountHolder;
+    private String accountHolderAddress;
+    private String accountHolderPhone;
+   
     
-    public String getCardType() {
+    public String getAccountHolderAddress() {
+		return accountHolderAddress;
+	}
+	public void setAccountHolderAddress(String accountHolderAddress) {
+		this.accountHolderAddress = accountHolderAddress;
+	}
+	public String getAccountHolderPhone() {
+		return accountHolderPhone;
+	}
+	public void setAccountHolderPhone(String accountHolderPhone) {
+		this.accountHolderPhone = accountHolderPhone;
+	}
+	public String getCardType() {
         return cardType;
     }
     public void setCardType(String cardType) {

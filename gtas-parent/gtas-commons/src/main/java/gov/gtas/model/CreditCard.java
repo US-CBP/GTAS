@@ -37,6 +37,12 @@ public class CreditCard extends BaseEntityAudit {
     
     @Column(name = "account_holder")
     private String accountHolder;
+    
+    @Column(name = "account_holder_address")
+    private String accountHolderAddress;
+    
+    @Column(name = "account_holder_phone")
+    private String accountHolderPhone;
 
     @ManyToMany(
         mappedBy = "creditCards",
@@ -44,7 +50,24 @@ public class CreditCard extends BaseEntityAudit {
     )
     private Set<Pnr> pnrs = new HashSet<>();
 
-    public String getCardType() {
+    
+    public String getAccountHolderAddress() {
+		return accountHolderAddress;
+	}
+
+	public void setAccountHolderAddress(String accountHolderAddress) {
+		this.accountHolderAddress = accountHolderAddress;
+	}
+
+	public String getAccountHolderPhone() {
+		return accountHolderPhone;
+	}
+
+	public void setAccountHolderPhone(String accountHolderPhone) {
+		this.accountHolderPhone = accountHolderPhone;
+	}
+
+	public String getCardType() {
         return cardType;
     }
 

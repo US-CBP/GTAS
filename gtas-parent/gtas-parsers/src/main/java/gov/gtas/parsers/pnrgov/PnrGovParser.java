@@ -327,6 +327,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 if (CollectionUtils.isNotEmpty(msgs)) {
                     for (CreditCardVo cc : newCreditCards) {
                         cc.setAccountHolder(msgs.get(0));
+                        if(msgs.size()>1){
+                        	cc.setAccountHolderAddress(msgs.get(1));
+                        	cc.setAccountHolderPhone(msgs.get(2));
+                        }
+                        
                     }
                 }
             }
