@@ -11,7 +11,7 @@
     "autocomplete"
   ],
   "description": "A library for textually searching arrays and hashes of objects by property (or multiple properties). Designed specifically for autocomplete.",
-  "version": "0.4.5",
+  "version": "0.5.2",
   "license": "Apache-2.0",
   "author": "Brian Reavis <brian@thirdroute.com>",
   "main": "./sifter.js",
@@ -30,7 +30,7 @@
     "cardinal": "0.4.x",
     "async": "0.2.x",
     "humanize": "0.0.x",
-    "node-csv": "https://github.com/voodootikigod/node-csv/tarball/master"
+    "csv-parse": "^1.1.7"
   },
   "devDependencies": {
     "mocha": "1.12.x",
@@ -41,7 +41,7 @@
     "istanbul": "0.1.x"
   },
   "optionalDependencies": {
-    "microtime": "2.0.x"
+    "microtime": "^2.1.0"
   },
   "engines": {
     "node": "*"

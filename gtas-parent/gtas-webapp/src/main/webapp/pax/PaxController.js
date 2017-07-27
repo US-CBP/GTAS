@@ -7,7 +7,7 @@
     'use strict';
     app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
-        $scope.isLoadingFlightHistory = true;        
+        $scope.isLoadingFlightHistory = true;
         $scope.isClosedCase = false;
         $scope.ruleHits = ruleHits;
         
@@ -50,11 +50,11 @@
         	});
         	return newSeats;
         };
-        
+
         //Bandaid: Re-orders TVL lines for flight legs, making sure it is ordered by date.
         var reorderTVLdata = function(flightLegs){
         	var orderedTvlData = [];
-        	
+
         	//Sorts flightLeg objects based on etd
         	flightLegs.sort(function(a,b){
         		if(a.etd < b.etd) return -1;
@@ -65,28 +65,28 @@
         	$.each(flightLegs, function(index,value){
         		value.legNumber = index+1; //+1 because 0th flight leg doesn't read well to normal humans
         	});
-        	
+
         	orderedTvlData = flightLegs;
-        	
+
         	return orderedTvlData
         };
-        
+
         if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
         	$scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
         	$scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
     	}
-        
+
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
         	$.each($scope.ruleHits, function(index,value){
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
-    	}        
-       
+    	}
+
         $scope.getCodeTooltipData = function(field,type){
         	return codeTooltipService.getCodeTooltipData(field,type);
         };
-        
+
         $scope.saveDisposition = function(){
         	var disposition = {
                     'passengerId':$scope.passenger.paxId,
@@ -120,8 +120,8 @@
         			$scope.passenger.dispositionHistory = [disposition];
         		}
         	});
-        }  
-        
+        }
+
      var getMostRecentCase = function(dispHistory){
     	var mostRecentCase = null;
      	$.each(dispHistory, function(index,value){
@@ -130,10 +130,10 @@
      		}
      	});
      	return mostRecentCase;
-     }   
+     }
 
        $scope.isCaseDisabled = function(dispHistory){
-    	 
+
     	 //Find if most recent case is closed
         	var mostRecentCase = getMostRecentCase(dispHistory);
          //If Closed, find out if current user is Admin
@@ -150,7 +150,7 @@
         		} else return true;
         	} else return false; //if not closed do not disable
         };
-       	
+
        	$scope.isCaseDropdownItemDisabled = function(statusId){
        		var mostRecentCase = getMostRecentCase($scope.passenger.dispositionHistory);
        		if(mostRecentCase != null){
@@ -184,18 +184,18 @@
        			return false;
        		} else{ return true;}
        	};
-       	
+
         caseService.getDispositionStatuses()
         .then(function(response){
         	$scope.dispositionStatus = response.data;
         });
-        
+
         paxDetailService.getPaxFlightHistory($scope.passenger.paxId)
         .then(function(response){
         	$scope.getPaxFullTravelHistory($scope.passenger);
             $scope.passenger.flightHistoryVo = response.data;
         });
-        
+
         $scope.getPaxFullTravelHistory= function(passenger){
         	var doc = passenger.documents[0];
         	if(typeof doc != 'undefined' && doc.documentNumber.length > 0){
@@ -204,7 +204,7 @@
         		var docIssuCountry = doc.issuanceCountry;
         		paxDetailService.getPaxFullTravelHistory(passenger.paxId, docNum, docIssuCountry, docExp).then(function(response){
         			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
-        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap); //Remove duplicates amongst the documents        			
+        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap); //Remove duplicates amongst the documents
         			for(var arry in $scope.passenger.flightHistoryVo.flightHistoryMap){
         				$scope.passenger.fullFlightHistoryVo.map = parseOutDuplicateFlights($scope.passenger.fullFlightHistoryVo.map, $scope.passenger.flightHistoryVo.flightHistoryMap[arry])
         			}
@@ -216,7 +216,7 @@
         	}
         };
     var parseOutDuplicateFlights = function(currentPNRFlightArray, totalFlightArray){
-    	var duplicateIndexes = []; 
+    	var duplicateIndexes = [];
     	var duplicateFreeFlightArray = [];
     	$.each(currentPNRFlightArray, function(index,value){
     		if(angular.isDefined(value) && value != null){
@@ -232,8 +232,8 @@
 	    		});
     		}
     	});
-    	
-    	
+
+
     	$.each(currentPNRFlightArray, function(i,v){
     		var notDupe = true;
     		$.each(duplicateIndexes, function(index,value){
@@ -246,10 +246,10 @@
     			duplicateFreeFlightArray.push(v);
     		}
     	});
-    	
+
     	//Bandaid: Re-order TVL lines so that dates are in correct order for all duplicateFreeArrays
     	duplicateFreeFlightArray = reorderTVLdata(duplicateFreeFlightArray);
-    	
+
     	return duplicateFreeFlightArray;
     }
     //Multiple documents on the same PNR pull and show the same flights on the flight history tab
@@ -261,26 +261,24 @@
     	$.each(flightHistoryMap, function(index,value){
     		if(value.length > longest){
     			longest = value.length;
-    			longestIndex = index;    
+    			longestIndex = index;
     		};
     	});
     	//Remove duplicates from all non-primary documents
     	$.each(flightHistoryMap, function(index,value){
     		if(index != longestIndex){
     			flightHistoryMap[index] = parseOutDuplicateFlights(value, flightHistoryMap[longestIndex]);
-    		}		       	
-        	
+    		}
+
     		//Bandaid: Sometimes flighthistory and the pnr flight legs do not match, this compares and parses them out if they do not exist in the pnrVo.flightLegs object arry
         	if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
         		flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
         	}
         	
         	//Bandaid: Re-order TVL lines so that dates are in correct order based on etd
-        	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);    		
+        	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);
     	});
-    	
-    	
-    	
+
     	//Remove documents with no flights now
     	var fullyParsedMap = {};
     	$.each(flightHistoryMap, function(index,value){
@@ -288,17 +286,17 @@
     			fullyParsedMap[index] = value;
     		}
     	});
-    	
+
     	return fullyParsedMap;
     }
-    
-    //PNR flight legs were not matching with flight history, 
+
+    //PNR flight legs were not matching with flight history,
     //this will compare the lists and remove from flight history flights that do not appear in the list under the PNR flightlegs
     var parseOutNonMatchingFlightHistoryToPNRFlights = function(flightHistoryFlightsArry, PNRFlightsArry){
     	if(!angular.isDefined(flightHistoryFlightsArry) || flightHistoryFlightsArry == null || !angular.isDefined(PNRFlightsArry) || PNRFlightsArry == null){
     		return;
     	}
-    	
+
     	var parsedFlightHistory = [];
     	$.each(PNRFlightsArry, function(index,value){
     		$.each(flightHistoryFlightsArry, function(i,v){
@@ -309,7 +307,7 @@
     	});
     	return parsedFlightHistory;
     }
-    
+
     //Adds user from pax detail page to watchlist.
     $scope.addEntityToWatchlist = function(){
     	spinnerService.show('html5spinner');
@@ -377,17 +375,20 @@
              .hideDelay(4000)
              .parent($scope.toastParent));
         };
-        
+
         var exporter = {
-                'csv': function () {
-                    $scope.gridApi.exporter.csvExport('all', 'all');
-                }
+          'csv': function () {
+              $scope.gridApi.exporter.csvExport('all', 'all');
+          },
+          'pdf': function () {
+              $scope.gridApi.exporter.pdfExport('all', 'all');
+          }
         };
-        
+
         $scope.export = function (format) {
             exporter[format]();
         };
-        
+
         function createFilterFor(query) {
             var lowercaseQuery = query.toLowerCase();
             return function filterFn(contact) {
@@ -427,12 +428,41 @@
                     };
                 });
             },
+            //TODO There is probably a better location to put this
+            //Parses Passengers object for front-end in flightpax
+            paxPassParser = function(passengers){
+              var pax = {};
+              //Obtain aggregate values
+              if (passengers.length>0){
+                pax.passCount=0;
+                pax.crewCount=0;
+                pax.hitCount=0;
+                pax.openCaseCount=0;
+                pax.closedCaseCount=0;
+                for(var i=0; i<passengers.length; i++){
+                  if(passengers[i].passengerType==="P"){
+                    pax.passCount+=1;
+                  }
+                  if(passengers[i].passengerType==="C"){
+                    pax.crewCount+=1;
+                  }
+                  if(passengers[i].onWatchList || passengers[i].onRuleHitList ||passengers[i].onWatchListDoc){
+                    pax.hitCount+=1;
+                  }
+                }
+                pax.eta = Date.parse(passengers[0].eta);
+                pax.etd = Date.parse(passengers[0].etd);
+              }
+              $scope.pax = pax;
+            },
             setPassengersGrid = function (grid, response) {
                 //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
                 var data = stateName === 'queryPassengers' ? response.data.result : response.data;
                 setSubGridOptions(data, $scope);
                 grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
                 grid.data = data.passengers;
+                //Add specific passenger info to scope for paxDetail
+                stateName === 'queryPassengers' ? null : paxPassParser(grid.data);
                 if(!grid.data || grid.data.length == 0){
                     $scope.errorToast('No results found for selected filter criteria');
                 }
@@ -523,7 +553,7 @@
         };
 
         $scope.buildAfterEntitiesLoaded();
-        
+
         $scope.passengerGrid = {
                 paginationPageSizes: [10, 15, 25],
                 paginationPageSize: $scope.model.pageSize,
@@ -587,11 +617,11 @@
 
             onRegisterApi: function (gridApi) {
                 $scope.gridApi = gridApi;
-                
+
                 gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                     $scope.model.pageSize = pageSize;
                 });
-                
+
                 gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
                     if (row.isExpanded) {
                         paxService.getRuleHits(row.entity.id).then(function (data) {
@@ -599,20 +629,20 @@
                         });
                     }
                 });
-            }    
+            }
         };
-        
+
         $scope.getCodeTooltipData = function(field, type){
         	return codeTooltipService.getCodeTooltipData(field,type);
         }
-        
+
       	$scope.hitTooltipData = ['Loading...'];
-        
+
         $scope.resetTooltip = function(){
         	$scope.hitTooltipData = ['Loading...'];
         	$('md-tooltip').remove();
         };
-        
+
     	$scope.getHitTooltipData = function(row){
     		var dataList = [];
     		paxService.getRuleHits(row.entity.id).then(function (data){
@@ -625,14 +655,14 @@
     			$scope.hitTooltipData = dataList;
     		});
     	};
-        
+
         if (stateName === 'queryPassengers') {
             $scope.passengerQueryGrid.columnDefs = [
                 {
                     field: 'onRuleHitList',
                     name: 'onRuleHitList',
                     displayName: 'Rule Hits',
-                    width: 90,
+                    width: 100,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -674,13 +704,13 @@
                 {
                 	field: 'documents[0].documentNumber',
                 	name:'documentNumber',
-                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                	displayName:'pass.docNum', headerCellFilter: 'translate', width: 120
                 },
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName:'pass.flight', headerCellFilter: 'translate',
-                    cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
+                    cellTemplate: '<span>{{row.entity.carrier}}{{COL_FIELD}}</span>'
                 },
                 {
                     field: 'flightOrigin',
@@ -728,7 +758,7 @@
         } else {
             $scope.passengerGrid.columnDefs = [
                 {
-                    name: 'onRuleHitList', displayName: 'Rule Hits', width: 90,
+                    name: 'onRuleHitList', displayName: 'Rule Hits', width: 100,
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
@@ -757,9 +787,8 @@
                 {
                 	field: 'documents[0].documentNumber',
                 	name:'documentNumber',
-                	displayName:'pass.docNum', headerCellFilter: 'translate'
+                	displayName:'pass.docNum', headerCellFilter: 'translate', width:130
                 },
-                {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
                 {
                     name: 'eta',
                     sort: {
@@ -770,9 +799,9 @@
                     visible: (stateName === 'paxAll')
                 },
                 {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
-                {name: 'gender', displayName:'G', width: 50},
+                {name: 'gender', displayName:'G', width:50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
-                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width: 75, 
+                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width:120,
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}
@@ -801,7 +830,7 @@
             var originAirports = new Array();
             var destinationAirports = new Array();
             var airport = { id: "" };
-            
+
             if($scope.model.origin ) {
                 if ($scope.model.origin instanceof Array ){
                     angular.forEach($scope.model.origin, function (value, index) {
@@ -816,7 +845,7 @@
                 }
                 $scope.model.origin = originAirports;
             }
-            
+
             if($scope.model.dest ) {
                 if ($scope.model.dest instanceof Array ) {
                   angular.forEach($scope.model.dest, function (value, index) {
@@ -829,9 +858,9 @@
                 }else{
                     destinationAirports.push({id: $scope.model.dest});
                 }
-                $scope.model.dest = destinationAirports;   
+                $scope.model.dest = destinationAirports;
             }
-            
+
         };
 
         $scope.filter = function () {
@@ -845,7 +874,15 @@
             paxModel.reset();
             resolvePage();
         };
-
+        $scope.toggleDiv = function(div) {
+            var element = document.getElementById(div);
+            if(element.classList.contains("active")){
+              element.classList.remove("active");
+            }
+            else {
+              element.className +=" active";
+            }
+          }
         $scope.getTableHeight = function () {
             if( stateName != "queryPassengers"){
                 return gridService.calculateGridHeight($scope.passengerGrid.data.length);

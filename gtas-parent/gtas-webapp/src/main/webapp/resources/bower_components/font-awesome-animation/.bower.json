@@ -1,7 +1,9 @@
 {
   "name": "font-awesome-animation",
-  "version": "0.0.8",
+  "description": "Simple animations using FontAwesome and some CSS3.",
+  "version": "0.0.10",
   "author": "l-lin",
+  "license": "MIT",
   "main": [
     "dist/font-awesome-animation.css",
     "dist/font-awesome-animation.min.css"
@@ -14,7 +16,6 @@
     "Gruntfile.js",
     "test",
     "node_modules",
-    "src",
     "vendor",
     "data.json",
     "demo",
@@ -30,13 +31,13 @@
   "dependencies": {},
   "devDependencies": {},
   "homepage": "https://github.com/l-lin/font-awesome-animation",
-  "_release": "0.0.8",
+  "_release": "0.0.10",
   "_resolution": {
     "type": "version",
-    "tag": "v0.0.8",
-    "commit": "469956d0b0d080007bcff620ee58350370c50d7a"
+    "tag": "v0.0.10",
+    "commit": "78a087ad54086b934c395ac9adb838682c7844f8"
   },
-  "_source": "git://github.com/l-lin/font-awesome-animation.git",
+  "_source": "https://github.com/l-lin/font-awesome-animation.git",
   "_target": "~0.0.7",
   "_originalSource": "font-awesome-animation"
 }

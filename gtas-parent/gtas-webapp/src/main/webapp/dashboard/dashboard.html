@@ -1,283 +1,136 @@
-<style>
-    .bullet { font: 10px sans-serif; }
-    .bullet .marker { stroke: #000; stroke-width: 2px; }
-    .bullet .tick line { stroke: #666; stroke-width: .5px; }
-    .bullet .range.s0 { fill: #eee; }
-    .bullet .range.s1 { fill: #ddd; }
-    .bullet .range.s2flight { fill: #ccc; }
-    .bullet .measure.s0 { fill: lightsteelblue; }
-    .bullet .measure.s1 { fill: steelblue; }
-    .bullet .title { font-size: 14px; font-weight: bold; }
-    .bullet .subtitle { fill: #999; }
-    <!-- .bullet{font:10px sans-serif}.bullet .marker{stroke:#000;stroke-width:2px}.bullet .tick line{stroke:#666;stroke-width:.5px}.bullet .range.s0{fill:#eee}.bullet .range.s1{fill:#ddd}.bullet .range.s2{fill:#ccc}.bullet .measure.s0{fill:#b0c4de}.bullet .measure.s1{fill:#4682b4}.bullet .title{font-size:14px;font-weight:700}.bullet .subtitle{fill:#999} -->
-    .axis path,.axis line{fill:none;stroke:#000;shape-rendering:crispEdges}.bar{fill:steelblue}.x.axis path{display:none}
-
-</style>
-
 <body>
-
-<div class="column" style="padding-top: 90px;"></div>
-
-<!-- Begin Flight Stats-->
-
-
-<div class="container-fluid">
-    <div class="column">
-
-        <div class="row">
-            <div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">
-                <div class="panel-heading">
-                    <i class="fa fa-bar-chart-o fa-fw"></i>
-                    <span data-col="col-sm-offset-2"><label style="font-weight: bold;">
-                        Flights (Next 72 hrs)
-                    </label></span>
-
-                </div>
-                <!-- /.panel-heading -->
-                <div class="panel-body">
-
-                    <div class="row">
-                        <div class="col-lg-2 col-md-5 col-md-offset-2">
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    <span class="pull-left">Flights</span>
-                                    <div class="row">
-                                        <div class="col-xs-3" style="padding-top: 15px;">
-                                            <i class="fa fa-plane fa-3x"></i>
-                                        </div>
-                                        <div class="col-sm-10 text-right">
-                                            <div class="row">
-                                                <div> Inbound &nbsp&nbsp <span class="huge">{{numberOfFlightsInbound}}</span></div>
-                                            </div>
-                                            <md-divider class="pull-right"/>
-                                            <div class="row">
-                                                <div> Outbound &nbsp&nbsp <span class="huge"> {{numberOfFlightsOutbound}}</span></div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-5">
-                            <div class="panel panel-green">
-                                <div class="panel-heading">
-                                    <span class="pull-left">Passengers</span>
-                                    <div class="row">
-                                        <div class="col-xs-3" style="padding-top: 15px;">
-                                            <i class="fa fa-user fa-3x"></i>
-                                        </div>
-                                        <div class="col-sm-10 text-right">
-                                            <div class="row">
-                                                <div> Inbound &nbsp&nbsp <span class="huge">{{numberOfPassengersInbound}}</span></div>
-                                            </div>
-                                            <md-divider class="pull-right"/>
-                                            <div class="row">
-                                                <div> Outbound &nbsp&nbsp <span class="huge"> {{numberOfPassengersOutbound}}</span></div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!--<div class="column"></div>-->
-                        <div class="col-lg-2 col-md-5">
-                            <div class="panel panel-red">
-                                <div class="panel-heading">
-                                    <span class="pull-left">Rule Hits</span>
-                                    <div class="row">
-                                        <div class="col-xs-3" style="padding-top: 15px;">
-                                            <i class="fa fa-flag-o fa-3x"></i>
-                                        </div>
-                                        <div class="col-sm-10 text-right">
-                                            <div class="row">
-                                                <div> Inbound &nbsp&nbsp <span class="huge">{{numberOfRuleHitsInbound}}</span></div>
-                                            </div>
-                                            <md-divider class="pull-right"/>
-                                            <div class="row">
-                                                <div> Outbound &nbsp&nbsp <span class="huge"> {{numberOfRuleHitsOutbound}}</span></div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-2 col-md-5">
-                            <div class="panel panel-yellow">
-                                <div class="panel-heading">
-                                    <span class="pull-left">Watchlist Hits</span>
-                                    <div class="row">
-                                        <div class="col-xs-3" style="padding-top: 15px;">
-                                            <i class="fa fa-eye fa-3x"></i>
-                                        </div>
-                                        <div class="col-sm-10 text-right">
-                                            <div class="row">
-                                                <div> Inbound &nbsp&nbsp <span class="huge">{{numberOfWatchListHitsInbound}}</span></div>
-                                            </div>
-                                            <md-divider class="pull-right"/>
-                                            <div class="row">
-                                                <div> Outbound &nbsp&nbsp <span class="huge"> {{numberOfWatchListHitsOutbound}}</span></div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--<a href="#/flights">-->
-                                    <!--<div class="panel-footer">-->
-                                        <!--<span class="pull-left">{{'db.viewDetails' | translate}}</span>-->
-                                        <!--<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>-->
-                                        <!--<div class="clearfix"></div>-->
-                                    <!--</div>-->
-                                <!--</a>-->
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                </div>
+  <div class="upper-cnt panel">
+    <!--Information Cards -->
+    <div class="container">
+      <h3 class="h-label">Next 72 hrs</h3>
+      <div class="flex flex-center flex-wrap cbp-card-container gtas-card-container">
+        <div class="primary-outline cbp-card cbp-card-shadow fixed-width-sm">
+          <div class="cbp-card__title">
+            <h3 class="cbp-card__title-text txt-color">Flights</h3>
+          </div>
+          <div class="flex justify-around align-items-center ie-fix-sm">
+            <i class="fa fa-plane fa-3x" aria-hidden="true"></i>
+            <div>
+              <div class="txt-color sm-pad txt-right">
+                Inbound: {{numberOfFlightsInbound}}
+              </div>
+              <div class="txt-color sm-pad txt-right">
+                Outbound: {{numberOfFlightsOutbound}}
+              </div>
             </div>
-
+          </div>
         </div>
+        <div class="success-outline cbp-card cbp-card-shadow fixed-width-sm">
+          <div class="cbp-card__title">
+            <h3 class="cbp-card__title-text txt-color">Passengers</h3>
+          </div>
+          <div class="flex justify-around align-items-center ie-fix-sm">
+            <i class="fa fa-user fa-3x" aria-hidden="true"></i>
+            <div>
+              <div class="txt-color sm-pad txt-right">
+                Inbound: {{numberOfPassengersInbound}}
+              </div>
+              <div class="txt-color sm-pad txt-right">
+                Outbound: {{numberOfPassengersOutbound}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="danger-outline cbp-card cbp-card-shadow fixed-width-sm">
+         <div class="cbp-card__title">
+            <h3 class="cbp-card__title-text txt-color">Rule Hits</h3>
+          </div>
+          <div class="flex justify-around align-items-center ie-fix-sm">
+            <i class="fa fa-flag fa-3x" aria-hidden="true"></i>
+            <div>
+              <div class="txt-color sm-pad txt-right">
+                Inbound: {{numberOfRuleHitsInbound}}
+              </div>
+              <div class="txt-color sm-pad txt-right">
+                Outbound: {{numberOfRuleHitsOutbound}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="warning-outline cbp-card cbp-card-shadow fixed-width-sm">
+         <div class="cbp-card__title">
+            <h3 class="cbp-card__title-text txt-color">Watchlist Hits</h3>
+          </div>
+          <div class="flex justify-around align-items-center ie-fix-sm">
+            <i class="fa fa-eye fa-3x" aria-hidden="true"></i>
+            <div>
+              <div class="txt-color sm-pad txt-right">
+                Inbound: {{numberOfWatchListHitsInbound}}
+              </div>
+              <div class="txt-color sm-pad txt-right">
+                Outbound: {{numberOfWatchListHitsOutbound}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-
-<!-- End of Flight Stats-->
-
-
-<div class="container-fluid">
-    <div class="column">
-        <div class="row">
-            <div class="panel panel-default col-lg-11" style="padding-left: 0;padding-right:0; margin-left: 2.9%;">
-                <div class="panel-heading">
-                    <i class="fa fa-map-o" aria-hidden="true"></i>
-                    <span data-col="col-sm-offset-2">
-                        <label style="font-weight: bold;">
-                       Flights (ETA Next 72 hrs)
-                        </label>
-                    </span>
-
-                    </div>
-                <div class="panel-body">
-                    <div>
-                        <my-elem ></my-elem>
-                    </div>
-                    <!--<div id="chartdiv"></div>-->
-
-                    <!--<canvas id="base" class="chart-bar"-->
-                            <!--chart-data="data" chart-labels="labels"-->
-                            <!--chart-colors="colors"-->
-                            <!--chart-dataset-override="datasetOverride">-->
-                    <!--</canvas>-->
-                </div>
-            </div>
+    <!--Flight Map Card-->
+    <div class="container">
+      <div class="cbp-card-container gtas-card-container">
+        <div class="cbp-card cbp-card-shadow">
+          <div class="panel-body">
+            <my-elem ></my-elem>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-
-
-
-<div class="column" style="padding-top: 90px;"></div>
-
-<div class="container-fluid">
-    <div class="column">
-
-        <div class="panel panel-default col-lg-6" style="padding-left: 0;padding-right:0; margin-left: 2.3%;">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i>
-                <span data-col="col-sm-offset-2"><label style="font-weight: bold;"> {{'db.topRuleHits' | translate}} </label></span>
-
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="row">
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>{{'db.ruleName' | translate}}</th>
-                                <th>{{'db.hits' | translate}}</th>
-                                <th>{{'db.createdOn' | translate}}</th>
-                                <th>{{'db.createdBy' | translate}}</th>
-                                <th>{{'db.lastOn' | translate}}</th>
-                                <th>{{'db.lastBy' | translate}}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="rec in rulesList">
-                                <td>{{rec.ruleName}}</td>
-                                <td>{{rec.ruleHits}}</td>
-                                <td>{{rec.createdOn}}</td>
-                                <td>{{rec.createdBy}}</td>
-                                <td>{{rec.lastEditedOn}}</td>
-                                <td>{{rec.lastUpdatedBy}}</td>
-                            </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.table-responsive -->
-
-                </div>
-
-                <!-- /.row -->
-            </div>
-            <!-- /.panel-body -->
+  </div>
+  <!--Table panels -->
+  <div class="panel">
+    <div class="container">
+      <div class="flex flex-center">
+        <div ng-if="rulesList.length>0" class="fixed-width-md sm-pad ">
+          <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+            <thead>
+              <tr>
+                <th scope="col" class="non-numeric">{{'db.ruleName' | translate}}</th>
+                <th scope="col" class="non-numeric">{{'db.hits' | translate}}</th>
+                <th scope="col" class="non-numeric">{{'db.createdOn' | translate}}</th>
+              </tr>
+            </thead>
+          </table>
+          <div class="floating-table-body" style="max-height: 200px;">
+            <table class="cbp-table-selectable mdl-js-data-table">
+              <tbody>
+                <tr ng-repeat="rec in rulesList">
+                    <th scope="row" class="non-numeric">{{rec.ruleName}}</th>
+                    <td>{{rec.ruleHits}}</td>
+                    <td>{{rec.createdOn}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
-
-        <div class="panel panel-default col-md-5" style="padding-left: 0;padding-right:0; margin-left: 2%;">
-            <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i>
-                <span data-col="col-sm-offset-2"><label style="font-weight: bold;"> {{'db.ytd' | translate}} </label></span>
-
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="row">
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>{{'db.airport' | translate}}</th>
-                                <th>{{'db.flights' | translate}}</th>
-                                <th>{{'db.watchLists' | translate}}</th>
-                                <th>{{'db.ruleHits' | translate}}</th>
-
-                            </tr>
-                            </thead>
-                            <tbody>
-
-                            <tr ng-repeat="rec in airportStats">
-                                <td>{{rec.airport}}</td>
-                                <td>{{rec.flights}}</td>
-                                <td>{{rec.watchListHits}}</td>
-                                <td>{{rec.ruleHits}}</td>
-                            </tr>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.table-responsive -->
-
-                </div>
-
-                <!-- /.row -->
-            </div>
-            <!-- /.panel-body -->
+        <div ng-if="airportStats.length>0" class="fixed-width-md sm-pad">
+          <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+            <thead>
+              <tr>
+                <th>{{'db.airport' | translate}}</th>
+                <th>{{'db.flights' | translate}}</th>
+                <th>{{'db.watchLists' | translate}}</th>
+                <th>{{'db.ruleHits' | translate}}</th>
+              </tr>
+            </thead>
+          </table>
+          <div class="floating-table-body" style="max-height: 200px;">
+            <table class="cbp-table-selectable mdl-js-data-table">
+              <tbody>
+                <tr ng-repeat="rec in airportStats">
+                  <td>{{rec.airport}}</td>
+                  <td>{{rec.flights}}</td>
+                  <td>{{rec.watchListHits}}</td>
+                  <td>{{rec.ruleHits}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
+      </div>
     </div>
-</div>
-
 </body>
-

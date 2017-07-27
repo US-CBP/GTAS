@@ -16,7 +16,7 @@
     "tag": "2.9.2",
     "commit": "308063b1770705f3d8b9378f3bfffca18d82d7ea"
   },
-  "_source": "git://github.com/PascalPrecht/bower-angular-translate-loader-url.git",
+  "_source": "https://github.com/PascalPrecht/bower-angular-translate-loader-url.git",
   "_target": "~2.9.1",
   "_originalSource": "angular-translate-loader-url"
 }

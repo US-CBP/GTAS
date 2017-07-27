@@ -1,15 +1,323 @@
-h2 {
-    font-size: 1.2em;
+/*Sizing Styles */
+.sm-pad{
+  padding: 5px;
+}
+.md-pad{
+  padding: 20px;
+}
+.no-margin-top {
+  margin-top: 0px;
+}
+.no-pad-top {
+  padding-top: 0px !important;
+}
+.no-pad-btm {
+  padding-bottom: 0px !important;
+}
+.md-margin{
+  margin: 20px;
+}
+.md-margin-top {
+  margin-top: 20px;
+}
+.fixed-width-sm {
+  width: 176px !important;
+}
+.fixed-width-md{
+  width: 450px !important;
+}
+.half-width {
+  width: 49% !important;
+}
+.sev-five-width {
+  width: 75% !important;
+}
+.full-width {
+  width: 100% !important;
+}
+.tble-width-l {
+  width: 125px !important;
+}
+.tble-width-m {
+  width: 100px !important;
+}
+/*Positioning Styles */
+.flex {
+  display: flex;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  flex: 1;
+}
+/*Internet Explorer Specific Styles*/
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    .ie-fix-sm{
+        min-height: 70px;
+    }
+    .ie-fix-md {
+      min-height: 200px;
+    }
+    .ie-fix-lg {
+      min-height: 400px;
+    }
+}
+.flex-line {
+  display: inline-flex;
+}
+.flex-vert {
+  flex-direction: column;
+  -ms-flex-direction: column;
+  -webkit-flex-direction: column;
+}
+.justify-around {
+  justify-content: space-around;
+}
+.flex-center{
+  justify-content: center;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.align-items-center{
+  align-items: center;
+}
+.txt-right {
+  text-align: right;
+}
+.upper-cnt {
+  margin-top: 20px !important;
+}
+.upper-cnt-nav {
+  margin-top: 0px !important;
+}
+@media (max-width : 1200px) {
+  .upper-cnt {
+    margin-top: 52px !important;
+  }
+  .upper-cnt-nav {
+    margin-top: 52px !important;
+  }
 }
 
-/* applies same font across different plugins */
-* {
-    font-family: 'Open Sans', sans-serif;
+.gtas-card-container .cbp-card  {
+    min-height: inherit;
+    max-height: 800px;
 }
+.gtas-card-container .cbp-card__title {
+  padding: 10px;
+}
+.cbp-card .txt-color {
+  color: #333333;
+}
+
+/*Color Setup */
+.primary-outline {
+  outline: #00416a 2px solid;
+}
+.success-outline {
+  outline: #008000 2px solid;
+}
+.warning-outline {
+  outline: #F09511 2px solid;
+}
+.danger-outline {
+  outline: #A00000 2px solid;
+}
+
+/*Custom Components*/
+.h-label{
+	background-color: #00416a;
+  display: inline;
+  padding: 8px;
+  color: white;
+}
+.block-label {
+  display: block;
+  padding: 8px;
+  color: white;
+  background-color: #00416a;
+  margin-bottom: 0px;
+}
+.alt-label {
+  background-color: #1460AA;
+  display: inline;
+  padding: 8px;
+  color: white;
+}
+/*Custom flightpax*/
+.flight-info * {
+  font-family:  'consolas';
+}
+.flight-num {
+  margin-top: 10px;
+}
+/*Custom paxdetail*/
+.center-btn{
+  margin: 15px auto !important;
+  display: block !important;
+}
+.seven-table td{
+  width: 15%;
+}
+.seven-table th{
+  width: 10%;
+}
+.five-table td {
+  width: 20%;
+}
+.four-table td {
+  width: 25%;
+}
+.three-table td {
+  width: 33%;
+}
+.two-table td {
+  width: 50%;
+}
+/*Angular-materials cbp overrides */
+.cbp-input, .md-chips {
+  display: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  padding: inherit;
+  vertical-align: inherit;
+}
+.cbp-input, .md-chips .md-chip-input-container{
+    width: 100%;
+}
+.cbp-input, .md-input-container .md-input {
+     display: inherit;
+     margin-top: inherit;
+     padding: inherit;
+     border-width: inherit;
+     line-height: inherit;
+     border-radius: inherit;
+     border-style: inherit;
+     box-sizing: inherit;
+     float: inherit;
+}
+.cbp-text-field {
+  padding: 20px 10px !important;
+}
+.cbp-text-field-label {
+  padding-left: 10px !important;
+}
+.cbp-datepicker {
+  position: relative;
+  font-size: 16px;
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 5px;
+}
+.cbp-datepicker .md-datepicker-input-container{
+  border-bottom-color: rgb(85, 85, 85) !important;
+}
+.cbp-datepicker .md-datepicker-input-container:focus{
+  border-bottom-width: 1px !important;
+}
+.cbp-datepicker .md-datepicker-input {
+  height: 39px;
+  padding: 0px 5px;
+}
+.cbp-datepicker .md-datepicker-input:hover{
+  background-color: rgba(20,96,170,.1)!important;
+}
+.cbp-datepicker .md-datepicker-triangle-button{
+  bottom: 0px;
+  background-color: inherit !important;
+}
+.cbp-non-chip-input {
+  border-bottom-color: rgb(85, 85, 85) !important;
+}
+.cbp-non-chip-input:focus {
+  outline: inherit;
+}
+.static-label {
+  top: 0px !important;
+}
+#cbp-sidebar {
+  margin-top: 0px !important;
+  z-index: 2 !important;
+  transform: translateX(-350px);
+  transition: .5s ease-in-out;
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+}
+#cbp-sidebar.active {
+  transform: translateX(0px);
+}
+.sidebar {
+  z-index: 1;
+  position: absolute;
+  height: 85vh;
+  padding: 10px;
+  width: 350px;
+  margin-top: 51px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#sidebar-toggle {
+  position: absolute;
+  z-index: 5;
+  left: 0px;
+  top: 50vh;
+  transition: .5s ease-in-out;
+  -webkit-transition: .5s ease-in-out;
+  -moz-transition: .5s ease-in-out;
+  -o-transition: .5s ease-in-out;
+}
+#sidebar-toggle.active {
+  -ms-transform: translateX(348px); /* IE 9 */
+  -webkit-transform: translateX(348px); /* Chrome, Safari, Opera */
+  transform: translateX(348px);
+}
+#sidebar-toggle.active i {
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg); /* IE 9 */
+  -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+}
+
+/*UI-Grid Overrides*/
+.manage .ui-grid {
+  height: 58vh !important;
+}
+.ui-grid {
+  width: 99%;
+  height: 85vh !important;
+  margin: auto;
+}
+.ui-grid-top-panel {
+   background: #f0f0f0;
+   border-bottom: #d4d4d4 1.5px solid;
+   outline: 1px solid #f0f0f0;
+}
+.ui-grid-header-cell {
+ border-right: inherit;
+ padding: 10px 5px;
+ color: rgb(85, 85, 85);
+}
+.ui-grid-header-cell:hover {
+  background: #e3e3e3;
+}
+/*ui-grid cell styling*/
+.ui-grid .md-button {
+    line-height: 20px;
+    min-height: 20px;
+    min-width: inherit;
+}
+.ui-grid-cell-contents {
+  text-align: center;
+}
+.ui-grid-cell {
+  text-align: center;
+}
+
 
 /* BEGIN IE css patches */
-/*md-input-container .md-input { flex: none !important; }*/
-
 .md-select-label :first-child{
     flex-basis: auto;
     max-width: 100%;
@@ -82,156 +390,3 @@ h2 {
     border-radius: 50%;
     border: solid 2px #050;
 }
-
-.md-sidenav-left,
-.md-sidenav-right {
-    min-width: 400px;
-    left: 100%;
-    top: 0;
-    -webkit-transform: translate3d(-100%,0,0);
-    transform: translate3d(-100%,0,0);
-}
-
-nav {
-    background-image: linear-gradient(rgb(255, 255, 255), rgb(242, 242, 242));
-    border-bottom-color: rgb(229, 229, 229);
-    border-bottom-style: solid;
-    border-bottom-width: 0.571429px;
-    border-image-outset: 0;
-    border-image-repeat: stretch;
-    border-image-slice: 100%;
-    border-image-source: none;
-    border-image-width: 1;
-    border-left-color: rgb(229, 229, 229);
-    border-left-style: solid;
-    border-left-width: 0.571429px;
-    border-right-color: rgb(229, 229, 229);
-    border-right-style: solid;
-    border-right-width: 0.571429px;
-    border-top-color: rgb(229, 229, 229);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-top-style: solid;
-    border-top-width: 0.571429px;
-    box-sizing: border-box;
-    color: rgb(51, 51, 51);
-    font-family: 'Open Sans';
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 11.4286px;
-    margin: 0;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    position: relative
-}
-
-nav a {
-    border-radius: 0 !important;
-}
-
-/* fixes big page numbers from not being seen */
-.ui-grid-pager-max-pages-number {
-    display: inline-block;
-    width: 4em;
-}
-
-
-@media (min-width: 768px) {
-    .modal-dialog {
-        width: 1000px;
-    }
-}
-
-.header {
-    height: 80px;
-    background-image: url(../img/header-tile.png);
-    background-repeat: repeat-x;
-}
-.header::before {
-    content: "";
-    display: block;
-    height: 80px;
-    width: 565px;
-    background-repeat: no-repeat;
-    background-image: url(../img/header-title.png);
-}
-
-@media (min-width: 1200px) {
-    .container {
-        width: 100%;
-        padding: 0;
-        margin: 0;
-    }
-}
-
-/* top nav */
-nav a.md-button {
-    border-bottom: 2px solid transparent;
-    margin: 0;
-    padding: .25em 2em;
-}
-nav a[disabled] {
-    color: navy !important;
-    background-color: transparent !important;
-    border-bottom: 3px solid rgba(100,100,100,0.5);
-}
-
-/* ui grid */
-.ui-grid-pager-control input {
-    width: 80px;
-    height: 30px;
-}
-
-.ui-grid-pager-panel {
-    background: rgb(238, 238, 238) none repeat scroll 0% 0%;
-}
-.ui-grid-pager-row-count-picker select {
-    display: inline-block;
-    width: 100px;
-    height: 30px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #555555;
-    background-color: #ffffff;
-    background-image: none;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-}
-.ui-grid .md-button {
-    margin: 0 1%;
-    font-weight: bold;
-    width: 98%;
-    text-align: left;
-}
-
-.ui-grid-icon-ok::before {
-    content: "\e157";
-    font-family: 'Glyphicons Halflings';
-}
-
-.ui-grid-all-selected.ui-grid-icon-ok::before,
-.ui-grid-row-selected .ui-grid-icon-ok::before {
-    content: "\e067";
-}
-
-.glyphicon-remove {
-    cursor: pointer;
-}
-
-
-.navbar {
-    background-color: #9c27b0;
-    border: 0;
-    border-radius: 3px;
-    box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
-    padding: 10px 0;
-    font-family: 'Open Sans', sans-serif; font-size: larger; font-weight: bold;
-    position: static;
-}
-

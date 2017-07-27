@@ -21,27 +21,28 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "Gruntfile.js",
     "dev-playground",
     "gulpfile.js",
     "webpack.config.js",
     "README.md",
-    "bootstrap",
     "bower.json",
     "examples",
     "node_modules",
     "package.json",
     "src",
-    "tests"
+    "tests",
+    "yarn.lock",
+    "composer.json",
+    ".travis.yml"
   ],
-  "version": "0.1.20",
-  "_release": "0.1.20",
+  "version": "0.1.31",
+  "_release": "0.1.31",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.20",
-    "commit": "ce8a2609986a3bf6e3c83f61741d4c56ca0b4ca0"
+    "tag": "0.1.31",
+    "commit": "a0b60d4038b0552a9463799e5442671d1950bce2"
   },
-  "_source": "git://github.com/bpampuch/pdfmake.git",
+  "_source": "https://github.com/bpampuch/pdfmake.git",
   "_target": "~0.1.18",
   "_originalSource": "pdfmake"
 }

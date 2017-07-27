@@ -84,6 +84,7 @@ public class PnrUtils {
 	 * / /   /         /   /GBR/12JUL64/M//JONES/WILLIAMNEVELL
 	 * </pre>
 	 */
+
 	public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif) throws ParseException {
 		SSR bestSsr = null;
 		for (SSR ssr : ssrDocs) {
@@ -145,7 +146,9 @@ public class PnrUtils {
 
 			processNames(p, safeGet(strs, 9), safeGet(strs, 10), safeGet(strs, 11), p.getGender());
 		}
-
+		captureMissingInfoFromSSRs(p,ssrDocs);
+			
+		
 		if (StringUtils.isNotBlank(doc.getDocumentType()) && StringUtils.isNotBlank(doc.getDocumentNumber())) {
 			// FIX for issue #316
 			if (StringUtils.isBlank(p.getCitizenshipCountry())) {
@@ -396,5 +399,23 @@ public class PnrUtils {
         }
         return thePax;
 	}
+	private static void captureMissingInfoFromSSRs(PassengerVo pvo,List<SSR> ssrDocs){
+		if(StringUtils.isBlank(pvo.getCitizenshipCountry())){
+			for (SSR ssr : ssrDocs) {
+				String ssrText = ssr.getFreeText();
+				List<String> strs = splitSsrFreeText(ssr);
+				if (CollectionUtils.isEmpty(strs)) {
+					continue;
+				}
+				if (StringUtils.isNotEmpty(safeGet(strs, 1))
+						|| (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 2)))) {
+					pvo.setCitizenshipCountry(safeGet(strs, 4));
+					
+				}else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))) {
+					pvo.setCitizenshipCountry(safeGet(strs, 5));
+				}
+			}
+		}
 
+	}
 }

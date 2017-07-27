@@ -1,794 +1,695 @@
-<style>
-    #detailSection md-tabs-wrapper > md-tabs-canvas > md-pagination-wrapper > md-tab-item {
-        width: 1050px;
-    }
-
-    md-tab-item {
-        max-width: none !important;
-    }
-
-    .capitalize {
-        text-transform: capitalize;
-    }
-
-    h3 {
-        margin-top: -3em;
-    }
-</style>
-<div style="padding-left: 25px; padding-top: 25px; padding-bottom: 25px; padding-right: 25px; width: 100%; min-height: 1500px;">
-    <!--<h3><span class="glyphicon glyphicon-user glyphiconFlightPax img-circle"></span>Passenger Detail</h3>-->
-
-    <div class="span12 col-sm-offset-1" style="padding-left: 25px; padding-top: 25px; padding-bottom: 25px; padding-right: 25px;">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-4 capitalize">{{'pass.lastname' | translate}}:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
-                <div class="col-sm-4 capitalize">{{'pass.firstname' | translate}}:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
-                <div class="col-sm-4 capitalize">{{'pass.middlename' | translate}}:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">{{'pass.gender' | translate}}:&nbsp; <strong> {{ passenger.gender }}</strong></div>
-                <div class="col-sm-4">{{'pass.dob' | translate}}:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
-                <div class="col-sm-4">{{'pass.paxtype' | translate}}:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">{{'pass.origin' | translate}}:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
-                <div class="col-sm-4">{{'pass.destination' | translate}}:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
-                <div class="col-sm-4">{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
-            </div>
-            <div class="row">
-            	<md-button type="submit" class="md-raised md-primary col-sm-offset-6 fa fa-eye" 
-            	ng-click="showConfirm()"> Add To Watchlist</md-button>
-            </div>
-            
-        </div>
+<div>
+  <div class="span12 flex justify-around upper-cnt flex-wrap">
+    <div>
+        <div>{{'pass.lastname' | translate}}:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
+        <div>{{'pass.firstname' | translate}}:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
+        <div>{{'pass.middlename' | translate}}:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
     </div>
-    <!-- END OF SPAN 12 -->
-
-
-    <div class="container" style="padding: 10px;">
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4"></div>
-            <div class="col-md-4"></div>
-        </div>
+    <div>
+        <div>{{'pass.gender' | translate}}:&nbsp; <strong> {{ passenger.gender }}</strong></div>
+        <div>{{'pass.dob' | translate}}:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
+        <div>{{'pass.paxtype' | translate}}:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
     </div>
-    <section>
-        <div class="container" style="height:100%;">
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4"></div>
-                <div class="col-md-4"></div>
+    <div>
+        <div>{{'pass.origin' | translate}}:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
+        <div>{{'pass.destination' | translate}}:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
+        <div>{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
+    <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+  </button>
+  <section>
+    <div class="panel panel-default">
+      <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
+        <!--Passenger Detail Tab!-->
+        <md-tab label="{{'pass.details' | translate}}">
+          <div class="sm-pad">
+            <div class="span12 flex justify-around flex-wrap">
+              <div>
+                <div>{{'flight.flight' | translate}}:&nbsp;<strong>
+                  {{passenger.carrier + passenger.flightNumber }}</strong></div>
+                <div>{{'pass.seat' | translate}}:&nbsp; <strong>{{ passenger.seat }}</strong></div>
+              </div>
+              <div>
+                <div>{{'pass.originairport' | translate}}:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
+                <div>{{'pass.destinationairport' | translate}}:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
+              </div>
+              <div>
+                <div>{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</strong></div>
+                <div>{{'pass.eta' | translate}}:&nbsp; <strong>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</strong></div>
+              </div>
             </div>
-        </div>
-        <div class="panel panel-default" style="min-height: 1200px; max-height: 1600px;">
-            <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
-
-                <!-- Details Tab -->
-                <md-tab label="{{ 'pass.details' | translate}}" style="max-width: 150px;">
-                    <div class="span12" style="background-color: rgb(255, 255, 255, 0.15);">
-                        <div class="container" style="height:100%;">
-                            <div style="padding: 10px;"></div>
-                            <div class="row col-md-offset-1">
-                                <div class="col-sm-2 capitalize">&nbsp;&nbsp;&nbsp;<span style="text-decoration: underline;">{{'flight.flight' | translate}}:&nbsp; <strong>{{
-                                    passenger.carrier + passenger.flightNumber }}</strong></span></div>
-                                <div class="col-sm-2">{{'pass.originairport' | translate}}:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
-                                <div class="col-sm-2">{{'pass.destinationairport' | translate}}:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
-                                <div class="col-sm-2">{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD }}</strong></div>
-                                <div class="col-sm-2">{{'pass.eta' | translate}}:&nbsp; <strong>{{ passenger.flightETA }}</strong></div>
-                                <div class="col-sm-1">{{'pass.seat' | translate}}:&nbsp; <strong>{{ passenger.seat }}</strong></div>
-                            </div>
-                        </div>
+            <div class="flex justify-around flex-wrap" >
+              <div class="fixed-width-md cbp-card-container gtas-card-container">
+                <div class="cbp-card cbp-card-shadow">
+                  <h3 class="h-label no-margin-top" >Documents</h3>
+                  <div class="panel-body flex flex-vert ie-fix-md">
+                    <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                      <thead>
+                        <tr>
+                          <th>{{'doc.doc' | translate}} #</th>
+                          <th>{{'doc.type' | translate}}</th>
+                          <th>{{'doc.iss.country' | translate}}</th>
+                          <th>{{'doc.exp.date' | translate}}</th>
+                        </tr>
+                      </thead>
+                    </table>
+                    <div class="floating-table-body">
+                      <table class="cbp-table-selectable mdl-js-data-table">
+                        <tbody>
+                          <tr ng-repeat="doc in passenger.documents">
+                            <td>{{doc.documentNumber}}</td>
+                            <td>{{doc.documentType}}</td>
+                            <td>{{doc.issuanceCountry}}</td>
+                            <td>{{doc.expirationDate}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
-                    <div style="padding: 30px;"></div>
-                    <div>
-                        <h2 class="col-sm-offset-1"><strong>Documents</strong></h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="fixed-width-md md-margin-top" ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
+              <h3 class="h-label">Hits Summary</h3>
+              <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Conditions</th>
+                  </tr>
+                </thead>
+              </table>
+              <div class="floating-table-body">
+                <table class="cbp-table-selectable mdl-js-data-table">
+                  <tbody>
+                    <tr ng-repeat="j in ruleHits[0].hitsDetailsList track by $index">
+                        <td>{{j.title}}</td>
+                        <td>{{j.ruleConditions}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="flex justify-around flex-wrap" >
+              <div class="fixed-width-md cbp-card-container gtas-card-container">
+                <div class="cbp-card cbp-card-shadow">
+                  <h3 class="h-label no-margin-top" >Disposition</h3>
+                  <div class="panel-body flex flex-vert ie-fix-md">
+                    <div class="mdl-selectfield mdl-js-selectfield" data-upgraded=",MaterialSelectfield">
+                      <select class="cbp-non-chip-input mdl-selectfield__select" id="disposition"
+                        ng-model="currentDispStatus" ng-disabled="isCaseDisabled(passenger.dispositionHistory)">
+                        <option value=-1 selected="selected">N/A</option>
+                        <option ng-repeat="item in dispositionStatus" value="{{item.id}}" ng-disabled="isCaseDropdownItemDisabled(item.id)") translate>
+                          {{item.name}}
+                        </option>
+                      </select>
+                      <label class="mdl-selectfield__label static-label" for="disposition">Disposition Status:</label>
                     </div>
-                    <div class="span10">
-                        <table class="table table-hover table-condensed table-striped col-lg-offset-1"
-                               style="border-collapse: separate; padding-left: 20px; width: 1200px; text-align: center;">
-                            <thead>
-                            <tr class="text-center">
-                                <th style="text-align: center">{{'doc.doc' | translate}} #</th>
-                                <th style="text-align: center">{{'doc.type' | translate}}</th>
-                                <th style="text-align: center">{{'doc.iss.country' | translate}}</th>
-                                <th style="text-align: center">{{'doc.exp.date' | translate}}</th>
+                    <div class="is-required mdl-textfield mdl-textfield--floating-label mdl-js-textfield mdl-textfield--full-width">
+                      <label for="descr" class="mdl-textfield__label static-label">Description</label>
+                      <textarea ng-disabled="isCaseDisabled(passenger.dispositionHistory)"
+                        ng-model ="currentDispComments" class="mdl-textfield__input"
+                        id="descr" rows="3" class="form-control form-control-width-fill">
+                      </textarea>
+                    </div>
+                    <button type="submit" class="btn btn-icon-only btn-primary" ng-click="saveDisposition()"
+                      ng-disabled="currentDispComments === empty || currentDispComments === '' || currentDispStatus === '-1'">
+                        <i class="fa fa-inverse fa-floppy-o"></i>
+                        <span class="sr-only">Save</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="h-label" >Disposition History</h3>
+            <div class="flex justify-around flex-wrap" >
+              <div ng-repeat ="disp in passenger.dispositionHistory | orderBy:'createdAt':true"
+                class="fixed-width-md cbp-card-container gtas-card-container">
+                <div class="cbp-card cbp-card-shadow">
+                  <h3 class="alt-label no-margin-top" >{{disp.status}}</h3>
+                  <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                    <span class="sm-pad">
+                      {{disp.createdBy}}
+                      {{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}}
+                    </span>
+                    <textarea class="sm-pad" disabled>{{disp.comments}}</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </md-tab>
+        <!-- APIs Tab -->
+        <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
+          <md-tab-body>
+            <div class="span12 flex justify-around flex-wrap">
+              <div>
+                {{'apis.embarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.embarkation }}</strong>
+                {{'apis.port' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.portOfFirstArrival }}</strong>
+              </div>
+              <div>
+                {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.debarkation}}</strong>
+                {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.residenceCountry}}</strong>
+              </div>
+              <div>
+                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
+                {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.travelerType}}</strong>
+              </div>
+            </div>
+            <div class="flex flex-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                <!--Total Bags!-->
+                <div class="cbp-card-container gtas-card-container full-width five-table">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'apis.totalbags' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'apis.bagid' | translate}}</th>
+                            <th>{{'apis.dest' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="bags in passenger.apisMessageVo.bags">
+                              <td>{{bags.bagId}}</td>
+                              <td>{{bags.destination}}</td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="doc in passenger.documents">
-                                <td style="text-align: center">{{doc.documentNumber}}</td>
-                                <td style="text-align: center">{{doc.documentType}}</td>
-                                <td style="text-align: center">{{doc.issuanceCountry}}</td>
-                                <td style="text-align: center">{{doc.expirationDate}}</td>
-                            </tr>
-                            </tbody>
+                          </tbody>
                         </table>
+                      </div>
                     </div>
-                    <div style="padding: 30px;"></div>
-                    
-					<div ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
-                        <h2 class="col-sm-offset-1"><strong>Hits Summary</strong></h2>
-                        	<div class="row">
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr class="text-center" style="text-align: center">
-                                            <th style="text-align: center">Title</th>
-                                            <th style="text-align: center">Conditions</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="j in ruleHits track by $index">
-                                            <td style="text-align: center">{{j.title}}</td>
-                                            <td style="text-align: center; max-width:150px">{{j.ruleConditions}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                             </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                <!--Phone Numbers!-->
+                <div class="cbp-card-container gtas-card-container full-width five-table">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'apis.phone' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'apis.number' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="phone in passenger.apisMessageVo.phoneNumbers">
+                              <td>{{phone.number}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    
-                    <h2 class="col-sm-offset-1"><strong>Disposition</strong></h2>
-                    
-	                <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
-	                	<div class="container">
-	                	<div style="padding: 10px;"></div>
-	                		<div class="col-sm-offset-2" style="padding-left:15px">
-	                			<div style="display:inline-block">Disposition Status:</div>
-	                			<md-input-container style="padding-left:5px">
-                                <md-select ng-model="currentDispStatus" ng-disabled="isCaseDisabled(passenger.dispositionHistory)">
-                                	<md-option value=-1 selected="selected">N/A</md-option>
-                                    <md-option ng-repeat="item in dispositionStatus" value="{{item.id}}" ng-disabled="isCaseDropdownItemDisabled(item.id)")>
-                                        {{item.name}}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-	                		</div>
-	                		<div class="col-sm-7 col-sm-offset-2">
-	                			<textarea ng-model ="currentDispComments" rows="7" style="min-width:100%;resize:none" ng-disabled="isCaseDisabled(passenger.dispositionHistory)"></textarea>
-	                			<div style="float:right">
-	  								<md-button type="submit"
-					                      ng-disabled="currentDispComments === empty || currentDispComments === '' || currentDispStatus === '-1'"
-					                      class="md-raised md-primary col-sm-offset-6" ng-click="saveDisposition()">
-					               	 Save
-					           		</md-button>
-				            	</div>
-	                		</div>
-	                	</div>
-	                	<div style="padding:10px;"></div>
-	                	<div>
-	                		<h2 class="col-sm-offset-1"><strong>Disposition History</strong></h2>
-	                	</div>
-	                	<div class="container" ng-repeat ="disp in passenger.dispositionHistory | orderBy:'createdAt':true">
-	                	<div style="padding: 10px;"></div>
-	                		<div class="col-sm-7 col-sm-offset-2" style="display:table-cell;vertical-align:middle">
-	                			<md-input-container>
-	                                <md-select ng-model="passengerTempHistory" disabled>
-	                                    <md-option selected=selected>
-                                        	{{disp.status}}
-	                                    </md-option>
-	                                </md-select>
-                            	</md-input-container>
-                            	<div style="float:right;margin-top:30px">
-                                {{disp.createdBy}}
-                                ({{disp.createdAt | date:'yyyy-MM-dd HH:mm:ss Z'}})    
-                                </div>                            
-	                		</div>
-	                		<div class="col-sm-7 col-sm-offset-2">
-	                			<textarea rows="7" style="min-width:100%;resize:none" disabled>{{disp.comments}}</textarea>
-				            </div>
-	                	</div>
-	                </div>
-                </md-tab>
-                
-                <!-- APIs Tab -->
-                <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
-                	<md-tab-body>
-                		<div style="padding: 10px;"></div>
-                        <div class="span12">
-                            <div class="container" style="height:100%;">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        &nbsp;&nbsp;&nbsp;&nbsp; {{'apis.embarkation' | translate}}:&nbsp; <span>
-                                        <strong>{{ passenger.apisMessageVo.embarkation }}</strong></span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.debarkation}}</strong>
-                                    </div>
-                                    <div class="col-sm-4">
-                                         {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
-                                    </div>
-                                </div>            
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        &nbsp;&nbsp;&nbsp;&nbsp; {{'apis.port' | translate}}:&nbsp; <span>
-                                        <strong>{{ passenger.apisMessageVo.portOfFirstArrival }}</strong></span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.residenceCountry}}</strong>
-                                    </div>
-                                    <div class="col-sm-4">
-                          				 {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.travelerType}}</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="padding: 30px;"></div>
-                        <!-- LEFT DIV -->
-                        <div class="col-lg-6" style="min-height: 200px; min-width: 40px; height: 100%; ">
-                			<div class="span6">
-                				<div class="container">
-                					<div id="OrderPackages">
-                                        <table id="tableSearchResults"
-                                               class="table table-hover table-striped table-condensed">
-                                            <tbody>
-                                            <thead>                                             
-                                         		<tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
-	                                                <td><strong>{{'apis.totalbags' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})</strong></td>
-	                                                <td></td>
-	                                                <td>
-	                                                </td>
-                                            	</tr>
-                                            </thead>
-                                            <tr>
-                                            </tr>		
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                         <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'apis.bagid' | translate}}</th>
-                                                                <th style="text-align: center">{{'apis.dest' | translate}}</th>
-                                                              </tr>
-                                                            </thead>
-                                                        	<tbody>
-                                                                <tr ng-repeat="bags in passenger.apisMessageVo.bags">
-                                                                        <td style="text-align: center">{{bags.bagId}}</td> 
-                                                                        <td style="text-align: center">{{bags.destination}}</td>                      
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                       </table>
-                                      </div>
-                                     </div>
-                                    </div>
-                                   </div>                       
-                       <!-- RIGHT DIV -->
-                        <div class="col-lg-6" style="min-height: 200px; min-width: 40px; height: 100%; ">
-                			<div class="span6">
-                				<div class="container">
-                					<div id="OrderPackages">
-                                        <table id="tableSearchResults"
-                                               class="table table-hover table-striped table-condensed">
-                                            <tbody>
-                                            <thead>                                             
-                                         		<tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
-	                                                <td><strong>{{'apis.phone' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})</strong></td>
-	                                                <td></td>
-	                                                <td>
-	                                                </td>
-                                            	</tr>
-                                            </thead>
-                                            <tr>
-                                            </tr>		
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                         <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'apis.number' | translate}}</th>
-                                                              </tr>
-                                                            </thead>
-                                                        	<tbody>
-                                                                <tr ng-repeat="phone in passenger.apisMessageVo.phoneNumbers">
-                                                                        <td style="text-align: center">{{phone.number}}</td>                   
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                       </table>
-                                      </div>
-                                     </div>
-                                    </div>
-                                   </div>      
-                                         
-                	</md-tab-body>                
-                </md-tab>      
-            
-                <!-- PNR Tab -->
-                <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists">
-                    <md-tab-body>
-                        <div style="padding: 10px;"></div>
-                        <div class="span12">
-                            <div class="container" style="height:100%;">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        &nbsp;&nbsp;&nbsp;&nbsp; {{'pnr.recordlocator' | translate}}:&nbsp; <span
-                                                style="text-decoration: underline;"><strong>{{
-                                            passenger.pnrVo.recordLocator }}</strong></span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date
-                                            }}</strong>
-
-                                    </div>
-                                    <div class="col-sm-4">
-                                         {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date }}</strong></br>
-                                         {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="padding: 30px;"></div>
-                        <!-- LEFT DIV -->
-                        <div class="col-lg-6" style="min-height: 200px; min-width: 40px; height: 100%; ">
-                            <div class="span6">
-                                <div class="container">
-                                    <div id="OrderPackages">
-                                        <table id="tableSearchResults"
-                                               class="table table-hover table-striped table-condensed">
-                                            <tbody>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'pnr.itenerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})</strong></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed"
-                                                               style="border-collapse: separate; text-align: center;">
-                                                            <thead>
-                                                              <tr class="text-center" style="text-align: center">
-                                                                   <th style="text-align: center">{{'pnr.leg' | translate}}</th>
-                                                                   <th style="text-align: center">{{'flight.flight' | translate}}#</th>
-                                                                   <th style="text-align: center">{{'pass.originairport' | translate}}</th>
-                                                                   <th style="text-align: center">{{'pass.destinationairport' | translate}}</th>
-                                                                   <th style="text-align: center">{{'pnr.flightdate' | translate}}</th>
-                                                                   <th style="text-align: center">{{'pass.etd' | translate}}</th>
-                                                               </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="doc in passenger.pnrVo.flightLegs">
-                                                                <td style="text-align: center">{{ doc.legNumber }}</td>
-                                                                <td style="text-align: center">{{ doc.flightNumber }}</td>
-                                                                <td style="text-align: center">{{ doc.originAirport }}</td>
-                                                                <td style="text-align: center">{{ doc.destinationAirport }}</td>
-                                                                <td style="text-align: center">{{ doc.flightDate }}</td>
-                                                                <td style="text-align: center">{{ doc.etd }}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package2" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails2">
-                                                <td><strong>{{'pnr.names' | translate}}  ({{ passenger.pnrVo.passengers.length }})</strong></td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails2" id="accordion2">
-                                                        <table class="table table-condensed">
-                                                            <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'pnr.first' | translate}}</th>
-                                                                <th style="text-align: center">{{'pnr.middle' | translate}}</th>
-                                                                <th style="text-align: center">{{'pnr.last' | translate}}</th>
-                                                                <th style="text-align: center">{{'pass.gender' | translate}}</th>
-                                                                <th style="text-align: center">Age</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="pass in passenger.pnrVo.passengers">
-                                                                <td style="text-align: center">{{ pass.firstName }}</td>
-                                                                <td style="text-align: center">{{ pass.middleName }}</td>
-                                                                <td style="text-align: center">{{ pass.lastName }}</td>
-                                                                <td style="text-align: center">{{ pass.gender }}</td>
-                                                                <td style="text-align: center">{{ pass.age }}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'pnr.documents' | translate}} ({{ passenger.documents.length }})</strong></td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed"
-                                                               style="border-collapse: separate; text-align: center;">
-                                                            <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'doc.type' | translate}}</th>
-                                                                <th style="text-align: center">{{'doc.country' | translate}}</th>
-                                                                <th style="text-align: center">{{'doc.Number' | translate}}</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="doc in passenger.documents">
-                                                                <td style="text-align: center">{{doc.documentType}}</td>
-                                                                <td style="text-align: center">{{doc.issuanceCountry}}</td>
-                                                                <td style="text-align: center">{{doc.documentNumber}}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})</strong>
-                                                </td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <thead>
-      														<tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'add.city' | translate}}</th>
-                                                                <th style="text-align: center">{{'add.state' | translate}}</th>
-                                                                <th style="text-align: center">{{'add.Country' | translate}}</th>
-                                                                <th style="text-align: center">{{'add.Street' | translate}}</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody ng-repeat="addr in passenger.pnrVo.addresses track by $index">
-                                                            <tr>
-                                                                <td style="text-align: center">{{ addr.city }}</td>
-                                                                <td style="text-align: center">{{ addr.state }}</td>
-                                                                <td style="text-align: center">{{ addr.country }}</td>
-                                                                <td style="text-align: center">{{ addr.line1 }}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'phone.phonenumbers' | translate}} ({{ passenger.pnrVo.phoneNumbers.length }})</strong>
-                                                </td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <thead>
-                                                                    <tr class="text-center" style="text-align: center">
-                                                                        <th style="text-align: center">{{'phone.phonenumber' | translate}}</th>
-
-                                                                    </tr>
-                                                                </thead>
-                                                            <tbody ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index">
-                                                                <tr>
-                                                                    <td style="text-align: center">{{ phn.number }}</td>
-                                                                </tr>
-                                                            </tbody>
-
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'email.emailaddresses' | translate}} ({{ passenger.pnrVo.emails.length
-                                                    }})</strong>
-                                                </td>
-                                                <td></td>
-                                                <td>
-
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <tr ng-repeat="email in passenger.pnrVo.emails track by $index">
-                                                                <td>{{ email.address }}</td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle"
-                                                data-parent="#OrderPackages" data-target=".packageDetails1">
-                                                <td><strong>{{'cc.creditcards' | translate}} ({{ passenger.pnrVo.creditCards.length
-                                                    }})</strong>
-                                                </td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'cc.holder' | translate}}</th>
-                                                                <th style="text-align: center">{{'cc.Type' | translate}}</th>
-                                                                <th style="text-align: center">{{'cc.Number' | translate}}</th>
-                                                                <th style="text-align: center">{{'cc.expdate' | translate}}</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index">
-                                                                <td style="text-align: center">{{cc.accountHolder}}</td>
-                                                                <td style="text-align: center">{{cc.cardType}}</td>
-                                                                <td style="text-align: center">{{cc.number}}</td>
-                                                                <td style="text-align: center">{{cc.expiration |
-                                                                    date:'yyyy-MM' }}
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'ff.FrequentFlyers' | translate}} ({{
-                                                    passenger.pnrVo.frequentFlyerDetails.length
-                                                    }})</strong></td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'ff.airline' | translate}}</th>
-                                                                <th style="text-align: center">{{'ff.number' | translate}}</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index">
-                                                                <td style="text-align: center">{{ff.carrier}}</td>
-                                                                <td style="text-align: center">{{ff.number}}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'tt.travelagencies' | translate}} ({{ passenger.pnrVo.agencies.length
-                                                    }})</strong>
-                                                </td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                         <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'tt.country' | translate}}</th>
-                                                                <th style="text-align: center">{{'tt.id' | translate}}</th>
-                                                                <th style="text-align: center">{{'tt.location' | translate}}</th>
-                                                                <th style="text-align: center">{{'tt.Name' | translate}}</th>
-                                                                <th style="text-align: center">{{'tt.Phone' | translate}}</th>
-                                                              </tr>
-                                                            </thead>
-                                                        <tbody>
-                                                                <tr ng-repeat="agency in passenger.pnrVo.agencies">
-                                                                        <td style="text-align: center">{{agency.country}}</td>
-                                                                        <td style="text-align: center">{{agency.identifier}}</td>
-                                                                        <td style="text-align: center">{{agency.location}}</td>
-                                                                        <td style="text-align: center">{{agency.name}}</td>
-                                                                        <td style="text-align: center">{{agency.phone}}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">                                   
-                                                <td><strong>{{'pnr.baggage' | translate}} ({{ passenger.pnrVo.bagCount }})</strong></td>
-                                                <td><strong>{{'pnr.totalbags' | translate}} ({{ passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})</strong></td>
-                                          		<td><strong>{{'pnr.totalweight' | translate}} ({{ passenger.pnrVo.totalbagWeight}})</strong></td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                         <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'pnr.bagid' | translate}}</th>
-                                                                <th style="text-align: center">{{'pnr.dest' | translate}}</th>
-                                                              </tr>
-                                                            </thead>
-                                                        <tbody>
-                                                                <tr ng-repeat="bags in passenger.pnrVo.bags">
-                                                                        <td style="text-align: center">{{bags.bagId}}</td> 
-                                                                        <td style="text-align: center">{{bags.destination}}</td>                      
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                        <table class="table table-condensed">
-                                                            <tr>
-
-                                                            </tr>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-
-                                            <tr id="package1" class="accordion-toggle" data-parent="#OrderPackages"
-                                                data-target=".packageDetails1">
-                                                <td><strong>{{'pnr.seatinformation' | translate}}</strong></td>
-                                                <td></td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <div class="accordion-body packageDetails1" id="accordion1">
-                                                       <table class="table table-condensed"
-                                                               style="border-collapse: separate; text-align: center;">
-                                                            <thead>
-                                                            <tr class="text-center" style="text-align: center">
-                                                                <th style="text-align: center">{{'pass.lastname' | translate}}</th>
-                                                                <th style="text-align: center">{{'pass.firstname' | translate}}</th>
-                                                                <th style="text-align: center">{{'flight.flight' | translate}}#</th>
-                                                                <th style="text-align: center">{{'pnr.seat' | translate}}#</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr ng-repeat="sa in passenger.pnrVo.seatAssignments">
-                                                                <td style="text-align: center">{{ sa.lastName }}</td>
-                                                                <td style="text-align: center">{{ sa.firstName }}</td>
-                                                                <td style="text-align: center">{{ sa.flightNumber }}</td>
-                                                                <td style="text-align: center">{{ sa.number }}</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <!-- END of ORDERED PACKS -->
-                                </div>
-                            </div>
-                        </div>
-                        <!-- RIGHT DIV -->
-                        <div class="col-md-offset-2 col-lg-6 col-lg-offset-0"
-                             style="min-height: 200px; min-width: 40px;  max-height: 1300px; overflow: scroll;">
-                            <table class="table table-striped">
-                                <tbody>
-                                <tr ng-repeat="i in passenger.pnrVo.rawList track by $index">
-                                    <td><span>{{ $index+1 }} .&nbsp;&nbsp;&nbsp; {{ i }}</span></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </md-tab-body>
-                </md-tab>
-
-                <!-- Flight History Tab -->                
-                <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
-                </md-tab>
-                <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
-                    <div class="span6" style="background-color: rgb(255, 255, 255, 0.15);">
-                        <div class="container">
-                            <div style="padding: 10px;"></div>
-                            <div class="row">
-								
-                                <div class="row"
-                                     ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
-                                    <span class="col-sm-offset-1"
-                                          style="margin-left:3.5%; font-weight: bold;">&nbsp;{{ 'doc.doc' | translate}}# : {{ key }}</span>
-									<div class="col-sm-offset-1">Current Itinerary</div>
-                                    <div style="padding: 15px;"></div>
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr class="text-center" style="text-align: center">
-                                            <th style="text-align: center">{{ 'flight.carrieflight' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.eta' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.etd' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.origin' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.originairport' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destination' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destinationairport' | translate}}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="j in value track by $index">
-                                            <td style="text-align: center">{{j.fullFlightNumber}}</td>
-                                            <td style="text-align: center">{{j.etaLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{j.etdLocalTZ | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{j.originCountry}}</td>
-                                            <td style="text-align: center">{{j.origin}}</td>
-                                            <td style="text-align: center">{{j.destinationCountry}}</td>
-                                            <td style="text-align: center">{{j.destination}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <span ng-repeat-end></span>
-
-                                <div class="row"
-                                     ng-repeat-start="flight in passenger.fullFlightHistoryVo">
-                                    <div style="padding: 10px;"></div>
-                                    <span class="col-sm-offset-1">Total Flight History</span>
-                                    <div style="padding: 15px;"></div>
-                                    <table class="table table-striped">
-                                        <thead>
-                                        <tr class="text-center" style="text-align: center">
-                                            <th style="text-align: center">{{ 'flight.carrieflight' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.eta' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.etd' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.origin' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.originairport' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destination' | translate}}</th>
-                                            <th style="text-align: center">{{ 'pass.destinationairport' | translate}}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr ng-repeat="k in flight track by $index">
-                                            <td style="text-align: center">{{k.fullFlightNumber}}</td>
-                                            <td style="text-align: center">{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
-                                            <td style="text-align: center">{{k.originCountry}}</td>
-                                            <td style="text-align: center">{{k.origin}}</td>
-                                            <td style="text-align: center">{{k.destinationCountry}}</td>
-                                            <td style="text-align: center">{{k.destination}}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <span ng-repeat-end></span>
-                            </div>
-                        </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </md-tab-body>
+        </md-tab>
+        <!-- PNR Tab -->
+        <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists">
+          <md-tab-body>
+            <div class="span12 flex justify-around flex-wrap">
+              <div>
+                {{'pnr.recordlocator' | translate}}:&nbsp;<strong>{{passenger.pnrVo.recordLocator }}</strong>
+              </div>
+              <div>
+                {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
+              </div>
+              <div>
+                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
+                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
+              </div>
+            </div>
+            <div class="flex flex-center">
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                <!--Itinerary!-->
+                <div class="cbp-card-container gtas-card-container full-width five-table">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'pnr.itenerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'pnr.leg' | translate}}</th>
+                            <th>{{'flight.flight' | translate}}#</th>
+                            <th>{{'pass.originairport' | translate}}</th>
+                            <th>{{'pass.destinationairport' | translate}}</th>
+                            <th>{{'pass.etd' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="doc in passenger.pnrVo.flightLegs | orderBy: '-etd'">
+                              <td>{{doc.legNumber }}</td>
+                              <td>{{doc.flightNumber }}</td>
+                              <td>{{doc.originAirport }}</td>
+                              <td>{{doc.destinationAirport }}</td>
+                              <td>{{doc.etd }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div style="padding: 30px;"></div>
-                </md-tab>
-            </md-tabs>
-        </div>
-    </section>
+                  </div>
+                </div>
+                <!--PNR Names!-->
+                <div class="cbp-card-container gtas-card-container full-width five-table">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'pnr.names' | translate}}  ({{ passenger.pnrVo.passengers.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'pnr.first' | translate}}</th>
+                            <th>{{'pnr.middle' | translate}}</th>
+                            <th>{{'pnr.last' | translate}}</th>
+                            <th>{{'pass.gender' | translate}}</th>
+                            <th>Age</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="pass in passenger.pnrVo.passengers">
+                              <td>{{ pass.firstName }}</td>
+                              <td>{{ pass.middleName }}</td>
+                              <td>{{ pass.lastName }}</td>
+                              <td>{{ pass.gender }}</td>
+                              <td>{{ pass.age }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Documents!-->
+                <div class="cbp-card-container gtas-card-container full-width">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'pnr.documents' | translate}} ({{ passenger.documents.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md three-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'doc.type' | translate}}</th>
+                            <th>{{'doc.country' | translate}}</th>
+                            <th>{{'doc.Number' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="doc in passenger.documents">
+                              <td>{{doc.documentType}}</td>
+                              <td>{{doc.issuanceCountry}}</td>
+                              <td>{{doc.documentNumber}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Addresses!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'add.city' | translate}}</th>
+                            <th>{{'add.state' | translate}}</th>
+                            <th>{{'add.Country' | translate}}</th>
+                            <th>{{'add.Street' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index">
+                              <td>{{ addr.city }}</td>
+                              <td>{{ addr.state }}</td>
+                              <td>{{ addr.country }}</td>
+                              <td>{{ addr.line1 }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Phone Numbers!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'phone.phonenumbers' | translate}} ({{ passenger.pnrVo.phoneNumbers.length }})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'phone.phonenumber' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index">
+                              <td>{{phn.number}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Emails!-->
+                <div ng-if="passenger.pnrVo.emails.length>0"  class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'email.emailaddresses' | translate}} ({{passenger.pnrVo.emails.length}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>Email Address</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="email in passenger.pnrVo.emails track by $index">
+                              <td>{{email.address}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Credit Cards!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'cc.creditcards' | translate}} ({{passenger.pnrVo.creditCards.length}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'cc.holder' | translate}}</th>
+                            <th>{{'cc.Type' | translate}}</th>
+                            <th>{{'cc.Number' | translate}}</th>
+                            <th>{{'cc.expdate' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index">
+                              <td>{{cc.accountHolder}}</td>
+                              <td>{{cc.cardType}}</td>
+                              <td>{{cc.number}}</td>
+                              <td>{{cc.expiration |
+                                  date:'yyyy-MM' }}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Frequent Flyers!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'ff.FrequentFlyers' | translate}} ({{passenger.pnrVo.frequentFlyerDetails.length}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'ff.airline' | translate}}</th>
+                            <th>{{'ff.number' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index">
+                                <td>{{ff.carrier}}</td>
+                                <td>{{ff.number}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                <!--RawPNR!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      Raw PNR
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-lg">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="i in passenger.pnrVo.rawList track by $index">
+                                <td>{{ $index+1 }} .&nbsp;&nbsp;&nbsp; {{ i }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Seat Information!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'pnr.seatinformation' | translate}}
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'pass.lastname' | translate}}</th>
+                            <th>{{'pass.firstname' | translate}}</th>
+                            <th>{{'flight.flight' | translate}}#</th>
+                            <th>{{'pnr.seat' | translate}}#</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="sa in passenger.pnrVo.seatAssignments">
+                                <td>{{ sa.lastName }}</td>
+                                <td>{{ sa.firstName }}</td>
+                                <td>{{ sa.flightNumber }}</td>
+                                <td>{{ sa.number }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Travel Agencies!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'tt.travelagencies' | translate}} ({{ passenger.pnrVo.agencies.length}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md five-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'tt.country' | translate}}</th>
+                            <th>{{'tt.id' | translate}}</th>
+                            <th>{{'tt.location' | translate}}</th>
+                            <th>{{'tt.Name' | translate}}</th>
+                            <th>{{'tt.Phone' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="agency in passenger.pnrVo.agencies">
+                              <td>{{agency.country}}</td>
+                              <td>{{agency.identifier}}</td>
+                              <td>{{agency.location}}</td>
+                              <td>{{agency.name}}</td>
+                              <td>{{agency.phone}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--Baggage!-->
+                <div class="cbp-card-container gtas-card-container full-width ">
+                  <div class="cbp-card cbp-card-shadow">
+                    <h3 class="h-label no-margin-top" >
+                      {{'pnr.baggage' | translate}} ({{passenger.pnrVo.bagCount}})
+                      {{'pnr.totalbags' | translate}} ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
+                      {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.totalbagWeight}})
+                    </h3>
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>{{'pnr.bagid' | translate}}</th>
+                            <th>{{'pnr.dest' | translate}}</th>
+                          </tr>
+                        </thead>
+                      </table>
+                      <div class="floating-table-body">
+                        <table class="cbp-table-selectable mdl-js-data-table">
+                          <tbody>
+                            <tr ng-repeat="bags in passenger.pnrVo.bags">
+                              <td>{{bags.bagId}}</td>
+                              <td>{{bags.destination}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </md-tab-body>
+        </md-tab>
+        <!-- Flight History Tab -->
+        <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
+        </md-tab>
+        <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
+          <md-tab-body>
+            <!--Current Itinerary!-->
+            <div class="cbp-card-container gtas-card-container md-pad full-width ">
+              <div class="cbp-card cbp-card-shadow" ng-repeat-start="(key, value) in passenger.flightHistoryVo.flightHistoryMap">
+                <h3 class="h-label no-margin-top" >
+                  Current Itinerary: {{ key }}
+                </h3>
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md seven-table">
+                  <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                    <thead>
+                      <tr>
+                        <th>{{'flight.carrieflight' | translate}}</th>
+                        <th>{{'pass.eta' | translate}}</th>
+                        <th>{{'pass.etd' | translate}}</th>
+                        <th>{{'pass.origin' | translate}}</th>
+                        <th>{{'pass.originairport' | translate}}</th>
+                        <th>{{'pass.destination' | translate}}</th>
+                        <th>{{'pass.destinationairport' | translate}}</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div class="floating-table-body">
+                    <table class="cbp-table-selectable mdl-js-data-table">
+                      <tbody>
+                        <tr ng-repeat="j in value track by $index">
+                            <td>{{j.fullFlightNumber}}</td>
+                            <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{j.originCountry}}</td>
+                            <td>{{j.origin}}</td>
+                            <td>{{j.destinationCountry}}</td>
+                            <td>{{j.destination}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <span ng-repeat-end></span>
+            </div>
+            <!--Seat Information!-->
+            <div class="cbp-card-container gtas-card-container md-pad full-width ">
+              <div class="cbp-card cbp-card-shadow" ng-repeat-start="flight in passenger.fullFlightHistoryVo">
+                <h3 class="h-label no-margin-top" >
+                  Total Flight History
+                </h3>
+                <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md seven-table">
+                  <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                    <thead>
+                      <tr>
+                        <th>{{'flight.carrieflight' | translate}}</th>
+                        <th>{{'pass.eta' | translate}}</th>
+                        <th>{{'pass.etd' | translate}}</th>
+                        <th>{{'pass.origin' | translate}}</th>
+                        <th>{{'pass.originairport' | translate}}</th>
+                        <th>{{'pass.destination' | translate}}</th>
+                        <th>{{'pass.destinationairport' | translate}}</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div class="floating-table-body">
+                    <table class="cbp-table-selectable mdl-js-data-table">
+                      <tbody>
+                        <tr ng-repeat="k in flight track by $index">
+                            <td>{{k.fullFlightNumber}}</td>
+                            <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{k.originCountry}}</td>
+                            <td>{{k.origin}}</td>
+                            <td>{{k.destinationCountry}}</td>
+                            <td>{{k.destination}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <span ng-repeat-end></span>
+            </div>
+          </md-tab-body>
+        </md-tab>
+      </md-tabs>
+    </div>
+  </section>
 </div>

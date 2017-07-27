@@ -1,8 +1,8 @@
 /*!
- * Angular Material Design
+ * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.0.7-master-d86efaf
+ * v1.1.4-master-75237c6
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -13,6 +13,8 @@
  * @description
  * BottomSheet
  */
+MdBottomSheetDirective['$inject'] = ["$mdBottomSheet"];
+MdBottomSheetProvider['$inject'] = ["$$interimElementProvider"];
 angular
   .module('material.components.bottomSheet', [
     'material.core',
@@ -25,7 +27,9 @@ angular
 function MdBottomSheetDirective($mdBottomSheet) {
   return {
     restrict: 'E',
-    link : function postLink(scope, element, attr) {
+    link : function postLink(scope, element) {
+      element.addClass('_md');     // private md component indicator for styling
+
       // When navigation force destroys an interimElement, then
       // listen and $destroy() that interim instance...
       scope.$on('$destroy', function() {
@@ -34,7 +38,6 @@ function MdBottomSheetDirective($mdBottomSheet) {
     }
   };
 }
-MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
 
 
 /**
@@ -64,9 +67,26 @@ MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
  * app.controller('MyController', function($scope, $mdBottomSheet) {
  *   $scope.openBottomSheet = function() {
  *     $mdBottomSheet.show({
- *       template: '<md-bottom-sheet>Hello!</md-bottom-sheet>'
+ *       template: '<md-bottom-sheet>' +
+ *       'Hello! <md-button ng-click="closeBottomSheet()">Close</md-button>' +
+ *       '</md-bottom-sheet>'
+ *     })
+ *
+ *     // Fires when the hide() method is used
+ *     .then(function() {
+ *       console.log('You clicked the button to close the bottom sheet!');
+ *     })
+ *
+ *     // Fires when the cancel() method is used
+ *     .catch(function() {
+ *       console.log('You hit escape or clicked the backdrop to close.');
  *     });
  *   };
+ *
+ *   $scope.closeBottomSheet = function($scope, $mdBottomSheet) {
+ *     $mdBottomSheet.hide();
+ *   }
+ *
  * });
  * </hljs>
  */
@@ -77,6 +97,14 @@ MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
  *
  * @description
  * Show a bottom sheet with the specified options.
+ *
+ * <em><b>Note:</b> You should <b>always</b> provide a `.catch()` method in case the user hits the
+ * `esc` key or clicks the background to close. In this case, the `cancel()` method will
+ * automatically be called on the bottom sheet which will `reject()` the promise. See the @usage
+ * section above for an example.
+ *
+ * Newer versions of Angular will throw a `Possibly unhandled rejection` exception if you forget
+ * this.</em>
  *
  * @param {object} options An options object, with the following properties:
  *
@@ -95,6 +123,7 @@ MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
  *   of 3.
  *   - `clickOutsideToClose` - `{boolean=}`: Whether the user can click outside the bottom sheet to
  *     close it. Default true.
+ *   - `bindToController` - `{boolean=}`: When set to true, the locals will be bound to the controller instance.
  *   - `disableBackdrop` - `{boolean=}`: When set to true, the bottomsheet will not show a backdrop.
  *   - `escapeToClose` - `{boolean=}`: Whether the user can press escape to close the bottom sheet.
  *     Default true.
@@ -117,7 +146,10 @@ MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
  *
  * @description
  * Hide the existing bottom sheet and resolve the promise returned from
- * `$mdBottomSheet.show()`. This call will close the most recently opened/current bottomsheet (if any).
+ * `$mdBottomSheet.show()`. This call will close the most recently opened/current bottomsheet (if
+ * any).
+ *
+ * <em><b>Note:</b> Use a `.then()` on your `.show()` to handle this callback.</em>
  *
  * @param {*=} response An argument for the resolved promise.
  *
@@ -131,16 +163,18 @@ MdBottomSheetDirective.$inject = ["$mdBottomSheet"];
  * Hide the existing bottom sheet and reject the promise returned from
  * `$mdBottomSheet.show()`.
  *
+ * <em><b>Note:</b> Use a `.catch()` on your `.show()` to handle this callback.</em>
+ *
  * @param {*=} response An argument for the rejected promise.
  *
  */
 
 function MdBottomSheetProvider($$interimElementProvider) {
   // how fast we need to flick down to close the sheet, pixels/ms
+  bottomSheetDefaults['$inject'] = ["$animate", "$mdConstant", "$mdUtil", "$mdTheming", "$mdBottomSheet", "$rootElement", "$mdGesture", "$log"];
   var CLOSING_VELOCITY = 0.5;
   var PADDING = 80; // same as css
 
-  bottomSheetDefaults.$inject = ["$animate", "$mdConstant", "$mdUtil", "$mdTheming", "$mdBottomSheet", "$rootElement", "$mdGesture"];
   return $$interimElementProvider('$mdBottomSheet')
     .setDefaults({
       methods: ['disableParentScroll', 'escapeToClose', 'clickOutsideToClose'],
@@ -148,7 +182,8 @@ function MdBottomSheetProvider($$interimElementProvider) {
     });
 
   /* ngInject */
-  function bottomSheetDefaults($animate, $mdConstant, $mdUtil, $mdTheming, $mdBottomSheet, $rootElement, $mdGesture) {
+  function bottomSheetDefaults($animate, $mdConstant, $mdUtil, $mdTheming, $mdBottomSheet, $rootElement,
+                               $mdGesture, $log) {
     var backdrop;
 
     return {
@@ -169,9 +204,16 @@ function MdBottomSheetProvider($$interimElementProvider) {
       // prevent tab focus or click focus on the bottom-sheet container
       element.attr('tabindex',"-1");
 
+      // Once the md-bottom-sheet has `ng-cloak` applied on his template the opening animation will not work properly.
+      // This is a very common problem, so we have to notify the developer about this.
+      if (element.hasClass('ng-cloak')) {
+        var message = '$mdBottomSheet: using `<md-bottom-sheet ng-cloak >` will affect the bottom-sheet opening animations.';
+        $log.warn( message, element[0] );
+      }
+
       if (!options.disableBackdrop) {
         // Add a backdrop that will close on click
-        backdrop = $mdUtil.createBackdrop(scope, "_md-bottom-sheet-backdrop md-opaque");
+        backdrop = $mdUtil.createBackdrop(scope, "md-bottom-sheet-backdrop md-opaque");
 
         // Prevent mouse focus on backdrop; ONLY programatic focus allowed.
         // This allows clicks on backdrop to propogate to the $rootElement and
@@ -204,7 +246,7 @@ function MdBottomSheetProvider($$interimElementProvider) {
           var focusable = $mdUtil.findFocusTarget(element) || angular.element(
             element[0].querySelector('button') ||
             element[0].querySelector('a') ||
-            element[0].querySelector('[ng-click]')
+            element[0].querySelector($mdUtil.prefixer('ng-click', true))
           ) || backdrop;
 
           if (options.escapeToClose) {
@@ -286,6 +328,5 @@ function MdBottomSheetProvider($$interimElementProvider) {
   }
 
 }
-MdBottomSheetProvider.$inject = ["$$interimElementProvider"];
 
 })(window, window.angular);

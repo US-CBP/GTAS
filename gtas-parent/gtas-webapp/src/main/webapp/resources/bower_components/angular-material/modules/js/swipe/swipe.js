@@ -1,8 +1,8 @@
 /*!
- * Angular Material Design
+ * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.0.7-master-d86efaf
+ * v1.1.4-master-75237c6
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -84,19 +84,22 @@ angular.module('material.components.swipe', ['material.core'])
     .directive('mdSwipeDown', getDirective('SwipeDown'));
 
 function getDirective(name) {
+    DirectiveFactory['$inject'] = ["$parse"];
   var directiveName = 'md' + name;
   var eventName = '$md.' + name.toLowerCase();
 
-    DirectiveFactory.$inject = ["$parse"];
   return DirectiveFactory;
 
   /* ngInject */
   function DirectiveFactory($parse) {
-      return { restrict: 'A', link: postLink };
-      function postLink(scope, element, attr) {
+      return {restrict: 'A', link: postLink};
+
+    function postLink(scope, element, attr) {
+        element.css('touch-action', attr['mdSwipeTouchAction'] || 'none');
+
         var fn = $parse(attr[directiveName]);
         element.on(eventName, function(ev) {
-          scope.$apply(function() { fn(scope, { $event: ev }); });
+          scope.$applyAsync(function() { fn(scope, { $event: ev }); });
         });
       }
     }
