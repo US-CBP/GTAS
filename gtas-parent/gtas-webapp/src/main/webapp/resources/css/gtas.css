@@ -29,6 +29,9 @@
 .half-width {
   width: 49% !important;
 }
+.sev-five-width {
+  width: 75% !important;
+}
 .full-width {
   width: 100% !important;
 }
@@ -279,9 +282,11 @@
 }
 
 /*UI-Grid Overrides*/
+.manage .ui-grid {
+  height: 58vh !important;
+}
 .ui-grid {
   width: 99%;
-  /*height: 420px !important;*/
   height: 85vh !important;
   margin: auto;
 }
