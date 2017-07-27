@@ -27,6 +27,7 @@ public class PnrVo extends MessageVo implements Validatable {
     private Date departureDate;
     private Integer passengerCount;
     private Integer bagCount;
+    private Integer total_bag_count;
     private Double baggageWeight;
     private String baggageUnit;
     private String formOfPayment;
@@ -46,7 +47,15 @@ public class PnrVo extends MessageVo implements Validatable {
     private Date reservationCreateDate;
     
     
-    public List<CodeShareVo> getCodeshares() {
+    public Integer getTotal_bag_count() {
+		return total_bag_count;
+	}
+
+	public void setTotal_bag_count(Integer total_bag_count) {
+		this.total_bag_count = total_bag_count;
+	}
+
+	public List<CodeShareVo> getCodeshares() {
 		return codeshares;
 	}
 

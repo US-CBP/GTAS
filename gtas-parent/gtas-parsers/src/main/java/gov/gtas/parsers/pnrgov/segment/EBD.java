@@ -29,7 +29,6 @@ public class EBD extends Segment {
         
         for (int i=0; i<numComposites(); i++) {
             Composite c = getComposite(i);
-            
             switch (i) {
             case 0:
                 this.currencyCode = c.getElement(0);

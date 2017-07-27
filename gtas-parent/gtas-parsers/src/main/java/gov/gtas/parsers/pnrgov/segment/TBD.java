@@ -39,7 +39,7 @@ import gov.gtas.parsers.util.ParseUtils;
 public class TBD extends Segment {
     private Integer numBags;
     private Double baggageWeight;
-    private String unitQualifier;
+    private String unitQualifier="Kgs";
     
     public class BagDetails {
         private String airline;
@@ -115,7 +115,8 @@ public class TBD extends Segment {
             		this.unitQualifier="kgs";
             	}
             	else if("701".equals(c.getElement(2))){
-            		this.unitQualifier="lbs";
+            		//this.unitQualifier="Kgs";
+            		this.baggageWeight=(double) Math.round(this.baggageWeight*0.45359237);
             	}
             }
           //CASE-2:
@@ -157,7 +158,7 @@ public class TBD extends Segment {
         		bag.setMemberPool(true);
         		this.numBags=1;
         		this.baggageWeight = 0.0;
-        		this.unitQualifier="NONE";
+        		this.unitQualifier="kgs";
         		bagDetails.add(bag);
         	}
         	

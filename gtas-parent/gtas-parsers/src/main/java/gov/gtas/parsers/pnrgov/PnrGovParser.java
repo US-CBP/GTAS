@@ -552,6 +552,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
         if (n != null) {
             parsedMessage.setBagCount(n);
+            if(parsedMessage.getTotal_bag_count()!= null && parsedMessage.getTotal_bag_count() >0){
+            	parsedMessage.setTotal_bag_count(parsedMessage.getTotal_bag_count()+n);
+            }else{
+            	parsedMessage.setTotal_bag_count(n);
+            }
+            
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
@@ -630,8 +636,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     private void processExcessBaggage(EBD ebd) {
         if (ebd != null) {
             Integer n = ParseUtils.returnNumberOrNull(ebd.getNumberInExcess());
+            
             if (n != null) {
-                parsedMessage.setBagCount(parsedMessage.getBagCount() + n);
+                parsedMessage.setTotal_bag_count(parsedMessage.getBagCount() + n);
+                
             }
         }
     }
