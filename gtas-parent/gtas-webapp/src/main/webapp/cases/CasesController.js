@@ -1,23 +1,23 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridService) {
     'use strict;'
 	$scope.pageSize = 10;
-	
+
     $scope.hitTypeIcon = function (hitType) {
         var icons = '&nbsp;';
         if (hitType) {
             if (hitType.includes('R')) {
-                icons += '<i class="glyphicon glyphicon-flag" style="color:red"></i>&nbsp;';
+                icons += '<i class="fa fa-flag" style="color:red"></i>&nbsp;';
             }
             if (hitType.includes('P')) {
-                icons += '<i class="glyphicon glyphicon-user" style="color:rgb(255, 176, 22)"></i>&nbsp;';
+                icons += '<i class="fa fa-user" style="color:rgb(255, 176, 22)"></i>&nbsp;';
             }
             if (hitType.includes('D')) {
-                icons += '<i class="glyphicon glyphicon-file" style="color:rgb(255, 176, 22)"></i>';
+                icons += '<i class="fa fa-file" style="color:rgb(255, 176, 22)"></i>';
             }
         }
         return $sce.trustAsHtml(icons);
@@ -37,16 +37,16 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
         enableColumnMenus: false,
         multiSelect: false,
         enableExpandableRowHeader: false,
-        
+
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
-            
+
             gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                 $scope.pageSize = pageSize;
             });
         }
     };
-    
+
     $scope.casesGrid.columnDefs = [
         {
             field: 'lastName',
@@ -108,9 +108,8 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
             displayName: 'Status'
         }
     ];
-    
+
     $scope.getTableHeight = function(){
     	return gridService.calculateGridHeight($scope.pageSize);
     };
 });
-
