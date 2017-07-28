@@ -11,6 +11,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,7 +34,15 @@ public class CaseDispositionServiceImplTest {
 
     @Test
     public void testCreateCase() throws Exception {
-        //assertTrue((caseDispService.create((new Long(18)).longValue(), (new Long(18)).longValue(), (new Long(18)).longValue())) instanceof Object);
+    	Random _rand = new Random();
+        List<Long> _tempHitList = new ArrayList<>();
+        _tempHitList.add(new Long(_rand.nextInt(1000)));
+        _tempHitList.add(new Long(_rand.nextInt(1000)));
+        _tempHitList.add(new Long(_rand.nextInt(1000)));
+
+        assertTrue((caseDispService.create((new Long(_rand.nextInt(1000))),
+        		(new Long(_rand.nextInt(1000))),_tempHitList)).getId()!=null);
     }
+
 
 }

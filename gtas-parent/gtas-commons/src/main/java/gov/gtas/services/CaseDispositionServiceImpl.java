@@ -10,11 +10,14 @@ import gov.gtas.model.Case;
 import javax.annotation.Resource;
 
 import gov.gtas.model.HitsDisposition;
+import gov.gtas.model.HitsDispositionComments;
+import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.repository.CaseDispositionRepository;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -23,53 +26,63 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     private CaseDispositionRepository caseDispositionRepository;
 
     @Override
-    public Case create(Long flight_id, Long pax_id, Long hit_id) {
+    public Case create(Long flight_id, Long pax_id, List<Long> hit_ids) {
         Case aCase = new Case();
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
 
-        aCase.setFlight_id(flight_id);
-        aCase.setPax_id(pax_id);
-        aCase.setStatus("New");
-        //aCase.setHits_disp(new HashSet<>().add(new HitsDisposition(hit_id)));
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+        for (Long _tempHitId : hit_ids) {
+            hitDisp = new HitsDisposition();
+            hitsDispCommentsSet = new HashSet<>();
+            hitDisp.setHitId(_tempHitId);
+            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitsDispositionComments = new HitsDispositionComments();
+            hitsDispositionComments.setHitId(_tempHitId);
+            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispCommentsSet.add(hitsDispositionComments);
+            hitDisp.setDispComments(hitsDispCommentsSet);
+            hitsDispSet.add(hitDisp);
+        }
+        aCase.setHitsDispositions(hitsDispSet);
+
+
         caseDispositionRepository.save(aCase);
         return aCase;
     }
 
-    //    @Override
-//    @Transactional
-//    public Case create(Carrier carrier) {
-//        return carrierRespository.save(carrier);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public Carrier delete(Long id) {
-//        Carrier carrier = this.findById(id);
-//        if(carrier != null){
-//            carrierRespository.delete(carrier);
-//        }
-//        return carrier;
-//    }
-//
-//    @Override
-//    @Transactional
-//    public List<Carrier> findAll() {
-//
-//        return (List<Carrier>)carrierRespository.findAll();
-//    }
-//
-//    @Override
-//    @Transactional
-//    public Carrier update(Carrier carrier) {
-//        // NO IMPLEMENTATION
-//        return null;
-//    }
-//
-//    @Override
-//    @Transactional
-//    public Carrier findById(Long id) {
-//
-//        return carrierRespository.findOne(id);
-//    }
-//
+    @Override
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id) {
 
+        Case aCase = new Case();
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+//        for (Long _tempHitId : hit_ids) {
+//            hitDisp = new HitsDisposition();
+//            hitsDispCommentsSet = new HashSet<>();
+//            hitDisp.setHit_id(_tempHitId);
+//            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+//            hitsDispositionComments = new HitsDispositionComments();
+//            hitsDispositionComments.setHit_id(_tempHitId);
+//            hitsDispositionComments.setComments("Initial Comment");
+//            hitsDispCommentsSet.add(hitsDispositionComments);
+//            hitDisp.setDispComments(hitsDispCommentsSet);
+//            hitsDispSet.add(hitDisp);
+//        }
+        aCase.setHitsDispositions(hitsDispSet);
+
+
+        caseDispositionRepository.save(aCase);
+        return aCase;
+    }
 }

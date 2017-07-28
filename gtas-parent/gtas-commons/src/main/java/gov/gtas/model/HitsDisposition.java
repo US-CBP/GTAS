@@ -5,9 +5,13 @@
  */
 package gov.gtas.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 
 
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -18,33 +22,33 @@ public class HitsDisposition extends BaseEntityAudit {
     public HitsDisposition() { }
 
     public HitsDisposition(Long hit){
-        this.hit_id = hit;
+        this.hitId = hit;
     }
 
-//    @ManyToOne(fetch = FetchType.LAZY)
     @Column(name="hit_id")
-    private long hit_id;
+    private long hitId;
 
-    @Column(name = "disp_id", nullable = false)
-    private String disp_id;
+    @Column(name="case_id")
+    private long caseId;
 
     @Column(name = "description")
     private String description;
 
-    @OneToMany
+    @Column(name = "status", nullable = false)
+    private String status;
+
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
     private Set<HitsDispositionComments> dispComments;
-    /*@ManyToOne
-    @JoinColumn(name = "case_id", nullable = false)
-    private Case case;*/
 
-//    public String getDisp_id() {
-//        return disp_id;
-//    }
-//
-//    public void setDisp_id(String disp_id) {
-//        this.disp_id = disp_id;
-//    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Set<HitsDispositionComments> getDispComments() {
         return dispComments;
@@ -62,19 +66,45 @@ public class HitsDisposition extends BaseEntityAudit {
         this.description = description;
     }
 
-    public long getHit_id() {
-        return hit_id;
+    public long getHitId() {
+        return hitId;
     }
 
-    public void setHit_id(long hit_id) {
-        this.hit_id = hit_id;
+    public void setHitId(long hitId) {
+        this.hitId = hitId;
     }
 
-    public String getDisp_id() {
-        return disp_id;
+    public long getCaseId() {
+        return caseId;
     }
 
-    public void setDisp_id(String disp_id) {
-        this.disp_id = disp_id;
+    public void setCaseId(long caseId) {
+        this.caseId = caseId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HitsDisposition that = (HitsDisposition) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(hitId, that.hitId)
+                .append(caseId, that.caseId)
+                .append(id, that.id)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(hitId)
+                .append(caseId)
+                .append(id)
+                .toHashCode();
     }
 }

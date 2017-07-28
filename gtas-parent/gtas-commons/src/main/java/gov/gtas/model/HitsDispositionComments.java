@@ -5,6 +5,9 @@
  */
 package gov.gtas.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 import java.util.HashSet;
 
@@ -19,48 +22,62 @@ public class HitsDispositionComments extends BaseEntityAudit {
 
     public HitsDispositionComments() { }
 
-    @Column(name = "hit_id", nullable = false)
-    private String hit_id;
-
-    @Column(name = "disp_id", nullable = false)
-    private String disp_id;
-
-    @Column(name = "description")
-    private String description;
-
+    @Column(name = "comments", length = 1000)
+    private String comments;
 
     @Column(name="hit_disp_id")
-    private long hit_disp_id;
+    private long hitDispId;
 
-    public String getHit_id() {
-        return hit_id;
+    @Column(name="hit_id")
+    private long hitId;
+
+    public String getComments() {
+        return comments;
     }
 
-    public void setHit_id(String hit_id) {
-        this.hit_id = hit_id;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
-    public String getDisp_id() {
-        return disp_id;
+    public long getHitDispId() {
+        return hitDispId;
     }
 
-    public void setDisp_id(String disp_id) {
-        this.disp_id = disp_id;
+    public void setHitDispId(long hitDispId) {
+        this.hitDispId = hitDispId;
     }
 
-    public String getDescription() {
-        return description;
+    public long getHitId() {
+        return hitId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setHitId(long hitId) {
+        this.hitId = hitId;
     }
 
-    public long getHit_disp_id() {
-        return hit_disp_id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        HitsDispositionComments that = (HitsDispositionComments) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(hitDispId, that.hitDispId)
+                .append(hitId, that.hitId)
+                .append(id, that.id)
+                .isEquals();
     }
 
-    public void setHit_disp_id(long hit_disp_id) {
-        this.hit_disp_id = hit_disp_id;
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(hitDispId)
+                .append(hitId)
+                .append(id)
+                .toHashCode();
     }
 }

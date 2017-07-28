@@ -7,7 +7,11 @@ package gov.gtas.services;
 
 import gov.gtas.model.Case;
 
+import java.util.List;
+
 public interface CaseDispositionService {
 
-    public Case create(Long flight_id, Long pax_id, Long hit_id);
+    public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
+
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 }

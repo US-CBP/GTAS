@@ -7,9 +7,6 @@ package gov.gtas.model;
 
 import javax.persistence.*;
 
-import gov.gtas.model.lookup.DispositionStatus;
-
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,11 +16,11 @@ public class Case extends BaseEntityAudit {
 
     public Case() { }
 
-    @Column(name = "flight_id", nullable = false)
-    private Long flight_id;
+    @Column(name = "flightId", nullable = false)
+    private Long flightId;
 
-    @Column(name = "pax_id", nullable = false)
-    private Long pax_id;
+    @Column(name = "paxId", nullable = false)
+    private Long paxId;
 
     @Column(name = "status", nullable = false)
     private String status;
@@ -31,32 +28,32 @@ public class Case extends BaseEntityAudit {
     @Column(name = "description", nullable = true)
     private String description;
 
-    @OneToMany
-    @JoinColumn(name="hit_id", referencedColumnName = "id")
-    private Set<HitsDisposition> hits_disp;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name="case_id", referencedColumnName = "id")
+    private Set<HitsDisposition> hitsDispositions;
 
-    public Set<HitsDisposition> getHits_disp() {
-        return hits_disp;
+    public Set<HitsDisposition> getHitsDispositions() {
+        return hitsDispositions;
     }
 
-    public void setHits_disp(Set<HitsDisposition> hits_disp) {
-        this.hits_disp = hits_disp;
+    public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
+        this.hitsDispositions = hitsDispositions;
     }
 
-    public Long getFlight_id() {
-        return flight_id;
+    public Long getFlightId() {
+        return flightId;
     }
 
-    public void setFlight_id(Long flight_id) {
-        this.flight_id = flight_id;
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
     }
 
-    public Long getPax_id() {
-        return pax_id;
+    public Long getPaxId() {
+        return paxId;
     }
 
-    public void setPax_id(Long pax_id) {
-        this.pax_id = pax_id;
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
     }
 
     public String getStatus() {
