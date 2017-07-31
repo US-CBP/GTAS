@@ -19,13 +19,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import gov.gtas.services.CaseDispositionService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TargetingResultUtils {
 	private static final Logger logger = LoggerFactory
 			.getLogger(TargetingResultUtils.class);
+
+	@Autowired
+	private static CaseDispositionService caseDispositionService;
 
 	/**
 	 * Eliminates duplicates and adds flight id, if missing.
@@ -82,6 +87,15 @@ public class TargetingResultUtils {
 
 	private static void processPassengerFlight(RuleHitDetail rhd,
 			Long flightId, Map<RuleHitDetail, RuleHitDetail> resultMap) {
+
+		// Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
+		Long _tempPaxId = null;
+		try {
+			_tempPaxId=rhd.getPassengerId();
+			caseDispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+		}catch(Exception ex){
+			logger.error("Could not initiate a case for Flight:"+ flightId +" Pax:"+_tempPaxId+" Rule:"+rhd.getRuleId()+" set");
+		}
 		logger.info("Entering processPassengerFlight().");
 		rhd.setFlightId(flightId);
 

@@ -14,4 +14,6 @@ public interface CaseDispositionService {
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
+
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
 }

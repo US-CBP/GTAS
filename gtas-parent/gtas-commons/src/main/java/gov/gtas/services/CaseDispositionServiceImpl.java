@@ -15,6 +15,7 @@ import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.repository.CaseDispositionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,5 +85,24 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
         caseDispositionRepository.save(aCase);
         return aCase;
+    }
+
+    @Override
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id)
+    {
+        List<Case> _tempCaseList = new ArrayList<>();
+        List<Long> _tempHitIds = new ArrayList<>();
+
+        _tempHitIds.add(hit_id);
+        _tempCaseList.add(create(flight_id, pax_id, _tempHitIds));
+
+        return _tempCaseList;
+    }
+
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, List<Long> hit_ids)
+    {
+        List<Case> _tempCaseList = new ArrayList<>();
+
+        return _tempCaseList;
     }
 }
