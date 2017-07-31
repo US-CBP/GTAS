@@ -307,10 +307,10 @@
 
         $scope.showConfirm = function (grid, newObjects) {
             var confirm = $mdDialog.confirm()
-                .title('WARNING: This will erase all existing items!')
-                .textContent('Are you certain you wish to replace existing data with the imported file\'s?')
-                .ariaLabel('Deletion Warning')
-                .ok('Confirm Replace')
+                .title('WARNING: Your Imported data may contain duplicate watch list items!')
+                .textContent('Are you certain you wish to import data with the imported file\'s?')
+                .ariaLabel('Import WatchList')
+                .ok('Confirm Import')
                 .cancel('Cancel');
 
             $mdDialog.show(confirm).then(function () {
