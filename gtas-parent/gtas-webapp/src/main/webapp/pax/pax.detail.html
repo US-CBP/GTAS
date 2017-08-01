@@ -87,12 +87,10 @@
                     <div class="floating-table-body">
                       <table class="cbp-table-selectable mdl-js-data-table">
                         <tbody>
-                          <tr ng-repeat="doc in passenger.documents">
-                            <td>{{doc.documentNumber}}</td>
-                            <td>{{doc.documentType}}</td>
-                            <td>{{doc.issuanceCountry}}</td>
-                            <td>{{doc.expirationDate}}</td>
-                          </tr>
+                          <tr ng-repeat="j in ruleHits track by $index">
+                                <td>{{j.title}}</td>
+                                <td>{{j.ruleConditions}}</td>
+                            </tr>
                         </tbody>
                       </table>
                     </div>
