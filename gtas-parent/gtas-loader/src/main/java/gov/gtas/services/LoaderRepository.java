@@ -18,6 +18,7 @@ import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Message;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.ReportingParty;
@@ -33,6 +34,7 @@ import gov.gtas.parsers.vo.EmailVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.FrequentFlyerVo;
 import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.parsers.vo.PaymentFormVo;
 import gov.gtas.parsers.vo.PhoneVo;
 import gov.gtas.parsers.vo.PnrVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
@@ -46,9 +48,11 @@ import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.FrequentFlyerRepository;
 import gov.gtas.repository.MessageRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.repository.PaymentFormRepository;
 import gov.gtas.repository.PhoneRepository;
 import gov.gtas.repository.ReportingPartyRepository;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -99,6 +103,9 @@ public class LoaderRepository {
     
     @Autowired
     private BagRepository bagDao;
+    
+    @Autowired
+    private PaymentFormRepository paymentFormDao;
     
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -153,7 +160,7 @@ public class LoaderRepository {
                 pnr.addCreditCard(existingCard);                
             }
         }
-        
+
         for (FrequentFlyerVo ffvo : vo.getFrequentFlyerDetails()) {
             FrequentFlyer existingFf = ffdao.findByCarrierAndNumber(ffvo.getCarrier(), ffvo.getNumber());
             if (existingFf == null) {
@@ -340,6 +347,20 @@ public class LoaderRepository {
     		}
     	}
      
+    }
+    public void createFormPfPayments(PnrVo vo,Pnr pnr){
+    	Set<PaymentForm> chkList=new HashSet<>();
+    	for(PaymentFormVo pvo:vo.getFormOfPayments()){
+    		PaymentForm pf = new PaymentForm();
+    		pf.setPaymentType(pvo.getPaymentType());
+    		pf.setPaymentAmount(pvo.getPaymentAmount());
+    		pf.setPnr(pnr);
+    		chkList.add(pf);
+    	}
+    	for(PaymentForm pform : chkList){
+    		paymentFormDao.save(pform);
+    	}
+    	
     }
     private void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);

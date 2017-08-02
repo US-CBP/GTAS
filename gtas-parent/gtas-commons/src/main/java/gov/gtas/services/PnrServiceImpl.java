@@ -11,6 +11,7 @@ import gov.gtas.model.Email;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.repository.PnrRepository;
@@ -190,6 +191,15 @@ public class PnrServiceImpl implements PnrService {
 			}
 		}
 
+		if (source.getPaymentForms() != null && source.getPaymentForms().size() > 0) {
+			List<PaymentForm> tempForms = source.getPaymentForms();
+			for (PaymentForm form : tempForms) {
+				if (!checkFormOfPaymentExist(target.getPaymentForms(), form)) {
+					target.getPaymentForms().add(form);
+				}
+			}
+		}
+		
 		if (source.getPassengers() != null && source.getPassengers().size() > 0) {
 			Iterator it6 = source.getPassengers().iterator();
 			while (it6.hasNext()) {
@@ -203,6 +213,16 @@ public class PnrServiceImpl implements PnrService {
 
 	}
 
+	private boolean checkFormOfPaymentExist(List<PaymentForm> forms, PaymentForm form){
+		boolean flag = false;
+		for(PaymentForm pf:forms){
+			if(pf.getPnr().equals(form.getPnr())){
+				flag=true;
+				break;
+			}
+		}
+		return flag;
+	}
 	private boolean checkFlightLegExistence(List<FlightLeg> flightLegs, FlightLeg fl) {
 		boolean flag = false;		
 		for (FlightLeg leg: flightLegs) {
