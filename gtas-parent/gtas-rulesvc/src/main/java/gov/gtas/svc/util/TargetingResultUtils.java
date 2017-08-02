@@ -88,14 +88,6 @@ public class TargetingResultUtils {
 	private static void processPassengerFlight(RuleHitDetail rhd,
 			Long flightId, Map<RuleHitDetail, RuleHitDetail> resultMap) {
 
-		// Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
-		Long _tempPaxId = null;
-		try {
-			_tempPaxId=rhd.getPassengerId();
-			caseDispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
-		}catch(Exception ex){
-			logger.error("Could not initiate a case for Flight:"+ flightId +" Pax:"+_tempPaxId+" Rule:"+rhd.getRuleId()+" set");
-		}
 		logger.info("Entering processPassengerFlight().");
 		rhd.setFlightId(flightId);
 

@@ -47,13 +47,11 @@ import gov.gtas.repository.PnrRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.RuleService;
-import gov.gtas.services.AuditLogPersistenceService;
-import gov.gtas.services.HitsSummaryService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.WhitelistService;
+import gov.gtas.services.*;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.util.RuleExecutionContext;
+import gov.gtas.svc.util.TargetingResultCaseMgmtUtils;
 import gov.gtas.svc.util.TargetingResultUtils;
 import gov.gtas.svc.util.TargetingServiceUtils;
 import gov.gtas.vo.WhitelistVo;
@@ -141,6 +139,9 @@ public class TargetingServiceImpl implements TargetingService {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private CaseDispositionService caseDispositionService;
+
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
 	 * 
@@ -175,6 +176,9 @@ public class TargetingServiceImpl implements TargetingService {
 				message).getRuleServiceRequest();
 		RuleServiceResult res = ruleService.invokeRuleEngine(req);
 		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		//make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+
 		logger.info("Exiting analyzeApisMessage().");
 		return res;
 	}
@@ -192,6 +196,9 @@ public class TargetingServiceImpl implements TargetingService {
 		RuleServiceResult res = ruleService.invokeAdhocRulesFromString(
 				drlRules, request);
 		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		//make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+
 		return res;
 	}
 
@@ -211,6 +218,9 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 		RuleServiceResult res = this.analyzeApisMessage(msg);
 		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		//make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+
 		return res;
 	}
 
@@ -230,6 +240,9 @@ public class TargetingServiceImpl implements TargetingService {
 			RuleServiceResult res = ruleService.invokeRuleEngine(ctx
 					.getRuleServiceRequest());
 			res = TargetingResultUtils.ruleResultPostProcesssing(res);
+			//make a call to Case Mgmt.
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+
 			ret = res.getResultList();
 		}
 		return ret;
@@ -251,6 +264,9 @@ public class TargetingServiceImpl implements TargetingService {
 			RuleServiceResult res = ruleService.invokeRuleEngine(ctx
 					.getRuleServiceRequest());
 			res = TargetingResultUtils.ruleResultPostProcesssing(res);
+			//make a call to Case Mgmt.
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+
 			ret = res.getResultList();
 		}
 		return ret;
@@ -477,10 +493,16 @@ public class TargetingServiceImpl implements TargetingService {
 			logger.debug("Eliminate duplicates from UDR rule running.");
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult);
+			//make a call to Case Mgmt.
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService);
+
 		}
 		if (wlResult != null) {
 			logger.debug("Eliminate duplicates from watchlist rule running.");
 			wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult);
+			//make a call to Case Mgmt.
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult, caseDispositionService);
+
 		}
 
 		TargetingResultUtils.updateRuleExecutionContext(ctx,

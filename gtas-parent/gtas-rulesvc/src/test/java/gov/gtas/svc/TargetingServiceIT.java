@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
+import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.config.RuleServiceConfig;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Document;
@@ -44,7 +45,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  * tests for date-effective and date-expires properties of rules.)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RuleServiceConfig.class)
+@ContextConfiguration(classes = {RuleServiceConfig.class, CommonServicesConfig.class })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class TargetingServiceIT {
 	public static final String UDR_RULE_AUTHOR = "test";

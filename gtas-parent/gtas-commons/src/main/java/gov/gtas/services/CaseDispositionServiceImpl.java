@@ -23,8 +23,12 @@ import java.util.Set;
 
 @Service
 public class CaseDispositionServiceImpl implements CaseDispositionService  {
+
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
+
+    public CaseDispositionServiceImpl() {
+    }
 
     @Override
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids) {
