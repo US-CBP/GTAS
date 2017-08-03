@@ -342,7 +342,10 @@
 .ui-grid-cell {
   text-align: center;
 }
-
+/*Override material ui Right sidebar */
+.md-sidenav-right {
+  margin-top: 100px !important;
+}
 
 /* BEGIN IE css patches */
 .md-select-label :first-child{

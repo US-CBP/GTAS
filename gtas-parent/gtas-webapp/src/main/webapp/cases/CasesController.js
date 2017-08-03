@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridService) {
+app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridService, $mdSidenav) {
     'use strict;'
 	$scope.pageSize = 10;
 
@@ -108,7 +108,9 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
             displayName: 'Status'
         }
     ];
-
+    $scope.sideNav = function(id) {
+      $mdSidenav(id).toggle();
+    }
     $scope.getTableHeight = function(){
     	return gridService.calculateGridHeight($scope.pageSize);
     };
