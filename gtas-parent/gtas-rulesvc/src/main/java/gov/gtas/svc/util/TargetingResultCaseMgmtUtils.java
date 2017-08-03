@@ -1,25 +1,19 @@
+/*
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ *
+ * Please see LICENSE.txt for details.
+ */
+
 package gov.gtas.svc.util;
 
-import gov.gtas.bo.BasicRuleServiceResult;
-import gov.gtas.bo.RuleHitDetail;
-import gov.gtas.bo.RuleServiceResult;
-import gov.gtas.bo.TargetDetailVo;
-import gov.gtas.bo.TargetSummaryVo;
-import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.bo.*;
 import gov.gtas.model.Flight;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.CaseDispositionServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.*;
 
 public class TargetingResultCaseMgmtUtils {
 

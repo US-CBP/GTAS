@@ -333,6 +333,22 @@ var app;
                         	}
                     	}
                 })
+                .state('caseDisposition', {
+                    url: '/casedisposition',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                        '@': {
+                            controller: 'CaseDispositionController as CaseDispCtrl',
+                            templateUrl: 'cases/caseDisposition.html'
+                        },
+                    },
+                    resolve: {
+                        newCases: function(caseDispositionService){
+                            return caseDispositionService.getAllCases();
+                        }
+                    }
+                })
                 .state('adhocquery', {
                     url: '/adhocquery',
                     authenticate: true,
