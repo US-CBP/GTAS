@@ -7,6 +7,8 @@ package gov.gtas.parsers.pnrgov.segment;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
@@ -31,6 +33,7 @@ import gov.gtas.parsers.edifact.Segment;
  * (ADD++700:4532 WILSON STREET:PHILADELPHIA:PA::US:34288’)
  * EMAIL
  * (ADD++700:::::::EK CTCE SOME.ABC//YAHOO.COM)
+ * ADD++E:::::::FIRST.LAST@GMAIL.COM' //Issue 467
  */
 public class ADD extends Segment {
     private String addressType;
@@ -51,6 +54,7 @@ public class ADD extends Segment {
 
         Composite c = getComposite(1);
         if (c != null) {
+
             this.addressType = c.getElement(0);
             this.streetNumberAndName = c.getElement(1);
             this.city = c.getElement(2);
@@ -67,6 +71,15 @@ public class ADD extends Segment {
             }
             if(freeText != null && freeText.contains("CTCE")){
             	this.email = freeText;
+            }
+            if((StringUtils.isNotBlank(c.getElement(0)) && ("E".equalsIgnoreCase(c.getElement(0))))){
+            	this.email = freeText;
+            }
+            if((StringUtils.isNotBlank(c.getElement(0)) && ("M".equalsIgnoreCase(c.getElement(0))))){
+            	this.telephone = freeText;
+            }
+            if((StringUtils.isNotBlank(c.getElement(0)) && ("H".equalsIgnoreCase(c.getElement(0))))){
+            	this.telephone = freeText;
             }
         }
     }

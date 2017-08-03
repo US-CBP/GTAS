@@ -27,6 +27,6 @@ public class PhoneVo implements Validatable {
     }
     @Override
     public boolean isValid() {
-        return StringUtils.isNotBlank(this.number);
+        return (StringUtils.isNotBlank(this.number) && (this.number.length() >3));
     }
 }
