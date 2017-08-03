@@ -106,6 +106,7 @@ public class PnrMessageService extends MessageLoaderService {
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
             loaderRepo.createBagsFromPnrVo(vo,pnr);
+            loaderRepo.createFormPfPayments(vo,pnr);
             setCodeShareFlights(pnr);
             pnr.setStatus(MessageStatus.LOADED);
 
@@ -288,6 +289,8 @@ public class PnrMessageService extends MessageLoaderService {
         pnr.setEmails(null);
         pnr.setFrequentFlyers(null);
         pnr.setPhones(null);
+        pnr.setDwellTimes(null);
+        pnr.setPaymentForms(null);
         pnr.setStatus(status);
         String stacktrace = ErrorUtils.getStacktrace(e);
         pnr.setError(stacktrace);

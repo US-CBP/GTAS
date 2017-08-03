@@ -17,7 +17,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -146,6 +145,9 @@ public class Pnr extends Message {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<FlightLeg> flightLegs = new ArrayList<>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
+    private List<PaymentForm> paymentForms = new ArrayList<>();
+    
     @ManyToMany(targetEntity = DwellTime.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
@@ -158,7 +160,15 @@ public class Pnr extends Message {
     private Double tripDuration;
 
     
-    public Set<CodeShareFlight> getCodeshares() {
+    public List<PaymentForm> getPaymentForms() {
+		return paymentForms;
+	}
+
+	public void setPaymentForms(List<PaymentForm> paymentForms) {
+		this.paymentForms = paymentForms;
+	}
+
+	public Set<CodeShareFlight> getCodeshares() {
 		return codeshares;
 	}
 
@@ -200,6 +210,10 @@ public class Pnr extends Message {
         flightLegs.add(leg);
     }
 
+	public void addPaymentForm(PaymentForm payment) {
+        paymentForms.add(payment);
+    }
+	
     public void addPassenger(Passenger p) {
         if (this.passengers == null) {
             this.passengers = new HashSet<>();

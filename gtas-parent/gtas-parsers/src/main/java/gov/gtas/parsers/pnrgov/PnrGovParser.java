@@ -64,6 +64,7 @@ import gov.gtas.parsers.vo.EmailVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.FrequentFlyerVo;
 import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.parsers.vo.PaymentFormVo;
 import gov.gtas.parsers.vo.PhoneVo;
 import gov.gtas.parsers.vo.PnrVo;
 import gov.gtas.parsers.vo.SeatVo;
@@ -300,13 +301,17 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      */
     private void processGroup4_FormOfPayment(FOP fop) throws ParseException {
         List<CreditCardVo> newCreditCards = new ArrayList<>();
-
+        List<PaymentFormVo> newForms = new ArrayList<>();
         if (fop != null) {
             List<Payment> payments = fop.getPayments();
             if (!CollectionUtils.isEmpty(payments)) {
-                // arbitrarily select first payment type
+            	
+            	// arbitrarily select first payment type
                 parsedMessage.setFormOfPayment(payments.get(0).getPaymentType());
                 for (Payment p : payments) {
+                	PaymentFormVo pfvo=new PaymentFormVo();
+                	pfvo.setPaymentType(p.getPaymentType());
+                	pfvo.setPaymentAmount(p.getPaymentAmount());
                     if (p.isCreditCard()) {
                         CreditCardVo cc = new CreditCardVo();
                         cc.setCardType(p.getVendorCode());
@@ -316,6 +321,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                             newCreditCards.add(cc);
                         }
                     } 
+                    parsedMessage.addFormOfPayments(pfvo);
+                    
                 }
             }
         }

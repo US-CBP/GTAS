@@ -28,6 +28,7 @@ import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.ReportingParty;
@@ -45,6 +46,7 @@ import gov.gtas.parsers.vo.EmailVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.FrequentFlyerVo;
 import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.parsers.vo.PaymentFormVo;
 import gov.gtas.parsers.vo.PhoneVo;
 import gov.gtas.parsers.vo.PnrVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
@@ -232,13 +234,20 @@ public class LoaderUtils {
         return p;
     }
 
+    public PaymentForm convertPaymentFormVo(PaymentFormVo vo) {
+    	PaymentForm pform=new PaymentForm();
+    	pform.setPaymentType(vo.getPaymentType());
+    	pform.setPaymentAmount(vo.getPaymentAmount());
+        return pform;
+    }
+
     public CreditCard convertCreditVo(CreditCardVo vo) {
         CreditCard cc = new CreditCard();
         cc.setCreatedBy(LOADER_USER);
         BeanUtils.copyProperties(vo, cc);
         return cc;
     }
-
+    
     public FrequentFlyer convertFrequentFlyerVo(FrequentFlyerVo vo) {
         FrequentFlyer ff = new FrequentFlyer();
         ff.setCreatedBy(LOADER_USER);

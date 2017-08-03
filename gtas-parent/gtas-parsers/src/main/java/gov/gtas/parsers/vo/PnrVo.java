@@ -44,10 +44,20 @@ public class PnrVo extends MessageVo implements Validatable {
     private List<EmailVo> emails = new ArrayList<>();
     private List<AgencyVo> agencies = new ArrayList<>();
     private List<CodeShareVo> codeshares = new ArrayList<>();
+    private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
     private Date reservationCreateDate;
     
     
-    public Integer getTotal_bag_count() {
+
+	public List<PaymentFormVo> getFormOfPayments() {
+		return FormOfPayments;
+	}
+
+	public void setFormOfPayments(List<PaymentFormVo> formOfPayments) {
+		FormOfPayments = formOfPayments;
+	}
+
+	public Integer getTotal_bag_count() {
 		return total_bag_count;
 	}
 
@@ -260,6 +270,9 @@ public class PnrVo extends MessageVo implements Validatable {
 		this.reservationCreateDate = reservationCreateDate;
 	}
 
+	public void addFormOfPayments(PaymentFormVo payment) {
+		FormOfPayments.add(payment);
+    }
 	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

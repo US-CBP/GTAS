@@ -118,7 +118,7 @@ public class FOP extends Segment {
         
         for (Composite c : composites) {
             Payment p = new Payment();
-            this.payments.add(p);
+            
             p.paymentType = c.getElement(0);
             if (CREDIT_CARD_TYPE.equals(p.paymentType)) {
                 p.isCreditCard = true;
@@ -139,6 +139,7 @@ public class FOP extends Segment {
             	p.isCheck = true;
             }
            p.paymentAmount = c.getElement(2);
+           this.payments.add(p);
         }
     }
 
