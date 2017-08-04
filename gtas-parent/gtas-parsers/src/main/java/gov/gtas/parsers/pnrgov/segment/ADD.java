@@ -72,6 +72,7 @@ public class ADD extends Segment {
             if(freeText != null && freeText.contains("CTCE")){
             	this.email = freeText;
             }
+            //Prod Data | ADD++M phone number segment 467 468 fix
             if((StringUtils.isNotBlank(c.getElement(0)) && ("E".equalsIgnoreCase(c.getElement(0))))){
             	this.email = freeText;
             }
