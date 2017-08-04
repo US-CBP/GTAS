@@ -1,4 +1,4 @@
-<md-sidenav class="upper-cnt md-sidenav-right md-whiteframe-z2" md-component-id="query">
+<md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="query">
   <md-toolbar class="md-theme-light">
     <h2 class="md-toolbar-tools">{{getToolbarText()}}</h2>
   </md-toolbar>
@@ -31,7 +31,7 @@
     </div>
   </form>
 </md-sidenav>
-<md-sidenav class="upper-cnt md-sidenav-right md-whiteframe-z2" md-component-id="rule">
+<md-sidenav class="right-sidebar  md-sidenav-right md-whiteframe-z2" md-component-id="rule">
   <md-toolbar class="md-theme-light">
     <h2 class="md-toolbar-tools">{{getToolbarText()}}</h2>
   </md-toolbar>
@@ -106,9 +106,10 @@
           <i class="fa fa-search" aria-hidden="true"></i>&nbsp;
           Passengers
         </md-button>
-        <md-button ng-click="resetQueryBuilder()" class="btn btn-icon-only btn-default">
+        <md-button ng-click="resetQueryBuilder()" class="btn btn-default">
           <md-tooltip>{{'qry.clear' | translate}}</md-tooltip>
-          <i class="fa fa-undo"></i>
+          <i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
+          Clear
         </md-button>
         <md-button ng-click="delete()" ng-disabled="ruleId === null"
           class="btn btn-default">

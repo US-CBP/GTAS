@@ -2,17 +2,26 @@
 .sm-pad{
   padding: 5px;
 }
+.sm-pad-span span {
+  padding: 5px;
+}
 .md-pad{
   padding: 20px;
 }
 .no-margin-top {
   margin-top: 0px;
 }
+.no-margin {
+  margin: 0px !important;
+}
 .no-pad-top {
   padding-top: 0px !important;
 }
 .no-pad-btm {
   padding-bottom: 0px !important;
+}
+.sm-margin {
+  margin: 5px !important;
 }
 .md-margin{
   margin: 20px;
@@ -34,6 +43,18 @@
 }
 .full-width {
   width: 100% !important;
+}
+.min-half-height {
+  min-height: 50vh;
+}
+.half-height {
+  height: 50vh;
+}
+.sev-five-height {
+  height: 75vh;
+}
+.full-height {
+  height: 100% !important;
 }
 .tble-width-l {
   width: 125px !important;
@@ -84,6 +105,9 @@
 }
 .txt-right {
   text-align: right;
+}
+.txt-center {
+  text-align: center;
 }
 .upper-cnt {
   margin-top: 20px !important;
@@ -144,6 +168,9 @@
   display: inline;
   padding: 8px;
   color: white;
+}
+.right-border-grey {
+  border-right: 1px solid #adadad;
 }
 /*Custom flightpax*/
 .flight-info * {
@@ -315,7 +342,10 @@
 .ui-grid-cell {
   text-align: center;
 }
-
+/*Override material ui Right sidebar */
+.md-sidenav-right {
+  margin-top: 100px !important;
+}
 
 /* BEGIN IE css patches */
 .md-select-label :first-child{

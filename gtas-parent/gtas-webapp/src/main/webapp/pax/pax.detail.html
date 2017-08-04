@@ -27,8 +27,9 @@
           <div class="sm-pad">
             <div class="span12 flex justify-around flex-wrap">
               <div>
-                <div>{{'flight.flight' | translate}}:&nbsp;<strong>
-                  {{passenger.carrier + passenger.flightNumber }}</strong></div>
+                <div>{{'flight.flight' | translate}}:&nbsp;
+                  <strong>{{passenger.carrier + passenger.flightNumber }}</strong>
+                </div>
                 <div>{{'pass.seat' | translate}}:&nbsp; <strong>{{ passenger.seat }}</strong></div>
               </div>
               <div>
@@ -152,16 +153,28 @@
           <md-tab-body>
             <div class="span12 flex justify-around flex-wrap">
               <div>
-                {{'apis.embarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.embarkation }}</strong>
-                {{'apis.port' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.portOfFirstArrival }}</strong>
+                <div>
+                  {{'apis.embarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.embarkation }}</strong>
+                </div>
+                <div>
+                  {{'apis.port' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.portOfFirstArrival }}</strong>
+                </div>
               </div>
               <div>
-                {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.debarkation}}</strong>
-                {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.residenceCountry}}</strong>
+                <div>
+                  {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.debarkation}}</strong>
+                </div>
+                <div>
+                  {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.residenceCountry}}</strong>
+                </div>
               </div>
               <div>
-                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
-                {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.travelerType}}</strong>
+                <div>
+                  {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
+                </div>
+                <div>
+                  {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.apisMessageVo.travelerType}}</strong>
+                </div>
               </div>
             </div>
             <div class="flex flex-center">
@@ -237,8 +250,12 @@
                 {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
               </div>
               <div>
-                {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
-                {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
+                <div>
+                  {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
+                </div>
+                <div>
+                  {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
+                </div>
               </div>
             </div>
             <div class="flex flex-center">

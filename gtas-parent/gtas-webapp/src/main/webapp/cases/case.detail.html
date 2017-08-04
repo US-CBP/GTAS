@@ -1,0 +1,82 @@
+<div>
+  <div class="flex justify-around flex-wrap" >
+    <div class="cbp-card-container gtas-card-container">
+      <div class="cbp-card cbp-card-shadow">
+        <h3 class="h-label no-margin" >Case#: 1, Status: Open</h3>
+        <div class="flex flex-wrap">
+          <button type="button" class="btn btn-icon-only btn-default">
+            <i class="fa fa-arrow-left"></i>
+            <md-tooltip>Return</md-tooltip>
+          </button>
+          <div class="fixed-width-md min-half-height right-border-grey">
+            <div class="flex flex-vert align-items-center full-height">
+              <img class="md-margin" name="photo" src="http://via.placeholder.com/150x150">
+              <div class="md-margin">
+                <div class="flex flex-vert sm-pad-span txt-center">
+                  <span>
+                    John Smith
+                  </span>
+                  <span name="dob">
+                    DOB: 1932-03-12
+                  </span>
+                  <span name="citizen">
+                    Citizenship: GBR
+                  </span>
+                  <span name="doc">
+                   Doc: #4332092
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body flex flex-vert ie-fix-md two-table fixed-width-md">
+            <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+              <thead>
+                <tr>
+                  <th>Hit#</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+            </table>
+            <div class="floating-table-body">
+              <table class="cbp-table-selectable mdl-js-data-table">
+                <tbody>
+                  <tr ng-click="sideNav('comments')">
+                    <td>1</td>
+                    <td>Open</td>
+                  </tr>
+                  <tr ng-click="sideNav('comments')">
+                    <td>2</td>
+                    <td>Closed</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="comments">
+    <md-toolbar class="md-theme-light">
+      <h2 class="md-toolbar-tools">Comments</h2>
+    </md-toolbar>
+    <div class="flex flex-vert align-items-center">
+      <div class="cbp-card-container gtas-card-container">
+        <div class="cbp-card cbp-card-shadow">
+          <h3 class="alt-label no-margin-top">Open</h3>
+          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+            <span class="sm-pad">
+              Created By: John Doe
+            </span>
+            <span class="sm-pad">
+              Created At: 2017-03-15
+            </span>
+            <textarea class="sm-pad" disabled>The initial comment</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </md-sidenav>
+  <div ng-include="'views/footerbuttons.html'"></div>
+</div>

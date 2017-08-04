@@ -95,9 +95,9 @@ var app;
                         event.preventDefault();
                     }
                 });
-            
+
            $rootScope.currentlyLoggedInUser = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
-            
+
            $rootScope.searchBarContent = {
         		   content : ""
            };
@@ -105,34 +105,34 @@ var app;
            $.getJSON('./data/countries.json', function(data){
         	   $rootScope.countriesList = data;
            });
-           
+
            //For tooltips
            $.getJSON('./data/airports.json', function(data){
         	   $rootScope.airportsList = data;
            });
-           
+
            //For tooltips
            $.getJSON('./data/carriers.json', function(data){
-        	  $rootScope.carriersList = data; 
+        	  $rootScope.carriersList = data;
            });
-           
-            
-           $rootScope.airportsList = 
-           
+
+
+           $rootScope.airportsList =
+
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
            });
-           
-           $rootScope.currentLocation ={ 
+
+           $rootScope.currentLocation ={
         		   val:$location.path()
            };
-           
+
            $rootScope.searchBarQuery = function(){
         	   if($rootScope.currentLocation.val != '/adhocquery' && typeof $rootScope.searchBarContent != 'undefined' && $rootScope.searchBarContent.content != '' && $rootScope.searchBarContent.content.length > 1){
         		   window.location.href = APP_CONSTANTS.HOME_PAGE + "#/adhocquery";
         	   }
            };
-            
+
            $rootScope.triggerIdle = function(){
         	   	//Prevent triggers pre-login
         	   	if(Idle.running()){
@@ -144,7 +144,7 @@ var app;
            $rootScope.setSelectedTab = function(tabName){
         	   $rootScope.selectedTab = tabName;
            };
-           
+
            $rootScope.$on('IdleStart', function(){
         	   $rootScope.showConfirm();
            });
@@ -317,6 +317,38 @@ var app;
                         	}
                     	}
                 })
+                .state('case-detail', {
+                    url: '/casedetail',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    views: {
+                        '@': {
+                            controller: 'CasesCtrl',
+                            templateUrl: 'cases/case.detail.html'
+                        },
+                    },
+                    resolve: {
+                        	newCases: function(caseService){
+                        		return caseService.getAllCases();
+                        	}
+                    	}
+                })
+                .state('caseDisposition', {
+                    url: '/casedisposition',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                        '@': {
+                            controller: 'CaseDispositionController as CaseDispCtrl',
+                            templateUrl: 'cases/caseDisposition.html'
+                        },
+                    },
+                    resolve: {
+                        newCases: function(caseDispositionService){
+                            return caseDispositionService.getAllCases();
+                        }
+                    }
+                })
                 .state('adhocquery', {
                     url: '/adhocquery',
                     authenticate: true,
@@ -333,7 +365,7 @@ var app;
                     				column:'firstName',
                     				dir:'desc'
                     		};
-                    		
+
                     		if(typeof $rootScope.searchBarContent != 'undefined' && $rootScope.searchBarContent.content.length > 0){
                     			return adhocQueryService.getPassengers($rootScope.searchBarContent.content, 1, 10, defaultSort);
                     		} else{
@@ -511,7 +543,7 @@ var app;
                 flights: {name: ['flights']},
                 passengers: {name: ['paxAll', 'flightpax']},
                 queries: {mode: ['query']},
-                adhocquery: {name: ['adhocquery']},                
+                adhocquery: {name: ['adhocquery']},
                 risks: {mode: ['rule']},
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},
@@ -528,7 +560,7 @@ var app;
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
             });
-          
+
             $rootScope.$on('unauthorizedEvent', function () {
                 $sessionStorage.remove(APP_CONSTANTS.CURRENT_USER);
                 window.location = APP_CONSTANTS.LOGIN_PAGE;
@@ -538,7 +570,7 @@ var app;
                 $scope.logout();
                 window.location = APP_CONSTANTS.LOGIN_PAGE;
             });
-            
+
             $scope.logout = function () {
 
                 $http({
