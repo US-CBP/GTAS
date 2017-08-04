@@ -1,107 +1,138 @@
-<style>
-    .actions {
-        text-align: center;
-    }
-
-    .ui-grid-viewport {
-        min-height: 330px !important;
-    }
-
-    .ui-grid-cell {
-        text-transform: uppercase;
-    }
-
-    .glyphicon-remove {
-        cursor: pointer;
-    }
-
-    md-input-container {
-        display: inline-block;
-        text-align: left;
-        width: 300px;
-    }
-</style>
 <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="save">
-    <md-toolbar class="md-theme-light">
-        <h2 class="md-toolbar-tools">{{getSaveStateText(activeTab)}} {{activeTab}}</h2>
-    </md-toolbar>
-    <form name="watchlist" ng-submit="saveRow()">
-        <md-input-container ng-if="activeTab == 'Document'">
-        <i class="glyphicon glyphicon-file"></i>
-            <label>{{'wl.doctype' | translate}}:</label>
-            <md-select ng-model="Document.documentType" required>
-                <md-option ng-repeat="docType in documentTypes" value="{{docType.id}}">
-                    {{docType.label}}
-                </md-option>
-            </md-select>
-        </md-input-container>
-        <md-input-container ng-if="activeTab == 'Document'">
-            <label>{{'wl.docnum' | translate}}:</label>
-            <input ng-model="Document.documentNumber" required>
-        </md-input-container>
-        <md-input-container ng-if="activeTab == 'Passenger'">
-            <label>{{'pass.firstname' | translate}}:</label>
-            <input ng-model="Passenger.firstName" required>
-        </md-input-container>
-        <md-input-container ng-if="activeTab == 'Passenger'">
-            <label>{{'pass.lastname' | translate}}:</label>
-            <input ng-model="Passenger.lastName" required>
-        </md-input-container>
-        <md-datepicker ng-if="activeTab == 'Passenger'" name="dob" ng-model="Passenger.dob"
-                       md-placeholder="Date of Birth" required></md-datepicker>
-        <div class="actions">
-            <md-button type="button"
-                       ng-if="$scope[$scope.activeTab].id !== null"
-                       class="md-raised md-warn pull-left"
-                       ng-click="removeRow()"
-                       ng-disabled="rowSelected === null">
-                <span class="glyphicon glyphicon-remove"></span> {{'wl.remove' | translate}}
-            </md-button>
-            <md-button class="md-raised md-primary pull-right" type="submit">
-                <i class="glyphicon glyphicon-save"></i><i class="glyphicon glyphicon-eye-open"></i> {{getSaveStateText(activeTab)}}
-            </md-button>
+    <h3 class="block-label no-margin-top">{{getSaveStateText(activeTab)}} {{activeTab}}</h3>
+    <form name="watchlist" class="filters" _lpchecked="1" ng-submit="saveRow()">
+      <div class="filter-list" role="tablist">
+        <h1 class="filter-heading">{{activeTab}}
+        </h1>
+        <h3 ng-if="activeTab == 'Document'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> {{'wl.doctype' | translate}}:
+        </h3>
+        <div ng-if="activeTab == 'Document'"  id="filterGroup5" class="collapse in" aria-expanded="true">
+          <div class="filter-group-content">
+            <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
+              <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
+                ng-model="Document.documentType" required>
+                <option ng-repeat="docType in documentTypes" value="{{docType.id}}" translate>
+                  {{docType.label}}
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
+        <h3 ng-if="activeTab == 'Document'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          {{'wl.docnum' | translate}}:
+        </h3>
+        <div ng-if="activeTab == 'Document'" id="filterGroup1" class="collapse in" aria-expanded="true">
+          <div class="filter-group-content">
+              <div class="form-group">
+                <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                  aria-required="true" ng-model="Document.documentNumber" required />
+              </div>
+          </div>
+        </div>
+        <h3 ng-if="activeTab == 'Passenger'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          {{'pass.firstname' | translate}}:
+        </h3>
+        <div ng-if="activeTab == 'Passenger'" id="filterGroup2" class="collapse in" aria-expanded="true">
+          <div class="filter-group-content">
+              <div class="form-group">
+                <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                  aria-required="true" ng-model="Passenger.firstName" required />
+              </div>
+          </div>
+        </div>
+        <h3 ng-if="activeTab == 'Passenger'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup3" aria-controls="filterGroup3" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+          {{'pass.lastname' | translate}}:
+        </h3>
+        <div ng-if="activeTab == 'Passenger'" id="filterGroup3" class="collapse in" aria-expanded="true">
+          <div class="filter-group-content">
+              <div class="form-group">
+                <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                  aria-required="true" ng-model="Passenger.lastName" required />
+              </div>
+          </div>
+        </div>
+        <h3 ng-if="activeTab == 'Passenger'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Date of Birth
+        </h3>
+        <div ng-if="activeTab == 'Passenger'" id="filterGroup6" class="collapse in">
+          <div class="filter-group-content">
+            <div class="row">
+              <div class="form-group">
+                <div class="cbp-datepicker">
+                  <md-datepicker name="dob" md-hide-icons="calendar"
+                    ng-model="Passenger.dob" required></md-datepicker>
+                  <div class="validation-messages" ng-messages="sideForm.startDate.$error">
+                    <div ng-message="valid" class="alert alert-danger" role="alert">
+                      <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="md-pad">
+        <button type="button" class="btn btn-icon-only btn-primary pull-left"
+            ng-if="$scope[$scope.activeTab].id !== null"
+            ng-click="removeRow()"
+            ng-disabled="rowSelected === null">
+            <i class="fa fa-inverse fa-trash"></i>
+            <md-tooltip>{{'wl.remove' | translate}}</md-tooltip>
+        </button>
+        <button type="submit" class="btn btn-icon-only btn-primary pull-right">
+            <i class="fa fa-inverse fa-floppy-o"></i>
+            <md-tooltip>{{getSaveStateText(activeTab)}}</md-tooltip>
+        </button>
+      </div>
     </form>
 </md-sidenav>
 <md-tabs>
-    <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)"><md-tab-label><span ng-bind-html="tab.icon"></span><span>&nbsp;{{tab.title}}</span></md-tab-label></md-tab>
+    <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)">
+      <md-tab-label>
+        <span ng-bind-html="tab.icon"></span>
+        <span>&nbsp;{{tab.title}}</span>
+      </md-tab-label>
+    </md-tab>
 </md-tabs>
 <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
-<div class="actions">
-    <md-button ng-click="removeRows()"
-               ng-disabled="disableTrash"
-               class="md-raised md-warn pull-left">
-        <md-tooltip>{{'wl.select' | translate}} {{activeTab}}(s)</md-tooltip>
-        <i class="glyphicon glyphicon-trash"></i><i class="glyphicon glyphicon-{{icon}}"></i>
-    </md-button>
-    <md-button ng-click="updateWatchlistService()"
-               ng-disabled="updating === true"
-               class="md-raised md-primary pull-right">
-        <md-tooltip>{{'wl.title' | translate}}</md-tooltip>
-        <i class="glyphicon glyphicon-cloud-upload"></i> <i class="glyphicon glyphicon-cloud-download"></i> {{'wl.sync' | translate}}
-    </md-button>
-    <md-button ng-click="Add()"
-               class="md-raised pull-right">
-        <md-tooltip>{{'btn.add' | translate}} {{activeTab}}</md-tooltip>
-        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-{{icon}}"></i>
-    </md-button>
-    <button onclick="angular.element(document.querySelector('.ui-grid-icon-menu'))[0].click();" class="md-raised pull-right md-button md-ink-ripple" type="button">
-        <i class="glyphicon glyphicon-import"></i> Import CSV
-    </button>
-    <md-button ng-click="export('csv')" class="md-raised pull-right" type="button">
-        <i class="glyphicon glyphicon-export"></i> CSV
-    </md-button>
-    <md-button ng-click="export('pdf')" class="md-raised pull-right" type="button">
-        <i class="glyphicon glyphicon-save-file"></i> PDF
-    </md-button>
+<div class="actions md-pad">
+  <button type="button" class="btn btn-icon-only btn-warning pull-left"
+      ng-disabled="disableTrash">
+      <i class="fa fa-inverse fa-trash"></i>
+      <md-tooltip>{{'wl.select' | translate}} {{activeTab}}(s)</md-tooltip>
+  </button>
+  <button type="button" class="btn btn-primary pull-right"
+      ng-click="updateWatchlistService()"
+      ng-disabled="updating === true">
+      <i class="fa fa-refresh"></i> Sync
+      <md-tooltip>{{'wl.title' | translate}}</md-tooltip>
+  </button>
+  <button ng-click="Add()" class="btn btn-icon-only btn-default pull-right">
+      <md-tooltip>{{'btn.add' | translate}} {{activeTab}}</md-tooltip>
+      <i class="fa fa-plus"></i> Document
+  </button>
+  <button onclick="angular.element(document.querySelector('.ui-grid-icon-menu'))[0].click();"
+      class="btn btn-hover btn-default pull-right" type="button">
+      <i class="fa fa-file-excel-o" aria-hidden="true"></i> Import
+      <md-tooltip>Import CSV</md-tooltip>
+  </button>
+  <button type="button" ng-click="export('csv')" class="btn btn-hover btn-default pull-right">
+     <i class="fa fa-file-excel-o" aria-hidden="true"></i> Export
+     <md-tooltip>Export CSV</md-tooltip>
+  </button>
 </div>
 <div>
-    <spinner name="html5spinner" ng-cloak="">
-        <div class="overlay"></div>
-        <div class="spinner">
-            <div class="double-bounce1"></div>
-            <div class="double-bounce2"></div>
-        </div>
-        <div class="please-wait">{{'wl.wait' | translate}}...</div>
-    </spinner>
+  <spinner name="html5spinner" ng-cloak="">
+      <div class="overlay"></div>
+      <div class="spinner">
+          <div class="double-bounce1"></div>
+          <div class="double-bounce2"></div>
+      </div>
+      <div class="please-wait">{{'wl.wait' | translate}}...</div>
+  </spinner>
 </div>

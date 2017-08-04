@@ -179,6 +179,10 @@
 .flight-num {
   margin-top: 10px;
 }
+.actions button{
+  text-transform: uppercase;
+  margin: 5px;
+}
 /*Custom paxdetail*/
 .center-btn{
   margin: 15px auto !important;
@@ -343,8 +347,14 @@
   text-align: center;
 }
 /*Override material ui Right sidebar */
+
 .md-sidenav-right {
   margin-top: 100px !important;
+  height: 100vh !important;
+}
+.md-sidenav-backdrop {
+  margin-top: 100px !important;
+  height: 100vh !important;
 }
 
 /* BEGIN IE css patches */
