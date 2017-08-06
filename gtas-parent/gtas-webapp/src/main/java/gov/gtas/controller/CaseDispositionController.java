@@ -6,12 +6,14 @@
 package gov.gtas.controller;
 
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.dto.CasePageDto;
+import gov.gtas.services.dto.CaseRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,16 +25,24 @@ public class CaseDispositionController {
     private CaseDispositionService caseDispositionService;
 
     //getAll
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllCaseDispositions")
-    public Map<String, Object> getAll(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate)
-            throws ParseException {
-        HashMap _tempMap = new HashMap();
+//    @RequestMapping(method = RequestMethod.POST, value = "/getAllCaseDispositions")
+//    public Map<String, Object> getAll(
+//            @RequestParam(value = "startDate", required = false) String startDate,
+//            @RequestParam(value = "endDate", required = false) String endDate)
+//            throws ParseException {
+//        HashMap _tempMap = new HashMap();
+//
+//        return _tempMap;
+//    }
 
-        return _tempMap;
+    @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
+                SecurityContextHolder.getContext());
+        return caseDispositionService.findAll(request);
     }
-
 
     //getOneHistDisp
     @RequestMapping(method = RequestMethod.GET, value = "/getOneHistDisp")

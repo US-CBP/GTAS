@@ -9,18 +9,33 @@
         .service('caseDispositionService', function ($http, $q) {
 
             function getAllCases(){
+                var pageRequest = {
+                    pageSize: "10",
+                    pageNumber: "1"
+                }
                 var dfd = $q.defer();
-                dfd.resolve($http.get("/gtas/getAllCaseDispositions"));
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/getAllCaseDispositions/",
+                    data: pageRequest
+                }));
+                return dfd.promise;
+            }
+
+            function getDispositionStatuses() {
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/dispositionstatuses"));
                 return dfd.promise;
             }
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
-                getAllCases:getAllCases,
-                getOneHitsDisposition:getOneHitsDisposition,
-                getOneHitsDispositionComments:getOneHitsDispositionComments,
-                updateHitsDisposition:updateHitsDisposition,
-                updateCase:updateCase
+                getAllCases:getAllCases
+                // ,
+                // getOneHitsDisposition:getOneHitsDisposition,
+                // getOneHitsDispositionComments:getOneHitsDispositionComments,
+                // updateHitsDisposition:updateHitsDisposition,
+                // updateCase:updateCase
             });
         })
 }());

@@ -6,10 +6,18 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Case;
+import gov.gtas.services.dto.CasePageDto;
+import gov.gtas.services.dto.CaseRequestDto;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
+
 public interface CaseDispositionService {
+
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+    public CasePageDto findAll(CaseRequestDto dto);
 
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 

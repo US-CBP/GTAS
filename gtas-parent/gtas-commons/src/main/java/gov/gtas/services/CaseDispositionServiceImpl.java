@@ -6,15 +6,18 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Case;
-
-import javax.annotation.Resource;
-
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.repository.CaseDispositionRepository;
+import gov.gtas.services.dto.CasePageDto;
+import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -108,5 +111,36 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         List<Case> _tempCaseList = new ArrayList<>();
 
         return _tempCaseList;
+    }
+
+    @Override
+    public CasePageDto findAll(CaseRequestDto dto) {
+
+        List<CaseVo> vos = new ArrayList<>();
+        Pair<Long, List<Case>> tuple = caseDispositionRepository.findByCriteria(dto);
+        for (Case f : tuple.getRight()) {
+            Long fId = f.getId();
+            int rCount = 0;
+            int wCount = 0;
+//            List<HitsSummary> hList = hitsSummaryRepository.findHitsByFlightId(fId);
+//            for (HitsSummary hs : hList) {
+//                rCount += hs.getRuleHitCount();
+//                wCount += hs.getWatchListHitCount();
+//            }
+//            f.setListHitCount(wCount);
+//            f.setRuleHitCount(rCount);
+        }
+        caseDispositionRepository.flush();
+
+        Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
+        for (Case f : tuple2.getRight()) {
+            CaseVo vo = new CaseVo();
+            BeanUtils.copyProperties(f, vo);
+//            vo.setListHitCount(f.getListHitCount());
+//            vo.setRuleHitCount(f.getRuleHitCount());
+            vos.add(vo);
+        }
+
+        return new CasePageDto(vos, tuple.getLeft());
     }
 }

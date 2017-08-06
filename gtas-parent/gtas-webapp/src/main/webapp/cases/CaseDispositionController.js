@@ -5,10 +5,10 @@
  */
 (function () {
     'use strict';
-    app.controller('CaseDispositionController',
-        function ($scope, $http, $state, $interval, $stateParams, $mdToast,
-                  gridService, uiGridConstants,
-                  spinnerService, caseDispositionService, codeTooltipService, $timeout, newCases) {
+    app.controller('CaseDispositionCtrl',
+        function ($scope, $http, $mdToast,
+                  gridService,
+                  spinnerService, caseDispositionService, newCases, caseService) {
 
             $scope.errorToast = function (error) {
                 $mdToast.show($mdToast.simple()
@@ -27,6 +27,9 @@
                 }
             };
 
+            caseService.getDispositionStatuses().then(function (response) {
+                $scope.dispositionStatuses = response.data;
+            });
 
             $scope.pageSize = 10;
 
@@ -70,67 +73,67 @@
                 }
             };
 
-            $scope.casesGrid.columnDefs = [
-                {
-                    field: 'lastName',
-                    name: 'lastName',
-                    displayName: 'pass.lastname', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-                },
-                {
-                    field: 'firstName',
-                    name: 'firstName',
-                    displayName: 'pass.firstname', headerCellFilter: 'translate'
-                },
-                {
-                    field: 'middleName',
-                    name: 'middleName',
-                    displayName: 'pass.middlename', headerCellFilter: 'translate'
-                },
-                {
-                    field: 'hitType',
-                    name: 'hitType',
-                    displayName: 'Hit Type',
-                    cellTemplate: '<div ng-bind-html="grid.appScope.hitTypeIcon(COL_FIELD)"></div>'
-                },
-                {
-                    field: 'flightNumber',
-                    name: 'flightNumber',
-                    displayName: 'pass.flight', headerCellFilter: 'translate',
-                    cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
-                },
-                {
-                    field: 'flightEtd',
-                    name: 'flightEtd',
-                    displayName: 'pass.etd', headerCellFilter: 'translate',
-                    cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
-                    enableFiltering: false
-                },
-                {
-                    field: 'flightEta',
-                    name: 'flightEta',
-                    displayName: 'pass.eta', headerCellFilter: 'translate',
-                    cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
-                    enableFiltering: false
-                },
-                {
-                    field: 'flightDirection',
-                    name: 'flightDirection',
-                    displayName: 'Direction'
-                },
-                {
-                    field: 'createDate',
-                    name: 'createDate',
-                    displayName: 'Last Updated',
-                    cellFilter: 'date',
-                    enableFiltering: false
-                },
-                {
-                    field: 'status',
-                    name: 'status',
-                    displayName: 'Status'
-                }
-            ];
+            // $scope.casesGrid.columnDefs = [
+            //     {
+            //         field: 'lastName',
+            //         name: 'lastName',
+            //         displayName: 'pass.lastname', headerCellFilter: 'translate',
+            //         cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+            //     },
+            //     {
+            //         field: 'firstName',
+            //         name: 'firstName',
+            //         displayName: 'pass.firstname', headerCellFilter: 'translate'
+            //     },
+            //     {
+            //         field: 'middleName',
+            //         name: 'middleName',
+            //         displayName: 'pass.middlename', headerCellFilter: 'translate'
+            //     },
+            //     {
+            //         field: 'hitType',
+            //         name: 'hitType',
+            //         displayName: 'Hit Type',
+            //         cellTemplate: '<div ng-bind-html="grid.appScope.hitTypeIcon(COL_FIELD)"></div>'
+            //     },
+            //     {
+            //         field: 'flightNumber',
+            //         name: 'flightNumber',
+            //         displayName: 'pass.flight', headerCellFilter: 'translate',
+            //         cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
+            //     },
+            //     {
+            //         field: 'flightEtd',
+            //         name: 'flightEtd',
+            //         displayName: 'pass.etd', headerCellFilter: 'translate',
+            //         cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
+            //         enableFiltering: false
+            //     },
+            //     {
+            //         field: 'flightEta',
+            //         name: 'flightEta',
+            //         displayName: 'pass.eta', headerCellFilter: 'translate',
+            //         cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
+            //         enableFiltering: false
+            //     },
+            //     {
+            //         field: 'flightDirection',
+            //         name: 'flightDirection',
+            //         displayName: 'Direction'
+            //     },
+            //     {
+            //         field: 'createDate',
+            //         name: 'createDate',
+            //         displayName: 'Last Updated',
+            //         cellFilter: 'date',
+            //         enableFiltering: false
+            //     },
+            //     {
+            //         field: 'status',
+            //         name: 'status',
+            //         displayName: 'Status'
+            //     }
+            // ];
 
             $scope.getTableHeight = function () {
                 return gridService.calculateGridHeight($scope.pageSize);

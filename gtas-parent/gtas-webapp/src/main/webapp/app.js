@@ -323,7 +323,7 @@ var app;
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
-                            controller: 'CasesCtrl',
+                            controller: 'CaseDispositionCtrl',//   CasesCtrl
                             templateUrl: 'cases/case.detail.html'
                         },
                     },
@@ -336,10 +336,10 @@ var app;
                 .state('caseDisposition', {
                     url: '/casedisposition',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
-                            controller: 'CaseDispositionController as CaseDispCtrl',
+                            controller: 'CaseDispositionCtrl',
                             templateUrl: 'cases/caseDisposition.html'
                         },
                     },

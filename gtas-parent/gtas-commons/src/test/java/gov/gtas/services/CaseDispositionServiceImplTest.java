@@ -6,6 +6,9 @@
 package gov.gtas.services;
 
 import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.services.dto.CasePageDto;
+import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +50,23 @@ public class CaseDispositionServiceImplTest {
 
         assertTrue((caseDispService.create((new Long(_rand.nextInt(1000))),
         		(new Long(_rand.nextInt(1000))),_tempHitList)).getId()!=null);
+    }
+
+    //@Test
+    public void testFindAll(){
+
+        CaseRequestDto inboundDto = new CaseRequestDto();
+        List<CaseVo> _tempCases = new ArrayList<CaseVo>();
+        CasePageDto outboundDto = new CasePageDto(_tempCases, 10);
+        inboundDto.setPageNumber(1);
+        inboundDto.setPageSize(10);
+        try{
+
+            outboundDto = caseDispService.findAll(inboundDto);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
 
