@@ -8,8 +8,12 @@ package gov.gtas.services;
 import gov.gtas.model.Case;
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
+import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.repository.CaseDispositionRepository;
+import gov.gtas.repository.FlightRepository;
+import gov.gtas.repository.HitDetailRepository;
+import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
@@ -30,6 +34,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
 
+    @Resource
+    private FlightRepository flightRepository;
+
+    @Resource
+    private PassengerRepository passengerRepository;
+
+    @Resource
+    private HitDetailRepository hitDetailRepository;
+
     public CaseDispositionServiceImpl() {
     }
 
@@ -48,6 +61,39 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitDisp = new HitsDisposition();
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
+            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitsDispositionComments = new HitsDispositionComments();
+            hitsDispositionComments.setHitId(_tempHitId);
+            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispCommentsSet.add(hitsDispositionComments);
+            hitDisp.setDispComments(hitsDispCommentsSet);
+            hitsDispSet.add(hitDisp);
+        }
+        aCase.setHitsDispositions(hitsDispSet);
+
+
+        caseDispositionRepository.save(aCase);
+        return aCase;
+    }
+
+    @Override
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids) {
+        Case aCase = new Case();
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setPaxName(paxName);
+        aCase.setPaxType(paxType);
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+        for (Long _tempHitId : hit_ids) {
+            hitDisp = new HitsDisposition();
+            hitsDispCommentsSet = new HashSet<>();
+            hitDisp.setHitId(_tempHitId);
+            hitDisp.setDescription(hitDesc);
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
@@ -106,12 +152,17 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         return _tempCaseList;
     }
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, List<Long> hit_ids)
-    {
+    @Override
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id) {
         List<Case> _tempCaseList = new ArrayList<>();
+        List<Long> _tempHitIds = new ArrayList<>();
+
+        _tempHitIds.add(hit_id);
+        _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, hitDesc, _tempHitIds));
 
         return _tempCaseList;
     }
+
 
     @Override
     public CasePageDto findAll(CaseRequestDto dto) {
@@ -135,7 +186,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
         for (Case f : tuple2.getRight()) {
             CaseVo vo = new CaseVo();
+            vo.setHitsDispositions(f.getHitsDispositions());
             BeanUtils.copyProperties(f, vo);
+
 //            vo.setListHitCount(f.getListHitCount());
 //            vo.setRuleHitCount(f.getRuleHitCount());
             vos.add(vo);

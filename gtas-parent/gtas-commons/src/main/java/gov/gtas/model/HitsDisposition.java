@@ -37,7 +37,7 @@ public class HitsDisposition extends BaseEntityAudit {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
     private Set<HitsDispositionComments> dispComments;
 

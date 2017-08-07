@@ -5,10 +5,16 @@
  */
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.HitsDisposition;
+import java.util.Set;
+
 import java.util.Date;
 
 public class CaseVo {
     private Long passengerId;
+    private String paxName;
+    private String paxType;
+    private Long paxId;
     private Long flightId;
     private String hitType;
     private Date flightEta;
@@ -20,7 +26,9 @@ public class CaseVo {
     private String flightNumber;
     private String createDate; 
     private String status;
-    
+    private String description;
+    private Set<HitsDisposition> hitsDispositions;
+
     public String getHitType() {
 		return hitType;
 	}
@@ -84,13 +92,56 @@ public class CaseVo {
     public String getStatus() {
         return status;
     }
+
+    public String getPaxName() {
+        return paxName;
+    }
+
+    public void setPaxName(String paxName) {
+        this.paxName = paxName;
+    }
+
+    public String getPaxType() {
+        return paxType;
+    }
+
+    public void setPaxType(String paxType) {
+        this.paxType = paxType;
+    }
+
+    public String getFlightDirection() {
+		return flightDirection;
+	}
+
+    public Long getPaxId() {
+        return paxId;
+    }
+
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
+    }
+
+    public void setFlightDirection(String flightDirection) {
+        this.flightDirection = flightDirection;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
-	public String getFlightDirection() {
-		return flightDirection;
-	}
-	public void setFlightDirection(String flightDirection) {
-		this.flightDirection = flightDirection;
-	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<HitsDisposition> getHitsDispositions() {
+        return hitsDispositions;
+    }
+
+    public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
+        this.hitsDispositions = hitsDispositions;
+    }
 }

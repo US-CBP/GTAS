@@ -22,13 +22,19 @@ public class Case extends BaseEntityAudit {
     @Column(name = "paxId", nullable = false)
     private Long paxId;
 
+    @Column(name = "passengerName", nullable = true)
+    private String paxName;
+
+    @Column(name = "passengerType", nullable = true)
+    private String paxType;
+
     @Column(name = "status", nullable = false)
     private String status;
 
     @Column(name = "description", nullable = true)
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="case_id", referencedColumnName = "id")
     private Set<HitsDisposition> hitsDispositions;
 
@@ -70,5 +76,50 @@ public class Case extends BaseEntityAudit {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPaxName() {
+        return paxName;
+    }
+
+    public void setPaxName(String paxName) {
+        this.paxName = paxName;
+    }
+
+    public String getPaxType() {
+        return paxType;
+    }
+
+    public void setPaxType(String paxType) {
+        this.paxType = paxType;
+    }
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Case aCase = (Case) o;
+
+        if (!flightId.equals(aCase.flightId)) return false;
+        return paxId.equals(aCase.paxId);
+
+    }
+
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + flightId.hashCode();
+        result = 31 * result + paxId.hashCode();
+        return result;
+    }
+
+    public String toString() {
+        return "Case{" +
+                "flightId=" + flightId +
+                ", paxId=" + paxId +
+                ", status='" + status + '\'' +
+                ", description='" + description + '\'' +
+                ", hitsDispositions=" + hitsDispositions +
+                '}';
     }
 }
