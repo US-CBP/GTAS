@@ -16,8 +16,15 @@ public class FlightLegVo {
     private String destinationAirport;
     private String flightDate;
     private String etd;
+    private String eta;
     
-    public String getFlightReference() {
+    public String getEta() {
+		return eta;
+	}
+	public void setEta(String eta) {
+		this.eta = eta;
+	}
+	public String getFlightReference() {
         return flightReference;
     }
     public void setFlightReference(String flightReference) {

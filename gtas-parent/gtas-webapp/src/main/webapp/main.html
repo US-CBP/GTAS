@@ -24,189 +24,176 @@
 </head>
 
 <body ng-cloak>
-	<div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
-		<div class="container-fluid">
-		  <div class="navbar-header">
-		    <a class="navbar-brand" href="#/dashboard">
-		      <div class="gtas-brand"></div>
-		      <div class="dhs-brand"></div>
-		    </a>
-		    <button data-target="#navbar-user-info" data-toggle="collapse" type="button" class="navbar-toggle">
+  <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#/dashboard">
+          <div class="gtas-brand"></div>
+          <div class="dhs-brand"></div>
+        </a>
+        <button data-target="#navbar-user-info" data-toggle="collapse" type="button" class="navbar-toggle">
 		    <span class="sr-only">Toggle Global Navigation</span>
 		   	<span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 		    </button>
-		  </div>
-		  <div id="navbar-user-info" class="navbar-collapse collapse">
-		    <ul class="nav navbar-nav navbar-right">
-		     <li class="dropdown">
-		        <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-		          Manage<span class="caret"></span>
-		        </a>
-		        <ul class="dropdown-menu" role="menu">
-		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
-		          	<i class="fa fa-filter" aria-hidden="true"></i>
-		          	&nbsp;{{'menu.queries' | translate}}</a>
-		          </li>
-		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/adhocquery">
-		          	<i class="fa fa-search" aria-hidden="true"></i>
-		          	&nbsp;Quick Query</a>
-		          </li>
-		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
-		          	<i class="fa fa-flag" aria-hidden="true"></i>
-		          	&nbsp;{{'menu.riskcriteria' | translate}}</a>
-		          </li>
-		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
-		          	<i class="fa fa-eye" aria-hidden="true"></i>
-		          	&nbsp;{{'menu.watchlist' | translate}}</a>
-		          </li>
-		        </ul>
-		      </li>
-		      <li data-has-role="[{{ ROLES.ADMIN }}]" class="dropdown">
-		        <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-		          Admin<span class="caret"></span> <!-- Your application name goes here!!!-->
-		        </a>
-		        <ul class="dropdown-menu" role="menu">
-		          <li><a href="#/admin">
-		          	<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-					&nbsp;{{'menu.admin' | translate}}</a></li>
-		          <li><a href="#/upload">
-		          	<i class="fa fa-upload" aria-hidden="true"></i>
-		          	&nbsp;{{'menu.upload' | translate}}</a></li>
-		        </ul>
-		      </li>
-		      <li>
-		        <a href="https://github.com/US-CBP/GTAS/issues">
+      </div>
+      <div id="navbar-user-info" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-left">
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+              Tools<span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                &nbsp;{{'menu.queries' | translate}}</a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
+                <i class="fa fa-flag" aria-hidden="true"></i>
+                &nbsp;{{'menu.riskcriteria' | translate}}</a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+                &nbsp;{{'menu.watchlist' | translate}}</a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}]">
+                <a href="#/admin">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                &nbsp;{{'menu.admin' | translate}}</a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}]"><a href="#/upload">
+                <i class="fa fa-upload" aria-hidden="true"></i>
+                &nbsp;{{'menu.upload' | translate}}</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a href="https://github.com/US-CBP/GTAS/issues">
 		          <span class="fa fa-comment"></span>
 		          <span class="hidden-sm">Feedback</span>
 		        </a>
-		      </li>
-		      <li data-toggle="hover" class="dropdown">
-		        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+          </li>
+          <li data-toggle="hover" class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">
 		          <span class="fa fa-user"></span>
 		          <span class="hidden-sm">
 		          	{{currentlyLoggedInUser.lastName}}, {{currentlyLoggedInUser.firstName}}
 		          </span>
 		          <span class="caret"></span>
 		        </a>
-		        <ul rel="right-menu-links" role="menu" class="dropdown-menu">
-		          <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
-		            <a title="Settings" href="#/userSettings">{{'menu.settings' | translate}}</a>
-		          </li>
-		          <li class="divider"></li>
-		          <li>
-		            <a href ng-click="logout()" title="Logout" >{{'login.logout' | translate}}</a>
-		          </li>
-		        </ul>
-		      </li>
-		    </ul>
-		  </div>
-		</div>
-	</div>
-	<div data-ng-controller="NavCtrl" role="navigation" class="app-header">
-	    <div class="container-fluid">
-	      <div class="navbar-header">
-	        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subnav">
+            <ul rel="right-menu-links" role="menu" class="dropdown-menu">
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
+                <a title="Settings" href="#/userSettings">{{'menu.settings' | translate}}</a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href ng-click="logout()" title="Logout">{{'login.logout' | translate}}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div data-ng-controller="NavCtrl" role="navigation" class="app-header">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subnav">
 	        <span class="sr-only">Toggle Application Navigation</span>
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	        </button>
-	      </div>
+      </div>
 
-	      <!-- Flights, Passengers, Cases Tab -->
-	      <div id="subnav" class="collapse navbar-collapse">
-	        <div class="nav navbar-nav">
-	          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]"
-	          	class="nav nav-tabs nav-tabs-light" role="tablist">
-	          	<li ng-class="{'active':selectedTab==='flights'}">
-                <a ng-disabled="onRoute('flights')" ng-click="setSelectedTab('flights')"
-                  href="#/flights" role="tab">
+      <!-- Flights, Passengers, Cases Tab -->
+      <div id="subnav" class="collapse navbar-collapse">
+        <div class="nav navbar-nav">
+          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
+            <li ng-class="{'active':selectedTab==='flights'}">
+              <a ng-disabled="onRoute('flights')" ng-click="setSelectedTab('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>
-	            <li ng-class="{'active':selectedTab==='passengers'}">
-                <a ng-disabled="onRoute('passengers')" ng-click="setSelectedTab('passengers')"
-                  href="#/passengers" role="tab">
+            <li ng-class="{'active':selectedTab==='passengers'}">
+              <a ng-disabled="onRoute('passengers')" ng-click="setSelectedTab('passengers')" href="#/passengers" role="tab">
 	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; {{'menu.passengers' | translate}}
 	              </a></li>
-	            <li ng-class="{'active':selectedTab==='cases'}">
-                <a ng-disabled="onRoute('cases')" ng-click="setSelectedTab('cases')"
-                  href="#/cases" role="tab">
+            <li ng-class="{'active':selectedTab==='cases'}">
+              <a ng-disabled="onRoute('cases')" ng-click="setSelectedTab('cases')" href="#/cases" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
 	              </a></li>
-	          </ul>
-	        </div>
+          </ul>
+        </div>
 
-	        <div class="nav navbar-nav navbar-form navbar-right">
-	          <form role="search">
-	            <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]"  class="form-group">
-	              <div class="input-group">
-	                <div class="mdl-textfield mdl-js-textfield">
-	                  <label for="main-search" class="mdl-textfield__label">Search</label>
-	                  <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
-	                  	ng-keypress ="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')"
-	                  	type="text" id="main-search" class="mdl-textfield__input" />
-	                </div>
-	                <span class="input-group-btn">
+        <div class="nav navbar-nav navbar-form navbar-right">
+          <form role="search">
+            <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" class="form-group">
+              <div class="input-group">
+                <div class="mdl-textfield mdl-js-textfield">
+                  <label for="main-search" class="mdl-textfield__label">Search</label>
+                  <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')" type="text" id="main-search" class="mdl-textfield__input"
+                  />
+                </div>
+                <span class="input-group-btn">
 	                  <button ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'"
 	                  	ng-click="searchBarQuery() && setSelectedTab('adhocquery')"
 	                  	aria-label="Search"  type="submit" class="btn btn-primary">
 	                  	<i class="fa fa-search"></i></button>
 	                </span>
-	              </div>
-	            </div>
-	          </form>
-	        </div>
-	      </div>
-	    </div>
-	</div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
   <div ui-view="nav"></div>
-  <div ui-view="header" href="#/dashboard" ></div>
+  <div ui-view="header" href="#/dashboard"></div>
   <div class="content" ui-view=""></div>
   <div ui-view="footer"></div>
 
-<script src="resources/bower_components/angular/angular.js"></script>
-<script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
-<script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-<script src="resources/bower_components/moment/min/moment.min.js"></script>
-<script src="resources/bower_components/jquery/dist/jquery.js"></script>
-<script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-<script src="resources/bower_components/bootbox/bootbox.js"></script>
-<script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
-<script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
-<script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-<script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-<script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
-<script src="resources/bower_components/CSV-JS/csv.js"></script>
-<script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
-<script src="resources/bower_components/angular-material/angular-material.min.js"></script>
-<script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
-<script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
-<script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
-<script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
-<script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
-<script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
-<script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
-<script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
-<script src='resources/js/query-builder.js'></script>
-<script src="resources/bower_components/d3/d3.min.js"></script>
-<script src="resources/bower_components/angular-translate/angular-translate.js"></script>
-<script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
-<script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
-<script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
-<script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
-<script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
-<script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-<script src="resources/bower_components/ammap/dist/ammap/ammap.js"></script>
-<script src="resources/bower_components/ammap/dist/ammap/maps/js/worldLow.js"></script>
-<script src="resources/bower_components/ammap/dist/ammap/plugins/export/export.min.js"></script>
-<link rel="stylesheet" href="resources/bower_components/ammap/dist/ammap/plugins/export/export.css" type="text/css" media="all" />
-<script src="resources/bower_components/ammap/dist/ammap/themes/light.js"></script>
-<script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
-<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
-<link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-
+  <script src="resources/bower_components/angular/angular.js"></script>
+  <script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
+  <script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="resources/bower_components/moment/min/moment.min.js"></script>
+  <script src="resources/bower_components/jquery/dist/jquery.js"></script>
+  <script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="resources/bower_components/bootbox/bootbox.js"></script>
+  <script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+  <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
+  <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+  <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
+  <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
+  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
+  <script src="resources/bower_components/CSV-JS/csv.js"></script>
+  <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
+  <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
+  <script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
+  <script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
+  <script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
+  <script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
+  <script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+  <script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+  <script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
+  <script src='resources/js/query-builder.js'></script>
+  <script src="resources/bower_components/d3/d3.min.js"></script>
+  <script src="resources/bower_components/angular-translate/angular-translate.js"></script>
+  <script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
+  <script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
+  <script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+  <script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
+  <script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
+  <script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+  <script src="resources/bower_components/ammap/dist/ammap/ammap.js"></script>
+  <script src="resources/bower_components/ammap/dist/ammap/maps/js/worldLow.js"></script>
+  <script src="resources/bower_components/ammap/dist/ammap/plugins/export/export.min.js"></script>
+  <link rel="stylesheet" href="resources/bower_components/ammap/dist/ammap/plugins/export/export.css" type="text/css" media="all" />
+  <script src="resources/bower_components/ammap/dist/ammap/themes/light.js"></script>
+  <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
+  <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
+  <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
 
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
@@ -240,25 +227,26 @@
 <script src='adhocquery/AdhocQueryService.js'></script>
 
   <script type="text/ng-template" id="dialog1.tmpl.html">
-  <md-dialog ng-cloak>
-    <form>
-      <md-dialog-content>
-        <div class="md-dialog-content">
-          <h2 class="md-title">Idle Timeout Warning</h2>
-          <div class="_md-dialog-content-body ng-scope"><p class="ng-binding">
-            You have been idle for too long. If you wish to maintain your session please click the button below</p>
+    <md-dialog ng-cloak>
+      <form>
+        <md-dialog-content>
+          <div class="md-dialog-content">
+            <h2 class="md-title">Idle Timeout Warning</h2>
+            <div class="_md-dialog-content-body ng-scope">
+              <p class="ng-binding">
+                You have been idle for too long. If you wish to maintain your session please click the button below</p>
+            </div>
+            <span idle-countdown="countdown"> You will be logged out automatically in <strong style="font-size:xx-large;">{{countdown}}</strong> seconds. </span>
           </div>
-          <span idle-countdown="countdown"> You will be logged out automatically in <strong style="font-size:xx-large;">{{countdown}}</strong> seconds. </span>
-        </div>
-      </md-dialog-content>
-      <md-dialog-actions layout="row">
-        <md-dialog-actions layout="row" class="layout-row">
-          <md-button ng-click="dialog.hide()">Continue Session</md-button>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+          <md-dialog-actions layout="row" class="layout-row">
+            <md-button ng-click="dialog.hide()">Continue Session</md-button>
+          </md-dialog-actions>
         </md-dialog-actions>
-      </md-dialog-actions>
-    </form>
-  </md-dialog>
-</script>
+      </form>
+    </md-dialog>
+  </script>
 
   <div>
     <spinner name="html5spinner" ng-cloak="">
