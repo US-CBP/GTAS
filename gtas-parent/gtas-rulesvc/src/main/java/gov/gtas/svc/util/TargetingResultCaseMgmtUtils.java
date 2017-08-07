@@ -81,7 +81,9 @@ public class TargetingResultCaseMgmtUtils {
         Long _tempPaxId = null;
         try {
             _tempPaxId=rhd.getPassengerId();
-            dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+            //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+            dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
+                    rhd.getPassengerType().getPassengerTypeName(), rhd.getDescription(), rhd.getRuleId());
         }catch(Exception ex){
             logger.error("Could not initiate a case for Flight:"+ flightId +"  Pax:"+_tempPaxId+"  Rule:"+rhd.getRuleId()+" set");
             ex.printStackTrace();
