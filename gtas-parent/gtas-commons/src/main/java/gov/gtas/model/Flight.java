@@ -114,7 +114,9 @@ public class Flight extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
-    
+ 
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
+//    private Set<FlightPax> flightPaxDetails = new HashSet<>();
     
     @Column(name = "passenger_count", nullable = false)
     private Integer passengerCount = Integer.valueOf(0);
@@ -271,6 +273,14 @@ public class Flight extends BaseEntityAudit {
 	public void setMarketingFlight(boolean isMarketingFlight) {
 		this.isMarketingFlight = isMarketingFlight;
 	}
+
+//	public Set<FlightPax> getFlightPaxDetails() {
+//		return flightPaxDetails;
+//	}
+//
+//	public void setFlightPaxDetails(Set<FlightPax> flightPaxDetails) {
+//		this.flightPaxDetails = flightPaxDetails;
+//	}
 
 	@Override
     public int hashCode() {

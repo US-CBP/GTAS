@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -20,14 +21,18 @@ import org.springframework.stereotype.Service;
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.EdifactMessage;
+import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.model.Passenger;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.paxlst.PaxlstParserUNedifact;
 import gov.gtas.parsers.paxlst.PaxlstParserUSedifact;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.ApisMessageRepository;
+import gov.gtas.repository.FlightPaxRepository;
 import gov.gtas.util.LobUtils;
 
 @Service
@@ -37,6 +42,9 @@ public class ApisMessageService extends MessageLoaderService {
     @Autowired
     private ApisMessageRepository msgDao;
 
+    @Autowired
+    private FlightPaxRepository paxDao;
+    
     private ApisMessage apisMessage;
 
     @Override
@@ -91,6 +99,7 @@ public class ApisMessageService extends MessageLoaderService {
             loaderRepo.processReportingParties(apisMessage, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
                     apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>());
+            createFlightPax(apisMessage);
             apisMessage.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -135,5 +144,24 @@ public class ApisMessageService extends MessageLoaderService {
     	}
         //return (msg.contains("CDT") || msg.contains("PDT"));
     	return false;
+    }
+    
+    private void createFlightPax(ApisMessage apisMessage){
+    	Set<Flight> flights=apisMessage.getFlights();
+    	for(Flight f : flights){
+    		for(Passenger p:f.getPassengers()){
+    			FlightPax fp=new FlightPax();
+    			fp.getApisMessage().add(apisMessage);
+    			fp.setDebarkation(f.getDestination());
+    			fp.setEmbarkation(f.getOrigin());
+    			fp.setPortOfFirstArrival(f.getDestination());
+    			fp.setFlight(f);
+    			fp.setResidenceCountry(p.getResidencyCountry());
+    			fp.setTravelerType(p.getPassengerType());
+    			fp.setPassenger(p);
+    			apisMessage.addToFlightPax(fp);
+    			
+    		}
+    	}
     }
 }

@@ -188,6 +188,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from bag",
 				"delete from disposition",	
 				"delete from payment_form",
+				"delete from apis_message_flight_pax",
+				"delete from flight_pax",
 				"delete from hit_detail", "delete from hits_summary",
 				"delete from  document",				
 				"delete from apis_message_passenger",

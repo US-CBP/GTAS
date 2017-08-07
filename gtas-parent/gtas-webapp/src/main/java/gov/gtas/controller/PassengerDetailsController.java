@@ -213,11 +213,11 @@ public class PassengerDetailsController {
 			ApisMessage apis = apisList.get(0);
 			ApisMessageVo apisVo = new ApisMessageVo();
 			apisVo.setApisRecordExists(true);
-			apisVo.setDebarkation(apis.getDebarkation());
-			apisVo.setEmbarkation(apis.getEmbarkation());
-			apisVo.setTravelerType(apis.getTravelerType());
-			apisVo.setPortOfFirstArrival(apis.getPortOfFirstArrival());
-			apisVo.setResidenceCountry(apis.getResidenceCountry());
+			//apisVo.setDebarkation(apis.getDebarkation());
+			//apisVo.setEmbarkation(apis.getEmbarkation());
+			//apisVo.setTravelerType(apis.getTravelerType());
+			//apisVo.setPortOfFirstArrival(apis.getPortOfFirstArrival());
+			//apisVo.setResidenceCountry(apis.getResidenceCountry());
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 			
 			Iterator<Bag> bagIter = t.getBags().iterator();
@@ -239,7 +239,7 @@ public class PassengerDetailsController {
 				pVo.setNumber(p.getNumber());
 				apisVo.addPhoneNumber(pVo);
 			}
-			if(apis.getInstallationAddress() != null){
+			/**if(apis.getInstallationAddress() != null){
 				AddressVo add = new AddressVo();
 				Address installAdd = apis.getInstallationAddress();
 				add.setLine1(installAdd.getLine1());
@@ -251,7 +251,7 @@ public class PassengerDetailsController {
 				add.setState(installAdd.getState());
 				apisVo.setInstallationAddress(add);
 				vo.setApisMessageVo(apisVo);				
-			}
+			}**/
 
 		}
 		return vo;

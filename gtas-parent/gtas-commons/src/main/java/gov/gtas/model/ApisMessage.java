@@ -36,62 +36,38 @@ public class ApisMessage extends Message {
     @JoinTable(name = "apis_message_reporting_party", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "reporting_party_id"))
     Set<ReportingParty> reportingParties = new HashSet<>();
 
+  //TODO Remove from ApisMessage
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = {
             CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "apis_message_flight", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
+  //TODO Remove from ApisMessage
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = {
             CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "apis_message_passenger", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
     
-    @Column(name= "traveler_type")
-    private String travelerType;
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = FlightPax.class, cascade = {
+            CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "apis_message_flight_pax", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "flight_pax_id"))
+    private Set<FlightPax> flightPaxList = new HashSet<>();
     
-    @Column(name= "residence_country")
-    private String residenceCountry;
     
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Phone.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "apis_phone", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
     private Set<Phone> phones = new HashSet<>();
     
-    @ManyToOne
-    @JoinColumn(name="installation_address")
-    private Address installationAddress;
+   
     
-    private String embarkation;
-    private String debarkation;
-    
-    @Column(name="port_of_first_arrival")
-    private String portOfFirstArrival; 
-    
-    @Column(name="bag_count")
-    private int bagCount;    
-    
-    public int getBagCount() {
-		return bagCount;
+    public Set<FlightPax> getFlightPaxList() {
+		return flightPaxList;
 	}
 
-	public void setBagCount(int bagCount) {
-		this.bagCount = bagCount;
+	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
+		this.flightPaxList = flightPaxList;
 	}
 
-	public String getTravelerType() {
-		return travelerType;
-	}
-
-	public void setTravelerType(String travelerType) {
-		this.travelerType = travelerType;
-	}
-
-	public String getResidenceCountry() {
-		return residenceCountry;
-	}
-
-	public void setResidenceCountry(String residenceCountry) {
-		this.residenceCountry = residenceCountry;
-	}
 
 	public Set<Phone> getPhones() {
 		return phones;
@@ -101,37 +77,6 @@ public class ApisMessage extends Message {
 		this.phones = phones;
 	}
 
-	public Address getInstallationAddress() {
-		return installationAddress;
-	}
-
-	public void setInstallationAddress(Address installationAddress) {
-		this.installationAddress = installationAddress;
-	}
-
-	public String getEmbarkation() {
-		return embarkation;
-	}
-
-	public void setEmbarkation(String embarkation) {
-		this.embarkation = embarkation;
-	}
-
-	public String getDebarkation() {
-		return debarkation;
-	}
-
-	public void setDebarkation(String debarkation) {
-		this.debarkation = debarkation;
-	}
-
-	public String getPortOfFirstArrival() {
-		return portOfFirstArrival;
-	}
-
-	public void setPortOfFirstArrival(String portOfFirstArrival) {
-		this.portOfFirstArrival = portOfFirstArrival;
-	}
 
 	public void addReportingParty(ReportingParty rp) {
         if (this.reportingParties == null) {
@@ -140,6 +85,13 @@ public class ApisMessage extends Message {
         this.reportingParties.add(rp);
     }
 
+	public void addToFlightPax(FlightPax fp) {
+        if (this.flightPaxList == null) {
+            this.flightPaxList = new HashSet<>();
+        }
+        this.flightPaxList.add(fp);
+    }
+	
     public Set<ReportingParty> getReportingParties() {
         return reportingParties;
     }

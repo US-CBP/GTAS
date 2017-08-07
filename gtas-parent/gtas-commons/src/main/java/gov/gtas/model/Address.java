@@ -43,24 +43,25 @@ public class Address extends BaseEntityAudit {
     @Column(name = "postal_code")
     private String postalCode;
 
-    public Set<ApisMessage> getApisMessage() {
-		return apisMessage;
-	}
-
-	public void setApisMessage(Set<ApisMessage> apisMessage) {
-		this.apisMessage = apisMessage;
-	}
-
-	@ManyToMany(
+ 	@ManyToMany(
         mappedBy = "addresses",
         targetEntity = Pnr.class
     )
     private Set<Pnr> pnrs = new HashSet<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress")
-    private Set<ApisMessage> apisMessage = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress", orphanRemoval = true)
+    private Set<FlightPax> flightPaxList = new HashSet<>();
 
-    public String getLine1() {
+    
+    public Set<FlightPax> getFlightPaxList() {
+		return flightPaxList;
+	}
+
+	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
+		this.flightPaxList = flightPaxList;
+	}
+
+	public String getLine1() {
         return line1;
     }
 
