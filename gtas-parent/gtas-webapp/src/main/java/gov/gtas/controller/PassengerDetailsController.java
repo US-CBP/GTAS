@@ -474,7 +474,7 @@ public class PassengerDetailsController {
 				copyModelToVo(p, pVo);
 				target.getPhoneNumbers().add(pVo);
 			}
-		}
+		}		
 
 		if (!source.getFlightLegs().isEmpty()) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
@@ -514,6 +514,18 @@ public class PassengerDetailsController {
 								.getFullFlightNumber());
 						target.getSeatAssignments().add(seatVo);
 					}
+				}
+				
+				Set<Document> documents = p.getDocuments();
+				for (Document d: documents) {
+					DocumentVo documentVo = new DocumentVo();
+					documentVo.setFirstName(d.getPassenger().getFirstName());
+					documentVo.setLastName(d.getPassenger().getLastName());
+					documentVo.setDocumentType(d.getDocumentType());
+					documentVo.setIssuanceCountry(d.getIssuanceCountry());
+					documentVo.setDocumentNumber(d.getDocumentNumber());
+					documentVo.setExpirationDate(d.getExpirationDate());
+					target.getDocuments().add(documentVo);
 				}
 			}
 		}

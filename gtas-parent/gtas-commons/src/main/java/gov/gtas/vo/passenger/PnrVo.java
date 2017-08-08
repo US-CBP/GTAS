@@ -46,8 +46,18 @@ public class PnrVo extends MessageVo {
     private List<EmailVo> emails = new ArrayList<>();
     private List<AgencyVo> agencies = new ArrayList<>();
     private List<FlightLegVo> flightLegs = new ArrayList<>();
+    private List<DocumentVo> documents = new ArrayList<>();
     
-    /** seat assignments in this pnr.  for display purposes only */
+    
+    
+    public List<DocumentVo> getDocuments() {
+		return documents;
+	}
+	public void setDocuments(List<DocumentVo> documents) {
+		this.documents = documents;
+	}
+
+	/** seat assignments in this pnr.  for display purposes only */
     private List<SeatVo> seatAssignments = new ArrayList<>();
     
     public void addBag(BagVo b) {

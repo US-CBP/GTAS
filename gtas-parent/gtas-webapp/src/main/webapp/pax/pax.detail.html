@@ -334,12 +334,14 @@
                 <div class="cbp-card-container gtas-card-container full-width">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.documents' | translate}} ({{ passenger.documents.length }})
+                      {{'pnr.documents' | translate}} ({{ passenger.pnrVo.documents.length}})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
+                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md six-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
+                            <th>{{'user.firstname' | translate}}</th>
+                            <th>{{'user.lastname' | translate}}</th>
                             <th>{{'doc.type' | translate}}</th>
                             <th>{{'doc.iss.country' | translate}}</th>
                             <th>{{'doc.Number' | translate}}</th>
@@ -350,7 +352,9 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="doc in passenger.documents">
+                            <tr ng-repeat="doc in passenger.pnrVo.documents">
+                              <td>{{doc.firstName}}</td>
+                              <td>{{doc.lastName}}</td>
                               <td>{{doc.documentType}}</td>
                               <td>{{doc.issuanceCountry}}</td>
                               <td>{{doc.documentNumber}}</td>
