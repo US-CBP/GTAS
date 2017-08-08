@@ -45,8 +45,18 @@ public class PassengerVo implements Validatable {
 
     private String bagId;
     private String bagNum;
+    private String reservationReferenceNumber;
 
-    public String getBagId() {
+    
+    public String getReservationReferenceNumber() {
+		return reservationReferenceNumber;
+	}
+
+	public void setReservationReferenceNumber(String reservationReferenceNumber) {
+		this.reservationReferenceNumber = reservationReferenceNumber;
+	}
+
+	public String getBagId() {
         return bagId;
     }
 

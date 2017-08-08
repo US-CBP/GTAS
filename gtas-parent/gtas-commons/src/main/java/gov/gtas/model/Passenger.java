@@ -84,13 +84,9 @@ public class Passenger extends BaseEntityAudit {
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    @Column(name = "ref_number")
+    private String reservationReferenceNumber;
+    
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
@@ -111,6 +107,21 @@ public class Passenger extends BaseEntityAudit {
     private String address;
       
     
+    public String getReservationReferenceNumber() {
+		return reservationReferenceNumber;
+	}
+
+	public void setReservationReferenceNumber(String reservationReferenceNumber) {
+		this.reservationReferenceNumber = reservationReferenceNumber;
+	}
+
+	public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
     public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}
