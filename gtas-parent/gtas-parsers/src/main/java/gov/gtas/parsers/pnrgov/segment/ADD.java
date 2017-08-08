@@ -82,6 +82,15 @@ public class ADD extends Segment {
             if((StringUtils.isNotBlank(c.getElement(0)) && ("H".equalsIgnoreCase(c.getElement(0))))){
             	this.telephone = freeText;
             }
+            //ADD++N:::::::M+1234567890' the number of :'s may vary.
+            //Data | phone | ADD++N:::::::M+ #581 fix
+            if((StringUtils.isNotBlank(c.getElement(0)) && ("N".equalsIgnoreCase(c.getElement(0))))){
+            	List<Composite> composits = getComposites();
+            	Composite lastOne=composits.get(composits.size()-1);
+            	if(StringUtils.isNotBlank(lastOne.getElement(0))){
+            		this.telephone = lastOne.getElement(0);
+            	}
+            }
         }
     }
 
