@@ -672,7 +672,17 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     }
     
     private void extractEmailInfo(String txt){
-    	String tmp = getContactInfo(IFT.CONTACT_EMAIL, txt);
+    	String tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
+    	//Fix Data | trim email address in back-end #547
+    	String[] extras=tmp.split(" ");
+    	if(extras != null && extras.length >1){
+    		for(String chk:extras){
+    			if(chk.contains("//") || chk.contains("@")){
+    				tmp=chk;
+    				break;
+    			}
+    		}
+    	}
     	
     	 if (StringUtils.isNotBlank(tmp)) {
     		 //implement future parsing here based on incoming email formats
@@ -687,8 +697,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		}
              EmailVo email = new EmailVo();
              email.setAddress(tmp);
-             if(tmp.indexOf("@") != -1){
-            	 email.setDomain(tmp.substring(tmp.indexOf("@")+1, tmp.length()));
+             if(tmp.lastIndexOf("@") != -1){
+            	 email.setDomain(tmp.substring(tmp.lastIndexOf("@")+1, tmp.length()));
              }
             
              parsedMessage.getEmails().add(email);
@@ -749,6 +759,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     private String[] getAgencyInfo(String text){
     	return text.split(" ");
     }
+    private String getEmailFromtext(String ctcCode, String text){
+    	return text.replace(ctcCode, "");
+    }
     private String getContactInfo(String ctcCode, String text) {
     	return text.replace(ctcCode, "").replace("\\s+", "");
     }
@@ -798,5 +811,5 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
         return null;
     }
-    
+
 }
