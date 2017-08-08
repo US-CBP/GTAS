@@ -487,6 +487,8 @@ public class PassengerDetailsController {
 				flVo.setFlightDate(fl.getFlight().getFlightDate().toString());
 				flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEtd()));
 				flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEta()));
+				flVo.setFlightId(Long.toString(fl.getFlight().getId()));
+				flVo.setDirection(fl.getFlight().getDirection());
 				target.getFlightLegs().add(flVo);
 			}
 		}
@@ -501,6 +503,7 @@ public class PassengerDetailsController {
 				pVo.setMiddleName(p.getMiddleName());
 				pVo.setAge(p.getAge());
 				pVo.setGender(p.getGender());
+				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
 
 				Set<Seat> seats = p.getSeatAssignments();

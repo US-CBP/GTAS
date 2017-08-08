@@ -17,8 +17,24 @@ public class FlightLegVo {
     private String flightDate;
     private String etd;
     private String eta;
+    private String flightId;
+    private String direction;
     
-    public String getEta() {
+    
+    
+    public String getFlightId() {
+		return flightId;
+	}
+	public void setFlightId(String flightId) {
+		this.flightId = flightId;
+	}
+	public String getDirection() {
+		return direction;
+	}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+	public String getEta() {
 		return eta;
 	}
 	public void setEta(String eta) {

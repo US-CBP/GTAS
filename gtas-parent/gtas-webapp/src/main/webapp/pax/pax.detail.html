@@ -282,13 +282,17 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="doc in passenger.pnrVo.flightLegs | orderBy: 'etd'">
-                              <td>{{doc.legNumber }}</td>
-                              <td>{{doc.flightNumber }}</td>
-                              <td>{{doc.originAirport }}</td>
-                              <td>{{doc.destinationAirport }}</td>
-                              <td>{{doc.etd }}</td>
-                              <td>{{doc.eta }}</td>
+                            <tr ng-repeat="leg in passenger.pnrVo.flightLegs | orderBy: 'etd'">
+                              <td>{{leg.legNumber }}</td>
+                              <td>
+                                <a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">
+                                  {{leg.flightNumber }}
+                                </a>
+                              </td>
+                              <td>{{leg.originAirport }}</td>
+                              <td>{{leg.destinationAirport }}</td>
+                              <td>{{leg.etd }}</td>
+                              <td>{{leg.eta }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -320,7 +324,11 @@
                             <tr ng-repeat="pass in passenger.pnrVo.passengers">
                               <td>{{ pass.firstName }}</td>
                               <td>{{ pass.middleName }}</td>
-                              <td>{{ pass.lastName }}</td>
+                              <td>
+                                <a href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">
+                                  {{ pass.lastName }}
+                                </a>
+                              </td>
                               <td>{{ pass.gender }}</td>
                               <td>{{ pass.age }}</td>
                             </tr>
