@@ -393,7 +393,12 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             case CUSTOMER_REF_NUMBER:
                 // possibly freq flyer #
                 break;
+                
+            case RESERVATION_REF_NUMBER:
+            	p.setReservationReferenceNumber(rff.getReferenceIdentifier());
+            	break;
             }
+            
         }
 
         for (;;) {
