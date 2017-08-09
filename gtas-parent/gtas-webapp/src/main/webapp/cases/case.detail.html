@@ -2,19 +2,17 @@
   <div class="flex justify-around flex-wrap" >
     <div class="cbp-card-container gtas-card-container">
       <div class="cbp-card cbp-card-shadow">
-        <h3 class="h-label no-margin" >Case#: 1, Status: Open</h3>
+        <h3 class="h-label no-margin" align="right">Case#: {{ caseItem.id }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    Status: {{ caseItem.status }}</h3>
         <div class="flex flex-wrap">
-          <button type="button" class="btn btn-icon-only btn-default">
-            <i class="fa fa-arrow-left"></i>
-            <md-tooltip>Return</md-tooltip>
-          </button>
+
           <div class="fixed-width-md min-half-height right-border-grey">
             <div class="flex flex-vert align-items-center full-height">
-              <img class="md-margin" name="photo" src="http://via.placeholder.com/150x150">
+              <img class="md-margin cbp-card" style="border-radius: 50%;" name="photo" src="http://via.placeholder.com/150x150">
               <div class="md-margin">
                 <div class="flex flex-vert sm-pad-span txt-center">
                   <span>
-                    John Smith
+                    {{ caseItem.firstName }} {{ caseItem.lastName }}
                   </span>
                   <span name="dob">
                     DOB: 1932-03-12
@@ -30,25 +28,24 @@
             </div>
           </div>
           <div class="panel-body flex flex-vert ie-fix-md two-table fixed-width-md">
-            <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
-              <thead>
+            <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
+              <thead align="left">
                 <tr>
-                  <th>Hit#</th>
-                  <th>Status</th>
+                  <th align="left">Hit#</th>
+                  <th class="text-center">Description</th>
+                  <th class="text-center">Status</th>
                 </tr>
               </thead>
             </table>
             <div class="floating-table-body">
               <table class="cbp-table-selectable mdl-js-data-table">
-                <tbody>
-                  <tr ng-click="sideNav('comments')">
-                    <td>1</td>
-                    <td>Open</td>
+                <tbody >
+                  <tr ng-repeat="hit in caseItemHits" ng-click="sideNav('comments',$index)">
+                    <td>{{ hit.hitId }}</td>
+                    <td>{{ hit.description }}</td>
+                    <td>{{ hit.status }}</td>
                   </tr>
-                  <tr ng-click="sideNav('comments')">
-                    <td>2</td>
-                    <td>Closed</td>
-                  </tr>
+
                 </tbody>
               </table>
             </div>
@@ -65,18 +62,20 @@
       <div class="cbp-card-container gtas-card-container">
         <div class="cbp-card cbp-card-shadow">
           <h3 class="alt-label no-margin-top">Open</h3>
-          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+          <div ng-repeat="comment in caseItemHitComments.dispComments" class="no-pad-top panel-body flex flex-vert ie-fix-md">
             <span class="sm-pad">
-              Created By: John Doe
+              Created By: {{ comment.updatedBy }}
             </span>
             <span class="sm-pad">
-              Created At: 2017-03-15
+              Created At: {{ comment.createdAt | date }}
             </span>
-            <textarea class="sm-pad" disabled>The initial comment</textarea>
+            <textarea class="sm-pad" disabled>{{ comment.comments }}</textarea>
           </div>
         </div>
       </div>
     </div>
   </md-sidenav>
-  <div ng-include="'views/footerbuttons.html'"></div>
+  <!--<div ng-include="'views/footerbuttons.html'"></div>-->
 </div>
+
+

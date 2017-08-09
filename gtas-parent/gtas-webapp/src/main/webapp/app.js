@@ -323,7 +323,7 @@ var app;
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
-                            controller: 'CaseDispositionCtrl',
+                            controller: 'CaseDispositionDetailCtrl',
                             templateUrl: 'cases/case.detail.html'
                         }
                     }
