@@ -20,7 +20,9 @@ public class CaseRequestDto implements Serializable {
 
     private int pageSize;
 
-    private String flightId;
+    private Long flightId;
+
+    private Long paxId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -45,15 +47,25 @@ public class CaseRequestDto implements Serializable {
         this.pageSize = pageSize;
     }
 
-    public String getFlightId() {
-        return flightId;
-    }
 
-    public void setFlightId(String flightId) {
-        this.flightId = flightId;
-    }
 
-    public Date getEtaStart() {
+    public Long getPaxId() {
+		return paxId;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	public void setPaxId(Long paxId) {
+		this.paxId = paxId;
+	}
+
+	public Date getEtaStart() {
         return etaStart;
     }
 
@@ -76,6 +88,7 @@ public class CaseRequestDto implements Serializable {
     public void setSort(List<SortOptionsDto> sort) {
         this.sort = sort;
     }
+
 
     @Override
     public String toString() {

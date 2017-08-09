@@ -309,7 +309,7 @@ var app;
                         '@': {
                             controller: 'CasesCtrl',
                             templateUrl: 'cases/cases.html'
-                        },
+                        }
                     },
                     resolve: {
                         	newCases: function(caseService){
@@ -317,21 +317,22 @@ var app;
                         	}
                     	}
                 })
-                .state('case-detail', {
-                    url: '/casedetail',
+                .state('casedetail', {
+                    url: '/casedetail/:flightId/:paxId',
                     authenticate: true,
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
-                            controller: 'CaseDispositionCtrl',//   CasesCtrl
+                            controller: 'CaseDispositionCtrl',
                             templateUrl: 'cases/case.detail.html'
-                        },
-                    },
+                        }
+                    }
+                    ,
                     resolve: {
-                        	newCases: function(caseService){
-                        		return caseService.getAllCases();
-                        	}
-                    	}
+                        newCases: function(caseDispositionService, $stateParams){
+                            return caseDispositionService.getOneHitsDisposition($stateParams.flightId, $stateParams.paxId);
+                        }
+                    }
                 })
                 .state('caseDisposition', {
                     url: '/casedisposition',
@@ -341,13 +342,33 @@ var app;
                         '@': {
                             controller: 'CaseDispositionCtrl',
                             templateUrl: 'cases/caseDisposition.html'
-                        },
+                        }
+                        // ,
+                        // 'detail@caseDisposition': {
+                        //     //controller: 'CaseDispositionCtrl',//   CasesCtrl
+                        //     templateUrl: 'cases/case.detail.html'
+                        // }
                     },
                     resolve: {
                         newCases: function(caseDispositionService){
                             return caseDispositionService.getAllCases();
                         }
                     }
+                })
+                .state('caseDisposition.detail', {
+                    url: '/:id',
+                    views: {
+                        'detail@caseDisposition': {
+                            controller: 'CaseDispositionCtrl',//   CasesCtrl
+                            templateUrl: 'cases/case.detail.html'
+                        }
+                    }
+
+                    // templateUrl: 'cases/case.detail.html'
+                    // ,
+                    // controller: function($scope, $stateParams){
+                    //     $scope.person = $scope.contacts[$stateParams.id];
+                    // }
                 })
                 .state('adhocquery', {
                     url: '/adhocquery',

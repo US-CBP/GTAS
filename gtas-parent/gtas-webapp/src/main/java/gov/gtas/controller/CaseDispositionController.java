@@ -5,6 +5,7 @@
  */
 package gov.gtas.controller;
 
+import gov.gtas.model.Case;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -45,14 +46,13 @@ public class CaseDispositionController {
     }
 
     //getOneHistDisp
-    @RequestMapping(method = RequestMethod.GET, value = "/getOneHistDisp")
-    public Map<String, Object> getOneHistDisp(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate)
+    @RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp",
+            produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Case getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
             throws ParseException {
         HashMap _tempMap = new HashMap();
 
-        return _tempMap;
+        return caseDispositionService.findHitsDispositionByCriteria(request);
     }
 
 

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Date;
 
 public class CaseVo {
+    private Long id;
     private Long passengerId;
     private String paxName;
     private String paxType;
@@ -28,6 +29,14 @@ public class CaseVo {
     private String status;
     private String description;
     private Set<HitsDisposition> hitsDispositions;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getHitType() {
 		return hitType;

@@ -15,4 +15,5 @@ public interface CaseDispositionRepositoryCustom {
 
     public Pair<Long, List<Case>> findByCriteria(CaseRequestDto dto);
 
+
 }

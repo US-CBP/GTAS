@@ -163,6 +163,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         return _tempCaseList;
     }
 
+    @Override
+    public Case findHitsDispositionByCriteria(CaseRequestDto dto){
+
+        return caseDispositionRepository.getCaseByFlightIdAndPaxId(dto.getFlightId(), dto.getPaxId());
+    }
 
     @Override
     public CasePageDto findAll(CaseRequestDto dto) {

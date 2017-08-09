@@ -6,8 +6,11 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.Flight;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -55,6 +58,20 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             }
             q.orderBy(orders);
         }
+        
+        
+		if (dto.getFlightId() != null) {
+			predicates.add(cb.equal(root.<Long> get("flightId"),
+					dto.getFlightId()));
+		}
+		
+		if (dto.getPaxId() != null) {
+			predicates.add(cb.equal(root.<Long> get("paxId"),
+					dto.getPaxId()));
+		}
+		
+		q.select(root).where(predicates.toArray(new Predicate[] {}));
+		typedQuery = em.createQuery(q);
 
         // total count
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
@@ -70,6 +87,8 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         typedQuery.setMaxResults(dto.getPageSize());
 
         logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
+                .getQueryString());
+        System.out.println(typedQuery.unwrap(org.hibernate.Query.class)
                 .getQueryString());
         List<Case> results = typedQuery.getResultList();
 

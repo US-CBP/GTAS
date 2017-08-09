@@ -22,6 +22,22 @@
                 return dfd.promise;
             }
 
+            function getOneHitsDisposition(paramFlight, paramPax){
+                var param = {
+                    pageSize: "10",
+                    pageNumber: "1",
+                    flightId: paramFlight,
+                    paxId: paramPax
+                }
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/getAllCaseDispositions/",
+                    data: param
+                }));
+                return dfd.promise;
+            }
+
             function getDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
@@ -30,9 +46,8 @@
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
-                getAllCases:getAllCases
-                // ,
-                // getOneHitsDisposition:getOneHitsDisposition,
+                getAllCases:getAllCases,
+                getOneHitsDisposition:getOneHitsDisposition
                 // getOneHitsDispositionComments:getOneHitsDispositionComments,
                 // updateHitsDisposition:updateHitsDisposition,
                 // updateCase:updateCase

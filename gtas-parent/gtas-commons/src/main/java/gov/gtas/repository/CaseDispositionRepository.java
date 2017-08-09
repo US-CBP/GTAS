@@ -18,6 +18,7 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -28,13 +29,15 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
 
     public Page<Case> findAll(Pageable pageable);
 
-    public Case findById(Long flight_id, Long pax_id, Long hit_id);
+    public Case findById(Long id);
 
-    @Query("SELECT c FROM Case c WHERE c.flightId = :flightId "
-            + "AND c.paxId = :paxId ")
-    public Case getCaseByCriteria(
-            @Param("flightId") String flightId,
-            @Param("paxId") String paxId);
+    @Query("SELECT c FROM Case c WHERE c.flightId = (:flightId) "
+            + "AND c.paxId = (:paxId)")
+    public Case getCaseByFlightIdAndPaxId(
+            @Param("flightId") Long flightId,
+            @Param("paxId") Long paxId);
+    
+
 
     @Modifying
     @Transactional

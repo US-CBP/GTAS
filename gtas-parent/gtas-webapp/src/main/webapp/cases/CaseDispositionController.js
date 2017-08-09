@@ -8,7 +8,10 @@
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast,
                   gridService,
-                  spinnerService, caseDispositionService, newCases, caseService) {
+                  spinnerService, caseDispositionService, newCases, caseService, $state) {
+
+            $scope.casesList = newCases.data.cases;
+
 
             $scope.errorToast = function (error) {
                 $mdToast.show($mdToast.simple()
@@ -49,6 +52,10 @@
                 return $sce.trustAsHtml(icons);
             };
 
+            $scope.transitionToCaseDetail = function(x) {
+                $state.transition('detail@caseDisposition', {id: x});
+            };
+
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
             });
@@ -78,8 +85,8 @@
                     field: 'flightId',
                     name: 'flightId',
                     displayName: 'Flight Id', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-                },
+                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    },
                 {
                     field: 'paxName',
                     name: 'paxName',

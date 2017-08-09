@@ -19,6 +19,9 @@ public interface CaseDispositionService {
     @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
     public CasePageDto findAll(CaseRequestDto dto);
 
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+    public Case findHitsDispositionByCriteria(CaseRequestDto dto);
+
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
