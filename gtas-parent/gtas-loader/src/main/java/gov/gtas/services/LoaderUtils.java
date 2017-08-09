@@ -109,6 +109,9 @@ public class LoaderUtils {
     public Document createNewDocument(DocumentVo vo) throws ParseException {
         Document d = new Document();
         updateDocument(vo, d);
+        if((StringUtils.isNotBlank(d.getIssuanceCountry())) && d.getIssuanceCountry().length() == 2 ){
+        	d.setIssuanceCountry(normalizeCountryCode(d.getIssuanceCountry()));
+        }
         return d;
     }
 
