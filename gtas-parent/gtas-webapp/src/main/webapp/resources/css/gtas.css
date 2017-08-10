@@ -137,16 +137,36 @@
 
 /*Color Setup */
 .primary-outline {
-  outline: #00416a 2px solid;
+  outline: #00416a 2px solid !important;
 }
 .success-outline {
-  outline: #008000 2px solid;
+  outline: #008000 2px solid !important;
 }
 .warning-outline {
-  outline: #F09511 2px solid;
+  outline: #F09511 2px solid !important;
 }
 .danger-outline {
-  outline: #A00000 2px solid;
+  outline: #A00000 2px solid !important;
+}
+.primary-border {
+  border: #00416a 2px solid !important;
+}
+.success-border {
+  border: #008000 2px solid !important;
+}
+.warning-border {
+  border: #F09511 2px solid !important;
+}
+.danger-border {
+  border: #A00000 2px solid !important;
+}
+.danger-back {
+  background-color: #A00000 !important;
+  color: white !important;
+}
+.warning-back {
+  background-color: #F09511 !important;
+  color: black !important;
 }
 
 /*Custom Components*/

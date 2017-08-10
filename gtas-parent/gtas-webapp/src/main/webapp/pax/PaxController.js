@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
@@ -10,9 +10,9 @@
         $scope.isLoadingFlightHistory = true;
         $scope.isClosedCase = false;
         $scope.ruleHits = ruleHits;
-        
+
         $scope.slides = [];
-        
+
         $scope.getAttachment = function(paxId){
         	//TO-DO add specific pax-id here to grab from current passenger
         	paxDetailService.getPaxAttachments(paxId).then(function(data){
@@ -31,12 +31,12 @@
         		$scope.showAttachments(attList);
         	});
         };
-        
+
         $scope.uploadAttachment = function(){
         	//TO-DO add specific pax information here as well as credentials of some kind to insure we don't get arbitrary uploads.
         	paxDetailService.savePaxAttachments('name','pw',$scope.attachmentDesc,$scope.passenger.paxId,$scope.attachment);
         };
-        
+
         //Bandaid: Parses out seat arrangements not for the particular PNR, returns new seat array. This should be handled on the back-end.
         var parseOutExtraSeats = function(seats, flightLegs){
         	var newSeats = [];
@@ -274,7 +274,7 @@
         	if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
         		flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
         	}
-        	
+
         	//Bandaid: Re-order TVL lines so that dates are in correct order based on etd
         	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);
     	});
@@ -334,7 +334,7 @@
    	   		});
    		});
     };
-    
+
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()
@@ -350,20 +350,20 @@
             return false;
         });
     };
-    
+
     //dialog function for image display dialog
     $scope.showAttachments = function(attachmentList) {
         $mdDialog.show({
           template:'<md-dialog><md-dialog-content>'+
           '<div><carousel>'+
               	attachmentList+
-            '</carousel></div>'+          
+            '</carousel></div>'+
           '</md-dialog-content></md-dialog>',
           parent: angular.element(document.body),
           clickOutsideToClose:true
         })
       };
-      
+
     });
     app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                               jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
@@ -766,7 +766,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
                 	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+                	+'<span class="badge warning-back">{{+row.entity.onRuleHitList}}</span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -775,7 +775,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
+                    cellTemplate: '<div><span class="badge danger-back">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
                 },
                 {name: 'passengerType', displayName:'T', width: 50},
                 {
@@ -882,7 +882,7 @@
             else {
               element.className +=" active";
             }
-          }
+          };
         $scope.getTableHeight = function () {
             if( stateName != "queryPassengers"){
                 return gridService.calculateGridHeight($scope.passengerGrid.data.length);

@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
@@ -302,17 +302,19 @@
                 sort: {
                     direction: uiGridConstants.DESC,
                     priority: 0
-                }
+                },
+                cellTemplate:'<span class="badge warning-back">{{row.entity.ruleHitCount}}</span>'
             },
             {
                 name: 'listHitCount',
                 displayName: 'Watchlist Hits',
                 enableFiltering: false,
-                cellClass: gridService.colorHits,
+                cellClass: "gridService.colorHits",
                 sort: {
                     direction: uiGridConstants.DESC,
                     priority: 1
-                }
+                },
+                cellTemplate:'<span class="badge danger-back">{{row.entity.listHitCount}}</span>'
             },
             {
                 name: 'flightNumber',
@@ -403,7 +405,6 @@
                 dest: row_entity.dest
             });
         };
-
         $scope.filter = function () {
             //temporary as flightService doesn't support multiple values yet
             //$scope.model.origin = self.origin.length ? self.origin.map(returnObjectId)[0] : '';
