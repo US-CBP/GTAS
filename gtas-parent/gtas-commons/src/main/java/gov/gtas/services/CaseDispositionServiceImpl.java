@@ -22,10 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -110,6 +107,41 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, List<Long> hit_ids) {
+        Case aCase = new Case();
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setPaxName(paxName);
+        aCase.setPaxType(paxType);
+        aCase.setCitizenshipCountry(citizenshipCountry);
+        aCase.setDob(dob);
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+        for (Long _tempHitId : hit_ids) {
+            hitDisp = new HitsDisposition();
+            hitsDispCommentsSet = new HashSet<>();
+            hitDisp.setHitId(_tempHitId);
+            hitDisp.setDescription(hitDesc);
+            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitsDispositionComments = new HitsDispositionComments();
+            hitsDispositionComments.setHitId(_tempHitId);
+            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispCommentsSet.add(hitsDispositionComments);
+            hitDisp.setDispComments(hitsDispCommentsSet);
+            hitsDispSet.add(hitDisp);
+        }
+        aCase.setHitsDispositions(hitsDispSet);
+
+
+        caseDispositionRepository.save(aCase);
+        return aCase;
+    }
+
+    @Override
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id) {
 
         Case aCase = new Case();
@@ -159,6 +191,22 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
         _tempHitIds.add(hit_id);
         _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, hitDesc, _tempHitIds));
+
+        return _tempCaseList;
+    }
+
+    @Override
+    public Passenger findPaxByID(Long id) {
+        return passengerRepository.findOne(id);
+    }
+
+    @Override
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, Long hit_id) {
+        List<Case> _tempCaseList = new ArrayList<>();
+        List<Long> _tempHitIds = new ArrayList<>();
+
+        _tempHitIds.add(hit_id);
+        _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, hitDesc, _tempHitIds));
 
         return _tempCaseList;
     }

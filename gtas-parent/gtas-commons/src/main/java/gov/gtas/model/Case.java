@@ -7,6 +7,7 @@ package gov.gtas.model;
 
 import javax.persistence.*;
 
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -24,6 +25,12 @@ public class Case extends BaseEntityAudit {
 
     @Column(name = "passengerName", nullable = true)
     private String paxName;
+
+    @Column(name = "dob", nullable = true)
+    private Date dob;
+
+    @Column(name = "citizenshipCountry", nullable = true)
+    private String citizenshipCountry;
 
     @Column(name = "passengerType", nullable = true)
     private String paxType;
@@ -44,6 +51,22 @@ public class Case extends BaseEntityAudit {
 
     public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
         this.hitsDispositions = hitsDispositions;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
+
+    public String getCitizenshipCountry() {
+        return citizenshipCountry;
+    }
+
+    public void setCitizenshipCountry(String citizenshipCountry) {
+        this.citizenshipCountry = citizenshipCountry;
     }
 
     public Long getFlightId() {
@@ -79,11 +102,11 @@ public class Case extends BaseEntityAudit {
     }
 
     public String getPaxName() {
-        return paxName;
+        return citizenshipCountry;
     }
 
     public void setPaxName(String paxName) {
-        this.paxName = paxName;
+        this.citizenshipCountry = paxName;
     }
 
     public String getPaxType() {

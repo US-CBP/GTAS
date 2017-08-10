@@ -24,6 +24,8 @@ public class CaseVo {
 	private String lastName;
     private String firstName;
     private String middleName;
+    private String citizenshipCountry;
+    private Date dob;
     private String flightNumber;
     private String createDate; 
     private String status;
@@ -36,6 +38,22 @@ public class CaseVo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCitizenshipCountry() {
+        return citizenshipCountry;
+    }
+
+    public void setCitizenshipCountry(String citizenshipCountry) {
+        this.citizenshipCountry = citizenshipCountry;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
     public String getHitType() {

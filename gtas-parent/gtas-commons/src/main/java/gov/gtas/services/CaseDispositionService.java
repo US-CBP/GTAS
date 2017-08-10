@@ -6,10 +6,12 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
@@ -26,9 +28,15 @@ public interface CaseDispositionService {
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
 
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, List<Long> hit_ids);
+
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
+
+    public Passenger findPaxByID(Long id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
+
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, Long hit_id);
 }

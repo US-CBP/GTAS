@@ -8,10 +8,13 @@ package gov.gtas.svc.util;
 
 import gov.gtas.bo.*;
 import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -19,6 +22,16 @@ public class TargetingResultCaseMgmtUtils {
 
     private static final Logger logger = LoggerFactory
             .getLogger(TargetingResultCaseMgmtUtils.class);
+
+    @Autowired
+    private PassengerRepository paxRepoInstance;
+
+    private static PassengerRepository paxRepo;
+
+    @Autowired
+    public TargetingResultCaseMgmtUtils(PassengerRepository paxRepo){
+        TargetingResultCaseMgmtUtils.paxRepo = paxRepo;
+    }
 
     /**
      * Eliminates duplicates and adds flight id, if missing.
@@ -79,40 +92,20 @@ public class TargetingResultCaseMgmtUtils {
 
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
         Long _tempPaxId = null;
+        Passenger _tempPax = null;
         try {
             _tempPaxId=rhd.getPassengerId();
+//            _tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
+            _tempPax = dispositionService.findPaxByID(_tempPaxId);
             //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+            if(_tempPax != null)
             dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
-                    rhd.getPassengerType().getPassengerTypeName(), rhd.getDescription(), rhd.getRuleId());
+                    rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(), rhd.getDescription(), rhd.getRuleId());
         }catch(Exception ex){
             logger.error("Could not initiate a case for Flight:"+ flightId +"  Pax:"+_tempPaxId+"  Rule:"+rhd.getRuleId()+" set");
             ex.printStackTrace();
         }
-//        logger.info("Entering processPassengerFlight().");
-//        rhd.setFlightId(flightId);
-//
-//        // set the passenger object to null
-//        // since its only purpose was to provide flight
-//        // details.
-//        rhd.setPassenger(null);
-//        RuleHitDetail resrhd = resultMap.get(rhd);
-//        if (resrhd != null && resrhd.getRuleId() != rhd.getRuleId()) {
-//            resrhd.incrementHitCount();
-//            if (resrhd.getUdrRuleId() != null) {
-//                logger.info("This is a rule hit so increment the rule hit count.");
-//                // this is a rule hit
-//                resrhd.incrementRuleHitCount();
-//            } else {
-//                logger.info("This is a watch list hit.");
-//                // this is a watch list hit
-//                if (resrhd.getHitType() != rhd.getHitType()) {
-//                    resrhd.setHitType(HitTypeEnum.PD);
-//                }
-//            }
-//        } else if (resrhd == null) {
-//            resultMap.put(rhd, rhd);
-//        }
-//        logger.info("Exiting processPassengerFlight().");
+
     }
 
     public static void updateRuleExecutionContext(RuleExecutionContext ctx,
@@ -136,5 +129,15 @@ public class TargetingResultCaseMgmtUtils {
         ctx.setTargetingResult(hitSummaryMap.values());
         logger.info("Exiting updateRuleExecutionContext().");
     }
+
+
+    public PassengerRepository getPaxRepoInstance() {
+        return paxRepoInstance;
+    }
+
+    public void setPaxRepoInstance(PassengerRepository paxRepoInstance) {
+        this.paxRepoInstance = paxRepoInstance;
+    }
+
 
 }
