@@ -78,9 +78,6 @@ public class LoaderUtils {
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
         p.setUpdatedBy(LOADER_USER);
-        if (vo.getAddress() != null) {
-            p.setAddress(vo.getAddress());
-        }
 
         if (vo.getDebarkation() != null) {
             String airportCode = vo.getDebarkation();
@@ -112,6 +109,9 @@ public class LoaderUtils {
     public Document createNewDocument(DocumentVo vo) throws ParseException {
         Document d = new Document();
         updateDocument(vo, d);
+        if((StringUtils.isNotBlank(d.getIssuanceCountry())) && d.getIssuanceCountry().length() == 2 ){
+        	d.setIssuanceCountry(normalizeCountryCode(d.getIssuanceCountry()));
+        }
         return d;
     }
 

@@ -37,6 +37,7 @@ import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
+import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.FlightVo;
@@ -411,20 +412,27 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
     }
 
     private void createPassengerAddress(NAD nad, PassengerVo p) {
+    	//TODO passenger address is stored in Address table.modify in future to store separately
+    	AddressVo avo=new AddressVo();
         StringJoiner sj = new StringJoiner(" ");
         if (nad.getNumberAndStreetIdentifier() != null) {
+        	avo.setLine1(nad.getNumberAndStreetIdentifier());
             sj.add(nad.getNumberAndStreetIdentifier());
         }
         if (nad.getCity() != null) {
+        	avo.setCity(nad.getCity());
             sj.add(nad.getCity());
         }
         if (nad.getCountrySubCode() != null) {
-            sj.add(nad.getCountrySubCode());
+        	avo.setState(nad.getCountrySubCode());
+        	sj.add(nad.getCountrySubCode());
         }
         if (nad.getPostalCode() != null) {
+        	avo.setPostalCode(nad.getPostalCode());
             sj.add(nad.getPostalCode());
         }
         if (nad.getCountryCode() != null) {
+        	avo.setCountry(nad.getCountryCode());
             sj.add(nad.getCountryCode());
         }
         p.setAddress(sj.toString());

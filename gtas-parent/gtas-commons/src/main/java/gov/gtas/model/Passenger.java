@@ -103,10 +103,7 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Bag> bags = new HashSet<>();
 
-    @Column(name = "address")
-    private String address;
-      
-    
+
     public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
 	}
@@ -115,13 +112,6 @@ public class Passenger extends BaseEntityAudit {
 		this.reservationReferenceNumber = reservationReferenceNumber;
 	}
 
-	public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
     public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}

@@ -88,8 +88,6 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
 
         logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
                 .getQueryString());
-        System.out.println(typedQuery.unwrap(org.hibernate.Query.class)
-                .getQueryString());
         List<Case> results = typedQuery.getResultList();
 
         return new ImmutablePair<>(count, results);
