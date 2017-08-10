@@ -99,12 +99,12 @@
         })
         .filter('watchListDocHit', function () {
             return function (hit) {
-                return hit ? 'glyphicon glyphicon-file' : '';
+                return hit ? 'fa fa-file' : '';
             };
         })
         .filter('watchListHit', function () {
             return function (hit) {
-                return hit ? 'glyphicon glyphicon-user' : '';
+                return hit ? 'fa fa-user' : '';
             };
         });
 }());

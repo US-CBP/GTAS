@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,7 @@ import com.google.gson.GsonBuilder;
 
 import gov.gtas.model.Address;
 import gov.gtas.model.ApisMessage;
+import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
@@ -52,6 +54,7 @@ import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.LookUpRepository;
 import gov.gtas.services.dto.AdhocQueryDto;
 import gov.gtas.util.LobUtils;
+import gov.gtas.vo.passenger.DocumentVo;
 
 /**
  * Methods for interfacing with elastic search engine: indexing
@@ -167,6 +170,18 @@ public class ElasticHelper {
 			vo.setOrigin((String)result.get("origin"));
 			vo.setDestination((String)result.get("destination"));
 			vo.setAddresses((Set<Address>) result.get("addresses"));
+			List<DocumentVo> documents = new ArrayList<>();
+			for(Document d: ((Set<Document>) result.get("documents"))) {
+				DocumentVo temp = new DocumentVo();
+				temp.setDocumentNumber(d.getDocumentNumber());
+				temp.setDocumentType(d.getDocumentType());
+				temp.setExpirationDate(d.getExpirationDate());
+				temp.setFirstName(d.getPassenger().getFirstName());
+				temp.setLastName(d.getPassenger().getLastName());
+				temp.setIssuanceCountry(d.getIssuanceCountry());
+				temp.setIssuanceDate(d.getIssuanceDate());
+				vo.addDocument(temp);
+			}
 			try {
 				Date etd = dateParser.parse((String)result.get("etd"));
 				vo.setEtd(etd);
@@ -186,7 +201,7 @@ public class ElasticHelper {
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		
-		final String[] searchFields = {"apis", "pnr", "firstName", "lastName", "carrier", "flightNumber", "origin", "destination","addresses"};
+		final String[] searchFields = {"apis", "pnr", "firstName", "lastName", "carrier", "flightNumber", "origin", "destination","addresses","documents"};
 		
         int startIndex = (pageNumber - 1) * pageSize;
         QueryBuilder qb = QueryBuilders
@@ -246,6 +261,20 @@ public class ElasticHelper {
 					IndexRequest indexRequest = new IndexRequest(INDEX_NAME, FLIGHTPAX_TYPE, id);		
 					FlightPassengerVo vo = new FlightPassengerVo();
 					BeanUtils.copyProperties(p, vo);
+					//Need to manually add documents to vo since it contains passengers
+					Set<DocumentVo> documents = new HashSet<DocumentVo>();
+					for(Document d: p.getDocuments()) {
+						DocumentVo temp = new DocumentVo();
+						temp.setDocumentNumber(d.getDocumentNumber());
+						temp.setDocumentType(d.getDocumentType());
+						temp.setExpirationDate(d.getExpirationDate());
+						temp.setFirstName(d.getPassenger().getFirstName());
+						temp.setLastName(d.getPassenger().getLastName());
+						temp.setIssuanceCountry(d.getIssuanceCountry());
+						temp.setIssuanceDate(d.getIssuanceDate());
+						documents.add(temp);
+					}
+					vo.setDocuments(documents);
 					vo.setPassengerId(p.getId());
 					BeanUtils.copyProperties(f, vo);
 					vo.setFlightId(f.getId());

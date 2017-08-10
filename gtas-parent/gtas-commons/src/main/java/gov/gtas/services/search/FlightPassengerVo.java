@@ -11,6 +11,8 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import gov.gtas.model.Address;
+import gov.gtas.model.Document;
+import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.FlightVo;
 
 public class FlightPassengerVo {
@@ -40,6 +42,7 @@ public class FlightPassengerVo {
     private String passengerType;
     private Date dob;
     private Set<Address> addresses;
+    private Set<DocumentVo> documents;
     
     private String apis;
     private String pnr;
@@ -176,5 +179,14 @@ public class FlightPassengerVo {
 	public void setAddresses(Set<Address> set) {
 		this.addresses = set;
 	}
-	
+	public Set<DocumentVo> getDocuments() {
+		return documents;
+	}
+	public void setDocuments(Set<DocumentVo> documents) {
+		this.documents = documents;
+	}
+	public void addDocument(DocumentVo document) {
+		this.documents.add(document);
+	}
+
 }
