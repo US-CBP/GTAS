@@ -27,13 +27,16 @@ import gov.gtas.parsers.edifact.Segment;
  * SSR’s in GR.5 (per TVL) apply to a specific flight and may apply to all
  * passengers or may apply to a specific passenger based on the traveler
  * reference number in SSR/9944 and TIF/9944.
+ * SSR+CTCE:HK:1:UA:::::/FIRSTNAMELASTNAME//YAHOO.COM+::001
+ * SSR+CTCE:HK:001:YY:::::USERNAME..//HOTMAIL.COM-1FIRSTNAMELASTNAME'
+ * 
  */
 public class SSR extends Segment {
     public static final String DOCS = "DOCS";
     public static final String DOCA = "DOCA";
     public static final String DOCO = "DOCO";
     public static final String SEAT = "SEAT";
-    
+    public static final String CTCE="CTCE";
     private String typeOfRequest;
     private String action;
     private String quantity;

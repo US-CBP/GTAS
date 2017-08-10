@@ -227,6 +227,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                     visas.add(visa);
                 }
             }
+            if(SSR.CTCE.equals(code)){
+            	String emailText=ssr.getFreeText();
+            	if(emailText.indexOf("-1") > -1){
+                	emailText=emailText.substring(0,emailText.indexOf("-1"));
+            	}
+            	extractEmailInfo(emailText);
+            }
         }
 
         if (!CollectionUtils.isEmpty(ssrDocs)) {
@@ -439,6 +446,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 } else if (StringUtils.isNotBlank(ssr.getFreeText())) {
                     // TODO: figure out seats
                 }
+            }
+            if(SSR.CTCE.equals(code)){
+            	String emailText=ssr.getFreeText();
+            	if(emailText.indexOf("-1") > -1){
+                	emailText=emailText.substring(0,emailText.indexOf("-1"));
+            	}
+            	extractEmailInfo(emailText);
             }
         }
 
@@ -695,6 +709,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		if(tmp.indexOf("..") != -1){
     			tmp=tmp.replace("..", "_");
     		}
+    		if(tmp.indexOf("/") != -1){
+    			tmp=tmp.replace("/", "");
+    		}
              EmailVo email = new EmailVo();
              email.setAddress(tmp);
              if(tmp.lastIndexOf("@") != -1){
@@ -811,5 +828,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
         return null;
     }
+
 
 }
