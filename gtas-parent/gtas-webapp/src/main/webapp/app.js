@@ -35,7 +35,8 @@ var app;
             'ngCookies',
             'pascalprecht.translate',
             'ngIdle',
-            'chart.js'
+            'chart.js',
+            'summernote'
         ],
         language = function ($translateProvider) {
 

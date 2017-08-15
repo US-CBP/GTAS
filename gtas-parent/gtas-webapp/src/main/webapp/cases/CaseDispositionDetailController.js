@@ -13,6 +13,17 @@
             $scope.caseItem;
             $scope.caseItemHits;
             $scope.caseItemHitComments;
+            $scope.commentText='Initial Comment';
+            $scope.options = {
+                height: 150,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            };
+            $scope.hitDetailTrueHitFlag=false;
 
             if(typeof newCases.data !== undefined && newCases.data !== null) {
                 $scope.caseItem = newCases.data.cases[0];
@@ -43,6 +54,9 @@
 
             $scope.pageSize = 10;
 
+            $scope.commentConfirm = function(){
+                caseDispositionService.updateHitsDisposition();
+            };
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
