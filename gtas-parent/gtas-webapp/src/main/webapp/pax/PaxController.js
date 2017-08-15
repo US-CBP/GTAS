@@ -766,7 +766,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
                 	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<span class="badge warning-back">{{+row.entity.onRuleHitList}}</span></md-button>'
+                	+'<span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -775,7 +775,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><span class="badge danger-back">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
+                    cellTemplate: '<div><span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
                 },
                 {name: 'passengerType', displayName:'T', width: 50},
                 {

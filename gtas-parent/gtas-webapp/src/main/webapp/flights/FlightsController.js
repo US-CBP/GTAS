@@ -303,7 +303,7 @@
                     direction: uiGridConstants.DESC,
                     priority: 0
                 },
-                cellTemplate:'<span class="badge warning-back">{{row.entity.ruleHitCount}}</span>'
+                cellTemplate:'<span class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
             },
             {
                 name: 'listHitCount',
@@ -314,7 +314,7 @@
                     direction: uiGridConstants.DESC,
                     priority: 1
                 },
-                cellTemplate:'<span class="badge danger-back">{{row.entity.listHitCount}}</span>'
+                cellTemplate:'<span class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
             },
             {
                 name: 'flightNumber',

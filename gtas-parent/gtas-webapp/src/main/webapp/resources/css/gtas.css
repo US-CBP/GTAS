@@ -160,6 +160,12 @@
 .danger-border {
   border: #A00000 2px solid !important;
 }
+.warning-border-th {
+  border: #F09511 1px solid !important;
+}
+.danger-border-th {
+  border: #A00000 1px solid !important;
+}
 .danger-back {
   background-color: #A00000 !important;
   color: white !important;
@@ -371,6 +377,9 @@
 }
 .ui-grid-cell {
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 /*Override material ui Right sidebar */
 
