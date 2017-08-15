@@ -48,6 +48,7 @@ import gov.gtas.model.Document;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
@@ -62,6 +63,7 @@ import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
+import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
@@ -213,12 +215,35 @@ public class PassengerDetailsController {
 			ApisMessage apis = apisList.get(0);
 			ApisMessageVo apisVo = new ApisMessageVo();
 			apisVo.setApisRecordExists(true);
-			//apisVo.setDebarkation(apis.getDebarkation());
-			//apisVo.setEmbarkation(apis.getEmbarkation());
-			//apisVo.setTravelerType(apis.getTravelerType());
-			//apisVo.setPortOfFirstArrival(apis.getPortOfFirstArrival());
-			//apisVo.setResidenceCountry(apis.getResidenceCountry());
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
+			
+			Iterator<FlightPax> fpIter = apis.getFlightPaxList().iterator();
+			while (fpIter.hasNext()) {
+				FlightPax fp= fpIter.next();
+				FlightPassengerVo fpVo = new FlightPassengerVo();
+				fpVo.setFirstName(fp.getPassenger().getFirstName());
+				fpVo.setLastName(fp.getPassenger().getLastName());
+				fpVo.setMiddleName(fp.getPassenger().getMiddleName());
+				fpVo.setEmbarkation(fp.getEmbarkation());
+				fpVo.setDebarkation(fp.getDebarkation());
+				if(fp.getInstallationAddress() != null){
+					AddressVo add = new AddressVo();
+					Address installAdd = fp.getInstallationAddress();
+					add.setLine1(installAdd.getLine1());
+					add.setLine2(installAdd.getLine2());
+					add.setLine3(installAdd.getLine3());
+					add.setCity(installAdd.getCity());
+					add.setCountry(installAdd.getCountry());
+					add.setPostalCode(installAdd.getPostalCode());
+					add.setState(installAdd.getState());
+					fpVo.setInstallationAddress(add);			
+				}
+				fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
+				fpVo.setResidencyCountry(fp.getResidenceCountry());
+				fpVo.setPassengerType(fp.getTravelerType());
+				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+				apisVo.addFlightpax(fpVo);
+			}
 			
 			Iterator<Bag> bagIter = t.getBags().iterator();
 			while (bagIter.hasNext()) {
@@ -227,7 +252,7 @@ public class PassengerDetailsController {
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
 					bagVo.setData_source(b.getData_source());
-					bagVo.setDestination(b.getDestination());
+					bagVo.setDestination(b.getDestinationAirport());
 					apisVo.addBag(bagVo);
 				}
 			}
@@ -239,20 +264,7 @@ public class PassengerDetailsController {
 				pVo.setNumber(p.getNumber());
 				apisVo.addPhoneNumber(pVo);
 			}
-			/**if(apis.getInstallationAddress() != null){
-				AddressVo add = new AddressVo();
-				Address installAdd = apis.getInstallationAddress();
-				add.setLine1(installAdd.getLine1());
-				add.setLine2(installAdd.getLine2());
-				add.setLine3(installAdd.getLine3());
-				add.setCity(installAdd.getCity());
-				add.setCountry(installAdd.getCountry());
-				add.setPostalCode(installAdd.getPostalCode());
-				add.setState(installAdd.getState());
-				apisVo.setInstallationAddress(add);
-				vo.setApisMessageVo(apisVo);				
-			}**/
-
+			vo.setApisMessageVo(apisVo);
 		}
 		return vo;
 	}

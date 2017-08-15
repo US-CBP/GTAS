@@ -6,21 +6,21 @@
 package gov.gtas.vo.passenger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.vo.MessageVo;
 
 public class ApisMessageVo extends MessageVo{
 	private String travelerType;
 	private String residenceCountry;
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
-    private AddressVo installationAddress;
-    private String embarkation;
-    private String debarkation;
-    private String portOfFirstArrival; 
     private int bagCount;
     private List<BagVo> bags = new ArrayList<>();
     private boolean apisRecordExists = false;
+    private Set<FlightPassengerVo> flightpaxs = new HashSet<>();
     
 	public boolean isApisRecordExists() {
 		return apisRecordExists;
@@ -49,30 +49,6 @@ public class ApisMessageVo extends MessageVo{
 	public void addPhoneNumber(PhoneVo phoneNumber) {
 		this.phoneNumbers.add(phoneNumber);
 	}
-	public AddressVo getInstallationAddress() {
-		return installationAddress;
-	}
-	public void setInstallationAddress(AddressVo installationAddress) {
-		this.installationAddress = installationAddress;
-	}
-	public String getEmbarkation() {
-		return embarkation;
-	}
-	public void setEmbarkation(String embarkation) {
-		this.embarkation = embarkation;
-	}
-	public String getDebarkation() {
-		return debarkation;
-	}
-	public void setDebarkation(String debarkation) {
-		this.debarkation = debarkation;
-	}
-	public String getPortOfFirstArrival() {
-		return portOfFirstArrival;
-	}
-	public void setPortOfFirstArrival(String portOfFirstArrival) {
-		this.portOfFirstArrival = portOfFirstArrival;
-	}
 	public int getBagCount() {
 		return bagCount;
 	}
@@ -89,4 +65,13 @@ public class ApisMessageVo extends MessageVo{
     public void addBag(BagVo b) {
         bags.add(b);
     }    
+	public Set<FlightPassengerVo> getFlightpaxs() {
+		return flightpaxs;
+	}
+	public void setFlightpaxs(Set<FlightPassengerVo> flightpaxs) {
+		this.flightpaxs = flightpaxs;
+	}
+	public void addFlightpax(FlightPassengerVo flightpax) {
+		this.flightpaxs.add(flightpax);
+	}
 }

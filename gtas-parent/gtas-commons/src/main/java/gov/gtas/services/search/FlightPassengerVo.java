@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import gov.gtas.model.Address;
 import gov.gtas.model.Document;
+import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.FlightVo;
 
@@ -43,6 +44,10 @@ public class FlightPassengerVo {
     private Date dob;
     private Set<Address> addresses;
     private Set<DocumentVo> documents;
+    private String embarkation;
+    private String debarkation;
+    private AddressVo installationAddress;
+    private String portOfFirstArrival;
     
     private String apis;
     private String pnr;
@@ -188,5 +193,29 @@ public class FlightPassengerVo {
 	public void addDocument(DocumentVo document) {
 		this.documents.add(document);
 	}
-
+	public String getEmbarkation() {
+		return embarkation;
+	}
+	public void setEmbarkation(String embarkation) {
+		this.embarkation = embarkation;
+	}
+	public String getDebarkation() {
+		return debarkation;
+	}
+	public void setDebarkation(String debarkation) {
+		this.debarkation = debarkation;
+	}
+	public AddressVo getInstallationAddress() {
+		return installationAddress;
+	}
+	public void setInstallationAddress(AddressVo installationAddress) {
+		this.installationAddress = installationAddress;
+	}
+	public String getPortOfFirstArrival() {
+		return portOfFirstArrival;
+	}
+	public void setPortOfFirstArrival(String portOfFirstArrival) {
+		this.portOfFirstArrival = portOfFirstArrival;
+	}
+	
 }

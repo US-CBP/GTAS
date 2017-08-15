@@ -208,6 +208,9 @@
   margin: 15px auto !important;
   display: block !important;
 }
+.eight-table td {
+  width: 12% !important;
+}
 .seven-table td{
   width: 15%;
 }
