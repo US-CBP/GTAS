@@ -25,20 +25,10 @@ public class CaseDispositionController {
     @Autowired
     private CaseDispositionService caseDispositionService;
 
-    //getAll
-//    @RequestMapping(method = RequestMethod.POST, value = "/getAllCaseDispositions")
-//    public Map<String, Object> getAll(
-//            @RequestParam(value = "startDate", required = false) String startDate,
-//            @RequestParam(value = "endDate", required = false) String endDate)
-//            throws ParseException {
-//        HashMap _tempMap = new HashMap();
-//
-//        return _tempMap;
-//    }
-
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
+    public
+    @ResponseBody
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
                 SecurityContextHolder.getContext());
@@ -48,7 +38,9 @@ public class CaseDispositionController {
     //getOneHistDisp
     @RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp",
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Case getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
+    public
+    @ResponseBody
+    Case getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
             throws ParseException {
         HashMap _tempMap = new HashMap();
 
@@ -69,13 +61,16 @@ public class CaseDispositionController {
 
     //updateHistDisp
     @RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
-    public Map<String, Object> updateHistDisp(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate)
-            throws ParseException {
-        HashMap _tempMap = new HashMap();
-
-        return _tempMap;
+    public
+    @ResponseBody
+    Case updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+        Case aCase = new Case();
+        try {
+            aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(), request.getHitId(), request.getCaseComments(), request.getStatus());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return aCase;
     }
 
     //updateCase
@@ -89,4 +84,4 @@ public class CaseDispositionController {
         return _tempMap;
     }
 
-    }
+}

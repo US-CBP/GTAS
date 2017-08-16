@@ -32,6 +32,8 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status);
+
     public Passenger findPaxByID(Long id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);

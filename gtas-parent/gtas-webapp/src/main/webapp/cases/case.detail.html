@@ -15,14 +15,12 @@
                     {{ caseItem.firstName }} {{ caseItem.lastName }}
                   </span>
                   <span name="dob">
-                    DOB: 1932-03-12
+                    DOB: {{ caseItem.dob | date }}
                   </span>
                   <span name="citizen">
-                    Citizenship: GBR
+                    Citizenship: {{ caseItem.citizenshipCountry }}
                   </span>
-                  <span name="doc">
-                   Doc: #4332092
-                  </span>
+
                 </div>
               </div>
             </div>
@@ -106,7 +104,7 @@
       </md-content>
 
       <div class="flex justify-around">
-        <button type="button" ng-click="prompt.cancel()" class="flex-15 md-raised btn btn-default">
+        <button type="button" ng-click="closeSideNav()" class="flex-15 md-raised btn btn-default">
           Cancel
         </button>
         <button type="submit" class="flex-15 md-raised btn btn-primary">
@@ -132,6 +130,7 @@
             <span class="sm-pad">
               Updated On: {{ comment.createdAt | date }}
             </span>
+            <!--<summernote airMode>{{ comment.comments }} </summernote>-->
             <textarea class="sm-pad" disabled>{{ comment.comments }}</textarea>
           </div>
         </div>
@@ -139,6 +138,15 @@
     </div>
 
   </md-sidenav>
+
+  <!--<spinner name="html5spinner" ng-cloak="">-->
+    <!--<div class="overlay"></div>-->
+    <!--<div class="spinner">-->
+      <!--<div class="double-bounce1"></div>-->
+      <!--<div class="double-bounce2"></div>-->
+    <!--</div>-->
+    <!--<div class="please-wait">{{'wl.wait' | translate}}...</div>-->
+  <!--</spinner>-->
 
   <!--<div ng-include="'views/footerbuttons.html'"></div>-->
 </div>
