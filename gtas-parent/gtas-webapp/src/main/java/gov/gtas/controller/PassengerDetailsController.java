@@ -539,6 +539,7 @@ public class PassengerDetailsController {
 					documentVo.setDocumentType(d.getDocumentType());
 					documentVo.setIssuanceCountry(d.getIssuanceCountry());
 					documentVo.setDocumentNumber(d.getDocumentNumber());
+					documentVo.setIssuanceDate(d.getIssuanceDate());
 					documentVo.setExpirationDate(d.getExpirationDate());
 					target.getDocuments().add(documentVo);
 				}

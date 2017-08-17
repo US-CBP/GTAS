@@ -32,19 +32,21 @@ public class DocumentVo {
     public void setDocumentNumber(String documentNumber) {
         this.documentNumber = documentNumber;
     }
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-    public Date getIssuanceDate() {
-        return issuanceDate;
-    }
-    public void setIssuanceDate(Date issuanceDate) {
-        this.issuanceDate = issuanceDate;
-    }
-    public String getIssuanceCountry() {
+
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+	public Date getIssuanceDate() {
+		return issuanceDate;
+	}
+	public void setIssuanceDate(Date issuanceDate) {
+		this.issuanceDate = issuanceDate;
+	}
+	public String getIssuanceCountry() {
         return issuanceCountry;
     }
     public void setIssuanceCountry(String issuanceCountry) {

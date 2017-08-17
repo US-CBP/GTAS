@@ -7,10 +7,12 @@ package gov.gtas.services.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +150,7 @@ public class ElasticHelper {
 		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null,apis,null);
 	}
 	
-	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) {	
+	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {	
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
@@ -170,25 +172,24 @@ public class ElasticHelper {
 			vo.setOrigin((String)result.get("origin"));
 			vo.setDestination((String)result.get("destination"));
 			vo.setAddresses((Set<Address>) result.get("addresses"));
-			List<DocumentVo> documents = new ArrayList<>();
-			for(Document d: ((Set<Document>) result.get("documents"))) {
-				DocumentVo temp = new DocumentVo();
-				temp.setDocumentNumber(d.getDocumentNumber());
-				temp.setDocumentType(d.getDocumentType());
-				temp.setExpirationDate(d.getExpirationDate());
-				temp.setFirstName(d.getPassenger().getFirstName());
-				temp.setLastName(d.getPassenger().getLastName());
-				temp.setIssuanceCountry(d.getIssuanceCountry());
-				temp.setIssuanceDate(d.getIssuanceDate());
-				vo.addDocument(temp);
-			}
-			try {
-				Date etd = dateParser.parse((String)result.get("etd"));
-				vo.setEtd(etd);
-				Date eta = dateParser.parse((String)result.get("eta"));
-				vo.setEta(eta);
-			} catch (java.text.ParseException e) {
-				logger.error("date parsing error", e);
+			if(result.get("documents") != null) {
+				Set<DocumentVo> documents = new HashSet<>();
+				for(HashMap m: ((ArrayList<HashMap>) result.get("documents"))) {
+					DocumentVo temp = new DocumentVo();
+					temp.setDocumentNumber((String) m.get("documentNumber"));
+					temp.setDocumentType((String) m.get("documentType"));
+					if(m.get("expirationDate")!=null) {
+						temp.setExpirationDate(dateParser.parse((String) m.get("expirationDate")));
+					}
+					temp.setFirstName((String) m.get("firstName"));
+					temp.setLastName((String) m.get("lastName"));
+					temp.setIssuanceCountry((String) m.get("issuanceCountry"));
+					if(m.get("issuanceDate")!=null) {
+						temp.setIssuanceDate(dateParser.parse((String) m.get("issuanceDate")));
+					}
+					documents.add(temp);
+				}
+				vo.setDocuments(documents);
 			}
 		}	
 
