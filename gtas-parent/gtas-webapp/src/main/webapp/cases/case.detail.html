@@ -15,14 +15,12 @@
                     {{ caseItem.firstName }} {{ caseItem.lastName }}
                   </span>
                   <span name="dob">
-                    DOB: 1932-03-12
+                    DOB: {{ caseItem.dob | date }}
                   </span>
                   <span name="citizen">
-                    Citizenship: GBR
+                    Citizenship: {{ caseItem.citizenshipCountry }}
                   </span>
-                  <span name="doc">
-                   Doc: #4332092
-                  </span>
+
                 </div>
               </div>
             </div>
@@ -54,7 +52,7 @@
       </div>
     </div>
   </div>
-  <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="comments">
+  <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" > /*md-component-id="comments" */
     <md-toolbar class="md-theme-light">
       <h2 class="md-toolbar-tools">Comments</h2>
     </md-toolbar>
@@ -75,7 +73,73 @@
       </div>
     </div>
   </md-sidenav>
-  <!--<div ng-include="'views/footerbuttons.html'"></div>-->
+
+
+  <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="comments"
+              style="width: 100%; max-width: 650px !important;">
+    <md-toolbar class="md-theme-light">
+      <h2 class="md-toolbar-tools">Comments on Hit# {{caseItemHitComments.hitId}} -- {{caseItemHitComments.description}}</h2>
+    </md-toolbar>
+    <form name="ruleForm" ng-submit="commentConfirm()">
+      <md-content layout-padding>
+        <!--<div class="sm-pad">-->
+          <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;full-width">-->
+            <!--&lt;!&ndash;<input name="title" ng-model="rule.title" class="mdl-textfield__input"&ndash;&gt;-->
+                   <!--&lt;!&ndash;type="text" id="title-input-rule">&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<label class="mdl-textfield__label static-label" for="title-input-rule">&ndash;&gt;-->
+              <!--&lt;!&ndash;{{'qry.name' | translate}}&ndash;&gt;-->
+            <!--&lt;!&ndash;</label>&ndash;&gt;-->
+          <!--</div>-->
+          <div>
+            <div class="static-label"> Leave a Comment </div>
+            <summernote ng-model="commentText" config="options" id="summernote"></summernote>
+          </div>
+
+        <!--</div>-->
+        <div>
+          <md-checkbox class="md-primary" required ng-model="hitDetailTrueHitFlag" aria-label="Enabled">True Hit ?</md-checkbox>
+        </div>
+
+      </md-content>
+
+      <div class="flex justify-around">
+        <button type="button" ng-click="closeSideNav()" class="flex-15 md-raised btn btn-default">
+          Cancel
+        </button>
+        <button type="submit" class="flex-15 md-raised btn btn-primary">
+          Save
+        </button>
+      </div>
+    </form>
+
+    <!-- Previous Comments -->
+    <br>
+    <hr/>
+    <!--<md-toolbar class="md-theme-light">-->
+      <h4 class="md-toolbar-tools">Past Comments</h4>
+    <!--</md-toolbar>-->
+    <div class="flex flex-vert align-items-center">
+      <div class="cbp-text-field">
+        <div class="cbp-card cbp-card-shadow" style="width: 450px;!important;">
+
+          <div ng-repeat="comment in caseItemHitComments.dispComments" class="no-pad-top panel-body flex flex-vert ie-fix-md">
+            <span class="sm-pad">
+              Created By: {{ comment.updatedBy }}
+            </span>
+            <span class="sm-pad">
+              Updated On: {{ comment.createdAt | date }}
+            </span>
+            <!--<summernote airMode>{{ comment.comments }} </summernote>-->
+            <textarea class="sm-pad" disabled>{{ comment.comments }}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </md-sidenav>
+
+
 </div>
 
 

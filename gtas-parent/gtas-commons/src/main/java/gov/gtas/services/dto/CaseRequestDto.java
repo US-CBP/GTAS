@@ -24,6 +24,12 @@ public class CaseRequestDto implements Serializable {
 
     private Long paxId;
 
+    private Long hitId;
+
+    private String caseComments;
+
+    private String status;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
@@ -47,25 +53,47 @@ public class CaseRequestDto implements Serializable {
         this.pageSize = pageSize;
     }
 
+    public Long getHitId() {
+        return hitId;
+    }
 
+    public void setHitId(Long hitId) {
+        this.hitId = hitId;
+    }
+
+    public String getCaseComments() {
+        return caseComments;
+    }
+
+    public void setCaseComments(String caseComments) {
+        this.caseComments = caseComments;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Long getPaxId() {
-		return paxId;
-	}
+        return paxId;
+    }
 
-	public Long getFlightId() {
-		return flightId;
-	}
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
+    }
 
-	public void setFlightId(Long flightId) {
-		this.flightId = flightId;
-	}
+    public Long getFlightId() {
+        return flightId;
+    }
 
-	public void setPaxId(Long paxId) {
-		this.paxId = paxId;
-	}
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
 
-	public Date getEtaStart() {
+    public Date getEtaStart() {
         return etaStart;
     }
 

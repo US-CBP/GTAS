@@ -38,6 +38,25 @@
                 return dfd.promise;
             }
 
+            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus){
+                var requestDto = {
+                    pageSize: "10",
+                    pageNumber: "1",
+                    flightId: paramFlight,
+                    paxId: paramPax,
+                    hitId: paramHit,
+                    caseComments: paramComments,
+                    status: paramStatus
+                }
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/updateHistDisp/",
+                    data: requestDto
+                }));
+                return dfd.promise;
+            }
+
             function getDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
@@ -47,9 +66,9 @@
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getAllCases:getAllCases,
-                getOneHitsDisposition:getOneHitsDisposition
+                getOneHitsDisposition:getOneHitsDisposition,
                 // getOneHitsDispositionComments:getOneHitsDispositionComments,
-                // updateHitsDisposition:updateHitsDisposition,
+                updateHitsDisposition:updateHitsDisposition
                 // updateCase:updateCase
             });
         })

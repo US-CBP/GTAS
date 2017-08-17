@@ -173,6 +173,50 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status) {
+        Case aCase = new Case();
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+
+        try {
+            aCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
+
+            hitsDispCommentsSet = null;
+            hitsDispSet = aCase.getHitsDispositions();
+            for(HitsDisposition hit : hitsDispSet){
+
+                if((hit.getCaseId() == aCase.getId()) && (hit.getHitId() == hit_id)){
+
+                    if(caseComments != null){ // set comments
+                        hitsDispositionComments = new HitsDispositionComments();
+                        hitsDispositionComments.setHitId(hit_id);
+                        hitsDispositionComments.setComments(caseComments);
+                        hitsDispCommentsSet = hit.getDispComments();
+                        hitsDispCommentsSet.add(hitsDispositionComments);
+                        hit.setDispComments(hitsDispCommentsSet);
+                    }
+
+                    if(status != null){ // set status
+                        hit.setStatus(status);
+                    }
+
+                } // end of hit updates
+
+            }
+
+            aCase.setHitsDispositions(hitsDispSet);
+
+            if((status != null) || (caseComments != null))
+                caseDispositionRepository.save(aCase);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+            return aCase;
+    }
+
+    @Override
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id)
     {
         List<Case> _tempCaseList = new ArrayList<>();
