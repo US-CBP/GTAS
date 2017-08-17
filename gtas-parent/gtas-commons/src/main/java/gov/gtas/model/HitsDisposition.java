@@ -19,16 +19,17 @@ import java.util.Set;
 public class HitsDisposition extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
 
-    public HitsDisposition() { }
+    public HitsDisposition() {
+    }
 
-    public HitsDisposition(Long hit){
+    public HitsDisposition(Long hit) {
         this.hitId = hit;
     }
 
-    @Column(name="hit_id")
+    @Column(name = "hit_id")
     private long hitId;
 
-    @Column(name="case_id")
+    @Column(name = "case_id")
     private long caseId;
 
     @Column(name = "description")
@@ -37,10 +38,21 @@ public class HitsDisposition extends BaseEntityAudit {
     @Column(name = "status", nullable = false)
     private String status;
 
+    @Column(name = "valid", nullable = true)
+    private String valid;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
     private Set<HitsDispositionComments> dispComments;
 
+
+    public String getValid() {
+        return valid;
+    }
+
+    public void setValid(String valid) {
+        this.valid = valid;
+    }
 
     public String getStatus() {
         return status;
