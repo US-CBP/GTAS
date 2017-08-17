@@ -16,7 +16,7 @@ public class MessageVo {
     private String transmissionSource;
     private Date transmissionDate;
     private String messageType;
-    private String version;
+    private String version;  
     
     public String getRaw() {
         return raw;

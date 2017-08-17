@@ -1,11 +1,33 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
     'use strict';
     app
+        .service('notificationService', function($http,$q) {
+          var GET_MESSAGE_ERRORS_URL ="/gtas/errorMessage";
+          function handleError(response) {
+              if (response.data.message === undefined) {
+                  return $q.reject("An unknown error occurred.");
+              }
+              return $q.reject(response.data.message);
+          }
+
+          function handleSuccess(response) {
+              return response.data;
+          }
+          return {
+            getErrorData:function() {
+              var request = $http({
+                  method: "get",
+                  url: GET_MESSAGE_ERRORS_URL
+              });
+              return (request.then(handleSuccess, handleError));
+            }
+          }
+        })
         .service('errorService', function ($http, $q) {
             var GET_ERROR_RECORDS_URL = "/gtas/errorlog";
 
@@ -1027,12 +1049,12 @@
         })
         //Tooltip service attempting to be generic
         .service("codeTooltipService", function($rootScope){
-        	
+
             function getCodeTooltipData(field, type){
             	if(field != null && typeof field != 'undefined' && field != ''){
             		if(type === 'country'){
             			return getFullNameByCodeAndCodeList(field, $rootScope.countriesList);
-            		} 
+            		}
             		else if(type === 'airport'){
             			return getFullNameByCodeAndCodeList(field, $rootScope.airportsList);
             		}
@@ -1041,7 +1063,7 @@
             		}
             	}
             };
-        	        	
+
             //Used for countries/airports/carriers, pass in code + code list, return full name
             function getFullNameByCodeAndCodeList(code, codeList){
             	var fullName = '';

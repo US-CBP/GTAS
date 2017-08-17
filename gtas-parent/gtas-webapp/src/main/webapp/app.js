@@ -546,10 +546,10 @@ var app;
             $httpProvider.defaults.withCredentials = false;
         },
 
-        NavCtrl = function ($scope, $http, APP_CONSTANTS, $sessionStorage, $rootScope, $cookies) {
+        NavCtrl = function ($scope, $http, APP_CONSTANTS, $sessionStorage, $rootScope, $cookies, notificationService) {
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
-
+            $scope.errorList = [];
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -557,7 +557,6 @@ var app;
                 $mdOpenMenu(ev);
                 originatorEv = null;
             };
-
             var lookup = {
                 admin: {name: ['admin', 'addUser', 'modifyUser']},
                 dashboard: {name: ['dashboard']},
@@ -577,6 +576,11 @@ var app;
             $scope.showNav = function () {
                 return ['queryFlights', 'queryPassengers', 'detail'].indexOf($scope.stateName) === -1;
             };
+            notificationService.getErrorData().then(function(value){
+              $scope.errorList = value;
+            }, function(reason){
+              alert("Error Loading Notifications: " + reason);
+            })
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
