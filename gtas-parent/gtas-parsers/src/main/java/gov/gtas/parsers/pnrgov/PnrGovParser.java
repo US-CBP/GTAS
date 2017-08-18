@@ -503,9 +503,16 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if (lts == null) {
                 break;
             }
+            if(lts.isAgency()){
+            	processAgencyInfo(lts.getTheText());
+            }else if(lts.isPhone()){
+            	processPhoneInfo(lts.getText());
+            }
             extractContactInfo(lts.getText());
         }
     }
+    
+
     
     /**
      * the agent info that checked-in the passenger
@@ -684,7 +691,52 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         	
         }
     }
-    
+   
+    private void processPhoneInfo(String text){
+    	
+    }
+    private void processAgencyInfo(String theText){
+    	if(StringUtils.isNotBlank(theText) && theText.contains("CTCT")){
+    		String untilCT=theText.substring(0, theText.indexOf("CTCT"));//0/O/28/OSI YY
+    		String afterCT=theText.substring(theText.indexOf("CTCT")+4,theText.length());//DCA 123 456-7890 TRAVEL AGENCY
+    		AgencyVo vo=new AgencyVo();
+    		if(afterCT.contains("TRAVEL") && afterCT.contains("AGENCY")){
+    			vo.setIdentifier("TRAVEL AGENCY");
+    		}else if(afterCT.endsWith("A")){
+    			vo.setIdentifier("TRAVEL AGENCY");
+    		}
+    		afterCT=afterCT.replace("TRAVEL", "");
+    		afterCT=afterCT.replace("AGENCY", "");
+    		String[] afterCTs=afterCT.split(" ");
+    		String[] untilCTs=untilCT.split(" ");
+    		StringBuilder b=new StringBuilder();
+    		for(String s : afterCTs){
+    			s=s.replace("-", "");
+    			if(StringUtils.isNoneBlank(s) && s.length() >= 3 && StringUtils.isNumericSpace(s)){
+    				b.append(s);
+    			}
+    			if(StringUtils.isNoneBlank(s) && s.length() == 3 && StringUtils.isAlpha(s)){
+    				vo.setLocation(s);
+    			}
+    		}
+    		vo.setPhone(b.toString());
+    		if(StringUtils.isBlank(vo.getLocation()) ){
+    			afterCT=afterCT.replaceAll("\\s+", "");
+    			vo.setLocation(afterCT.substring(0,3));
+    		}
+    		for(String s : untilCTs){
+    			if(StringUtils.isNoneBlank(s) && s.length() == 2 && StringUtils.isAlpha(s)){
+    				vo.setName(s);
+    			}
+    		}
+    		if(StringUtils.isBlank(vo.getName())){
+    			vo.setName(untilCT);
+    		}
+    		if(vo.isValid()){
+    			parsedMessage.getAgencies().add(vo);
+    		}
+    	}
+    }
     private void extractEmailInfo(String txt){
     	String tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
     	//Fix Data | trim email address in back-end #547
@@ -828,6 +880,5 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
         return null;
     }
-
 
 }

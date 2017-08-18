@@ -7,6 +7,8 @@ package gov.gtas.parsers.pnrgov.segment;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
@@ -20,17 +22,62 @@ import gov.gtas.parsers.edifact.Segment;
  * DL1314U 19FEB MCOATL NN/SS1 1130A 105P AS SEAT RS 29F TRAN/TRINH')
  */
 public class LTS extends Segment {
+	public static final String CTCT="CTCT";
+	public static final String CTC="CTC";
+	public static final String APM="APM";
     private String theText;
-
+    private boolean isAgency=false;
+    private boolean isPhone=false;
+    private boolean isContact=false;
+    
     public LTS(List<Composite> composites) {
         super(LTS.class.getSimpleName(), composites);
         Composite c = getComposite(0);
         if (c != null) {
             this.theText = c.getElement(0);
+            if(StringUtils.isNotBlank(theText)){
+            	if(theText.contains(CTCT)){
+            		isAgency=true;
+            	}
+            	else if(theText.contains(CTC)){
+            		isContact=true;
+            	}
+            	else if(theText.contains(APM)){
+            		isPhone=true;
+            	}
+            }
         }
     }
 
-    public String getTheText() {
+    public boolean isAgency() {
+		return isAgency;
+	}
+
+	public void setAgency(boolean isAgency) {
+		this.isAgency = isAgency;
+	}
+
+	public boolean isPhone() {
+		return isPhone;
+	}
+
+	public void setPhone(boolean isPhone) {
+		this.isPhone = isPhone;
+	}
+
+	public boolean isContact() {
+		return isContact;
+	}
+
+	public void setContact(boolean isContact) {
+		this.isContact = isContact;
+	}
+
+	public void setTheText(String theText) {
+		this.theText = theText;
+	}
+
+	public String getTheText() {
         return theText;
     }
 }

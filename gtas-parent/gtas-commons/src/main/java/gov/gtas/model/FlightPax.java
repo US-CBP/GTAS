@@ -145,7 +145,7 @@ public class FlightPax implements Serializable {
 
 	@Override
     public int hashCode() {
-        return Objects.hash(this.debarkation,this.debarkation,this.portOfFirstArrival);
+        return Objects.hash(this.debarkation,this.embarkation,this.portOfFirstArrival);
     }
 
     @Override
