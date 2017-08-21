@@ -508,10 +508,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }else if(lts.isPhone()){
             	processPhoneInfo(lts.getText());
             }
+            else if(lts.isFormPayment()){
+            	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
+            }
             extractContactInfo(lts.getText());
         }
     }
-    
 
     
     /**
@@ -872,6 +874,46 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
     }
     
+    private void processFormOfPayment(String textString,boolean isCash){
+    	if(StringUtils.isNoneBlank(textString) ){
+    		if(isCash){
+    			String[] tokens=textString.split("/");
+    			if(tokens.length >=2){
+    				String tmp=tokens[1];
+    				PaymentFormVo pfvo=new PaymentFormVo();
+    				pfvo.setPaymentType("CA");
+    				pfvo.setPaymentAmount(tmp);
+    				parsedMessage.addFormOfPayments(pfvo);
+    			}
+
+    		}else{
+				if(textString.contains("CHECK")){
+					PaymentFormVo pfvo=new PaymentFormVo();
+    				pfvo.setPaymentType("CK");
+    				pfvo.setPaymentAmount("0.0");
+    				parsedMessage.addFormOfPayments(pfvo);
+				}else if(textString.contains("FP CC")){
+					String[] tokens=textString.split(" ");
+					    if(tokens.length >=2){
+					    	String tmp=tokens[1];
+					    	PaymentFormVo pfvo=new PaymentFormVo();
+					    	pfvo.setPaymentType(tmp.substring(0, 2));
+		    				pfvo.setPaymentAmount("0.0");
+		    				parsedMessage.addFormOfPayments(pfvo);
+		    		    	if(tmp.length() >4 && tmp.indexOf("/") > -1){
+		    		    		CreditCardVo cc = new CreditCardVo();
+		    		    		cc.setCardType(tmp.substring(2, 4));
+		    		    		cc.setNumber(tmp.substring(4, tmp.indexOf("/")));
+		    		    		cc.setExpiration(ParseUtils.parseExpirationDateForCC(tmp.substring(tmp.indexOf("/")+1, tmp.length()), "MMyy"));
+		    		    		parsedMessage.getCreditCards().add(cc);
+		    		    	}
+		                    
+	    			    }
+				}
+				
+			}
+    	}
+    }    
     private PassengerVo findPaxByReferenceNumber(String refNumber) {
         for (PassengerVo pax : parsedMessage.getPassengers()) {
             if (refNumber.equals(pax.getTravelerReferenceNumber())) {

@@ -25,15 +25,18 @@ public class LTS extends Segment {
 	public static final String CTCT="CTCT";
 	public static final String CTC="CTC";
 	public static final String APM="APM";
+	public static final String FP="F/FP";
     private String theText;
     private boolean isAgency=false;
     private boolean isPhone=false;
     private boolean isContact=false;
+    private boolean isFormPayment=false;
+    private boolean isCashPayment=false;
     
     public LTS(List<Composite> composites) {
         super(LTS.class.getSimpleName(), composites);
         Composite c = getComposite(0);
-        if (c != null) {
+         if (c != null) {
             this.theText = c.getElement(0);
             if(StringUtils.isNotBlank(theText)){
             	if(theText.contains(CTCT)){
@@ -44,6 +47,18 @@ public class LTS extends Segment {
             	}
             	else if(theText.contains(APM)){
             		isPhone=true;
+            	}
+               	else if(theText.contains(FP)){
+               		isFormPayment=true;
+               		for (int i=1; i<getComposites().size(); i++) {
+               		 c = getComposite(i);
+               		 	if (c != null) {
+               		 		if(theText.contains("CASH")){
+               		 			isCashPayment=true;
+               		 		    theText=c.getElement(0);
+               		 		}
+               		 	}
+               		}
             	}
             }
         }
@@ -80,4 +95,21 @@ public class LTS extends Segment {
 	public String getTheText() {
         return theText;
     }
+
+	public boolean isFormPayment() {
+		return isFormPayment;
+	}
+
+	public void setFormPayment(boolean isFormPayment) {
+		this.isFormPayment = isFormPayment;
+	}
+
+	public boolean isCashPayment() {
+		return isCashPayment;
+	}
+
+	public void setCashPayment(boolean isCashPayment) {
+		this.isCashPayment = isCashPayment;
+	}
+	
 }
