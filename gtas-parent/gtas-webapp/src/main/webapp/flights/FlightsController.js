@@ -364,7 +364,7 @@
                      direction: uiGridConstants.DESC,
                      priority: 0
                  },
-                 cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+                 cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
              },
              {
                  name: 'onWatchList', displayName: 'Watchlist Hits',
@@ -373,7 +373,7 @@
                      direction: uiGridConstants.DESC,
                      priority: 1
                  },
-                 cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
+                 cellTemplate: '<span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
              },
              {name: 'passengerType', displayName:'T', headerCellFilter: 'translate'},
              {
@@ -394,7 +394,8 @@
              },
              {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
              {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
-             {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
+             {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
+              cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
              {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate'}
          ];
 

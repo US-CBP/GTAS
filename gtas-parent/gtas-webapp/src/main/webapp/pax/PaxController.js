@@ -669,8 +669,8 @@
                         priority: 0
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}">'
-                    	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                    	+'<i class="{{row.entity.onRuleHitList|ruleHitIcon}}"></i></md-button>'
+                	+'<md-tooltip class="tt-multiline" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
+                	+'<span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -679,7 +679,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><i class="{{row.entity.onWatchList|watchListHit}}"></i> <i class="{{row.entity.onWatchListDoc|watchListDocHit}}"></i></div>'
+                    cellTemplate: '<div><span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
                 },
                 {
                     field: 'passengerType',
@@ -744,7 +744,8 @@
                 {
                     name: 'dob',
                     displayName:'pass.dob', headerCellFilter: 'translate',
-                    cellFilter: 'date'
+                    cellFilter: 'date',
+                    cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'
                 },
                 {
                     name: 'citizenshipCountry',
@@ -800,7 +801,8 @@
                 },
                 {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
                 {name: 'gender', displayName:'G', width:50},
-                {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date'},
+                {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
+                  cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
                 {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width:120,
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
