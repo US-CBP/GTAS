@@ -90,7 +90,7 @@
           class="btn btn-default">
           <md-tooltip>{{'qry.add' | translate}} {{mode}}</md-tooltip>
           <i class="fa fa-plus" aria-hidden="true"></i>
-          &nbsp;Query
+          &nbsp; {{mode}}
         </md-button>
         <md-button href="#/query/flights" title="Launch Flight Query Results in new window"
           target="queryFlights" ng-click="executeQuery($event)"
@@ -111,20 +111,20 @@
           <i class="fa fa-undo" aria-hidden="true"></i>&nbsp;
           Clear
         </md-button>
-        <md-button ng-click="delete()" ng-disabled="ruleId === null"
+        <md-button data-toggle="modal" data-target="#deleteModal" ng-disabled="ruleId === null"
           class="btn btn-default">
           <md-tooltip>{{'qry.delete' | translate}}</md-tooltip>
           <i class="fa fa-trash-o" aria-hidden="true"></i>
-          &nbsp;Query
+          &nbsp; {{mode}}
         </md-button>
         <md-button ng-click="copyRule()" ng-disabled="ruleId === null || saving === true"
           class="btn btn-default">
           <md-tooltip>{{'qry.copy' | translate}} {{mode}}</md-tooltip>
           <i class="fa fa-clipboard" aria-hidden="true"></i>
-          &nbsp;Query
+          &nbsp; {{mode}}
         </md-button>
         <md-button ng-click="prompt.save('rule')" ng-disabled="saving === true"
-          class="btn btn-default">
+          class="btn btn-primary">
           <md-tooltip>{{'qry.saveas.rl' | translate}}</md-tooltip>
           <i class="fa fa-floppy-o" aria-hidden="true"></i>
           &nbsp;Rule
@@ -138,6 +138,24 @@
       </div>
     </section>
 </md-content>
+<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog" aria-labelledby="myModalTitle">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-body">
+      <button type="button" class="close" data-dismiss="modal">
+      <span aria-hidden="true">&times;</span>
+      <span class="sr-only">Close</span>
+      </button>
+      <h4  class="text-danger">Delete this {{mode}}?</h4>
+      <p>May effect hit information.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="pull-left btn btn-default" data-dismiss="modal">Cancel</button>
+      <button data-dismiss="modal" ng-click="delete()" type="button" class="btn btn-danger">Delete</button>
+    </div>
+  </div>
+</div>
+</div>
 <div>
   <spinner name="html5spinner" ng-cloak="">
     <div class="overlay"></div>

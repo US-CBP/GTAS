@@ -347,7 +347,7 @@
             	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
             	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
             	+'</md-button>'},
-            {name: 'destinationCountry', displayName:'add.Country', headerCellFilter: 'translate',
+            {name: 'destinationCountry', displayName:'pass.destination', headerCellFilter: 'translate',
                 cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
             	+'<md-tooltip class="tt-multiline" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
             	+'</md-button>'}

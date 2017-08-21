@@ -174,7 +174,10 @@
   background-color: #F09511 !important;
   color: black !important;
 }
-
+.primary-back {
+  background-color: #00416a !important;
+  color: white !important;
+}
 /*Custom Components*/
 .h-label{
 	background-color: #00416a;
@@ -200,7 +203,8 @@
 }
 /*Custom flightpax*/
 .flight-info * {
-  font-family:  'consolas';
+  font-family: 'Roboto Mono', monospace;
+  color: white;
 }
 .flight-num {
   margin-top: 10px;
@@ -417,6 +421,12 @@
 .md-sidenav-backdrop {
   margin-top: 100px !important;
   height: 100vh !important;
+}
+
+/*Override query builder */
+.group-conditions .btn-primary.active {
+  background-color: #F09511 !important;
+  color: black !important;
 }
 
 /* BEGIN IE css patches */

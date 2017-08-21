@@ -2,11 +2,15 @@
 <div class="upper-cnt-nav" data-ng-if="stateName === 'flightpax'">
 	<div class="flex justify-around align-items-center md-pad">
 		<div class="flight-info">
-			<div class="flex primary-outline">
+			<div class="flex primary-back">
 				<span class="sm-pad flight-num">{{model.flightNumber}}</span>
 				<span class="sm-pad">
-					<div>{{model.origin[0].id}} {{pax.etd | date:'yyyy-MM-dd HHmm'}}</div>
-					<div>{{model.dest[0].id}} {{pax.eta | date:'yyyy-MM-dd HHmm'}}</div>
+					<div>
+						<i class="fa fa-inverse fa-arrow-circle-up" aria-hidden="true"></i>
+						{{model.origin[0].id}} {{pax.etd | date:'yyyy-MM-dd HHmm'}}</div>
+					<div>
+						<i class="fa fa-inverse fa-arrow-circle-down" aria-hidden="true"></i>
+						{{model.dest[0].id}} {{pax.eta | date:'yyyy-MM-dd HHmm'}}</div>
 				</span>
 			</div>
 		</div>
