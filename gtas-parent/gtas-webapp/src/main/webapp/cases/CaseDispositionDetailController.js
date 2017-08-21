@@ -57,7 +57,7 @@
 
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId, $scope.caseItemHitId, $scope.commentText, null).then(function (aCase) {
+                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId, $scope.caseItemHitId, $scope.commentText, '', $scope.hitDetailTrueHitFlag).then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                     $scope.commentText='';
@@ -77,6 +77,11 @@
             $scope.sideNav = function(id, position) {
                 $scope.caseItemHitComments = $scope.caseItemHits[position];
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
+                $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
+                if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
+                    if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
+                        else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
+                }
                 $mdSidenav(id).toggle();
             }
         })

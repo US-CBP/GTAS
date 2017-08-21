@@ -173,7 +173,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status) {
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit) {
         Case aCase = new Case();
         HitsDisposition hitDisp = new HitsDisposition();
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -200,6 +200,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
                     if(status != null){ // set status
                         hit.setStatus(status);
+                    }
+
+                    if((hit.getValid()==null) && !(validHit==null || validHit.equalsIgnoreCase("null"))){
+                        hit.setValid(validHit);
                     }
 
                 } // end of hit updates

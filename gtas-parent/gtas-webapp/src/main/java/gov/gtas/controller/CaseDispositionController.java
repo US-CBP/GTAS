@@ -66,7 +66,9 @@ public class CaseDispositionController {
     Case updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         Case aCase = new Case();
         try {
-            aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(), request.getHitId(), request.getCaseComments(), request.getStatus());
+            aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
+                                                            request.getHitId(), request.getCaseComments(),
+                                                                request.getStatus(), request.getValidHit());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

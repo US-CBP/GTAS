@@ -86,12 +86,12 @@ public class CaseDispositionServiceImplTest {
         Case aCase = null;
         inboundDto.setPageNumber(1);
         inboundDto.setPageSize(10);
-        inboundDto.setFlightId((long) 10);
-    	inboundDto.setPaxId((long) 27);
-        Long _tempHitId = new Long(4);
+        inboundDto.setFlightId((long) 499);
+    	inboundDto.setPaxId((long) 727);
+        Long _tempHitId = new Long(720);
         try{
 
-            aCase = caseDispService.addCaseComments(inboundDto.getFlightId(), inboundDto.getPaxId(), _tempHitId, "follow-up", "PENDING");
+            aCase = caseDispService.addCaseComments(inboundDto.getFlightId(), inboundDto.getPaxId(), _tempHitId, "follow-up", "PENDING","true");
 
         }catch (Exception ex){
             ex.printStackTrace();

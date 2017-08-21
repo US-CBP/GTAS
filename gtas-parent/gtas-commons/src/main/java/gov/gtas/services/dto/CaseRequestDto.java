@@ -30,6 +30,8 @@ public class CaseRequestDto implements Serializable {
 
     private String status;
 
+    private String validHit;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
@@ -117,6 +119,13 @@ public class CaseRequestDto implements Serializable {
         this.sort = sort;
     }
 
+    public String getValidHit() {
+        return validHit;
+    }
+
+    public void setValidHit(String validHit) {
+        this.validHit = validHit;
+    }
 
     @Override
     public String toString() {
