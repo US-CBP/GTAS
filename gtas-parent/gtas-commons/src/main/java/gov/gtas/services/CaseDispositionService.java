@@ -32,7 +32,7 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status);
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit);
 
     public Passenger findPaxByID(Long id);
 

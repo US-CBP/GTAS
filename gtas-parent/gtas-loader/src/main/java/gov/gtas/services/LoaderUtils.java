@@ -274,12 +274,20 @@ public class LoaderUtils {
         a.setCreatedBy(LOADER_USER);
         BeanUtils.copyProperties(vo, a);
         if (StringUtils.isNotBlank(vo.getCity())) {
-            String cityCode = vo.getCity();
+            
             Airport aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
             if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
-                cityCode = aPort.getCity();
+            	a.setCity(aPort.getCity());
+            	a.setCountry(aPort.getCountry());
             }
-            a.setCity(cityCode);
+           
+        }
+        if(StringUtils.isBlank(vo.getCity()) && StringUtils.isNotBlank(vo.getLocation())){
+        	Airport aPort = airportService.getAirportByThreeLetterCode(vo.getLocation());
+        	if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
+                a.setCity(aPort.getCity());
+                a.setCountry(aPort.getCountry());
+            }
         }
         return a;
     }

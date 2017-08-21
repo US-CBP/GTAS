@@ -38,7 +38,7 @@
                 return dfd.promise;
             }
 
-            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus){
+            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus, paramValidHit){
                 var requestDto = {
                     pageSize: "10",
                     pageNumber: "1",
@@ -46,7 +46,8 @@
                     paxId: paramPax,
                     hitId: paramHit,
                     caseComments: paramComments,
-                    status: paramStatus
+                    status: paramStatus,
+                    validHit: paramValidHit
                 }
                 var dfd = $q.defer();
                 dfd.resolve($http({
