@@ -26,19 +26,20 @@ public class LTS extends Segment {
 	public static final String CTCE="CTCE";
 	public static final String APM="APM";
 	public static final String FP="F/FP";
+	public static final String FQTV="FQTV";
     private String theText;
     private boolean isAgency=false;
     private boolean isPhone=false;
     private boolean isEmail=false;
     private boolean isFormPayment=false;
     private boolean isCashPayment=false;
+    private boolean isFrequentFlyer=false;
     
     public LTS(List<Composite> composites) {
         super(LTS.class.getSimpleName(), composites);
         Composite c = getComposite(0);
          if (c != null) {
             this.theText = c.getElement(0);
-
             if(StringUtils.isNotBlank(theText)){
             	if(theText.contains(CTCT)){
             		isAgency=true;
@@ -49,6 +50,9 @@ public class LTS extends Segment {
             	}
             	else if(theText.contains(APM)){
             		isPhone=true;
+            	}
+            	else if(theText.contains(FQTV)){
+            		isFrequentFlyer=true;
             	}
                	else if(theText.contains(FP)){
                		isFormPayment=true;
@@ -112,6 +116,14 @@ public class LTS extends Segment {
 
 	public void setCashPayment(boolean isCashPayment) {
 		this.isCashPayment = isCashPayment;
+	}
+
+	public boolean isFrequentFlyer() {
+		return isFrequentFlyer;
+	}
+
+	public void setFrequentFlyer(boolean isFrequentFlyer) {
+		this.isFrequentFlyer = isFrequentFlyer;
 	}
 
 }

@@ -514,6 +514,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             else if(lts.isEmail()){
             	extractEmailInfo(lts.getTheText());
             }
+            if(lts.isFrequentFlyer()){
+            	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
+            	if(ffvo != null && ffvo.isValid()){
+            		parsedMessage.getFrequentFlyerDetails().add(ffvo);
+            	}
+            }
             extractContactInfo(lts.getText());
         }
     }
@@ -924,6 +930,26 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
         }
         return null;
+    }
+    
+    private static FrequentFlyerVo getFrequentFlyerFromLtsText(String fftext){
+    	if(StringUtils.isNotBlank(fftext ) && fftext.indexOf("FQTV") >0){
+    		FrequentFlyerVo vo=new FrequentFlyerVo();
+    		fftext=fftext.substring(fftext.indexOf("FQTV")+4,fftext.length());
+    		String carrier=fftext.substring(0,2);
+    		vo.setCarrier(carrier);
+    		fftext=fftext.replaceAll("/", " ");
+    		String[] tokens=fftext.split(" ");
+    		for(String s:tokens){
+    			s=s.replaceAll("\\s+", "");
+    			if(s.startsWith(carrier) && (!s.contains("HK"))){
+    				vo.setNumber(s.substring(2, s.length()));
+    				break;
+    			}
+    		}
+    		return vo;
+    	}
+    	return null;
     }
 
 }
