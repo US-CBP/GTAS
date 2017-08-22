@@ -210,7 +210,7 @@ public class PassengerDetailsController {
 			vo.setPnrVo(tempVo);
 		}
 		
-		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(new Long(flightId), t.getId());
+		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId), t.getId());
 		if(!apisList.isEmpty()) {
 			ApisMessage apis = apisList.get(0);
 			ApisMessageVo apisVo = new ApisMessageVo();

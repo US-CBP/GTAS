@@ -213,7 +213,7 @@
   text-transform: uppercase;
   margin: 5px;
 }
-.notif-tooltip {
+.multi-tooltip {
   max-width:400px;
   word-wrap: break-word !important;
   height: auto !important;

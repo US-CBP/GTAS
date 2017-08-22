@@ -99,7 +99,9 @@
       </md-tab-label>
     </md-tab>
 </md-tabs>
-<div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+<div class="manage">
+  <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+</div>
 <div class="actions md-pad">
   <button type="button" class="btn btn-icon-only btn-warning pull-left"
       ng-disabled="disableTrash">
