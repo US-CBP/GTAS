@@ -511,6 +511,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             else if(lts.isFormPayment()){
             	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
             }
+            else if(lts.isEmail()){
+            	extractEmailInfo(lts.getTheText());
+            }
             extractContactInfo(lts.getText());
         }
     }

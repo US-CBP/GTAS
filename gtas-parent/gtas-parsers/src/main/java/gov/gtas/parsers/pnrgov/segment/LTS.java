@@ -23,13 +23,13 @@ import gov.gtas.parsers.edifact.Segment;
  */
 public class LTS extends Segment {
 	public static final String CTCT="CTCT";
-	public static final String CTC="CTC";
+	public static final String CTCE="CTCE";
 	public static final String APM="APM";
 	public static final String FP="F/FP";
     private String theText;
     private boolean isAgency=false;
     private boolean isPhone=false;
-    private boolean isContact=false;
+    private boolean isEmail=false;
     private boolean isFormPayment=false;
     private boolean isCashPayment=false;
     
@@ -38,12 +38,14 @@ public class LTS extends Segment {
         Composite c = getComposite(0);
          if (c != null) {
             this.theText = c.getElement(0);
+
             if(StringUtils.isNotBlank(theText)){
             	if(theText.contains(CTCT)){
             		isAgency=true;
             	}
-            	else if(theText.contains(CTC)){
-            		isContact=true;
+            	else if(theText.contains(CTCE)){
+            		isEmail=true;
+            		
             	}
             	else if(theText.contains(APM)){
             		isPhone=true;
@@ -80,12 +82,12 @@ public class LTS extends Segment {
 		this.isPhone = isPhone;
 	}
 
-	public boolean isContact() {
-		return isContact;
+	public boolean isEmail() {
+		return isEmail;
 	}
 
-	public void setContact(boolean isContact) {
-		this.isContact = isContact;
+	public void setEmail(boolean isContact) {
+		this.isEmail = isContact;
 	}
 
 	public void setTheText(String theText) {
@@ -111,5 +113,5 @@ public class LTS extends Segment {
 	public void setCashPayment(boolean isCashPayment) {
 		this.isCashPayment = isCashPayment;
 	}
-	
+
 }
