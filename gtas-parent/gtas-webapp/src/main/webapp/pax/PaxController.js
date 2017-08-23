@@ -565,9 +565,9 @@
                 enableVerticalScrollbar: 0,
                 enableColumnMenus: false,
                 multiSelect: false,
+                enableGridMenu: true,
                 enableExpandableRowHeader: false,
                 expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
 
@@ -587,6 +587,10 @@
                             }
                         }
                         resolvePage();
+                    });
+
+                    gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
+                      $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
                     });
 
                     gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {

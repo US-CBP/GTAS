@@ -162,6 +162,7 @@
             enableColumnResizing: true,
             enableVerticalScrollbar: 1,
             enableColumnMenus: false,
+            enableGridMenu: true,
             enableExpandableRowHeader: false,
             exporterCsvFilename: 'Flights.csv',
             expandableRowHeight: 200,
@@ -191,6 +192,10 @@
                         $scope.model.pageSize = pageSize;
                         resolvePage();
                     }
+                });
+
+                gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
+                  $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
                 });
 
                 gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
