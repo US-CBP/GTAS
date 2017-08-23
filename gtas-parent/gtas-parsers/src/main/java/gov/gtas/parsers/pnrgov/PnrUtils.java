@@ -416,6 +416,18 @@ public class PnrUtils {
 				}
 			}
 		}
-
 	}
+	public static String getPhoneNumberFromLTS(String phoneText){
+		try {
+			phoneText=phoneText.replaceAll("\\s+", "");
+			phoneText=phoneText.substring(phoneText.indexOf("APM")+3,phoneText.length());
+			if(phoneText.indexOf("/") >0){
+				phoneText=phoneText.substring(0,phoneText.indexOf("/"));
+			}
+		} catch (Exception e) {
+			//e.getMessage();
+		}
+		return phoneText;
+	}
+
 }

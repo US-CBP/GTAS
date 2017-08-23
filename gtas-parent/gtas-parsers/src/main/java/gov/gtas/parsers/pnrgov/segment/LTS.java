@@ -24,7 +24,7 @@ import gov.gtas.parsers.edifact.Segment;
 public class LTS extends Segment {
 	public static final String CTCT="CTCT";
 	public static final String CTCE="CTCE";
-	public static final String APM="APM";
+	public static final String APM="/APM";
 	public static final String FP="F/FP";
 	public static final String FQTV="FQTV";
     private String theText;

@@ -506,7 +506,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if(lts.isAgency()){
             	processAgencyInfo(lts.getTheText());
             }else if(lts.isPhone()){
-            	processPhoneInfo(lts.getText());
+            	processPhoneInfo(lts.getTheText());
             }
             else if(lts.isFormPayment()){
             	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
@@ -704,7 +704,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     }
    
     private void processPhoneInfo(String text){
-    	
+    	String number=PnrUtils.getPhoneNumberFromLTS(text);
+    	if(StringUtils.isNotBlank(number)){
+    		PhoneVo pvo=new PhoneVo();
+    		pvo.setNumber(number);
+    		parsedMessage.getPhoneNumbers().add(pvo);
+    	}
     }
     private void processAgencyInfo(String theText){
     	if(StringUtils.isNotBlank(theText) && theText.contains("CTCT")){
