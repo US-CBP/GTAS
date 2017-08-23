@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
@@ -42,6 +42,8 @@
             exporter[format]();
         };
 
+        $scope.model = {};
+
         $scope.watchlistGrid = gridOptionsLookupService.getGridOptions('watchlist');
         $scope.watchlistGrid.importerDataAddCallback = function (grid, newObjects) {
             if ($scope.validateNewObjects(newObjects)) {
@@ -61,6 +63,9 @@
                 $scope.openAlert('The format of the file you have uploaded is invalid.');
             }
         };
+        $scope.watchlistGrid.paginationPageSizes = [10, 15, 25];
+        $scope.watchlistGrid.paginationPageSize =  $scope.model.pageSize;
+        $scope.watchlistGrid.paginationCurrentPage =  $scope.model.pageNumber;
         $scope.watchlistGrid.finishImport = function (grid, newObjects) {
             spinnerService.show('html5spinner');
             var listName = $scope.activeTab;
@@ -106,6 +111,9 @@
             $scope.gridApi = gridApi;
             gridApi.selection.on.rowSelectionChanged($scope, isItTrashTime);
             gridApi.selection.on.rowSelectionChangedBatch($scope, isItTrashTime);
+            gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                $scope.model.pageSize = pageSize;
+            });
         };
 
         $scope.documentTypes = [
@@ -366,7 +374,7 @@
             }
             return valid;
         };
-        
+
         $scope.validateDateFormat = function(date, index){
             var valid = true;
             if(date.search('-') < 2){
