@@ -202,7 +202,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
                         hit.setStatus(status);
                     }
 
-                    if((hit.getValid()==null) && !(validHit==null || validHit.equalsIgnoreCase("null"))){
+                    if(!(validHit==null)){
                         hit.setValid(validHit);
                     }
 
@@ -212,7 +212,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
             aCase.setHitsDispositions(hitsDispSet);
 
-            if((status != null) || (caseComments != null))
+            if((status != null) || (caseComments != null) || (validHit != null))
                 caseDispositionRepository.save(aCase);
         }catch (Exception ex){
             ex.printStackTrace();
