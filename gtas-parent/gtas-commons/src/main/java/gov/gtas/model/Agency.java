@@ -42,6 +42,8 @@ public class Agency extends BaseEntityAudit {
     
     private String city;
     
+    private String type;
+    
     @ManyToMany(
         mappedBy = "agencies",
         targetEntity = Pnr.class
@@ -97,7 +99,15 @@ public class Agency extends BaseEntityAudit {
         this.phone = phone;
     }
 
-    public Set<Pnr> getPnrs() {
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Set<Pnr> getPnrs() {
         return pnrs;
     }
 

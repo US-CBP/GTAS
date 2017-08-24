@@ -716,10 +716,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		String untilCT=theText.substring(0, theText.indexOf("CTCT"));//0/O/28/OSI YY
     		String afterCT=theText.substring(theText.indexOf("CTCT")+4,theText.length());//DCA 123 456-7890 TRAVEL AGENCY
     		AgencyVo vo=new AgencyVo();
+    		
     		if(afterCT.contains("TRAVEL") && afterCT.contains("AGENCY")){
     			vo.setIdentifier("TRAVEL AGENCY");
+    			vo.setType("TRAVEL");
     		}else if(afterCT.endsWith("A")){
     			vo.setIdentifier("TRAVEL AGENCY");
+    			vo.setType("TRAVEL");
     		}
     		afterCT=afterCT.replace("TRAVEL", "");
     		afterCT=afterCT.replace("AGENCY", "");
@@ -863,10 +866,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         agencyVo.setCountry(org.getOriginatorCountryCode());
         if(StringUtils.isNotEmpty(org.getAgentLocationCode())){
         	agencyVo.setCity(org.getAgentLocationCode());
+        	agencyVo.setType("TRAVEL");
         }else{
         	agencyVo.setCity(org.getLocationCode());
         }
- 
+        if(StringUtils.isNotBlank(agencyVo.getIdentifier())){
+        	agencyVo.setType("TRAVEL");
+        }
         if (agencyVo.isValid()) {
             parsedMessage.getAgencies().add(agencyVo);
         }

@@ -16,6 +16,7 @@ public class AgencyVo implements Validatable {
     private String country;
     private String phone;
     private String city;
+    private String type="Messaging";
     
     public String getCity() {
 		return city;
@@ -53,7 +54,14 @@ public class AgencyVo implements Validatable {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    @Override
+    
+    public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	@Override
     public boolean isValid() {
         return StringUtils.isNotBlank(this.name);
     }
