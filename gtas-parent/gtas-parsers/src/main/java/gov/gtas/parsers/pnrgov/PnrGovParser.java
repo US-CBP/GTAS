@@ -506,10 +506,19 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if(lts.isAgency()){
             	processAgencyInfo(lts.getTheText());
             }else if(lts.isPhone()){
-            	processPhoneInfo(lts.getText());
+            	processPhoneInfo(lts.getTheText());
             }
             else if(lts.isFormPayment()){
             	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
+            }
+            else if(lts.isEmail()){
+            	extractEmailInfo(lts.getTheText());
+            }
+            if(lts.isFrequentFlyer()){
+            	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
+            	if(ffvo != null && ffvo.isValid()){
+            		parsedMessage.getFrequentFlyerDetails().add(ffvo);
+            	}
             }
             extractContactInfo(lts.getText());
         }
@@ -695,17 +704,25 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     }
    
     private void processPhoneInfo(String text){
-    	
+    	String number=PnrUtils.getPhoneNumberFromLTS(text);
+    	if(StringUtils.isNotBlank(number)){
+    		PhoneVo pvo=new PhoneVo();
+    		pvo.setNumber(number);
+    		parsedMessage.getPhoneNumbers().add(pvo);
+    	}
     }
     private void processAgencyInfo(String theText){
     	if(StringUtils.isNotBlank(theText) && theText.contains("CTCT")){
     		String untilCT=theText.substring(0, theText.indexOf("CTCT"));//0/O/28/OSI YY
     		String afterCT=theText.substring(theText.indexOf("CTCT")+4,theText.length());//DCA 123 456-7890 TRAVEL AGENCY
     		AgencyVo vo=new AgencyVo();
+    		
     		if(afterCT.contains("TRAVEL") && afterCT.contains("AGENCY")){
     			vo.setIdentifier("TRAVEL AGENCY");
+    			vo.setType("TRAVEL");
     		}else if(afterCT.endsWith("A")){
     			vo.setIdentifier("TRAVEL AGENCY");
+    			vo.setType("TRAVEL");
     		}
     		afterCT=afterCT.replace("TRAVEL", "");
     		afterCT=afterCT.replace("AGENCY", "");
@@ -849,10 +866,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         agencyVo.setCountry(org.getOriginatorCountryCode());
         if(StringUtils.isNotEmpty(org.getAgentLocationCode())){
         	agencyVo.setCity(org.getAgentLocationCode());
+        	agencyVo.setType("TRAVEL");
         }else{
         	agencyVo.setCity(org.getLocationCode());
         }
- 
+        if(StringUtils.isNotBlank(agencyVo.getIdentifier())){
+        	agencyVo.setType("TRAVEL");
+        }
         if (agencyVo.isValid()) {
             parsedMessage.getAgencies().add(agencyVo);
         }
@@ -921,6 +941,26 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
         }
         return null;
+    }
+    
+    private static FrequentFlyerVo getFrequentFlyerFromLtsText(String fftext){
+    	if(StringUtils.isNotBlank(fftext ) && fftext.indexOf("FQTV") >0){
+    		FrequentFlyerVo vo=new FrequentFlyerVo();
+    		fftext=fftext.substring(fftext.indexOf("FQTV")+4,fftext.length());
+    		String carrier=fftext.substring(0,2);
+    		vo.setCarrier(carrier);
+    		fftext=fftext.replaceAll("/", " ");
+    		String[] tokens=fftext.split(" ");
+    		for(String s:tokens){
+    			s=s.replaceAll("\\s+", "");
+    			if(s.startsWith(carrier) && (!s.contains("HK"))){
+    				vo.setNumber(s.substring(2, s.length()));
+    				break;
+    			}
+    		}
+    		return vo;
+    	}
+    	return null;
     }
 
 }

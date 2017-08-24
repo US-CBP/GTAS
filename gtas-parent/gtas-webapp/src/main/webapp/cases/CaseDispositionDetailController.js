@@ -13,7 +13,7 @@
             $scope.caseItem;
             $scope.caseItemHits;
             $scope.caseItemHitComments;
-            $scope.commentText='Initial Comment';
+            $scope.commentText;
             $scope.options = {
                 height: 150,
                 toolbar: [
@@ -23,8 +23,12 @@
                     ['height', ['height']]
                 ]
             };
-            $scope.hitDetailTrueHitFlag=false;
+            $scope.hitDetailTrueHitFlag = false;
             $scope.caseItemHitId=null;
+
+            $scope.changeState = function(){
+                $scope.hitDetailTrueHitFlag = hitDetailTrueHitFlag;
+            }
 
             if(typeof newCases.data !== undefined && newCases.data !== null) {
                 $scope.caseItem = newCases.data.cases[0];
@@ -57,10 +61,12 @@
 
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId, $scope.caseItemHitId, $scope.commentText, '', $scope.hitDetailTrueHitFlag).then(function (aCase) {
+                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                                                             $scope.caseItemHitId, $scope.commentText, null, $scope.hitDetailTrueHitFlag)
+                    .then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-                    $scope.commentText='';
+                    $scope.commentText=null;
                     spinnerService.hide('html5spinner');
                     $mdSidenav('comments').close();
                 });
@@ -78,10 +84,10 @@
                 $scope.caseItemHitComments = $scope.caseItemHits[position];
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
-                if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
-                    if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
-                        else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
-                }
+                // if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
+                //     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
+                //         else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
+                // }
                 $mdSidenav(id).toggle();
             }
         })

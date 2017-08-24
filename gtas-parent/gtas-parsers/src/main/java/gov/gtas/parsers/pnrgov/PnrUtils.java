@@ -377,9 +377,16 @@ public class PnrUtils {
 		if(StringUtils.isBlank(tagNumber)){
 			return "0";
 		}
+		String tagId="";
 		tagNumber=tagNumber.replaceAll("\\s", "").trim();
-		Long value= (Long.valueOf(tagNumber))+counter;
-		return value.toString();
+		Long value;
+		try {
+			value = (Long.valueOf(tagNumber))+counter;
+			tagId=value.toString();
+		} catch (NumberFormatException e) {
+			tagId=tagNumber+counter;
+		}
+		return tagId;
 	}
 	public static PassengerVo getPaxFromTIF(TIF tif,List<PassengerVo> passengers){
 		PassengerVo thePax = passengers.get(0);
@@ -416,6 +423,18 @@ public class PnrUtils {
 				}
 			}
 		}
-
 	}
+	public static String getPhoneNumberFromLTS(String phoneText){
+		try {
+			phoneText=phoneText.replaceAll("\\s+", "");
+			phoneText=phoneText.substring(phoneText.indexOf("APM")+3,phoneText.length());
+			if(phoneText.indexOf("/") >0){
+				phoneText=phoneText.substring(0,phoneText.indexOf("/"));
+			}
+		} catch (Exception e) {
+			//e.getMessage();
+		}
+		return phoneText;
+	}
+
 }
