@@ -377,9 +377,16 @@ public class PnrUtils {
 		if(StringUtils.isBlank(tagNumber)){
 			return "0";
 		}
+		String tagId="";
 		tagNumber=tagNumber.replaceAll("\\s", "").trim();
-		Long value= (Long.valueOf(tagNumber))+counter;
-		return value.toString();
+		Long value;
+		try {
+			value = (Long.valueOf(tagNumber))+counter;
+			tagId=value.toString();
+		} catch (NumberFormatException e) {
+			tagId=tagNumber+counter;
+		}
+		return tagId;
 	}
 	public static PassengerVo getPaxFromTIF(TIF tif,List<PassengerVo> passengers){
 		PassengerVo thePax = passengers.get(0);
