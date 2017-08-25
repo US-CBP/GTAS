@@ -7,6 +7,8 @@ package gov.gtas.parsers.util;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
+
 public final class FlightUtils {
     public static final int MAX_FLIGHT_NUM_LENG = 4;
     public static final int MIN_CARRIER_LENG = 2;
@@ -61,6 +63,9 @@ public final class FlightUtils {
     }
     
     public static String padFlightNumberWithZeroes(String fn) {
+    	if(StringUtils.isBlank(fn)){
+    		return null;
+    	}
         StringBuffer buff = new StringBuffer();
         for (int j=0; j<MAX_FLIGHT_NUM_LENG - fn.length(); j++) {
             buff.append("0");
@@ -68,4 +73,5 @@ public final class FlightUtils {
         buff.append(fn);
         return buff.toString();
     }
+
 }
