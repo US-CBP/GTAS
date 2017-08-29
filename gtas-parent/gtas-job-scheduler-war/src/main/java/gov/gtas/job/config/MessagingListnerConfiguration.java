@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
  
-@Configuration
-@EnableJms
+//@Configuration
+//@EnableJms
 public class MessagingListnerConfiguration {
  
-    @Autowired
+   // @Autowired
     ConnectionFactory connectionFactory;
      
-    @Bean
+    //@Bean
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);

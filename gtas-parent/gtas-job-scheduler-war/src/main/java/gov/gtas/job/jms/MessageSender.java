@@ -20,10 +20,10 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class MessageSender {
  
-    @Autowired
+    //@Autowired
     JmsTemplate jmsTemplate;
  
     public void sendMessage(final File f) {

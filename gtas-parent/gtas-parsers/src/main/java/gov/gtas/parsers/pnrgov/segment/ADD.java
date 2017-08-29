@@ -34,6 +34,7 @@ import gov.gtas.parsers.edifact.Segment;
  * EMAIL
  * (ADD++700:::::::EK CTCE SOME.ABC//YAHOO.COM)
  * ADD++E:::::::FIRST.LAST@GMAIL.COM' //Issue 467
+ * ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
  */
 public class ADD extends Segment {
     private String addressType;
@@ -65,7 +66,7 @@ public class ADD extends Segment {
             this.postalCode = c.getElement(6);
 
             String freeText = c.getElement(7);
-            // if (freeText != null && freeText.contains("CTC")) {
+            
             if (freeText != null) {
                 this.telephone = freeText;
             }
@@ -91,6 +92,7 @@ public class ADD extends Segment {
             		this.telephone = lastOne.getElement(0);
             	}
             }
+            //ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
         }
     }
 
