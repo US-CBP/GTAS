@@ -92,7 +92,25 @@ public class ADD extends Segment {
             		this.telephone = lastOne.getElement(0);
             	}
             }
-            //ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
+            if(StringUtils.isBlank(c.getElement(0)) && StringUtils.isNotBlank(c.getElement(7)) &&
+            		c.getElement(7).contains("TBM")){
+               	//ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
+            	Composite c2 = getComposite(2);
+            	if(c2 != null){
+            		this.addressType = "MAIL TO";
+                    this.streetNumberAndName = c2.getElement(14);
+                    String temp=c2.getElement(21);
+                    if(StringUtils.isNotBlank(temp)){
+                    	String[] tokens=temp.split(" ");
+                    	if(tokens.length >= 3){
+                    		this.city = tokens[0];
+                    		this.stateOrProvinceCode = tokens[1];
+                    		this.postalCode = tokens[2];
+                    	}
+                    }
+
+            	}
+            }
         }
     }
 
