@@ -1,0 +1,27 @@
+<md-dialog aria-label="Link Analysis">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Link Analysis</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="md-dialog-content">
+        <div ng-repeat="pax in paxLinks">
+          <h2>Passenger:</h2>
+          <p>
+            {{pax.firstName}} {{pax.middleName}} {{pax.lastName}}
+          </p>
+          <h2>Highlights: </h2>
+          <p class="white-space-preline">
+            {{pax.highlightMatch}}
+          </p>
+        </div>
+      </div>
+    </md-dialog-content>
+  </form>
+</md-dialog>

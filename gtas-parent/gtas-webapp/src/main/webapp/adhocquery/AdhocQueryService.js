@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 app.service("adhocQueryService", function ($http, $q) {
@@ -11,12 +11,27 @@ app.service("adhocQueryService", function ($http, $q) {
         dfd.resolve($http({
             method: 'get',
             url: "/gtas/search/queryPassengers",
-            params: { 
-                query: query, 
-                pageNumber: page, 
-                pageSize: pageSize, 
+            params: {
+                query: query,
+                pageNumber: page,
+                pageSize: pageSize,
                 column: sort.column,
-                dir: sort.dir 
+                dir: sort.dir
+            }
+        }));
+        return dfd.promise;
+    }
+    function getLinks(paxId, page, pageSize, sort) {
+        var dfd = $q.defer();
+        dfd.resolve($http({
+            method: 'get',
+            url: "/gtas/search/queryLinks",
+            params: {
+                paxId: paxId,
+                pageNumber: page,
+                pageSize: pageSize,
+                column: sort.column,
+                dir: sort.dir
             }
         }));
         return dfd.promise;
@@ -35,6 +50,7 @@ app.service("adhocQueryService", function ($http, $q) {
 
     // Return public API.
     return ({
-        getPassengers: getPassengers
+        getPassengers: getPassengers,
+        getLinks: getLinks
     });
 });

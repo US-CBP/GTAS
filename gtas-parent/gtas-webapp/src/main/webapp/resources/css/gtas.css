@@ -63,6 +63,9 @@
   width: 100px !important;
 }
 /*Positioning Styles */
+.white-space-preline {
+  white-space:pre-line;
+}
 .flex {
   display: flex;
   display: -ms-flexbox;

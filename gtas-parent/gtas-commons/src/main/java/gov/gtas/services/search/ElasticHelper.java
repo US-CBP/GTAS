@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.PreDestroy;
@@ -23,19 +24,25 @@ import javax.annotation.PreDestroy;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.highlight.HighlightBuilder;
+import org.elasticsearch.search.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,8 +62,12 @@ import gov.gtas.model.Pnr;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.LookUpRepository;
 import gov.gtas.services.dto.AdhocQueryDto;
+import gov.gtas.services.dto.LinkAnalysisDto;
 import gov.gtas.util.LobUtils;
+import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.DocumentVo;
+import gov.gtas.vo.passenger.LinkPassengerVo;
+import gov.gtas.vo.passenger.PassengerVo;
 
 /**
  * Methods for interfacing with elastic search engine: indexing
@@ -171,7 +182,21 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 			vo.setOrigin((String)result.get("origin"));
 			vo.setDestination((String)result.get("destination"));
-			vo.setAddresses((Set<Address>) result.get("addresses"));
+			if(result.get("addresses")!=null) {
+				Set<Address> addresses = new HashSet<>();
+				for(HashMap m: ((ArrayList<HashMap>) result.get("addresses"))) {
+					Address temp = new Address();
+					temp.setLine1((String)m.get("line1"));
+					temp.setLine2((String)m.get("line2"));
+					temp.setLine3((String)m.get("line3"));
+					temp.setCity((String)m.get("city"));
+					temp.setCountry((String)m.get("country"));
+					temp.setPostalCode((String)m.get("postalCode"));
+					temp.setState((String)m.get("state"));
+					addresses.add(temp);
+				}
+				vo.setAddresses(addresses);
+			}
 			if(result.get("documents") != null) {
 				Set<DocumentVo> documents = new HashSet<>();
 				for(HashMap m: ((ArrayList<HashMap>) result.get("documents"))) {
@@ -196,9 +221,74 @@ public class ElasticHelper {
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
+	public LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir) throws ParseException {	
+		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
+		int startIndex = (pageNumber - 1) * pageSize;
+		
+		List<String> docNumbers = new ArrayList<>();
+		for(Document d:pax.getDocuments()) {
+			docNumbers.add(d.getDocumentNumber());
+		}
+		
+		QueryBuilder qb = QueryBuilders
+				.boolQuery()
+				.should(QueryBuilders.boolQuery()
+						.must(matchQuery("firstName",pax.getFirstName()))
+						.must(matchQuery("lastName",pax.getLastName())))
+				.should(termsQuery("documents.documentNumber", docNumbers))
+				.should(termsQuery("pnr", docNumbers))
+				.should(termsQuery("pnr", pax.getLastName()));
+		
+		SearchResponse response = client.prepareSearch(INDEX_NAME)
+                .setTypes(FLIGHTPAX_TYPE)
+			    .setSearchType(SearchType.QUERY_THEN_FETCH)
+			    .setQuery(qb)
+			    .addHighlightedField("documents.documentNumber")
+			    .addHighlightedField("lastName")
+			    .addHighlightedField("firstName")
+			    .addHighlightedField("pnr")
+			    .setFrom(startIndex)
+			    .setSize(pageSize)
+			    .addSort(column, sortOrder)
+			    .setExplain(true)
+			    .execute()
+			    .actionGet();
+		
+	    SearchHits hits = response.getHits();
+	    SearchHit[] resultsArry = hits.getHits();
+
+	    List<LinkPassengerVo> lp = new ArrayList<>();
+		for (SearchHit hit : resultsArry) {
+			Map<String, Object> result = hit.getSource();
+			LinkPassengerVo lpVo = new LinkPassengerVo();
+			lpVo.setFirstName((String)result.get("firstName"));
+			lpVo.setMiddleName((String)result.get("middleName"));
+			lpVo.setLastName((String)result.get("lastName"));
+			lpVo.setHighlightMatch(convertHighlights(hit.getHighlightFields().entrySet()));
+			lp.add(lpVo);
+		}
+		return new LinkAnalysisDto(lp, hits.totalHits());
+	}
 	////////////////////////////////////////////////////////////////////
 	// helpers
-	
+	private String convertHighlights(Set<Entry<String,HighlightField>> highlights){
+		StringBuilder highlightString = new StringBuilder();
+        for (Map.Entry<String, HighlightField> highlight : highlights) {
+        	highlightString.append("Field: ");
+        	highlightString.append(highlight.getKey());
+        	highlightString.append("\n");
+            for (Text text : highlight.getValue().fragments()) {
+            	highlightString.append("Fragment: ");
+                highlightString.append(text.string());
+            	highlightString.append("\n");
+                highlightString.append("... ");
+            }
+        	highlightString.append("\n");
+            highlightString.append("---- ");
+            highlightString.append("\n");
+        }
+        return highlightString.toString();
+	}
 	private SearchHits search(String query, int pageNumber, int pageSize, String column, String dir) {
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		

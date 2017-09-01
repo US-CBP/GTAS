@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.Passenger;
 import gov.gtas.querybuilder.exceptions.InvalidQueryException;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.AdhocQueryDto;
+import gov.gtas.services.dto.LinkAnalysisDto;
 import gov.gtas.services.search.SearchService;
 
 @RestController
@@ -27,6 +30,9 @@ public class SearchController {
     
     @Autowired
     SearchService searchService;
+    
+    @Autowired
+    PassengerService paxService;
 
     @RequestMapping(value = Constants.RUN_SEARCH_PASSENGER_URI, method=RequestMethod.GET)
     public JsonServiceResponse runPassengerQuery(
@@ -39,4 +45,17 @@ public class SearchController {
         AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize, column, dir);
         return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
     }       
+    @RequestMapping(value = "/queryLinks", method=RequestMethod.GET)
+    public JsonServiceResponse runLinksQuery(
+    		@RequestParam(value = "paxId") Long paxId,
+    		@RequestParam(value = "pageNumber") Integer pageNumber,
+    		@RequestParam(value="pageSize") Integer pageSize,
+    		@RequestParam(value = "column") String column,
+    		@RequestParam(value = "dir") String dir) throws InvalidQueryException {
+    	
+    	
+    	Passenger pax = paxService.findById(paxId);    	
+    	LinkAnalysisDto queryResults = searchService.findPaxLinks(pax, pageNumber, pageSize, column, dir);
+        return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
+    }  
 }

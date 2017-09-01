@@ -5,8 +5,11 @@
  */
 package gov.gtas.services.search;
 
+import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.AdhocQueryDto;
+import gov.gtas.services.dto.LinkAnalysisDto;
 
 public interface SearchService {
     public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize, String column, String dir);
+    public LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir);
 }

@@ -7,6 +7,11 @@ package gov.gtas.services.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.soap.Text;
+
+import org.elasticsearch.search.highlight.HighlightField;
 
 import gov.gtas.services.search.FlightPassengerVo;
 
@@ -30,11 +35,11 @@ public class AdhocQueryDto {
 		this.totalHits = totalHits;
 		this.passengers = pass;
 	}
-
+	
 	public List<FlightPassengerVo> getPassengers() {
 		return passengers;
 	}
-
+	
 	public long getTotalHits() {
 		return totalHits;
 	}
