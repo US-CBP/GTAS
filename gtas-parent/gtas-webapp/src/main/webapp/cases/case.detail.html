@@ -4,8 +4,7 @@
   <div class="flex justify-around flex-wrap" >
     <div class="cbp-card-container gtas-card-container">
       <div class="cbp-card cbp-card-shadow">
-        <h3 class="h-label no-margin" align="right">Case#: {{ caseItem.id }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                    Status: {{ caseItem.status }}</h3>
+        <h3 class="h-label no-margin" align="right">Case#: {{ caseItem.id }} &nbsp;&nbsp;&nbsp;</h3>
         <div class="flex flex-wrap">
 
           <div class="fixed-width-md min-half-height right-border-grey">
@@ -27,6 +26,7 @@
               </div>
             </div>
           </div>
+
           <div class="panel-body flex flex-vert ie-fix-md two-table fixed-width-md">
             <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
               <thead align="left">
@@ -49,7 +49,40 @@
                 </tbody>
               </table>
             </div>
+            <!--<div layout layout-sm="column col-md-5">-->
+
+              <!--<md-input-container style="padding-left:5px">Status :<md-select ng-model="hitDispStatus">-->
+                <!--<md-option value=-1 selected="selected">Update Status</md-option>-->
+                <!--<md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">-->
+                  <!--{{item.name}}-->
+                <!--</md-option>-->
+              <!--</md-select>-->
+              <!--</md-input-container>-->
+              <!--<md-input-container><button type="submit" class="flex-15 md-raised btn btn-primary">-->
+                <!--Save-->
+              <!--</button></md-input-container>-->
+            <!--</div>-->
+
+                <div style="padding: 20px;"></div>
+
+                  <div style="margin-left: 15%;">
+                    <div style="display:inline-block">Case Status:</div>
+                    <md-input-container style="padding-left:5px">
+                      <md-select ng-model="hitDispStatus">
+                        <md-option value=-1 selected="selected">Update Status</md-option>
+                        <md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">
+                          {{item.name}}
+                        </md-option>
+                      </md-select>
+                    </md-input-container>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <md-input-container>
+                      <button class="flex-150 md-raised btn btn-primary" type="submit">Save</button>
+                    </md-input-container>
+
+                  </div>
+
           </div>
+
         </div>
       </div>
     </div>
@@ -122,9 +155,7 @@
               </md-option>
             </md-select>
             </md-input-container>
-
         </div>
-
       </md-content>
 
 
