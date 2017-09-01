@@ -14,6 +14,7 @@
             $scope.caseItemHits;
             $scope.caseItemHitComments;
             $scope.commentText;
+            $scope.hitDispStatus;
             $scope.options = {
                 height: 150,
                 toolbar: [
@@ -62,11 +63,13 @@
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
                 caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
-                                                             $scope.caseItemHitId, $scope.commentText, null, $scope.hitDetailTrueHitFlag)
+                                                             $scope.caseItemHitId, $scope.commentText, $scope.hitDispStatus,
+                                                             $scope.hitDetailTrueHitFlag)
                     .then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                     $scope.commentText=null;
+                    $scope.hitDispStatus=null;
                     spinnerService.hide('html5spinner');
                     $mdSidenav('comments').close();
                 });
@@ -84,10 +87,10 @@
                 $scope.caseItemHitComments = $scope.caseItemHits[position];
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
-                // if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
-                //     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
-                //         else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
-                // }
+                if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
+                    if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
+                        else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
+                }
                 $mdSidenav(id).toggle();
             }
         })

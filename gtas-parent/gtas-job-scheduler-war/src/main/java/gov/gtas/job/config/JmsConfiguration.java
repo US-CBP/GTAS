@@ -10,21 +10,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsTemplate;
  
-@Configuration
+//@Configuration
 public class JmsConfiguration {
  
     private static final String DEFAULT_BROKER_URL = "tcp://localhost:61616";
      
     private static final String GTAS_QUEUE = "GTAS_Q";
 
-    @Bean
+    //@Bean
     public ActiveMQConnectionFactory connectionFactory(){
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(DEFAULT_BROKER_URL);
         return connectionFactory;
     }
      
-    @Bean
+   // @Bean
     public JmsTemplate jmsTemplate(){
         JmsTemplate template = new JmsTemplate();
         template.setSessionTransacted(true);

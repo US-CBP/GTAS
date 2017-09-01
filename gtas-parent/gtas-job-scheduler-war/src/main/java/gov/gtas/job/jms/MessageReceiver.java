@@ -22,16 +22,16 @@ import org.springframework.stereotype.Component;
 
 import gov.gtas.services.Loader;
 
-@Component
+//@Component
 public class MessageReceiver {
     static final Logger LOG = LoggerFactory.getLogger(MessageReceiver.class);
     private static final String GTAS_QUEUE = "GTAS_Q";
 	
      
-    @Autowired
+    //@Autowired
     Loader gtasLoader;
      
-    @JmsListener(destination = GTAS_QUEUE)
+    //@JmsListener(destination = GTAS_QUEUE)
     public void receiveMessage(final Message<byte[]> message) throws JMSException {
         LOG.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         MessageHeaders headers =  message.getHeaders();

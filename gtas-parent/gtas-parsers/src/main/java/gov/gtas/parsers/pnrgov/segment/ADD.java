@@ -34,6 +34,7 @@ import gov.gtas.parsers.edifact.Segment;
  * EMAIL
  * (ADD++700:::::::EK CTCE SOME.ABC//YAHOO.COM)
  * ADD++E:::::::FIRST.LAST@GMAIL.COM' //Issue 467
+ * ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
  */
 public class ADD extends Segment {
     private String addressType;
@@ -65,7 +66,7 @@ public class ADD extends Segment {
             this.postalCode = c.getElement(6);
 
             String freeText = c.getElement(7);
-            // if (freeText != null && freeText.contains("CTC")) {
+            
             if (freeText != null) {
                 this.telephone = freeText;
             }
@@ -89,6 +90,25 @@ public class ADD extends Segment {
             	Composite lastOne=composits.get(composits.size()-1);
             	if(StringUtils.isNotBlank(lastOne.getElement(0))){
             		this.telephone = lastOne.getElement(0);
+            	}
+            }
+            if(StringUtils.isBlank(c.getElement(0)) && StringUtils.isNotBlank(c.getElement(7)) &&
+            		c.getElement(7).contains("TBM")){
+               	//ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
+            	Composite c2 = getComposite(2);
+            	if(c2 != null){
+            		this.addressType = "MAIL TO";
+                    this.streetNumberAndName = c2.getElement(14);
+                    String temp=c2.getElement(21);
+                    if(StringUtils.isNotBlank(temp)){
+                    	String[] tokens=temp.split(" ");
+                    	if(tokens.length >= 3){
+                    		this.city = tokens[0];
+                    		this.stateOrProvinceCode = tokens[1];
+                    		this.postalCode = tokens[2];
+                    	}
+                    }
+
             	}
             }
         }

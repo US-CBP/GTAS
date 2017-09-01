@@ -309,9 +309,11 @@ public class LoaderRepository {
     }
  
     public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) { 
-    	
+
     	for(Flight f : pnr.getFlights()){
-    		
+        	if(pvo == null || pvo.getBags() == null ){
+        		break;
+        	}   		
     		for(BagVo b : pvo.getBags()){
     			
     			if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
@@ -389,4 +391,6 @@ public class LoaderRepository {
             return null;
         }
     }
+    
+
 }

@@ -93,17 +93,40 @@
               <!--&lt;!&ndash;{{'qry.name' | translate}}&ndash;&gt;-->
             <!--&lt;!&ndash;</label>&ndash;&gt;-->
           <!--</div>-->
-          <div>
+          <!--<div>-->
             <div class="static-label"> Leave a Comment </div>
             <!--<summernote ng-model="commentText" config="options" id="summernote"></summernote>-->
+
+              <div class="sm-pad">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+              <input name="title" ng-model="commentText" class="mdl-textfield__input"
+              type="text" id="title-input-rule">
+
+              <!--<label class="mdl-textfield__label static-label" for="title-input-rule">-->
+              <!--{{'qry.name' | translate}}-->
+              <!--</label>-->
+              </div>
+
           </div>
 
         <!--</div>-->
-        <!--<div>-->
-          <md-checkbox class="md-primary" ng-model="hitDetailTrueHitFlag" ng-checked="true">Valid Hit?</md-checkbox>
-        <!--</div>-->
+
+        <div layout layout-sm="column">
+          <md-input-container flex>
+            <md-checkbox class="md-primary" ng-model="hitDetailTrueHitFlag" ng-checked="true">Valid Hit?</md-checkbox>
+          </md-input-container>
+            <md-input-container style="padding-left:-1px">Status :<md-select ng-model="hitDispStatus">
+              <md-option value=-1 selected="selected">Update Status</md-option>
+              <md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">
+                {{item.name}}
+              </md-option>
+            </md-select>
+            </md-input-container>
+
+        </div>
 
       </md-content>
+
 
       <div class="flex justify-around">
         <button type="button" ng-click="closeSideNav()" class="flex-15 md-raised btn btn-default">
@@ -114,6 +137,7 @@
         </button>
       </div>
     </form>
+
 
     <!-- Previous Comments -->
     <br>
