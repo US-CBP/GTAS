@@ -54,6 +54,9 @@ public class FlightPax implements Serializable {
     @ManyToMany(mappedBy = "flightPaxList", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
+    @Column(name = "ref_number")
+    private String reservationReferenceNumber;
+    
     @ManyToOne
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
@@ -142,6 +145,14 @@ public class FlightPax implements Serializable {
 	public void setPortOfFirstArrival(String portOfFirstArrival) {
 		this.portOfFirstArrival = portOfFirstArrival;
 	} 
+
+	public String getReservationReferenceNumber() {
+		return reservationReferenceNumber;
+	}
+
+	public void setReservationReferenceNumber(String reservationReferenceNumber) {
+		this.reservationReferenceNumber = reservationReferenceNumber;
+	}
 
 	@Override
     public int hashCode() {

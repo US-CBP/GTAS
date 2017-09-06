@@ -159,6 +159,7 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setResidenceCountry(p.getResidencyCountry());
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
+    			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
     			apisMessage.addToFlightPax(fp);
     			
     		}
