@@ -183,11 +183,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         try {
             aCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
 
+            if(aCase!=null && status != null) { // set case status
+                if (status.startsWith("Case")) aCase.setStatus(status.substring(4));
+            }
             hitsDispCommentsSet = null;
             hitsDispSet = aCase.getHitsDispositions();
             for(HitsDisposition hit : hitsDispSet){
 
-                if((hit.getCaseId() == aCase.getId()) && (hit.getHitId() == hit_id)){
+                if((hit.getCaseId() == aCase.getId()) && (hit_id != null) && (hit.getHitId() == hit_id)){
 
                     if(caseComments != null){ // set comments
                         hitsDispositionComments = new HitsDispositionComments();
@@ -198,7 +201,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
                         hit.setDispComments(hitsDispCommentsSet);
                     }
 
-                    if(status != null){ // set status
+                    if(status != null && !status.startsWith("Case")){ // set status
                         hit.setStatus(status);
                     }
 

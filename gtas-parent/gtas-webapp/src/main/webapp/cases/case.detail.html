@@ -1,8 +1,8 @@
 
 
 <div>
-  <div class="flex justify-around flex-wrap" >
-    <div class="cbp-card-container gtas-card-container">
+  <div class="flex justify-around flex-wrap">
+    <div class="cbp-card-container gtas-card-container" id="caseForm">
       <div class="cbp-card cbp-card-shadow">
         <h3 class="h-label no-margin" align="right">Case#: {{ caseItem.id }} &nbsp;&nbsp;&nbsp;</h3>
         <div class="flex flex-wrap">
@@ -53,23 +53,23 @@
                 <div style="padding: 20px;"></div>
 
                   <div style="margin-left: 15%;">
+                    <form name="caseForm" ng-submit="caseConfirm()">
                     <div style="display:inline-block">Case Status:</div>
                     <md-input-container style="padding-left:5px">
-                      <md-select ng-model="hitDispStatus">
-                        <md-option value=-1 selected="selected">Update Status</md-option>
+                      <span ng-show="!dispStatus.caseStatusShow">{{caseDispStatus}}</span>
+                      <md-select ng-model="caseDispStatus" ng-show="dispStatus.caseStatusShow">
+                        <md-option value=-1 selected="{{item.name}}"></md-option>
                         <md-option ng-repeat="item in dispositionStatuses" value="{{item.name}}">
                           {{item.name}}
                         </md-option>
                       </md-select>
                     </md-input-container>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <md-input-container>
+                    <md-input-container ng-show="dispStatus.caseStatusShow">
                       <button class="flex-150 md-raised btn btn-primary" type="submit">Save</button>
                     </md-input-container>
-
+                      </form>
                   </div>
-
           </div>
-
         </div>
       </div>
     </div>
@@ -102,7 +102,7 @@
     <md-toolbar class="md-theme-light">
       <h2 class="md-toolbar-tools">{{hitDispStatus}} --  Hit# {{caseItemHitComments.hitId}} -- {{caseItemHitComments.description}}</h2>
     </md-toolbar>
-    <form name="ruleForm" ng-submit="commentConfirm()">
+    <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
             <div class="static-label"> Leave a Comment </div>
             <!--<summernote ng-model="commentText" config="options" id="summernote"></summernote>-->

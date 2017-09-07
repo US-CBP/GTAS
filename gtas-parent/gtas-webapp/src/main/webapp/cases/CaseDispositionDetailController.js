@@ -15,8 +15,11 @@
             $scope.caseItemHitComments;
             $scope.commentText;
             $scope.hitDispStatus;
+            $scope.caseDispStatus;
             $scope.dispStatus={
-                hitStatusShow:true
+                hitStatusShow:true,
+                caseStatusShow:true,
+                allHitsClosed:true
             };
             $scope.hitValidityStatuses=[
             {id: 1, name: 'Yes'},
@@ -37,18 +40,19 @@
 
             $scope.changeState = function(){
                 $scope.hitDetailTrueHitFlag = hitDetailTrueHitFlag;
-            }
+            };
 
             if(typeof newCases.data !== undefined && newCases.data !== null) {
                 $scope.caseItem = newCases.data.cases[0];
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-
+                $scope.caseDispStatus = $scope.caseItem.status;
+                $scope.dispStatus.caseStatusShow = ($scope.caseItem.status === 'CLOSED')? false: true;
             }
 
             $scope.errorToast = function (error) {
                 $mdToast.show($mdToast.simple()
                     .content(error)
-                    .position('top right')
+                    .position('bottom left')
                     .hideDelay(4000)
                     .parent($scope.toastParent));
             };
@@ -67,6 +71,39 @@
             });
 
             $scope.pageSize = 10;
+
+            $scope.caseConfirm = function() {
+                //check whether all the hits are CLOSED or not
+                angular.forEach($scope.caseItemHits, function (item) {
+                    if (item.status != 'CLOSED') $scope.dispStatus.allHitsClosed = false;
+                });
+                if($scope.dispStatus.allHitsClosed){
+                spinnerService.show('html5spinner');
+                $scope.caseDispStatus = "Case" + $scope.caseDispStatus;
+                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                    $scope.caseItemHitId, $scope.commentText,
+                    $scope.caseDispStatus,
+                    $scope.hitDetailTrueHitFlag)
+                    .then(function (aCase) {
+                        $scope.caseItem = aCase.data;
+                        $scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                        $scope.caseDispStatus = $scope.caseItem.status;
+                        $scope.dispStatus.caseStatusShow = false;
+                        spinnerService.hide('html5spinner');
+                        $mdSidenav('comments').close();
+                    });// END of caseDispositionService call
+            }else{
+                    var toastPosition = angular.element(document.getElementById('caseForm'));
+                        $mdToast.show($mdToast.simple()
+                            .content("All Hits Have To Be Processed And Closed To Close This Case")
+                            .position('top right')
+                            .hideDelay(4000)
+                            .parent(toastPosition));
+                    $scope.caseItem = aCase.data;
+                    $scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                    $scope.caseDispStatus = $scope.caseItem.status;
+                }
+            };
 
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
