@@ -78,7 +78,7 @@ public class CaseDispositionServiceImplTest {
         }*/
     }
 
-    @Test
+    //@Test
     public void testUpdateCaseComments(){
         CaseRequestDto inboundDto = new CaseRequestDto();
         List<CaseVo> _tempCases = new ArrayList<CaseVo>();

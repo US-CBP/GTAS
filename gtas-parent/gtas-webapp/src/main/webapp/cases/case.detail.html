@@ -49,19 +49,6 @@
                 </tbody>
               </table>
             </div>
-            <!--<div layout layout-sm="column col-md-5">-->
-
-              <!--<md-input-container style="padding-left:5px">Status :<md-select ng-model="hitDispStatus">-->
-                <!--<md-option value=-1 selected="selected">Update Status</md-option>-->
-                <!--<md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">-->
-                  <!--{{item.name}}-->
-                <!--</md-option>-->
-              <!--</md-select>-->
-              <!--</md-input-container>-->
-              <!--<md-input-container><button type="submit" class="flex-15 md-raised btn btn-primary">-->
-                <!--Save-->
-              <!--</button></md-input-container>-->
-            <!--</div>-->
 
                 <div style="padding: 20px;"></div>
 
@@ -70,7 +57,7 @@
                     <md-input-container style="padding-left:5px">
                       <md-select ng-model="hitDispStatus">
                         <md-option value=-1 selected="selected">Update Status</md-option>
-                        <md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">
+                        <md-option ng-repeat="item in dispositionStatuses" value="{{item.name}}">
                           {{item.name}}
                         </md-option>
                       </md-select>
@@ -113,47 +100,42 @@
   <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="comments"
               style="width: 100%; max-width: 650px !important;">
     <md-toolbar class="md-theme-light">
-      <h2 class="md-toolbar-tools">Comments on Hit# {{caseItemHitComments.hitId}} -- {{caseItemHitComments.description}}</h2>
+      <h2 class="md-toolbar-tools">{{hitDispStatus}} --  Hit# {{caseItemHitComments.hitId}} -- {{caseItemHitComments.description}}</h2>
     </md-toolbar>
     <form name="ruleForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
-        <!--<div class="sm-pad">-->
-          <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;full-width">-->
-            <!--&lt;!&ndash;<input name="title" ng-model="rule.title" class="mdl-textfield__input"&ndash;&gt;-->
-                   <!--&lt;!&ndash;type="text" id="title-input-rule">&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<label class="mdl-textfield__label static-label" for="title-input-rule">&ndash;&gt;-->
-              <!--&lt;!&ndash;{{'qry.name' | translate}}&ndash;&gt;-->
-            <!--&lt;!&ndash;</label>&ndash;&gt;-->
-          <!--</div>-->
-          <!--<div>-->
             <div class="static-label"> Leave a Comment </div>
             <!--<summernote ng-model="commentText" config="options" id="summernote"></summernote>-->
-
               <div class="sm-pad">
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
               <input name="title" ng-model="commentText" class="mdl-textfield__input"
               type="text" id="title-input-rule">
 
-              <!--<label class="mdl-textfield__label static-label" for="title-input-rule">-->
-              <!--{{'qry.name' | translate}}-->
-              <!--</label>-->
               </div>
 
           </div>
 
-        <!--</div>-->
-
         <div layout layout-sm="column">
-          <md-input-container flex>
-            <md-checkbox class="md-primary" ng-model="hitDetailTrueHitFlag" ng-checked="true">Valid Hit?</md-checkbox>
-          </md-input-container>
-            <md-input-container style="padding-left:-1px">Status :<md-select ng-model="hitDispStatus">
-              <md-option value=-1 selected="selected">Update Status</md-option>
-              <md-option ng-repeat="item in dispositionStatuses" value="{{item.id}}">
+
+
+            <md-input-container style="padding-left:-1px">Validity :<md-select ng-model="hitDetailTrueHitFlag"
+                                                                             ng-show="dispStatus.hitStatusShow">
+              <md-option value=-1 selected="{{item.name}}"></md-option>
+              <md-option ng-repeat="item in hitValidityStatuses" value="{{item.name}}">
                 {{item.name}}
               </md-option>
             </md-select>
+              <span ng-show="!dispStatus.hitStatusShow">{{hitDetailTrueHitFlag}}</span>
+            </md-input-container>
+
+          <md-input-container style="padding-left:300px">Status :<md-select ng-model="hitDispStatus"
+                                                                             ng-show="dispStatus.hitStatusShow">
+              <md-option value=-1 selected="{{item.name}}"></md-option>
+              <md-option ng-repeat="item in dispositionStatuses" value="{{item.name}}">
+                {{item.name}}
+              </md-option>
+            </md-select>
+              <span ng-show="!dispStatus.hitStatusShow">{{hitDispStatus}}</span>
             </md-input-container>
         </div>
       </md-content>
@@ -163,7 +145,7 @@
         <button type="button" ng-click="closeSideNav()" class="flex-15 md-raised btn btn-default">
           Cancel
         </button>
-        <button type="submit" class="flex-15 md-raised btn btn-primary">
+        <button type="submit" class="flex-15 md-raised btn btn-primary" ng-show="dispStatus.hitStatusShow">
           Save
         </button>
       </div>

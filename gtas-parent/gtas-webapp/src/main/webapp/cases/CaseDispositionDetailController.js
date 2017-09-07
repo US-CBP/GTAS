@@ -15,6 +15,14 @@
             $scope.caseItemHitComments;
             $scope.commentText;
             $scope.hitDispStatus;
+            $scope.dispStatus={
+                hitStatusShow:true
+            };
+            $scope.hitValidityStatuses=[
+            {id: 1, name: 'Yes'},
+            {id: 1, name: 'No'},
+            {id: 1, name: 'N/A'}
+            ];
             $scope.options = {
                 height: 150,
                 toolbar: [
@@ -63,7 +71,8 @@
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
                 caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
-                                                             $scope.caseItemHitId, $scope.commentText, $scope.hitDispStatus,
+                                                             $scope.caseItemHitId, $scope.commentText,
+                    $scope.hitDispStatus,
                                                              $scope.hitDetailTrueHitFlag)
                     .then(function (aCase) {
                     $scope.caseItem = aCase.data;
@@ -87,6 +96,8 @@
                 $scope.caseItemHitComments = $scope.caseItemHits[position];
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
+                $scope.hitDispStatus = $scope.caseItemHits[position].status;
+                $scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === 'CLOSED')? false: true;
                 if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
                     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
                         else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;
