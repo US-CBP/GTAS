@@ -29,6 +29,9 @@ import gov.gtas.parsers.edifact.Segment;
  * reference number in SSR/9944 and TIF/9944.
  * SSR+CTCE:HK:1:UA:::::/FIRSTNAMELASTNAME//YAHOO.COM+::001
  * SSR+CTCE:HK:001:YY:::::USERNAME..//HOTMAIL.COM-1FIRSTNAMELASTNAME'
+ * SSR+FQTV:HK::DL' (just the carrier code of the frequent flyer program)
+ * SSR+FQTV:HK:1:OZ:::::/DL1234567890-LASTNAME/FIRSTNAMEMI'
+ * SSR+FQTV:HK:1:UA:::::SSRFQTVUAHK/LH1234567890-LASTNAME/FIRSTNAME 1.1'
  * 
  */
 public class SSR extends Segment {
@@ -37,6 +40,7 @@ public class SSR extends Segment {
     public static final String DOCO = "DOCO";
     public static final String SEAT = "SEAT";
     public static final String CTCE="CTCE";
+    public static final String FQTV="FQTV";
     private String typeOfRequest;
     private String action;
     private String quantity;

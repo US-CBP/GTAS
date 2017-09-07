@@ -234,6 +234,31 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             	}
             	extractEmailInfo(emailText);
             }
+            if(SSR.FQTV.equals(code)){
+            	//SSR+FQTV:HK::DL' (just the carrier code of the frequent flyer program)
+            	//SSR+FQTV:HK:1:OZ:::::/DL1234567890-LASTNAME/FIRSTNAMEMI'
+            	//SSR+FQTV:HK:1:UA:::::SSRFQTVUAHK/LH1234567890-LASTNAME/FIRSTNAME 1.1'
+            	String freeText=ssr.getFreeText();
+            	if(StringUtils.isBlank(freeText) && StringUtils.isNotBlank(ssr.getCarrier())){
+            		//Case:1
+            		FrequentFlyerVo ffvo = new FrequentFlyerVo();
+                    ffvo.setCarrier(ssr.getCarrier());
+                    ffvo.setNumber("None");
+                    if (ffvo.isValid()) {
+                        parsedMessage.getFrequentFlyerDetails().add(ffvo);
+                    }
+            	}else if(StringUtils.isNotBlank(freeText) && StringUtils.isNotBlank(ssr.getCarrier())){
+            		String ffString=PnrUtils.getFrequentFlyertextFromFreeText(freeText);
+            		if(StringUtils.isNotBlank(ffString) && ffString.length() > 3){
+                		FrequentFlyerVo ffvo = new FrequentFlyerVo();
+                        ffvo.setCarrier(ffString.substring(0, 2));
+                        ffvo.setNumber(ffString.substring(2, ffString.length()));
+                        if (ffvo.isValid()) {
+                            parsedMessage.getFrequentFlyerDetails().add(ffvo);
+                        }
+            		}
+            	}
+            }
         }
 
         if (!CollectionUtils.isEmpty(ssrDocs)) {
