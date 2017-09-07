@@ -674,7 +674,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
+                	+'<span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -683,7 +683,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
+                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
                 },
                 {
                     field: 'passengerType',
@@ -719,12 +719,18 @@
                 {
                     field: 'flightOrigin',
                     name: 'flightOriginairport',
-                    displayName:'pass.originairport', headerCellFilter: 'translate'
+                    displayName:'pass.originairport', headerCellFilter: 'translate',
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                      +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+                      +'</md-button>'
                 },
                 {
                     field: 'flightDestination',
                     name: 'flightDestinationairport',
-                    displayName:'pass.destinationairport', headerCellFilter: 'translate'
+                    displayName:'pass.destinationairport', headerCellFilter: 'translate',
+                    cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                      +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+                      +'</md-button>'
                 },
                 {
                     field: 'etaLocalTZ',
@@ -771,7 +777,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
+                	+'<span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -780,7 +786,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
+                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
                 },
                 {name: 'passengerType', displayName:'T', width: 50},
                 {
