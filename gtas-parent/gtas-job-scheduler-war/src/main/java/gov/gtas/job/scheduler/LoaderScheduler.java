@@ -6,6 +6,8 @@
 package gov.gtas.job.scheduler;
 
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
+
+import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -15,6 +17,7 @@ import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.Loader;
 import gov.gtas.services.LoaderStatistics;
+import gov.gtas.svc.TargetingService;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +66,9 @@ public class LoaderScheduler {
 			return stringValue;
 		}
 	}
+	
+	@Autowired
+	private TargetingService targetingService;
 
 	@Autowired
 	private Loader loader;
@@ -125,6 +131,19 @@ public class LoaderScheduler {
 			logger.warn("No inputType selection.");
 		}
 		writeAuditLog(stats);
+		
+		logger.info("entering rule running portion of jobScheduling()");
+		try {
+			targetingService.preProcessing();
+			targetingService.runningRuleEngine();
+		} catch (Exception exception) {
+			logger.error(exception.getCause().getMessage());
+			ErrorDetailInfo errInfo = ErrorHandlerFactory
+					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
+			errorPersistenceService.create(errInfo);
+		}
+		logger.info("exiting rule running portion of jobScheduling()");
+		
 		logger.info("exiting jobScheduling()");
 	}
 

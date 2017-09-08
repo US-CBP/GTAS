@@ -51,7 +51,7 @@ public class RuleRunnerScheduler {
 	/**
 	 * Job scheduling.
 	 */
-	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	//@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		try {

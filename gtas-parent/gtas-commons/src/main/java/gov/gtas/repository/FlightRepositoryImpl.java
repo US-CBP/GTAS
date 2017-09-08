@@ -9,6 +9,8 @@ import static gov.gtas.constant.FlightCategoryConstants.ALL_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.DOMESTIC_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.INTERNATIONAL_FLIGHTS;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
+
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.Flight;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
@@ -19,6 +21,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -179,7 +182,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 		return new ImmutablePair<>(count, results);
 	}
-
+	
 	@Override
 	@Transactional
 	@PreAuthorize(PRIVILEGE_ADMIN)
@@ -199,8 +202,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from apis_message_reporting_party",
 				"delete from reporting_party",
 				"delete from apis_message",			
-				"delete from pnr_passenger", 
-				"delete from pnr_flight", "delete from code_share_flight",
+				"delete from pnr_passenger",
+				"delete from pnr_flight", "delete from pnr_codeshares","delete from code_share_flight",
 				"delete from flight",
 				"delete from pnr_agency", "delete from agency",
 				"delete from pnr_credit_card", "delete from credit_card",

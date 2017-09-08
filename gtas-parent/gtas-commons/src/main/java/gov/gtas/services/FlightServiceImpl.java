@@ -6,14 +6,17 @@
 
 package gov.gtas.services;
 
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.Pnr;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
 
 import java.util.ArrayList;
@@ -78,9 +81,17 @@ public class FlightServiceImpl implements FlightService {
         Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
         for (Flight f : tuple2.getRight()) {
             FlightVo vo = new FlightVo();
+            List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
             BeanUtils.copyProperties(f, vo);
             vo.setListHitCount(f.getListHitCount());
             vo.setRuleHitCount(f.getRuleHitCount());
+            List<CodeShareFlight> csl = (List<CodeShareFlight>)flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
+	        for(CodeShareFlight cs : csl){ // grab all codeshares from it
+		       	CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
+		        BeanUtils.copyProperties(cs, codeshare);
+		        codeshareList.add(codeshare); //Add csVo to list
+	        }
+            vo.setCodeshares(codeshareList); //add csVOlist to flightvo
             vos.add(vo);
         }
 

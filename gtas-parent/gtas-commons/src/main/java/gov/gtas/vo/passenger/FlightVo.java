@@ -7,6 +7,7 @@ package gov.gtas.vo.passenger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -48,6 +49,7 @@ public class FlightVo extends BaseVo {
     private int listHits;
     private int paxListHit;
     private int docListHit;
+    private List <CodeShareVo> codeshares;
     
     public int getRuleHits() {
         return ruleHits;
@@ -210,6 +212,14 @@ public class FlightVo extends BaseVo {
     public String getEtaLocalTZ() {
         return etaLocalTZ;
     }
+    
+    public List <CodeShareVo> getCodeshares() {
+		return codeshares;
+	}
+    
+	public void setCodeshares(List <CodeShareVo> codeshares) {
+		this.codeshares = codeshares;
+	}
     
     @Override
     public String toString() {

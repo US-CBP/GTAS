@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.Flight;
 
 public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRepositoryCustom {
@@ -73,5 +74,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     @Transactional
     @Query("update Flight set listHitCount = (select count(distinct passenger) from HitsSummary where flight.id = :flightId and watchListHitCount > 0) where id = :flightId")
     public Integer updateListHitCountForFlight(@Param("flightId") Long flightId);
+    
+    @Query("SELECT c FROM CodeShareFlight c where c.operatingFlightId = :flightId group by c.marketingFlightNumber")
+    public List<CodeShareFlight> getCodeSharesForFlight(@Param("flightId") Long flightId);
 
 }
