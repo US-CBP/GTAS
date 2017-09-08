@@ -56,7 +56,14 @@ public class FlightPax implements Serializable {
 
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
+ 
+    @Column(name = "emb_country")
+    private String embarkationCountry;
     
+    @Column(name = "deb_country")
+    private String debarkationCountry;
+    
+  
     @ManyToOne
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
@@ -153,6 +160,24 @@ public class FlightPax implements Serializable {
 	public void setReservationReferenceNumber(String reservationReferenceNumber) {
 		this.reservationReferenceNumber = reservationReferenceNumber;
 	}
+
+	
+	public String getEmbarkationCountry() {
+		return embarkationCountry;
+	}
+
+	public void setEmbarkationCountry(String embarkationCountry) {
+		this.embarkationCountry = embarkationCountry;
+	}
+
+	public String getDebarkationCountry() {
+		return debarkationCountry;
+	}
+
+	public void setDebarkationCountry(String debarkationCountry) {
+		this.debarkationCountry = debarkationCountry;
+	}
+
 
 	@Override
     public int hashCode() {

@@ -153,7 +153,9 @@ public class ApisMessageService extends MessageLoaderService {
     			FlightPax fp=new FlightPax();
     			fp.getApisMessage().add(apisMessage);
     			fp.setDebarkation(f.getDestination());
+    			fp.setDebarkationCountry(f.getDestinationCountry());
     			fp.setEmbarkation(f.getOrigin());
+    			fp.setEmbarkationCountry(f.getOriginCountry());
     			fp.setPortOfFirstArrival(f.getDestination());
     			fp.setFlight(f);
     			fp.setResidenceCountry(p.getResidencyCountry());
