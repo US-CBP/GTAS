@@ -1,6 +1,6 @@
 
 
-<div>
+<div id='dom-to-print'>
   <div class="flex justify-around flex-wrap">
     <div class="cbp-card-container gtas-card-container" id="caseForm">
       <div class="cbp-card cbp-card-shadow">
@@ -67,13 +67,23 @@
                     <md-input-container ng-show="dispStatus.caseStatusShow">
                       <button class="flex-150 md-raised btn btn-primary" type="submit">Save</button>
                     </md-input-container>
-                      </form>
+
+                    </form>
                   </div>
+
+            <form name="pdfForm" ng-submit="printCard()">
+              <md-input-container>
+                <button class="md-raised btn btn-default" type="submit">Export PDF</button>
+              </md-input-container>
+            </form>
+
           </div>
         </div>
       </div>
     </div>
   </div>
+
+
   <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" > /*md-component-id="comments" */
     <md-toolbar class="md-theme-light">
       <h2 class="md-toolbar-tools">Comments</h2>

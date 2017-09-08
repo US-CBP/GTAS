@@ -57,14 +57,10 @@
                     .parent($scope.toastParent));
             };
 
-            // var exporter = {
-            //     'csv': function () {
-            //         $scope.gridApi.exporter.csvExport('all', 'all');
-            //     },
-            //     'pdf': function () {
-            //         $scope.gridApi.exporter.pdfExport('all', 'all');
-            //     }
-            // };
+            $scope.printCard = function(){
+                var element = document.getElementById('dom-to-print');
+                html2pdf(element);
+        };
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
