@@ -259,6 +259,14 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             		}
             	}
             }
+            if(SSR.CTCM.equals(code) && StringUtils.isNotBlank(ssr.getFreeText())){
+            	String phone=PnrUtils.getPhoneNumberFromFreeText(ssr.getFreeText());
+            	if(StringUtils.isNotBlank(phone)){
+            		PhoneVo pvo=new PhoneVo();
+            		pvo.setNumber(phone);
+            		parsedMessage.getPhoneNumbers().add(pvo);
+            	}
+            }
         }
 
         if (!CollectionUtils.isEmpty(ssrDocs)) {

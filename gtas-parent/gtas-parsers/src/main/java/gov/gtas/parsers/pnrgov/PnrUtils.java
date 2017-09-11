@@ -447,9 +447,16 @@ public class PnrUtils {
     	}
     	return temp;
     }
-    public static void main(String[] args){
-    	String temp="LH1234567890";
-    	System.out.println(temp.substring(0, 2));
-    	System.out.println(temp.substring(2, temp.length()));
-    }
+    public static String getPhoneNumberFromFreeText(String freeText){
+    	String temp=null;
+    	String[] tokens=freeText.split("/");
+    	for(String s:tokens){
+    		s.trim();
+    		if(s.indexOf("-") > 0){
+    			temp=s.substring(0, s.indexOf("-"));
+    		}
+    	}
+    	return temp;
+    }    
+
 }

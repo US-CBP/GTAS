@@ -32,7 +32,7 @@ import gov.gtas.parsers.edifact.Segment;
  * SSR+FQTV:HK::DL' (just the carrier code of the frequent flyer program)
  * SSR+FQTV:HK:1:OZ:::::/DL1234567890-LASTNAME/FIRSTNAMEMI'
  * SSR+FQTV:HK:1:UA:::::SSRFQTVUAHK/LH1234567890-LASTNAME/FIRSTNAME 1.1'
- * 
+ * SSR+CTCM:HK:1:UA:::::/1800123456789-1LASTNAME/FIRSTNAMEMIDDLENAME'
  */
 public class SSR extends Segment {
     public static final String DOCS = "DOCS";
@@ -41,6 +41,7 @@ public class SSR extends Segment {
     public static final String SEAT = "SEAT";
     public static final String CTCE="CTCE";
     public static final String FQTV="FQTV";
+    public static final String CTCM="CTCM";
     private String typeOfRequest;
     private String action;
     private String quantity;
