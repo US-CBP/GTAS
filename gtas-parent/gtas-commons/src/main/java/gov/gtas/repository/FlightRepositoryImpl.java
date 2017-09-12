@@ -228,4 +228,59 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			q.executeUpdate();
 		}
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Flight> getFullTravelHistory(Long paxId){
+		StringBuilder sqlStr = new StringBuilder();
+		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p " 
+				+  "WHERE p.id = ");			
+		sqlStr.append(paxId);
+		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
+				.getResultList();
+	}
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
+		StringBuilder sqlStr = new StringBuilder();
+		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p WHERE ");		
+		if(pnrId !=null) {
+			sqlStr.append("r.pnr_id = ");
+			sqlStr.append(pnrId);
+		}
+		else if(pnrRef !=null) {
+			sqlStr.append("a.apis_message_id = '");
+			sqlStr.append(pnrRef);
+			sqlStr.append("'");
+		}
+		else {
+			sqlStr.append("r.pnr_id = ");
+			sqlStr.append(pnrId);
+		}
+		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
+				.getResultList();
+	}
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef){
+		StringBuilder sqlStr = new StringBuilder();
+		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p " 
+				+  "WHERE p.id = ");			
+		sqlStr.append(paxId);
+		
+		if(pnrId !=null) {
+			sqlStr.append(" AND r.pnr_id != ");
+			sqlStr.append(pnrId);
+		}
+		else if(pnrRef !=null) {
+			sqlStr.append(" AND a.apis_message_id != '");
+			sqlStr.append(pnrRef);
+			sqlStr.append("'");
+		}
+		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
+				.getResultList();
+	}	
 }

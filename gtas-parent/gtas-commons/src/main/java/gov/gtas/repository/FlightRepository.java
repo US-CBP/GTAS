@@ -64,7 +64,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     public List<Flight> getFlightsByPassengerNameAndDocument(@Param("firstName") String firstName,
                                                              @Param("lastName") String lastName,
                                                              @Param("documentNumber") String documentNumber);
-    
+        
     @Modifying
     @Transactional
     @Query("update Flight set ruleHitCount = (select count(distinct passenger) from HitsSummary where flight.id = :flightId and ruleHitCount > 0) where id = :flightId")

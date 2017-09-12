@@ -12,9 +12,17 @@
     <md-dialog-content>
       <div class="md-dialog-content">
         <div ng-repeat="pax in paxLinks">
-          <h2>Passenger:</h2>
+            <h2>
+              <a href="#/paxdetail/{{pax.passengerId}}/{{pax.flightId}}" target="_blank">
+                Passenger:
+                <md-tooltip>View Pax-Detail Page</md-tooltip>
+              </a>
+            </h2>
           <p>
             {{pax.firstName}} {{pax.middleName}} {{pax.lastName}}
+          </p>
+          <p>
+            Flight Number: {{pax.flightNumber}}
           </p>
           <h2>Highlights: </h2>
           <p class="white-space-preline">

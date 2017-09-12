@@ -308,7 +308,7 @@
                     direction: uiGridConstants.DESC,
                     priority: 0
                 },
-                cellTemplate:'<span class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
+                cellTemplate:'<span ng-if="row.entity.ruleHitCount" class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
             },
             {
                 name: 'listHitCount',
@@ -319,7 +319,7 @@
                     direction: uiGridConstants.DESC,
                     priority: 1
                 },
-                cellTemplate:'<span class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
+                cellTemplate:'<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
             },
             {
                 name: 'flightNumber',
@@ -371,7 +371,7 @@
                      direction: uiGridConstants.DESC,
                      priority: 0
                  },
-                 cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
+                 cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
              },
              {
                  name: 'onWatchList', displayName: 'Watchlist Hits',
@@ -380,7 +380,7 @@
                      direction: uiGridConstants.DESC,
                      priority: 1
                  },
-                 cellTemplate: '<span class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
+                 cellTemplate: '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
              },
              {name: 'passengerType', displayName:'T', headerCellFilter: 'translate'},
              {

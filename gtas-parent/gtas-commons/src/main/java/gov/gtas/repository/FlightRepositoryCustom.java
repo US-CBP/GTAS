@@ -11,6 +11,8 @@ import gov.gtas.services.dto.FlightsRequestDto;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * The Interface FlightRepositoryCustom.
@@ -29,4 +31,8 @@ public interface FlightRepositoryCustom {
      * @throws Exception the exception
      */
     public void deleteAllMessages() throws Exception ;
+    
+    public List<Flight> getFullTravelHistory(Long paxId);    
+    public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);    
+    public List<Flight> getTravelHistoryNotByItinerary( Long paxId, Long pnrId, String pnrRef);
 }

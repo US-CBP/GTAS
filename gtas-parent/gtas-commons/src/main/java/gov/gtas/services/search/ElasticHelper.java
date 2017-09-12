@@ -237,7 +237,7 @@ public class ElasticHelper {
 						.must(matchQuery("lastName",pax.getLastName())))
 				.should(termsQuery("documents.documentNumber", docNumbers))
 				.should(termsQuery("pnr", docNumbers))
-				.should(termsQuery("pnr", pax.getLastName()));
+				.should(matchQuery("pnr", pax.getLastName()));
 		
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes(FLIGHTPAX_TYPE)
@@ -261,9 +261,12 @@ public class ElasticHelper {
 		for (SearchHit hit : resultsArry) {
 			Map<String, Object> result = hit.getSource();
 			LinkPassengerVo lpVo = new LinkPassengerVo();
+			lpVo.setPassengerId((Integer)result.get("passengerId"));
+			lpVo.setFlightId((Integer)result.get("flightId"));
 			lpVo.setFirstName((String)result.get("firstName"));
 			lpVo.setMiddleName((String)result.get("middleName"));
 			lpVo.setLastName((String)result.get("lastName"));
+			lpVo.setFlightNumber((String)result.get("flightNumber"));
 			lpVo.setHighlightMatch(convertHighlights(hit.getHighlightFields().entrySet()));
 			lp.add(lpVo);
 		}
@@ -278,10 +281,12 @@ public class ElasticHelper {
         	highlightString.append(highlight.getKey());
         	highlightString.append("\n");
             for (Text text : highlight.getValue().fragments()) {
+            	highlightString.append("\n");
             	highlightString.append("Fragment: ");
                 highlightString.append(text.string());
-            	highlightString.append("\n");
                 highlightString.append("... ");
+            	highlightString.append("\n");
+
             }
         	highlightString.append("\n");
             highlightString.append("---- ");
@@ -356,13 +361,13 @@ public class ElasticHelper {
 					Set<DocumentVo> documents = new HashSet<DocumentVo>();
 					for(Document d: p.getDocuments()) {
 						DocumentVo temp = new DocumentVo();
-						temp.setDocumentNumber(d.getDocumentNumber());
-						temp.setDocumentType(d.getDocumentType());
-						temp.setExpirationDate(d.getExpirationDate());
-						temp.setFirstName(d.getPassenger().getFirstName());
-						temp.setLastName(d.getPassenger().getLastName());
-						temp.setIssuanceCountry(d.getIssuanceCountry());
-						temp.setIssuanceDate(d.getIssuanceDate());
+						temp.setDocumentNumber(d.getDocumentNumber()!=null?d.getDocumentNumber():"");
+						temp.setDocumentType(d.getDocumentType()!=null?d.getDocumentType():"");
+						temp.setExpirationDate(d.getExpirationDate()!=null?d.getExpirationDate():new Date());
+						temp.setFirstName(d.getPassenger().getFirstName()!=null?d.getPassenger().getFirstName():"");
+						temp.setLastName(d.getPassenger().getLastName()!=null?d.getPassenger().getLastName():"");
+						temp.setIssuanceCountry(d.getIssuanceCountry()!=null?d.getIssuanceCountry():"");
+						temp.setIssuanceDate(d.getIssuanceDate()!=null?d.getIssuanceDate():new Date());
 						documents.add(temp);
 					}
 					vo.setDocuments(documents);
