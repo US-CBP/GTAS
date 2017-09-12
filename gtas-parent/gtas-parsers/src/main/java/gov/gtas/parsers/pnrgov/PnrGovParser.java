@@ -790,7 +790,15 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	}
     }
     private void extractEmailInfo(String txt){
-    	String tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
+    	String tmp="";
+    	if(txt.contains(LTS.APE)){
+    		//LTS+0/O/5/APE FIRST.LAST@YAHOO.COM/FIRST/LAST MRS'
+    		tmp=txt.substring(txt.indexOf(LTS.APE)+4, txt.length());
+    		tmp=tmp.substring(0,tmp.indexOf("/"));
+    	}else{
+    		tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
+		
+    	}
     	//Fix Data | trim email address in back-end #547
     	String[] extras=tmp.split(" ");
     	if(extras != null && extras.length >1){

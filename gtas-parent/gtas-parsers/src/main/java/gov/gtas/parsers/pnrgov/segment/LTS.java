@@ -27,6 +27,7 @@ public class LTS extends Segment {
 	public static final String APM="/APM";
 	public static final String FP="F/FP";
 	public static final String FQTV="FQTV";
+	public static final String APE="/APE";
     private String theText;
     private boolean isAgency=false;
     private boolean isPhone=false;
@@ -44,9 +45,8 @@ public class LTS extends Segment {
             	if(theText.contains(CTCT)){
             		isAgency=true;
             	}
-            	else if(theText.contains(CTCE)){
+            	else if(theText.contains(CTCE) || theText.contains(APE)){
             		isEmail=true;
-            		
             	}
             	else if(theText.contains(APM)){
             		isPhone=true;
