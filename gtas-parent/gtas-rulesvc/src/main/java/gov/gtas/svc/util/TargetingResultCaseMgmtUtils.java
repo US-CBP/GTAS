@@ -7,6 +7,7 @@
 package gov.gtas.svc.util;
 
 import gov.gtas.bo.*;
+import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.PassengerRepository;
@@ -29,7 +30,7 @@ public class TargetingResultCaseMgmtUtils {
     private static PassengerRepository paxRepo;
 
     @Autowired
-    public TargetingResultCaseMgmtUtils(PassengerRepository paxRepo){
+    public TargetingResultCaseMgmtUtils(PassengerRepository paxRepo) {
         TargetingResultCaseMgmtUtils.paxRepo = paxRepo;
     }
 
@@ -94,15 +95,21 @@ public class TargetingResultCaseMgmtUtils {
         Long _tempPaxId = null;
         Passenger _tempPax = null;
         try {
-            _tempPaxId=rhd.getPassengerId();
+            _tempPaxId = rhd.getPassengerId();
 //            _tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
             _tempPax = dispositionService.findPaxByID(_tempPaxId);
             //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
-            if(_tempPax != null)
-            dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
-                    rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(), rhd.getDescription(), rhd.getRuleId());
-        }catch(Exception ex){
-            logger.error("Could not initiate a case for Flight:"+ flightId +"  Pax:"+_tempPaxId+"  Rule:"+rhd.getRuleId()+" set");
+            if (_tempPax != null) {
+                String document = null;
+                for (Document documentItem : _tempPax.getDocuments()) {
+                    document = documentItem.getDocumentNumber();
+                }
+                dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
+                        rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
+                        document, rhd.getDescription(), rhd.getRuleId());
+            }
+        } catch (Exception ex) {
+            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  Rule:" + rhd.getRuleId() + " set");
             ex.printStackTrace();
         }
 

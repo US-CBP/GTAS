@@ -107,7 +107,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, List<Long> hit_ids) {
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids) {
         Case aCase = new Case();
         HitsDisposition hitDisp = new HitsDisposition();
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -119,6 +119,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setPaxName(paxName);
         aCase.setPaxType(paxType);
         aCase.setCitizenshipCountry(citizenshipCountry);
+        aCase.setDocument(document);
         aCase.setDob(dob);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
         for (Long _tempHitId : hit_ids) {
@@ -252,12 +253,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String hitDesc, Long hit_id) {
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob,
+                                                   String document, String hitDesc, Long hit_id) {
         List<Case> _tempCaseList = new ArrayList<>();
         List<Long> _tempHitIds = new ArrayList<>();
 
         _tempHitIds.add(hit_id);
-        _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, hitDesc, _tempHitIds));
+        _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, document, hitDesc, _tempHitIds));
 
         return _tempCaseList;
     }

@@ -35,6 +35,9 @@ public class Case extends BaseEntityAudit {
     @Column(name = "passengerType", nullable = true)
     private String paxType;
 
+    @Column(name = "document", nullable = true)
+    private String document;
+
     @Column(name = "status", nullable = false)
     private String status;
 
@@ -102,11 +105,11 @@ public class Case extends BaseEntityAudit {
     }
 
     public String getPaxName() {
-        return citizenshipCountry;
+        return paxName;
     }
 
     public void setPaxName(String paxName) {
-        this.citizenshipCountry = paxName;
+        this.paxName = paxName;
     }
 
     public String getPaxType() {
@@ -115,6 +118,14 @@ public class Case extends BaseEntityAudit {
 
     public void setPaxType(String paxType) {
         this.paxType = paxType;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public boolean equals(Object o) {
