@@ -190,123 +190,18 @@
         	$scope.dispositionStatus = response.data;
         });
 
-        paxDetailService.getPaxFlightHistory($scope.passenger.paxId)
+        paxDetailService.getPaxFlightHistory($scope.passenger.paxId, $scope.passenger.flightId)
         .then(function(response){
         	$scope.getPaxFullTravelHistory($scope.passenger);
-            $scope.passenger.flightHistoryVo = response.data;
+          $scope.passenger.flightHistoryVo = response.data;
         });
 
         $scope.getPaxFullTravelHistory= function(passenger){
-        	var doc = passenger.documents[0];
-        	if(typeof doc != 'undefined' && doc.documentNumber.length > 0){
-        		var docNum = doc.documentNumber;
-        		var docExp = doc.expirationDate;
-        		var docIssuCountry = doc.issuanceCountry;
-        		paxDetailService.getPaxFullTravelHistory(passenger.paxId, docNum, docIssuCountry, docExp).then(function(response){
-        			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
-        			$scope.passenger.flightHistoryVo.flightHistoryMap = parseDuplicateDocumentFlights($scope.passenger.flightHistoryVo.flightHistoryMap); //Remove duplicates amongst the documents
-        			for(var arry in $scope.passenger.flightHistoryVo.flightHistoryMap){
-        				$scope.passenger.fullFlightHistoryVo.map = parseOutDuplicateFlights($scope.passenger.fullFlightHistoryVo.map, $scope.passenger.flightHistoryVo.flightHistoryMap[arry])
-        			}
-        			$scope.isLoadingFlightHistory = false;
-        		});
-        	} else{
-        		console.log("doc  was undefined, halting full travel history call");
-        		$scope.isLoadingFlightHistory = false;
-        	}
+      		paxDetailService.getPaxFullTravelHistory(passenger.paxId, passenger.flightId).then(function(response){
+      			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
+      			$scope.isLoadingFlightHistory = false;
+      		});
         };
-    var parseOutDuplicateFlights = function(currentPNRFlightArray, totalFlightArray){
-    	var duplicateIndexes = [];
-    	var duplicateFreeFlightArray = [];
-    	$.each(currentPNRFlightArray, function(index,value){
-    		if(angular.isDefined(value) && value != null){
-	    		$.each(totalFlightArray, function(i,v){
-	    			if(angular.isDefined(v) && v != null){
-		    			if(value.id === v.id){
-		    				if(duplicateIndexes.indexOf(index) === -1){
-		    					duplicateIndexes.push(index);
-		    				}
-		    				return;
-		    			};
-	    			}
-	    		});
-    		}
-    	});
-
-
-    	$.each(currentPNRFlightArray, function(i,v){
-    		var notDupe = true;
-    		$.each(duplicateIndexes, function(index,value){
-    			if(value === i){
-    				notDupe = false;
-    				return;
-    			}
-    		});
-    		if(notDupe){
-    			duplicateFreeFlightArray.push(v);
-    		}
-    	});
-
-    	//Bandaid: Re-order TVL lines so that dates are in correct order for all duplicateFreeArrays
-    	duplicateFreeFlightArray = reorderTVLdata(duplicateFreeFlightArray);
-
-    	return duplicateFreeFlightArray;
-    }
-    //Multiple documents on the same PNR pull and show the same flights on the flight history tab
-    //This function will remove all duplicate flights from a given Map, remove all documents that have 0 flights, and return a new fully parsed map
-    var parseDuplicateDocumentFlights = function(flightHistoryMap){
-    	var longest = 0;
-		var longestIndex = -1;
-		//Insure we maintain the largest amount of flight information by defining a psuedo 'primary' doc
-    	$.each(flightHistoryMap, function(index,value){
-    		if(value.length > longest){
-    			longest = value.length;
-    			longestIndex = index;
-    		};
-    	});
-    	//Remove duplicates from all non-primary documents
-    	$.each(flightHistoryMap, function(index,value){
-    		if(index != longestIndex){
-    			flightHistoryMap[index] = parseOutDuplicateFlights(value, flightHistoryMap[longestIndex]);
-    		}
-
-    		//Bandaid: Sometimes flighthistory and the pnr flight legs do not match, this compares and parses them out if they do not exist in the pnrVo.flightLegs object arry
-        	if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
-        		flightHistoryMap[index] = parseOutNonMatchingFlightHistoryToPNRFlights(flightHistoryMap[index], $scope.passenger.pnrVo.flightLegs);
-        	}
-
-        	//Bandaid: Re-order TVL lines so that dates are in correct order based on etd
-        	flightHistoryMap[index] = reorderTVLdata(flightHistoryMap[index]);
-    	});
-
-    	//Remove documents with no flights now
-    	var fullyParsedMap = {};
-    	$.each(flightHistoryMap, function(index,value){
-    		if(value.length != 0){
-    			fullyParsedMap[index] = value;
-    		}
-    	});
-
-    	return fullyParsedMap;
-    }
-
-    //PNR flight legs were not matching with flight history,
-    //this will compare the lists and remove from flight history flights that do not appear in the list under the PNR flightlegs
-    var parseOutNonMatchingFlightHistoryToPNRFlights = function(flightHistoryFlightsArry, PNRFlightsArry){
-    	if(!angular.isDefined(flightHistoryFlightsArry) || flightHistoryFlightsArry == null || !angular.isDefined(PNRFlightsArry) || PNRFlightsArry == null){
-    		return;
-    	}
-
-    	var parsedFlightHistory = [];
-    	$.each(PNRFlightsArry, function(index,value){
-    		$.each(flightHistoryFlightsArry, function(i,v){
-    			if(v.fullFlightNumber === value.flightNumber){ //If flighthistory has flight that is in pnr leg, set aside in new verified array
-    				parsedFlightHistory.push(v);
-    			}
-    		});
-    	});
-    	return parsedFlightHistory;
-    }
 
     //Adds user from pax detail page to watchlist.
     $scope.addEntityToWatchlist = function(){

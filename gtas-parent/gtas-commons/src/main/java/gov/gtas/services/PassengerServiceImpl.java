@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -49,6 +51,7 @@ import gov.gtas.repository.DispositionStatusRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.repository.PnrRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
@@ -84,9 +87,15 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Autowired
     private FlightRepository flightRespository;
+    
+    @Autowired
+    private PnrRepository pnrRepository;
 
     @Autowired
     private BagRepository bagRespository;
+    
+	@PersistenceContext
+	private EntityManager em;
 
     @Override
     @Transactional
@@ -359,5 +368,21 @@ public class PassengerServiceImpl implements PassengerService {
     public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
         List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
         return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
+    }
+    
+    @Override
+    @Transactional
+    public List<Flight> getFullTravelHistory(Long paxId) {
+    	return flightRespository.getFullTravelHistory(paxId);
+    }
+    @Override
+    @Transactional
+    public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
+    	return flightRespository.getTravelHistoryByItinerary(pnrId, pnrRef);
+    }
+    @Override
+    @Transactional
+    public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
+    	return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
     }
 }

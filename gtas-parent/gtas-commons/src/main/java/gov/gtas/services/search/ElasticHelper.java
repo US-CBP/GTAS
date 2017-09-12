@@ -361,13 +361,13 @@ public class ElasticHelper {
 					Set<DocumentVo> documents = new HashSet<DocumentVo>();
 					for(Document d: p.getDocuments()) {
 						DocumentVo temp = new DocumentVo();
-						temp.setDocumentNumber(d.getDocumentNumber());
-						temp.setDocumentType(d.getDocumentType());
-						temp.setExpirationDate(d.getExpirationDate());
-						temp.setFirstName(d.getPassenger().getFirstName());
-						temp.setLastName(d.getPassenger().getLastName());
-						temp.setIssuanceCountry(d.getIssuanceCountry());
-						temp.setIssuanceDate(d.getIssuanceDate());
+						temp.setDocumentNumber(d.getDocumentNumber()!=null?d.getDocumentNumber():"");
+						temp.setDocumentType(d.getDocumentType()!=null?d.getDocumentType():"");
+						temp.setExpirationDate(d.getExpirationDate()!=null?d.getExpirationDate():new Date());
+						temp.setFirstName(d.getPassenger().getFirstName()!=null?d.getPassenger().getFirstName():"");
+						temp.setLastName(d.getPassenger().getLastName()!=null?d.getPassenger().getLastName():"");
+						temp.setIssuanceCountry(d.getIssuanceCountry()!=null?d.getIssuanceCountry():"");
+						temp.setIssuanceDate(d.getIssuanceDate()!=null?d.getIssuanceDate():new Date());
 						documents.add(temp);
 					}
 					vo.setDocuments(documents);

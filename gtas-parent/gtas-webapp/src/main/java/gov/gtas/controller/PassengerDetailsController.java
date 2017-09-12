@@ -269,77 +269,84 @@ public class PassengerDetailsController {
 		return vo;
 	}
 
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
-	public FlightHistoryVo getFlightHistoryByPassengerAndDocuments(
-			@RequestParam String paxId) {
-
-		FlightHistoryVo flightHistoryVo = new FlightHistoryVo();
-		List<FlightVo> flightVoList = new ArrayList<>();
-		Passenger t = pService.findById(Long.valueOf(paxId));
-
-		// Gather Flight History Details
-		Map<Document, List<Flight>> flightHistoryMap = fService.getFlightsByPassengerNameAndDocument(
-				t.getFirstName(), t.getLastName(), t.getDocuments());
-
-		for (Document document : flightHistoryMap.keySet()) {
-			for (Document doc : t.getDocuments()) {
-				if ((document.getDocumentNumber() != null)
-						&& (document.getDocumentNumber().equals(
-								doc.getDocumentNumber()) && (document
-								.getDocumentType().equalsIgnoreCase(doc
-								.getDocumentType())))) {
-					flightVoList.clear();
-					for (Flight flight : flightHistoryMap.get(document)) {
-						FlightVo _tempFlightVo = new FlightVo();
-						copyModelToVo(flight, _tempFlightVo);
-						flightVoList.add(_tempFlightVo);
-					}
-					flightHistoryVo.getFlightHistoryMap().put(
-							doc.getDocumentNumber(), flightVoList);
-				}
-			}
-		}
-
-		return flightHistoryVo;
-	}
-
 	/**
-	 * Gets the travel history by passenger and document.
+	 * Gets the travel history by pnr id and pnr ref.
 	 *
 	 * @param paxId
 	 *            the passenger id
-	 * @param docNum
-	 *            the doc num
-	 * @param docIssuCountry
-	 *            the doc issu country
-	 * @param docExpiration
-	 *            the doc expiration
+	 * @param flightId
+	 *            the flight id
 	 * @return the travel history by passenger and document
 	 * @throws ParseException
 	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
-	public List<FlightVo> getTravelHistoryByPassengerAndDocument(
+	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
+	public List<FlightVo> getTravelHistoryByPassengerAndItinerary(
 			@RequestParam String paxId,
-			@RequestParam String docNum,
-			@RequestParam String docIssuCountry,
-			@RequestParam String docExpiration)
+			@RequestParam String flightId)
 			throws ParseException {
-		Date docExpDate = null;
-		if (!Strings.isNullOrEmpty(docExpiration)) {
-			docExpDate = DateCalendarUtils.parseJsonDate(docExpiration);
+		
+		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
+		String pnrRef = null;
+		
+		if(!pnrs.isEmpty() || pnrRef!=null) {
+			return pService
+					.getTravelHistoryByItinerary(pnrs.get(0).getId(), pnrRef)
+					.stream().map(flight -> {
+								FlightVo flightVo = new FlightVo();
+								copyModelToVo(flight, flightVo);
+								return flightVo;
+							}).collect(Collectors.toCollection(LinkedList::new));
 		}
-		return pService
-				.getTravelHistory(Long.valueOf(paxId), docNum, docIssuCountry,
-						docExpDate).stream().map(flight -> {
-					FlightVo flightVo = new FlightVo();
-					copyModelToVo(flight, flightVo);
-					return flightVo;
-				}).collect(Collectors.toCollection(LinkedList::new));
+		else {
+			return new ArrayList<FlightVo>();
+		}
+
 	}
+	/**
+	 * Gets the travel history by passenger and document.
+	 *
+	 * @param paxId
+	 *            the passenger id
+	 * @param flightId
+	 * 			  the flight id           
+	 * @return the travel history by passenger and document
+	 * @throws ParseException
+	 */
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
+	public List<FlightVo> getTravelHistoryByPassengerAndNotItinerary(
+			@RequestParam String paxId,
+			@RequestParam String flightId)
+			throws ParseException {
+		
+		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
+		String pnrRef = null;
+		
+		if(!pnrs.isEmpty() || pnrRef!=null) {
+			return pService
+				.getTravelHistoryNotByItinerary(Long.valueOf(paxId), pnrs.get(0).getId(), pnrRef)
+				.stream().map(flight -> {
+							FlightVo flightVo = new FlightVo();
+							copyModelToVo(flight, flightVo);
+							return flightVo;
+						}).collect(Collectors.toCollection(LinkedList::new));
+		}
+		else {
+			return pService
+				.getFullTravelHistory(Long.valueOf(paxId))
+				.stream().map(flight -> {
+							FlightVo flightVo = new FlightVo();
+							copyModelToVo(flight, flightVo);
+							return flightVo;
+						}).collect(Collectors.toCollection(LinkedList::new));
+		
+		}
+	}
+	
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
 	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {

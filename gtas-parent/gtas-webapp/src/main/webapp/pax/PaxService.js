@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 (function () {
@@ -12,26 +12,39 @@
                 dfd.resolve($http.get("/gtas/passengers/passenger/" + paxId + "/details?flightId=" + flightId));
                 return dfd.promise;
             }
-            
-            function getPaxFlightHistory(paxId){
+
+            // function getPaxFlightHistory(paxId){
+            //     var dfd = $q.defer();
+            //     dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId));
+            //     return dfd.promise;
+            // }
+            //
+            // function getPaxFullTravelHistory(paxId, docNum, docIssuCountry, docExpiration){
+            // 	var dfd = $q.defer();
+            // 	dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&docNum=" + docNum
+            // 			+ "&docIssuCountry=" + docIssuCountry + "&docExpiration="+docExpiration));
+            // 	return dfd.promise;
+            // }
+
+            function getPaxFlightHistory(paxId, flightId){
                 var dfd = $q.defer();
-                dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId));
+                dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId + "&flightId="+ flightId));
                 return dfd.promise;
             }
-            
-            function getPaxFullTravelHistory(paxId, docNum, docIssuCountry, docExpiration){
-            	var dfd = $q.defer();
-            	dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&docNum=" + docNum 
-            			+ "&docIssuCountry=" + docIssuCountry + "&docExpiration="+docExpiration));
-            	return dfd.promise;
+
+            function getPaxFullTravelHistory(paxId, flightId){
+              var dfd = $q.defer();
+              dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&flightId=" + flightId));
+              return dfd.promise;
             }
-            
+
+
             function getPaxAttachments(paxId){
             	var dfd = $q.defer();
             	dfd.resolve($http.get('/gtas/getattachments?paxId='+ paxId));
             	return dfd.promise;
             }
-            
+
             function savePaxAttachments(username, password, description, paxId, file){
             	if (!file.$error) {
                     Upload.upload({
@@ -41,7 +54,7 @@
                           password: password,
                           desc: description,
                           paxId: paxId,
-                          file: file  
+                          file: file
                         }
                     }).progress(function (evt) {
                     	//progress tracker potentially
@@ -50,7 +63,7 @@
                     });
             	}
             };
-            
+
             function deleteAttachment(attId){
             	 var dfd = $q.defer();
                  dfd.resolve($http.post("/gtas/deleteattachment", attId));
@@ -77,19 +90,19 @@
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
                 return dfd.promise;
             }
-            
+
             function getAllCases(){
             	var dfd = $q.defer();
             	dfd.resolve($http.get("/gtas/allcases"));
             	return dfd.promise;
             }
-            
+
             function createOrEditDispositionStatus(dispStatusObj){
             	var dfd = $q.defer();
             	dfd.resolve($http.post("/gtas/createoreditdispstatus",dispStatusObj));
             	return dfd.promise;
             }
-            
+
             function deleteDispositionStatus(dispStatusObj){
             	var dfd = $q.defer();
             	dfd.resolve($http.post("/gtas/deletedispstatus", dispStatusObj));
@@ -105,7 +118,7 @@
             });
         })
         .service("paxService", function (userService, $rootScope, $http, $q) {
-            
+
             function getPassengersBasedOnUser(paxModel){
                 var today = new Date();
                 //first request
@@ -130,8 +143,8 @@
                     return getAllPax(paxModel.model);
                 });
             }
-            
-            
+
+
             function getPax(flightId, pageRequest) {
             	//This converts the date to the appropriate time, i.e. 00:00:00 on the start, and 23:59:59 on the end without impacting the front end visuals
             	var tmp = jQuery.extend({},pageRequest);
@@ -192,7 +205,7 @@
                 });
                 return (request.then(handleSuccess, handleError));
             }
-            
+
             function getRuleHitsByFlightAndPax(passengerId, flightId) {
                 var request = $http({
                     method: "get",
@@ -201,7 +214,7 @@
                         action: "get"
                     }
                 });
-                
+
                 return (request.then(function(res){
                 	return formatHitDetails(res);
                 }));
@@ -210,11 +223,11 @@
             function broadcastRuleID(ruleID) {
                 $rootScope.$broadcast('ruleIDBroadcast', ruleID);
             }
-            
+
             //Open up rule hits summaries to break apart details for display.
             function formatHitDetails(ruleSummaryHits){
             	var ruleHitsList = [];
-            	if(angular.isDefined(ruleSummaryHits) && ruleSummaryHits.data.length > 0){   	  
+            	if(angular.isDefined(ruleSummaryHits) && ruleSummaryHits.data.length > 0){
             	  $.each(ruleSummaryHits.data, function(index,value){
             		  ruleHitsList.push(value.hitsDetailsList[0]); //First object in this 'array' contains the values needed for the front-end display
             	  });
