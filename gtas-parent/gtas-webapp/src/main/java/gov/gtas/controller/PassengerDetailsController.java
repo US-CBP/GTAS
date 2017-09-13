@@ -289,10 +289,11 @@ public class PassengerDetailsController {
 		
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
 		String pnrRef = null;
-		
-		if(!pnrs.isEmpty() || pnrRef!=null) {
+		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
+
+		if(pnrId != null || pnrRef!=null) {
 			return pService
-					.getTravelHistoryByItinerary(pnrs.get(0).getId(), pnrRef)
+					.getTravelHistoryByItinerary(pnrId, pnrRef)
 					.stream().map(flight -> {
 								FlightVo flightVo = new FlightVo();
 								copyModelToVo(flight, flightVo);
@@ -325,26 +326,15 @@ public class PassengerDetailsController {
 		
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
 		String pnrRef = null;
+		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
 		
-		if(!pnrs.isEmpty() || pnrRef!=null) {
-			return pService
-				.getTravelHistoryNotByItinerary(Long.valueOf(paxId), pnrs.get(0).getId(), pnrRef)
-				.stream().map(flight -> {
-							FlightVo flightVo = new FlightVo();
-							copyModelToVo(flight, flightVo);
-							return flightVo;
-						}).collect(Collectors.toCollection(LinkedList::new));
-		}
-		else {
-			return pService
-				.getFullTravelHistory(Long.valueOf(paxId))
-				.stream().map(flight -> {
-							FlightVo flightVo = new FlightVo();
-							copyModelToVo(flight, flightVo);
-							return flightVo;
-						}).collect(Collectors.toCollection(LinkedList::new));
-		
-		}
+		return pService
+			.getTravelHistoryNotByItinerary(Long.valueOf(paxId), pnrId, pnrRef)
+			.stream().map(flight -> {
+						FlightVo flightVo = new FlightVo();
+						copyModelToVo(flight, flightVo);
+						return flightVo;
+					}).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
 	

@@ -232,32 +232,22 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Flight> getFullTravelHistory(Long paxId){
+	public List<Flight> getTravelHistoryByItinerary (Long pnrId, String pnrRef) {
 		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p " 
-				+  "WHERE p.id = ");			
-		sqlStr.append(paxId);
-		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
-				.getResultList();
-	}
-	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
-		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p WHERE ");		
+		sqlStr.append("SELECT DISTINCT f.* FROM flight_passenger fp JOIN Flight f ON f.id = fp.flight_id ");		
 		if(pnrId !=null) {
-			sqlStr.append("r.pnr_id = ");
+			sqlStr.append("LEFT OUTER JOIN pnr_passenger r ON fp.passenger_id = r.passenger_id ");
+			sqlStr.append("WHERE r.pnr_id = ");
 			sqlStr.append(pnrId);
 		}
 		else if(pnrRef !=null) {
-			sqlStr.append("a.apis_message_id = '");
+			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id ");
+			sqlStr.append("WHERE fpa.ref_number = '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
 		}
 		else {
-			sqlStr.append("r.pnr_id = ");
-			sqlStr.append(pnrId);
+			return new ArrayList<Flight>();
 		}
 		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
 				.getResultList();
@@ -267,19 +257,26 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	@Transactional
 	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef){
 		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM Flight f JOIN pnr_flight r JOIN passenger p " 
-				+  "WHERE p.id = ");			
-		sqlStr.append(paxId);
-		
+		sqlStr.append("SELECT DISTINCT f.* FROM flight_passenger fp JOIN Flight f ON f.id = fp.flight_id ");					
 		if(pnrId !=null) {
-			sqlStr.append(" AND r.pnr_id != ");
+			sqlStr.append("LEFT OUTER JOIN pnr_passenger r ON fp.passenger_id = r.passenger_id ");
+			sqlStr.append("WHERE r.pnr_id != ");
 			sqlStr.append(pnrId);
+			sqlStr.append(" AND ");
 		}
 		else if(pnrRef !=null) {
-			sqlStr.append(" AND a.apis_message_id != '");
+			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id ");
+			sqlStr.append("WHERE fpa.ref_number != '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
+			sqlStr.append(" AND ");
 		}
+		else {
+			sqlStr.append("WHERE ");
+		}
+		sqlStr.append(" fp.passenger_id = ");
+		sqlStr.append(paxId);
+		
 		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
 				.getResultList();
 	}	

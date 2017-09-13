@@ -13,19 +13,6 @@
                 return dfd.promise;
             }
 
-            // function getPaxFlightHistory(paxId){
-            //     var dfd = $q.defer();
-            //     dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId));
-            //     return dfd.promise;
-            // }
-            //
-            // function getPaxFullTravelHistory(paxId, docNum, docIssuCountry, docExpiration){
-            // 	var dfd = $q.defer();
-            // 	dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&docNum=" + docNum
-            // 			+ "&docIssuCountry=" + docIssuCountry + "&docExpiration="+docExpiration));
-            // 	return dfd.promise;
-            // }
-
             function getPaxFlightHistory(paxId, flightId){
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId + "&flightId="+ flightId));

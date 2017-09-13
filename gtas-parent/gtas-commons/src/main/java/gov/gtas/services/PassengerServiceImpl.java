@@ -372,11 +372,6 @@ public class PassengerServiceImpl implements PassengerService {
     
     @Override
     @Transactional
-    public List<Flight> getFullTravelHistory(Long paxId) {
-    	return flightRespository.getFullTravelHistory(paxId);
-    }
-    @Override
-    @Transactional
     public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
     	return flightRespository.getTravelHistoryByItinerary(pnrId, pnrRef);
     }

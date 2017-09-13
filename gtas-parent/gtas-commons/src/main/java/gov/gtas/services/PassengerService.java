@@ -77,8 +77,6 @@ public interface PassengerService {
 	public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
 	
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getFullTravelHistory(Long pId);
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);	
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);	
