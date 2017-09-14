@@ -395,6 +395,7 @@ public class PnrUtils {
 		}
 		return null;
 	}
+	
 	public static String getBagTagFromElement(String tagNumber,int counter){
 		if(StringUtils.isBlank(tagNumber)){
 			return "0";
