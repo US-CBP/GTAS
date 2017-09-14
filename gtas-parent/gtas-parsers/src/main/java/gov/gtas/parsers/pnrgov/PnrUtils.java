@@ -127,7 +127,8 @@ public class PnrUtils {
 			}
 
 			processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10), p.getGender());
-		} else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))) {
+		} else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))
+				&& StringUtils.isNotEmpty(safeGet(strs, 4))) {
 			doc.setDocumentType(safeGet(strs, 2));
 			doc.setIssuanceCountry(safeGet(strs, 3));
 			doc.setDocumentNumber(safeGet(strs, 4));
@@ -145,6 +146,27 @@ public class PnrUtils {
 			}
 
 			processNames(p, safeGet(strs, 9), safeGet(strs, 10), safeGet(strs, 11), p.getGender());
+		}
+		else if(StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 4))){
+			//USA/497994674//17MAR47/M/02NOV16/ELMORE/ERVINMR/DARIN
+
+			doc.setDocumentType(safeGet(strs, 1));
+			doc.setIssuanceCountry(safeGet(strs, 2));
+			doc.setDocumentNumber(safeGet(strs, 3));
+			p.setCitizenshipCountry(safeGet(strs, 4));
+			String d = safeGet(strs, 5);
+			if (StringUtils.isNotBlank(d)) {
+				Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
+				p.setDob(dob);
+				p.setAge(DateUtils.calculateAge(dob));
+			}
+			p.setGender(safeGet(strs, 6));
+			d = safeGet(strs, 7);
+			if (StringUtils.isNotBlank(d)) {
+				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
+			}
+
+			processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10), p.getGender());
 		}
 		captureMissingInfoFromSSRs(p,ssrDocs);
 			
@@ -373,6 +395,7 @@ public class PnrUtils {
 		}
 		return null;
 	}
+	
 	public static String getBagTagFromElement(String tagNumber,int counter){
 		if(StringUtils.isBlank(tagNumber)){
 			return "0";
@@ -418,7 +441,8 @@ public class PnrUtils {
 						|| (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 2)))) {
 					pvo.setCitizenshipCountry(safeGet(strs, 4));
 					
-				}else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))) {
+				}else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))
+						&& StringUtils.isNotEmpty(safeGet(strs, 4)) ){
 					pvo.setCitizenshipCountry(safeGet(strs, 5));
 				}
 			}

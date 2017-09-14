@@ -69,3 +69,9 @@ insert into disposition_status(id, name, description) values(2, 'OPEN', 'Case is
 insert into disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
 insert into disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
 insert into disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
+
+
+insert into rule_category(catId, category, description, priority) values(1, 'Terrorism', 'Terrorism related entities', 1);
+insert into rule_category(catId, category, description, priority) values(2, 'World Health', 'Health Alert related', 2);
+insert into rule_category(catId, category, description, priority) values(3, 'Federal Law Enforcement', 'Federal watch category', 3);
+insert into rule_category(catId, category, description, priority) values(4, 'Local Law Enforcement', 'Local watch category', 4);
