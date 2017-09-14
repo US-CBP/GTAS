@@ -209,7 +209,6 @@ public class PassengerDetailsController {
 			}
 			vo.setPnrVo(tempVo);
 		}
-		
 		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId), t.getId());
 		if(!apisList.isEmpty()) {
 			ApisMessage apis = apisList.get(0);
@@ -217,7 +216,10 @@ public class PassengerDetailsController {
 			apisVo.setApisRecordExists(true);
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 			
-			Iterator<FlightPax> fpIter = apis.getFlightPaxList().iterator();
+			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());			
+			List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(refList.get(0));
+			
+			Iterator<FlightPax> fpIter = fpList.iterator();
 			while (fpIter.hasNext()) {
 				FlightPax fp= fpIter.next();
 				FlightPassengerVo fpVo = new FlightPassengerVo();
@@ -288,7 +290,8 @@ public class PassengerDetailsController {
 			throws ParseException {
 		
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		String pnrRef = null;
+		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
+		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;
 		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
 
 		if(pnrId != null || pnrRef!=null) {
@@ -325,7 +328,8 @@ public class PassengerDetailsController {
 			throws ParseException {
 		
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		String pnrRef = null;
+		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
+		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;		
 		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
 		
 		return pService
