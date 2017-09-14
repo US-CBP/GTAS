@@ -27,7 +27,7 @@ public class RuleCat extends BaseEntityAudit {
     private String description;
 
     @Column(name = "priority", nullable = false)
-    private String priority;
+    private Long priority;
 
     public Long getCatId() {
         return catId;
@@ -53,11 +53,11 @@ public class RuleCat extends BaseEntityAudit {
         this.description = description;
     }
 
-    public String getPriority() {
+    public Long getPriority() {
         return priority;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(Long priority) {
         this.priority = priority;
     }
 }
