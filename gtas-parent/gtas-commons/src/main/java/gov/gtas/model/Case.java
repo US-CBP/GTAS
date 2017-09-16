@@ -5,6 +5,9 @@
  */
 package gov.gtas.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import javax.persistence.*;
 
 import java.util.Date;
@@ -128,23 +131,28 @@ public class Case extends BaseEntityAudit {
         this.document = document;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
 
         Case aCase = (Case) o;
 
-        if (!flightId.equals(aCase.flightId)) return false;
-        return paxId.equals(aCase.paxId);
-
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(flightId, aCase.flightId)
+                .append(paxId, aCase.paxId)
+                .isEquals();
     }
 
+    @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + flightId.hashCode();
-        result = 31 * result + paxId.hashCode();
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(flightId)
+                .append(paxId)
+                .toHashCode();
     }
 
     public String toString() {

@@ -18,6 +18,8 @@ import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,11 @@ import java.util.*;
 
 @Service
 public class CaseDispositionServiceImpl implements CaseDispositionService  {
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(CaseDispositionServiceImpl.class);
+
+    private static Set casesToCommit = new HashSet<Case>();
 
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
@@ -107,13 +114,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids) {
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry,
+                       Date dob, String document, String hitDesc, List<Long> hit_ids) {
+
         Case aCase = new Case();
+        Case _tempCase = null;
         HitsDisposition hitDisp = new HitsDisposition();
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
         Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
         Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
-
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setPaxName(paxName);
@@ -122,6 +131,19 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setDocument(document);
         aCase.setDob(dob);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
+        _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
+        if(_tempCase!=null){aCase = _tempCase; }
+
+        if(casesToCommit!=null){
+            final Case _tempCaseToCompare = aCase;
+            Case existingCase = (Case)casesToCommit.stream()
+                    .filter(x -> _tempCaseToCompare.equals(x))
+                    .findAny()
+                    .orElse(null);
+            if(existingCase!=null)aCase=existingCase;
+            else casesToCommit.add(aCase);
+        }
+
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
             hitsDispCommentsSet = new HashSet<>();
@@ -135,10 +157,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
-        aCase.setHitsDispositions(hitsDispSet);
+        if(aCase.getHitsDispositions()!=null) aCase.getHitsDispositions().addAll(hitsDispSet);
+        else aCase.setHitsDispositions(hitsDispSet);
 
 
-        caseDispositionRepository.save(aCase);
+        caseDispositionRepository.saveAndFlush(aCase);
         return aCase;
     }
 
@@ -218,6 +241,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
             if((status != null) || (caseComments != null) || (validHit != null))
                 caseDispositionRepository.save(aCase);
+
         }catch (Exception ex){
             ex.printStackTrace();
         }
