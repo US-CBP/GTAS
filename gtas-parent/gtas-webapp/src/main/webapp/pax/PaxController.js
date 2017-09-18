@@ -86,6 +86,18 @@
         $scope.getCodeTooltipData = function(field,type){
         	return codeTooltipService.getCodeTooltipData(field,type);
         };
+        $scope.highlightClass = function(className) {
+          var elems = document.getElementsByClassName(className);
+          for (var i=0; i<elems.length; i++) {
+            if(elems[i].classList.contains("highlight")){
+              elems[i].classList.remove("highlight");
+            }
+            else {
+              elems[i].classList.add("highlight");
+              elems[i].scrollIntoView(false, {behavior:"smooth"});
+            }
+          }
+        };
 
         $scope.saveDisposition = function(){
         	var disposition = {

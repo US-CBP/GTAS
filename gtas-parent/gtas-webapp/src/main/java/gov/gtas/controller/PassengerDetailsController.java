@@ -7,12 +7,14 @@ package gov.gtas.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
@@ -347,6 +349,11 @@ public class PassengerDetailsController {
 		return pService.getDispositionStatuses();
 	}
 
+	@RequestMapping(value = "/allcases", method = RequestMethod.GET)
+	public @ResponseBody List<CaseVo> getAllDispositions() {
+		return pService.getAllDispositions();
+	}
+
 	@RequestMapping(value = "/disposition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JsonServiceResponse createDisposition(
 			@RequestBody DispositionData disposition) {
@@ -356,11 +363,6 @@ public class PassengerDetailsController {
 			pService.createDisposition(disposition, uService.fetchUser(userId));
 		}
 		return response;
-	}
-
-	@RequestMapping(value = "/allcases", method = RequestMethod.GET)
-	public @ResponseBody List<CaseVo> getAllDispositions() {
-		return pService.getAllDispositions();
 	}
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -419,8 +421,6 @@ public class PassengerDetailsController {
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotalbagCount(source.getTotal_bag_count());
 		target.setTotalbagWeight(source.getTotal_bag_weight());
-		parseRawMessageToList(target);
-
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
@@ -546,27 +546,159 @@ public class PassengerDetailsController {
 				}
 			}
 		}
-
+		
+		parseRawMessageToSegmentList(target);
 		return target;
 	}
-
+	
 	/**
-	 * Util Method To Parse PNR Raw Format Message to List For The Front End
-	 * 
+	 * Segments PnrRaw String
+	 * Required for Frontend to highlight segment corresponding to pnr section
 	 * @param targetVo
 	 */
-	private void parseRawMessageToList(PnrVo targetVo) {
-
+	private void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
 			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),
 					"\n");
-			ArrayList<String> _tempList = new ArrayList<>();
+			List<Map.Entry<String,String>> segmentList= new ArrayList<>();
+			
+			final String ITIN = "TVL";
+			final String NAME = "SSR";
+			final String DOC = "DOCS";
+			final String ADD = "ADD";
+			final String CC = "FOP";
+			final String FF = "FTI";
+			final String BAG = "TVD";
+					
 			while (_tempStr.hasMoreTokens()) {
-				_tempList.add(_tempStr.nextToken());
+				String currString = _tempStr.nextToken();
+				StringBuilder segment = new StringBuilder();
+				
+				//Itinerary
+				if (currString.contains(ITIN)) {
+					for(FlightLegVo f: targetVo.getFlightLegs()) {
+						if(currString.contains(f.getOriginAirport())) {
+							segment.append(ITIN);
+							segment.append(f.getOriginAirport());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//PNR names
+				if (currString.contains(NAME)) {
+					for(PassengerVo p: targetVo.getPassengers()) {
+						if(currString.contains(p.getFirstName())) {
+							segment.append(NAME);
+							segment.append(p.getFirstName());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//Doc Numbers
+				if (currString.contains(DOC)) {
+					for(DocumentVo d: targetVo.getDocuments()) {
+						if(currString.contains(d.getDocumentNumber())) {
+							segment.append(DOC);
+							segment.append(d.getDocumentNumber());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//Addresses
+				if (currString.contains(ADD)) {
+					for(AddressVo a: targetVo.getAddresses()) {
+						if(currString.contains(a.getCity())) {
+							segment.append(ADD);
+							segment.append(a.getCity());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//FOP
+				if (currString.contains(CC)) {
+					for(CreditCardVo c: targetVo.getCreditCards()) {
+						if(currString.contains(c.getNumber().substring(c.getNumber().length()-4))) {
+							segment.append(CC);
+							segment.append(c.getNumber());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//Frequent Flyer
+				if (currString.contains(FF)) {
+					for(FrequentFlyerVo f: targetVo.getFrequentFlyerDetails()) {
+						if(currString.contains(f.getNumber())) {
+							segment.append(FF);
+							segment.append(f.getNumber());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//Bag
+				if (currString.contains(BAG)) {
+					for(BagVo b: targetVo.getBags()) {
+						if(currString.contains(b.getBagId())) {
+							segment.append(BAG);
+							segment.append(b.getBagId());
+							segment.append(" ");
+							break;
+						}
+					}
+				}
+				//Phone
+				for(PhoneVo p: targetVo.getPhoneNumbers()) {
+					if(currString.contains(p.getNumber().substring(p.getNumber().length()-4))) {
+						segment.append("PHONE");
+						segment.append(p.getNumber());
+						segment.append(" ");
+						break;
+					}
+				}
+				
+				//Email
+				for(EmailVo e: targetVo.getEmails()) {
+					int at = e.getAddress().indexOf("@");
+					//Backup if @ is not found
+					at = at != -1?at:e.getAddress().length();
+					if(currString.contains(e.getAddress().substring(0,at))) {
+						segment.append("EMAIL");
+						segment.append(e.getAddress());
+						segment.append(" ");
+						break;
+					}
+				}
+				
+				//Seat
+				for(SeatVo s: targetVo.getSeatAssignments()) {
+					if(currString.contains(s.getNumber())) {
+						segment.append("SEAT");
+						segment.append(s.getNumber());
+						segment.append(" ");
+						break;
+					}
+				}
+				
+				//Agency
+				for(AgencyVo a: targetVo.getAgencies()) {
+					if(currString.contains(a.getIdentifier())) {
+						segment.append("AGEN");
+						segment.append(a.getIdentifier());
+						segment.append(" ");
+						break;
+					}
+				}					
+				
+				segmentList.add(new AbstractMap.SimpleEntry<String, String>(segment.toString(), currString));
 			}
-			targetVo.setRawList(_tempList);
+			targetVo.setSegmentList(segmentList);
 		}
-	}
+	}	
 
 	/**
 	 * 

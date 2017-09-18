@@ -205,6 +205,9 @@
   border-right: 1px solid #adadad;
 }
 /*Custom flightpax*/
+.highlight {
+  background-color: yellow;
+}
 .flight-info * {
   font-family: 'Roboto Mono', monospace;
   color: white;

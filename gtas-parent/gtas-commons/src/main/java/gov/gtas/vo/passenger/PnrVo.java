@@ -8,6 +8,7 @@ package gov.gtas.vo.passenger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -34,6 +35,7 @@ public class PnrVo extends MessageVo {
     private String updateMode;
     private String raw;
     private List<String> rawList = new ArrayList<String>();
+	List<Map.Entry<String,String>> segmentList= new ArrayList<>();
     private Integer daysBookedBeforeTravel;
     private boolean pnrRecordExists = false; 
     private List<FlightVo> flights = new ArrayList<>();
@@ -294,8 +296,13 @@ public class PnrVo extends MessageVo {
     public void setSeatAssignments(List<SeatVo> seatAssignments) {
         this.seatAssignments = seatAssignments;
     }
-
-    @Override
+	public List<Map.Entry<String, String>> getSegmentList() {
+		return segmentList;
+	}
+	public void setSegmentList(List<Map.Entry<String, String>> segmentList) {
+		this.segmentList = segmentList;
+	}
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }

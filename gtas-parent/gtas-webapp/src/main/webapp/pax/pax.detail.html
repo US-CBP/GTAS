@@ -238,7 +238,7 @@
             </div>
             <div class="flex flex-vert ie-fix-md full-width align-items-center">
               <!--FlightPax!-->
-              <div class="cbp-card-container gtas-card-container full-width eight-table">
+              <div class="cbp-card-container gtas-card-container full-width six-table">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >
                     FlightPax ({{ passenger.apisMessageVo.flightpaxs.length }})
@@ -251,8 +251,6 @@
                           <th>{{'pass.middlename' | translate}}</th>
                           <th>{{'pass.lastname' | translate}}</th>
                           <th>{{'pass.paxtype' | translate}}</th>
-                          <th>{{'apis.embarkation' | translate}}</th>
-                          <th>{{'apis.debarkation' | translate}}</th>
                           <th>{{'apis.residence' | translate}}</th>
                           <th>{{'apis.port' | translate}}</th>
                         </tr>
@@ -266,8 +264,6 @@
                             <td>{{flightpax.middleName}}</td>
                             <td>{{flightpax.lastName}}</td>
                             <td>{{flightpax.passengerType}}</td>
-                            <td>{{flightpax.embarkation}}</td>
-                            <td>{{flightpax.debarkation}}</td>
                             <td>{{flightpax.residencyCountry}}</td>
                             <td>{{flightpax.portOfFirstArrival}}</td>
                           </tr>
@@ -323,7 +319,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="leg in passenger.pnrVo.flightLegs | orderBy: 'etd'">
+                            <tr ng-repeat="leg in passenger.pnrVo.flightLegs | orderBy: 'etd'" ng-click="highlightClass('TVL'+leg.originAirport)">
                               <td>{{leg.legNumber }}</td>
                               <td>
                                 <a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">
@@ -362,7 +358,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="pass in passenger.pnrVo.passengers">
+                            <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
                               <td>{{ pass.firstName }}</td>
                               <td>{{ pass.middleName }}</td>
                               <td>
@@ -401,7 +397,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="doc in passenger.pnrVo.documents">
+                            <tr ng-repeat="doc in passenger.pnrVo.documents" ng-click="highlightClass('DOCS'+doc.documentNumber)">
                               <td>{{doc.firstName}}</td>
                               <td>{{doc.lastName}}</td>
                               <td>{{doc.documentType}}</td>
@@ -435,7 +431,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index">
+                            <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index" ng-click="highlightClass('ADD'+addr.city)">
                               <td>{{ addr.city }}</td>
                               <td>{{ addr.state }}</td>
                               <td>{{ addr.country }}</td>
@@ -464,7 +460,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index">
+                            <tr ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index" ng-click="highlightClass('PHONE'+phn.number)">
                               <td>{{phn.number}}</td>
                             </tr>
                           </tbody>
@@ -490,7 +486,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="email in passenger.pnrVo.emails track by $index">
+                            <tr ng-repeat="email in passenger.pnrVo.emails track by $index" ng-click="highlightClass('EMAIL'+email.address)">
                               <td>{{email.address}}</td>
                             </tr>
                           </tbody>
@@ -519,7 +515,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index">
+                            <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index" ng-click="highlightClass('FOP'+cc.number)">
                               <td>{{cc.accountHolder}}</td>
                               <td>{{cc.cardType}}</td>
                               <td>{{cc.number}}</td>
@@ -551,7 +547,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index">
+                            <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index" ng-click="highlightClass('FTI'+ff.number)">
                                 <td>{{ff.carrier}}</td>
                                 <td>{{ff.number}}</td>
                             </tr>
@@ -575,8 +571,8 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="i in passenger.pnrVo.rawList track by $index">
-                                <td>{{ $index+1 }} .&nbsp;&nbsp;&nbsp; {{ i }}</td>
+                            <tr ng-repeat="i in passenger.pnrVo.segmentList track by $index">
+                                <td ng-class="i.key">{{ $index+1 }} .&nbsp;&nbsp;&nbsp; {{ i.value }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -604,7 +600,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="sa in passenger.pnrVo.seatAssignments">
+                            <tr ng-repeat="sa in passenger.pnrVo.seatAssignments" ng-click="highlightClass('SEAT'+sa.number)">
                                 <td>{{ sa.lastName }}</td>
                                 <td>{{ sa.firstName }}</td>
                                 <td>{{ sa.flightNumber }}</td>
@@ -638,7 +634,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="agency in passenger.pnrVo.agencies">
+                            <tr ng-repeat="agency in passenger.pnrVo.agencies" ng-click="highlightClass('AGEN'+agency.identifier)">
                               <td>{{agency.type}}</td>
                               <td>{{agency.city}}</td>
                               <td>{{agency.identifier}}</td>
@@ -672,7 +668,7 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="bags in passenger.pnrVo.bags">
+                            <tr ng-repeat="bags in passenger.pnrVo.bags" ng-click="highlightClass('TVD'+bag.bagId)">
                               <td>{{bags.bagId}}</td>
                               <td>{{bags.destination}}</td>
                             </tr>
