@@ -22,6 +22,8 @@
                     Citizenship: {{ caseItem.citizenshipCountry }}
                   </span>
 
+                  <!--<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme"> Link to Passenger Detail </md-button>-->
+                  <md-button aria-label="type" href="#/paxdetail/{{ caseItem.paxId }}/{{ caseItem.flightId }}" target="pax.detail.{{ caseItem.paxId }}.{{ caseItem.flightId }}" class="md-primary md-button md-default-theme"> Link to Passenger Detail </md-button>
                 </div>
               </div>
             </div>

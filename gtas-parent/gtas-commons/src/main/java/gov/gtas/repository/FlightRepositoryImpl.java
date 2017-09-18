@@ -219,7 +219,10 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from loader_audit_logs",
 				"delete from error_detail",
 				"delete from audit_log",
-				"delete from dashboard_message_stats"
+				"delete from dashboard_message_stats",
+				"delete from cases",
+				"delete from hits_disposition",
+				"delete from hits_disposition_comments"
 				};
 
 		Session session = em.unwrap(Session.class);

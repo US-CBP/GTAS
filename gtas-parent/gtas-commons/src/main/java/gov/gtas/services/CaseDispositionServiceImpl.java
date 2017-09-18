@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.CaseDispositionStatusEnum;
 import gov.gtas.model.Case;
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
@@ -46,6 +47,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
     @Resource
     private HitDetailRepository hitDetailRepository;
+
+
 
     public CaseDispositionServiceImpl() {
     }
@@ -132,17 +135,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setDob(dob);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
         _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
-        if(_tempCase!=null){aCase = _tempCase; }
+        if(_tempCase!=null &&
+                (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
+                ||_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN))))
+                {aCase = _tempCase; }
 
-        if(casesToCommit!=null){
-            final Case _tempCaseToCompare = aCase;
-            Case existingCase = (Case)casesToCommit.stream()
-                    .filter(x -> _tempCaseToCompare.equals(x))
-                    .findAny()
-                    .orElse(null);
-            if(existingCase!=null)aCase=existingCase;
-            else casesToCommit.add(aCase);
-        }
+        //redundant at this time
+        //contextCases(aCase);
 
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
@@ -163,6 +162,23 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
         caseDispositionRepository.saveAndFlush(aCase);
         return aCase;
+    }
+
+
+    private void contextCases(Case aCase) {
+        try{
+            if(casesToCommit!=null){
+                final Case _tempCaseToCompare = aCase;
+                Case existingCase = (Case)casesToCommit.stream()
+                        .filter(x -> _tempCaseToCompare.equals(x))
+                        .findAny()
+                        .orElse(null);
+                if(existingCase!=null)aCase=existingCase;
+                else casesToCommit.add(aCase);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
