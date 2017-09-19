@@ -14,7 +14,7 @@ public class ParseUtilsTest {
     @Test
     public void testPrepTelephoneNumber() {
         String num = ParseUtils.prepTelephoneNumber("+1-019-324- 1234");
-        assertEquals("10193241234", num);
+        assertEquals("+1-019-324-1234", num);
     }
     
     @Test

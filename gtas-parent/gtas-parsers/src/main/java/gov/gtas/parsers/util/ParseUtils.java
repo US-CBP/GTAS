@@ -82,7 +82,22 @@ public final class ParseUtils {
         if (StringUtils.isBlank(number)) {
             return null;
         }
-        return number.replaceAll("[^0-9]", "");
+        number=number.replace(" ", "");
+        if(number.indexOf("H") >-1){
+        	number=number.replaceAll("H", " H-");
+        }
+        if(number.indexOf("W") >-1){
+        	number=number.replaceAll("W", " W-");
+        }
+        if(number.indexOf("O") >-1){
+        	number=number.replaceAll("O", " O-");
+        }
+        if(number.indexOf("M") >-1){
+        	number=number.replaceAll("M", " M-");
+        }
+        
+        return number;
+        //return number.replaceAll("[^0-9]", "");
     }
        
     public static Integer returnNumberOrNull(String s) {
@@ -96,7 +111,9 @@ public final class ParseUtils {
             return null;
         }
     }
+    
     public static boolean isValidDocument(DocumentVo d) {
     	return (StringUtils.isNotEmpty(d.getDocumentNumber()) && StringUtils.isNotEmpty(d.getDocumentType()));
     }
+    
 }

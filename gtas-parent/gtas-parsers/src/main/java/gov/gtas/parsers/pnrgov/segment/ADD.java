@@ -83,6 +83,9 @@ public class ADD extends Segment {
             if((StringUtils.isNotBlank(c.getElement(0)) && ("H".equalsIgnoreCase(c.getElement(0))))){
             	this.telephone = freeText;
             }
+            if((StringUtils.isNotBlank(c.getElement(0)) && ("O".equalsIgnoreCase(c.getElement(0))))){
+            	this.telephone = freeText;
+            }
             //ADD++N:::::::M+1234567890' the number of :'s may vary.
             //Data | phone | ADD++N:::::::M+ #581 fix
             if((StringUtils.isNotBlank(c.getElement(0)) && ("N".equalsIgnoreCase(c.getElement(0))))){
