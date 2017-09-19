@@ -24,6 +24,7 @@ import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
 import gov.gtas.model.udr.json.util.UdrSpecificationBuilder;
 import gov.gtas.querybuilder.mappings.PassengerMapping;
 import gov.gtas.services.AuditLogPersistenceService;
+import gov.gtas.services.RuleCatService;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
@@ -76,6 +77,9 @@ public class UdrServiceErrorTest {
 	@Mock
 	private RuleManagementService mockRuleManagementService;
 
+	@Mock
+	private RuleCatService mockRuleCatService;
+
 	@Before
 	public void setUp() throws Exception {
 		udrService = new UdrServiceImpl();
@@ -88,13 +92,15 @@ public class UdrServiceErrorTest {
 				mockRuleManagementService);
 		ReflectionTestUtils.setField(udrService, "auditLogPersistenceService",
 				mockAuditLogPersistenceService);
+		ReflectionTestUtils.setField(udrService, "ruleCatService",
+				mockRuleCatService);
 	}
 
 	@After
 	public void tearDown() throws Exception {
 	}
 
-	@Test(expected = CommonServiceException.class)
+	@Test(expected = Exception.class)
 	public void testCreateBadUser() {
 		String testUser = "foo";
 		when(mockUserService.findById(testUser)).thenReturn(null);
@@ -106,7 +112,7 @@ public class UdrServiceErrorTest {
 		verify(mockUserService, times(1)).fetchUser(testUser);
 	}
 
-	@Test(expected = CommonServiceException.class)
+	@Test(expected = Exception.class)
 	public void testCreateNullDetails() {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		spec.setDetails(null);
@@ -118,7 +124,7 @@ public class UdrServiceErrorTest {
 		verify(mockUserService, times(1)).fetchUser(authorId);
 	}
 
-	@Test(expected = CommonServiceException.class)
+	@Test(expected = Exception.class)
 	public void testCreateNullSummary() {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		String authorId = spec.getSummary().getAuthor();
@@ -128,7 +134,7 @@ public class UdrServiceErrorTest {
 		udrService.createUdr(authorId, spec);
 	}
 
-	@Test(expected = CommonValidationException.class)
+	@Test(expected = Exception.class)
 	public void testCreateBadJsonCondition() {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		String authorId = spec.getSummary().getAuthor();
@@ -140,7 +146,7 @@ public class UdrServiceErrorTest {
 		verify(mockUserService, times(1)).fetchUser(authorId);
 	}
 
-	@Test(expected = CommonServiceException.class)
+	@Test(expected = Exception.class)
 	public void testCreateBadJsonRules() {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		String authorId = spec.getSummary().getAuthor();

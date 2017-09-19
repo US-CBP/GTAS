@@ -286,7 +286,7 @@ public class UdrServiceImpl implements UdrService {
 			ioe.printStackTrace();
 			throw new RuntimeException(ioe.getMessage());
 		} catch(Exception ex){
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 
 		UdrRule savedRule = rulePersistenceService.create(ruleToSave, userId);
