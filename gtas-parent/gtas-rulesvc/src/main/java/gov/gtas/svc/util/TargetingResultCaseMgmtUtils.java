@@ -96,7 +96,7 @@ public class TargetingResultCaseMgmtUtils {
         Passenger _tempPax = null;
         try {
             _tempPaxId = rhd.getPassengerId();
-//            _tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
+            //_tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
             _tempPax = dispositionService.findPaxByID(_tempPaxId);
             //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
             if (_tempPax != null) {

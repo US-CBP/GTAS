@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.gtas.model.lookup.RuleCat;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -44,6 +46,11 @@ public class HitsDisposition extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
     private Set<HitsDispositionComments> dispComments;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "rule_cat_id", nullable = true, referencedColumnName = "id")
+    private RuleCat ruleCat;
 
 
     public String getValid() {
@@ -92,6 +99,14 @@ public class HitsDisposition extends BaseEntityAudit {
 
     public void setCaseId(long caseId) {
         this.caseId = caseId;
+    }
+
+    public RuleCat getRuleCat() {
+        return ruleCat;
+    }
+
+    public void setRuleCat(RuleCat ruleCat) {
+        this.ruleCat = ruleCat;
     }
 
     @Override

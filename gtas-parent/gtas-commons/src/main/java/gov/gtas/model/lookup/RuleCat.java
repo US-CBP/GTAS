@@ -6,11 +6,13 @@
 package gov.gtas.model.lookup;
 
 import gov.gtas.model.BaseEntityAudit;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitsDisposition;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "rule_category")
@@ -28,6 +30,9 @@ public class RuleCat extends BaseEntityAudit {
 
     @Column(name = "priority", nullable = false)
     private Long priority;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HitsDisposition> hitsDispositions = new ArrayList<HitsDisposition>();
 
     public Long getCatId() {
         return catId;
@@ -66,5 +71,13 @@ public class RuleCat extends BaseEntityAudit {
 
     public RuleCat(Long catId) {
         this.catId = catId;
+    }
+
+    public List<HitsDisposition> getHitsDispositions() {
+        return hitsDispositions;
+    }
+
+    public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
+        this.hitsDispositions = hitsDispositions;
     }
 }

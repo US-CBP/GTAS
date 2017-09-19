@@ -11,10 +11,8 @@ import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.DispositionStatusCode;
-import gov.gtas.repository.CaseDispositionRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitDetailRepository;
-import gov.gtas.repository.PassengerRepository;
+import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.repository.*;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
@@ -47,6 +45,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
     @Resource
     private HitDetailRepository hitDetailRepository;
+
+    @Resource
+    private RuleCatRepository ruleCatRepository;
 
 
 
@@ -145,6 +146,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
+            pullRuleCategory(hitDisp, _tempHitId);
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
             hitDisp.setDescription(hitDesc);
@@ -165,6 +167,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
 
+    /**
+     * Utility method to manage cases to persist
+     * @param aCase
+     */
     private void contextCases(Case aCase) {
         try{
             if(casesToCommit!=null){
@@ -179,6 +185,17 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         }catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * Utility method to pull Rule Cat
+     * @param hitDisp
+     * @param id
+     */
+    private void pullRuleCategory(HitsDisposition hitDisp, Long id){
+            try{
+                hitDisp.setRuleCat(ruleCatRepository.findOne(id));
+            }catch (Exception ex){  ex.printStackTrace();}
     }
 
     @Override
@@ -319,27 +336,40 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             Long fId = f.getId();
             int rCount = 0;
             int wCount = 0;
-//            List<HitsSummary> hList = hitsSummaryRepository.findHitsByFlightId(fId);
-//            for (HitsSummary hs : hList) {
-//                rCount += hs.getRuleHitCount();
-//                wCount += hs.getWatchListHitCount();
-//            }
-//            f.setListHitCount(wCount);
-//            f.setRuleHitCount(rCount);
+
         }
         caseDispositionRepository.flush();
 
         Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
         for (Case f : tuple2.getRight()) {
             CaseVo vo = new CaseVo();
+            f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
             vo.setHitsDispositions(f.getHitsDispositions());
+            vo.setHitsDispositions(returnHitsDisposition(f.getHitsDispositions()));
             BeanUtils.copyProperties(f, vo);
 
-//            vo.setListHitCount(f.getListHitCount());
-//            vo.setRuleHitCount(f.getRuleHitCount());
             vos.add(vo);
         }
 
         return new CasePageDto(vos, tuple.getLeft());
+    }
+
+    /**
+     * Utility method to fetch model object
+     * @param _tempHitsDispositionSet
+     * @return
+     */
+    private Set<HitsDisposition> returnHitsDisposition (Set<HitsDisposition> _tempHitsDispositionSet){
+
+        Set<HitsDisposition> _tempReturnHitsDispSet = new HashSet<HitsDisposition>();
+        HitsDisposition _tempHitsDisp = new HitsDisposition();
+        RuleCat _tempRuleCat = new RuleCat();
+        for(HitsDisposition hitDisp : _tempHitsDispositionSet){
+            _tempHitsDisp = new HitsDisposition();
+            BeanUtils.copyProperties(hitDisp, _tempHitsDisp);
+            _tempHitsDisp.setRuleCat(hitDisp.getRuleCat());
+            _tempReturnHitsDispSet.add(_tempHitsDisp);
+        }
+        return _tempReturnHitsDispSet;
     }
 }
