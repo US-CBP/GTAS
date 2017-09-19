@@ -137,15 +137,15 @@
       <div id="subnav" class="collapse navbar-collapse">
         <div class="nav navbar-nav">
           <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
-            <li ng-class="{'active':selectedTab==='flights'}">
-              <a ng-disabled="onRoute('flights')" ng-click="setSelectedTab('flights')" href="#/flights" role="tab">
+            <li ng-class="{'active': setSelectedTab('/flights')}">
+              <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>
-            <li ng-class="{'active':selectedTab==='passengers'}">
-              <a ng-disabled="onRoute('passengers')" ng-click="setSelectedTab('passengers')" href="#/passengers" role="tab">
+            <li ng-class="{'active': setSelectedTab('/passengers')}">
+              <a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">
 	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; {{'menu.passengers' | translate}}
 	              </a></li>
-            <li ng-class="{'active':selectedTab==='cases'}">
-              <a ng-disabled="onRoute('cases')" ng-click="setSelectedTab('cases')" href="#/cases" role="tab">
+            <li ng-class="{'active': setSelectedTab('/cases')}">
+              <a ng-disabled="onRoute('cases')" href="#/cases" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
 	              </a></li>
           </ul>

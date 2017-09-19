@@ -141,9 +141,8 @@ var app;
            		}
            };
 
-           $rootScope.selectedTab = '';
-           $rootScope.setSelectedTab = function(tabName){
-        	   $rootScope.selectedTab = tabName;
+           $rootScope.setSelectedTab = function(route){
+             return route === $location.path();
            };
 
            $rootScope.$on('IdleStart', function(){
