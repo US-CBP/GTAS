@@ -54,6 +54,9 @@ public class RulePersistenceServiceIT {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RuleCatService ruleCatService;
+
     private RuleServiceDataGenUtils testGenUtils;
 
     @Before

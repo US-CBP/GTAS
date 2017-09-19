@@ -6,21 +6,16 @@
 package gov.gtas.model.udr;
 
 import gov.gtas.enumtype.YesNoEnum;
+import gov.gtas.model.lookup.Airport;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.util.DateCalendarUtils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,41 +32,47 @@ public class RuleMeta implements Serializable {
      * serial version UID
      */
     private static final long serialVersionUID = 384462394390643572L;
-    
+
     @Id
-    @Column(name="ID")
+    @Column(name = "ID")
     private Long id;
-    
+
     @OneToOne
-    @JoinColumn(name="ID", referencedColumnName="ID", insertable=false, updatable=false)
+    @JoinColumn(name = "ID", referencedColumnName = "ID", insertable = false, updatable = false)
     private UdrRule parent;
-    
-    @Column(name = "TITLE", nullable=false, length = 20)
+
+    @Column(name = "TITLE", nullable = false, length = 20)
     private String title;
-    
+
     @Column(name = "DESCRIPTION", length = 1024)
     private String description;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "START_DT", nullable = false, length = 19)
     private Date startDt;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "END_DT", length = 19)
     private Date endDt;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "ENABLE_FLAG", nullable = false, length = 1) 
+    @Column(name = "ENABLE_FLAG", nullable = false, length = 1)
     private YesNoEnum enabled;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "HIGH_PRIORITY_FLAG", nullable = false, length = 1)  
+    @Column(name = "HIGH_PRIORITY_FLAG", nullable = false, length = 1)
     private YesNoEnum priorityHigh;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "HIT_SHARE_FLAG", nullable = false, length = 1)  
+    @Column(name = "HIT_SHARE_FLAG", nullable = false, length = 1)
     private YesNoEnum hitSharing;
-    
+
+
+    @ManyToMany(targetEntity = RuleCat.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "udr_rule_cat", joinColumns = @JoinColumn(name = "udr_rule_id"), inverseJoinColumns = @JoinColumn(name = "rule_cat_id"))
+    private Set<RuleCat> ruleCategories = new HashSet<RuleCat>();
+
+
     /**
      * Constructor for JPA.
      */
@@ -88,18 +89,31 @@ public class RuleMeta implements Serializable {
     }
 
     public RuleMeta(UdrRule parentRule, String title, String description, Date startDt,
-            Date endDt, YesNoEnum enabled, YesNoEnum priorityHigh,
-            YesNoEnum hitSharing) {
+                    Date endDt, YesNoEnum enabled, YesNoEnum priorityHigh,
+                    YesNoEnum hitSharing) {
         this.id = parentRule.getId();
         this.title = title;
-        this.description = description;     
-        this.startDt = startDt;     
+        this.description = description;
+        this.startDt = startDt;
         this.endDt = endDt;
         this.enabled = enabled;
         this.priorityHigh = priorityHigh;
         this.hitSharing = hitSharing;
     }
 
+    public RuleMeta(Long id, String title, String description,
+                    Date startDt, Date endDt, YesNoEnum enabled,
+                    YesNoEnum priorityHigh, YesNoEnum hitSharing, Set<RuleCat> ruleCategories) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.startDt = startDt;
+        this.endDt = endDt;
+        this.enabled = enabled;
+        this.priorityHigh = priorityHigh;
+        this.hitSharing = hitSharing;
+        this.ruleCategories = ruleCategories;
+    }
 
     /**
      * @return the id
@@ -134,8 +148,8 @@ public class RuleMeta implements Serializable {
      */
     public void setParent(UdrRule parent) {
         this.parent = parent;
-        if(parent != null && parent.getId() != null){
-           this.id = parent.getId();
+        if (parent != null && parent.getId() != null) {
+            this.id = parent.getId();
         }
     }
 
@@ -185,6 +199,7 @@ public class RuleMeta implements Serializable {
     public String getDescription() {
         return this.description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -234,21 +249,29 @@ public class RuleMeta implements Serializable {
         EqualsBuilder equalsBuilder = new EqualsBuilder();
         equalsBuilder.append(title, other.title);
         equalsBuilder.append(description, other.description);
-        
+
         //start and end date equality up to seconds
-        if(!DateCalendarUtils.dateRoundedEquals(startDt,  other.startDt)
-            || !DateCalendarUtils.dateRoundedEquals(endDt,  other.endDt)    ){
+        if (!DateCalendarUtils.dateRoundedEquals(startDt, other.startDt)
+                || !DateCalendarUtils.dateRoundedEquals(endDt, other.endDt)) {
             return false;
         }
-        
+
         equalsBuilder.append(enabled, other.enabled);
         equalsBuilder.append(priorityHigh, other.priorityHigh);
         equalsBuilder.append(hitSharing, other.hitSharing);
         return equalsBuilder.isEquals();
     }
+
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
-    }        
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
 
+    public Set<RuleCat> getRuleCategories() {
+        return ruleCategories;
+    }
+
+    public void setRuleCategories(Set<RuleCat> ruleCategories) {
+        this.ruleCategories = ruleCategories;
+    }
 }

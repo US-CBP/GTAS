@@ -9,6 +9,8 @@ import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.User;
+import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.RuleMeta;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.MetaData;
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -49,9 +53,13 @@ public class JsonToDomainObjectConverter {
         final YesNoEnum enabled = metaData.isEnabled() ? YesNoEnum.Y
                 : YesNoEnum.N;
         final Date endDate = metaData.getEndDate();
-
+        final Long ruleCatId = metaData.getRuleCat();
+//
+//        RuleMeta ret = createRuleMeta(id, title, descr, startDate, endDate,
+//                enabled);
+        //@RuleCategory changes
         RuleMeta ret = createRuleMeta(id, title, descr, startDate, endDate,
-                enabled);
+                enabled, ruleCatId);
         return ret;
     }
 
@@ -246,4 +254,41 @@ public class JsonToDomainObjectConverter {
         return meta;
     }
 
+    /**
+     * Creates the meta data portion of the UdrRule domain object.
+     * //@RuleCategory changes
+     * @param id
+     *            the Id of the domain UDR Rule object.
+     * @param title
+     *            the title of the rule.
+     * @param descr
+     *            the rule description.
+     * @param startDate
+     *            the day the rule should become active (if enabled).
+     * @param endDate
+     *            the day the rule should cease to be active (optional).
+     * @param enabled
+     *            enabled state of the rule.
+     * @return
+     */
+    private static RuleMeta createRuleMeta(Long id, String title, String descr,
+                                           Date startDate, Date endDate, YesNoEnum enabled, Long _tempRuleCatStr) {
+        RuleMeta meta = new RuleMeta();
+        Set<RuleCat> _tempRuleCatSet = new HashSet<RuleCat>();
+        RuleCat _tempRuleCat = new RuleCat();
+        if (id != null) {
+            meta.setId(id);
+        }
+        meta.setDescription(descr);
+        meta.setEnabled(enabled);
+        meta.setHitSharing(YesNoEnum.N);
+        meta.setPriorityHigh(YesNoEnum.N);
+        meta.setStartDt(startDate);
+        meta.setEndDt(endDate);
+        meta.setTitle(title);
+        _tempRuleCat.setId(_tempRuleCatStr);
+        _tempRuleCatSet.add(_tempRuleCat);
+        meta.setRuleCategories(_tempRuleCatSet);
+        return meta;
+    }
 }
