@@ -60,4 +60,11 @@ public class RuleCat extends BaseEntityAudit {
     public void setPriority(Long priority) {
         this.priority = priority;
     }
+
+    public RuleCat() {
+    }
+
+    public RuleCat(Long catId) {
+        this.catId = catId;
+    }
 }

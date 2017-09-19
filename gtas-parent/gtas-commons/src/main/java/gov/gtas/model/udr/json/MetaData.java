@@ -19,6 +19,8 @@ public class MetaData implements Serializable {
     
     private String title;
     private String description;
+
+    private Long ruleCat;
         
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date startDate;
@@ -38,6 +40,25 @@ public class MetaData implements Serializable {
         this.startDate = startDate;
         startDate.setTime(startDate.getTime());
         this.author = auth;
+    }
+
+    public MetaData(String title, String description, Long ruleCat, Date startDate, Date endDate, String author, boolean enabled) {
+            this.title = title;
+            this.description = description;
+            this.ruleCat = ruleCat;
+            this.startDate = startDate;
+            startDate.setTime(startDate.getTime());
+            this.endDate = endDate;
+            endDate.setTime(endDate.getTime());
+
+    }
+
+    public Long getRuleCat() {
+        return ruleCat;
+    }
+
+    public void setRuleCat(Long ruleCat) {
+        this.ruleCat = ruleCat;
     }
 
     /**

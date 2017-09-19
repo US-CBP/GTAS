@@ -21,6 +21,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     this.startDate = obj ? obj.startDate : todayDate;
                     this.endDate = obj ? obj.endDate : undefined;
                     this.enabled = obj ? obj.enabled : true;
+                    this.ruleCat = obj ? obj.ruleCat : null;
                 }
             }
         },

@@ -168,6 +168,8 @@ public class UdrManagementController {
 		if (meta != null) {
 			meta.setStartDate(fixMetaDataDates(meta.getStartDate()));
 			meta.setEndDate(fixMetaDataDates(meta.getEndDate()));
+			//temp change
+			meta.setRuleCat(new Long(1));
 		}
 		return udrService.createUdr(userId, inputSpec);
 

@@ -18,6 +18,7 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.User;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.RuleMeta;
@@ -30,6 +31,7 @@ import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
 import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import gov.gtas.services.AuditLogPersistenceService;
+import gov.gtas.services.RuleCatService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.util.UdrServiceHelper;
@@ -80,6 +82,10 @@ public class UdrServiceImpl implements UdrService {
 
 	@Autowired
 	private RuleManagementService ruleManagementService;
+
+	//@RuleCategory changes
+	@Autowired
+	private RuleCatService ruleCatService;
 
 	@Override
 	@Transactional
@@ -263,14 +269,24 @@ public class UdrServiceImpl implements UdrService {
 		String authorUserId = meta.getAuthor();
 		User author = fetchRuleAuthor(userId, authorUserId);
 
+		//@RuleCategory changes begin
+		RuleCat _tempRuleCat = new RuleCat();
+		Set<RuleCat> _tempRuleCatSet;
+		//@RuleCategory changes END
+
 		UdrRule ruleToSave = null;
 		try {
 			ruleToSave = JsonToDomainObjectConverter.createUdrRuleFromJson(
 					udrToCreate, author);
+			//@RuleCategory changes Begin
+			getRuleCatFromRuleMeta(ruleToSave);
+			//@RuleCategory changes END
 			UdrServiceHelper.addEngineRulesToUdrRule(ruleToSave, udrToCreate);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new RuntimeException(ioe.getMessage());
+		} catch(Exception ex){
+			ex.printStackTrace();
 		}
 
 		UdrRule savedRule = rulePersistenceService.create(ruleToSave, userId);
@@ -504,5 +520,29 @@ public class UdrServiceImpl implements UdrService {
 			actionData.addProperty("endDate", StringUtils.EMPTY);
 		}
 		return actionData;
+	}
+
+	//@RuleCat changes
+	// Utility method to retrieve RuleCat Set from nested RuleMeta under UDR Rule
+	private void getRuleCatFromRuleMeta(UdrRule udrRule) throws Exception{
+
+		Set<RuleCat> _tempRuleCatSet = udrRule.getMetaData().getRuleCategories();
+		RuleCat _tempRuleCat = new RuleCat();
+		_tempRuleCat = _tempRuleCatSet.stream()
+				.filter(x -> x.getId()!=null)
+				.findAny()
+				.orElse(null);
+
+		if(_tempRuleCat==null){ // if category is missing, set it to "General" category
+			_tempRuleCat=new RuleCat();
+			_tempRuleCat.setId(new Long(1));
+		}
+
+		//finally, retrieve this category object and set it in UDRrule for persistence
+		_tempRuleCat = ruleCatService.findRuleCatByID(_tempRuleCat.getId());
+		_tempRuleCatSet = new HashSet<RuleCat>();
+		_tempRuleCatSet.add(_tempRuleCat);
+		udrRule.getMetaData().setRuleCategories(_tempRuleCatSet);
+
 	}
 }
