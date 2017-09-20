@@ -43,6 +43,19 @@ public class Document extends BaseEntity {
 	@ManyToOne
 	private Passenger passenger;
 
+    /** calculated field */
+    @Column(name = "days_valid")
+    private Integer numberOfDaysValid;
+ 
+    
+	public Integer getNumberOfDaysValid() {
+		return numberOfDaysValid;
+	}
+
+	public void setNumberOfDaysValid(Integer numberOfDaysValid) {
+		this.numberOfDaysValid = numberOfDaysValid;
+	}
+
 	public String getDocumentType() {
 		return documentType;
 	}

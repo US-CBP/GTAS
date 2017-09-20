@@ -141,21 +141,15 @@ public class LoaderUtils {
     	Date docExpDate=null;
     	int validdays=0;
     	for(Document d : p.getDocuments()){
-    		if(d.getExpirationDate() != null && d.getExpirationDate().after(etd) ){
+    		if(d.getExpirationDate() != null && etd != null ){
     			docExpDate=d.getExpirationDate();
-    			break;
-    		}
-    		else{
-    			if(docExpDate ==null){
-    				docExpDate=d.getExpirationDate();
-    			}
+         		validdays=DateUtils.calculateValidVisaPeriod(etd, docExpDate);
+         		if(d.getExpirationDate().after(etd)){
+         			p.setNumberOfDaysVisaValid(validdays);
+         		}
+         		d.setNumberOfDaysValid(validdays);
     		}
     	}
-    	if(etd != null && docExpDate != null){
-     		validdays=DateUtils.calculateValidVisaPeriod(etd, docExpDate);
-    		p.setNumberOfDaysVisaValid(validdays);
-    	}
-    	
     }
     
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
