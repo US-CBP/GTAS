@@ -16,6 +16,7 @@ import gov.gtas.repository.*;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.HitsDispositionVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -345,9 +346,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             CaseVo vo = new CaseVo();
             f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
             vo.setHitsDispositions(f.getHitsDispositions());
-            vo.setHitsDispositions(returnHitsDisposition(f.getHitsDispositions()));
+            vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
             BeanUtils.copyProperties(f, vo);
-
             vos.add(vo);
         }
 
@@ -359,15 +359,18 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
      * @param _tempHitsDispositionSet
      * @return
      */
-    private Set<HitsDisposition> returnHitsDisposition (Set<HitsDisposition> _tempHitsDispositionSet){
+    private Set<HitsDispositionVo> returnHitsDisposition (Set<HitsDisposition> _tempHitsDispositionSet){
 
-        Set<HitsDisposition> _tempReturnHitsDispSet = new HashSet<HitsDisposition>();
-        HitsDisposition _tempHitsDisp = new HitsDisposition();
+        Set<HitsDispositionVo> _tempReturnHitsDispSet = new HashSet<HitsDispositionVo>();
+        Set<RuleCat> _tempRuleCatSet = new HashSet<RuleCat>();
+        HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
         RuleCat _tempRuleCat = new RuleCat();
         for(HitsDisposition hitDisp : _tempHitsDispositionSet){
-            _tempHitsDisp = new HitsDisposition();
+            _tempHitsDisp = new HitsDispositionVo();
             BeanUtils.copyProperties(hitDisp, _tempHitsDisp);
-            _tempHitsDisp.setRuleCat(hitDisp.getRuleCat());
+            BeanUtils.copyProperties(hitDisp.getRuleCat(), _tempRuleCat);
+            _tempRuleCatSet.add(_tempRuleCat);
+            _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
             _tempReturnHitsDispSet.add(_tempHitsDisp);
         }
         return _tempReturnHitsDispSet;

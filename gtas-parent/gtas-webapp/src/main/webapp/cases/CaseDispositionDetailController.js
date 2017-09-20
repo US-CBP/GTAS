@@ -16,6 +16,9 @@
             $scope.commentText;
             $scope.hitDispStatus;
             $scope.caseDispStatus;
+            $scope.caseItemHitsVo;
+            $scope.ruleCatSet;
+            $scope.ruleCat;
             $scope.dispStatus={
                 hitStatusShow:true,
                 caseStatusShow:true,
@@ -45,6 +48,7 @@
             if(typeof newCases.data !== undefined && newCases.data !== null) {
                 $scope.caseItem = newCases.data.cases[0];
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                $scope.caseItemHitsVo = $scope.caseItem.hitsDispositionVos;
                 $scope.caseDispStatus = $scope.caseItem.status;
                 $scope.dispStatus.caseStatusShow = ($scope.caseItem.status === 'CLOSED')? false: true;
             }

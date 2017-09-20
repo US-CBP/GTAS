@@ -31,6 +31,7 @@ public class CaseVo {
     private String status;
     private String description;
     private Set<HitsDisposition> hitsDispositions;
+    private Set<HitsDispositionVo> hitsDispositionVos;
 
     public Long getId() {
         return id;
@@ -54,6 +55,14 @@ public class CaseVo {
 
     public void setDob(Date dob) {
         this.dob = dob;
+    }
+
+    public Set<HitsDispositionVo> getHitsDispositionVos() {
+        return hitsDispositionVos;
+    }
+
+    public void setHitsDispositionVos(Set<HitsDispositionVo> hitsDispositionVos) {
+        this.hitsDispositionVos = hitsDispositionVos;
     }
 
     public String getHitType() {

@@ -33,7 +33,7 @@
             <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
               <thead align="left">
                 <tr>
-                  <th align="left">Hit#</th>
+                  <th align="left">Category</th>
                   <th class="text-center">Description</th>
                   <th class="text-center">Status</th>
                 </tr>
@@ -42,8 +42,8 @@
             <div class="floating-table-body">
               <table class="cbp-table-selectable mdl-js-data-table">
                 <tbody >
-                  <tr ng-repeat="hit in caseItemHits" ng-click="sideNav('comments',$index)">
-                    <td>{{ hit.hitId }}</td>
+                  <tr ng-repeat="hit in caseItemHitsVo" ng-click="sideNav('comments',$index)">
+                    <td>{{ hit.ruleCatSet[0].category }}</td>
                     <td>{{ hit.description }}</td>
                     <td>{{ hit.status }}</td>
                   </tr>
