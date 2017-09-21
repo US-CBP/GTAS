@@ -320,7 +320,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:flightId/:paxId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -337,7 +337,7 @@ var app;
                 .state('caseDisposition', {
                     url: '/casedisposition',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionCtrl',

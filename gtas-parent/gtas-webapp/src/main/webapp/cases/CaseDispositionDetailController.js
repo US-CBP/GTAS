@@ -8,7 +8,7 @@
     app.controller('CaseDispositionDetailCtrl',
         function ($scope, $http, $mdToast,
                   gridService,
-                  spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav) {
+                  spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
 
             $scope.caseItem;
             $scope.caseItemHits;
@@ -19,10 +19,16 @@
             $scope.caseItemHitsVo;
             $scope.ruleCatSet;
             $scope.ruleCat;
+            $scope.dispositionStatuses = [];
             $scope.dispStatus={
                 hitStatusShow:true,
                 caseStatusShow:true,
-                allHitsClosed:true
+                allHitsClosed:true,
+                caseStatusAdminView:false
+            };
+            $scope.dispStatus.constants={
+                CLOSED: 'CLOSED',
+                PENDINGCLOSURE: 'PENDING CLOSURE'
             };
             $scope.hitValidityStatuses=[
             {id: 1, name: 'Yes'},
@@ -40,6 +46,12 @@
             };
             $scope.hitDetailTrueHitFlag = false;
             $scope.caseItemHitId=null;
+            $scope.currentUser=null;
+
+            AuthService.getCurrentUser().then(function (user) {
+                $scope.currentUser = user;
+                $scope.dispStatus.caseStatusAdminView = ($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())? true: false;
+            });
 
             $scope.changeState = function(){
                 $scope.hitDetailTrueHitFlag = hitDetailTrueHitFlag;
@@ -50,7 +62,7 @@
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                 $scope.caseItemHitsVo = $scope.caseItem.hitsDispositionVos;
                 $scope.caseDispStatus = $scope.caseItem.status;
-                $scope.dispStatus.caseStatusShow = ($scope.caseItem.status === 'CLOSED')? false: true;
+                $scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
             }
 
             $scope.errorToast = function (error) {
@@ -66,16 +78,29 @@
                 html2pdf(element);
         };
 
-            caseService.getDispositionStatuses().then(function (response) {
-                $scope.dispositionStatuses = response.data;
-            });
+            $scope.populateDispStatuses = function(){
+                caseService.getDispositionStatuses().then(function (response) {
+                    $scope.dispositionStatuses = [];
+                    angular.forEach(response.data, function(item){
+                        $scope.dispositionStatuses.push(item);
+                        if($scope.currentUser!=null
+                            && !($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())
+                            && item.name.toUpperCase()===$scope.dispStatus.constants.CLOSED
+                        ) {
+                            $scope.dispositionStatuses.pop(item);
+                        }
+                    });
+                });
+            };
+
+            $scope.populateDispStatuses();
 
             $scope.pageSize = 10;
 
             $scope.caseConfirm = function() {
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
-                    if (item.status != 'CLOSED') $scope.dispStatus.allHitsClosed = false;
+                    if (item.status != $scope.dispStatus.constants.CLOSED) $scope.dispStatus.allHitsClosed = false;
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
@@ -121,10 +146,6 @@
                 });
             };
 
-            caseService.getDispositionStatuses().then(function (response) {
-                $scope.dispositionStatuses = response.data;
-            });
-
             $scope.closeSideNav = function(){
                 $mdSidenav('comments').close();
             };
@@ -134,7 +155,8 @@
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
                 $scope.hitDispStatus = $scope.caseItemHits[position].status;
-                $scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === 'CLOSED')? false: true;
+                $scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === $scope.dispStatus.constants.CLOSED)? false: true;
+                $scope.populateDispStatuses();
                 if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
                     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
                         else if($scope.hitDetailTrueHitFlag == 'false') $scope.hitDetailTrueHitFlag = false;

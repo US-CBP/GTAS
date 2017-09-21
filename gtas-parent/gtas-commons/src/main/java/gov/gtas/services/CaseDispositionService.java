@@ -14,14 +14,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.Date;
 import java.util.List;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
 
 public interface CaseDispositionService {
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public CasePageDto findAll(CaseRequestDto dto);
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public Case findHitsDispositionByCriteria(CaseRequestDto dto);
 
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
