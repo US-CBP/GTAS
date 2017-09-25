@@ -6,10 +6,7 @@
 package gov.gtas.services;
 
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
-import gov.gtas.model.Case;
-import gov.gtas.model.HitsDisposition;
-import gov.gtas.model.HitsDispositionComments;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.*;
@@ -21,6 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -34,6 +32,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             .getLogger(CaseDispositionServiceImpl.class);
 
     private static Set casesToCommit = new HashSet<Case>();
+
+    private static final String INITIAL_COMMENT="Initial Comment";
+
+    private static final String UPDATED_BY_INTERNAL="Internal";
 
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
@@ -49,6 +51,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
     @Resource
     private RuleCatRepository ruleCatRepository;
+
+    @Autowired
+    public RuleCatService ruleCatService;
 
 
 
@@ -73,7 +78,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
-            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispositionComments.setComments(INITIAL_COMMENT);
             hitsDispCommentsSet.add(hitsDispositionComments);
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
@@ -106,7 +111,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
-            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispositionComments.setComments(INITIAL_COMMENT);
             hitsDispCommentsSet.add(hitsDispositionComments);
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
@@ -124,10 +129,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
         Case aCase = new Case();
         Case _tempCase = null;
+        Long highPriorityRuleCatId = 1L;
         HitsDisposition hitDisp = new HitsDisposition();
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
         Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
         Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+        aCase.setUpdatedAt(new Date());
+        aCase.setUpdatedBy(UPDATED_BY_INTERNAL); //@ToDo change this to pass-by-value in the next release
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setPaxName(paxName);
@@ -148,17 +156,19 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
             pullRuleCategory(hitDisp, _tempHitId);
+            highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
             hitDisp.setDescription(hitDesc);
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
-            hitsDispositionComments.setComments("Initial Comment");
+            hitsDispositionComments.setComments(INITIAL_COMMENT);
             hitsDispCommentsSet.add(hitsDispositionComments);
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         if(aCase.getHitsDispositions()!=null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
 
@@ -197,6 +207,18 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             try{
                 hitDisp.setRuleCat(ruleCatRepository.findOne(id));
             }catch (Exception ex){  ex.printStackTrace();}
+    }
+
+    /**
+     *
+     * @param ruleId
+     * @return
+     */
+    private Long getHighPriorityRuleCatId(Long ruleId) {
+        try{
+             return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
+        }catch (Exception ex){ex.printStackTrace();}
+        return 1L;
     }
 
     @Override
@@ -311,6 +333,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
+    public Flight findFlightByID(Long id) {
+        return flightRepository.findOne(id);
+    }
+
+    @Override
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob,
                                                    String document, String hitDesc, Long hit_id) {
         List<Case> _tempCaseList = new ArrayList<>();
@@ -347,6 +374,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
             vo.setHitsDispositions(f.getHitsDispositions());
             vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
+            populatePassengerDetails(vo, f.getFlightId(),f.getPaxId());
             BeanUtils.copyProperties(f, vo);
             vos.add(vo);
         }
@@ -374,5 +402,20 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             _tempReturnHitsDispSet.add(_tempHitsDisp);
         }
         return _tempReturnHitsDispSet;
+    }
+
+
+    /**
+     * Utility method to pull passenger details for the cases view
+     * @param aCaseVo
+     * @param flightId
+     * @param paxId
+     */
+    private void populatePassengerDetails (CaseVo aCaseVo, Long flightId, Long paxId){
+        Passenger _tempPax = findPaxByID(paxId);
+        Flight _tempFlight = findFlightByID(flightId);
+        aCaseVo.setFirstName(_tempPax.getFirstName());
+        aCaseVo.setLastName(_tempPax.getLastName());
+        aCaseVo.setFlightNumber(_tempFlight.getFlightNumber());
     }
 }

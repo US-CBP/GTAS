@@ -82,11 +82,21 @@
 
             $scope.casesGrid.columnDefs = [
                 {
-                    field: 'flightId',
-                    name: 'flightId',
-                    displayName: 'Flight Id', headerCellFilter: 'translate',
+                    field: 'flightNumber',
+                    name: 'flightNumber',
+                    displayName: 'Flight', headerCellFilter: 'translate',
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-                    },
+                },
+                {
+                    field: 'lastName',
+                    name: 'lastName',
+                    displayName: 'Last Name', headerCellFilter: 'translate'
+                },
+                {
+                    field: 'firstName',
+                    name: 'firstName',
+                    displayName: 'First Name', headerCellFilter: 'translate'
+                },
                 {
                     field: 'paxName',
                     name: 'paxName',
@@ -97,7 +107,6 @@
                     name: 'hitType',
                     displayName: 'Hit Type'
                 },
-
                 {
                     field: 'status',
                     name: 'status',

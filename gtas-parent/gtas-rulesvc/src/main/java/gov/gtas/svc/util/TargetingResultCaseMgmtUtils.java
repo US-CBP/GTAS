@@ -87,6 +87,13 @@ public class TargetingResultCaseMgmtUtils {
         return ret;
     }
 
+    /**
+     * Method that does bulk of the Case Mgmt. calls
+     * @param rhd
+     * @param flightId
+     * @param resultMap
+     * @param dispositionService
+     */
     private static void processPassengerFlight(RuleHitDetail rhd,
                                                Long flightId, Map<RuleHitDetail, RuleHitDetail> resultMap,
                                                CaseDispositionService dispositionService) {
@@ -115,6 +122,11 @@ public class TargetingResultCaseMgmtUtils {
 
     }
 
+    /**
+     *
+     * @param ctx
+     * @param res
+     */
     public static void updateRuleExecutionContext(RuleExecutionContext ctx,
                                                   RuleServiceResult res) {
         logger.info("Entering updateRuleExecutionContext().");

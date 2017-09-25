@@ -13,4 +13,6 @@ public interface RuleCatService {
 
     public Iterable<RuleCat> findAll();
 
+    public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception;
+
 }

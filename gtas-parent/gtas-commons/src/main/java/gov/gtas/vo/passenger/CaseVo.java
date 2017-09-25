@@ -26,6 +26,7 @@ public class CaseVo {
     private String middleName;
     private String citizenshipCountry;
     private Date dob;
+    private String highPriorityRuleCat;
     private String flightNumber;
     private String createDate; 
     private String status;
@@ -155,6 +156,14 @@ public class CaseVo {
 
     public void setPaxId(Long paxId) {
         this.paxId = paxId;
+    }
+
+    public String getHighPriorityRuleCat() {
+        return highPriorityRuleCat;
+    }
+
+    public void setHighPriorityRuleCat(String highPriorityRuleCat) {
+        this.highPriorityRuleCat = highPriorityRuleCat;
     }
 
     public void setFlightDirection(String flightDirection) {

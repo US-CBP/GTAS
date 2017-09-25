@@ -33,7 +33,7 @@
             <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
               <thead align="left">
                 <tr>
-                  <th align="left">Category</th>
+                  <th align="left">Rule Category</th>
                   <th class="text-center">Description</th>
                   <th class="text-center">Status</th>
                 </tr>
@@ -112,7 +112,7 @@
   <md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="comments"
               style="width: 100%; max-width: 650px !important;">
     <md-toolbar class="md-theme-light">
-      <h2 class="md-toolbar-tools">{{hitDispStatus}} --  Hit# {{caseItemHitComments.hitId}} -- {{caseItemHitComments.description}}</h2>
+      <h2 class="md-toolbar-tools">Status ({{hitDispStatus}})    --    {{caseItemHitComments.description}}</h2>
     </md-toolbar>
     <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>

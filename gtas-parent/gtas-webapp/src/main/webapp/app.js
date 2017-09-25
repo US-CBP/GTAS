@@ -343,11 +343,7 @@ var app;
                             controller: 'CaseDispositionCtrl',
                             templateUrl: 'cases/caseDisposition.html'
                         }
-                        // ,
-                        // 'detail@caseDisposition': {
-                        //     //controller: 'CaseDispositionCtrl',//   CasesCtrl
-                        //     templateUrl: 'cases/case.detail.html'
-                        // }
+
                     },
                     resolve: {
                         newCases: function(caseDispositionService){
@@ -484,7 +480,7 @@ var app;
                 .state('detail', {
                     url: '/paxdetail/{paxId}/{flightId}',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
                     views: {
                         '@': {
                             controller: 'PassengerDetailCtrl',

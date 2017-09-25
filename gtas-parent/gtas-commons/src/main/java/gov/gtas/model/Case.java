@@ -47,6 +47,9 @@ public class Case extends BaseEntityAudit {
     @Column(name = "description", nullable = true)
     private String description;
 
+    @Column(name = "highPriorityRuleCatId", nullable = false)
+    private Long highPriorityRuleCatId;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="case_id", referencedColumnName = "id")
     private Set<HitsDisposition> hitsDispositions;
@@ -129,6 +132,14 @@ public class Case extends BaseEntityAudit {
 
     public void setDocument(String document) {
         this.document = document;
+    }
+
+    public Long getHighPriorityRuleCatId() {
+        return highPriorityRuleCatId;
+    }
+
+    public void setHighPriorityRuleCatId(Long highPriorityRuleCatId) {
+        this.highPriorityRuleCatId = highPriorityRuleCatId;
     }
 
     @Override

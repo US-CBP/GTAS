@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -35,6 +36,8 @@ public interface CaseDispositionService {
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit);
 
     public Passenger findPaxByID(Long id);
+
+    public Flight findFlightByID(Long id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
 

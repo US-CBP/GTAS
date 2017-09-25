@@ -110,7 +110,7 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
     ];
     $scope.sideNav = function(id) {
       $mdSidenav(id).toggle();
-    }
+    };
     $scope.getTableHeight = function(){
     	return gridService.calculateGridHeight($scope.pageSize);
     };

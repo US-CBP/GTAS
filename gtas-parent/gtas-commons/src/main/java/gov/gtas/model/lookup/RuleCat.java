@@ -8,6 +8,8 @@ package gov.gtas.model.lookup;
 import gov.gtas.model.BaseEntityAudit;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsDisposition;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -79,5 +81,33 @@ public class RuleCat extends BaseEntityAudit {
 
     public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
         this.hitsDispositions = hitsDispositions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RuleCat ruleCat = (RuleCat) o;
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(catId, ruleCat.catId)
+                .append(category, ruleCat.category)
+                .append(description, ruleCat.description)
+                .append(priority, ruleCat.priority)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(catId)
+                .append(category)
+                .append(description)
+                .append(priority)
+                .toHashCode();
     }
 }

@@ -6,7 +6,7 @@ INSERT INTO `role` VALUES ('2', 'Manage Queries');
 INSERT INTO `role` VALUES ('3', 'View Flight And Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
-INSERT INTO `role` VALUES ('6', 'Test');
+
 
 -- ----------------------------
 -- Users
@@ -32,7 +32,7 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtang', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtaylor', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('mcopenhafer', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 1);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 5);
 
 -- ----------------------------
 -- Records of flight_direction
