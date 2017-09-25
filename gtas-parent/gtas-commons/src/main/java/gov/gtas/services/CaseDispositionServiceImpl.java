@@ -67,7 +67,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
         Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
         Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
-
+        Long highPriorityRuleCatId = 1L;
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
@@ -97,7 +98,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
         Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
         Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
-
+        Long highPriorityRuleCatId = 1L;
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setPaxName(paxName);
