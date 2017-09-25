@@ -7,16 +7,15 @@ notifications:
     rooms:
     - gtas:G1lDbK5rR8cNBEhlszZNGDnL#general
     on_success: change
-    on_failure: always
+    on_failure: change
   email:
     recipients:
     - david.j.ertel@cbp.dhs.gov
     - taylorjwdev@gmail.com
     - donleyac@gmail.com 
     - vempatisvr@gmail.com
-    - mikecope@gmail.com
     on_success: change
-    on_failure: always
+    on_failure: change
 before_script:
 - cd gtas-parent
 - sed -i 's/admin/'"$DB_PASS"'/' gtas-commons/src/main/resources/hibernate.properties

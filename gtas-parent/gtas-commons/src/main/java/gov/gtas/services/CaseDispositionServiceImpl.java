@@ -86,7 +86,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         }
         aCase.setHitsDispositions(hitsDispSet);
 
-
         caseDispositionRepository.save(aCase);
         return aCase;
     }
@@ -119,7 +118,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitsDispSet.add(hitDisp);
         }
         aCase.setHitsDispositions(hitsDispSet);
-
 
         caseDispositionRepository.save(aCase);
         return aCase;
@@ -173,8 +171,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         if(aCase.getHitsDispositions()!=null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
-
-
         caseDispositionRepository.saveAndFlush(aCase);
         return aCase;
     }
