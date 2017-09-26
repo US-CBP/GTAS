@@ -269,11 +269,6 @@ public class UdrServiceImpl implements UdrService {
 		String authorUserId = meta.getAuthor();
 		User author = fetchRuleAuthor(userId, authorUserId);
 
-		//@RuleCategory changes begin
-		RuleCat _tempRuleCat = new RuleCat();
-		Set<RuleCat> _tempRuleCatSet;
-		//@RuleCategory changes END
-
 		UdrRule ruleToSave = null;
 		try {
 			ruleToSave = JsonToDomainObjectConverter.createUdrRuleFromJson(

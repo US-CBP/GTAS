@@ -32,6 +32,7 @@ public final class Constants {
 	public static final String UDR_PUT = "/udr/{id}";
 	public static final String UDR_DELETE = "/udr/{id}";
 	public static final String UDR_TEST = "/udr_test";
+	public static final String UDR_GETALL_CATEGORIES = "/all_cat";
 
 	// Targeting URI
 	public static final String TARGET_ONE_APIS_MSG = "/apis/{id}";
