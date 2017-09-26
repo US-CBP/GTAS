@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilderWidget, gridOptionsLookupService, jqueryQueryBuilderService, spinnerService, $mdSidenav, $stateParams, $interval, $timeout, $mdDialog) {
@@ -360,7 +360,6 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                         return;
                     }
                 }
-
                 spinnerService.show('html5spinner');
                 jqueryQueryBuilderService.save('rule', ruleObject).then($scope.updateQueryBuilderOnSave);
             }
@@ -381,7 +380,9 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     jqueryQueryBuilderService.getList($scope.selectedMode).then(function (myData) {
         $scope.setData[$scope.mode](myData.result);
     });
-
+    jqueryQueryBuilderService.getRuleCat().then(function(myData) {
+      $scope.ruleCategories = myData;
+    });
     //query specific
     $scope.loadQuery = function () {
         var obj = $scope.qbGrid.data[$scope.selectedIndex];

@@ -12,15 +12,18 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.udr.json.JsonUdrListElement;
 import gov.gtas.model.udr.json.MetaData;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.UdrSpecificationBuilder;
 import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.RuleCatService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.util.DateCalendarUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +52,11 @@ public class UdrManagementController {
 
 	@Autowired
 	private RuleManagementService ruleManagementService;
+	
+	@Autowired
+	private RuleCatService ruleCatService;
+
+	
 
 	/**
 	 * Gets the udr.
@@ -168,8 +176,6 @@ public class UdrManagementController {
 		if (meta != null) {
 			meta.setStartDate(fixMetaDataDates(meta.getStartDate()));
 			meta.setEndDate(fixMetaDataDates(meta.getEndDate()));
-			//temp change
-			meta.setRuleCat(new Long(1));
 		}
 		return udrService.createUdr(userId, inputSpec);
 
@@ -277,5 +283,12 @@ public class UdrManagementController {
 			throw ex;
 		}
 		return UdrSpecificationBuilder.createSampleSpec();
+	}
+	
+	@RequestMapping(value = Constants.UDR_GETALL_CATEGORIES, method = RequestMethod.GET)
+	public List<RuleCat> getAllCategories() {
+		List<RuleCat> target = new ArrayList<>();
+		ruleCatService.findAll().forEach(target::add);
+		return target;
 	}
 }

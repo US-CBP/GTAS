@@ -839,7 +839,8 @@
                     query: '/gtas/query/',
                     rule: '/gtas/udr/',
                     all: '/gtas/all_udr/',
-                    copy: '/gtas/copy_udr/'
+                    copy: '/gtas/copy_udr/',
+                    rule_cat: '/gtas/all_cat/'
                 },
                 handleError = function (response) {
                     if (!angular.isObject(response.data) || !response.data.message) {
@@ -921,6 +922,16 @@
                         });
 
                         return (request.then(handleSuccess, handleError));
+                    },
+                    getRuleCat: function() {
+                      var request, baseUrl = URLS.rule_cat;
+
+                      request = $http({
+                          method: "get",
+                          url: baseUrl
+                      });
+
+                      return (request.then(handleSuccess, handleError));
                     }
                 };
 
@@ -930,7 +941,8 @@
                 getList: services.getList,
                 loadRuleById: services.loadRuleById,
                 delete: services.delete,
-                save: services.save
+                save: services.save,
+                getRuleCat: services.getRuleCat
             });
         })
         .service("executeQueryService", function ($http, $q, spinnerService) {
