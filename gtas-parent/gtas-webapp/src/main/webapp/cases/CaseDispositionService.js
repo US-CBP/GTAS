@@ -64,13 +64,18 @@
                 return dfd.promise;
             }
 
+            function getRuleCats() {
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/getRuleCats"));
+                return dfd.promise;
+            }
+
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getAllCases:getAllCases,
                 getOneHitsDisposition:getOneHitsDisposition,
-                // getOneHitsDispositionComments:getOneHitsDispositionComments,
+                getRuleCats:getRuleCats,
                 updateHitsDisposition:updateHitsDisposition
-                // updateCase:updateCase
             });
         })
 }());

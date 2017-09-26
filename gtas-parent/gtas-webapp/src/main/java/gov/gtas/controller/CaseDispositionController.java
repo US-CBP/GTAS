@@ -6,7 +6,10 @@
 package gov.gtas.controller;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.udr.Rule;
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +19,21 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 public class CaseDispositionController {
 
     @Autowired
     private CaseDispositionService caseDispositionService;
+
+    @Autowired
+    private RuleCatService ruleCatService;
 
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -57,6 +67,20 @@ public class CaseDispositionController {
         HashMap _tempMap = new HashMap();
 
         return _tempMap;
+    }
+
+    //getRuleCats
+    @RequestMapping(method = RequestMethod.GET, value = "/getRuleCats")
+    public List<RuleCat> getRuleCats()
+            throws Exception {
+
+        List<RuleCat> _tempRuleCatList = new ArrayList<RuleCat>();
+        Iterable<RuleCat> _tempIterable =  ruleCatService.findAll();
+        if(_tempIterable!=null){
+            _tempRuleCatList = StreamSupport.stream(_tempIterable.spliterator(),false).collect(Collectors.toList());
+        }
+
+        return _tempRuleCatList;
     }
 
     //updateHistDisp

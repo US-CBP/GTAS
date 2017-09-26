@@ -348,6 +348,9 @@ var app;
                     resolve: {
                         newCases: function(caseDispositionService){
                             return caseDispositionService.getAllCases();
+                        },
+                        ruleCats: function(caseDispositionService){
+                            return caseDispositionService.getRuleCats();
                         }
                     }
                 })

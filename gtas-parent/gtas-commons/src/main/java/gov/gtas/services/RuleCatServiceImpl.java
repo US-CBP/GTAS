@@ -44,11 +44,11 @@ public class RuleCatServiceImpl implements RuleCatService {
         if(_tempRule!=null){
             Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
 
-            _tempRuleCat = _tempRuleCatSet.stream().sorted(Comparator.comparing(RuleCat::getPriority).reversed())
+            _tempRuleCat = _tempRuleCatSet.stream().sorted(Comparator.comparing(RuleCat::getPriority))
                     .findFirst()
                     .orElse(null);
             if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
-            else return _tempRuleCat.getPriority();
+            else return _tempRuleCat.getCatId();
 
         }else {
             // bracket orphans to 'General' rule category

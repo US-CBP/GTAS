@@ -8,9 +8,11 @@
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast,
                   gridService,
-                  spinnerService, caseDispositionService, newCases, caseService, $state) {
+                  spinnerService, caseDispositionService, newCases, ruleCats, caseService, $state, uiGridConstants) {
 
             $scope.casesList = newCases.data.cases;
+            $scope.casesListWithCats=[];
+            $scope.ruleCats=ruleCats.data;
 
 
             $scope.errorToast = function (error) {
@@ -33,6 +35,16 @@
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
             });
+
+
+            $scope.assignRuleCats = function(){
+                    angular.forEach($scope.ruleCats, function(item, index){
+                        $scope.casesListWithCats[item.catId] = item.category;
+                    });
+                //$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
+            };
+
+            $scope.assignRuleCats();
 
             $scope.pageSize = 10;
 
@@ -88,6 +100,12 @@
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
+                    field: 'highPriorityRuleCatId',
+                    name: 'highPriorityRuleCatId',
+                    displayName: 'Top Rule Category',
+                    cellTemplate: '<span>{{grid.appScope.casesListWithCats[COL_FIELD]}}</span>'
+                },
+                {
                     field: 'lastName',
                     name: 'lastName',
                     displayName: 'Last Name', headerCellFilter: 'translate'
@@ -96,16 +114,6 @@
                     field: 'firstName',
                     name: 'firstName',
                     displayName: 'First Name', headerCellFilter: 'translate'
-                },
-                {
-                    field: 'paxName',
-                    name: 'paxName',
-                    displayName: 'Passenger Name', headerCellFilter: 'translate'
-                },
-                {
-                    field: 'hitType',
-                    name: 'hitType',
-                    displayName: 'Hit Type'
                 },
                 {
                     field: 'status',
