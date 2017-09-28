@@ -95,8 +95,6 @@
 
             $scope.populateDispStatuses();
 
-            $scope.pageSize = 10;
-
             $scope.caseConfirm = function() {
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {

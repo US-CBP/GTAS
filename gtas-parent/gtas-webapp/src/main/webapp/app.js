@@ -358,16 +358,11 @@ var app;
                     url: '/:id',
                     views: {
                         'detail@caseDisposition': {
-                            controller: 'CaseDispositionCtrl',//   CasesCtrl
+                            controller: 'CaseDispositionCtrl',
                             templateUrl: 'cases/case.detail.html'
                         }
                     }
 
-                    // templateUrl: 'cases/case.detail.html'
-                    // ,
-                    // controller: function($scope, $stateParams){
-                    //     $scope.person = $scope.contacts[$stateParams.id];
-                    // }
                 })
                 .state('adhocquery', {
                     url: '/adhocquery',

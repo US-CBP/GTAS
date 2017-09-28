@@ -18,6 +18,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -232,20 +234,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
-//        for (Long _tempHitId : hit_ids) {
-//            hitDisp = new HitsDisposition();
-//            hitsDispCommentsSet = new HashSet<>();
-//            hitDisp.setHit_id(_tempHitId);
-//            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
-//            hitsDispositionComments = new HitsDispositionComments();
-//            hitsDispositionComments.setHit_id(_tempHitId);
-//            hitsDispositionComments.setComments("Initial Comment");
-//            hitsDispCommentsSet.add(hitsDispositionComments);
-//            hitDisp.setDispComments(hitsDispCommentsSet);
-//            hitsDispSet.add(hitDisp);
-//        }
         aCase.setHitsDispositions(hitsDispSet);
-
 
         caseDispositionRepository.save(aCase);
         return aCase;
@@ -354,18 +343,23 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         return caseDispositionRepository.getCaseByFlightIdAndPaxId(dto.getFlightId(), dto.getPaxId());
     }
 
+    /**
+     *
+     * @param dto
+     * @return
+     */
     @Override
     public CasePageDto findAll(CaseRequestDto dto) {
 
         List<CaseVo> vos = new ArrayList<>();
-        Pair<Long, List<Case>> tuple = caseDispositionRepository.findByCriteria(dto);
-        for (Case f : tuple.getRight()) {
-            Long fId = f.getId();
-            int rCount = 0;
-            int wCount = 0;
-
-        }
-        caseDispositionRepository.flush();
+//        Pair<Long, List<Case>> tuple = caseDispositionRepository.findByCriteria(dto);
+//        for (Case f : tuple.getRight()) {
+//            Long fId = f.getId();
+//            int rCount = 0;
+//            int wCount = 0;
+//
+//        }
+//        caseDispositionRepository.flush();
 
         Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
         for (Case f : tuple2.getRight()) {
@@ -374,11 +368,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             vo.setHitsDispositions(f.getHitsDispositions());
             vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
             populatePassengerDetails(vo, f.getFlightId(),f.getPaxId());
-            BeanUtils.copyProperties(f, vo);
+            //BeanUtils.copyProperties(f, vo);
+            CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
             vos.add(vo);
         }
 
-        return new CasePageDto(vos, tuple.getLeft());
+        return new CasePageDto(vos, tuple2.getLeft());
     }
 
     /**
@@ -394,8 +389,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         RuleCat _tempRuleCat = new RuleCat();
         for(HitsDisposition hitDisp : _tempHitsDispositionSet){
             _tempHitsDisp = new HitsDispositionVo();
-            BeanUtils.copyProperties(hitDisp, _tempHitsDisp);
-            BeanUtils.copyProperties(hitDisp.getRuleCat(), _tempRuleCat);
+            //BeanUtils.copyProperties(hitDisp, _tempHitsDisp);
+            CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
+            //BeanUtils.copyProperties(hitDisp.getRuleCat(), _tempRuleCat);
+            CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
             _tempRuleCatSet.add(_tempRuleCat);
             _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
             _tempReturnHitsDispSet.add(_tempHitsDisp);
@@ -416,5 +413,37 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCaseVo.setFirstName(_tempPax.getFirstName());
         aCaseVo.setLastName(_tempPax.getLastName());
         aCaseVo.setFlightNumber(_tempFlight.getFlightNumber());
+    }
+
+
+    /**
+     * Static utility method to ignore nulls while copying
+     * @param source
+     * @return
+     */
+    public static String[] getNullPropertyNames (Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<String>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
+    /**
+     * Wrapper method over BeanUtils.copyProperties
+     * @param src
+     * @param target
+     */
+    public static void copyIgnoringNullValues(Object src, Object target) {
+        try {
+            BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
