@@ -124,7 +124,8 @@ public class PassengerDetailsController {
 		PassengerVo vo = new PassengerVo();
 		Passenger t = pService.findById(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
-
+		List<Bag> bagList = new ArrayList<Bag>();
+		
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
 			vo.setCarrier(flight.getCarrier());
@@ -144,6 +145,7 @@ public class PassengerDetailsController {
 					vo.setSeat(seats.get(0));
 				}
 			}
+			 bagList = bagRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
@@ -189,18 +191,15 @@ public class PassengerDetailsController {
 			}
 			vo.setDispositionHistory(history);
 		}
-
+	
 		// Gather PNR Details
 		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(
 				t.getId(), new Long(flightId));
 
 		if (!pnrList.isEmpty()) {
-			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));
-			
-			PnrVo tempVo = vo.getPnrVo();			
-			Iterator<Bag> bagIter = t.getBags().iterator();
-			while (bagIter.hasNext()) {
-				Bag b = bagIter.next();
+			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));			
+			PnrVo tempVo = vo.getPnrVo();	
+			for(Bag b: bagList ) {
 				if(b.getData_source().equalsIgnoreCase("pnr")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
@@ -248,10 +247,8 @@ public class PassengerDetailsController {
 				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
 				apisVo.addFlightpax(fpVo);
 			}
-			
-			Iterator<Bag> bagIter = t.getBags().iterator();
-			while (bagIter.hasNext()) {
-				Bag b = bagIter.next();
+
+			for(Bag b:bagList) {
 				if(b.getData_source().equalsIgnoreCase("apis")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
