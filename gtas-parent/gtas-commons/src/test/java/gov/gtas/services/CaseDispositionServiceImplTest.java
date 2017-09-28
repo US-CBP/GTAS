@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 
@@ -45,6 +42,11 @@ public class CaseDispositionServiceImplTest {
     @Autowired
     private CaseDispositionRepository caseRepo;
 
+    private static final String TEST_PAX_NAME="John Smith";
+    private static final String TEST_PAX_TYPE="Passenger";
+    private static final String TEST_PAX_DOC="123456789";
+    private static final String TEST_PAX_CTZ="GBR";
+    private static final String TEST_PAX_DOB="John Smith";
 
     @Test
     public void testCreateCase() throws Exception {
@@ -54,29 +56,12 @@ public class CaseDispositionServiceImplTest {
         _tempHitList.add(new Long(_rand.nextInt(1000)));
         _tempHitList.add(new Long(_rand.nextInt(1000)));
 
-        assertTrue((caseDispService.create((new Long(_rand.nextInt(1000))),
-        		(new Long(_rand.nextInt(1000))),_tempHitList)).getId()!=null);
+        assertTrue((caseDispService.create((new Long(_rand.nextInt(1000))), (new Long(_rand.nextInt(1000))),
+                TEST_PAX_NAME,TEST_PAX_TYPE, TEST_PAX_CTZ,
+                new Date(), TEST_PAX_DOC, "", _tempHitList))
+                .getId()!=null);
     }
-
     
-    //@Test
-    public void testFindAll(){
-
-        CaseRequestDto inboundDto = new CaseRequestDto();
-        List<CaseVo> _tempCases = new ArrayList<CaseVo>();
-        CasePageDto outboundDto = new CasePageDto(_tempCases, 10);
-        inboundDto.setPageNumber(1);
-        inboundDto.setPageSize(10);
-        /*inboundDto.setFlightId((long) 603);
-    	inboundDto.setPaxId((long) 907);
-        try{
-
-            outboundDto = caseDispService.findAll(inboundDto);
-
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }*/
-    }
 
     //@Test
     public void testUpdateCaseComments(){
