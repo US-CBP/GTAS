@@ -36,7 +36,8 @@ var app;
             'pascalprecht.translate',
             'ngIdle',
             'chart.js',
-            'summernote'
+            'summernote',
+            'angularTrix'
         ],
         language = function ($translateProvider) {
 
