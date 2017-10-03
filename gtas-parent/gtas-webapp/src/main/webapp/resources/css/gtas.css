@@ -1,4 +1,7 @@
 /*Sizing Styles */
+.fnt-small {
+  font-size: 12px;
+}
 .sm-pad{
   padding: 5px;
 }
@@ -73,6 +76,9 @@
   -ms-flex: 1;
   -webkit-flex: 1;
   flex: 1;
+}
+.right {
+  float: right;
 }
 /*Internet Explorer Specific Styles*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
