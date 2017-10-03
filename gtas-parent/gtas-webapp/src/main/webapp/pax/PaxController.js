@@ -581,7 +581,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
+                	+'<span ng-if="row.entity.onRuleHitList" class="warning-color"><i class="fa fa-flag" aria-hidden="true"></i></span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -590,7 +590,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
+                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
                 },
                 {
                     field: 'passengerType',
@@ -684,7 +684,7 @@
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
-                	+'<span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
+                	+'<span ng-if="row.entity.onRuleHitList" class="warning-color"><i class="fa fa-flag" aria-hidden="true"></i></span></md-button>'
                 },
                 {
                     name: 'onWatchList', displayName: 'Watchlist Hits', width: 130,
@@ -693,7 +693,7 @@
                         direction: uiGridConstants.DESC,
                         priority: 1
                     },
-                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span></div>'
+                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
                 },
                 {name: 'passengerType', displayName:'T', width: 50},
                 {

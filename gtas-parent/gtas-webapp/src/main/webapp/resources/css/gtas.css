@@ -145,6 +145,12 @@
 }
 
 /*Color Setup */
+.danger-color {
+  color: #A00000;
+}
+.warning-color {
+  color: #F09511;
+}
 .primary-outline {
   outline: #00416a 2px solid !important;
 }
