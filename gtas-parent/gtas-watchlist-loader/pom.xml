@@ -39,6 +39,12 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <dependency>
+    		<groupId>org.apache.commons</groupId>
+    		<artifactId>commons-csv</artifactId>
+    		<version>1.1</version>
+		</dependency>
+		
         <!-- spring -->
         <dependency>
             <groupId>org.springframework</groupId>

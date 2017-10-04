@@ -1,0 +1,8 @@
+firstname,lastname,middlename,dob,documentcountry,documentnumber,documenttype,coc,phone,email
+ROBERT,PICHA,ANTONIO,,USA,P123456,P,GBR,888456890,some@somedomain.com
+ryan,benson,,11-10-1975,USA,883456,V,GBR,877454440,test@somedomain.com
+john,deo,,2-12-1965,,P123456,P,MEX,111456890,best@somedomain.com
+john,deo,,2-12-1965,USA,P123456,P,AUS,222456890,toast@somedomain.com
+john,deo,,2-12-1965,USA,,P,USA,333456890,last@somedomain.com
+john,deo,,2-12-1965,USA,A3456,P,,555456888,first@somedomain.com
+john,deo,KUMAR,2-12-1965,USA,P123456,P,CHI,666456890,guest@somedomain.com
