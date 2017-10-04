@@ -135,8 +135,9 @@ public class WatchListLoaderService {
 	                        .getFieldName(), PassengerMapping.MIDDLE_NAME.getFieldType(), record.get("middlename"), termList);
 				}					
 				if(StringUtils.isNotBlank(record.get("dob"))){
+					String dob_m=record.get("dob").replaceAll("/", "-");
 					termList=createWatchListTermList(PassengerMapping.DOB
-	                        .getFieldName(), PassengerMapping.DOB.getFieldType(), record.get("dob"), termList);
+	                        .getFieldName(), PassengerMapping.DOB.getFieldType(), dob_m, termList);
 				}	
 				if(StringUtils.isNotBlank(record.get("documentcountry"))){
 					termList_D=createWatchListTermList(DocumentMapping.ISSUANCE_COUNTRY
