@@ -63,7 +63,7 @@ app.factory('jqueryQueryBuilderWidget', function () {
             service: "DROOLS",
             plugins: {
                 'bt-tooltip-errors': {delay: 100},
-                'sortable': null,
+                'sortable': {icon:'fa fa-arrows'},
                 'filter-description': {mode: 'bootbox'},
                 'bt-selectpicker': null,
                 'unique-filter': null,

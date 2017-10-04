@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.slf4j.Logger;
@@ -135,7 +136,8 @@ public class LoaderScheduler {
 		logger.info("entering rule running portion of jobScheduling()");
 		try {
 			targetingService.preProcessing();
-			targetingService.runningRuleEngine();
+			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
+			targetingService.updateFlightHitCounts(uniqueFlights);
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
 			ErrorDetailInfo errInfo = ErrorHandlerFactory

@@ -1,4 +1,7 @@
 /*Sizing Styles */
+.fnt-small {
+  font-size: 12px;
+}
 .sm-pad{
   padding: 5px;
 }
@@ -74,6 +77,9 @@
   -webkit-flex: 1;
   flex: 1;
 }
+.right {
+  float: right;
+}
 /*Internet Explorer Specific Styles*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     .ie-fix-sm{
@@ -139,6 +145,12 @@
 }
 
 /*Color Setup */
+.danger-color {
+  color: #A00000;
+}
+.warning-color {
+  color: #F09511;
+}
 .primary-outline {
   outline: #00416a 2px solid !important;
 }
