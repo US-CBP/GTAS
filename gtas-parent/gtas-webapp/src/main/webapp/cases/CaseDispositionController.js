@@ -8,12 +8,14 @@
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast,
                   gridService,
-                  spinnerService, caseDispositionService, newCases, ruleCats, caseService, $state, uiGridConstants) {
+                  spinnerService, caseDispositionService, newCases,
+                  ruleCats, caseService, $state, uiGridConstants) {
 
             $scope.casesList = newCases.data.cases;
             $scope.casesListWithCats=[];
             $scope.ruleCats=ruleCats.data;
-
+            $scope.pageSize = 10;
+            $scope.pageNumber = 1;
 
             $scope.errorToast = function (error) {
                 $mdToast.show($mdToast.simple()
@@ -36,17 +38,13 @@
                 $scope.dispositionStatuses = response.data;
             });
 
-
             $scope.assignRuleCats = function(){
                     angular.forEach($scope.ruleCats, function(item, index){
                         $scope.casesListWithCats[item.catId] = item.category;
                     });
-                //$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.EDIT );
             };
 
             $scope.assignRuleCats();
-
-            $scope.pageSize = 10;
 
             $scope.hitTypeIcon = function (hitType) {
                 var icons = '&nbsp;';
@@ -72,10 +70,27 @@
                 $scope.dispositionStatuses = response.data;
             });
 
-            $scope.casesGrid = {
+            $scope.resolvePage = function () {
+                var postData = {
+                    pageNumber: $scope.pageNumber,
+                    pageSize: $scope.pageSize
+                };
+                spinnerService.show('html5spinner');
+                caseDispositionService.getPagedCases(postData).then(
+                    function(data){
+                        $scope.casesDispGrid.data = data.data.cases;
+                        $scope.casesDispGrid.totalItems = data.data.totalCases;
+                        spinnerService.hide('html5spinner');
+                    });
+            };
+
+            $scope.casesDispGrid = {
                 data: newCases.data.cases,
                 paginationPageSizes: [10, 15, 25],
+                totalItems: newCases.data.totalCases,
                 paginationPageSize: $scope.pageSize,
+                paginationCurrentPage: $scope.pageNumber,
+                useExternalPagination: true,
                 enableFiltering: true,
                 enableHorizontalScrollbar: 0,
                 enableVerticalScrollbar: 0,
@@ -87,12 +102,14 @@
                     $scope.gridApi = gridApi;
 
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                        $scope.pageNumber = newPage;
                         $scope.pageSize = pageSize;
+                        $scope.resolvePage();
                     });
                 }
             };
 
-            $scope.casesGrid.columnDefs = [
+            $scope.casesDispGrid.columnDefs = [
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
@@ -123,7 +140,7 @@
             ];
 
             $scope.getTableHeight = function () {
-                return gridService.calculateGridHeight($scope.pageSize);
+                return gridService.calculateGridHeight(newCases.data.totalCases);
             };
 
 })

@@ -95,8 +95,6 @@
 
             $scope.populateDispStatuses();
 
-            $scope.pageSize = 10;
-
             $scope.caseConfirm = function() {
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
@@ -120,7 +118,7 @@
             }else{
                     var toastPosition = angular.element(document.getElementById('caseForm'));
                         $mdToast.show($mdToast.simple()
-                            .content("All Hits Have To Be Processed And Closed To Close This Case")
+                            .content("Be Sure To Validate All Hits And Mark 'Closed' To Close This Case")
                             .position('top right')
                             .hideDelay(4000)
                             .parent(toastPosition));
@@ -163,5 +161,13 @@
                 }
                 $mdSidenav(id).toggle();
             }
+
+
+            //Angular Trix related event handlers
+            $scope.trixInitialize = function(e, editor) {
+                angular.element(editor.element).prop('contenteditable', false);
+                angular.element(editor.element.toolbarElement).remove();
+            }
+
         })
 }());

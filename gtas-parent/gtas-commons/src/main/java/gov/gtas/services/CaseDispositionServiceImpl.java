@@ -18,6 +18,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,37 +28,27 @@ import java.util.*;
 
 
 @Service
-public class CaseDispositionServiceImpl implements CaseDispositionService  {
+public class CaseDispositionServiceImpl implements CaseDispositionService {
 
     private static final Logger logger = LoggerFactory
             .getLogger(CaseDispositionServiceImpl.class);
 
     private static Set casesToCommit = new HashSet<Case>();
-
-    private static final String INITIAL_COMMENT="Initial Comment";
-
-    private static final String UPDATED_BY_INTERNAL="Internal";
-
+    private static final String INITIAL_COMMENT = "Initial Comment";
+    private static final String UPDATED_BY_INTERNAL = "Internal";
 
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
-
     @Resource
     private FlightRepository flightRepository;
-
     @Resource
     private PassengerRepository passengerRepository;
-
     @Resource
     private HitDetailRepository hitDetailRepository;
-
     @Resource
     private RuleCatRepository ruleCatRepository;
-
     @Autowired
     public RuleCatService ruleCatService;
-
-
 
     public CaseDispositionServiceImpl() {
     }
@@ -146,10 +138,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setDob(dob);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
         _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
-        if(_tempCase!=null &&
+        if (_tempCase != null &&
                 (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
-                ||_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN))))
-                {aCase = _tempCase; }
+                        || _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
+            aCase = _tempCase;
+        }
 
         //redundant at this time
         //contextCases(aCase);
@@ -162,15 +155,19 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             hitDisp.setHitId(_tempHitId);
             hitDisp.setDescription(hitDesc);
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitDisp.setUpdatedAt(new Date());
+            hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
             hitsDispositionComments.setComments(INITIAL_COMMENT);
+            hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
+            hitsDispositionComments.setUpdatedAt(new Date());
             hitsDispCommentsSet.add(hitsDispositionComments);
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
         aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
-        if(aCase.getHitsDispositions()!=null) aCase.getHitsDispositions().addAll(hitsDispSet);
+        if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
         caseDispositionRepository.saveAndFlush(aCase);
         return aCase;
@@ -179,44 +176,52 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
     /**
      * Utility method to manage cases to persist
+     *
      * @param aCase
      */
     private void contextCases(Case aCase) {
-        try{
-            if(casesToCommit!=null){
+        try {
+            if (casesToCommit != null) {
                 final Case _tempCaseToCompare = aCase;
-                Case existingCase = (Case)casesToCommit.stream()
+                Case existingCase = (Case) casesToCommit.stream()
                         .filter(x -> _tempCaseToCompare.equals(x))
                         .findAny()
                         .orElse(null);
-                if(existingCase!=null)aCase=existingCase;
+                if (existingCase != null) aCase = existingCase;
                 else casesToCommit.add(aCase);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     /**
      * Utility method to pull Rule Cat
+     *
      * @param hitDisp
      * @param id
      */
-    private void pullRuleCategory(HitsDisposition hitDisp, Long id){
-            try{
+    private void pullRuleCategory(HitsDisposition hitDisp, Long id) {
+        try {
+            if (id == null || (ruleCatRepository.findOne(id) == null))
+                hitDisp.setRuleCat(ruleCatRepository.findOne(1L));
+            else
                 hitDisp.setRuleCat(ruleCatRepository.findOne(id));
-            }catch (Exception ex){  ex.printStackTrace();}
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
-     *
      * @param ruleId
      * @return
      */
     private Long getHighPriorityRuleCatId(Long ruleId) {
-        try{
-             return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
-        }catch (Exception ex){ex.printStackTrace();}
+        try {
+            return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return 1L;
     }
 
@@ -232,20 +237,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
-//        for (Long _tempHitId : hit_ids) {
-//            hitDisp = new HitsDisposition();
-//            hitsDispCommentsSet = new HashSet<>();
-//            hitDisp.setHit_id(_tempHitId);
-//            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
-//            hitsDispositionComments = new HitsDispositionComments();
-//            hitsDispositionComments.setHit_id(_tempHitId);
-//            hitsDispositionComments.setComments("Initial Comment");
-//            hitsDispCommentsSet.add(hitsDispositionComments);
-//            hitDisp.setDispComments(hitsDispCommentsSet);
-//            hitsDispSet.add(hitDisp);
-//        }
         aCase.setHitsDispositions(hitsDispSet);
-
 
         caseDispositionRepository.save(aCase);
         return aCase;
@@ -262,16 +254,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
         try {
             aCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
 
-            if(aCase!=null && status != null) { // set case status
+            if (aCase != null && status != null) { // set case status
                 if (status.startsWith("Case")) aCase.setStatus(status.substring(4));
             }
             hitsDispCommentsSet = null;
             hitsDispSet = aCase.getHitsDispositions();
-            for(HitsDisposition hit : hitsDispSet){
+            for (HitsDisposition hit : hitsDispSet) {
 
-                if((hit.getCaseId() == aCase.getId()) && (hit_id != null) && (hit.getHitId() == hit_id)){
+                if ((hit.getCaseId() == aCase.getId()) && (hit_id != null) && (hit.getHitId() == hit_id)) {
 
-                    if(caseComments != null){ // set comments
+                    if (caseComments != null) { // set comments
                         hitsDispositionComments = new HitsDispositionComments();
                         hitsDispositionComments.setHitId(hit_id);
                         hitsDispositionComments.setComments(caseComments);
@@ -280,11 +272,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
                         hit.setDispComments(hitsDispCommentsSet);
                     }
 
-                    if(status != null && !status.startsWith("Case")){ // set status
+                    if (status != null && !status.startsWith("Case")) { // set status
                         hit.setStatus(status);
                     }
 
-                    if(!(validHit==null)){
+                    if (!(validHit == null)) {
                         hit.setValid(validHit);
                     }
 
@@ -294,18 +286,17 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
             aCase.setHitsDispositions(hitsDispSet);
 
-            if((status != null) || (caseComments != null) || (validHit != null))
+            if ((status != null) || (caseComments != null) || (validHit != null))
                 caseDispositionRepository.save(aCase);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
-            return aCase;
+        return aCase;
     }
 
     @Override
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id)
-    {
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id) {
         List<Case> _tempCaseList = new ArrayList<>();
         List<Long> _tempHitIds = new ArrayList<>();
 
@@ -349,23 +340,27 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
     }
 
     @Override
-    public Case findHitsDispositionByCriteria(CaseRequestDto dto){
+    public Case findHitsDispositionByCriteria(CaseRequestDto dto) {
 
         return caseDispositionRepository.getCaseByFlightIdAndPaxId(dto.getFlightId(), dto.getPaxId());
     }
 
+    /**
+     * @param dto
+     * @return
+     */
     @Override
     public CasePageDto findAll(CaseRequestDto dto) {
 
         List<CaseVo> vos = new ArrayList<>();
-        Pair<Long, List<Case>> tuple = caseDispositionRepository.findByCriteria(dto);
-        for (Case f : tuple.getRight()) {
-            Long fId = f.getId();
-            int rCount = 0;
-            int wCount = 0;
-
-        }
-        caseDispositionRepository.flush();
+//        Pair<Long, List<Case>> tuple = caseDispositionRepository.findByCriteria(dto);
+//        for (Case f : tuple.getRight()) {
+//            Long fId = f.getId();
+//            int rCount = 0;
+//            int wCount = 0;
+//
+//        }
+//        caseDispositionRepository.flush();
 
         Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
         for (Case f : tuple2.getRight()) {
@@ -373,32 +368,39 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
             f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
             vo.setHitsDispositions(f.getHitsDispositions());
             vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
-            populatePassengerDetails(vo, f.getFlightId(),f.getPaxId());
-            BeanUtils.copyProperties(f, vo);
+            populatePassengerDetails(vo, f.getFlightId(), f.getPaxId());
+            //BeanUtils.copyProperties(f, vo);
+            CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
             vos.add(vo);
         }
 
-        return new CasePageDto(vos, tuple.getLeft());
+        return new CasePageDto(vos, tuple2.getLeft());
     }
 
     /**
      * Utility method to fetch model object
+     *
      * @param _tempHitsDispositionSet
      * @return
      */
-    private Set<HitsDispositionVo> returnHitsDisposition (Set<HitsDisposition> _tempHitsDispositionSet){
+    private Set<HitsDispositionVo> returnHitsDisposition(Set<HitsDisposition> _tempHitsDispositionSet) {
 
         Set<HitsDispositionVo> _tempReturnHitsDispSet = new HashSet<HitsDispositionVo>();
         Set<RuleCat> _tempRuleCatSet = new HashSet<RuleCat>();
         HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
         RuleCat _tempRuleCat = new RuleCat();
-        for(HitsDisposition hitDisp : _tempHitsDispositionSet){
-            _tempHitsDisp = new HitsDispositionVo();
-            BeanUtils.copyProperties(hitDisp, _tempHitsDisp);
-            BeanUtils.copyProperties(hitDisp.getRuleCat(), _tempRuleCat);
-            _tempRuleCatSet.add(_tempRuleCat);
-            _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
-            _tempReturnHitsDispSet.add(_tempHitsDisp);
+        try {
+            for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
+                _tempHitsDisp = new HitsDispositionVo();
+                CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
+                if (hitDisp.getRuleCat() != null)
+                    CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
+                _tempRuleCatSet.add(_tempRuleCat);
+                _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
+                _tempReturnHitsDispSet.add(_tempHitsDisp);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return _tempReturnHitsDispSet;
     }
@@ -406,15 +408,50 @@ public class CaseDispositionServiceImpl implements CaseDispositionService  {
 
     /**
      * Utility method to pull passenger details for the cases view
+     *
      * @param aCaseVo
      * @param flightId
      * @param paxId
      */
-    private void populatePassengerDetails (CaseVo aCaseVo, Long flightId, Long paxId){
+    private void populatePassengerDetails(CaseVo aCaseVo, Long flightId, Long paxId) {
         Passenger _tempPax = findPaxByID(paxId);
         Flight _tempFlight = findFlightByID(flightId);
         aCaseVo.setFirstName(_tempPax.getFirstName());
         aCaseVo.setLastName(_tempPax.getLastName());
         aCaseVo.setFlightNumber(_tempFlight.getFlightNumber());
+    }
+
+
+    /**
+     * Static utility method to ignore nulls while copying
+     *
+     * @param source
+     * @return
+     */
+    public static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<String>();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+        }
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
+    }
+
+    /**
+     * Wrapper method over BeanUtils.copyProperties
+     *
+     * @param src
+     * @param target
+     */
+    public static void copyIgnoringNullValues(Object src, Object target) {
+        try {
+            BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

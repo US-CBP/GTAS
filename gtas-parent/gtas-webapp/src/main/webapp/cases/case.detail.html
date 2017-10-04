@@ -117,15 +117,16 @@
     <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
             <div class="static-label"> Leave a Comment </div>
+            <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."></trix-editor>
             <!--<summernote ng-model="commentText" config="options" id="summernote"></summernote>-->
-              <div class="sm-pad">
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-              <input name="title" ng-model="commentText" class="mdl-textfield__input"
-              type="text" id="title-input-rule">
+              <!--<div class="sm-pad">-->
+              <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;full-width">-->
+              <!--<input name="title" ng-model="commentText" class="mdl-textfield__input"-->
+              <!--type="text" id="title-input-rule">-->
 
-              </div>
+              <!--</div>-->
 
-          </div>
+          <!--</div>-->
 
         <div layout layout-sm="column">
 
@@ -174,15 +175,14 @@
       <div class="cbp-text-field">
         <div class="cbp-card cbp-card-shadow" style="width: 450px;!important;">
 
-          <div ng-repeat="comment in caseItemHitComments.dispComments" class="no-pad-top panel-body flex flex-vert ie-fix-md">
+          <div ng-repeat="comment in caseItemHitComments.dispComments | orderBy : updatedAt" class="no-pad-top panel-body flex flex-vert ie-fix-md">
             <span class="sm-pad">
-              Created By: {{ comment.updatedBy }}
+              Created By: {{ comment.createdBy }}
             </span>
             <span class="sm-pad">
-              Updated On: {{ comment.createdAt | date }}
+              Updated On: {{ comment.updatedAt | date }}
             </span>
-            <!--<summernote airMode>{{ comment.comments }} </summernote>-->
-            <textarea class="sm-pad" disabled>{{ comment.comments }}</textarea>
+            <trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled ng-model="comment.comments"></trix-editor>
           </div>
         </div>
       </div>

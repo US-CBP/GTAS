@@ -12,7 +12,21 @@
                 var pageRequest = {
                     pageSize: "10",
                     pageNumber: "1"
-                }
+                };
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/getAllCaseDispositions/",
+                    data: pageRequest
+                }));
+                return dfd.promise;
+            }
+
+            function getPagedCases(params){
+                var pageRequest = {
+                    pageSize: params.pageSize.toString(),
+                    pageNumber: params.pageNumber.toString()
+                };
                 var dfd = $q.defer();
                 dfd.resolve($http({
                     method: 'post',
@@ -75,7 +89,8 @@
                 getAllCases:getAllCases,
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,
-                updateHitsDisposition:updateHitsDisposition
+                updateHitsDisposition:updateHitsDisposition,
+                getPagedCases: getPagedCases
             });
         })
 }());
