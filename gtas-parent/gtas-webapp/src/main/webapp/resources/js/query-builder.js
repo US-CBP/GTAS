@@ -1652,14 +1652,14 @@
 
         //Custom fix to check against and load from the full filter list rather than the filters for "Last entity loaded"
         var totalFilterList = this.entities[id.split('.')[0]].columns;
-        
+
         if(totalFilterList.length > 0){
     	    for (var i=0, l=totalFilterList.length; i<l; i++) {
     	        if (totalFilterList[i].id == id) {
     	            return totalFilterList[i];
     	        }
     	    }
-        } else{  
+        } else{
     	    for (var i=0, l=this.filters.length; i<l; i++) {
     	        if (this.filters[i].id == id) {
     	            return this.filters[i];
@@ -3149,6 +3149,18 @@
 
                     src.$el.hide();
                 }, 0);
+
+                setInterval(function() {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  src.$el.show();
+                  placeholder.drop();
+
+                  src = placeholder = null;
+
+                  self.$el.find('.rule-container, .rules-group-container').removeAttr('draggable');
+                }, 3500);
             });
 
             // dragenter: move the placeholder
