@@ -616,16 +616,20 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	@Transactional
 	@Override
-	public void runningRuleEngine() {
+	public Set<Long> runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
-		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
-		if (ruleRunningResult != null) {
-			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult);
-			for (HitsSummary s : hitsSummaryList) {
-				passengerService.createDisposition(s);
-			}
-			writeAuditLogForTargetingRun(ruleRunningResult);
-		}
+	 		Set<Long> uniqueFlights = new HashSet<>();
+	  		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
+	  		if (ruleRunningResult != null) {
+	 			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult);
+				for (HitsSummary s : hitsSummaryList) {
+		  			passengerService.createDisposition(s);
+		 			uniqueFlights.add(s.getFlight().getId());
+				}
+	  		writeAuditLogForTargetingRun(ruleRunningResult);
+	  	}
+	 	logger.info("Exiting runningRuleEngine().");
+	 	return uniqueFlights;
 	}
 
 	/**
@@ -681,16 +685,16 @@ public class TargetingServiceImpl implements TargetingService {
 	@Transactional
 	@Override
 	public void updateFlightHitCounts(Set<Long> flights) {
-//		logger.info("Entering updateFlightHitCounts().");
-//		if (CollectionUtils.isEmpty(flights)) {
-//			logger.info("no flight");
-//			return;
-//		}
-//		logger.info("update rule hit count on flights.");
-
-//			flightRepository.updateRuleHitCountForFlight(flightId);
-//			flightRepository.updateListHitCountForFlight(flightId);
-//		}
+		logger.info("Entering updateFlightHitCounts().");
+		if (CollectionUtils.isEmpty(flights)) {
+			logger.info("no flight");
+			return;
+		}
+		logger.info("update rule hit count on flights.");
+		for (Long flightId : flights){
+			flightRepository.updateRuleHitCountForFlight(flightId);
+			flightRepository.updateListHitCountForFlight(flightId);
+		}
 	}
 
 	/**

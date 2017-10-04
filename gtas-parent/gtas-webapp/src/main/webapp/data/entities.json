@@ -399,11 +399,7 @@
           "NOT_CONTAINS",
           "ENDS_WITH",
           "NOT_ENDS_WITH"
-        ],
-        "input": "select",
-        "multiple": true,
-        "plugin": "selectize",
-        "dataSource": "carriers"
+        ]
       },
       {
         "id": "Flight.destinationCountry",
