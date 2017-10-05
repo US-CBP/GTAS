@@ -17,7 +17,7 @@ git clone https://github.com/US-CBP/GTAS.git
 
 ## Configure
 
-First update the following values in gtas-parent/gtas-commons/src/main/resources/hibernate.properties to work with your installation of MariaDB:
+First update the following values in `gtas-parent/gtas-commons/src/main/resources/hibernate.properties` to work with your installation of MariaDB:
 
 ```
 hibernate.connection.url=jdbc:mariadb://localhost:3306/gtas
@@ -25,7 +25,7 @@ hibernate.connection.username=root
 hibernate.connection.password=admin
 ```
 
-Configure the job scheduler war by editing gtas-parent/gtas-job-scheduler-war/src/main/resources/jobScheduler.properties.  Modify the message origin and processed folders.  For example,
+Configure the job scheduler war by editing `gtas-parent/gtas-job-scheduler-war/src/main/resources/jobScheduler.properties`.  Modify the message origin and processed folders.  For example,
 
 ```
 message.dir.origin=/data/gtas_in
@@ -34,7 +34,7 @@ message.dir.processed=/data/gtas_out
 
 ## Build
 
-Standard build with unit tests. Note: if maven shows a java socket error (invalid argument 'connect'), you may need to add -Djava.net.preferIPv4Stack=true to the MAVEN_OPTS environment variable.
+Standard build with unit tests. Note: if maven shows a java socket error (invalid argument 'connect'), you may need to add `-Djava.net.preferIPv4Stack=true` to the `MAVEN_OPTS` environment variable.
 
 ```
 cd gtas-parent
@@ -101,7 +101,7 @@ Both of these processes can be executed on the command-line.
 
 ### GTAS Loader
 
-After compiling, the GTAS loader is located in gtas-loader/target/gtas-loader.jar.  It's an executable jar that takes one or more input filenames on the command line.  For example, the following command would execute the loader on two input files:
+After compiling, the GTAS loader is located in `gtas-loader/target/gtas-loader.jar`.  It's an executable jar that takes one or more input filenames on the command line.  For example, the following command would execute the loader on two input files:
 
 ```
 java -jar gtas-loader/target/gtas-loader.jar 101.txt 102.txt
