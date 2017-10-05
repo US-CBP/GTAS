@@ -3131,6 +3131,7 @@
 
             // dragstart: create placeholder and hide current element
             self.$el.on('dragstart', '[draggable]', function(e) {
+                var dragStart = true;
                 e.stopPropagation();
 
                 // notify drag and drop (only dummy text)
@@ -3150,17 +3151,21 @@
                     src.$el.hide();
                 }, 0);
 
-                setInterval(function() {
-                  e.preventDefault();
-                  e.stopPropagation();
+                //Re-renders rule if its been too long when dragging
+                //Required because dragend is not being called in some cases
+                setTimeout(function() {
+                  if(src!==null){
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                  src.$el.show();
-                  placeholder.drop();
+                    src.$el.show();
+                    placeholder.drop();
 
-                  src = placeholder = null;
+                    src = placeholder = null;
 
-                  self.$el.find('.rule-container, .rules-group-container').removeAttr('draggable');
-                }, 3500);
+                    self.$el.find('.rule-container, .rules-group-container').removeAttr('draggable');
+                  }
+                }, 3000);
             });
 
             // dragenter: move the placeholder
