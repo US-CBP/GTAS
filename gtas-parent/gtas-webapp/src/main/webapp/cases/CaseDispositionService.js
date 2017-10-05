@@ -78,6 +78,12 @@
                 return dfd.promise;
             }
 
+            function getHitDispositionStatuses() {
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/hitdispositionstatuses"));
+                return dfd.promise;
+            }
+
             function getRuleCats() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/getRuleCats"));
@@ -86,6 +92,7 @@
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
+                getHitDispositionStatuses: getHitDispositionStatuses,
                 getAllCases:getAllCases,
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,

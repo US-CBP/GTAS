@@ -133,7 +133,7 @@
 
             <md-input-container style="padding-left:-1px">Validity :<md-select ng-model="hitDetailTrueHitFlag"
                                                                              ng-show="dispStatus.hitStatusShow">
-              <md-option value=-1 selected="{{item.name}}"></md-option>
+              <md-option value=0 selected="{{item.name}}"></md-option>
               <md-option ng-repeat="item in hitValidityStatuses" value="{{item.name}}">
                 {{item.name}}
               </md-option>
@@ -143,7 +143,7 @@
 
           <md-input-container style="padding-left:300px">Status :<md-select ng-model="hitDispStatus"
                                                                              ng-show="dispStatus.hitStatusShow">
-              <md-option value=-1 selected="{{item.name}}"></md-option>
+              <md-option value=0 selected="{{item.name}}"></md-option>
               <md-option ng-repeat="item in dispositionStatuses" value="{{item.name}}">
                 {{item.name}}
               </md-option>
