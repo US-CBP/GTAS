@@ -6,8 +6,8 @@
 app.service("paxModel", [function () {
     'use strict';
     var defaultSort = [
-            {column: 'onRuleHitList', dir: 'desc'},
             {column: 'onWatchList', dir: 'desc'},
+            {column: 'onRuleHitList', dir: 'desc'},
             {column: 'eta', dir: 'desc'}
         ],
         startDate = new Date(),

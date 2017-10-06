@@ -6,8 +6,8 @@
 app.service("flightsModel", [function () {
     'use strict';
     var defaultSort = [
-            {column: 'ruleHitCount', dir: 'desc'},
             {column: 'listHitCount', dir: 'desc'},
+            {column: 'ruleHitCount', dir: 'desc'},
             {column: 'eta', dir: 'desc'}
         ],
         startDate = new Date(),

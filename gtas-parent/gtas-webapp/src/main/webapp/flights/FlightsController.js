@@ -306,7 +306,7 @@
                 cellClass: gridService.colorHits,
                 sort: {
                     direction: uiGridConstants.DESC,
-                    priority: 0
+                    priority: 1
                 },
                 cellTemplate:'<span ng-if="row.entity.ruleHitCount" class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
             },
@@ -317,7 +317,7 @@
                 cellClass: "gridService.colorHits",
                 sort: {
                     direction: uiGridConstants.DESC,
-                    priority: 1
+                    priority: 0
                 },
                 cellTemplate:'<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
             },
@@ -369,7 +369,7 @@
                  cellClass: "rule-hit",
                  sort: {
                      direction: uiGridConstants.DESC,
-                     priority: 0
+                     priority: 1
                  },
                  cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
              },
@@ -378,7 +378,7 @@
                  cellClass: gridService.anyWatchlistHit,
                  sort: {
                      direction: uiGridConstants.DESC,
-                     priority: 1
+                     priority: 0
                  },
                  cellTemplate: '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
              },

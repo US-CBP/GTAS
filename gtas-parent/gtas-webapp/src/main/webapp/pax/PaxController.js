@@ -577,7 +577,7 @@
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
-                        priority: 0
+                        priority: 1
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
@@ -588,7 +588,7 @@
                     cellClass: gridService.anyWatchlistHit,
                     sort: {
                         direction: uiGridConstants.DESC,
-                        priority: 1
+                        priority: 0
                     },
                     cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
                 },
@@ -680,7 +680,7 @@
                     cellClass: "rule-hit",
                     sort: {
                         direction: uiGridConstants.DESC,
-                        priority: 0
+                        priority: 1
                     },
                     cellTemplate: '<md-button aria-label="hits" ng-mouseover="grid.appScope.getHitTooltipData(row)" ng-mouseleave="grid.appScope.resetTooltip()" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" ng-disabled={{!row.entity.onRuleHitList}}>'
                 	+'<md-tooltip class="multi-tooltip" md-direction="right"><div ng-repeat="item in grid.appScope.hitTooltipData">{{item}}<br/></div></md-tooltip>'
@@ -691,7 +691,7 @@
                     cellClass: gridService.anyWatchlistHit,
                     sort: {
                         direction: uiGridConstants.DESC,
-                        priority: 1
+                        priority: 0
                     },
                     cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
                 },
