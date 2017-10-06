@@ -35,8 +35,14 @@
 .fixed-width-sm {
   width: 176px !important;
 }
+.fixed-width-sm-case {
+    width: 225px !important;
+}
 .fixed-width-md{
   width: 450px !important;
+}
+.fixed-width-md-case{
+    width: 600px !important;
 }
 .half-width {
   width: 49% !important;
@@ -49,6 +55,9 @@
 }
 .min-half-height {
   min-height: 50vh;
+}
+.min-half-height-case {
+    min-height: 75vh;
 }
 .half-height {
   height: 50vh;

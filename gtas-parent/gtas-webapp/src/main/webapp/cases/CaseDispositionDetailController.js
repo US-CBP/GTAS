@@ -19,7 +19,8 @@
             $scope.caseItemHitsVo;
             $scope.ruleCatSet;
             $scope.ruleCat;
-            $scope.dispositionStatuses = [];
+            $scope.caseDispositionStatuses = [];
+            $scope.hitDispositionStatuses = [];
             $scope.dispStatus={
                 hitStatusShow:true,
                 caseStatusShow:true,
@@ -79,15 +80,15 @@
         };
 
             $scope.populateDispStatuses = function(){
-                caseDispositionService.getHitDispositionStatuses().then(function (response) {
-                    $scope.dispositionStatuses = [];
+                caseDispositionService.getDispositionStatuses().then(function (response) {
+                    $scope.caseDispositionStatuses = [];
                     angular.forEach(response.data, function(item){
-                        $scope.dispositionStatuses.push(item);
+                        $scope.caseDispositionStatuses.push(item);
                         if($scope.currentUser!=null
                             && !($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())
                             && item.name.toUpperCase()===$scope.dispStatus.constants.CLOSED
                         ) {
-                            $scope.dispositionStatuses.pop(item);
+                            $scope.caseDispositionStatuses.pop(item);
                         }
                     });
                 });
@@ -95,10 +96,28 @@
 
             $scope.populateDispStatuses();
 
+
+            $scope.populateHitDispStatuses = function(){
+                caseDispositionService.getHitDispositionStatuses().then(function (response) {
+                    $scope.hitDispositionStatuses = [];
+                    angular.forEach(response.data, function(item){
+                        $scope.hitDispositionStatuses.push(item);
+                        if($scope.currentUser!=null
+                            && !($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())
+                            && item.name.toUpperCase()===$scope.dispStatus.constants.CLOSED
+                        ) {
+                            $scope.hitDispositionStatuses.pop(item);
+                        }
+                    });
+                });
+            };
+
+            $scope.populateHitDispStatuses();
+
             $scope.caseConfirm = function() {
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
-                    if (item.status != $scope.dispStatus.constants.CLOSED) $scope.dispStatus.allHitsClosed = false;
+                    if ((item.status != $scope.dispStatus.constants.CLOSED) || (item.valid == null)) $scope.dispStatus.allHitsClosed = false;
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
@@ -122,9 +141,9 @@
                             .position('top right')
                             .hideDelay(4000)
                             .parent(toastPosition));
-                    $scope.caseItem = aCase.data;
-                    $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-                    $scope.caseDispStatus = $scope.caseItem.status;
+                    // $scope.caseItem = aCase.data;
+                    // $scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                    // $scope.caseDispStatus = $scope.caseItem.status;
                 }
             };
 
