@@ -7,13 +7,16 @@ package gov.gtas.services;
 
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.model.lookup.DispositionStatusCode;
+import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.*;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.HitsDispositionVo;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +50,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private HitDetailRepository hitDetailRepository;
     @Resource
     private RuleCatRepository ruleCatRepository;
+    @Resource
+    private HitDispositionStatusRepository hitDispRepo;
     @Autowired
     public RuleCatService ruleCatService;
 
@@ -453,5 +458,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public List<HitDispositionStatus> getHitDispositionStatuses() {
+        Iterable<HitDispositionStatus> i = hitDispRepo.findAll();
+        if (i != null) {
+            return IteratorUtils.toList(i.iterator());
+        }
+        return new ArrayList<>();
     }
 }

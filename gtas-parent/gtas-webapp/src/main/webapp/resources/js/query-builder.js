@@ -1652,14 +1652,14 @@
 
         //Custom fix to check against and load from the full filter list rather than the filters for "Last entity loaded"
         var totalFilterList = this.entities[id.split('.')[0]].columns;
-        
+
         if(totalFilterList.length > 0){
     	    for (var i=0, l=totalFilterList.length; i<l; i++) {
     	        if (totalFilterList[i].id == id) {
     	            return totalFilterList[i];
     	        }
     	    }
-        } else{  
+        } else{
     	    for (var i=0, l=this.filters.length; i<l; i++) {
     	        if (this.filters[i].id == id) {
     	            return this.filters[i];
@@ -3131,6 +3131,7 @@
 
             // dragstart: create placeholder and hide current element
             self.$el.on('dragstart', '[draggable]', function(e) {
+                var dragStart = true;
                 e.stopPropagation();
 
                 // notify drag and drop (only dummy text)
@@ -3149,6 +3150,22 @@
 
                     src.$el.hide();
                 }, 0);
+
+                //Re-renders rule if its been too long when dragging
+                //Required because dragend is not being called in some cases
+                setTimeout(function() {
+                  if(src!==null){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    src.$el.show();
+                    placeholder.drop();
+
+                    src = placeholder = null;
+
+                    self.$el.find('.rule-container, .rules-group-container').removeAttr('draggable');
+                  }
+                }, 3000);
             });
 
             // dragenter: move the placeholder
