@@ -6,6 +6,7 @@
 package gov.gtas.controller;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.services.CaseDispositionService;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -108,6 +108,11 @@ public class CaseDispositionController {
         HashMap _tempMap = new HashMap();
 
         return _tempMap;
+    }
+
+    @RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
+    public @ResponseBody List<HitDispositionStatus> getHitDispositionStatuses() {
+        return caseDispositionService.getHitDispositionStatuses();
     }
 
 }

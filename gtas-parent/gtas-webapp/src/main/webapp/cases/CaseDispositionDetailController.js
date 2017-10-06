@@ -79,7 +79,7 @@
         };
 
             $scope.populateDispStatuses = function(){
-                caseService.getDispositionStatuses().then(function (response) {
+                caseDispositionService.getHitDispositionStatuses().then(function (response) {
                     $scope.dispositionStatuses = [];
                     angular.forEach(response.data, function(item){
                         $scope.dispositionStatuses.push(item);
@@ -141,6 +141,7 @@
                     $scope.hitDispStatus=null;
                     spinnerService.hide('html5spinner');
                     $mdSidenav('comments').close();
+                    $state.reload();
                 });
             };
 

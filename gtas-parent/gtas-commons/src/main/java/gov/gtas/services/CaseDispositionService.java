@@ -8,10 +8,10 @@ package gov.gtas.services;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import org.springframework.security.access.prepost.PreAuthorize;
-
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +24,8 @@ public interface CaseDispositionService {
 
     @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public Case findHitsDispositionByCriteria(CaseRequestDto dto);
+
+    public List<HitDispositionStatus> getHitDispositionStatuses();
 
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 
