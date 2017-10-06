@@ -29,6 +29,7 @@
             };
             $scope.dispStatus.constants={
                 CLOSED: 'CLOSED',
+                NEW: 'NEW',
                 PENDINGCLOSURE: 'PENDING CLOSURE'
             };
             $scope.hitValidityStatuses=[
@@ -117,7 +118,9 @@
             $scope.caseConfirm = function() {
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
-                    if ((item.status != $scope.dispStatus.constants.CLOSED) || (item.valid == null)) $scope.dispStatus.allHitsClosed = false;
+                    if ( ($scope.caseDispStatus != $scope.dispStatus.constants.CLOSED) ||
+                        (item.status === $scope.dispStatus.constants.NEW) ||
+                        (item.valid == null)) $scope.dispStatus.allHitsClosed = false;
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
@@ -141,9 +144,7 @@
                             .position('top right')
                             .hideDelay(4000)
                             .parent(toastPosition));
-                    // $scope.caseItem = aCase.data;
-                    // $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-                    // $scope.caseDispStatus = $scope.caseItem.status;
+
                 }
             };
 
