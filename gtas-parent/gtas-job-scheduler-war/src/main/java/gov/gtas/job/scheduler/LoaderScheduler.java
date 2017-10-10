@@ -137,7 +137,6 @@ public class LoaderScheduler {
 		try {
 			targetingService.preProcessing();
 			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
-			targetingService.updateFlightHitCounts(uniqueFlights);
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
 			ErrorDetailInfo errInfo = ErrorHandlerFactory

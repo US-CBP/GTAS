@@ -629,6 +629,8 @@ public class TargetingServiceImpl implements TargetingService {
 	  		writeAuditLogForTargetingRun(ruleRunningResult);
 	  	}
 	 	logger.info("Exiting runningRuleEngine().");
+	 	//updateFlightHitCounts() was moved here in order to insure manual rule running updated flight hit counts
+	 	updateFlightHitCounts(uniqueFlights);
 	 	return uniqueFlights;
 	}
 
