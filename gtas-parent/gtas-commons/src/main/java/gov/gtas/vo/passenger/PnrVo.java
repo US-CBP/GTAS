@@ -30,7 +30,7 @@ public class PnrVo extends MessageVo {
     private List<BagVo> bags = new ArrayList<>();
    
 	private Integer totalbagCount;
-    private float totalbagWeight;
+    private double baggageWeight;
     private String formOfPayment;
     private String updateMode;
     private String raw;
@@ -75,16 +75,14 @@ public class PnrVo extends MessageVo {
 	public void setTotalbagCount(Integer totalbagCount) {
 		this.totalbagCount = totalbagCount;
 	}
-
-	public float getTotalbagWeight() {
-		return totalbagWeight;
-	}
-
-	public void setTotalbagWeight(float totalbagWeight) {
-		this.totalbagWeight = totalbagWeight;
-	}
     
-    public PnrVo() {
+    public double getBaggageWeight() {
+		return baggageWeight;
+	}
+	public void setBaggageWeight(double baggageWeight) {
+		this.baggageWeight = baggageWeight;
+	}
+	public PnrVo() {
         this.bagCount = 0;
         this.passengerCount = 0;
     }
