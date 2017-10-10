@@ -71,6 +71,7 @@ import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
 import gov.gtas.vo.BaseVo;
+import gov.gtas.vo.MessageVo;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
 import gov.gtas.vo.passenger.ApisMessageVo;
@@ -208,6 +209,7 @@ public class PassengerDetailsController {
 					tempVo.addBag(bagVo);
 				}
 			}
+			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
 		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId), t.getId());
@@ -417,7 +419,7 @@ public class PassengerDetailsController {
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotalbagCount(source.getTotal_bag_count());
-		target.setTotalbagWeight(source.getTotal_bag_weight());
+		target.setBaggageWeight(source.getBaggageWeight());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
@@ -543,11 +545,14 @@ public class PassengerDetailsController {
 				}
 			}
 		}
-		
-		parseRawMessageToSegmentList(target);
 		return target;
 	}
-	
+	/**
+	 * Sets Bag Object to passed in Vo element
+	 */
+	private void mapBagsToVo(Bag b, MessageVo m) {
+		
+	}
 	/**
 	 * Segments PnrRaw String
 	 * Required for Frontend to highlight segment corresponding to pnr section
@@ -565,7 +570,7 @@ public class PassengerDetailsController {
 			final String ADD = "ADD";
 			final String CC = "FOP";
 			final String FF = "FTI";
-			final String BAG = "TVD";
+			final String BAG = "TBD";
 					
 			while (_tempStr.hasMoreTokens()) {
 				String currString = _tempStr.nextToken();

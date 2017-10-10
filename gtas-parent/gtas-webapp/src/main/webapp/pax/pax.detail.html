@@ -654,7 +654,7 @@
                     <h3 class="h-label no-margin-top" >
                       {{'pnr.totalbags' | translate}} ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
                       <span class="right fnt-small">{{'pnr.baggage' | translate}} ({{passenger.pnrVo.bagCount}})
-                      {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.totalbagWeight}})
+                      {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.baggageWeight}})
                       </span>
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
@@ -669,9 +669,9 @@
                       <div class="floating-table-body">
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="bags in passenger.pnrVo.bags" ng-click="highlightClass('TVD'+bag.bagId)">
-                              <td>{{bags.bagId}}</td>
-                              <td>{{bags.destination}}</td>
+                            <tr ng-repeat="bag in passenger.pnrVo.bags" ng-click="highlightClass('TBD'+bag.bagId)">
+                              <td>{{bag.bagId}}</td>
+                              <td>{{bag.destination}}</td>
                             </tr>
                           </tbody>
                         </table>
