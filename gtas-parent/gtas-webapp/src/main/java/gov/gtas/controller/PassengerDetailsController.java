@@ -583,7 +583,6 @@ public class PassengerDetailsController {
 							segment.append(ITIN);
 							segment.append(f.getOriginAirport());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -594,7 +593,6 @@ public class PassengerDetailsController {
 							segment.append(NAME);
 							segment.append(p.getFirstName());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -605,7 +603,6 @@ public class PassengerDetailsController {
 							segment.append(DOC);
 							segment.append(d.getDocumentNumber());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -616,7 +613,6 @@ public class PassengerDetailsController {
 							segment.append(ADD);
 							segment.append(a.getCity());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -627,7 +623,6 @@ public class PassengerDetailsController {
 							segment.append(CC);
 							segment.append(c.getNumber());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -638,7 +633,6 @@ public class PassengerDetailsController {
 							segment.append(FF);
 							segment.append(f.getNumber());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -649,7 +643,6 @@ public class PassengerDetailsController {
 							segment.append(BAG);
 							segment.append(b.getBagId());
 							segment.append(" ");
-							break;
 						}
 					}
 				}
@@ -659,20 +652,24 @@ public class PassengerDetailsController {
 						segment.append("PHONE");
 						segment.append(p.getNumber());
 						segment.append(" ");
-						break;
 					}
 				}
 				
 				//Email
 				for(EmailVo e: targetVo.getEmails()) {
-					int at = e.getAddress().indexOf("@");
-					//Backup if @ is not found
-					at = at != -1?at:e.getAddress().length();
-					if(currString.contains(e.getAddress().substring(0,at))) {
+					boolean isMatch = true;
+					String[] words = e.getAddress().split("[^a-zA-Z0-9']+");
+
+					for(String word: words) {
+						if(!currString.contains(word)) {
+							isMatch = false;
+							break;
+						}
+					}
+					if(words.length>0 && isMatch) {
 						segment.append("EMAIL");
 						segment.append(e.getAddress());
 						segment.append(" ");
-						break;
 					}
 				}
 				
@@ -682,7 +679,6 @@ public class PassengerDetailsController {
 						segment.append("SEAT");
 						segment.append(s.getNumber());
 						segment.append(" ");
-						break;
 					}
 				}
 				
@@ -692,7 +688,6 @@ public class PassengerDetailsController {
 						segment.append("AGEN");
 						segment.append(a.getIdentifier());
 						segment.append(" ");
-						break;
 					}
 				}					
 				
