@@ -153,12 +153,18 @@ public class ElasticHelper {
 
 	public void indexPnr(Pnr pnr) {
 		String pnrRaw = LobUtils.convertClobToString(pnr.getRaw());
-		indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw, null, pnr);
+		if(!(pnr == null || pnr.getFlights() == null || pnr.getPassengers() == null )){
+			indexFlightPax(pnr.getFlights(), pnr.getPassengers(), null, pnrRaw, null, pnr);
+		}
+		
 	}
 
 	public void indexApis(ApisMessage apis) {
-		String apisRaw = LobUtils.convertClobToString(apis.getRaw());		
-		indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null,apis,null);
+		String apisRaw = LobUtils.convertClobToString(apis.getRaw());
+		if(!(apis == null || apis.getFlights() == null || apis.getPassengers() == null )){
+			indexFlightPax(apis.getFlights(), apis.getPassengers(), apisRaw, null,apis,null);
+		}
+		
 	}
 	
 	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {	
