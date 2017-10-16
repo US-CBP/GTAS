@@ -154,7 +154,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
-            pullRuleCategory(hitDisp, _tempHitId);
+            pullRuleCategory(hitDisp, getRuleCatId(_tempHitId));
             highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
@@ -224,6 +224,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private Long getHighPriorityRuleCatId(Long ruleId) {
         try {
             return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return 1L;
+    }
+
+    private Long getRuleCatId(Long ruleId) {
+        try {
+            return ruleCatService.fetchRuleCatIdFromRuleId(ruleId);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
