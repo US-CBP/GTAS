@@ -242,7 +242,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
 			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
 			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id = ");
 			sqlStr.append(pnrId);
 			sqlStr.append(" OR " );
@@ -253,13 +253,13 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		else if(pnrId !=null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
 			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id = ");
 			sqlStr.append(pnrId);
 		}
 		else if(pnrRef !=null) {
 			sqlStr.append("flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE fpa.ref_number = '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
@@ -280,7 +280,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
 			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
 			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id != ");
 			sqlStr.append(pnrId);
 			sqlStr.append(" AND " );
@@ -292,14 +292,14 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		else if(pnrId !=null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
 			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id != ");
 			sqlStr.append(pnrId);
 			sqlStr.append(" AND ");
 		}
 		else if(pnrRef !=null) {
 			sqlStr.append("flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
-			sqlStr.append("JOIN Flight f ON f.id = fp.flight_id ");
+			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE fpa.ref_number != '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
