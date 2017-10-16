@@ -711,7 +711,7 @@
                   <div class="floating-table-body">
                     <table class="cbp-table-selectable mdl-js-data-table">
                       <tbody>
-                        <tr ng-repeat="j in passenger.flightHistoryVo track by $index">
+                        <tr ng-repeat="j in passenger.flightHistoryVo | orderBy:'-etd'">
                             <td>{{j.fullFlightNumber}}</td>
                             <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
@@ -749,7 +749,7 @@
                   <div class="floating-table-body">
                     <table class="cbp-table-selectable mdl-js-data-table">
                       <tbody>
-                        <tr ng-repeat="k in flight track by $index">
+                        <tr ng-repeat="k in flight | orderBy:'-etd'">
                             <td>{{k.fullFlightNumber}}</td>
                             <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
