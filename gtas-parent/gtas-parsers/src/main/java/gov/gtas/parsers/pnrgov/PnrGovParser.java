@@ -444,6 +444,30 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
     }
     
+    private void extractSeatInfo(String ltsText){
+    	 //LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
+    	 //LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
+ 	
+    	if(ltsText.contains("NR/RS")){
+    		ltsText=ltsText.substring(ltsText.indexOf("NR/RS")+6, ltsText.length());
+    		String[] tokens=ltsText.split(" ");
+    		if(tokens.length == 5){
+    			SeatVo seat = new SeatVo();
+    			PassengerVo thePax =this.findPaxByName(tokens[1]);
+                //seat.setTravelerReferenceNumber(refNumber);
+        		String temp=tokens[4];
+        		String orig=temp.substring(3, temp.length());
+                seat.setNumber(tokens[0]);
+                seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
+                seat.setDestination(tokens[4].substring(0,3));
+                if(thePax != null && seat.isValid() ){
+                	thePax.getSeatAssignments().add(seat);
+                	
+                }
+    		}
+    		
+    	}
+    }
     private void processFlightSegments(TVL tvl) throws ParseException {
         getConditionalSegment(TRA.class);
         getConditionalSegment(RPI.class);
@@ -546,6 +570,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             else if(lts.isEmail()){
             	extractEmailInfo(lts.getTheText());
+            }
+            else if(lts.isSeat()){
+            	//extractSeatInfo(lts.getTheText());
             }
             if(lts.isFrequentFlyer()){
             	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
@@ -974,7 +1001,21 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 				
 			}
     	}
-    }    
+    }  
+
+    private PassengerVo findPaxByName(String name) {
+    	String[] tokens=name.split("/");
+    	if(tokens.length >=2){
+            for (PassengerVo pax : parsedMessage.getPassengers()) {
+                if (tokens[0].equals(pax.getFirstName()) &&  tokens[1].contains(pax.getLastName())) {
+                    return pax;
+                }
+            }	
+    	}
+
+        return null;
+    }
+    
     private PassengerVo findPaxByReferenceNumber(String refNumber) {
         for (PassengerVo pax : parsedMessage.getPassengers()) {
             if (refNumber.equals(pax.getTravelerReferenceNumber())) {
