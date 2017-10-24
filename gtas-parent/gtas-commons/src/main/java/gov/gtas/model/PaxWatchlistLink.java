@@ -32,7 +32,7 @@ public class PaxWatchlistLink {
     private Long id;  
     
     @Column(name= "percent_match")
-    private int percentMatch;
+    private float percentMatch;
     
     @Column(name= "last_run_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
@@ -54,11 +54,11 @@ public class PaxWatchlistLink {
 		this.id = id;
 	}
 
-	public int getPercentMatch() {
+	public float getPercentMatch() {
 		return percentMatch;
 	}
 
-	public void setPercentMatch(int percentMatch) {
+	public void setPercentMatch(float percentMatch) {
 		this.percentMatch = percentMatch;
 	}
 

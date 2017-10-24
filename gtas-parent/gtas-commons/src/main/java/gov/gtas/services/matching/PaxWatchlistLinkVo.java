@@ -11,16 +11,27 @@ import gov.gtas.model.watchlist.WatchlistItem;
 
 public class PaxWatchlistLinkVo {
 
-	    private int percentMatch;
+	    private float percentMatch;
 	    private Date lastRunTimestamp;
-	    private WatchlistItem watchlistItem;
-	    private Passenger passenger;
+	    private int verifiedStatus;
+	    private Long watchlistItemId;
+	    private Long passengerId;
 
-		public int getPercentMatch() {
+		public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus, Long watchlistItemId,
+				Long passengerId) {
+			super();
+			this.percentMatch = percentMatch;
+			this.lastRunTimestamp = lastRunTimestamp;
+			this.verifiedStatus = verifiedStatus;
+			this.watchlistItemId = watchlistItemId;
+			this.passengerId = passengerId;
+		}
+
+		public float getPercentMatch() {
 			return percentMatch;
 		}
 
-		public void setPercentMatch(int percentMatch) {
+		public void setPercentMatch(float percentMatch) {
 			this.percentMatch = percentMatch;
 		}
 
@@ -32,20 +43,27 @@ public class PaxWatchlistLinkVo {
 			this.lastRunTimestamp = lastRunTimestamp;
 		}
 
-		public WatchlistItem getWatchlistItem() {
-			return watchlistItem;
+		public Long getWatchlistItemId() {
+			return watchlistItemId;
 		}
 
-		public void setWatchlistItem(WatchlistItem watchlistItem) {
-			this.watchlistItem = watchlistItem;
+		public void setWatchlistItemId(Long watchlistItemId) {
+			this.watchlistItemId = watchlistItemId;
 		}
 
-		public Passenger getPassenger() {
-			return passenger;
+		public Long getPassengerId() {
+			return passengerId;
 		}
 
-		public void setPassenger(Passenger passenger) {
-			this.passenger = passenger;
+		public void setPassengerId(Long passengerId) {
+			this.passengerId = passengerId;
 		}
-	    
+
+		public int getVerifiedStatus() {
+			return verifiedStatus;
+		}
+
+		public void setVerifiedStatus(int verifiedStatus) {
+			this.verifiedStatus = verifiedStatus;
+		}
 }
