@@ -75,7 +75,7 @@ public class MatchingService {
                 }
                 if(percentMatch>=threshold) {
                 	Date lastRunTimestamp = new Date();
-//                	paxWatchlistLinkRepository.savePaxWatchlistLink(lastRunTimestamp,percentMatch, 0, id, item.getId());
+                	paxWatchlistLinkRepository.savePaxWatchlistLink(lastRunTimestamp,percentMatch, 0, id, item.getId());
                 	pwlList.add(new PaxWatchlistLinkVo(percentMatch,lastRunTimestamp,0, item.getId(), id));
                 }
                 
