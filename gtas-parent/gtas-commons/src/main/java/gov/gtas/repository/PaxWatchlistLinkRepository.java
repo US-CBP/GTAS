@@ -14,9 +14,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import gov.gtas.model.Passenger;
 import gov.gtas.model.PaxWatchlistLink;
 
 public interface PaxWatchlistLinkRepository extends JpaRepository<PaxWatchlistLink, Long> {
 	public List<PaxWatchlistLink> findByPassengerId(Long id);
-    public void setPaxWatchlistLink(Date lastDate, float percentMatch, int verifiedStatus,Long passengerId, Long watchlistItemId);
+//    public void savePaxWatchlistLink(Date lastDate, float percentMatch, int verifiedStatus,Long passengerId, Long watchlistItemId);
 }
