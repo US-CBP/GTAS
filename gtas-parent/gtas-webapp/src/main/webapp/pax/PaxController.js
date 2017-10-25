@@ -242,6 +242,14 @@
    		});
     };
 
+    $scope.getWatchListMatchByPaxId = function (){
+      spinnerService.show('html5spinner');
+      paxService.getPaxWatchlistLink($scope.passenger.paxId)
+      .then(function(response){
+        $scope.passenger.watchlistLinks = response.data;
+      });
+    }
+
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()

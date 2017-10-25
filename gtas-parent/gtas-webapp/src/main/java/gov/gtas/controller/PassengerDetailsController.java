@@ -65,6 +65,8 @@ import gov.gtas.services.DispositionData;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
+import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
@@ -104,6 +106,9 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private UserService uService;
+	
+	@Autowired
+	private MatchingService matchingService;
 	
 	@Resource
 	private BagRepository bagRepository;
@@ -340,6 +345,13 @@ public class PassengerDetailsController {
 						copyModelToVo(flight, flightVo);
 						return flightVo;
 					}).collect(Collectors.toCollection(LinkedList::new));
+	}	
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/watchlistlink", method = RequestMethod.GET)
+	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId (@RequestParam String paxId) {
+		return matchingService.saveWatchListMatchByPaxId(Long.valueOf(paxId));
 	}
 	
 	

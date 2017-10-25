@@ -13,6 +13,12 @@
                 return dfd.promise;
             }
 
+            function getPaxWatchlistLink(paxId){
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/passengers/passenger/watchlistlink?paxId=" + paxId));
+                return dfd.promise;
+            }
+
             function getPaxFlightHistory(paxId, flightId){
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/passengers/passenger/flighthistory?paxId=" + paxId + "&flightId="+ flightId));
