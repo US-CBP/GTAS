@@ -117,7 +117,9 @@
     <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
             <div class="static-label"> Leave a Comment </div>
-            <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."></trix-editor>
+            <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."
+                trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);"
+            ></trix-editor>
             <!--<summernote ng-model="commentText" config="options" id="summernote"></summernote>-->
               <!--<div class="sm-pad">-->
               <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;full-width">-->
