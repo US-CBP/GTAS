@@ -170,6 +170,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             processGroup5_Flight(tvl);
         }
+        processLTS();
     }
 
     /**
@@ -444,30 +445,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
     }
     
-    private void extractSeatInfo(String ltsText){
-    	 //LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
-    	 //LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
- 	
-    	if(ltsText.contains("NR/RS")){
-    		ltsText=ltsText.substring(ltsText.indexOf("NR/RS")+6, ltsText.length());
-    		String[] tokens=ltsText.split(" ");
-    		if(tokens.length == 5){
-    			SeatVo seat = new SeatVo();
-    			PassengerVo thePax =this.findPaxByName(tokens[1]);
-                //seat.setTravelerReferenceNumber(refNumber);
-        		String temp=tokens[4];
-        		String orig=temp.substring(3, temp.length());
-                seat.setNumber(tokens[0]);
-                seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
-                seat.setDestination(tokens[4].substring(0,3));
-                if(thePax != null && seat.isValid() ){
-                	thePax.getSeatAssignments().add(seat);
-                	
-                }
-    		}
-    		
-    	}
-    }
     private void processFlightSegments(TVL tvl) throws ParseException {
         getConditionalSegment(TRA.class);
         getConditionalSegment(RPI.class);
@@ -555,6 +532,36 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             processGroup10_History(abi);
         }
 
+//        for (;;) {
+//            LTS lts = getConditionalSegment(LTS.class);
+//            if (lts == null) {
+//                break;
+//            }
+//            if(lts.isAgency()){
+//            	processAgencyInfo(lts.getTheText());
+//            }else if(lts.isPhone()){
+//            	processPhoneInfo(lts.getTheText());
+//            }
+//            else if(lts.isFormPayment()){
+//            	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
+//            }
+//            else if(lts.isEmail()){
+//            	extractEmailInfo(lts.getTheText());
+//            }
+//            else if(lts.isSeat()){
+//            	extractSeatInfo(lts.getTheText());
+//            }
+//            if(lts.isFrequentFlyer()){
+//            	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
+//            	if(ffvo != null && ffvo.isValid()){
+//            		parsedMessage.getFrequentFlyerDetails().add(ffvo);
+//            	}
+//            }
+//            extractContactInfo(lts.getText());
+//        }
+    }
+
+    private void processLTS() throws ParseException{
         for (;;) {
             LTS lts = getConditionalSegment(LTS.class);
             if (lts == null) {
@@ -572,7 +579,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             	extractEmailInfo(lts.getTheText());
             }
             else if(lts.isSeat()){
-            	//extractSeatInfo(lts.getTheText());
+            	extractSeatInfo(lts.getTheText());
             }
             if(lts.isFrequentFlyer()){
             	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
@@ -583,7 +590,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             extractContactInfo(lts.getText());
         }
     }
-
     
     /**
      * the agent info that checked-in the passenger
@@ -1007,7 +1013,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	String[] tokens=name.split("/");
     	if(tokens.length >=2){
             for (PassengerVo pax : parsedMessage.getPassengers()) {
-                if (tokens[0].equals(pax.getFirstName()) &&  tokens[1].contains(pax.getLastName())) {
+                if ((tokens[0].contains(pax.getFirstName()) &&  tokens[1].contains(pax.getLastName()))
+                		|| (tokens[0].contains(pax.getLastName()) &&  tokens[1].contains(pax.getFirstName()))) {
                     return pax;
                 }
             }	
@@ -1044,5 +1051,36 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	}
     	return null;
     }
-
+    private void extractSeatInfo(String ltsText){
+   	 //LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
+   	 //LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
+   	
+   	if(ltsText.contains("NR/RS")){
+   		ltsText=ltsText.substring(ltsText.indexOf("NR/RS")+6, ltsText.length());
+   	}else if(ltsText.contains(" RS")){
+   		ltsText=ltsText.substring(ltsText.indexOf(" RS")+3, ltsText.length());
+   	}
+   	String[] tokens=ltsText.split(" ");
+   	if(tokens.length == 5){
+   		SeatVo seat = new SeatVo();
+   		PassengerVo thePax =this.findPaxByName(tokens[1]);
+           seat.setNumber(tokens[0]);
+           seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
+           seat.setDestination(tokens[4].substring(0,3));
+           if(thePax != null && seat.isValid() ){
+               thePax.getSeatAssignments().add(seat);
+           }
+   	}else if(tokens.length == 6){
+   		SeatVo seat = new SeatVo();
+   		PassengerVo thePax =this.findPaxByName(tokens[1]);
+        seat.setNumber(tokens[0]);
+        seat.setOrigin(tokens[5].substring(3, tokens[5].length()));
+        seat.setDestination(tokens[5].substring(0,3));
+           if(thePax != null && seat.isValid() ){
+               thePax.getSeatAssignments().add(seat);
+           }    		
+   	}
+   		
+   	
+   }
 }
