@@ -1,0 +1,6 @@
+To set up the home country for the loader to determine the incoming and outgoing flights modify the below entry in 
+\gtas-parent\gtas-commons\src\main\resources\sql\gtas_data.sql file.
+
+insert into app_configuration (opt, val, description) values('HOME_COUNTRY', 'AAA', 'home country for the loader to determine incoming/outgoing flights');
+Where "AAA" needs to be replaced with the interested country that is going to install GTAS application.
+Make sure this is a three letter conuntry code.
