@@ -1,6 +1,33 @@
-To set up the home country for the loader to determine the incoming and outgoing flights modify the below entry in 
+
+SETTING UP HOME COUNTRY AND DASHBOARD AIRPORT TO LOAD AND WATCH INCOMING AND OUTGOING FILGHTS.
+
+To set up the home country for the loader to determine the incoming and outgoing flights modify the below entries in 
+
 \gtas-parent\gtas-commons\src\main\resources\sql\gtas_data.sql file.
 
-insert into app_configuration (opt, val, description) values('HOME_COUNTRY', 'AAA', 'home country for the loader to determine incoming/outgoing flights');
-Where "AAA" needs to be replaced with the interested country that is going to install GTAS application.
-Make sure this is a three letter conuntry code.
+1).insert into app_configuration (opt, val, description) values('HOME_COUNTRY', 'USA', 'home country for the loader to determine incoming/outgoing flights');
+             Where val "USA" needs to be replaced with the interested country that is going to install GTAS application.
+             Make sure this is a three letter conuntry code.
+
+2).insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
+            Where val "IAD" needs to be replaced with the interested Airport that is going to idisplay on the Dash board.
+3).insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
+	    Where val '-5' need to be modified according to your GMT/UTC offset.
+
+
+The values of "HOME_COUNTRY" and and "DASHBOARD_AIRPORT" can be retrieved programmatically using the method
+public String getAppConfigOption(String option) of \gtas-parent\gtas-commons\src\main\java\gov\gtas\repository\LookUpRepository by passing the appropriate options.
+
+Ex: String value=getAppConfigOption("HOME_COUNTRY");
+
+Loader is using the "HOME_COUNTRY" value from app_configuration table and changing/modifying the gtas_data.sql will allow you to set the Home country at installation.
+
+
+There are two other places where the hardcoded value of 'DASHBOARD_AIRPORT' need to be modified.
+
+1)./gtas-parent/gtas-webapp/src/main/webapp/dashboard/DashboardController.js: "title": "IAD"
+2)./gtas-parent/gtas-webapp/src/main/webapp/dashboard/DashboardController.js: "label": "Flights To IAD"
+
+The "IAD" airport value can be replaced with the Airport code you are interested in the files.
+
+
