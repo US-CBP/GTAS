@@ -16,8 +16,7 @@ import org.springframework.data.repository.query.Param;
 /**
  * Watch list Repository with custom queries.
  */
-public interface WatchlistItemRepository extends CrudRepository<WatchlistItem, Long>, JpaSpecificationExecutor<WatchlistItem> {
-    
+public interface WatchlistItemRepository extends CrudRepository<WatchlistItem, Long>, JpaSpecificationExecutor<WatchlistItem> {	
     @Query("SELECT wli FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
     public List<WatchlistItem> getItemsByWatchlistName(@Param("watchlistName") String watchlistName);   
 

@@ -27,7 +27,7 @@ import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 
 public interface MatchingService {
-	public List<PaxWatchlistLink> findByPassengerId(Long id);
+	public List<PaxWatchlistLinkVo> findByPassengerId(Long id);
 	
-	public List<PaxWatchlistLinkVo> saveWatchListMatchByPaxId(Long id);
+	public void saveWatchListMatchByPaxId(Long id);
 }

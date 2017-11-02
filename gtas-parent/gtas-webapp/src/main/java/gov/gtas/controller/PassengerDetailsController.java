@@ -349,11 +349,17 @@ public class PassengerDetailsController {
 	
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/watchlistlink", method = RequestMethod.GET)
-	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId (@RequestParam String paxId) {
+	@RequestMapping(value = "/passengers/passenger/savewatchlistlink", method = RequestMethod.GET)
+	public List<PaxWatchlistLinkVo> saveWatchListMatchByPaxId (@RequestParam String paxId) {
 		return matchingService.saveWatchListMatchByPaxId(Long.valueOf(paxId));
 	}
 	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/getwatchlistlink", method = RequestMethod.GET)
+	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId (@RequestParam String paxId) {
+		return matchingService.findByPassengerId(Long.valueOf(paxId));
+	}
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
 	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {

@@ -54,8 +54,8 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
 
   $scope.resultsGrid.columnDefs = [
       {
-        field: 'Link Analysis',
-        name: 'Link Analysis',
+        field: 'passengerId',
+        name: 'passengerId',
         displayName: 'Link Analysis',
         cellTemplate: '<md-button ng-click="grid.appScope.searchLinks(row.entity.passengerId,$event)"><i class="fa fa-link" aria-hidden="true"></i></md-button>'
       },

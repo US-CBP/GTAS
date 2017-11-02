@@ -15,7 +15,12 @@
 
             function getPaxWatchlistLink(paxId){
                 var dfd = $q.defer();
-                dfd.resolve($http.get("/gtas/passengers/passenger/watchlistlink?paxId=" + paxId));
+                dfd.resolve($http.get("/gtas/passengers/passenger/getwatchlistlink?paxId=" + paxId));
+                return dfd.promise;
+            }
+            function savePaxWatchlistLink(paxId){
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/passengers/passenger/savewatchlistlink?paxId=" + paxId));
                 return dfd.promise;
             }
 
@@ -30,8 +35,6 @@
               dfd.resolve($http.get("/gtas/passengers/passenger/travelhistory?paxId=" + paxId + "&flightId=" + flightId));
               return dfd.promise;
             }
-
-
             function getPaxAttachments(paxId){
             	var dfd = $q.defer();
             	dfd.resolve($http.get('/gtas/getattachments?paxId='+ paxId));
@@ -68,7 +71,9 @@
                     getPaxFullTravelHistory: getPaxFullTravelHistory,
                     getPaxAttachments: getPaxAttachments,
                     savePaxAttachments: savePaxAttachments,
-                    deleteAttachment: deleteAttachment
+                    deleteAttachment: deleteAttachment,
+                    getPaxWatchlistLink: getPaxWatchlistLink,
+                    savePaxWatchlistLink: savePaxWatchlistLink
                     });
         })
         .service('caseService', function ($http, $q) {

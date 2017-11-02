@@ -44,19 +44,56 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 	
 	private float stringMatcher(String str1, String str2) {
 		if(doubleMetaphone.isDoubleMetaphoneEqual(str1, str2)) {
-			return 1;
+			return 1.0f;
 		}
 		return jaroWinklerDistance.getDistance(str1, str2);
 	}
-	
-	public List<PaxWatchlistLink> findByPassengerId(Long id) {
-		return paxWatchlistLinkRepository.findByPassengerId(id);
+	private PaxWatchlistLinkVo convertToVo(PaxWatchlistLink pwLink) {
+		return convertToVo(pwLink.getPercentMatch(), pwLink.getLastRunTimestamp(), pwLink.getVerifiedStatus(), pwLink.getId(), pwLink.getWatchlistItem());
+	}
+	private PaxWatchlistLinkVo convertToVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus, long paxId, WatchlistItem item) {
+		 try{
+             WatchlistItemSpec itemSpec = mapper.readValue(item.getItemData(),
+                 WatchlistItemSpec.class);
+             String firstName = new String();
+             String lastName = new String();
+             String dob = new String();
+             
+             for(WatchlistTerm term: itemSpec.getTerms()) {
+             	if(term.getField().equals("firstName")) {
+             		firstName = term.getValue();
+             	}
+             	if(term.getField().equals("lastName")) {
+             		lastName = term.getValue();
+             	}
+             	if(term.getField().equals("dob")) {
+             		dob = term.getValue();
+             	}
+             }  
+             return new PaxWatchlistLinkVo(percentMatch, lastRunTimestamp, verifiedStatus,paxId, item.getId(), firstName, lastName, dob);
+         } catch(IOException ioe){
+             logger.error("ConvertToVo"
+                     + ioe.getMessage());
+             throw ErrorHandlerFactory
+                     .getErrorHandler()
+                     .createException(
+                             CommonErrorConstants.INVALID_ARGUMENT_ERROR_CODE,
+                             item.getId(), "getWatchListMatchByPaxId");
+
+         }
 	}
 	
-	public List<PaxWatchlistLinkVo> saveWatchListMatchByPaxId(Long id) {
-		final double threshold = .7;
-		Passenger passenger = passengerRepository.getPassengerById(id);
+	public List<PaxWatchlistLinkVo> findByPassengerId(Long id) {
 		List<PaxWatchlistLinkVo> pwlList = new ArrayList<PaxWatchlistLinkVo>();
+		for(PaxWatchlistLink pwLink: paxWatchlistLinkRepository.findByPassengerId(id)) {
+			pwlList.add(convertToVo(pwLink));
+		}
+		return pwlList;
+	}
+	
+	public void saveWatchListMatchByPaxId(Long id){
+		final float threshold = 70.0f;
+		Passenger passenger = passengerRepository.getPassengerById(id);
 		List<WatchlistItem> passengerWatchlist = watchlistItemRepository.getItemsByWatchlistName("Passenger");
 		for (WatchlistItem item : passengerWatchlist) {
             try{
@@ -68,18 +105,18 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
                 		percentMatch+=stringMatcher(passenger.getFirstName(), term.getValue());
                 	}
                 	if(term.getField().equals("lastName")) {
-                		percentMatch+=stringMatcher(passenger.getFirstName(), term.getValue());
+                		percentMatch+=stringMatcher(passenger.getLastName(), term.getValue());
                 	}
-                	percentMatch = percentMatch==0?percentMatch:percentMatch/2;
                 	//TODO Incorporate Date into matchPercentage
 //                	if(!term.getField().equals("dob")) {
 //                		percentMatch=0;
 //                	}
                 }
+                percentMatch*=100;
+            	percentMatch = percentMatch==0?percentMatch:percentMatch/2.0f;
                 if(percentMatch>=threshold) {
                 	Date lastRunTimestamp = new Date();
                 	paxWatchlistLinkRepository.savePaxWatchlistLink(lastRunTimestamp,percentMatch, 0, id, item.getId());
-                	pwlList.add(new PaxWatchlistLinkVo(percentMatch,lastRunTimestamp,0, item.getId(), id));
                 }
                 
             } catch(IOException ioe){
@@ -93,6 +130,5 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 
             }
 		}
-        return pwlList;
 	}
 }

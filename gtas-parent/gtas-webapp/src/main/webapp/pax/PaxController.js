@@ -5,8 +5,9 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, paxDetailService, caseService, watchListService, codeTooltipService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
+        $scope.watchlistLinks = watchlistLinks.data;
         $scope.isLoadingFlightHistory = true;
         $scope.isClosedCase = false;
         $scope.ruleHits = ruleHits;
@@ -98,6 +99,20 @@
             }
           }
         };
+
+        $scope.getWatchListMatchByPaxId = function (){
+          paxDetailService.getPaxWatchlistLink($scope.passenger.paxId)
+          .then(function(response){
+            $scope.passenger.watchlistLinks = response.data;
+          });
+        }
+
+        $scope.saveWatchListMatchByPaxId = function (){
+          paxDetailService.savePaxWatchlistLink($scope.passenger.paxId)
+          .then(function(response){
+            $scope.passenger.watchlistLinks = response.data;
+          });
+        }
 
         $scope.saveDisposition = function(){
         	var disposition = {
@@ -241,14 +256,6 @@
    	   		});
    		});
     };
-
-    $scope.getWatchListMatchByPaxId = function (){
-      spinnerService.show('html5spinner');
-      paxService.getPaxWatchlistLink($scope.passenger.paxId)
-      .then(function(response){
-        $scope.passenger.watchlistLinks = response.data;
-      });
-    }
 
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {

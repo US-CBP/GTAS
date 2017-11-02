@@ -495,6 +495,9 @@ var app;
                         },
                         ruleHits: function(paxService, $stateParams){
                         	return paxService.getRuleHitsByFlightAndPax($stateParams.paxId, $stateParams.flightId);
+                        },
+                        watchlistLinks: function(paxDetailService, $stateParams){
+                          return paxDetailService.getPaxWatchlistLink($stateParams.paxId)
                         }
                     }
                 })
