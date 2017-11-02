@@ -7,9 +7,11 @@ package gov.gtas.services.search;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -167,7 +169,7 @@ public class ElasticHelper {
 		
 	}
 	
-	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {	
+	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
@@ -188,6 +190,11 @@ public class ElasticHelper {
 			vo.setFlightNumber(flightNumber);
 			vo.setOrigin((String)result.get("origin"));
 			vo.setDestination((String)result.get("destination"));
+			try {
+				vo.setEta(dateParser.parse((String)result.get("eta")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			if(result.get("addresses")!=null) {
 				Set<Address> addresses = new HashSet<>();
 				for(HashMap m: ((ArrayList<HashMap>) result.get("addresses"))) {
@@ -223,11 +230,14 @@ public class ElasticHelper {
 				vo.setDocuments(documents);
 			}
 		}	
-
+		rv.sort((o1,o2)->o1.getEta().compareTo(o2.getEta())*-1);
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
 	public LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir) throws ParseException {	
+		if(pax==null) {
+			return new LinkAnalysisDto(new ArrayList(), 0);
+		}
 		SortOrder sortOrder = ("asc".equals(dir.toLowerCase())) ? SortOrder.ASC : SortOrder.DESC;
 		int startIndex = (pageNumber - 1) * pageSize;
 		
@@ -309,18 +319,16 @@ public class ElasticHelper {
         QueryBuilder qb = QueryBuilders
         		.multiMatchQuery(query, searchFields)
         		.type(MultiMatchQueryBuilder.Type.MOST_FIELDS);
-        
-		SearchResponse response = client.prepareSearch(INDEX_NAME)
-                .setTypes(FLIGHTPAX_TYPE)
-			    .setSearchType(SearchType.QUERY_THEN_FETCH)
-			    .setQuery(qb)
-			    .setFrom(startIndex)
-			    .setSize(pageSize)
-			    .addSort(column, sortOrder)
-			    .setExplain(true)
-			    .execute()
-			    .actionGet();
-		
+        SearchResponse response = client.prepareSearch(INDEX_NAME)
+                    .setTypes(FLIGHTPAX_TYPE)
+    			    .setSearchType(SearchType.QUERY_THEN_FETCH)
+    			    .setQuery(qb)
+    			    .setFrom(startIndex)
+    			    .setSize(pageSize)
+    			    .addSort(column, sortOrder)
+    			    .setExplain(true)
+    			    .execute()
+    			    .actionGet();		
 		return response.getHits();
 	}
 	
