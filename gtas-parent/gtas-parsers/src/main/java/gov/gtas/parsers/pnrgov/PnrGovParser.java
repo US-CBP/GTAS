@@ -673,7 +673,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	if(bDetails == null || bDetails.size()==0){
     		return null;
     	}
-    	List<BagVo> bags = new ArrayList();
+    	List<BagVo> bags = new ArrayList<>();
+    	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
     	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
     	for (BagDetails bd : bDetails){
     		BagVo bvo=new BagVo();
@@ -689,6 +690,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
     		}
     		bags.add(bvo);
+    	}
     	}
     	return bags;
     }
@@ -827,7 +829,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	if(txt.contains(LTS.APE)){
     		//LTS+0/O/5/APE FIRST.LAST@YAHOO.COM/FIRST/LAST MRS'
     		tmp=txt.substring(txt.indexOf(LTS.APE)+4, txt.length());
-    		tmp=tmp.substring(0,tmp.indexOf("/"));
+    		if(tmp.indexOf("/") != -1){
+    			tmp=tmp.substring(0,tmp.indexOf("/"));
+    		}
+    		
     	}else{
     		tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
 		
@@ -1065,8 +1070,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
    		SeatVo seat = new SeatVo();
    		PassengerVo thePax =this.findPaxByName(tokens[1]);
            seat.setNumber(tokens[0]);
-           seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
-           seat.setDestination(tokens[4].substring(0,3));
+           if(tokens[4] != null && tokens[4].length() >4){
+        	   seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
+        	   seat.setDestination(tokens[4].substring(0,3));
+           }
+     
            if(thePax != null && seat.isValid() ){
                thePax.getSeatAssignments().add(seat);
            }
@@ -1074,11 +1082,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
    		SeatVo seat = new SeatVo();
    		PassengerVo thePax =this.findPaxByName(tokens[1]);
         seat.setNumber(tokens[0]);
-        seat.setOrigin(tokens[5].substring(3, tokens[5].length()));
-        seat.setDestination(tokens[5].substring(0,3));
-           if(thePax != null && seat.isValid() ){
-               thePax.getSeatAssignments().add(seat);
-           }    		
+        if(tokens[5] != null && tokens[5].length() >4){
+            seat.setOrigin(tokens[5].substring(3, tokens[5].length()));
+            seat.setDestination(tokens[5].substring(0,3));
+        }
+        if(thePax != null && seat.isValid() ){
+            thePax.getSeatAssignments().add(seat);
+        }    		
    	}
    		
    	
