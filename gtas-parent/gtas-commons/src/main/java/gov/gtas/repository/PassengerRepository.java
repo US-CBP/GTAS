@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,7 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
     public List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
+    
+    @Query(value="update Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId", nativeQuery=true)
+    public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
 }

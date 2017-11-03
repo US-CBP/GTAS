@@ -350,8 +350,8 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/savewatchlistlink", method = RequestMethod.GET)
-	public List<PaxWatchlistLinkVo> saveWatchListMatchByPaxId (@RequestParam String paxId) {
-		return matchingService.saveWatchListMatchByPaxId(Long.valueOf(paxId));
+	public void saveWatchListMatchByPaxId (@RequestParam String paxId) {
+		matchingService.saveWatchListMatchByPaxId(Long.valueOf(paxId));
 	}
 	
 	@ResponseBody

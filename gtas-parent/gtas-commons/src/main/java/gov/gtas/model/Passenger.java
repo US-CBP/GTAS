@@ -87,6 +87,8 @@ public class Passenger extends BaseEntityAudit {
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
     
+    private Date watchlistCheckTimestamp;
+    
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
@@ -104,7 +106,17 @@ public class Passenger extends BaseEntityAudit {
     private Set<Bag> bags = new HashSet<>();
 
 
-    public String getReservationReferenceNumber() {
+    
+    
+    public Date getWatchlistCheckTimestamp() {
+		return watchlistCheckTimestamp;
+	}
+
+	public void setWatchlistCheckTimestamp(Date watchlistCheckTimestamp) {
+		this.watchlistCheckTimestamp = watchlistCheckTimestamp;
+	}
+
+	public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
 	}
 
