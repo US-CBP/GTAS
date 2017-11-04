@@ -19,6 +19,7 @@
             $scope.caseItemHitsVo;
             $scope.ruleCatSet;
             $scope.ruleCat;
+            $scope.caseCommentAttachment = null;
             $scope.caseDispositionStatuses = [];
             $scope.hitDispositionStatuses = [];
             $scope.dispStatus={
@@ -128,7 +129,7 @@
                 caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
                     $scope.caseItemHitId, $scope.commentText,
                     $scope.caseDispStatus,
-                    $scope.hitDetailTrueHitFlag)
+                    $scope.hitDetailTrueHitFlag,null)
                     .then(function (aCase) {
                         $scope.caseItem = aCase.data;
                         $scope.caseItemHits = $scope.caseItem.hitsDispositions;
@@ -152,8 +153,9 @@
                 spinnerService.show('html5spinner');
                 caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
                                                              $scope.caseItemHitId, $scope.commentText,
-                    $scope.hitDispStatus,
-                                                             $scope.hitDetailTrueHitFlag)
+                                                             $scope.hitDispStatus,
+                                                             $scope.hitDetailTrueHitFlag,
+                                                             $scope.caseCommentAttachment)
                     .then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
@@ -197,12 +199,15 @@
             $scope.trixAttachmentAdd = function(e) {
                 var attachment;
                 attachment = e.attachment;
-                if (attachment.file) {
-                    return uploadAttachment(attachment);
-                }
+                $scope.caseCommentAttachment = e.attachment.file;
+
+
+                // if (attachment.file) {
+                //     return uploadAttachment(attachment);
+                // }
             };
 
-            host = "//";
+            host = "/gtas/uploadattachments";
 
             uploadAttachment = function(attachment) {
                 var file, form, key, xhr;

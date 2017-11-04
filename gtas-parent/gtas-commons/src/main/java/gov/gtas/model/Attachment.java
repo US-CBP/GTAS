@@ -1,5 +1,7 @@
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
@@ -85,6 +87,7 @@ public class Attachment implements Serializable {
 		this.filename = filename;
 	}
 
+	@JsonIgnore
 	public Blob getContent() {
 		return content;
 	}

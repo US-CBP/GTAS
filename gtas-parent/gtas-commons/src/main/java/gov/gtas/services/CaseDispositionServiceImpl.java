@@ -25,8 +25,10 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.sql.Blob;
 import java.util.*;
 
 
@@ -46,6 +48,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private FlightRepository flightRepository;
     @Resource
     private PassengerRepository passengerRepository;
+    @Resource
+    private AttachmentRepository attachmentRepository;
     @Resource
     private HitDetailRepository hitDetailRepository;
     @Resource
@@ -258,7 +262,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     @Override
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit) {
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach) {
         Case aCase = new Case();
         HitsDisposition hitDisp = new HitsDisposition();
         HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -282,6 +286,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
                         hitsDispositionComments.setHitId(hit_id);
                         hitsDispositionComments.setComments(caseComments);
                         hitsDispCommentsSet = hit.getDispComments();
+                        //check whether attachment exists, if yes, populate
+                        if(fileToAttach!=null && !fileToAttach.isEmpty())populateAttachmentsToCase(fileToAttach, hitsDispositionComments, pax_id);
                         hitsDispCommentsSet.add(hitsDispositionComments);
                         hit.setDispComments(hitsDispCommentsSet);
                     }
@@ -307,6 +313,33 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             ex.printStackTrace();
         }
         return aCase;
+    }
+
+    /**
+     * Utility method to persist attachment to each case comment
+     * @param file
+     * @param _tempHitsDispComments
+     * @throws Exception
+     */
+    private void populateAttachmentsToCase(MultipartFile file, HitsDispositionComments _tempHitsDispComments, Long pax_id) throws Exception {
+
+        Attachment attachment = new Attachment();
+            //Build attachment to be added to pax
+        Set<Attachment> _tempAttachSet = new HashSet<Attachment>();
+            if(_tempHitsDispComments.getAttachmentSet()!=null)_tempAttachSet = _tempHitsDispComments.getAttachmentSet();
+            attachment.setContentType(file.getContentType());
+            attachment.setFilename(file.getOriginalFilename());
+            attachment.setName(file.getName());
+            byte[] bytes = file.getBytes();
+            Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
+            attachment.setContent(blob);
+            //Grab pax to add attachment to it
+            Passenger pax = passengerRepository.findOne(pax_id);
+            attachment.setPassenger(pax);
+            attachmentRepository.save(attachment);
+        _tempAttachSet.add(attachment);
+        _tempHitsDispComments.setAttachmentSet(_tempAttachSet);
+
     }
 
     @Override
@@ -384,6 +417,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
             populatePassengerDetails(vo, f.getFlightId(), f.getPaxId());
             //BeanUtils.copyProperties(f, vo);
+            manageHitsDispositionCommentsAttachments(f.getHitsDispositions());
             CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
             vos.add(vo);
         }
@@ -419,6 +453,40 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return _tempReturnHitsDispSet;
     }
 
+
+    /**
+     * Utility method to fetch model object
+     *
+     * @param _tempHitsDispositionSet
+     * @return
+     */
+    private Set<HitsDispositionVo> manageHitsDispositionCommentsAttachments
+                                        (Set<HitsDisposition> _tempHitsDispositionSet) {
+
+        Set<HitsDispositionVo> _tempReturnHitsDispSet = new HashSet<HitsDispositionVo>();
+        Set<Attachment> _tempAttachmentSet = new HashSet<Attachment>();
+        HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
+        RuleCat _tempRuleCat = new RuleCat();
+        try {
+            for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
+                _tempHitsDisp = new HitsDispositionVo();
+                if(hitDisp.getDispComments()!=null) {
+                    Set<HitsDispositionComments> _tempDispCommentsSet = hitDisp.getDispComments();
+                    for (HitsDispositionComments _tempComments : _tempDispCommentsSet) {
+                        if (_tempComments.getAttachmentSet()!=null) {
+                            for (Attachment _tempAttach : _tempComments.getAttachmentSet()) {
+                                    _tempAttach.setPassenger(null);
+                            }
+                        }
+                    }
+                }
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return _tempReturnHitsDispSet;
+    }
 
     /**
      * Utility method to pull passenger details for the cases view

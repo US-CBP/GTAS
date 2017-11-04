@@ -13,11 +13,16 @@ import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +84,9 @@ public class CaseDispositionController {
         if(_tempIterable!=null){
             _tempRuleCatList = StreamSupport.stream(_tempIterable.spliterator(),false).collect(Collectors.toList());
         }
-
+        for( RuleCat _tempRuleCat : _tempRuleCatList){
+            _tempRuleCat.setHitsDispositions(null);
+        }
         return _tempRuleCatList;
     }
 
@@ -90,9 +97,40 @@ public class CaseDispositionController {
     Case updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         Case aCase = new Case();
         try {
+            //MultipartFile multipartFile = request.getFile();
+//            File file = request.getFile();
+//            FileInputStream input = new FileInputStream(file);
+//            MultipartFile multipartFile = new MockMultipartFile("file",
+//                    file.getName(), "text/plain", IOUtils.toByteArray(input));
             aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
                                                             request.getHitId(), request.getCaseComments(),
-                                                                request.getStatus(), request.getValidHit());
+                                                                request.getStatus(), request.getValidHit(),
+                                                            request.getMultipartFile());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return aCase;
+    }
+
+    //updateHistDispAttachments
+    @RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
+    public
+    @ResponseBody
+    Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
+                                   @RequestParam("status")String status,
+                                   @RequestParam("validHit")String validHit) {
+        Case aCase = new Case();
+        try {
+            MultipartFile multipartFile = file;
+//            File file = request.getFile();
+//            FileInputStream input = new FileInputStream(file);
+//            MultipartFile multipartFile = new MockMultipartFile("file",
+//                    file.getName(), "text/plain", IOUtils.toByteArray(input));
+            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+                    Long.parseLong(hitId), caseComments,
+                    status, validHit,
+                    multipartFile);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -9,20 +9,19 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
-
 import java.util.Set;
-import java.util.Date;
-import java.util.Objects;
+
 
 @Entity
 @Table(name = "hits_disposition_comments")
-public class HitsDispositionComments extends BaseEntityAudit {
+public class HitsDispositionComments extends BaseEntityAudit implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public HitsDispositionComments() { }
 
-    @Column(name = "comments", length = 1000)
+    @Column(name = "comments", length = 20000)
     private String comments;
 
     @Column(name="hit_disp_id")
@@ -30,6 +29,12 @@ public class HitsDispositionComments extends BaseEntityAudit {
 
     @Column(name="hit_id")
     private long hitId;
+
+    @ManyToMany(targetEntity = Attachment.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "hits_disposition_comments_attachment",
+            joinColumns = @JoinColumn(name = "hits_disp_comment_id"),
+            inverseJoinColumns = @JoinColumn(name = "attachment_id"))
+    private Set<Attachment> attachmentSet = new HashSet<Attachment>();
 
     public String getComments() {
         return comments;
@@ -53,6 +58,14 @@ public class HitsDispositionComments extends BaseEntityAudit {
 
     public void setHitId(long hitId) {
         this.hitId = hitId;
+    }
+
+    public Set<Attachment> getAttachmentSet() {
+        return attachmentSet;
+    }
+
+    public void setAttachmentSet(Set<Attachment> attachmentSet) {
+        this.attachmentSet = attachmentSet;
     }
 
     @Override

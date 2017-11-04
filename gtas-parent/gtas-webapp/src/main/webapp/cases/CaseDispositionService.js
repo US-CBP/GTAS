@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app
-        .service('caseDispositionService', function ($http, $q) {
+        .service('caseDispositionService', function ($http, $q, Upload) {
 
             function getAllCases(){
                 var pageRequest = {
@@ -42,7 +42,7 @@
                     pageNumber: "1",
                     flightId: paramFlight,
                     paxId: paramPax
-                }
+                };
                 var dfd = $q.defer();
                 dfd.resolve($http({
                     method: 'post',
@@ -52,7 +52,8 @@
                 return dfd.promise;
             }
 
-            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus, paramValidHit){
+            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus,
+                                           paramValidHit, file){
                 var requestDto = {
                     pageSize: "10",
                     pageNumber: "1",
@@ -62,13 +63,44 @@
                     caseComments: paramComments,
                     status: paramStatus,
                     validHit: paramValidHit
-                }
+                    // ,
+                    // multipartFile: file
+                };
+
                 var dfd = $q.defer();
-                dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/updateHistDisp/",
-                    data: requestDto
-                }));
+
+                if(file!=null){
+                    dfd.resolve(
+                    Upload.upload({
+                        method: 'post',
+                        url: '/gtas/updateHistDispAttachments/',
+                        data: {
+                            flightId: paramFlight,
+                            paxId: paramPax,
+                            hitId: paramHit,
+                            caseComments: paramComments,
+                            status: paramStatus,
+                            validHit: paramValidHit,
+                            file: file
+                        }
+                    }))
+                    ;
+                }else{
+
+                    dfd.resolve(
+                        //
+                        // $http.post("/gtas/updateHistDisp/", requestDto, {
+                        //     transformRequest: angular.identity,
+                        //     headers: {'Content-Type': undefined}
+                        // })
+                            $http({
+                            method: 'post',
+                            url: "/gtas/updateHistDisp/",
+                            data: requestDto
+                            })
+                    );
+                }
+
                 return dfd.promise;
             }
 
@@ -87,6 +119,12 @@
             function getRuleCats() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/getRuleCats"));
+                return dfd.promise;
+            }
+
+            function saveCaseDispAttachments() {
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/uploadattachments"));
                 return dfd.promise;
             }
 
