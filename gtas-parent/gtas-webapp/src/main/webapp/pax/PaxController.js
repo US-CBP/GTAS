@@ -109,9 +109,7 @@
 
         $scope.saveWatchListMatchByPaxId = function (){
           paxDetailService.savePaxWatchlistLink($scope.passenger.paxId)
-          .then(function(response){
-            $scope.passenger.watchlistLinks = response.data;
-          });
+          .then($scope.getWatchListMatchByPaxId());
         }
 
         $scope.saveDisposition = function(){

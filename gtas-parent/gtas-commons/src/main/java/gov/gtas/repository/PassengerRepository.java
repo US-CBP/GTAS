@@ -35,6 +35,6 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
     public List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
     
-    @Query(value="update Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId", nativeQuery=true)
+    @Query(value="update passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId", nativeQuery=true)
     public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
 }
