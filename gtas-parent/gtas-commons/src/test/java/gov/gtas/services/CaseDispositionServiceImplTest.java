@@ -63,26 +63,4 @@ public class CaseDispositionServiceImplTest {
     }
     
 
-    //@Test
-    public void testUpdateCaseComments(){
-        CaseRequestDto inboundDto = new CaseRequestDto();
-        List<CaseVo> _tempCases = new ArrayList<CaseVo>();
-        CasePageDto outboundDto = new CasePageDto(_tempCases, 10);
-        Case aCase = null;
-        inboundDto.setPageNumber(1);
-        inboundDto.setPageSize(10);
-        inboundDto.setFlightId((long) 499);
-    	inboundDto.setPaxId((long) 727);
-        Long _tempHitId = new Long(720);
-        try{
-
-            aCase = caseDispService.addCaseComments(inboundDto.getFlightId(), inboundDto.getPaxId(), _tempHitId, "follow-up", "PENDING","true");
-
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-    }
-
-
 }

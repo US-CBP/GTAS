@@ -417,6 +417,9 @@ public class PnrUtils {
 		return tagId;
 	}
 	public static PassengerVo getPaxFromTIF(TIF tif,List<PassengerVo> passengers){
+		if(passengers == null || passengers.size() <= 0){
+			return null;
+		}
 		PassengerVo thePax = passengers.get(0);
         if (tif != null) {
             // try finding pax based on tif info

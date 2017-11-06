@@ -12,6 +12,8 @@ import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit);
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach);
 
     public Passenger findPaxByID(Long id);
 

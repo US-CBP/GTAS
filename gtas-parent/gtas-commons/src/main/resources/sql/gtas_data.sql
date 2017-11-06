@@ -52,6 +52,7 @@ insert into app_configuration (opt, val, description) values('ELASTIC_PORT','930
 insert into app_configuration (opt, val, description) values('QUEUE', 'gtasQ', 'queue name for storing incoming messages');
 insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\MESSAGE', 'directory for uploading files from UI');
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
+insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 
 -- ----------------------------
 -- Records of dashboard_message_stats

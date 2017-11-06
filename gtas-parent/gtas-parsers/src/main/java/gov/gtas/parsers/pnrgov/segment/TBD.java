@@ -102,6 +102,7 @@ public class TBD extends Segment {
     private List<BagDetails> bagDetails;
 
     public TBD(List<Composite> composites) {
+
         super(TBD.class.getSimpleName(), composites);
         Composite c = getComposite(1);
         this.bagDetails = new ArrayList<>();
@@ -111,46 +112,50 @@ public class TBD extends Segment {
             	this.baggageWeight = Double.valueOf(c.getElement(1));
             }
             if(StringUtils.isNotBlank(c.getElement(2))){
-            	if("700".equals(c.getElement(2))){
-            		this.unitQualifier="kgs";
-            	}
-            	else if("701".equals(c.getElement(2))){
-            		//this.unitQualifier="Kgs";
+            	if("701".equals(c.getElement(2))){
             		this.baggageWeight=(double) Math.round(this.baggageWeight*0.45359237);
             	}
             }
-          //CASE-2:
-            //TBD++03:278:701+++DL:80070001::GRU:006+DL::80070002::GRU:006+DL::80070002::GRU:006'
-          //CASE-3:
-            //TBD++5:155:701+++KL: 8074902824:2:MSP+ KL: 8074902826:3:JFK'
-            //TBD++3:84:700++HP+KL:4074902824:3:MSP'
-            for (int i=3; i<numComposites(); i++) {
-            	c = getComposite(i);
-                if (c != null && c.numElements() > 2) {
-                	if(StringUtils.isBlank(c.getElement(2))){
-                		BagDetails bag = new BagDetails();
-                		bag.setAirline(c.getElement(0));
-                        bag.setTagNumber(c.getElement(1));
-                        bag.setDestAirport(c.getElement(3));
-                        bagDetails.add(bag);
-                	}else{
-                		int noBags=Integer.valueOf(c.getElement(2));
-                		String airline=c.getElement(0);
-                		String dest=c.getElement(3);
-                		
-                		for(int j=0;j<noBags;j++){
-                       		BagDetails bag = new BagDetails();
-                    		bag.setAirline(airline);
-                            bag.setTagNumber(PnrUtils.getBagTagFromElement(c.getElement(1),j));
-                            bag.setDestAirport(dest);
-                            bagDetails.add(bag);
-                		}
-                	}
-                }
+            if(numComposites() > 4 ){
+            	c = getComposite(4);
+            	if(this.numBags >0 && c != null){
+            		for(int i=1;i<=numBags;i++){
+            			BagDetails bag = new BagDetails();
+            			bag.setAirline(c.getElement(0));
+            			bag.setTagNumber(c.getElement(1)+":"+i);
+            			if (c.numElements() >= 3){
+            				bag.setDestAirport(c.getElement(3));
+            			}
+            			bagDetails.add(bag);
+            		}
+            	}
+            }else if(numComposites() <=4 && this.numBags >0 ){
+            	if(getComposite(3) != null){
+            		c = getComposite(3);
+            		for(int i=1;i<=numBags;i++){
+            			BagDetails bag = new BagDetails();
+            			bag.setAirline(c.getElement(0));
+            			bag.setTagNumber(c.getElement(1)+":"+i);
+            			if(c.numElements() > 3){
+            				bag.setDestAirport(c.getElement(3));
+            			}
+            			bagDetails.add(bag);
+            		}
+            	}else{
+            		//TBD++3:95:K'
+            		if(this.baggageWeight > 0 && numBags >0  ){
+            			for(int i=1;i<=numBags;i++){
+            				BagDetails bag = new BagDetails();
+            				bag.setAirline("--");
+            				bag.setTagNumber("Bag"+i);
+            				bag.setDestAirport("---");
+            				bagDetails.add(bag);
+            			}
+            		}
+            	}
             }
+            
         }else{
-            //CASE-1:
-            //TBD+++MP:0741234123456'
         	Composite mpc = getComposite(2);
         	if(mpc != null && mpc.numElements() >1){
         		BagDetails bag = new BagDetails();
@@ -161,7 +166,6 @@ public class TBD extends Segment {
         		this.unitQualifier="kgs";
         		bagDetails.add(bag);
         	}
-        	
         }
     }
 

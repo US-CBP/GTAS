@@ -1,9 +1,12 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,10 @@ public class CaseRequestDto implements Serializable {
     private String status;
 
     private String validHit;
+
+    private File file;
+
+    private MultipartFile multipartFile;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -125,6 +132,22 @@ public class CaseRequestDto implements Serializable {
 
     public void setValidHit(String validHit) {
         this.validHit = validHit;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
+
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
     }
 
     @Override
