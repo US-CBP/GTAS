@@ -26,10 +26,8 @@ public class FlightPassengerVo {
     private String destination;
     private String destinationLocation;
     private Date flightDate;
-    
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)        
+
     private Date etd;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)        
     private Date eta;
 
     // pax

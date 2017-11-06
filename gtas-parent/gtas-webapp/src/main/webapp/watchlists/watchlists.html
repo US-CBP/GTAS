@@ -91,14 +91,16 @@
       </div>
     </form>
 </md-sidenav>
-<md-tabs>
-    <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)">
-      <md-tab-label>
-        <span ng-bind-html="tab.icon"></span>
-        <span>&nbsp;{{tab.title}}</span>
-      </md-tab-label>
-    </md-tab>
-</md-tabs>
+<div class="upper-cnt">
+  <md-tabs>
+      <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)">
+        <md-tab-label>
+          <span ng-bind-html="tab.icon"></span>
+          <span>&nbsp;{{tab.title}}</span>
+        </md-tab-label>
+      </md-tab>
+  </md-tabs>
+</div>
 <div class="manage">
   <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
 </div>

@@ -192,6 +192,7 @@ public class ElasticHelper {
 			vo.setDestination((String)result.get("destination"));
 			try {
 				vo.setEta(dateParser.parse((String)result.get("eta")));
+				vo.setEtd(dateParser.parse((String)result.get("etd")));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

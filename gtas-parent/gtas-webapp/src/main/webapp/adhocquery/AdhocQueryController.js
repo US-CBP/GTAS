@@ -97,12 +97,14 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
       {
           field: 'etd',
           name: 'etd',
-          displayName: 'pass.etd', headerCellFilter: 'translate'
+          displayName: 'pass.etd', headerCellFilter: 'translate',
+          cellTemplate: '<div>{{COL_FIELD | date:"yyyy-MM-dd hh:mm"}}</div>'
       },
       {
           field: 'eta',
           name: 'eta',
-          displayName: 'pass.eta', headerCellFilter: 'translate'
+          displayName: 'pass.eta', headerCellFilter: 'translate',
+          cellTemplate: '<div>{{COL_FIELD | date:"yyyy-MM-dd hh:mm"}}</div>'
       }
   ];
 
