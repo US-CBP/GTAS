@@ -182,6 +182,62 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return aCase;
     }
 
+    @Override
+    public Case createManualCase(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry,
+                       Date dob, String document, String hitDesc, List<Long> hit_ids, String username) {
+
+        Case aCase = new Case();
+        Case _tempCase = null;
+        Long highPriorityRuleCatId = 1L;
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+        aCase.setUpdatedAt(new Date());
+        aCase.setUpdatedBy(username);
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setPaxName(paxName);
+        aCase.setPaxType(paxType);
+        aCase.setCitizenshipCountry(citizenshipCountry);
+        aCase.setDocument(document);
+        aCase.setDob(dob);
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+        _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
+        if (_tempCase != null &&
+                (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
+                        || _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
+            aCase = _tempCase;
+        }
+
+        //redundant at this time
+        //contextCases(aCase);
+
+        for (Long _tempHitId : hit_ids) {
+            hitDisp = new HitsDisposition();
+            pullRuleCategory(hitDisp, getRuleCatId(_tempHitId));
+            highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
+            hitsDispCommentsSet = new HashSet<>();
+            hitDisp.setHitId(_tempHitId);
+            hitDisp.setDescription(hitDesc);
+            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitDisp.setUpdatedAt(new Date());
+            hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
+            hitsDispositionComments = new HitsDispositionComments();
+            hitsDispositionComments.setHitId(_tempHitId);
+            hitsDispositionComments.setComments(INITIAL_COMMENT);
+            hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
+            hitsDispositionComments.setUpdatedAt(new Date());
+            hitsDispCommentsSet.add(hitsDispositionComments);
+            hitDisp.setDispComments(hitsDispCommentsSet);
+            hitsDispSet.add(hitDisp);
+        }
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+        if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
+        else aCase.setHitsDispositions(hitsDispSet);
+        caseDispositionRepository.saveAndFlush(aCase);
+        return aCase;
+    }
 
     /**
      * Utility method to manage cases to persist
@@ -419,6 +475,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             //BeanUtils.copyProperties(f, vo);
             manageHitsDispositionCommentsAttachments(f.getHitsDispositions());
             CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+            manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
             vos.add(vo);
         }
 
@@ -441,8 +498,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
                 _tempHitsDisp = new HitsDispositionVo();
                 CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
-                if (hitDisp.getRuleCat() != null)
+                if (hitDisp.getRuleCat() != null) {
                     CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
+                    _tempRuleCat.setHitsDispositions(null);
+                }
                 _tempRuleCatSet.add(_tempRuleCat);
                 _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
                 _tempReturnHitsDispSet.add(_tempHitsDisp);

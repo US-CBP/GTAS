@@ -35,6 +35,8 @@ public interface CaseDispositionService {
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids);
 
+    public Case createManualCase(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids, String username);
+
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach);
