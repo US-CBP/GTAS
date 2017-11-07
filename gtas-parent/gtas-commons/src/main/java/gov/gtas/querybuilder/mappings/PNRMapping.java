@@ -10,6 +10,7 @@ import gov.gtas.enumtype.TypeEnum;
 public enum PNRMapping implements IEntityMapping {
 
     BAG_COUNT ("bagCount", "Bag - Count", TypeEnum.INTEGER.getType()),
+    BAG_WEIGHT ("baggageWeight", "Baggage - Weight", TypeEnum.DOUBLE.getType()),
     BOOKING_DATE ("dateBooked", "Booking Date", TypeEnum.DATE.getType()), 
     CARRIER_CODE ("carrier", "Carrier Code", TypeEnum.STRING.getType()),
     DATE_RECEIVED ("dateReceived", "Date Received", TypeEnum.DATE.getType()),

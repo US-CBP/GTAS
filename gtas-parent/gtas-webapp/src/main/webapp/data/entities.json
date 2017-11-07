@@ -933,6 +933,21 @@
         ]                       
       },
       {
+        "id": "Pnr.baggageWeight",
+        "label": "Baggage - Weight",
+        "type": "double",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]                       
+      },
+      {
         "id": "Pnr.dateBooked",
         "label": "Booking Date",
         "type": "date",
