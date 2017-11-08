@@ -49,8 +49,11 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 	            .getLogger(MatchingService.class);
 	
 	private float stringMatcher(String str1, String str2) {
-		if(doubleMetaphone.isDoubleMetaphoneEqual(str1, str2)) {
+		if(str1.equals(str2)) {
 			return 1.0f;
+		}
+		if(doubleMetaphone.isDoubleMetaphoneEqual(str1, str2)) {
+			return 0.9f;
 		}
 		return jaroWinklerDistance.getDistance(str1, str2);
 	}

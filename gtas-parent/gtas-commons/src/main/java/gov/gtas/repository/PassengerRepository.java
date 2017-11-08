@@ -8,9 +8,11 @@ package gov.gtas.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Passenger;
@@ -35,6 +37,8 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
     public List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
     
-    @Query(value="update passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId", nativeQuery=true)
+	@Modifying
+	@Transactional
+    @Query("UPDATE Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId")
     public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
 }

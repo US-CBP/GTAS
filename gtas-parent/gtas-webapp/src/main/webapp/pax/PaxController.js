@@ -103,13 +103,15 @@
         $scope.getWatchListMatchByPaxId = function (){
           paxDetailService.getPaxWatchlistLink($scope.passenger.paxId)
           .then(function(response){
-            $scope.passenger.watchlistLinks = response.data;
+            $scope.watchlistLinks = response.data;
           });
         }
 
         $scope.saveWatchListMatchByPaxId = function (){
           paxDetailService.savePaxWatchlistLink($scope.passenger.paxId)
-          .then($scope.getWatchListMatchByPaxId());
+          .then(function(response) {
+            $scope.getWatchListMatchByPaxId();
+          });
         }
 
         $scope.saveDisposition = function(){

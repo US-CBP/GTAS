@@ -16,6 +16,8 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
 			}
 	}
 
+  var timeStart = new Date();
+
   $scope.resultsGrid = {
   	data: typeof searchBarResults != "undefined" && searchBarResults != null ? searchBarResults.data.result.passengers :null,
   	totalItems: typeof searchBarResults != "undefined" && searchBarResults != null ? searchBarResults.data.result.totalHits :null,
@@ -51,7 +53,9 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
           });
       }
   };
-
+  $scope.cellFormater = function(cell) {
+    return timeStart < cell;
+  };
   $scope.resultsGrid.columnDefs = [
       {
         field: 'passengerId',
@@ -104,7 +108,7 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
           field: 'eta',
           name: 'eta',
           displayName: 'pass.eta', headerCellFilter: 'translate',
-          cellTemplate: '<div>{{COL_FIELD | date:"yyyy-MM-dd hh:mm"}}</div>'
+          cellTemplate: '<div ng-class="{ \'highlight\': grid.appScope.cellFormater(COL_FIELD)}">{{COL_FIELD | date:"yyyy-MM-dd hh:mm"}}</div>'
       }
   ];
 
