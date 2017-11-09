@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.print.Doc;
 import java.sql.Blob;
 import java.util.*;
 
@@ -41,6 +42,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private static Set casesToCommit = new HashSet<Case>();
     private static final String INITIAL_COMMENT = "Initial Comment";
     private static final String UPDATED_BY_INTERNAL = "Internal";
+    private static final String CASE_CREATION_MANUAL_DESC = "Agent Created Case";
 
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
@@ -183,8 +185,59 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     @Override
-    public Case createManualCase(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry,
-                       Date dob, String document, String hitDesc, List<Long> hit_ids, String username) {
+    public Case createManualCase(Long flight_id, Long pax_id,  String comments, String username) {
+
+        Case aCase = new Case();
+        Case _tempCase = null;
+        Long highPriorityRuleCatId = 1L;
+        ArrayList<Long> hit_ids = new ArrayList<>();
+        Passenger pax = passengerRepository.getPassengerById(pax_id);
+        HitsDisposition hitDisp = new HitsDisposition();
+        HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
+        Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+        Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+        aCase.setUpdatedAt(new Date());
+        aCase.setUpdatedBy(username);
+        aCase.setFlightId(flight_id);
+        aCase.setPaxId(pax_id);
+        aCase.setPaxName(pax.getFirstName());
+        aCase.setPaxType(pax.getPassengerType());
+        aCase.setCitizenshipCountry(pax.getCitizenshipCountry());
+        aCase.setDocument(((Document)pax.getDocuments().parallelStream().findFirst().orElse(new Document("xxxxxxxxx"))).getDocumentNumber());
+        aCase.setDob(pax.getDob());
+        aCase.setStatus(DispositionStatusCode.NEW.toString());
+
+        hit_ids.add(9999L); // Manual Distinction
+        for (Long _tempHitId : hit_ids) {
+            hitDisp = new HitsDisposition();
+            //pullRuleCategory(hitDisp, 9999L);
+            //hitDisp.getRuleCat().setHitsDispositions(null);
+            highPriorityRuleCatId = 1L;
+            hitsDispCommentsSet = new HashSet<>();
+            hitDisp.setHitId(_tempHitId);
+            hitDisp.setDescription(CASE_CREATION_MANUAL_DESC);
+            hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+            hitDisp.setUpdatedAt(new Date());
+            hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
+            hitsDispositionComments = new HitsDispositionComments();
+            hitsDispositionComments.setHitId(_tempHitId);
+            hitsDispositionComments.setComments(comments);
+            hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
+            hitsDispositionComments.setUpdatedAt(new Date());
+            hitsDispCommentsSet.add(hitsDispositionComments);
+            hitDisp.setDispComments(hitsDispCommentsSet);
+            hitsDispSet.add(hitDisp);
+        }
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+        if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
+        else aCase.setHitsDispositions(hitsDispSet);
+        caseDispositionRepository.saveAndFlush(aCase);
+        return aCase;
+    }
+
+    @Override
+    public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry,
+                                 Date dob, String document, String hitDesc, List<Long> hit_ids, String username, MultipartFile fileToAttach) {
 
         Case aCase = new Case();
         Case _tempCase = null;
@@ -216,7 +269,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
             pullRuleCategory(hitDisp, getRuleCatId(_tempHitId));
-            highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
+            highPriorityRuleCatId = 1L;
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
             hitDisp.setDescription(hitDesc);

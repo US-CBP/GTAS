@@ -128,6 +128,47 @@
                 return dfd.promise;
             }
 
+            function postManualCase(paramFlight, paramPax, paramComments,file){
+
+                var requestDto = {
+                    flightId: paramFlight,
+                    paxId: paramPax,
+                    caseComments: paramComments
+                };
+
+                var dfd = $q.defer();
+
+                if(file!=null){
+                    dfd.resolve(
+                        Upload.upload({
+                            method: 'post',
+                            url: '/gtas/updateHistDispAttachments/',
+                            data: {
+                                flightId: paramFlight,
+                                paxId: paramPax,
+                                hitId: paramHit,
+                                caseComments: paramComments,
+                                status: paramStatus,
+                                validHit: paramValidHit,
+                                file: file
+                            }
+                        }))
+                    ;
+                }else{
+
+                    dfd.resolve(
+
+                        $http({
+                            method: 'post',
+                            url: "/gtas/createManualCase/",
+                            data: requestDto
+                        })
+                    );
+                }
+
+                return dfd.promise;
+            }
+
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -135,7 +176,8 @@
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,
                 updateHitsDisposition:updateHitsDisposition,
-                getPagedCases: getPagedCases
+                getPagedCases: getPagedCases,
+                postManualCase: postManualCase
             });
         })
 }());

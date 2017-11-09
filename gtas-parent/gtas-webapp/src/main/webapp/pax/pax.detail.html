@@ -19,6 +19,15 @@
   <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
     <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
   </button>
+<!-- href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}" -->
+
+
+  <md-button class="md-primary md-button center-btn" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}"
+             title="Create Case in new window" target="case.manual.{{passenger.flightId}}.{{passenger.paxId}}"
+             aria-label="type">
+    &nbsp;Create Case</md-button>
+
+
   <section>
     <div class="panel panel-default">
       <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>

@@ -437,7 +437,7 @@ public class PassengerDetailsController {
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotalbagCount(source.getTotal_bag_count());
-		target.setBaggageWeight(source.getBaggageWeight());
+		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();

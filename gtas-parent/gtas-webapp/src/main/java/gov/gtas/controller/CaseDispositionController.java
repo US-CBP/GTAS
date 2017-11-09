@@ -9,6 +9,7 @@ import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.udr.Rule;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
@@ -97,14 +98,10 @@ public class CaseDispositionController {
     Case updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         Case aCase = new Case();
         try {
-            //MultipartFile multipartFile = request.getFile();
-//            File file = request.getFile();
-//            FileInputStream input = new FileInputStream(file);
-//            MultipartFile multipartFile = new MockMultipartFile("file",
-//                    file.getName(), "text/plain", IOUtils.toByteArray(input));
+
             aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
                                                             request.getHitId(), request.getCaseComments(),
-                                                                request.getStatus(), request.getValidHit(),
+                                                            request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile());
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -123,14 +120,50 @@ public class CaseDispositionController {
         Case aCase = new Case();
         try {
             MultipartFile multipartFile = file;
-//            File file = request.getFile();
-//            FileInputStream input = new FileInputStream(file);
-//            MultipartFile multipartFile = new MockMultipartFile("file",
-//                    file.getName(), "text/plain", IOUtils.toByteArray(input));
+
             aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
                     multipartFile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return aCase;
+    }
+
+    //createManualCaseAttachments
+    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
+    public
+    @ResponseBody
+    Case createManualCaseAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
+                                   @RequestParam("status")String status,
+                                   @RequestParam("validHit")String validHit) {
+        Case aCase = new Case();
+        try {
+            MultipartFile multipartFile = file;
+
+            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+                    Long.parseLong(hitId), caseComments,
+                    status, validHit,
+                    multipartFile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return aCase;
+    }
+
+    //createManualCase
+    @RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
+    public
+    @ResponseBody
+    Case createManualCase(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+        Case aCase = new Case();
+        try {
+
+            aCase = caseDispositionService.createManualCase(request.getFlightId(), request.getPaxId(),
+                    request.getCaseComments(), GtasSecurityUtils.fetchLoggedInUserId()
+                    );
         } catch (Exception ex) {
             ex.printStackTrace();
         }

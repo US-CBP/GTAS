@@ -1,0 +1,87 @@
+<div class="upper-cnt panel">
+
+    <div class="container">
+        <h3 class="h-label"><span> Open a Case on {{ passenger.lastName }}, {{ passenger.firstName }} flying on Flight {{ passenger.flightNumber }} </span>
+        </h3>
+    </div>
+
+    <div class="flex justify-around flex-wrap">
+
+        <div class="container">
+
+            <div class="span12 flex justify-around upper-cnt flex-wrap">
+                <div class="span12 flex justify-around upper-cnt flex-wrap">
+                    <div>
+                        <div>Last Name:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
+                        <div>First Name:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
+                        <div>Middle Name:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
+                    </div>
+                    <br>
+                    <div>
+                        <div>Gender:&nbsp; <strong> {{ passenger.gender }}</strong></div>
+                        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
+                        <div>Type:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
+                    </div>
+                    <br>
+                    <div>
+                        <div>Origin:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
+                        <div>Destination:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
+                        <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="md-margin">
+            <div class="container"></div>
+        </div>
+
+        <div class="container">
+
+            <form name="hitForm" ng-submit="commentConfirm()">
+                <div class="row">
+
+                    <div class="col-md-6 float-md-left">
+                        <div class="mdl-selectfield mdl-js-selectfield float-md-left"
+                             data-upgraded=",MaterialSelectfield">
+                            <select class="cbp-non-chip-input mdl-selectfield__select" id="disposition"
+                                    ng-model="rule.ruleCat">
+                                <option ng-repeat="rule in ruleCats" value="{{rule.id}}" translate>
+                                    {{rule.category}}
+                                </option>
+                            </select>
+                            <label class="mdl-selectfield__label static-label" for="disposition">Select a Rule
+                                Category:</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6 right">
+                        <div><span> Leave a Comment </span></div>
+                        <div>
+                            <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."
+                                         trix-attachment-add="trixAttachmentAdd(e, editor);"
+                                         trix-attachment-remove="trixAttachmentRemove(e, editor);">
+
+                            </trix-editor>
+                        </div>
+                    </div>
+
+                    <div class="md-margin">
+                        <div class="container"></div>
+                    </div>
+                    <div class="flex justify-around">
+                        <button type="submit" class="flex-20 md-raised btn btn-primary h-label">
+                            <h4><span>Create Case</span></h4>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

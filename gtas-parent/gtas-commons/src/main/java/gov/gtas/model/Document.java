@@ -23,6 +23,10 @@ public class Document extends BaseEntity {
 	public Document() {
 	}
 
+	public Document(String documentNumber){
+		this.documentNumber = documentNumber;
+	}
+
 	@Column(name = "document_type", length = 3, nullable = false)
 	private String documentType;
 

@@ -318,6 +318,26 @@ var app;
                         	}
                     	}
                 })
+                .state('casemanual', {
+                    url: '/casemanual/:flightId/:paxId',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    views: {
+                        '@': {
+                            controller: 'CaseDispositionManualCtrl',
+                            templateUrl: 'cases/case.manual.html'
+                        }
+                    }
+                    ,
+                    resolve: {
+                        passenger: function (paxDetailService, $stateParams) {
+                            return paxDetailService.getPaxDetail($stateParams.paxId, $stateParams.flightId);
+                        },
+                        ruleCats: function(caseDispositionService){
+                            return caseDispositionService.getRuleCats();
+                        }
+                    }
+                })
                 .state('casedetail', {
                     url: '/casedetail/:flightId/:paxId',
                     authenticate: true,
