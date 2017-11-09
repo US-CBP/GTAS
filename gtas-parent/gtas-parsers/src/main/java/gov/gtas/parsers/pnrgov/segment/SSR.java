@@ -33,6 +33,11 @@ import gov.gtas.parsers.edifact.Segment;
  * SSR+FQTV:HK:1:OZ:::::/DL1234567890-LASTNAME/FIRSTNAMEMI'
  * SSR+FQTV:HK:1:UA:::::SSRFQTVUAHK/LH1234567890-LASTNAME/FIRSTNAME 1.1'
  * SSR+CTCM:HK:1:UA:::::/1800123456789-1LASTNAME/FIRSTNAMEMIDDLENAME'
+ * SSR+DOCS:HK:1:UA::::://///14JUL71/M//AVDIU/ILIR-1AVDIU/ILIR'
+ * SSR+DOCS:HK:1:UA::::://P/P00266142/14JUL71/M/28MAY23/AVDIU/ILIR'
+ * SSR+DOCS:HK:1:AV::::://DE/C4FG15LP2/DE/23AUG77/M/13FEB24/GREWE/MARK/ANDREAS'
+ * SSR+DOCS:HK:1:AV:::::/P/DEU/C4FG15LP2/DEU/23AUG77/M/13FEB24/GREWE/MARK'
+ * SSR+DOCS:HK:1:AV:::FLL:BOG:/P/DEU/C4FG15LP2/DEU/23AUG77/M/13FEB24/GREWE/MARK+::2'
  */
 public class SSR extends Segment {
     public static final String DOCS = "DOCS";
@@ -123,7 +128,11 @@ public class SSR extends Segment {
         }
     }
 
-    public String getTypeOfRequest() {
+    public void setFreeText(String freeText) {
+		this.freeText = freeText;
+	}
+
+	public String getTypeOfRequest() {
         return typeOfRequest;
     }
 

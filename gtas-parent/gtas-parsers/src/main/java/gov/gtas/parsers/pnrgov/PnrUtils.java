@@ -10,12 +10,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.segment.ADD;
@@ -75,102 +73,70 @@ public class PnrUtils {
 	 * "Reservations Interline Message Procedures — Passenger (AIRIMP)"
 	 * 
 	 * <pre>
-	 * Examples: handle
-	 * /P/GBR/123456789/GBR/12JUL64/M/23AUG19/SMITHJR/JONATHON/ROBERT
-	 * //P/USA/554416148/USA/06MAY02/F/27SEP21/ROBERTS/ELIZABETH/ANNE'
-	 * /////05MAY02/F//ROBERTS/ELIZABETH-1ROBERTS/ELIZABETH'
-	 * 
-	 * Not handle:
-	 * / /   /         /   /GBR/12JUL64/M//JONES/WILLIAMNEVELL
 	 * </pre>
 	 */
 
-	public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif) throws ParseException {
-		SSR bestSsr = null;
+	private static SSR getBestSsrFromList(List<SSR> ssrDocs){
 		for (SSR ssr : ssrDocs) {
 			String ssrText = ssr.getFreeText();
-			if (ssrText == null) {
-				continue;
-			} else if (bestSsr == null || ssrText.length() > bestSsr.getFreeText().length()) {
-				bestSsr = ssr;
+			if(StringUtils.isNotBlank(ssrText) && (!ssrText.startsWith("/"))){
+				ssrText="/"+ssrText;
+				ssr.setFreeText(ssrText);
+			}
+			List<String> tokens = splitSsrFreeText(ssr);
+			if(tokens != null  && tokens.size() >7){
+				if(StringUtils.isNotBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(3))
+						&& StringUtils.isNotBlank(tokens.get(6))){
+					//SSR+DOCS:HK:1:AV:::::/P/DEU/C4FG15LP2/DEU/23AUG77/M/13FEB24/GREWE/MARK'
+					if((tokens.get(1).trim().length() == 1) && (tokens.get(6).trim().length() == 1)){
+						return ssr;
+					}
+				}
+				//P/P00266142/14JUL71/M/28MAY23/AVDIU/ILIR
+				if(StringUtils.isBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(2))
+						&& StringUtils.isNotBlank(tokens.get(3))){
+					if((tokens.get(2).trim().length() == 1) && (tokens.get(5).trim().length() == 1)){
+						return ssr;
+					}
+				}
+				if(StringUtils.isBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(2))
+						&& StringUtils.isNotBlank(tokens.get(7))){
+					//P/USA/554416148/USA/06MAY02/F/27SEP21/ROBERTS/ELIZABETH/ANNE'
+					if((tokens.get(2).trim().length() == 1) && (tokens.get(7).trim().length() == 1)){
+						return ssr;
+					}
+				}
 			}
 		}
-
+		return null;
+	}
+	
+	public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif) throws ParseException {
+		SSR bestSsr = null;
+		bestSsr=getBestSsrFromList(ssrDocs);
+		if(bestSsr == null){
+			for (SSR ssr : ssrDocs) {
+				String ssrText = ssr.getFreeText();
+				if (ssrText == null) {
+					continue;
+				} else if (bestSsr == null || ssrText.length() > bestSsr.getFreeText().length()) {
+					bestSsr = ssr;
+				}
+			}			
+		}
 		if (bestSsr == null) {
 			return null;
 		}
-
 		List<String> strs = splitSsrFreeText(bestSsr);
 		if (CollectionUtils.isEmpty(strs)) {
 			return null;
 		}
-
 		PassengerVo p = new PassengerVo();
 		p.setPassengerType("P");
 		DocumentVo doc = new DocumentVo();
-		if (StringUtils.isNotEmpty(safeGet(strs, 1))
-				|| (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 2)))) {
-			doc.setDocumentType(safeGet(strs, 1));
-			doc.setIssuanceCountry(safeGet(strs, 2));
-			doc.setDocumentNumber(safeGet(strs, 3));
-			p.setCitizenshipCountry(safeGet(strs, 4));
-			String d = safeGet(strs, 5);
-			if (StringUtils.isNotBlank(d)) {
-				Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
-				p.setDob(dob);
-				p.setAge(DateUtils.calculateAge(dob));
-			}
-			p.setGender(safeGet(strs, 6));
-			d = safeGet(strs, 7);
-			if (StringUtils.isNotBlank(d)) {
-				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-			}
-
-			processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10), p.getGender());
-		} else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))
-				&& StringUtils.isNotEmpty(safeGet(strs, 4))) {
-			doc.setDocumentType(safeGet(strs, 2));
-			doc.setIssuanceCountry(safeGet(strs, 3));
-			doc.setDocumentNumber(safeGet(strs, 4));
-			p.setCitizenshipCountry(safeGet(strs, 5));
-			String d = safeGet(strs, 6);
-			if (StringUtils.isNotBlank(d)) {
-				Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
-				p.setDob(dob);
-				p.setAge(DateUtils.calculateAge(dob));
-			}
-			p.setGender(safeGet(strs, 7));
-			d = safeGet(strs, 8);
-			if (StringUtils.isNotBlank(d)) {
-				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-			}
-
-			processNames(p, safeGet(strs, 9), safeGet(strs, 10), safeGet(strs, 11), p.getGender());
-		}
-		else if(StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 4))){
-			//USA/497994674//17MAR47/M/02NOV16/ELMORE/ERVINMR/DARIN
-
-			doc.setDocumentType(safeGet(strs, 1));
-			doc.setIssuanceCountry(safeGet(strs, 2));
-			doc.setDocumentNumber(safeGet(strs, 3));
-			p.setCitizenshipCountry(safeGet(strs, 4));
-			String d = safeGet(strs, 5);
-			if (StringUtils.isNotBlank(d)) {
-				Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
-				p.setDob(dob);
-				p.setAge(DateUtils.calculateAge(dob));
-			}
-			p.setGender(safeGet(strs, 6));
-			d = safeGet(strs, 7);
-			if (StringUtils.isNotBlank(d)) {
-				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-			}
-
-			processNames(p, safeGet(strs, 8), safeGet(strs, 9), safeGet(strs, 10), p.getGender());
-		}
+		updatePassengerAndDocument(p,doc,strs);
 		captureMissingInfoFromSSRs(p,ssrDocs);
-			
-		
+
 		if (StringUtils.isNotBlank(doc.getDocumentType()) && StringUtils.isNotBlank(doc.getDocumentNumber())) {
 			// FIX for issue #316
 			if (StringUtils.isBlank(p.getCitizenshipCountry())) {
@@ -180,11 +146,9 @@ public class PnrUtils {
 		} else {
 			// ToDo: logger invalid document
 		}
-
 		if (!tif.getTravelerDetails().isEmpty()) {
 			TravelerDetails td = tif.getTravelerDetails().get(0);
 			p.setTravelerReferenceNumber(td.getTravelerReferenceNumber());
-
 			PassengerVo tmp = new PassengerVo();
 			if (tif.getTravelerSurname() != null && td.getTravelerGivenName() != null)
 				processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null, p.getGender());
@@ -195,14 +159,11 @@ public class PnrUtils {
 				p.setFirstName(tmp.getFirstName());
 			}
 			checkNamesForExtraChars(p);
-	
 			p.setTitle(tmp.getTitle());
 			p.setSuffix(tmp.getSuffix());
 		}
-
 		return p;
 	}
-
 
 	//Handling names with a 1 #478 code fix
 	private static void checkNamesForExtraChars(PassengerVo p){
@@ -216,12 +177,12 @@ public class PnrUtils {
 			p.setFirstName(p.getFirstName().substring(0,p.getFirstName().indexOf("-1")));
 		}
 	}
+	
 	public static DocumentVo createVisa(SSR ssr) {
 		List<String> strs = splitSsrFreeText(ssr);
 		if (CollectionUtils.isEmpty(strs)) {
 			return null;
 		}
-
 		DocumentVo visa = new DocumentVo();
 		// index 1 place of birth
 		visa.setDocumentType(safeGet(strs, 2));
@@ -258,7 +219,6 @@ public class PnrUtils {
 		if (strs == null) {
 			return null;
 		}
-
 		AddressVo rv = new AddressVo();
 		rv.setCountry(safeGet(strs, 2));
 		rv.setLine1(safeGet(strs, 3));
@@ -291,19 +251,16 @@ public class PnrUtils {
 		for (int i = 0; i <= index; i++) {
 			found = matcher.find();
 		}
-
 		if (!found) {
 			return null;
 		}
 		int start = matcher.start();
-
 		int end = -1;
 		if (matcher.find()) {
 			end = matcher.start();
 		} else {
 			end = lexer.getStartOfSegment("UNT");
 		}
-
 		if (end != -1) {
 			return lexer.getMessage().substring(start, end);
 		} else {
@@ -320,10 +277,8 @@ public class PnrUtils {
 		int start = lexer.getStartOfSegment("UNB");
 		int end = lexer.getStartOfSegment("SRC");
 		String header = msg.substring(start, end);
-
 		start = lexer.getStartOfSegment("UNT");
 		String footer = msg.substring(start);
-
 		List<String> rv = new ArrayList<>();
 		int i = 0;
 		for (;;) {
@@ -377,8 +332,10 @@ public class PnrUtils {
 				}
 			}
 		}
-
 		if (last != null) {
+			if(last.indexOf("-1") > 0){
+				last=last.substring(0,last.indexOf("-1"));
+			}
 			for (String suffix : SUFFIXES) {
 				if (last.endsWith(suffix)) {
 					p.setSuffix(suffix);
@@ -416,6 +373,7 @@ public class PnrUtils {
 		}
 		return tagId;
 	}
+	
 	public static PassengerVo getPaxFromTIF(TIF tif,List<PassengerVo> passengers){
 		if(passengers == null || passengers.size() <= 0){
 			return null;
@@ -437,6 +395,7 @@ public class PnrUtils {
         }
         return thePax;
 	}
+	
 	private static void captureMissingInfoFromSSRs(PassengerVo pvo,List<SSR> ssrDocs){
 		if(StringUtils.isBlank(pvo.getCitizenshipCountry())){
 			for (SSR ssr : ssrDocs) {
@@ -456,6 +415,7 @@ public class PnrUtils {
 			}
 		}
 	}
+	
 	public static String getPhoneNumberFromLTS(String phoneText){
 		try {
 			phoneText=phoneText.replaceAll("\\s+", "");
@@ -468,6 +428,7 @@ public class PnrUtils {
 		}
 		return phoneText;
 	}
+	
     public static String getFrequentFlyertextFromFreeText(String freeText){
     	String temp=null;
     	String[] tokens=freeText.split("/");
@@ -479,6 +440,7 @@ public class PnrUtils {
     	}
     	return temp;
     }
+    
     public static String getPhoneNumberFromFreeText(String freeText){
     	String temp=null;
     	String[] tokens=freeText.split("/");
@@ -490,5 +452,95 @@ public class PnrUtils {
     	}
     	return temp;
     }    
+
+    private static void updatePassengerAndDocument(PassengerVo p,DocumentVo doc,List<String> strs){
+    	List<Integer> positions=getPositionalElements(strs);
+    	int docTypePos=0;
+    	int genderPos=0;
+    	if(positions.size() >0 && positions.size()==1){
+    		genderPos=positions.get(0);
+    		//doc.setDocumentType("P");
+    		//doc.setDocumentNumber("NONE");
+    		if(StringUtils.isNotBlank(safeGet(strs, genderPos)) && 
+    				("M".equals(safeGet(strs, genderPos)) || "F".equals(safeGet(strs, genderPos))
+    						|| "O".equals(safeGet(strs, genderPos)))){
+        		/////05MAY02/F//ROBERTS/ELIZABETH-1ROBERTS/ELIZABETH'
+        		p.setGender(safeGet(strs, genderPos));
+        		setPassengerDob(p,safeGet(strs, genderPos-1));
+       			processNames(p, safeGet(strs, genderPos+2), safeGet(strs, genderPos+3), safeGet(strs, genderPos+4), p.getGender());
+    		
+    		}else if(StringUtils.isNotBlank(safeGet(strs, genderPos)) && 
+    				("P".equals(safeGet(strs, genderPos)))){
+    			// /P/GBR/516442192/GBR/02JUN
+      			doc.setDocumentType(safeGet(strs, genderPos));
+    			doc.setIssuanceCountry(safeGet(strs, genderPos+1));
+    			doc.setDocumentNumber(safeGet(strs, genderPos+2));
+    			p.setCitizenshipCountry(safeGet(strs, genderPos+3));
+    			setPassengerDob(p,safeGet(strs, genderPos+4));
+    			p.setGender(safeGet(strs, genderPos+5));
+    			String d = safeGet(strs,genderPos+6);
+    			if (StringUtils.isNotBlank(d)) {
+    				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
+    			}
+    			processNames(p, safeGet(strs, genderPos+7), safeGet(strs, genderPos+8), safeGet(strs, genderPos+9), p.getGender());
+    		}
+
+    	}else if(positions.size() >0 && positions.size()>=2){
+    		docTypePos=positions.get(0);
+    		genderPos=positions.get(1);
+    		if((genderPos-docTypePos) == 3){
+    			//P/P00266142/14JUL71/M/28MAY23/AVDIU/ILIR
+    			doc.setDocumentType(safeGet(strs, docTypePos));
+    			doc.setDocumentNumber(safeGet(strs, docTypePos+1));
+    			setPassengerDob(p,safeGet(strs, docTypePos+2));
+    			p.setGender(safeGet(strs, genderPos));
+    			String d = safeGet(strs,genderPos+1);
+    			if (StringUtils.isNotBlank(d)) {
+    				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
+    			}
+       			processNames(p, safeGet(strs, genderPos+2), safeGet(strs, genderPos+3), safeGet(strs, genderPos+4), p.getGender());
+			
+    		}else if((genderPos-docTypePos) == 5){
+    			//P/USA/554416148/USA/06MAY02/F/27SEP21/ROBERTS/ELIZABETH/ANNE
+      			doc.setDocumentType(safeGet(strs, docTypePos));
+    			doc.setIssuanceCountry(safeGet(strs, docTypePos+1));
+    			doc.setDocumentNumber(safeGet(strs, docTypePos+2));
+    			p.setCitizenshipCountry(safeGet(strs, docTypePos+3));
+    			setPassengerDob(p,safeGet(strs, docTypePos+4));
+    			p.setGender(safeGet(strs, genderPos));
+    			String d = safeGet(strs,genderPos+1);
+    			if (StringUtils.isNotBlank(d)) {
+    				doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
+    			}
+    			processNames(p, safeGet(strs, genderPos+2), safeGet(strs, genderPos+3), safeGet(strs, genderPos+4), p.getGender());
+    		}
+    	}
+    }
+    
+    private static void setPassengerDob(PassengerVo p,String d){
+		if (StringUtils.isNotBlank(d)) {
+			try {
+				Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
+				p.setDob(dob);
+				p.setAge(DateUtils.calculateAge(dob));
+			} catch (Exception e) {
+				
+			}
+		}
+    }
+    
+    private static List<Integer> getPositionalElements(List<String> tokens){
+    	List<Integer> pos=new ArrayList<>();
+    	for(int i=0;i<tokens.size();i++){
+    		if(StringUtils.isNotBlank(tokens.get(i)) && tokens.get(i).trim().length()==1){
+    			if("M".equals(tokens.get(i).trim()) || "F".equals(tokens.get(i).trim()) || "P".equals(tokens.get(i).trim())
+    					&& i<=8){
+    				pos.add(i);
+    			}
+    		}
+    	}
+    	
+    	return pos;
+    }
 
 }

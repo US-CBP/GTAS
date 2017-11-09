@@ -12,6 +12,8 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.sun.media.jfxmedia.logging.Logger;
+
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.segment.ABI;
@@ -216,7 +218,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             String code = ssr.getTypeOfRequest();
             if (SSR.DOCS.equals(code)) {
-                ssrDocs.add(ssr);
+            	if(StringUtils.isNotBlank(ssr.getFreeText())){
+            		ssrDocs.add(ssr);
+            	}
+                
             } else if (SSR.DOCA.equals(code)) {
                 AddressVo addr = PnrUtils.createAddress(ssr);
                 if (addr != null && addr.isValid()) {
@@ -276,7 +281,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 p.getDocuments().addAll(visas);
                 parsedMessage.getPassengers().add(p);
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
+                
             } else {
+            	//System.out.println(" IN VALID PASSNEGER-"+tif.toString());
                 throw new ParseException("Invalid passenger: " + p);
             }
         }
@@ -618,7 +625,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (refNumber != null) {
             thePax = findPaxByReferenceNumber(refNumber);
         }
-        
         TIF tif = getConditionalSegment(TIF.class);
         if (thePax == null && tif != null) {
             // try finding pax based on tif info
@@ -634,7 +640,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 }
             }
         }
-        
         // TODO: how does this relate to ssr:seat?
         SSD ssd = getConditionalSegment(SSD.class);
         if (thePax != null && ssd != null) {
@@ -662,7 +667,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }else{
             	parsedMessage.setTotal_bag_count(n);
             }
-            
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
@@ -694,6 +698,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	}
     	return bags;
     }
+    
     private void processGroup8_SplitPassenger(EQN eqn) throws ParseException {
         getMandatorySegment(RCI.class);
     }
@@ -779,13 +784,13 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		parsedMessage.getPhoneNumbers().add(pvo);
     	}
     }
+    
     private void processAgencyInfo(String theText){
     	if(StringUtils.isNotBlank(theText) && theText.contains("CTCT")){
     		String untilCT=theText.substring(0, theText.indexOf("CTCT"));//0/O/28/OSI YY
     		String afterCT=theText.substring(theText.indexOf("CTCT")+4,theText.length());//DCA 123 456-7890 TRAVEL AGENCY
     		AgencyVo vo=new AgencyVo();
-    		
-    		if(afterCT.contains("TRAVEL") && afterCT.contains("AGENCY")){
+     		if(afterCT.contains("TRAVEL") && afterCT.contains("AGENCY")){
     			vo.setIdentifier("TRAVEL AGENCY");
     			vo.setType("TRAVEL");
     		}else if(afterCT.endsWith("A")){
@@ -847,8 +852,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     			}
     		}
     	}
-    	
-    	 if (StringUtils.isNotBlank(tmp)) {
+   	 	if (StringUtils.isNotBlank(tmp)) {
     		 //implement future parsing here based on incoming email formats
     		if(tmp.indexOf("//") != -1){
     			tmp=tmp.replace("//", "@");
@@ -867,7 +871,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              if(tmp.lastIndexOf("@") != -1){
             	 email.setDomain(tmp.substring(tmp.lastIndexOf("@")+1, tmp.length()));
              }
-            
              parsedMessage.getEmails().add(email);
          }
     }
@@ -875,11 +878,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (StringUtils.isBlank(txt)) {
             return;
         }
-        
         if (txt.contains(IFT.CONTACT_EMAIL)) {
         	//gets executed for email format IFT+4:28::YY+CTCE SOMEBODY//GMAIL.COM'
         	extractEmailInfo(txt);
-        	
         } else if (txt.contains(IFT.CONTACT_ADDR)) {
         	String tmp = getContactInfo(IFT.CONTACT_ADDR, txt);
             if (StringUtils.isNotBlank(tmp)) {
@@ -937,7 +938,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (org == null) {
             return;
         }
-        
         AgencyVo agencyVo = new AgencyVo();
         agencyVo.setName(org.getAirlineCode());
         agencyVo.setLocation(org.getLocationCode());
@@ -1057,40 +1057,36 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	return null;
     }
     private void extractSeatInfo(String ltsText){
-   	 //LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
-   	 //LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
-   	
-   	if(ltsText.contains("NR/RS")){
-   		ltsText=ltsText.substring(ltsText.indexOf("NR/RS")+6, ltsText.length());
-   	}else if(ltsText.contains(" RS")){
-   		ltsText=ltsText.substring(ltsText.indexOf(" RS")+3, ltsText.length());
-   	}
-   	String[] tokens=ltsText.split(" ");
-   	if(tokens.length == 5){
-   		SeatVo seat = new SeatVo();
-   		PassengerVo thePax =this.findPaxByName(tokens[1]);
-           seat.setNumber(tokens[0]);
-           if(tokens[4] != null && tokens[4].length() >4){
+   	 	//LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
+   	 	//LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
+    	if(ltsText.contains("NR/RS")){
+    		ltsText=ltsText.substring(ltsText.indexOf("NR/RS")+6, ltsText.length());
+    	}else if(ltsText.contains(" RS")){
+    		ltsText=ltsText.substring(ltsText.indexOf(" RS")+3, ltsText.length());
+    	}
+    	String[] tokens=ltsText.split(" ");
+    	if(tokens.length == 5){
+    		SeatVo seat = new SeatVo();
+    		PassengerVo thePax =this.findPaxByName(tokens[1]);
+            seat.setNumber(tokens[0]);
+            if(tokens[4] != null && tokens[4].length() >4){
         	   seat.setOrigin(tokens[4].substring(3, tokens[4].length()));
         	   seat.setDestination(tokens[4].substring(0,3));
            }
-     
-           if(thePax != null && seat.isValid() ){
+            if(thePax != null && seat.isValid() ){
                thePax.getSeatAssignments().add(seat);
            }
-   	}else if(tokens.length == 6){
-   		SeatVo seat = new SeatVo();
-   		PassengerVo thePax =this.findPaxByName(tokens[1]);
-        seat.setNumber(tokens[0]);
-        if(tokens[5] != null && tokens[5].length() >4){
-            seat.setOrigin(tokens[5].substring(3, tokens[5].length()));
-            seat.setDestination(tokens[5].substring(0,3));
-        }
-        if(thePax != null && seat.isValid() ){
-            thePax.getSeatAssignments().add(seat);
-        }    		
-   	}
-   		
-   	
+    	}else if(tokens.length == 6){
+    		SeatVo seat = new SeatVo();
+    		PassengerVo thePax =this.findPaxByName(tokens[1]);
+    		seat.setNumber(tokens[0]);
+    		if(tokens[5] != null && tokens[5].length() >4){
+    			seat.setOrigin(tokens[5].substring(3, tokens[5].length()));
+    			seat.setDestination(tokens[5].substring(0,3));
+    		}
+    		if(thePax != null && seat.isValid() ){
+    			thePax.getSeatAssignments().add(seat);
+    		}    		
+    	}
    }
 }
