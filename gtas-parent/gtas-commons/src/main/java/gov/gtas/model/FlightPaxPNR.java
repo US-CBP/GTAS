@@ -60,13 +60,13 @@ public class FlightPaxPNR implements Serializable {
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
 
-    @ManyToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+   /* @ManyToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "bag",
-            joinColumns = @JoinColumn(name = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
+            joinColumns = @JoinColumn(name = "flight_pax_pnr_id"),
+            inverseJoinColumns = @JoinColumn(name = "bag_id"))
     private Set<Bag> bagSet = new HashSet<Bag>();
 
-
+*/
     @Column(name = "total_bag_count")
     private Integer total_bag_count;
 
@@ -181,13 +181,13 @@ public class FlightPaxPNR implements Serializable {
         this.debarkationCountry = debarkationCountry;
     }
 
-    public Set<Bag> getBagSet() {
+    /*public Set<Bag> getBagSet() {
         return bagSet;
     }
 
     public void setBagSet(Set<Bag> bagSet) {
         this.bagSet = bagSet;
-    }
+    }*/
 
     public Integer getTotal_bag_count() {
         return total_bag_count;
