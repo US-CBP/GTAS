@@ -1,5 +1,8 @@
 package gov.gtas.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -13,9 +16,7 @@ public class FlightPaxAPIs implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public FlightPaxAPIs(){
-
-    }
+    public FlightPaxAPIs(){}
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -69,11 +70,12 @@ public class FlightPaxAPIs implements Serializable {
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
 
-    /*@ManyToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "bag",
+    @OneToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "flight_pax_apis_bag",
             joinColumns = @JoinColumn(name = "flight_pax_apis_id"),
-            inverseJoinColumns = @JoinColumn(name = "bag_id"))
-    private Set<Bag> bagSet = new HashSet<Bag>();*/
+            inverseJoinColumns = @JoinColumn(name = "id")
+    )
+    private Set<Bag> bagSet = new HashSet<Bag>();
 
 
     public Integer getTotal_bag_count() {
@@ -208,23 +210,30 @@ public class FlightPaxAPIs implements Serializable {
 */
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.debarkation,this.embarkation,this.portOfFirstArrival);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FlightPaxAPIs that = (FlightPaxAPIs) o;
+
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(embarkation, that.embarkation)
+                .append(debarkation, that.debarkation)
+                .append(flight, that.flight)
+                .append(passenger, that.passenger)
+                .isEquals();
     }
 
     @Override
-    public boolean equals(Object target) {
-
-        if (this == target) {
-            return true;
-        }
-
-        if (!(target instanceof FlightPax)) {
-            return false;
-        }
-
-        FlightPax dataTarget = ((FlightPax) target);
-
-        return ((this.getFlight().equals(dataTarget.getFlight()) && (this.getPassenger().equals(dataTarget.getPassenger()))));
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(embarkation)
+                .append(debarkation)
+                .append(flight)
+                .append(passenger)
+                .toHashCode();
     }
 }

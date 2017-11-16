@@ -1,26 +1,24 @@
-/*
- * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
- * Please see LICENSE.txt for details.
- */
-package gov.gtas.job.config;
+package gov.gtas.jms.config;
 
 import javax.jms.ConnectionFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+
  
-//@Configuration
+@Configuration
+/**Enable/ uncomment the below when the ActiveMQ is up and running.
+ *Otherwise it will generate exception stack trace in the server console.
+ **/
 //@EnableJms
 public class MessagingListnerConfiguration {
  
-   // @Autowired
+	@Autowired
     ConnectionFactory connectionFactory;
-     
-    //@Bean
+
+    @Bean
     public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);

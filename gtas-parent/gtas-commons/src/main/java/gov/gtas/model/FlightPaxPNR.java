@@ -60,13 +60,12 @@ public class FlightPaxPNR implements Serializable {
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
 
-   /* @ManyToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "bag",
+    @ManyToMany(targetEntity = Bag.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "flight_pax_pnr_bag",
             joinColumns = @JoinColumn(name = "flight_pax_pnr_id"),
-            inverseJoinColumns = @JoinColumn(name = "bag_id"))
+            inverseJoinColumns = @JoinColumn(name = "id"))
     private Set<Bag> bagSet = new HashSet<Bag>();
 
-*/
     @Column(name = "total_bag_count")
     private Integer total_bag_count;
 
