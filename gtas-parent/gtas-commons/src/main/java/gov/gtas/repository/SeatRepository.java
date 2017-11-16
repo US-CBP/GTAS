@@ -30,4 +30,8 @@ public interface SeatRepository extends CrudRepository<Seat, Long> {
 	@Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.passenger.id = :passengerId")
 	List<Seat> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
+	
+	@Query("SELECT s FROM Seat s WHERE s.flight.id = :flightId AND s.passenger.id = :passengerId AND s.apis=0")
+	List<Seat> findByFlightIdAndPassengerIdNotApis(@Param("flightId") Long flightId,
+			@Param("passengerId") Long passengerId);
 }

@@ -130,8 +130,8 @@ public class PassengerDetailsController {
 		PassengerVo vo = new PassengerVo();
 		Passenger t = pService.findById(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
-		List<Bag> bagList = new ArrayList<Bag>();
-		
+		List<Bag> bagList = new ArrayList<Bag>();		
+		List<Seat> pnrSeatList = new ArrayList<Seat>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
 			vo.setCarrier(flight.getCarrier());
@@ -151,7 +151,7 @@ public class PassengerDetailsController {
 					vo.setSeat(seats.get(0));
 				}
 			}
-			 bagList = bagRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
+			bagList = bagRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
@@ -201,10 +201,25 @@ public class PassengerDetailsController {
 		// Gather PNR Details
 		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(
 				t.getId(), new Long(flightId));
-
+		
 		if (!pnrList.isEmpty()) {
 			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));			
-			PnrVo tempVo = vo.getPnrVo();	
+			PnrVo tempVo = vo.getPnrVo();
+			
+			//Assign seat for every passenger on pnr
+			for(Passenger p: pnrList.get(0).getPassengers()) {
+				pnrSeatList.addAll(seatRepository.findByFlightIdAndPassengerIdNotApis(Long.parseLong(flightId), p.getId()));
+			}
+			for (Seat s : pnrSeatList) {
+				SeatVo seatVo = new SeatVo();
+				seatVo.setFirstName(s.getPassenger().getFirstName());
+				seatVo.setLastName(s.getPassenger().getLastName());
+				seatVo.setNumber(s.getNumber());
+				seatVo.setFlightNumber(s.getFlight()
+						.getFullFlightNumber());
+				tempVo.addSeat(seatVo);
+			}			
+	
 			for(Bag b: bagList ) {
 				if(b.getData_source().equalsIgnoreCase("pnr")){
 					BagVo bagVo = new BagVo();
@@ -535,19 +550,6 @@ public class PassengerDetailsController {
 				pVo.setGender(p.getGender());
 				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
-
-				Set<Seat> seats = p.getSeatAssignments();
-				for (Seat s : seats) {
-					if (!s.getApis()) {
-						SeatVo seatVo = new SeatVo();
-						seatVo.setFirstName(s.getPassenger().getFirstName());
-						seatVo.setLastName(s.getPassenger().getLastName());
-						seatVo.setNumber(s.getNumber());
-						seatVo.setFlightNumber(s.getFlight()
-								.getFullFlightNumber());
-						target.getSeatAssignments().add(seatVo);
-					}
-				}
 				
 				Set<Document> documents = p.getDocuments();
 				for (Document d: documents) {
@@ -564,12 +566,6 @@ public class PassengerDetailsController {
 			}
 		}
 		return target;
-	}
-	/**
-	 * Sets Bag Object to passed in Vo element
-	 */
-	private void mapBagsToVo(Bag b, MessageVo m) {
-		
 	}
 	/**
 	 * Segments PnrRaw String

@@ -49,7 +49,7 @@ public class PnrVo extends MessageVo {
     private List<AgencyVo> agencies = new ArrayList<>();
     private List<FlightLegVo> flightLegs = new ArrayList<>();
     private List<DocumentVo> documents = new ArrayList<>();
-    
+    private List<SeatVo> seatAssignments = new ArrayList<>();
     
     
     public List<DocumentVo> getDocuments() {
@@ -59,8 +59,7 @@ public class PnrVo extends MessageVo {
 		this.documents = documents;
 	}
 
-	/** seat assignments in this pnr.  for display purposes only */
-    private List<SeatVo> seatAssignments = new ArrayList<>();
+
     
     public void addBag(BagVo b) {
         bags.add(b);
@@ -291,6 +290,9 @@ public class PnrVo extends MessageVo {
         return seatAssignments;
     }
 
+    public void addSeat(SeatVo s) {
+    	this.seatAssignments.add(s);
+    }
     public void setSeatAssignments(List<SeatVo> seatAssignments) {
         this.seatAssignments = seatAssignments;
     }
