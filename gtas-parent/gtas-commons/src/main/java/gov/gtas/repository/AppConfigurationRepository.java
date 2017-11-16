@@ -12,10 +12,10 @@ import gov.gtas.model.lookup.AppConfiguration;
 public interface AppConfigurationRepository extends CrudRepository<AppConfiguration, Long> {
     public static String HOME_COUNTRY = "HOME_COUNTRY";
     public static String QUEUE = "QUEUE";
-
+    public static String QUEUE_OUT ="QUEUE_OUT";
+    public static String QUEUE_IN ="QUEUE_IN";
     public static String ELASTIC_HOSTNAME = "ELASTIC_HOSTNAME";
     public static String ELASTIC_PORT = "ELASTIC_PORT";
-    
     public static String UPLOAD_DIR = "UPLOAD_DIR";
     public static String DASHBOARD_AIRPORT = "DASHBOARD_AIRPORT";
 
