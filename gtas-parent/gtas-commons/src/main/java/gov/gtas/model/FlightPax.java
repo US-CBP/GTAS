@@ -62,9 +62,17 @@ public class FlightPax implements Serializable {
     
     @Column(name = "deb_country")
     private String debarkationCountry;
-    
-  
-    @ManyToOne
+
+	@Column(name = "bag_count")
+	private Integer bag_count;
+
+	@Column(name = "bag_weight")
+	private float bag_weight;
+
+	@Column(name = "head_of_pool", nullable = false)
+	private boolean headOfPool=false;
+
+	@ManyToOne
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
@@ -178,6 +186,29 @@ public class FlightPax implements Serializable {
 		this.debarkationCountry = debarkationCountry;
 	}
 
+	public Integer getBag_count() {
+		return bag_count;
+	}
+
+	public void setBag_count(Integer bag_count) {
+		this.bag_count = bag_count;
+	}
+
+	public float getBag_weight() {
+		return bag_weight;
+	}
+
+	public void setBag_weight(float bag_weight) {
+		this.bag_weight = bag_weight;
+	}
+
+	public boolean isHeadOfPool() {
+		return headOfPool;
+	}
+
+	public void setHeadOfPool(boolean headOfPool) {
+		this.headOfPool = headOfPool;
+	}
 
 	@Override
     public int hashCode() {
