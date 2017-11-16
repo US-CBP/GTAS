@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -250,19 +251,16 @@ public class ElasticHelper {
 		QueryBuilder qb = QueryBuilders
 				.boolQuery()
 				.should(QueryBuilders.boolQuery()
-						.must(matchQuery("firstName",pax.getFirstName()))
-						.must(matchQuery("lastName",pax.getLastName())))
+						.must(matchQuery("pnr",pax.getFirstName()))
+						.must(matchQuery("pnr",pax.getLastName())))
 				.should(termsQuery("documents.documentNumber", docNumbers))
-				.should(termsQuery("pnr", docNumbers))
-				.should(matchQuery("pnr", pax.getLastName()));
+				.should(termsQuery("pnr", docNumbers));
 		
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes(FLIGHTPAX_TYPE)
 			    .setSearchType(SearchType.QUERY_THEN_FETCH)
 			    .setQuery(qb)
 			    .addHighlightedField("documents.documentNumber")
-			    .addHighlightedField("lastName")
-			    .addHighlightedField("firstName")
 			    .addHighlightedField("pnr")
 			    .setFrom(startIndex)
 			    .setSize(pageSize)
@@ -277,20 +275,31 @@ public class ElasticHelper {
 	    List<LinkPassengerVo> lp = new ArrayList<>();
 		for (SearchHit hit : resultsArry) {
 			Map<String, Object> result = hit.getSource();
-			LinkPassengerVo lpVo = new LinkPassengerVo();
-			lpVo.setPassengerId((Integer)result.get("passengerId"));
-			lpVo.setFlightId((Integer)result.get("flightId"));
-			lpVo.setFirstName((String)result.get("firstName"));
-			lpVo.setMiddleName((String)result.get("middleName"));
-			lpVo.setLastName((String)result.get("lastName"));
-			lpVo.setFlightNumber((String)result.get("flightNumber"));
-			lpVo.setHighlightMatch(convertHighlights(hit.getHighlightFields().entrySet()));
-			lp.add(lpVo);
+			if(!((String)result.get("firstName")).equals(pax.getFirstName()) || !((String)result.get("lastName")).equals(pax.getLastName())) {
+				LinkPassengerVo lpVo = new LinkPassengerVo();
+				lpVo.setPassengerId((Integer)result.get("passengerId"));
+				lpVo.setFlightId((Integer)result.get("flightId"));
+				lpVo.setFirstName((String)result.get("firstName"));
+				lpVo.setMiddleName((String)result.get("middleName"));
+				lpVo.setLastName((String)result.get("lastName"));
+				lpVo.setFlightNumber((String)result.get("flightNumber"));
+				lpVo.setHighlightMatch(converHighlightsTable(hit.getHighlightFields().entrySet()));
+				lp.add(lpVo);
+			}
 		}
 		return new LinkAnalysisDto(lp, hits.totalHits());
 	}
 	////////////////////////////////////////////////////////////////////
 	// helpers
+	private Hashtable<String,String> converHighlightsTable(Set<Entry<String,HighlightField>> highlights) {
+		Hashtable<String,String> highlightStrings = new Hashtable<String,String>();
+        for (Map.Entry<String, HighlightField> highlight : highlights) {
+            for (Text text : highlight.getValue().fragments()) {
+            	highlightStrings.put(highlight.getKey(), text.string());
+            }
+        }
+        return highlightStrings;
+	}
 	private String convertHighlights(Set<Entry<String,HighlightField>> highlights){
 		StringBuilder highlightString = new StringBuilder();
         for (Map.Entry<String, HighlightField> highlight : highlights) {
@@ -303,7 +312,6 @@ public class ElasticHelper {
                 highlightString.append(text.string());
                 highlightString.append("... ");
             	highlightString.append("\n");
-
             }
         	highlightString.append("\n");
             highlightString.append("---- ");

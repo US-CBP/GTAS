@@ -5,6 +5,8 @@
  */
 package gov.gtas.vo.passenger;
 
+import java.util.Hashtable;
+
 public class LinkPassengerVo {
 	private Integer passengerId;
 	private Integer flightId;
@@ -12,7 +14,7 @@ public class LinkPassengerVo {
 	private String middleName;
 	private String lastName;
 	private String flightNumber;
-	private String highlightMatch;
+	private Hashtable<String,String> highlightMatch;
 	
 	public String getFlightNumber() {
 		return flightNumber;
@@ -50,10 +52,10 @@ public class LinkPassengerVo {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public String getHighlightMatch() {
+	public Hashtable<String, String> getHighlightMatch() {
 		return highlightMatch;
 	}
-	public void setHighlightMatch(String highlightMatch) {
+	public void setHighlightMatch(Hashtable<String, String> highlightMatch) {
 		this.highlightMatch = highlightMatch;
 	}
 }
