@@ -22,9 +22,7 @@ public class FlightPax implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	public FlightPax(){
-		
-	}
+	public FlightPax(){}
 	
     @Id  
     @GeneratedValue(strategy = GenerationType.AUTO)  
@@ -63,11 +61,17 @@ public class FlightPax implements Serializable {
     @Column(name = "deb_country")
     private String debarkationCountry;
 
+	@Column(name = "msg_source")
+	private String messageSource;
+
 	@Column(name = "bag_count")
-	private Integer bag_count;
+	private Integer bagCount;
 
 	@Column(name = "bag_weight")
-	private float bag_weight;
+	private float bagWeight;
+
+	@Column(name = "average_bag_weight")
+	private float averageBagWeight;
 
 	@Column(name = "head_of_pool", nullable = false)
 	private boolean headOfPool=false;
@@ -169,7 +173,6 @@ public class FlightPax implements Serializable {
 		this.reservationReferenceNumber = reservationReferenceNumber;
 	}
 
-	
 	public String getEmbarkationCountry() {
 		return embarkationCountry;
 	}
@@ -186,20 +189,20 @@ public class FlightPax implements Serializable {
 		this.debarkationCountry = debarkationCountry;
 	}
 
-	public Integer getBag_count() {
-		return bag_count;
+	public Integer getBagCount() {
+		return bagCount;
 	}
 
-	public void setBag_count(Integer bag_count) {
-		this.bag_count = bag_count;
+	public void setBagCount(Integer bagCount) {
+		this.bagCount = bagCount;
 	}
 
-	public float getBag_weight() {
-		return bag_weight;
+	public float getBagWeight() {
+		return bagWeight;
 	}
 
-	public void setBag_weight(float bag_weight) {
-		this.bag_weight = bag_weight;
+	public void setBagWeight(float bagWeight) {
+		this.bagWeight = bagWeight;
 	}
 
 	public boolean isHeadOfPool() {
@@ -208,6 +211,22 @@ public class FlightPax implements Serializable {
 
 	public void setHeadOfPool(boolean headOfPool) {
 		this.headOfPool = headOfPool;
+	}
+
+	public String getMessageSource() {
+		return messageSource;
+	}
+
+	public void setMessageSource(String messageSource) {
+		this.messageSource = messageSource;
+	}
+
+	public float getAverageBagWeight() {
+		return averageBagWeight;
+	}
+
+	public void setAverageBagWeight(float averageBagWeight) {
+		this.averageBagWeight = averageBagWeight;
 	}
 
 	@Override
