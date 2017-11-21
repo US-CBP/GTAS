@@ -105,10 +105,19 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Bag> bags = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    private Set<FlightPax> flightPaxList = new HashSet<>();
+    
+    
+    public Set<FlightPax> getFlightPaxList() {
+		return flightPaxList;
+	}
 
-    
-    
-    public Date getWatchlistCheckTimestamp() {
+	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
+		this.flightPaxList = flightPaxList;
+	}
+
+	public Date getWatchlistCheckTimestamp() {
 		return watchlistCheckTimestamp;
 	}
 

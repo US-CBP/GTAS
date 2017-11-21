@@ -46,8 +46,16 @@ public class PnrVo extends MessageVo implements Validatable {
     private List<CodeShareVo> codeshares = new ArrayList<>();
     private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
     private Date reservationCreateDate;
+    private Boolean headPool = Boolean.FALSE;
     
-    
+
+	public Boolean getHeadPool() {
+		return headPool;
+	}
+
+	public void setHeadPool(Boolean headPool) {
+		this.headPool = headPool;
+	}
 
 	public List<PaymentFormVo> getFormOfPayments() {
 		return FormOfPayments;

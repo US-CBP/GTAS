@@ -689,6 +689,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     			bvo.setDestinationAirport(pvo.getDebarkation());
     			bvo.setFirstName(pvo.getFirstName());
     			bvo.setLastName(pvo.getLastName());
+    			parsedMessage.setHeadPool(true);
     		}
     		else{
     			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());

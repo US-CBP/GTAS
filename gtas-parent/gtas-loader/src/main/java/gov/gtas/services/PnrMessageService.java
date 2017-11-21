@@ -20,11 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
+import gov.gtas.model.ApisMessage;
+import gov.gtas.model.Bag;
 import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.DwellTime;
 import gov.gtas.model.EdifactMessage;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
@@ -108,6 +111,7 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.createBagsFromPnrVo(vo,pnr);
             loaderRepo.createFormPfPayments(vo,pnr);
             setCodeShareFlights(pnr);
+            createFlightPax(pnr);
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -311,5 +315,37 @@ public class PnrMessageService extends MessageLoaderService {
             msgDao.save(m);
         }
         return ret;
+    }
+    
+    private void createFlightPax(Pnr pnr){
+    	Set<Flight> flights=pnr.getFlights();
+    	for(Flight f : flights){
+    		for(Passenger p:f.getPassengers()){
+    			FlightPax fp=new FlightPax();
+    			fp.setDebarkation(f.getDestination());
+    			fp.setDebarkationCountry(f.getDestinationCountry());
+    			fp.setEmbarkation(f.getOrigin());
+    			fp.setEmbarkationCountry(f.getOriginCountry());
+    			fp.setPortOfFirstArrival(f.getDestination());
+    			fp.setFlight(f);
+    			fp.setResidenceCountry(p.getResidencyCountry());
+    			fp.setTravelerType(p.getPassengerType());
+    			fp.setPassenger(p);
+    			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
+    			int totalbags=pnr.getBagCount();
+    			int passengerBags=p.getBags() == null?0:p.getBags().size();
+    			if(passengerBags ==0){
+    				passengerBags=totalbags;
+    			}
+    			fp.setBagCount(passengerBags);
+    			if(pnr.getBaggageWeight() >0.0){
+    				fp.setAverageBagWeight(Math.round(pnr.getBaggageWeight()/passengerBags));
+    			}
+    			
+    			fp.setBagWeight(pnr.getBaggageWeight());
+    			p.getFlightPaxList().add(fp);
+    			
+    		}
+    	}
     }
 }

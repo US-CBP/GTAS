@@ -104,6 +104,7 @@ public class TBD extends Segment {
     public TBD(List<Composite> composites) {
 
         super(TBD.class.getSimpleName(), composites);
+
         Composite c = getComposite(1);
         this.bagDetails = new ArrayList<>();
         if (c != null && StringUtils.isNotBlank(c.getElement(0))) {

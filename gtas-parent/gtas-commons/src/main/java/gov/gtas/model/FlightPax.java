@@ -68,10 +68,10 @@ public class FlightPax implements Serializable {
 	private Integer bagCount;
 
 	@Column(name = "bag_weight")
-	private float bagWeight;
+	private double bagWeight;
 
 	@Column(name = "average_bag_weight")
-	private float averageBagWeight;
+	private double averageBagWeight;
 
 	@Column(name = "head_of_pool", nullable = false)
 	private boolean headOfPool=false;
@@ -197,11 +197,11 @@ public class FlightPax implements Serializable {
 		this.bagCount = bagCount;
 	}
 
-	public float getBagWeight() {
+	public double getBagWeight() {
 		return bagWeight;
 	}
 
-	public void setBagWeight(float bagWeight) {
+	public void setBagWeight(double bagWeight) {
 		this.bagWeight = bagWeight;
 	}
 
@@ -221,11 +221,11 @@ public class FlightPax implements Serializable {
 		this.messageSource = messageSource;
 	}
 
-	public float getAverageBagWeight() {
+	public double getAverageBagWeight() {
 		return averageBagWeight;
 	}
 
-	public void setAverageBagWeight(float averageBagWeight) {
+	public void setAverageBagWeight(double averageBagWeight) {
 		this.averageBagWeight = averageBagWeight;
 	}
 

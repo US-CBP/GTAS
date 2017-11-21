@@ -37,7 +37,7 @@ public class PassengerVo implements Validatable {
     private String embarkation;
     private String debarkation;
     private Boolean deleted = Boolean.FALSE;
-
+    
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
 
@@ -47,8 +47,7 @@ public class PassengerVo implements Validatable {
     private String bagNum;
     private String reservationReferenceNumber;
 
-    
-    public String getReservationReferenceNumber() {
+  	public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
 	}
 

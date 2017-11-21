@@ -162,8 +162,9 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
+    			fp.setBagCount(p.getBags() == null?0:p.getBags().size());
+    			p.getFlightPaxList().add(fp);
     			apisMessage.addToFlightPax(fp);
-    			
     		}
     	}
     }
