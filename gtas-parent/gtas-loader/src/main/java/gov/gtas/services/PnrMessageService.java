@@ -111,7 +111,9 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.createBagsFromPnrVo(vo,pnr);
             loaderRepo.createFormPfPayments(vo,pnr);
             setCodeShareFlights(pnr);
+            //if(vo.getBags() != null && vo.getBags().size() >0 ){
             createFlightPax(pnr);
+            //}
             pnr.setStatus(MessageStatus.LOADED);
 
         } catch (Exception e) {
@@ -332,17 +334,17 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
-    			int totalbags=pnr.getBagCount();
+    			int totalbags=pnr.getBagCount() == null?0:pnr.getBagCount();
     			int passengerBags=p.getBags() == null?0:p.getBags().size();
-    			if(passengerBags ==0){
+    			if(passengerBags ==0 && totalbags >0 ){
     				passengerBags=totalbags;
     			}
     			fp.setBagCount(passengerBags);
-    			if(pnr.getBaggageWeight() >0.0){
+    			if(pnr.getBaggageWeight() != null && pnr.getBaggageWeight() >0.0){
     				fp.setAverageBagWeight(Math.round(pnr.getBaggageWeight()/passengerBags));
+    				
     			}
-    			
-    			fp.setBagWeight(pnr.getBaggageWeight());
+    			fp.setBagWeight(pnr.getBaggageWeight() == null?0:pnr.getBaggageWeight());
     			p.getFlightPaxList().add(fp);
     			
     		}
