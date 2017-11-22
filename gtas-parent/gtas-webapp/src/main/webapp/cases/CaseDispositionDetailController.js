@@ -35,8 +35,8 @@
             };
             $scope.hitValidityStatuses=[
             {id: 1, name: 'Yes'},
-            {id: 1, name: 'No'},
-            {id: 1, name: 'N/A'}
+            {id: 2, name: 'No'},
+            {id: 3, name: 'N/A'}
             ];
             $scope.options = {
                 height: 150,
@@ -65,7 +65,8 @@
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                 $scope.caseItemHitsVo = $scope.caseItem.hitsDispositionVos;
                 $scope.caseDispStatus = $scope.caseItem.status;
-                $scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
+                //$scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
+                $scope.dispStatus.caseStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
             }
 
             $scope.errorToast = function (error) {
@@ -117,11 +118,13 @@
             $scope.populateHitDispStatuses();
 
             $scope.caseConfirm = function() {
+                $scope.dispStatus.allHitsClosed = true;
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
                     if ( ($scope.caseDispStatus != $scope.dispStatus.constants.CLOSED) ||
                         (item.status === $scope.dispStatus.constants.NEW) ||
-                        (item.valid == null)) $scope.dispStatus.allHitsClosed = false;
+                        ( (item.valid === $scope.hitValidityStatuses[0].name) || (item.valid === $scope.hitValidityStatuses[1].name)))
+                        $scope.dispStatus.allHitsClosed = false;
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
@@ -134,7 +137,7 @@
                         $scope.caseItem = aCase.data;
                         $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                         $scope.caseDispStatus = $scope.caseItem.status;
-                        $scope.dispStatus.caseStatusShow = false;
+                        //$scope.dispStatus.caseStatusShow = false;
                         spinnerService.hide('html5spinner');
                         $mdSidenav('comments').close();
                     });// END of caseDispositionService call
@@ -176,7 +179,8 @@
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
                 $scope.hitDispStatus = $scope.caseItemHits[position].status;
-                $scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === $scope.dispStatus.constants.CLOSED)? false: true;
+                //$scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === $scope.dispStatus.constants.CLOSED)? false: true;
+                $scope.dispStatus.hitStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
                 $scope.populateDispStatuses();
                 if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
                     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
