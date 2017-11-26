@@ -43,7 +43,7 @@
               <table class="cbp-table-selectable mdl-js-data-table">
                 <tbody >
                   <tr ng-repeat="hit in caseItemHitsVo" ng-click="sideNav('comments',$index)">
-                    <td style="padding-left: 50px; padding-right: 1px;">{{ hit.ruleCatSet[0].category }}</td>
+                    <td style="padding-left: 50px; padding-right: 1px;">{{ hit.category }}</td>
                     <td style="padding-left: 1px; padding-right: 10px;">{{ hit.description }}</td>
                     <td style="padding-left: 10px; padding-right: 10px;" align="text-right">{{ hit.status }}</td>
                   </tr>

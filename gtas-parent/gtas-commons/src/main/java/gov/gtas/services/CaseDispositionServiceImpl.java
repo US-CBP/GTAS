@@ -148,6 +148,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         aCase.setDocument(document);
         aCase.setDob(dob);
         aCase.setStatus(DispositionStatusCode.NEW.toString());
+        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
         if (_tempCase != null &&
                 (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
@@ -177,7 +178,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
-        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+        if(aCase.getHighPriorityRuleCatId() != null && aCase.getHighPriorityRuleCatId().equals(1L))
+            aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+        else if(aCase.getHighPriorityRuleCatId() != null && (aCase.getHighPriorityRuleCatId() > highPriorityRuleCatId) && highPriorityRuleCatId != 1)
+            aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
         caseDispositionRepository.saveAndFlush(aCase);
@@ -550,12 +554,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         try {
             for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
                 _tempHitsDisp = new HitsDispositionVo();
+                _tempRuleCat = new RuleCat();
                 CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
                 if (hitDisp.getRuleCat() != null) {
                     CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
                     _tempRuleCat.setHitsDispositions(null);
                 }
                 _tempRuleCatSet.add(_tempRuleCat);
+                _tempHitsDisp.setCategory(_tempRuleCat.getCategory());
                 _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
                 _tempReturnHitsDispSet.add(_tempHitsDisp);
             }

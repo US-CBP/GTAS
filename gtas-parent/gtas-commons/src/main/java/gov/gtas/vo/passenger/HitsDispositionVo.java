@@ -22,6 +22,7 @@ public class HitsDispositionVo {
     private String valid;
     private Set<HitsDispositionComments> dispComments;
     private Set<RuleCat> ruleCatSet;
+    private String category;
 
     @Override
     public boolean equals(Object o) {
@@ -99,5 +100,13 @@ public class HitsDispositionVo {
 
     public void setRuleCatSet(Set<RuleCat> ruleCatSet) {
         this.ruleCatSet = ruleCatSet;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
