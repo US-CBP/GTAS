@@ -61,7 +61,7 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
         field: 'passengerId',
         name: 'passengerId',
         displayName: 'Link Analysis',
-        cellTemplate: '<md-button ng-click="grid.appScope.searchLinks(row.entity.passengerId,$event)"><i class="fa fa-link" aria-hidden="true"></i></md-button>'
+        cellTemplate: '<md-button ng-click="grid.appScope.searchLinks(row.entity,$event)"><i class="fa fa-link" aria-hidden="true"></i></md-button>'
       },
       {
           field: 'lastName',
@@ -147,9 +147,10 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
       });
   };
 
-  $scope.searchLinks = function (paxId, ev) {
+  $scope.searchLinks = function (pax, ev) {
+    $scope.rootPax = pax;
     return adhocQueryService
-    .getLinks(paxId, $scope.pageNumber, $scope.pageSize, $scope.sort)
+    .getLinks(pax.passengerId, $scope.pageNumber, $scope.pageSize, $scope.sort)
     .then(function (response) {
         var result = response.data.result;
         if (result.error !== null) {
@@ -158,14 +159,14 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
         } else {
             $scope.paxLinks = result.passengers;
             $scope.msgToast(result.totalHits + " results found");
-            $scope.showAdvanced(ev);
+            $scope.linkDetail(ev);
         }
     });
   }
 
   //Modal Configs
   $scope.customFullscreen = false;
-  $scope.showAdvanced = function(ev) {
+  $scope.linkDetail = function(ev) {
     $mdDialog.show({
       controller: DialogController,
       templateUrl: 'dialog/linkDialog.tmpl.html',
@@ -174,12 +175,28 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
       targetEvent: ev,
       clickOutsideToClose:true,
       fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
-    })
-    .then(function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }, function() {
-      $scope.status = 'You cancelled the dialog.';
     });
+  };
+
+  $scope.linkGraph = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'dialog/linkGraph.tmpl.html',
+      parent: angular.element(document.body),
+      scope: $scope.$new(),
+      targetEvent: ev,
+      clickOutsideToClose:true,
+      onComplete: generateGraph,
+      fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+    });
+
+    function generateGraph(scope, element, options) {
+      $.getScript('./adhocquery/linkGraph.js', function()
+      {
+        var myGraph = new window.graph(window.d3, "md-dialog-content"); //http://d3js.org/
+        window.init_page(myGraph, $scope.rootPax, $scope.paxLinks);
+      });
+    }
   };
   function DialogController($scope, $mdDialog, $sce) {
     $scope.hide = function() {

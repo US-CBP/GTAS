@@ -284,19 +284,23 @@ public class ElasticHelper {
 				lpVo.setLastName((String)result.get("lastName"));
 				lpVo.setFlightNumber((String)result.get("flightNumber"));
 				lpVo.setHighlightMatch(converHighlightsTable(hit.getHighlightFields().entrySet()));
+				//Need to normalize for intuitive consideration
+				lpVo.setScore(hit.getExplanation().getValue());
 				lp.add(lpVo);
 			}
 		}
 		return new LinkAnalysisDto(lp, hits.totalHits());
 	}
 	////////////////////////////////////////////////////////////////////
-	// helpers
-	private Hashtable<String,String> converHighlightsTable(Set<Entry<String,HighlightField>> highlights) {
-		Hashtable<String,String> highlightStrings = new Hashtable<String,String>();
+	// helpers,
+	private Hashtable<String, List<String>> converHighlightsTable(Set<Entry<String,HighlightField>> highlights) {
+		Hashtable<String,List<String>> highlightStrings = new Hashtable<String,List<String>>();
         for (Map.Entry<String, HighlightField> highlight : highlights) {
+        	List<String> fragments = new ArrayList<String>();
             for (Text text : highlight.getValue().fragments()) {
-            	highlightStrings.put(highlight.getKey(), text.string());
+            	fragments.add(text.string());
             }
+        	highlightStrings.put(highlight.getKey(), fragments);
         }
         return highlightStrings;
 	}

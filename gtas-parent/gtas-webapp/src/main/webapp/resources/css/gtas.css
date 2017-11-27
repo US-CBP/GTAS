@@ -462,8 +462,59 @@
     max-width: 100%;
     overflow: hidden;
 }
+
 /* END IE css patches */
 
+
+/*d3 graph */
+
+.nodebox {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 3.5px;
+}
+#node_PHYSICAL .nodebox {
+    stroke: beige;
+}
+#node_PHYSICAL_HARD .nodebox {
+    stroke: tan;
+}
+#node_PHYSICAL_SOFT .nodebox {
+    stroke: yellow;
+}
+#node_BIOTA .nodebox {
+    stroke: darkgreen;
+}
+#node_BIOTA_SPONGES .nodebox {
+    stroke: orange;
+}
+#node_BIOTA_ALGAE .nodebox {
+    stroke: green;
+}
+#node_BIOTA_ALGAE_CANOPY_ECK .nodebox {
+    stroke: lightgreen;
+}
+#node_BIOTA_ALGAE_CRUSTOSE .nodebox {
+    stroke: purple;
+}
+.nodeTitle {
+    font: 8px sans-serif;
+    font-weight: bold;
+}
+.nodeText {
+    font: 8px sans-serif;
+}
+.f1Text {
+    fill: orange;
+    font-weight: bold;
+}
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 3.5px;
+}
+
+/*End d3 graph*/
 .spinner {
     width: 100px;
     height: 100px;
