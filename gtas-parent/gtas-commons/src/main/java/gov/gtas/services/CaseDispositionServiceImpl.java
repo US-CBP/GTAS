@@ -43,6 +43,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private static final String INITIAL_COMMENT = "Initial Comment";
     private static final String UPDATED_BY_INTERNAL = "Internal";
     private static final String CASE_CREATION_MANUAL_DESC = "Agent Created Case";
+    private static final String WL_ITEM_PREFIX = "wl_item";
 
     @Resource
     private CaseDispositionRepository caseDispositionRepository;
@@ -161,7 +162,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
-            pullRuleCategory(hitDisp, getRuleCatId(_tempHitId));
+            if(hitDesc.startsWith(WL_ITEM_PREFIX)){ pullRuleCategory(hitDisp, getRuleCatId(9999L)); hitDesc = hitDesc.substring(7); }
+            else pullRuleCategory(hitDisp, getRuleCatId(_tempHitId));
             highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);

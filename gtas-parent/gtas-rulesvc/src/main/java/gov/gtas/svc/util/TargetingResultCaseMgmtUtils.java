@@ -101,11 +101,16 @@ public class TargetingResultCaseMgmtUtils {
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
         Long _tempPaxId = null;
         Passenger _tempPax = null;
+        String description = rhd.getDescription();
+        String watchlistItemFlag = "wl_item";
         try {
             _tempPaxId = rhd.getPassengerId();
             //_tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
             _tempPax = dispositionService.findPaxByID(_tempPaxId);
             //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+            if(rhd.getUdrRuleId() == null){
+                description = watchlistItemFlag + description;
+            }
             if (_tempPax != null) {
                 String document = null;
                 for (Document documentItem : _tempPax.getDocuments()) {
@@ -113,7 +118,7 @@ public class TargetingResultCaseMgmtUtils {
                 }
                 dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
                         rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, rhd.getDescription(), rhd.getRuleId());
+                        document, description, rhd.getRuleId());
             }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  Rule:" + rhd.getRuleId() + " set");
