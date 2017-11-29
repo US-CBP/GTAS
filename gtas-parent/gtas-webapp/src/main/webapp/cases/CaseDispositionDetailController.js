@@ -7,7 +7,7 @@
     'use strict';
     app.controller('CaseDispositionDetailCtrl',
         function ($scope, $http, $mdToast,
-                  gridService,
+                  gridService, $mdDialog,
                   spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
 
             $scope.caseItem;
@@ -175,7 +175,8 @@
             };
 
             $scope.sideNav = function(id, position) {
-                $scope.caseItemHitComments = $scope.caseItemHits[position];
+                //$scope.caseItemHitComments = $scope.caseItemHits[position];
+                $scope.caseItemHitComments = $scope.caseItemHitsVo[position];
                 $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
                 $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
                 $scope.hitDispStatus = $scope.caseItemHits[position].status;
@@ -189,6 +190,26 @@
                 $mdSidenav(id).toggle();
             };
 
+            //dialog function for image display dialog
+            $scope.showAttachments = function(attachmentList) {
+                $mdDialog.show({
+                    template:'<md-dialog><md-dialog-content>'+
+                    '<div><carousel>'+
+                    attachmentList+
+                    '</carousel></div>'+
+                    '</md-dialog-content></md-dialog>',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose:true
+                })
+            };
+
+            $scope.packageAttachments = function(value){
+                var attList = '';
+                var slideString = '';
+                slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
+                attList += slideString;
+                $scope.showAttachments(attList);
+            };
 
             //Angular Trix related event handlers
             $scope.trixInitialize = function(e, editor) {
@@ -248,10 +269,6 @@
                 time = date.getTime();
                 return "tmp/" + day + "/" + time + "-" + file.name;
             };
-
-
-            // End Trix attachment logic
-
 
 
         })

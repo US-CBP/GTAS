@@ -21,6 +21,7 @@ public class HitsDispositionVo {
     private String status;
     private String valid;
     private Set<HitsDispositionComments> dispComments;
+    private Set<HitsDispositionCommentsVo> dispCommentsVo;
     private Set<RuleCat> ruleCatSet;
     private String category;
 
@@ -108,5 +109,13 @@ public class HitsDispositionVo {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public Set<HitsDispositionCommentsVo> getDispCommentsVo() {
+        return dispCommentsVo;
+    }
+
+    public void setDispCommentsVo(Set<HitsDispositionCommentsVo> dispCommentsVo) {
+        this.dispCommentsVo = dispCommentsVo;
     }
 }

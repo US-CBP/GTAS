@@ -14,7 +14,9 @@ import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.*;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.vo.passenger.AttachmentVo;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.HitsDispositionCommentsVo;
 import gov.gtas.vo.passenger.HitsDispositionVo;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -553,10 +555,17 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         Set<RuleCat> _tempRuleCatSet = new HashSet<RuleCat>();
         HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
         RuleCat _tempRuleCat = new RuleCat();
+        Set<AttachmentVo> _tempAttachmentVoSet = new HashSet<AttachmentVo>();
+        Set<HitsDispositionCommentsVo> _tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+        HitsDispositionCommentsVo _tempDispCommentsVo = new HitsDispositionCommentsVo();
+
         try {
             for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
                 _tempHitsDisp = new HitsDispositionVo();
                 _tempRuleCat = new RuleCat();
+                _tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+                _tempAttachmentVoSet = new HashSet<AttachmentVo>();
+
                 CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
                 if (hitDisp.getRuleCat() != null) {
                     CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
@@ -565,6 +574,40 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
                 _tempRuleCatSet.add(_tempRuleCat);
                 _tempHitsDisp.setCategory(_tempRuleCat.getCategory());
                 _tempHitsDisp.setRuleCatSet(_tempRuleCatSet);
+
+                // begin to retrieve attachments
+                if(hitDisp.getDispComments()!=null) {
+                    Set<HitsDispositionComments> _tempDispCommentsSet = hitDisp.getDispComments();
+                    for (HitsDispositionComments _tempComments : _tempDispCommentsSet) {
+                        _tempDispCommentsVo = new HitsDispositionCommentsVo();
+                        _tempAttachmentVoSet = new HashSet<AttachmentVo>();
+                        CaseDispositionServiceImpl.copyIgnoringNullValues(_tempComments, _tempDispCommentsVo);
+                        _tempHitsDispCommentsVoSet.add(_tempDispCommentsVo);
+
+                        if (_tempComments.getAttachmentSet()!=null) {
+
+                            for(Attachment a: _tempComments.getAttachmentSet()){
+                                AttachmentVo attVo = new AttachmentVo();
+                                //Turn blob into byte[], as input stream is not serializable
+                                attVo.setContent(a.getContent().getBytes(1, (int) a.getContent().length()));
+                                attVo.setId(a.getId());
+                                attVo.setContentType(a.getContentType());
+                                attVo.setDescription(a.getDescription());
+                                attVo.setFilename(a.getFilename());
+                                //Drop blob from being held in memory after each set
+                                a.getContent().free();
+                                //Add to attVoList to be returned to front-end
+                                a.setPassenger(null);
+                                _tempAttachmentVoSet.add(attVo);
+                            }
+
+                        }
+                        _tempDispCommentsVo.setAttachmentSet(_tempAttachmentVoSet);
+                    }
+                    _tempHitsDisp.setDispCommentsVo(_tempHitsDispCommentsVoSet);
+
+                } //end
+
                 _tempReturnHitsDispSet.add(_tempHitsDisp);
             }
         } catch (Exception ex) {
@@ -594,6 +637,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
                     Set<HitsDispositionComments> _tempDispCommentsSet = hitDisp.getDispComments();
                     for (HitsDispositionComments _tempComments : _tempDispCommentsSet) {
                         if (_tempComments.getAttachmentSet()!=null) {
+
                             for (Attachment _tempAttach : _tempComments.getAttachmentSet()) {
                                     _tempAttach.setPassenger(null);
                             }
