@@ -43,6 +43,7 @@ import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.LookUpRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.util.ApisGeneratorUtil;
 import gov.gtas.vo.passenger.AttachmentVo;
 import gov.gtas.vo.passenger.PassengerVo;
 
@@ -180,15 +181,30 @@ public class UploadController {
 
         try {
             if (!file.isEmpty()) {
-                byte[] bytes = file.getBytes();
-                String filename = uploadDir + File.separator + file.getOriginalFilename();
-                output = new FileOutputStream(new File(filename));
-                IOUtils.write(bytes, output);
+            	if(ApisGeneratorUtil.isUgandaManifest(multipartToFile(file))){
+            		StringBuilder modifiedContent=ApisGeneratorUtil.processAndConvertFile(multipartToFile(file));
+            		byte[] modified_bytes = modifiedContent.toString().getBytes();
+                    String filename = uploadDir + File.separator + file.getOriginalFilename();
+                    output = new FileOutputStream(new File(filename));
+                    IOUtils.write(modified_bytes, output);
+            	}else{
+                    byte[] bytes = file.getBytes();
+                    String filename = uploadDir + File.separator + file.getOriginalFilename();
+                    output = new FileOutputStream(new File(filename));
+                    IOUtils.write(bytes, output);
+            	}
+
            }
        } finally {
            if (output != null) {
                output.close();
            }
        }
+    }
+    
+    public File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException     {
+        File convFile = new File( multipart.getOriginalFilename());
+        multipart.transferTo(convFile);
+        return convFile;
     }
 }
