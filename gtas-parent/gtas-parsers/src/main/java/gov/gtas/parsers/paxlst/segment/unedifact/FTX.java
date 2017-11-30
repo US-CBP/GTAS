@@ -33,6 +33,9 @@ public class FTX extends Segment {
 
     /** This element reports the Bag Tag identification reference */
     private String bagId;
+    
+    //UGANDA SPECIFIC WEIGHT-NOT AVAILABLE IN REGULAR APIS FILE
+    private String bagWeight;
 
     /**
      * Conditional: This element reports a numeric value indicating a sequence
@@ -53,6 +56,11 @@ public class FTX extends Segment {
                     break;
                 }
                 break;
+            case 1:
+                if (this.ftxCode == FtxCode.BAG) {
+                    this.bagWeight = c.getElement(0);
+                }
+                break;
                 
             case 3:
                 if (this.ftxCode == FtxCode.BAG) {
@@ -64,7 +72,13 @@ public class FTX extends Segment {
         }
     }
 
-    public FtxCode getFtxCode() {
+    
+    public String getBagWeight() {
+		return bagWeight;
+	}
+
+
+	public FtxCode getFtxCode() {
         return ftxCode;
     }
 

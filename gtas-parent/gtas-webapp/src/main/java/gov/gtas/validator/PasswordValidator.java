@@ -37,11 +37,5 @@ public class PasswordValidator {
 
 		return messages.toArray(new String[messages.size()]);
 	}
-	public static void main(String[] args){
-		String[] demo =(String[])validate("SSSe4SSSSSSSS!");
-		for(String s :demo){
-			System.out.println(" Sri ="+s);
-		}
-		
-	}
+
 }

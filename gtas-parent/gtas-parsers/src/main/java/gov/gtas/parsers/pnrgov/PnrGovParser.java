@@ -283,7 +283,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
                 
             } else {
-            	//System.out.println(" IN VALID PASSNEGER-"+tif.toString());
                 throw new ParseException("Invalid passenger: " + p);
             }
         }

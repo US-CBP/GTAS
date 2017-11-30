@@ -37,17 +37,23 @@ public class PassengerVo implements Validatable {
     private String embarkation;
     private String debarkation;
     private Boolean deleted = Boolean.FALSE;
-    
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
-
     private String address;
-
     private String bagId;
     private String bagNum;
+    private String totalBagWeight;
     private String reservationReferenceNumber;
 
-  	public String getReservationReferenceNumber() {
+  	public String getTotalBagWeight() {
+		return totalBagWeight;
+	}
+
+	public void setTotalBagWeight(String totalBagWeight) {
+		this.totalBagWeight = totalBagWeight;
+	}
+
+	public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
 	}
 

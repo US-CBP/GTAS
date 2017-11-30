@@ -66,10 +66,9 @@ public class ApisGeneratorUtil {
             	origin =origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_EMBARK)+ApisGeneratorUtil.STR_EMBARK.length(),origenDetails.indexOf(ApisGeneratorUtil.STR_DEST));
             	dest =origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_DEST)+ApisGeneratorUtil.STR_DEST.length(),origenDetails.length());
             	if(StringUtils.isNotBlank(origin) && StringUtils.isNotBlank(dest)){
-            		origin.replaceAll("\\s+", "");
-            		dest.replaceAll("\\s+", "");
-            		origin.trim();
-            		dest.trim();
+            		origin=origin.replaceAll("\\s+", "");
+            		dest=dest.replaceAll("\\s+", "");
+            		
             	}
             	prepareFlightSegment(sb,carrier, flight_num, origin, mod_f_Date, dest);
             }
@@ -128,7 +127,7 @@ public class ApisGeneratorUtil {
     		if(StringUtils.isNotBlank(tokens[1])){
     			firstName= tokens[1];
     			firstName=firstName.replaceAll("\\.+", "");
-    			firstName=firstName.replaceAll("\\s+", "");
+    			//firstName=firstName.replaceAll("\\s+", "");
     		}
     		if(StringUtils.isBlank(firstName)){
     			firstName="NONAME";

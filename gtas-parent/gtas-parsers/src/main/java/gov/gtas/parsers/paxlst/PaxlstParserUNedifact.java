@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
@@ -304,16 +305,16 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 break;
             }
             String bagId = ftx.getBagId();
-            if (bagId != null) {
-                p.setBagId(bagId);
+            if (StringUtils.isNotBlank(bagId)) {
+            	p.setTotalBagWeight(ftx.getBagWeight());
+            	p.setBagId(bagId);
                 List<String> bags = new ArrayList<>();
                 bags.add(bagId);
-                if (ftx.getNumBags() != null) {
+                if (ftx.getNumBags() != null ) {
                     p.setBagNum(ftx.getNumBags());
                     int numBags = Integer.parseInt(ftx.getNumBags());
                     String airlineCode = bagId.substring(0, Math.min(bagId.length(), 2));
                     int startNum = getNum(bagId);
-
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < numBags - 1; i++) {
                         sb.setLength(0);

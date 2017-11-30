@@ -163,6 +163,15 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
     			fp.setBagCount(p.getBags() == null?0:p.getBags().size());
+    			try {
+					double weight=p.getTotalBagWeight() == null?0:Double.parseDouble(p.getTotalBagWeight());
+					fp.setBagWeight(weight);
+					if(weight > 0 && fp.getBagCount() >0){
+						fp.setAverageBagWeight(Math.round(weight/fp.getBagCount()));
+					}
+				} catch (NumberFormatException e) {
+
+				}
     			p.getFlightPaxList().add(fp);
     			apisMessage.addToFlightPax(fp);
     		}

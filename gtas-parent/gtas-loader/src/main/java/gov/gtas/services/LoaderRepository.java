@@ -304,6 +304,7 @@ public class LoaderRepository {
             bag.setAirline(f.getCarrier());
             bag.setFlight(f);
             bag.setPassenger(p);
+            p.getBags().add(bag);
             bagDao.save(bag);
         }     
     }

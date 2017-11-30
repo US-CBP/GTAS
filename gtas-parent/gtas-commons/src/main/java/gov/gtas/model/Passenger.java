@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "passenger")
@@ -87,6 +88,9 @@ public class Passenger extends BaseEntityAudit {
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
     
+    @Transient
+    private String totalBagWeight;
+    
     private Date watchlistCheckTimestamp;
     
 
@@ -109,7 +113,15 @@ public class Passenger extends BaseEntityAudit {
     private Set<FlightPax> flightPaxList = new HashSet<>();
     
     
-    public Set<FlightPax> getFlightPaxList() {
+    public String getTotalBagWeight() {
+		return totalBagWeight;
+	}
+
+	public void setTotalBagWeight(String totalBagWeight) {
+		this.totalBagWeight = totalBagWeight;
+	}
+
+	public Set<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}
 

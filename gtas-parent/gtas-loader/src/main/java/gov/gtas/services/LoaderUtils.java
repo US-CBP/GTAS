@@ -78,7 +78,6 @@ public class LoaderUtils {
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
         p.setUpdatedBy(LOADER_USER);
-
         if (vo.getDebarkation() != null) {
             String airportCode = vo.getDebarkation();
             p.setDebarkation(airportCode);
