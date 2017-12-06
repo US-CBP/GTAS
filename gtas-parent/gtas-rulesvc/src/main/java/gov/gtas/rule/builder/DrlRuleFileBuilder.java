@@ -20,11 +20,13 @@ import gov.gtas.bo.match.PnrPhoneLink;
 import gov.gtas.bo.match.PnrTravelAgencyLink;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.Bag;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
 import gov.gtas.model.DwellTime;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
@@ -50,7 +52,7 @@ public class DrlRuleFileBuilder {
     private static final Class<?>[] IMPORT_LIST = { Flight.class,
             Passenger.class, Document.class, Pnr.class, Address.class,
             Phone.class, Email.class, FrequentFlyer.class, CreditCard.class,
-            Agency.class,DwellTime.class, PnrAddressLink.class, PnrCreditCardLink.class,
+            Agency.class, DwellTime.class, FlightPax.class, Bag.class, PnrAddressLink.class, PnrCreditCardLink.class,
             PnrEmailLink.class, PnrFrequentFlyerLink.class,
             PnrPassengerLink.class, PnrPhoneLink.class,
             PnrTravelAgencyLink.class,PnrDwellTimeLink.class,

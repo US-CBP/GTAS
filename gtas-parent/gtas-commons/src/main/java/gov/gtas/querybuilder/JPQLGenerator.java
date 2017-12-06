@@ -385,6 +385,13 @@ public class JPQLGenerator {
                     joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.PNR.getEntityReference() + " " + EntityEnum.PNR.getAlias();
                 }
                 break;
+            case Constants.BAG:
+            	//TO-DO: Revisit This For Flight Queries, currently both Bag and Fpax only work with passenger queries
+                joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BAG.getEntityReference() + " " + EntityEnum.BAG.getAlias();
+                break;                
+            case Constants.FLIGHTPAX:
+            	joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT_PAX.getEntityReference() + " " + EntityEnum.FLIGHT_PAX.getAlias();
+            	break;
             default:
                 throw new InvalidQueryRepositoryException("Invalid Entity: " + entity.getEntityName(), null);
         }

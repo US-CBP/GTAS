@@ -15,6 +15,8 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.QueryTerm;
+import gov.gtas.rule.builder.pnr.BagConditionBuilder;
+import gov.gtas.rule.builder.pnr.FlightPaxConditionBuilder;
 import gov.gtas.rule.builder.pnr.PnrRuleConditionBuilder;
 
 import java.text.ParseException;
@@ -37,6 +39,9 @@ public class RuleConditionBuilder {
 
     private SeatConditionBuilder pnrSeatConditionBuilder;
     private SeatConditionBuilder apisSeatConditionBuilder;
+    
+    private BagConditionBuilder bagConditionBuilder;
+    private FlightPaxConditionBuilder flightPaxConditionBuilder;
 
     private String passengerVariableName;
     private String flightVariableName;
@@ -75,7 +80,12 @@ public class RuleConditionBuilder {
                 RuleTemplateConstants.SEAT_VARIABLE_NAME, false);
         this.apisSeatConditionBuilder = new SeatConditionBuilder(
                 RuleTemplateConstants.SEAT_VARIABLE_NAME+"2", true);
-
+        
+        this.bagConditionBuilder = new BagConditionBuilder(
+        		RuleTemplateConstants.BAG_VARIABLE_NAME, passengerVariableName);
+        this.flightPaxConditionBuilder = new FlightPaxConditionBuilder(
+        		RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME, passengerVariableName);
+        
         this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(
                 entityVariableNameMap);
     }
@@ -101,6 +111,9 @@ public class RuleConditionBuilder {
 
         generateLinkConditions();
 
+        parentStringBuilder.append(bagConditionBuilder.build());
+        parentStringBuilder.append(flightPaxConditionBuilder.build());
+        
         parentStringBuilder.append(apisSeatConditionBuilder.build());
         parentStringBuilder.append(pnrSeatConditionBuilder.build());
 
@@ -118,6 +131,8 @@ public class RuleConditionBuilder {
         flightConditionBuilder.reset();
         pnrSeatConditionBuilder.reset();
         apisSeatConditionBuilder.reset();
+        bagConditionBuilder.reset();
+        flightConditionBuilder.reset();
 
     }
 
@@ -146,13 +161,26 @@ public class RuleConditionBuilder {
                     .addLinkByIdCondition(documentConditionBuilder
                             .getPassengerIdLinkExpression());
         }
-
+        //If there are bag or flightpax conditions add link to passenger builder
+        //Add link to flight condition builder because of flight id existence in each. 
+        if(!bagConditionBuilder.isEmpty()){
+        	passengerConditionBuilder.addLinkByIdCondition(bagConditionBuilder.getPassengerIdLinkExpression());
+        	flightConditionBuilder.addConditionAsString("id == "+bagConditionBuilder.getFlightIdLinkExpression());
+        	this.flightCriteriaPresent = true;
+        }
+        
+        if(!flightPaxConditionBuilder.isEmpty()){
+        	passengerConditionBuilder.addLinkByIdCondition(flightPaxConditionBuilder.getPassengerIdLinkExpression());
+        	flightConditionBuilder.addConditionAsString("id == "+flightPaxConditionBuilder.getFlightIdLinkExpression());
+        	this.flightCriteriaPresent = true;
+        }
+        
         // if there are passenger conditions then add a link to
         // the Flight builder
         if (!passengerConditionBuilder.isEmpty()) {
             flightConditionBuilder
                     .addLinkedPassenger(this.passengerVariableName);
-        }       
+        }
     }
 
     /**
@@ -197,6 +225,14 @@ public class RuleConditionBuilder {
                         attributeType, trm.getValue());
                 this.flightCriteriaPresent = true;
                 break;
+            case BAG:
+            	bagConditionBuilder.addCondition(opCode, trm.getField(),
+            			attributeType, trm.getValue());
+            	break;
+            case FLIGHT_PAX:
+            	flightPaxConditionBuilder.addCondition(opCode, trm.getField(),
+            			attributeType, trm.getValue());
+            	break;
             default:
                 // try and add PNR related conditions if they exist.
                 if(entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)) {

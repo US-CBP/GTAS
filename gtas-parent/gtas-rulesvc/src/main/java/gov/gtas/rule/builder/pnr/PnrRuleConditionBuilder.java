@@ -39,6 +39,8 @@ public class PnrRuleConditionBuilder {
     private FrequentFlyerConditionBuilder frequentFlyerConditionBuilder;
     private TravelAgencyConditionBuilder travelAgencyConditionBuilder;
     private DwellTimeConditionBuilder dwellTimeConditionBuilder;
+    private BagConditionBuilder bagConditionBuilder;
+    private FlightPaxConditionBuilder flightPaxConditionBuilder;
     private PnrConditionBuilder pnrConditionBuilder;
 
     public PnrRuleConditionBuilder(

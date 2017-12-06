@@ -17,6 +17,8 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.PHONE_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.PNR_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.TRAVEL_AGENCY_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.DWELL_TIME_VARIABLE_NAME;
+import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME;
+import static gov.gtas.rule.builder.RuleTemplateConstants.BAG_VARIABLE_NAME;
 import static gov.gtas.util.DateCalendarUtils.addOneDayToDate;
 import static gov.gtas.util.DateCalendarUtils.formatRuleEngineDate;
 import gov.gtas.enumtype.EntityEnum;
@@ -107,6 +109,8 @@ public class EngineRuleUtils {
         ret.put(EntityEnum.TRAVEL_AGENCY, TRAVEL_AGENCY_VARIABLE_NAME);
         ret.put(EntityEnum.CREDIT_CARD, CREDIT_CARD_VARIABLE_NAME);
         ret.put(EntityEnum.DWELL_TIME, DWELL_TIME_VARIABLE_NAME);
+        ret.put(EntityEnum.FLIGHT_PAX, FLIGHT_PAX_VARIABLE_NAME);
+        ret.put(EntityEnum.BAG, BAG_VARIABLE_NAME);
         return ret;
     }
 

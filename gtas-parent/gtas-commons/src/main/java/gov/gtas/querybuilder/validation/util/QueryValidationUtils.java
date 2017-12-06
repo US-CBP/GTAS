@@ -14,11 +14,13 @@ import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.constants.Constants;
 import gov.gtas.querybuilder.mappings.AddressMapping;
+import gov.gtas.querybuilder.mappings.BagMapping;
 import gov.gtas.querybuilder.mappings.CreditCardMapping;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
 import gov.gtas.querybuilder.mappings.DwellTimeMapping;
 import gov.gtas.querybuilder.mappings.EmailMapping;
 import gov.gtas.querybuilder.mappings.FlightMapping;
+import gov.gtas.querybuilder.mappings.FlightPaxMapping;
 import gov.gtas.querybuilder.mappings.FrequentFlyerMapping;
 import gov.gtas.querybuilder.mappings.HitsMapping;
 import gov.gtas.querybuilder.mappings.IEntityMapping;
@@ -176,7 +178,12 @@ public class QueryValidationUtils {
                     case Constants.AGENCY:
                         validField = validateField(TravelAgencyMapping.values(), field);
                         break;
-                    
+                    case Constants.BAG:
+                    	validField = validateField(BagMapping.values(),field);
+                    	break;
+                    case Constants.FLIGHTPAX:
+                    	validField = validateField(FlightPaxMapping.values(), field);
+                    	break;
                 }
                 if(!validField) {
                     errors.reject("", "entity: \'"+ entity + "\' has an invalid field value, field: \'" + field + "\' is invalid");
