@@ -35,14 +35,8 @@
 .fixed-width-sm {
   width: 176px !important;
 }
-.fixed-width-sm-case {
-    width: 225px !important;
-}
 .fixed-width-md{
   width: 450px !important;
-}
-.fixed-width-md-case{
-    width: 600px !important;
 }
 .half-width {
   width: 49% !important;
@@ -579,4 +573,21 @@
     text-align: center;
     border-radius: 50%;
     border: solid 2px #050;
+}
+
+/*Switch responsive styles */
+@media (max-width : 700px) {
+  .switch-width-sm-half {
+    width: 99%;
+  }
+}
+@media (min-width : 700px) {
+  .switch-width-sm-half {
+    width: 50%;
+  }
+}
+@media screen and (max-device-width:500px) {
+    .mobile-hide {
+      display: none !important;
+    }
 }

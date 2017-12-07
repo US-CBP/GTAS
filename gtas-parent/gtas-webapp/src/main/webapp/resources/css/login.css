@@ -2,6 +2,7 @@
     width: 400px;
     padding-top: 25vh;
     margin: auto;
+    max-width: 100%;
 }
 .login-container .login-header {
   background-color: #00416a;
