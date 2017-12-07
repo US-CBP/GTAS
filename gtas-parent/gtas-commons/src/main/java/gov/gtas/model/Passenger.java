@@ -90,6 +90,9 @@ public class Passenger extends BaseEntityAudit {
     
     @Transient
     private String totalBagWeight;
+ 
+    @Transient
+    private String bagNum;
     
     private Date watchlistCheckTimestamp;
     
@@ -112,8 +115,15 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
     private Set<FlightPax> flightPaxList = new HashSet<>();
     
-    
-    public String getTotalBagWeight() {
+	public String getBagNum() {
+		return bagNum;
+	}
+
+	public void setBagNum(String bagNum) {
+		this.bagNum = bagNum;
+	}
+
+	public String getTotalBagWeight() {
 		return totalBagWeight;
 	}
 

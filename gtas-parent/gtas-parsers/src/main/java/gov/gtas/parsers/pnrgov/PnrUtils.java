@@ -23,6 +23,7 @@ import gov.gtas.parsers.pnrgov.segment.TIF.TravelerDetails;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.parsers.vo.AddressVo;
+import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.PhoneVo;
@@ -347,6 +348,37 @@ public class PnrUtils {
 		}
 	}
 
+	@SuppressWarnings("unused")
+	private static void processBagNames(BagVo p, String last, String first){
+		if (first != null) {
+			for (String prefix : PREFIXES) {
+				String firstName = null;
+				if (first.startsWith(prefix)) {
+					firstName = first.substring(prefix.length()).trim();
+				} else if (first.endsWith(prefix)) {
+					firstName = first.substring(0, first.length() - prefix.length()).trim();
+				}
+
+				if (firstName != null) {
+					p.setFirstName(firstName);
+						break;
+				}
+			}
+		}
+		if (last != null) {
+			if(last.indexOf("-1") > 0){
+				last=last.substring(0,last.indexOf("-1"));
+			}
+			for (String suffix : SUFFIXES) {
+				if (last.endsWith(suffix)) {
+					String lastName = last.substring(0, last.length() - suffix.length()).trim();
+					p.setLastName(lastName);
+					break;
+				}
+			}
+		}
+	}
+	
 	private static List<String> splitSsrFreeText(SSR ssr) {
 		if (ssr.getFreeText() != null) {
 			List<String> strs = new ArrayList<>();
@@ -386,7 +418,7 @@ public class PnrUtils {
             if (CollectionUtils.isNotEmpty(td)) {
                 String firstName = td.get(0).getTravelerGivenName();
                 for (PassengerVo pax : passengers) {
-                    if (surname.equals(pax.getLastName()) && firstName.equals(pax.getFirstName())) {
+                    if (surname.equals(pax.getLastName()) && firstName.contains(pax.getFirstName())) {
                         thePax = pax;
                         break;
                     }

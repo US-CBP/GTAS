@@ -656,8 +656,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (tbd == null) {
             return;
         }
-        TIF tif1 = getConditionalSegment(TIF.class);    
-        Integer n = tbd.getNumBags();
+        //TIF tif1 = getConditionalSegment(TIF.class);    
+        Integer n = tbd.getNumBags()== null ? 0 : tbd.getNumBags();
         Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
         if (n != null) {
             parsedMessage.setBagCount(n);
@@ -669,16 +669,16 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
-        parsedMessage.setBags(getBagVosFromTBD(tbd.getBagDetails(),tif1));
+        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n);
+       
     }
     
-    private List<BagVo> getBagVosFromTBD(List<BagDetails> bDetails,TIF tif){
-    	if(bDetails == null || bDetails.size()==0){
-    		return null;
-    	}
-    	List<BagVo> bags = new ArrayList<>();
+    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags){
+    	if(!(bDetails == null || bDetails.size()==0)){
     	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
     	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
+   		pvo.setBagNum(numBags.toString());
+   		pvo.setTotalBagWeight(weight.toString());
     	for (BagDetails bd : bDetails){
     		BagVo bvo=new BagVo();
     		if(bd.isMemberPool()){
@@ -693,10 +693,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		else{
     			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
     		}
-    		bags.add(bvo);
+    		parsedMessage.getBags().add(bvo);
     	}
     	}
-    	return bags;
+    	
+    	}
     }
     
     private void processGroup8_SplitPassenger(EQN eqn) throws ParseException {

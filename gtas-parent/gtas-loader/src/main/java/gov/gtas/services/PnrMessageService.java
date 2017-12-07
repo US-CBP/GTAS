@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,17 +335,17 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
-    			int totalbags=pnr.getBagCount() == null?0:pnr.getBagCount();
     			int passengerBags=p.getBags() == null?0:p.getBags().size();
-    			if(passengerBags ==0 && totalbags >0 ){
-    				passengerBags=totalbags;
-    			}
     			fp.setBagCount(passengerBags);
-    			if(pnr.getBaggageWeight() != null && pnr.getBaggageWeight() >0.0){
-    				fp.setAverageBagWeight(Math.round(pnr.getBaggageWeight()/passengerBags));
-    				
-    			}
-    			fp.setBagWeight(pnr.getBaggageWeight() == null?0:pnr.getBaggageWeight());
+    			try {
+					if(StringUtils.isNotBlank(p.getTotalBagWeight()) && (passengerBags >0)){
+						Double weight=Double.parseDouble(p.getTotalBagWeight());
+						fp.setAverageBagWeight(Math.round(weight/passengerBags));
+						fp.setBagWeight(weight);
+					}
+				} catch (NumberFormatException e) {
+					// Don't set when get the parse exception
+				}
     			p.getFlightPaxList().add(fp);
     			
     		}

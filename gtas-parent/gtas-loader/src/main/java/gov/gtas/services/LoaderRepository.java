@@ -328,7 +328,8 @@ public class LoaderRepository {
     	    		         bag.setDestinationAirport(b.getDestinationAirport());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag);    						
+    	    		         bagDao.save(bag); 
+    	    		         p.getBags().add(bag);
     					}
     				}
     			}
@@ -343,7 +344,8 @@ public class LoaderRepository {
     	    		         bag.setDestinationAirport(f.getDestination());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag);    						
+    	    		         bagDao.save(bag); 
+    	    		         p.getBags().add(bag);
     					}
     				}    				
     			}
