@@ -123,7 +123,12 @@
                 angular.forEach($scope.caseItemHits, function (item) {
                     if ( ($scope.caseDispStatus != $scope.dispStatus.constants.CLOSED) ||
                         (item.status === $scope.dispStatus.constants.NEW) ||
-                        ( (item.valid === $scope.hitValidityStatuses[0].name) || (item.valid === $scope.hitValidityStatuses[1].name)))
+                        ( (item.valid === null) ) ||
+                        (typeof(item.valid) === "undefined")
+                        // ||
+                        // (item.valid != $scope.hitValidityStatuses[1].name)) ||
+                        // (item.valid != $scope.hitValidityStatuses[2].name)
+                    )
                         $scope.dispStatus.allHitsClosed = false;
                 });
                 if($scope.dispStatus.allHitsClosed){
