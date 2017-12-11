@@ -19,11 +19,13 @@ import gov.gtas.bo.match.PnrTravelAgencyLink;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.ApisMessage;
+import gov.gtas.model.Bag;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
 import gov.gtas.model.DwellTime;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Phone;
@@ -345,6 +347,16 @@ public class RuleEngineRequestBuilder {
         if (passenger.getSeatAssignments() != null) {
             for (Seat seat : passenger.getSeatAssignments()) {
                 this.requestObjectList.add(seat);
+            }
+        }
+        if(passenger.getBags() != null){
+        	for (Bag bag : passenger.getBags()) {
+                this.requestObjectList.add(bag);
+            }
+        }
+        if(passenger.getFlightPaxList() != null){
+        	for (FlightPax flightPax : passenger.getFlightPaxList()) {
+                this.requestObjectList.add(flightPax);
             }
         }
     }
