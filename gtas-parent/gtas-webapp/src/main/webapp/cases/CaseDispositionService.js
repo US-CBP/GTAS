@@ -128,11 +128,12 @@
                 return dfd.promise;
             }
 
-            function postManualCase(paramFlight, paramPax, paramComments,file){
+            function postManualCase(paramFlight, paramPax, paramRuleCatId, paramComments,file){
 
                 var requestDto = {
                     flightId: paramFlight,
                     paxId: paramPax,
+                    ruleCatId: paramRuleCatId,
                     caseComments: paramComments
                 };
 

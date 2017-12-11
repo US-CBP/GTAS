@@ -155,7 +155,7 @@
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
                 caseDispositionService.postManualCase($scope.passenger.flightId, $scope.passenger.paxId,
-                    $scope.commentText, null)
+                    $scope.rule.ruleCat, $scope.commentText, null)
                     .then(function (aCase) {
                         spinnerService.hide('html5spinner');
                         var toastPosition = angular.element(document.getElementById('hitForm'));

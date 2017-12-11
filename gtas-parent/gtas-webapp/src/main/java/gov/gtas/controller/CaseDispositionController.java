@@ -162,7 +162,7 @@ public class CaseDispositionController {
         try {
 
             aCase = caseDispositionService.createManualCase(request.getFlightId(), request.getPaxId(),
-                    request.getCaseComments(), GtasSecurityUtils.fetchLoggedInUserId()
+                    request.getRuleCatId(), request.getCaseComments(),  GtasSecurityUtils.fetchLoggedInUserId()
                     );
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -37,6 +37,8 @@ public class CaseRequestDto implements Serializable {
 
     private File file;
 
+    private Long ruleCatId;
+
     private MultipartFile multipartFile;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
@@ -148,6 +150,14 @@ public class CaseRequestDto implements Serializable {
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+    }
+
+    public Long getRuleCatId() {
+        return ruleCatId;
+    }
+
+    public void setRuleCatId(Long ruleCatId) {
+        this.ruleCatId = ruleCatId;
     }
 
     @Override

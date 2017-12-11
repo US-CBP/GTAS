@@ -193,10 +193,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     @Override
-    public Case createManualCase(Long flight_id, Long pax_id,  String comments, String username) {
+    public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id,  String comments, String username) {
 
         Case aCase = new Case();
         Case _tempCase = null;
+        _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
+        if (_tempCase != null &&
+                (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
+                        || _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
+            aCase = _tempCase;
+        }
         Long highPriorityRuleCatId = 1L;
         ArrayList<Long> hit_ids = new ArrayList<>();
         Passenger pax = passengerRepository.getPassengerById(pax_id);
@@ -218,11 +224,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         hit_ids.add(9999L); // Manual Distinction
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
-            //pullRuleCategory(hitDisp, 9999L);
+            //pullRuleCategory(hitDisp, rule_cat_id);
             //hitDisp.getRuleCat().setHitsDispositions(null);
             highPriorityRuleCatId = 1L;
             hitsDispCommentsSet = new HashSet<>();
             hitDisp.setHitId(_tempHitId);
+            //pullRuleCategory(hitDisp, rule_cat_id);
             hitDisp.setDescription(CASE_CREATION_MANUAL_DESC);
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitDisp.setUpdatedAt(new Date());
@@ -236,10 +243,23 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
-        aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+        if(aCase.getHighPriorityRuleCatId() == null)
+            aCase.setHighPriorityRuleCatId(rule_cat_id);
+        if(aCase.getHighPriorityRuleCatId() != null && aCase.getHighPriorityRuleCatId().equals(1L))
+            aCase.setHighPriorityRuleCatId(rule_cat_id);
+        else if(aCase.getHighPriorityRuleCatId() != null && (aCase.getHighPriorityRuleCatId() > rule_cat_id) && rule_cat_id != 1)
+            aCase.setHighPriorityRuleCatId(rule_cat_id);
         if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
         caseDispositionRepository.saveAndFlush(aCase);
+
+        if(aCase.getId()!=null){
+            for(HitsDisposition _tempHitDisp : aCase.getHitsDispositions()) {
+                if((_tempHitDisp.getHitId() == 9999L))
+                    pullRuleCategory(_tempHitDisp, rule_cat_id);
+            }
+            caseDispositionRepository.save(aCase);
+        }
         return aCase;
     }
 
