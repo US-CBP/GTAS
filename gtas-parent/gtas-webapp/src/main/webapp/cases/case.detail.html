@@ -13,13 +13,16 @@
               <div class="md-margin">
                 <div class="flex flex-vert sm-pad-span txt-center">
                   <span>
-                    {{ caseItem.paxName }}
+                    <strong>{{ caseItem.paxName }}</strong>
                   </span>
                   <span name="dob">
-                    DOB: {{ caseItem.dob | date }}
+                    <strong>DOB:</strong> {{ caseItem.dob | date }}
                   </span>
                   <span name="citizen">
-                    Citizenship: {{ caseItem.citizenshipCountry }}
+                    <strong>Citizenship:</strong> {{ caseItem.citizenshipCountry }}
+                  </span>
+                  <span name="citizen">
+                    <strong>Passport:</strong> {{ caseItem.document }}
                   </span>
                   <md-button aria-label="type" href="#/paxdetail/{{ caseItem.paxId }}/{{ caseItem.flightId }}" target="pax.detail.{{ caseItem.paxId }}.{{ caseItem.flightId }}" class="md-primary md-button md-default-theme"> Link to Passenger Detail </md-button>
                 </div>

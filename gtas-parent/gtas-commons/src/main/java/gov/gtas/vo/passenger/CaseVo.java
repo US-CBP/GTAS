@@ -26,6 +26,7 @@ public class CaseVo {
     private String middleName;
     private String citizenshipCountry;
     private Date dob;
+    private String document;
     private Long highPriorityRuleCatId;
     private String flightNumber;
     private String createDate; 
@@ -64,6 +65,14 @@ public class CaseVo {
 
     public void setHitsDispositionVos(Set<HitsDispositionVo> hitsDispositionVos) {
         this.hitsDispositionVos = hitsDispositionVos;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public String getHitType() {
