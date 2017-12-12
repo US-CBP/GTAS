@@ -9,6 +9,8 @@ import java.io.File;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -187,6 +189,7 @@ public class UploadController {
                     String filename = uploadDir + File.separator + file.getOriginalFilename();
                     output = new FileOutputStream(new File(filename));
                     IOUtils.write(modified_bytes, output);
+                    
             	}else{
                     byte[] bytes = file.getBytes();
                     String filename = uploadDir + File.separator + file.getOriginalFilename();
@@ -203,8 +206,16 @@ public class UploadController {
     }
     
     public File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException     {
-        File convFile = new File( multipart.getOriginalFilename());
-        multipart.transferTo(convFile);
+    	File convFile=null;
+    	try {
+			byte[] bytes = multipart.getBytes();
+			final Path path = Files.createTempFile("gtasTempFile", ".txt");
+			Files.write(path, bytes);
+			convFile=path.toFile();
+		} catch (Exception e) {
+
+		}
+
         return convFile;
     }
 }

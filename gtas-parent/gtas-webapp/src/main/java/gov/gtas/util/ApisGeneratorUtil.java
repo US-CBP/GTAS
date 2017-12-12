@@ -186,30 +186,34 @@ public class ApisGeneratorUtil {
 	
 	public static boolean isUgandaManifest(File fin){
 		boolean chk=false;
-		String flightregex="^FLIGHT: (.*)\\s+DATE: (.*)$";
-		Pattern pattern = Pattern.compile(flightregex);
-		FileInputStream fis=null;
-		BufferedReader br = null;
-		String line = null;
-		try {
-			fis = new FileInputStream(fin);
-			br = new BufferedReader(new InputStreamReader(fis));
-	    	while ((line = br.readLine()) != null) {
-	    		Matcher matcher = pattern.matcher(line); 
-	    		 while (matcher.find()) { 
-	    			 return true;
-	    		 }
-	    	}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally{
-			if(!(br==null)){
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+		if(fin != null){
+			
+			String flightregex="^FLIGHT: (.*)\\s+DATE: (.*)$";
+			Pattern pattern = Pattern.compile(flightregex);
+			FileInputStream fis=null;
+			BufferedReader br = null;
+			String line = null;
+			try {
+				fis = new FileInputStream(fin);
+				br = new BufferedReader(new InputStreamReader(fis));
+		    	while ((line = br.readLine()) != null) {
+		    		Matcher matcher = pattern.matcher(line); 
+		    		 while (matcher.find()) { 
+		    			 return true;
+		    		 }
+		    	}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				fin.deleteOnExit();
+				if(!(br==null)){
+					try {
+						br.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
