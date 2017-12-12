@@ -31,7 +31,8 @@
             $scope.dispStatus.constants={
                 CLOSED: 'CLOSED',
                 NEW: 'NEW',
-                PENDINGCLOSURE: 'PENDING CLOSURE'
+                PENDINGCLOSURE: 'PENDING CLOSURE',
+                REOPEN: 'RE-OPEN'
             };
             $scope.hitValidityStatuses=[
             {id: 1, name: 'Yes'},
@@ -93,6 +94,11 @@
                         ) {
                             $scope.caseDispositionStatuses.pop(item);
                         }
+                        if( !($scope.caseItem.status.toUpperCase()===$scope.dispStatus.constants.CLOSED)
+                            && !($scope.caseItem.status.toUpperCase()===$scope.dispStatus.constants.REOPEN)
+                            && (item.name.toUpperCase()===$scope.dispStatus.constants.REOPEN) ){
+                            $scope.caseDispositionStatuses.pop(item);
+                        }
                     });
                 });
             };
@@ -111,6 +117,10 @@
                         ) {
                             $scope.hitDispositionStatuses.pop(item);
                         }
+                        if( !($scope.caseItem.status.toUpperCase()===$scope.dispStatus.constants.CLOSED)
+                            && (item.name.toUpperCase()===$scope.dispStatus.constants.REOPEN) ){
+                            $scope.hitDispositionStatuses.pop(item);
+                        }
                     });
                 });
             };
@@ -121,10 +131,9 @@
                 $scope.dispStatus.allHitsClosed = true;
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
-                    if ( ($scope.caseDispStatus != $scope.dispStatus.constants.CLOSED) ||
-                        (item.status === $scope.dispStatus.constants.NEW) ||
-                        ( (item.valid === null) ) ||
-                        (typeof(item.valid) === "undefined")
+                    if ( ($scope.caseDispStatus === $scope.dispStatus.constants.CLOSED) &&
+                        ( (item.valid === null)  ||
+                        (typeof(item.valid) === "undefined"))
                         // ||
                         // (item.valid != $scope.hitValidityStatuses[1].name)) ||
                         // (item.valid != $scope.hitValidityStatuses[2].name)
@@ -187,6 +196,7 @@
                 $scope.hitDispStatus = $scope.caseItemHits[position].status;
                 //$scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === $scope.dispStatus.constants.CLOSED)? false: true;
                 $scope.dispStatus.hitStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
+                $scope.dispStatus.hitStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;//when top-level case is closed, no more comments until re-opened
                 $scope.populateDispStatuses();
                 if(typeof $scope.hitDetailTrueHitFlag !== undefined && $scope.hitDetailTrueHitFlag !== null) {
                     if($scope.hitDetailTrueHitFlag == 'true') $scope.hitDetailTrueHitFlag = true;
