@@ -160,10 +160,10 @@ public class ApisGeneratorUtil {
     		if(StringUtils.isNotBlank(tokens[11])){
     			debark=tokens[11].replaceAll("\\.+", "");
     		}
-       		if(StringUtils.isBlank(embark)){
+       		if(StringUtils.isBlank(embark) || (StringUtils.isNotBlank(embark) && embark.length() < 3)){
        			embark=origin;
     		}
-       		if(StringUtils.isBlank(debark)){
+       		if(StringUtils.isBlank(debark)|| (StringUtils.isNotBlank(debark) && debark.length() < 3)){
        			debark=dest;
     		}
     	}
