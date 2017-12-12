@@ -253,13 +253,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         else aCase.setHitsDispositions(hitsDispSet);
         caseDispositionRepository.saveAndFlush(aCase);
 
-        if(aCase.getId()!=null){
-            for(HitsDisposition _tempHitDisp : aCase.getHitsDispositions()) {
-                if((_tempHitDisp.getHitId() == 9999L))
-                    pullRuleCategory(_tempHitDisp, rule_cat_id);
-            }
-            caseDispositionRepository.save(aCase);
-        }
+//        _tempCase = null;
+//        _tempCase = caseDispositionRepository.getOne(aCase.getId());
+//
+//        if(_tempCase!=null){
+//            for(HitsDisposition _tempHitDisp : _tempCase.getHitsDispositions()) {
+//                if((_tempHitDisp.getHitId() == 9999L))
+//                    pullRuleCategory(_tempHitDisp, rule_cat_id);
+//            }
+//            caseDispositionRepository.save(_tempCase);
+//        }
         return aCase;
     }
 
