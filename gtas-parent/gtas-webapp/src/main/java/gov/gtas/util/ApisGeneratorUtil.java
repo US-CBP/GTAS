@@ -222,7 +222,7 @@ public class ApisGeneratorUtil {
 	
 	private static String getDateInYYMMDD(String dateString){
 		//TVL ddmmyy
-		SimpleDateFormat formatter = new SimpleDateFormat("ddMMMyy");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyMMMdd");
     	Date date=new Date();
 		try {
 			Date date1 = formatter.parse(dateString);
