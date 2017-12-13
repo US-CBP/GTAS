@@ -25,6 +25,9 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 			@Param("passengerId") Long passengerId);
 	@Query("SELECT fp FROM ApisMessage apis join apis.flightPaxList fp where fp.reservationReferenceNumber = :refNumber")
 	List<FlightPax> findFlightPaxByApisRef(@Param("refNumber") String refNumber);	
+	@Query("SELECT fp FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")
+	List<FlightPax> findFlightPaxByFlightIdandPassengerId(@Param("flightId") Long flightId,
+			@Param("passengerId") Long passengerId);	
     @Query("SELECT apis FROM ApisMessage apis WHERE apis.createDate >= current_date() - 1")
     public List<Message> getAPIsByDates();
 }

@@ -18,9 +18,11 @@ public class ApisMessageVo extends MessageVo{
 	private String residenceCountry;
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
     private int bagCount;
+    private double bagWeight;
     private List<BagVo> bags = new ArrayList<>();
     private boolean apisRecordExists = false;
     private Set<FlightPassengerVo> flightpaxs = new HashSet<>();
+    
     
 	public boolean isApisRecordExists() {
 		return apisRecordExists;
@@ -74,4 +76,11 @@ public class ApisMessageVo extends MessageVo{
 	public void addFlightpax(FlightPassengerVo flightpax) {
 		this.flightpaxs.add(flightpax);
 	}
+	public double getBagWeight() {
+		return bagWeight;
+	}
+	public void setBagWeight(double bagWeight) {
+		this.bagWeight = bagWeight;
+	}
+	
 }
