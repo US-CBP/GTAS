@@ -242,7 +242,7 @@ public class PassengerDetailsController {
 			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());			
 			List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(refList.get(0));
 			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId())
-					.stream().filter(a -> a.getMessageSource().equals("apis")).collect(Collectors.toList());
+					.stream().filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
 			
 			if(!apisMessageFlightPaxs.isEmpty()) {
 				FlightPax apisMessageFlightPax = apisMessageFlightPaxs.get(0);
