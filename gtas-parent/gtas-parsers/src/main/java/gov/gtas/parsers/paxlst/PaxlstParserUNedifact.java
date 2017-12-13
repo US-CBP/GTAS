@@ -314,6 +314,13 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                     p.setBagNum(ftx.getNumBags());
                     int numBags = Integer.parseInt(ftx.getNumBags());
                     String airlineCode = bagId.substring(0, Math.min(bagId.length(), 2));
+                    if(StringUtils.isNumeric(airlineCode) && StringUtils.isNumeric(bagId)){
+                        for (int i = 0; i < numBags - 1; i++) {
+                        	int j=1+i;
+                            String temp = bagId+":"+j;
+                            bags.add(temp);
+                        }                   	
+                    }else{
                     int startNum = getNum(bagId);
                     StringBuffer sb = new StringBuffer();
                     for (int i = 0; i < numBags - 1; i++) {
@@ -321,6 +328,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                         String temp = sb.append(airlineCode).append(++startNum).toString();
                         bags.add(temp);
                     }
+                }
                 }
                 p.setBags(bags);
             }
