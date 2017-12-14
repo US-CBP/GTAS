@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -21,10 +20,11 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 
 public class QueueService {
-    private static final String AWS_ACCESS_KEY_ID = "";
-    private static final String AWS_SECRET_ACCESS_KEY = "";
-
-    private AmazonSQS sqs;
+    private static AmazonSQS sqs;
+    static {
+        sqs = new AmazonSQSClient();
+        sqs.setRegion(Region.getRegion(Regions.GovCloud));    	
+    }
     private String queueName;
     private String queueUrl;
     
@@ -36,11 +36,6 @@ public class QueueService {
     
     public void configure(String queueName) {
         this.queueName = queueName;
-        BasicAWSCredentials credentials = new BasicAWSCredentials(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY);
-        this.sqs = new AmazonSQSClient(credentials);
-        Region reg = Region.getRegion(Regions.US_EAST_1);
-        sqs.setRegion(reg);
-
         for (String queueUrl : listQueues()) {
             if (queueUrl.endsWith(this.queueName)) {
                 this.queueUrl = queueUrl;

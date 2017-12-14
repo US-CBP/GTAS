@@ -54,6 +54,7 @@ insert into app_configuration (opt, val, description) values('QUEUE_IN', 'GTAS_Q
 insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\MESSAGE', 'directory for uploading files from UI');
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
+insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
 
 -- ----------------------------
 -- Records of dashboard_message_stats
@@ -84,3 +85,4 @@ insert into rule_category(catId, category, description, priority) values(2, 'Ter
 insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
 insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
 insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
+

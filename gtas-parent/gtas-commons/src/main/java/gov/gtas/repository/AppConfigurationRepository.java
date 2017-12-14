@@ -18,6 +18,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String ELASTIC_PORT = "ELASTIC_PORT";
     public static String UPLOAD_DIR = "UPLOAD_DIR";
     public static String DASHBOARD_AIRPORT = "DASHBOARD_AIRPORT";
+    public static String SMS_TOPIC_ARN = "SMS_TOPIC_ARN";
 
     public AppConfiguration findByOption(String option);
 }
