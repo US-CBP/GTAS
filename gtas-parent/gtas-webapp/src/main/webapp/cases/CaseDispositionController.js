@@ -142,6 +142,19 @@
             $scope.getTableHeight = function () {
                 return gridService.calculateGridHeight(newCases.data.totalCases);
             };
-
+            //toggleDiv and filterCheck required for sidepanel
+            $scope.toggleDiv = function(div) {
+                var element = document.getElementById(div);
+                if(element.classList.contains("active")){
+                  element.classList.remove("active");
+                }
+                else {
+                  element.className +=" active";
+                }
+              };
+            $scope.filterCheck = function(option) {
+              var filters = ['name', 'flight', 'status', 'priority', 'dateLabel', 'date'];
+              return filters.includes(option);
+            }
 })
 }());

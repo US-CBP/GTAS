@@ -808,6 +808,13 @@
             paxModel.reset();
             resolvePage();
         };
+        $scope.getTableHeight = function () {
+            if( stateName != "queryPassengers"){
+                return gridService.calculateGridHeight($scope.passengerGrid.data.length);
+            } // Sets minimal height for front-end pagination controlled variant of grid
+            return gridService.calculateGridHeight($scope.model.pageSize);
+        };
+        //toggleDiv and filterCheck required for sidepanel
         $scope.toggleDiv = function(div) {
             var element = document.getElementById(div);
             if(element.classList.contains("active")){
@@ -817,12 +824,10 @@
               element.className +=" active";
             }
           };
-        $scope.getTableHeight = function () {
-            if( stateName != "queryPassengers"){
-                return gridService.calculateGridHeight($scope.passengerGrid.data.length);
-            } // Sets minimal height for front-end pagination controlled variant of grid
-            return gridService.calculateGridHeight($scope.model.pageSize);
-        };
+        $scope.filterCheck = function(option) {
+          var filters = ['origin', 'destination', 'flight', 'direction', 'date'];
+          return filters.includes(option);
+        }
 
         getPage();
         mapAirports();

@@ -14,107 +14,165 @@
             </button>
             <a href="#" ng-click="reset()" class="filters-clear">Clear Filters</a>
           </h1>
-          <h2 aria-expanded="true" data-toggle="collapse" role="tab"
-            data-target="#filterGroup8" aria-controls="filterGroup8" class="filter-group-title">
-            {{'flight.origin' | translate}}
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          </h2>
-          <div id="filterGroup8" class="collapse in">
-            <div class="filter-group-content">
-              <div class="form-group">
-                <!--Flights!-->
-                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
-                  md-contacts="flights.querySearch($query)" md-contact-name="id"
-                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'">
-                </md-contact-chips>
-                <!--Passengers!-->
-                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
-                  md-contacts="searchSort($query)" md-contact-name="id"
-                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
-                </md-contact-chips>
+          <div ng-show='filterCheck("name")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#nameGroup" aria-controls="nameGroup" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+              Last Name
+            </h3>
+            <div id="nameGroup" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                  <div class="form-group">
+                    <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                      aria-required="true" id="name" ng-model="model.name" />
+                  </div>
               </div>
             </div>
           </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-            {{'flight.destination' | translate}}
-          </h3>
-          <div id="filterGroup2" class="collapse in" aria-expanded="true">
-            <div class="filter-group-content">
-              <div class="form-group">
-                <!--Flights!-->
-                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
-                  md-contacts="flights.querySearch($query)" md-contact-name="id"
-                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'" >
-                </md-contact-chips>
-                <!--Passengers!-->
-                <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
-                  md-contacts="searchSort($query)" md-contact-name="id"
-                  md-contact-email="name" md-require-match="true" md-highlight-flags="i"
-                  filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
-                </md-contact-chips>
-              </div>
-            </div>
-          </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-            {{'flight.flight' | translate}}
-          </h3>
-          <div id="filterGroup1" class="collapse in" aria-expanded="true">
-            <div class="filter-group-content">
+          <div ng-show='filterCheck("origin")'>
+            <h2 aria-expanded="true" data-toggle="collapse" role="tab"
+              data-target="#originGroup" aria-controls="originGroup" class="filter-group-title">
+              {{'flight.origin' | translate}}
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+            </h2>
+            <div id="originGroup" class="collapse in">
+              <div class="filter-group-content">
                 <div class="form-group">
-                  <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
-                    aria-required="true" id="flightNumber" ng-model="model.flightNumber" />
+                  <!--Flights!-->
+                  <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
+                    md-contacts="flights.querySearch($query)" md-contact-name="id"
+                    md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                    filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'">
+                  </md-contact-chips>
+                  <!--Passengers!-->
+                  <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.origin"
+                    md-contacts="searchSort($query)" md-contact-name="id"
+                    md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                    filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
+                  </md-contact-chips>
                 </div>
-            </div>
-          </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> {{'flight.direction' | translate}}
-          </h3>
-          <div id="filterGroup5" class="collapse in" aria-expanded="true">
-            <div class="filter-group-content">
-              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
-                <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
-                  ng-model="model.direction">
-                  <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
-                    {{item.label}}
-                  </option>
-                </select>
               </div>
             </div>
           </div>
-          <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
-          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Date Range
-          </h3>
-          <div id="filterGroup6" class="collapse in">
-            <div class="filter-group-content">
-              <div class="row">
-                <div class="form-group col-xs-6">
-                  <div class="cbp-datepicker">
-                    <md-datepicker id="startDate" name="startDate" md-hide-icons="calendar"
-                      ng-model="model.etaStart" required></md-datepicker>
-                    <label class="mdl-textfield__label static-label" for="startDate">
-                      {{'flight.startdate' | translate}}
-                    </label>
-                    <div class="validation-messages" ng-messages="sideForm.startDate.$error">
-                      <div ng-message="valid" class="alert alert-danger" role="alert">
-                        <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+          <div ng-show='filterCheck("destination")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+              {{'flight.destination' | translate}}
+            </h3>
+            <div id="filterGroup2" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                <div class="form-group">
+                  <!--Flights!-->
+                  <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
+                    md-contacts="flights.querySearch($query)" md-contact-name="id"
+                    md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                    filter-selected="flights.filterSelected" data-ng-if="stateName !== 'paxAll'" >
+                  </md-contact-chips>
+                  <!--Passengers!-->
+                  <md-contact-chips class="cbp-input mdl-textfield__input" ng-model="model.dest"
+                    md-contacts="searchSort($query)" md-contact-name="id"
+                    md-contact-email="name" md-require-match="true" md-highlight-flags="i"
+                    filter-selected="filterSelected" data-ng-if="stateName === 'paxAll'">
+                  </md-contact-chips>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show='filterCheck("flight")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+              {{'flight.flight' | translate}}
+            </h3>
+            <div id="filterGroup1" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                  <div class="form-group">
+                    <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                      aria-required="true" id="flightNumber" ng-model="model.flightNumber" />
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show='filterCheck("direction")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> {{'flight.direction' | translate}}
+            </h3>
+            <div id="filterGroup5" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
+                  <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
+                    ng-model="model.direction">
+                    <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
+                      {{item.label}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show='filterCheck("status")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#statusGroup" aria-controls="statusGroup" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Status
+            </h3>
+            <div id="statusGroup" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
+                  <select class="cbp-non-chip-input mdl-selectfield__select" id="status"
+                    ng-model="model.status">
+                    <option ng-repeat="item in statusGroup" value="{{item.value}}" translate>
+                      {{item.label}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show='filterCheck("priority")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#priorityGroup" aria-controls="priorityGroup" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Priority
+            </h3>
+            <div id="priorityGroup" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
+                  <select class="cbp-non-chip-input mdl-selectfield__select" id="priority"
+                    ng-model="model.priority">
+                    <option ng-repeat="item in priorityGroup" value="{{item.value}}" translate>
+                      {{item.label}}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ng-show='filterCheck("date")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> <span ng-show='filterCheck("dateLabel")'>Flight</span> Date Range
+            </h3>
+            <div id="filterGroup6" class="collapse in">
+              <div class="filter-group-content">
+                <div class="row">
+                  <div class="form-group col-xs-6">
+                    <div class="cbp-datepicker">
+                      <md-datepicker id="startDate" name="startDate" md-hide-icons="calendar"
+                        ng-model="model.etaStart" required></md-datepicker>
+                      <label class="mdl-textfield__label static-label" for="startDate">
+                        {{'flight.startdate' | translate}}
+                      </label>
+                      <div class="validation-messages" ng-messages="sideForm.startDate.$error">
+                        <div ng-message="valid" class="alert alert-danger" role="alert">
+                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="form-group col-xs-6">
-                  <div class="cbp-datepicker">
-                    <md-datepicker id="endDate" name="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
-                    <label class="mdl-textfield__label static-label" for="endDate">
-                      {{'flight.enddate' | translate}}
-                    </label>
-                    <div class="validation-messages" ng-messages="sideForm.endDate.$error">
-                      <div ng-message="valid" class="alert alert-danger" role="alert">
-                        <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                  <div class="form-group col-xs-6">
+                    <div class="cbp-datepicker">
+                      <md-datepicker id="endDate" name="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
+                      <label class="mdl-textfield__label static-label" for="endDate">
+                        {{'flight.enddate' | translate}}
+                      </label>
+                      <div class="validation-messages" ng-messages="sideForm.endDate.$error">
+                        <div ng-message="valid" class="alert alert-danger" role="alert">
+                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                        </div>
                       </div>
                     </div>
                   </div>

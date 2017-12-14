@@ -1,4 +1,4 @@
-<md-content>
+<md-content class="upper-cnt-nav">
     <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
         <md-tab label="Manage Users" layout="column">
             <div layout="column">
@@ -22,6 +22,9 @@
         </md-tab>
         <md-tab label = "Disposition Status Management">
         	<ng-include src="'admin/dispstatus.html'" />
+        </md-tab>
+        <md-tab label = "Settings">
+          <ng-include src="'admin/settings.html'" />
         </md-tab>
     </md-tabs>
 </md-content>

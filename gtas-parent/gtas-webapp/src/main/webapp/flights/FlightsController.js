@@ -438,6 +438,7 @@
             } // Sets minimal height for front-end pagination controlled variant of grid
             return gridService.calculateGridHeight($scope.model.pageSize);
         };
+        //toggleDiv and filterCheck required for sidepanel
         $scope.toggleDiv = function(div) {
           var element = document.getElementById(div);
           if(element.classList.contains("active")){
@@ -446,6 +447,10 @@
           else {
             element.className +=" active";
           }
+        }
+        $scope.filterCheck = function(option) {
+          var filters = ['origin', 'destination', 'flight', 'direction', 'date'];
+          return filters.includes(option);
         }
         resolvePage();
         mapAirports();

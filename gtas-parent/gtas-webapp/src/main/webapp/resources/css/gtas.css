@@ -83,6 +83,9 @@
 .right {
   float: right;
 }
+.center {
+  margin: auto;
+}
 /*Internet Explorer Specific Styles*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     .ie-fix-sm{
