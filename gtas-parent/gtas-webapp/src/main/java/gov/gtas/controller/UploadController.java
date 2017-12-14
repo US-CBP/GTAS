@@ -6,15 +6,12 @@
 package gov.gtas.controller;
 
 import java.io.File;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.sql.rowset.serial.SerialException;
 
@@ -24,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import gov.gtas.aws.QueueService;
+import gov.gtas.aws.SmsServiceImpl;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.Attachment;
@@ -44,7 +39,6 @@ import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.LookUpRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.vo.passenger.AttachmentVo;
-import gov.gtas.vo.passenger.PassengerVo;
 
 @Controller
 public class UploadController {
@@ -62,6 +56,9 @@ public class UploadController {
     @Autowired
     private AttachmentRepository attRepo;
 
+    @Autowired
+    private SmsServiceImpl sms;    
+    
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/upload")
     public void upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) throws IOException {
@@ -71,12 +68,7 @@ public class UploadController {
         }
         
         writeFile(file);
-
-        // disable this for now
-//        String queueName = lookupRepo.getAppConfigOption(AppConfigurationRepository.QUEUE);
-//        QueueService sqs = new QueueService(queueName);
-//        sqs.sendMessage(new String(file.getBytes()));
-        
+        sms.sendMessage("FILE UPLOAD: " + file.getOriginalFilename());
         logger.info(String.format("received %s from %s", file.getOriginalFilename(), username));
     }
     
