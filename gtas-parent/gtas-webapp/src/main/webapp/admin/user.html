@@ -1,30 +1,30 @@
 <md-content layout-padding>
     <form name="userForm" ng-submit="saveUser()">
         <div layout layout-sm="column">
-            <md-input-container flex><label>{{'user.useId' | translate}}</label>
+            <md-input-container flex><label>User Id</label>
                 <input required ng-model="user.userId" id="userId" ng-disabled="action === 'updateUser'" autocomplete="off" style="width: 300px;">
             </md-input-container>
-            <md-input-container flex><label>{{'user.password' | translate}}</label>
+            <md-input-container flex><label>Password</label>
                 <input ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/" ng-focus="displayPasswordRules()" ng-blur="hideToast()" ng-model="user.password" id="password" type="password" type="search"  autocomplete="off" required style="width: 300px;">
             </md-input-container>
         </div>
         <div layout layout-sm="column">
-            <md-input-container flex><label>{{'user.firstname' | translate}}</label> <input required ng-model="user.firstName" autocomplete="off" required style="width: 300px;">
+            <md-input-container flex><label>First name</label> <input required ng-model="user.firstName" autocomplete="off" required style="width: 300px;">
             </md-input-container>
-            <md-input-container flex><label>{{'user.lastname' | translate}}</label> <input required ng-model="user.lastName" required style="width: 300px;">
+            <md-input-container flex><label>Last Name</label> <input required ng-model="user.lastName" required style="width: 300px;">
             </md-input-container>
         </div>
 
         <div layout="column">
-            <code style="font-weight: bold; font-size: 17px;">{{'user.status' | translate}}</code>
+            <code style="font-weight: bold; font-size: 17px;">Status</code>
             <md-switch ng-model="user.active" ng-true-value="1" ng-false-value="0"
                        class="md-primary" aria-label="userStatus">
-                {{'user.status.text' | translate}} 
+                	User is
                 <p translate> {{ user.active ? 'user.status.enabled' : 'user.status.disabled' }}</p>
             </md-switch>
         </div>
         <div layout="column">
-            <code style="font-weight: bold; font-size: 17px;">{{'user.roles' | translate}}</code>
+            <code style="font-weight: bold; font-size: 17px;">Roles</code>
             <span layout="column" layout-wrap class="clearfix" style="min-height: 200px;">
                 <span flex="20" ng-repeat="role in roles | orderBy:'roleDescription'">
                         <md-switch ng-model="role.selected"
@@ -38,8 +38,8 @@
         </div>
         <div class="md-actions" layout="row" style="padding-top: 15px;">
             <span flex="80"></span>
-            <md-button href="#/admin" class="md-raised">{{'btn.back' | translate}}</md-button>
-            <md-button class="md-raised md-primary" type="submit">{{'qry.save' | translate}}</md-button>
+            <md-button href="#/admin" class="md-raised">Back</md-button>
+            <md-button class="md-raised md-primary" type="submit">Save</md-button>
         </div>
     </form>
 </md-content>

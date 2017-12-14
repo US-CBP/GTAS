@@ -54,24 +54,24 @@
             <ul class="dropdown-menu" role="menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;{{'menu.queries' | translate}}</a>
+                &nbsp;Queries</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
                 <i class="fa fa-flag" aria-hidden="true"></i>
-                &nbsp;{{'menu.riskcriteria' | translate}}</a>
+                &nbsp;Rules</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
                 <i class="fa fa-eye" aria-hidden="true"></i>
-                &nbsp;{{'menu.watchlist' | translate}}</a>
+                &nbsp;Watch List</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
                 <a href="#/admin">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                &nbsp;{{'menu.admin' | translate}}</a>
+                &nbsp;Admin</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]"><a href="#/upload">
                 <i class="fa fa-upload" aria-hidden="true"></i>
-                &nbsp;{{'menu.upload' | translate}}</a></li>
+                &nbsp;Upload</a></li>
             </ul>
           </li>
           <li class="dropdown notification mobile-hide">
@@ -108,11 +108,11 @@
 		        </a>
             <ul rel="right-menu-links" role="menu" class="dropdown-menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
-                <a title="Settings" href="#/userSettings">{{'menu.settings' | translate}}</a>
+                <a title="Settings" href="#/userSettings">Change Password</a>
               </li>
               <li class="divider"></li>
               <li>
-                <a href ng-click="logout()" title="Logout">{{'login.logout' | translate}}</a>
+                <a href ng-click="logout()" title="Logout">Logout</a>
               </li>
             </ul>
           </li>
@@ -137,10 +137,10 @@
           <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
-	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>
+	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
             <li ng-class="{'active': setSelectedTab('/passengers')}">
               <a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">
-	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; {{'menu.passengers' | translate}}
+	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers
 	              </a></li>
             <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
               ng-class="{'active': setSelectedTab('/casedisposition')}">
@@ -286,7 +286,7 @@
       <div class="overlay"></div>
       <div class="spinner">
         <button class="btn btn-default" disabled>
-            <i class="fa fa-spinner fa-spin"></i> {{'wl.wait' | translate}}...
+            <i class="fa fa-spinner fa-spin"></i> Please Wait...
         </button>
       </div>
     </spinner>

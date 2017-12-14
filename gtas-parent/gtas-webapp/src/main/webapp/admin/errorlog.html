@@ -26,14 +26,14 @@
 
 <form id = "ErrorFilterPanel" layout="row" layout-padding layout-margin layout-align="space-around center" ng-submit="refreshError()">
   <md-input-container style="min-width: 6em">
-    <label>{{'admin.errorcode' | translate}}</label>
+    <label>Error Code</label>
     <input ng-model="errorModel.code">
   </md-input-container>
   <md-datepicker ng-model="errorModel.timestampStart" md-placeholder="Start Date"></md-datepicker>
   <md-datepicker ng-model="errorModel.timestampEnd" md-placeholder="End Date"></md-datepicker>
 
   <md-button class="md-primary" type="submit">
-    <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
+    <md-tooltip>Filter</md-tooltip>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M10 18h4v-2h-4v2z"></path><path d="M3 6v2h18V6H3z"></path><path d="M6 13h12v-2H6v2z"></path></svg>
   </md-button>
 </form>

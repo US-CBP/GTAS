@@ -1,19 +1,19 @@
 <div>
   <div class="span12 flex justify-around upper-cnt flex-wrap">
     <div>
-        <div>{{'pass.lastname' | translate}}:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
-        <div>{{'pass.firstname' | translate}}:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
-        <div>{{'pass.middlename' | translate}}:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
+        <div>Last Name:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
+        <div>First Name:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
+        <div>Middle Name:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
     </div>
     <div>
-        <div>{{'pass.gender' | translate}}:&nbsp; <strong> {{ passenger.gender }}</strong></div>
-        <div>{{'pass.dob' | translate}}:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
-        <div>{{'pass.paxtype' | translate}}:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
+        <div>Gender:&nbsp; <strong> {{ passenger.gender }}</strong></div>
+        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
+        <div>Pax Type:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
     </div>
     <div>
-        <div>{{'pass.origin' | translate}}:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
-        <div>{{'pass.destination' | translate}}:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
-        <div>{{'pass.citizenship' | translate}}:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
+        <div>Origin Country:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
+        <div>Destination Country:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
+        <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
     </div>
   </div>
   <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
@@ -32,22 +32,22 @@
     <div class="panel panel-default">
       <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
         <!--Passenger Detail Tab!-->
-        <md-tab label="{{'pass.details' | translate}}">
+        <md-tab label="Details">
           <div class="sm-pad">
             <div class="span12 flex justify-around flex-wrap">
               <div>
-                <div>{{'flight.flight' | translate}}:&nbsp;
+                <div>Flight:&nbsp;
                   <strong>{{passenger.carrier + passenger.flightNumber }}</strong>
                 </div>
-                <div>{{'pass.seat' | translate}}:&nbsp; <strong>{{ passenger.seat }}</strong></div>
+                <div>SEAT:&nbsp; <strong>{{ passenger.seat }}</strong></div>
               </div>
               <div>
-                <div>{{'pass.originairport' | translate}}:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
-                <div>{{'pass.destinationairport' | translate}}:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
+                <div>Origin Airport:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
+                <div>Destination Airport:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
               </div>
               <div>
-                <div>{{'pass.etd' | translate}}:&nbsp; <strong>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</strong></div>
-                <div>{{'pass.eta' | translate}}:&nbsp; <strong>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</strong></div>
+                <div>ETD:&nbsp; <strong>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</strong></div>
+                <div>ETA:&nbsp; <strong>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</strong></div>
               </div>
             </div>
             <div class="flex justify-around flex-wrap" >
@@ -58,10 +58,10 @@
                     <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                       <thead>
                         <tr>
-                          <th>{{'doc.doc' | translate}} #</th>
-                          <th>{{'doc.type' | translate}}</th>
-                          <th>{{'doc.iss.country' | translate}}</th>
-                          <th>{{'doc.exp.date' | translate}}</th>
+                          <th>Doc #</th>
+                          <th>Type</th>
+                          <th>Iss. Country</th>
+                          <th>Exp. Date</th>
                         </tr>
                       </thead>
                     </table>
@@ -153,23 +153,23 @@
             <div class="span12 flex justify-around flex-wrap">
               <div>
                 <div>
-                  {{'apis.embarkation' | translate}}:&nbsp; <strong>{{ passenger.embarkation }}</strong>
+                  Embarkation:&nbsp; <strong>{{ passenger.embarkation }}</strong>
                 </div>
                 <div>
-                  {{'apis.debarkation' | translate}}:&nbsp; <strong>{{ passenger.debarkation}}</strong>
-                </div>
-              </div>
-              <div>
-                <div>
-                  {{'apis.residence' | translate}}:&nbsp; <strong>{{ passenger.residencyCountry}}</strong>
-                </div>
-                <div>
-                  {{'apis.traveller' | translate}}:&nbsp; <strong>{{ passenger.passengerType}}</strong>
+                  Debarkation:&nbsp; <strong>{{ passenger.debarkation}}</strong>
                 </div>
               </div>
               <div>
                 <div>
-                  {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
+                  Residence:&nbsp; <strong>{{ passenger.residencyCountry}}</strong>
+                </div>
+                <div>
+                  Passenger Type:&nbsp; <strong>{{ passenger.passengerType}}</strong>
+                </div>
+              </div>
+              <div>
+                <div>
+                  Transmission Date:&nbsp; <strong>{{passenger.apisMessageVo.transmissionDate | date:'yyyy-MM-dd hh:mm:ss'}}</strong>
                 </div>
 
               </div>
@@ -180,7 +180,7 @@
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'apis.totalbags' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
+                      Total Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
                       <span class="right fnt-small">
                         Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
                       </span>
@@ -189,8 +189,8 @@
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'apis.bagid' | translate}}</th>
-                            <th>{{'apis.dest' | translate}}</th>
+                            <th>BagID</th>
+                            <th>Destination</th>
                           </tr>
                         </thead>
                       </table>
@@ -213,13 +213,13 @@
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'apis.phone' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})
+                      Phone Numbers ({{ passenger.apisMessageVo.phoneNumbers.length }})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'apis.number' | translate}}</th>
+                            <th>Phone Number</th>
                           </tr>
                         </thead>
                       </table>
@@ -249,12 +249,12 @@
                     <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                       <thead>
                         <tr>
-                          <th>{{'pass.firstname' | translate}}</th>
-                          <th>{{'pass.middlename' | translate}}</th>
-                          <th>{{'pass.lastname' | translate}}</th>
-                          <th>{{'pass.paxtype' | translate}}</th>
-                          <th>{{'apis.residence' | translate}}</th>
-                          <th>{{'apis.port' | translate}}</th>
+                          <th>First Name</th>
+                          <th>Middle Name</th>
+                          <th>Last Name</th>
+                          <th>Pax Type</th>
+                          <th>Residence</th>
+                          <th>Port of Arrival</th>
                         </tr>
                       </thead>
                     </table>
@@ -283,17 +283,17 @@
           <md-tab-body>
             <div class="span12 flex justify-around flex-wrap">
               <div>
-                {{'pnr.recordlocator' | translate}}:&nbsp;<strong>{{passenger.pnrVo.recordLocator }}</strong>
+                Record Locator:&nbsp;<strong>{{passenger.pnrVo.recordLocator }}</strong>
               </div>
               <div>
-                {{'pnr.bookingdate' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
+                Booking Date:&nbsp; <strong>{{ passenger.pnrVo.dateBooked | date:'yyyy-MM-dd'}}</strong>
               </div>
               <div>
                 <div>
-                  {{'pnr.received' | translate}}:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
+                  Received:&nbsp; <strong>{{ passenger.pnrVo.dateReceived | date:'yyyy-MM-dd HH:mm' }}</strong></br>
                 </div>
                 <div>
-                  {{'pnr.transDate' | translate}}:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
+                  Transmission Date:&nbsp; <strong>{{passenger.pnrVo.transmissionDate | date:'yyyy-MM-dd HH:mm'}}</strong>
                 </div>
               </div>
             </div>
@@ -303,18 +303,18 @@
                 <div class="cbp-card-container gtas-card-container full-width six-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.itenerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})
+                      Itinerary ({{ passenger.pnrVo.flightLegs.length }})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'pnr.leg' | translate}}</th>
-                            <th>{{'flight.flight' | translate}}#</th>
-                            <th>{{'pass.originairport' | translate}}</th>
-                            <th>{{'pass.destinationairport' | translate}}</th>
-                            <th>{{'pass.etd' | translate}}</th>
-                            <th>{{'pass.eta' | translate}}</th>
+                            <th>Leg</th>
+                            <th>Flight#</th>
+                            <th>Origin Airport</th>
+                            <th>Destination Airport</th>
+                            <th>ETD</th>
+                            <th>ETA</th>
                           </tr>
                         </thead>
                       </table>
@@ -343,16 +343,16 @@
                 <div class="cbp-card-container gtas-card-container full-width five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.names' | translate}}  ({{ passenger.pnrVo.passengers.length }})
+                      PNR Names  ({{ passenger.pnrVo.passengers.length }})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'pnr.first' | translate}}</th>
-                            <th>{{'pnr.middle' | translate}}</th>
-                            <th>{{'pnr.last' | translate}}</th>
-                            <th>{{'pass.gender' | translate}}</th>
+                            <th>First</th>
+                            <th>Middle</th>
+                            <th>Last</th>
+                            <th>Gender</th>
                             <th>Age</th>
                           </tr>
                         </thead>
@@ -381,18 +381,18 @@
                 <div class="cbp-card-container gtas-card-container full-width">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.documents' | translate}} ({{ passenger.pnrVo.documents.length}})
+                      Documents ({{ passenger.pnrVo.documents.length}})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md six-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'user.firstname' | translate}}</th>
-                            <th>{{'user.lastname' | translate}}</th>
-                            <th>{{'doc.type' | translate}}</th>
-                            <th>{{'doc.iss.country' | translate}}</th>
-                            <th>{{'doc.Number' | translate}}</th>
-                            <th>{{'doc.exp.date' | translate}}</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Type</th>
+                            <th>Iss. Country</th>
+                            <th>Number</th>
+                            <th>Exp. Date</th>
                           </tr>
                         </thead>
                       </table>
@@ -417,16 +417,16 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})
+                      Addresses({{ passenger.pnrVo.addresses.length }})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'add.city' | translate}}</th>
-                            <th>{{'add.state' | translate}}</th>
-                            <th>{{'add.Country' | translate}}</th>
-                            <th>{{'add.Street' | translate}}</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Street</th>
                           </tr>
                         </thead>
                       </table>
@@ -449,13 +449,13 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'phone.phonenumbers' | translate}} ({{ passenger.pnrVo.phoneNumbers.length }})
+                      Phone Numbers ({{ passenger.pnrVo.phoneNumbers.length }})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'phone.phonenumber' | translate}}</th>
+                            <th>Phone Number</th>
                           </tr>
                         </thead>
                       </table>
@@ -475,7 +475,7 @@
                 <div ng-if="passenger.pnrVo.emails.length>0"  class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'email.emailaddresses' | translate}} ({{passenger.pnrVo.emails.length}})
+                      Email Addresses ({{passenger.pnrVo.emails.length}})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
@@ -501,16 +501,16 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'cc.creditcards' | translate}} ({{passenger.pnrVo.creditCards.length}})
+                      Credit Cards ({{passenger.pnrVo.creditCards.length}})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'cc.holder' | translate}}</th>
-                            <th>{{'cc.Type' | translate}}</th>
-                            <th>{{'cc.Number' | translate}}</th>
-                            <th>{{'cc.expdate' | translate}}</th>
+                            <th>Holder</th>
+                            <th>Type</th>
+                            <th>Number</th>
+                            <th>Exp. Date</th>
                           </tr>
                         </thead>
                       </table>
@@ -535,14 +535,14 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'ff.FrequentFlyers' | translate}} ({{passenger.pnrVo.frequentFlyerDetails.length}})
+                      Frequent Flyer Numbers ({{passenger.pnrVo.frequentFlyerDetails.length}})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'ff.airline' | translate}}</th>
-                            <th>{{'ff.number' | translate}}</th>
+                            <th>Airline</th>
+                            <th>Number</th>
                           </tr>
                         </thead>
                       </table>
@@ -586,16 +586,16 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.seatinformation' | translate}}
+                      Seat Information
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md four-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'pass.lastname' | translate}}</th>
-                            <th>{{'pass.firstname' | translate}}</th>
-                            <th>{{'flight.flight' | translate}}#</th>
-                            <th>{{'pnr.seat' | translate}}#</th>
+                            <th>Last name</th>
+                            <th>First Name</th>
+                            <th>Flight#</th>
+                            <th>Seat#</th>
                           </tr>
                         </thead>
                       </table>
@@ -618,18 +618,18 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'tt.travelagencies' | translate}} ({{ passenger.pnrVo.agencies.length}})
+                      Agencies ({{ passenger.pnrVo.agencies.length}})
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md six-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'tt.type' | translate}}</th>
-                            <th>{{'tt.city' | translate}}</th>
-                            <th>{{'tt.id' | translate}}</th>
-                            <th>{{'tt.location' | translate}}</th>
-                            <th>{{'tt.Name' | translate}}</th>
-                            <th>{{'tt.Phone' | translate}}</th>
+                            <th>Type</th>
+                            <th>City</th>
+                            <th>ID</th>
+                            <th>Location</th>
+                            <th>Name</th>
+                            <th>Phone</th>
                           </tr>
                         </thead>
                       </table>
@@ -654,17 +654,17 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      {{'pnr.totalbags' | translate}} ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
-                      <span class="right fnt-small">{{'pnr.baggage' | translate}} ({{passenger.pnrVo.bagCount}})
-                      {{'pnr.totalweight' | translate}} ({{passenger.pnrVo.baggageWeight}})
+                      Total Baggage ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
+                      <span class="right fnt-small">Excess Baggage ({{passenger.pnrVo.bagCount}})
+                      Total Weight kg ({{passenger.pnrVo.baggageWeight}})
                       </span>
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>{{'pnr.bagid' | translate}}</th>
-                            <th>{{'pnr.dest' | translate}}</th>
+                            <th>Bag ID</th>
+                            <th>Destination</th>
                           </tr>
                         </thead>
                       </table>
@@ -700,13 +700,13 @@
                   <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                     <thead>
                       <tr>
-                        <th>{{'flight.carrieflight' | translate}}</th>
-                        <th>{{'pass.eta' | translate}}</th>
-                        <th>{{'pass.etd' | translate}}</th>
-                        <th>{{'pass.origin' | translate}}</th>
-                        <th>{{'pass.originairport' | translate}}</th>
-                        <th>{{'pass.destination' | translate}}</th>
-                        <th>{{'pass.destinationairport' | translate}}</th>
+                        <th>Carrier/Flight</th>
+                        <th>ETA</th>
+                        <th>ETD</th>
+                        <th>Origin Country</th>
+                        <th>Origin Airport</th>
+                        <th>Destination Country</th>
+                        <th>Destination Airport</th>
                       </tr>
                     </thead>
                   </table>
@@ -738,13 +738,13 @@
                   <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                     <thead>
                       <tr>
-                        <th>{{'flight.carrieflight' | translate}}</th>
-                        <th>{{'pass.eta' | translate}}</th>
-                        <th>{{'pass.etd' | translate}}</th>
-                        <th>{{'pass.origin' | translate}}</th>
-                        <th>{{'pass.originairport' | translate}}</th>
-                        <th>{{'pass.destination' | translate}}</th>
-                        <th>{{'pass.destinationairport' | translate}}</th>
+                        <th>Carrier/Flight</th>
+                        <th>ETA</th>
+                        <th>ETD</th>
+                        <th>Origin Country</th>
+                        <th>Origin Airport</th>
+                        <th>Destination Country</th>
+                        <th>Destination Airport</th>
                       </tr>
                     </thead>
                   </table>
