@@ -125,13 +125,6 @@ public class CaseDispositionRepositoryIT {
         _tempDto.setPageSize(pageable.getPageSize());
         //_tempDto.setFlightId(20L);
 
-        CasePageDto _tempCaseDto = caseDispositionService.findAll(_tempDto);
-        for(CaseVo aCase : _tempCaseDto.getcases()){
-            Set<HitsDisposition> _tempSet = caseDispositionRepository.getHitsDispositionByCaseId(aCase.getId());
-            for(HitsDisposition _hit : aCase.getHitsDispositions()){
-                System.out.println(_hit);
-            }
-        }
         assertNotNull( caseDispositionRepository.findAll());
     }
 }
