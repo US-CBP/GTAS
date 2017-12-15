@@ -25,7 +25,7 @@ public interface CaseDispositionService {
     public CasePageDto findAll(CaseRequestDto dto);
 
     @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
-    public Case findHitsDispositionByCriteria(CaseRequestDto dto);
+    public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
 
@@ -41,7 +41,7 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach);
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username);
 
     public Passenger findPaxByID(Long id);
 

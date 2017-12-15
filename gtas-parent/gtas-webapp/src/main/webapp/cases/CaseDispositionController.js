@@ -11,6 +11,7 @@
                   spinnerService, caseDispositionService, newCases,
                   ruleCats, caseService, $state, uiGridConstants) {
 
+            spinnerService.hide('html5spinner');
             $scope.casesList = newCases.data.cases;
             $scope.casesListWithCats=[];
             $scope.ruleCats=ruleCats.data;

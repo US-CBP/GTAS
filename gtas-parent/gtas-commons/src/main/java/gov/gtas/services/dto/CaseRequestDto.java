@@ -37,6 +37,8 @@ public class CaseRequestDto implements Serializable {
 
     private File file;
 
+    private String paxName;
+
     private Long ruleCatId;
 
     private MultipartFile multipartFile;
@@ -158,6 +160,14 @@ public class CaseRequestDto implements Serializable {
 
     public void setRuleCatId(Long ruleCatId) {
         this.ruleCatId = ruleCatId;
+    }
+
+    public String getPaxName() {
+        return paxName;
+    }
+
+    public void setPaxName(String paxName) {
+        this.paxName = paxName;
     }
 
     @Override

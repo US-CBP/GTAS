@@ -5,6 +5,7 @@
  */
 package gov.gtas.model.lookup;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.BaseEntityAudit;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsDisposition;
@@ -12,9 +13,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "rule_category")
@@ -33,8 +32,9 @@ public class RuleCat extends BaseEntityAudit {
     @Column(name = "priority", nullable = false)
     private Long priority;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HitsDisposition> hitsDispositions = new ArrayList<HitsDisposition>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
     public Long getCatId() {
         return catId;
@@ -75,11 +75,20 @@ public class RuleCat extends BaseEntityAudit {
         this.catId = catId;
     }
 
-    public List<HitsDisposition> getHitsDispositions() {
+//    public List<HitsDisposition> getHitsDispositions() {
+//        return hitsDispositions;
+//    }
+//
+//    public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
+//        this.hitsDispositions = hitsDispositions;
+//    }
+
+
+    public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
 
-    public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
+    public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
         this.hitsDispositions = hitsDispositions;
     }
 

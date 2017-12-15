@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +37,10 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     public Case getCaseByFlightIdAndPaxId(
             @Param("flightId") Long flightId,
             @Param("paxId") Long paxId);
-    
 
+
+    @Query("SELECT p FROM Case c join c.hitsDispositions p where c.id = (:caseId)")
+    public Set<HitsDisposition> getHitsDispositionByCaseId(@Param("caseId") Long caseId);
 
     @Modifying
     @Transactional

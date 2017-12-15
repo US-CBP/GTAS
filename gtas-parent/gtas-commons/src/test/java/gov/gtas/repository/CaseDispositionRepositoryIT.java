@@ -7,6 +7,9 @@ import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.repository.CaseDispositionRepository;
+import gov.gtas.services.dto.CasePageDto;
+import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +33,7 @@ public class CaseDispositionRepositoryIT {
     @Before
     public void setUp() throws Exception {
 
-        Random _rand = new Random();
+       /* Random _rand = new Random();
         List<Long> _tempHitList = new ArrayList<>();
         _tempHitList.add(new Long(_rand.nextInt(1000)));
         _tempHitList.add(new Long(_rand.nextInt(1000)));
@@ -59,7 +62,7 @@ public class CaseDispositionRepositoryIT {
         }
         aCase.setHitsDispositions(hitsDispSet);
 
-        caseDispositionRepository.save(aCase);
+        caseDispositionRepository.save(aCase);*/
     }
 
     @After
@@ -68,6 +71,9 @@ public class CaseDispositionRepositoryIT {
 
     @Autowired
     private CaseDispositionRepository caseDispositionRepository;
+
+    @Autowired
+    private CaseDispositionService caseDispositionService;
 
     @Test
     public void testFindAllPageable() throws Exception {
@@ -113,7 +119,19 @@ public class CaseDispositionRepositoryIT {
                 return false;
             }
         };
-        List<Case> _tempList = caseDispositionRepository.findAll();
+
+        CaseRequestDto _tempDto = new CaseRequestDto();
+        _tempDto.setPageNumber(pageable.getPageNumber());
+        _tempDto.setPageSize(pageable.getPageSize());
+        //_tempDto.setFlightId(20L);
+
+        CasePageDto _tempCaseDto = caseDispositionService.findAll(_tempDto);
+        for(CaseVo aCase : _tempCaseDto.getcases()){
+            Set<HitsDisposition> _tempSet = caseDispositionRepository.getHitsDispositionByCaseId(aCase.getId());
+            for(HitsDisposition _hit : aCase.getHitsDispositions()){
+                System.out.println(_hit);
+            }
+        }
         assertNotNull( caseDispositionRepository.findAll());
     }
 }

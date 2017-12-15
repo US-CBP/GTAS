@@ -5,6 +5,7 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -24,12 +25,18 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
     @Column(name = "comments", length = 20000)
     private String comments;
 
-    @Column(name="hit_disp_id")
-    private long hitDispId;
+//    @Column(name="hit_disp_id")
+//    private long hitDispId;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="hit_disp_id")
+    private HitsDisposition hitDispId;
 
     @Column(name="hit_id")
     private long hitId;
 
+    @JsonIgnore
     @ManyToMany(targetEntity = Attachment.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "hits_disposition_comments_attachment",
             joinColumns = @JoinColumn(name = "hits_disp_comment_id"),
@@ -44,11 +51,20 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
         this.comments = comments;
     }
 
-    public long getHitDispId() {
+//    public long getHitDispId() {
+//        return hitDispId;
+//    }
+//
+//    public void setHitDispId(long hitDispId) {
+//        this.hitDispId = hitDispId;
+//    }
+
+
+    public HitsDisposition getHitDispId() {
         return hitDispId;
     }
 
-    public void setHitDispId(long hitDispId) {
+    public void setHitDispId(HitsDisposition hitDispId) {
         this.hitDispId = hitDispId;
     }
 

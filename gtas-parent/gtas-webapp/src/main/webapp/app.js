@@ -367,7 +367,8 @@ var app;
 
                     },
                     resolve: {
-                        newCases: function(caseDispositionService){
+                        newCases: function(caseDispositionService, spinnerService){
+                            spinnerService.show('html5spinner');
                             return caseDispositionService.getAllCases();
                         },
                         ruleCats: function(caseDispositionService){

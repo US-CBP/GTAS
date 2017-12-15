@@ -52,15 +52,25 @@ public class CaseDispositionServiceImplTest {
     public void testCreateCase() throws Exception {
     	Random _rand = new Random();
         List<Long> _tempHitList = new ArrayList<>();
-        _tempHitList.add(new Long(_rand.nextInt(1000)));
-        _tempHitList.add(new Long(_rand.nextInt(1000)));
-        _tempHitList.add(new Long(_rand.nextInt(1000)));
+        _tempHitList.add(new Long(1L));
+        //_tempHitList.add(new Long(_rand.nextInt(1000)));
+       // _tempHitList.add(new Long(_rand.nextInt(1000)));
 
-//        assertTrue((caseDispService.create((new Long(_rand.nextInt(1000))), (new Long(_rand.nextInt(1000))),
-//                TEST_PAX_NAME,TEST_PAX_TYPE, TEST_PAX_CTZ,
-//                new Date(), TEST_PAX_DOC, "", _tempHitList))
-//                .getId()!=null);
+        assertTrue((caseDispService.create((new Long(1L)), (new Long(5L)),
+                TEST_PAX_NAME,TEST_PAX_TYPE, TEST_PAX_CTZ,
+                new Date(), TEST_PAX_DOC, "", _tempHitList))
+                .getId()!=null);
+
+        for(int i=0; i<2000; i++){
+            caseDispService.create((new Long(_rand.nextInt(1000))), (new Long(_rand.nextInt(1000))),
+                    TEST_PAX_NAME,TEST_PAX_TYPE, TEST_PAX_CTZ,
+                    new Date(), TEST_PAX_DOC, "", _tempHitList);
+        }
+
+
+
     }
-    
+
+
 
 }

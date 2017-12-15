@@ -56,7 +56,7 @@ public class CaseDispositionController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
-    Case getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
+    CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
             throws ParseException {
         HashMap _tempMap = new HashMap();
 
@@ -86,7 +86,7 @@ public class CaseDispositionController {
             _tempRuleCatList = StreamSupport.stream(_tempIterable.spliterator(),false).collect(Collectors.toList());
         }
         for( RuleCat _tempRuleCat : _tempRuleCatList){
-            _tempRuleCat.setHitsDispositions(null);
+            //_tempRuleCat.setHitsDispositions(null);
         }
         return _tempRuleCatList;
     }
@@ -102,7 +102,7 @@ public class CaseDispositionController {
             aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
                                                             request.getHitId(), request.getCaseComments(),
                                                             request.getStatus(), request.getValidHit(),
-                                                            request.getMultipartFile());
+                                                            request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -124,7 +124,7 @@ public class CaseDispositionController {
             aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
-                    multipartFile);
+                    multipartFile, GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -146,7 +146,7 @@ public class CaseDispositionController {
             aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
-                    multipartFile);
+                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -46,7 +46,7 @@
                 var dfd = $q.defer();
                 dfd.resolve($http({
                     method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
+                    url: "/gtas/getOneHistDisp/",
                     data: param
                 }));
                 return dfd.promise;

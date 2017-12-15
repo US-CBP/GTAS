@@ -5,12 +5,14 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -48,11 +50,30 @@ public class Case extends BaseEntityAudit {
     private String description;
 
     @Column(name = "highPriorityRuleCatId", nullable = false)
-    private Long highPriorityRuleCatId;
+    private Long highPriorityRuleCatId = new Long(1L);
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name="case_id", referencedColumnName = "id")
-    private Set<HitsDisposition> hitsDispositions;
+
+    //@OneToMany(mappedBy = "aCase", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JoinColumn(name="case_id", referencedColumnName = "id")
+
+    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
+    private Set<HitsDisposition> hitsDispositions = new HashSet<>();
+
+    public void addHitsDisposition(HitsDisposition _tempHit){
+        hitsDispositions.add(_tempHit);
+        //_tempHit.setaCase(this);
+    }
+
+    @Column(name = "flightNumber")
+    private String flightNumber;
+
+    @Column(name = "lastName")
+    private String lastName;
+
+    @Column(name = "firstName")
+    private String firstName;
+
 
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
@@ -114,6 +135,8 @@ public class Case extends BaseEntityAudit {
         return paxName;
     }
 
+    public String getPassengerName(){return paxName;}
+
     public void setPaxName(String paxName) {
         this.paxName = paxName;
     }
@@ -142,6 +165,30 @@ public class Case extends BaseEntityAudit {
         this.highPriorityRuleCatId = highPriorityRuleCatId;
     }
 
+    public String getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(String flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -166,13 +213,13 @@ public class Case extends BaseEntityAudit {
                 .toHashCode();
     }
 
-    public String toString() {
-        return "Case{" +
-                "flightId=" + flightId +
-                ", paxId=" + paxId +
-                ", status='" + status + '\'' +
-                ", description='" + description + '\'' +
-                ", hitsDispositions=" + hitsDispositions +
-                '}';
-    }
+//    public String toString() {
+//        return "Case{" +
+//                "flightId=" + flightId +
+//                ", paxId=" + paxId +
+//                ", status='" + status + '\'' +
+//                ", description='" + description + '\'' +
+//                ", hitsDispositions=" + hitsDispositions +
+//                '}';
+//    }
 }

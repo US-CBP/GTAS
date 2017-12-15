@@ -66,10 +66,16 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
 		}
 		
 		if (dto.getPaxId() != null) {
-			predicates.add(cb.equal(root.<Long> get("paxId"),
-					dto.getPaxId()));
-		}
-		
+            predicates.add(cb.equal(root.<Long> get("paxId"),
+                    dto.getPaxId()));
+        }
+
+        if (dto.getPaxName() != null) {
+            String likeString = String.format("%%%s%%", dto.getPaxName().toUpperCase());
+            predicates.add(cb.like(root.<String>get("paxName"),likeString));
+        }
+
+
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		typedQuery = em.createQuery(q);
 
