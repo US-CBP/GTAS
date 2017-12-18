@@ -228,7 +228,7 @@ public class FlightPax implements Serializable {
 	public void setAverageBagWeight(double averageBagWeight) {
 		this.averageBagWeight = averageBagWeight;
 	}
-
+/**
 	@Override
     public int hashCode() {
         return Objects.hash(this.debarkation,this.embarkation,this.portOfFirstArrival);
@@ -247,6 +247,8 @@ public class FlightPax implements Serializable {
 
         FlightPax dataTarget = ((FlightPax) target);
 
-        return ((this.getFlight().equals(dataTarget.getFlight()) && (this.getPassenger().equals(dataTarget.getPassenger()))));
-    }    
+        return ((this.getFlight().getId().equals(dataTarget.getFlight().getId()) && 
+        		(this.getPassenger().getId().equals(dataTarget.getPassenger().getId()))));
+    }  
+    **/  
 }

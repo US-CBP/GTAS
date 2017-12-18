@@ -336,7 +336,14 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
-    			int passengerBags=p.getBags() == null?0:p.getBags().size();
+    			int passengerBags=0;
+    			if(StringUtils.isNotBlank(p.getBagNum())){
+    				try {
+    					passengerBags=Integer.parseInt(p.getBagNum());
+					} catch (NumberFormatException e) {
+						passengerBags=0;
+					}
+    			}
     			fp.setBagCount(passengerBags);
     			try {
 					if(StringUtils.isNotBlank(p.getTotalBagWeight()) && (passengerBags >0)){
@@ -347,7 +354,7 @@ public class PnrMessageService extends MessageLoaderService {
 				} catch (NumberFormatException e) {
 					// Don't set when get the parse exception
 				}
-    			p.getFlightPaxList().add(fp);
+    			//p.getFlightPaxList().add(fp);
     			
     		}
     	}

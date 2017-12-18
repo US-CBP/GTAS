@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,17 +164,25 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
-    			fp.setBagCount(p.getBags() == null?0:p.getBags().size());
+    			int bCount=0;
+    			if(StringUtils.isNotBlank(p.getBagNum())){
+    				try {
+						bCount=Integer.parseInt(p.getBagNum());
+					} catch (NumberFormatException e) {
+						bCount=0;
+					}
+    			}
+    			fp.setBagCount(bCount);
     			try {
 					double weight=p.getTotalBagWeight() == null?0:Double.parseDouble(p.getTotalBagWeight());
 					fp.setBagWeight(weight);
-					if(weight > 0 && fp.getBagCount() >0){
-						fp.setAverageBagWeight(Math.round(weight/fp.getBagCount()));
+					if(weight > 0 && bCount >0){
+						fp.setAverageBagWeight(Math.round(weight/bCount));
 					}
 				} catch (NumberFormatException e) {
 
 				}
-    			p.getFlightPaxList().add(fp);
+    			//p.getFlightPaxList().add(fp);
     			apisMessage.addToFlightPax(fp);
     		}
     	}

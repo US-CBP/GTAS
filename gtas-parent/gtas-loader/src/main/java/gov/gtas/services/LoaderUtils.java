@@ -103,6 +103,7 @@ public class LoaderUtils {
         if (vo.getResidencyCountry() != null) {
             p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
+        p.setBagNum(vo.getBagNum());
     }
 
     public Document createNewDocument(DocumentVo vo) throws ParseException {

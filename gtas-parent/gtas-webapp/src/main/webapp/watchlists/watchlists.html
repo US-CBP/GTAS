@@ -5,7 +5,7 @@
         <h1 class="filter-heading">{{activeTab}}
         </h1>
         <h3 ng-if="activeTab == 'Document'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup5" aria-controls="filterGroup5" class="filter-group-title">
-          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> {{'wl.doctype' | translate}}:
+          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Document Type:
         </h3>
         <div ng-if="activeTab == 'Document'"  id="filterGroup5" class="collapse in" aria-expanded="true">
           <div class="filter-group-content">
@@ -21,7 +21,7 @@
         </div>
         <h3 ng-if="activeTab == 'Document'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup1" aria-controls="filterGroup1" class="filter-group-title">
           <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          {{'wl.docnum' | translate}}:
+          Document Number:
         </h3>
         <div ng-if="activeTab == 'Document'" id="filterGroup1" class="collapse in" aria-expanded="true">
           <div class="filter-group-content">
@@ -33,7 +33,7 @@
         </div>
         <h3 ng-if="activeTab == 'Passenger'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup2" aria-controls="filterGroup2" class="filter-group-title">
           <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          {{'pass.firstname' | translate}}:
+          First Name:
         </h3>
         <div ng-if="activeTab == 'Passenger'" id="filterGroup2" class="collapse in" aria-expanded="true">
           <div class="filter-group-content">
@@ -45,7 +45,7 @@
         </div>
         <h3 ng-if="activeTab == 'Passenger'" aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup3" aria-controls="filterGroup3" class="filter-group-title">
           <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
-          {{'pass.lastname' | translate}}:
+          Last Name:
         </h3>
         <div ng-if="activeTab == 'Passenger'" id="filterGroup3" class="collapse in" aria-expanded="true">
           <div class="filter-group-content">
@@ -82,7 +82,7 @@
             ng-click="removeRow()"
             ng-disabled="rowSelected === null">
             <i class="fa fa-inverse fa-trash"></i>
-            <md-tooltip>{{'wl.remove' | translate}}</md-tooltip>
+            <md-tooltip>Remove</md-tooltip>
         </button>
         <button type="submit" class="btn btn-icon-only btn-primary pull-right">
             <i class="fa fa-inverse fa-floppy-o"></i>
@@ -109,16 +109,16 @@
       ng-click="removeRows()"
       ng-disabled="disableTrash">
       <i class="fa fa-inverse fa-trash"></i>
-      <md-tooltip>{{'wl.select' | translate}} {{activeTab}}(s)</md-tooltip>
+      <md-tooltip>Selected {{activeTab}}(s)</md-tooltip>
   </button>
   <button type="button" class="btn btn-primary pull-right"
       ng-click="updateWatchlistService()"
       ng-disabled="updating === true">
       <i class="fa fa-refresh"></i> Sync
-      <md-tooltip>{{'wl.title' | translate}}</md-tooltip>
+      <md-tooltip>Watchlist Service</md-tooltip>
   </button>
   <button ng-click="Add()" class="btn btn-default pull-right">
-      <md-tooltip>{{'btn.add' | translate}} {{activeTab}}</md-tooltip>
+      <md-tooltip>Add User {{activeTab}}</md-tooltip>
       <i class="fa fa-plus"></i> {{activeTab}}
   </button>
   <button onclick="angular.element(document.querySelector('.ui-grid-icon-menu'))[0].click();"
@@ -136,7 +136,7 @@
     <div class="overlay"></div>
     <div class="spinner">
       <button class="btn btn-default" disabled>
-          <i class="fa fa-spinner fa-spin"></i> {{'wl.wait' | translate}}...
+          <i class="fa fa-spinner fa-spin"></i> Please Wait...
       </button>
     </div>
   </spinner>

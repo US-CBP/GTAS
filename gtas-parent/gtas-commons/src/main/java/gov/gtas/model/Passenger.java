@@ -5,8 +5,10 @@
  */
 package gov.gtas.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -113,7 +115,7 @@ public class Passenger extends BaseEntityAudit {
     private Set<Bag> bags = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
-    private Set<FlightPax> flightPaxList = new HashSet<>();
+    private List<FlightPax> flightPaxList = new ArrayList<>();
     
 	public String getBagNum() {
 		return bagNum;
@@ -131,11 +133,11 @@ public class Passenger extends BaseEntityAudit {
 		this.totalBagWeight = totalBagWeight;
 	}
 
-	public Set<FlightPax> getFlightPaxList() {
+	public List<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}
 
-	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
+	public void setFlightPaxList(List<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
 	}
 
