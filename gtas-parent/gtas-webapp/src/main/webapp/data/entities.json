@@ -1469,7 +1469,7 @@
         ]    
       },
       {
-        "id": "FlightPax.embarkationCounty",
+        "id": "FlightPax.embarkationCountry",
         "label": "Embarkation - Country",
         "type": "string",
         "operators": [
