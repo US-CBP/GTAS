@@ -89,6 +89,9 @@ public class Passenger extends BaseEntityAudit {
 
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
+ 
+    @Column(name = "travel_frequency")
+    private Integer travelFrequency=0;
     
     @Transient
     private String totalBagWeight;
@@ -116,7 +119,16 @@ public class Passenger extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
     private List<FlightPax> flightPaxList = new ArrayList<>();
+
     
+	public Integer getTravelFrequency() {
+		return travelFrequency;
+	}
+
+	public void setTravelFrequency(Integer travelFrequency) {
+		this.travelFrequency = travelFrequency;
+	}
+
 	public String getBagNum() {
 		return bagNum;
 	}

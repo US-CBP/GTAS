@@ -39,6 +39,8 @@ import gov.gtas.parsers.pnrgov.PnrGovParser;
 import gov.gtas.parsers.pnrgov.PnrUtils;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.parsers.vo.PnrVo;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.LookUpRepository;
 import gov.gtas.repository.PnrRepository;
 import gov.gtas.util.LobUtils;
 
@@ -51,6 +53,9 @@ public class PnrMessageService extends MessageLoaderService {
     
     @Autowired
     private LoaderUtils utils;
+    
+    @Autowired
+    private LookUpRepository lookupRepo;
 
     private Pnr pnr;
 
@@ -322,8 +327,9 @@ public class PnrMessageService extends MessageLoaderService {
     
     private void createFlightPax(Pnr pnr){
     	Set<Flight> flights=pnr.getFlights();
+    	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	for(Flight f : flights){
-    		for(Passenger p:f.getPassengers()){
+    		for(Passenger p : f.getPassengers()){
     			FlightPax fp=new FlightPax();
     			fp.setDebarkation(p.getDebarkation());
     			fp.setDebarkationCountry(p.getDebarkCountry());
@@ -352,10 +358,13 @@ public class PnrMessageService extends MessageLoaderService {
 						fp.setBagWeight(weight);
 					}
 				} catch (NumberFormatException e) {
-					// Don't set when get the parse exception
+					// Do nothing
 				}
-    			//p.getFlightPaxList().add(fp);
-    			
+    			if(StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())){
+    				if(homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())){
+    					p.setTravelFrequency(p.getTravelFrequency()+1);
+    				}
+    			}
     		}
     	}
     }

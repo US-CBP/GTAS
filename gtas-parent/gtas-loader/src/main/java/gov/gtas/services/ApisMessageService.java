@@ -31,8 +31,10 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.paxlst.PaxlstParserUNedifact;
 import gov.gtas.parsers.paxlst.PaxlstParserUSedifact;
 import gov.gtas.parsers.vo.ApisMessageVo;
+import gov.gtas.repository.LookUpRepository;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.ApisMessageRepository;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.FlightPaxRepository;
 import gov.gtas.util.LobUtils;
 
@@ -45,6 +47,9 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private FlightPaxRepository paxDao;
+
+    @Autowired
+    private LookUpRepository lookupRepo;
     
     private ApisMessage apisMessage;
 
@@ -149,6 +154,7 @@ public class ApisMessageService extends MessageLoaderService {
     
     private void createFlightPax(ApisMessage apisMessage){
     	Set<Flight> flights=apisMessage.getFlights();
+    	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	for(Flight f : flights){
     		for(Passenger p:f.getPassengers()){
     			FlightPax fp=new FlightPax();
@@ -182,7 +188,11 @@ public class ApisMessageService extends MessageLoaderService {
 				} catch (NumberFormatException e) {
 
 				}
-    			//p.getFlightPaxList().add(fp);
+    			if(StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())){
+    				if(homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())){
+    					p.setTravelFrequency(p.getTravelFrequency()+1);
+    				}
+    			}
     			apisMessage.addToFlightPax(fp);
     		}
     	}
