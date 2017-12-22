@@ -22,7 +22,8 @@ public enum PassengerMapping implements IEntityMapping {
     MIDDLE_NAME ("middleName", "Middle Name", TypeEnum.STRING.getType()),
     RESIDENCY_COUNTRY ("residencyCountry", "Residency Country", TypeEnum.STRING.getType()), 
     SEAT ("seat", "Seat", TypeEnum.STRING.getType()),
-    PASSENGER_TYPE ("passengerType", "Type", TypeEnum.STRING.getType()); 
+    PASSENGER_TYPE ("passengerType", "Type", TypeEnum.STRING.getType()),
+	TRAVEL_FREQUENCY ("travelFrequency", "Travel Frequency", TypeEnum.STRING.getType());
     
     private String fieldName;
     private String friendlyName;

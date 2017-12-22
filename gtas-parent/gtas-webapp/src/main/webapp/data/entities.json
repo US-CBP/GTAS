@@ -889,6 +889,21 @@
         "multiple": true,
         "plugin": "selectize",
         "dataSource": "passenger_types"
+      },
+      {
+        "id": "Passenger.travelFrequency",
+        "label": "Travel Frequency",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]                       
       }
     ]
   },
