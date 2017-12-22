@@ -25,6 +25,8 @@ public class CaseRequestDto implements Serializable {
 
     private Long flightId;
 
+    private Long flightNumber;
+
     private Long paxId;
 
     private Long hitId;
@@ -38,6 +40,8 @@ public class CaseRequestDto implements Serializable {
     private File file;
 
     private String paxName;
+
+    private String lastName;
 
     private Long ruleCatId;
 
@@ -168,6 +172,22 @@ public class CaseRequestDto implements Serializable {
 
     public void setPaxName(String paxName) {
         this.paxName = paxName;
+    }
+
+    public Long getFlightNumber() {
+        return flightNumber;
+    }
+
+    public void setFlightNumber(Long flightNumber) {
+        this.flightNumber = flightNumber;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override

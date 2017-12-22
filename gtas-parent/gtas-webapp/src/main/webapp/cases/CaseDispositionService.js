@@ -52,6 +52,23 @@
                 return dfd.promise;
             }
 
+            function getByQueryParams(model){
+                var param = {
+                    pageSize: "10",
+                    pageNumber: "1",
+                    flightNumber: model.flightNumber,
+                    lastName: model.lastName,
+                    status: model.status
+                };
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/getOneHistDisp/",
+                    data: param
+                }));
+                return dfd.promise;
+            }
+
             function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus,
                                            paramValidHit, file){
                 var requestDto = {
@@ -178,7 +195,8 @@
                 getRuleCats:getRuleCats,
                 updateHitsDisposition:updateHitsDisposition,
                 getPagedCases: getPagedCases,
-                postManualCase: postManualCase
+                postManualCase: postManualCase,
+                getByQueryParams: getByQueryParams
             });
         })
 }());

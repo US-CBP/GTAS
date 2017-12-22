@@ -18,6 +18,13 @@
             $scope.pageSize = 10;
             $scope.pageNumber = 1;
 
+            $scope.model={
+                name: "",
+                flightNumber: "",
+                status : "",
+                priority: ""
+            };
+
             $scope.errorToast = function (error) {
                 $mdToast.show($mdToast.simple()
                     .content(error)
@@ -154,8 +161,19 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['name', 'flight', 'status', 'priority', 'dateLabel', 'date'];
+              var filters = ['name', 'flight', 'status']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             }
-})
+
+
+            $scope.filter = function () {
+
+            };
+
+            $scope.reset = function () {
+                $scope.model.reset();
+                resolvePage();
+            };
+
+        })
 }());
