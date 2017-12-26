@@ -57,13 +57,13 @@
                     pageSize: "10",
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
-                    lastName: model.lastName,
+                    lastName: model.name,
                     status: model.status
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
                     method: 'post',
-                    url: "/gtas/getOneHistDisp/",
+                    url: "/gtas/getAllCaseDispositions/",
                     data: param
                 }));
                 return dfd.promise;

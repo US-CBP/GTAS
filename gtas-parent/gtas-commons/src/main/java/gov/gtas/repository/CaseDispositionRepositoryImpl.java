@@ -75,6 +75,10 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             predicates.add(cb.like(root.<String>get("paxName"),likeString));
         }
 
+        if (dto.getLastName() != null) {
+            String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
+            predicates.add(cb.like(root.<String>get("lastName"),likeString));
+        }
 
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		typedQuery = em.createQuery(q);

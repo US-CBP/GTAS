@@ -25,12 +25,12 @@
                 priority: ""
             };
 
-            $scope.errorToast = function (error) {
+            $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
                     .content(error)
                     .position('top right')
                     .hideDelay(4000)
-                    .parent($scope.toastParent));
+                    .parent(toastPosition));
             };
 
             var exporter = {
@@ -163,11 +163,26 @@
             $scope.filterCheck = function(option) {
               var filters = ['name', 'flight', 'status']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
-            }
+            };
 
 
             $scope.filter = function () {
-
+                spinnerService.show('html5spinner');
+                var toastPosition = angular.element(document.getElementById('casesGrid'));
+                caseDispositionService.getByQueryParams($scope.model).then(
+                    function(data){
+                        if(data!=null && data.data.cases!=null){
+                            if(data.data.cases.length < 1){
+                                $scope.errorToast("No Results Found", toastPosition);
+                            }
+                        $scope.casesDispGrid.data = data.data.cases;
+                        $scope.casesDispGrid.totalItems = data.data.totalCases;
+                            }
+                            else{
+                            $scope.errorToast("No Results Found", toastPosition)
+                        }
+                        spinnerService.hide('html5spinner');
+                    });
             };
 
             $scope.reset = function () {
