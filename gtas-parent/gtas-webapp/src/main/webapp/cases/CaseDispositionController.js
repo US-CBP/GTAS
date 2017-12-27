@@ -44,6 +44,7 @@
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
+                $scope.statusGroup = $scope.dispositionStatuses;
             });
 
             $scope.assignRuleCats = function(){
@@ -76,6 +77,7 @@
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
+                $scope.statusGroup = $scope.dispositionStatuses;
             });
 
             $scope.resolvePage = function () {
@@ -161,14 +163,14 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['name', 'flight', 'status']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
 
             $scope.filter = function () {
                 spinnerService.show('html5spinner');
-                var toastPosition = angular.element(document.getElementById('casesGrid'));
+                var toastPosition = angular.element(document.getElementById('casesDispGrid'));
                 caseDispositionService.getByQueryParams($scope.model).then(
                     function(data){
                         if(data!=null && data.data.cases!=null){

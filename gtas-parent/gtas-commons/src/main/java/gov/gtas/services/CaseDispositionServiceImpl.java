@@ -563,15 +563,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
         List<CaseVo> vos = new ArrayList<>();
             CaseVo vo = new CaseVo();
-            //f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
             vo.setHitsDispositions(aCase.getHitsDispositions());
-            //f.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
             vo.setHitsDispositionVos(returnHitsDisposition(aCase.getHitsDispositions()));
             CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
-            //populatePassengerDetails(vo, f.getFlightId(), f.getPaxId());
-            //BeanUtils.copyProperties(f, vo);
-            //manageHitsDispositionCommentsAttachments(f.getHitsDispositions());
-            //CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
             manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
             vos.add(vo);
         return new CasePageDto(vos, new Long(1L));
@@ -585,21 +579,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     public CasePageDto findAll(CaseRequestDto dto) {
 
         List<CaseVo> vos = new ArrayList<>();
-        //caseDispositionRepository.flush();
 
         Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
         for (Case f : tuple2.getRight()) {
             CaseVo vo = new CaseVo();
-            //f.getHitsDispositions().stream().forEach(x -> x.getRuleCat());
-                //vo.setHitsDispositions(f.getHitsDispositions());
-            //f.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
-                //vo.setHitsDispositionVos(returnHitsDisposition(f.getHitsDispositions()));
             CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
-            //populatePassengerDetails(vo, f.getFlightId(), f.getPaxId());
-            //BeanUtils.copyProperties(f, vo);
-            //manageHitsDispositionCommentsAttachments(f.getHitsDispositions());
-            //CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
-            //manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
             vos.add(vo);
         }
 
