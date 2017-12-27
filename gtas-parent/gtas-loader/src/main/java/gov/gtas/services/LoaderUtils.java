@@ -5,8 +5,10 @@
  */
 package gov.gtas.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,7 @@ import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.ReportingParty;
+import gov.gtas.model.TicketFare;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.FlightDirectionCode;
@@ -50,6 +53,7 @@ import gov.gtas.parsers.vo.PaymentFormVo;
 import gov.gtas.parsers.vo.PhoneVo;
 import gov.gtas.parsers.vo.PnrVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
+import gov.gtas.parsers.vo.TicketFareVo;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.LookUpRepository;
 
@@ -104,8 +108,25 @@ public class LoaderUtils {
             p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
         p.setBagNum(vo.getBagNum());
+        if(vo.getTickets() != null && vo.getTickets().size() >0){
+        	updateTicketDetails(vo,p);
+        }
     }
 
+    public void updateTicketDetails(PassengerVo vo, Passenger p){
+    	for(TicketFareVo t : vo.getTickets()){
+    		TicketFare tf = new TicketFare();
+    		tf.setCurrencyCode(t.getCurrencyCode());
+    		tf.setNumberOfBooklets(t.getNumberOfBooklets());
+    		tf.setPaymentAmount(t.getPaymentAmount());
+    		tf.setTicketless(t.isTicketless());
+    		tf.setTicketNumber(t.getTicketNumber());
+    		tf.setTicketType(t.getTicketType());
+    		tf.setPassenger(p);
+    		p.getTickets().add(tf);
+    	}
+
+    }
     public Document createNewDocument(DocumentVo vo) throws ParseException {
         Document d = new Document();
         updateDocument(vo, d);

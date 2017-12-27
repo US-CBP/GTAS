@@ -70,10 +70,12 @@ import gov.gtas.parsers.vo.PaymentFormVo;
 import gov.gtas.parsers.vo.PhoneVo;
 import gov.gtas.parsers.vo.PnrVo;
 import gov.gtas.parsers.vo.SeatVo;
+import gov.gtas.parsers.vo.TicketFareVo;
 
 
 public final class PnrGovParser extends EdifactParser<PnrVo> {
    
+	private PassengerVo currentPassenger=null;
     public PnrGovParser() {
         this.parsedMessage = new PnrVo();
     }
@@ -281,6 +283,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 p.getDocuments().addAll(visas);
                 parsedMessage.getPassengers().add(p);
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
+                currentPassenger=p;
                 
             } else {
                 throw new ParseException("Invalid passenger: " + p);
@@ -309,8 +312,28 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * Not currently using this.
      */
     private void processGroup3_TicketCost(TKT tkt) throws ParseException {
-        getConditionalSegment(MON.class);
+    	MON mon = getConditionalSegment(MON.class);
         getConditionalSegment(PTK.class);
+    	if(tkt != null){
+    		TicketFareVo tvo = new TicketFareVo();
+    		if(tkt.isTicketless()){
+    			tvo.setTicketNumber("0");
+    			tvo.setTicketless(tkt.isTicketless());
+    		}else{
+        		tvo.setTicketType(tkt.getTicketType());
+        		tvo.setTicketNumber(tkt.getTicketNumber());
+        		tvo.setNumberOfBooklets(tkt.getNumberOfBooklets());
+        		tvo.setTicketless(false);   			
+    		}
+
+    		if(mon != null){
+    			tvo.setCurrencyCode(mon.getCurrencyCode());
+    			tvo.setPaymentAmount(mon.getPaymentAmount());
+    		}
+    		if(tvo.isValid() && currentPassenger != null && currentPassenger.isValid()){
+    			currentPassenger.getTickets().add(tvo);
+    		}
+    	}
 
         for (;;) {
             TXD txd = getConditionalSegment(TXD.class);
