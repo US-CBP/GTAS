@@ -80,7 +80,7 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             predicates.add(cb.like(root.<String>get("paxName"),likeString));
         }
 
-        if (dto.getStatus() != null) { 
+        if (dto.getStatus() != null) {
             String likeString = String.format("%%%s%%", dto.getStatus().toUpperCase());
             predicates.add(cb.like(root.<String>get("status"),likeString));
         }
@@ -88,6 +88,11 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         if (dto.getFlightNumber() != null) {
             predicates.add(cb.equal(root.<Long> get("flightNumber"),
                     dto.getFlightNumber()));
+        }
+
+        if (dto.getRuleCatId() != null) {
+            predicates.add(cb.equal(root.<Long> get("highPriorityRuleCatId"),
+                    dto.getRuleCatId()));
         }
 
 		q.select(root).where(predicates.toArray(new Predicate[] {}));

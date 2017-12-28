@@ -17,12 +17,20 @@
             $scope.ruleCats=ruleCats.data;
             $scope.pageSize = 10;
             $scope.pageNumber = 1;
+            $scope.emptyString = "";
 
             $scope.model={
-                name: "",
-                flightNumber: "",
-                status : "",
-                priority: ""
+                name: $scope.emptyString,
+                flightNumber: $scope.emptyString,
+                status : $scope.emptyString,
+                priority: $scope.emptyString,
+                ruleCat: $scope.emptyString
+            };
+
+            $scope.model.reset = function(){
+                angular.forEach($scope.model, function(item, index){
+                    item = $scope.emptyString;
+                });
             };
 
             $scope.errorToast = function (error, toastPosition) {
@@ -163,7 +171,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
@@ -189,7 +197,7 @@
 
             $scope.reset = function () {
                 $scope.model.reset();
-                resolvePage();
+                $scope.resolvePage();
             };
 
         })
