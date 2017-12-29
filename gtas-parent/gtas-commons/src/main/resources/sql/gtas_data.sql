@@ -55,6 +55,8 @@ insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
+insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.70','Threshold which to determine name match');
+insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
 
 -- ----------------------------
 -- Records of dashboard_message_stats

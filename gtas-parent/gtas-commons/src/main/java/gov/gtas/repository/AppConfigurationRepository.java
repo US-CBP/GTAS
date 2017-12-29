@@ -19,6 +19,10 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String UPLOAD_DIR = "UPLOAD_DIR";
     public static String DASHBOARD_AIRPORT = "DASHBOARD_AIRPORT";
     public static String SMS_TOPIC_ARN = "SMS_TOPIC_ARN";
+    public static String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
+    public static String FLIGHT_RANGE = "FLIGHT_RANGE";
 
     public AppConfiguration findByOption(String option);
+    public AppConfiguration save(AppConfiguration appConfig);
+    
 }

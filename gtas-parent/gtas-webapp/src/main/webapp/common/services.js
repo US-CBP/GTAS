@@ -147,6 +147,26 @@
                 ]
             };
         })
+        .service('defaultSettingsService', function($http, $q) {
+          var SETTINGS = "/gtas/settingsinfo"
+          var dfd = $q.defer();
+          function getAllSettings(){
+            dfd.resolve($http.get(SETTINGS));
+            return dfd.promise;
+          }
+          function saveSettings(settings){
+            return $http({
+              method: 'PUT',
+              url: SETTINGS,
+              params: settings,
+              headers: 'Accept:application/json'
+            });
+          }
+          return {
+            getAllSettings: getAllSettings,
+            saveSettings: saveSettings
+          }
+        })
         .service('userService', function ($http, $q) {
             var USER_ROLES_URL = "/gtas/roles/",
                 USERS_URL = "/gtas/users/",

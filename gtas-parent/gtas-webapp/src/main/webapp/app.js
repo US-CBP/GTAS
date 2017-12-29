@@ -238,8 +238,7 @@ var app;
                             controller: 'DashboardController',
                             templateUrl: 'dashboard/dashboard.html'
                         }
-                    }
-                    ,
+                    },
                     resolve: {
                         sampleData: function(){
                             return false;
@@ -261,6 +260,11 @@ var app;
                             controller: 'AdminCtrl',
                             templateUrl: 'admin/admin.html'
                         }
+                    },
+                    resolve: {
+                      settingsInfo: function(defaultSettingsService){
+                        return defaultSettingsService.getAllSettings();
+                      }
                     }
                 })
                 .state('modifyUser', {
