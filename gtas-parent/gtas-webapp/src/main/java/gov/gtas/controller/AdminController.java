@@ -17,8 +17,6 @@ import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
 
-import static org.mockito.Matchers.anyBoolean;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
