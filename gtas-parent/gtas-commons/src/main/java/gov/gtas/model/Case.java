@@ -28,6 +28,12 @@ public class Case extends BaseEntityAudit {
     @Column(name = "paxId", nullable = false)
     private Long paxId;
 
+    @Column(name = "eta_date", nullable = true)
+    private Date flightETADate;
+
+    @Column(name = "etd_date", nullable = true)
+    private Date flightETDDate;
+
     @Column(name = "passengerName", nullable = true)
     private String paxName;
 
@@ -51,10 +57,6 @@ public class Case extends BaseEntityAudit {
 
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
-
-
-    //@OneToMany(mappedBy = "aCase", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JoinColumn(name="case_id", referencedColumnName = "id")
 
     @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
@@ -111,7 +113,24 @@ public class Case extends BaseEntityAudit {
         return paxId;
     }
 
+    public Date getFlightETADate() {
+        return flightETADate;
+    }
+
+    public void setFlightETADate(Date flightETADate) {
+        this.flightETADate = flightETADate;
+    }
+
+    public Date getFlightETDDate() {
+        return flightETDDate;
+    }
+
+    public void setFlightETDDate(Date flightETDDate) {
+        this.flightETDDate = flightETDDate;
+    }
+
     public void setPaxId(Long paxId) {
+
         this.paxId = paxId;
     }
 
@@ -188,6 +207,8 @@ public class Case extends BaseEntityAudit {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

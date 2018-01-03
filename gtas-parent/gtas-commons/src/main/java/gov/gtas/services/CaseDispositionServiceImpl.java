@@ -721,7 +721,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     /**
      * Utility method to pull passenger details for the cases view
      *
-     * @param aCaseVo
+     * @param aCase
      * @param flightId
      * @param paxId
      */
@@ -734,6 +734,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         }
         if(_tempFlight!=null) {
             aCase.setFlightNumber(_tempFlight.getFlightNumber());
+            aCase.setFlightETADate(_tempFlight.getEtaDate());
+            aCase.setFlightETDDate(_tempFlight.getEtdDate());
         }
     }
 

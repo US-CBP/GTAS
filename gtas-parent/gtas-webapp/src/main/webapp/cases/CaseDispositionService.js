@@ -59,7 +59,9 @@
                     flightNumber: model.flightNumber,
                     lastName: model.name,
                     status: model.status,
-                    ruleCatId: model.ruleCat
+                    ruleCatId: model.ruleCat,
+                    etaStart: model.etaStart,
+                    etaEnd: model.etaEnd
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({

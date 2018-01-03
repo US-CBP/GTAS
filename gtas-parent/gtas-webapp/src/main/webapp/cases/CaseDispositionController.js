@@ -24,12 +24,14 @@
                 flightNumber: $scope.emptyString,
                 status : $scope.emptyString,
                 priority: $scope.emptyString,
-                ruleCat: $scope.emptyString
+                ruleCat: $scope.emptyString,
+                etaStart: $scope.emptyString,
+                etaEnd: $scope.emptyString
             };
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
-                    item = $scope.emptyString;
+                    index = $scope.emptyString;
                 });
             };
 
@@ -171,7 +173,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 

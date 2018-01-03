@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -93,6 +94,20 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         if (dto.getRuleCatId() != null) {
             predicates.add(cb.equal(root.<Long> get("highPriorityRuleCatId"),
                     dto.getRuleCatId()));
+        }
+
+        Predicate etaCondition;
+        if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
+
+            Path<Date> eta = root.<Date> get("flightETADate");
+            Predicate startPredicate = cb.or(
+                    cb.isNull(eta),
+                    cb.greaterThanOrEqualTo(eta,
+                            dto.getEtaStart()));
+            Predicate endPredicate = cb.or(cb.isNull(eta),
+                    cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
+            etaCondition = cb.and(startPredicate, endPredicate);
+            predicates.add(etaCondition);
         }
 
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
