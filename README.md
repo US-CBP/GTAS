@@ -18,46 +18,6 @@ GTAS parses data provided by airline departure control systems (API) and reserva
 * View Flights and Passengers Interface
 * Query Flights and Passengers Interface
 
-## Multilingual
-
-GTAS currently supports 31 languages:
-
-* Arabic
-* Chinese
-* Czech 
-* Danish
-* German
-* Greek
-* English
-* Spanish
-* French
-* Irish
-* Hindi
-* Hungarian
-* Indonesian
-* Icelandic
-* Italian
-* Japanese
-* Korean
-* Malay
-* Maltese
-* Dutch
-* Norwegian
-* Polish
-* Portugese
-* Slovak
-* Slovenian
-* Serbian
-* Swedish 
-* Thai
-* Turkish
-* Ukrainian
-* Vietnamese
-
-### Add Support for your Language
-
-If you want to add support for a language that is not supported out-of-box by GTAS, please add a remark on the issues list and label it as "new feature"
-
 ## Issues
 
 Find a bug or want to request a new feature? Please let us know by submitting an issue. The GTAS team manages all GTAS updates, bugs, and feature additions via GitHub's public issue tracker in this repository. In the spirit of open source software, everyone is encouraged to help improve this project. 
