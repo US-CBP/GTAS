@@ -39,7 +39,6 @@ import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.LookUpRepository;
 import gov.gtas.repository.PassengerRepository;
-import gov.gtas.services.SmsService;
 import gov.gtas.util.ApisGeneratorUtil;
 import gov.gtas.vo.passenger.AttachmentVo;
 
@@ -59,9 +58,6 @@ public class UploadController {
     @Autowired
     private AttachmentRepository attRepo;
 
-    @Autowired
-    private SmsService sms;
-
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value = "/upload")
     public void upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) throws IOException {
@@ -71,7 +67,6 @@ public class UploadController {
         }
         
         writeFile(file);
-        sms.sendMessage("FILE UPLOAD: " + file.getOriginalFilename());
         logger.info(String.format("received %s from %s", file.getOriginalFilename(), username));
     }
     
