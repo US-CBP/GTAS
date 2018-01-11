@@ -17,6 +17,7 @@ import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.Loader;
 import gov.gtas.services.LoaderStatistics;
+import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
 
 import java.io.File;
@@ -79,6 +80,9 @@ public class LoaderScheduler {
 
 	@Autowired
 	private AuditLogPersistenceService auditLogPersistenceService;
+	
+	@Autowired
+	private MatchingService matchingService;
 
 	@Value("${message.dir.origin}")
 	private String messageOriginDir;
@@ -98,7 +102,7 @@ public class LoaderScheduler {
 	@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
-
+		logger.info("entering loader scheduler portion of jobScheduling");
 		boolean exitStatus = false;
 		Path dInputDir = Paths.get(messageOriginDir).normalize();
 		File inputDirFile = dInputDir.toFile();
@@ -132,6 +136,11 @@ public class LoaderScheduler {
 			logger.warn("No inputType selection.");
 		}
 		writeAuditLog(stats);
+		logger.info("exiting loader scheduler portion of jobScheduling");
+		
+		logger.info("entering matching service portion of jobScheduling");
+		matchingService.findMatchesBasedOnTimeThreshold();
+		logger.info("exiting matching service portion of jobScheduling");
 		
 		logger.info("entering rule running portion of jobScheduling()");
 		try {

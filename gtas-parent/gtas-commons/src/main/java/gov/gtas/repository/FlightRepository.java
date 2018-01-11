@@ -77,5 +77,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     
     @Query("SELECT c FROM CodeShareFlight c where c.operatingFlightId = :flightId group by c.marketingFlightNumber")
     public List<CodeShareFlight> getCodeSharesForFlight(@Param("flightId") Long flightId);
+    
+    @Query("SELECT f FROM Flight f WHERE f.eta BETWEEN :dateTimeStart AND :dateTimeEnd "
+    									 + "OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd")
+    public List<Flight> getInboundAndOutboundFlightsWithinTimeFrame(@Param("dateTimeStart")Date date1,
+    											  @Param("dateTimeEnd") Date date2);
 
 }
