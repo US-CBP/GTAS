@@ -16,10 +16,15 @@
         <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
     </div>
   </div>
-  <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
-    <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
-  </button>
-<!-- href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}" -->
+  <div class="flex justify-around">
+    <button type="submit" class="btn btn-warning" ng-click="showConfirm()">
+      <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+    </button>
+    <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
+      <i class="fa fa-download" aria-hidden="true"></i> &nbsp;
+      Pax Detail
+    </a>
+  </div>
 
 
   <md-button class="md-primary md-button center-btn" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}"
