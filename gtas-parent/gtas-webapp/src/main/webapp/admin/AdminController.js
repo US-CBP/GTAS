@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, caseService, errorService, $location, $mdToast, $document, $http) {
+app.controller('AdminCtrl', function ($scope, $mdDialog, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, apiAccessService, auditService, caseService, errorService, $location, $mdToast, $document, $http) {
     'use strict';
 
     $scope.settingsInfo = settingsInfo.data;
@@ -18,6 +18,10 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
     var setUserData = function (data) {
         $scope.userGrid.data = data;
         };
+
+    var setApiAccessData = function (data) {
+      $scope.apiAccessGrid.data = data;
+      };
 
     var setAuditData = function (data) {
         $scope.auditGrid.data = data;
@@ -38,6 +42,10 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
     var setupUserGrid = function(){
         $scope.userGrid = gridOptionsLookupService.getGridOptions('admin');
         $scope.userGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('admin');
+    }
+    var setupApiAccessGrid = function(){
+        $scope.apiAccessGrid = gridOptionsLookupService.getGridOptions('apiAccess');
+        $scope.apiAccessGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('apiAccess');
     }
     var setupAuditGrid = function(){
         $scope.auditGrid = gridOptionsLookupService.getGridOptions('audit');
@@ -84,6 +92,7 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
     $scope.selectedTabIndex = 0;
 
     setupUserGrid();
+    setupApiAccessGrid();
     setupAuditGrid();
     setupErrorGrid();
     $scope.auditGrid.onRegisterApi = selectRow;
@@ -102,6 +111,9 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
                 $scope.toastParent = $document[0].getElementById('ErrorFilterPanel');
                 $scope.refreshError();
                 break;
+          case 4:
+            $scope.refreshApiAccess();
+            break;
         }
       });
 
@@ -123,6 +135,9 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
         var model = $scope.errorModel;
         $scope.selectedErrorItem = null;
         errorService.getErrorData(model.code, model.timestampStart, model.timestampEnd).then(setErrorData, $scope.errorToast);
+    };
+    $scope.refreshApiAccess = function(){
+        apiAccessService.getAllApiAccessData().then(setApiAccessData, $scope.errorToast);
     };
     $scope.errorToast = function(error){
         $mdToast.show($mdToast.simple()
@@ -214,4 +229,45 @@ app.controller('AdminCtrl', function ($scope, gridOptionsLookupService, userServ
     }
 
     $scope.loadDispStatuses();
+
+    $scope.saveUser = function(user){
+      if($scope.saveType==="create"){
+        apiAccessService.createApiAccessData(user).then($scope.refreshApiAccess, $scope.errorToast);
+      }
+      if($scope.saveType==="update"){
+        apiAccessService.updateApiAccessData(user).then($scope.refreshApiAccess, $scope.errorToast)
+      }
+      $mdDialog.cancel();
+    }
+    $scope.userManagement = function (user, ev) {
+      if(user==null){
+        $scope.saveType = "create"
+      }
+      else {
+        $scope.saveType ="update";
+      }
+      $scope.user = user;
+      $scope.userModal(ev);
+    }
+    //Modal Configs
+    $scope.customFullscreen = false;
+    $scope.userModal = function(ev) {
+      $mdDialog.show({
+        controller: DialogController,
+        templateUrl: 'dialog/user.tmpl.html',
+        parent: angular.element(document.body),
+        scope: $scope.$new(),
+        targetEvent: ev,
+        clickOutsideToClose:true,
+        fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+      });
+    };
+    function DialogController($scope, $mdDialog, $sce) {
+      $scope.hide = function() {
+        $mdDialog.hide();
+      };
+      $scope.cancel = function() {
+        $mdDialog.cancel();
+      };
+    }
 });

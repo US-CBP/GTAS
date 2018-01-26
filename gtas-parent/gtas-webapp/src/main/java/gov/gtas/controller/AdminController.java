@@ -7,13 +7,19 @@ package gov.gtas.controller;
 
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.Status;
 import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.ApiAccess;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.ApiAccessService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.security.UserData;
 import gov.gtas.util.DateCalendarUtils;
+import gov.gtas.validator.UserDataValidator;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
 
@@ -33,11 +39,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,6 +68,9 @@ public class AdminController {
 
 	@Autowired
 	private ErrorPersistenceService errorService;
+	
+	@Autowired
+	private ApiAccessService apiAccessService;
 
 	@RequestMapping(method = RequestMethod.GET, value = "/auditlog")
 	public List<AuditRecordVo> getAuditlog(
@@ -88,7 +99,19 @@ public class AdminController {
 		}
 		return fetchAuditLogData(user, actionType, st, nd);
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
+	public List<ApiAccess> getAllApiAccess(){
+		return apiAccessService.findAll();
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ApiAccess createApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+		return apiAccessService.create(apiAccess);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ApiAccess updateApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+		return apiAccessService.update(apiAccess);
+	}
 	@RequestMapping(method = RequestMethod.GET, value = "/errorlog")
 	public List<ErrorDetailInfo> getErrorlog(
 			@RequestParam(value = "code", required = false) String code,
