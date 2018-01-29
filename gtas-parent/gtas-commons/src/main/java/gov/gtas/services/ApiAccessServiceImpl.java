@@ -20,13 +20,15 @@ import gov.gtas.repository.ApiAccessRepository;
 @Service
 public class ApiAccessServiceImpl implements ApiAccessService {
 
+	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Resource
     private ApiAccessRepository apiAccessRepository;
     
     @Override
     @Transactional
     public ApiAccess create(ApiAccess apiAccess) {
-    	apiAccess.setPassword((new BCryptPasswordEncoder()).encode(apiAccess
+    	apiAccess.setPassword(passwordEncoder.encode(apiAccess
 				.getPassword()));
         return apiAccessRepository.save(apiAccess);
     }
@@ -51,8 +53,8 @@ public class ApiAccessServiceImpl implements ApiAccessService {
     @Transactional
     public ApiAccess update(ApiAccess apiAccess) {
     	//If the password changed we need to encrypt it
-    	if(!findById(apiAccess.getId()).getPassword().equals(apiAccess.getPassword())) {
-        	apiAccess.setPassword((new BCryptPasswordEncoder()).encode(apiAccess
+    	if(!passwordEncoder.matches(findById(apiAccess.getId()).getPassword(),apiAccess.getPassword())) {
+        	apiAccess.setPassword(passwordEncoder.encode(apiAccess
     				.getPassword()));
     	}
         return apiAccessRepository.save(apiAccess);
