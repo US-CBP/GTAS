@@ -202,6 +202,13 @@
                       data: user
                   });
                   return (request.then(handleSuccess, handleError));
+                },
+                deleteApiAccessData: function(id){
+                  var request = $http({
+                      method: "delete",
+                      url: API_ACCESS_URL+"/"+id,
+                  });
+                  return (request.then(handleSuccess, handleError));
                 }
             };
         })

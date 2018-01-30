@@ -27,6 +27,10 @@
           <input class="mdl-textfield__input" type="text" id="dg-org" ng-model="user.organization" required>
           <label class="mdl-textfield__label static-label" for="dg-org">Organization</label>
         </div>
+        <button ng-if="user && user.id" ng-click="deleteUser(user)" class="btn btn-icon-only btn-default">
+          <i class="fa fa-trash-o" aria-hidden="true"></i>
+          <span class="sr-only">Delete</span>
+        </button>
         <button type="submit" class="btn btn-icon-only btn-primary">
           <i class="fa fa-inverse fa-floppy-o"></i>
           <span class="sr-only">Save</span>

@@ -239,6 +239,10 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, gridOptionsLookupServic
       }
       $mdDialog.cancel();
     }
+    $scope.deleteUser = function(user){
+      apiAccessService.deleteApiAccessData(user.id).then($scope.refreshApiAccess, $scope.errorToast)
+      $mdDialog.cancel();
+    }
     $scope.userManagement = function (user, ev) {
       if(user==null){
         $scope.saveType = "create"

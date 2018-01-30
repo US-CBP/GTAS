@@ -112,6 +112,10 @@ public class AdminController {
 	public ApiAccess updateApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
 		return apiAccessService.update(apiAccess);
 	}
+	@RequestMapping(method = RequestMethod.DELETE, value = "/apiAccess/{id}")
+	public ApiAccess deleteApiAccess(@PathVariable Long id) {
+		return apiAccessService.delete(id);
+	}
 	@RequestMapping(method = RequestMethod.GET, value = "/errorlog")
 	public List<ErrorDetailInfo> getErrorlog(
 			@RequestParam(value = "code", required = false) String code,
