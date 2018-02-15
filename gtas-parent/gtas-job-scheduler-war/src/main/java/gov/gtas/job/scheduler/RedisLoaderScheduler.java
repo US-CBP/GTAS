@@ -39,6 +39,9 @@ public class RedisLoaderScheduler {
     @Value("${inbound.loader.jms.queue}")
     private String inboundLoaderQueue;
 
+    @Value("${outbound.loader.jms.queue}")
+    private String outboundLoaderQueue;
+
     @Autowired
     RedisLoader loader;
 
@@ -47,7 +50,7 @@ public class RedisLoaderScheduler {
 
     private static RedissonClient client;
 
-    //@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
         Path dInputDir = Paths.get(messageOriginDir).normalize();
         File inputDirFile = dInputDir.toFile();
@@ -147,7 +150,7 @@ public class RedisLoaderScheduler {
             byte[] raw = FileUtils.readSmallFile(filePath);
             String tmp = new String(raw, StandardCharsets.US_ASCII);
 
-            sender.sendFileContent(inboundLoaderQueue, tmp);
+            sender.sendFileContent(inboundLoaderQueue, tmp, f.getName());
         }
 
 

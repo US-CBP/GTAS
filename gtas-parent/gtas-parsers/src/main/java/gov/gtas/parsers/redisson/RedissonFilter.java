@@ -5,12 +5,16 @@
  */
 package gov.gtas.parsers.redisson;
 
+import gov.gtas.parsers.edifact.EdifactLexer;
+import gov.gtas.parsers.redisson.jms.InboundQMessageSender;
 import gov.gtas.parsers.redisson.model.LedgerLiveObject;
 import org.redisson.Redisson;
 import org.redisson.api.*;
 import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import redis.embedded.RedisServer;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +29,10 @@ public class RedissonFilter {
     private static RedisServer redisServer;
     private RedissonClient client;
     private static String[] randomStrings;
+
+    private static final String MESSAGE_SEGMENT_BEGIN="UNH";
+    private static final String MESSAGE_SEGMENT_END="UNT";
+
 
     public RedissonFilter() {
     }
@@ -54,7 +62,7 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(messagePayload));
                 ledger = service.persist(ledger);
-                if(!publishToDownstreamQueues(messagePayload)){throw new Exception("Error publishing to parsing queue");};
+                //if(!publishToDownstreamQueues(messagePayload)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
             }
@@ -66,12 +74,18 @@ public class RedissonFilter {
 
     }
 
-    public void redisObjectLookUpPersist(String messagePayload, Date messageTimestamp, RLiveObjectService service){
+    public void redisObjectLookUpPersist(String messagePayload, Date messageTimestamp,
+                                         RLiveObjectService service,
+                                         InboundQMessageSender sender,
+                                         String outboundLoaderQueue,
+                                         String filename){
 
         try {
 
             LedgerLiveObject ledger = new LedgerLiveObject();
-            String messageHashKey = getMessageHash(messagePayload);
+            EdifactLexer lexer = new EdifactLexer((String)messagePayload);
+            String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
+            String messageHashKey = getMessageHash(payload);
 
             // query Redis with the Key
             LedgerLiveObject returnLedger
@@ -81,10 +95,10 @@ public class RedissonFilter {
                 //persist into Redis
                 ledger.setMessageTimeStamp(messageTimestamp);
                 ledger.setProcessedTimeStamp(new Date());
-                ledger.setName(getMessageHash(messagePayload));
+                ledger.setName(getMessageHash(payload));
                 ledger = service.persist(ledger);
                 LOG.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
-                if(!publishToDownstreamQueues(messagePayload)){throw new Exception("Error publishing to parsing queue");};
+                if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
                 LOG.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
@@ -96,8 +110,13 @@ public class RedissonFilter {
 
     }
 
-    private boolean publishToDownstreamQueues(String messagePayload){
-
+    private boolean publishToDownstreamQueues(String messagePayload, InboundQMessageSender sender,
+                                              String outboundLoaderQueue, String filename){
+        try {
+            sender.sendFileToDownstreamQs(outboundLoaderQueue, messagePayload, filename);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
         return true;
     }
 

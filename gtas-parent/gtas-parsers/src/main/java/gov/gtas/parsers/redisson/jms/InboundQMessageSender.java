@@ -33,14 +33,28 @@ public class InboundQMessageSender {
 //        });
     }
 
-    public void sendFileContent(final String queue, final String string) {
+    public void sendFileContent(final String queue, final String stringFile, String filename) {
         jmsTemplateFile.setDefaultDestinationName(queue);
         jmsTemplateFile.send(new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
-                Message message = session.createObjectMessage(string);
+                Message message = session.createObjectMessage(stringFile);
+                message.setStringProperty("filename", filename);
                 return message;
             }
         });
+    }
+
+    public boolean sendFileToDownstreamQs(final String queue, final String stringFile, String filename) throws Exception{
+        jmsTemplateFile.setDefaultDestinationName(queue);
+        jmsTemplateFile.send(new MessageCreator() {
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                Message message = session.createTextMessage(stringFile);
+                        message.setStringProperty("Filename", filename);
+                return message;
+            }
+        });
+        return true;
     }
 }

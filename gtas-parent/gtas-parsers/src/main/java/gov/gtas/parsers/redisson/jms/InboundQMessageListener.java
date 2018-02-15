@@ -10,6 +10,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
@@ -35,6 +36,12 @@ public class InboundQMessageListener {
 
     @Value("${inbound.loader.jms.queue}")
     private static final String INBOUND_QUEUE = "ABC";
+
+    @Autowired
+    private InboundQMessageSender sender;
+
+    @Value("${outbound.loader.jms.queue}")
+    private String outboundLoaderQueue;
     
     private static final String MESSAGE_SEGMENT_BEGIN="UNH";
     private static final String MESSAGE_SEGMENT_END="UNT";
@@ -46,7 +53,7 @@ public class InboundQMessageListener {
 
     @PostConstruct
     public void init(){
-        LOG.info("++++++++++++++++++INIT Called+++++++++++++++++++++++++++++++++++");
+        LOG.info("++++++++++INIT Called+++++++++++++++++");
         config.useSingleServer().setAddress(redisConnectionString).setConnectionPoolSize(50);
         config.useSingleServer().setAddress(redisConnectionString).setConnectionMinimumIdleSize(10);
         config.setNettyThreads(0);
@@ -62,21 +69,21 @@ public class InboundQMessageListener {
     @JmsListener(destination = INBOUND_QUEUE)
     public void receiveMessage(final Message<?> message) throws JMSException {
 
-        LOG.info("++++++++++++++++++Message Received+++++++++++++++++++++++++++++++++++");
+        LOG.info("++++++++Message Received++++++++++++");
         MessageHeaders headers =  message.getHeaders();
 
         try {
-           EdifactLexer lexer = new EdifactLexer((String)message.getPayload());
-            String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
+
             if(client!=null && service!=null) {
-                filter.redisObjectLookUpPersist(payload, new Date(), service);
+                filter.redisObjectLookUpPersist((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
+                        (String)headers.get("filename"));
             }
         }
         catch (Exception ex){
             ex.printStackTrace();
         }
 
-        LOG.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        LOG.info("+++++++++++++++++++++++++++++");
     }
 
 

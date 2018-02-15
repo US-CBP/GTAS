@@ -100,7 +100,7 @@ public class LoaderScheduler {
 	/**
 	 * Loader Scheduler running on configured schedule
 	 */
-	@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+	//@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		logger.info("entering loader scheduler portion of jobScheduling");
