@@ -1,6 +1,19 @@
 package gov.gtas.services;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,6 +97,42 @@ public class JmsSenderTest {
 		f.setOriginCountry("USA");
 		f.setId(101l);
 		return f;
+	}
+	
+	//@Test
+	public void testJmsLoaderFileSend() {
+		Path dInputDir = Paths.get("C:\\MESSAGEJMS").normalize();
+		DirectoryStream.Filter<Path> filter = entry -> {
+			File f = entry.toFile();
+			return !f.isHidden() && f.isFile();
+		};
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(
+				dInputDir, filter)) {
+
+			final Iterator<Path> iterator = stream.iterator();
+			List<File> files = new ArrayList<>();
+			for (int i = 0; iterator.hasNext() && i < 10; i++) {
+				files.add(iterator.next().toFile());
+			}
+			Collections.sort(files,
+					LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
+			files.stream().forEach(
+					f -> {
+						System.out.println("==============LOADER SEND==============");
+						Path path = Paths.get(f.getAbsolutePath());
+						byte raw[] = null;
+						try {
+							raw = Files.readAllBytes(path);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						String tmp = new String(raw, StandardCharsets.US_ASCII);
+						sender.sendLoaderFileContent(tmp, f.getName());
+					});
+			stream.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	private Pnr getPnr(){

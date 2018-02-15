@@ -12,7 +12,7 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 /**Enable/ uncomment the below when the ActiveMQ is up and running.
  *Otherwise it will generate exception stack trace in the server console.
  **/
-//@EnableJms
+@EnableJms
 public class MessagingListnerConfiguration {
  
 	@Autowired

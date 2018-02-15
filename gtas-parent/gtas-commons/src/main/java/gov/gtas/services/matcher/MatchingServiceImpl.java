@@ -108,15 +108,19 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 		}
 		return pwlList;
 	}
-	
+	//Overloaded method that will save on erroneous passenger calls during automated run. Automated run already contains passenger objects.
 	public void saveWatchListMatchByPaxId(Long id){
-		final float threshold = 70.0f;
-		//TODO Move passenger fetch outside to separate method for matching modulation. Also, use new threshold value from DB.
 		Passenger passenger = passengerRepository.getPassengerById(id);
+		saveWatchListMatchByPaxId(passenger);
+	}
+	
+	public void saveWatchListMatchByPaxId(Passenger passenger){
+		final float threshold =100*Float.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue()));
+		//TODO Move passenger fetch outside to separate method for matching modulation. Also, use new threshold value from DB.
 		Watchlist watchlist = watchlistRepository.getWatchlistByName("Passenger");
 		if(passenger.getWatchlistCheckTimestamp()==null || passenger.getWatchlistCheckTimestamp().before(watchlist.getEditTimestamp())) {
 			List<WatchlistItem> passengerWatchlist = watchlistItemRepository.getItemsByWatchlistName("Passenger");
-			Set<Long> watchlistIds = new HashSet<Long>(paxWatchlistLinkRepository.findWatchlistItemByPassengerId(id));
+			Set<Long> watchlistIds = new HashSet<Long>(paxWatchlistLinkRepository.findWatchlistItemByPassengerId(passenger.getId()));
 			for (WatchlistItem item : passengerWatchlist) {
 				//If watchlist-pax connection doesn't exist (Prevents Duplicate Inserts)
 				if(!watchlistIds.contains(item.getId())) {
@@ -139,7 +143,7 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 		                percentMatch*=100;
 		            	percentMatch = percentMatch==0?percentMatch:percentMatch/2.0f;
 		                if(percentMatch>=threshold) {
-		                	paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(),percentMatch, 0, id, item.getId());
+		                	paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(),percentMatch, 0, passenger.getId(), item.getId());
 		                }
 		            } catch(IOException ioe){
 		                logger.error("Matching Service"
@@ -153,7 +157,7 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 		            }
 				}
 			}
-			passengerRepository.setPassengerWatchlistTimestamp(id, new Date());
+			passengerRepository.setPassengerWatchlistTimestamp(passenger.getId(), new Date());
 		}
 	}
 	/**
@@ -178,6 +182,7 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 				saveWatchListMatchByPaxId(p.getId());
 			}
 			endTime = System.nanoTime();	
+			logger.info("Passenger count for matching service: "+passengers.size());
 			logger.info("Execution time for saveWatchListMatchByPaxId() for loop = "+(endTime-startTime)/1000000+"ms");
 		}
 		//TODO totalMatchCount is not being added at the moment, but is something that could be used in the future
@@ -193,8 +198,9 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 		int timeOffsetMinutes = Integer.parseInt(String.valueOf((60*Double.parseDouble(arr[1])/10)).split("\\.")[0]); //retrieves the percentage of the minutes solution
 		Date startDate = new Date();
 		Date endDate = new Date();
-		startDate.setHours(startDate.getHours()-timeOffsetHours);
-		startDate.setMinutes(startDate.getMinutes()-timeOffsetMinutes);
+		//Set time +hours and +minutes out from current time in order to grab upcoming flights arriving or departing within the time frame.
+		endDate.setHours(startDate.getHours()+timeOffsetHours);
+		endDate.setMinutes(startDate.getMinutes()+timeOffsetMinutes);
 		//Calls native query that uses a between to get all flights with flight.eta between startDate and endDate
 		ArrayList<Flight> flights = (ArrayList<Flight>) flightRepository.getInboundAndOutboundFlightsWithinTimeFrame(startDate, endDate);
 		ArrayList<Passenger> passengers = new ArrayList<Passenger>();
@@ -206,7 +212,7 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 			endTime = System.nanoTime();
 			logger.info("Execution time for getPassengersOnFlightsWithingTimeRange() get passenger by flight ID for loop = "+(endTime-startTime)/1000000+"ms");
 		}
-		logger.info("Number of flights found within "+timeOffsetHours+" hours and "+timeOffsetMinutes+" minutes of arrival. Flight Count: "+flights.size());
+		logger.info("Number of flights found within "+timeOffsetHours+" hours and "+timeOffsetMinutes+" minutes of arrival or departure. Flight Count: "+flights.size());
 		return passengers;
 	}
 }
