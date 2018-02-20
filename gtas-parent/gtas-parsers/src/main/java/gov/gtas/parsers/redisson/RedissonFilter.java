@@ -32,6 +32,7 @@ public class RedissonFilter {
 
     private static final String MESSAGE_SEGMENT_BEGIN="UNH";
     private static final String MESSAGE_SEGMENT_END="UNT";
+    private static final String EMPTY_STRING="";
 
 
     public RedissonFilter() {
@@ -83,15 +84,19 @@ public class RedissonFilter {
         try {
 
             LedgerLiveObject ledger = new LedgerLiveObject();
+            String messageHashKey = EMPTY_STRING;
             EdifactLexer lexer = new EdifactLexer((String)messagePayload);
             String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
-            String messageHashKey = getMessageHash(payload);
-
+            if(payload == null){
+                publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename);
+            }else {
+                messageHashKey = getMessageHash(payload);
+            }
             // query Redis with the Key
             LedgerLiveObject returnLedger
                     = service.get(LedgerLiveObject.class, messageHashKey);
 
-            if( (returnLedger == null) || (!returnLedger.getName().equals(messageHashKey))) {
+            if(payload!=null && ( (returnLedger == null) || (!returnLedger.getName().equals(messageHashKey)))) {
                 //persist into Redis
                 ledger.setMessageTimeStamp(messageTimestamp);
                 ledger.setProcessedTimeStamp(new Date());
@@ -101,11 +106,16 @@ public class RedissonFilter {
                 if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
-                LOG.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
+                if(payload == null) {
+                    LOG.info("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
+                }else {
+                    LOG.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
+                }
             }
 
         }catch(Exception ex){
             ex.printStackTrace();
+            publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename);
         }
 
     }

@@ -54,8 +54,8 @@ public class InboundQMessageListener {
     @PostConstruct
     public void init(){
         LOG.info("++++++++++INIT Called+++++++++++++++++");
-        config.useSingleServer().setAddress(redisConnectionString).setConnectionPoolSize(50);
-        config.useSingleServer().setAddress(redisConnectionString).setConnectionMinimumIdleSize(10);
+        config.useSingleServer().setAddress(redisConnectionString);
+        //config.useSingleServer().setAddress(redisConnectionString);
         config.setNettyThreads(0);
         config.setThreads(0);
         client = Redisson.create(config);
