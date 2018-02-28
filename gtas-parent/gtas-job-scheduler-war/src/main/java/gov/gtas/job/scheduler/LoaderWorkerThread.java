@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class LoaderWorkerThread implements Runnable {
 	@Autowired
 	private LoaderScheduler loader;
-	@PersistenceUnit
-	EntityManagerFactory emf;
+/*	@PersistenceUnit
+	EntityManagerFactory emf;*/
 	
 	private String text;
 	private String fileName;
@@ -30,13 +30,9 @@ public class LoaderWorkerThread implements Runnable {
 
     @Override
     public void run() {
-    	EntityManager em = emf.createEntityManager();
         logger.info(Thread.currentThread().getName()+" Test FileName = "+fileName);
-        em.getTransaction().begin();
         processCommand();
-        em.getTransaction().commit();
-        em.flush();
-        em.close();
+
         logger.info(Thread.currentThread().getName()+" End.");
     }
    

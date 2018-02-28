@@ -42,5 +42,7 @@ public abstract class MessageLoaderService {
 
 	public void setUseIndexer(boolean useIndexer) {
 		this.useIndexer = useIndexer;
-	} 
+	}
+	public abstract MessageDto parse(MessageDto msgDto);
+	public abstract boolean load(MessageDto msgDto);
 }

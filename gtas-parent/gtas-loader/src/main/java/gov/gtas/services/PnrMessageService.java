@@ -57,7 +57,7 @@ public class PnrMessageService extends MessageLoaderService {
     @Autowired
     private LookUpRepository lookupRepo;
 
-    private Pnr pnr;
+    //private Pnr pnr;
 
     @Override
     public List<String> preprocess(String message) {
@@ -65,8 +65,8 @@ public class PnrMessageService extends MessageLoaderService {
     }
     
     @Override
-    public MessageVo parse(String message) {
-        pnr = new Pnr();
+    public MessageDto parse(MessageDto msgDto) {
+    	Pnr pnr = new Pnr();
         pnr.setCreateDate(new Date());
         pnr.setStatus(MessageStatus.RECEIVED);
         pnr.setFilePath(filePath);
@@ -74,7 +74,7 @@ public class PnrMessageService extends MessageLoaderService {
         MessageVo vo = null;
         try {
             EdifactParser<PnrVo> parser = new PnrGovParser();
-            vo = parser.parse(message);
+            vo = parser.parse(msgDto.getRawMsg());
             loaderRepo.checkHashCode(vo.getHashCode());
             pnr.setRaw(LobUtils.createClob(vo.getRaw()));
 
@@ -86,22 +86,23 @@ public class PnrMessageService extends MessageLoaderService {
             em.setMessageType(vo.getMessageType());
             em.setVersion(vo.getVersion());
             pnr.setEdifactMessage(em);
-            
+            msgDto.setMsgVo(vo);
         } catch (Exception e) {
-            handleException(e, MessageStatus.FAILED_PARSING);
+            handleException(e, MessageStatus.FAILED_PARSING, pnr);
             return null;
         } finally {
             createMessage(pnr);
         }
-
-        return vo;
+        msgDto.setPnr(pnr);
+        return msgDto;
     }
     
     @Override
-    public boolean load(MessageVo messageVo) {
+    public boolean load(MessageDto msgDto) {
         boolean success = true;
+        Pnr pnr = msgDto.getPnr();
         try {
-            PnrVo vo = (PnrVo)messageVo;
+            PnrVo vo = (PnrVo)msgDto.getMsgVo();
             // TODO: fix this, combine methods
             utils.convertPnrVo(pnr, vo);
             loaderRepo.processPnr(pnr, vo);
@@ -124,7 +125,7 @@ public class PnrMessageService extends MessageLoaderService {
 
         } catch (Exception e) {
             success = false;
-            handleException(e, MessageStatus.FAILED_LOADING);
+            handleException(e, MessageStatus.FAILED_LOADING, pnr);
         } finally {
             success &= createMessage(pnr);            
         }
@@ -290,7 +291,7 @@ public class PnrMessageService extends MessageLoaderService {
     	}
 
     }
-    private void handleException(Exception e, MessageStatus status) {
+    private void handleException(Exception e, MessageStatus status, Pnr pnr) {
         // set all the collections to null so we can save the message itself
         pnr.setFlights(null);
         pnr.setPassengers(null);
@@ -313,13 +314,14 @@ public class PnrMessageService extends MessageLoaderService {
     private boolean createMessage(Pnr m) {
         boolean ret = true;
         try {
+        	//logger.info("Message Hash: " + m.getHashCode());
             msgDao.save(m);
             if (useIndexer) {
             	indexer.indexPnr(m);
             }
         } catch (Exception e) {
             ret = false;
-            handleException(e, MessageStatus.FAILED_LOADING);
+            handleException(e, MessageStatus.FAILED_LOADING, m);
             msgDao.save(m);
         }
         return ret;
@@ -368,4 +370,16 @@ public class PnrMessageService extends MessageLoaderService {
     		}
     	}
     }
+
+	@Override
+	public MessageVo parse(String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean load(MessageVo messageVo) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

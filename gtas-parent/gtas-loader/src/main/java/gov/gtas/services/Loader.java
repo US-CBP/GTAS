@@ -46,26 +46,30 @@ public class Loader {
      */
     public int[] processMessage(File f) {
         String filePath = f.getAbsolutePath();
+        MessageDto msgDto = null;
         MessageLoaderService svc = null;
         List<String> rawMessages = null;
         try {
             if (exceedsMaxSize(f)) {
                 throw new LoaderException("exceeds max file size");
             }
-
+            msgDto = new MessageDto();
+            
             byte[] raw = FileUtils.readSmallFile(filePath);
             String tmp = new String(raw, StandardCharsets.US_ASCII);
             String text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
 
             if (text.contains("PAXLST")) {
                 svc = apisLoader;
+                msgDto.setMsgType("APIS");
             } else if (text.contains("PNRGOV")) {
                 svc = pnrLoader;
+                msgDto.setMsgType("PNR");
             } else {
                 throw new LoaderException("unrecognized file type");
             }
 
-            rawMessages = svc.preprocess(text);
+            msgDto.setRawMsgs(svc.preprocess(text));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,9 +93,11 @@ public class Loader {
         int successMsgCount = 0;
         int failedMsgCount = 0;
         svc.setFilePath(filePath);
+        rawMessages = msgDto.getRawMsgs();
         for (String rawMessage : rawMessages) {
-            MessageVo parsedMessage = svc.parse(rawMessage);
-            if (parsedMessage != null && svc.load(parsedMessage)) {
+        	msgDto.setRawMsg(rawMessage);
+            MessageDto parsedMessageDto = svc.parse(msgDto);
+            if (parsedMessageDto.getMsgVo() != null && svc.load(parsedMessageDto)) {
                 successMsgCount++;
             } else {
                 failedMsgCount++;

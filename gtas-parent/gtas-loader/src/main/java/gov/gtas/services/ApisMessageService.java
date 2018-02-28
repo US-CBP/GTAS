@@ -59,6 +59,15 @@ public class ApisMessageService extends MessageLoaderService {
     }
     
     @Override
+    public MessageDto parse(MessageDto msgDto){
+    	return null;
+    }
+	@Override
+    public boolean load(MessageDto msgDto){
+		return true;
+	}
+    
+    @Override
     public MessageVo parse(String message) {
         apisMessage = new ApisMessage();
         apisMessage.setCreateDate(new Date());
