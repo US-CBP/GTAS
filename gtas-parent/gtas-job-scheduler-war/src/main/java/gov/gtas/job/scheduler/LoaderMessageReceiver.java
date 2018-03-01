@@ -28,7 +28,7 @@ public class LoaderMessageReceiver {
 	private static final String GTAS_LOADER_QUEUE = "GTAS_LOADER_Q";
 	static final Logger logger = LoggerFactory.getLogger(LoaderMessageReceiver.class);
 	
-	@JmsListener(destination = GTAS_LOADER_QUEUE, concurrency = "${receiver.maxNumOfThreads}")
+	@JmsListener(destination = GTAS_LOADER_QUEUE, concurrency = "2")
 	public void receiveMessagesForLoader(Message<?> message){
 		logger.info("+++++++++++++++++IN LOADER QUEUE++++++++++++++++++++++++++++++++++++");
 		MessageHeaders headers =  message.getHeaders();
