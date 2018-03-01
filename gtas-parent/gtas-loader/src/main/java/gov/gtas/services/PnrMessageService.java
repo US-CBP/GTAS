@@ -365,6 +365,7 @@ public class PnrMessageService extends MessageLoaderService {
     					p.setTravelFrequency(p.getTravelFrequency()+1);
     				}
     			}
+    			p.getFlightPaxList().add(fp);
     		}
     	}
     }
