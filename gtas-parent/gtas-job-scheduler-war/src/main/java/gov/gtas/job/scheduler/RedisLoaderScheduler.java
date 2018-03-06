@@ -61,7 +61,7 @@ public class RedisLoaderScheduler {
         //config.setTransportMode(TransportMode.EPOLL);
         config.useSingleServer().setAddress(redisConnectionString);
 
-        client = Redisson.create(config);
+        if(client==null) client = Redisson.create(config);
 
         //processFiles(dInputDir, dOutputDir, stats);
         processAndQFiles(dInputDir, dOutputDir, stats);

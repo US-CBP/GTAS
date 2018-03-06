@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import org.springframework.cache.annotation.Cacheable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
+@Cacheable
 @Entity
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
