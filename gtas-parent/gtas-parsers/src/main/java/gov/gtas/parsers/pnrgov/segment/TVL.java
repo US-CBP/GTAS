@@ -37,12 +37,12 @@ import gov.gtas.parsers.pnrgov.PnrUtils;
  * carrier/flight are the same, only one TVL is used as defined in 5.28.2.
  * <p>
  * Flown segments are to be included in history. Departure and arrival
- * city/airport codes as contained in the passengerâ€™s booked itinerary.
+ * city/airport codes as contained in the passenger's booked itinerary.
  * 
  * This example contains an illustration of both the operating and the marketing TVLs for a codeshare situation
  * where the marketing carrier is DL and the operating carrier is KL..
- * TVL+010410:2235: 020410:1200+ATL+AMS+DL:KL+9362:K’
- * TVL+++++972:M’
+ * TVL+010410:2235: 020410:1200+ATL+AMS+DL:KL+9362:K
+ * TVL+++++972:M
  */
 public class TVL extends Segment {
     private Date etd;

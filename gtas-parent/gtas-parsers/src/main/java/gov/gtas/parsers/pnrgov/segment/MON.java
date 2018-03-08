@@ -16,13 +16,6 @@ import gov.gtas.parsers.edifact.Segment;
  * <p>
  * To specify ticket amount
  * <p>
- * Ex .Ticket/document amount is $0.00 due to an award
- * certificate.(MON+T:AWARD') Ticket/document amount is 297.50
- * EUR.(MON+T:297.50:EURâ€™)
- * MON+T:AWARD'
- * MON+T:297.50:EUR’
- * MON+B:999.00:SGD+T:1999.99:SGD'
- * 
  */
 public class MON extends Segment {
 	public static final String BASE = "B";
