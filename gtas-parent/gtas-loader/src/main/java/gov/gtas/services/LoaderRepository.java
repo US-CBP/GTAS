@@ -237,9 +237,11 @@ public class LoaderRepository {
 //				
 //				continue;
 //			}
-			Passenger newPassenger=(Passenger)passengerDao.findExistingPassengerWithAttributes(pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
-					pvo.getGender(), pvo.getDob(), pvo.getPassengerType());
-			
+//			Passenger newPassenger=(Passenger)passengerDao.findExistingPassengerWithAttributes(pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
+//					pvo.getGender(), pvo.getDob(), pvo.getPassengerType());
+
+            Passenger newPassenger=null;
+
 			if(newPassenger != null){
 				utils.updatePassenger(pvo, newPassenger);
 			}else{

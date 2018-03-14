@@ -102,6 +102,9 @@ public class Passenger extends BaseEntityAudit {
     private String bagNum;
     
     private Date watchlistCheckTimestamp;
+
+    @Column(name = "idTag")
+    private String idTag;
     
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
@@ -382,6 +385,15 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
+
+    public String getIdTag() {
+        return idTag;
+    }
+
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
+    }
+
 	@Override
     public int hashCode() {
         final int prime = 31;
@@ -433,4 +445,5 @@ public class Passenger extends BaseEntityAudit {
 
         return true;
     }
+
 }
