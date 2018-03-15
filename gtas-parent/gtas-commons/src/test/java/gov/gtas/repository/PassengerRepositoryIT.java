@@ -11,16 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
-
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
-        CachingConfig.class })
+@ContextConfiguration(classes = { CommonServicesConfig.class,CachingConfig.class })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class PassengerRepositoryIT {
 
@@ -39,7 +36,6 @@ public class PassengerRepositoryIT {
         List<Passenger> paxListWithNullIdTags = passengerDao.getNullIdTagPassengers();
 
         final java.util.Random rand = new java.util.Random();
-        int tnd = rand.nextInt(5)+5;
 
         for(Passenger _tempPaxWithIdTag : paxListNotNull){
             boolean paxFoundFlag = false;
