@@ -6,6 +6,7 @@
 package gov.gtas.parsers.redisson;
 
 import gov.gtas.parsers.edifact.EdifactLexer;
+import gov.gtas.parsers.edifact.Segment;
 import gov.gtas.parsers.redisson.jms.InboundQMessageSender;
 import gov.gtas.parsers.redisson.model.LedgerLiveObject;
 import org.redisson.Redisson;
@@ -20,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class RedissonFilter {
@@ -80,15 +83,24 @@ public class RedissonFilter {
                                          InboundQMessageSender sender,
                                          String outboundLoaderQueue,
                                          String filename){
+        List<Segment> segments = new ArrayList<>();
+        String tvlLineText = EMPTY_STRING;
 
         try {
 
             LedgerLiveObject ledger = new LedgerLiveObject();
             String messageHashKey = EMPTY_STRING;
             EdifactLexer lexer = new EdifactLexer((String)messagePayload);
+            segments = lexer.tokenize();
+            for(Segment seg : segments){
+                if(seg.getName().equalsIgnoreCase("TVL")){
+                    tvlLineText = seg.getText();
+                    break;
+                }
+            }
             String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
             if(payload == null){
-                publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename);
+                publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
             }else {
                 messageHashKey = getMessageHash(payload);
             }
@@ -103,7 +115,7 @@ public class RedissonFilter {
                 ledger.setName(getMessageHash(payload));
                 ledger = service.persist(ledger);
                 LOG.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
-                if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename)){throw new Exception("Error publishing to parsing queue");};
+                if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
                 if(payload == null) {
@@ -115,15 +127,15 @@ public class RedissonFilter {
 
         }catch(Exception ex){
             ex.printStackTrace();
-            publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename);
+            publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
         }
 
     }
 
     private boolean publishToDownstreamQueues(String messagePayload, InboundQMessageSender sender,
-                                              String outboundLoaderQueue, String filename){
+                                              String outboundLoaderQueue, String filename, String tvlLineText){
         try {
-            sender.sendFileToDownstreamQs(outboundLoaderQueue, messagePayload, filename);
+            sender.sendFileToDownstreamQs(outboundLoaderQueue, messagePayload, filename, tvlLineText);
         }catch (Exception ex){
             ex.printStackTrace();
         }
