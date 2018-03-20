@@ -152,7 +152,19 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    @Column(name = "resrvation_create_date")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="pnr")
+    private List<BookingDetail> bookingDetailList = new ArrayList<>();
+
+    
+    public List<BookingDetail> getBookingDetailList() {
+		return bookingDetailList;
+	}
+
+	public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
+		this.bookingDetailList = bookingDetailList;
+	}
+
+	@Column(name = "resrvation_create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date reservationCreateDate;
     

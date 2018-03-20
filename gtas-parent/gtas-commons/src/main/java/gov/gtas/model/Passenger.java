@@ -128,7 +128,17 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<TicketFare> tickets = new HashSet<>();    
    
-    
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    private List<BookingDetail> bookingDetailList = new ArrayList<>();    
+	
+    public List<BookingDetail> getBookingDetailList() {
+		return bookingDetailList;
+	}
+
+	public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
+		this.bookingDetailList = bookingDetailList;
+	}
+
 	public Set<TicketFare> getTickets() {
 		return tickets;
 	}
