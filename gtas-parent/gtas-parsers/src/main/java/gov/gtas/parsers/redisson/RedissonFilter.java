@@ -36,6 +36,7 @@ public class RedissonFilter {
     private static final String MESSAGE_SEGMENT_BEGIN="UNH";
     private static final String MESSAGE_SEGMENT_END="UNT";
     private static final String EMPTY_STRING="";
+    private static final String TVL_HEADER_LABEL="TVL";
 
 
     public RedissonFilter() {
@@ -93,9 +94,11 @@ public class RedissonFilter {
             EdifactLexer lexer = new EdifactLexer((String)messagePayload);
             segments = lexer.tokenize();
             for(Segment seg : segments){
-                if(seg.getName().equalsIgnoreCase("TVL")){
+                if(seg.getName().equalsIgnoreCase(TVL_HEADER_LABEL)){
                     tvlLineText = seg.getText();
                     break;
+                    // not entertaining the concept of multiple PNRs(multiple TVL0 lines) in one file for now
+                    // will revisit if need be
                 }
             }
             String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
