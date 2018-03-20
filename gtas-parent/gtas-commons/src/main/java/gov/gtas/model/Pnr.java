@@ -110,6 +110,10 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = BookingDetail.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail__id"))
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+    
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
@@ -152,16 +156,13 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="pnr")
-    private List<BookingDetail> bookingDetailList = new ArrayList<>();
-
     
-    public List<BookingDetail> getBookingDetailList() {
-		return bookingDetailList;
+    public Set<BookingDetail> getBookingDetails() {
+		return bookingDetails;
 	}
 
-	public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
-		this.bookingDetailList = bookingDetailList;
+	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+		this.bookingDetails = bookingDetails;
 	}
 
 	@Column(name = "resrvation_create_date")

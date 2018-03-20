@@ -6,12 +6,15 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -84,6 +87,9 @@ public class FlightPax implements Serializable {
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
     
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = BookingDetail.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "flight_pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail__id"))
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
     
 	public Set<ApisMessage> getApisMessage() {
 		return apisMessage;

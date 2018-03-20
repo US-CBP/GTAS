@@ -1,37 +1,41 @@
 package gov.gtas.model;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "BookingDetail")
 public class BookingDetail extends BaseEntityAudit {
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id", nullable = false)
-    private Passenger passenger;
+    @ManyToMany(
+            mappedBy = "bookingDetails",
+            targetEntity = FlightPax.class
+        ) 
+    private Set<FlightPax> flightPaxes = new HashSet<>();
    
-    @ManyToOne
-    @JoinColumn(name = "pnr_id", nullable = false)
-    private Pnr pnr;
+    @ManyToMany(
+            mappedBy = "bookingDetails",
+            targetEntity = Pnr.class
+        ) 
+    private Set<Pnr> pnrs = new HashSet<>();
 
-	public Passenger getPassenger() {
-		return passenger;
+	public Set<FlightPax> getFlightPaxes() {
+		return flightPaxes;
 	}
 
-	public void setPassenger(Passenger passenger) {
-		this.passenger = passenger;
+	public void setFlightPaxes(Set<FlightPax> flightPaxes) {
+		this.flightPaxes = flightPaxes;
 	}
 
-	public Pnr getPnr() {
-		return pnr;
+	public Set<Pnr> getPnrs() {
+		return pnrs;
 	}
 
-	public void setPnr(Pnr pnr) {
-		this.pnr = pnr;
+	public void setPnrs(Set<Pnr> pnrs) {
+		this.pnrs = pnrs;
 	}
-    
-    
+
 }
