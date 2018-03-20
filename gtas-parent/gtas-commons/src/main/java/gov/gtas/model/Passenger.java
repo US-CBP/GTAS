@@ -135,7 +135,7 @@ public class Passenger extends BaseEntityAudit {
 		return bookingDetailList;
 	}
 
-	public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
+    public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
 		this.bookingDetailList = bookingDetailList;
 	}
 
