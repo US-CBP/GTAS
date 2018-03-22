@@ -14,6 +14,7 @@ public class MessageDto {
 	private String msgType;
 	private MessageVo msgVo;
 	private List<String> rawMsgs;
+	private String filepath;
 	
 	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo){
 		this.pnr = pnr;
@@ -22,6 +23,7 @@ public class MessageDto {
 		this.msgVo = msgVo;
 		this.rawMsg = rawMsg;
 		this.rawMsgs = rawMsgs;
+		this.filepath = filepath;
 	}
 	
 	public MessageDto(){
@@ -74,6 +76,14 @@ public class MessageDto {
 
 	public void setMsgVo(MessageVo msgVo) {
 		this.msgVo = msgVo;
+	}
+
+	public String getFilepath() {
+		return filepath;
+	}
+
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
 	}
 	
 }

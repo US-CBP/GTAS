@@ -83,21 +83,21 @@ public class Loader {
             return null;
         }
         
-		indexer.initClient();
+/*		indexer.initClient();
 		if (indexer.isDown()) {
 			svc.setUseIndexer(false);
 		} else {
 			svc.setUseIndexer(true);
-		}
+		}*/
         
         int successMsgCount = 0;
         int failedMsgCount = 0;
-        svc.setFilePath(filePath);
+        msgDto.setFilepath(filePath);
         rawMessages = msgDto.getRawMsgs();
         for (String rawMessage : rawMessages) {
         	msgDto.setRawMsg(rawMessage);
             MessageDto parsedMessageDto = svc.parse(msgDto);
-            if (parsedMessageDto.getMsgVo() != null && svc.load(parsedMessageDto)) {
+            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null && svc.load(parsedMessageDto)) {
                 successMsgCount++;
             } else {
                 failedMsgCount++;

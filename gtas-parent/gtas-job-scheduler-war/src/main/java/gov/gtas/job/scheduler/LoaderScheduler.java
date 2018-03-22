@@ -5,6 +5,11 @@
  */
 package gov.gtas.job.scheduler;
 
+/*
+ * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ * 
+ * Please see LICENSE.txt for details.
+ */
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
 
 import gov.gtas.constant.RuleServiceConstants;

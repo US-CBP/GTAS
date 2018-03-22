@@ -66,10 +66,12 @@ public class PnrMessageService extends MessageLoaderService {
     
     @Override
     public MessageDto parse(MessageDto msgDto) {
+    	logger.debug("@ parse");
+    	long startTime = System.nanoTime();
     	Pnr pnr = new Pnr();
         pnr.setCreateDate(new Date());
         pnr.setStatus(MessageStatus.RECEIVED);
-        pnr.setFilePath(filePath);
+        pnr.setFilePath(msgDto.getFilepath());
         
         MessageVo vo = null;
         try {
@@ -91,14 +93,17 @@ public class PnrMessageService extends MessageLoaderService {
             handleException(e, MessageStatus.FAILED_PARSING, pnr);
             return null;
         } finally {
-            createMessage(pnr);
+            createMessageFromParse(pnr);
         }
         msgDto.setPnr(pnr);
+        logger.debug("load time = "+(System.nanoTime()-startTime)/1000000);
         return msgDto;
     }
     
     @Override
     public boolean load(MessageDto msgDto) {
+    	logger.debug("@ load");
+    	long startTime = System.nanoTime();
         boolean success = true;
         Pnr pnr = msgDto.getPnr();
         try {
@@ -110,8 +115,10 @@ public class PnrMessageService extends MessageLoaderService {
                     pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs());
             
             // update flight legs
-            for (FlightLeg leg : pnr.getFlightLegs()) {
-                leg.setPnr(pnr);
+            synchronized(this){
+            	for (FlightLeg leg : pnr.getFlightLegs()) {
+                	leg.setPnr(pnr);
+            	}
             }
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
@@ -129,11 +136,14 @@ public class PnrMessageService extends MessageLoaderService {
         } finally {
             success &= createMessage(pnr);            
         }
+        logger.debug("load time = "+(System.nanoTime()-startTime)/1000000);
         return success;
     }
     
 
     private void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
+    	logger.debug("@ updatePaxEmbarkDebark");
+    	long startTime = System.nanoTime();
     	List<FlightLeg> legs = pnr.getFlightLegs();
     	if (CollectionUtils.isEmpty(legs)) {
     		return;
@@ -168,9 +178,12 @@ public class PnrMessageService extends MessageLoaderService {
     			p.setDebarkCountry(airport.getCountry());
     		}
     	}
+    	logger.debug("updatePaxEmbarkDebark time = "+(System.nanoTime()-startTime)/1000000);
     }
     
     private void calculateDwellTimes(Pnr pnr){
+    	logger.debug("@ calculateDwellTimes");
+    	long startTime = System.nanoTime();
     	List<FlightLeg> legs=pnr.getFlightLegs();
         if (CollectionUtils.isEmpty(legs)) {
         	return;
@@ -230,6 +243,7 @@ public class PnrMessageService extends MessageLoaderService {
     	setDwelTime(seventhFlight,eighthFlight,pnr);
     	setDwelTime(eighthFlight,ninethFlight,pnr);
     	setDwelTime(ninethFlight,tenthFlight,pnr);
+    	logger.debug("calculateDwellTime time = "+(System.nanoTime()-startTime)/1000000);
     }
     private void setDwelTime(Flight firstFlight,Flight secondFlight,Pnr pnr){
  
@@ -309,25 +323,51 @@ public class PnrMessageService extends MessageLoaderService {
         pnr.setError(stacktrace);
         logger.error(stacktrace);
     }
-
+    
+    //Parses are fresh messages, there is no concurrency threat from brand new parsed messages so no synchronized is needed unlike the load() createMessage call.
     @Transactional
-    private boolean createMessage(Pnr m) {
-        boolean ret = true;
+    private boolean createMessageFromParse(Pnr m){
+    	boolean ret = true;
+        logger.debug("@createMessage");
+        long startTime = System.nanoTime();
         try {
-        	//logger.info("Message Hash: " + m.getHashCode());
-            msgDao.save(m);
+        		msgDao.save(m);
             if (useIndexer) {
             	indexer.indexPnr(m);
             }
         } catch (Exception e) {
             ret = false;
             handleException(e, MessageStatus.FAILED_LOADING, m);
-            msgDao.save(m);
+            	msgDao.save(m);
         }
+        logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
+        return ret;
+    }
+    
+    @Transactional
+    private boolean createMessage(Pnr m) {
+        boolean ret = true;
+        logger.debug("@createMessage");
+        long startTime = System.nanoTime();
+        try {
+        	synchronized(this){
+        		msgDao.save(m);
+        	}
+            if (useIndexer) {
+            	indexer.indexPnr(m);
+            }
+        } catch (Exception e) {
+            ret = false;
+            handleException(e, MessageStatus.FAILED_LOADING, m);
+            	msgDao.save(m);
+        }
+        logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
         return ret;
     }
     
     private void createFlightPax(Pnr pnr){
+    	logger.debug("@ createFlightPax");
+    	long startTime = System.nanoTime();
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	for(Flight f : flights){
@@ -367,8 +407,10 @@ public class PnrMessageService extends MessageLoaderService {
     					p.setTravelFrequency(p.getTravelFrequency()+1);
     				}
     			}
+    			p.getFlightPaxList().add(fp);
     		}
     	}
+    	logger.debug("createFlightPax time = "+(System.nanoTime()-startTime)/1000000);
     }
 
 	@Override
