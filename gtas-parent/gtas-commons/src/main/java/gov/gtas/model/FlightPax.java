@@ -87,8 +87,7 @@ public class FlightPax implements Serializable {
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = BookingDetail.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "flight_pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail__id"))
+    @ManyToMany(mappedBy = "flightPaxes",targetEntity = BookingDetail.class) 
     private Set<BookingDetail> bookingDetails = new HashSet<>();
     
 	public Set<ApisMessage> getApisMessage() {

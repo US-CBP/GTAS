@@ -110,8 +110,7 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = BookingDetail.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail__id"))
+    @ManyToMany(mappedBy = "pnrs",targetEntity = BookingDetail.class) 
     private Set<BookingDetail> bookingDetails = new HashSet<>();
     
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
