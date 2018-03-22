@@ -6,13 +6,11 @@
 package gov.gtas.model;
 
 import org.springframework.cache.annotation.Cacheable;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
 @Cacheable
 @Entity
 @Table(name = "passenger")
@@ -102,6 +101,9 @@ public class Passenger extends BaseEntityAudit {
     private String bagNum;
     
     private Date watchlistCheckTimestamp;
+
+    @Column(name = "idTag")
+    private String idTag;
     
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
@@ -124,8 +126,18 @@ public class Passenger extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<TicketFare> tickets = new HashSet<>();    
-   
-    
+   /**
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    private List<BookingDetail> bookingDetailList = new ArrayList<>();    
+	
+    public List<BookingDetail> getBookingDetailList() {
+		return bookingDetailList;
+	}
+
+    public void setBookingDetailList(List<BookingDetail> bookingDetailList) {
+		this.bookingDetailList = bookingDetailList;
+	}
+**/
 	public Set<TicketFare> getTickets() {
 		return tickets;
 	}
@@ -382,6 +394,15 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
+
+    public String getIdTag() {
+        return idTag;
+    }
+
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
+    }
+
 	@Override
     public int hashCode() {
         final int prime = 31;
@@ -433,4 +454,5 @@ public class Passenger extends BaseEntityAudit {
 
         return true;
     }
+
 }

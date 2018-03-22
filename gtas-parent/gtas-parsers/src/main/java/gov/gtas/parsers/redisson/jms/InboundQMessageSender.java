@@ -45,13 +45,14 @@ public class InboundQMessageSender {
         });
     }
 
-    public boolean sendFileToDownstreamQs(final String queue, final String stringFile, String filename) throws Exception{
+    public boolean sendFileToDownstreamQs(final String queue, final String stringFile, String filename, String tvlLineText) throws Exception{
         jmsTemplateFile.setDefaultDestinationName(queue);
         jmsTemplateFile.send(new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
                 Message message = session.createTextMessage(stringFile);
                         message.setStringProperty("Filename", filename);
+                        message.setStringProperty("TVL", tvlLineText);
                 return message;
             }
         });
