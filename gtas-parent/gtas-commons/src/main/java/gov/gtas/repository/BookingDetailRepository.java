@@ -6,4 +6,5 @@ import gov.gtas.model.BookingDetail;
 
 public interface BookingDetailRepository extends CrudRepository<BookingDetail, Long>{
 
+	
 }
