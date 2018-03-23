@@ -2,7 +2,7 @@
  * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.1.4-master-75237c6
+ * v1.1.8-master-c62282f
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -16,7 +16,7 @@ inputTextareaDirective['$inject'] = ["$mdUtil", "$window", "$mdAria", "$timeout"
 mdMaxlengthDirective['$inject'] = ["$animate", "$mdUtil"];
 placeholderDirective['$inject'] = ["$compile"];
 ngMessageDirective['$inject'] = ["$mdUtil"];
-mdSelectOnFocusDirective['$inject'] = ["$timeout"];
+mdSelectOnFocusDirective['$inject'] = ["$document", "$timeout"];
 mdInputInvalidMessagesAnimation['$inject'] = ["$$AnimateRunner", "$animateCss", "$mdUtil", "$log"];
 ngMessagesAnimation['$inject'] = ["$$AnimateRunner", "$animateCss", "$mdUtil", "$log"];
 ngMessageAnimation['$inject'] = ["$$AnimateRunner", "$animateCss", "$mdUtil", "$log"];
@@ -48,7 +48,7 @@ if (window._mdMocksIncluded) {
         hide        : hideInputMessages,
         getElement  : getMessagesElement
       }
-    }
+    };
   })
 
   // Register a service for each animation so that we can easily inject them into unit tests
@@ -358,8 +358,9 @@ function inputTextareaDirective($mdUtil, $window, $mdAria, $timeout, $mdGesture)
     var errorsSpacer = angular.element('<div class="md-errors-spacer">');
     element.after(errorsSpacer);
 
-    if (!containerCtrl.label) {
-      $mdAria.expect(element, 'aria-label', attr.placeholder);
+    var placeholderText = angular.isString(attr.placeholder) ? attr.placeholder.trim() : '';
+    if (!containerCtrl.label && !placeholderText.length) {
+      $mdAria.expect(element, 'aria-label');
     }
 
     element.addClass('md-input');
@@ -652,10 +653,24 @@ function mdMaxlengthDirective($animate, $mdUtil) {
   };
 
   function postLink(scope, element, attr, ctrls) {
-    var maxlength;
+    var maxlength = parseInt(attr.mdMaxlength);
+    if (isNaN(maxlength)) maxlength = -1;
     var ngModelCtrl = ctrls[0];
     var containerCtrl = ctrls[1];
     var charCountEl, errorsSpacer;
+
+
+    ngModelCtrl.$validators['md-maxlength'] = function(modelValue, viewValue) {
+      if (!angular.isNumber(maxlength) || maxlength < 0) {
+        return true;
+      }
+
+      // We always update the char count, when the modelValue has changed.
+      // Using the $validators for triggering the update works very well.
+      renderCharCount();
+
+      return ( modelValue || element.val() || viewValue || '' ).length <= maxlength;
+    };
 
     // Wait until the next tick to ensure that the input has setup the errors spacer where we will
     // append our counter
@@ -681,23 +696,11 @@ function mdMaxlengthDirective($animate, $mdUtil) {
           $animate.leave(charCountEl);
         }
       });
-
-      ngModelCtrl.$validators['md-maxlength'] = function(modelValue, viewValue) {
-        if (!angular.isNumber(maxlength) || maxlength < 0) {
-          return true;
-        }
-
-        // We always update the char count, when the modelValue has changed.
-        // Using the $validators for triggering the update works very well.
-        renderCharCount();
-
-        return ( modelValue || element.val() || viewValue || '' ).length <= maxlength;
-      };
     });
 
     function renderCharCount(value) {
-      // If we have not been appended to the body yet; do not render
-      if (!charCountEl.parent) {
+      // If we have not been initialized or appended to the body yet; do not render
+      if (!charCountEl || !charCountEl.parent) {
         return value;
       }
 
@@ -794,7 +797,7 @@ function placeholderDirective($compile) {
  *
  * </hljs>
  */
-function mdSelectOnFocusDirective($timeout) {
+function mdSelectOnFocusDirective($document, $timeout) {
 
   return {
     restrict: 'A',
@@ -820,9 +823,14 @@ function mdSelectOnFocusDirective($timeout) {
       preventMouseUp = true;
 
       $timeout(function() {
+
         // Use HTMLInputElement#select to fix firefox select issues.
         // The debounce is here for Edge's sake, otherwise the selection doesn't work.
-        element[0].select();
+        // Since focus may already have been lost on the input (and because `select()`
+        // will re-focus), make sure the element is still active before applying.
+        if($document[0].activeElement === element[0]) {
+          element[0].select();
+        }
 
         // This should be reset from inside the `focus`, because the event might
         // have originated from something different than a click, e.g. a keyboard event.

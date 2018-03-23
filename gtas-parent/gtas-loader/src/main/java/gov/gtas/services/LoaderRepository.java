@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.services;
@@ -71,10 +71,10 @@ import org.springframework.stereotype.Repository;
 public class LoaderRepository {
 	private static final Logger logger = LoggerFactory
 			.getLogger(LoaderRepository.class);
-   
+
     @Autowired
     private ReportingPartyRepository rpDao;
-    
+
     @Autowired
     private FlightRepository flightDao;
 
@@ -83,37 +83,37 @@ public class LoaderRepository {
 
     @Autowired
     private DocumentRepository docDao;
-    
+
     @Autowired
     private PhoneRepository phoneDao;
 
     @Autowired
     private CreditCardRepository creditDao;
-    
+
     @Autowired
     private AddressRepository addressDao;
 
     @Autowired
     private AgencyRepository agencyDao;
-    
+
     @Autowired
     private MessageRepository<Message> messageDao;
 
     @Autowired
     private FrequentFlyerRepository ffdao;
-    
+
     @Autowired
     private LoaderUtils utils;
-    
+
     @Autowired
     private BagRepository bagDao;
-    
+
     @Autowired
     private PaymentFormRepository paymentFormDao;
-    
+
 	@PersistenceContext
 	private EntityManager em;
-    
+
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
         if (m != null) {
@@ -139,7 +139,7 @@ public class LoaderRepository {
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
     	logger.debug("@ processPnr");
     	long startTime = System.nanoTime();
-    	
+
         for (AddressVo addressVo : vo.getAddresses()) {
             Address existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountry(
                     addressVo.getLine1(), addressVo.getCity(), addressVo.getState(), addressVo.getPostalCode(), addressVo.getCountry());
@@ -147,17 +147,17 @@ public class LoaderRepository {
                 Address address = utils.convertAddressVo(addressVo);
                 pnr.addAddress(address);
             } else {
-                pnr.addAddress(existingAddress);                
+                pnr.addAddress(existingAddress);
             }
         }
-        
+
         for (PhoneVo phoneVo : vo.getPhoneNumbers()) {
             Phone existingPhone = phoneDao.findByNumber(phoneVo.getNumber());
             if (existingPhone == null) {
                 Phone newPhone = utils.convertPhoneVo(phoneVo);
                 pnr.addPhone(newPhone);
             } else {
-                pnr.addPhone(existingPhone);                
+                pnr.addPhone(existingPhone);
             }
         }
 
@@ -167,7 +167,7 @@ public class LoaderRepository {
                 CreditCard newCard  = utils.convertCreditVo(creditVo);
                 pnr.addCreditCard(newCard);
             } else {
-                pnr.addCreditCard(existingCard);                
+                pnr.addCreditCard(existingCard);
             }
         }
 
@@ -180,7 +180,7 @@ public class LoaderRepository {
                 pnr.addFrequentFlyer(existingFf);
             }
         }
-        
+
         for (AgencyVo avo : vo.getAgencies()) {
             Agency existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
             if (existingAgency == null) {
@@ -235,7 +235,7 @@ public class LoaderRepository {
                             createBags(pvo.getBags(), existingPassenger, existingFlight);
                         }
                     }
-                    
+
                 }
             logger.debug("processFlightsAndPassenger: check for existing flights time= "+ (System.nanoTime()-startTime)/1000000);
             messageFlights.add(currentFlight);
@@ -245,7 +245,7 @@ public class LoaderRepository {
             flightLegs.add(leg);
         }
     }
-    
+
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, List<FlightLeg> flightLegs) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
         checkAndCreateFlights(flights, passengers, messageFlights, messagePassengers, flightLegs, existingPassengers);
@@ -265,7 +265,7 @@ public class LoaderRepository {
                     try{
                     	flightDao.save(currentFlight);
                     }catch(Exception cve){
-                    	//This is to catch thread collisions trying to create the same flight at the same time. 
+                    	//This is to catch thread collisions trying to create the same flight at the same time.
                     	//Synchronized is not blocking the section of code correctly, so threads are still accessing at the same time
                     	//This will, if it fails to create a flight, instead uses the flight with the exact same constraints it violated as it, by logic of hitting the constraint, must exist.
                     	logger.debug("Flight Already Exists With That Criteria!");
@@ -292,36 +292,37 @@ public class LoaderRepository {
                             createBags(pvo.getBags(), existingPassenger, existingFlight);
                         }
                     }
-                    
+
                 } else {
                     currentFlight = utils.createNewFlight(fvo);
                     flightDao.save(currentFlight);
                 }
             } //end synchronize
-           
+
             logger.debug("processFlightsAndPassenger: check for existing flights time= "+ (System.nanoTime()-startTime)/1000000);
             messageFlights.add(currentFlight);
             FlightLeg leg = new FlightLeg();
             leg.setFlight(currentFlight);
             leg.setLegNumber(i);
-            flightLegs.add(leg); 
+            flightLegs.add(leg);
         }*/
-               
+
 		// create any new passengers
         startTime = System.nanoTime();
 		for (PassengerVo pvo : passengers) {
-			
+
 //			if (passengerDao.findExistingPassengerByAttributes(
 //					pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
 //					pvo.getGender(), pvo.getDob(), pvo.getPassengerType())) {
-//				
+//
 //				continue;
 //			}
+
 			/*Passenger newPassenger=(Passenger)passengerDao.findExistingPassengerWithAttributes(pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
 					pvo.getGender(), pvo.getDob(), pvo.getPassengerType());*/
-			
+
 			Passenger newPassenger = utils.createNewPassenger(pvo);
-			
+
 			/*if(newPassenger != null){
 
 //			Passenger newPassenger=(Passenger)passengerDao.findExistingPassengerWithAttributes(pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
@@ -330,15 +331,19 @@ public class LoaderRepository {
             Passenger newPassenger=null;
 
 			if(newPassenger != null){
+<<<<<<< Updated upstream
+=======
+ refs/remotes/origin/dev
+>>>>>>> Stashed changes
 				utils.updatePassenger(pvo, newPassenger);
 			}else{
 				newPassenger = utils.createNewPassenger(pvo);
 			}*/
-			
+
 			for (DocumentVo dvo : pvo.getDocuments()) {
 				newPassenger.addDocument(utils.createNewDocument(dvo));
 			}
-			
+
 			passengerDao.save(newPassenger);
 			messagePassengers.add(newPassenger);
 
@@ -354,19 +359,19 @@ public class LoaderRepository {
             for (Passenger p : messagePassengers) {
             	utils.calculateValidVisaDays(f,p);
                 f.addPassenger(p);
-                
+
             }
             f.setPassengerCount(f.getPassengers().size());
         }
         logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
     }
-    
+
 
     /**
      * Create a single seat assignment for the given passenger, flight
      * combination. TODO: Inefficient to have to pass in the entire list of seat
      * assignments from the paxVo.
-     * 
+     *
      * @param seatAssignments
      * @param p
      * @param f
@@ -386,7 +391,7 @@ public class LoaderRepository {
         }
     }
 
-    public void createBags(List<String> bagIds, Passenger p, Flight f) {       
+    public void createBags(List<String> bagIds, Passenger p, Flight f) {
         for (String bagId: bagIds) {
             Bag bag = new Bag();
             bag.setBagId(bagId);
@@ -397,20 +402,20 @@ public class LoaderRepository {
             bag.setPassenger(p);
             p.getBags().add(bag);
             bagDao.save(bag);
-        }     
+        }
     }
- 
-    public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) { 
+
+    public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) {
 
     	for(Flight f : pnr.getFlights()){
         	if(pvo == null || pvo.getBags() == null ){
         		break;
-        	}   		
+        	}
     		for(BagVo b : pvo.getBags()){
-    			
+
     			if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
     				for(Passenger p: f.getPassengers()){
-    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) && 
+    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
     							StringUtils.equals(p.getLastName(), b.getLastName())){
     						 Bag bag = new Bag();
     	    		         bag.setBagId(b.getBagId());
@@ -419,14 +424,14 @@ public class LoaderRepository {
     	    		         bag.setDestinationAirport(b.getDestinationAirport());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag); 
+    	    		         bagDao.save(bag);
     	    		         p.getBags().add(bag);
     					}
     				}
     			}
     			if(b.getDestinationAirport() == null){
     				for(Passenger p: f.getPassengers()){
-    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) && 
+    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
     							StringUtils.equals(p.getLastName(), b.getLastName())){
     						 Bag bag = new Bag();
     	    		         bag.setBagId(b.getBagId());
@@ -435,14 +440,14 @@ public class LoaderRepository {
     	    		         bag.setDestinationAirport(f.getDestination());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag); 
+    	    		         bagDao.save(bag);
     	    		         p.getBags().add(bag);
     					}
-    				}    				
+    				}
     			}
     		}
     	}
-     
+
     }
     public void createFormPfPayments(PnrVo vo,Pnr pnr){
     	Set<PaymentForm> chkList=new HashSet<>();
@@ -456,7 +461,7 @@ public class LoaderRepository {
     	for(PaymentForm pform : chkList){
     		paymentFormDao.save(pform);
     	}
-    	
+
     }
     private void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
@@ -466,10 +471,10 @@ public class LoaderRepository {
                 existingPassenger.addDocument(utils.createNewDocument(dvo));
             } else {
                 utils.updateDocument(dvo, existingDoc);
-            }                        
+            }
         }
     }
-    
+
     /**
      * TODO: update how we find passengers here, use document ,etc
      */
@@ -477,7 +482,7 @@ public class LoaderRepository {
         if (f.getId() == null) {
             return null;
         }
-        
+
         List<Passenger> pax = passengerDao.getPassengersByFlightIdAndName(f.getId(), pvo.getFirstName(), pvo.getLastName());
         if (pax != null && pax.size() >= 1) {
             return pax.get(0);

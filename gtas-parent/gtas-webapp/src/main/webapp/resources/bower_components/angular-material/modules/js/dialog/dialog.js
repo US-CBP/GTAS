@@ -2,7 +2,7 @@
  * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.1.4-master-75237c6
+ * v1.1.8-master-c62282f
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -483,6 +483,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  * - $mdDialogPreset#htmlContent(string) - Sets the prompt message as HTML. Requires ngSanitize
  *     module to be loaded. HTML is not run through Angular's compiler.
  * - $mdDialogPreset#placeholder(string) - Sets the placeholder text for the input.
+ * - $mdDialogPreset#required(boolean) - Sets the input required value.
  * - $mdDialogPreset#initialValue(string) - Sets the initial value for the prompt input.
  * - $mdDialogPreset#ok(string) - Sets the prompt "Okay" button text.
  * - $mdDialogPreset#cancel(string) - Sets the prompt "Cancel" button text.
@@ -546,6 +547,8 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *     `three` into the controller, with the value 3. If `bindToController` is true, they will be
  *     copied to the controller instead.
  *   - `bindToController` - `bool`: bind the locals to the controller, instead of passing them in.
+ *   - `resolve` - `{function=}`: Similar to locals, except it takes as values functions that return promises, and the	
+ *      dialog will not open until all of the promises resolve.
  *   - `controllerAs` - `{string=}`: An alias to assign the controller to on the scope.
  *   - `parent` - `{element=}`: The element to append the dialog to. Defaults to appending
  *     to the root element of the application.
@@ -555,7 +558,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
  *     finished.
  *   - `onRemoving` - `function(element, removePromise)`: Callback function used to announce the
  *      close/hide() action is starting. This allows developers to run custom animations
- *      in parallel the close animations.
+ *      in parallel with the close animations.
  *   - `fullscreen` `{boolean=}`: An option to toggle whether the dialog should show in fullscreen
  *      or not. Defaults to `false`.
  *   - `multiple` `{boolean=}`: An option to allow this dialog to display over one that's currently open.
@@ -589,7 +592,7 @@ function MdDialogDirective($$rAF, $mdTheming, $mdDialog) {
 
 function MdDialogProvider($$interimElementProvider) {
   // Elements to capture and redirect focus when the user presses tab at the dialog boundary.
-  advancedDialogOptions['$inject'] = ["$mdDialog", "$mdConstant"];
+  MdDialogController['$inject'] = ["$mdDialog", "$mdConstant"];
   dialogDefaultOptions['$inject'] = ["$mdDialog", "$mdAria", "$mdUtil", "$mdConstant", "$animate", "$document", "$window", "$rootElement", "$log", "$injector", "$mdTheming", "$interpolate", "$mdInteraction"];
   var topFocusTrap, bottomFocusTrap;
 
@@ -616,7 +619,7 @@ function MdDialogProvider($$interimElementProvider) {
     });
 
   /* ngInject */
-  function advancedDialogOptions($mdDialog, $mdConstant) {
+  function advancedDialogOptions() {
     return {
       template: [
         '<md-dialog md-theme="{{ dialog.theme || dialog.defaultTheme }}" aria-label="{{ dialog.ariaLabel }}" ng-class="dialog.css">',
@@ -644,27 +647,39 @@ function MdDialogProvider($$interimElementProvider) {
         '  </md-dialog-actions>',
         '</md-dialog>'
       ].join('').replace(/\s\s+/g, ''),
-      controller: function mdDialogCtrl() {
-        var isPrompt = this.$type == 'prompt';
-
-        if (isPrompt && this.initialValue) {
-          this.result = this.initialValue;
-        }
-
-        this.hide = function() {
-          $mdDialog.hide(isPrompt ? this.result : true);
-        };
-        this.abort = function() {
-          $mdDialog.cancel();
-        };
-        this.keypress = function($event) {
-          if ($event.keyCode === $mdConstant.KEY_CODE.ENTER) {
-            $mdDialog.hide(this.result);
-          }
-        };
-      },
+      controller: MdDialogController,
       controllerAs: 'dialog',
       bindToController: true,
+    };
+  }
+
+  /**
+   * Controller for the md-dialog interim elements
+   * ngInject
+   */
+  function MdDialogController($mdDialog, $mdConstant) {
+    // For compatibility with AngularJS 1.6+, we should always use the $onInit hook in
+    // interimElements. The $mdCompiler simulates the $onInit hook for all versions.
+    this.$onInit = function() {
+      var isPrompt = this.$type == 'prompt';
+
+      if (isPrompt && this.initialValue) {
+        this.result = this.initialValue;
+      }
+
+      this.hide = function() {
+        $mdDialog.hide(isPrompt ? this.result : true);
+      };
+      this.abort = function() {
+        $mdDialog.cancel();
+      };
+      this.keypress = function($event) {
+        var invalidPrompt = isPrompt && this.required && !angular.isDefined(this.result);
+
+        if ($event.keyCode === $mdConstant.KEY_CODE.ENTER && !invalidPrompt) {
+          $mdDialog.hide(this.result);
+        }
+      };
     };
   }
 
@@ -696,7 +711,8 @@ function MdDialogProvider($$interimElementProvider) {
         var startSymbol = $interpolate.startSymbol();
         var endSymbol = $interpolate.endSymbol();
         var theme = startSymbol + (options.themeWatch ? '' : '::') + 'theme' + endSymbol;
-        return '<div class="md-dialog-container" tabindex="-1" md-theme="' + theme + '">' + validatedTemplate(template) + '</div>';
+        var themeAttr = (options.hasTheme) ? 'md-theme="'+theme+'"': '';
+        return '<div class="md-dialog-container" tabindex="-1" ' + themeAttr + '>' + validatedTemplate(template) + '</div>';
 
         /**
          * The specified template should contain a <md-dialog> wrapper element....
@@ -816,7 +832,7 @@ function MdDialogProvider($$interimElementProvider) {
 
       // For navigation $destroy events, do a quick, non-animated removal,
       // but for normal closes (from clicks, etc) animate the removal
-      return !!options.$destroy ? detachAndClean() : animateRemoval().then( detachAndClean );
+      return options.$destroy ? detachAndClean() : animateRemoval().then( detachAndClean );
 
       /**
        * For normal closes, animate the removal.
@@ -857,7 +873,9 @@ function MdDialogProvider($$interimElementProvider) {
 
       var themeCtrl = targetEl && targetEl.controller('mdTheme');
 
-      if (!themeCtrl) {
+      options.hasTheme = (!!themeCtrl);
+
+      if (!options.hasTheme) {
         return;
       }
 
@@ -1051,7 +1069,7 @@ function MdDialogProvider($$interimElementProvider) {
        */
       options.hideBackdrop = function hideBackdrop($destroy) {
         if (options.backdrop) {
-          if ( !!$destroy ) options.backdrop.remove();
+          if ( $destroy ) options.backdrop.remove();
           else              $animate.leave(options.backdrop);
         }
 
@@ -1096,9 +1114,15 @@ function MdDialogProvider($$interimElementProvider) {
       }
       else {
         $mdAria.expectAsync(element, 'aria-label', function() {
-          var words = dialogContent.text().split(/\s+/);
-          if (words.length > 3) words = words.slice(0, 3).concat('...');
-          return words.join(' ');
+          // If dialog title is specified, set aria-label with it
+          // See https://github.com/angular/material/issues/10582
+          if (options.title) {
+            return options.title;
+          } else {
+            var words = dialogContent.text().split(/\s+/);
+            if (words.length > 3) words = words.slice(0, 3).concat('...');
+            return words.join(' ');
+          }
         });
       }
 
@@ -1155,7 +1179,9 @@ function MdDialogProvider($$interimElementProvider) {
           for (var i = 0; i < children.length; i++) {
             // skip over child if it is an ascendant of the dialog
             // or a script or style tag
-            if (element !== children[i] && !isNodeOneOf(children[i], ['SCRIPT', 'STYLE'])) {
+            if (element !== children[i] &&
+             !isNodeOneOf(children[i], ['SCRIPT', 'STYLE']) &&
+             !children[i].hasAttribute('aria-live')) {
               children[i].setAttribute('aria-hidden', isHidden);
             }
           }

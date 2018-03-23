@@ -11,7 +11,7 @@
     "autocomplete"
   ],
   "description": "A library for textually searching arrays and hashes of objects by property (or multiple properties). Designed specifically for autocomplete.",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "license": "Apache License, Version 2.0",
   "readmeFilename": "README.md",
   "repository": {
@@ -32,11 +32,11 @@
   ],
   "dependencies": {},
   "homepage": "https://github.com/brianreavis/sifter.js",
-  "_release": "0.5.2",
+  "_release": "0.5.3",
   "_resolution": {
     "type": "version",
-    "tag": "v0.5.2",
-    "commit": "4ba7422542bf188c1fdb4bbc341fc4fcc1ff0680"
+    "tag": "v0.5.3",
+    "commit": "2a9c84ec5ac63ceaa4516205e013113626d36a2d"
   },
   "_source": "https://github.com/brianreavis/sifter.js.git",
   "_target": "~0.5.2",

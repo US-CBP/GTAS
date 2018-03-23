@@ -2,7 +2,7 @@
  * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.1.4-master-75237c6
+ * v1.1.8-master-c62282f
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -679,7 +679,7 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
    * Slides the tabs over approximately one page forward.
    */
   function nextPage () {
-    if (!ctrl.canPageForward()) { return }
+    if (!ctrl.canPageForward()) { return; }
 
     var newOffset = MdTabsPaginationService.increasePageOffset(getElements(), ctrl.offsetLeft);
 
@@ -690,7 +690,7 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
    * Slides the tabs over approximately one page backward.
    */
   function previousPage () {
-    if (!ctrl.canPageBack()) { return }
+    if (!ctrl.canPageBack()) { return; }
 
     var newOffset = MdTabsPaginationService.decreasePageOffset(getElements(), ctrl.offsetLeft);
 
@@ -1004,7 +1004,10 @@ function MdTabsController ($scope, $element, $window, $mdConstant, $mdTabInkRipp
         index = ctrl[ key ];
     for (newIndex = index + inc;
          ctrl.tabs[ newIndex ] && ctrl.tabs[ newIndex ].scope.disabled;
-         newIndex += inc) {}
+         newIndex += inc) { /* do nothing */ }
+
+    newIndex = (index + inc + ctrl.tabs.length) % ctrl.tabs.length;
+
     if (ctrl.tabs[ newIndex ]) {
       ctrl[ key ] = newIndex;
     }
@@ -1410,7 +1413,7 @@ function MdTabs ($$mdSvgRegistry) {
                       '\'md-disabled\':  tab.scope.disabled ' +
                   '}" ' +
                   'ng-disabled="tab.scope.disabled" ' +
-                  'md-swipe-left="$mdTabsCtrl.nextPage()" md-swipe-touch-action="pan-y" ' +
+                  'md-swipe-left="$mdTabsCtrl.nextPage()" ' +
                   'md-swipe-right="$mdTabsCtrl.previousPage()" ' +
                   'md-tabs-template="::tab.label" ' +
                   'md-scope="::tab.parent"></md-tab-item> ' +
@@ -1434,7 +1437,6 @@ function MdTabs ($$mdSvgRegistry) {
               'aria-labelledby="tab-item-{{::tab.id}}" ' +
               'md-swipe-left="$mdTabsCtrl.swipeContent && $mdTabsCtrl.incrementIndex(1)" ' +
               'md-swipe-right="$mdTabsCtrl.swipeContent && $mdTabsCtrl.incrementIndex(-1)" ' +
-              'md-swipe-touch-action="pan-y" ' +
               'ng-if="tab.hasContent" ' +
               'ng-repeat="(index, tab) in $mdTabsCtrl.tabs" ' +
               'ng-class="{ ' +

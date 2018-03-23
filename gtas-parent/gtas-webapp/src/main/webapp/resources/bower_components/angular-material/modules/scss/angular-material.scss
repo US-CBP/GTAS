@@ -1876,13 +1876,6 @@ button.md-button::-moz-focus-inner {
     padding: $baseline-grid;
     width: $icon-button-width;
     border-radius: $button-icon-border-radius;
-    .md-ripple-container {
-      border-radius: $button-icon-border-radius;
-      background-clip: padding-box;
-      overflow: hidden;
-      // The following hack causes Safari/Chrome to respect overflow hidden for ripples
-      -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC');
-    }
   }
 
   &.md-fab {
@@ -1906,13 +1899,6 @@ button.md-button::-moz-focus-inner {
 
     transition: $swift-ease-in;
     transition-property: background-color, box-shadow, transform;
-    .md-ripple-container {
-      border-radius: $button-fab-border-radius;
-      background-clip: padding-box;
-      overflow: hidden;
-      // The following hack causes Safari/Chrome to respect overflow hidden for ripples
-      -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC');
-    }
 
     &.md-mini {
       line-height: $button-fab-mini-line-height;
@@ -1938,11 +1924,13 @@ button.md-button::-moz-focus-inner {
   }
 
   .md-ripple-container {
-    border-radius: $button-border-radius;
+    border-radius: inherit;
     background-clip: padding-box;
     overflow: hidden;
-    // The following hack causes Safari/Chrome to respect overflow hidden for ripples
-    -webkit-mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC');
+
+    // Workaround for rounded corner overflow bug
+    // Force Safari and Chrome to use a compositing layer
+    -webkit-transform:translateZ(0);
   }
 }
 
@@ -2684,7 +2672,7 @@ md-calendar {
   font-weight: 500; // Roboto Medium
   @include rtl(padding, 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding, rtl-value( 0 0 0 $md-calendar-side-padding + $md-calendar-month-label-padding));
 
-  md-calendar-month &:not(.md-calendar-month-label-disabled) {
+  &.md-calendar-label-clickable {
     cursor: pointer;
   }
 
@@ -3774,13 +3762,6 @@ md-input-container {
     overflow: hidden;
     @include rtl(clear, left, right);
 
-    &.ng-enter {
-      // Upon entering the DOM, messages should be hidden
-      .md-input-message-animation {
-        opacity: 0;
-        margin-top: -100px;
-      }
-    }
   }
 
   .md-input-message-animation, .md-char-counter {
@@ -3814,16 +3795,16 @@ md-input-container {
     }
   }
 
-  // Note: This is a workaround to fix an ng-enter flicker bug
   .md-input-message-animation {
-    &:not(.ng-animate) {
+    // Enter animation
+    // Pre-animation state is transparent and off target
+    &.ng-enter-prepare {
       opacity: 0;
       margin-top: -100px;
     }
-  }
 
-  .md-input-message-animation {
-    &.ng-enter {
+    // First keyframe of entry animation
+    &.ng-enter:not(.ng-enter-active) {
       opacity: 0;
       margin-top: -100px;
     }
@@ -4672,6 +4653,7 @@ $md-nav-bar-height: 48px;
   &:hover {
     background-color: inherit;
   }
+
 }
 
 md-nav-ink-bar {
@@ -6175,6 +6157,14 @@ $subheader-sticky-shadow: 0px 2px 4px 0 rgba(0,0,0,0.16) !default;
   }
 }
 
+[md-swipe-left], [md-swipe-right] {
+    touch-action : pan-y;
+}
+
+[md-swipe-up], [md-swipe-down] {
+    touch-action : pan-x;
+}
+
 $switch-width: 36px !default;
 $switch-height: $baseline-grid * 3 !default;
 $switch-bar-height: 14px !default;
@@ -6552,7 +6542,7 @@ md-tab-content {
   &.md-left:not(.md-active) {
     @include rtl(transform, translateX(-100%), translateX(+100%));
     animation: 2 * $swift-ease-in-out-duration md-tab-content-hide;
-    opacity: 0;
+    visibility: hidden;
     * {
       transition: visibility 0s linear;
       transition-delay: $swift-ease-in-out-duration;
@@ -6562,7 +6552,7 @@ md-tab-content {
   &.md-right:not(.md-active) {
     @include rtl(transform, translateX(100%), translateX(-100%));
     animation: 2 * $swift-ease-in-out-duration md-tab-content-hide;
-    opacity: 0;
+    visibility: hidden;
     * {
       transition: visibility 0s linear;
       transition-delay: $swift-ease-in-out-duration;

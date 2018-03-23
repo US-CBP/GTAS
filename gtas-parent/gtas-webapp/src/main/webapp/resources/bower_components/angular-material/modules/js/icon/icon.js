@@ -2,7 +2,7 @@
  * AngularJS Material Design
  * https://github.com/angular/material
  * @license MIT
- * v1.1.4-master-75237c6
+ * v1.1.8-master-c62282f
  */
 (function( window, angular, undefined ){
 "use strict";
@@ -97,7 +97,7 @@ angular
  *
  * ### Localization
  *
- * Because an `md-icon` element's text content is not intended to translated, it is recommended to declare the text
+ * Because an `md-icon` element's text content is not intended to be translated, it is recommended to declare the text
  * content for an `md-icon` element in its start tag. Instead of using the HTML text content, consider using `ng-bind`
  * with a scope variable or literal string.
  *
@@ -714,8 +714,8 @@ function ConfigurationItem(url, viewBoxSize) {
 function MdIconService(config, $templateRequest, $q, $log, $mdUtil, $sce) {
   var iconCache = {};
   var svgCache = {};
-  var urlRegex = /[-\w@:%\+.~#?&//=]{2,}\.[a-z]{2,4}\b(\/[-\w@:%\+.~#?&//=]*)?/i;
-  var dataUrlRegex = /^data:image\/svg\+xml[\s*;\w\-\=]*?(base64)?,(.*)$/i;
+  var urlRegex = /[-\w@:%+.~#?&//=]{2,}\.[a-z]{2,4}\b(\/[-\w@:%+.~#?&//=]*)?/i;
+  var dataUrlRegex = /^data:image\/svg\+xml[\s*;\w\-=]*?(base64)?,(.*)$/i;
 
   Icon.prototype = {clone: cloneSVG, prepare: prepareAndStyle};
   getIcon.fontSet = findRegisteredFontSet;

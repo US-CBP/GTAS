@@ -34,12 +34,12 @@
     "package.json",
     "Cakefile"
   ],
-  "version": "1.1.0",
-  "_release": "1.1.0",
+  "version": "1.2.0",
+  "_release": "1.2.0",
   "_resolution": {
     "type": "version",
-    "tag": "1.1.0",
-    "commit": "12f3b5693647c2bf6a39180a5097a40ed5586663"
+    "tag": "1.2.0",
+    "commit": "8524ffd9f1bc3658518daf69eda4274a3dcccc56"
   },
   "_source": "https://github.com/mistic100/sql-parser.git",
   "_target": "^1.0.0",
