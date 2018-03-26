@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +54,7 @@ public class RedissonFilter {
         try {
         RLiveObjectService service = client.getLiveObjectService();
 
-        LedgerLiveObject ledger = new LedgerLiveObject();
+            LedgerLiveObject ledger = new LedgerLiveObject();
 
             //ledger.setName("ledger1");
             String messageHashKey = getMessageHash(messagePayload);
@@ -66,6 +68,8 @@ public class RedissonFilter {
                 ledger.setMessageTimeStamp(messageTimestamp);
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(messagePayload));
+                RExpirable rExpirable = service.asRExpirable(ledger);
+                rExpirable.expireAt(Date.from(LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("UTC"))));
                 ledger = service.persist(ledger);
                 //if(!publishToDownstreamQueues(messagePayload)){throw new Exception("Error publishing to parsing queue");};
             }else{
