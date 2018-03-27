@@ -7,6 +7,8 @@ package gov.gtas.parsers.paxlst.segment.unedifact;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 import gov.gtas.parsers.exception.ParseException;
@@ -48,6 +50,7 @@ public class FTX extends Segment {
         super(FTX.class.getSimpleName(), composites);
         for (int i = 0; i < numComposites(); i++) {
             Composite c = getComposite(i);
+            
             switch (i) {
             case 0:
                 switch (c.getElement(0)) {
@@ -55,20 +58,27 @@ public class FTX extends Segment {
                     this.ftxCode = FtxCode.BAG;
                     break;
                 }
+                
                 break;
             case 1:
                 if (this.ftxCode == FtxCode.BAG) {
                     this.bagWeight = c.getElement(0);
+                    
                 }
                 break;
-                
+             
             case 3:
                 if (this.ftxCode == FtxCode.BAG) {
                     this.bagId = c.getElement(0);
-                    this.numBags = c.getElement(1);
+                    //if(c.getElement(1) == null || StringUtils.isBlank(c.getElement(1))){
+                    	//this.numBags = "1";
+                    //}else{
+                    	this.numBags = c.getElement(1);
+                    //}
                 }
                 break;
             }
+            
         }
     }
 

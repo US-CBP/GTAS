@@ -232,6 +232,8 @@ public class LoaderRepository {
                             logger.debug("@ createSeatAssignment");
                             createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, existingFlight);
                             logger.debug("@ createBags");
+                            System.out.println("##### Bags ######### :"+pvo.getBags());
+                        
                             createBags(pvo.getBags(), existingPassenger, existingFlight);
                         }
                     }
