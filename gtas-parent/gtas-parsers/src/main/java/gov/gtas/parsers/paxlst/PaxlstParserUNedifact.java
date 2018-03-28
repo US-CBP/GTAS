@@ -309,7 +309,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             	p.setTotalBagWeight(ftx.getBagWeight());
             	p.setBagId(bagId);
                 List<String> bags = new ArrayList<>();
-                bags.add(bagId);
+                
                 if (ftx.getNumBags() != null ) {
                     p.setBagNum(ftx.getNumBags());
                     int numBags = Integer.parseInt(ftx.getNumBags());
@@ -329,6 +329,10 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                         bags.add(temp);
                     }
                 }
+                }
+                else{
+                   	bags.add(bagId);
+                	p.setBagNum("1");
                 }
                 p.setBags(bags);
             }

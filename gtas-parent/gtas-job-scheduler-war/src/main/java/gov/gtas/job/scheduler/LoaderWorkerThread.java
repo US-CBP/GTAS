@@ -6,6 +6,8 @@
 package gov.gtas.job.scheduler;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,20 +22,22 @@ import com.sun.jna.platform.win32.WinUser.MSG;
 public class LoaderWorkerThread implements Runnable {
 	@Autowired
 	private LoaderScheduler loader;
-/*	@PersistenceUnit
-	EntityManagerFactory emf;*/
 	
 	private String text;
 	private String fileName;
+	private String primeFlightKey;
 	private BlockingQueue<Message<?>> queue;
+	private ConcurrentMap<String, BlockingQueue<Message<?>>> map;
 	
 	static final Logger logger = LoggerFactory.getLogger(LoaderWorkerThread.class);
 	
 	public LoaderWorkerThread(){
 	}
 	
-	public LoaderWorkerThread(BlockingQueue<Message<?>> queue){
+	public LoaderWorkerThread(BlockingQueue<Message<?>> queue, ConcurrentMap<String, BlockingQueue<Message<?>>> map, String primeFlightKey){
         this.queue=queue;
+        this.map = map;
+        this.primeFlightKey = primeFlightKey;
     }
 
 	@Override
@@ -41,23 +45,33 @@ public class LoaderWorkerThread implements Runnable {
     	while(true){
 	    	Message<?> msg = null;
 	    	try {
-	    		msg = queue.take();
+	    		msg = queue.poll(30000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	    	
 	    	if(msg != null){
 	    		MessageHeaders headers =  msg.getHeaders();
 	    		this.fileName = headers.get("Filename").toString();
 	    		this.text = msg.getPayload().toString();
-	    		logger.info(Thread.currentThread().getName()+" Test FileName = "+fileName);
+	    		logger.info(Thread.currentThread().getName()+" FileName = "+fileName);
 	        	processCommand();
 	    	}
+	    	else{
+	    		//If msg = null then .poll() has lasted 30 seconds and found no message, eat the queue and destroy the thread
+	    		destroyQueue();
+	    		break;
+	    	}
 	    }
+    	logger.info("Self-Destruct: Queue Removed, Thread Destroyed");
     }
    
     private void processCommand() {
       loader.receiveMessage(text, fileName);
+    }
+    
+    private void destroyQueue(){
+    	//remove the reference from the parent map at the same time as ending the thread, dereferencing the queue and GC-ing it.
+    	this.map.remove(this.primeFlightKey);
     }
 
     @Override
@@ -86,5 +100,21 @@ public class LoaderWorkerThread implements Runnable {
 
 	public void setQueue(BlockingQueue<Message<?>> queue) {
 		this.queue = queue;
+	}
+
+	public String getPrimeFlightKey() {
+		return primeFlightKey;
+	}
+
+	public void setPrimeFlightKey(String primeFlightKey) {
+		this.primeFlightKey = primeFlightKey;
+	}
+
+	public ConcurrentMap<String, BlockingQueue<Message<?>>> getMap() {
+		return map;
+	}
+
+	public void setMap(ConcurrentMap<String, BlockingQueue<Message<?>>> map) {
+		this.map = map;
 	}
 }

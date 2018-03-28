@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,8 +41,9 @@ public class LoaderMessageReceiver {
 	
 	private ExecutorService exec = Executors.newFixedThreadPool(maxNumOfThreads);
 	
-	private static BlockingQueue<Message<?>> queue = new ArrayBlockingQueue<Message<?>>(1024);
+	private BlockingQueue<Message<?>> queue;
 	
+	private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<String, BlockingQueue<Message<?>>>();
 	
 	private static final String GTAS_LOADER_QUEUE = "GTAS_LOADER_Q";
 	static final Logger logger = LoggerFactory.getLogger(LoaderMessageReceiver.class);
@@ -51,25 +54,31 @@ public class LoaderMessageReceiver {
 		MessageHeaders headers =  message.getHeaders();
 		logger.info("Application : headers received : {}", headers);
 		logger.info("Filename: "+headers.get("Filename"));
-		try {
-			msg.acknowledge();
-		} catch (JMSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		//logger.info("+++++++++++++FILE CONTENT ++++++++++++++++++++++"+message.getPayload());
 		String fileName = headers.get("Filename").toString();
-		//loader.receiveMessage(message.getPayload().toString(), fileName);;
-		//Uncomment when threading is supported for our loader process
-		//logger.info("Worker Object Generated With Filename: "+ worker.getFileName());
+		String primeFlight = headers.get("TVL").toString();
 		
-		try {
-			queue.put(message);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		//bucketBucket is a bucket of buckets. It holds a series of queues that are processed sequentially.
+		//This solves the problem where-in which we cannot run the risk of trying to save/update the same flight at the same time. This is done by shuffling all identical flights into the same queue in order
+		//to be processed sequentially. However, by processing multiple sequential queues at the same time, we in essence multi-thread the process for all non-identical prime flights
+		BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlight);
+		if(potentialBucket == null){
+			//Is not existing bucket, make bucket, stuff in bucketBucket,
+			logger.info("New Queue Created For Prime Flight: " + primeFlight);
+			queue = new ArrayBlockingQueue<Message<?>>(1024);
+			queue.offer(message); //TODO: offer returns false if can't enter the queue, need to make sure we don't lose messages and have it wait for re attempt when there is space.
+			bucketBucket.putIfAbsent(primeFlight, queue);
+			//Only generate workers on a per queue basis
+			worker.setQueue(queue);
+			worker.setMap(bucketBucket); //give map reference and key in order to kill queue later
+			worker.setPrimeFlightKey(primeFlight);
+			exec.execute(worker);
+		} else{
+			//Is existing bucket, place same prime flight message into bucket
+			logger.info("Existing Queue Found!");
+			potentialBucket.offer(message);
+			//No need to execute worker here, if queue exists then worker is already on it.
 		}
-		//loader.receiveMessage(message.getPayload().toString(), fileName);
-		worker.setQueue(queue);
-		exec.execute(worker);
 	}
 }
