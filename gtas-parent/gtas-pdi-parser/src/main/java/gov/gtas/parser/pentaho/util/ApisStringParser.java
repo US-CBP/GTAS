@@ -27,7 +27,7 @@ public class ApisStringParser {
 
 		String result = null;
 
-		if (txt != null && !txt.isEmpty()) {
+		if (txt != null && !txt.trim().isEmpty()) {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			byte[] array = md.digest(txt.getBytes(StandardCharsets.US_ASCII));
 			StringBuilder sb = new StringBuilder();
@@ -149,6 +149,10 @@ public class ApisStringParser {
 
 			}
 
+		}
+		else
+		{
+			digitString = false;
 		}
 
 		return digitString;
