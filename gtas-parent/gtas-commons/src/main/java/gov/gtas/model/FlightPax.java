@@ -86,10 +86,7 @@ public class FlightPax implements Serializable {
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
-    
-    @ManyToMany(mappedBy = "flightPaxes",targetEntity = BookingDetail.class) 
-    private Set<BookingDetail> bookingDetails = new HashSet<>();
-    
+
 	public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}
