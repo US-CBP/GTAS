@@ -71,4 +71,109 @@ public class BookingDetail extends BaseEntityAudit {
 	}
 
 
+	public String getFlightNumber() {
+		return flightNumber;
+	}
+
+	public void setFlightNumber(String flightNumber) {
+		this.flightNumber = flightNumber;
+	}
+
+	public Date getEtdDate() {
+		return etdDate;
+	}
+
+	public void setEtdDate(Date etdDate) {
+		this.etdDate = etdDate;
+	}
+
+	public Date getEtaDate() {
+		return etaDate;
+	}
+
+	public void setEtaDate(Date etaDate) {
+		this.etaDate = etaDate;
+	}
+
+	public Date getEtd() {
+		return etd;
+	}
+
+	public void setEtd(Date etd) {
+		this.etd = etd;
+	}
+
+	public Date getEta() {
+		return eta;
+	}
+
+	public void setEta(Date eta) {
+		this.eta = eta;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public String getOriginCountry() {
+		return originCountry;
+	}
+
+	public void setOriginCountry(String originCountry) {
+		this.originCountry = originCountry;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
+	public String getDestinationCountry() {
+		return destinationCountry;
+	}
+
+	public void setDestinationCountry(String destinationCountry) {
+		this.destinationCountry = destinationCountry;
+	}
+
+	public Boolean getProcessed() {
+		return processed;
+	}
+
+	public void setProcessed(Boolean processed) {
+		this.processed = processed;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		if (!super.equals(o)) return false;
+
+		BookingDetail that = (BookingDetail) o;
+
+		if (!flightNumber.equals(that.flightNumber)) return false;
+		if (!etdDate.equals(that.etdDate)) return false;
+		if (!etaDate.equals(that.etaDate)) return false;
+		if (!origin.equals(that.origin)) return false;
+		return destination.equals(that.destination);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode();
+		result = 31 * result + flightNumber.hashCode();
+		result = 31 * result + etdDate.hashCode();
+		result = 31 * result + etaDate.hashCode();
+		result = 31 * result + origin.hashCode();
+		result = 31 * result + destination.hashCode();
+		return result;
+	}
 }
