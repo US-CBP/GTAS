@@ -93,7 +93,7 @@ public class PnrMessageService extends MessageLoaderService {
             handleException(e, MessageStatus.FAILED_PARSING, pnr);
             return null;
         } finally {
-            createMessageFromParse(pnr);
+            createMessage(pnr);
         }
         msgDto.setPnr(pnr);
         logger.debug("load time = "+(System.nanoTime()-startTime)/1000000);
@@ -112,13 +112,11 @@ public class PnrMessageService extends MessageLoaderService {
             utils.convertPnrVo(pnr, vo);
             loaderRepo.processPnr(pnr, vo);
             loaderRepo.processFlightsAndPassengers(vo.getFlights(), vo.getPassengers(), 
-                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs());
+                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey());
             
             // update flight legs
-            synchronized(this){
-            	for (FlightLeg leg : pnr.getFlightLegs()) {
-                	leg.setPnr(pnr);
-            	}
+           	for (FlightLeg leg : pnr.getFlightLegs()) {
+               	leg.setPnr(pnr);
             }
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
@@ -324,35 +322,13 @@ public class PnrMessageService extends MessageLoaderService {
         logger.error(stacktrace);
     }
     
-    //Parses are fresh messages, there is no concurrency threat from brand new parsed messages so no synchronized is needed unlike the load() createMessage call.
-    @Transactional
-    private boolean createMessageFromParse(Pnr m){
-    	boolean ret = true;
-        logger.debug("@createMessage");
-        long startTime = System.nanoTime();
-        try {
-        		msgDao.save(m);
-            if (useIndexer) {
-            	indexer.indexPnr(m);
-            }
-        } catch (Exception e) {
-            ret = false;
-            handleException(e, MessageStatus.FAILED_LOADING, m);
-            	msgDao.save(m);
-        }
-        logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
-        return ret;
-    }
-    
     @Transactional
     private boolean createMessage(Pnr m) {
         boolean ret = true;
         logger.debug("@createMessage");
         long startTime = System.nanoTime();
         try {
-        	synchronized(this){
-        		msgDao.save(m);
-        	}
+        	msgDao.save(m);
             if (useIndexer) {
             	indexer.indexPnr(m);
             }

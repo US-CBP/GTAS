@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
@@ -31,17 +32,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoaderMessageReceiver {
 	//Uncomment along with executorService when threading is more capable in our persistence model
-	@Autowired
-	private LoaderWorkerThread worker;
+/*	@Autowired
+	private LoaderWorkerThread worker;*/
 	
 	@Autowired
 	private LoaderScheduler loader;
 	
-	private int maxNumOfThreads = 4;
+	@Autowired
+	private ApplicationContext	ctx;
+	
+	private int maxNumOfThreads = 5;
 	
 	private ExecutorService exec = Executors.newFixedThreadPool(maxNumOfThreads);
-	
-	private BlockingQueue<Message<?>> queue;
 	
 	private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<String, BlockingQueue<Message<?>>>();
 	
@@ -66,17 +68,18 @@ public class LoaderMessageReceiver {
 		if(potentialBucket == null){
 			//Is not existing bucket, make bucket, stuff in bucketBucket,
 			logger.info("New Queue Created For Prime Flight: " + primeFlight);
-			queue = new ArrayBlockingQueue<Message<?>>(1024);
+			BlockingQueue<Message<?>> queue = new ArrayBlockingQueue<Message<?>>(1024);
 			queue.offer(message); //TODO: offer returns false if can't enter the queue, need to make sure we don't lose messages and have it wait for re attempt when there is space.
 			bucketBucket.putIfAbsent(primeFlight, queue);
 			//Only generate workers on a per queue basis
+			LoaderWorkerThread worker = ctx.getBean(LoaderWorkerThread.class);
 			worker.setQueue(queue);
 			worker.setMap(bucketBucket); //give map reference and key in order to kill queue later
 			worker.setPrimeFlightKey(primeFlight);
 			exec.execute(worker);
 		} else{
 			//Is existing bucket, place same prime flight message into bucket
-			logger.info("Existing Queue Found!");
+			logger.info("Existing Queue Found! Placing message inside...");
 			potentialBucket.offer(message);
 			//No need to execute worker here, if queue exists then worker is already on it.
 		}

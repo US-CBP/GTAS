@@ -159,7 +159,7 @@ public class LoaderMain {
 
     private static void processSingleFile(File f, LoaderStatistics stats) {
         System.out.println(String.format("Processing %s", f.getAbsolutePath()));
-        int[] result = loader.processMessage(f);
+        int[] result = loader.processMessage(f, "placeHolder"); //TODO: Replace placeHolder
         // update loader statistics.
         if (result != null) {
             stats.incrementNumFilesProcessed();

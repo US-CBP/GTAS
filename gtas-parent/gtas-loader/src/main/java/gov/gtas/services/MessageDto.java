@@ -15,15 +15,16 @@ public class MessageDto {
 	private MessageVo msgVo;
 	private List<String> rawMsgs;
 	private String filepath;
+	private String primeFlightKey;
 	
-	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo){
+	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo, String primeFlightKey){
 		this.pnr = pnr;
 		this.apis = apis;
 		this.msgType = msgType;
 		this.msgVo = msgVo;
 		this.rawMsg = rawMsg;
 		this.rawMsgs = rawMsgs;
-		this.filepath = filepath;
+		this.primeFlightKey = primeFlightKey;
 	}
 	
 	public MessageDto(){
@@ -84,6 +85,14 @@ public class MessageDto {
 
 	public void setFilepath(String filepath) {
 		this.filepath = filepath;
+	}
+
+	public String getPrimeFlightKey() {
+		return primeFlightKey;
+	}
+
+	public void setPrimeFlightKey(String primeFlightKey) {
+		this.primeFlightKey = primeFlightKey;
 	}
 	
 }

@@ -106,7 +106,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)msgDto.getMsgVo();
             loaderRepo.processReportingParties(apis, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>());
+            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), msgDto.getPrimeFlightKey());
             createFlightPax(apis);
             apis.setStatus(MessageStatus.LOADED);
 
@@ -165,7 +165,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)messageVo;
             loaderRepo.processReportingParties(apisMessage, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>());
+                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),"placeHolder"); //TODO: Placeholder string removed
             createFlightPax(apisMessage);
             apisMessage.setStatus(MessageStatus.LOADED);
 

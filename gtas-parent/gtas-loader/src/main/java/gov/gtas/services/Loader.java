@@ -41,10 +41,12 @@ public class Loader {
      * 
      * @param f
      *            the file to process
+     * @param primeFlightKey
+     * 			  the key for determining which flight on the itinerary is the current border crossing flight. A.K.A. Prime Flight
      * @return array of integers containing loaded message count at index 0 and
      *         failed message count at index 1.
      */
-    public int[] processMessage(File f) {
+    public int[] processMessage(File f, String primeFlightKey) {
         String filePath = f.getAbsolutePath();
         MessageDto msgDto = null;
         MessageLoaderService svc = null;
@@ -54,6 +56,7 @@ public class Loader {
                 throw new LoaderException("exceeds max file size");
             }
             msgDto = new MessageDto();
+            msgDto.setPrimeFlightKey(primeFlightKey);
             
             byte[] raw = FileUtils.readSmallFile(filePath);
             String tmp = new String(raw, StandardCharsets.US_ASCII);

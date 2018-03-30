@@ -201,111 +201,51 @@ public class LoaderRepository {
         }
         logger.debug("processPnr time= "+(System.nanoTime()-startTime)/1000000);
     }
+
     @Transactional
-    public synchronized void checkAndCreateFlights(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights,
-    		Set<Passenger> messagePassengers,List<FlightLeg> flightLegs, Set<PassengerVo> existingPassengers) throws ParseException{
-    	long startTime = System.nanoTime();
+    public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, List<FlightLeg> flightLegs, String primeFlightKey) throws ParseException {
+        Set<PassengerVo> existingPassengers = new HashSet<>();
+        long startTime = System.nanoTime();
         // first find all existing passengers, create any missing flights
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            logger.debug("@ getFlightByCriteria");
-            Flight currentFlight = null;
-            	Flight existingFlight = flightDao.getFlightAndPassengersByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
-                if(existingFlight == null){
-                	logger.debug("Flight Not Found: Creating Flight");
-                    currentFlight = utils.createNewFlight(fvo);
-                    flightDao.save(currentFlight);
-                    logger.debug("Flight Created: "+fvo.getFlightNumber());
-                }
-                else if (existingFlight != null) {
-                    currentFlight = existingFlight;
-                    if(fvo.isCodeShareFlight() ){
-                    	currentFlight.setOperatingFlight(true);
-                    }
-                    for (PassengerVo pvo : passengers) {
-                    	logger.debug("@ findPassengerOnFlight");
-                        Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
-                        if (existingPassenger != null) {
-                            updatePassenger(existingPassenger, pvo);
-                            messagePassengers.add(existingPassenger);
-                            existingPassengers.add(pvo);
-                            logger.debug("@ createSeatAssignment");
-                            createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, existingFlight);
-                            logger.debug("@ createBags");
-                            createBags(pvo.getBags(), existingPassenger, existingFlight);
-                        }
-                    }
-
-                }
-            logger.debug("processFlightsAndPassenger: check for existing flights time= "+ (System.nanoTime()-startTime)/1000000);
-            messageFlights.add(currentFlight);
-            FlightLeg leg = new FlightLeg();
-            leg.setFlight(currentFlight);
-            leg.setLegNumber(i);
-            flightLegs.add(leg);
+            if(primeFlightKey.equalsIgnoreCase("placeholder") || isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
+	            logger.debug("@ getFlightByCriteria");
+	            Flight currentFlight = null;
+	           	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
+	           		if(existingFlight == null){
+	                	logger.info("Flight Not Found: Creating Flight");
+	                    currentFlight = utils.createNewFlight(fvo);
+	                    flightDao.save(currentFlight);
+	                    logger.info("Flight Created: "+fvo.getFlightNumber());
+	                }
+	                else if (existingFlight != null) {
+	                    currentFlight = existingFlight;
+	                    if(fvo.isCodeShareFlight() ){
+	                    	currentFlight.setOperatingFlight(true);
+	                    }
+	                    for (PassengerVo pvo : passengers) {
+	                    	logger.debug("@ findPassengerOnFlight");
+	                        Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
+	                        if (existingPassenger != null) {
+	                            updatePassenger(existingPassenger, pvo);
+	                            messagePassengers.add(existingPassenger);
+	                            existingPassengers.add(pvo);
+	                            logger.debug("@ createSeatAssignment");
+	                            createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, existingFlight);
+	                            logger.debug("@ createBags");
+	                            createBags(pvo.getBags(), existingPassenger, existingFlight);
+	                        }
+	                    }
+	                }
+	            logger.debug("processFlightsAndPassenger: check for existing flights time= "+ (System.nanoTime()-startTime)/1000000);
+	            messageFlights.add(currentFlight);
+	            FlightLeg leg = new FlightLeg();
+	            leg.setFlight(currentFlight);
+	            leg.setLegNumber(i);
+	            flightLegs.add(leg);
+            }//End if prime flight
         }
-    }
-
-    public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, List<FlightLeg> flightLegs) throws ParseException {
-        Set<PassengerVo> existingPassengers = new HashSet<>();
-        checkAndCreateFlights(flights, passengers, messageFlights, messagePassengers, flightLegs, existingPassengers);
-        long startTime = System.nanoTime();
-        // first find all existing passengers, create any missing flights
-        /*for (int i=0; i<flights.size(); i++) {
-            FlightVo fvo = flights.get(i);
-            logger.debug("@ getFlightByCriteria");
-            Flight currentFlight = null;
-            synchronized(lockObject){
-            	logger.debug("In synchronized thread " + this);
-            	logger.debug("static object lock reference = "+lockObject);
-            	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
-                if(existingFlight == null){
-                	logger.debug("Flight Not Found: Creating Flight");
-                    currentFlight = utils.createNewFlight(fvo);
-                    try{
-                    	flightDao.save(currentFlight);
-                    }catch(Exception cve){
-                    	//This is to catch thread collisions trying to create the same flight at the same time.
-                    	//Synchronized is not blocking the section of code correctly, so threads are still accessing at the same time
-                    	//This will, if it fails to create a flight, instead uses the flight with the exact same constraints it violated as it, by logic of hitting the constraint, must exist.
-                    	logger.debug("Flight Already Exists With That Criteria!");
-                    	logger.debug("Attempting to use existing flight in processing");
-                    	currentFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
-                    }
-                    logger.debug("Flight Created: "+fvo.getFlightNumber());
-                }
-                else if (existingFlight != null) {
-                    currentFlight = existingFlight;
-                    if(fvo.isCodeShareFlight() ){
-                    	currentFlight.setOperatingFlight(true);
-                    }
-                    for (PassengerVo pvo : passengers) {
-                    	logger.debug("@ findPassengerOnFlight");
-                        Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
-                        if (existingPassenger != null) {
-                            updatePassenger(existingPassenger, pvo);
-                            messagePassengers.add(existingPassenger);
-                            existingPassengers.add(pvo);
-                            logger.debug("@ createSeatAssignment");
-                            createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, existingFlight);
-                            logger.debug("@ createBags");
-                            createBags(pvo.getBags(), existingPassenger, existingFlight);
-                        }
-                    }
-
-                } else {
-                    currentFlight = utils.createNewFlight(fvo);
-                    flightDao.save(currentFlight);
-                }
-            } //end synchronize
-
-            logger.debug("processFlightsAndPassenger: check for existing flights time= "+ (System.nanoTime()-startTime)/1000000);
-            messageFlights.add(currentFlight);
-            FlightLeg leg = new FlightLeg();
-            leg.setFlight(currentFlight);
-            leg.setLegNumber(i);
-            flightLegs.add(leg);
-        }*/
 
 		// create any new passengers
         startTime = System.nanoTime();
@@ -331,10 +271,6 @@ public class LoaderRepository {
             Passenger newPassenger=null;
 
 			if(newPassenger != null){
-<<<<<<< Updated upstream
-=======
- refs/remotes/origin/dev
->>>>>>> Stashed changes
 				utils.updatePassenger(pvo, newPassenger);
 			}else{
 				newPassenger = utils.createNewPassenger(pvo);
@@ -364,6 +300,22 @@ public class LoaderRepository {
             f.setPassengerCount(f.getPassengers().size());
         }
         logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
+    }
+    
+    private boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
+    	String[] primeCrit = primeFlightCriteria.split("\\+");
+    	primeCrit[5] = primeCrit[5].replace("'", "");
+    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
+    		primeCrit[5] = String.format("%4s",primeCrit[5]);
+    		primeCrit[5] = primeCrit[5].replace(" ", "0");
+    	}
+    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
+    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
+    			fvo.getDestination().toString().equals(primeCrit[3])){
+    		logger.debug("Prime Flight Found!");
+    		return true;
+    	}
+    	else return false;
     }
 
 

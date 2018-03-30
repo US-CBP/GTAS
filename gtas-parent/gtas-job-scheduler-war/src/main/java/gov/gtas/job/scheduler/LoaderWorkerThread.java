@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import com.sun.jna.platform.win32.WinUser.MSG;
 
 @Component
+@Scope("prototype")
 public class LoaderWorkerThread implements Runnable {
 	@Autowired
 	private LoaderScheduler loader;
@@ -66,12 +68,15 @@ public class LoaderWorkerThread implements Runnable {
     }
    
     private void processCommand() {
-      loader.receiveMessage(text, fileName);
+      loader.receiveMessage(text, fileName, primeFlightKey);
     }
     
     private void destroyQueue(){
     	//remove the reference from the parent map at the same time as ending the thread, dereferencing the queue and GC-ing it.
+    	logger.debug("Prime key being removed: " + this.primeFlightKey);
+    	logger.debug("Queue inside this thread: " + this.queue.hashCode());
     	this.map.remove(this.primeFlightKey);
+    	this.queue = null;
     }
 
     @Override
