@@ -42,6 +42,6 @@ public class ApisMessageServiceIT extends
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-		svc.processMessage(this.message);
+		svc.processMessage(this.message, "placeholder");
 	}
 }
