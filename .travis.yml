@@ -12,7 +12,7 @@ notifications:
     recipients:
     - david.j.ertel@cbp.dhs.gov
     - taylorjwdev@gmail.com
-    - donleyac@gmail.com 
+    - teddygtaswork@gmail.com
     - vempatisvr@gmail.com
     on_success: change
     on_failure: change

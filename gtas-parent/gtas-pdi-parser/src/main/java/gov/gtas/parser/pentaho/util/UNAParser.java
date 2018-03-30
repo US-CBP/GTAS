@@ -13,7 +13,7 @@ public final class UNAParser {
 	{
 		String serviceString = null;
 		
-		if(unaSegment == null || unaSegment.isEmpty())
+		if(unaSegment == null || unaSegment.trim().isEmpty())
 			return DEFAULT_SERVICE_STRING_ADVICE;
 		else
 		{

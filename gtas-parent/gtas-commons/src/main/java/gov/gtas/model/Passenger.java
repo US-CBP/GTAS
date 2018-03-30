@@ -43,6 +43,9 @@ public class Passenger extends BaseEntityAudit {
     @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
 
+    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+
     private String title;
 
     @Column(name = "first_name")
