@@ -283,10 +283,10 @@ public class LoaderRepository {
 			passengerDao.save(newPassenger);
 			messagePassengers.add(newPassenger);
 
-			/*for (Flight f : messageFlights) {
+			for (Flight f : messageFlights) {
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
 				createBags(pvo.getBags(), newPassenger, f);
-			}*/
+			}
 		}
         logger.debug("processFlightAndPassenger() create new Passengers time = "+(System.nanoTime()-startTime)/1000000);
         // assoc all passengers w/ flights, update pax counts
