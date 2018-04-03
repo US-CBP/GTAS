@@ -31,33 +31,52 @@ public class BookingDetailCompressScheduler {
     @Autowired
     private BookingDetailRepository bookingDetailRepository;
 
-    //@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
 
         ArrayList<Long> _idsToRemove = new ArrayList<Long>();
         List<BookingDetail> _tempList = bookingDetailRepository.getBookingDetailByProcessedFlag();
-        logger.debug(String.valueOf(_tempList.size()));
+        logger.debug("Booking Detail collection size -- "+String.valueOf(_tempList.size()));
         BookingDetail _tempBD = new BookingDetail();
         List<BookingDetail> _tempQueryResults = new ArrayList<BookingDetail>();
+        List<BookingDetail> _tempBDListNoDuplicates = new ArrayList<>();
+        List<BookingDetail> _tempTBDList = new ArrayList<>();
+        List<BookingDetail> _tempTBSList = new ArrayList<>();
 
-        _idsToRemove.addAll(sliceExistingBookingDetailListBySimilarity(_tempList));
+        //filter out duplicates from the un-processed records
+        _tempBDListNoDuplicates = _tempList.stream()
+                .distinct()
+                .collect(Collectors.toList());
 
-        for(BookingDetail bd : _tempList){
+        for(BookingDetail bd : _tempBDListNoDuplicates){
             _tempQueryResults = bookingDetailRepository.getSpecificBookingDetail(bd.getFlightNumber(), bd.getOrigin(), bd.getDestination(),
                                                                                  bd.getEtaDate(), bd.getEtdDate(), Boolean.TRUE);
             if(_tempQueryResults.size()>0){
                 // found existing Booking Detail, line up existing for deletion
                 _idsToRemove.add(bd.getId());
+                _tempTBDList.add(bd);
             }else{
                 // did not find one, make the first BookingDetail the pertinent processed one, line up the rest for deletion
                 bd.setProcessed(Boolean.TRUE);
+                _tempTBSList.add(bd);
             }
         }
 
-
+        try {
+            processTBDBookingDetailList(_tempTBDList);
+            processTBSBookingDetailList(_tempTBSList);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        logger.debug("Booking Detail processing complete -- ");
 
     } // end of job scheduling
 
+    /**
+     * Utility method to handle BookingDetail collection
+     * @param _tempList
+     * @return
+     */
     private List<Long> sliceExistingBookingDetailListBySimilarity(List<BookingDetail> _tempList){
 
         List<Long> _idsToRemove = new ArrayList<>();
@@ -68,20 +87,32 @@ public class BookingDetailCompressScheduler {
                    .distinct()
                    .collect(Collectors.toList());
        }
-       for(BookingDetail bd:_tempList){
-
-           if (((_tempBDListNoDuplicates.stream()
-                   .filter(x -> x.equals(bd))
-                   .findAny()
-                   .orElse(null)) == null)) {
-               _idsToRemove.add(bd.getId());
-           }
-
-       }
 
         return _idsToRemove;
     }
 
+    /**
+     * This method interacts with the DB and removes TBD records from BookingDetail table
+     * @param _tempList
+     */
+    private void processTBDBookingDetailList(List<BookingDetail> _tempList) throws Exception{
 
+            // Delete TBD records
+            bookingDetailRepository.delete(_tempList);;
+
+            logger.debug("Booking Detail collection marked delete -- "+String.valueOf(_tempList.size()));
+    }
+
+    /**
+     * This method interacts with the DB and saves ToBeSaved records from BookingDetail table
+     * @param _tempList
+     */
+    private void processTBSBookingDetailList(List<BookingDetail> _tempList) throws Exception{
+
+        // Save TBD records
+        bookingDetailRepository.save(_tempList);
+        logger.debug("Booking Detail collection marked save -- "+String.valueOf(_tempList.size()));
+
+    }
 
 }
