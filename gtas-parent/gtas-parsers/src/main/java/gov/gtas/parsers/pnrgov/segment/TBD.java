@@ -40,6 +40,7 @@ public class TBD extends Segment {
     private Integer numBags;
     private Double baggageWeight;
     private String unitQualifier="Kgs";
+    private boolean headOrMemberPool=false;
     
     public class BagDetails {
         private String airline;
@@ -101,10 +102,11 @@ public class TBD extends Segment {
     
     private List<BagDetails> bagDetails;
 
+
     public TBD(List<Composite> composites) {
 
         super(TBD.class.getSimpleName(), composites);
-
+        setMemberPool(composites);
         Composite c = getComposite(1);
         this.bagDetails = new ArrayList<>();
         if (c != null && StringUtils.isNotBlank(c.getElement(0))) {
@@ -170,6 +172,13 @@ public class TBD extends Segment {
         }
     }
 
+    private void setMemberPool(List<Composite> composites){
+    	for(Composite c: composites){
+    		if(c != null && (c.toString().contains("HP") ||(c.toString().contains("HP")))){
+    			this.headOrMemberPool=true;
+    		}
+    	}
+    }
     public Integer getNumBags() {
         return numBags;
     }
@@ -200,6 +209,12 @@ public class TBD extends Segment {
 
 	public void setBagDetails(List<BagDetails> bagDetails) {
 		this.bagDetails = bagDetails;
+	}
+	public boolean isHeadOrMemberPool() {
+		return headOrMemberPool;
+	}
+	public void setHeadOrMemberPool(boolean headOrMemberPool) {
+		this.headOrMemberPool = headOrMemberPool;
 	}
    
 }

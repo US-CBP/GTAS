@@ -690,11 +690,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
-        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n);
+        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n,tbd.isHeadOrMemberPool());
        
     }
     
-    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags){
+    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags,boolean headPool){
     	if(!(bDetails == null || bDetails.size()==0)){
     	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
     	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
@@ -702,13 +702,14 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
    		pvo.setTotalBagWeight(weight.toString());
     	for (BagDetails bd : bDetails){
     		BagVo bvo=new BagVo();
-    		if(bd.isMemberPool()){
+    		if(headPool){
     			bvo.setAirline(parsedMessage.getCarrier());
     			bvo.setBagId(bd.getTagNumber());
     			bvo.setData_source("PNR");
     			bvo.setDestinationAirport(pvo.getDebarkation());
     			bvo.setFirstName(pvo.getFirstName());
     			bvo.setLastName(pvo.getLastName());
+    			bvo.setHeadPool(true);
     			parsedMessage.setHeadPool(true);
     		}
     		else{
