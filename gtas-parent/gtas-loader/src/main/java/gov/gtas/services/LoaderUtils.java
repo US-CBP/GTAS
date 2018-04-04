@@ -21,8 +21,11 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.LoaderOptions;
+
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
@@ -321,6 +324,32 @@ public class LoaderUtils {
 
         logger.warn("Unknown airport code: " + code);
         return null;
+    }
+    
+    public boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
+    	String[] primeCrit = primeFlightCriteria.split("\\+");
+    	primeCrit[5] = primeCrit[5].replace("'", "");
+    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
+    		primeCrit[5] = String.format("%4s",primeCrit[5]);
+    		primeCrit[5] = primeCrit[5].replace(" ", "0");
+    	}
+    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
+    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
+    			fvo.getDestination().toString().equals(primeCrit[3])){
+    		logger.debug("Prime Flight Found!");
+    		return true;
+    	}
+    	else return false;
+    }
+    
+    public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo){
+    	BookingDetail bD = new BookingDetail();
+    	BeanUtils.copyProperties(fvo, bD);
+    	bD.setEtdDate(fvo.getEtd());
+    	bD.setEtaDate(fvo.getEta());
+    	bD.setCreatedAt(null);
+    	bD.setCreatedBy(LOADER_USER);
+    	return bD;
     }
 
     /**

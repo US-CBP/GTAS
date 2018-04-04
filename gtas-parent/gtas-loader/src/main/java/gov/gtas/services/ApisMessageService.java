@@ -8,6 +8,7 @@ package gov.gtas.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.ApisMessage;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.EdifactMessage;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
@@ -106,7 +108,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)msgDto.getMsgVo();
             loaderRepo.processReportingParties(apis, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), msgDto.getPrimeFlightKey());
+            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), msgDto.getPrimeFlightKey(), new HashSet<BookingDetail>());
             createFlightPax(apis);
             apis.setStatus(MessageStatus.LOADED);
 
@@ -165,7 +167,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)messageVo;
             loaderRepo.processReportingParties(apisMessage, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),"placeHolder"); //TODO: Placeholder string removed
+                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),"placeHolder", new HashSet<BookingDetail>()); //TODO: Placeholder string removed
             createFlightPax(apisMessage);
             apisMessage.setStatus(MessageStatus.LOADED);
 

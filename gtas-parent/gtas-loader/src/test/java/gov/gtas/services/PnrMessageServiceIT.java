@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.Passenger;
@@ -112,7 +113,7 @@ public class PnrMessageServiceIT extends
 		Set<Flight> dummy = new HashSet<>();
 		Set<Passenger> paxDummy = new HashSet<>();
 		loaderRepo.processFlightsAndPassengers(flights, passengers, dummy,
-				paxDummy, new ArrayList<FlightLeg>(),"placeholder");
+				paxDummy, new ArrayList<FlightLeg>(),"placeholder",new HashSet<BookingDetail>());
 		List<Passenger> pax = paxDao.getPassengersByLastName("doe");
 		assertEquals(1, pax.size());
 	}

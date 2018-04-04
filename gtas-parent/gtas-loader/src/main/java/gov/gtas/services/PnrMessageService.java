@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Bag;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.DwellTime;
 import gov.gtas.model.EdifactMessage;
@@ -112,12 +113,17 @@ public class PnrMessageService extends MessageLoaderService {
             utils.convertPnrVo(pnr, vo);
             loaderRepo.processPnr(pnr, vo);
             loaderRepo.processFlightsAndPassengers(vo.getFlights(), vo.getPassengers(), 
-                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey());
+                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey(), pnr.getBookingDetails());
             
             // update flight legs
            	for (FlightLeg leg : pnr.getFlightLegs()) {
                	leg.setPnr(pnr);
             }
+           	//update booking details
+           	for(BookingDetail bD : pnr.getBookingDetails()){
+           		bD.getPnrs().add(pnr);
+           		logger.info("pnr set size for this detail:" + bD.getPnrs().size());
+           	}
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
             loaderRepo.createBagsFromPnrVo(vo,pnr);

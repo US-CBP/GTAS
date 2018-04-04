@@ -23,6 +23,7 @@ import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.ReportingParty;
 import gov.gtas.model.Seat;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
@@ -42,6 +43,7 @@ import gov.gtas.parsers.vo.SeatVo;
 import gov.gtas.repository.AddressRepository;
 import gov.gtas.repository.AgencyRepository;
 import gov.gtas.repository.BagRepository;
+import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.repository.CreditCardRepository;
 import gov.gtas.repository.DocumentRepository;
 import gov.gtas.repository.FlightRepository;
@@ -110,9 +112,9 @@ public class LoaderRepository {
 
     @Autowired
     private PaymentFormRepository paymentFormDao;
-
-	@PersistenceContext
-	private EntityManager em;
+    
+    @Autowired 
+    BookingDetailRepository bookingDetailDao;
 
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -203,13 +205,14 @@ public class LoaderRepository {
     }
 
     @Transactional
-    public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, List<FlightLeg> flightLegs, String primeFlightKey) throws ParseException {
+    public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
+    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
         long startTime = System.nanoTime();
         // first find all existing passengers, create any missing flights
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if(primeFlightKey.equalsIgnoreCase("placeholder") || isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
+            if(primeFlightKey.equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
 	            logger.debug("@ getFlightByCriteria");
 	            Flight currentFlight = null;
 	           	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
@@ -245,8 +248,14 @@ public class LoaderRepository {
 	            leg.setLegNumber(i);
 	            flightLegs.add(leg);
             }//End if prime flight
+            else{
+            	BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
+            	//create booking details for this pnr
+                createNewBookingDetails(bD);
+            	bookingDetails.add(bD);
+            }
         }
-
+        
 		// create any new passengers
         startTime = System.nanoTime();
 		for (PassengerVo pvo : passengers) {
@@ -295,29 +304,19 @@ public class LoaderRepository {
             for (Passenger p : messagePassengers) {
             	utils.calculateValidVisaDays(f,p);
                 f.addPassenger(p);
-
             }
             f.setPassengerCount(f.getPassengers().size());
         }
+        
+        //assoc passengers to booking details
+        for(BookingDetail bD : bookingDetails){
+        	for(Passenger p : messagePassengers){
+        		bD.getPassengers().add(p);
+        		p.getBookingDetails().add(bD);
+        	}
+        }
         logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
     }
-    
-    private boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
-    	String[] primeCrit = primeFlightCriteria.split("\\+");
-    	primeCrit[5] = primeCrit[5].replace("'", "");
-    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
-    		primeCrit[5] = String.format("%4s",primeCrit[5]);
-    		primeCrit[5] = primeCrit[5].replace(" ", "0");
-    	}
-    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
-    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
-    			fvo.getDestination().toString().equals(primeCrit[3])){
-    		logger.debug("Prime Flight Found!");
-    		return true;
-    	}
-    	else return false;
-    }
-
 
     /**
      * Create a single seat assignment for the given passenger, flight
@@ -441,5 +440,9 @@ public class LoaderRepository {
         } else {
             return null;
         }
+    }
+    
+    private void createNewBookingDetails(BookingDetail bD){
+    	bookingDetailDao.save(bD);
     }
 }
