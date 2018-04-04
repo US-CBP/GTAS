@@ -373,6 +373,7 @@ public class LoaderRepository {
     	    		         bag.setAirline(b.getAirline());
     	    		         bag.setData_source(b.getData_source());
     	    		         bag.setDestinationAirport(b.getDestinationAirport());
+    	    		         bag.setHeadPool(b.isHeadPool());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
     	    		         bagDao.save(bag);
@@ -389,6 +390,7 @@ public class LoaderRepository {
     	    		         bag.setAirline(f.getCarrier());
     	    		         bag.setData_source(b.getData_source());
     	    		         bag.setDestinationAirport(f.getDestination());
+    	    		         bag.setHeadPool(b.isHeadPool());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
     	    		         bagDao.save(bag);

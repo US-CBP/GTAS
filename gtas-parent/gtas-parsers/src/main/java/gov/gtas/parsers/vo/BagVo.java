@@ -8,6 +8,7 @@ public class BagVo {
 	private String airline;
 	private String firstName;
 	private String lastName;
+	private boolean headPool=false;
 	
 	public BagVo(String bid,String source,String airport,String aline,String fName,String lName){
 		this.bagId=bid;
@@ -21,6 +22,12 @@ public class BagVo {
 		
 	}
 	
+	public boolean isHeadPool() {
+		return headPool;
+	}
+	public void setHeadPool(boolean headPool) {
+		this.headPool = headPool;
+	}
 	public String getFirstName() {
 		return firstName;
 	}

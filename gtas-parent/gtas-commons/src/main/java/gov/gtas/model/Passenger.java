@@ -125,7 +125,7 @@ public class Passenger extends BaseEntityAudit {
     private Set<Bag> bags = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
-    private List<FlightPax> flightPaxList = new ArrayList<>();
+    private Set<FlightPax> flightPaxList = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<TicketFare> tickets = new HashSet<>();    
@@ -170,11 +170,11 @@ public class Passenger extends BaseEntityAudit {
 		this.totalBagWeight = totalBagWeight;
 	}
 
-	public List<FlightPax> getFlightPaxList() {
+	public Set<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}
 
-	public void setFlightPaxList(List<FlightPax> flightPaxList) {
+	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
 	}
 

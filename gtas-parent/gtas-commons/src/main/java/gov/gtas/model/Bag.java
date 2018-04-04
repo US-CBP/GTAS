@@ -40,6 +40,18 @@ public class Bag extends BaseEntity {
     
     @Column(name = "airline")
 	private String airline;
+    
+    @Column(name = "headpool")
+	private boolean headPool=false;
+
+    
+	public boolean isHeadPool() {
+		return headPool;
+	}
+
+	public void setHeadPool(boolean headPool) {
+		this.headPool = headPool;
+	}
 
 	public String getDestinationAirport() {
 		return destinationAirport;

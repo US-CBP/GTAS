@@ -389,12 +389,28 @@ public class PnrMessageService extends MessageLoaderService {
     					p.setTravelFrequency(p.getTravelFrequency()+1);
     				}
     			}
+    			setHeadPool( fp,p,f);
     			p.getFlightPaxList().add(fp);
     		}
     	}
     	logger.debug("createFlightPax time = "+(System.nanoTime()-startTime)/1000000);
     }
 
+    private void setHeadPool(FlightPax fp,Passenger p,Flight f){
+    	try {
+			if(p.getBags() != null && p.getBags().size() >0){
+				for(Bag b:p.getBags()){
+					if(b.isHeadPool() && b.getFlight().getId().equals(f.getId()) 
+							&& b.getPassenger().getId().equals(p.getId())){
+						fp.setHeadOfPool(true);
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			//Skip..Do nothing..
+		}
+    }
 	@Override
 	public MessageVo parse(String message) {
 		// TODO Auto-generated method stub
