@@ -46,11 +46,11 @@ public class BookingDetail extends BaseEntityAudit {
 	@Column(name = "processed")
 	private Boolean processed = Boolean.FALSE;
 
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
     private Set<Passenger> passengers = new HashSet<>();
    
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Pnr.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Pnr.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pnr_id"))     
     private Set<Pnr> pnrs = new HashSet<>();
 

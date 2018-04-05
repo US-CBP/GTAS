@@ -10,11 +10,16 @@ import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.repository.PassengerRepository;
+import gov.gtas.services.BookingDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import java.awt.print.Book;
 import java.io.IOException;
@@ -30,6 +35,9 @@ public class BookingDetailCompressScheduler {
 
     @Autowired
     private BookingDetailRepository bookingDetailRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
@@ -54,7 +62,11 @@ public class BookingDetailCompressScheduler {
             if(_tempQueryResults.size()>0){
                 // found existing Booking Detail, line up existing for deletion
                 _idsToRemove.add(bd.getId());
+                bd.setPassengers(null);
+                bd.setPnrs(null);
                 _tempTBDList.add(bd);
+
+
             }else{
                 // did not find one, make the first BookingDetail the pertinent processed one, line up the rest for deletion
                 bd.setProcessed(Boolean.TRUE);
@@ -63,8 +75,9 @@ public class BookingDetailCompressScheduler {
         }
 
         try {
-            processTBDBookingDetailList(_tempTBDList);
             processTBSBookingDetailList(_tempTBSList);
+            processTBSBookingDetailList(_tempTBDList);
+            processTBDBookingDetailList(_tempTBDList);
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -72,35 +85,42 @@ public class BookingDetailCompressScheduler {
 
     } // end of job scheduling
 
-    /**
-     * Utility method to handle BookingDetail collection
-     * @param _tempList
-     * @return
-     */
-    private List<Long> sliceExistingBookingDetailListBySimilarity(List<BookingDetail> _tempList){
-
-        List<Long> _idsToRemove = new ArrayList<>();
-        List<BookingDetail> _tempBDListNoDuplicates = new ArrayList<>();
-
-       if(null != _tempList){
-           _tempBDListNoDuplicates = _tempList.stream()
-                   .distinct()
-                   .collect(Collectors.toList());
-       }
-
-        return _idsToRemove;
-    }
 
     /**
      * This method interacts with the DB and removes TBD records from BookingDetail table
      * @param _tempList
      */
-    private void processTBDBookingDetailList(List<BookingDetail> _tempList) throws Exception{
+    protected void processTBDBookingDetailList(List<BookingDetail> _tempList) throws Exception{
 
-            // Delete TBD records
-            bookingDetailRepository.delete(_tempList);;
+        // Delete TBD records
+        if(null != _tempList) {
+            for(BookingDetail bd : _tempList) {
+                try {
+                    processTBDBookingDetail(bd);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
 
-            logger.debug("Booking Detail collection marked delete -- "+String.valueOf(_tempList.size()));
+        logger.debug("Booking Detail collection marked delete -- "+String.valueOf(_tempList.size()));
+
+    }
+
+    /**
+     * This method interacts with the DB and removes TBD records from BookingDetail table
+     * @param bd
+     */
+    protected void processTBDBookingDetail(BookingDetail bd) throws Exception{
+
+        // Delete TBD records
+        if(null != bd) {
+            try {
+                bookingDetailRepository.delete(bd);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -110,8 +130,10 @@ public class BookingDetailCompressScheduler {
     private void processTBSBookingDetailList(List<BookingDetail> _tempList) throws Exception{
 
         // Save TBD records
-        bookingDetailRepository.save(_tempList);
-        logger.debug("Booking Detail collection marked save -- "+String.valueOf(_tempList.size()));
+        if(null != _tempList) {
+            bookingDetailRepository.save(_tempList);
+        }
+        //logger.debug("Booking Detail collection marked save -- "+String.valueOf(_tempList.size()));
 
     }
 
