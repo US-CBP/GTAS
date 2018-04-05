@@ -122,7 +122,6 @@ public class PnrMessageService extends MessageLoaderService {
            	//update booking details
            	for(BookingDetail bD : pnr.getBookingDetails()){
            		bD.getPnrs().add(pnr);
-           		logger.info("pnr set size for this detail:" + bD.getPnrs().size());
            	}
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
