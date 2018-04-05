@@ -431,6 +431,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         f.setOrigin(tvl.getOrigin());
         f.setEta(tvl.getEta());
         f.setEtd(tvl.getEtd());
+        //PNR data can be received without ETA issue #546 fix.
+        if(f.getEta() == null){
+        	f.setEta(f.getEtd());
+        }
         f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
         Date flightDate = FlightUtils.determineFlightDate(tvl.getEtd(), tvl.getEta(), parsedMessage.getTransmissionDate());
         f.setFlightDate(flightDate);
@@ -455,6 +459,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              csFlight.setOrigin(tvl.getOrigin());
              csFlight.setEta(tvl.getEta());
              csFlight.setEtd(tvl.getEtd());
+             //PNR data can be received without ETA issue #546 fix.
+             if(csFlight.getEta() == null){
+            	 csFlight.setEta(csFlight.getEtd());
+             }
              csFlight.setFlightDate(flightDate);
              csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
              csFlight.setCodeShareFlight(true);
