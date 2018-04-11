@@ -44,22 +44,27 @@ public class IntegrateUnTaggedPassengerListScheduler {
 
         final java.util.Random rand = new java.util.Random();
 
-        for(Passenger _tempPaxWithIdTag : paxListNotNull){
-            boolean paxFoundFlag = false;
-            Passenger _tempPaxWithIdTagThatMatched = new Passenger();
-            for(Passenger _tempPaxWithNoIdTag : paxListWithNullIdTags){
-                if((_tempPaxWithIdTag.getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getFirstName()))
-                        &&(_tempPaxWithIdTag.getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getLastName()))
-                        &&(_tempPaxWithIdTag.getDob().equals(_tempPaxWithNoIdTag.getDob()))
-                        &&(_tempPaxWithIdTag.getCitizenshipCountry().equalsIgnoreCase(_tempPaxWithNoIdTag.getCitizenshipCountry()))
-                        &&(_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
-                        ){
-                    // match found
-                    _tempPaxWithNoIdTag.setIdTag(_tempPaxWithIdTag.getIdTag());
+        try {
+            for (Passenger _tempPaxWithIdTag : paxListNotNull) {
+                boolean paxFoundFlag = false;
+                Passenger _tempPaxWithIdTagThatMatched = new Passenger();
+                for (Passenger _tempPaxWithNoIdTag : paxListWithNullIdTags) {
+                    if ((_tempPaxWithIdTag.getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getFirstName()))
+                            && (_tempPaxWithIdTag.getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getLastName()))
+                            && (_tempPaxWithIdTag.getDob().equals(_tempPaxWithNoIdTag.getDob()))
+//                            && (_tempPaxWithIdTag.getCitizenshipCountry().equalsIgnoreCase(_tempPaxWithNoIdTag.getCitizenshipCountry()))
+                            && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
+                            ) {
+                        // match found
+                        _tempPaxWithNoIdTag.setIdTag(_tempPaxWithIdTag.getIdTag());
+                    }
                 }
-            }
 
-        } // end of Passenger with No IdTag loop
+            } // end of Passenger with No IdTag loop
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
         // Now persist this checked set of passengers
         for(Passenger _checkedListOfNullIdTagPassenger : paxListWithNullIdTags){
