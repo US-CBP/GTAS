@@ -11,16 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Cacheable
 @Entity
@@ -45,6 +36,11 @@ public class Passenger extends BaseEntityAudit {
 
     @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+
+    @ManyToOne(fetch=FetchType.EAGER, targetEntity = PassengerIDTag.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "pax_tag_id"))
+    private PassengerIDTag paxIdTag;
 
     private String title;
 
@@ -105,9 +101,6 @@ public class Passenger extends BaseEntityAudit {
     
     private Date watchlistCheckTimestamp;
 
-    @Column(name = "idTag")
-    private String idTag;
-    
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
@@ -394,16 +387,15 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
-
-    public String getIdTag() {
-        return idTag;
+    public PassengerIDTag getPaxIdTag() {
+        return paxIdTag;
     }
 
-    public void setIdTag(String idTag) {
-        this.idTag = idTag;
+    public void setPaxIdTag(PassengerIDTag paxIdTag) {
+        this.paxIdTag = paxIdTag;
     }
 
-	@Override
+    @Override
     public int hashCode() {
         final int prime = 31;
         // int result = super.hashCode();

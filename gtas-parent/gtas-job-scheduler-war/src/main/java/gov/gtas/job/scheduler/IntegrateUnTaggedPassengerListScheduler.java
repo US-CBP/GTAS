@@ -34,13 +34,13 @@ public class IntegrateUnTaggedPassengerListScheduler {
                 //passengerDao.getNotNullIdTagPassengers();
                 //passengerDao.getNullIdTagPassengers();
 
-        for(Passenger _tempPax : paxList){
-            if(_tempPax.getIdTag() == null){
-                paxListWithNullIdTags.add(_tempPax);
-            }else{
-                paxListNotNull.add(_tempPax);
-            }
-        }
+//        for(Passenger _tempPax : paxList){
+//            if(_tempPax.getIdTag() == null){
+//                paxListWithNullIdTags.add(_tempPax);
+//            }else{
+//                paxListNotNull.add(_tempPax);
+//            }
+//        }
 
         final java.util.Random rand = new java.util.Random();
 
@@ -56,7 +56,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
                             && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
                             ) {
                         // match found
-                        _tempPaxWithNoIdTag.setIdTag(_tempPaxWithIdTag.getIdTag());
+//                        _tempPaxWithNoIdTag.setIdTag(_tempPaxWithIdTag.getIdTag());
                     }
                 }
 
@@ -69,9 +69,9 @@ public class IntegrateUnTaggedPassengerListScheduler {
         // Now persist this checked set of passengers
         for(Passenger _checkedListOfNullIdTagPassenger : paxListWithNullIdTags){
 
-            if(_checkedListOfNullIdTagPassenger.getIdTag()==null){ // Passenger found, apply IdTag to the new record
-                _checkedListOfNullIdTagPassenger.setIdTag(generateRandomIDTag(9));
-            }
+//            if(_checkedListOfNullIdTagPassenger.getIdTag()==null){ // Passenger found, apply IdTag to the new record
+//                _checkedListOfNullIdTagPassenger.setIdTag(generateRandomIDTag(9));
+//            }
             passengerDao.save(_checkedListOfNullIdTagPassenger);
         }
 
