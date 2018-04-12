@@ -44,22 +44,22 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     @Query("UPDATE Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId")
     public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
 
-	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +
-            "AND UPPER(p.lastName) = UPPER(:lastName)" +
-            "AND UPPER(p.gender) = UPPER(:gender)" +
-            "AND UPPER(p.citizenshipCountry) = UPPER(:ctz_country) " +
-            "AND p.dob = (:dob)" +
-            "AND p.idTag IS NOT NULL")
-	public List<Passenger> getNotNullIdTaggedPassenger(@Param("firstName") String firstName, @Param("lastName") String lastName,
-                                                         @Param("gender") String gender, @Param("ctz_country") String ctz_country,
-                                                         @Param("dob") Date dob);
+//	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +
+//            "AND UPPER(p.lastName) = UPPER(:lastName)" +
+//            "AND UPPER(p.gender) = UPPER(:gender)" +
+//            "AND UPPER(p.citizenshipCountry) = UPPER(:ctz_country) " +
+//            "AND p.dob = (:dob)" +
+//            "AND p.idTag IS NOT NULL")
+//	public List<Passenger> getNotNullIdTaggedPassenger(@Param("firstName") String firstName, @Param("lastName") String lastName,
+//                                                         @Param("gender") String gender, @Param("ctz_country") String ctz_country,
+//                                                         @Param("dob") Date dob);
 
-	@Query("SELECT p FROM Passenger p WHERE p.idTag = (:idTag)")
-    public List<Passenger> getIdTaggedPassenger(@Param("") String idTag);
-
-	@Query("SELECT p FROM Passenger p WHERE p.idTag IS NULL")
-    public List<Passenger> getNullIdTagPassengers();
-
-    @Query("SELECT p FROM Passenger p WHERE p.idTag IS NOT NULL")
-    public List<Passenger> getNotNullIdTagPassengers();
+//	@Query("SELECT p FROM Passenger p WHERE p.idTag = (:idTag)")
+//    public List<Passenger> getIdTaggedPassenger(@Param("") String idTag);
+//
+//	@Query("SELECT p FROM Passenger p WHERE p.idTag IS NULL")
+//    public List<Passenger> getNullIdTagPassengers();
+//
+//    @Query("SELECT p FROM Passenger p WHERE p.idTag IS NOT NULL")
+//    public List<Passenger> getNotNullIdTagPassengers();
 }
