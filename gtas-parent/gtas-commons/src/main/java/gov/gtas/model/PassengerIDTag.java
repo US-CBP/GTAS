@@ -33,4 +33,11 @@ public class PassengerIDTag extends BaseEntityAudit {
         this.idTag = idTag;
     }
 
+    public Set<Passenger> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
 }

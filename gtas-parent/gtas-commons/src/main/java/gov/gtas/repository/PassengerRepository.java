@@ -57,9 +57,9 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 //	@Query("SELECT p FROM Passenger p WHERE p.idTag = (:idTag)")
 //    public List<Passenger> getIdTaggedPassenger(@Param("") String idTag);
 //
-//	@Query("SELECT p FROM Passenger p WHERE p.idTag IS NULL")
-//    public List<Passenger> getNullIdTagPassengers();
-//
-//    @Query("SELECT p FROM Passenger p WHERE p.idTag IS NOT NULL")
-//    public List<Passenger> getNotNullIdTagPassengers();
+	@Query("SELECT p FROM Passenger p WHERE p.paxIdTag IS NULL")
+    public List<Passenger> getNullIdTagPassengers();
+
+    @Query("SELECT p FROM Passenger p WHERE p.paxIdTag IS NOT NULL")
+    public List<Passenger> getNotNullIdTagPassengers();
 }

@@ -6,6 +6,8 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerIDTag;
+import gov.gtas.repository.PassengerIDTagRepository;
 import gov.gtas.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +25,9 @@ public class IntegrateUnTaggedPassengerListScheduler {
     @Autowired
     private PassengerRepository passengerDao;
 
+    @Autowired
+    private PassengerIDTagRepository passengerIDTagRepository;
+
     @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
 
@@ -31,16 +36,16 @@ public class IntegrateUnTaggedPassengerListScheduler {
 
         List<Passenger> paxListNotNull = new ArrayList<Passenger>();
         List<Passenger> paxListWithNullIdTags = new ArrayList<Passenger>();
-                //passengerDao.getNotNullIdTagPassengers();
-                //passengerDao.getNullIdTagPassengers();
+        passengerDao.getNotNullIdTagPassengers();
+        Iterable<Passenger> paxList2  = passengerDao.getNullIdTagPassengers();
 
-//        for(Passenger _tempPax : paxList){
-//            if(_tempPax.getIdTag() == null){
-//                paxListWithNullIdTags.add(_tempPax);
-//            }else{
-//                paxListNotNull.add(_tempPax);
-//            }
-//        }
+        for(Passenger _tempPax : paxList){
+            if(_tempPax.getPaxIdTag() == null){
+                paxListWithNullIdTags.add(_tempPax);
+            }else{
+                paxListNotNull.add(_tempPax);
+            }
+        }
 
         final java.util.Random rand = new java.util.Random();
 
@@ -56,7 +61,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
                             && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
                             ) {
                         // match found
-//                        _tempPaxWithNoIdTag.setIdTag(_tempPaxWithIdTag.getIdTag());
+                        _tempPaxWithNoIdTag.setPaxIdTag(_tempPaxWithIdTag.getPaxIdTag());
                     }
                 }
 
@@ -69,9 +74,18 @@ public class IntegrateUnTaggedPassengerListScheduler {
         // Now persist this checked set of passengers
         for(Passenger _checkedListOfNullIdTagPassenger : paxListWithNullIdTags){
 
-//            if(_checkedListOfNullIdTagPassenger.getIdTag()==null){ // Passenger found, apply IdTag to the new record
-//                _checkedListOfNullIdTagPassenger.setIdTag(generateRandomIDTag(9));
-//            }
+            //create new PassengerIDTag entity
+            ArrayList<PassengerIDTag> _tempPaxIdTagList = new ArrayList<>();
+            PassengerIDTag _tempPaxIDTag = new PassengerIDTag();
+
+
+            if(_checkedListOfNullIdTagPassenger.getPaxIdTag()==null){ // Passenger found, apply IdTag to the new record
+                _tempPaxIDTag.setIdTag(generateRandomIDTag(9));
+                _tempPaxIdTagList.add(_tempPaxIDTag);
+                _checkedListOfNullIdTagPassenger.setPaxIdTag(_tempPaxIDTag);
+                //_tempPaxIDTag.getPassengers().add(_checkedListOfNullIdTagPassenger);
+            }
+            passengerIDTagRepository.save(_tempPaxIdTagList);
             passengerDao.save(_checkedListOfNullIdTagPassenger);
         }
 
