@@ -52,6 +52,7 @@ import gov.gtas.repository.MessageRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PaymentFormRepository;
 import gov.gtas.repository.PhoneRepository;
+import gov.gtas.repository.PnrRepository;
 import gov.gtas.repository.ReportingPartyRepository;
 
 import java.util.HashSet;
@@ -115,6 +116,9 @@ public class LoaderRepository {
     
     @Autowired 
     BookingDetailRepository bookingDetailDao;
+    
+    @Autowired
+    PnrRepository pnrDao;
 
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -206,9 +210,11 @@ public class LoaderRepository {
 
     @Transactional
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
-    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
+    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails, long pnrId) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
+        Pnr currentPnr = pnrDao.findOne(pnrId); // We use this to associate booking details and pnr, otherwise we get detached entities and other nastiness.
         long startTime = System.nanoTime();
+        Pnr currentPNR = null;
         // first find all existing passengers, create any missing flights
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
@@ -251,8 +257,8 @@ public class LoaderRepository {
             else{
             	BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
             	//create booking details for this pnr
-                createNewBookingDetails(bD);
             	bookingDetails.add(bD);
+            	bookingDetailDao.save(bD);
             }
         }
         
@@ -309,12 +315,14 @@ public class LoaderRepository {
         }
         
         //assoc passengers to booking details
-        for(BookingDetail bD : bookingDetails){
-        	for(Passenger p : messagePassengers){
-        		bD.getPassengers().add(p);
-        		p.getBookingDetails().add(bD);
-        	}
-        }
+    	for(BookingDetail bD : bookingDetails){
+        	bD.getPnrs().add(currentPnr);
+   			for(Passenger pax : messagePassengers){
+    			bD.getPassengers().add(pax);
+    			pax.getBookingDetails().add(bD);
+    		}
+    	}
+        
         logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
     }
 
@@ -444,7 +452,11 @@ public class LoaderRepository {
         }
     }
     
-    private void createNewBookingDetails(BookingDetail bD){
-    	bookingDetailDao.save(bD);
+    public void createBookingDetails(Pnr pnr){
+    	
+    	for(BookingDetail bD : pnr.getBookingDetails()){
+    		bD.getPnrs().add(pnr);
+    	}
+    	bookingDetailDao.save(pnr.getBookingDetails());
     }
 }

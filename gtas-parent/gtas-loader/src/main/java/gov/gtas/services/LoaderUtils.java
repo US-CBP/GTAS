@@ -328,18 +328,25 @@ public class LoaderUtils {
     
     public boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
     	String[] primeCrit = primeFlightCriteria.split("\\+");
-    	primeCrit[5] = primeCrit[5].replace("'", "");
-    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
-    		primeCrit[5] = String.format("%4s",primeCrit[5]);
-    		primeCrit[5] = primeCrit[5].replace(" ", "0");
+    	if(primeCrit.length == 5){
+	    	primeCrit[5] = primeCrit[5].replace("'", "");
+	    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
+	    		primeCrit[5] = String.format("%4s",primeCrit[5]);
+	    		primeCrit[5] = primeCrit[5].replace(" ", "0");
+	    	}
+	    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
+	    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
+	    			fvo.getDestination().toString().equals(primeCrit[3])){
+	    		logger.debug("Prime Flight Found!");
+	    		return true;
+	    	}
+    	else return false;
     	}
-    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
-    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
-    			fvo.getDestination().toString().equals(primeCrit[3])){
-    		logger.debug("Prime Flight Found!");
+    	else {
+    		//If malformed prime flight criteria, returning true forces flight to load as prime flight
     		return true;
     	}
-    	else return false;
+    	
     }
     
     public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo){
