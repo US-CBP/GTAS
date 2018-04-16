@@ -127,7 +127,7 @@ public class LoaderRepository {
         }
     }
 
-    @Transactional
+    //@Transactional
     public void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties) {
         for (ReportingPartyVo rvo : parties) {
             ReportingParty existingRp = rpDao.getReportingParty(rvo.getPartyName(), rvo.getTelephone());
@@ -141,7 +141,7 @@ public class LoaderRepository {
         }
     }
 
-    @Transactional
+    //@Transactional
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
     	logger.debug("@ processPnr");
     	long startTime = System.nanoTime();
@@ -208,7 +208,7 @@ public class LoaderRepository {
         logger.debug("processPnr time= "+(System.nanoTime()-startTime)/1000000);
     }
 
-    @Transactional
+    //@Transactional
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
     		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails, long pnrId) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();

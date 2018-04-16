@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.Message;
@@ -46,6 +47,7 @@ public class Loader {
      * @return array of integers containing loaded message count at index 0 and
      *         failed message count at index 1.
      */
+    @Transactional
     public int[] processMessage(File f, String primeFlightKey) {
         String filePath = f.getAbsolutePath();
         MessageDto msgDto = null;
