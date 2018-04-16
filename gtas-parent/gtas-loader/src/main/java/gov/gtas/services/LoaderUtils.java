@@ -328,7 +328,7 @@ public class LoaderUtils {
     
     public boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
     	String[] primeCrit = primeFlightCriteria.split("\\+");
-    	if(primeCrit.length == 5){
+    	if(primeCrit.length == 6){
 	    	primeCrit[5] = primeCrit[5].replace("'", "");
 	    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
 	    		primeCrit[5] = String.format("%4s",primeCrit[5]);
@@ -339,10 +339,8 @@ public class LoaderUtils {
 	    			fvo.getDestination().toString().equals(primeCrit[3])){
 	    		logger.debug("Prime Flight Found!");
 	    		return true;
-	    	}
-    	else return false;
-    	}
-    	else {
+	    	} else return false;
+    	}else {
     		//If malformed prime flight criteria, returning true forces flight to load as prime flight
     		return true;
     	}
