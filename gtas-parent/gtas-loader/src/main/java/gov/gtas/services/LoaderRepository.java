@@ -371,16 +371,19 @@ public class LoaderRepository {
         		break;
         	}
     		for(BagVo b : pvo.getBags()){
-
-    			if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
-    				for(Passenger p: f.getPassengers()){
+    			String destination=f.getDestination();
+    			//if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
+    			if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
+    				destination=b.getDestinationAirport();
+    			}
+    			for(Passenger p: f.getPassengers()){
     					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
     							StringUtils.equals(p.getLastName(), b.getLastName())){
     						 Bag bag = new Bag();
     	    		         bag.setBagId(b.getBagId());
     	    		         bag.setAirline(b.getAirline());
     	    		         bag.setData_source(b.getData_source());
-    	    		         bag.setDestinationAirport(b.getDestinationAirport());
+    	    		         bag.setDestinationAirport(destination);
     	    		         bag.setHeadPool(b.isHeadPool());
     	    		         bag.setFlight(f);
     	    		         bag.setPassenger(p);
@@ -388,25 +391,7 @@ public class LoaderRepository {
     	    		         p.getBags().add(bag);
     					}
     				}
-    			}
-    			if(b.getDestinationAirport() == null){
-    				for(Passenger p: f.getPassengers()){
-    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
-    							StringUtils.equals(p.getLastName(), b.getLastName())){
-    						 Bag bag = new Bag();
-    	    		         bag.setBagId(b.getBagId());
-    	    		         bag.setAirline(f.getCarrier());
-    	    		         bag.setData_source(b.getData_source());
-    	    		         bag.setDestinationAirport(f.getDestination());
-    	    		         bag.setHeadPool(b.isHeadPool());
-    	    		         bag.setFlight(f);
-    	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag);
-    	    		         p.getBags().add(bag);
-    					}
-    				}
-    			}
-    		}
+     		}
     	}
 
     }
