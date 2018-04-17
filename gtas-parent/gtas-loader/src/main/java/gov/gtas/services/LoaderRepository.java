@@ -372,6 +372,7 @@ public class LoaderRepository {
         	}
     		for(BagVo b : pvo.getBags()){
     			String destination=f.getDestination();
+    			//flight_pax | bag info not making table #783 code fix
     			//if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
     			if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
     				destination=b.getDestinationAirport();
