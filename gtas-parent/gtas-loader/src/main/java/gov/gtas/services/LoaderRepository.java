@@ -365,7 +365,6 @@ public class LoaderRepository {
     }
 
     public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) {
-
     	for(Flight f : pnr.getFlights()){
         	if(pvo == null || pvo.getBags() == null ){
         		break;
