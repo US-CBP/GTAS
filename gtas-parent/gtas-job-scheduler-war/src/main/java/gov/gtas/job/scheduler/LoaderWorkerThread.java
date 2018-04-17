@@ -56,7 +56,12 @@ public class LoaderWorkerThread implements Runnable {
 	    		this.fileName = headers.get("Filename").toString();
 	    		this.text = msg.getPayload().toString();
 	    		logger.info(Thread.currentThread().getName()+" FileName = "+fileName);
-	        	processCommand();
+	        	try{
+	        		processCommand();
+	        	}catch(Exception e){
+	        		logger.info("Catastrophic failure, uncaught exception would cause thread destruction without queue destruction causing memory leak; Rerouting process");
+	        		e.printStackTrace();
+	        	}
 	    	}
 	    	else{
 	    		//If msg = null then .poll() has lasted 30 seconds and found no message, eat the queue and destroy the thread
