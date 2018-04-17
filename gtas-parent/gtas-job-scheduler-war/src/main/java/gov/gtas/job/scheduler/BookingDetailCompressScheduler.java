@@ -39,12 +39,12 @@ public class BookingDetailCompressScheduler {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
 
         ArrayList<Long> _idsToRemove = new ArrayList<Long>();
         List<BookingDetail> _tempList = bookingDetailRepository.getBookingDetailByProcessedFlag();
-        logger.debug("Booking Detail collection size -- "+String.valueOf(_tempList.size()));
+        logger.info("Booking Detail compress START , collection size -- "+String.valueOf(_tempList.size()));
         BookingDetail _tempBD = new BookingDetail();
         List<BookingDetail> _tempQueryResults = new ArrayList<BookingDetail>();
         List<BookingDetail> _tempBDListNoDuplicates = new ArrayList<>();
@@ -81,7 +81,7 @@ public class BookingDetailCompressScheduler {
         }catch (Exception ex){
             ex.printStackTrace();
         }
-        logger.debug("Booking Detail processing complete -- ");
+        logger.info("Booking Detail compress processing COMPLETE");
 
     } // end of job scheduling
 

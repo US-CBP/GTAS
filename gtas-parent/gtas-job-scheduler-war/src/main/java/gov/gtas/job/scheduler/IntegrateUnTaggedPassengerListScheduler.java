@@ -9,6 +9,8 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.repository.PassengerIDTagRepository;
 import gov.gtas.repository.PassengerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,15 +24,19 @@ import java.util.List;
 public class IntegrateUnTaggedPassengerListScheduler {
 
 
+    private static final Logger logger = LoggerFactory
+            .getLogger(IntegrateUnTaggedPassengerListScheduler.class);
+
     @Autowired
     private PassengerRepository passengerDao;
 
     @Autowired
     private PassengerIDTagRepository passengerIDTagRepository;
 
-    @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
+    @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
 
+        logger.info("PassengerIDTag matchup service START ");
         Iterable<Passenger> paxList = passengerDao.findAll();
         //int count = passengerDao.getNullIdTagPassengers().size();
 
@@ -87,6 +93,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
             }
             passengerIDTagRepository.save(_tempPaxIdTagList);
             passengerDao.save(_checkedListOfNullIdTagPassenger);
+            logger.info("PassengerIDTag matchup service END ");
         }
 
     }
