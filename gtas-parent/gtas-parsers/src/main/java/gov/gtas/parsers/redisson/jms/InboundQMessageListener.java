@@ -35,7 +35,7 @@ public class InboundQMessageListener {
     private String redisConnectionString;
 
     @Value("${inbound.loader.jms.queue}")
-    private static final String INBOUND_QUEUE = "ABC";
+    private static final String INBOUND_QUEUE = "GTAS_INBOUND_Q_REDIS";
 
     @Autowired
     private InboundQMessageSender sender;
