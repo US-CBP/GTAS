@@ -257,15 +257,15 @@ public class LoaderRepository {
             else{
             	BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
             	//create booking details for this pnr
+            	bD = bookingDetailDao.save(bD);
             	bookingDetails.add(bD);
-            	bookingDetailDao.save(bD);
             }
         }
         
 		// create any new passengers
         startTime = System.nanoTime();
 		for (PassengerVo pvo : passengers) {
-
+			if(!existingPassengers.contains(pvo)){
 //			if (passengerDao.findExistingPassengerByAttributes(
 //					pvo.getFirstName(), pvo.getLastName(), pvo.getMiddleName(),
 //					pvo.getGender(), pvo.getDob(), pvo.getPassengerType())) {
@@ -302,6 +302,7 @@ public class LoaderRepository {
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
 				createBags(pvo.getBags(), newPassenger, f);
 			}
+			}//End check if existing pvo
 		}
         logger.debug("processFlightAndPassenger() create new Passengers time = "+(System.nanoTime()-startTime)/1000000);
         // assoc all passengers w/ flights, update pax counts
@@ -345,6 +346,15 @@ public class LoaderRepository {
                 s.setNumber(seat.getNumber());
                 s.setApis(seat.getApis());
                 p.getSeatAssignments().add(s);
+                Boolean alreadyExistsSeat = Boolean.FALSE;
+                for(Seat s2 : p.getSeatAssignments()){      	
+                	if(s.equals(s2)){
+                		alreadyExistsSeat = Boolean.TRUE;
+                	}
+                }
+                if(!alreadyExistsSeat){
+                	p.getSeatAssignments().add(s);
+                }
                 return;
             }
         }
