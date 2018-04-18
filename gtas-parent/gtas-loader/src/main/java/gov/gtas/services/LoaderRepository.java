@@ -345,7 +345,6 @@ public class LoaderRepository {
                 s.setFlight(f);
                 s.setNumber(seat.getNumber());
                 s.setApis(seat.getApis());
-                p.getSeatAssignments().add(s);
                 Boolean alreadyExistsSeat = Boolean.FALSE;
                 for(Seat s2 : p.getSeatAssignments()){      	
                 	if(s.equals(s2)){
