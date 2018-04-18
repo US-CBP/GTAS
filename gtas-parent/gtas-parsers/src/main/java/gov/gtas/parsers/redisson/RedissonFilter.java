@@ -39,6 +39,7 @@ public class RedissonFilter {
     private static final String MESSAGE_SEGMENT_END="UNT";
     private static final String EMPTY_STRING="";
     private static final String TVL_HEADER_LABEL="TVL";
+    private static final String DAT_HEADER_LABEL="DAT+700";
 
 
     public RedissonFilter() {
@@ -97,6 +98,7 @@ public class RedissonFilter {
             String messageHashKey = EMPTY_STRING;
             EdifactLexer lexer = new EdifactLexer((String)messagePayload);
             segments = lexer.tokenize();
+
             for(Segment seg : segments){
                 if(seg.getName().equalsIgnoreCase(TVL_HEADER_LABEL)){
                     tvlLineText = seg.getText();
@@ -109,6 +111,8 @@ public class RedissonFilter {
             if(payload == null){
                 publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
             }else {
+                // Eject DAT line, if it exists, and then hash the payload
+                payload = removeDATSegment(payload);
                 messageHashKey = getMessageHash(payload);
             }
             // query Redis with the Key
@@ -176,6 +180,29 @@ public class RedissonFilter {
             ex.printStackTrace();
         }
 
+    }
+
+    /**
+     * Utility method to strip out DAT line from message payload before hashing
+     * @param origString
+     * @return
+     * @throws Exception
+     */
+    private String removeDATSegment(String origString) throws Exception {
+
+        String[] lines = origString.split("'\n");
+        for(int i=0;i<lines.length;i++){
+            if(lines[i].startsWith(DAT_HEADER_LABEL)){
+                lines[i]=EMPTY_STRING;
+            }
+        }
+        StringBuilder returnStr= new StringBuilder();
+        for(String s:lines){
+            if(!s.equals("")){
+                returnStr.append(s).append("'\n");
+            }
+        }
+        return returnStr.toString();
     }
 
 

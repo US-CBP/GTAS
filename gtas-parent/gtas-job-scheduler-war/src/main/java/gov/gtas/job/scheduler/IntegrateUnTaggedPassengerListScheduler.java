@@ -93,8 +93,9 @@ public class IntegrateUnTaggedPassengerListScheduler {
             }
             passengerIDTagRepository.save(_tempPaxIdTagList);
             passengerDao.save(_checkedListOfNullIdTagPassenger);
-            logger.info("PassengerIDTag matchup service END ");
         }
+
+        logger.info("PassengerIDTag matchup service END ");
 
     }
 
