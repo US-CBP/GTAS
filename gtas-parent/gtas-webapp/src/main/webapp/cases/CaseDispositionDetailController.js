@@ -191,9 +191,9 @@
             $scope.sideNav = function(id, position) {
                 //$scope.caseItemHitComments = $scope.caseItemHits[position];
                 $scope.caseItemHitComments = $scope.caseItemHitsVo[position];
-                $scope.caseItemHitId = $scope.caseItemHits[position].hitId;
-                $scope.hitDetailTrueHitFlag = $scope.caseItemHits[position].valid;
-                $scope.hitDispStatus = $scope.caseItemHits[position].status;
+                $scope.caseItemHitId = $scope.caseItemHitsVo[position].hit_disp_id;
+                $scope.hitDetailTrueHitFlag = $scope.caseItemHitsVo[position].valid;
+                $scope.hitDispStatus = $scope.caseItemHitsVo[position].status;
                 //$scope.dispStatus.hitStatusShow = ($scope.caseItemHits[position].status === $scope.dispStatus.constants.CLOSED)? false: true;
                 $scope.dispStatus.hitStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
                 $scope.dispStatus.hitStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;//when top-level case is closed, no more comments until re-opened
