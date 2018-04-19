@@ -16,7 +16,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import gov.gtas.vo.MessageVo;
 
 public class PnrVo extends MessageVo {
-    private String messageCode;
+    private Long id;
+	private String messageCode;
     
     private String recordLocator;
     private String carrier;
@@ -52,7 +53,13 @@ public class PnrVo extends MessageVo {
     private List<SeatVo> seatAssignments = new ArrayList<>();
     
     
-    public List<DocumentVo> getDocuments() {
+    public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public List<DocumentVo> getDocuments() {
 		return documents;
 	}
 	public void setDocuments(List<DocumentVo> documents) {
