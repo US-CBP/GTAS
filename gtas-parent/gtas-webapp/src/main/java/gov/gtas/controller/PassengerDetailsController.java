@@ -203,7 +203,8 @@ public class PassengerDetailsController {
 				t.getId(), new Long(flightId));
 		
 		if (!pnrList.isEmpty()) {
-			vo.setPnrVo(mapPnrToPnrVo(pnrList.get(0)));			
+			Pnr source=getLatestPnrFromList(pnrList);
+			vo.setPnrVo(mapPnrToPnrVo(source));			
 			PnrVo tempVo = vo.getPnrVo();
 			
 			//Assign seat for every passenger on pnr
@@ -853,6 +854,15 @@ public class PassengerDetailsController {
 
 	}
 
+	private Pnr getLatestPnrFromList(List<Pnr> pnrList) {
+		Pnr latest = pnrList.get(0);
+		for(Pnr p:pnrList) {
+			if(p.getId() >latest.getId()) {
+				latest=p;
+			}
+		}
+		return latest;
+	}
 	private DispositionStatus getCurrentDispositionStatus(
 			DispositionData disposition) {
 		List<Disposition> dispList = pService.getPassengerDispositionHistory(
