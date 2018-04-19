@@ -11,6 +11,7 @@ import gov.gtas.model.lookup.RuleCat;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class HitsDispositionVo {
@@ -24,6 +25,7 @@ public class HitsDispositionVo {
     private Set<HitsDispositionCommentsVo> dispCommentsVo;
     private Set<RuleCat> ruleCatSet;
     private String category;
+    private long hit_disp_id;
 
     @Override
     public boolean equals(Object o) {
@@ -34,16 +36,22 @@ public class HitsDispositionVo {
         HitsDispositionVo that = (HitsDispositionVo) o;
 
         return new EqualsBuilder()
+                .appendSuper(super.equals(o))
                 .append(hitId, that.hitId)
-                .append(caseId, that.caseId)
+                 .append(caseId, that.caseId)
+                //.append(aCase, that.aCase)
+                .append(hit_disp_id, that.hit_disp_id)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
                 .append(hitId)
                 .append(caseId)
+                //.append(aCase)
+                .append(hit_disp_id)
                 .toHashCode();
     }
 
@@ -118,4 +126,13 @@ public class HitsDispositionVo {
     public void setDispCommentsVo(Set<HitsDispositionCommentsVo> dispCommentsVo) {
         this.dispCommentsVo = dispCommentsVo;
     }
+
+    public long getHit_disp_id() {
+        return hit_disp_id;
+    }
+
+    public void setHit_disp_id(long hit_disp_id) {
+        this.hit_disp_id = hit_disp_id;
+    }
+
 }

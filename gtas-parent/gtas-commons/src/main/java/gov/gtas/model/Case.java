@@ -58,7 +58,7 @@ public class Case extends BaseEntityAudit {
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
 
-    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 

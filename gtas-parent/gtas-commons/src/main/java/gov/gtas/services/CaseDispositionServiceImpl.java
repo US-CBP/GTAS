@@ -36,6 +36,7 @@ import javax.annotation.Resource;
 import javax.print.Doc;
 import java.sql.Blob;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -218,6 +219,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id,  String comments, String username) {
 
         Case aCase = new Case();
+        Long _tempHitIdForManualCase = 9999L;
         Case _tempCase = null;
         _tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
         if (_tempCase != null &&
@@ -236,14 +238,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         aCase.setUpdatedBy(username);
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
-        aCase.setPaxName(pax.getFirstName());
+        aCase.setPaxName(pax.getFirstName()+" "+pax.getLastName());
+        populatePassengerDetailsInCase(aCase, flight_id, pax_id);
         aCase.setPaxType(pax.getPassengerType());
         aCase.setCitizenshipCountry(pax.getCitizenshipCountry());
         aCase.setDocument(((Document)pax.getDocuments().parallelStream().findFirst().orElse(new Document("xxxxxxxxx"))).getDocumentNumber());
         aCase.setDob(pax.getDob());
         aCase.setStatus(DispositionStatusCode.NEW.toString());
 
-        hit_ids.add(9999L); // Manual Distinction
+        hit_ids.add(_tempHitIdForManualCase); // Manual Distinction
+
         for (Long _tempHitId : hit_ids) {
             hitDisp = new HitsDisposition();
             //pullRuleCategory(hitDisp, rule_cat_id);
@@ -256,6 +260,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitDisp.setUpdatedAt(new Date());
             hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
+            RuleCat _tempRuleCat = ruleCatRepository.findOne(rule_cat_id);
+            if(_tempRuleCat!=null)hitDisp.setRuleCat(ruleCatRepository.findOne(rule_cat_id));
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
             hitsDispositionComments.setComments(comments);
@@ -265,6 +271,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             hitDisp.setDispComments(hitsDispCommentsSet);
             hitsDispSet.add(hitDisp);
         }
+
         if(aCase.getHighPriorityRuleCatId() == null)
             aCase.setHighPriorityRuleCatId(rule_cat_id);
         if(aCase.getHighPriorityRuleCatId() != null && aCase.getHighPriorityRuleCatId().equals(1L))
@@ -273,7 +280,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             aCase.setHighPriorityRuleCatId(rule_cat_id);
         if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
-        caseDispositionRepository.saveAndFlush(aCase);
+        caseDispositionRepository.save(aCase);
 
 //        _tempCase = null;
 //        _tempCase = caseDispositionRepository.getOne(aCase.getId());
@@ -304,6 +311,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         aCase.setFlightId(flight_id);
         aCase.setPaxId(pax_id);
         aCase.setPaxName(paxName);
+        populatePassengerDetailsInCase(aCase, flight_id, pax_id);
         aCase.setPaxType(paxType);
         aCase.setCitizenshipCountry(citizenshipCountry);
         aCase.setDocument(document);
@@ -329,6 +337,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             hitDisp.setStatus(DispositionStatusCode.NEW.toString());
             hitDisp.setUpdatedAt(new Date());
             hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
+//            RuleCat _tempRuleCat = ruleCatRepository.findOne(rule_cat_id);
+//            if(_tempRuleCat!=null)hitDisp.setRuleCat(ruleCatRepository.findOne(rule_cat_id));
             hitsDispositionComments = new HitsDispositionComments();
             hitsDispositionComments.setHitId(_tempHitId);
             hitsDispositionComments.setComments(INITIAL_COMMENT);
@@ -341,7 +351,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
         if (aCase.getHitsDispositions() != null) aCase.getHitsDispositions().addAll(hitsDispSet);
         else aCase.setHitsDispositions(hitsDispSet);
-        caseDispositionRepository.saveAndFlush(aCase);
+        caseDispositionRepository.save(aCase);
         return aCase;
     }
 
@@ -444,7 +454,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
                 //if ((hit.getCaseId() == aCase.getId()) && (hit_id != null) && (hit.getHitId() == hit_id)) {
                 // (hit.getaCase().getId() == aCase.getId()) &&
-                if ((hit_id != null) && (hit.getHitId() == hit_id)) {
+                if ((hit_id != null) && (hit.getId() == hit_id)) {
 
                     if (caseComments != null) { // set comments
                         hitsDispositionComments = new HitsDispositionComments();
@@ -614,6 +624,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
                 _tempAttachmentVoSet = new HashSet<AttachmentVo>();
 
                 CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
+                _tempHitsDisp.setHit_disp_id(hitDisp.getId());
                 if (hitDisp.getRuleCat() != null) {
                     CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp.getRuleCat(), _tempRuleCat);
                     //_tempRuleCat.setHitsDispositions(null);
@@ -660,7 +671,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return _tempReturnHitsDispSet;
+        //_tempReturnHitsDispSet = _tempReturnHitsDispSet.stream().sorted(Comparator.comparing(HitsDispositionVo::getHit_disp_id)).collect(Collectors.toSet());
+        List<HitsDispositionVo> _tempArrList = _tempReturnHitsDispSet.stream().sorted(Comparator.comparing(HitsDispositionVo::getHit_disp_id)).collect(Collectors.toList());
+        return new HashSet<>(_tempReturnHitsDispSet.stream().sorted(Comparator.comparing(HitsDispositionVo::getHit_disp_id)).collect(Collectors.toList()));
+        //return _tempReturnHitsDispSet;
     }
 
 

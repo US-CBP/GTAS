@@ -52,7 +52,7 @@ public class HitsDisposition extends BaseEntityAudit {
 
 //    @JsonIgnore
 //    @OneToMany(mappedBy = "hitDispId", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(targetEntity = HitsDispositionComments.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = HitsDispositionComments.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     //@JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
     @JoinTable(name = "case_hit_disp_comments", joinColumns = @JoinColumn(name = "hit_disp_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_comments_id"))
     private Set<HitsDispositionComments> dispComments = new HashSet<>();
