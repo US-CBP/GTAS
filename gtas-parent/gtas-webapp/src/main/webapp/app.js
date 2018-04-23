@@ -1468,6 +1468,11 @@ var app;
                     return $q.reject(response);
                 }
             };
-        }
-    );
+        })
+        .filter('nospace', function () {
+            return function (value) {
+                return (!value) ? '' : value.replace(/ /g, '');
+            };
+        })
+    ;
 }());

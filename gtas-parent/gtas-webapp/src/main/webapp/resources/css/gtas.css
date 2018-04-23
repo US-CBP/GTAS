@@ -294,6 +294,30 @@
 .two-table td {
   width: 50%;
 }
+
+/* Pax Detail specific*/
+.pad-left-1px-align-middle tr {
+    padding:1px;
+    vertical-align:middle;
+    margin:0 0 1em;
+}
+.pad-left-2px-align-middle tr {
+    padding:1px;
+    vertical-align:middle;
+}
+.pad-left-3px-align-middle tr {
+    padding:1px;
+    vertical-align:middle;
+}
+.pad-left-4px-align-middle tr {
+    padding:1px;
+    vertical-align:middle;
+}
+.pad-left-5px-align-middle tr {
+    padding:1px;
+    vertical-align:middle;
+}
+
 /*Angular-materials cbp overrides */
 .cbp-input, .md-chips {
   display: inherit;
