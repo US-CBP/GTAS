@@ -34,14 +34,14 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);*/
     
     @Query(nativeQuery = true, 
-    		value="SELECT p.* FROM Flight_Passenger fp join Passenger p ON (fp.passenger_id = p.id) where fp.flight_id = (:flightId)")
+    		value="SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where fp.flight_id = (:flightId)")
     public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);
     
 /*    @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId) AND UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
     public List<Passenger> getPassengersByFlightIdAndName(@Param("flightId") Long flightId, @Param("firstName") String firstName,@Param("lastName") String lastName);*/
 
     @Query(nativeQuery = true, 
-    		value="SELECT p.*, ptag.* FROM Flight_Passenger fp join Passenger p ON (fp.passenger_id = p.id) join pax_idtag ptag ON (ptag.pax_id = p.id) "
+    		value="SELECT p.*, ptag.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) join pax_idtag ptag ON (ptag.pax_id = p.id) "
     				+ "where fp.flight_id = (:flightId) AND UPPER(p.first_name) = UPPER(:firstName) AND UPPER(p.last_name) = UPPER(:lastName)")
     public List<Passenger> getPassengersByFlightIdAndName(@Param("flightId") Long flightId, @Param("firstName") String firstName,@Param("lastName") String lastName);
     
