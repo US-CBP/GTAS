@@ -34,7 +34,7 @@ public class ApisDataGenerator {
     public static ApisMessage createSimpleTestApisMesssage(){
         ApisMessage msg = new ApisMessage();
         msg.setId(9999L);
-        msg.setFlights(createFlights());
+        //msg.setFlights(createFlights());
         msg.setCreateDate(new Date());
         msg.setStatus(MessageStatus.LOADED);
         fixPassengerReferences(msg);
@@ -106,7 +106,7 @@ public class ApisDataGenerator {
                 );
         flight.setPassengers(passengers);
         for(Passenger pas:passengers){
-            pas.getFlights().add(flight);
+            //pas.getFlights().add(flight);
         }
         flight.setCarrier("V7");//Continental
         flight.setDestination("BOB");
@@ -128,7 +128,7 @@ public class ApisDataGenerator {
                 );
         flight.setPassengers(passengers);
         for(Passenger pas:passengers){
-            pas.getFlights().add(flight);
+            //pas.getFlights().add(flight);
         }
 
         flight.setCarrier("CO");//Continental

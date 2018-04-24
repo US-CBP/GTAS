@@ -117,7 +117,7 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setFlightNumber(flight.getFlightNumber());
 			flightToUpdate.setOrigin(flight.getOrigin());
 			flightToUpdate.setOriginCountry(flight.getOriginCountry());
-			flightToUpdate.setPassengers(flight.getPassengers());
+			//flightToUpdate.setPassengers(flight.getPassengers());
 			flightToUpdate.setUpdatedAt(new Date());
 			// TODO replace with logged in user id
 			flightToUpdate.setUpdatedBy(flight.getUpdatedBy());
@@ -126,7 +126,7 @@ public class FlightServiceImpl implements FlightService {
 				Iterator it = flight.getPassengers().iterator();
 				while (it.hasNext()) {
 					Passenger p = (Passenger) it.next();
-					flightToUpdate.addPassenger(p);
+					//flightToUpdate.addPassenger(p);
 				}
 			}
 		}
@@ -189,5 +189,35 @@ public class FlightServiceImpl implements FlightService {
 		String codeShareQueryFix = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'O' AND ((marketing_flight = FALSE AND operating_flight = FALSE) OR operating_flight = TRUE)";
 		return (List<Flight>) em.createNativeQuery(codeShareQueryFix, Flight.class)
 				.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<Passenger> getAllPassengers(Long id) {
+		String sqlStr = "SELECT p.* FROM flight_passenger fp JOIN passenger p ON (fp.passenger_id = p.id) WHERE fp.flight_id="+id;
+		return (Set<Passenger>) em.createNativeQuery(sqlStr, Passenger.class);
+	}
+
+	@Override
+	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
+		String sqlStr = "";
+		for(Passenger p: passengers){
+			sqlStr += "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+flightId+","+p.getId()+")";
+		}
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
+
+	@Override
+	public void setSinglePassenger(Long passengerId, Long flightId) {
+		String sqlStr = "INSERT INTO flight_passenger(flight_id,passenger_id) VALUES("+flightId+","+passengerId+")";
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
+
+	@Override
+	public int getPassengerCount(Flight f) {
+		String sqlStr = "SELECT COUNT(*) FROM flight_passenger fp JOIN passenger p ON (fp.passenger_id = p.id) where fl.flight_id = "+f.getId();
+		List<Integer> rList = em.createNativeQuery(sqlStr).getResultList();
+		int tempInt = rList.get(0).intValue();
+		return tempInt;
 	}
 }

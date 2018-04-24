@@ -20,6 +20,7 @@ import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.DocumentTypeCode;
 import gov.gtas.model.lookup.PassengerTypeCode;
 import gov.gtas.services.FlightService;
+import gov.gtas.services.PassengerService;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -54,6 +55,9 @@ public class ServiceRepositoryIT {
 
     @Autowired
     private ApisMessageRepository apisMessageRepository;
+    
+    @Autowired
+    private PassengerService passengerService;
 
     @Before
     public void setUp() throws Exception {
@@ -102,7 +106,7 @@ public class ServiceRepositoryIT {
         passengerToUpdate.setFirstName("Mike");
         Set hs = new HashSet<Flight>();
         hs.add(f);
-        passengerToUpdate.setFlights(hs);
+        passengerService.setAllFlights(hs, passengerToUpdate.getId());
         passengerToUpdate.setGender("M");
         passengerToUpdate.setLastName("Copenhafer");
         passengerToUpdate.setResidencyCountry(c);

@@ -18,15 +18,15 @@ import javax.persistence.*;
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
-
+    
     public Passenger() {
     }
 
     @Column(name = "passenger_type", length = 3, nullable = false)
     private String passengerType;
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
-    private Set<Flight> flights = new HashSet<>();
+/*    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
+    private Set<Flight> flights = new HashSet<>();*/
 
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
@@ -210,13 +210,13 @@ public class Passenger extends BaseEntityAudit {
         this.passengerType = passengerType;
     }
 
-    public Set<Flight> getFlights() {
-        return flights;
-    }
+   /* public Set<Flight> getFlights() {
+        return passengerService.getAllFlights(this.id);
+    }*/
 
-    public void setFlights(Set<Flight> flights) {
-        this.flights = flights;
-    }
+  /*  public void setFlights(Set<Flight> flights) {
+        passengerService.setAllFlights(flights, this.id);
+    }*/
 
     public String getTitle() {
         return title;

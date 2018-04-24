@@ -292,7 +292,7 @@ public class QueryBuilderServiceIT {
 		passenger.setFirstName("TEST");
 		passenger.setLastName("USER");
 
-		passenger.setFlights(flights);
+		passengerService.setAllFlights(flights, passenger.getId());
 
 		Set<Passenger> passengers = new HashSet<Passenger>();
 		passengers.add(passenger);
@@ -348,7 +348,7 @@ public class QueryBuilderServiceIT {
 		passenger.setFirstName("TEST1");
 		passenger.setLastName("USER1");
 
-		passenger.setFlights(flights);
+		passengerService.setAllFlights(flights, passenger.getId());
 
 		Set<Passenger> passengers = new HashSet<Passenger>();
 		passengers.add(passenger);

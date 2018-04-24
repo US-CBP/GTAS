@@ -64,6 +64,9 @@ public class PnrServiceIT {
 	@Autowired
 	private ApisMessageRepository apisMessageRepository;
 
+	@Autowired
+	private PassengerService passengerService;
+	
 	@Test
 	@Transactional
 	public void testPnrSave() {
@@ -74,9 +77,9 @@ public class PnrServiceIT {
 		Pnr pnr = new Pnr();
 		preparePnr(pnr);
 		passengerToUpdate.getPnrs().add(pnr);
-		passengerToUpdate.getFlights().add(f);
+		//passengerToUpdate.getFlights().add(f);
 		pnr.getPassengers().add(passengerToUpdate);
-		f.getPassengers().add(passengerToUpdate);
+		//f.getPassengers().add(passengerToUpdate);
 		pnr.getFlights().add(f);
 		pnrService.create(pnr);
 		assertNotNull(pnr.getId());

@@ -119,6 +119,10 @@ public class PnrMessageService extends MessageLoaderService {
            	for (FlightLeg leg : pnr.getFlightLegs()) {
                	leg.setPnr(pnr);
             }
+           	
+           	for (BookingDetail bD : pnr.getBookingDetails()){
+           		bD.getPnrs().add(pnr);
+           	}
 
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
@@ -349,7 +353,7 @@ public class PnrMessageService extends MessageLoaderService {
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	for(Flight f : flights){
-    		for(Passenger p : f.getPassengers()){
+    		for(Passenger p : pnr.getPassengers()){
     			FlightPax fp=new FlightPax();
     			fp.setDebarkation(p.getDebarkation());
     			fp.setDebarkationCountry(p.getDebarkCountry());

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.PassengerService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,9 @@ public class TargetingResultUtils {
 
 	@Autowired
 	private static CaseDispositionService caseDispositionService;
+	
+	@Autowired
+	private static PassengerService passengerService;
 
 	/**
 	 * Eliminates duplicates and adds flight id, if missing.
@@ -56,7 +61,7 @@ public class TargetingResultUtils {
 				// and replicate the RuleHitDetail object, for each flight id
 				// Note that the RuleHitDetail key is (UdrId, EngineRuleId,
 				// PassengerId, FlightId)
-				Collection<Flight> flights = rhd.getPassenger().getFlights();
+				Collection<Flight> flights = passengerService.getAllFlights(rhd.getPassengerId());
 				if (flights != null && !CollectionUtils.isEmpty(flights)) {
 					try {
 						for (Flight flight : flights) {

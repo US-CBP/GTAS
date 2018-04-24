@@ -12,6 +12,8 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.PassengerService;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,9 @@ public class TargetingResultCaseMgmtUtils {
 
     @Autowired
     private PassengerRepository paxRepoInstance;
+    
+    @Autowired
+    private static PassengerService passengerService;
 
     private static PassengerRepository paxRepo;
 
@@ -58,7 +63,7 @@ public class TargetingResultCaseMgmtUtils {
                 // and replicate the RuleHitDetail object, for each flight id
                 // Note that the RuleHitDetail key is (UdrId, EngineRuleId,
                 // PassengerId, FlightId)
-                Collection<Flight> flights = rhd.getPassenger().getFlights();
+                Collection<Flight> flights = passengerService.getAllFlights(rhd.getPassengerId());
                 if (flights != null && !CollectionUtils.isEmpty(flights)) {
                     try {
                         for (Flight flight : flights) {

@@ -225,7 +225,7 @@ public class PassengerServiceImpl implements PassengerService {
             passengerToUpdate.setEmbarkation(passenger.getEmbarkation());
             passengerToUpdate.setEmbarkCountry(passenger.getEmbarkCountry());
             passengerToUpdate.setFirstName(passenger.getFirstName());
-            passengerToUpdate.setFlights(passenger.getFlights());
+            //passengerToUpdate.setFlights(passenger.getFlights()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
             passengerToUpdate.setGender(passenger.getGender());
             passengerToUpdate.setLastName(passenger.getLastName());
             passengerToUpdate.setMiddleName(passenger.getMiddleName());
@@ -366,8 +366,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     @Transactional
     public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
-        List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
-        return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
+       /* List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
+        return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());*/
+    	return null;
     }
     
     @Override
@@ -380,4 +381,26 @@ public class PassengerServiceImpl implements PassengerService {
     public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
     	return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<Flight> getAllFlights(Long id) {
+		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN Flight f ON (fp.flight_id = p.id) WHERE fp.passenger_id="+id+"";
+		return (Set<Flight>) em.createNativeQuery(sqlStr, Flight.class);
+	}
+
+	@Override
+	public void setAllFlights(Set<Flight> flights, Long id) {
+		String sqlStr = "";
+		for(Flight f: flights){
+			sqlStr += "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+f.getId()+","+id+");";
+		}
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
+
+	@Override
+	public void SetSingleFlight(Flight f, Long id) {
+		String sqlStr = "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+f.getId()+","+id+");";
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
 }

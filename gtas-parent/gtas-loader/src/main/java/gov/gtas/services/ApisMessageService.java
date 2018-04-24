@@ -219,7 +219,7 @@ public class ApisMessageService extends MessageLoaderService {
     	Set<Flight> flights=apisMessage.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	for(Flight f : flights){
-    		for(Passenger p:f.getPassengers()){
+    		for(Passenger p:apisMessage.getPassengers()){
     			FlightPax fp=new FlightPax();
     			fp.getApisMessage().add(apisMessage);
     			fp.setDebarkation(p.getDebarkation());

@@ -30,12 +30,21 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.lastName) = UPPER(:lastName)")
     public List<Passenger> getPassengersByLastName(@Param("lastName") String lastName);
 
-    @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId)")
+  /*  @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId)")
+    public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);*/
+    
+    @Query(nativeQuery = true, 
+    		value="SELECT p.* FROM Flight_Passenger fp join Passenger p ON (fp.passenger_id = p.id) where fp.flight_id = (:flightId)")
     public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);
+    
+/*    @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId) AND UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
+    public List<Passenger> getPassengersByFlightIdAndName(@Param("flightId") Long flightId, @Param("firstName") String firstName,@Param("lastName") String lastName);*/
 
-    @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId) AND UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
+    @Query(nativeQuery = true, 
+    		value="SELECT p.*, ptag.* FROM Flight_Passenger fp join Passenger p ON (fp.passenger_id = p.id) join pax_idtag ptag ON (ptag.pax_id = p.id) "
+    				+ "where fp.flight_id = (:flightId) AND UPPER(p.first_name) = UPPER(:firstName) AND UPPER(p.last_name) = UPPER(:lastName)")
     public List<Passenger> getPassengersByFlightIdAndName(@Param("flightId") Long flightId, @Param("firstName") String firstName,@Param("lastName") String lastName);
-
+    
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
     public List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
     

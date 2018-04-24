@@ -119,6 +119,9 @@ public class LoaderRepository {
     
     @Autowired
     PnrRepository pnrDao;
+    
+    @Autowired
+    FlightService flightService;
 
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -212,9 +215,7 @@ public class LoaderRepository {
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
     		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails, long pnrId) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
-        Pnr currentPnr = pnrDao.findOne(pnrId); // We use this to associate booking details and pnr, otherwise we get detached entities and other nastiness.
         long startTime = System.nanoTime();
-        Pnr currentPNR = null;
         // first find all existing passengers, create any missing flights
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
@@ -264,6 +265,7 @@ public class LoaderRepository {
         
 		// create any new passengers
         startTime = System.nanoTime();
+        Set<Passenger> newPassengers = new HashSet<Passenger>();
 		for (PassengerVo pvo : passengers) {
 			if(!existingPassengers.contains(pvo)){
 //			if (passengerDao.findExistingPassengerByAttributes(
@@ -297,6 +299,7 @@ public class LoaderRepository {
 
 			passengerDao.save(newPassenger);
 			messagePassengers.add(newPassenger);
+			newPassengers.add(newPassenger);
 
 			for (Flight f : messageFlights) {
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
@@ -306,18 +309,19 @@ public class LoaderRepository {
 		}
         logger.debug("processFlightAndPassenger() create new Passengers time = "+(System.nanoTime()-startTime)/1000000);
         // assoc all passengers w/ flights, update pax counts
+        //only associate new passengers, old passengers are still the same id
         startTime = System.nanoTime();
         for (Flight f : messageFlights) {
-            for (Passenger p : messagePassengers) {
+            for (Passenger p : newPassengers) {
             	utils.calculateValidVisaDays(f,p);
-                f.addPassenger(p);
+            	flightService.setSinglePassenger(p.getId(), f.getId());
+                f.setPassengerCount(f.getPassengerCount()+1);
             }
-            f.setPassengerCount(f.getPassengers().size());
+           //f.setPassengerCount(f.getPassengers().size()); TODO RE-ADD PASSENGER COUNT AFTER TESTS
         }
         
         //assoc passengers to booking details
     	for(BookingDetail bD : bookingDetails){
-        	bD.getPnrs().add(currentPnr);
    			for(Passenger pax : messagePassengers){
     			bD.getPassengers().add(pax);
     			pax.getBookingDetails().add(bD);
@@ -385,7 +389,7 @@ public class LoaderRepository {
     			if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
     				destination=b.getDestinationAirport();
     			}
-    			for(Passenger p: f.getPassengers()){
+    			for(Passenger p: pnr.getPassengers()){
     					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
     							StringUtils.equals(p.getLastName(), b.getLastName())){
     						 Bag bag = new Bag();
