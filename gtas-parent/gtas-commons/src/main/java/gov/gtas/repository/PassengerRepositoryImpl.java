@@ -400,4 +400,22 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 		return existing;
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName) {
+		String nativeQuery = "SELECT p.*, ptag.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) "
+				+ "join pax_idtag ptag ON (ptag.pax_id = p.id) where "
+				+ "fp.flight_id = (\""+flightId+"\") "
+				+ "AND UPPER(p.first_name) = UPPER(\""+firstName+"\") "
+				+ "AND UPPER(p.last_name) = UPPER(\""+lastName+"\")";
+		return (List<Passenger>) em.createNativeQuery(nativeQuery, Passenger.class).getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Passenger> getPassengersByFlightId(Long flightId) {
+		String nativeQuery = "SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where fp.flight_id = (\""+flightId+"\")";
+		return (List<Passenger>) em.createNativeQuery(nativeQuery, Passenger.class).getResultList();
+	}
 }
