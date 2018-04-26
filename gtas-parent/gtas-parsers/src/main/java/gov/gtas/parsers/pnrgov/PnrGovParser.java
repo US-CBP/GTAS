@@ -157,7 +157,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         
         TIF tif = getMandatorySegment(TIF.class);
         processGroup2_Passenger(tif);
-        System.out.println("After processGroup2_Passenger(tif) = " +tif);
         for (;;) {
             tif = getConditionalSegment(TIF.class);
             if (tif == null) {
@@ -180,13 +179,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     }
     private boolean validTvl(TVL tvl) {
     	boolean check=true;
-    	System.out.println("XXXXXXXX TVL = " +tvl.getCarrier());
-    	System.out.println("XXXXXXXXXX TVL = " +tvl.getDestination());
-    	System.out.println("XXXXXXXXX TVL = " +tvl.getFlightNumber());
+
     	if(StringUtils.isBlank(tvl.getCarrier()) && StringUtils.isBlank(tvl.getDestination())
     			&& StringUtils.isBlank(tvl.getFlightNumber())) {
     		check=false;
-    		System.out.println("before processGroup5 TVL = " +check);
+    		
     	}
     	
     	return check;
@@ -196,7 +193,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * Passenger
      */
     private void processGroup2_Passenger(TIF tif) throws ParseException {
-    	System.out.println("in processGroup2" );
+    	
         FTI fti = getConditionalSegment(FTI.class);
         if (fti != null) {
             FrequentFlyerVo ffvo = new FrequentFlyerVo();
@@ -443,7 +440,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * itinerary.
      */
     private void processGroup5_Flight(TVL tvl) throws ParseException {
-    	System.out.println("processGroup5_Flight");
+    
         FlightVo f = new FlightVo();
         f.setCarrier(tvl.getCarrier());
         f.setDestination(tvl.getDestination());
@@ -649,7 +646,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * the agent info that checked-in the passenger
      */
     private void processGroup6_Agent(DAT_G6 dat, TVL tvl) throws ParseException {
-    	System.out.println("processGroup6_Agent");
+    
         ORG org = getConditionalSegment(ORG.class, "ORG");
         processAgencyInfo(org);
         /**
@@ -658,16 +655,16 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			tri = getMandatorySegment(TRI.class);
 			processGroup7_SeatInfo(tri, tvl);
 		} catch (Exception e) {
-			 System.out.println("got In-valid MANDATORY TRI");
+			 
 		}
        **/
-        System.out.println("After processGroup7_SeatInfo");
+        
         for (;;) {
             TRI tri = getConditionalSegment(TRI.class);
             if (tri == null) {
                 break;
             }
-            System.out.println("#######  got conditional TRI" + tri.toString());
+            
             processGroup7_SeatInfo(tri, tvl);
         }        
     }
@@ -676,7 +673,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * boarding, seat number and checked bag info
      */
     private void processGroup7_SeatInfo(TRI tri, TVL tvl) throws ParseException {
-    	 System.out.println("in processGroup7" );
+    	
         PassengerVo thePax = null;
         String refNumber = tri.getTravelerReferenceNumber();
         if (refNumber != null) {
