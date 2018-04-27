@@ -390,6 +390,24 @@ var app;
                     }
 
                 })
+                .state('onedaylookout', {
+                    url: '/onedaylookout',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    views: {
+                        '@': {
+                            controller: 'OneDayLookoutCtrl',
+                            templateUrl: 'onedaylookout/oneDayLookout.html'
+                        }
+
+                    },
+                   
+                   resolve: {
+                        lookoutData: function(oneDayLookoutService, $stateParams){
+                            return oneDayLookoutService.getOneDayLookout($stateParams.flightDate);
+                        }
+                    }
+                })
                 .state('adhocquery', {
                     url: '/adhocquery',
                     authenticate: true,
@@ -591,7 +609,8 @@ var app;
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},
                 upload: {name: ['upload']},
-                cases: {name: ['cases']}
+                cases: {name: ['cases']},
+                onedaylookout: {name: ['onedaylookout']}
             };
             $scope.onRoute = function (key) {
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);

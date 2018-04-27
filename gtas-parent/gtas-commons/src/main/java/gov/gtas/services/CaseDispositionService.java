@@ -52,4 +52,6 @@ public interface CaseDispositionService {
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id);
+    
+    public List<Case> getOneDayLookoutByDate(Date date);
 }

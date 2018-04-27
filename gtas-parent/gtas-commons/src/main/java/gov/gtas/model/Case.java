@@ -76,7 +76,9 @@ public class Case extends BaseEntityAudit {
     @Column(name = "firstName")
     private String firstName;
 
-
+    @ManyToOne(optional=true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
+    private Flight flight;
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
@@ -210,7 +212,15 @@ public class Case extends BaseEntityAudit {
 
 
 
-    @Override
+    public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
 

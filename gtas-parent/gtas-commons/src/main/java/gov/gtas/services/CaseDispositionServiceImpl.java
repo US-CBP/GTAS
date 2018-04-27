@@ -795,4 +795,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         }
         return new ArrayList<>();
     }
+    
+    @Override
+	public List<Case> getOneDayLookoutByDate(Date date) {
+		List<Case> oneDayLookoutResult = caseDispositionRepository.findOneDayLookoutByDate(date);
+		if(oneDayLookoutResult == null){
+			return new ArrayList<Case>();
+		}
+		return oneDayLookoutResult;
+	}
 }

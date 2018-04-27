@@ -147,6 +147,12 @@
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
 	              </a></li>
+	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
+              ng-class="{'active': setSelectedTab('/onedaylookout')}">
+              <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
+	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;One Day Lookouts
+	              </a>
+	         </li>        
           </ul>
         </div>
 
@@ -256,6 +262,8 @@
 <script src='cases/CaseDispositionDetailController.js'></script>
 <script src='cases/CaseDispositionManualController.js'></script>
 <script src='cases/CaseDispositionService.js'></script>
+<script src='onedaylookout/OneDayLookoutController.js'></script>
+<script src='onedaylookout/OneDayLookoutService.js'></script>
 <script src='adhocquery/AdhocQueryController.js'></script>
 <script src='adhocquery/AdhocQueryService.js'></script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
