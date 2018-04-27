@@ -60,9 +60,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -175,9 +177,9 @@ public class TargetingServiceImpl implements TargetingService {
 		RuleServiceRequest req = TargetingServiceUtils.createApisRequest(
 				message).getRuleServiceRequest();
 		RuleServiceResult res = ruleService.invokeRuleEngine(req);
-		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		res = TargetingResultUtils.ruleResultPostProcesssing(res, passengerService);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
 
 		logger.info("Exiting analyzeApisMessage().");
 		return res;
@@ -195,9 +197,9 @@ public class TargetingServiceImpl implements TargetingService {
 			String drlRules) {
 		RuleServiceResult res = ruleService.invokeAdhocRulesFromString(
 				drlRules, request);
-		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		res = TargetingResultUtils.ruleResultPostProcesssing(res, passengerService);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
 
 		return res;
 	}
@@ -217,9 +219,9 @@ public class TargetingServiceImpl implements TargetingService {
 					messageId);
 		}
 		RuleServiceResult res = this.analyzeApisMessage(msg);
-		res = TargetingResultUtils.ruleResultPostProcesssing(res);
+		res = TargetingResultUtils.ruleResultPostProcesssing(res, passengerService);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
 
 		return res;
 	}
@@ -239,9 +241,9 @@ public class TargetingServiceImpl implements TargetingService {
 					.createApisRequestContext(msgs);
 			RuleServiceResult res = ruleService.invokeRuleEngine(ctx
 					.getRuleServiceRequest());
-			res = TargetingResultUtils.ruleResultPostProcesssing(res);
+			res = TargetingResultUtils.ruleResultPostProcesssing(res, passengerService);
 			//make a call to Case Mgmt.
-			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
 
 			ret = res.getResultList();
 		}
@@ -263,9 +265,9 @@ public class TargetingServiceImpl implements TargetingService {
 					.createPnrRequestContext(msgs);
 			RuleServiceResult res = ruleService.invokeRuleEngine(ctx
 					.getRuleServiceRequest());
-			res = TargetingResultUtils.ruleResultPostProcesssing(res);
+			res = TargetingResultUtils.ruleResultPostProcesssing(res, passengerService);
 			//make a call to Case Mgmt.
-			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService);
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
 
 			ret = res.getResultList();
 		}
@@ -492,16 +494,16 @@ public class TargetingServiceImpl implements TargetingService {
 		if (udrResult != null) {
 			logger.debug("Eliminate duplicates from UDR rule running.");
 			udrResult = TargetingResultUtils
-					.ruleResultPostProcesssing(udrResult);
+					.ruleResultPostProcesssing(udrResult, passengerService);
 			//make a call to Case Mgmt.
-			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService);
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService);
 
 		}
 		if (wlResult != null) {
 			logger.debug("Eliminate duplicates from watchlist rule running.");
-			wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult);
+			wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult, passengerService);
 			//make a call to Case Mgmt.
-			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult, caseDispositionService);
+			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult, caseDispositionService, passengerService);
 
 		}
 
@@ -858,5 +860,18 @@ public class TargetingServiceImpl implements TargetingService {
 		hitDetail.setParent(hitsSummary);
 		logger.info("Exiting createHitDetail().");
 		return hitDetail;
+	}
+	
+	private Map<Long, Set<Flight>> getPaxIdFlightMap(RuleServiceResult res){
+		Map<Long,Set<Flight>> map = new HashMap<Long, Set<Flight>>();
+		Set<Flight> flights;
+		
+		for(RuleHitDetail rhd : res.getResultList()){
+			flights = passengerService.getAllFlights(rhd.getPassengerId());
+			if(flights != null && flights.size() > 0){
+				map.put(rhd.getPassengerId(), flights);
+			}
+		}
+		return map;
 	}
 }

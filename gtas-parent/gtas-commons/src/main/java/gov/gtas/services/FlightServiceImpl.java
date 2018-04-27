@@ -20,6 +20,7 @@ import gov.gtas.vo.passenger.FlightVo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -195,7 +196,12 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	public Set<Passenger> getAllPassengers(Long id) {
 		String sqlStr = "SELECT p.* FROM flight_passenger fp JOIN passenger p ON (fp.passenger_id = p.id) WHERE fp.flight_id="+id;
-		return (Set<Passenger>) em.createNativeQuery(sqlStr, Passenger.class);
+		List<Passenger> resultList = em.createNativeQuery(sqlStr, Passenger.class).getResultList();
+		Set<Passenger> resultSet = null;
+		if(resultList != null && resultList.size() > 0){
+			resultSet = new HashSet<Passenger>(resultList);
+		}
+		return resultSet;
 	}
 
 	@Override

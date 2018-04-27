@@ -28,9 +28,6 @@ public class TargetingResultCaseMgmtUtils {
 
     @Autowired
     private PassengerRepository paxRepoInstance;
-    
-    @Autowired
-    private static PassengerService passengerService;
 
     private static PassengerRepository paxRepo;
 
@@ -46,7 +43,7 @@ public class TargetingResultCaseMgmtUtils {
      * @return
      */
     public static RuleServiceResult ruleResultPostProcesssing(
-            RuleServiceResult result, CaseDispositionService dispositionService) {
+            RuleServiceResult result, CaseDispositionService dispositionService, PassengerService passengerService) {
         logger.info("Entering ruleResultPostProcesssing().");
         // get the list of RuleHitDetail objects returned by the Rule Engine
         List<RuleHitDetail> resultList = result.getResultList();

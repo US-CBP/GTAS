@@ -12,31 +12,23 @@ import gov.gtas.bo.TargetDetailVo;
 import gov.gtas.bo.TargetSummaryVo;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.Flight;
+import gov.gtas.services.PassengerService;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.PassengerService;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class TargetingResultUtils {
+public class TargetingResultUtils{
 	private static final Logger logger = LoggerFactory
 			.getLogger(TargetingResultUtils.class);
-
-	@Autowired
-	private static CaseDispositionService caseDispositionService;
 	
-	@Autowired
-	private static PassengerService passengerService;
-
 	/**
 	 * Eliminates duplicates and adds flight id, if missing.
 	 * 
@@ -44,7 +36,7 @@ public class TargetingResultUtils {
 	 * @return
 	 */
 	public static RuleServiceResult ruleResultPostProcesssing(
-			RuleServiceResult result) {
+			RuleServiceResult result, PassengerService passengerService) {
 		logger.info("Entering ruleResultPostProcesssing().");
 		// get the list of RuleHitDetail objects returned by the Rule Engine
 		List<RuleHitDetail> resultList = result.getResultList();

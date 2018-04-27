@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -385,8 +386,13 @@ public class PassengerServiceImpl implements PassengerService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Set<Flight> getAllFlights(Long id) {
-		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN Flight f ON (fp.flight_id = p.id) WHERE fp.passenger_id="+id+"";
-		return (Set<Flight>) em.createNativeQuery(sqlStr, Flight.class);
+		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN flight f ON (fp.flight_id = f.id) WHERE fp.passenger_id="+id+"";
+		List<Flight> resultList = em.createNativeQuery(sqlStr, Flight.class).getResultList();
+		Set<Flight> flightSet = null;
+		if(resultList != null){
+			flightSet = new HashSet<Flight>(resultList);
+		}
+		return flightSet;
 	}
 
 	@Override
