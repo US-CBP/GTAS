@@ -16,6 +16,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +47,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
         List<Passenger> paxListWithNullIdTags = new ArrayList<Passenger>();
         passengerDao.getNotNullIdTagPassengers();
         Iterable<Passenger> paxList2  = passengerDao.getNullIdTagPassengers();
+        //String.join("", Arrays.asList(firstName.toUpperCase(), lastName.toUpperCase(), gender.toUpperCase(), DOB, ctz_country.toUpperCase()))
 
         for(Passenger _tempPax : paxList){
             if(_tempPax.getPaxIdTag() == null){
@@ -99,6 +103,11 @@ public class IntegrateUnTaggedPassengerListScheduler {
 
     }
 
+    /**
+     * Util method to generate a unique id tag each time
+     * @param strLength
+     * @return
+     */
     private String generateRandomIDTag(int strLength){
         final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
         final java.util.Random rand = new java.util.Random();
@@ -111,5 +120,29 @@ public class IntegrateUnTaggedPassengerListScheduler {
         }
         return builder.toString();
     }
+
+    /**
+     * Util method to hash passenger attributes
+     * @param input
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private String makeSHA1Hash(String input)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes("UTF-8");
+        md.update(buffer);
+        byte[] digest = md.digest();
+
+        String hexStr = "";
+        for (int i = 0; i < digest.length; i++) {
+            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return hexStr;
+    }
+
 
 }
