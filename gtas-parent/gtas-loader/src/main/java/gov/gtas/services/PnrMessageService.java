@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -349,9 +350,13 @@ public class PnrMessageService extends MessageLoaderService {
     
     private void createFlightPax(Pnr pnr){
     	logger.debug("@ createFlightPax");
+    	boolean oneFlight=false;
+    	List<FlightPax> paxRecords=new ArrayList<>();
     	long startTime = System.nanoTime();
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
+    	int pnrBagCount=0;
+    	double pnrBagWeight=0.0;
     	for(Flight f : flights){
     		for(Passenger p : pnr.getPassengers()){
     			FlightPax fp=new FlightPax();
@@ -375,11 +380,13 @@ public class PnrMessageService extends MessageLoaderService {
 					}
     			}
     			fp.setBagCount(passengerBags);
+    			pnrBagCount=pnrBagCount+passengerBags;
     			try {
 					if(StringUtils.isNotBlank(p.getTotalBagWeight()) && (passengerBags >0)){
 						Double weight=Double.parseDouble(p.getTotalBagWeight());
 						fp.setAverageBagWeight(Math.round(weight/passengerBags));
 						fp.setBagWeight(weight);
+						pnrBagWeight=pnrBagWeight+weight;
 					}
 				} catch (NumberFormatException e) {
 					// Do nothing
@@ -391,11 +398,28 @@ public class PnrMessageService extends MessageLoaderService {
     			}
     			setHeadPool( fp,p,f);
     			p.getFlightPaxList().add(fp);
+    			paxRecords.add(fp);
     		}
+    		if(!oneFlight) {
+    			setBagDetails(paxRecords,pnr);
+    		}
+    		oneFlight=true;
     	}
     	logger.debug("createFlightPax time = "+(System.nanoTime()-startTime)/1000000);
     }
 
+    private void setBagDetails(List<FlightPax> paxes,Pnr pnr) {
+    	int pnrBagCount=0;
+    	double pnrBagWeight=0.0;
+    	for(FlightPax fp:paxes) {
+    		pnrBagCount=pnrBagCount+fp.getBagCount();
+    		pnrBagWeight=pnrBagWeight+fp.getBagWeight();
+    	}
+   		pnr.setBagCount(pnrBagCount);
+		pnr.setBaggageWeight(pnrBagWeight);
+		pnr.setTotal_bag_count(pnrBagCount);
+		pnr.setTotal_bag_weight((float)pnrBagWeight);
+    }
     private void setHeadPool(FlightPax fp,Passenger p,Flight f){
     	try {
 			if(p.getBags() != null && p.getBags().size() >0){

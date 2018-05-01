@@ -220,7 +220,7 @@ public class PassengerDetailsController {
 						.getFullFlightNumber());
 				tempVo.addSeat(seatVo);
 			}			
-	
+			int bagCount=0;
 			for(Bag b: bagList ) {
 				if(b.getData_source().equalsIgnoreCase("pnr")){
 					BagVo bagVo = new BagVo();
@@ -228,8 +228,10 @@ public class PassengerDetailsController {
 					bagVo.setData_source(b.getData_source());
 					bagVo.setDestination(b.getDestinationAirport());
 					tempVo.addBag(bagVo);
+					bagCount=bagCount+1;
 				}
 			}
+			tempVo.setBagCount(bagCount);
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
