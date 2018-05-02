@@ -18,6 +18,7 @@ public final class Constants {
     public static final String JOIN_FETCH = " join fetch ";
     public static final String LEFT_JOIN = " left join ";
     public static final String LEFT_JOIN_FETCH = " left join fetch ";
+    public static final String EXISTS = "exists";
     
     // Entities
     public static final String ADDRESS = "ADDRESS";

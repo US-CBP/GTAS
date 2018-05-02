@@ -44,6 +44,9 @@ public class JPQLGenerator {
             List<EntityEnum> joinEntities = new ArrayList<>();
             StringBuilder where = new StringBuilder();
             String join = "";
+            //Since flight and passenger are no longer mapped together, this manual join is done via connecting through the Flight_Passenger table. The trailing "and" is required since this is a
+            //where clause itself and allows for the addition of normal where clauses after it.
+            String crossJoinForFlightPax = "";
             MutableBoolean seatCondition = new MutableBoolean();
             MutableInt positionalParameter = new MutableInt();
             MutableInt level = new MutableInt();
@@ -56,8 +59,9 @@ public class JPQLGenerator {
                 queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + 
                         " " + Constants.FROM + " " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias();
                 
+                
                 if(seatCondition.isTrue()) {
-                    joinEntities.add(EntityEnum.PASSENGER);
+                    joinEntities.add(EntityEnum.PASSENGER); //TO-DO Seemingly redundant at this point due to redesign, consider removal
                 }
                     
                 if(!joinEntities.isEmpty()) {
@@ -80,6 +84,19 @@ public class JPQLGenerator {
                             joinEntities.remove(EntityEnum.PNR);
                             joinEntities.add(0, EntityEnum.PNR);
                         }
+                        
+                        if(joinEntities.contains(EntityEnum.PASSENGER) || joinEntities.contains(EntityEnum.DOCUMENT)){
+                        	//If document, needs new prefix in order to use join p.documents
+                        	//join flights.passengers does not work as they are not mapped to one another by hibernate, so the join must be removed if it exists
+                        	joinEntities.remove(EntityEnum.PASSENGER);
+                        	//prefix for flight selection must be altered in order to incorporate the appropriate self joins on passenger due to lack of hibernate managed mapping
+                        	//The flight side is unique in both the prefix is not already consistent of a join (like passenger was) but also the cross join is altered to only select on flight
+                            queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " + Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " +
+                            		EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias();
+                            //the subsequent crossjoin that the adjusted prefix is only required if document, or a passenger join is present.
+                        	crossJoinForFlightPax = Constants.EXISTS + "(" + Constants.SELECT + " fp " + Constants.FROM + " FlightPassenger fp " + Constants.WHERE + " " + 
+                            		EntityEnum.PASSENGER.getAlias() + Constants.ID + " = fp.passengerId " + Constants.AND + " " + EntityEnum.FLIGHT.getAlias() + Constants.ID + " = fp.flightId) " + Constants.AND;
+                        }
                     }
                     
                     join = generateJoinCondition(joinEntities, queryType);
@@ -89,13 +106,20 @@ public class JPQLGenerator {
                     join += " left join p.seatAssignments s ";
                 }
                 
-                query = queryPrefix + join + " " + Constants.WHERE + " " + where;
+                query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
             }
             else if(queryType == EntityEnum.PASSENGER) {
-                queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getAlias() + " " + 
+                /*queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getAlias() + " " + 
                         Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias() +
-                        Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference() + " " + EntityEnum.FLIGHT.getAlias();
-                        
+                        Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference() + " " + EntityEnum.FLIGHT.getAlias(); */        
+                
+            	//Replacement prefix for the new structure that does not have flight/passengers mapped together by hibernate, this means we have to do self joins in essence.
+                queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getAlias() + " " +
+                		Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " " + EntityEnum.FLIGHT.getAlias();
+                //Cross join is always required for Passenger side queries
+                crossJoinForFlightPax = Constants.EXISTS + "(" + Constants.SELECT + " fp " + Constants.FROM + " FlightPassenger fp " + Constants.WHERE + " " + 
+                		EntityEnum.PASSENGER.getAlias() + Constants.ID + " = fp.passengerId " + Constants.AND + " " + EntityEnum.FLIGHT.getAlias() + Constants.ID + " = fp.flightId) " + Constants.AND;
+                
                 if(!joinEntities.isEmpty()) {
                     
                     // remove Flight and Passenger from the List because it is already
@@ -117,7 +141,7 @@ public class JPQLGenerator {
                     join += " left join p.seatAssignments s ";
                 }
                 
-                query = queryPrefix + join + " " + Constants.WHERE + " " + where;
+                query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
                 if(isDwellQuery(joinEntities)){
                 	query += " and dwell.location = f.destination";
                 }
@@ -354,8 +378,7 @@ public class JPQLGenerator {
                 break;
             case Constants.DOCUMENT:
                 if(queryType == EntityEnum.FLIGHT) {
-                    joinCondition = Constants.JOIN + EntityEnum.FLIGHT.getAlias() + EntityEnum.PASSENGER.getEntityReference() + " " + EntityEnum.PASSENGER.getAlias() +
-                        Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
+                    joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
                 } else if(queryType == EntityEnum.PASSENGER) {
                     joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.DOCUMENT.getEntityReference() + " " + EntityEnum.DOCUMENT.getAlias();
                 }
