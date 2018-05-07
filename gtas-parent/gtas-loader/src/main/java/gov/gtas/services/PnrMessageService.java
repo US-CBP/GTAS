@@ -153,14 +153,35 @@ public class PnrMessageService extends MessageLoaderService {
     	if (CollectionUtils.isEmpty(legs)) {
     		return;
     	}
-    	String embark = legs.get(0).getFlight().getOrigin();
-    	Date firstDeparture=legs.get(0).getFlight().getEtd();
-    	String debark = legs.get(legs.size() - 1).getFlight().getDestination();
-    	Date finalArrival=legs.get(legs.size() - 1).getFlight().getEta();
+    	String embark,debark = "";
+    	Date firstDeparture, finalArrival = null;
+    	
+    	//If flight is null in either of these checks, then the particular leg must be comprised of a booking detail...
+    	if(legs.get(0).getFlight() != null){
+    		embark = legs.get(0).getFlight().getOrigin();
+    		firstDeparture=legs.get(0).getFlight().getEtd();
+    	}else{ //use BD instead
+    		embark = legs.get(0).getBookingDetail().getOrigin();
+    		firstDeparture=legs.get(0).getBookingDetail().getEtd();
+    	}
+    	
+    	if(legs.get(legs.size()-1).getFlight() != null){
+    		debark = legs.get(legs.size() - 1).getFlight().getDestination();
+    		finalArrival=legs.get(legs.size() - 1).getFlight().getEta();
+    	} else{ //use BD instead
+    		debark = legs.get(legs.size() - 1).getBookingDetail().getDestination();
+    		finalArrival=legs.get(legs.size() - 1).getBookingDetail().getEta();
+    	}
+    	
     	//Origin / Destination Country Issue #356 code fix.
     	if(legs.size() <=2 && (embark.equals(debark))){
-    		debark=legs.get(0).getFlight().getDestination();
-    		finalArrival=legs.get(0).getFlight().getEta();
+    		if(legs.get(0).getFlight() != null){
+    			debark=legs.get(0).getFlight().getDestination();
+    			finalArrival=legs.get(0).getFlight().getEta();
+    		}else{ //use BD instead
+    			debark=legs.get(0).getBookingDetail().getDestination();
+    			finalArrival=legs.get(0).getBookingDetail().getEta();
+    		}
     	}
     	else if(legs.size() >2 && (embark.equals(debark))){
     		DwellTime d=getMaxDwelltime(pnr);

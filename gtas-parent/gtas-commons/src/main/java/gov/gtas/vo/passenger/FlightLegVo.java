@@ -19,6 +19,7 @@ public class FlightLegVo {
     private String eta;
     private String flightId;
     private String direction;
+    private String bookingDetailId;
     
     
     
@@ -94,6 +95,12 @@ public class FlightLegVo {
     public void setEtd(String etd) {
         this.etd = etd;
     }
+	public void setBookingDetailId(String bookingDetailId) {
+		this.bookingDetailId = bookingDetailId;
+	}
+	public String getBookingDetailId() {
+		return bookingDetailId;
+	}
     
 
 }

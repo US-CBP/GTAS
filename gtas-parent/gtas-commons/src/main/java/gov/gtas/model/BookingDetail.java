@@ -45,6 +45,9 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Column(name = "processed")
 	private Boolean processed = Boolean.FALSE;
+	
+	@OneToMany(mappedBy ="bookingDetail")
+	private Set<FlightLeg> flightLegs;
 
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
@@ -149,6 +152,14 @@ public class BookingDetail extends BaseEntityAudit {
 
 	public void setProcessed(Boolean processed) {
 		this.processed = processed;
+	}
+
+	public Set<FlightLeg> getFlightLegs() {
+		return flightLegs;
+	}
+
+	public void setFlightLegs(Set<FlightLeg> flightLegs) {
+		this.flightLegs = flightLegs;
 	}
 
 	@Override

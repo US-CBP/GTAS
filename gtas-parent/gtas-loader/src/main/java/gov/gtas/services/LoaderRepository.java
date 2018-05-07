@@ -260,6 +260,10 @@ public class LoaderRepository {
             	//create booking details for this pnr
             	bD = bookingDetailDao.save(bD);
             	bookingDetails.add(bD);
+            	FlightLeg leg = new FlightLeg();
+            	leg.setBookingDetail(bD);
+            	leg.setLegNumber(i);
+            	flightLegs.add(leg);
             }
         }
         
