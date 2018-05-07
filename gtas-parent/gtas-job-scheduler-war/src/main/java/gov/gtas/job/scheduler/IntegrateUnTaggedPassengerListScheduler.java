@@ -37,7 +37,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
     @Autowired
     private PassengerIDTagRepository passengerIDTagRepository;
 
-    @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
+    //@Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {
 
         logger.info("PassengerIDTag matchup service START ");
