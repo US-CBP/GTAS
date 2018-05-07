@@ -370,7 +370,18 @@ public class PassengerDetailsController {
 						copyModelToVo(flight, flightVo);
 						return flightVo;
 					}).collect(Collectors.toCollection(LinkedList::new));
-	}	
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/bookingdetailhistory", method = RequestMethod.GET)
+	public List<FlightVo> getBookingDetailHistoryByPassenger(
+			@RequestParam String paxId,
+			@RequestParam String flightId)
+			throws ParseException {
+
+		return null;
+	}
 	
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)

@@ -12,4 +12,6 @@ import java.util.List;
 public interface BookingDetailService {
 
     public List<BookingDetail> getBookingDetailsByProcessedFlag();
+
+    public List<BookingDetail> getBookingDetailsByPassengers(Long pax_id) throws Exception;
 }

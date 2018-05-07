@@ -30,4 +30,7 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
     public List<BookingDetail> getSpecificBookingDetail(@Param("flight_number") String flight_number, @Param("origin") String origin,
                                                         @Param("destination") String destination, @Param("eta_date") Date eta_date,
                                                         @Param("etd_date") Date etd_date, @Param("processed") Boolean processed);
+
+    @Query("SELECT bd FROM BookingDetail bd JOIN bd.passengers p WHERE p.id = (:pax_id)")
+    public List<BookingDetail> getBookingDetailsByPassengers(@Param("pax_id") Long pax_id);
 }
