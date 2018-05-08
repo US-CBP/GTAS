@@ -59,10 +59,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
 import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +213,7 @@ public class LoaderRepository {
         Set<PassengerVo> existingPassengers = new HashSet<>();
         long startTime = System.nanoTime();
         // first find all existing passengers, create any missing flights
+    	utils.sortFlightsByDate(flights);
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
             if(primeFlightKey.equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader

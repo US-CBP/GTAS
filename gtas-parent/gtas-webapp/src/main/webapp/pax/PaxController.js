@@ -57,12 +57,15 @@
         var reorderTVLdata = function(flightLegs){
         	var orderedTvlData = [];
 
-        	//Sorts flightLeg objects based on etd
+        	/*//Sorts flightLeg objects based on etd
+        	 * 5/8/2018*No longer required to sort but does add +1 to leg number visually still, so will keep that functionality.
+        	 
         	flightLegs.sort(function(a,b){
-        		if(a.etd < b.etd) return -1;
-        		if(a.etd > b.etd) return 1;
+        		if(a.legNumber < b.legNumber) return -1;
+        		if(a.legNumber > b.legNumber) return 1;
         		else return 0;
-        	});
+        	});*/
+        	
         	//sets each flightLeg# to the newly sorted index value
         	$.each(flightLegs, function(index,value){
         		value.legNumber = index+1; //+1 because 0th flight leg doesn't read well to normal humans

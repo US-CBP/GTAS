@@ -215,75 +215,25 @@ public class PnrMessageService extends MessageLoaderService {
         	return;
         }
         
-    	Flight firstFlight=null;
-    	Flight secondFlight=null;
-    	Flight thirdFlight=null;
-    	Flight fourthFlight=null;
-    	Flight fifthFlight=null;
-    	Flight sixthFlight=null;
-    	Flight seventhFlight=null;
-    	Flight eighthFlight=null;
-    	Flight ninethFlight=null;
-    	Flight tenthFlight=null;
     	for(int i=0;i<legs.size();i++){
-            switch (i) {
-            case 0:
-            	firstFlight=legs.get(0).getFlight();
-                break;
-            case 1:
-            	secondFlight=legs.get(1).getFlight();
-                break;
-            case 2:
-            	thirdFlight=legs.get(2).getFlight();
-                break;
-            case 3:
-            	fourthFlight=legs.get(3).getFlight();
-                break;
-            case 4:
-            	fifthFlight=legs.get(4).getFlight();
-            	break;
-            case 5:
-            	sixthFlight=legs.get(5).getFlight();
-            	break;
-            case 6:
-            	seventhFlight=legs.get(6).getFlight();
-            	break;
-            case 7:
-            	eighthFlight=legs.get(7).getFlight();
-            	break;
-            case 8:
-            	ninethFlight=legs.get(8).getFlight();
-            	break;
-            case 9:
-            	tenthFlight=legs.get(9).getFlight();
-            	break;
-            } 
- 
+        	if(i+1 < legs.size()){ //If the 'next' leg actually exists
+        		//4 different combinations of flights and booking details n^2, where n = 2. FxF, FxB, BxF, BxB. Order matters due to time calc
+	    		if(legs.get(i).getFlight() != null){
+	    			if(legs.get(i+1).getFlight() != null){ //FxF
+	    				utils.setDwellTime(legs.get(i).getFlight(), legs.get(i+1).getFlight(),pnr);
+	    			} else{ //next leg is a booking detail //FxB
+	    				utils.setDwellTime(legs.get(i).getFlight(),legs.get(i+1).getBookingDetail(), pnr);
+	    			}
+	    		} else if(legs.get(i+1).getFlight() != null){ //first leg is booking detail BxF
+	    			utils.setDwellTime(legs.get(i).getBookingDetail(),legs.get(i+1).getFlight(),pnr);
+	    		} else{ //both legs are booking details BxB
+	    			utils.setDwellTime(legs.get(i).getBookingDetail(),legs.get(i+1).getBookingDetail(),pnr);
+	    		}
+        	}
     	}
-    	setDwelTime(firstFlight,secondFlight,pnr);
-    	setDwelTime(secondFlight,thirdFlight,pnr);
-    	setDwelTime(thirdFlight,fourthFlight,pnr);
-    	setDwelTime(fourthFlight,fifthFlight,pnr);
-    	setDwelTime(fifthFlight,sixthFlight,pnr);
-    	setDwelTime(sixthFlight,seventhFlight,pnr);
-    	setDwelTime(seventhFlight,eighthFlight,pnr);
-    	setDwelTime(eighthFlight,ninethFlight,pnr);
-    	setDwelTime(ninethFlight,tenthFlight,pnr);
     	logger.debug("calculateDwellTime time = "+(System.nanoTime()-startTime)/1000000);
     }
-    private void setDwelTime(Flight firstFlight,Flight secondFlight,Pnr pnr){
- 
-    	if(firstFlight != null && secondFlight != null 
-    			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
-    			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
-    		
-    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
-    		d.setFlyingFrom(firstFlight.getOrigin());
-    		d.setFlyingTo(secondFlight.getDestination());
-    		pnr.addDwellTime(d);
-    	}
-    }
+
 
     private void setCodeShareFlights(Pnr pnr){
     	Set<Flight> flights=pnr.getFlights();

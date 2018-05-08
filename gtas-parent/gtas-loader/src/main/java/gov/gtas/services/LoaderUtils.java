@@ -6,6 +6,8 @@
 package gov.gtas.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +31,7 @@ import gov.gtas.model.BookingDetail;
 import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
+import gov.gtas.model.DwellTime;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
@@ -355,6 +358,64 @@ public class LoaderUtils {
     	bD.setCreatedAt(null);
     	bD.setCreatedBy(LOADER_USER);
     	return bD;
+    }
+    
+    //These 4 overloaded methods represent the 4 combinations that legs can be compared together
+    public void setDwellTime(Flight firstFlight,Flight secondFlight, Pnr pnr){
+    	if(firstFlight != null && secondFlight != null 
+    			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
+    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
+    			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    		d.setFlyingFrom(firstFlight.getOrigin());
+    		d.setFlyingTo(secondFlight.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(BookingDetail firstBooking, BookingDetail secondBooking, Pnr pnr){
+    	if(firstBooking != null && secondBooking != null 
+    			&& firstBooking.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
+    			&& !(secondBooking.getDestination().equals( firstBooking.getOrigin()))
+    			&& (firstBooking.getEta()!=null && secondBooking.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
+    		d.setFlyingFrom(firstBooking.getOrigin());
+    		d.setFlyingTo(secondBooking.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(Flight firstFlight, BookingDetail secondBooking, Pnr pnr){
+    	if(firstFlight != null && secondBooking != null 
+    			&& firstFlight.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
+    			&& !(secondBooking.getDestination().equals( firstFlight.getOrigin()))
+    			&& (firstFlight.getEta()!=null && secondBooking.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
+    		d.setFlyingFrom(firstFlight.getOrigin());
+    		d.setFlyingTo(secondBooking.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(BookingDetail firstBooking, Flight secondFlight, Pnr pnr){
+    	if(firstBooking != null && secondFlight != null 
+    			&& firstBooking.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
+    			&& !(secondFlight.getDestination().equals( firstBooking.getOrigin()))
+    			&& (firstBooking.getEta()!=null && secondFlight.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    		d.setFlyingFrom(firstBooking.getOrigin());
+    		d.setFlyingTo(secondFlight.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    //The parsed message did not have the flights in proper order for flight leg generation (needed for dwell time and appropriate display)
+    public void sortFlightsByDate(List<FlightVo> flights){
+    	Collections.sort(flights, new Comparator<FlightVo>(){
+    		public int compare(FlightVo f1, FlightVo f2){
+    			return f1.getEtd().compareTo(f2.getEtd());
+    		}
+    	});
     }
 
     /**
