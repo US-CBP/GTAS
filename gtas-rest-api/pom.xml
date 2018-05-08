@@ -5,7 +5,7 @@
 
 	<groupId>gov.gtas.rest</groupId>
 	<artifactId>gtas-rest-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
 	<packaging>jar</packaging>
 
 	<name>gtas-rest-api</name>
