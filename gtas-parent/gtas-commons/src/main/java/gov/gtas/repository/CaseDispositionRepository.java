@@ -52,7 +52,8 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     @Query("update HitsDisposition set hitsDispositions = :hitsDispositionSet where id = :id")
     public Integer updateDispCommentsForHitsDisposition(Long id, Set<HitsDisposition> hitsDispositionSet);
 
-    @Query("SELECT c " +
-			"FROM Case c JOIN c.flight flt  WHERE flt.etaDate = :date or flt.etdDate =  :date" )
-	public List<Case> findOneDayLookoutByDate(@Param("date") Date date);
+   @Query("SELECT c " +
+			"FROM Case c JOIN c.flight flt  WHERE (flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I') OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' ))" )
+	public List<Case> findOneDayLookoutByDate(@Param("startDate") Date startDate, @Param("endDate")Date endDate);
+	
 }

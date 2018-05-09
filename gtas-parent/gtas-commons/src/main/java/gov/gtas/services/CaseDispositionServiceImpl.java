@@ -798,10 +798,27 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     
     @Override
 	public List<Case> getOneDayLookoutByDate(Date date) {
-		List<Case> oneDayLookoutResult = caseDispositionRepository.findOneDayLookoutByDate(date);
+    	//set start date
+    	Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
+	    cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
+	    cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
+	    cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+	    Date startDate = cal.getTime();
+	   //set end date
+	   	cal.setTime(date);
+	    cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
+	    cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
+	    cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
+	    cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+	    Date endDate = cal.getTime();
+	    
+		List<Case> oneDayLookoutResult = caseDispositionRepository.findOneDayLookoutByDate(startDate,endDate);
 		if(oneDayLookoutResult == null){
 			return new ArrayList<Case>();
 		}
+		
 		return oneDayLookoutResult;
 	}
 }
