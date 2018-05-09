@@ -25,6 +25,9 @@ public class PassengerIDTag extends BaseEntityAudit {
     @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_tag_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
     private Set<Passenger> passengers = new HashSet<>();
 
+    @Column(name = "pax_id")
+    private Long pax_id;
+
     public String getIdTag() {
         return idTag;
     }
@@ -39,5 +42,13 @@ public class PassengerIDTag extends BaseEntityAudit {
 
     public void setPassengers(Set<Passenger> passengers) {
         this.passengers = passengers;
+    }
+
+    public Long getPax_id() {
+        return pax_id;
+    }
+
+    public void setPax_id(Long pax_id) {
+        this.pax_id = pax_id;
     }
 }
