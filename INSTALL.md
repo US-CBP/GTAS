@@ -6,6 +6,8 @@
 * Apache Tomcat 8
 * MariaDB 10.0 Stable
 * Maven 3.3
+* Apache ActiveMQ 5.15
+* Redis 4.0
 
 ## Download
 
@@ -31,6 +33,8 @@ Configure the job scheduler war by editing gtas-parent/gtas-job-scheduler-war/sr
 message.dir.origin=/data/gtas_in
 message.dir.processed=/data/gtas_out
 ```
+
+Repeat this process for all properties files that set set directories for messages received, and messages processed.
 
 ## Build
 
@@ -88,7 +92,7 @@ cp gtas-job-scheduler-war/target/gtas-job-scheduler.war [tomcat home]/webapps
 
 Access site at http://localhost:8080/gtas
 
-## Backend Processes
+## Backend Processes 
 
 These instructions are only for admins who wish to configure the backend processes as cron jobs on a Unix system.  If you plan on using the job scheduler war instead, there is no need to follow these instructions.
 
@@ -99,7 +103,7 @@ GTAS currently relies on the following batch processes:
 
 Both of these processes can be executed on the command-line.
 
-### GTAS Loader
+### GTAS Loader (these have been temporarily disabled as all message loading must be handled by Job Scheduler)
 
 After compiling, the GTAS loader is located in gtas-loader/target/gtas-loader.jar.  It's an executable jar that takes one or more input filenames on the command line.  For example, the following command would execute the loader on two input files:
 
@@ -113,7 +117,7 @@ Alternatively, you can provide input and output directories.  This is useful for
 java -jar gtas-loader/target/gtas-loader.jar inputdir outputdir
 ```
 
-### GTAS Rule Runner
+### GTAS Rule Runner (this has been temporarily disabled as rules engine must be handled by Job Scheduler)
 
 The rule runner takes no arguments
 
