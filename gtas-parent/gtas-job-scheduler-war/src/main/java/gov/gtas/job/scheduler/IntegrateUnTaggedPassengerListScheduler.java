@@ -46,16 +46,16 @@ public class IntegrateUnTaggedPassengerListScheduler {
 
         List<Passenger> paxListNotNull = new ArrayList<Passenger>();
         List<Passenger> paxListWithNullIdTags = new ArrayList<Passenger>();
-        passengerDao.getNotNullIdTagPassengers();
-        Iterable<Passenger> paxList2  = passengerDao.getNullIdTagPassengers();
+//        passengerDao.getNotNullIdTagPassengers();
+//        Iterable<Passenger> paxList2  = passengerDao.getNullIdTagPassengers();
 
 
         for(Passenger _tempPax : paxList){
-            if(_tempPax.getPaxIdTag() == null){
+/*            if(_tempPax.getPaxIdTag() == null){
                 paxListWithNullIdTags.add(_tempPax);
             }else{
                 paxListNotNull.add(_tempPax);
-            }
+            }*/
         }
 
         final java.util.Random rand = new java.util.Random();
@@ -72,7 +72,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
                             && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
                             ) {
                         // match found
-                        _tempPaxWithNoIdTag.setPaxIdTag(_tempPaxWithIdTag.getPaxIdTag());
+                        //_tempPaxWithNoIdTag.setPaxIdTag(_tempPaxWithIdTag.getPaxIdTag());
                     }
                 }
 
@@ -90,12 +90,12 @@ public class IntegrateUnTaggedPassengerListScheduler {
             PassengerIDTag _tempPaxIDTag = new PassengerIDTag();
 
 
-            if(_checkedListOfNullIdTagPassenger.getPaxIdTag()==null){ // Passenger found, apply IdTag to the new record
+/*            if(_checkedListOfNullIdTagPassenger.getPaxIdTag()==null){ // Passenger found, apply IdTag to the new record
                 _tempPaxIDTag.setIdTag(generateRandomIDTag(9));
                 _tempPaxIdTagList.add(_tempPaxIDTag);
                 _checkedListOfNullIdTagPassenger.setPaxIdTag(_tempPaxIDTag);
                 //_tempPaxIDTag.getPassengers().add(_checkedListOfNullIdTagPassenger);
-            }
+            }*/
             passengerIDTagRepository.save(_tempPaxIdTagList);
             passengerDao.save(_checkedListOfNullIdTagPassenger);
         }

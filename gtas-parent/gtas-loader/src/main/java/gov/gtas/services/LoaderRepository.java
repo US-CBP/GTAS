@@ -18,6 +18,7 @@ import gov.gtas.model.FlightLeg;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Message;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerIDTag;
 import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
@@ -49,6 +50,7 @@ import gov.gtas.repository.DocumentRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.FrequentFlyerRepository;
 import gov.gtas.repository.MessageRepository;
+import gov.gtas.repository.PassengerIDTagRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PaymentFormRepository;
 import gov.gtas.repository.PhoneRepository;
@@ -109,6 +111,9 @@ public class LoaderRepository {
 
     @Autowired
     private PaymentFormRepository paymentFormDao;
+    
+    @Autowired
+    private PassengerIDTagRepository passengerIdTagDao;
     
     @Autowired 
     BookingDetailRepository bookingDetailDao;
@@ -232,6 +237,7 @@ public class LoaderRepository {
 	                    	currentFlight.setOperatingFlight(true);
 	                    }
 	                    for (PassengerVo pvo : passengers) {
+	                    	pvo.getBags();
 	                    	logger.debug("@ findPassengerOnFlight");
 	                        Passenger existingPassenger = findPassengerOnFlight(existingFlight, pvo);
 	                        if (existingPassenger != null) {
@@ -297,11 +303,13 @@ public class LoaderRepository {
 			for (DocumentVo dvo : pvo.getDocuments()) {
 				newPassenger.addDocument(utils.createNewDocument(dvo));
 			}
-
 			passengerDao.save(newPassenger);
 			messagePassengers.add(newPassenger);
 			newPassengers.add(newPassenger);
-
+			//Create tag based on new passenger, associating them
+			PassengerIDTag paxIdTag = utils.createPassengerIDTag(newPassenger);
+			passengerIdTagDao.save(paxIdTag);
+			
 			for (Flight f : messageFlights) {
 				createSeatAssignment(pvo.getSeatAssignments(), newPassenger, f);
 				createBags(pvo.getBags(), newPassenger, f);

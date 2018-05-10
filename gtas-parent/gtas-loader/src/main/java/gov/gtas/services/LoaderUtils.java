@@ -5,7 +5,11 @@
  */
 package gov.gtas.services;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,6 +40,7 @@ import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerIDTag;
 import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
@@ -419,6 +424,41 @@ public class LoaderUtils {
     }
 
     /**
+     * Util method takes a Passenger object and return a hash for the top 5 attributes
+     * @param pax
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
+                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
+    }
+
+    /**
+     * Util method to hash passenger attributes
+     * @param input
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private String makeSHA1Hash(String input)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes("UTF-8");
+        md.update(buffer);
+        byte[] digest = md.digest();
+
+        String hexStr = "";
+        for (int i = 0; i < digest.length; i++) {
+            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return hexStr;
+    }
+    
+    /**
      * try returning ISO_3 code
      */
     private String normalizeCountryCode(String code) {
@@ -455,4 +495,19 @@ public class LoaderUtils {
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
     }
+    
+	public PassengerIDTag createPassengerIDTag(Passenger p) {
+    	PassengerIDTag paxIdTag = new PassengerIDTag(); 
+    	paxIdTag.setPax_id(p.getId());
+    	paxIdTag.setCreatedAt(new Date());
+    	paxIdTag.setCreatedBy(LOADER_USER);
+    	try {
+			paxIdTag.setIdTag(getHashForPassenger(p));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	return paxIdTag;
+	}
 }

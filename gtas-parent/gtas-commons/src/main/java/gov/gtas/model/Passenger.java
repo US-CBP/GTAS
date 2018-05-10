@@ -38,9 +38,9 @@ public class Passenger extends BaseEntityAudit {
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
 
-    @ManyToOne(fetch=FetchType.EAGER, targetEntity = PassengerIDTag.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    /*@ManyToOne(fetch=FetchType.EAGER, targetEntity = PassengerIDTag.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "pax_tag_id"))
-    private PassengerIDTag paxIdTag;
+    private PassengerIDTag paxIdTag;*/
 
     private String title;
 
@@ -387,13 +387,13 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
-    public PassengerIDTag getPaxIdTag() {
+/*    public PassengerIDTag getPaxIdTag() {
         return paxIdTag;
     }
 
     public void setPaxIdTag(PassengerIDTag paxIdTag) {
         this.paxIdTag = paxIdTag;
-    }
+    }*/
 
     @Override
     public int hashCode() {
