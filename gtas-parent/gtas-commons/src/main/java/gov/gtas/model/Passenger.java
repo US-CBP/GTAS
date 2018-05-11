@@ -28,13 +28,13 @@ public class Passenger extends BaseEntityAudit {
 /*    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
     private Set<Flight> flights = new HashSet<>();*/
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "passengers", targetEntity = ApisMessage.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "passengers", targetEntity = Pnr.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<Pnr> pnrs = new HashSet<>();
 
-    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "passengers",targetEntity = BookingDetail.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
 

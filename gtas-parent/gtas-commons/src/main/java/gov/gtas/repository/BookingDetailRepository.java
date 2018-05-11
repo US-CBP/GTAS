@@ -33,4 +33,6 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
 
     @Query("SELECT bd FROM BookingDetail bd JOIN bd.passengers p WHERE p.id = (:pax_id)")
     public List<BookingDetail> getBookingDetailsByPassengers(@Param("pax_id") Long pax_id);
+
+
 }

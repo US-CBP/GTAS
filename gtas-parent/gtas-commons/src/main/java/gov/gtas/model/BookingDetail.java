@@ -46,7 +46,7 @@ public class BookingDetail extends BaseEntityAudit {
 	@Column(name = "processed")
 	private Boolean processed = Boolean.FALSE;
 	
-	@OneToMany(mappedBy ="bookingDetail")
+	@OneToMany(fetch=FetchType.EAGER, mappedBy ="bookingDetail", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	private Set<FlightLeg> flightLegs;
 
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
@@ -186,5 +186,24 @@ public class BookingDetail extends BaseEntityAudit {
 		result = 31 * result + origin.hashCode();
 		result = 31 * result + destination.hashCode();
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "BookingDetail{" +
+				"flightNumber='" + flightNumber + '\'' +
+				", etdDate=" + etdDate +
+				", etaDate=" + etaDate +
+				", etd=" + etd +
+				", eta=" + eta +
+				", origin='" + origin + '\'' +
+				", originCountry='" + originCountry + '\'' +
+				", destination='" + destination + '\'' +
+				", destinationCountry='" + destinationCountry + '\'' +
+				", processed=" + processed +
+				", flightLegs=" + flightLegs +
+				", passengers=" + passengers +
+				", pnrs=" + pnrs +
+				'}';
 	}
 }

@@ -5,10 +5,7 @@
  */
 package gov.gtas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "flight_leg")
@@ -22,7 +19,7 @@ public class FlightLeg extends BaseEntity {
     @ManyToOne
     private Pnr pnr;
     
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private BookingDetail bookingDetail;
 
     @Column(name = "leg_number", nullable = false)

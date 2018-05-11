@@ -21,9 +21,9 @@ public class PassengerIDTag extends BaseEntityAudit {
     @Column(name = "idTag")
     private String idTag;
 
-    @OneToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_tag_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
-    private Set<Passenger> passengers = new HashSet<>();
+//    @OneToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+//    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_tag_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
+//    private Set<Passenger> passengers = new HashSet<>();
 
     @Column(name = "pax_id")
     private Long pax_id;
@@ -36,13 +36,13 @@ public class PassengerIDTag extends BaseEntityAudit {
         this.idTag = idTag;
     }
 
-    public Set<Passenger> getPassengers() {
-        return passengers;
-    }
-
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
-    }
+//    public Set<Passenger> getPassengers() {
+//        return passengers;
+//    }
+//
+//    public void setPassengers(Set<Passenger> passengers) {
+//        this.passengers = passengers;
+//    }
 
     public Long getPax_id() {
         return pax_id;
