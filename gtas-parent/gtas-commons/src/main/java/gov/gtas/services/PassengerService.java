@@ -83,6 +83,9 @@ public interface PassengerService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	public List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
 
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
+
 	public Set<Flight> getAllFlights(Long id);
 
 	public void setAllFlights(Set<Flight> flights, Long id);	

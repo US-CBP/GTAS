@@ -38,6 +38,7 @@ public class BookingDetailCompressScheduler {
     @PersistenceContext
     private EntityManager entityManager;
 
+
     @Transactional
     @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() throws IOException {

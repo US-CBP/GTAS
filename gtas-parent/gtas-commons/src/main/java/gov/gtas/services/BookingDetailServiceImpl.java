@@ -39,9 +39,17 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         return _bd;
     }
 
+    /**
+     *
+     * @param pax_id
+     */
     private void getHashFromPaxID(Long pax_id){
         Passenger _tempPax = passengerService.findById(pax_id);
-
+        try {
+            String _paxHash = getHashForPassenger(_tempPax);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
 

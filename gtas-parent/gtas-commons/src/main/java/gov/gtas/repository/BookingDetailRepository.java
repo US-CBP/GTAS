@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.Passenger;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -34,5 +35,9 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
     @Query("SELECT bd FROM BookingDetail bd JOIN bd.passengers p WHERE p.id = (:pax_id)")
     public List<BookingDetail> getBookingDetailsByPassengers(@Param("pax_id") Long pax_id);
 
+
+    @Query("SELECT pax FROM Passenger pax WHERE pax.id IN (" +
+            "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
+    public List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id);
 
 }

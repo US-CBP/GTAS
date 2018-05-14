@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import gov.gtas.repository.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,15 +46,6 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.Seat;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.DispositionStatus;
-import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.repository.BagRepository;
-import gov.gtas.repository.DispositionRepository;
-import gov.gtas.repository.DispositionStatusRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitsSummaryRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.repository.PnrRepository;
-import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
@@ -94,6 +86,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Autowired
     private BagRepository bagRespository;
+
+    @Autowired
+    private BookingDetailRepository bookingDetailRepository;
     
 	@PersistenceContext
 	private EntityManager em;
@@ -383,7 +378,12 @@ public class PassengerServiceImpl implements PassengerService {
     	return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
     }
 
-	@SuppressWarnings("unchecked")
+    @Override
+    public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
+        return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+    }
+
+    @SuppressWarnings("unchecked")
 	@Override
 	public Set<Flight> getAllFlights(Long id) {
 		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN flight f ON (fp.flight_id = f.id) WHERE fp.passenger_id="+id+"";
