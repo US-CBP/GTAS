@@ -46,39 +46,13 @@ public class BookingDetailServiceImpl implements BookingDetailService{
     private void getHashFromPaxID(Long pax_id){
         Passenger _tempPax = passengerService.findById(pax_id);
         try {
-            String _paxHash = getHashForPassenger(_tempPax);
+            //String _paxHash = (new LoaderUtils()).getHashForPassenger(_tempPax);
         }catch (Exception ex){
             ex.printStackTrace();
         }
     }
 
 
-    /**
-     * Util method takes top 5 attributes for a Passenger and returns a hash
-     * @param firstName
-     * @param lastName
-     * @param gender
-     * @param DOB
-     * @param ctz_country
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
-     */
-    private String getHashForPassenger(String firstName, String lastName, String gender, String DOB, String ctz_country) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(firstName.toUpperCase(), lastName.toUpperCase(), gender.toUpperCase(), DOB, ctz_country.toUpperCase())));
-    }
-
-    /**
-     * Util method takes a Passenger object and return a hash for the top 5 attributes
-     * @param pax
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
-     */
-    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
-    }
 
     /**
      * Util method to hash passenger attributes

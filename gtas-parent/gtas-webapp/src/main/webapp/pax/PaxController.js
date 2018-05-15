@@ -225,7 +225,8 @@
 
         paxDetailService.getPaxFlightHistory($scope.passenger.paxId, $scope.passenger.flightId)
         .then(function(response){
-        	$scope.getPaxFullTravelHistory($scope.passenger);
+        	//$scope.getPaxFullTravelHistory($scope.passenger);
+            $scope.getPaxBookingDetailHistory($scope.passenger);
           $scope.passenger.flightHistoryVo = response.data;
         });
 
@@ -234,6 +235,13 @@
       			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
       			$scope.isLoadingFlightHistory = false;
       		});
+        };
+
+        $scope.getPaxBookingDetailHistory= function(passenger){
+            paxDetailService.getPaxBookingDetailHistory(passenger.paxId, passenger.flightId).then(function(response){
+                $scope.passenger.fullFlightHistoryVo ={'map': response.data};
+                $scope.isLoadingFlightHistory = false;
+            });
         };
 
     //Adds user from pax detail page to watchlist.

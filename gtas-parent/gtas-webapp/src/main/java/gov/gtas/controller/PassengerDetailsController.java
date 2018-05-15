@@ -7,23 +7,19 @@ package gov.gtas.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.model.*;
+import gov.gtas.services.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,31 +36,11 @@ import com.google.common.base.Strings;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Bag;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Disposition;
-import gov.gtas.model.Document;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.Seat;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.DispositionData;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrService;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
@@ -109,6 +85,9 @@ public class PassengerDetailsController {
 	
 	@Autowired
 	private MatchingService matchingService;
+
+	@Autowired
+	private BookingDetailService bookingDetailService;
 	
 	@Resource
 	private BagRepository bagRepository;
@@ -380,7 +359,9 @@ public class PassengerDetailsController {
 			@RequestParam String flightId)
 			throws ParseException {
 
-		return null;
+		List<Passenger> _tempPaxList = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
+		return copyBookingDetailFlightModelToVo(_tempPaxList);
+
 	}
 	
 	@ResponseBody
@@ -753,6 +734,124 @@ public class PassengerDetailsController {
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		} 
+	}
+
+    /**
+     *
+     * @param _tempPaxList
+     */
+	private List<FlightVo> copyBookingDetailFlightModelToVo(List<Passenger> _tempPaxList) {
+
+	    List<FlightVo> _tempBDFlightsList = new ArrayList<>();
+        try {
+	    //stuff flights from Passenger
+
+        List _tempFLList = _tempPaxList.stream().map(pax->{return pService.getAllFlights(pax.getId());}).collect(Collectors.toList());
+            _tempBDFlightsList.addAll((Collection<? extends FlightVo>)_tempFLList.stream().flatMap(f -> ((Set)f).stream())
+				.map(flight -> {
+            	//for(Flight fl : flight){}
+                FlightVo flightVo = new FlightVo();
+				populateFlightVoWithFlightDetail((Flight)flight, flightVo);
+                return flightVo;
+            }).collect(Collectors.toCollection(LinkedList::new)));
+	    // stuff booking details from Passenger
+        List _tempbdList = _tempPaxList.stream().map(pax -> {return pax.getBookingDetails();}).collect(Collectors.toList());
+        _tempBDFlightsList.addAll((Collection<? extends FlightVo>) _tempbdList.stream().flatMap(f -> ((Set)f).stream()).map(bd -> {
+            FlightVo flightVo = new FlightVo();
+            populateFlightVoWithBookingDetail((BookingDetail) bd, flightVo);
+            return flightVo;
+        }).collect(Collectors.toList()));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return _tempBDFlightsList;
+	}
+
+    /**
+     *
+     * @param source
+     * @param target
+     */
+	private void populateFlightVoWithBookingDetail(BookingDetail source, FlightVo target){
+        try {
+
+            target.setFlightNumber(((BookingDetail)source).getFlightNumber());
+            target.setCarrier(((BookingDetail)source).getFlightNumber());
+            target.setEtaDate(((BookingDetail)source).getEtaDate());
+            target.setEtdDate(((BookingDetail)source).getEtdDate());
+            target.setOriginCountry(((BookingDetail)source).getOriginCountry());
+            target.setOrigin(((BookingDetail)source).getOrigin());
+            target.setDestinationCountry(((BookingDetail)source).getDestinationCountry());
+            target.setDestination(((BookingDetail)source).getDestination());
+			target.setEtd(((BookingDetail)source).getEtd());
+			target.setEta(((BookingDetail)source).getEta());
+			//target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+	/**
+	 *
+	 * @param source
+	 * @param target
+	 */
+	private void populateFlightVoWithFlightDetail(Flight source, FlightVo target){
+		try {
+
+			target.setFlightNumber(source.getFlightNumber());
+			target.setCarrier(source.getCarrier());
+			target.setEtaDate(source.getEtaDate());
+			target.setEtdDate(source.getEtdDate());
+			target.setOriginCountry(source.getOriginCountry());
+			target.setOrigin(source.getOrigin());
+			target.setDestinationCountry(source.getDestinationCountry());
+			target.setDestination(source.getDestination());
+			target.setFlightDate(source.getFlightDate());
+			target.setEtd(source.getEtd());
+			target.setEta(source.getEta());
+			target.setFullFlightNumber(source.getFullFlightNumber());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	/**
+	 * Static utility method to ignore nulls while copying
+	 *
+	 * @param source
+	 * @return
+	 */
+	public static String[] getNullPropertyNames(Object source) {
+		final BeanWrapper src = new BeanWrapperImpl(source);
+		java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+		Set<String> emptyNames = new HashSet<String>();
+		for (java.beans.PropertyDescriptor pd : pds) {
+			Object srcValue = src.getPropertyValue(pd.getName());
+			if (srcValue == null) emptyNames.add(pd.getName());
+		}
+		String[] result = new String[emptyNames.size()];
+		return emptyNames.toArray(result);
+	}
+
+	/**
+	 * Wrapper method over BeanUtils.copyProperties
+	 *
+	 * @param src
+	 * @param target
+	 */
+	public static void copyIgnoringNullValues(Object src, Object target) {
+		try {
+			org.springframework.beans.BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private boolean isRemovableDispositionStatus(DispositionStatus ds) {
