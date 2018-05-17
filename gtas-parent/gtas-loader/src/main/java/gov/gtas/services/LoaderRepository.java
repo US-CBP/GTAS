@@ -66,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -214,7 +215,7 @@ public class LoaderRepository {
 
     //@Transactional
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
-    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails, long pnrId) throws ParseException {
+    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
         long startTime = System.nanoTime();
         // first find all existing passengers, create any missing flights
@@ -328,16 +329,18 @@ public class LoaderRepository {
             }
            //f.setPassengerCount(f.getPassengers().size()); TODO RE-ADD PASSENGER COUNT AFTER TESTS
         }
+        logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
         
         //assoc passengers to booking details
+        startTime = System.nanoTime();
     	for(BookingDetail bD : bookingDetails){
    			for(Passenger pax : messagePassengers){
     			bD.getPassengers().add(pax);
     			pax.getBookingDetails().add(bD);
     		}
     	}
+        logger.debug("processflightAndPassenger() associate booking details/passengers time = "+(System.nanoTime()-startTime)/1000000);
         
-        logger.debug("processFlightAndPassenger() associate pax/flights time = "+(System.nanoTime()-startTime)/1000000);
     }
 
     /**

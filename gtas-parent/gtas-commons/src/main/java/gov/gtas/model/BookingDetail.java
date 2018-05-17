@@ -46,17 +46,20 @@ public class BookingDetail extends BaseEntityAudit {
 	@Column(name = "processed")
 	private Boolean processed = Boolean.FALSE;
 	
-	@OneToMany(fetch=FetchType.EAGER, mappedBy ="bookingDetail", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@OneToMany(mappedBy ="bookingDetail")
 	private Set<FlightLeg> flightLegs;
 
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(targetEntity = Passenger.class)
     @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
     private Set<Passenger> passengers = new HashSet<>();
    
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Pnr.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(targetEntity = Pnr.class)
     @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pnr_id"))     
     private Set<Pnr> pnrs = new HashSet<>();
-
+    
+    @Column(name="full_flight_number")
+    private String fullFlightNumber;
+    
 	public Set<Passenger> getPassengers() {
 		return passengers;
 	}
@@ -160,6 +163,14 @@ public class BookingDetail extends BaseEntityAudit {
 
 	public void setFlightLegs(Set<FlightLeg> flightLegs) {
 		this.flightLegs = flightLegs;
+	}
+
+	public String getFullFlightNumber() {
+		return fullFlightNumber;
+	}
+
+	public void setFullFlightNumber(String fullFlightNumber) {
+		this.fullFlightNumber = fullFlightNumber;
 	}
 
 	@Override

@@ -108,7 +108,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)msgDto.getMsgVo();
             loaderRepo.processReportingParties(apis, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), "placeholder", new HashSet<BookingDetail>(), -1);//TODO: Placeholder and -1
+            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), msgDto.getPrimeFlightKey(), new HashSet<BookingDetail>());//TODO: Placeholder and -1
             createFlightPax(apis);
             apis.setStatus(MessageStatus.LOADED);
 
@@ -167,7 +167,7 @@ public class ApisMessageService extends MessageLoaderService {
             ApisMessageVo m = (ApisMessageVo)messageVo;
             loaderRepo.processReportingParties(apisMessage, m.getReportingParties());
             loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),"placeholder", new HashSet<BookingDetail>(),-1); //TODO: Placeholder and -1
+                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),"placeholder", new HashSet<BookingDetail>()); //TODO: Placeholder and -1
             createFlightPax(apisMessage);
             apisMessage.setStatus(MessageStatus.LOADED);
 

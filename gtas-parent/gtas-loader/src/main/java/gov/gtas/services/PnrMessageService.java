@@ -114,7 +114,7 @@ public class PnrMessageService extends MessageLoaderService {
             utils.convertPnrVo(pnr, vo);
             loaderRepo.processPnr(pnr, vo);
             loaderRepo.processFlightsAndPassengers(vo.getFlights(), vo.getPassengers(), 
-                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey(), pnr.getBookingDetails(), pnr.getId());
+                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey(), pnr.getBookingDetails());
             
             // update flight legs
            	for (FlightLeg leg : pnr.getFlightLegs()) {

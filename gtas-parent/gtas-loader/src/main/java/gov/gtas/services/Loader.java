@@ -19,7 +19,6 @@ import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
-import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.MessageRepository;
 import gov.gtas.services.search.ElasticHelper;
 
@@ -37,6 +36,8 @@ public class Loader {
     @Autowired
     protected ElasticHelper indexer;
 
+    private boolean isElasticEnabled = true; //TO-DO put this in property file
+    
     /**
      * Processes all the messages in a single file.
      * 
@@ -87,13 +88,14 @@ public class Loader {
             msgDao.save(m);
             return null;
         }
-        
-/*		indexer.initClient();
-		if (indexer.isDown()) {
-			svc.setUseIndexer(false);
-		} else {
-			svc.setUseIndexer(true);
-		}*/
+        if (isElasticEnabled == true){
+        	indexer.initClient();
+			if (indexer.isDown()) {
+				svc.setUseIndexer(false);
+			} else {
+				svc.setUseIndexer(true);
+			}
+    	}
         
         int successMsgCount = 0;
         int failedMsgCount = 0;

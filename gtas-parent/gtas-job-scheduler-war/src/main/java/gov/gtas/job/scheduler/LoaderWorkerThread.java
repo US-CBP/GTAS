@@ -17,8 +17,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
-import com.sun.jna.platform.win32.WinUser.MSG;
-
 @Component
 @Scope("prototype")
 public class LoaderWorkerThread implements Runnable {

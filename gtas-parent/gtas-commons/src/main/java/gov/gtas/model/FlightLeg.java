@@ -19,7 +19,7 @@ public class FlightLeg extends BaseEntity {
     @ManyToOne
     private Pnr pnr;
     
-    @ManyToOne(fetch=FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne
     private BookingDetail bookingDetail;
 
     @Column(name = "leg_number", nullable = false)

@@ -358,6 +358,7 @@ public class LoaderUtils {
     public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo){
     	BookingDetail bD = new BookingDetail();
     	BeanUtils.copyProperties(fvo, bD);
+    	bD.setFullFlightNumber(fvo.getCarrier() + fvo.getFlightNumber());
     	bD.setEtdDate(fvo.getEtd());
     	bD.setEtaDate(fvo.getEta());
     	bD.setCreatedAt(null);
@@ -432,7 +433,7 @@ public class LoaderUtils {
      */
     private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
         return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
+                pax.getGender().toUpperCase(), pax.getDob().toString())));
     }
 
     /**
