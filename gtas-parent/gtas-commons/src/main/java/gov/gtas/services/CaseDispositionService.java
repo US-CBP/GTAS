@@ -11,6 +11,8 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.vo.OneDayLookoutVo;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,5 +55,5 @@ public interface CaseDispositionService {
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id);
     
-    public List<Case> getOneDayLookoutByDate(Date date);
+    public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
 }
