@@ -8,12 +8,7 @@ package gov.gtas.services;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -21,10 +16,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.vo.passenger.FlightVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -36,15 +34,6 @@ import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.AuditRecord;
-import gov.gtas.model.Bag;
-import gov.gtas.model.Disposition;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Seat;
-import gov.gtas.model.User;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
@@ -379,8 +368,21 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Transactional
     public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
-        return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+        //return
+        List<Passenger> _tempPaxList = bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+        //List<FlightVo> _tempBDFlightsList = new ArrayList<>();
+        try {
+            //stuff flights from Passenger
+            List _tempbdList = _tempPaxList.stream().map(pax -> {
+                Hibernate.initialize(pax.getBookingDetails());
+                return pax.getBookingDetails();
+            }).collect(Collectors.toList());
+        } catch (Exception ex) {
+                ex.printStackTrace();
+        }
+        return _tempPaxList;
     }
 
     @SuppressWarnings("unchecked")
