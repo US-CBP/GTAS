@@ -2,6 +2,9 @@ package gov.gtas.vo;
 
 public class OneDayLookoutVo extends BaseVo{
 
+		private Long paxId;
+		private Long passengerId;
+		private Long flightId;
 	    private String document;
 	    private String direction;
 	    private String disposition;
@@ -67,6 +70,25 @@ public class OneDayLookoutVo extends BaseVo{
 		public void setName(String name) {
 			this.name = name;
 		}
+		public Long getPaxId() {
+			return paxId;
+		}
+		public void setPaxId(Long paxId) {
+			this.paxId = paxId;
+		}
+		public Long getPassengerId() {
+			return passengerId;
+		}
+		public void setPassengerId(Long passengerId) {
+			this.passengerId = passengerId;
+		}
+		public Long getFlightId() {
+			return flightId;
+		}
+		public void setFlightId(Long flightId) {
+			this.flightId = flightId;
+		}
+		
 		
 	    
 		
