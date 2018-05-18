@@ -398,9 +398,9 @@ public class LoaderRepository {
     			String destination=f.getDestination();
     			//flight_pax | bag info not making table #783 code fix
     			//if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
-    			if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
-    				destination=b.getDestinationAirport();
-    			}
+    			//if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
+    				//destination=b.getDestinationAirport();
+    			//}
     			for(Passenger p: pnr.getPassengers()){
     					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
     							StringUtils.equals(p.getLastName(), b.getLastName())){

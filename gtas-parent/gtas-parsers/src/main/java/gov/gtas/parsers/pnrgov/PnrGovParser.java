@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.segment.ABI;
@@ -711,7 +712,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (tbd == null) {
             return;
         }
-        //TIF tif1 = getConditionalSegment(TIF.class);    
+
         Integer n = tbd.getNumBags()== null ? 0 : tbd.getNumBags();
         Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
         if (n != null) {
@@ -724,11 +725,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
-        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n,tbd.isHeadOrMemberPool());
+        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n,tbd.isHeadOrMemberPool(),tvl.getDestination(),tbd.getFreeText());
        
     }
     
-    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags,boolean headPool){
+
+    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags,boolean headPool,String dest,String text){
     	if(!(bDetails == null || bDetails.size()==0)){
     	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
     	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
@@ -738,16 +740,16 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		BagVo bvo=new BagVo();
     		if(headPool){
     			bvo.setAirline(parsedMessage.getCarrier());
-    			bvo.setBagId(bd.getTagNumber());
+    			bvo.setBagId(bd.getTagNumber() +" ("+text+" )");
     			bvo.setData_source("PNR");
-    			bvo.setDestinationAirport(pvo.getDebarkation());
+    			bvo.setDestinationAirport(dest);
     			bvo.setFirstName(pvo.getFirstName());
     			bvo.setLastName(pvo.getLastName());
     			bvo.setHeadPool(true);
     			parsedMessage.setHeadPool(true);
     		}
     		else{
-    			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
+    			bvo=new BagVo(bd.getTagNumber()+" ("+text+" )","PNR",dest,bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
     		}
     		parsedMessage.getBags().add(bvo);
     	}

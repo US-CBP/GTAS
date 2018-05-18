@@ -15,6 +15,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 import gov.gtas.parsers.pnrgov.PnrUtils;
+import gov.gtas.parsers.pnrgov.segment.SSR.SpecialRequirementDetails;
 import gov.gtas.parsers.util.ParseUtils;
 
 /**
@@ -41,6 +42,7 @@ public class TBD extends Segment {
     private Double baggageWeight;
     private String unitQualifier="Kgs";
     private boolean headOrMemberPool=false;
+    private String freeText;
     
     public class BagDetails {
         private String airline;
@@ -107,6 +109,7 @@ public class TBD extends Segment {
 
         super(TBD.class.getSimpleName(), composites);
         setMemberPool(composites);
+        setFreeText(composites);
         Composite c = getComposite(1);
         this.bagDetails = new ArrayList<>();
         if (c != null && StringUtils.isNotBlank(c.getElement(0))) {
@@ -125,9 +128,11 @@ public class TBD extends Segment {
             		for(int i=1;i<=numBags;i++){
             			BagDetails bag = new BagDetails();
             			bag.setAirline(c.getElement(0));
-            			bag.setTagNumber(c.getElement(1)+":"+i);
+            			//bag.setTagNumber(c.getElement(1)+":"+i);
+            			bag.setTagNumber("Bag"+i);
             			if (c.numElements() >= 3){
             				bag.setDestAirport(c.getElement(3));
+            				
             			}
             			bagDetails.add(bag);
             		}
@@ -138,7 +143,8 @@ public class TBD extends Segment {
             		for(int i=1;i<=numBags;i++){
             			BagDetails bag = new BagDetails();
             			bag.setAirline(c.getElement(0));
-            			bag.setTagNumber(c.getElement(1)+":"+i);
+            			//bag.setTagNumber(c.getElement(1)+":"+i);
+            			bag.setTagNumber("Bag"+i);
             			if(c.numElements() > 3){
             				bag.setDestAirport(c.getElement(3));
             			}
@@ -216,5 +222,27 @@ public class TBD extends Segment {
 	public void setHeadOrMemberPool(boolean headOrMemberPool) {
 		this.headOrMemberPool = headOrMemberPool;
 	}
-   
+
+	public String getFreeText() {
+		return freeText;
+	}
+
+	public void setFreeText(String freeText) {
+		this.freeText = freeText;
+	}
+    private void setFreeText(List<Composite> composites){
+    	StringBuffer b = new StringBuffer();
+        for (int i=3; i<getComposites().size(); i++) {
+        	Composite c = getComposite(i);
+            if (c != null) {
+                 for (int j=0; j<c.numElements(); j++) {
+                    b.append(c.getElement(j));
+                    b.append(" ");
+                }
+            }
+        }
+        if (b.length() != 0) {
+            this.freeText = b.toString();
+        }
+    }
 }
