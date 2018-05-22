@@ -380,7 +380,8 @@ public class LoaderRepository {
             Bag bag = new Bag();
             bag.setBagId(bagId);
             bag.setData_source("APIS");
-            bag.setDestinationAirport(f.getDestination());
+            //APIS Tab | Remove Baggage destination #657 code fix
+            //bag.setDestinationAirport(f.getDestination());
             bag.setAirline(f.getCarrier());
             bag.setFlight(f);
             bag.setPassenger(p);

@@ -194,8 +194,8 @@
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
+                            <th>&nbsp;</th>
                             <th>BagID</th>
-                            <th>Destination</th>
                           </tr>
                         </thead>
                       </table>
@@ -203,8 +203,8 @@
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
                             <tr ng-repeat="bags in passenger.apisMessageVo.bags">
-                              <td>{{bags.bagId}}</td>
-                              <td>{{bags.destination}}</td>
+                              <td>&nbsp;</td>
+                              <td align="right">{{bags.bagId}}</td>
                             </tr>
                           </tbody>
                         </table>
