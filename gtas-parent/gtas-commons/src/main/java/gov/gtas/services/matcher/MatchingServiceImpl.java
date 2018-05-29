@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.services.CaseDispositionService;
 import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.lucene.search.spell.JaroWinklerDistance;
 import org.slf4j.Logger;
@@ -51,6 +52,8 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 	private WatchlistRepository watchlistRepository;
 	@Autowired
 	private FlightRepository flightRepository;
+	@Autowired
+	private CaseDispositionService caseDispositionService;
 	@Autowired
 	private AppConfigurationRepository appConfigRepository;
 	private ObjectMapper mapper = new ObjectMapper();
@@ -144,6 +147,10 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 		            	percentMatch = percentMatch==0?percentMatch:percentMatch/2.0f;
 		                if(percentMatch>=threshold) {
 		                	paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(),percentMatch, 0, passenger.getId(), item.getId());
+		                	//make a call to open case here
+							new NameMatchCaseMgmtUtils().nameMatchCaseProcessing( passenger.getId(), item.getId(), item.getWatchlist().getWatchlistName(),
+									(flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst().orElse(null).getId()),
+									caseDispositionService);
 		                }
 		            } catch(IOException ioe){
 		                logger.error("Matching Service"
@@ -163,7 +170,7 @@ import gov.gtas.services.matching.PaxWatchlistLinkVo;
 	/**
      * receives a time threshold in hours to process potential matches for flights within a given timeframe 
      * returns a count of all matches found during matching process beyond the match threshold
-     * @param timeThreshold
+
      * @return totalMatchCount
      */
 	public int findMatchesBasedOnTimeThreshold() {
