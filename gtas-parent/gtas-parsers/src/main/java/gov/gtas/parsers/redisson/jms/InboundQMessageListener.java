@@ -54,7 +54,7 @@ public class InboundQMessageListener {
     private Config config = new Config();
     private RedissonFilter filter = new RedissonFilter(client);
     private RLiveObjectService service;
-    private Long REDIS_KEYS_TTL_IN_DAYS=7200L; // 5 Days - default
+    private Long REDIS_KEYS_TTL_IN_DAYS=5L; // 5 Days - default
 
     @PostConstruct
     public void init(){

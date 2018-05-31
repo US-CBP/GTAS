@@ -107,7 +107,7 @@ public class RedissonFilter {
                                          Long REDIS_KEYS_TTL_IN_DAYS){
         List<Segment> segments = new ArrayList<>();
         String tvlLineText = EMPTY_STRING;
-        REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL_IN_DAYS >=1) ? REDIS_KEYS_TTL_IN_DAYS:REDIS_KEY_TTL_MINUTES;
+        REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL_IN_DAYS >=1) ? REDIS_KEYS_TTL_IN_DAYS*24*60:REDIS_KEY_TTL_MINUTES;
 
         try {
 
