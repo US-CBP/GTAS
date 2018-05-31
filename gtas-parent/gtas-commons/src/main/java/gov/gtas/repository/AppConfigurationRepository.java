@@ -21,6 +21,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String SMS_TOPIC_ARN = "SMS_TOPIC_ARN";
     public static String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
     public static String FLIGHT_RANGE = "FLIGHT_RANGE";
+    public static String REDIS_KEYS_TTL_IN_DAYS = "REDIS_KEYS_TTL_IN_DAYS";
 
     public AppConfiguration findByOption(String option);
     public AppConfiguration save(AppConfiguration appConfig);

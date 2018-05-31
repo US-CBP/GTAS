@@ -4,6 +4,7 @@ import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.redisson.RedissonFilter;
 import gov.gtas.parsers.redisson.concurrency.MessageFilterExecutorService;
 import gov.gtas.parsers.redisson.concurrency.MessageFilterTask;
+import gov.gtas.repository.AppConfigurationRepository;
 import org.redisson.Redisson;
 import org.redisson.api.RLiveObjectService;
 import org.redisson.api.RedissonClient;
@@ -42,7 +43,10 @@ public class InboundQMessageListener {
 
     @Value("${outbound.loader.jms.queue}")
     private String outboundLoaderQueue;
-    
+
+    @Autowired
+    private AppConfigurationRepository appConfigRepository;
+
     private static final String MESSAGE_SEGMENT_BEGIN="UNH";
     private static final String MESSAGE_SEGMENT_END="UNT";
 
@@ -50,6 +54,7 @@ public class InboundQMessageListener {
     private Config config = new Config();
     private RedissonFilter filter = new RedissonFilter(client);
     private RLiveObjectService service;
+    private Long REDIS_KEYS_TTL_IN_DAYS=7200L; // 5 Days - default
 
     @PostConstruct
     public void init(){
@@ -60,6 +65,7 @@ public class InboundQMessageListener {
         config.setThreads(0);
         client = Redisson.create(config);
         service = client.getLiveObjectService();
+        REDIS_KEYS_TTL_IN_DAYS = Long.parseLong(appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL_IN_DAYS).getValue());
     }
 
     private MessageFilterExecutorService filterExecutorService = new MessageFilterExecutorService();
@@ -76,7 +82,7 @@ public class InboundQMessageListener {
 
             if(client!=null && service!=null) {
                 filter.redisObjectLookUpPersist((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
-                        (String)headers.get("filename"));
+                        (String)headers.get("filename"), client, REDIS_KEYS_TTL_IN_DAYS);
             }
         }
         catch (Exception ex){

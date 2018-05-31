@@ -57,6 +57,7 @@ insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT'
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
 insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.70','Threshold which to determine name match');
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
+insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_IN_DAYS','1','Number of days indexed REDIS Keys to expire in');
 
 -- ----------------------------
 -- Records of dashboard_message_stats

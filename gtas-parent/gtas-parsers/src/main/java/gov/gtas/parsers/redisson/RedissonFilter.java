@@ -26,6 +26,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public class RedissonFilter {
@@ -40,6 +41,7 @@ public class RedissonFilter {
     private static final String EMPTY_STRING="";
     private static final String TVL_HEADER_LABEL="TVL";
     private static final String DAT_HEADER_LABEL="DAT+700";
+    private Long REDIS_KEY_TTL_MINUTES=7200L; // 5 Days - default
 
 
     public RedissonFilter() {
@@ -50,6 +52,7 @@ public class RedissonFilter {
     }
 
 
+    // @todo legacy method call, purge in future iterations
     public void redisObjectLookUpPersist(String messagePayload, Date messageTimestamp){
 
         try {
@@ -72,6 +75,7 @@ public class RedissonFilter {
                 RExpirable rExpirable = service.asRExpirable(ledger);
                 rExpirable.expireAt(Date.from(LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("UTC"))));
                 ledger = service.persist(ledger);
+
                 //if(!publishToDownstreamQueues(messagePayload)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
@@ -84,17 +88,31 @@ public class RedissonFilter {
 
     }
 
+    /**
+     * Method to handle check, skip/or insert logic into REDIS
+     * @param messagePayload
+     * @param messageTimestamp
+     * @param service
+     * @param sender
+     * @param outboundLoaderQueue
+     * @param filename
+     * @param client
+     * @param REDIS_KEYS_TTL_IN_DAYS
+     */
     public void redisObjectLookUpPersist(String messagePayload, Date messageTimestamp,
                                          RLiveObjectService service,
                                          InboundQMessageSender sender,
                                          String outboundLoaderQueue,
-                                         String filename){
+                                         String filename, RedissonClient client,
+                                         Long REDIS_KEYS_TTL_IN_DAYS){
         List<Segment> segments = new ArrayList<>();
         String tvlLineText = EMPTY_STRING;
+        REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL_IN_DAYS >=1) ? REDIS_KEYS_TTL_IN_DAYS:REDIS_KEY_TTL_MINUTES;
 
         try {
 
             LedgerLiveObject ledger = new LedgerLiveObject();
+            RMapCache<String, String> map = client.getMapCache("ledger");
             String messageHashKey = EMPTY_STRING;
             EdifactLexer lexer = new EdifactLexer((String)messagePayload);
             segments = lexer.tokenize();
@@ -119,12 +137,13 @@ public class RedissonFilter {
             LedgerLiveObject returnLedger
                     = service.get(LedgerLiveObject.class, messageHashKey);
 
-            if(payload!=null && ( (returnLedger == null) || (!returnLedger.getName().equals(messageHashKey)))) {
+
+            if(payload!=null && !map.containsKey(messageHashKey)){
                 //persist into Redis
                 ledger.setMessageTimeStamp(messageTimestamp);
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
-                ledger = service.persist(ledger);
+                map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
                 LOG.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
                 if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)){throw new Exception("Error publishing to parsing queue");};
             }else{
