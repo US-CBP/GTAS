@@ -54,7 +54,8 @@ public class InboundQMessageListener {
     private Config config = new Config();
     private RedissonFilter filter = new RedissonFilter(client);
     private RLiveObjectService service;
-    private Long REDIS_KEYS_TTL_IN_DAYS=5L; // 5 Days - default
+    private Long REDIS_KEYS_TTL=5L; // 5 Days - default
+    private String REDIS_KEYS_TTL_TIME_UNIT="MINUTES"; // 5 Days - default
 
     @PostConstruct
     public void init(){
@@ -65,7 +66,8 @@ public class InboundQMessageListener {
         config.setThreads(0);
         client = Redisson.create(config);
         service = client.getLiveObjectService();
-        REDIS_KEYS_TTL_IN_DAYS = Long.parseLong(appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL_IN_DAYS).getValue());
+        REDIS_KEYS_TTL = Long.parseLong(appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL).getValue());
+        REDIS_KEYS_TTL_TIME_UNIT = appConfigRepository.findByOption(appConfigRepository.REDIS_KEYS_TTL_TIME_UNIT).getValue();
     }
 
     private MessageFilterExecutorService filterExecutorService = new MessageFilterExecutorService();
@@ -82,7 +84,7 @@ public class InboundQMessageListener {
 
             if(client!=null && service!=null) {
                 filter.redisObjectLookUpPersist((String)message.getPayload(), new Date(), service ,sender, outboundLoaderQueue,
-                        (String)headers.get("filename"), client, REDIS_KEYS_TTL_IN_DAYS);
+                        (String)headers.get("filename"), client, REDIS_KEYS_TTL, REDIS_KEYS_TTL_TIME_UNIT);
             }
         }
         catch (Exception ex){

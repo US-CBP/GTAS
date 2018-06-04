@@ -5,6 +5,7 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.services.matcher.MatchingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class RuleRunnerScheduler {
 	/** The error persistence service. */
 	private ErrorPersistenceService errorPersistenceService;
 
+
+	@Autowired
+	private MatchingService matchingService;
+
 	/**
 	 * Instantiates a new rule runner scheduler.
 	 *
@@ -59,6 +64,9 @@ public class RuleRunnerScheduler {
 		try {
 			targetingService.preProcessing();
 			targetingService.runningRuleEngine();
+			logger.info("entering matching service portion of jobScheduling");
+			matchingService.findMatchesBasedOnTimeThreshold();
+			logger.info("exiting matching service portion of jobScheduling");
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
 			ErrorDetailInfo errInfo = ErrorHandlerFactory

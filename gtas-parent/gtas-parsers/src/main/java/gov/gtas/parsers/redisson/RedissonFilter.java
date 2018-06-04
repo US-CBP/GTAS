@@ -97,18 +97,23 @@ public class RedissonFilter {
      * @param outboundLoaderQueue
      * @param filename
      * @param client
-     * @param REDIS_KEYS_TTL_IN_DAYS
+     * @param REDIS_KEYS_TTL
      */
     public void redisObjectLookUpPersist(String messagePayload, Date messageTimestamp,
                                          RLiveObjectService service,
                                          InboundQMessageSender sender,
                                          String outboundLoaderQueue,
                                          String filename, RedissonClient client,
-                                         Long REDIS_KEYS_TTL_IN_DAYS){
+                                         Long REDIS_KEYS_TTL,
+                                         String REDIS_KEYS_TTL_TIME_UNIT){
         List<Segment> segments = new ArrayList<>();
         String tvlLineText = EMPTY_STRING;
-        REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL_IN_DAYS >=1) ? REDIS_KEYS_TTL_IN_DAYS*24*60:REDIS_KEY_TTL_MINUTES;
-
+        if(REDIS_KEYS_TTL_TIME_UNIT.equalsIgnoreCase("DAYS")) {
+            REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL >= 1) ? REDIS_KEYS_TTL * 24 * 60 : REDIS_KEY_TTL_MINUTES;
+        }
+        else{
+            REDIS_KEY_TTL_MINUTES = (REDIS_KEYS_TTL >= 1) ? REDIS_KEYS_TTL : REDIS_KEY_TTL_MINUTES;
+        }
         try {
 
             LedgerLiveObject ledger = new LedgerLiveObject();
