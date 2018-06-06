@@ -111,7 +111,8 @@ public class JPQLGenerator {
                     join += " left join p.seatAssignments s ";
                 }
                 if(paymentFormCondition.isTrue()){
-                	join += " left join pnr.paymentForms pf ";
+                	//joins to pnr -> paymentForms through flight
+                	join += " left join f.pnrs ppnr left join ppnr.paymentForms pf ";
                 }
                 
                 query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
