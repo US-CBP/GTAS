@@ -48,12 +48,12 @@ public class JPQLGenerator {
             //where clause itself and allows for the addition of normal where clauses after it.
             String crossJoinForFlightPax = "";
             MutableBoolean seatCondition = new MutableBoolean();
+            MutableBoolean paymentFormCondition = new MutableBoolean();
             MutableInt positionalParameter = new MutableInt();
             MutableInt level = new MutableInt();
-            
             logger.debug("Parsing QueryObject...");
             
-            generateWhereCondition(queryEntity, queryType, joinEntities, where, seatCondition, positionalParameter, level);
+            generateWhereCondition(queryEntity, queryType, joinEntities, where, seatCondition, positionalParameter, level, paymentFormCondition);
             
             if(queryType == EntityEnum.FLIGHT) {
                 queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + 
@@ -61,7 +61,12 @@ public class JPQLGenerator {
                 
                 
                 if(seatCondition.isTrue()) {
-                    joinEntities.add(EntityEnum.PASSENGER); //TO-DO Seemingly redundant at this point due to redesign, consider removal
+                    //joinEntities.add(EntityEnum.PASSENGER); //TO-DO Seemingly redundant at this point due to redesign, consider removal
+                }
+                
+                if(paymentFormCondition.isTrue()){
+                	//PNR doesn't need to be added in the same way if paymentForm is a requirement
+                	joinEntities.remove(EntityEnum.PNR);
                 }
                     
                 if(!joinEntities.isEmpty()) {
@@ -105,6 +110,9 @@ public class JPQLGenerator {
                 if(seatCondition.isTrue()) {
                     join += " left join p.seatAssignments s ";
                 }
+                if(paymentFormCondition.isTrue()){
+                	join += " left join pnr.paymentForms pf ";
+                }
                 
                 query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
             }
@@ -119,6 +127,10 @@ public class JPQLGenerator {
                 //Cross join is always required for Passenger side queries
                 crossJoinForFlightPax = Constants.EXISTS + "(" + Constants.SELECT + " fp " + Constants.FROM + " FlightPassenger fp " + Constants.WHERE + " " + 
                 		EntityEnum.PASSENGER.getAlias() + Constants.ID + " = fp.passengerId " + Constants.AND + " " + EntityEnum.FLIGHT.getAlias() + Constants.ID + " = fp.flightId) " + Constants.AND;
+                
+                if(paymentFormCondition.isTrue()){
+                	joinEntities.remove(EntityEnum.PNR);
+                }
                 
                 if(!joinEntities.isEmpty()) {
                     
@@ -139,6 +151,10 @@ public class JPQLGenerator {
                     
                 if(seatCondition.isTrue()) {
                     join += " left join p.seatAssignments s ";
+                }
+                
+                if(paymentFormCondition.isTrue()){
+                	join += " left join p.pnrs ppnr left join ppnr.paymentForms pf ";
                 }
                 
                 query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
@@ -165,7 +181,7 @@ public class JPQLGenerator {
      * @throws InvalidQueryRepositoryException
      */
     private static void generateWhereCondition(QueryEntity queryEntity, EntityEnum queryType, List<EntityEnum> joinEntities, StringBuilder where, 
-        MutableBoolean seatCondition, MutableInt positionalParameter, MutableInt level) throws InvalidQueryRepositoryException {
+        MutableBoolean seatCondition, MutableInt positionalParameter, MutableInt level, MutableBoolean paymentFormCondition) throws InvalidQueryRepositoryException {
         QueryObject queryObject = null;
         QueryTerm queryTerm = null;
         String condition = null;
@@ -187,7 +203,7 @@ public class JPQLGenerator {
                 if(index > 0) {
                     where.append(" " + condition + " ");
                 }
-                generateWhereCondition(rule, queryType, joinEntities, where, seatCondition, positionalParameter, level);
+                generateWhereCondition(rule, queryType, joinEntities, where, seatCondition, positionalParameter, level, paymentFormCondition);
                 index++;
             }
                         
@@ -205,12 +221,16 @@ public class JPQLGenerator {
             
             // add entity to data structure if not already present
             // will be used later for generating the join condition
-            if(!(entityEnum == EntityEnum.PNR && field.equalsIgnoreCase(Constants.SEAT)) && !joinEntities.contains(entityEnum)) {
+            if(!(entityEnum == EntityEnum.PNR && (field.equalsIgnoreCase(Constants.SEAT) || field.equalsIgnoreCase(Constants.PAYMENTFORMS))) && !joinEntities.contains(entityEnum)) {
                 joinEntities.add(entityEnum);
             }
             
             if(seatCondition.isFalse() && field.equalsIgnoreCase(Constants.SEAT)) {
                 seatCondition.setTrue();
+            }
+            
+            if(paymentFormCondition.isFalse() && field.equalsIgnoreCase(Constants.PAYMENTFORMS)){
+            	paymentFormCondition.setTrue();
             }
             
             if(entityEnum == EntityEnum.HITS) {
@@ -287,6 +307,8 @@ public class JPQLGenerator {
                             where.append("(s.apis = false");
                         }
                         where.append(" and s.number " + opEnum.getOperator() + ")");
+                    } else if(field.equalsIgnoreCase(Constants.PAYMENTFORMS)){
+                    	where.append("(ppnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?" + positionalParameter + ")");
                     }else {
                         where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator());
                     }
@@ -318,6 +340,8 @@ public class JPQLGenerator {
                             where.append("(s.apis = false");
                         }
                         where.append(" and f.id = s.flight.id and s.number " + opEnum.getOperator() + " (?" + positionalParameter + "))");
+                    } else if(field.equalsIgnoreCase(Constants.PAYMENTFORMS)){
+                    	where.append("(ppnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?" + positionalParameter + ")");
                     } else {
                         where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " (?" + positionalParameter + ")");
                     }
@@ -333,6 +357,8 @@ public class JPQLGenerator {
                             where.append("(s.apis = false");
                         }
                         where.append(" and f.id = s.flight.id and s.number " + opEnum.getOperator() + " ?" + positionalParameter + ")");
+                    } else if(field.equalsIgnoreCase(Constants.PAYMENTFORMS)){
+                    	where.append("(ppnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?" + positionalParameter + ")");
                     } else {
                         where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " ?" + positionalParameter);
                     }
