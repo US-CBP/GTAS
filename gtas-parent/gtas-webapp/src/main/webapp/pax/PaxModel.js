@@ -18,7 +18,7 @@ app.service("paxModel", [function () {
     this.initial = function (params) {
         return {
             pageNumber: 1,
-            pageSize: typeof this.model.pageSize != "undefined" ? this.model.pageSize : 10,
+            pageSize: typeof this.model.pageSize != "undefined" ? this.model.pageSize : 25,
             lastName: '',
             flightNumber: params && params.flightNumber ? params.flightNumber : '',
             origin: params && params.origin ? params.origin : [],

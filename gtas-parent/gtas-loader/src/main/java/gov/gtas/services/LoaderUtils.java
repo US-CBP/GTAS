@@ -355,9 +355,24 @@ public class LoaderUtils {
     	
     }
     
-    public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo){
+    public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
     	BookingDetail bD = new BookingDetail();
     	BeanUtils.copyProperties(fvo, bD);
+    	
+    	 Airport dest = getAirport(fvo.getDestination());
+         String destCountry = null;
+         if (dest != null) {
+             destCountry = dest.getCountry();
+             bD.setDestinationCountry(destCountry);
+         }
+
+         Airport origin = getAirport(fvo.getOrigin());
+         String originCountry = null;
+         if (origin != null) {
+             originCountry = origin.getCountry();
+             bD.setOriginCountry(originCountry);
+         }
+    	
     	bD.setFullFlightNumber(fvo.getCarrier() + fvo.getFlightNumber());
     	bD.setEtdDate(fvo.getEtd());
     	bD.setEtaDate(fvo.getEta());

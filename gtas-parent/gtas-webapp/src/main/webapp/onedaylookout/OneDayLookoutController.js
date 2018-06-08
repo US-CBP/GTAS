@@ -14,13 +14,13 @@
     	
     	 var stateName = $state ? $state.$current.self.name : 'onedaylookout';
     	 $scope.stateName = stateName;
-    	 $scope.pageSize = 10;
+    	 $scope.pageSize = 25;
     	 $scope.lookoutDate = $filter('date')(new Date(), 'yyyy-MM-dd'); //current date
     	 $scope.isTodayButtonDisabled = true;
       
     	 $scope.oneDayLookoutGrid = {
                  data:  lookoutData.data,
-                 paginationPageSizes: [10, 15, 25],
+                 paginationPageSizes: [10, 25, 50],
                  paginationPageSize: $scope.pageSize,
                  enableFiltering: true,
                  enableHorizontalScrollbar: 0,

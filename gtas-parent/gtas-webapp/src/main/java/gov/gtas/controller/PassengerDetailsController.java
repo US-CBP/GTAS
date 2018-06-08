@@ -538,7 +538,7 @@ public class PassengerDetailsController {
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else{
-					flVo.setFlightNumber(fl.getBookingDetail().getFlightNumber());
+					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
 					flVo.setDestinationAirport(fl.getBookingDetail().getDestination());
 					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getBookingDetail().getEtd()));
@@ -778,6 +778,7 @@ public class PassengerDetailsController {
         try {
 
             target.setFlightNumber(((BookingDetail)source).getFlightNumber());
+            target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
             target.setCarrier(((BookingDetail)source).getFlightNumber());
             target.setEtaDate(((BookingDetail)source).getEtaDate());
             target.setEtdDate(((BookingDetail)source).getEtdDate());

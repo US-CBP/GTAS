@@ -327,7 +327,8 @@
                           <tbody>
                             <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                               <td style="align-items: center;">{{leg.legNumber }}</td>
-                              <td style="align-items: left; width: 10%;"><a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                              <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;"><a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                              <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                               <td>{{leg.originAirport }} / {{leg.destinationAirport }}</td>
                               <!--<td>{{leg.destinationAirport }}</td>-->
                               <td>{{leg.etd }}</td>

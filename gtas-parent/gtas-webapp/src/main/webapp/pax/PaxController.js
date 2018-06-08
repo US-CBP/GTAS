@@ -491,7 +491,7 @@
         $scope.buildAfterEntitiesLoaded();
 
         $scope.passengerGrid = {
-                paginationPageSizes: [10, 15, 25],
+                paginationPageSizes: [10, 25, 50],
                 paginationPageSize: $scope.model.pageSize,
                 paginationCurrentPage: $scope.model.pageNumber,
                 useExternalPagination: true,
@@ -541,7 +541,7 @@
         //Front-end pagination configuration object for gridUi
         //Should only be active on stateName === 'queryPassengers'
         $scope.passengerQueryGrid = {
-            paginationPageSizes: [10, 15, 25],
+            paginationPageSizes: [10, 25, 50],
             paginationPageSize: $scope.model.pageSize,
             paginationCurrentPage: 1,
             useExternalPagination: false,

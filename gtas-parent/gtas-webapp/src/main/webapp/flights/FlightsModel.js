@@ -17,7 +17,7 @@ app.service("flightsModel", [function () {
 
     this.reset = function () {
         this.pageNumber = 1;
-        this.pageSize = typeof this.pageSize != "undefined" ? this.pageSize : 10;
+        this.pageSize = typeof this.pageSize != "undefined" ? this.pageSize : 25;
         this.flightNumber = '';
         this.origin = [];
         this.dest = [];
