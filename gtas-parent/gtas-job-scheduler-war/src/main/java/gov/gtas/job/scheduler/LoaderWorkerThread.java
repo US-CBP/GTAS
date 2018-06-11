@@ -45,7 +45,7 @@ public class LoaderWorkerThread implements Runnable {
     	while(true){
 	    	Message<?> msg = null;
 	    	try {
-	    		msg = queue.poll(30000, TimeUnit.MILLISECONDS);
+	    		msg = queue.poll(5000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}	    	
