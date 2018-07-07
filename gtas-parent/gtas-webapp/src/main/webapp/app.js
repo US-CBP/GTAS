@@ -421,7 +421,7 @@ var app;
                     resolve:{
                     	searchBarResults: function(adhocQueryService, $rootScope){
                     		var defaultSort = {
-                    				column:'firstName',
+                    				column:'_score',
                     				dir:'desc'
                     		};
 
