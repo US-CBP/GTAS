@@ -34,8 +34,7 @@ public class OneDayLookoutController {
 	public @ResponseBody List<OneDayLookoutVo> getOneDayLookout(
 			@RequestParam(value = "flightDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") String flightDate) {
 
-		logger.debug("In One Day Lookout");
-
+	
 		List<OneDayLookoutVo> OneDayLookoutVoList = new ArrayList<OneDayLookoutVo>();
 
 		if (flightDate != null) {
@@ -44,7 +43,8 @@ public class OneDayLookoutController {
 				Date etaEtdDate = dateFormat.parse(flightDate);
 				OneDayLookoutVoList = caseDispositionService.getOneDayLookoutByDate(etaEtdDate);
 			} catch (Exception e) {
-
+				logger.error("An Exception has occurred when reading one day lookout information");
+				e.printStackTrace();
 			}
 		} else {
 			Date today = Calendar.getInstance().getTime();
@@ -54,6 +54,57 @@ public class OneDayLookoutController {
 		return OneDayLookoutVoList;
 	}
 
+	@RequestMapping(value = "/addonedaylookout", method = RequestMethod.GET)
+	public @ResponseBody boolean addToOneDayLookout(
+			@RequestParam(value = "caseId", required = true)  String caseId) {
 
+		logger.debug("..Case ID to be added:  "+ caseId);
+		boolean result = false;
+		
+
+		if (caseId != null) {
+			try {
+					Long caseIdAsLong = Long.valueOf(caseId);
+					result = caseDispositionService.updateDayLookoutFlag(caseIdAsLong, Boolean.TRUE);
+					
+					
+				} catch (Exception e) {
+					logger.error("An Exception has occurred when adding flagging a case as a one day lookout data");
+					e.printStackTrace();
+					result = false;
+
+			}
+		
+	}
+
+		return result;
+	}
+
+
+	@RequestMapping(value = "/removeonedaylookout", method = RequestMethod.GET)
+	public @ResponseBody boolean removeFromonedaylookout(
+			@RequestParam(value = "caseId", required = true)  String caseId) {
+
+		boolean result = false;
+		logger.info("..Case ID to be removed: "+ caseId);
+		
+
+		if (caseId != null) {
+			try {
+					Long caseIdAsLong = Long.valueOf(caseId);
+										
+					result = caseDispositionService.updateDayLookoutFlag(caseIdAsLong, null);
+					
+				} catch (Exception e) {
+					logger.error("An Exception has occurred when removing flagging a case as a one day lookout data");
+					e.printStackTrace();
+					result = false;
+
+			}
+		
+	}
+
+		return result;
+	}
 
 }

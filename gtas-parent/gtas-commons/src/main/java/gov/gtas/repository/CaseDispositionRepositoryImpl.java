@@ -60,6 +60,11 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             q.orderBy(orders);
         }
         
+        if (dto.getOneDayLookoutFlag() != null) {
+			predicates.add(cb.equal(root.<Boolean> get("oneDayLookoutFlag"),
+					dto.getOneDayLookoutFlag()));
+		}
+        
         
 		if (dto.getFlightId() != null) {
 			predicates.add(cb.equal(root.<Long> get("flightId"),

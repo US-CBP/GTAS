@@ -71,6 +71,17 @@
                 <button class="md-raised btn btn-default" type="submit">Export PDF</button>
               </md-input-container>
             </form>
+           <md-button ng-click="addToOneDayLookoutList(caseItem.id)" ng-disabled="isAddOLKButtonDisabled" class="btn btn-default">
+          				<md-tooltip>Add to One Day Lookout List</md-tooltip>
+          					<i aria-hidden="true"></i>
+         						 &nbsp;<Strong>Add to One Day Lookout</Strong>
+   			</md-button>
+   			<br/>
+            <md-button ng-click="removeFromOneDayLookoutList(caseItem.id)" ng-disabled="isRemoveOLKButtonDisabled" class="btn btn-default">
+          				<md-tooltip>Remove from One Day Lookout List</md-tooltip>
+          					<i aria-hidden="true"></i>
+         						 &nbsp;<Strong>Remove from One Day Lookout</Strong>
+   			</md-button>
           </div>
         </div>
       </div>

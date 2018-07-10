@@ -44,6 +44,8 @@ public class CaseRequestDto implements Serializable {
     private String lastName;
 
     private Long ruleCatId;
+    
+    private Boolean oneDayLookoutFlag;
 
     private MultipartFile multipartFile;
 
@@ -190,7 +192,15 @@ public class CaseRequestDto implements Serializable {
         this.lastName = lastName;
     }
 
-    @Override
+    public Boolean getOneDayLookoutFlag() {
+		return oneDayLookoutFlag;
+	}
+
+	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
+		this.oneDayLookoutFlag = oneDayLookoutFlag;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);

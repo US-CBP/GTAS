@@ -948,4 +948,26 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		return oneDayLookoutVoList;
 	}
+
+	
+	public Boolean updateDayLookoutFlag(Long caseId, Boolean flag) {
+		
+		boolean result = false;
+		
+		try
+		{
+			caseDispositionRepository.updateOneDayLookoutFlag(caseId, flag);
+			result = true;
+		}
+		catch (Exception e)
+		{
+			logger.error("An Error has occurred when updating one day lookout flag for CASE ID: " + caseId+ " with flag: "+ flag );
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+			return result;
+	}
+
+
+
 }

@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService, $mdDialog,
                   spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
-
+    	
             $scope.caseItem;
             $scope.caseItemHits;
             $scope.caseItemHitComments;
@@ -68,6 +68,17 @@
                 $scope.caseDispStatus = $scope.caseItem.status;
                 //$scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
                 $scope.dispStatus.caseStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
+                if($scope.caseItem.oneDayLookoutFlag == true)
+                {
+                	$scope.isAddOLKButtonDisabled = true;
+           	    	$scope.isRemoveOLKButtonDisabled = false;
+                }
+                else 
+                {
+                	$scope.isAddOLKButtonDisabled = false;
+           	    	$scope.isRemoveOLKButtonDisabled = true;
+                }
+                	
             }
 
             $scope.errorToast = function (error) {
@@ -183,6 +194,39 @@
                     $state.reload();
                 });
             };
+            
+            $scope.addToOneDayLookoutList = function(caseId){
+                
+            	caseDispositionService.addToOneDayLookout(caseId).then(
+                        function(data){
+                            var confirmation = data.data;
+                            if(confirmation == true)
+                            {
+                            	 $scope.isAddOLKButtonDisabled = true;
+                            	 $scope.isRemoveOLKButtonDisabled = false;
+                            }
+                           
+                        });
+            };
+            
+            
+            $scope.removeFromOneDayLookoutList = function(caseId){
+                
+            	caseDispositionService.removeFromOneDayLookoutList(caseId).then(
+                        function(data){
+                            var confirmation = data.data;
+                            if(confirmation == true)
+                            {
+                            	$scope.isRemoveOLKButtonDisabled = true;
+                            	$scope.isAddOLKButtonDisabled = false;
+                            	 
+                            }
+                           
+                        });;
+            };
+            
+            
+            
 
             $scope.closeSideNav = function(){
                 $mdSidenav('comments').close();

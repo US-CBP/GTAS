@@ -34,6 +34,7 @@ public class CaseVo {
     private String description;
     private Set<HitsDisposition> hitsDispositions;
     private Set<HitsDispositionVo> hitsDispositionVos;
+    private Boolean oneDayLookoutFlag;
 
     public Long getId() {
         return id;
@@ -198,4 +199,14 @@ public class CaseVo {
     public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
         this.hitsDispositions = hitsDispositions;
     }
+
+	public Boolean getOneDayLookoutFlag() {
+		return oneDayLookoutFlag;
+	}
+
+	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
+		this.oneDayLookoutFlag = oneDayLookoutFlag;
+	}
+    
+    
 }
