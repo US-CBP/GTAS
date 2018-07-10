@@ -121,8 +121,8 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
   };
 
   var defaultSort = {
-      column: 'lastName',
-      dir: 'asc'
+      column: '_score',
+      dir: 'desc'
   };
 
   $scope.getTableHeight = function(){
@@ -131,6 +131,12 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
 
   $scope.sort = defaultSort;
 
+  $scope.searchPaxSortByScore = function(){
+    $scope.sort.column='_score';
+    $scope.sort.dir='desc';
+    $scope.searchPax();
+  };
+	  
   $scope.searchPax = function () {
       return adhocQueryService
       .getPassengers(_content, $scope.pageNumber, $scope.pageSize, $scope.sort)

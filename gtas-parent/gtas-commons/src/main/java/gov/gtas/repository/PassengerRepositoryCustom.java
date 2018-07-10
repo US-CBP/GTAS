@@ -57,4 +57,8 @@ public interface PassengerRepositoryCustom {
 	
 	public Passenger findExistingPassengerWithAttributes(String firstName,
 			String lastName, String middleName, String gender, Date dob, String passengerType);
+	
+	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName);
+	
+	public List<Passenger> getPassengersByFlightId(Long flightId);
 }

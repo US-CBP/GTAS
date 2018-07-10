@@ -16,10 +16,15 @@
         <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
     </div>
   </div>
-  <button type="submit" class="btn btn-warning center-btn" ng-click="showConfirm()">
-    <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
-  </button>
-<!-- href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}" -->
+  <div class="flex justify-around">
+    <button type="submit" class="btn btn-warning" ng-click="showConfirm()">
+      <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+    </button>
+    <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
+      <i class="fa fa-download" aria-hidden="true"></i> &nbsp;
+      Pax Detail
+    </a>
+  </div>
 
 
   <md-button class="md-primary md-button center-btn" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}"
@@ -189,8 +194,8 @@
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
+                            <th>&nbsp;</th>
                             <th>BagID</th>
-                            <th>Destination</th>
                           </tr>
                         </thead>
                       </table>
@@ -198,8 +203,8 @@
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
                             <tr ng-repeat="bags in passenger.apisMessageVo.bags">
-                              <td>{{bags.bagId}}</td>
-                              <td>{{bags.destination}}</td>
+                              <td>&nbsp;</td>
+                              <td align="right">{{bags.bagId}}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -300,36 +305,32 @@
             <div class="flex flex-center">
               <div class="flex flex-vert ie-fix-md half-width align-items-center">
                 <!--Itinerary!-->
-                <div class="cbp-card-container gtas-card-container full-width six-table">
+                <div class="cbp-card-container gtas-card-container full-width  five-table">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
                       Itinerary ({{ passenger.pnrVo.flightLegs.length }})
                     </h3>
-                    <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
-                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
-                        <thead>
+                    <div class="no-pad-top no-pad-btm panel-body"> <!--  flex flex-vert ie-fix-md-->
+                      <table aria-hidden="true" class="cbp-table mdl-js-data-table flex-center"> <!-- floating-table-header-->
+                        <thead class="floating-table-header flex-center">
                           <tr>
-                            <th>Leg</th>
-                            <th>Flight#</th>
-                            <th>Origin Airport</th>
-                            <th>Destination Airport</th>
-                            <th>ETD</th>
-                            <th>ETA</th>
+                            <th style="padding:1px; vertical-align:middle; text-align: center;">Leg</th>
+                            <th style="padding:1px; vertical-align:middle; text-align: center;">Flight#</th>
+                            <th style="padding:25px; vertical-align:middle; text-align: left; width: 10%;">Origin / Destination</th>
+                            <th style="padding:1px; vertical-align:middle; text-align: center;">ETD</th>
+                            <th style="padding:1px; vertical-align:middle; text-align: center;">ETA</th>
                           </tr>
                         </thead>
                       </table>
-                      <div class="floating-table-body">
+                      <div class="floating-table-body"><!--floating-table-body-->
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
-                            <tr ng-repeat="leg in passenger.pnrVo.flightLegs | orderBy: 'etd'" ng-click="highlightClass('TVL'+leg.originAirport)">
-                              <td>{{leg.legNumber }}</td>
-                              <td>
-                                <a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">
-                                  {{leg.flightNumber }}
-                                </a>
-                              </td>
-                              <td>{{leg.originAirport }}</td>
-                              <td>{{leg.destinationAirport }}</td>
+                            <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
+                              <td style="align-items: center;">{{leg.legNumber }}</td>
+                              <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;"><a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                              <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
+                              <td>{{leg.originAirport }} / {{leg.destinationAirport }}</td>
+                              <!--<td>{{leg.destinationAirport }}</td>-->
                               <td>{{leg.etd }}</td>
                               <td>{{leg.eta }}</td>
                             </tr>
@@ -349,7 +350,7 @@
                       <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                         <thead>
                           <tr>
-                            <th>First</th>
+                            <th style="padding:1px; vertical-align:middle; text-align: center;">First</th>
                             <th>Middle</th>
                             <th>Last</th>
                             <th>Gender</th>
@@ -654,9 +655,9 @@
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
                     <h3 class="h-label no-margin-top" >
-                      Total Baggage ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
-                      <span class="right fnt-small">Excess Baggage ({{passenger.pnrVo.bagCount}})
-                      Total Weight kg ({{passenger.pnrVo.baggageWeight}})
+                      Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
+                      <span class="right fnt-small">Passenger Baggage Count ({{passenger.pnrVo.bagCount}})
+                      Total Weight in kgs ({{passenger.pnrVo.baggageWeight}})
                       </span>
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">

@@ -8,11 +8,7 @@ package gov.gtas.services;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -20,9 +16,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import gov.gtas.model.*;
+import gov.gtas.repository.*;
+import gov.gtas.vo.passenger.FlightVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -34,25 +34,7 @@ import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.AuditRecord;
-import gov.gtas.model.Bag;
-import gov.gtas.model.Disposition;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Seat;
-import gov.gtas.model.User;
 import gov.gtas.model.lookup.DispositionStatus;
-import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.repository.BagRepository;
-import gov.gtas.repository.DispositionRepository;
-import gov.gtas.repository.DispositionStatusRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitsSummaryRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.repository.PnrRepository;
-import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
@@ -93,6 +75,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Autowired
     private BagRepository bagRespository;
+
+    @Autowired
+    private BookingDetailRepository bookingDetailRepository;
     
 	@PersistenceContext
 	private EntityManager em;
@@ -225,7 +210,7 @@ public class PassengerServiceImpl implements PassengerService {
             passengerToUpdate.setEmbarkation(passenger.getEmbarkation());
             passengerToUpdate.setEmbarkCountry(passenger.getEmbarkCountry());
             passengerToUpdate.setFirstName(passenger.getFirstName());
-            passengerToUpdate.setFlights(passenger.getFlights());
+            //passengerToUpdate.setFlights(passenger.getFlights()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
             passengerToUpdate.setGender(passenger.getGender());
             passengerToUpdate.setLastName(passenger.getLastName());
             passengerToUpdate.setMiddleName(passenger.getMiddleName());
@@ -366,8 +351,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     @Transactional
     public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
-        List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
-        return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());
+       /* List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
+        return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());*/
+    	return null;
     }
     
     @Override
@@ -380,4 +366,49 @@ public class PassengerServiceImpl implements PassengerService {
     public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
     	return flightRespository.getTravelHistoryNotByItinerary(paxId, pnrId, pnrRef);
     }
+
+    @Override
+    @Transactional
+    public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
+        //return
+        List<Passenger> _tempPaxList = bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
+        //List<FlightVo> _tempBDFlightsList = new ArrayList<>();
+        try {
+            //stuff flights from Passenger
+            List _tempbdList = _tempPaxList.stream().map(pax -> {
+                Hibernate.initialize(pax.getBookingDetails());
+                return pax.getBookingDetails();
+            }).collect(Collectors.toList());
+        } catch (Exception ex) {
+                ex.printStackTrace();
+        }
+        return _tempPaxList;
+    }
+
+    @SuppressWarnings("unchecked")
+	@Override
+	public Set<Flight> getAllFlights(Long id) {
+		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN flight f ON (fp.flight_id = f.id) WHERE fp.passenger_id="+id+"";
+		List<Flight> resultList = em.createNativeQuery(sqlStr, Flight.class).getResultList();
+		Set<Flight> flightSet = null;
+		if(resultList != null){
+			flightSet = new HashSet<Flight>(resultList);
+		}
+		return flightSet;
+	}
+
+	@Override
+	public void setAllFlights(Set<Flight> flights, Long id) {
+		String sqlStr = "";
+		for(Flight f: flights){
+			sqlStr += "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+f.getId()+","+id+");";
+		}
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
+
+	@Override
+	public void SetSingleFlight(Flight f, Long id) {
+		String sqlStr = "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+f.getId()+","+id+");";
+		em.createNativeQuery(sqlStr).executeUpdate();
+	}
 }

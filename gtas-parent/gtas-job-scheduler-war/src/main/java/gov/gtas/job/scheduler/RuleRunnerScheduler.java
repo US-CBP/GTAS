@@ -5,6 +5,7 @@
  */
 package gov.gtas.job.scheduler;
 
+import gov.gtas.services.matcher.MatchingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class RuleRunnerScheduler {
 	/** The error persistence service. */
 	private ErrorPersistenceService errorPersistenceService;
 
+
+	@Autowired
+	private MatchingService matchingService;
+
 	/**
 	 * Instantiates a new rule runner scheduler.
 	 *
@@ -53,12 +58,15 @@ public class RuleRunnerScheduler {
 	 */
 	//This is commented out as a scheduled task in order to remove concurrency issues in the DB involving loader and rule runner. This may not be the final solution to the problem
 	//but it suffices for now. The rule running portion of the scheduler is now tacked into the loader portion at the bottom to insure sequential operation.
-	//@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
+	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		try {
 			targetingService.preProcessing();
 			targetingService.runningRuleEngine();
+			logger.info("entering matching service portion of jobScheduling");
+			matchingService.findMatchesBasedOnTimeThreshold();
+			logger.info("exiting matching service portion of jobScheduling");
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());
 			ErrorDetailInfo errInfo = ErrorHandlerFactory

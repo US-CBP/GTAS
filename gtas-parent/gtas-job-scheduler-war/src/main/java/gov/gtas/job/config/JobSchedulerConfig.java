@@ -23,7 +23,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @EnableScheduling
 @ComponentScan("gov.gtas.job.scheduler")
 @PropertySource({ "classpath:jobScheduler.properties",
-		"classpath:dashboardJobScheduler.properties" })
+		"classpath:dashboardJobScheduler.properties",
+		"classpath:singleNodeConfig.json"})
 public class JobSchedulerConfig implements SchedulingConfigurer {
 
 	/*

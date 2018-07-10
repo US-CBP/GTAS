@@ -13,6 +13,7 @@
         $scope.ruleHits = ruleHits;
 
         $scope.slides = [];
+        $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
 
         $scope.getAttachment = function(paxId){
         	//TO-DO add specific pax-id here to grab from current passenger
@@ -56,12 +57,15 @@
         var reorderTVLdata = function(flightLegs){
         	var orderedTvlData = [];
 
-        	//Sorts flightLeg objects based on etd
+        	/*//Sorts flightLeg objects based on etd
+        	 * 5/8/2018*No longer required to sort but does add +1 to leg number visually still, so will keep that functionality.
+        	 
         	flightLegs.sort(function(a,b){
-        		if(a.etd < b.etd) return -1;
-        		if(a.etd > b.etd) return 1;
+        		if(a.legNumber < b.legNumber) return -1;
+        		if(a.legNumber > b.legNumber) return 1;
         		else return 0;
-        	});
+        	});*/
+        	
         	//sets each flightLeg# to the newly sorted index value
         	$.each(flightLegs, function(index,value){
         		value.legNumber = index+1; //+1 because 0th flight leg doesn't read well to normal humans
@@ -149,6 +153,8 @@
         	});
         }
 
+
+
      var getMostRecentCase = function(dispHistory){
     	var mostRecentCase = null;
      	$.each(dispHistory, function(index,value){
@@ -219,7 +225,8 @@
 
         paxDetailService.getPaxFlightHistory($scope.passenger.paxId, $scope.passenger.flightId)
         .then(function(response){
-        	$scope.getPaxFullTravelHistory($scope.passenger);
+        	//$scope.getPaxFullTravelHistory($scope.passenger);
+            $scope.getPaxBookingDetailHistory($scope.passenger);
           $scope.passenger.flightHistoryVo = response.data;
         });
 
@@ -228,6 +235,13 @@
       			$scope.passenger.fullFlightHistoryVo ={'map': response.data};
       			$scope.isLoadingFlightHistory = false;
       		});
+        };
+
+        $scope.getPaxBookingDetailHistory= function(passenger){
+            paxDetailService.getPaxBookingDetailHistory(passenger.paxId, passenger.flightId).then(function(response){
+                $scope.passenger.fullFlightHistoryVo ={'map': response.data};
+                $scope.isLoadingFlightHistory = false;
+            });
         };
 
     //Adds user from pax detail page to watchlist.
@@ -477,7 +491,7 @@
         $scope.buildAfterEntitiesLoaded();
 
         $scope.passengerGrid = {
-                paginationPageSizes: [10, 15, 25],
+                paginationPageSizes: [10, 25, 50],
                 paginationPageSize: $scope.model.pageSize,
                 paginationCurrentPage: $scope.model.pageNumber,
                 useExternalPagination: true,
@@ -527,7 +541,7 @@
         //Front-end pagination configuration object for gridUi
         //Should only be active on stateName === 'queryPassengers'
         $scope.passengerQueryGrid = {
-            paginationPageSizes: [10, 15, 25],
+            paginationPageSizes: [10, 25, 50],
             paginationPageSize: $scope.model.pageSize,
             paginationCurrentPage: 1,
             useExternalPagination: false,

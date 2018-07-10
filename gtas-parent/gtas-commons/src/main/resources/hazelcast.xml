@@ -61,4 +61,26 @@
         <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
     </map>
 
+    <map name="passenger">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <read-backup-data>false</read-backup-data>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>30</time-to-live-seconds>
+        <max-idle-seconds>600</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+    <map name="flight">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <read-backup-data>false</read-backup-data>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>30</time-to-live-seconds>
+        <max-idle-seconds>600</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
 </hazelcast>

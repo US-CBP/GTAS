@@ -265,11 +265,11 @@ public class PnrDataGenerator {
         p.setMiddleName(params[2].toUpperCase());
         p.setLastName(params[3].toUpperCase());
         p.setId(id);
-        p.getFlights().add(flight);
+        //p.getFlights().add(flight);
         
         addDocumentToPassenger(p, params[4], params[5]);
         pnr.getPassengers().add(p);
-        flight.getPassengers().add(p);
+        //flight.getPassengers().add(p);
     
         if(params.length > 6){
             //add seat

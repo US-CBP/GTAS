@@ -6,7 +6,11 @@
 package gov.gtas.parsers.paxlst;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,7 +20,7 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.FlightVo;
-
+import gov.gtas.parsers.vo.PassengerVo;
 
 public final class PaxlstParserUNedifactTest {
     EdifactParser<ApisMessageVo> parser; 
@@ -196,5 +200,168 @@ public final class PaxlstParserUNedifactTest {
         List<FlightVo> flights = vo.getFlights();
         assertEquals(2, flights.size());
         System.out.println(vo);
+    }
+    
+    /**
+     * Tests parsing bag information where both bag weight and count are included in the MEA segment of the APIS message
+     * 
+     * @throws ParseException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testAPISParsingWithBagWeightAndCountInMEASegment() throws ParseException, IOException, URISyntaxException {
+     
+    	String message = header + 
+    			"NAD+MS+++UNITED HELPDESK SIN'" + 
+				"COM+044 222 222222:TE'" + 
+				"TDT+20+UA988'" + 
+				"LOC+125+FRA'" + 
+				"DTM+189:1806261220:201'" + 
+				"LOC+87+IAD'" + 
+				"DTM+232:1806261505:201'" +
+    			"NAD+FL+++FENNER:JACKI:ANJA'ATT+2++F'DTM+329:700602'MEA+CT++4'MEA+WT++KGM:80'FTX+BAG+++UA0443'FTX+BAG+++UA0444'FTX+BAG+++UA0445'FTX+BAG+++UA0446'LOC+178+WDH'LOC+179+FRA'LOC+174+USA'NAT+2+USA'RFF+AVF:9C7313'RFF+SEA:44G'DOC++448763368'DTM+36:220518'LOC+91+USA'DOC++'DTM+36:190919'LOC+91+'" + 
+    			trailer;
+    			
+        ApisMessageVo vo = parser.parse(message);
+    	
+    	assertNotNull(vo);
+    	
+    	PassengerVo pvo = vo.getPassengers().get(0);
+    	 
+    	assertNotNull(pvo);
+    
+    	assertEquals("80", pvo.getTotalBagWeight());
+    	assertEquals("4",pvo.getBagNum());
+    }
+    
+    
+    /**
+     * Tests parsing bag information where only bag weight is included in the MEA segment of the APIS message
+     * 
+     * @throws ParseException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testAPISParsingWithOnlyBagWeightInMEASegment() throws ParseException, IOException, URISyntaxException {
+     
+    	String message = header + 
+    			"NAD+MS+++UNITED HELPDESK SIN'" + 
+				"COM+044 222 222222:TE'" + 
+				"TDT+20+UA988'" + 
+				"LOC+125+FRA'" + 
+				"DTM+189:1806261220:201'" + 
+				"LOC+87+IAD'" + 
+				"DTM+232:1806261505:201'" +
+    			"NAD+FL+++FENNER:JACKI:ANJA'ATT+2++F'DTM+329:700602'MEA+WT++KGM:80'FTX+BAG+++UA0443'FTX+BAG+++UA0444'FTX+BAG+++UA0445'FTX+BAG+++UA0446'LOC+178+WDH'LOC+179+FRA'LOC+174+USA'NAT+2+USA'RFF+AVF:9C7313'RFF+SEA:44G'DOC++448763368'DTM+36:220518'LOC+91+USA'DOC++'DTM+36:190919'LOC+91+'" + 
+    			trailer;
+    			
+        ApisMessageVo vo = parser.parse(message);
+    	
+    	assertNotNull(vo);
+    	
+    	PassengerVo pvo = vo.getPassengers().get(0);
+    	 
+    	assertNotNull(pvo);
+    
+    	assertEquals("80", pvo.getTotalBagWeight());
+    	assertEquals(null,pvo.getBagNum());
+    }
+    
+    /**
+     * Tests parsing bag information where only bag count is included in the MEA segment of the APIS message 
+     * 
+     * @throws ParseException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testAPISParsingWithOnlyBagCountInMEASegment() throws ParseException, IOException, URISyntaxException {
+     
+    	String message = header + 
+    			"NAD+MS+++UNITED HELPDESK SIN'" + 
+				"COM+044 222 222222:TE'" + 
+				"TDT+20+UA988'" + 
+				"LOC+125+FRA'" + 
+				"DTM+189:1806261220:201'" + 
+				"LOC+87+IAD'" + 
+				"DTM+232:1806261505:201'" +
+    			"NAD+FL+++FENNER:JACKI:ANJA'ATT+2++F'DTM+329:700602'MEA+CT++4'FTX+BAG+++UA0443'FTX+BAG+++UA0444'FTX+BAG+++UA0445'FTX+BAG+++UA0446'LOC+178+WDH'LOC+179+FRA'LOC+174+USA'NAT+2+USA'RFF+AVF:9C7313'RFF+SEA:44G'DOC++448763368'DTM+36:220518'LOC+91+USA'DOC++'DTM+36:190919'LOC+91+'" + 
+    			trailer;
+    			
+        ApisMessageVo vo = parser.parse(message);
+    	
+    	assertNotNull(vo);
+    	
+    	PassengerVo pvo = vo.getPassengers().get(0);
+    	 
+    	assertNotNull(pvo);
+    	assertEquals(null, pvo.getTotalBagWeight());
+    	assertEquals("4",pvo.getBagNum());
+    }
+    
+    /**
+     * Tests parsing bag information where no MEA segment is included in the APIS message
+     * 
+     * @throws ParseException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testAPISParsingWithNoMEASegment() throws ParseException, IOException, URISyntaxException {
+     
+    	String message = header + 
+				"NAD+MS+++UNITED HELPDESK SIN'" + 
+				"COM+044 222 222222:TE'" + 
+				"TDT+20+UA988'" + 
+				"LOC+125+FRA'" + 
+				"DTM+189:1806261220:201'" + 
+				"LOC+87+IAD'" + 
+				"DTM+232:1806261505:201'" +
+    			"NAD+FL+++FENNER:JACKI:ANJA'ATT+2++F'DTM+329:700602'FTX+BAG+++UA0443'FTX+BAG+++UA0444'FTX+BAG+++UA0445'FTX+BAG+++UA0446'LOC+178+WDH'LOC+179+FRA'LOC+174+USA'NAT+2+USA'RFF+AVF:9C7313'RFF+SEA:44G'DOC++448763368'DTM+36:220518'LOC+91+USA'DOC++'DTM+36:190919'LOC+91+'" + 
+    			trailer;
+    			
+        ApisMessageVo vo = parser.parse(message);
+    	
+    	assertNotNull(vo);
+    	
+    	PassengerVo pvo = vo.getPassengers().get(0);
+    	 
+    	assertNotNull(pvo);
+    	assertEquals("",pvo.getTotalBagWeight());
+    	assertEquals("1",pvo.getBagNum());
+    }
+    
+    /**
+     * Tests parsing bag information where no MEA segment is included in the APIS message
+     * 
+     * @throws ParseException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    @Test
+    public void testAPISParsingWithNoMEASegmentAndTwoBagCountOnFTXSegment() throws ParseException, IOException, URISyntaxException {
+     
+    	String message = header + 
+				"NAD+MS+++UNITED HELPDESK SIN'" + 
+				"COM+044 222 222222:TE'" + 
+				"TDT+20+UA988'" + 
+				"LOC+125+FRA'" + 
+				"DTM+189:1806261220:201'" + 
+				"LOC+87+IAD'" + 
+				"DTM+232:1806261505:201'" +
+    			"NAD+FL+++FENNER:JACKI:ANJA'ATT+2++F'DTM+329:700602'FTX+BAG+++UA0443'FTX+BAG+++UA0444'FTX+BAG+++UA0445'FTX+BAG+++UA0446:2'LOC+178+WDH'LOC+179+FRA'LOC+174+USA'NAT+2+USA'RFF+AVF:9C7313'RFF+SEA:44G'DOC++448763368'DTM+36:220518'LOC+91+USA'DOC++'DTM+36:190919'LOC+91+'" + 
+    			trailer;
+    			
+        ApisMessageVo vo = parser.parse(message);
+    	
+    	assertNotNull(vo);
+    	
+    	PassengerVo pvo = vo.getPassengers().get(0);
+    	 
+    	assertNotNull(pvo);
+    	assertEquals("",pvo.getTotalBagWeight());
+    	assertEquals("2",pvo.getBagNum());
     }
 }

@@ -58,7 +58,7 @@ public class Case extends BaseEntityAudit {
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
 
-    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
@@ -75,8 +75,13 @@ public class Case extends BaseEntityAudit {
 
     @Column(name = "firstName")
     private String firstName;
+    
+    @Column(name = "one_day_lookout_flag")
+    private Boolean oneDayLookoutFlag;
 
-
+    @ManyToOne(optional=true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
+    private Flight flight;
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
@@ -210,7 +215,25 @@ public class Case extends BaseEntityAudit {
 
 
 
-    @Override
+    public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	
+	
+	public Boolean getOneDayLookoutFlag() {
+		return oneDayLookoutFlag;
+	}
+
+	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
+		this.oneDayLookoutFlag = oneDayLookoutFlag;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
 

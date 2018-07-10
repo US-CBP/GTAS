@@ -12,8 +12,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.sun.media.jfxmedia.logging.Logger;
-
+import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.segment.ABI;
@@ -172,15 +171,30 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if (tvl == null) {
                 break;
             }
-            processGroup5_Flight(tvl);
+            if(validTvl(tvl)) {
+            	processGroup5_Flight(tvl);
+            }
+            
         }
         processLTS();
+    }
+    private boolean validTvl(TVL tvl) {
+    	boolean check=true;
+
+    	if(StringUtils.isBlank(tvl.getCarrier()) && StringUtils.isBlank(tvl.getDestination())
+    			&& StringUtils.isBlank(tvl.getFlightNumber())) {
+    		check=false;
+    		
+    	}
+    	
+    	return check;
     }
 
     /**
      * Passenger
      */
     private void processGroup2_Passenger(TIF tif) throws ParseException {
+    	
         FTI fti = getConditionalSegment(FTI.class);
         if (fti != null) {
             FrequentFlyerVo ffvo = new FrequentFlyerVo();
@@ -427,12 +441,17 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * itinerary.
      */
     private void processGroup5_Flight(TVL tvl) throws ParseException {
+    
         FlightVo f = new FlightVo();
         f.setCarrier(tvl.getCarrier());
         f.setDestination(tvl.getDestination());
         f.setOrigin(tvl.getOrigin());
         f.setEta(tvl.getEta());
         f.setEtd(tvl.getEtd());
+        //PNR data can be received without ETA issue #546 fix.
+        if(f.getEta() == null){
+        	f.setEta(f.getEtd());
+        }
         f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
         Date flightDate = FlightUtils.determineFlightDate(tvl.getEtd(), tvl.getEta(), parsedMessage.getTransmissionDate());
         f.setFlightDate(flightDate);
@@ -457,6 +476,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              csFlight.setOrigin(tvl.getOrigin());
              csFlight.setEta(tvl.getEta());
              csFlight.setEtd(tvl.getEtd());
+             //PNR data can be received without ETA issue #546 fix.
+             if(csFlight.getEta() == null){
+            	 csFlight.setEta(csFlight.getEtd());
+             }
              csFlight.setFlightDate(flightDate);
              csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
              csFlight.setCodeShareFlight(true);
@@ -624,16 +647,25 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * the agent info that checked-in the passenger
      */
     private void processGroup6_Agent(DAT_G6 dat, TVL tvl) throws ParseException {
+    
         ORG org = getConditionalSegment(ORG.class, "ORG");
         processAgencyInfo(org);
+        /**
+        TRI tri=null;
+		try {
+			tri = getMandatorySegment(TRI.class);
+			processGroup7_SeatInfo(tri, tvl);
+		} catch (Exception e) {
+			 
+		}
+       **/
         
-        TRI tri = getMandatorySegment(TRI.class);
-        processGroup7_SeatInfo(tri, tvl);
         for (;;) {
-            tri = getConditionalSegment(TRI.class);
+            TRI tri = getConditionalSegment(TRI.class);
             if (tri == null) {
                 break;
             }
+            
             processGroup7_SeatInfo(tri, tvl);
         }        
     }
@@ -642,6 +674,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * boarding, seat number and checked bag info
      */
     private void processGroup7_SeatInfo(TRI tri, TVL tvl) throws ParseException {
+    	
         PassengerVo thePax = null;
         String refNumber = tri.getTravelerReferenceNumber();
         if (refNumber != null) {
@@ -679,7 +712,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (tbd == null) {
             return;
         }
-        //TIF tif1 = getConditionalSegment(TIF.class);    
+
         Integer n = tbd.getNumBags()== null ? 0 : tbd.getNumBags();
         Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
         if (n != null) {
@@ -692,11 +725,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             parsedMessage.setBaggageWeight(weight);
             parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
         }
-        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n);
+        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n,tbd.isHeadOrMemberPool(),tvl.getDestination(),tbd.getFreeText());
        
     }
     
-    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags){
+
+    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags,boolean headPool,String dest,String text){
     	if(!(bDetails == null || bDetails.size()==0)){
     	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
     	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
@@ -704,17 +738,18 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
    		pvo.setTotalBagWeight(weight.toString());
     	for (BagDetails bd : bDetails){
     		BagVo bvo=new BagVo();
-    		if(bd.isMemberPool()){
+    		if(headPool){
     			bvo.setAirline(parsedMessage.getCarrier());
-    			bvo.setBagId(bd.getTagNumber());
+    			bvo.setBagId(bd.getTagNumber() +" ("+text+" )");
     			bvo.setData_source("PNR");
-    			bvo.setDestinationAirport(pvo.getDebarkation());
+    			bvo.setDestinationAirport(dest);
     			bvo.setFirstName(pvo.getFirstName());
     			bvo.setLastName(pvo.getLastName());
+    			bvo.setHeadPool(true);
     			parsedMessage.setHeadPool(true);
     		}
     		else{
-    			bvo=new BagVo(bd.getTagNumber(),"PNR",bd.getDestAirport(),bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
+    			bvo=new BagVo(bd.getTagNumber()+" ("+text+" )","PNR",dest,bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
     		}
     		parsedMessage.getBags().add(bvo);
     	}

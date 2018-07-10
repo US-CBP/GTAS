@@ -83,7 +83,7 @@
       o('Union', function() {
         return [$1];
       }), o('Unions Union', function() {
-        return $1.concat($3);
+        return $1.concat($2);
       })
     ],
     Union: [
@@ -210,11 +210,35 @@
         return new UnaryOp($1, $2);
       }), o('SubSelectExpression'), o('WhitepaceList', function() {
         return new WhitepaceList($1);
-      }), o('Value')
+      }), o('CaseStatement'), o('Value')
     ],
     BetweenExpression: [
       o('Expression CONDITIONAL Expression', function() {
         return new BetweenOp([$1, $3]);
+      })
+    ],
+    CaseStatement: [
+      o('CASE CaseWhens END', function() {
+        return new Case($2);
+      }), o('CASE CaseWhens CaseElse END', function() {
+        return new Case($2, $3);
+      })
+    ],
+    CaseWhen: [
+      o('WHEN Expression THEN Expression', function() {
+        return new CaseWhen($2, $4);
+      })
+    ],
+    CaseWhens: [
+      o('CaseWhens CaseWhen', function() {
+        return $1.concat($2);
+      }), o('CaseWhen', function() {
+        return [$1];
+      })
+    ],
+    CaseElse: [
+      o('ELSE Expression', function() {
+        return new CaseElse($2);
       })
     ],
     SubSelectExpression: [
@@ -274,6 +298,8 @@
       o("LITERAL LEFT_PAREN RIGHT_PAREN", function() {
         return new FunctionValue($1, null, true);
       }), o("LITERAL LEFT_PAREN AggregateArgumentList RIGHT_PAREN", function() {
+        return new FunctionValue($1, $3, true);
+      }), o("LITERAL LEFT_PAREN Case RIGHT_PAREN", function() {
         return new FunctionValue($1, $3, true);
       })
     ],

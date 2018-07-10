@@ -18,6 +18,7 @@ public final class Constants {
     public static final String JOIN_FETCH = " join fetch ";
     public static final String LEFT_JOIN = " left join ";
     public static final String LEFT_JOIN_FETCH = " left join fetch ";
+    public static final String EXISTS = "exists";
     
     // Entities
     public static final String ADDRESS = "ADDRESS";
@@ -57,6 +58,7 @@ public final class Constants {
     public static final String DOCUMENT_HIT_TYPE = "hitType like '%d%'";
     
     public static final String SEAT = "SEAT";
+    public static final String PAYMENTFORMS = "PAYMENTFORMS";
     
     public static final String QUERY_EXISTS_ERROR_MSG = "A query with the same title already exists. Please rename this query or edit the existing one.";
     public static final String QUERY_DOES_NOT_EXIST_ERROR_MSG = "Query cannot be found.";

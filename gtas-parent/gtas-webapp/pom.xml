@@ -20,6 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rest-assured.version>2.4.0</rest-assured.version>
         <spring-csrf-token-filter>1.1</spring-csrf-token-filter>
+        <maven.exec.skip>false</maven.exec.skip> <!-- default -->
     </properties>
 
     <dependencies>
@@ -213,6 +214,7 @@
                 <configuration>
                 	<workingDirectory>src/main/webapp/resources</workingDirectory>
                     <installDirectory>target/gtas/resources</installDirectory>
+                    <skip>${maven.exec.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>

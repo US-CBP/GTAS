@@ -6,12 +6,15 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -83,8 +86,7 @@ public class FlightPax implements Serializable {
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
     private Passenger passenger;
-    
-    
+
 	public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}
@@ -228,7 +230,7 @@ public class FlightPax implements Serializable {
 	public void setAverageBagWeight(double averageBagWeight) {
 		this.averageBagWeight = averageBagWeight;
 	}
-/**
+
 	@Override
     public int hashCode() {
         return Objects.hash(this.debarkation,this.embarkation,this.portOfFirstArrival);
@@ -250,5 +252,5 @@ public class FlightPax implements Serializable {
         return ((this.getFlight().getId().equals(dataTarget.getFlight().getId()) && 
         		(this.getPassenger().getId().equals(dataTarget.getPassenger().getId()))));
     }  
-    **/  
+     
 }

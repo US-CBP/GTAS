@@ -12,9 +12,16 @@ import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
+import gov.gtas.parsers.edifact.EdifactLexer;
+import gov.gtas.parsers.edifact.Segment;
+import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.redisson.model.LedgerLiveObject;
 import gov.gtas.parsers.util.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -159,7 +166,13 @@ public class LoaderMain {
 
     private static void processSingleFile(File f, LoaderStatistics stats) {
         System.out.println(String.format("Processing %s", f.getAbsolutePath()));
-        int[] result = loader.processMessage(f);
+        String primeFlightKey = "placeHolder";
+        try {
+			primeFlightKey = getPrimeFlightTvl(FileUtils.readSmallFile(f.getAbsolutePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        int[] result = loader.processMessage(f, primeFlightKey);
         // update loader statistics.
         if (result != null) {
             stats.incrementNumFilesProcessed();
@@ -176,4 +189,23 @@ public class LoaderMain {
                 .println("Usage: MessageLoader [incoming dir] [outgoing dir]");
         System.out.println("Usage: MessageLoader [queue URL]");
     }
+    
+	private static String getPrimeFlightTvl(byte[] fileRaw){
+		String primeFlightTVL = "";
+		String tmp = new String(fileRaw, StandardCharsets.US_ASCII);
+		List<Segment> segments = new ArrayList<>();
+        EdifactLexer lexer = new EdifactLexer(tmp);
+        try {
+			segments = lexer.tokenize();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+         for(Segment seg : segments){
+             if(seg.getName().equalsIgnoreCase("TVL")){
+            	 primeFlightTVL = seg.getText();
+                 break;
+             }
+         }
+         return primeFlightTVL;
+	}
 }

@@ -29,7 +29,7 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
 //    private long hitDispId;
 
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name="hit_disp_id")
     private HitsDisposition hitDispId;
 
@@ -37,7 +37,7 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
     private long hitId;
 
     @JsonIgnore
-    @ManyToMany(targetEntity = Attachment.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = Attachment.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "hits_disposition_comments_attachment",
             joinColumns = @JoinColumn(name = "hits_disp_comment_id"),
             inverseJoinColumns = @JoinColumn(name = "attachment_id"))

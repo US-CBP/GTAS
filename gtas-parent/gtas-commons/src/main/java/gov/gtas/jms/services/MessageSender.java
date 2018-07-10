@@ -75,4 +75,15 @@ public class MessageSender {
     	      }
     	    });
      }
+    
+    public void sendLoaderFileContent(final String text, String fileName){
+    	jmsTemplateFile.setDefaultDestinationName("GTAS_LOADER_Q");
+    	jmsTemplateFile.send(new MessageCreator(){
+    		public Message createMessage(Session session) throws JMSException {
+    			Message message = session.createTextMessage(text);
+    			message.setStringProperty("Filename", fileName);
+    			return message;
+    		}
+    	});
+    }
 }

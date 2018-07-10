@@ -5,7 +5,7 @@
  */
 app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridService, $mdSidenav) {
     'use strict;'
-	$scope.pageSize = 10;
+	$scope.pageSize = 25;
 
     $scope.hitTypeIcon = function (hitType) {
         var icons = '&nbsp;';
@@ -29,7 +29,7 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
 
     $scope.casesGrid = {
         data: newCases.data,
-        paginationPageSizes: [10, 15, 25],
+        paginationPageSizes: [10, 25, 50],
         paginationPageSize: $scope.pageSize,
         enableFiltering: true,
         enableHorizontalScrollbar: 0,

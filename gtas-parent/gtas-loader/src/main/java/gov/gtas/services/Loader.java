@@ -12,13 +12,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
-import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.MessageRepository;
 import gov.gtas.services.search.ElasticHelper;
 
@@ -36,36 +36,46 @@ public class Loader {
     @Autowired
     protected ElasticHelper indexer;
 
+    private boolean isElasticEnabled = true; //TO-DO put this in property file
+    
     /**
      * Processes all the messages in a single file.
      * 
      * @param f
      *            the file to process
+     * @param primeFlightKey
+     * 			  the key for determining which flight on the itinerary is the current border crossing flight. A.K.A. Prime Flight
      * @return array of integers containing loaded message count at index 0 and
      *         failed message count at index 1.
      */
-    public int[] processMessage(File f) {
+    @Transactional
+    public int[] processMessage(File f, String primeFlightKey) {
         String filePath = f.getAbsolutePath();
+        MessageDto msgDto = null;
         MessageLoaderService svc = null;
         List<String> rawMessages = null;
         try {
             if (exceedsMaxSize(f)) {
                 throw new LoaderException("exceeds max file size");
             }
-
+            msgDto = new MessageDto();
+            msgDto.setPrimeFlightKey(primeFlightKey);
+            
             byte[] raw = FileUtils.readSmallFile(filePath);
             String tmp = new String(raw, StandardCharsets.US_ASCII);
             String text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
 
             if (text.contains("PAXLST")) {
                 svc = apisLoader;
+                msgDto.setMsgType("APIS");
             } else if (text.contains("PNRGOV")) {
                 svc = pnrLoader;
+                msgDto.setMsgType("PNR");
             } else {
                 throw new LoaderException("unrecognized file type");
             }
 
-            rawMessages = svc.preprocess(text);
+            msgDto.setRawMsgs(svc.preprocess(text));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,20 +88,23 @@ public class Loader {
             msgDao.save(m);
             return null;
         }
-        
-		indexer.initClient();
-		if (indexer.isDown()) {
-			svc.setUseIndexer(false);
-		} else {
-			svc.setUseIndexer(true);
-		}
+        if (isElasticEnabled == true){
+        	indexer.initClient();
+			if (indexer.isDown()) {
+				svc.setUseIndexer(false);
+			} else {
+				svc.setUseIndexer(true);
+			}
+    	}
         
         int successMsgCount = 0;
         int failedMsgCount = 0;
-        svc.setFilePath(filePath);
+        msgDto.setFilepath(filePath);
+        rawMessages = msgDto.getRawMsgs();
         for (String rawMessage : rawMessages) {
-            MessageVo parsedMessage = svc.parse(rawMessage);
-            if (parsedMessage != null && svc.load(parsedMessage)) {
+        	msgDto.setRawMsg(rawMessage);
+            MessageDto parsedMessageDto = svc.parse(msgDto);
+            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null && svc.load(parsedMessageDto)) {
                 successMsgCount++;
             } else {
                 failedMsgCount++;

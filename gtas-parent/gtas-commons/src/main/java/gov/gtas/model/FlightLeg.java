@@ -5,10 +5,7 @@
  */
 package gov.gtas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "flight_leg")
@@ -21,6 +18,9 @@ public class FlightLeg extends BaseEntity {
     
     @ManyToOne
     private Pnr pnr;
+    
+    @ManyToOne
+    private BookingDetail bookingDetail;
 
     @Column(name = "leg_number", nullable = false)
     private Integer legNumber;
@@ -48,4 +48,12 @@ public class FlightLeg extends BaseEntity {
     public void setLegNumber(Integer legNumber) {
         this.legNumber = legNumber;
     }
+
+	public BookingDetail getBookingDetail() {
+		return bookingDetail;
+	}
+
+	public void setBookingDetail(BookingDetail bookingDetail) {
+		this.bookingDetail = bookingDetail;
+	}
 }

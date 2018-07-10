@@ -11,20 +11,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
-
+@Cacheable
 @Entity
 @Table(name = "flight",
 uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})})
@@ -101,16 +90,16 @@ public class Flight extends BaseEntityAudit {
     @Column(length = 1, nullable = false)
     private String direction;
     
-    @ManyToMany(
+    /*@ManyToMany(
         targetEntity=Passenger.class,
         cascade={CascadeType.ALL}
     )
-    @JoinTable(
+    	@JoinTable(
         name="flight_passenger",
         joinColumns=@JoinColumn(name="flight_id"),
         inverseJoinColumns=@JoinColumn(name="passenger_id")
     )    
-    private Set<Passenger> passengers = new HashSet<>();
+    private Set<Passenger> passengers = new HashSet<>();*/
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
@@ -133,18 +122,20 @@ public class Flight extends BaseEntityAudit {
     ) 
     private Set<Pnr> pnrs = new HashSet<>();
     
-    public void addPassenger(Passenger passenger) {
-        this.passengers.add(passenger);
-        passenger.getFlights().add(this);
-    }
+   /* public void addPassenger(Passenger passenger) {
+    	System.out.println(flightService);
+    	System.out.println(passenger);
+    	System.out.println(this);
+        flightService.setSinglePassenger(passenger.id, this.id);
+    }*/
 
     public Set<Passenger> getPassengers() {
-        return passengers;
-    }
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
+        return null;
     }
     
+    public void setPassengers(Set<Passenger> passengers) {
+       
+    }
 
 	public String getFlightNumber() {
         return flightNumber;

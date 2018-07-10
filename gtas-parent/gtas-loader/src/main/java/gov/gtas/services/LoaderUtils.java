@@ -5,7 +5,13 @@
  */
 package gov.gtas.services;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -21,15 +27,20 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.LoaderOptions;
+
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
+import gov.gtas.model.DwellTime;
 import gov.gtas.model.Email;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerIDTag;
 import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
@@ -322,7 +333,147 @@ public class LoaderUtils {
         logger.warn("Unknown airport code: " + code);
         return null;
     }
+    
+    public boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
+    	String[] primeCrit = primeFlightCriteria.split("\\+");
+    	if(primeCrit.length == 6){
+	    	primeCrit[5] = primeCrit[5].replace("'", "");
+	    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
+	    		primeCrit[5] = String.format("%4s",primeCrit[5]);
+	    		primeCrit[5] = primeCrit[5].replace(" ", "0");
+	    	}
+	    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
+	    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
+	    			fvo.getDestination().toString().equals(primeCrit[3])){
+	    		logger.debug("Prime Flight Found!");
+	    		return true;
+	    	} else return false;
+    	}else {
+    		//If malformed prime flight criteria, returning true forces flight to load as prime flight
+    		return true;
+    	}
+    	
+    }
+    
+    public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
+    	BookingDetail bD = new BookingDetail();
+    	BeanUtils.copyProperties(fvo, bD);
+    	
+    	 Airport dest = getAirport(fvo.getDestination());
+         String destCountry = null;
+         if (dest != null) {
+             destCountry = dest.getCountry();
+             bD.setDestinationCountry(destCountry);
+         }
 
+         Airport origin = getAirport(fvo.getOrigin());
+         String originCountry = null;
+         if (origin != null) {
+             originCountry = origin.getCountry();
+             bD.setOriginCountry(originCountry);
+         }
+    	
+    	bD.setFullFlightNumber(fvo.getCarrier() + fvo.getFlightNumber());
+    	bD.setEtdDate(fvo.getEtd());
+    	bD.setEtaDate(fvo.getEta());
+    	bD.setCreatedAt(null);
+    	bD.setCreatedBy(LOADER_USER);
+    	return bD;
+    }
+    
+    //These 4 overloaded methods represent the 4 combinations that legs can be compared together
+    public void setDwellTime(Flight firstFlight,Flight secondFlight, Pnr pnr){
+    	if(firstFlight != null && secondFlight != null 
+    			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
+    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
+    			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    		d.setFlyingFrom(firstFlight.getOrigin());
+    		d.setFlyingTo(secondFlight.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(BookingDetail firstBooking, BookingDetail secondBooking, Pnr pnr){
+    	if(firstBooking != null && secondBooking != null 
+    			&& firstBooking.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
+    			&& !(secondBooking.getDestination().equals( firstBooking.getOrigin()))
+    			&& (firstBooking.getEta()!=null && secondBooking.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
+    		d.setFlyingFrom(firstBooking.getOrigin());
+    		d.setFlyingTo(secondBooking.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(Flight firstFlight, BookingDetail secondBooking, Pnr pnr){
+    	if(firstFlight != null && secondBooking != null 
+    			&& firstFlight.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
+    			&& !(secondBooking.getDestination().equals( firstFlight.getOrigin()))
+    			&& (firstFlight.getEta()!=null && secondBooking.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
+    		d.setFlyingFrom(firstFlight.getOrigin());
+    		d.setFlyingTo(secondBooking.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    public void setDwellTime(BookingDetail firstBooking, Flight secondFlight, Pnr pnr){
+    	if(firstBooking != null && secondFlight != null 
+    			&& firstBooking.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
+    			&& !(secondFlight.getDestination().equals( firstBooking.getOrigin()))
+    			&& (firstBooking.getEta()!=null && secondFlight.getEtd() != null)){
+    		
+    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    		d.setFlyingFrom(firstBooking.getOrigin());
+    		d.setFlyingTo(secondFlight.getDestination());
+    		pnr.addDwellTime(d);
+    	}
+    }
+    //The parsed message did not have the flights in proper order for flight leg generation (needed for dwell time and appropriate display)
+    public void sortFlightsByDate(List<FlightVo> flights){
+    	Collections.sort(flights, new Comparator<FlightVo>(){
+    		public int compare(FlightVo f1, FlightVo f2){
+    			return f1.getEtd().compareTo(f2.getEtd());
+    		}
+    	});
+    }
+
+    /**
+     * Util method takes a Passenger object and return a hash for the top 5 attributes
+     * @param pax
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
+                pax.getGender().toUpperCase(), pax.getDob().toString())));
+    }
+
+    /**
+     * Util method to hash passenger attributes
+     * @param input
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    private String makeSHA1Hash(String input)
+            throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes("UTF-8");
+        md.update(buffer);
+        byte[] digest = md.digest();
+
+        String hexStr = "";
+        for (int i = 0; i < digest.length; i++) {
+            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return hexStr;
+    }
+    
     /**
      * try returning ISO_3 code
      */
@@ -360,4 +511,19 @@ public class LoaderUtils {
         String[] result = new String[emptyNames.size()];
         return emptyNames.toArray(result);
     }
+    
+	public PassengerIDTag createPassengerIDTag(Passenger p) {
+    	PassengerIDTag paxIdTag = new PassengerIDTag(); 
+    	paxIdTag.setPax_id(p.getId());
+    	paxIdTag.setCreatedAt(new Date());
+    	paxIdTag.setCreatedBy(LOADER_USER);
+    	try {
+			paxIdTag.setIdTag(getHashForPassenger(p));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	return paxIdTag;
+	}
 }

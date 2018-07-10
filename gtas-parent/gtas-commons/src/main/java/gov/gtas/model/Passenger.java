@@ -1,48 +1,46 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- *
+ * 
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.model;
 
 import org.springframework.cache.annotation.Cacheable;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 @Cacheable
 @Entity
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
-
+    
     public Passenger() {
     }
 
     @Column(name = "passenger_type", length = 3, nullable = false)
     private String passengerType;
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
-    private Set<Flight> flights = new HashSet<>();
+/*    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
+    private Set<Flight> flights = new HashSet<>();*/
 
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
     @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
+
+    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+
+    /*@ManyToOne(fetch=FetchType.EAGER, targetEntity = PassengerIDTag.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "pax_tag_id"))
+    private PassengerIDTag paxIdTag;*/
 
     private String title;
 
@@ -75,7 +73,7 @@ public class Passenger extends BaseEntityAudit {
     /** calculated field */
     @Column(name = "days_visa_valid")
     private Integer numberOfDaysVisaValid;
-
+    
     private String embarkation;
 
     private String debarkation;
@@ -91,20 +89,17 @@ public class Passenger extends BaseEntityAudit {
 
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
-
+ 
     @Column(name = "travel_frequency")
     private Integer travelFrequency=0;
-
+    
     @Transient
     private String totalBagWeight;
-
+ 
     @Transient
     private String bagNum;
-
+    
     private Date watchlistCheckTimestamp;
-
-    @Column(name = "idTag")
-    private String idTag;
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
@@ -112,90 +107,97 @@ public class Passenger extends BaseEntityAudit {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Attachment> attachments = new HashSet<>();
-
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Seat> seatAssignments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
-
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Bag> bags = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
-    private List<FlightPax> flightPaxList = new ArrayList<>();
+    private Set<FlightPax> flightPaxList = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<TicketFare> tickets = new HashSet<>();
+    private Set<TicketFare> tickets = new HashSet<>();    
+    
+	public Set<BookingDetail> getBookingDetails() {
+		return bookingDetails;
+	}
 
+	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+		this.bookingDetails = bookingDetails;
+	}
+	
+	public Set<TicketFare> getTickets() {
+		return tickets;
+	}
 
-    public Set<TicketFare> getTickets() {
-        return tickets;
-    }
+	public void setTickets(Set<TicketFare> tickets) {
+		this.tickets = tickets;
+	}
 
-    public void setTickets(Set<TicketFare> tickets) {
-        this.tickets = tickets;
-    }
+	public Integer getTravelFrequency() {
+		return travelFrequency;
+	}
 
-    public Integer getTravelFrequency() {
-        return travelFrequency;
-    }
+	public void setTravelFrequency(Integer travelFrequency) {
+		this.travelFrequency = travelFrequency;
+	}
 
-    public void setTravelFrequency(Integer travelFrequency) {
-        this.travelFrequency = travelFrequency;
-    }
+	public String getBagNum() {
+		return bagNum;
+	}
 
-    public String getBagNum() {
-        return bagNum;
-    }
+	public void setBagNum(String bagNum) {
+		this.bagNum = bagNum;
+	}
 
-    public void setBagNum(String bagNum) {
-        this.bagNum = bagNum;
-    }
+	public String getTotalBagWeight() {
+		return totalBagWeight;
+	}
 
-    public String getTotalBagWeight() {
-        return totalBagWeight;
-    }
+	public void setTotalBagWeight(String totalBagWeight) {
+		this.totalBagWeight = totalBagWeight;
+	}
 
-    public void setTotalBagWeight(String totalBagWeight) {
-        this.totalBagWeight = totalBagWeight;
-    }
+	public Set<FlightPax> getFlightPaxList() {
+		return flightPaxList;
+	}
 
-    public List<FlightPax> getFlightPaxList() {
-        return flightPaxList;
-    }
+	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
+		this.flightPaxList = flightPaxList;
+	}
 
-    public void setFlightPaxList(List<FlightPax> flightPaxList) {
-        this.flightPaxList = flightPaxList;
-    }
+	public Date getWatchlistCheckTimestamp() {
+		return watchlistCheckTimestamp;
+	}
 
-    public Date getWatchlistCheckTimestamp() {
-        return watchlistCheckTimestamp;
-    }
+	public void setWatchlistCheckTimestamp(Date watchlistCheckTimestamp) {
+		this.watchlistCheckTimestamp = watchlistCheckTimestamp;
+	}
 
-    public void setWatchlistCheckTimestamp(Date watchlistCheckTimestamp) {
-        this.watchlistCheckTimestamp = watchlistCheckTimestamp;
-    }
+	public String getReservationReferenceNumber() {
+		return reservationReferenceNumber;
+	}
 
-    public String getReservationReferenceNumber() {
-        return reservationReferenceNumber;
-    }
-
-    public void setReservationReferenceNumber(String reservationReferenceNumber) {
-        this.reservationReferenceNumber = reservationReferenceNumber;
-    }
+	public void setReservationReferenceNumber(String reservationReferenceNumber) {
+		this.reservationReferenceNumber = reservationReferenceNumber;
+	}
 
     public Set<ApisMessage> getApisMessage() {
-        return apisMessage;
-    }
+		return apisMessage;
+	}
 
-    public void setApisMessage(Set<ApisMessage> apisMessage) {
-        this.apisMessage = apisMessage;
+	public void setApisMessage(Set<ApisMessage> apisMessage) {
+		this.apisMessage = apisMessage;
+	}
+	public void addApisMessage(ApisMessage apisMessage) {
     }
-    public void addApisMessage(ApisMessage apisMessage) {
-    }
-
-    public void addDocument(Document d) {
+	
+	public void addDocument(Document d) {
         this.documents.add(d);
         d.setPassenger(this);
     }
@@ -208,13 +210,13 @@ public class Passenger extends BaseEntityAudit {
         this.passengerType = passengerType;
     }
 
-    public Set<Flight> getFlights() {
-        return flights;
-    }
+   /* public Set<Flight> getFlights() {
+        return passengerService.getAllFlights(this.id);
+    }*/
 
-    public void setFlights(Set<Flight> flights) {
-        this.flights = flights;
-    }
+  /*  public void setFlights(Set<Flight> flights) {
+        passengerService.setAllFlights(flights, this.id);
+    }*/
 
     public String getTitle() {
         return title;
@@ -333,14 +335,14 @@ public class Passenger extends BaseEntityAudit {
     }
 
     public Set<Bag> getBags() {
-        return bags;
-    }
+		return bags;
+	}
 
-    public void setBags(Set<Bag> bags) {
-        this.bags = bags;
-    }
+	public void setBags(Set<Bag> bags) {
+		this.bags = bags;
+	}
 
-    public void setDocuments(Set<Document> documents) {
+	public void setDocuments(Set<Document> documents) {
         this.documents = documents;
     }
 
@@ -368,31 +370,30 @@ public class Passenger extends BaseEntityAudit {
         this.seatAssignments = seatAssignments;
     }
 
-
+    
     public Integer getNumberOfDaysVisaValid() {
-        return numberOfDaysVisaValid;
-    }
+		return numberOfDaysVisaValid;
+	}
 
-    public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
-        this.numberOfDaysVisaValid = numberOfDaysVisaValid;
-    }
-
+	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
+		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
+	}
+	
     public Set<Attachment> getAttachments() {
-        return attachments;
+		return attachments;
+	}
+
+	public void setAttachments(Set<Attachment> attachments) {
+		this.attachments = attachments;
+	}
+
+/*    public PassengerIDTag getPaxIdTag() {
+        return paxIdTag;
     }
 
-    public void setAttachments(Set<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-
-    public String getIdTag() {
-        return idTag;
-    }
-
-    public void setIdTag(String idTag) {
-        this.idTag = idTag;
-    }
+    public void setPaxIdTag(PassengerIDTag paxIdTag) {
+        this.paxIdTag = paxIdTag;
+    }*/
 
     @Override
     public int hashCode() {

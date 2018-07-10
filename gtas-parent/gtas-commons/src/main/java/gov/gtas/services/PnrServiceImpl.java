@@ -227,10 +227,19 @@ public class PnrServiceImpl implements PnrService {
 	private boolean checkFlightLegExistence(List<FlightLeg> flightLegs, FlightLeg fl) {
 		boolean flag = false;		
 		for (FlightLeg leg: flightLegs) {
-			if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getPnr()).equals(fl.getPnr())) {
-				flag=true;
-				break;
-			} 
+			if(leg.getFlight() != null && fl.getFlight() != null){
+				if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getPnr()).equals(fl.getPnr())) {
+					flag=true;
+					break;
+				} 
+			} else{ //Check instead for booking detail as a flight leg
+				if(leg.getBookingDetail() != null && fl.getBookingDetail() != null){
+					if ((leg.getBookingDetail()).equals(fl.getBookingDetail()) && (leg.getPnr()).equals(fl.getPnr())) {
+						flag=true;
+						break;
+					} 
+				}
+			}
 		}
 		return flag;
 	}
@@ -264,12 +273,13 @@ public class PnrServiceImpl implements PnrService {
 		if (source.getFlightLegs() != null && source.getFlightLegs().size() > 0) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
 			for (FlightLeg fl : _tempFL) {
-
-				if (fl.getFlight().getId().equals(flightId)) {
-					flightCheck = true;
-					break;
+				
+				if(fl.getFlight() != null){ //FlightLegs contain both flights and booking details, we only care to compare against flights here
+					if (fl.getFlight().getId().equals(flightId)) {
+						flightCheck = true;
+						break;
+					}
 				}
-
 			}
 		}
 

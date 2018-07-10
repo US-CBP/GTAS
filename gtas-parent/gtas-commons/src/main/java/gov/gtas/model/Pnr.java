@@ -106,10 +106,13 @@ public class Pnr extends Message {
 	@Column(name = "form_of_payment")
     private String formOfPayment;
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "pnrs",targetEntity = BookingDetail.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+    
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
@@ -152,7 +155,16 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    @Column(name = "resrvation_create_date")
+    
+    public Set<BookingDetail> getBookingDetails() {
+		return bookingDetails;
+	}
+
+	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+		this.bookingDetails = bookingDetails;
+	}
+
+	@Column(name = "resrvation_create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date reservationCreateDate;
     

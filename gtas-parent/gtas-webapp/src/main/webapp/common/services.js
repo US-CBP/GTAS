@@ -167,6 +167,51 @@
             saveSettings: saveSettings
           }
         })
+        .service('apiAccessService', function ($http, $q) {
+            var API_ACCESS_URL = "/gtas/apiAccess";
+            function handleError(response) {
+                if (response.data.message === undefined) {
+                    return $q.reject("An unknown error occurred.");
+                }
+                return $q.reject(response.data.message);
+            }
+            function handleSuccess(response) {
+                return response.data;
+            }
+
+            return {
+                getAllApiAccessData: function () {
+                    var request = $http({
+                        method: "get",
+                        url: API_ACCESS_URL
+                    });
+                    return (request.then(handleSuccess, handleError));
+                },
+                updateApiAccessData: function(user){
+                  var request = $http({
+                      method: "put",
+                      url: API_ACCESS_URL,
+                      data: user
+                  });
+                  return (request.then(handleSuccess, handleError));
+                },
+                createApiAccessData: function(user){
+                  var request = $http({
+                      method: "post",
+                      url: API_ACCESS_URL,
+                      data: user
+                  });
+                  return (request.then(handleSuccess, handleError));
+                },
+                deleteApiAccessData: function(id){
+                  var request = $http({
+                      method: "delete",
+                      url: API_ACCESS_URL+"/"+id,
+                  });
+                  return (request.then(handleSuccess, handleError));
+                }
+            };
+        })
         .service('userService', function ($http, $q) {
             var USER_ROLES_URL = "/gtas/roles/",
                 USERS_URL = "/gtas/users/",
@@ -313,6 +358,21 @@
                         enableGridMenu: true,
                         enableSelectAll: true
                     },
+                    apiAccess: {
+                        enableRowSelection: true,
+                        enableRowHeaderSelection: false,
+                        enableFullRowSelection: true,
+                        paginationPageSize: 10,
+                        paginationPageSizes: [],
+                        enableHorizontalScrollbar: 0,
+                        enableVerticalScrollbar: 0,
+                        enableFiltering: true,
+                        enableCellEditOnFocus: false,
+                        showGridFooter: true,
+                        multiSelect: false,
+                        enableGridMenu: true,
+                        enableSelectAll: false,
+                    },
                     error: {
                         enableRowSelection: true,
                         enableRowHeaderSelection: false,
@@ -391,6 +451,26 @@
                             displayName: 'admin.timestamp', headerCellFilter: 'translate',
                             field: 'timestamp',
                             width: '45%'
+                        }
+                    ],
+                    apiAccess: [
+                        {
+                            name: 'username',
+                            displayName: 'username', headerCellFilter: 'translate',
+                            field: 'username',
+                            cellTemplate: '<md-button ng-click="grid.appScope.userManagement(row.entity,$event)">{{COL_FIELD}}</md-button>',
+                            sort: {
+                                direction: uiGridConstants.DESC,
+                                priority: 1
+                            }
+                        }, {
+                            name: 'organization',
+                            displayName: 'organization', headerCellFilter: 'translate',
+                            field: 'organization'
+                        }, {
+                            name: 'email',
+                            displayName: 'email', headerCellFilter: 'translate',
+                            field: 'email'
                         }
                     ],
                     error: [

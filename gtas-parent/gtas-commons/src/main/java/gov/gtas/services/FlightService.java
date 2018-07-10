@@ -8,6 +8,7 @@ package gov.gtas.services;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
 
@@ -45,4 +46,12 @@ public interface FlightService {
 	public List<Flight> getFlightsThreeDaysForwardInbound();
 
 	public List<Flight> getFlightsThreeDaysForwardOutbound();
+
+	public Set<Passenger> getAllPassengers(Long id);
+
+	public void setAllPassengers(Set<Passenger> passengers, Long flightId);
+	
+	public void setSinglePassenger(Long passengerId, Long flightId);
+
+	public int getPassengerCount(Flight f);
 }

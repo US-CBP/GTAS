@@ -1,0 +1,35 @@
+<!-- <div ng-include="'views/sidepanel.html'"></div> -->
+
+<div style="width: 100%;margin-top:10px" align="center">
+  <md-button ng-click="getPreviousDayData()" ng-disabled="isBackButtonDisabled"
+          class="btn btn-default">
+          <md-tooltip>Yesterday's lookout list</md-tooltip>
+          <i class="fa fa-minus" aria-hidden="true"></i>
+          &nbsp;<Strong>1 Day</Strong>
+   </md-button>
+   
+	
+	<md-button ng-click="getTodaysData()" ng-disabled="isTodayButtonDisabled"
+          class="btn btn-default">
+          <md-tooltip>Today's lookout list</md-tooltip>
+          <i class="fa" aria-hidden="true"></i>
+          &nbsp;<Strong>Today</Strong>
+   </md-button>
+
+	<md-button ng-click="getNextDayData()" ng-disabled="isForwardButtonDisabled"
+          class="btn btn-default">
+          <md-tooltip>Tomorrow's lookout list</md-tooltip>
+          <i class="fa fa-plus" aria-hidden="true"></i>
+          &nbsp;<Strong>1 Day</Strong>
+   </md-button>
+	
+
+	<div align="center" style="margin-top:10px">
+		<span>	<strong> {{lookoutDate}}</strong></span>
+	</div>
+</div> 
+  
+ <div id="oneDayLookoutGrid" ui-grid="oneDayLookoutGrid" ui-grid-pagination
+     ui-grid-auto-resize ui-grid-move-columns ng-style="getTableHeight()"
+     class="upper-cnt grid">
+</div>  

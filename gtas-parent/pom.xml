@@ -65,6 +65,7 @@
         <module>gtas-webapp</module>
         <module>gtas-query-builder</module>
         <module>gtas-job-scheduler-war</module>
+        <module>gtas-pdi-parser</module> 
     </modules>
 
     <build>

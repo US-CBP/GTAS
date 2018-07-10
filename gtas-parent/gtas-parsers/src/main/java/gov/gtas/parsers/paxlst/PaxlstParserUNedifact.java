@@ -30,6 +30,8 @@ import gov.gtas.parsers.paxlst.segment.unedifact.GEI;
 import gov.gtas.parsers.paxlst.segment.unedifact.LOC;
 import gov.gtas.parsers.paxlst.segment.unedifact.LOC.LocCode;
 import gov.gtas.parsers.paxlst.segment.unedifact.MEA;
+import gov.gtas.parsers.paxlst.segment.unedifact.MEA.MeasurementCodeQualifier;
+import gov.gtas.parsers.paxlst.segment.unedifact.MEA.MeasurementUnitCode;
 import gov.gtas.parsers.paxlst.segment.unedifact.NAD;
 import gov.gtas.parsers.paxlst.segment.unedifact.NAT;
 import gov.gtas.parsers.paxlst.segment.unedifact.QTY;
@@ -45,6 +47,7 @@ import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
 import gov.gtas.parsers.vo.SeatVo;
+import gov.gtas.util.MathUtils;
 
 public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
     public PaxlstParserUNedifact() {
@@ -284,12 +287,44 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 }
             }
         }
+        
+        /**
+         * APIS 16B | Parsing and Loading New bag information #815
+         * 
+         * FTX segment below ignores bag information if bagsCountedFromMEA is true, meaning ... it was already parsed from MEA segment and avoids overriding the information from FTX segment.
+         *  
+         */
+        boolean bagsCountedFromMEA =false;
 
         for (;;) {
             MEA mea = getConditionalSegment(MEA.class);
             if (mea == null) {
                 break;
             }
+            
+            /**
+             * APIS 16B | Parsing and Loading New bag information #815
+             */
+	            if(mea.isSegmentIncludedInAPISMessage()) {
+	            	bagsCountedFromMEA=true;
+	            }
+	            
+	            if(MeasurementCodeQualifier.CT.equals(mea.getCode())) {
+	            	p.setBagNum(mea.getNumBags());
+	            }
+	            if(MeasurementCodeQualifier.WT.equals(mea.getCode())) {
+	            	
+	            	if(mea.getWeightUnit().equals(MeasurementUnitCode.LBR)) {
+	            		// Convert pounds to kilograms
+	            		double kilograms = MathUtils.poundsToKilos(Double.parseDouble(mea.getBagWeight()));
+	            		p.setTotalBagWeight(String.valueOf(kilograms));
+	            }else
+	            		p.setTotalBagWeight(mea.getBagWeight());
+	            }
+            
+            /**
+             * ENDS #815
+             */
         }
 
         for (;;) {
@@ -306,11 +341,13 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
             String bagId = ftx.getBagId();
             if (StringUtils.isNotBlank(bagId)) {
+            	if(!bagsCountedFromMEA) // APIS 16B | Ignore bag weight if already parsed from MEA segment #815. 
             	p.setTotalBagWeight(ftx.getBagWeight());
             	p.setBagId(bagId);
                 List<String> bags = new ArrayList<>();
-                bags.add(bagId);
+                
                 if (ftx.getNumBags() != null ) {
+                	if(!bagsCountedFromMEA) // APIS 16B | Ignore bag count if already parsed from MEA segment #815. 
                     p.setBagNum(ftx.getNumBags());
                     int numBags = Integer.parseInt(ftx.getNumBags());
                     String airlineCode = bagId.substring(0, Math.min(bagId.length(), 2));
@@ -329,6 +366,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                         bags.add(temp);
                     }
                 }
+                }
+                else{
+                   	bags.add(bagId);
+                	if(!bagsCountedFromMEA)
+                   	p.setBagNum("1");
                 }
                 p.setBags(bags);
             }

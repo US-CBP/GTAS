@@ -124,6 +124,37 @@
                 return dfd.promise;
             }
 
+            function addToOneDayLookout(caseIdParam){
+                
+                 var dfd = $q.defer();
+                 dfd.resolve($http({
+                     method: 'get',
+                     url: "/gtas/addonedaylookout",
+                     params: {
+                    	 caseId:caseIdParam
+                     }
+                 }));
+        		 
+        	        		 
+                 return dfd.promise;
+             }  
+     
+                    
+            function removeFromOneDayLookoutList(caseIdParam){
+                
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'get',
+                    url: "/gtas/removeonedaylookout",
+                    params: {
+                   	 caseId:caseIdParam
+                    }
+                }));
+       		 
+       	        		 
+                return dfd.promise;
+            }  
+            
             function getDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
@@ -197,6 +228,8 @@
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,
                 updateHitsDisposition:updateHitsDisposition,
+                addToOneDayLookout:addToOneDayLookout,
+                removeFromOneDayLookoutList:removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
                 getByQueryParams: getByQueryParams

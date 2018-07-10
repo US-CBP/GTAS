@@ -72,6 +72,11 @@
               <li data-has-role="[{{ ROLES.ADMIN }}]"><a href="#/upload">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 &nbsp;Upload</a></li>
+              <!-- Neo4J Browser pop out-->
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="http://localhost:7474/browser/" target="_blank">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+                &nbsp;Neo4J Browser</a>
+              </li>
             </ul>
           </li>
           <li class="dropdown notification mobile-hide">
@@ -138,15 +143,21 @@
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
-            <li ng-class="{'active': setSelectedTab('/passengers')}">
-              <a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">
-	              	<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers
-	              </a></li>
+            <!--<li ng-class="{'active': setSelectedTab('/passengers')}">-->
+              <!--<a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">-->
+	              	<!--<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers-->
+	              <!--</a></li>-->
             <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
               ng-class="{'active': setSelectedTab('/casedisposition')}">
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
 	              </a></li>
+	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
+              ng-class="{'active': setSelectedTab('/onedaylookout')}">
+              <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
+	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;One Day Lookouts
+	              </a>
+	         </li>        
           </ul>
         </div>
 
@@ -256,6 +267,8 @@
 <script src='cases/CaseDispositionDetailController.js'></script>
 <script src='cases/CaseDispositionManualController.js'></script>
 <script src='cases/CaseDispositionService.js'></script>
+<script src='onedaylookout/OneDayLookoutController.js'></script>
+<script src='onedaylookout/OneDayLookoutService.js'></script>
 <script src='adhocquery/AdhocQueryController.js'></script>
 <script src='adhocquery/AdhocQueryService.js'></script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
