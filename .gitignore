@@ -5,6 +5,7 @@ target/
 *.war
 *.ear
 *.class
+*.orig
 
 # spring
 logs/
