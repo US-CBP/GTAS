@@ -314,6 +314,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			aCase.getHitsDispositions().addAll(hitsDispSet);
 		else
 			aCase.setHitsDispositions(hitsDispSet);
+
+		//fix to adjust to the recent flight mappings
+		aCase.setFlight(null);
+
 		caseDispositionRepository.save(aCase);
 
 		// _tempCase = null;
