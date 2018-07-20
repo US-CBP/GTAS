@@ -394,6 +394,13 @@ public class UdrServiceImpl implements UdrService {
 			for (Rule r : newEngineRules) {
 				ruleToUpdate.addEngineRule(r);
 			}
+			//@RuleCategory changes Begin
+			try {
+				getRuleCatFromRuleMeta(ruleToUpdate);
+			}catch (Exception ex){
+				ex.printStackTrace();
+			}
+			//@RuleCategory changes END
 			if (ruleToUpdate.getAuthor().getUserId().equals(userId)) {
 				updatedRule = rulePersistenceService.update(ruleToUpdate,
 						ruleToUpdate.getAuthor());
