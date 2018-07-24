@@ -49,7 +49,7 @@ public class Loader {
      *         failed message count at index 1.
      */
     @Transactional
-    public int[] processMessage(File f, String primeFlightKey) {
+    public int[] processMessage(File f, String[] primeFlightKey) {
         String filePath = f.getAbsolutePath();
         MessageDto msgDto = null;
         MessageLoaderService svc = null;

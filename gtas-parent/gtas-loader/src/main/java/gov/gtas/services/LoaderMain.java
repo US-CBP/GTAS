@@ -166,7 +166,7 @@ public class LoaderMain {
 
     private static void processSingleFile(File f, LoaderStatistics stats) {
         System.out.println(String.format("Processing %s", f.getAbsolutePath()));
-        String primeFlightKey = "placeHolder";
+        String[] primeFlightKey = new String[]{"placeHolder"};
         try {
 			primeFlightKey = getPrimeFlightTvl(FileUtils.readSmallFile(f.getAbsolutePath()));
 		} catch (IOException e) {
@@ -190,8 +190,10 @@ public class LoaderMain {
         System.out.println("Usage: MessageLoader [queue URL]");
     }
     
-	private static String getPrimeFlightTvl(byte[] fileRaw){
-		String primeFlightTVL = "";
+	private static String[] getPrimeFlightTvl(byte[] fileRaw){
+		String[] primeFlightTVL = new String[4];
+		primeFlightTVL[0] = "placeholder";
+		Boolean foundTVL = Boolean.FALSE;
 		String tmp = new String(fileRaw, StandardCharsets.US_ASCII);
 		List<Segment> segments = new ArrayList<>();
         EdifactLexer lexer = new EdifactLexer(tmp);
@@ -202,8 +204,11 @@ public class LoaderMain {
 		}
          for(Segment seg : segments){
              if(seg.getName().equalsIgnoreCase("TVL")){
-            	 primeFlightTVL = seg.getText();
-                 break;
+            	primeFlightTVL[0] = seg.getComposite(1).getElement(0);
+            	primeFlightTVL[1] = seg.getComposite(2).getElement(0);
+ 				primeFlightTVL[2] = seg.getComposite(3).getElement(0);
+ 				primeFlightTVL[3] = seg.getComposite(4).getElement(0);
+                break;
              }
          }
          return primeFlightTVL;

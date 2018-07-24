@@ -215,14 +215,14 @@ public class LoaderRepository {
 
     //@Transactional
     public void processFlightsAndPassengers(List<FlightVo> flights, List<PassengerVo> passengers, Set<Flight> messageFlights, Set<Passenger> messagePassengers, 
-    		List<FlightLeg> flightLegs, String primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
+    		List<FlightLeg> flightLegs, String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
         Set<PassengerVo> existingPassengers = new HashSet<>();
         long startTime = System.nanoTime();
         // first find all existing passengers, create any missing flights
     	utils.sortFlightsByDate(flights);
         for (int i=0; i<flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if(primeFlightKey.equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
+            if(primeFlightKey[0].equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
 	            logger.debug("@ getFlightByCriteria");
 	            Flight currentFlight = null;
 	           	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());

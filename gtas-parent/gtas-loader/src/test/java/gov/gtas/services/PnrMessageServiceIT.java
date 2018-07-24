@@ -113,7 +113,7 @@ public class PnrMessageServiceIT extends
 		Set<Flight> dummy = new HashSet<>();
 		Set<Passenger> paxDummy = new HashSet<>();
 		loaderRepo.processFlightsAndPassengers(flights, passengers, dummy,
-				paxDummy, new ArrayList<FlightLeg>(),"placeholder",new HashSet<BookingDetail>());
+				paxDummy, new ArrayList<FlightLeg>(),new String[]{"placeholder"},new HashSet<BookingDetail>());
 		List<Passenger> pax = paxDao.getPassengersByLastName("doe");
 		assertEquals(1, pax.size());
 	}
@@ -121,6 +121,6 @@ public class PnrMessageServiceIT extends
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-		svc.processMessage(this.message, "placeholder");
+		svc.processMessage(this.message, new String[]{"placeholder"});
 	}
 }

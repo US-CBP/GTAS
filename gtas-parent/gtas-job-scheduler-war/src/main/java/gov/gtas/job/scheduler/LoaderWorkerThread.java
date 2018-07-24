@@ -25,7 +25,7 @@ public class LoaderWorkerThread implements Runnable {
 	
 	private String text;
 	private String fileName;
-	private String primeFlightKey;
+	private String[] primeFlightKey;
 	private BlockingQueue<Message<?>> queue;
 	private ConcurrentMap<String, BlockingQueue<Message<?>>> map;
 	
@@ -34,7 +34,7 @@ public class LoaderWorkerThread implements Runnable {
 	public LoaderWorkerThread(){
 	}
 	
-	public LoaderWorkerThread(BlockingQueue<Message<?>> queue, ConcurrentMap<String, BlockingQueue<Message<?>>> map, String primeFlightKey){
+	public LoaderWorkerThread(BlockingQueue<Message<?>> queue, ConcurrentMap<String, BlockingQueue<Message<?>>> map, String[] primeFlightKey){
         this.queue=queue;
         this.map = map;
         this.primeFlightKey = primeFlightKey;
@@ -110,11 +110,11 @@ public class LoaderWorkerThread implements Runnable {
 		this.queue = queue;
 	}
 
-	public String getPrimeFlightKey() {
+	public String[] getPrimeFlightKey() {
 		return primeFlightKey;
 	}
 
-	public void setPrimeFlightKey(String primeFlightKey) {
+	public void setPrimeFlightKey(String[] primeFlightKey) {
 		this.primeFlightKey = primeFlightKey;
 	}
 
