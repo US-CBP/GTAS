@@ -962,7 +962,7 @@
           "NOT_ENDS_WITH"
   	  	]
   	  }, {
-  	  	"id":"Bag.dataSource",
+  	  	"id":"Bag.data_source",
   	  	"label":"Data Source",
   	  	"type":"string",
   	  	"operators": [
