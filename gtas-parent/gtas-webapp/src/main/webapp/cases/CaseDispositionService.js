@@ -61,7 +61,9 @@
                     status: model.status,
                     ruleCatId: model.ruleCat,
                     etaStart: model.etaStart,
-                    etaEnd: model.etaEnd
+                    etaEnd: model.etaEnd,
+                    etaEtdFilter: model.etaEtdFilter,
+                    etaEtdSortFlag: model.etaEtdSortFlag
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({

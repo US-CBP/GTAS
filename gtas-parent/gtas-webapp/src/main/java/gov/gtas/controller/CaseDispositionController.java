@@ -14,6 +14,7 @@ import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.services.dto.SortOptionsDto;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,6 +49,16 @@ public class CaseDispositionController {
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
                 SecurityContextHolder.getContext());
+        SortOptionsDto sortDTO = new SortOptionsDto();
+        //default to earliest ETA
+        if(request.getEtaEtdFilter()!=null && request.getEtaEtdSortFlag()!=null){
+            sortDTO.setColumn(request.getEtaEtdFilter());
+            sortDTO.setDir(request.getEtaEtdSortFlag());
+            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
+            _tempSortDtoList.add(sortDTO);
+            request.setSort(_tempSortDtoList);
+        }
+
         return caseDispositionService.findAll(request);
     }
 

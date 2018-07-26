@@ -26,8 +26,20 @@
                 priority: $scope.emptyString,
                 ruleCat: $scope.emptyString,
                 etaStart: $scope.emptyString,
-                etaEnd: $scope.emptyString
+                etaEnd: $scope.emptyString,
+                etaEtdFilter: $scope.emptyString,
+                etaEtdSortFlag: $scope.emptyString
             };
+
+            $scope.sortEtaEtdFlag=[
+                {id: 'flightETADate', name: 'ETA'},
+                {id: 'flightETDDate', name: 'ETD'}
+            ];
+
+            $scope.sortEtaEtdFlagStatuses=[
+                {id: 'asc', name: 'ASCENDING'},
+                {id: 'desc', name: 'DESCENDING'}
+            ];
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -137,6 +149,14 @@
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
+                    field: 'lastName',
+                    name: 'countdown',
+                    displayName: 'Countdown to takeoff', headerCellFilter: 'translate',
+                    cellTemplate: '<div class=\'time-to\'>\n' +
+                    '        <span countdown=\'\' date=\'January 1, 2017 12:00:00\'>&nbsp;</span>\n' +
+                    '    </div>'
+                },
+                {
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
                     displayName: 'Top Rule Category',
@@ -173,7 +193,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','etaetdfilter', 'dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 

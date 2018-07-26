@@ -47,6 +47,10 @@ public class CaseRequestDto implements Serializable {
     
     private Boolean oneDayLookoutFlag;
 
+    private String etaEtdFilter;
+
+    private String etaEtdSortFlag;
+
     private MultipartFile multipartFile;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
@@ -200,7 +204,23 @@ public class CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-	@Override
+    public String getEtaEtdFilter() {
+        return etaEtdFilter;
+    }
+
+    public void setEtaEtdFilter(String etaEtdFilter) {
+        this.etaEtdFilter = etaEtdFilter;
+    }
+
+    public String getEtaEtdSortFlag() {
+        return etaEtdSortFlag;
+    }
+
+    public void setEtaEtdSortFlag(String etaEtdSortFlag) {
+        this.etaEtdSortFlag = etaEtdSortFlag;
+    }
+
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);

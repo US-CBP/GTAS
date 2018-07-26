@@ -49,11 +49,20 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
 
     $scope.casesGrid.columnDefs = [
         {
-            field: 'lastName',
-            name: 'lastName',
-            displayName: 'pass.lastname', headerCellFilter: 'translate',
-            cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-        },
+                field: 'lastName',
+                name: 'lastName',
+                displayName: 'pass.lastname', headerCellFilter: 'translate',
+                cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.passengerId}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.passengerId}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+            },
+            {
+                field: 'lastName',
+                name: 'countdown',
+                displayName: 'Time to takeoff', headerCellFilter: 'translate',
+                cellTemplate: '<div class=\'time-to\'>\n' +
+                '        <span countdown=\'\' date=\'January 1, 2017 12:00:00\'>&nbsp;</span>\n' +
+                '    </div>'
+            },
+
         {
             field: 'firstName',
             name: 'firstName',
