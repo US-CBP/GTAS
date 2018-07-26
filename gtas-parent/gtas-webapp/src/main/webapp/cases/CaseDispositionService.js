@@ -61,7 +61,9 @@
                     status: model.status,
                     ruleCatId: model.ruleCat,
                     etaStart: model.etaStart,
-                    etaEnd: model.etaEnd
+                    etaEnd: model.etaEnd,
+                    etaEtdFilter: model.etaEtdFilter,
+                    etaEtdSortFlag: model.etaEtdSortFlag
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -124,6 +126,37 @@
                 return dfd.promise;
             }
 
+            function addToOneDayLookout(caseIdParam){
+                
+                 var dfd = $q.defer();
+                 dfd.resolve($http({
+                     method: 'get',
+                     url: "/gtas/addonedaylookout",
+                     params: {
+                    	 caseId:caseIdParam
+                     }
+                 }));
+        		 
+        	        		 
+                 return dfd.promise;
+             }  
+     
+                    
+            function removeFromOneDayLookoutList(caseIdParam){
+                
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'get',
+                    url: "/gtas/removeonedaylookout",
+                    params: {
+                   	 caseId:caseIdParam
+                    }
+                }));
+       		 
+       	        		 
+                return dfd.promise;
+            }  
+            
             function getDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
@@ -197,6 +230,8 @@
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,
                 updateHitsDisposition:updateHitsDisposition,
+                addToOneDayLookout:addToOneDayLookout,
+                removeFromOneDayLookoutList:removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
                 getByQueryParams: getByQueryParams

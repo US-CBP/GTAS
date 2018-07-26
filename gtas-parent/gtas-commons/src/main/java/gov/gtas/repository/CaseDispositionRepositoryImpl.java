@@ -60,6 +60,23 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             q.orderBy(orders);
         }
         
+        if (dto.getOneDayLookoutFlag() != null) {
+			predicates.add(cb.equal(root.<Boolean> get("oneDayLookoutFlag"),
+					dto.getOneDayLookoutFlag()));
+		}
+
+        if (dto.getEtaEtdFilter() != null) {
+
+            SortOptionsDto sortDTO = new SortOptionsDto();
+            //default to earliest ETA
+            sortDTO.setColumn("flightETADate");
+            sortDTO.setDir("asc");
+            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
+            _tempSortDtoList.add(sortDTO);
+            predicates.add(cb.equal(root.<Boolean> get("oneDayLookoutFlag"),
+                    dto.getOneDayLookoutFlag()));
+
+        }
         
 		if (dto.getFlightId() != null) {
 			predicates.add(cb.equal(root.<Long> get("flightId"),

@@ -44,6 +44,12 @@ public class CaseRequestDto implements Serializable {
     private String lastName;
 
     private Long ruleCatId;
+    
+    private Boolean oneDayLookoutFlag;
+
+    private String etaEtdFilter;
+
+    private String etaEtdSortFlag;
 
     private MultipartFile multipartFile;
 
@@ -188,6 +194,30 @@ public class CaseRequestDto implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Boolean getOneDayLookoutFlag() {
+		return oneDayLookoutFlag;
+	}
+
+	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
+		this.oneDayLookoutFlag = oneDayLookoutFlag;
+	}
+
+    public String getEtaEtdFilter() {
+        return etaEtdFilter;
+    }
+
+    public void setEtaEtdFilter(String etaEtdFilter) {
+        this.etaEtdFilter = etaEtdFilter;
+    }
+
+    public String getEtaEtdSortFlag() {
+        return etaEtdSortFlag;
+    }
+
+    public void setEtaEtdSortFlag(String etaEtdSortFlag) {
+        this.etaEtdSortFlag = etaEtdSortFlag;
     }
 
     @Override
