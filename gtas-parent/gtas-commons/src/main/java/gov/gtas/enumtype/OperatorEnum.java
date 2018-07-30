@@ -8,6 +8,7 @@ package gov.gtas.enumtype;
 public enum OperatorEnum {
     
     EQUAL ("="),
+    EQUALS ("="),
     NOT_EQUAL ("!="),
     IN ("in"),
     NOT_IN ("not in"),
@@ -16,6 +17,7 @@ public enum OperatorEnum {
     GREATER (">"),
     GREATER_OR_EQUAL (">="),
     BETWEEN ("BETWEEN"),
+    NOT_BETWEEN ("NOT BETWEEN"),
     BEGINS_WITH ("LIKE"),
     NOT_BEGINS_WITH ("NOT LIKE"),
     CONTAINS ("LIKE"),
@@ -45,7 +47,7 @@ public enum OperatorEnum {
              }
          }
         
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("Illegal operator enum: "+ value);
     }
 
 }
