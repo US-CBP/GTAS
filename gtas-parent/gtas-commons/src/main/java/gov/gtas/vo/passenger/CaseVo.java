@@ -18,8 +18,8 @@ public class CaseVo {
     private Long paxId;
     private Long flightId;
     private String hitType;
-    private Date flightEta;
-    private Date flightEtd;
+    private Date flightETADate;
+    private Date flightETDDate;
     private String flightDirection;
 	private String lastName;
     private String firstName;
@@ -82,19 +82,24 @@ public class CaseVo {
 	public void setHitType(String hitType) {
 		this.hitType = hitType;
 	}
-	public Date getFlightEta() {
-		return flightEta;
-	}
-	public void setFlightEta(Date flightEta) {
-		this.flightEta = flightEta;
-	}
-	public Date getFlightEtd() {
-		return flightEtd;
-	}
-	public void setFlightEtd(Date flightEtd) {
-		this.flightEtd = flightEtd;
-	}
-	public Long getPassengerId() {
+
+    public Date getFlightETADate() {
+        return flightETADate;
+    }
+
+    public void setFlightETADate(Date flightETADate) {
+        this.flightETADate = flightETADate;
+    }
+
+    public Date getFlightETDDate() {
+        return flightETDDate;
+    }
+
+    public void setFlightETDDate(Date flightETDDate) {
+        this.flightETDDate = flightETDDate;
+    }
+
+    public Long getPassengerId() {
         return passengerId;
     }
     public void setPassengerId(Long passengerId) {

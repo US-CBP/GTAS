@@ -86,15 +86,15 @@ app.controller('CasesCtrl', function ($scope, newCases, $sce, caseService, gridS
             cellTemplate: '<div>{{row.entity.carrier}}{{COL_FIELD}}</div>'
         },
         {
-            field: 'flightEtd',
-            name: 'flightEtd',
+            field: 'flightETDDate',
+            name: 'flightETDDate',
             displayName: 'pass.etd', headerCellFilter: 'translate',
             cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
             enableFiltering: false
         },
         {
-            field: 'flightEta',
-            name: 'flightEta',
+            field: 'flightETADate',
+            name: 'flightETADate',
             displayName: 'pass.eta', headerCellFilter: 'translate',
             cellFilter: 'date: "MM/dd/yyyy hh:mm:ss"',
             enableFiltering: false

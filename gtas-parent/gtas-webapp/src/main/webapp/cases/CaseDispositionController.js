@@ -32,11 +32,13 @@
             };
 
             $scope.sortEtaEtdFlag=[
+                {id: 'flightETADate', name: ''},
                 {id: 'flightETADate', name: 'ETA'},
                 {id: 'flightETDDate', name: 'ETD'}
             ];
 
             $scope.sortEtaEtdFlagStatuses=[
+                {id: '', name: ''},
                 {id: 'asc', name: 'ASCENDING'},
                 {id: 'desc', name: 'DESCENDING'}
             ];
@@ -151,10 +153,9 @@
                 {
                     field: 'lastName',
                     name: 'countdown',
-                    displayName: 'Countdown to takeoff', headerCellFilter: 'translate',
-                    cellTemplate: '<div class=\'time-to\'>\n' +
-                    '        <span countdown=\'\' date=\'January 1, 2017 12:00:00\'>&nbsp;</span>\n' +
-                    '    </div>'
+                    displayName: 'Countdown Timer', headerCellFilter: 'translate',
+                    //cellTemplate: '<count-down date="{{row.entity.flightETDDate}}">'
+                    cellTemplate: '<div class=\'time-to\' countdown=\'\' date="{{row.entity.flightETDDate}}" message=""> </div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
@@ -219,6 +220,8 @@
 
             $scope.reset = function () {
                 $scope.model.reset();
+                $scope.model.etaEtdFilter = $scope.emptyString;
+                $scope.model.etaEtdSortFlag = $scope.emptyString;
                 $scope.resolvePage();
             };
 

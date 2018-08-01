@@ -1472,16 +1472,33 @@ var app;
             '$interval',
             function (timeUtil, $interval) {
                 return {
-                    restrict: 'A',
-                    scope: { date: '@' },
+                    restrict: 'EA',
+                    replace: false,
+                    transclude: true,
+                    template: "<div ng-transclude>{{message}}</div>",
+                    scope: { date: '@',
+                             message: '@'},
                     link: function (scope, element) {
-                        var future;
-                        future = new Date(scope.date);
-                        $interval(function () {
-                            var diff;
-                            diff = Math.floor((future.getTime() - new Date().getTime()) / 1000);
-                            return element.text(timeUtil.dhms(diff));
-                        }, 1000);
+                        var future, message;
+                        var messageStart = '<div>';
+                        var messageWarn = '<span class="label label-warning">WARNING</span>';
+                        var messageEndDiv = '</div>';
+
+                        scope.$watch('date', function(date){
+                            future = new Date(parseInt(date));
+                            $interval(function () {
+                                var diff;
+                                diff = Math.floor((future.getTime() - new Date().getTime()) / 1000);
+
+                                if(Math.floor(( future - new Date() ) / 86400000) < 2 ){
+                                    message = messageStart+timeUtil.dhms(diff)+messageWarn+messageEndDiv;
+                                }else{
+                                    message = messageStart+timeUtil.dhms(diff)+messageEndDiv;
+                                }
+                                return element.html(message);
+                            }, 1000);
+                        });
+
                     }
                 };
             }
@@ -1496,6 +1513,7 @@ var app;
                     minutes = Math.floor(t / 60) % 60;
                     t -= minutes * 60;
                     seconds = t % 60;
+
                     return [
                         days + 'd',
                         hours + 'h',
