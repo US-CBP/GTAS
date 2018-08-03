@@ -335,15 +335,24 @@ public class LoaderUtils {
     }
     
     public boolean isPrimeFlight(FlightVo fvo, String[] primeFlightCriteria){
-    	if(primeFlightCriteria[3].length() < 4){
+    	//The regex splits on alphanumeric detection. Flightnumber can sometimes be < 4 digits, this converts to 4 and adds preceding 0's if necessary.
+    	String regex = "((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))";
+    	String[] tmpArry = primeFlightCriteria[2].split(regex);
+    	if(tmpArry.length == 2){
+    		if(tmpArry[1].length() < 4){
+    		   tmpArry[1] = String.format("%4s",tmpArry[1]);
+    		   tmpArry[1] = tmpArry[1].replace(" ", "0");
+        	}
+    		primeFlightCriteria[2] = tmpArry[0]+tmpArry[1];
+    	}
+    	/*if(primeFlightCriteria[3].length() < 4){
     		primeFlightCriteria[3] = String.format("%4s",primeFlightCriteria[3]);
 	   		primeFlightCriteria[3] = primeFlightCriteria[3].replace(" ", "0");
-    	}
+    	}*/
 	    	
-    	if(fvo.getFlightNumber().toString().equals(primeFlightCriteria[3]) &&
-    			fvo.getOrigin().toString().equals(primeFlightCriteria[0]) &&
-    			fvo.getDestination().toString().equals(primeFlightCriteria[1]) &&
-    			fvo.getCarrier().toString().equals(primeFlightCriteria[2])){
+    	if(	fvo.getOrigin().toString().equals(primeFlightCriteria[0]) &&
+    		fvo.getDestination().toString().equals(primeFlightCriteria[1]) &&
+    		primeFlightCriteria[2].equals(fvo.getCarrier().toString() + fvo.getFlightNumber().toString())){
     		logger.debug("Prime Flight Found!");
     		return true;
 	   	} else return false;

@@ -47,23 +47,24 @@ public class LoaderQueueThreadManager {
 	public void receiveMessages(Message<?> message) {
 		String[] primeFlightKeyArray = getPrimeFlightKey(message);
 		//Construct label for individual buckets out of concatenated array values from prime flight key generation
-		String primeFlight = primeFlightKeyArray[0]+primeFlightKeyArray[1]+primeFlightKeyArray[2]+primeFlightKeyArray[3];
+		String primeFlightKey = primeFlightKeyArray[0]+primeFlightKeyArray[1]+primeFlightKeyArray[2]+primeFlightKeyArray[3];
 		// bucketBucket is a bucket of buckets. It holds a series of queues that are processed sequentially.
 		// This solves the problem where-in which we cannot run the risk of trying to save/update the same flight at the same time. This is done
 		// by shuffling all identical flights into the same queue in order to be processed sequentially. However, by processing multiple
 		// sequential queues at the same time, we in essence multi-thread the process for all non-identical prime flights
-		BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlight);
+		BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlightKey);
 		if (potentialBucket == null) {
 			// Is not existing bucket, make bucket, stuff in bucketBucket,
-			logger.info("New Queue Created For Prime Flight: " + primeFlight);
+			logger.info("New Queue Created For Prime Flight: " + primeFlightKey);
 			BlockingQueue<Message<?>> queue = new ArrayBlockingQueue<Message<?>>(1024);
 			queue.offer(message); // TODO: offer returns false if can't enter the queue, need to make sure we don'tlose messages and have it wait for re-attempt when there is space.
-			bucketBucket.putIfAbsent(primeFlight, queue);
+			bucketBucket.putIfAbsent(primeFlightKey, queue);
 			// Only generate workers on a per queue basis
 			LoaderWorkerThread worker = ctx.getBean(LoaderWorkerThread.class);
 			worker.setQueue(queue);
 			worker.setMap(bucketBucket); // give map reference and key in order to kill queue later
-			worker.setPrimeFlightKey(primeFlightKeyArray);
+			worker.setPrimeFlightKeyArray(primeFlightKeyArray);
+			worker.setPrimeFlightKey(primeFlightKey);
 			exec.execute(worker);
 		} else {
 			// Is existing bucket, place same prime flight message into bucket
@@ -109,9 +110,8 @@ public class LoaderQueueThreadManager {
 					primeFlightKeyArray[locCount] = seg.getComposite(1).getElement(0);
 					locCount++;
 				}else if(seg.getName().equals("TDT")){
-					String[] tmpArry = seg.getComposite(1).getElement(0).split(regex);
-					primeFlightKeyArray[2] = tmpArry[0];
-					primeFlightKeyArray[3] = tmpArry[1];
+					//String[] tmpArry = seg.getComposite(1).getElement(0).split(regex);
+						primeFlightKeyArray[2] = seg.getComposite(1).getElement(0);
 				}
 				if(locCount == 2){
 					break;

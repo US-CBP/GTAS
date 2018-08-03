@@ -25,7 +25,9 @@ public class LoaderWorkerThread implements Runnable {
 	
 	private String text;
 	private String fileName;
-	private String[] primeFlightKey;
+	private String[] primeFlightKeyArray;
+	private String primeFlightKey;
+	
 	private BlockingQueue<Message<?>> queue;
 	private ConcurrentMap<String, BlockingQueue<Message<?>>> map;
 	
@@ -37,7 +39,7 @@ public class LoaderWorkerThread implements Runnable {
 	public LoaderWorkerThread(BlockingQueue<Message<?>> queue, ConcurrentMap<String, BlockingQueue<Message<?>>> map, String[] primeFlightKey){
         this.queue=queue;
         this.map = map;
-        this.primeFlightKey = primeFlightKey;
+        this.primeFlightKeyArray = primeFlightKey;
     }
 
 	@Override
@@ -71,12 +73,12 @@ public class LoaderWorkerThread implements Runnable {
     }
    
     private void processCommand() {
-      loader.receiveMessage(text, fileName, primeFlightKey);
+      loader.receiveMessage(text, fileName, primeFlightKeyArray);
     }
     
     private void destroyQueue(){
     	//remove the reference from the parent map at the same time as ending the thread, dereferencing the queue and GC-ing it.
-    	logger.debug("Prime key being removed: " + this.primeFlightKey);
+    	logger.debug("Prime key being removed: " + this.primeFlightKeyArray);
     	logger.debug("Queue inside this thread: " + this.queue.hashCode());
     	this.map.remove(this.primeFlightKey);
     	this.queue = null;
@@ -110,12 +112,12 @@ public class LoaderWorkerThread implements Runnable {
 		this.queue = queue;
 	}
 
-	public String[] getPrimeFlightKey() {
-		return primeFlightKey;
+	public String[] getPrimeFlightKeyArray() {
+		return primeFlightKeyArray;
 	}
 
-	public void setPrimeFlightKey(String[] primeFlightKey) {
-		this.primeFlightKey = primeFlightKey;
+	public void setPrimeFlightKeyArray(String[] primeFlightKey) {
+		this.primeFlightKeyArray = primeFlightKey;
 	}
 
 	public ConcurrentMap<String, BlockingQueue<Message<?>>> getMap() {
@@ -124,5 +126,13 @@ public class LoaderWorkerThread implements Runnable {
 
 	public void setMap(ConcurrentMap<String, BlockingQueue<Message<?>>> map) {
 		this.map = map;
+	}
+
+	public String getPrimeFlightKey() {
+		return primeFlightKey;
+	}
+
+	public void setPrimeFlightKey(String primeFlightKey) {
+		this.primeFlightKey = primeFlightKey;
 	}
 }

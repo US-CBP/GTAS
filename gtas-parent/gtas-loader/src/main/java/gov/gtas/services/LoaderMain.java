@@ -206,8 +206,7 @@ public class LoaderMain {
              if(seg.getName().equalsIgnoreCase("TVL")){
             	primeFlightTVL[0] = seg.getComposite(1).getElement(0);
             	primeFlightTVL[1] = seg.getComposite(2).getElement(0);
- 				primeFlightTVL[2] = seg.getComposite(3).getElement(0);
- 				primeFlightTVL[3] = seg.getComposite(4).getElement(0);
+ 				primeFlightTVL[2] = seg.getComposite(3).getElement(0) + seg.getComposite(4).getElement(0);
                 break;
              }
          }
