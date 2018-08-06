@@ -5,7 +5,7 @@ ENV MYSQL_DATABASE=gtas \
     MYSQL_PASSWORD=admin
 
 #ADD gtas-parent/gtas-commons/target/schema.sql /docker-entrypoint-initdb.d
-ADD target/dev_to_sandbox.sql /docker-entrypoint-initdb.d
+ADD dev_to_sandbox.sql /docker-entrypoint-initdb.d
 #ADD src/main/resources/sql/countries.sql /docker-entrypoint-initdb.d
 #ADD src/main/resources/sql/carriers.sql /docker-entrypoint-initdb.d
 #ADD src/main/resources/sql/airports.sql /docker-entrypoint-initdb.d
