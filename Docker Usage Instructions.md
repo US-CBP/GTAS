@@ -25,7 +25,7 @@ There are couple of ways to engage Docker within GTAS
 From under GTAS root folder, issue these commands
         
 ```sh
-        $ docker build -f gtas-parent/docker/tomcat.Dockerfile .
+        $ docker build -f gtas-parent/docker/tomcat.Dockerfile -t gtas_tomcatgtas .
 ```
 This would build you a _**gtas_tomcatgtas**_ image, the following command will let you check whether this image has been created or not.
 ```sh
@@ -42,7 +42,7 @@ Repeat similar process to build _**gtas_mariahost**_ image
 
 From under _**gtas-parent/gtas-commons**_ directory
 ```sh
-        $ docker build -f db.Dockerfile .
+        $ docker build -f db.Dockerfile -t gtas_mariahost .
 ```
         
 This would build you a _**gtas_mariahost**_ image, again check it with
