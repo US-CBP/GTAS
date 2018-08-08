@@ -90,8 +90,7 @@ public class LoaderQueueThreadManager {
 				tvlLineText = seg.getText();
 				primeFlightKeyArray[0] = seg.getComposite(1).getElement(0);
 				primeFlightKeyArray[1] = seg.getComposite(2).getElement(0);
-				primeFlightKeyArray[2] = seg.getComposite(3).getElement(0);
-				primeFlightKeyArray[3] = seg.getComposite(4).getElement(0);
+				primeFlightKeyArray[2] = seg.getComposite(3).getElement(0)+seg.getComposite(4).getElement(0);
 				break;
 			}
 		}
