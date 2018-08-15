@@ -58,6 +58,6 @@ public interface CaseDispositionService {
     public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
     
     public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
-    
-   
+
+    public String getCountdownAPISFlag();
 }

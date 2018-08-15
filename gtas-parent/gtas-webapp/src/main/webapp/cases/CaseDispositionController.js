@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService,
                   spinnerService, caseDispositionService, newCases,
-                  ruleCats, caseService, $state, uiGridConstants) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList = newCases.data.cases;
@@ -18,6 +18,8 @@
             $scope.pageSize = 10;
             $scope.pageNumber = 1;
             $scope.emptyString = "";
+            $scope.showCountdownLabelFlag = false;
+            $scope.trueFalseBoolean = "YES";
 
             $scope.model={
                 name: $scope.emptyString,
@@ -65,6 +67,13 @@
                     $scope.gridApi.exporter.pdfExport('all', 'all');
                 }
             };
+
+            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
+                $timeout(function () {
+                    $scope.showCountdownLabelFlag = ((typeof response !== undefined) && response.data.startsWith("Y")) ? true : false;
+
+                }, 1000);
+            });
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
@@ -155,7 +164,8 @@
                     name: 'countdown',
                     displayName: 'Countdown Timer', headerCellFilter: 'translate',
                     //cellTemplate: '<count-down date="{{row.entity.flightETDDate}}">'
-                    cellTemplate: '<div class=\'time-to\' countdown=\'\' date="{{row.entity.flightETDDate}}" message=""> </div>'
+                    cellTemplate: '<div class=\'time-to\' countdown=\'\' date="{{row.entity.flightETDDate}}" currentTime="{{row.entity.currentTime}}"' +
+                    'showCountdownLabelFlag="{{grid.appScope.showCountdownLabelFlag}}"> </div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',

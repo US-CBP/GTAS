@@ -42,6 +42,7 @@ public class CaseDispositionController {
     @Autowired
     private RuleCatService ruleCatService;
 
+
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public
@@ -195,6 +196,11 @@ public class CaseDispositionController {
     @RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
     public @ResponseBody List<HitDispositionStatus> getHitDispositionStatuses() {
         return caseDispositionService.getHitDispositionStatuses();
+    }
+
+    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
+    public @ResponseBody String getCountdownAPISFlag() {
+        return caseDispositionService.getCountdownAPISFlag();
     }
 
 }

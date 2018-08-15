@@ -35,6 +35,7 @@ public class CaseVo {
     private Set<HitsDisposition> hitsDispositions;
     private Set<HitsDispositionVo> hitsDispositionVos;
     private Boolean oneDayLookoutFlag;
+    private Date currentTime;
 
     public Long getId() {
         return id;
@@ -212,6 +213,12 @@ public class CaseVo {
 	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
-    
-    
+
+    public Date getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Date currentTime) {
+        this.currentTime = currentTime;
+    }
 }
