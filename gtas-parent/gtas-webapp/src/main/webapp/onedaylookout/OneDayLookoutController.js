@@ -69,7 +69,7 @@
             	   name: 'fullFlightNumber',
             	   displayName: 'Flight', headerCellFilter: 'translate'
                },
-               {
+	       {
             	   field: 'origDestAirportsStr',
             	   name: 'origDestAirportsStr',
             	   displayName: 'Origin/Destination', headerCellFilter: 'translate'
