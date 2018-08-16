@@ -1573,7 +1573,8 @@ var app;
             return {
                 dhms: function (t) {
                     var days, hours, minutes, seconds;
-                    days = Math.floor(t / 86400);
+                    if(t<0){days = Math.ceil(t / 86400)}
+                    else{days = Math.floor(t / 86400)}
                     t -= days * 86400;
                     hours = Math.floor(t / 3600) % 24;
                     t -= hours * 3600;
