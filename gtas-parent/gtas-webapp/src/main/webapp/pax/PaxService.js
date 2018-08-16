@@ -7,6 +7,12 @@
     'use strict';
     app
         .service('paxDetailService', function ($http, $q, Upload) {
+        	 function getPaxCaseHistory(paxId) {
+                 var dfd = $q.defer();
+                 dfd.resolve($http.get("/gtas/passenger/caseHistory/" + paxId));
+                 return dfd.promise;
+             }
+        	
             function getPaxDetail(paxId, flightId) {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/passengers/passenger/" + paxId + "/details?flightId=" + flightId));
@@ -73,7 +79,8 @@
                  return dfd.promise;
             }
 
-            return ({getPaxDetail: getPaxDetail,
+            return ({getPaxCaseHistory: getPaxCaseHistory,
+            		getPaxDetail: getPaxDetail,
                     getPaxFlightHistory: getPaxFlightHistory,
                     getPaxFullTravelHistory: getPaxFullTravelHistory,
                     getPaxBookingDetailHistory: getPaxBookingDetailHistory,

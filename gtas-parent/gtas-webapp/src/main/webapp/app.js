@@ -536,6 +536,12 @@ var app;
                         user: function (userService) {
                             return userService.getUserData();
                         },
+                        caseHistory : function (paxDetailService, $stateParams) {
+                        	return paxDetailService.getPaxCaseHistory($stateParams.paxId);
+                        },
+                        ruleCats: function(caseDispositionService){
+                            return caseDispositionService.getRuleCats();
+                        },
                         ruleHits: function(paxService, $stateParams){
                         	return paxService.getRuleHitsByFlightAndPax($stateParams.paxId, $stateParams.flightId);
                         },

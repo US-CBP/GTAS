@@ -5,9 +5,12 @@
  */
 package gov.gtas.services;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -50,10 +53,12 @@ import gov.gtas.repository.HitDetailRepository;
 import gov.gtas.repository.HitDispositionStatusRepository;
 import gov.gtas.repository.HitsDispositionCommentsRepository;
 import gov.gtas.repository.HitsDispositionRepository;
+import gov.gtas.repository.PassengerIDTagRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.RuleCatRepository;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.util.EntityResolverUtils;
 import gov.gtas.vo.OneDayLookoutVo;
 import gov.gtas.vo.passenger.AttachmentVo;
 import gov.gtas.vo.passenger.CaseVo;
@@ -93,6 +98,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	private FlightPaxRepository flightPaxRepository;
 	@Autowired
 	public RuleCatService ruleCatService;
+    @Autowired
+    private PassengerIDTagRepository passengerIdTagDao;
 
 	public CaseDispositionServiceImpl() {
 	}
@@ -970,6 +977,38 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			e.printStackTrace();
 		}
 			return result;
+	}
+
+	@Override
+	public List<Case> getCaseByPaxId(List<Long> paxIds) {
+		//
+		return this.caseDispositionRepository.getCaseByPaxId(paxIds);
+	}
+
+	@Override
+	public List<Case> getCaseHistoryByPaxId(Long paxId) {
+		
+		Passenger pax = this.findPaxByID(new Long(paxId));
+
+    	String hash = null;
+    	
+    	try {
+    		hash = EntityResolverUtils.makeHashForPassenger(pax);
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	 
+    	/**
+    	 * 
+    	 * The hash could be based on gtas tag_id or tamr id (at the moment we only have gtas passenger_tag_id)
+    	 * 
+    	 */
+    	List<Long> paxIds = this.passengerIdTagDao.findPaxIdsByTagId(hash);
+    	
+    	if(paxIds.size()==0)
+    		return Collections.emptyList();
+    	
+    	return this.getCaseByPaxId(paxIds);
 	}
 
 
