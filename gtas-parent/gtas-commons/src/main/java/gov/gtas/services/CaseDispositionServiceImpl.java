@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.repository.*;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -45,17 +46,6 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
-import gov.gtas.repository.AttachmentRepository;
-import gov.gtas.repository.CaseDispositionRepository;
-import gov.gtas.repository.FlightPaxRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitDetailRepository;
-import gov.gtas.repository.HitDispositionStatusRepository;
-import gov.gtas.repository.HitsDispositionCommentsRepository;
-import gov.gtas.repository.HitsDispositionRepository;
-import gov.gtas.repository.PassengerIDTagRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.repository.RuleCatRepository;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.util.EntityResolverUtils;
@@ -100,6 +90,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	public RuleCatService ruleCatService;
     @Autowired
     private PassengerIDTagRepository passengerIdTagDao;
+	@Resource
+	private AppConfigurationRepository appConfigurationRepository;
 
 	public CaseDispositionServiceImpl() {
 	}
@@ -652,6 +644,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		for (Case f : tuple2.getRight()) {
 			CaseVo vo = new CaseVo();
 			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+			vo.setCurrentTime(new Date());
 			vos.add(vo);
 		}
 
@@ -925,6 +918,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				oneDayLookoutVo.setFullFlightNumber(oneDayLookoutCase.getFlight().getFullFlightNumber());
 				oneDayLookoutVo.setPaxId(oneDayLookoutCase.getPaxId());
 				oneDayLookoutVo.setFlightId(oneDayLookoutCase.getFlightId());
+				String origDestFlightsStr = oneDayLookoutCase.getFlight().getOrigin() + "/" + oneDayLookoutCase.getFlight().getDestination();
+                                oneDayLookoutVo.setOrigDestAirportsStr(origDestFlightsStr);
 
 				if (oneDayLookoutCase.getFlight().getDirection() != null) {
 
@@ -1011,6 +1006,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     	return this.getCaseByPaxId(paxIds);
 	}
 
-
+	public String getCountdownAPISFlag(){
+		return appConfigurationRepository.findByOption(AppConfigurationRepository.CASE_COUNTDOWN_LABEL).getValue();
+	}
 
 }

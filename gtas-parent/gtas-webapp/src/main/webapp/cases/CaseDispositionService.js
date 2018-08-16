@@ -223,6 +223,14 @@
                 return dfd.promise;
             }
 
+            function getAppConfigAPISFlag(){
+
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/countdownAPISFlag"));
+                return dfd.promise;
+
+            }
+
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -234,7 +242,8 @@
                 removeFromOneDayLookoutList:removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
-                getByQueryParams: getByQueryParams
+                getByQueryParams: getByQueryParams,
+                getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
 }());

@@ -229,4 +229,9 @@ public class CaseDispositionController {
     	return vos;
     }
  
+    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
+    public @ResponseBody String getCountdownAPISFlag() {
+        return caseDispositionService.getCountdownAPISFlag();
+    }
+
 }

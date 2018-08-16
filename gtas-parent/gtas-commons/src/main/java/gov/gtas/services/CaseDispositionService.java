@@ -62,4 +62,6 @@ public interface CaseDispositionService {
     public List<Case> getCaseByPaxId(List<Long> paxIds);
     
     public List<Case> getCaseHistoryByPaxId(Long paxId);
+
+    public String getCountdownAPISFlag();
 }
