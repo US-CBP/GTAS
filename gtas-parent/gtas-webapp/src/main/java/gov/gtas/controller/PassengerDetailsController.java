@@ -256,6 +256,9 @@ public class PassengerDetailsController {
 				fpVo.setResidencyCountry(fp.getResidenceCountry());
 				fpVo.setPassengerType(fp.getTravelerType());
 				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+                                fpVo.setResRefNumber(fp.getReservationReferenceNumber());
+                                fpVo.setFlightId(fp.getFlight().getId());
+                                fpVo.setPassengerId(fp.getPassenger().getId());
 				apisVo.addFlightpax(fpVo);
 			}
 

@@ -260,6 +260,7 @@
                           <th>Pax Type</th>
                           <th>Residence</th>
                           <th>Port of Arrival</th>
+                          <th>Ref Num</th>
                         </tr>
                       </thead>
                     </table>
@@ -269,10 +270,11 @@
                           <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                             <td>{{flightpax.firstName}}</td>
                             <td>{{flightpax.middleName}}</td>
-                            <td>{{flightpax.lastName}}</td>
+                            <td><a class="md-primary md-default-theme" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{flightpax.lastName}}</a></td>
                             <td>{{flightpax.passengerType}}</td>
                             <td>{{flightpax.residencyCountry}}</td>
                             <td>{{flightpax.portOfFirstArrival}}</td>
+                            <td>{{flightpax.resRefNumber}}</td>
                           </tr>
                         </tbody>
                       </table>

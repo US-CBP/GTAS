@@ -46,6 +46,7 @@ public class FlightPassengerVo {
     private String debarkation;
     private AddressVo installationAddress;
     private String portOfFirstArrival;
+    private String resRefNumber;
     
     private String apis;
     private String pnr;
@@ -215,5 +216,15 @@ public class FlightPassengerVo {
 	public void setPortOfFirstArrival(String portOfFirstArrival) {
 		this.portOfFirstArrival = portOfFirstArrival;
 	}
+
+        public String getResRefNumber() {
+            return resRefNumber;
+        }
+
+        public void setResRefNumber(String resRefNumber) {
+            this.resRefNumber = resRefNumber;
+        }
+        
+        
 	
 }
