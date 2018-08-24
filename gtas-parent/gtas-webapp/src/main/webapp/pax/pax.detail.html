@@ -251,8 +251,8 @@
                     FlightPax ({{ passenger.apisMessageVo.flightpaxs.length }})
                   </h3>
                   <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
-                    <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
-                      <thead>
+                      <table class="cbp-table-selectable mdl-js-data-table">
+                       <thead>
                         <tr>
                           <th>First Name</th>
                           <th>Middle Name</th>
@@ -263,9 +263,6 @@
                           <th>Ref Num</th>
                         </tr>
                       </thead>
-                    </table>
-                    <div class="floating-table-body">
-                      <table class="cbp-table-selectable mdl-js-data-table">
                         <tbody>
                           <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                             <td>{{flightpax.firstName}}</td>
@@ -278,7 +275,6 @@
                           </tr>
                         </tbody>
                       </table>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -755,7 +751,7 @@
                     <table class="cbp-table-selectable mdl-js-data-table">
                       <tbody>
                         <tr ng-repeat="k in flight | orderBy:'-etd'">
-                            <td>{{k.fullFlightNumber}}</td>
+                            <td><a class="md-primary md-default-theme" href="#/paxdetail/{{passenger.paxId}}/{{k.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{k.fullFlightNumber}}</a></td>
                             <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.originCountry}}</td>

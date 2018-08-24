@@ -60,4 +60,6 @@ public interface CaseDispositionService {
     public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
 
     public String getCountdownAPISFlag();
+    
+    public Date getCurrentServerTime();
 }

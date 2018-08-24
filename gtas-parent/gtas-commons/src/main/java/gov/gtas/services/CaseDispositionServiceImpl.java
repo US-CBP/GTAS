@@ -639,11 +639,39 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			CaseVo vo = new CaseVo();
 			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
 			vo.setCurrentTime(new Date());
+                        vo = calculateCountDownDisplayString(vo);
 			vos.add(vo);
 		}
 
 		return new CasePageDto(vos, tuple2.getLeft());
 	}
+        
+        private CaseVo calculateCountDownDisplayString(CaseVo caseVo)
+        {
+            Long currentTimeMillis = caseVo.getCurrentTime().getTime();
+            Long etdDateTime = caseVo.getFlightETDDate().getTime();
+            Long countDownMillis = etdDateTime - currentTimeMillis;
+            Long countDownSeconds = countDownMillis/1000;
+            
+            Long daysLong = countDownSeconds/86400;
+            Long secondsRemainder1 = countDownSeconds % 86400;
+            Long hoursLong = secondsRemainder1/3600;
+            Long secondsRemainder2 = secondsRemainder1 % 3600;
+            Long minutesLong = secondsRemainder2/60;
+            
+            String daysString = (countDownSeconds < 0 && daysLong.longValue() == 0) ? "-" + daysLong.toString() : daysLong.toString();
+            
+            String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
+            caseVo.setCountDownTimeDisplay(countDownString);
+
+            return caseVo;
+        }
+        
+        public Date getCurrentServerTime()
+        {
+            Date currentTime = new Date();
+            return currentTime;
+        }
 
 	/**
 	 * Utility method to fetch model object

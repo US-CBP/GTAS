@@ -8,25 +8,20 @@ package gov.gtas.controller;
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
-import gov.gtas.model.udr.Rule;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.services.dto.SortOptionsDto;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.mock.web.MockMultipartFile;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +43,21 @@ public class CaseDispositionController {
     public
     @ResponseBody
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
-                SecurityContextHolder.getContext());
-        SortOptionsDto sortDTO = new SortOptionsDto();
-        //default to earliest ETA
-        if(request.getEtaEtdFilter()!=null && request.getEtaEtdSortFlag()!=null){
-            sortDTO.setColumn(request.getEtaEtdFilter());
-            sortDTO.setDir(request.getEtaEtdSortFlag());
-            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
-            _tempSortDtoList.add(sortDTO);
-            request.setSort(_tempSortDtoList);
-        }
+        
+        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
 
-        return caseDispositionService.findAll(request);
+        //SortOptionsDto sortDTO = new SortOptionsDto();
+        //default to earliest ETA
+//        if(request.getEtaEtdFilter()!=null && request.getEtaEtdSortFlag()!=null){
+//            sortDTO.setColumn(request.getEtaEtdFilter());
+//            sortDTO.setDir(request.getEtaEtdSortFlag());
+//            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
+//            _tempSortDtoList.add(sortDTO);
+//            request.setSort(_tempSortDtoList);
+//        }
+
+        CasePageDto casePageDto = caseDispositionService.findAll(request);
+        return casePageDto;
     }
 
     //getOneHistDisp
@@ -85,6 +82,16 @@ public class CaseDispositionController {
         HashMap _tempMap = new HashMap();
 
         return _tempMap;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
+    @ResponseBody
+    public long getCurrentServerTime() {
+        
+        Date currentServerTime = caseDispositionService.getCurrentServerTime();
+        long currentServerTimeMillis = currentServerTime.getTime();
+        
+        return currentServerTimeMillis;
     }
 
     //getRuleCats
@@ -198,9 +205,9 @@ public class CaseDispositionController {
         return caseDispositionService.getHitDispositionStatuses();
     }
 
-    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
-    public @ResponseBody String getCountdownAPISFlag() {
-        return caseDispositionService.getCountdownAPISFlag();
-    }
+//    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
+//    public @ResponseBody String getCountdownAPISFlag() {
+//        return caseDispositionService.getCountdownAPISFlag();
+//    }
 
 }

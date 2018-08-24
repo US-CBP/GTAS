@@ -36,6 +36,7 @@ public class CaseVo {
     private Set<HitsDispositionVo> hitsDispositionVos;
     private Boolean oneDayLookoutFlag;
     private Date currentTime;
+    private String countDownTimeDisplay;
 
     public Long getId() {
         return id;
@@ -221,4 +222,13 @@ public class CaseVo {
     public void setCurrentTime(Date currentTime) {
         this.currentTime = currentTime;
     }
+
+    public String getCountDownTimeDisplay() {
+        return countDownTimeDisplay;
+    }
+
+    public void setCountDownTimeDisplay(String countDownTimeDisplay) {
+        this.countDownTimeDisplay = countDownTimeDisplay;
+    }
+ 
 }

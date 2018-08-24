@@ -29,9 +29,11 @@ public class Case extends BaseEntityAudit {
     private Long paxId;
 
     @Column(name = "eta_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date flightETADate;
 
     @Column(name = "etd_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date flightETDDate;
 
     @Column(name = "passengerName", nullable = true)

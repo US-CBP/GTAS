@@ -80,7 +80,7 @@ public class FlightPax implements Serializable {
 	private boolean headOfPool=false;
 
 	@ManyToOne
-    @JoinColumn(name = "flight_id", nullable = false)
+    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
     private Flight flight;
 
     @ManyToOne

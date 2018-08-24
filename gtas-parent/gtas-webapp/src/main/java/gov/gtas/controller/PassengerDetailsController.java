@@ -350,6 +350,7 @@ public class PassengerDetailsController {
 			.stream().map(flight -> {
 						FlightVo flightVo = new FlightVo();
 						copyModelToVo(flight, flightVo);
+                                                flightVo.setFlightId(flight.getId().toString());
 						return flightVo;
 					}).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -792,6 +793,7 @@ public class PassengerDetailsController {
 			target.setEtd(((BookingDetail)source).getEtd());
 			target.setEta(((BookingDetail)source).getEta());
 			//target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
+            target.setFlightId(source.getId().toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -818,6 +820,7 @@ public class PassengerDetailsController {
 			target.setEtd(source.getEtd());
 			target.setEta(source.getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
+                        target.setFlightId(source.getId().toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();
