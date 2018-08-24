@@ -8,6 +8,7 @@ package gov.gtas.services;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +68,7 @@ import gov.gtas.parsers.vo.ReportingPartyVo;
 import gov.gtas.parsers.vo.TicketFareVo;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.LookUpRepository;
+import gov.gtas.util.EntityResolverUtils;
 
 @Service
 public class LoaderUtils {
@@ -450,9 +452,12 @@ public class LoaderUtils {
      * @throws UnsupportedEncodingException
      */
     private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-                pax.getGender().toUpperCase(), pax.getDob().toString())));
-    }
+//        String hash = makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
+//                pax.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getDob()))));
+//            	
+//           return hash;
+    	return EntityResolverUtils.makeHashForPassenger(pax);
+    } 
 
     /**
      * Util method to hash passenger attributes
@@ -464,17 +469,18 @@ public class LoaderUtils {
     private String makeSHA1Hash(String input)
             throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-        md.reset();
-        byte[] buffer = input.getBytes("UTF-8");
-        md.update(buffer);
-        byte[] digest = md.digest();
-
-        String hexStr = "";
-        for (int i = 0; i < digest.length; i++) {
-            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-        }
-        return hexStr;
+//        MessageDigest md = MessageDigest.getInstance("SHA1");
+//        md.reset();
+//        byte[] buffer = input.getBytes("UTF-8");
+//        md.update(buffer);
+//        byte[] digest = md.digest();
+//
+//        String hexStr = "";
+//        for (int i = 0; i < digest.length; i++) {
+//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+//        }
+//        return hexStr;
+    	return EntityResolverUtils.makeSHA1Hash(input);
     }
     
     /**

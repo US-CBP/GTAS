@@ -536,6 +536,12 @@ var app;
                         user: function (userService) {
                             return userService.getUserData();
                         },
+                        caseHistory : function (paxDetailService, $stateParams) {
+                        	return paxDetailService.getPaxCaseHistory($stateParams.paxId);
+                        },
+                        ruleCats: function(caseDispositionService){
+                            return caseDispositionService.getRuleCats();
+                        },
                         ruleHits: function(paxService, $stateParams){
                         	return paxService.getRuleHitsByFlightAndPax($stateParams.paxId, $stateParams.flightId);
                         },
@@ -1567,7 +1573,8 @@ var app;
             return {
                 dhms: function (t) {
                     var days, hours, minutes, seconds;
-                    days = Math.floor(t / 86400);
+                    if(t<0){days = Math.ceil(t / 86400)}
+                    else{days = Math.floor(t / 86400)}
                     t -= days * 86400;
                     hours = Math.floor(t / 3600) % 24;
                     t -= hours * 3600;

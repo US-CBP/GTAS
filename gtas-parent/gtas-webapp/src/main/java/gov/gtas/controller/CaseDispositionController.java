@@ -5,11 +5,38 @@
  */
 package gov.gtas.controller;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -27,6 +54,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import gov.gtas.services.dto.SortOptionsDto;
+import gov.gtas.vo.passenger.CaseVo;
+
 
 @RestController
 public class CaseDispositionController {
@@ -36,7 +66,8 @@ public class CaseDispositionController {
 
     @Autowired
     private RuleCatService ruleCatService;
-
+    
+    private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
 
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -205,9 +236,31 @@ public class CaseDispositionController {
         return caseDispositionService.getHitDispositionStatuses();
     }
 
+
 //    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
 //    public @ResponseBody String getCountdownAPISFlag() {
 //        return caseDispositionService.getCountdownAPISFlag();
 //    }
+
+    
+    @ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)
+	public List<CaseVo> getPassengerCaseHistory(
+			@PathVariable(value = "paxId") Long paxId) {
+
+    	List<CaseVo> vos =new ArrayList<CaseVo>();
+    	
+    	List<Case> cases = caseDispositionService.getCaseHistoryByPaxId(paxId);
+    	
+    	
+    	for(Case _case : cases) {
+    		CaseVo vo = new CaseVo();
+    		CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
+    		vos.add(vo);
+    	}
+    	
+    	return vos;
+    }
 
 }

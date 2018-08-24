@@ -59,28 +59,11 @@ mvn clean install -Dskip.integration.tests=false
 
 ## Deploy
 
-Create the database 
-
-```
-mysql -u root -p
-$ create database gtas
-```
-
-Create the schema using Maven:
+Create the schema, load application configuration and lookup data using Maven:
 
 ```
 cd gtas-commons
 mvn hibernate4:export
-```
-
-Load the application configuration and lookup data (Note that countries must be loaded before airports):
-
-```
-mysql –u root –p
-$ source gtas-parent/gtas-commons/src/main/resources/sql/gtas_data.sql
-$ source gtas-parent/gtas-commons/src/main/resources/sql/countries.sql
-$ source gtas-parent/gtas-commons/src/main/resources/sql/carriers.sql
-$ source gtas-parent/gtas-commons/src/main/resources/sql/airports.sql
 ```
 
 Deploy to tomcat and start the server.
