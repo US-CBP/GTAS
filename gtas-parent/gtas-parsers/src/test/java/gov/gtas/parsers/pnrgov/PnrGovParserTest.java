@@ -38,7 +38,7 @@ public class PnrGovParserTest {
      * */
     @Test
     public void reservationDateMapsToRCITimeCreated() throws ParseException {
-        PnrVo vo = this.parser.parse(pnrTestMessages.fullPnrMessagePg77());
+        PnrVo vo = this.parser.parse(PnrTestMessages.fullPnrMessagePg77());
         LocalDateTime reservationDate = getLocalDateTime(vo.getReservationCreateDate());
         LocalDateTime May23rd2013At181348 = LocalDateTime.of(2013, 5, 23, 18, 13, 48);
         assertTrue(May23rd2013At181348.isEqual(reservationDate));
@@ -46,7 +46,7 @@ public class PnrGovParserTest {
 
     @Test
     public void dateBookedMapsToPaymentMadeDate() throws ParseException {
-        PnrVo vo = this.parser.parse(pnrTestMessages.fullPnrMessagePg77());
+        PnrVo vo = this.parser.parse(PnrTestMessages.fullPnrMessagePg77());
         LocalDateTime dateBooked = getLocalDateTime(vo.getDateBooked());
         LocalDateTime May23rd2013At212400 = LocalDateTime.of(2013, 5, 23, 21, 24);
         assertTrue(May23rd2013At212400.isEqual(dateBooked));
@@ -54,7 +54,7 @@ public class PnrGovParserTest {
 
     @Test
     public void bookingDateMapsToFirstDateWithCode710() throws ParseException {
-        PnrVo vo = this.parser.parse(pnrTestMessages.fullPnrMessagePg76());
+        PnrVo vo = this.parser.parse(PnrTestMessages.fullPnrMessagePg76());
         LocalDate dateBooked = getLocalDate(vo.getDateBooked());
         LocalDate Feb142013 = LocalDate.of(2013, 2, 14);
         assertTrue(Feb142013.isEqual(dateBooked));

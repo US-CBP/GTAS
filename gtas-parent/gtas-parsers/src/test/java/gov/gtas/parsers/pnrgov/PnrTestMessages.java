@@ -1,6 +1,6 @@
 package gov.gtas.parsers.pnrgov;
 
-public class pnrTestMessages {
+public class PnrTestMessages {
 
 
    public static String fullPnrMessagePg77() {
