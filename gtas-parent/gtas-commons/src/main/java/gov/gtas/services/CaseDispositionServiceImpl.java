@@ -44,10 +44,12 @@ import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.DispositionStatusCode;
+import gov.gtas.model.lookup.FlightDirectionCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.services.dto.SortOptionsDto;
 import gov.gtas.util.EntityResolverUtils;
 import gov.gtas.vo.OneDayLookoutVo;
 import gov.gtas.vo.passenger.AttachmentVo;
@@ -636,27 +638,34 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @return
 	 */
 	@Override
-	public CasePageDto findAll(CaseRequestDto dto) {
+	public CasePageDto findAll(CaseRequestDto dto) 
+        {
+            List<CaseVo> vos = new ArrayList<>();
 
-		List<CaseVo> vos = new ArrayList<>();
+            CasePageDto casePageDto = null;
 
-		Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
-		for (Case f : tuple2.getRight()) {
-			CaseVo vo = new CaseVo();
-			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
-			vo.setCurrentTime(new Date());
-                        vo = calculateCountDownDisplayString(vo);
-			vos.add(vo);
-		}
+            Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
+            for (Case f : tuple2.getRight()) {
+                    CaseVo vo = new CaseVo();
+                    CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+                    vo.setCurrentTime(new Date());
+                    vo.setFlightDirection(f.getFlight().getDirection());
+                    vo.setCountdownTime(f.getCountdown().getTime());
+                    vo = calculateCountDownDisplayString(vo);
+                    vos.add(vo);
+            }
 
-		return new CasePageDto(vos, tuple2.getLeft());
+            casePageDto = new CasePageDto(vos, tuple2.getLeft()); 
+
+            return casePageDto;
 	}
         
         private CaseVo calculateCountDownDisplayString(CaseVo caseVo)
         {
+            Long etdEtaDateTime = caseVo.getCountdownTime();
             Long currentTimeMillis = caseVo.getCurrentTime().getTime();
-            Long etdDateTime = caseVo.getFlightETDDate().getTime();
-            Long countDownMillis = etdDateTime - currentTimeMillis;
+           
+            Long countDownMillis = etdEtaDateTime - currentTimeMillis;
             Long countDownSeconds = countDownMillis/1000;
             
             Long daysLong = countDownSeconds/86400;
@@ -673,6 +682,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             return caseVo;
         }
         
+        @Override
         public Date getCurrentServerTime()
         {
             Date currentTime = new Date();

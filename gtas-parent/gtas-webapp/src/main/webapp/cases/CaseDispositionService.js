@@ -27,7 +27,7 @@
                     pageSize: params.pageSize.toString(),
                     pageNumber: params.pageNumber.toString(),
                     sort: params.sort,
-                    paxName: params.model.name,
+                    lastName: params.model.name,
                     flightNumber: params.model.flightNumber,
                     status: params.model.status,
                     ruleCatId: params.model.ruleCat,
@@ -70,7 +70,8 @@
                     etaStart: model.etaStart,
                     etaEnd: model.etaEnd,
                     etaEtdFilter: model.etaEtdFilter,
-                    etaEtdSortFlag: model.etaEtdSortFlag
+                    etaEtdSortFlag: model.etaEtdSortFlag,
+                    sort: model.sort
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({

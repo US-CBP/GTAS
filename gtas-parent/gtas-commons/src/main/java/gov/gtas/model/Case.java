@@ -64,6 +64,10 @@ public class Case extends BaseEntityAudit {
     @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
+    @Transient
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date countdown;
+
     public void addHitsDisposition(HitsDisposition _tempHit){
         hitsDispositions.add(_tempHit);
         //_tempHit.setaCase(this);
@@ -225,8 +229,14 @@ public class Case extends BaseEntityAudit {
 		this.flight = flight;
 	}
 
-	
-	
+    public Date getCountdown() {
+        return countdown;
+    }
+
+    public void setCountdown(Date countdown) {
+        this.countdown = countdown;
+    }
+
 	public Boolean getOneDayLookoutFlag() {
 		return oneDayLookoutFlag;
 	}

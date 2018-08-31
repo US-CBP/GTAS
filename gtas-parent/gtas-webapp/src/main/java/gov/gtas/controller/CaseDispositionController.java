@@ -62,16 +62,6 @@ public class CaseDispositionController {
         
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
 
-        //SortOptionsDto sortDTO = new SortOptionsDto();
-        //default to earliest ETA
-//        if(request.getEtaEtdFilter()!=null && request.getEtaEtdSortFlag()!=null){
-//            sortDTO.setColumn(request.getEtaEtdFilter());
-//            sortDTO.setDir(request.getEtaEtdSortFlag());
-//            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
-//            _tempSortDtoList.add(sortDTO);
-//            request.setSort(_tempSortDtoList);
-//        }
-
         CasePageDto casePageDto = caseDispositionService.findAll(request);
         return casePageDto;
     }

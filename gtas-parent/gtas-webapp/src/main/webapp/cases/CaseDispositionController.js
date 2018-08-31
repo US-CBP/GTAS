@@ -23,7 +23,8 @@
             
             var startDate = new Date();
             var endDate = new Date();
-            endDate.setDate(endDate.getDate() + 3);
+            endDate.setDate(endDate.getDate() + 30);
+            startDate.setDate(startDate.getDate() - 30);
 
             $scope.model={
                 name: $scope.emptyString,
@@ -33,21 +34,7 @@
                 ruleCat: $scope.emptyString,
                 etaStart: startDate,
                 etaEnd: endDate,
-                etaEtdFilter: $scope.emptyString,
-                etaEtdSortFlag: $scope.emptyString
             };
-
-            $scope.sortEtaEtdFlag=[
-                {id: 'flightETADate', name: ''},
-                {id: 'flightETADate', name: 'ETA'},
-                {id: 'flightETDDate', name: 'ETD'}
-            ];
-
-            $scope.sortEtaEtdFlagStatuses=[
-                {id: '', name: ''},
-                {id: 'asc', name: 'ASCENDING'},
-                {id: 'desc', name: 'DESCENDING'}
-            ];
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -147,10 +134,17 @@
                 
                 for (var i = 0; i < $scope.casesList.length; i++)
                 {
-                    var etdTimeMillis = $scope.casesList[i].flightETDDate;
-                    //var currentTimeMillis = (new Date()).getTime();
+                    var etdEtaTimeMillis = 0;
+                    if (($scope.casesList[i].flightDirection === "O") || ($scope.casesList[i].flightDirection === "C"))
+                    {
+                       etdEtaTimeMillis = $scope.casesList[i].flightETDDate;
+                    }
+                    else
+                    {
+                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;  
+                    }
 
-                    var countDownMillis = etdTimeMillis - currentTimeMillis;
+                    var countDownMillis = etdEtaTimeMillis - currentTimeMillis;
                     var countDownSeconds = Math.trunc(countDownMillis/1000);
 
                     var daysLong = Math.trunc(countDownSeconds/86400);
@@ -223,16 +217,10 @@
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
-                    field: 'flightETDDate',
-                    name: 'flightETDDate',
+                    field: 'countdown',
+                    name: 'countdown',
                     displayName: 'Countdown Timer', headerCellFilter: 'translate',
                     cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span></div>'
-
-                    //field: 'flightETDDate',
-                    //name: 'flightETDDate',
-                    //displayName: 'Countdown Timer', headerCellFilter: 'translate',
-                    //cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span><button ng-show="rowRenderIndex==0" ng-click="grid.appScope.refreshCountDown()"' + 
-                    //        ' type="button" class="fa fa-refresh btn-primary"  style="margin-left:6px;background-color:gray;color:white;padding:4px;" /><md-tooltip class="multi-tooltip" md-direction="right">Refresh Countdown Times</md-tooltip></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
@@ -300,8 +288,6 @@
             $scope.reset = function () {
                 // this function does not work.
                 //$scope.model.reset();
-                $scope.model.etaEtdFilter = $scope.emptyString;
-                $scope.model.etaEtdSortFlag = $scope.emptyString;
                 $scope.model.name = $scope.emptyString;
                 $scope.model.flightNumber = $scope.emptyString;
                 $scope.model.status = $scope.emptyString;
@@ -309,7 +295,8 @@
                 
                 var startDate = new Date();
                 var endDate = new Date();
-                endDate.setDate(endDate.getDate() + 3);
+                endDate.setDate(endDate.getDate() + 30);
+                startDate.setDate(startDate.getDate() - 30);
                 $scope.model.etaStart = startDate;
                 $scope.model.etaEnd = endDate;
                 $scope.resolvePage();
