@@ -25,7 +25,14 @@
             function getPagedCases(params){
                 var pageRequest = {
                     pageSize: params.pageSize.toString(),
-                    pageNumber: params.pageNumber.toString()
+                    pageNumber: params.pageNumber.toString(),
+                    sort: params.sort,
+                    lastName: params.model.name,
+                    flightNumber: params.model.flightNumber,
+                    status: params.model.status,
+                    ruleCatId: params.model.ruleCat,
+                    etaStart: params.model.etaStart,
+                    etaEnd: params.model.etaEnd
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -63,7 +70,8 @@
                     etaStart: model.etaStart,
                     etaEnd: model.etaEnd,
                     etaEtdFilter: model.etaEtdFilter,
-                    etaEtdSortFlag: model.etaEtdSortFlag
+                    etaEtdSortFlag: model.etaEtdSortFlag,
+                    sort: model.sort
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -223,13 +231,28 @@
                 return dfd.promise;
             }
 
-            function getAppConfigAPISFlag(){
+//            function getAppConfigAPISFlag(){
+//
+//                var dfd = $q.defer();
+//                dfd.resolve($http.get("/gtas/countdownAPISFlag"));
+//                return dfd.promise;
+//
+//            }
 
-                var dfd = $q.defer();
-                dfd.resolve($http.get("/gtas/countdownAPISFlag"));
-                return dfd.promise;
-
-            }
+             function getCurrentServerTime() {
+  
+                var currentServerTimeMillis = 0;
+                
+                $.ajax({
+                    async: false,
+                    url: "/gtas/getCurrentServerTime",
+                    success: function (data, status, jqXHR) {
+                       currentServerTimeMillis = data;
+                     }
+                });
+                
+                return currentServerTimeMillis;
+             } 
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
@@ -243,7 +266,8 @@
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
                 getByQueryParams: getByQueryParams,
-                getAppConfigAPISFlag: getAppConfigAPISFlag
+                getCurrentServerTime: getCurrentServerTime
+                //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
 }());

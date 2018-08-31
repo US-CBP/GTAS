@@ -256,6 +256,9 @@ public class PassengerDetailsController {
 				fpVo.setResidencyCountry(fp.getResidenceCountry());
 				fpVo.setPassengerType(fp.getTravelerType());
 				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+                                fpVo.setResRefNumber(fp.getReservationReferenceNumber());
+                                fpVo.setFlightId(fp.getFlight().getId());
+                                fpVo.setPassengerId(fp.getPassenger().getId());
 				apisVo.addFlightpax(fpVo);
 			}
 
@@ -347,6 +350,7 @@ public class PassengerDetailsController {
 			.stream().map(flight -> {
 						FlightVo flightVo = new FlightVo();
 						copyModelToVo(flight, flightVo);
+                                                flightVo.setFlightId(flight.getId().toString());
 						return flightVo;
 					}).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -789,6 +793,7 @@ public class PassengerDetailsController {
 			target.setEtd(((BookingDetail)source).getEtd());
 			target.setEta(((BookingDetail)source).getEta());
 			//target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
+            target.setFlightId(source.getId().toString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -815,6 +820,7 @@ public class PassengerDetailsController {
 			target.setEtd(source.getEtd());
 			target.setEta(source.getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
+                        target.setFlightId(source.getId().toString());
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -36,7 +36,7 @@ public class HitsSummary extends BaseEntity {
     private List<HitDetail> hitdetails = new ArrayList<HitDetail>();
 
     @ManyToOne
-    @JoinColumn(name = "flight_id", nullable = false)
+    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
     private Flight flight;
 
     @ManyToOne

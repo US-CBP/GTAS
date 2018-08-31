@@ -14,6 +14,4 @@ import java.util.List;
 public interface CaseDispositionRepositoryCustom {
 
     public Pair<Long, List<Case>> findByCriteria(CaseRequestDto dto);
-
-
 }
