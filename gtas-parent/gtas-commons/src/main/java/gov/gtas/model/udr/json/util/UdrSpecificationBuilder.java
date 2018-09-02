@@ -59,7 +59,6 @@ public class UdrSpecificationBuilder {
         meta.setAuthor(author);
         meta.setEnabled(enabled);
         meta.setEndDate(endDate);
-        meta.setRuleCat(1L);
         return this;
     }
 
