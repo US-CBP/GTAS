@@ -32,7 +32,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @TransactionConfiguration(defaultRollback = false)
-public class TargetingPerformanceEval {
+public class TargetingPerformanceEvalIT {
     public static final String PASSENGER_WL_NAME = "PerfTest Passenger WL";
     public static final String DOCUMENT_WL_NAME = "PerfTest Document WL";
 
