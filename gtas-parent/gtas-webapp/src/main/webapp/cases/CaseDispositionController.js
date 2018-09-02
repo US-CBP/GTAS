@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService,
                   spinnerService, caseDispositionService, newCases,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList = newCases.data.cases;
@@ -20,6 +20,11 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
+            
+            var startDate = new Date();
+            var endDate = new Date();
+            endDate.setDate(endDate.getDate() + 30);
+            startDate.setDate(startDate.getDate() - 30);
 
             $scope.model={
                 name: $scope.emptyString,
@@ -27,23 +32,9 @@
                 status : $scope.emptyString,
                 priority: $scope.emptyString,
                 ruleCat: $scope.emptyString,
-                etaStart: $scope.emptyString,
-                etaEnd: $scope.emptyString,
-                etaEtdFilter: $scope.emptyString,
-                etaEtdSortFlag: $scope.emptyString
+                etaStart: startDate,
+                etaEnd: endDate,
             };
-
-            $scope.sortEtaEtdFlag=[
-                {id: 'flightETADate', name: ''},
-                {id: 'flightETADate', name: 'ETA'},
-                {id: 'flightETDDate', name: 'ETD'}
-            ];
-
-            $scope.sortEtaEtdFlagStatuses=[
-                {id: '', name: ''},
-                {id: 'asc', name: 'ASCENDING'},
-                {id: 'desc', name: 'DESCENDING'}
-            ];
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -68,12 +59,13 @@
                 }
             };
 
-            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
-                $timeout(function () {
-                    $scope.showCountdownLabelFlag = ((typeof response !== undefined) && response.data.startsWith("Y")) ? true : false;
+//            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
+//                $timeout(function () {
+//                    $scope.showCountdownLabelFlag = ((typeof response !== undefined) && response.data.startsWith("Y")) ? true : false;
+//
+//                }, 1000);
+//            });
 
-                }, 1000);
-            });
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
@@ -116,19 +108,69 @@
             $scope.resolvePage = function () {
                 var postData = {
                     pageNumber: $scope.pageNumber,
-                    pageSize: $scope.pageSize
+                    pageSize: $scope.pageSize,
+                    sort:     $scope.model.sort,
+                    model:    $scope.model
                 };
                 spinnerService.show('html5spinner');
                 caseDispositionService.getPagedCases(postData).then(
                     function(data){
                         $scope.casesDispGrid.data = data.data.cases;
+                        $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
                         spinnerService.hide('html5spinner');
                     });
             };
+            
+            $scope.refreshCountDown = function () {
+                
+                var currentTimeMillis = caseDispositionService.getCurrentServerTime();
+ 
+                if (!currentTimeMillis)
+                {
+                   currentTimeMillis = (new Date()).getTime(); 
+                   console.log("Using client side time for cases countdown.");
+                }
+                
+                for (var i = 0; i < $scope.casesList.length; i++)
+                {
+                    var etdEtaTimeMillis = 0;
+                    if (($scope.casesList[i].flightDirection === "O") || ($scope.casesList[i].flightDirection === "C"))
+                    {
+                       etdEtaTimeMillis = $scope.casesList[i].flightETDDate;
+                    }
+                    else
+                    {
+                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;  
+                    }
+
+                    var countDownMillis = etdEtaTimeMillis - currentTimeMillis;
+                    var countDownSeconds = Math.trunc(countDownMillis/1000);
+
+                    var daysLong = Math.trunc(countDownSeconds/86400);
+                    var secondsRemainder1 = countDownSeconds % 86400;
+                    var hoursLong = Math.trunc(secondsRemainder1/3600);
+                    var secondsRemainder2 = secondsRemainder1 % 3600;
+                    var minutesLong = Math.trunc(secondsRemainder2/60);
+
+                    var daysString = (countDownSeconds < 0 && daysLong === 0) ? "-" + daysLong.toString() : daysLong.toString();
+
+                    var countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";                   
+
+                    $scope.casesList[i].countDownTimeDisplay = countDownString;    
+                }
+                
+                $scope.casesDispGrid.data = $scope.casesList;
+
+            };
+            
+            $timeout(function () {
+                $interval(function () {$scope.refreshCountDown();}, 20000);
+            },10000);
+             
 
             $scope.casesDispGrid = {
-                data: newCases.data.cases,
+                data: $scope.casesList,
                 paginationPageSizes: [10, 15, 25],
                 totalItems: newCases.data.totalCases,
                 paginationPageSize: $scope.pageSize,
@@ -143,6 +185,21 @@
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
+                    
+                    gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+                    if (sortColumns.length === 0) {
+                        $scope.model.sort = null;
+                    } else {
+                        $scope.model.sort = [];
+                        for (var i = 0; i < sortColumns.length; i++) {
+                            $scope.model.sort.push({
+                                column: sortColumns[i].name,
+                                dir: sortColumns[i].sort.direction
+                            });
+                        }
+                    }
+                    $scope.resolvePage();
+                })
 
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                         $scope.pageNumber = newPage;
@@ -160,12 +217,10 @@
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
-                    field: 'lastName',
+                    field: 'countdown',
                     name: 'countdown',
                     displayName: 'Countdown Timer', headerCellFilter: 'translate',
-                    //cellTemplate: '<count-down date="{{row.entity.flightETDDate}}">'
-                    cellTemplate: '<div class=\'time-to\' countdown=\'\' date="{{row.entity.flightETDDate}}" currentTime="{{row.entity.currentTime}}"' +
-                    'showCountdownLabelFlag="{{grid.appScope.showCountdownLabelFlag}}"> </div>'
+                    cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
@@ -188,6 +243,7 @@
                     name: 'status',
                     displayName: 'Status'
                 }
+
             ];
 
             $scope.getTableHeight = function () {
@@ -219,6 +275,7 @@
                                 $scope.errorToast("No Results Found", toastPosition);
                             }
                         $scope.casesDispGrid.data = data.data.cases;
+                        $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
                             }
                             else{
@@ -229,9 +286,19 @@
             };
 
             $scope.reset = function () {
-                $scope.model.reset();
-                $scope.model.etaEtdFilter = $scope.emptyString;
-                $scope.model.etaEtdSortFlag = $scope.emptyString;
+                // this function does not work.
+                //$scope.model.reset();
+                $scope.model.name = $scope.emptyString;
+                $scope.model.flightNumber = $scope.emptyString;
+                $scope.model.status = $scope.emptyString;
+                $scope.model.ruleCat = $scope.emptyString;
+                
+                var startDate = new Date();
+                var endDate = new Date();
+                endDate.setDate(endDate.getDate() + 30);
+                startDate.setDate(startDate.getDate() - 30);
+                $scope.model.etaStart = startDate;
+                $scope.model.etaEnd = endDate;
                 $scope.resolvePage();
             };
 

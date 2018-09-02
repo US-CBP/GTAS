@@ -6,11 +6,10 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.Case;
-import gov.gtas.model.Flight;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
+import java.time.Instant;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -19,11 +18,12 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import javax.persistence.Query;
 
 @Repository
 public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryCustom {
@@ -33,109 +33,180 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
 
     @PersistenceContext
     private EntityManager em;
-
+    
     @Override
-    public Pair<Long, List<Case>> findByCriteria(CaseRequestDto dto) {
+    public Pair<Long, List<Case>> findByCriteria(CaseRequestDto dto) 
+    {
+        StringBuilder querySB = new StringBuilder();
+        StringBuilder countQuerySB = new StringBuilder();
+        countQuerySB.append("SELECT COUNT(c) FROM Case c ");
+        
+        querySB.append("SELECT c, CASE WHEN c.flight.direction= 'I' THEN c.flightETADate WHEN c.flight.direction= 'O' THEN c.flightETDDate ELSE c.flightETDDate END AS countdown ");
+        querySB.append(" FROM Case c ");
+        
+        List<String> criteria = addCriteria(dto);
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Case> q = cb.createQuery(Case.class);
-        Root<Case> root = q.from(Case.class);
-        List<Predicate> predicates = new ArrayList<>();
-
-        TypedQuery<Case> typedQuery = em.createQuery(q);
-
-        // sorting
-        if (dto.getSort() != null) {
-            List<Order> orders = new ArrayList<>();
-            for (SortOptionsDto sort : dto.getSort()) {
-                Expression<?> e = root.get(sort.getColumn());
-                Order order;
-                if ("desc".equalsIgnoreCase(sort.getDir())) {
-                    order = cb.desc(e);
-                } else {
-                    order = cb.asc(e);
-                }
-                orders.add(order);
-            }
-            q.orderBy(orders);
+        if (!criteria.isEmpty())
+        {
+           querySB.append(" WHERE "); 
+           countQuerySB.append(" WHERE "); 
         }
         
-        if (dto.getOneDayLookoutFlag() != null) {
-			predicates.add(cb.equal(root.<Boolean> get("oneDayLookoutFlag"),
-					dto.getOneDayLookoutFlag()));
-		}
-
-
-		if (dto.getFlightId() != null) {
-			predicates.add(cb.equal(root.<Long> get("flightId"),
-					dto.getFlightId()));
-		}
-		
-		if (dto.getPaxId() != null) {
-            predicates.add(cb.equal(root.<Long> get("paxId"),
-                    dto.getPaxId()));
+        for (int j = 0; j < criteria.size(); j++)
+        {
+            if (j > 0)
+            {
+                querySB.append( " AND ");
+                countQuerySB.append( " AND ");
+            }
+            
+            querySB.append(criteria.get(j));
+            countQuerySB.append(criteria.get(j));
         }
+        
+        // sorting
+        querySB =  handleSortOptions(querySB, dto);
+        
+        String finalQuery = querySB.toString().endsWith(",") ? querySB.toString().substring(0, querySB.toString().length() - 1) : querySB.toString();
+        
+        Query countQuery = em.createQuery(countQuerySB.toString());
+        Query query = em.createQuery(finalQuery);
+        
+        setQueryParameters(query, countQuery,  dto);
 
-        if (dto.getPaxName() != null) {
-            String likeString = String.format("%%%s%%", dto.getPaxName().toUpperCase());
-            predicates.add(cb.like(root.<String>get("paxName"),likeString));
-        }
-
-        if (dto.getLastName() != null) { // map this to full pax name
-            String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
-            predicates.add(cb.like(root.<String>get("paxName"),likeString));
-        }
-
-        if (dto.getStatus() != null) {
-            String likeString = String.format("%%%s%%", dto.getStatus().toUpperCase());
-            predicates.add(cb.like(root.<String>get("status"),likeString));
-        }
-
-        if (dto.getFlightNumber() != null) {
-            predicates.add(cb.equal(root.<Long> get("flightNumber"),
-                    dto.getFlightNumber()));
-        }
-
-        if (dto.getRuleCatId() != null) {
-            predicates.add(cb.equal(root.<Long> get("highPriorityRuleCatId"),
-                    dto.getRuleCatId()));
-        }
-
-        Predicate etaCondition;
-        if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
-
-            Path<Date> eta = root.<Date> get("flightETADate");
-            Predicate startPredicate = cb.or(
-                    cb.isNull(eta),
-                    cb.greaterThanOrEqualTo(eta,
-                            dto.getEtaStart()));
-            Predicate endPredicate = cb.or(cb.isNull(eta),
-                    cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
-            etaCondition = cb.and(startPredicate, endPredicate);
-            predicates.add(etaCondition);
-        }
-
-		q.select(root).where(predicates.toArray(new Predicate[] {}));
-		typedQuery = em.createQuery(q);
-
-        // total count
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        countQuery.select(cb.count(countQuery.from(Case.class))).where(
-                predicates.toArray(new Predicate[] {}));
-        Long count = em.createQuery(countQuery).getSingleResult();
-
-        // pagination
+        Long caseCount = (Long)countQuery.getSingleResult();
+        
+         // pagination
         int pageNumber = dto.getPageNumber();
         int pageSize = dto.getPageSize();
         int firstResultIndex = (pageNumber - 1) * pageSize;
-        typedQuery.setFirstResult(firstResultIndex);
-        typedQuery.setMaxResults(dto.getPageSize());
-
-        logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
+        query.setFirstResult(firstResultIndex);
+        query.setMaxResults(dto.getPageSize());      
+        
+       logger.debug(query.unwrap(org.hibernate.Query.class)
                 .getQueryString());
-        List<Case> results = typedQuery.getResultList();
+       
+        List<Object[]> resultList = query.getResultList();
+         
+        List<Case> results = putCountdownTimeIntoCaseObjects(resultList);
 
-        return new ImmutablePair<>(count, results);
+        return new ImmutablePair<>(caseCount, results);       
+    }
+    
+    private List<String> addCriteria(CaseRequestDto dto)
+    {
+        List<String> criteria = new ArrayList<>();
+       
+        if (dto.getLastName() != null && !dto.getLastName().isEmpty()) 
+        {
+          criteria.add(" c.lastName LIKE :lastName ");
+        }
 
+        if (dto.getStatus() != null && !dto.getStatus().isEmpty()) 
+        {
+           criteria.add(" c.status = :status ");
+        }
+
+        if (dto.getFlightNumber() != null && !dto.getFlightNumber().isEmpty()) 
+        {
+           criteria.add(" c.flightNumber LIKE :flightNumber ");
+        }
+
+        if (dto.getRuleCatId() != null) 
+        {
+           criteria.add(" c.highPriorityRuleCatId = :highPriorityRuleCatId ");
+        }
+        
+        if (dto.getEtaStart() != null && dto.getEtaEnd() != null) 
+        {
+           criteria.add(" (c.flightETADate BETWEEN :etaStart AND :etaEnd OR  c.flightETDDate BETWEEN :etaStart AND :etaEnd) "); 
+        }      
+       
+       return criteria;
+    }
+    
+    
+    private void setQueryParameters(Query query, Query countQuery, CaseRequestDto dto)
+    {
+         if (dto.getLastName() != null && !dto.getLastName().isEmpty()) 
+        { 
+            query.setParameter("lastName", dto.getLastName().toUpperCase() + "%"); 
+            countQuery.setParameter("lastName", dto.getLastName().toUpperCase() + "%"); 
+        }
+        
+        if (dto.getStatus() != null && !dto.getStatus().isEmpty()) 
+        { 
+            query.setParameter("status", dto.getStatus().toUpperCase()); 
+            countQuery.setParameter("status", dto.getStatus().toUpperCase()); 
+        }
+        
+        if (dto.getFlightNumber() != null && !dto.getFlightNumber().isEmpty()) 
+        { 
+            query.setParameter("flightNumber", dto.getFlightNumber() + "%");
+            countQuery.setParameter("flightNumber", dto.getFlightNumber() + "%");
+        }
+        
+        if (dto.getRuleCatId() != null) 
+        { 
+            query.setParameter("highPriorityRuleCatId", dto.getRuleCatId()); 
+            countQuery.setParameter("highPriorityRuleCatId", dto.getRuleCatId());
+        }
+        
+        if (dto.getEtaStart() != null && dto.getEtaEnd() != null) 
+        {
+           Calendar calStart = new GregorianCalendar();
+           Calendar calEnd = new GregorianCalendar();
+           calStart.setTime(dto.getEtaStart());
+           calEnd.setTime(dto.getEtaEnd());
+
+           calStart.set(calStart.get(Calendar.YEAR), calStart.get(Calendar.MONTH), calStart.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+           Date startDate = calStart.getTime();
+           calEnd.set(calEnd.get(Calendar.YEAR), calEnd.get(Calendar.MONTH), calEnd.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+           Date endDate = calEnd.getTime();
+           query.setParameter("etaStart", startDate);
+           query.setParameter("etaEnd", endDate);
+           countQuery.setParameter("etaStart", startDate);
+           countQuery.setParameter("etaEnd", endDate);
+        }       
+    }
+
+    private StringBuilder handleSortOptions(StringBuilder querySB, CaseRequestDto dto)
+    {
+        if (dto.getSort() != null && !dto.getSort().isEmpty()) 
+        {
+            querySB.append(" ORDER BY "); 
+
+            for (SortOptionsDto sort : dto.getSort()) 
+            {
+                querySB.append(" "); 
+                querySB.append(sort.getColumn());
+                querySB.append(" ");
+
+                if ("desc".equalsIgnoreCase(sort.getDir())) 
+                {
+                  querySB.append(" DESC,");
+                } 
+                else 
+                {
+                  querySB.append(" ASC,");
+                }
+            } 
+        }
+        return querySB;
+    }
+    
+    private List<Case> putCountdownTimeIntoCaseObjects(List<Object[]> resultList)
+    {
+       List<Case> returnList = new ArrayList<>();
+       
+       for (Object[] objArray : resultList)
+       {
+          Date countdownTime = (Date)objArray[1];
+          Case caseObj = (Case)objArray[0];
+          caseObj.setCountdown(countdownTime);
+          returnList.add(caseObj);
+       }
+       
+       return returnList; 
     }
 }

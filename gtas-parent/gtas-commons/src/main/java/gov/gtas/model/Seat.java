@@ -35,7 +35,7 @@ public class Seat extends BaseEntity {
 	private Passenger passenger;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
 	private Flight flight;
 
 	public String getNumber() {

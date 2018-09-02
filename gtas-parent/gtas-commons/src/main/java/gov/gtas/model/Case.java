@@ -29,9 +29,11 @@ public class Case extends BaseEntityAudit {
     private Long paxId;
 
     @Column(name = "eta_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date flightETADate;
 
     @Column(name = "etd_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date flightETDDate;
 
     @Column(name = "passengerName", nullable = true)
@@ -61,6 +63,10 @@ public class Case extends BaseEntityAudit {
     @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
+
+    @Transient
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date countdown;
 
     public void addHitsDisposition(HitsDisposition _tempHit){
         hitsDispositions.add(_tempHit);
@@ -223,8 +229,14 @@ public class Case extends BaseEntityAudit {
 		this.flight = flight;
 	}
 
-	
-	
+    public Date getCountdown() {
+        return countdown;
+    }
+
+    public void setCountdown(Date countdown) {
+        this.countdown = countdown;
+    }
+
 	public Boolean getOneDayLookoutFlag() {
 		return oneDayLookoutFlag;
 	}

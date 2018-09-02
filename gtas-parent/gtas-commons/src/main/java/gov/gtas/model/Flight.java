@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 @Table(name = "flight",
 uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})})
 public class Flight extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;  
+    private static final long serialVersionUID = 1L; 
     public Flight() { }
     
     @Column(nullable = false)
@@ -115,13 +115,13 @@ public class Flight extends BaseEntityAudit {
 
     @Column(name = "list_hit_count", nullable = false)
     private Integer listHitCount = Integer.valueOf(0);
-    
+   
     @ManyToMany(
         mappedBy = "flights",
         targetEntity = Pnr.class
     ) 
     private Set<Pnr> pnrs = new HashSet<>();
-    
+   
    /* public void addPassenger(Passenger passenger) {
     	System.out.println(flightService);
     	System.out.println(passenger);
@@ -264,6 +264,12 @@ public class Flight extends BaseEntityAudit {
 	public void setMarketingFlight(boolean isMarketingFlight) {
 		this.isMarketingFlight = isMarketingFlight;
 	}
+
+        public Long getId() {
+            return id;
+        }
+        
+        
 
 //	public Set<FlightPax> getFlightPaxDetails() {
 //		return flightPaxDetails;

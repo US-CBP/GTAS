@@ -159,9 +159,9 @@ public class JPQLGenerator {
                 }
                 
                 query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
-                if(isDwellQuery(joinEntities)){
+               /* if(isDwellQuery(joinEntities)){
                 	query += " and dwell.location = f.destination";
-                }
+                }*/
                 
             }
             
