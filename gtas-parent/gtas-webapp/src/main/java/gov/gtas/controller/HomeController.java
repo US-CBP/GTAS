@@ -43,7 +43,7 @@ public class HomeController {
         try {
             com.hazelcast.core.Hazelcast.shutdownAll();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("error shutting down GTAS Home Controller.", ex);
         }
     }   
 }

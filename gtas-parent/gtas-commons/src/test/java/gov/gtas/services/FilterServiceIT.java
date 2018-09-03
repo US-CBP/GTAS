@@ -21,6 +21,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +37,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FilterServiceIT {
 
+	private static final Logger logger = LoggerFactory.getLogger(FilterServiceIT.class);
+
 	private final String USER_ID = "test";
 
 	@Autowired
@@ -45,6 +49,7 @@ public class FilterServiceIT {
 
 	@Test
 	public void testCreateUserFilter() {
+
 		// Arrange
 		Set<String> originAirports = new HashSet<String>();
 
@@ -68,7 +73,7 @@ public class FilterServiceIT {
 		try {
 			acutalFilter = filterService.create(expectedFilter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error creating acutal filter", e);
 		}
 
 		// Assert
@@ -99,7 +104,7 @@ public class FilterServiceIT {
 		// Act
 		FilterData actualFilter = filterService.update(expectedFilter);
 
-		System.out.println(actualFilter);
+		logger.info(actualFilter == null ? "null" : actualFilter.toString());
 		// Assert
 		assertEquals(expectedFilter, actualFilter);
 		filterService.delete(USER_ID);

@@ -42,7 +42,7 @@ public class GlobalErrorHandlerHelper {
            err = errorService.create(err);
         } catch (Exception exception){
             //possibly DB is down
-            exception.printStackTrace();
+            logger.error("error saving errorservice. Is DB Down?", exception);
         }
 
         JsonServiceResponse resp = new JsonServiceResponse(ErrorConstants.FATAL_DB_ERROR_CODE,

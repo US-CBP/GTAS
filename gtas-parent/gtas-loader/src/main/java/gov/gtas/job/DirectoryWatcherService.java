@@ -24,7 +24,7 @@ public class DirectoryWatcherService {
             DIRECTORY_TO_WATCH=args[0];
         }
         else{
-            System.out.println("Enter Directory Name to Watch : ");
+            logger.info("Enter Directory Name to Watch : ");
             Scanner scanIn = new Scanner(System.in);
             DIRECTORY_TO_WATCH = scanIn.nextLine();
             scanIn.close();            

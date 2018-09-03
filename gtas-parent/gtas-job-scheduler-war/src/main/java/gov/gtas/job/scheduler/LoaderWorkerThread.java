@@ -49,7 +49,7 @@ public class LoaderWorkerThread implements Runnable {
 	    	try {
 	    		msg = queue.poll(5000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("error polling queue", e);
 			}	    	
 	    	if(msg != null){
 	    		MessageHeaders headers =  msg.getHeaders();
@@ -60,7 +60,7 @@ public class LoaderWorkerThread implements Runnable {
 	        		processCommand();
 	        	}catch(Exception e){
 	        		logger.info("Catastrophic failure, uncaught exception would cause thread destruction without queue destruction causing memory leak; Rerouting process");
-	        		e.printStackTrace();
+	        		logger.error("Catastrophic failure!", e);
 	        	}
 	    	}
 	    	else{

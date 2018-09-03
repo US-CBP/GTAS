@@ -23,9 +23,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.KieSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DrlRuleFileBuilderTest {
     public static final String UDR_RULE_AUTHOR="adelorie";
+    public static Logger logger = LoggerFactory.getLogger(DrlRuleFileBuilderTest.class);
     private DrlRuleFileBuilder testTarget;
     @Before
     public void setUp() throws Exception {
@@ -45,7 +48,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, FLIGHT_ETA_ETD_RULE_INDX);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }
@@ -58,7 +61,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, 1);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }
@@ -71,7 +74,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, 2);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }
@@ -84,7 +87,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, 4);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }
@@ -97,7 +100,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, PASSENGER_SEAT_RULE_INDX);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }
@@ -110,7 +113,7 @@ public class DrlRuleFileBuilderTest {
         verifyDrl(result, PNR_SEAT_RULE_INDX);
         testKnowledgeBaseTest(result);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception.");
         }
     }

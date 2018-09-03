@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RedissonFilter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RedissonFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(RedissonFilter.class);
     private static RedisServer redisServer;
     private RedissonClient client;
     private static String[] randomStrings;
@@ -83,7 +83,7 @@ public class RedissonFilter {
 
 
         }catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("Redis look up presist errored", ex);
         }
 
     }
@@ -149,19 +149,19 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
                 map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
-                LOG.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
+                logger.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
                 if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
                 if(payload == null) {
-                    LOG.info("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
+                    logger.info("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
                 }else {
-                    LOG.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
+                    logger.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
                 }
             }
 
         }catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error in redis update and persist", ex);
             publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText);
         }
 
@@ -172,7 +172,7 @@ public class RedissonFilter {
         try {
             sender.sendFileToDownstreamQs(outboundLoaderQueue, messagePayload, filename, tvlLineText);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error publishing to downstream queues", ex);
         }
         return true;
     }
@@ -189,7 +189,7 @@ public class RedissonFilter {
         for (int i=0;i<mdbytes.length;i++) {
             hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
         }
-        LOG.info("Hex format : " + hexString.toString());
+        logger.info("Hex format : " + hexString.toString());
         return hexString.toString();
     }
 
@@ -201,7 +201,7 @@ public class RedissonFilter {
             Config config = Config.fromJSON(new File(classLoader.getResource("singleNodeConfig.json").getFile()));
             client = Redisson.create(config);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error setting up redis client", ex);
         }
 
     }

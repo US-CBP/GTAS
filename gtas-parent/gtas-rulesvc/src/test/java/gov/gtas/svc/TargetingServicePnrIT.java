@@ -22,6 +22,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,6 +49,7 @@ import gov.gtas.testdatagen.PnrDataGenerator;
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class TargetingServicePnrIT {
+    private static final Logger logger = LoggerFactory.getLogger(TargetingServicePnrIT.class);
     public static final String UDR_RULE_AUTHOR="test";
 
     @Autowired
@@ -130,7 +133,7 @@ public class TargetingServicePnrIT {
         DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
         UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, AGENCY_CC_FF_FLIGHT_DOC_RULE_INDX);
         String drlRules = drlBuilder.addRule(udrRule).build();
-        System.out.println(drlRules);
+        logger.info(drlRules);
         RuleServiceRequest request = TargetingServiceUtils
                 .createPnrRequestContext(msg).getRuleServiceRequest();
         RuleServiceResult result = targetingService.applyRules(request,
@@ -151,7 +154,7 @@ public class TargetingServicePnrIT {
         DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
         UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, RuleBuilderTestUtils.PNR_SEAT_RULE_INDX);
         String drlRules = drlBuilder.addRule(udrRule).build();
-        System.out.println(drlRules);
+        logger.info(drlRules);
         RuleServiceRequest request = TargetingServiceUtils
                 .createPnrRequestContext(msg).getRuleServiceRequest();
         RuleServiceResult result = targetingService.applyRules(request,

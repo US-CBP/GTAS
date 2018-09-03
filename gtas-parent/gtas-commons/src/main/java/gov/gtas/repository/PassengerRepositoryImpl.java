@@ -255,7 +255,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         }
         
         logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-//        System.out.println(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
+//        logger.info(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
         List<Object[]> results = typedQuery.getResultList();
         
         return new ImmutablePair<Long, List<Object[]>>(count, results);
