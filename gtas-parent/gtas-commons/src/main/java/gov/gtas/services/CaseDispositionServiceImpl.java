@@ -43,13 +43,12 @@ import gov.gtas.model.FlightPax;
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.lookup.DispositionStatusCode;
-import gov.gtas.model.lookup.FlightDirectionCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.services.dto.SortOptionsDto;
 import gov.gtas.util.EntityResolverUtils;
 import gov.gtas.vo.OneDayLookoutVo;
 import gov.gtas.vo.passenger.AttachmentVo;
@@ -1044,8 +1043,24 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     	return this.getCaseByPaxId(paxIds);
 	}
 
-	public String getCountdownAPISFlag(){
-		return appConfigurationRepository.findByOption(AppConfigurationRepository.CASE_COUNTDOWN_LABEL).getValue();
+        // returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or FALSE
+	@Override
+        public String getAPISOnlyFlagAndVersion()
+        {
+            String apisReturnStr = "";
+            AppConfiguration appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
+            String apisOnlyFlag = (appConfiguration != null) ? appConfiguration.getValue() : "FALSE";
+            if (apisOnlyFlag.equals("TRUE"))
+            {
+                appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_VERSION);
+                String apisVersion = (appConfiguration != null) ? appConfiguration.getValue() : "";
+                apisReturnStr = apisOnlyFlag + ";" + apisVersion;
+            }
+            else
+            {
+               apisReturnStr =  apisOnlyFlag;
+            }
+            return apisReturnStr;
 	}
-
+        
 }

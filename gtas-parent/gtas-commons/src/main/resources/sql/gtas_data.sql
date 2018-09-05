@@ -59,6 +59,8 @@ insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL','5','Number of days indexed REDIS Keys to expire in');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_TIME_UNIT','DAYS','REDIS keys expiration time units - DAYS or MINUTES ');
+insert into app_configuration (opt, val, description) values('APIS_ONLY_FLAG','FALSE','Is APIS the only message source in use.');
+insert into app_configuration (opt, val, description) values('APIS_VERSION','16B','Latest APIS version being used.');
 
 -- ----------------------------
 -- Records of dashboard_message_stats
