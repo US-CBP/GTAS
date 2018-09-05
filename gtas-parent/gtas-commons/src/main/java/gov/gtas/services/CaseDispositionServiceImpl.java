@@ -90,7 +90,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Autowired
 	public RuleCatService ruleCatService;
     @Autowired
-    private PassengerIDTagRepository passengerIdTagDao;
+    private PassengerResolverService passengerResolverService;
 	@Resource
 	private AppConfigurationRepository appConfigurationRepository;
 
@@ -1020,27 +1020,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	public List<Case> getCaseHistoryByPaxId(Long paxId) {
 		
-		Passenger pax = this.findPaxByID(new Long(paxId));
-
-    	String hash = null;
+		List<Long> pax_group = this.passengerResolverService.resolve(paxId);
     	
-    	try {
-    		hash = EntityResolverUtils.makeHashForPassenger(pax);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-    	 
-    	/**
-    	 * 
-    	 * The hash could be based on gtas tag_id or tamr id (at the moment we only have gtas passenger_tag_id)
-    	 * 
-    	 */
-    	List<Long> paxIds = this.passengerIdTagDao.findPaxIdsByTagId(hash);
-    	
-    	if(paxIds.size()==0)
-    		return Collections.emptyList();
-    	
-    	return this.getCaseByPaxId(paxIds);
+    	return this.getCaseByPaxId(pax_group);
 	}
 
         // returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or FALSE
