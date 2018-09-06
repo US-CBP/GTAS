@@ -20,6 +20,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,6 +31,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DashboardCountsIT {
+
+    private static Logger logger = LoggerFactory.getLogger(DashboardCountsIT.class);
 
     @Autowired
     MessageStatisticsService service;
@@ -49,27 +53,23 @@ public class DashboardCountsIT {
 
     // @Test
     public void testPnrStatistics() {
-        System.out
-                .println("##################### begin testPnrStatistics#############################");
+        logger.info("##################### begin testPnrStatistics#############################");
         PnrStatistics pntCounts = service.getPnrStatistics();
         if (pntCounts != null) {
-            System.out.println(" COUNTS : " + pntCounts.toString());
+            logger.info(" COUNTS : " + pntCounts.toString());
         }
         assertNotNull(pntCounts);
-        System.out
-                .println("###################### end testPnrStatistics############################");
+        logger.info("###################### end testPnrStatistics############################");
     }
 
     // @Test
     public void testApisStatistics() {
-        System.out
-                .println("##################### begin testApisStatistics#############################");
+        logger.info("##################### begin testApisStatistics#############################");
         ApisStatistics apisCounts = service.getApisStatistics();
         if (apisCounts != null) {
-            System.out.println(" COUNTS : " + apisCounts.toString());
+            logger.info(" COUNTS : " + apisCounts.toString());
         }
         assertNotNull(apisCounts);
-        System.out
-                .println("###################### end testApisStatistics ############################");
+        logger.info("###################### end testApisStatistics ############################");
     }
 }

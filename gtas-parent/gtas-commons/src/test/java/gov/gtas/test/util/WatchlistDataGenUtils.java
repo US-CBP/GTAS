@@ -14,11 +14,14 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates test data for rules domain objects.
  */
 public class WatchlistDataGenUtils {
+    private static final Logger logger = LoggerFactory.getLogger(WatchlistDataGenUtils.class);
     public static final String TEST_WATCHLIST_PREFIX = "TestWL";
 
     public static final int TEST_ROLE1_ID = 1;
@@ -42,7 +45,7 @@ public class WatchlistDataGenUtils {
             UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles,null);
             userService.create(userData);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error!", e);
         }
     }
 

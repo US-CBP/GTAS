@@ -13,6 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,6 +39,8 @@ import gov.gtas.parsers.exception.ParseException;
 @ContextConfiguration(classes = CommonServicesConfig.class)
 @Transactional
 public class MessageGeneratorApp {
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageGeneratorApp.class);
 
     @Autowired
     private ServiceUtil svc;
@@ -85,7 +89,7 @@ public class MessageGeneratorApp {
             PnrGen.buildSrc(carrier, origin,dest,fNumber,dString,numPax,dto,sb);
             PnrGen.buildFooter(sb);
             flights.add(dto);
-            System.out.println(sb.toString());  
+            logger.info(sb.toString());
             PnrGen.writeToFile(i,sb);
             sb=null;
         }
@@ -123,7 +127,7 @@ public class MessageGeneratorApp {
             PnrGen.buildSrc(carrier, origin,dest,fNumber,dString,numPax,dto,sb);
             PnrGen.buildFooter(sb);
             flights.add(dto);
-            System.out.println(sb.toString());  
+            logger.info(sb.toString());
             PnrGen.writeToFile(i,sb);
             sb=null;
         }
@@ -227,7 +231,7 @@ public class MessageGeneratorApp {
                 paxList.add(pax);
             }
             f.setPaxList(paxList);
-            //System.out.println("################"+f.getPaxList().size()); 
+            //logger.infoln("################"+f.getPaxList().size());
             counter++;
         }
     }

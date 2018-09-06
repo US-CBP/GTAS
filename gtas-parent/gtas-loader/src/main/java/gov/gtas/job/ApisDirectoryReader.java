@@ -98,17 +98,17 @@ public class ApisDirectoryReader implements Runnable {
 				}
 			}
 		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
+			logger.error("error!", e);
 		} finally {
 			ctx.close();
 		}
-		System.out.println("Stopping thread");
+		logger.info("Stopping thread");
 	}
 
 	private void processNewFile(Path p, MessageLoaderService svc) {
 
 		// MessageLoader.processSingleFile(svc, p.toFile());
-		System.out.println("*****************processing file"
+		logger.info("*****************processing file"
 				+ p.toFile().getAbsolutePath());
 	}
 }

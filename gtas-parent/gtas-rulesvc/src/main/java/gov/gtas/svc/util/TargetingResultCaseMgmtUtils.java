@@ -69,7 +69,7 @@ public class TargetingResultCaseMgmtUtils {
                                     resultMap, dispositionService);
                         }
                     } catch (CloneNotSupportedException cnse) {
-                        cnse.printStackTrace();
+                        logger.error("error, clone not supported", cnse);
                     }
                 } else {
                     // ERROR we do not have flights for this passenger
@@ -123,8 +123,8 @@ public class TargetingResultCaseMgmtUtils {
                         document, description, rhd.getRuleId());
             }
         } catch (Exception ex) {
-            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  Rule:" + rhd.getRuleId() + " set");
-            ex.printStackTrace();
+            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId
+                    + "  Rule:" + rhd.getRuleId() + " set",ex);
         }
 
     }

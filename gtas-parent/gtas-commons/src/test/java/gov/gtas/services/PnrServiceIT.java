@@ -32,6 +32,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,6 +45,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
+
+	private static final Logger logger = LoggerFactory.getLogger(PnrServiceIT.class);
 	@Autowired
 	private PnrService pnrService;
 
@@ -148,7 +152,7 @@ public class PnrServiceIT {
 		f.setCreatedAt(new Date());
 		f.setCreatedBy("JUNIT");
 		String a = "IAD";
-		System.out.println(a);
+		logger.info(a);
 		f.setOrigin(a);
 		String b = "JFK";
 		f.setDestination(b);

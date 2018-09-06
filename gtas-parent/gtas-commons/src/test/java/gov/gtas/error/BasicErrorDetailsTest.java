@@ -13,8 +13,12 @@ import gov.gtas.constant.CommonErrorConstants;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicErrorDetailsTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(BasicErrorDetailsTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -34,7 +38,7 @@ public class BasicErrorDetailsTest {
         assertEquals("Exception class:Exception", det[0]);
         assertTrue(det[1].endsWith("Test Error"));
         assertTrue(det.length > 0);
-        //System.out.println(String.join("\n", det));
+        //logger.info(String.join("\n", det));
     }
 
 }

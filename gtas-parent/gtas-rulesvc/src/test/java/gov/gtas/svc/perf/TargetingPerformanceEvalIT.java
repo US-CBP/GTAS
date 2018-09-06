@@ -21,6 +21,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +35,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @TransactionConfiguration(defaultRollback = false)
 public class TargetingPerformanceEvalIT {
+
+    private static final Logger logger = LoggerFactory.getLogger(TargetingPerformanceEval.class);
     public static final String PASSENGER_WL_NAME = "PerfTest Passenger WL";
     public static final String DOCUMENT_WL_NAME = "PerfTest Document WL";
 
@@ -67,23 +71,17 @@ public class TargetingPerformanceEvalIT {
         WatchlistRuleGenerator.generateWlRules(watchlistService,
                 DOCUMENT_WL_NAME, EntityEnum.DOCUMENT, 20);
         // UdrRuleGenerator.generateUdr(udrService, "PerfTestUdr", 200);
-        System.out
-                .println("*****************************************************************");
-        System.out
-                .println("********************   GENERATION COMPLETE  *********************");
-        System.out
-                .println("*****************************************************************");
+        logger.info("*****************************************************************");
+        logger.info("********************   GENERATION COMPLETE  *********************");
+        logger.info("*****************************************************************");
     }
 
     // @Test
     public void activatePerformanceData() {
         watchlistService.activateAllWatchlists();
-        System.out
-                .println("*****************************************************************");
-        System.out
-                .println("********************   ACTIVATION COMPLETE  *********************");
-        System.out
-                .println("*****************************************************************");
+        logger.info("*****************************************************************");
+        logger.info("********************   ACTIVATION COMPLETE  *********************");
+        logger.info("*****************************************************************");
     }
 
     @Test
@@ -93,7 +91,7 @@ public class TargetingPerformanceEvalIT {
         RuleExecutionContext ctx = targetingService
                 .analyzeLoadedMessages(false);
         long elapsed = System.currentTimeMillis() - start;
-        System.out.println(String.format(
+        logger.info(String.format(
                 "******* result count = %d, elapsed millis = %d", ctx
                         .getTargetingResult().size(), elapsed));
     }

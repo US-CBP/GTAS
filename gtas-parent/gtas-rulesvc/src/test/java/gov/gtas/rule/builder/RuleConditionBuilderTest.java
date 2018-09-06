@@ -26,8 +26,12 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuleConditionBuilderTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(RuleConditionBuilderTest.class);
     
     private RuleConditionBuilder testTarget;
 
@@ -53,7 +57,7 @@ public class RuleConditionBuilderTest {
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        System.out.println(result.toString().trim());
+        logger.info(result.toString().trim());
         assertEquals(
                 "$seat2:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" in (\"A7865\", \"H76\"), apis == true)\n"
                 + "$p:Passenger(id == $seat2.passenger.id)\n"
@@ -134,7 +138,7 @@ public class RuleConditionBuilderTest {
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        System.out.println(result.toString().trim());
+        logger.info(result.toString().trim());
         assertEquals(
                 "$seat2:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" != null, "
                          + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " str[endsWith] \"31\", apis == true)\n"
@@ -426,7 +430,7 @@ public class RuleConditionBuilderTest {
         testTarget.addRuleCondition(cond);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
-        System.out.println(result);
+        logger.info(result.toString());
         assertTrue(result.length() > 0);
         assertEquals("$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\", "
             + DocumentMapping.DOCUMENT_TYPE.getFieldName()+" != \"P\")\n"

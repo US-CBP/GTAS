@@ -36,6 +36,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -46,6 +48,8 @@ import org.springframework.test.util.ReflectionTestUtils;
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServiceRepositoryIT {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceRepositoryIT.class);
 
     @Autowired
     private FlightService testTarget;
@@ -74,7 +78,7 @@ public class ServiceRepositoryIT {
         f.setCreatedBy("JUNIT");
         // Airport a = new Airport(3616l,"Washington","IAD","KAID");
         String a = "IAD";
-        System.out.println(a);
+        logger.info(a);
         f.setOrigin(a);
         String b = "JFK";
         // Airport b = new Airport (3584l,"Atlanta","ATL","KATL");
@@ -133,81 +137,66 @@ public class ServiceRepositoryIT {
         f.setPassengers(passengers);
 
         testTarget.create(f);
-        System.out
-                .println("********************************************************");
-        System.out
-                .println("******************Saved Flight***********************"
+        logger.info("********************************************************");
+        logger.info("******************Saved Flight***********************"
                         + f.toString());
-        System.out
-                .println("********************************************************");
+        logger.info("********************************************************");
 
     }
 
     // @Test()
     public void testSecondaryCahe() {
-        System.out.println("\n>>>>> testSecondaryCahe <<<<<\n");
+        logger.info("\n>>>>> testSecondaryCahe <<<<<\n");
 
         List<Airport> airports = lookupDao.getAllAirports();
-        System.out
-                .println("***********************AIRPORTS*******************************"
+        logger.info("***********************AIRPORTS*******************************"
                         + airports.size());
         List<Carrier> carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("***********************CARRIERS*******************************"
+        logger.info("***********************CARRIERS*******************************"
                         + carriers.size());
         List<Country> countries = lookupDao.getAllCountries();
-        System.out
-                .println("*************COUNTRIES*******************************"
+        logger.info("*************COUNTRIES*******************************"
                         + countries.size());
 
         // next, get data from cache without going to db
         // verification: no sql execution on console output
 
         airports = lookupDao.getAllAirports();
-        System.out
-                .println("***********************AIRPORTS*******************************"
+        logger.info("***********************AIRPORTS*******************************"
                         + airports.size());
         carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("***********************CARRIERS*******************************"
+        logger.info("***********************CARRIERS*******************************"
                         + carriers.size());
         countries = lookupDao.getAllCountries();
-        System.out
-                .println("*************COUNTRIES*******************************"
+        logger.info("*************COUNTRIES*******************************"
                         + countries.size());
     }
 
     // @Test()
     public void testEmptyCache() {
-        System.out.println("\n>>>>> testEmptyCache <<<<<\n");
+        logger.info("\n>>>>> testEmptyCache <<<<<\n");
 
         List<Carrier> carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("***********************CARRIERS- get from db*******************************"
+        logger.info("***********************CARRIERS- get from db*******************************"
                         + carriers.size());
 
         carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("***********************CARRIERS- get from cache *******************************"
+        logger.info("***********************CARRIERS- get from cache *******************************"
                         + carriers.size());
 
         lookupDao.clearAllEntitiesCache();
-        System.out
-                .println("***********************CARRIERS- empty cache *******************************");
+        logger.info("***********************CARRIERS- empty cache *******************************");
 
         carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("*************CARRIERS- retrieve from db again*******************************"
+        logger.info("*************CARRIERS- retrieve from db again*******************************"
                         + carriers.size());
 
         carriers = lookupDao.getAllCarriers();
-        System.out
-                .println("***********************CARRIERS- get from cache again *******************************"
+        logger.info("***********************CARRIERS- get from cache again *******************************"
                         + carriers.size());
 
         lookupDao.clearAllEntitiesCache();
-        System.out
-                .println("***********************CARRIERS- empty cache -final *******************************\n");
+        logger.info("***********************CARRIERS- empty cache -final *******************************\n");
 
     }
 
@@ -228,33 +217,28 @@ public class ServiceRepositoryIT {
 
     // @Test
     public void testSingleEntityCache() {
-        System.out.println("\n>>>>> testSingleEntityCache <<<<<\n");
+        logger.info("\n>>>>> testSingleEntityCache <<<<<\n");
 
         Country country = createCountry();
         lookupDao.saveCountry(country);
 
-        System.out
-                .println("*************save country*****************************"
+        logger.info("*************save country*****************************"
                         + country.getName());
 
         lookupDao.getCountry(country.getName());
-        System.out
-                .println("*************get country from db*****************************"
+        logger.info("*************get country from db*****************************"
                         + country.getName());
         lookupDao.getCountry(country.getName());
-        System.out
-                .println("*************get country from cache*****************************"
+        logger.info("*************get country from cache*****************************"
                         + country.getName());
         lookupDao.removeCountryCache(country.getName());
-        System.out
-                .println("*************delete country and remove it from cache*****************************"
+        logger.info("*************delete country and remove it from cache*****************************"
                         + country.getName());
         lookupDao.getCountry(country.getName());
-        System.out
-                .println("*************get country again from db*****************************"
+        logger.info("*************get country again from db*****************************"
                         + country.getName());
         lookupDao.deleteCountryDb(country);
-        System.out.println("************* Done***********************\n");
+        logger.info("************* Done***********************\n");
     }
 
     @Test
@@ -273,7 +257,7 @@ public class ServiceRepositoryIT {
 
                     Iterator<Flight> itr = flights.iterator();
                     while (itr.hasNext()) {
-                        System.out.println("Flights are not null \n");
+                        logger.info("Flights are not null \n");
                         Flight aFlight = (Flight) itr.next();
                         assertNotNull(aFlight);
                         Set<Passenger> passengers = aFlight.getPassengers();
@@ -283,15 +267,15 @@ public class ServiceRepositoryIT {
                             while (itr2.hasNext()) {
                                 Passenger passenger = itr2.next();
                                 assertNotNull(passenger);
-                                // System.out.println("Passengers are not null \n");
+                                // logger.info("Passengers are not null \n");
                             }
                         }
                     }
-                    // System.out.println("happy faces!\n");
+                    // logger.info("happy faces!\n");
                 }
             }
         }
-        // System.out.println("happy faces again!\n");
+        // logger.info("happy faces again!\n");
     }
 
     @Test

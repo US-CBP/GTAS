@@ -9,6 +9,8 @@ import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,6 +28,8 @@ import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 @Component
 public class RedisLoaderScheduler {
+
+    private static final Logger logger = LoggerFactory.getLogger(RedisLoaderScheduler.class);
 
     @Value("${message.dir.origin}")
     private String messageOriginDir;
@@ -94,7 +98,7 @@ public class RedisLoaderScheduler {
                     });
             stream.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("error in process files!", ex);
         }
 
     }
@@ -123,18 +127,17 @@ public class RedisLoaderScheduler {
                         try {
                             pushToInboundQueue(f);
                         }catch (LoaderException lex) {
-                            lex.printStackTrace();
+                            logger.error("loader exception!", lex);
                         }catch (IOException ioex) {
-                            ioex.printStackTrace();
+                            logger.error("io exception in process files", ioex);
                         }
                         f.renameTo(new File(outgoingDir.toFile()
                                 + File.separator + f.getName()));
                         f.delete();
                     });
             stream.close();
-
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("error in process and q files!", ex);
         }
 
     }

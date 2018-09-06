@@ -36,6 +36,8 @@ import javax.transaction.Transactional;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,6 +52,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @Ignore //TODO:Investigate to see why these test fail.
 public class TargetingServiceIT {
+	private static final Logger logger = LoggerFactory.getLogger(TargetingServiceIT.class);
 	public static final String UDR_RULE_AUTHOR = "test";
 
 	@Autowired
@@ -86,7 +89,7 @@ public class TargetingServiceIT {
 		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
 				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX);
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -115,7 +118,7 @@ public class TargetingServiceIT {
 				DateCalendarUtils.addOneDayToDate(new Date()), null);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -143,7 +146,7 @@ public class TargetingServiceIT {
 				endDate);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -172,7 +175,7 @@ public class TargetingServiceIT {
 				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX, date, date);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -189,7 +192,7 @@ public class TargetingServiceIT {
 		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
 				UDR_RULE_AUTHOR, 2);
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -214,7 +217,7 @@ public class TargetingServiceIT {
 		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
 				UDR_RULE_AUTHOR, 3);
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,
@@ -239,7 +242,7 @@ public class TargetingServiceIT {
 		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
 				UDR_RULE_AUTHOR, RuleBuilderTestUtils.PASSENGER_SEAT_RULE_INDX);
 		String drlRules = drlBuilder.addRule(udrRule).build();
-		System.out.println(drlRules);
+		logger.info(drlRules);
 		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
 				msg).getRuleServiceRequest();
 		RuleServiceResult result = targetingService.applyRules(request,

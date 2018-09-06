@@ -18,8 +18,13 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WatchlistBuilderTest {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(WatchlistBuilderTest.class);
     @Before
     public void setUp() throws Exception {
     }
@@ -42,7 +47,7 @@ public class WatchlistBuilderTest {
         assertNotNull(deleteItems.get(0).getId());
         for(WatchlistItem item:items){
             assertNotNull(item.getItemData());
-            System.out.println(item.getItemData());
+            logger.info(item.getItemData());
         }
     }
 

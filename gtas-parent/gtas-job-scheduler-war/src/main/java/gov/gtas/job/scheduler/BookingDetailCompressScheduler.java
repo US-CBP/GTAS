@@ -90,7 +90,7 @@ public class BookingDetailCompressScheduler {
             upsertDeleteRecords(_tempTBSList, _tempTBDList);
 
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("Error in Booking Detail compress:", ex);
         }
         logger.info("Booking Detail compress processing COMPLETE");
 
@@ -166,7 +166,7 @@ public class BookingDetailCompressScheduler {
                 try {
                     processTBDBookingDetail(bd);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.error("Error processing TBD Booking Detail List", ex);
                 }
             }
         }
@@ -187,7 +187,7 @@ public class BookingDetailCompressScheduler {
             //try {
                 bookingDetailRepository.delete(bd);
            // }catch (Exception ex){
-           //     ex.printStackTrace();
+           //     logger.error("error!", e);
            // }
         }
 
@@ -207,7 +207,7 @@ public class BookingDetailCompressScheduler {
            //     try {
             //        bookingDetailRepository.save(bd);
             //    } catch (Exception ex) {
-            //        ex.printStackTrace();
+            //        logger.error("error!", e);
             //    }
             }
         }

@@ -129,7 +129,7 @@ public class CaseDispositionController {
                                                             request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error updating histDisp!", ex);
         }
         return aCase;
     }
@@ -151,7 +151,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile, GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in histDispAttachements!", ex);
         }
         return aCase;
     }
@@ -173,7 +173,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile,  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case attachments", ex);
         }
         return aCase;
     }
@@ -190,7 +190,7 @@ public class CaseDispositionController {
                     request.getRuleCatId(), request.getCaseComments(),  GtasSecurityUtils.fetchLoggedInUserId()
                     );
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case", ex);
         }
         return aCase;
     }
