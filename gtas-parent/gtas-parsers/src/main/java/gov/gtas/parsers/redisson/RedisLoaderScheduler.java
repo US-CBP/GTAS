@@ -6,6 +6,8 @@
 package gov.gtas.parsers.redisson;
 
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,6 +27,7 @@ import java.util.List;
 //@Component
 public class RedisLoaderScheduler {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedisLoaderScheduler.class);
 
     @Value("${message.dir.origin}")
     private String messageOriginDir;
@@ -70,7 +73,7 @@ public class RedisLoaderScheduler {
                     });
             stream.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("error in process files redis scheduler", ex);
         }
 
     }

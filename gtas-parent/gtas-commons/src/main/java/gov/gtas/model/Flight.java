@@ -123,9 +123,9 @@ public class Flight extends BaseEntityAudit {
     private Set<Pnr> pnrs = new HashSet<>();
    
    /* public void addPassenger(Passenger passenger) {
-    	System.out.println(flightService);
-    	System.out.println(passenger);
-    	System.out.println(this);
+    	logger.info(flightService);
+    	logger.info(passenger);
+    	logger.info(this);
         flightService.setSinglePassenger(passenger.id, this.id);
     }*/
 

@@ -14,9 +14,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class FetchUdrTest implements PerformanceTestFactory {
+    private static final Logger logger = LoggerFactory.getLogger(FetchUdrTest.class);
     private UdrService udrService;
     private int parallelRequestCount = 1000;
     private int poolTimeoutSeconds = 500;
@@ -48,7 +51,7 @@ public class FetchUdrTest implements PerformanceTestFactory {
           exec.shutdown();
           exec.awaitTermination(poolTimeoutSeconds, TimeUnit.SECONDS);
         }catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
         }
         long udrElapsed = System.currentTimeMillis() - udrStart;
         ret.add("Total Time = " + udrElapsed
@@ -64,7 +67,7 @@ public class FetchUdrTest implements PerformanceTestFactory {
             public void run() {
                 UdrSpecification spec = udrService.fetchUdr(userId, title);
                 if(spec == null){
-                    System.out.println(">>>>>>>> ERROR cannot find UDR:"+title);
+                    logger.info(">>>>>>>> ERROR cannot find UDR:"+title);
                 } 
             }
             

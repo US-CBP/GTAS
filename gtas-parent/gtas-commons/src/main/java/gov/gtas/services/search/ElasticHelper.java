@@ -195,7 +195,7 @@ public class ElasticHelper {
 				vo.setEta(dateParser.parse((String)result.get("eta")));
 				vo.setEtd(dateParser.parse((String)result.get("etd")));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Failed to parse date searching for passengers", e);
 			}
 			if(result.get("addresses")!=null) {
 				Set<Address> addresses = new HashSet<>();

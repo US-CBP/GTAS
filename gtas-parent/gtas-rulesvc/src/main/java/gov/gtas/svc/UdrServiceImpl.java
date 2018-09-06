@@ -102,7 +102,7 @@ public class UdrServiceImpl implements UdrService {
 			jsonObject = JsonToDomainObjectConverter
 					.getJsonFromUdrRule(fetchedRule);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error fetching udr!", ex);
 			throw new RuntimeException(ex.getMessage());
 		}
 		return jsonObject;
@@ -122,7 +122,7 @@ public class UdrServiceImpl implements UdrService {
 			jsonObject = JsonToDomainObjectConverter
 					.getJsonFromUdrRule(fetchedRule);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error fetching udr.", ex);
 			throw new RuntimeException(ex.getMessage());
 		}
 		return jsonObject;
@@ -278,10 +278,10 @@ public class UdrServiceImpl implements UdrService {
 			//@RuleCategory changes END
 			UdrServiceHelper.addEngineRulesToUdrRule(ruleToSave, udrToCreate);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error("error creating udr!", ioe);
 			throw new RuntimeException(ioe.getMessage());
 		} catch(Exception ex){
-			//ex.printStackTrace();
+			//ex.logger.error("error!", e);
 		}
 
 		UdrRule savedRule = rulePersistenceService.create(ruleToSave, userId);
@@ -382,7 +382,7 @@ public class UdrServiceImpl implements UdrService {
 						.convertQueryObjectToBlob(queryObject);
 				ruleToUpdate.setUdrConditionObject(ruleBlob);
 			} catch (IOException | ClassNotFoundException ex) {
-				ex.printStackTrace();
+				logger.error("error updating udr!", ex);
 				throw new RuntimeException(ex.getMessage());
 			}
 
@@ -398,7 +398,7 @@ public class UdrServiceImpl implements UdrService {
 			try {
 				getRuleCatFromRuleMeta(ruleToUpdate);
 			}catch (Exception ex){
-				ex.printStackTrace();
+				logger.error("error getting rule category changes", ex);
 			}
 			//@RuleCategory changes END
 			if (ruleToUpdate.getAuthor().getUserId().equals(userId)) {

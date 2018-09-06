@@ -41,11 +41,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class UdrServiceErrorTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(UdrServiceErrorTest.class);
+
 	private static final String TEST_JSON = "{ \"details\": {"
 			+ "  \"@class\": \"gov.gtas.model.udr.json.QueryObject\","
 			+ " \"condition\": \"OR\"," + " \"rules\": [" + " {"
@@ -167,7 +172,7 @@ public class UdrServiceErrorTest {
 		try {
 			when(mockUserService.fetchUser(authorId)).thenReturn(author);
 			String today = DateCalendarUtils.formatJsonDate(new Date());
-			System.out.println(today);
+			logger.info(today);
 			spec.getSummary().setStartDate(
 					DateCalendarUtils.parseJsonDate(today));
 			spec.getSummary()
@@ -182,7 +187,7 @@ public class UdrServiceErrorTest {
 			when(mockRulePersistenceSvc.findAll()).thenReturn(rlList);
 			udrService.createUdr(authorId, spec);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(1)).fetchUser(authorId);
@@ -222,7 +227,7 @@ public class UdrServiceErrorTest {
 			assertEquals(RuleErrorConstants.PAST_START_DATE_ERROR_CODE,
 					cse.getErrorCode());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(0)).findById(authorId);
@@ -262,7 +267,7 @@ public class UdrServiceErrorTest {
 			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE,
 					cve.getErrorCode());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(0)).findById(authorId);
@@ -301,7 +306,7 @@ public class UdrServiceErrorTest {
 			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE,
 					cve.getErrorCode());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(0)).fetchUser(authorId);
@@ -339,7 +344,7 @@ public class UdrServiceErrorTest {
 			when(mockUserService.fetchUser(authorId)).thenReturn(author);
 			udrService.createUdr(authorId, testObj);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(1)).fetchUser(authorId);

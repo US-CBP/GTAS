@@ -9,6 +9,8 @@ import gov.gtas.constants.ErrorConstants;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.services.ErrorPersistenceService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
 public class WebAppGlobalErrorHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebAppGlobalErrorHandler.class);
+
+
     @Autowired
     ErrorPersistenceService errorService;
     /*
@@ -58,7 +64,7 @@ public class WebAppGlobalErrorHandler {
     @ResponseStatus(value=HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TypeMismatchException.class)
     public @ResponseBody JsonServiceResponse handleError(TypeMismatchException ex) {
-        ex.printStackTrace();
+        logger.error("handling error :", ex);
         return new JsonServiceResponse(ErrorConstants.INVALID_PATH_VARIABLE_ERROR_CODE,
         "The REST path variable could not be parsed:"
                 + ex.getMessage(), null);
@@ -66,7 +72,7 @@ public class WebAppGlobalErrorHandler {
     @ResponseStatus(value=HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public @ResponseBody JsonServiceResponse handleError(HttpRequestMethodNotSupportedException ex) {
-        ex.printStackTrace();
+        logger.error("handling error.", ex);
         return new JsonServiceResponse( ErrorConstants.HTTP_METHOD_NOT_SUPPORTED_ERROR_CODE,
         "The URL could not be dispatched:"
                 + ex.getMessage(), null);
@@ -84,7 +90,7 @@ public class WebAppGlobalErrorHandler {
             errorDetails = errorService.create(errorDetails); //add the saved ID
         } catch (Exception exception){
             //possibly DB is down
-            exception.printStackTrace();
+            logger.error("error - is DB down?", exception);
         }
         return  errorDetails;   
     }

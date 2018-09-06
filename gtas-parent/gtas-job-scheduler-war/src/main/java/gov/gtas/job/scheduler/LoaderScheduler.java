@@ -219,8 +219,7 @@ public class LoaderScheduler {
 			fw.write(text);
 			fw.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("error receiving message", e);
 		}
 		processSingleFile(f, stats, primeFlightKey);
 	}

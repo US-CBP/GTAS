@@ -79,7 +79,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
             } // end of Passenger with No IdTag loop
 
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error in job scheduling", ex);
         }
 
         // Now persist this checked set of passengers

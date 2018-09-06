@@ -19,8 +19,11 @@ import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
 import gov.gtas.util.DateCalendarUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PnrDataGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(PnrDataGenerator.class);
     public static final long PNR_ID1 = 221L;
     public static final String PNR_ATTR_CARRIER1 = "NZ";
     public static final String PNR_ATTR_RECORD_LOCATOR1 = "VYZ32901123";
@@ -75,7 +78,7 @@ public class PnrDataGenerator {
             addPassenger(pnr, 3, flight);
             addPassenger(pnr, 4, flight);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("error creating test pnr", ex);
         }
         return pnr;
     }
@@ -95,7 +98,7 @@ public class PnrDataGenerator {
             addPassenger(pnr, 5, flight);
             addPassenger(pnr, 6, flight);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("error creating test pnr2", ex);
         }
         return pnr;
     }   
