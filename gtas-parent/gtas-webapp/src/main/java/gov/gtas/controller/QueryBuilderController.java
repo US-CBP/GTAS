@@ -20,6 +20,7 @@ import gov.gtas.querybuilder.model.QueryRequest;
 import gov.gtas.querybuilder.model.UserQueryRequest;
 import gov.gtas.querybuilder.service.QueryBuilderService;
 import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,6 +53,9 @@ public class QueryBuilderController {
     
     @Autowired
     QueryBuilderService queryService;
+    
+    @Autowired
+    CaseDispositionService caseDispositionService;
 
     /**
      * This method generates the Entity and Field mappings for the 
@@ -157,6 +162,15 @@ public class QueryBuilderController {
         logger.info("Delete query id: " + id + " by " + userId);
         queryService.deleteQuery(userId, id);
         return new JsonServiceResponse(Status.SUCCESS, Constants.QUERY_DELETED_SUCCESS_MSG, null);
+    }
+    
+    @RequestMapping(value = Constants.APIS_ONLY_FLAG, method = RequestMethod.GET)
+    @ResponseBody
+    public String  getApisOnlyFlagAndVersion()
+    {
+       String apisOnlyFlagAndVersion = caseDispositionService.getAPISOnlyFlagAndVersion();
+       
+       return apisOnlyFlagAndVersion;
     }
     
     private Map<String, QueryBuilderMapping> getQueryBuilderMapping() {

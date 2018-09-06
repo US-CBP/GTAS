@@ -43,13 +43,12 @@ import gov.gtas.model.FlightPax;
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.lookup.DispositionStatusCode;
-import gov.gtas.model.lookup.FlightDirectionCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.services.dto.SortOptionsDto;
 import gov.gtas.util.EntityResolverUtils;
 import gov.gtas.vo.OneDayLookoutVo;
 import gov.gtas.vo.passenger.AttachmentVo;
@@ -91,7 +90,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Autowired
 	public RuleCatService ruleCatService;
     @Autowired
-    private PassengerIDTagRepository passengerIdTagDao;
+    private PassengerResolverService passengerResolverService;
 	@Resource
 	private AppConfigurationRepository appConfigurationRepository;
 
@@ -1020,31 +1019,29 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	public List<Case> getCaseHistoryByPaxId(Long paxId) {
 		
-		Passenger pax = this.findPaxByID(new Long(paxId));
-
-    	String hash = null;
+		List<Long> pax_group = this.passengerResolverService.resolve(paxId);
     	
-    	try {
-    		hash = EntityResolverUtils.makeHashForPassenger(pax);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			logger.error("Unable to make hash for passenger", e);
-		}
-    	 
-    	/**
-    	 * 
-    	 * The hash could be based on gtas tag_id or tamr id (at the moment we only have gtas passenger_tag_id)
-    	 * 
-    	 */
-    	List<Long> paxIds = this.passengerIdTagDao.findPaxIdsByTagId(hash);
-    	
-    	if(paxIds.size()==0)
-    		return Collections.emptyList();
-    	
-    	return this.getCaseByPaxId(paxIds);
+    	return this.getCaseByPaxId(pax_group);
 	}
 
-	public String getCountdownAPISFlag(){
-		return appConfigurationRepository.findByOption(AppConfigurationRepository.CASE_COUNTDOWN_LABEL).getValue();
+        // returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or FALSE
+	@Override
+        public String getAPISOnlyFlagAndVersion()
+        {
+            String apisReturnStr = "";
+            AppConfiguration appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
+            String apisOnlyFlag = (appConfiguration != null) ? appConfiguration.getValue() : "FALSE";
+            if (apisOnlyFlag.equals("TRUE"))
+            {
+                appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_VERSION);
+                String apisVersion = (appConfiguration != null) ? appConfiguration.getValue() : "";
+                apisReturnStr = apisOnlyFlag + ";" + apisVersion;
+            }
+            else
+            {
+               apisReturnStr =  apisOnlyFlag;
+            }
+            return apisReturnStr;
 	}
-
+        
 }

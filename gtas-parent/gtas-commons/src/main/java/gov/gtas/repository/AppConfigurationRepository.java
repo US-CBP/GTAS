@@ -23,7 +23,9 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String FLIGHT_RANGE = "FLIGHT_RANGE";
     public static String REDIS_KEYS_TTL = "REDIS_KEYS_TTL";
     public static String REDIS_KEYS_TTL_TIME_UNIT = "REDIS_KEYS_TTL_TIME_UNIT";
-    public static String CASE_COUNTDOWN_LABEL = "CASE_COUNTDOWN_LABEL";
+    //public static String CASE_COUNTDOWN_LABEL = "CASE_COUNTDOWN_LABEL";
+    public static String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
+    public static String APIS_VERSION = "APIS_VERSION";
 
     public AppConfiguration findByOption(String option);
     public AppConfiguration save(AppConfiguration appConfig);
