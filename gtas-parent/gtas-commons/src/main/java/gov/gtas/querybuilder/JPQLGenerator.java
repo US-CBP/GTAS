@@ -107,6 +107,16 @@ public class JPQLGenerator {
 							// The flight side is unique in both the prefix is not already consistent of a
 							// join (like passenger was) but also the cross join is altered to only select
 							// on flight
+							if (joinEntities.contains(EntityEnum.FLIGHT_LEG)) {
+
+								logger.info("################# " + "FLIGHT LEG");
+								queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " 
+										+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
+										+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
+										+ EntityEnum.FLIGHT.getAlias();
+							}
+							
+							
 							queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " "
 									+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
 									+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
@@ -534,7 +544,7 @@ public class JPQLGenerator {
 		 case Constants.FLIGHTLEG:
              
               if(queryType == EntityEnum.FLIGHT) {
-              	//TODO: if flight query is going to be used
+            	  joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
               } else if(queryType == EntityEnum.PASSENGER) {
                   joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
               }
