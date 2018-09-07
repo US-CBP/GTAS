@@ -7,14 +7,15 @@ package gov.gtas.services;
 
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.parsers.exception.ParseException;
 
 import java.io.File;
 
+import gov.gtas.parsers.redisson.config.RedisLoaderConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -23,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
-		CachingConfig.class })
+		CachingConfig.class, RedisLoaderConfig.class})
+@PropertySource({ "classpath:redisloader.properties" })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class ApisMessageServiceIT extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -41,7 +43,7 @@ public class ApisMessageServiceIT extends
 
 	@Test()
 	@Transactional
-	public void testRunService() throws ParseException {
+	public void testRunService() {
 		svc.processMessage(this.message, new String[]{"placeholder"});
 	}
 }

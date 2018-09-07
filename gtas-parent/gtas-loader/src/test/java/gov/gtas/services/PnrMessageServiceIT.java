@@ -11,7 +11,6 @@ import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
 import gov.gtas.model.Passenger;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.FlightVo;
@@ -20,11 +19,8 @@ import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.PassengerRepository;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +74,6 @@ public class PnrMessageServiceIT extends
 		p.setPassengerType("P");
 		p.setFirstName("john");
 		p.setLastName("doe");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 		assertNotNull(f.getId());
 	}
@@ -101,19 +96,24 @@ public class PnrMessageServiceIT extends
 		PassengerVo pvo = new PassengerVo();
 		pvo.setPassengerType("P");
 		pvo.setFirstName("sam");
+		pvo.setGender("M");
+
+		pvo.setDob(new Date(LocalDate.of(1998, 5, 5).toEpochDay()));
 		pvo.setLastName("doe");
 		List<PassengerVo> passengers = new ArrayList<>();
 		passengers.add(pvo);
 		PassengerVo pvo2 = new PassengerVo();
 		pvo2.setPassengerType("P");
 		pvo2.setFirstName("sam2");
+		pvo2.setDob(new Date(LocalDate.of(1979, 9, 12).toEpochDay()));
+		pvo2.setGender("F");
 		pvo2.setLastName("doe2");
 		passengers.add(pvo2);
 
 		Set<Flight> dummy = new HashSet<>();
 		Set<Passenger> paxDummy = new HashSet<>();
 		loaderRepo.processFlightsAndPassengers(flights, passengers, dummy,
-				paxDummy, new ArrayList<FlightLeg>(),new String[]{"placeholder"},new HashSet<BookingDetail>());
+				paxDummy, new ArrayList<>(),new String[]{"placeholder"},new HashSet<BookingDetail>());
 		List<Passenger> pax = paxDao.getPassengersByLastName("doe");
 		assertEquals(1, pax.size());
 	}

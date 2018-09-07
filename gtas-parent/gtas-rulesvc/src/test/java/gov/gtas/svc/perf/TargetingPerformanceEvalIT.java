@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -34,8 +35,10 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @TransactionConfiguration(defaultRollback = false)
-public class TargetingPerformanceEval {
-    private static final Logger logger = LoggerFactory.getLogger(TargetingPerformanceEval.class);
+public class TargetingPerformanceEvalIT {
+
+    private static final Logger logger = LoggerFactory.getLogger(TargetingPerformanceEvalIT
+            .class);
     public static final String PASSENGER_WL_NAME = "PerfTest Passenger WL";
     public static final String DOCUMENT_WL_NAME = "PerfTest Document WL";
 
@@ -85,6 +88,7 @@ public class TargetingPerformanceEval {
 
     @Test
     @Transactional
+    @Ignore
     public void runPerformance() {
         long start = System.currentTimeMillis();
         RuleExecutionContext ctx = targetingService

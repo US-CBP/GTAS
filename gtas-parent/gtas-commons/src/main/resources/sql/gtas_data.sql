@@ -32,6 +32,7 @@ INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtang', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtaylor', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('mcopenhafer', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 5);
 
 -- ----------------------------
