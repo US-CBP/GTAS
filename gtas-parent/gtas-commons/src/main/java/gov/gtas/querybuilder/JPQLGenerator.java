@@ -109,7 +109,6 @@ public class JPQLGenerator {
 							// on flight
 							if (joinEntities.contains(EntityEnum.FLIGHT_LEG)) {
 
-								logger.info("################# " + "FLIGHT LEG");
 								queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " 
 										+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
 										+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
