@@ -9,12 +9,14 @@ import gov.gtas.model.lookup.RuleCat;
 
 public interface RuleCatService {
 
-    public RuleCat findRuleCatByID(Long id);
+    RuleCat findRuleCatByID(Long id);
 
-    public Iterable<RuleCat> findAll();
+    RuleCat findRuleCatByCatId(Long catId);
 
-    public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception;
+    Iterable<RuleCat> findAll();
 
-    public Long fetchRuleCatIdFromRuleId(Long ruleId) throws Exception;
+    Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception;
+
+    Long fetchRuleCatIdFromRuleId(Long ruleId) throws Exception;
 
 }

@@ -7,8 +7,14 @@ package gov.gtas.repository;
 
 
 import gov.gtas.model.lookup.RuleCat;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface RuleCatRepository extends CrudRepository<RuleCat, Long> {
 
+    @Query("SELECT rc FROM RuleCat rc where rc.catId = :catId" )
+    List<RuleCat> findRuleCatByCatId(@Param("catId") Long catId);
 }

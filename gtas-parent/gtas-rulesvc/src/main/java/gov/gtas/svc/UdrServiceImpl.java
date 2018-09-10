@@ -273,15 +273,13 @@ public class UdrServiceImpl implements UdrService {
 		try {
 			ruleToSave = JsonToDomainObjectConverter.createUdrRuleFromJson(
 					udrToCreate, author);
-			//@RuleCategory changes Begin
-			getRuleCatFromRuleMeta(ruleToSave);
-			//@RuleCategory changes END
+			setRuleCatOnRuleMeta(ruleToSave.getMetaData());
 			UdrServiceHelper.addEngineRulesToUdrRule(ruleToSave, udrToCreate);
 		} catch (IOException ioe) {
 			logger.error("error creating udr!", ioe);
 			throw new RuntimeException(ioe.getMessage());
 		} catch(Exception ex){
-			//ex.logger.error("error!", e);
+			logger.error("Error creating udr rule!", ex);
 		}
 
 		UdrRule savedRule = rulePersistenceService.create(ruleToSave, userId);
@@ -295,7 +293,7 @@ public class UdrServiceImpl implements UdrService {
 	/**
 	 * Fetches all the active rules and recompiles the Knowledge Base. If no
 	 * rules are found then the knowledge Base is deleted.
-	 * 
+	 *
 	 * @param kbName
 	 * @param userId
 	 */
@@ -367,12 +365,7 @@ public class UdrServiceImpl implements UdrService {
 					.format("UdrServiceImpl.updateUdr() - %s trying to update rule by different author %s!",
 							authorUserId, ruleToUpdate.getAuthor().getUserId()));
 		}
-		// update the meta data
-		RuleMeta ruleMeta = JsonToDomainObjectConverter
-				.extractRuleMetaUpdates(udrToUpdate);
-		ruleToUpdate.setMetaData(ruleMeta);
-		ruleToUpdate.setTitle(ruleMeta.getTitle());
-
+		updateRuleMetaData(udrToUpdate, ruleToUpdate);
 		UdrRule updatedRule = null;
 
 		QueryObject queryObject = udrToUpdate.getDetails();
@@ -381,7 +374,7 @@ public class UdrServiceImpl implements UdrService {
 				final byte[] ruleBlob = JsonToDomainObjectConverter
 						.convertQueryObjectToBlob(queryObject);
 				ruleToUpdate.setUdrConditionObject(ruleBlob);
-			} catch (IOException | ClassNotFoundException ex) {
+			} catch (IOException ex) {
 				logger.error("error updating udr!", ex);
 				throw new RuntimeException(ex.getMessage());
 			}
@@ -394,13 +387,6 @@ public class UdrServiceImpl implements UdrService {
 			for (Rule r : newEngineRules) {
 				ruleToUpdate.addEngineRule(r);
 			}
-			//@RuleCategory changes Begin
-			try {
-				getRuleCatFromRuleMeta(ruleToUpdate);
-			}catch (Exception ex){
-				logger.error("error getting rule category changes", ex);
-			}
-			//@RuleCategory changes END
 			if (ruleToUpdate.getAuthor().getUserId().equals(userId)) {
 				updatedRule = rulePersistenceService.update(ruleToUpdate,
 						ruleToUpdate.getAuthor());
@@ -429,6 +415,18 @@ public class UdrServiceImpl implements UdrService {
 
 		return UdrServiceJsonResponseHelper.createResponse(true,
 				RuleConstants.UDR_UPDATE_OP_NAME, updatedRule);
+	}
+
+	private void updateRuleMetaData(UdrSpecification udrToUpdate, UdrRule ruleToUpdate) {
+		try {
+			RuleMeta ruleMeta = JsonToDomainObjectConverter
+					.extractRuleMetaUpdates(udrToUpdate);
+			ruleToUpdate.setTitle(ruleMeta.getTitle());
+			setRuleCatOnRuleMeta(ruleMeta);
+			ruleToUpdate.setMetaData(ruleMeta);
+		} catch (Exception ex) {
+			logger.error("Error updating rule meta data!", ex);
+		}
 	}
 
 	@Override
@@ -526,25 +524,23 @@ public class UdrServiceImpl implements UdrService {
 
 	//@RuleCat changes
 	// Utility method to retrieve RuleCat Set from nested RuleMeta under UDR Rule
-	private void getRuleCatFromRuleMeta(UdrRule udrRule) throws Exception{
+	private void setRuleCatOnRuleMeta(RuleMeta ruleMeta) {
 
-		Set<RuleCat> _tempRuleCatSet = udrRule.getMetaData().getRuleCategories();
-		RuleCat _tempRuleCat = new RuleCat();
-		_tempRuleCat = _tempRuleCatSet.stream()
+		Set<RuleCat> _tempRuleCatSet = ruleMeta.getRuleCategories();
+
+		RuleCat _tempRuleCat = _tempRuleCatSet.stream()
 				.filter(x -> x.getId()!=null)
 				.findAny()
 				.orElse(null);
 
 		if(_tempRuleCat==null){ // if category is missing, set it to "General" category
-			_tempRuleCat=new RuleCat();
-			_tempRuleCat.setId(new Long(1));
+			_tempRuleCat= ruleCatService.findRuleCatByCatId(1L);
 		}
-
 		//finally, retrieve this category object and set it in UDRrule for persistence
 		_tempRuleCat = ruleCatService.findRuleCatByID(_tempRuleCat.getId());
-		_tempRuleCatSet = new HashSet<RuleCat>();
+		_tempRuleCatSet = new HashSet<>();
 		_tempRuleCatSet.add(_tempRuleCat);
-		udrRule.getMetaData().setRuleCategories(_tempRuleCatSet);
+		ruleMeta.setRuleCategories(_tempRuleCatSet);
 
 	}
 }
