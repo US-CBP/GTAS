@@ -838,8 +838,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		if (_tempFlight != null) {
 			aCase.setFlightNumber(_tempFlight.getFlightNumber());
-			aCase.setFlightETADate(_tempFlight.getEtaDate());
-			aCase.setFlightETDDate(_tempFlight.getEtdDate());
+                        aCase.setFlightETADate(_tempFlight.getEta());
+			aCase.setFlightETDDate(_tempFlight.getEtd());
 		}
 	}
 

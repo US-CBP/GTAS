@@ -9,9 +9,17 @@
         .service('caseDispositionService', function ($http, $q, Upload) {
 
             function getAllCases(){
+                
+                var startDate = new Date();
+                var endDate = new Date();
+                endDate.setDate(endDate.getDate() + 30);
+                startDate.setDate(startDate.getDate() - 30);                
+        
                 var pageRequest = {
                     pageSize: "10",
-                    pageNumber: "1"
+                    pageNumber: "1",
+                    etaStart: startDate,
+                    etaEnd: endDate
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
