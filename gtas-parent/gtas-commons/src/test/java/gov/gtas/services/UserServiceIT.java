@@ -28,6 +28,8 @@ import javax.transaction.Transactional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +40,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 		CachingConfig.class })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class UserServiceIT {
+
+	private static final Logger logger = LoggerFactory.getLogger(UserServiceIT.class);
+
 	@Autowired
 	UserService userService;
 
@@ -81,7 +86,7 @@ public class UserServiceIT {
 				r -> r.getRoleId() == 2);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-		System.out.println(authRoles);
+		logger.info(authRoles.toString());
 		UserData expectedUser = new UserData("iTest99", "password", "test",
 				"99", 1, authRoles, null);
 
@@ -90,7 +95,7 @@ public class UserServiceIT {
 		try {
 			actualUser = userService.create(expectedUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);
 		}
 		// Assert
 		assertEquals(expectedUser.getUserId(), actualUser.getUserId());
@@ -129,7 +134,7 @@ public class UserServiceIT {
 		try {
 			actualUser = userService.create(expectedUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);;;
 		}
 
 		// Assert
@@ -146,14 +151,14 @@ public class UserServiceIT {
 				r -> r.getRoleId() == 2);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
-		System.out.println(authRoles);
+		logger.info(authRoles.toString());
 		UserData expectedUser = new UserData("iTest99", "password", "test",
 				"99", 1, authRoles, null);
 
 		try {
 			userService.create(expectedUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);
 		}
 		// update lastname
 		UserData expectedUserU = new UserData("iTest99", "password", "test",
@@ -164,7 +169,7 @@ public class UserServiceIT {
 		try {
 			actualUserU = userService.update(expectedUserU);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);
 		}
 
 		// Assert
@@ -200,7 +205,7 @@ public class UserServiceIT {
 		try {
 			userService.create(expectedUser);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);;;
 		}
 
 		Stream<RoleData> streamRolesU = roles.stream().filter(
@@ -215,7 +220,7 @@ public class UserServiceIT {
 		FilterData filterU = new FilterData("iTest99", "O", originAirports,
 				destinationAirports, etaStart, etaEnd);
 
-		System.out.println(authRoles);
+		logger.info(authRoles.toString());
 		UserData expectedUserU = new UserData("iTest99", "password", "test",
 				"99", 1, authRolesU, filterU);
 
@@ -224,7 +229,7 @@ public class UserServiceIT {
 		try {
 			actualUserU = userService.update(expectedUserU);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error!", e);
 		}
 
 		// Assert

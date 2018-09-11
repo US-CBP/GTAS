@@ -16,9 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class PnrGen {
+
+    private static final Logger logger = LoggerFactory.getLogger(PnrGen.class);
 
     private static String newline=System.getProperty("line.separator");
     //private static StringBuilder sb=new StringBuilder();
@@ -76,8 +80,8 @@ public class PnrGen {
                 bDate=pDto.getDob();
                 lName=pDto.getLastName();
                 fName=pDto.getFirstName();
-                //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>------"+lName);
-                //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>------"+fName);
+                //logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>------"+lName);
+                //logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>------"+fName);
             }
             
             String id=""+GenUtil.getRandomNumber(9999);
@@ -197,7 +201,7 @@ public class PnrGen {
 
     public static void writeToFile(int num,StringBuilder sb){
         String fileName="C:\\PNR"+"\\pnr"+num+".txt";
-        System.out.println("Writing to file"+fileName); 
+        logger.info("Writing to file"+fileName);
         try{
             String content = sb.toString();
             File pnrFile = new File(fileName);
@@ -209,7 +213,7 @@ public class PnrGen {
                bw.write(content);
                bw.close();
          }catch(Exception e){
-             System.out.println(e);
+             logger.info("Exception writing test to file" , e);
          }
     }
 
@@ -320,7 +324,7 @@ public class PnrGen {
     
     public static void writeToApisFile(int num,StringBuilder sb){
         String fileName="C:\\PNR"+"\\apis"+num+".txt";
-        System.out.println("Writing to file"+fileName); 
+        logger.info("Writing to file"+fileName);
         try{
             String content = sb.toString();
             File apisFile = new File(fileName);
@@ -332,7 +336,7 @@ public class PnrGen {
                bw.write(content);
                bw.close();
          }catch(Exception e){
-             System.out.println(e);
+             logger.info("Exception writing APIS to file", e);
          }
     }
     
@@ -360,7 +364,7 @@ public class PnrGen {
 //          buildSrc(carrier, origin,dest,fNumber,dString,numPax,dto,sb);
 //          buildFooter(sb);
 //          //flights.add(dto);
-//          System.out.println(sb.toString());  
+//          logger.info(sb.toString());
 //          //writeToFile(i,sb);
 //          sb=null;
 //      }

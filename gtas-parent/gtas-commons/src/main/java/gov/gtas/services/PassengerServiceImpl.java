@@ -380,7 +380,7 @@ public class PassengerServiceImpl implements PassengerService {
                 return pax.getBookingDetails();
             }).collect(Collectors.toList());
         } catch (Exception ex) {
-                ex.printStackTrace();
+                logger.error("Get booking detail history failed.", ex);
         }
         return _tempPaxList;
     }

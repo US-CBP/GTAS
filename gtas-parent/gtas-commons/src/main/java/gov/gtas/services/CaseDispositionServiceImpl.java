@@ -412,7 +412,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 					casesToCommit.add(aCase);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error in context cases!", ex);
 		}
 	}
 
@@ -429,7 +429,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			else
 				hitDisp.setRuleCat(ruleCatRepository.findOne(id));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in pull rule category.", ex);
 		}
 	}
 
@@ -441,7 +441,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in high priority rule cat id", ex);
 		}
 		return 1L;
 	}
@@ -450,7 +450,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			return ruleCatService.fetchRuleCatIdFromRuleId(ruleId);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in get rule cat id", ex);
 		}
 		return 1L;
 	}
@@ -534,7 +534,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				caseDispositionRepository.save(aCase);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error adding case comments: ", ex);
 		}
 
 		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
@@ -757,7 +757,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				_tempReturnHitsDispSet.add(_tempHitsDisp);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error returning hits disposition.", ex);
 		}
 		// _tempReturnHitsDispSet =
 		// _tempReturnHitsDispSet.stream().sorted(Comparator.comparing(HitsDispositionVo::getHit_disp_id)).collect(Collectors.toSet());
@@ -798,7 +798,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error in manage hits disposition comments.", ex);
 		}
 		return _tempReturnHitsDispSet;
 	}
@@ -873,7 +873,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error copying object", ex);
 		}
 	}
 
@@ -1005,8 +1005,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		catch (Exception e)
 		{
 			logger.error("An Error has occurred when updating one day lookout flag for CASE ID: " + caseId+ " with flag: "+ flag );
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 			return result;
 	}

@@ -15,6 +15,8 @@ import gov.gtas.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 @WebAppConfiguration
 @TransactionConfiguration(defaultRollback = true)
 public class SecurityUserDetailsServiceIT {
+
+	private static final Logger logger = LoggerFactory.getLogger(SecurityUserDetailsServiceIT.class);
 	@Autowired
 	UserRepository userDao;
 
@@ -66,6 +70,6 @@ public class SecurityUserDetailsServiceIT {
 	public void testMyUser() {
 		UserDetails u = userDetailsService.loadUserByUsername("test");
 		assertNotNull(u);
-		System.out.println(u);
+		logger.info(u.toString());
 	}
 }

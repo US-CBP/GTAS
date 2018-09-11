@@ -43,7 +43,7 @@ public class WatchListLoaderService {
         	FILE_TO_PARSE=args[0];
         }
         else{
-        	 System.out.println("Enter absolute file Name to parse and load watchlist (Example:C:/TEST/wlist.csv): ");
+        	 logger.info("Enter absolute file Name to parse and load watchlist (Example:C:/TEST/wlist.csv): ");
         	 FILE_TO_PARSE = scanIn.nextLine();
         }
         if(StringUtils.isNoneBlank(FILE_TO_PARSE)){
@@ -64,26 +64,26 @@ public class WatchListLoaderService {
             	                // use comma as separator
             	                String[] tokens = line.split(cvsSplitBy);
             	                if(tokens.length < 10){
-            	                	System.out.println("****************************************************************");
-            	                	System.out.println(" INVALID FILE EXPECTED FIELDS IN FILE = 10 ");
-            	                  	System.out.println(""+ toParse +" Contains "+tokens.length+" Fields to parse");
-            	                	System.out.println("                    EXITING     ");
-            	                	System.out.println("****************************************************************");
+            	                	logger.info("****************************************************************");
+            	                	logger.info(" INVALID FILE EXPECTED FIELDS IN FILE = 10 ");
+            	                  	logger.info(""+ toParse +" Contains "+tokens.length+" Fields to parse");
+            	                	logger.info("                    EXITING     ");
+            	                	logger.info("****************************************************************");
             	                	System.exit(-1);
             	                }
             	                break;
             	            }
 
             	        } catch (FileNotFoundException e) {
-            	            e.printStackTrace();
+            	            logger.error("file to parse not found!", e);
             	        } catch (IOException e) {
-            	            e.printStackTrace();
+            	            logger.error("error processing file!", e);
             	        } finally {
             	            if (br != null) {
             	                try {
             	                    br.close();
             	                } catch (IOException e) {
-            	                    e.printStackTrace();
+            	                    logger.error("error closing br", e);
             	                }
             	            }
             	        }
@@ -91,9 +91,9 @@ public class WatchListLoaderService {
             		logger.info("Valid file to parse : "+FILE_TO_PARSE);
             		scanIn.close(); 
             	}else{
-                    System.out.println(
+                    logger.info(
                             "\nPlease enter valid file name to parse and load " + FILE_TO_PARSE + " is not a valid file");
-                    System.out.print("\nPlease enter the filename again: ");
+                    logger.info("\nPlease enter the filename again: ");
                     FILE_TO_PARSE = scanIn.nextLine();
             	}
 
@@ -110,7 +110,7 @@ public class WatchListLoaderService {
 			UserService userService=(UserService) ctx.getBean(UserService.class);
 			WatchlistService wlService=(WatchlistService) ctx.getBean(WatchlistService.class);
 			UserData user=userService.findById("gtas");
-			System.out.println(user.getUserId());
+			logger.info(user.getUserId());
 			
 			CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withHeader()); 
 			if(f.toString().endsWith("xls") || f.toString().endsWith("xlsx")){
@@ -156,7 +156,7 @@ public class WatchListLoaderService {
 	                        .getFieldName(), PassengerMapping.CITIZENSHIP_COUNTRY.getFieldType(), record.get("coc"), termList);
 				}					
 
-				//System.out.printf("%s\t%s\t%s\n", record.get("dob"), record.get("firstname"), record.get("doc"));
+				//logger.info("%s\t%s\t%s\n", record.get("dob"), record.get("firstname"), record.get("doc"));
 				if(!termList.isEmpty()){
 					WatchlistItemSpec spec=new WatchlistItemSpec();
 					spec.setAction(WatchlistEditEnum.C.getOperationName());
@@ -175,25 +175,25 @@ public class WatchListLoaderService {
 			}
 			JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
 					user.getUserId(), ret);
-			System.out.println("****************************************************************");
-			System.out.println("Passenger WatchList Saved "+resp.getMessage());
-			System.out.println("****************************************************************");
+			logger.info("****************************************************************");
+			logger.info("Passenger WatchList Saved "+resp.getMessage());
+			logger.info("****************************************************************");
 			JsonServiceResponse resp1 = wlService.createUpdateDeleteWatchlistItems(
 					user.getUserId(), ret_D);
-			System.out.println("****************************************************************");
-			System.out.println("Document WatchList Saved "+resp1.getMessage());
-			System.out.println("****************************************************************");
+			logger.info("****************************************************************");
+			logger.info("Document WatchList Saved "+resp1.getMessage());
+			logger.info("****************************************************************");
 			JsonServiceResponse resp2 = wlService.activateAllWatchlists();
-			System.out.println("****************************************************************");
-			System.out.println(" All WatchList items were Activated "+resp2.getMessage());
-			System.out.println("****************************************************************");
+			logger.info("****************************************************************");
+			logger.info(" All WatchList items were Activated "+resp2.getMessage());
+			logger.info("****************************************************************");
 			parser.close();	
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("parse load watchlist error!", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("parse load watchlist error.", e);
 		}
     }
     public static List<WatchlistTerm> createWatchListTermList(String fieldName,String type,String value,List<WatchlistTerm> terms){

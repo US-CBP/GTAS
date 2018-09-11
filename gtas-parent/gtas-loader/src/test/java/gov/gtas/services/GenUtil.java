@@ -303,7 +303,7 @@ public class GenUtil {
         Calendar cal = new GregorianCalendar(year,mon,day);
         Date date=cal.getTime();
         SimpleDateFormat df = new SimpleDateFormat("yyMMdd");
-        //System.out.println("DOB<<<<<<<<<<----"+df.format(date));
+        //logger.info("DOB<<<<<<<<<<----"+df.format(date));
         return df.format(date);
     }
     public static List<PaxDto> getWatchList(){

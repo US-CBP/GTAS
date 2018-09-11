@@ -32,6 +32,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,6 +49,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
         CachingConfig.class })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class RulePersistenceServiceIT {
+
+    private static final Logger logger = LoggerFactory.getLogger(RulePersistenceServiceIT.class);
     private static final String TEST_KB_NAME = "Foo Knowledge Base";
 
     @Autowired
@@ -407,7 +411,7 @@ public class RulePersistenceServiceIT {
         assertTrue(id > 0);
         String kbString = new String(readKb.getKbBlob(),
                 RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING);
-        System.out.println(kbString);
+        logger.info(kbString);
         assertEquals(UPDATED_KB_TEXT, kbString);
         String rlString = new String(readKb.getRulesBlob(),
                 RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING);

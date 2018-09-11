@@ -10,6 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,8 @@ import gov.gtas.services.search.ElasticHelper;
 
 @Service
 public class Loader {
+
+    private static final Logger logger = LoggerFactory.getLogger(Loader.class);
     @Autowired
     private MessageRepository<Message> msgDao;
 
@@ -78,7 +82,7 @@ public class Loader {
             msgDto.setRawMsgs(svc.preprocess(text));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error processing message.", e);
             String stacktrace = ErrorUtils.getStacktrace(e);
             Message m = new Message();
             m.setError(stacktrace);

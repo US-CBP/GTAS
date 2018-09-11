@@ -59,9 +59,8 @@ public class NameMatchCaseMgmtUtils {
                         document, description, wl_id);
             }
         } catch (Exception ex) {
-            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:" + wl_id + " set");
-            ex.printStackTrace();
-        }
+            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:" + wl_id + " set", ex);
+          }
         return true;
     }
 

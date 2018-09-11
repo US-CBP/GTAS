@@ -21,9 +21,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.FieldError;
 
 public class WatchlistValidationAdapterTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(WatchlistValidationAdapterTest.class);
+
     private static final String WL_NAME1 = "Hello WL 1";
 
     @Before
@@ -40,7 +45,7 @@ public class WatchlistValidationAdapterTest {
         WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
         WatchlistValidationAdapter.validateWatchlistSpec(spec);
         } catch (Exception  ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Not expecting exception");
         }
     }

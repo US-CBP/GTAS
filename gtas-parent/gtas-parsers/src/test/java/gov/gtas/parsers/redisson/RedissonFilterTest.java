@@ -17,6 +17,8 @@ import org.redisson.client.RedisConnection;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.client.protocol.RedisCommands;
 import org.redisson.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.embedded.RedisServer;
 
 import java.io.File;
@@ -36,6 +38,8 @@ import static org.junit.Assert.assertTrue;
 
 public class RedissonFilterTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedissonFilterTest.class);
+
     private static RedisServer redisServer;
     private static RedissonClient client;
     private static String[] randomStrings;
@@ -47,7 +51,7 @@ public class RedissonFilterTest {
             Config config = Config.fromJSON(new File(classLoader.getResource("singleNodeConfig.json").getFile()));
             client = Redisson.create(config);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
         }
 
     }
@@ -79,7 +83,7 @@ public class RedissonFilterTest {
 
 
         }catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
         }
 
     }
@@ -103,7 +107,7 @@ public class RedissonFilterTest {
 //            sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
 //        }
 //
-//        System.out.println("Hex format : " + sb.toString());
+//        logger.info("Hex format : " + sb.toString());
 //
 //        //convert the byte to hex format method 2
 //        StringBuffer hexString = new StringBuffer();
@@ -111,7 +115,7 @@ public class RedissonFilterTest {
 //            hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
 //        }
 //
-//        System.out.println("Hex format : " + hexString.toString());
+//        logger.info("Hex format : " + hexString.toString());
 //
 //        return hexString.toString();
 //    }
@@ -127,7 +131,7 @@ public class RedissonFilterTest {
         for (int i=0;i<mdbytes.length;i++) {
             hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
         }
-        System.out.println("Hex format : " + hexString.toString());
+        logger.info("Hex format : " + hexString.toString());
         return hexString.toString();
     }
 

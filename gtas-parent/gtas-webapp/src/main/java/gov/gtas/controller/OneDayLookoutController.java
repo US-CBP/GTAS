@@ -43,8 +43,7 @@ public class OneDayLookoutController {
 				Date etaEtdDate = dateFormat.parse(flightDate);
 				OneDayLookoutVoList = caseDispositionService.getOneDayLookoutByDate(etaEtdDate);
 			} catch (Exception e) {
-				logger.error("An Exception has occurred when reading one day lookout information");
-				e.printStackTrace();
+				logger.error("An Exception has occurred when reading one day lookout information", e);
 			}
 		} else {
 			Date today = Calendar.getInstance().getTime();
@@ -69,8 +68,7 @@ public class OneDayLookoutController {
 					
 					
 				} catch (Exception e) {
-					logger.error("An Exception has occurred when adding flagging a case as a one day lookout data");
-					e.printStackTrace();
+					logger.error("An Exception has occurred when adding flagging a case as a one day lookout data", e);
 					result = false;
 
 			}
@@ -96,8 +94,7 @@ public class OneDayLookoutController {
 					result = caseDispositionService.updateDayLookoutFlag(caseIdAsLong, null);
 					
 				} catch (Exception e) {
-					logger.error("An Exception has occurred when removing flagging a case as a one day lookout data");
-					e.printStackTrace();
+					logger.error("An Exception has occurred when removing flagging a case as a one day lookout data", e);
 					result = false;
 
 			}

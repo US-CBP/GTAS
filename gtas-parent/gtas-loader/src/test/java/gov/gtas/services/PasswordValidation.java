@@ -1,9 +1,13 @@
 package gov.gtas.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PasswordValidation {
+	  private static final Logger logger = LoggerFactory.getLogger(PasswordValidation.class);
  	  private static Pattern pattern;
 	  private static Matcher matcher;
 
@@ -27,7 +31,7 @@ public class PasswordValidation {
 	  }
 	  
 	  public static void main(String[] args){
-	   System.out.println(" SS4rinivas1!"+ new PasswordValidation().validate("S4rinivas!"));
+	   logger.info(" SS4rinivas1!"+ new PasswordValidation().validate("S4rinivas!"));
 	  }
 	  
 	   private static int calculatePasswordStrength(String password){

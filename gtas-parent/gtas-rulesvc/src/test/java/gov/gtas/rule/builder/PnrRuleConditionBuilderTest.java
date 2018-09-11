@@ -32,11 +32,16 @@ import gov.gtas.querybuilder.mappings.PhoneMapping;
 
 import java.text.ParseException;
 
+import gov.gtas.rule.builder.pnr.PnrRuleConditionBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PnrRuleConditionBuilderTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(PnrRuleConditionBuilderTest.class);
     
     private RuleConditionBuilder testTarget;
 
@@ -131,7 +136,7 @@ public class PnrRuleConditionBuilderTest {
         testTarget.addRuleCondition(cond);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
-        System.out.println(result);
+        logger.info(result.toString());
         assertTrue(result.length() > 0);
         /*
             $d:Document(issuanceCountry != "US")
