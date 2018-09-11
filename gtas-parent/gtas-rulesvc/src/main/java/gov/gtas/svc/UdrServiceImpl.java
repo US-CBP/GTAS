@@ -526,21 +526,17 @@ public class UdrServiceImpl implements UdrService {
 	// Utility method to retrieve RuleCat Set from nested RuleMeta under UDR Rule
 	private void setRuleCatOnRuleMeta(RuleMeta ruleMeta) {
 
-		Set<RuleCat> _tempRuleCatSet = ruleMeta.getRuleCategories();
-
-		RuleCat _tempRuleCat = _tempRuleCatSet.stream()
-				.filter(x -> x.getId()!=null)
+		RuleCat ruleCat = ruleMeta
+				.getRuleCategories()
+				.stream()
+				.filter(rc -> rc.getId() != null)
 				.findAny()
-				.orElse(null);
+				.orElse(ruleCatService.findRuleCatByCatId(1L)); //Default to 1L - "General Rule Category"
 
-		if(_tempRuleCat==null){ // if category is missing, set it to "General" category
-			_tempRuleCat= ruleCatService.findRuleCatByCatId(1L);
-		}
 		//finally, retrieve this category object and set it in UDRrule for persistence
-		_tempRuleCat = ruleCatService.findRuleCatByID(_tempRuleCat.getId());
-		_tempRuleCatSet = new HashSet<>();
-		_tempRuleCatSet.add(_tempRuleCat);
-		ruleMeta.setRuleCategories(_tempRuleCatSet);
-
+		ruleCat = ruleCatService.findRuleCatByID(ruleCat.getId());
+		Set<RuleCat> ruleCatSet = new HashSet<>();
+		ruleCatSet.add(ruleCat);
+		ruleMeta.setRuleCategories(ruleCatSet);
 	}
 }
