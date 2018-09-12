@@ -60,6 +60,7 @@ public final class Constants {
     
     public static final String SEAT = "SEAT";
     public static final String PAYMENTFORMS = "PAYMENTFORMS";
+    public static final String FORM_OF_PAYMENT = "formOfPayment";
     
     public static final String QUERY_EXISTS_ERROR_MSG = "A query with the same title already exists. Please rename this query or edit the existing one.";
     public static final String QUERY_DOES_NOT_EXIST_ERROR_MSG = "Query cannot be found.";

@@ -56,6 +56,9 @@ public class JPQLGenerator {
 			MutableInt positionalParameter = new MutableInt();
 			MutableInt level = new MutableInt();
 			logger.debug("Parsing QueryObject...");
+			
+			QueryObject queryObject = (QueryObject)queryEntity;
+			
 
 			generateWhereCondition(queryEntity, queryType, joinEntities, where, seatCondition, positionalParameter,
 					level, paymentFormCondition);
@@ -132,13 +135,22 @@ public class JPQLGenerator {
 					join = generateJoinCondition(joinEntities, queryType);
 				}
 
+				boolean  hasFormOfPayment = hasField(queryObject, Constants.FORM_OF_PAYMENT);
+				
+				if(hasFormOfPayment)
+				{
+					join += " join "+ EntityEnum.PNR.getAlias() +".flights pnfl ";
+				}
+				
 				if (seatCondition.isTrue()) {
 					join += " left join p.seatAssignments s ";
 				}
 				if (paymentFormCondition.isTrue()) {
 					// joins to pnr -> paymentForms through flight
 					join += " left join pnr.paymentForms pf ";
+				
 				}
+				
 
 				query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
 			} else if (queryType == EntityEnum.PASSENGER) {
@@ -194,6 +206,14 @@ public class JPQLGenerator {
 
 						join = generateJoinCondition(joinEntities, queryType);
 					}
+					
+					boolean  hasFormOfPayment = hasField(queryObject, Constants.FORM_OF_PAYMENT);
+					
+					if(hasFormOfPayment)
+					{
+						join += " join "+ EntityEnum.PNR.getAlias() +".flights pnfl ";
+					}
+					
 
 					if (seatCondition.isTrue()) {
 						join += " left join p.seatAssignments s ";
@@ -421,7 +441,12 @@ public class JPQLGenerator {
 					} else if (field.equalsIgnoreCase(Constants.PAYMENTFORMS)) {
 						where.append("(pnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?"
 								+ positionalParameter + ")");
-					} else {
+					} 
+					else if (field.equalsIgnoreCase(Constants.FORM_OF_PAYMENT)) {
+						where.append(" f.id in pnfl.id  and "+entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " ?"
+								+ positionalParameter);
+					}
+					else {
 						where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator());
 					}
 				} else if (OperatorEnum.BETWEEN.toString().equalsIgnoreCase(operator)
@@ -455,7 +480,13 @@ public class JPQLGenerator {
 					} else if (field.equalsIgnoreCase(Constants.PAYMENTFORMS)) {
 						where.append("(pnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?"
 								+ positionalParameter + ")");
-					} else {
+					} 
+					else if (field.equalsIgnoreCase(Constants.FORM_OF_PAYMENT)) {
+						where.append(" f.id in pnfl.id  and "+entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " ?"
+								+ positionalParameter);
+					}
+					
+					else {
 						where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " (?"
 								+ positionalParameter + ")");
 					}
@@ -473,6 +504,9 @@ public class JPQLGenerator {
 					} else if (field.equalsIgnoreCase(Constants.PAYMENTFORMS)) {
 						where.append("(pnr.id = pf.pnr.id and pf.paymentType " + opEnum.getOperator() + " ?"
 								+ positionalParameter + ")");
+					} else if (field.equalsIgnoreCase(Constants.FORM_OF_PAYMENT)) {
+						where.append(" f.id in pnfl.id  and "+entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " ?"
+								+ positionalParameter);
 					} else {
 						where.append(entityEnum.getAlias() + "." + field + " " + opEnum.getOperator() + " ?"
 								+ positionalParameter);
@@ -607,6 +641,32 @@ public class JPQLGenerator {
 		}
 
 		return false;
+	}
+	
+	
+	
+	private static boolean hasField(QueryObject queryObject, String fieldName) {
+		boolean result = false;
+		QueryEntity queryEntity = null;
+
+		List<QueryEntity> rules = queryObject.getRules();
+		if (rules != null) {
+			for (QueryEntity rule : rules) {
+
+				queryEntity = rule;
+				if (queryEntity instanceof QueryTerm) {
+					QueryTerm queryTerm = (QueryTerm) queryEntity;
+					String field = queryTerm.getField();
+					if (field != null && field.equalsIgnoreCase(fieldName))
+						result = true;
+
+				}
+
+			}
+
+		}
+
+		return result;
 	}
 
 	private static boolean isDwellQuery(List<EntityEnum> entity) {
