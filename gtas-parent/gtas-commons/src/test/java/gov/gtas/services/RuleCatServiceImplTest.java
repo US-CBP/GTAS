@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 
 import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.model.lookup.RuleCat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,16 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.validation.constraints.NotNull;
-
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class })
+@ContextConfiguration(classes = {CommonServicesConfig.class})
 public class RuleCatServiceImplTest {
 
     private static final Logger logger = LoggerFactory
             .getLogger(RuleCatServiceImplTest.class);
+
     @Before
     public void setUp() throws Exception {
     }
@@ -40,9 +40,25 @@ public class RuleCatServiceImplTest {
 
 
     @Test
-    public void testRuleCatRetrieval() throws Exception{
+    public void testRuleCatRetrievalTerroism() {
+        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(2L);
+        assertEquals(ruleCat.getCatId(), new Long(2L));
+        assertEquals(ruleCat.getCategory(), "Terrorism");
+    }
 
-    //assertTrue(ruleCatService.findRuleCatByID(new Long(2)).getCatId()!=null);
+
+    @Test
+    public void testRuleCatRetrievalGeneral() {
+        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(1L);
+        assertEquals(ruleCat.getCatId(), new Long(1L));
+        assertEquals(ruleCat.getCategory(), "General");
+    }
+
+    @Test
+    public void testRuleCatDoesntExist() {
+        long notAValidRuleCategory = -1999L;
+        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(notAValidRuleCategory);
+        assertEquals(ruleCat, null);
     }
 
 }
