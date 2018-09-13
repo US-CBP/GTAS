@@ -527,11 +527,11 @@
       }
     ]
   },
-  "FlightLeg": {
+  "BookingDetail": {
     "label": "FLIGHT LEG",
     "columns": [
       {
-        "id": "FlightLeg.origin",
+        "id": "BookingDetail.origin",
         "label": "Origin",
         "type": "string",
         "operators": [
@@ -549,7 +549,7 @@
         "multiple": true               
       },
       {
-        "id": "FlightLeg.destination",
+        "id": "BookingDetail.destination",
         "label": "Destination",
         "type": "string",
         "operators": [

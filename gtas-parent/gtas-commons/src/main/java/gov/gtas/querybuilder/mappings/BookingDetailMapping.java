@@ -7,7 +7,7 @@ package gov.gtas.querybuilder.mappings;
 
 import gov.gtas.enumtype.TypeEnum;
 
-public enum FlightLegMapping implements IEntityMapping {
+public enum BookingDetailMapping implements IEntityMapping {
 
     ORIGIN ("origin", "Origin", TypeEnum.STRING.getType()),
     DESTINATION ("destination", "Destination", TypeEnum.STRING.getType());
@@ -17,14 +17,14 @@ public enum FlightLegMapping implements IEntityMapping {
     private String fieldType;
     private boolean displayField;
     
-    private FlightLegMapping(String fieldName, String friendlyName,
+    private BookingDetailMapping(String fieldName, String friendlyName,
             String fieldType, boolean displayField) {
         this.fieldName = fieldName;
         this.friendlyName = friendlyName;
         this.fieldType = fieldType;
         this.displayField = displayField;
     }
-    private FlightLegMapping(String fieldName, String friendlyName,
+    private BookingDetailMapping(String fieldName, String friendlyName,
             String fieldType) {
         this(fieldName, friendlyName, fieldType, true);
     }

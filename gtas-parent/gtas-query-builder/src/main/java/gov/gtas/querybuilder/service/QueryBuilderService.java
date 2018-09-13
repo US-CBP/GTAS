@@ -314,7 +314,7 @@ public class QueryBuilderService {
 				if (queryEntity instanceof QueryTerm) {
 					QueryTerm queryTerm = (QueryTerm) queryEntity;
 					String entity = queryTerm.getEntity();
-					if (entity != null && entity.equalsIgnoreCase(EntityEnum.FLIGHT_LEG.getEntityName()))
+					if (entity != null && entity.equalsIgnoreCase(EntityEnum.BOOKING_DETAIL.getEntityName()))
 						result = true;
 
 				}

@@ -100,7 +100,7 @@ public class JPQLGenerator {
 							joinEntities.add(0, EntityEnum.PNR);
 						}
 
-						if (joinEntities.contains(EntityEnum.PASSENGER) || joinEntities.contains(EntityEnum.DOCUMENT)) {
+						if (joinEntities.contains(EntityEnum.PASSENGER) || joinEntities.contains(EntityEnum.DOCUMENT) || joinEntities.contains(EntityEnum.BOOKING_DETAIL)) {
 							// If document, needs new prefix in order to use join p.documents
 							// join flights.passengers does not work as they are not mapped to one another
 							// by hibernate, so the join must be removed if it exists
@@ -110,15 +110,7 @@ public class JPQLGenerator {
 							// The flight side is unique in both the prefix is not already consistent of a
 							// join (like passenger was) but also the cross join is altered to only select
 							// on flight
-							if (joinEntities.contains(EntityEnum.FLIGHT_LEG)) {
-
-								queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " " 
-										+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
-										+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
-										+ EntityEnum.FLIGHT.getAlias();
-							}
-							
-							
+														
 							queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.FLIGHT.getAlias() + " "
 									+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
 									+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
@@ -155,7 +147,7 @@ public class JPQLGenerator {
 				query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
 			} else if (queryType == EntityEnum.PASSENGER) {
 
-				if (joinEntities.contains(EntityEnum.FLIGHT_LEG)) {
+				if (joinEntities.contains(EntityEnum.BOOKING_DETAIL)) {
 
 					queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID
 							+ ", " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.BOOKING_DETAIL.getAlias() + " "
@@ -382,7 +374,7 @@ public class JPQLGenerator {
 				}
 			}
 
-			else if (entityEnum == EntityEnum.FLIGHT_LEG) {
+			else if (entityEnum == EntityEnum.BOOKING_DETAIL) {
 
 				// These four operators don't have any value ex. where firstname IS NULL
 				if (OperatorEnum.IS_EMPTY.toString().equalsIgnoreCase(operator)
@@ -574,7 +566,7 @@ public class JPQLGenerator {
 			joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.FLIGHT.getEntityReference()
 					+ " " + EntityEnum.FLIGHT.getAlias();
 			break;
-		 case Constants.FLIGHTLEG:
+		 case Constants.BOOKINGDETAIL:
              
               if(queryType == EntityEnum.FLIGHT) {
             	  joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();

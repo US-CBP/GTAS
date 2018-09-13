@@ -35,7 +35,8 @@ public final class Constants {
     public static final String DWELLTIME = "DWELLTIME";
     public static final String BAG = "BAG";
     public static final String FLIGHTPAX = "FLIGHTPAX";
-    public static final String FLIGHTLEG = "FLIGHTLEG";
+    //public static final String FLIGHTLEG = "FLIGHTLEG";
+    public static final String BOOKINGDETAIL = "BOOKINGDETAIL";
     
     public static final String QUERYOBJECT_OBJECTNAME = "queryObject";
     public static final String USERQUERY_OBJECTNAME = "userQuery";

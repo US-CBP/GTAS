@@ -14,7 +14,7 @@ public enum EntityEnum {
         DOCUMENT ("DOCUMENT", "Document", "d", ".documents"),
         EMAIL ("EMAIL", "Email", "e", ".emails"),
         FLIGHT ("FLIGHT", "Flight", "f", ".flights"),
-        FLIGHT_LEG ("FLIGHT LEG", "FlightLeg", "fl", ".flightLegs"),
+       // FLIGHT_LEG ("FLIGHT LEG", "FlightLeg", "fl", ".flightLegs"),
         FREQUENT_FLYER ("FREQUENT FLYER", "FrequentFlyer", "ff", ".frequentFlyers"),
         HITS ("HITS", "HitsSummary", "h", ""),
         PASSENGER("PASSENGER", "Passenger", "p", ".passengers"),
