@@ -31,7 +31,7 @@ public class RuleTemplateConstants {
     public static final String LINK_VARIABLE_SUFFIX = "link";
     public static final String LINK_PNR_ID = "pnrId";
     public static final String LINK_ATTRIBUTE_ID = "linkAttributeId";
-
+    public static final String BOOKING_DETAIL_VARIABLE_NAME = "$bl";
     private RuleTemplateConstants() {
         // to prevent instantiation.
     }

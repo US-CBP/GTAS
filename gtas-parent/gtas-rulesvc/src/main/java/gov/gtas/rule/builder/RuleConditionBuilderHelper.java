@@ -18,6 +18,7 @@ import gov.gtas.enumtype.CriteriaOperatorEnum;
 import gov.gtas.enumtype.TypeEnum;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.mappings.AddressMapping;
+import gov.gtas.querybuilder.mappings.BookingDetailMapping;
 import gov.gtas.querybuilder.mappings.CreditCardMapping;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
 import gov.gtas.querybuilder.mappings.EmailMapping;
@@ -218,6 +219,9 @@ public class RuleConditionBuilderHelper {
             break;
         case CREDIT_CARD:
             ret = extractFriendlyName(CreditCardMapping.values(), field);
+            break;
+        case BOOKING_DETAIL:
+            ret = extractFriendlyName(BookingDetailMapping.values(), field);
             break;
         case EMAIL:
             ret = extractFriendlyName(EmailMapping.values(), field);
