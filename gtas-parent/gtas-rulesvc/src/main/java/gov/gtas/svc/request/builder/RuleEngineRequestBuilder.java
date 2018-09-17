@@ -9,6 +9,7 @@ import gov.gtas.bo.BasicRuleServiceRequest;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceRequestType;
 import gov.gtas.bo.match.PnrAddressLink;
+import gov.gtas.bo.match.PnrBookingLink;
 import gov.gtas.bo.match.PnrCreditCardLink;
 import gov.gtas.bo.match.PnrDwellTimeLink;
 import gov.gtas.bo.match.PnrEmailLink;
@@ -290,7 +291,7 @@ public class RuleEngineRequestBuilder {
             Long id = bl.getId();
             if (!this.bookingDetailIdSet.contains(id)) {
                 requestObjectList.add(bl);
-                requestObjectList.add(new PnrCreditCardLink(pnr.getId(), bl
+                requestObjectList.add(new PnrBookingLink(pnr.getId(), bl
                         .getId()));
                 this.bookingDetailIdSet.add(id);
             }

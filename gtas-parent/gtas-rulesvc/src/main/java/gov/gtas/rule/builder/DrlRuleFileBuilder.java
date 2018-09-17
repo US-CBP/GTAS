@@ -11,7 +11,7 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.NEW_LINE;
 import static gov.gtas.rule.builder.RuleTemplateConstants.RULE_PACKAGE_NAME;
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.match.PnrAddressLink;
-import gov.gtas.bo.match.PnrBookingDetailLink;
+import gov.gtas.bo.match.PnrBookingLink;
 import gov.gtas.bo.match.PnrCreditCardLink;
 import gov.gtas.bo.match.PnrDwellTimeLink;
 import gov.gtas.bo.match.PnrEmailLink;
@@ -55,7 +55,7 @@ public class DrlRuleFileBuilder {
             Passenger.class, Document.class, Pnr.class, Address.class,
             Phone.class, Email.class, FrequentFlyer.class, CreditCard.class,BookingDetail.class,
             Agency.class, DwellTime.class, FlightPax.class, Bag.class, PnrAddressLink.class, PnrCreditCardLink.class,
-            PnrEmailLink.class, PnrFrequentFlyerLink.class,PnrBookingDetailLink.class,
+            PnrEmailLink.class, PnrFrequentFlyerLink.class,PnrBookingLink.class,
             PnrPassengerLink.class, PnrPhoneLink.class,
             PnrTravelAgencyLink.class,PnrDwellTimeLink.class,
             Seat.class};

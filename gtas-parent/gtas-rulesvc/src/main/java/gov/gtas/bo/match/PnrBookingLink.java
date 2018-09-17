@@ -8,7 +8,7 @@ package gov.gtas.bo.match;
 /**
  * The Class Pnr BookingDetail Link.
  */
-public class PnrBookingDetailLink extends PnrAttributeLink {
+public class PnrBookingLink extends PnrAttributeLink {
 	private static final long serialVersionUID = -1157351677154533276L;
 
 	/**
@@ -19,7 +19,7 @@ public class PnrBookingDetailLink extends PnrAttributeLink {
 	 * @param bookingDetailId
 	 *            the booking detail id
 	 */
-	public PnrBookingDetailLink(final long pnrId, final long bookingDetailId) {
+	public PnrBookingLink(final long pnrId, final long bookingDetailId) {
 		super(pnrId, bookingDetailId);
 	}
 

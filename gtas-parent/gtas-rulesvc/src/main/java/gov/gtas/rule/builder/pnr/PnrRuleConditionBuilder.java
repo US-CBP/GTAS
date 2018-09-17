@@ -8,7 +8,7 @@ package gov.gtas.rule.builder.pnr;
 import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_ATTRIBUTE_ID;
 import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_PNR_ID;
 import gov.gtas.bo.match.PnrAddressLink;
-import gov.gtas.bo.match.PnrBookingDetailLink;
+import gov.gtas.bo.match.PnrBookingLink;
 import gov.gtas.bo.match.PnrCreditCardLink;
 import gov.gtas.bo.match.PnrEmailLink;
 import gov.gtas.bo.match.PnrFrequentFlyerLink;
@@ -115,7 +115,7 @@ public class PnrRuleConditionBuilder {
         if (!bookingDetailConditionBuilder.isEmpty()) {
             addLinkCondition(linkStringBuilder,
             		bookingDetailConditionBuilder.getLinkVariableName(),
-                    PnrBookingDetailLink.class.getSimpleName(), pnrVarName,
+                    PnrBookingLink.class.getSimpleName(), pnrVarName,
                     bookingDetailConditionBuilder);
         }
         if (!emailConditionBuilder.isEmpty()) {
