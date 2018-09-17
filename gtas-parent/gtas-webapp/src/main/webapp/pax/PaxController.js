@@ -5,13 +5,15 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
         $scope.watchlistLinks = watchlistLinks.data;
         $scope.isLoadingFlightHistory = true;
         $scope.isClosedCase = false;
+        $scope.casesListWithCats=[];
         $scope.ruleHits = ruleHits;
-
+        $scope.caseHistory = caseHistory.data; 
+        $scope.ruleCats=ruleCats.data;
         $scope.slides = [];
         $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
 
@@ -38,6 +40,14 @@
         	//TO-DO add specific pax information here as well as credentials of some kind to insure we don't get arbitrary uploads.
         	paxDetailService.savePaxAttachments('name','pw',$scope.attachmentDesc,$scope.passenger.paxId,$scope.attachment);
         };
+        
+        $scope.assignRuleCats = function(){
+            angular.forEach($scope.ruleCats, function(item, index){
+                $scope.casesListWithCats[item.catId] = item.category;
+            });
+        };
+
+        $scope.assignRuleCats();
 
         //Bandaid: Parses out seat arrangements not for the particular PNR, returns new seat array. This should be handled on the back-end.
         var parseOutExtraSeats = function(seats, flightLegs){

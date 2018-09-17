@@ -15,6 +15,8 @@ import gov.gtas.model.lookup.DocumentTypeCode;
 import gov.gtas.model.lookup.FlightDirectionCode;
 import gov.gtas.model.lookup.PassengerTypeCode;
 import gov.gtas.util.DateCalendarUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -23,6 +25,7 @@ import java.util.Set;
 
 
 public class ApisDataGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(ApisDataGenerator.class);
     public static final String DOCUMENT_NUMBER="12345";
     public static final long FLIGHT_ID1=12345L;
     public static final long FLIGHT_ID2=2931L;
@@ -139,7 +142,7 @@ public class ApisDataGenerator {
             flDate = new Date(flDate.getTime()+36000000L);//add 10 hours
             flight.setFlightDate(flDate);
         }catch(ParseException pe){
-            pe.printStackTrace();
+            logger.error("error parsing flight information!", pe);
         }
         flight.setFlightNumber("0017");
         flight.setOrigin("LHR");
@@ -163,7 +166,7 @@ public class ApisDataGenerator {
             try{
                doc.setIssuanceDate(DateCalendarUtils.parseJsonDate(issueDates[i]));
             }catch(ParseException pe){
-                pe.printStackTrace();
+                logger.error("error creating document:", pe);
             }
             docs.add(doc);
             docCount++;

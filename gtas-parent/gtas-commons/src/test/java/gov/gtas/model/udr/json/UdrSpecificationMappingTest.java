@@ -15,8 +15,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UdrSpecificationMappingTest {
+    private static final Logger logger = LoggerFactory.getLogger(UdrSpecificationMappingTest.class);
     private static final String TEST_JSON =
             "{ \"details\": {"
               +"  \"@class\": \"gov.gtas.model.udr.json.QueryObject\","
@@ -72,7 +75,7 @@ public class UdrSpecificationMappingTest {
         mapper.readValue(json, UdrSpecification.class);
         
         } catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Got exception");
         }
     }
@@ -85,7 +88,7 @@ public class UdrSpecificationMappingTest {
             assertNotNull(testObj);
             assertEquals("Hello Rule 1", testObj.getSummary().getTitle());
         } catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Got exception");
         }
     }

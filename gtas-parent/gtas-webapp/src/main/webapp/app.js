@@ -536,6 +536,12 @@ var app;
                         user: function (userService) {
                             return userService.getUserData();
                         },
+                        caseHistory : function (paxDetailService, $stateParams) {
+                        	return paxDetailService.getPaxCaseHistory($stateParams.paxId);
+                        },
+                        ruleCats: function(caseDispositionService){
+                            return caseDispositionService.getRuleCats();
+                        },
                         ruleHits: function(paxService, $stateParams){
                         	return paxService.getRuleHitsByFlightAndPax($stateParams.paxId, $stateParams.flightId);
                         },
@@ -1464,9 +1470,146 @@ var app;
             }
         })
 
+        // END amchanrts directive
+
+        //Countdown Timer Directive
+        .directive('countdown', [
+            'timeUtil',
+            '$interval',
+            function (timeUtil, $interval) {
+                return {
+                    restrict: 'EA',
+                    replace: false,
+                    transclude: true,
+                    template: "<div ng-transclude>{{message}}</div>",
+                    scope: { date: '@',
+                             message: '@',
+                             currenttime: '@',
+                             showcountdownlabelflag: '@'
+                            },
+                    link: function (scope, element, attrs) {
+                        var future, message, current, duration;
+                        var messageStart = '<div>';
+                        var messageWarn = '&nbsp;<span class="label label-warning">Warning</span>';
+                        var messageWheelsUp = '&nbsp;<span class="label label-danger">WheelsUp</span>';
+                        var messageEndDiv = '</div>';
+                        var interval = 1000;
 
 
-    // END amchanrts directive
+                        future = new Date(parseInt(scope.date));
+                        if((typeof current === "undefined") ) {
+                            current = new Date(parseInt(attrs.currenttime));
+                        }else{
+                            current = current - interval;
+                        }
+
+                            var timelyCheck = function () {
+                                var diff;
+                                current = moment(current).add(1,'minutes');
+                                future = moment(future);
+                                diff = Math.floor((future - current) / 1000);
+
+                                if(Math.floor(( future - current ) / 86400000) < 2 ){
+
+                                    if(scope.showcountdownlabelflag === "true"){
+                                        if(Math.floor(( future - current ) / 86400000) < 0 ){
+                                            current = moment(current).subtract(2,'minutes');
+                                            diff = Math.floor((future - current) / 1000);
+                                            message = messageStart + timeUtil.dhms(diff) + messageWheelsUp + messageEndDiv;
+                                        }else {
+                                            message = messageStart + timeUtil.dhms(diff) + messageWarn + messageEndDiv;
+                                        }
+                                    }else {
+                                        message = messageStart+timeUtil.dhms(diff)+messageEndDiv;
+                                    }
+                                }else{
+                                    message = messageStart+timeUtil.dhms(diff)+messageEndDiv;
+                                }
+                                return element.html(message);
+                            };
+
+                        timelyCheck();
+
+                        scope.$watch('date', function(date){
+
+                            future = new Date(parseInt(date));
+                            if((typeof current === "undefined") ) {
+                                current = new Date(parseInt(attrs.currenttime));
+                            }else{
+                                current = current - interval;
+                            }
+
+                            $interval(function () {
+                                var diff;
+                                current = moment(current).add(1,'minutes');
+                                future = moment(future);
+                                diff = Math.floor((future - current) / 1000);
+
+                                if(Math.floor(( future - current ) / 86400000) < 2 ){
+
+                                    if(scope.showcountdownlabelflag === "true"){
+                                        if(Math.floor(( future - current ) / 86400000) < 0 ){
+                                            current = moment(current).subtract(2,'minutes');
+                                            diff = Math.floor((future - current) / 1000);
+                                            message = messageStart + timeUtil.dhms(diff) + messageWheelsUp + messageEndDiv;
+                                        }else {
+                                            message = messageStart + timeUtil.dhms(diff) + messageWarn + messageEndDiv;
+                                        }
+                                    }else {
+                                        message = messageStart+timeUtil.dhms(diff)+messageEndDiv;
+                                    }
+                                }else{
+                                    message = messageStart+timeUtil.dhms(diff)+messageEndDiv;
+                                }
+                                return element.html(message);
+                            },60000);
+
+                        });
+
+                    }
+                };
+            }
+        ]).factory('timeUtil', [function () {
+            return {
+                dhms: function (t) {
+                    var days, hours, minutes, seconds;
+                    if(t<0){days = Math.ceil(t / 86400)}
+                    else{days = Math.floor(t / 86400)}
+                    t -= days * 86400;
+                    hours = Math.floor(t / 3600) % 24;
+                    t -= hours * 3600;
+                    minutes = Math.floor(t / 60) % 60;
+                    t -= minutes * 60;
+                    seconds = t % 60;
+
+                    return [
+                        days + 'd',
+                        hours + 'h',
+                        minutes + 'm'
+                       ].join(' ');
+                }
+            };
+        }]).factory('timePastUtil', [function () {
+        return {
+            dhms: function (t) {
+                var days, hours, minutes, seconds;
+                days = Math.floor(t / 86400);
+                t -= days * 86400;
+                hours = Math.floor(t / 3600) % 24;
+                t -= hours * 3600;
+                minutes = Math.floor(t / 60) % 60;
+                t -= minutes * 60;
+                seconds = t % 60;
+
+                return [
+                    days + 'd',
+                    hours + 'h',
+                    minutes + 'm',
+                    seconds + 's'
+                ].join(' ');
+            }
+        };
+    }])
 
         .controller('NavCtrl', NavCtrl)
 

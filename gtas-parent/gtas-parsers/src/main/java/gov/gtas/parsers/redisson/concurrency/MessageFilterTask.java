@@ -1,5 +1,6 @@
 package gov.gtas.parsers.redisson.concurrency;
 
+import gov.gtas.model.Message;
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.redisson.RedissonFilter;
@@ -9,6 +10,8 @@ import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.parsers.vo.PnrVo;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 public class MessageFilterTask implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger(MessageFilterTask.class);
 
     private File fileToBeProcessed;
     private static final String MESSAGE_SEGMENT_BEGIN="UNH";
@@ -43,7 +48,7 @@ public class MessageFilterTask implements Runnable {
     @Override
     public void run() {
         if(this.fileToBeProcessedString == null){return;}
-        System.out.println("Thread "+this.toString()+" began processing");
+        logger.info("Thread "+this.toString()+" began processing");
         EdifactLexer lexer = new EdifactLexer(this.fileToBeProcessedString);
         String payload = lexer.getMessagePayload(MESSAGE_SEGMENT_BEGIN, MESSAGE_SEGMENT_END);
         RedissonFilter filter = new RedissonFilter(redissonClient);
@@ -72,7 +77,7 @@ public class MessageFilterTask implements Runnable {
             //rawMessages = svc.preprocess(text);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error parsing files!", e);;;
 //            String stacktrace = ErrorUtils.getStacktrace(e);
 //            Message m = new Message();
 //            m.setError(stacktrace);

@@ -14,6 +14,7 @@ public class OneDayLookoutVo extends BaseVo{
 	    private String etaEtdTime;
 	    private String fullFlightNumber;
 	    private String name;
+            private String origDestAirportsStr;
 	    
 		public String getDocument() {
 			return document;
@@ -88,6 +89,15 @@ public class OneDayLookoutVo extends BaseVo{
 		public void setFlightId(Long flightId) {
 			this.flightId = flightId;
 		}
+
+                public String getOrigDestAirportsStr() {
+                    return origDestAirportsStr;
+                }
+
+                public void setOrigDestAirportsStr(String origDestAirportsStr) {
+                    this.origDestAirportsStr = origDestAirportsStr;
+                }
+                
 		
 		
 	    

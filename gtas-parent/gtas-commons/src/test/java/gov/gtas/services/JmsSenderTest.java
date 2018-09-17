@@ -18,6 +18,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,6 +44,8 @@ import gov.gtas.model.Pnr;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JmsSenderTest {
+
+	private final static Logger logger = LoggerFactory.getLogger(JmsSenderTest.class);
 
 	@Autowired
 	private MessageSender sender;
@@ -72,7 +76,7 @@ public class JmsSenderTest {
 		//p.getFlights().add(f);
 		f.getPassengers().add(p);
 		pnr.getFlights().add(f);
-		System.out.println("-------------------SENDING--------");
+		logger.info("-------------------SENDING--------");
 		sender.sendMessage(pnr);
 
 	}
@@ -118,20 +122,20 @@ public class JmsSenderTest {
 					LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
 			files.stream().forEach(
 					f -> {
-						System.out.println("==============LOADER SEND==============");
+						logger.info("==============LOADER SEND==============");
 						Path path = Paths.get(f.getAbsolutePath());
 						byte raw[] = null;
 						try {
 							raw = Files.readAllBytes(path);
 						} catch (Exception e) {
-							e.printStackTrace();
+							logger.error("unable to read file bytes", e);
 						}
 						String tmp = new String(raw, StandardCharsets.US_ASCII);
 						sender.sendLoaderFileContent(tmp, f.getName());
 					});
 			stream.close();
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 		}
 	}
 	

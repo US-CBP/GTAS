@@ -7,26 +7,21 @@ package gov.gtas.controller;
 
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.enumtype.Status;
 import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.ApiAccess;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ApiAccessService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.services.security.UserData;
 import gov.gtas.util.DateCalendarUtils;
-import gov.gtas.validator.UserDataValidator;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +38,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,9 +54,15 @@ public class AdminController {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdminController.class);
-
-	@Autowired
-	private AppConfigurationRepository appConfigRepository;
+        
+        public static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
+        public static final String FLIGHT_RANGE ="FLIGHT_RANGE";
+        public static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
+        public static final String APIS_VERSION = "APIS_VERSION";
+     
+        @Autowired
+        AppConfigurationService appConfigurationService;
+        
 	@Autowired
 	private AuditLogPersistenceService auditService;
 
@@ -135,11 +135,22 @@ public class AdminController {
 	}
 	@RequestMapping(method = RequestMethod.GET, value = "/settingsinfo")
 	public SettingsVo getSettings() {
-		final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
-		final String FLIGHT_RANGE ="FLIGHT_RANGE";
+
 		SettingsVo settingsVo = new SettingsVo();
-		settingsVo.setMatchingThreshold(Double.parseDouble(appConfigRepository.findByOption(MATCHING_THRESHOLD).getValue()));
-		settingsVo.setFlightRange(Double.parseDouble(appConfigRepository.findByOption(FLIGHT_RANGE).getValue()));
+		settingsVo.setMatchingThreshold(Double.parseDouble(appConfigurationService.findByOption(MATCHING_THRESHOLD).getValue()));
+		settingsVo.setFlightRange(Double.parseDouble(appConfigurationService.findByOption(FLIGHT_RANGE).getValue()));
+                
+                AppConfiguration appConfigApisFlag = appConfigurationService.findByOption(APIS_ONLY_FLAG);
+                if (appConfigApisFlag != null)
+                {
+                  settingsVo.setApisOnlyFlag(appConfigApisFlag.getValue());
+                }
+                AppConfiguration appConfigApisVersion = appConfigurationService.findByOption(APIS_VERSION);
+                if (appConfigApisVersion != null)
+                {
+                  settingsVo.setApisVersion(appConfigApisVersion.getValue());
+                }
+
 		return settingsVo; 
 	}
 	@RequestMapping(method = RequestMethod.PUT, value = "/settingsinfo")
@@ -150,17 +161,54 @@ public class AdminController {
 					.collect(Collectors.toList());
 			return new ResponseEntity<>(errors, HttpStatus.EXPECTATION_FAILED);
 		} else {
-			final String MATCHING = "MATCHING_THRESHOLD";
-			final String FLIGHT_RANGE ="FLIGHT_RANGE";
+
 			AppConfiguration appConfig;
 			
-			appConfig = appConfigRepository.findByOption(MATCHING);
+			appConfig = appConfigurationService.findByOption(MATCHING_THRESHOLD);
 			appConfig.setValue(String.valueOf(settings.getMatchingThreshold()));
-			appConfigRepository.save(appConfig);
+			appConfigurationService.save(appConfig);
 			
-			appConfig = appConfigRepository.findByOption(FLIGHT_RANGE);
+			appConfig = appConfigurationService.findByOption(FLIGHT_RANGE);
 			appConfig.setValue(String.valueOf(settings.getFlightRange()));
-			appConfigRepository.save(appConfig);
+			appConfigurationService.save(appConfig);
+                        
+                        if (settings.getApisOnlyFlag() != null && !settings.getApisOnlyFlag().isEmpty())
+                        {
+			    appConfig = appConfigurationService.findByOption(APIS_ONLY_FLAG);
+                            if (appConfig != null)
+                            {
+			        appConfig.setValue(String.valueOf(settings.getApisOnlyFlag())); 
+                                appConfigurationService.save(appConfig);
+                            }
+                            else
+                            {
+                              AppConfiguration newAppConfig = new AppConfiguration(); 
+                              newAppConfig.setDescription("Is APIS the only message source.");
+                              newAppConfig.setOption(APIS_ONLY_FLAG);
+                              newAppConfig.setValue(settings.getApisOnlyFlag());
+                              appConfigurationService.save(newAppConfig);
+                            }
+                        }
+                        
+                        if (settings.getApisVersion() != null && !settings.getApisVersion().isEmpty())
+                        {
+			    appConfig = appConfigurationService.findByOption(APIS_VERSION);
+                            if (appConfig != null)
+                            {
+			        appConfig.setValue(String.valueOf(settings.getApisVersion())); 
+                                appConfigurationService.save(appConfig);
+                            }
+                            else
+                            {
+                              AppConfiguration newAppConfig = new AppConfiguration(); 
+                              newAppConfig.setDescription("Latest APIS version being used.");
+                              newAppConfig.setOption(APIS_VERSION);
+                              newAppConfig.setValue(settings.getApisVersion());
+                              appConfigurationService.save(newAppConfig);                               
+                            }
+                        }
+                        
+       
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 	}

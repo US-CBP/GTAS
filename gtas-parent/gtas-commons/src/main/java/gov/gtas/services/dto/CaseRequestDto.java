@@ -25,7 +25,7 @@ public class CaseRequestDto implements Serializable {
 
     private Long flightId;
 
-    private Long flightNumber;
+    private String flightNumber;
 
     private Long paxId;
 
@@ -176,11 +176,11 @@ public class CaseRequestDto implements Serializable {
         this.paxName = paxName;
     }
 
-    public Long getFlightNumber() {
+    public String getFlightNumber() {
         return flightNumber;
     }
 
-    public void setFlightNumber(Long flightNumber) {
+    public void setFlightNumber(String flightNumber) {
         this.flightNumber = flightNumber;
     }
 
@@ -200,7 +200,7 @@ public class CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-	@Override
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);

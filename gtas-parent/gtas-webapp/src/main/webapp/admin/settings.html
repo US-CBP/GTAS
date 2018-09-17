@@ -8,6 +8,20 @@
       <input class="mdl-textfield__input" type="text" id="watch1" ng-model="settingsInfo.flightRange" />
       <label class="mdl-textfield__label static-label" for="watch1">Watchlist Matching Flight Range</label>
     </div>
+    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
+        
+     <select class="mdl-selectfield__select" id="apisOnlyFlag"
+                    ng-model="settingsInfo.apisOnlyFlag">
+                    <option value="">----</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="TRUE">TRUE</option>
+    </select>
+      <label class="mdl-textfield__label static-label" for="apisOnlyFlag">APIS Only Flag</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="apisVersion" ng-model="settingsInfo.apisVersion" />
+      <label class="mdl-textfield__label static-label" for="apisVersion">APIS Version</label>
+    </div>
     <button type="submit" class="btn btn-primary">Save</button>
   </div>
 </form>

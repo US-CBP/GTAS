@@ -6,6 +6,8 @@ import gov.gtas.parsers.pnrgov.PnrGovParser;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.vo.PnrVo;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.*;
 @Component
 public class RedisLoaderMain {
 
+    private static final Logger logger = LoggerFactory.getLogger(RedisLoaderMain.class);
     private static File toBeProcessedPNRFile;
     private static Path incomingDir = FileSystems.getDefault().getPath("C:\\Message");
     private static Path outgoingDir = FileSystems.getDefault().getPath("C:\\Messageold");
@@ -58,7 +61,7 @@ public class RedisLoaderMain {
                             getMessagePayloadAndTimestamp();
                             redFilter.redisObjectLookUpPersist(messagePayload,transDate);
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error("Caught exception,", ex);
                         }
                         //processSingleFile(f, stats);
                         f.renameTo(new File(outgoingDir.toFile()
@@ -66,7 +69,7 @@ public class RedisLoaderMain {
                     });
             stream.close();
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.error("Error in initialize Pnr Files", ex);
         }
     }
 
@@ -117,7 +120,7 @@ public class RedisLoaderMain {
 //
 ////            writeAuditLog(ctx, stats);
 //        }catch (Exception ex){
-//            ex.printStackTrace();
+//            logger.error("error!", e);
 //        }
 //    }
 

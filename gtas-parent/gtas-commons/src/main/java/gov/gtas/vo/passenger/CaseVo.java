@@ -18,8 +18,8 @@ public class CaseVo {
     private Long paxId;
     private Long flightId;
     private String hitType;
-    private Date flightEta;
-    private Date flightEtd;
+    private Date flightETADate;
+    private Date flightETDDate;
     private String flightDirection;
 	private String lastName;
     private String firstName;
@@ -35,6 +35,9 @@ public class CaseVo {
     private Set<HitsDisposition> hitsDispositions;
     private Set<HitsDispositionVo> hitsDispositionVos;
     private Boolean oneDayLookoutFlag;
+    private Date currentTime;
+    private String countDownTimeDisplay;
+    private Long countdownTime;
 
     public Long getId() {
         return id;
@@ -82,19 +85,24 @@ public class CaseVo {
 	public void setHitType(String hitType) {
 		this.hitType = hitType;
 	}
-	public Date getFlightEta() {
-		return flightEta;
-	}
-	public void setFlightEta(Date flightEta) {
-		this.flightEta = flightEta;
-	}
-	public Date getFlightEtd() {
-		return flightEtd;
-	}
-	public void setFlightEtd(Date flightEtd) {
-		this.flightEtd = flightEtd;
-	}
-	public Long getPassengerId() {
+
+    public Date getFlightETADate() {
+        return flightETADate;
+    }
+
+    public void setFlightETADate(Date flightETADate) {
+        this.flightETADate = flightETADate;
+    }
+
+    public Date getFlightETDDate() {
+        return flightETDDate;
+    }
+
+    public void setFlightETDDate(Date flightETDDate) {
+        this.flightETDDate = flightETDDate;
+    }
+
+    public Long getPassengerId() {
         return passengerId;
     }
     public void setPassengerId(Long passengerId) {
@@ -207,6 +215,28 @@ public class CaseVo {
 	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
-    
-    
+
+    public Date getCurrentTime() {
+        return currentTime;
+    }
+
+    public void setCurrentTime(Date currentTime) {
+        this.currentTime = currentTime;
+    }
+
+    public String getCountDownTimeDisplay() {
+        return countDownTimeDisplay;
+    }
+
+    public void setCountDownTimeDisplay(String countDownTimeDisplay) {
+        this.countDownTimeDisplay = countDownTimeDisplay;
+    }
+
+    public Long getCountdownTime() {
+        return countdownTime;
+    }
+
+    public void setCountdownTime(Long countdownTime) {
+        this.countdownTime = countdownTime;
+    }
 }

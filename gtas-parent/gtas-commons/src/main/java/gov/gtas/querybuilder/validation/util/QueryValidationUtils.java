@@ -19,6 +19,7 @@ import gov.gtas.querybuilder.mappings.CreditCardMapping;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
 import gov.gtas.querybuilder.mappings.DwellTimeMapping;
 import gov.gtas.querybuilder.mappings.EmailMapping;
+import gov.gtas.querybuilder.mappings.BookingDetailMapping;
 import gov.gtas.querybuilder.mappings.FlightMapping;
 import gov.gtas.querybuilder.mappings.FlightPaxMapping;
 import gov.gtas.querybuilder.mappings.FrequentFlyerMapping;
@@ -156,6 +157,9 @@ public class QueryValidationUtils {
                         break;
                     case Constants.FLIGHT:
                         validField = validateField(FlightMapping.values(), field);
+                        break;
+                    case Constants.BOOKINGDETAIL:
+                        validField = validateField(BookingDetailMapping.values(), field);
                         break;
                     case Constants.FREQUENTFLYER:
                         validField = validateField(FrequentFlyerMapping.values(), field);

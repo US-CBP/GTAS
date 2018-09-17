@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.amazonaws.services.sqs.model.Message;
 
 public class LoaderMain {
+    private static final Logger logger = LoggerFactory.getLogger(LoaderMain.class);
     private static Loader loader;
 
     private enum InputType {
@@ -56,12 +59,12 @@ public class LoaderMain {
             } else if (arg1.isDirectory() && args.length == 2) {
                 File arg2 = new File(args[1]);
                 if (!arg2.isDirectory()) {
-                    System.err.println(arg2 + " is not a directory");
+                    logger.error(arg2 + " is not a directory");
                     System.exit(-1);
                 }
                 inputType = InputType.TWO_DIRS;
             } else {
-                System.err.println("Invalid argument(s)");
+                logger.error("Invalid argument(s)");
                 printUsage();
                 System.exit(-1);
             }
@@ -124,7 +127,7 @@ public class LoaderMain {
                 processSingleFile(f, stats);
                 sqs.deleteMessage(m.getReceiptHandle());
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("error processing queue", e);
             }
         }
     }
@@ -160,17 +163,17 @@ public class LoaderMain {
                     message, GTAS_APPLICATION_USERID);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("error writing to audit log.", ex);
         }
     }
 
     private static void processSingleFile(File f, LoaderStatistics stats) {
-        System.out.println(String.format("Processing %s", f.getAbsolutePath()));
-        String primeFlightKey = "placeHolder";
+        logger.info(String.format("Processing %s", f.getAbsolutePath()));
+        String[] primeFlightKey = new String[]{"placeHolder"};
         try {
 			primeFlightKey = getPrimeFlightTvl(FileUtils.readSmallFile(f.getAbsolutePath()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error getting flight tv1", e);
 		}
         int[] result = loader.processMessage(f, primeFlightKey);
         // update loader statistics.
@@ -184,26 +187,29 @@ public class LoaderMain {
     }
 
     private static void printUsage() {
-        System.out.println("Usage: MessageLoader [files]");
-        System.out
-                .println("Usage: MessageLoader [incoming dir] [outgoing dir]");
-        System.out.println("Usage: MessageLoader [queue URL]");
+        logger.error("Usage: MessageLoader [files]");
+        logger.error("Usage: MessageLoader [incoming dir] [outgoing dir]");
+        logger.error("Usage: MessageLoader [queue URL]");
     }
     
-	private static String getPrimeFlightTvl(byte[] fileRaw){
-		String primeFlightTVL = "";
+	private static String[] getPrimeFlightTvl(byte[] fileRaw){
+		String[] primeFlightTVL = new String[4];
+		primeFlightTVL[0] = "placeholder";
+		Boolean foundTVL = Boolean.FALSE;
 		String tmp = new String(fileRaw, StandardCharsets.US_ASCII);
 		List<Segment> segments = new ArrayList<>();
         EdifactLexer lexer = new EdifactLexer(tmp);
         try {
 			segments = lexer.tokenize();
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("Error tokenizing segments.", e);
 		}
          for(Segment seg : segments){
              if(seg.getName().equalsIgnoreCase("TVL")){
-            	 primeFlightTVL = seg.getText();
-                 break;
+            	primeFlightTVL[0] = seg.getComposite(1).getElement(0);
+            	primeFlightTVL[1] = seg.getComposite(2).getElement(0);
+ 				primeFlightTVL[2] = seg.getComposite(3).getElement(0) + seg.getComposite(4).getElement(0);
+                break;
              }
          }
          return primeFlightTVL;

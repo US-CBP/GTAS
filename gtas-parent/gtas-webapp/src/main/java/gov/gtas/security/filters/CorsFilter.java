@@ -15,11 +15,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.Ordered;
 
 public class CorsFilter {
+    private static Logger logger = LoggerFactory.getLogger(CorsFilter.class);
 
   public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
     HttpServletResponse response = (HttpServletResponse) res;
@@ -34,7 +38,7 @@ public class CorsFilter {
         try{
                 chain.doFilter(req, res);
             }catch(Exception ex){
-                ex.printStackTrace();
+                logger.error("error in cors filter.", ex);
             }
     
     } 

@@ -15,10 +15,14 @@ import gov.gtas.svc.perf.WatchlistRuleGenerator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class TargetingTestFactory implements PerformanceTestFactory,
         PerformanceTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(TargetingTestFactory.class);
     public static final String PASSENGER_WL_NAME = "PerfTest Passenger WL";
     public static final String DOCUMENT_WL_NAME = "PerfTest Document WL";
 
@@ -39,12 +43,9 @@ public class TargetingTestFactory implements PerformanceTestFactory,
         if (genData) {
             genPerformanceData();
             watchlistService.activateAllWatchlists();
-            System.out
-                    .println("*****************************************************************");
-            System.out
-                    .println("********************   ACTIVATION COMPLETE  *********************");
-            System.out
-                    .println("*****************************************************************");
+            logger.info("*****************************************************************");
+            logger.info("********************   ACTIVATION COMPLETE  *********************");
+            logger.info("*****************************************************************");
         }
         List<String> ret = new LinkedList<String>();
         long max = 0;
@@ -89,12 +90,9 @@ public class TargetingTestFactory implements PerformanceTestFactory,
         if (udrCount > 0) {
             UdrRuleGenerator.generateUdr(udrService, "PerfTestUdr", udrCount);
         }
-        System.out
-                .println("*****************************************************************");
-        System.out
-                .println("********************   GENERATION COMPLETE  *********************");
-        System.out
-                .println("*****************************************************************");
+        logger.info("*****************************************************************");
+        logger.info("********************   GENERATION COMPLETE  *********************");
+        logger.info("*****************************************************************");
     }
 
     /**

@@ -59,5 +59,11 @@ public interface CaseDispositionService {
     
     public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
     
-   
+    public List<Case> getCaseByPaxId(List<Long> paxIds);
+    
+    public List<Case> getCaseHistoryByPaxId(Long paxId);
+
+    public String getAPISOnlyFlagAndVersion();
+    
+    public Date getCurrentServerTime();
 }

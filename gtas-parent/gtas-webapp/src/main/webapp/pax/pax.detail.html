@@ -38,8 +38,8 @@
       <md-tabs id="detailSection" md-stretch-tabs="always" md-dynamic-height>
         <!--Passenger Detail Tab!-->
         <md-tab label="Details">
-          <div class="sm-pad">
-            <div class="span12 flex justify-around flex-wrap">
+          <div class="sm-pad" >
+           <div class="span12 flex justify-around flex-wrap">
               <div>
                 <div>Flight:&nbsp;
                   <strong>{{passenger.carrier + passenger.flightNumber }}</strong>
@@ -55,8 +55,48 @@
                 <div>ETA:&nbsp; <strong>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</strong></div>
               </div>
             </div>
+           <div layout="row"> 
+            <div class="span6 flex flex-wrap justify-around">
+           <div class="flex justify-around flex-wrap" >
+              <div class="full-width cbp-card-container gtas-card-container">
+                <div class="cbp-card cbp-card-shadow">
+                  <h3 class="h-label no-margin-top" >Case History</h3>
+                  <div class="panel-body flex flex-vert ie-fix-md">
+                  
+       
+                      <table class="cbp-table-selectable mdl-js-data-table">
+                      
+                        <thead>
+	                        <tr>
+	                          <th>Case Id</th>
+	                          <th>Flight</th>
+	                          <th>Doc #</th>
+	                          <th>Status</th>	                          
+	                          <th>Top Rule Category </th>
+	                          <th>Description</th>
+	                        </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="case in caseHistory">
+                            <td><a ng-href="#/casedetail/{{case.flightId}}/{{case.paxId}}" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
+                            <td>{{case.flightNumber}}</td>
+                            <td>{{case.document}}</td>
+                            <td>{{case.status}}</td>
+                            <td>{{casesListWithCats[case.highPriorityRuleCatId]}}</td>
+							<td>{{case.description}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                   
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            <div layout="column" class="span6 flex flex-wrap justify-around">
+            
             <div class="flex justify-around flex-wrap" >
-              <div class="fixed-width-md cbp-card-container gtas-card-container">
+              <div class="full-width cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Documents</h3>
                   <div class="panel-body flex flex-vert ie-fix-md">
@@ -87,7 +127,7 @@
               </div>
             </div>
             <div class="flex justify-around flex-wrap" >
-              <div class="fixed-width-md cbp-card-container gtas-card-container">
+              <div class="full-width cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Watchlist Matches
                     <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
@@ -123,8 +163,9 @@
                 </div>
               </div>
             </div>
+            
             <div class="flex justify-around flex-wrap" ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
-              <div class="fixed-width-md cbp-card-container gtas-card-container">
+              <div class="full-width cbp-card-container gtas-card-container">
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Hits Summary</h3>
                   <div class="panel-body flex flex-vert ie-fix-md">
@@ -150,6 +191,8 @@
                 </div>
               </div>
             </div>
+        	</div>
+        	</div>
           </div>
         </md-tab>
         <!-- APIs Tab -->
@@ -251,8 +294,8 @@
                     FlightPax ({{ passenger.apisMessageVo.flightpaxs.length }})
                   </h3>
                   <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
-                    <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
-                      <thead>
+                      <table class="cbp-table-selectable mdl-js-data-table">
+                       <thead>
                         <tr>
                           <th>First Name</th>
                           <th>Middle Name</th>
@@ -260,23 +303,21 @@
                           <th>Pax Type</th>
                           <th>Residence</th>
                           <th>Port of Arrival</th>
+                          <th>Ref Num</th>
                         </tr>
                       </thead>
-                    </table>
-                    <div class="floating-table-body">
-                      <table class="cbp-table-selectable mdl-js-data-table">
                         <tbody>
                           <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                             <td>{{flightpax.firstName}}</td>
                             <td>{{flightpax.middleName}}</td>
-                            <td>{{flightpax.lastName}}</td>
+                            <td><a class="md-primary md-default-theme" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{flightpax.lastName}}</a></td>
                             <td>{{flightpax.passengerType}}</td>
                             <td>{{flightpax.residencyCountry}}</td>
                             <td>{{flightpax.portOfFirstArrival}}</td>
+                            <td>{{flightpax.resRefNumber}}</td>
                           </tr>
                         </tbody>
                       </table>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -753,7 +794,7 @@
                     <table class="cbp-table-selectable mdl-js-data-table">
                       <tbody>
                         <tr ng-repeat="k in flight | orderBy:'-etd'">
-                            <td>{{k.fullFlightNumber}}</td>
+                            <td><a class="md-primary md-default-theme" href="#/paxdetail/{{passenger.paxId}}/{{k.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{k.fullFlightNumber}}</a></td>
                             <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.originCountry}}</td>

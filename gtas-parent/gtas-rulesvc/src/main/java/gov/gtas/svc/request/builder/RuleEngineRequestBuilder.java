@@ -20,6 +20,7 @@ import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Bag;
+import gov.gtas.model.BookingDetail;
 import gov.gtas.model.CreditCard;
 import gov.gtas.model.Document;
 import gov.gtas.model.DwellTime;
@@ -64,7 +65,8 @@ public class RuleEngineRequestBuilder {
     private final Set<Long> frequentFlyerIdSet;
     private final Set<Long> travelAgencyIdSet;
     private final Set<Long> dwellTimeIdSet;
-
+    private final Set<Long> bookingDetailIdSet;
+    
     private final Set<PassengerFlightTuple> passengerFlightSet;
 
     private RuleServiceRequestType requestType;
@@ -73,6 +75,7 @@ public class RuleEngineRequestBuilder {
         this.requestObjectList = new LinkedList<Object>();
         this.addressIdSet = new HashSet<Long>();
         this.creditCardIdSet = new HashSet<Long>();
+        this.bookingDetailIdSet = new HashSet<Long>();
         this.emailIdSet = new HashSet<Long>();
         this.flightIdSet = new HashSet<Long>();
         this.frequentFlyerIdSet = new HashSet<Long>();
@@ -143,6 +146,7 @@ public class RuleEngineRequestBuilder {
             addPhoneObjects(pnr, pnr.getPhones());
             addEmailObjects(pnr, pnr.getEmails());
             addCreditCardObjects(pnr, pnr.getCreditCards());
+            addBookingDetailObjects(pnr, pnr.getBookingDetails());
             addFrequentFlyerObjects(pnr, pnr.getFrequentFlyers());
             addPassengerObjects(pnr, pnr.getPassengers());
             addTravelAgencyObjects(pnr, pnr.getAgencies());
@@ -277,7 +281,21 @@ public class RuleEngineRequestBuilder {
             }
         }
     }
-
+    private void addBookingDetailObjects(final Pnr pnr,
+            final Collection<BookingDetail> bookingDetails) {
+        if (bookingDetails == null || bookingDetails.isEmpty()) {
+            return;
+        }
+        for (BookingDetail bl : bookingDetails) {
+            Long id = bl.getId();
+            if (!this.bookingDetailIdSet.contains(id)) {
+                requestObjectList.add(bl);
+                requestObjectList.add(new PnrCreditCardLink(pnr.getId(), bl
+                        .getId()));
+                this.bookingDetailIdSet.add(id);
+            }
+        }
+    }
     private void addDwellTimeObjects(final Pnr pnr,
             final Collection<DwellTime> dwellTimes) {
         if (CollectionUtils.isEmpty(dwellTimes)) {

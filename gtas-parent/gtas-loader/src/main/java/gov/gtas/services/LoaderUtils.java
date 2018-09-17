@@ -8,6 +8,7 @@ package gov.gtas.services;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,6 +68,7 @@ import gov.gtas.parsers.vo.ReportingPartyVo;
 import gov.gtas.parsers.vo.TicketFareVo;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.LookUpRepository;
+import gov.gtas.util.EntityResolverUtils;
 
 @Service
 public class LoaderUtils {
@@ -334,25 +336,28 @@ public class LoaderUtils {
         return null;
     }
     
-    public boolean isPrimeFlight(FlightVo fvo, String primeFlightCriteria){
-    	String[] primeCrit = primeFlightCriteria.split("\\+");
-    	if(primeCrit.length == 6){
-	    	primeCrit[5] = primeCrit[5].replace("'", "");
-	    	if(primeCrit[5].length()< 4){ //add appropriate 0's to flight number if needed
-	    		primeCrit[5] = String.format("%4s",primeCrit[5]);
-	    		primeCrit[5] = primeCrit[5].replace(" ", "0");
-	    	}
-	    	if(fvo.getFlightNumber().toString().equals(primeCrit[5]) &&
-	    			fvo.getOrigin().toString().equals(primeCrit[2]) &&
-	    			fvo.getDestination().toString().equals(primeCrit[3])){
-	    		logger.debug("Prime Flight Found!");
-	    		return true;
-	    	} else return false;
-    	}else {
-    		//If malformed prime flight criteria, returning true forces flight to load as prime flight
-    		return true;
+    public boolean isPrimeFlight(FlightVo fvo, String[] primeFlightCriteria){
+    	//The regex splits on alphanumeric detection. Flightnumber can sometimes be < 4 digits, this converts to 4 and adds preceding 0's if necessary.
+    	String regex = "((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))";
+    	String[] tmpArry = primeFlightCriteria[2].split(regex);
+    	if(tmpArry.length == 2){
+    		if(tmpArry[1].length() < 4){
+    		   tmpArry[1] = String.format("%4s",tmpArry[1]);
+    		   tmpArry[1] = tmpArry[1].replace(" ", "0");
+        	}
+    		primeFlightCriteria[2] = tmpArry[0]+tmpArry[1];
     	}
-    	
+    	/*if(primeFlightCriteria[3].length() < 4){
+    		primeFlightCriteria[3] = String.format("%4s",primeFlightCriteria[3]);
+	   		primeFlightCriteria[3] = primeFlightCriteria[3].replace(" ", "0");
+    	}*/
+	    	
+    	if(	fvo.getOrigin().toString().equals(primeFlightCriteria[0]) &&
+    		fvo.getDestination().toString().equals(primeFlightCriteria[1]) &&
+    		primeFlightCriteria[2].equals(fvo.getCarrier().toString() + fvo.getFlightNumber().toString())){
+    		logger.debug("Prime Flight Found!");
+    		return true;
+	   	} else return false;
     }
     
     public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
@@ -447,9 +452,12 @@ public class LoaderUtils {
      * @throws UnsupportedEncodingException
      */
     private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-                pax.getGender().toUpperCase(), pax.getDob().toString())));
-    }
+//        String hash = makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
+//                pax.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getDob()))));
+//            	
+//           return hash;
+    	return EntityResolverUtils.makeHashForPassenger(pax);
+    } 
 
     /**
      * Util method to hash passenger attributes
@@ -461,17 +469,18 @@ public class LoaderUtils {
     private String makeSHA1Hash(String input)
             throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-        md.reset();
-        byte[] buffer = input.getBytes("UTF-8");
-        md.update(buffer);
-        byte[] digest = md.digest();
-
-        String hexStr = "";
-        for (int i = 0; i < digest.length; i++) {
-            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-        }
-        return hexStr;
+//        MessageDigest md = MessageDigest.getInstance("SHA1");
+//        md.reset();
+//        byte[] buffer = input.getBytes("UTF-8");
+//        md.update(buffer);
+//        byte[] digest = md.digest();
+//
+//        String hexStr = "";
+//        for (int i = 0; i < digest.length; i++) {
+//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+//        }
+//        return hexStr;
+    	return EntityResolverUtils.makeSHA1Hash(input);
     }
     
     /**
@@ -520,9 +529,9 @@ public class LoaderUtils {
     	try {
 			paxIdTag.setIdTag(getHashForPassenger(p));
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			logger.error("error creating passenger id tag:", e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error("error creating passenger id tag.", e);
 		}
     	return paxIdTag;
 	}

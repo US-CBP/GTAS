@@ -119,7 +119,7 @@ public class FileReader {
 																// ID
 		} catch (Exception exception) {
 			// possibly DB is down
-			exception.printStackTrace();
+			logger.error("Error creating error details", e);
 		}
 	}
 

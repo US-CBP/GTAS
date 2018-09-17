@@ -79,7 +79,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
             } // end of Passenger with No IdTag loop
 
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("error in job scheduling", ex);
         }
 
         // Now persist this checked set of passengers
@@ -124,32 +124,32 @@ public class IntegrateUnTaggedPassengerListScheduler {
 
 
 
-    /**
-     * Util method takes top 5 attributes for a Passenger and returns a hash
-     * @param firstName
-     * @param lastName
-     * @param gender
-     * @param DOB
-     * @param ctz_country
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
-     */
-    private String getHashForPassenger(String firstName, String lastName, String gender, String DOB, String ctz_country) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(firstName.toUpperCase(), lastName.toUpperCase(), gender.toUpperCase(), DOB, ctz_country.toUpperCase())));
-    }
-
-    /**
-     * Util method takes a Passenger object and return a hash for the top 5 attributes
-     * @param pax
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
-     */
-    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
-    }
+//    /**
+//     * Util method takes top 5 attributes for a Passenger and returns a hash
+//     * @param firstName
+//     * @param lastName
+//     * @param gender
+//     * @param DOB
+//     * @param ctz_country
+//     * @return
+//     * @throws NoSuchAlgorithmException
+//     * @throws UnsupportedEncodingException
+//     */
+//    private String getHashForPassenger(String firstName, String lastName, String gender, String DOB, String ctz_country) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+//        return makeSHA1Hash(String.join("", Arrays.asList(firstName.toUpperCase(), lastName.toUpperCase(), gender.toUpperCase(), DOB, ctz_country.toUpperCase())));
+//    }
+//
+//    /**
+//     * Util method takes a Passenger object and return a hash for the top 5 attributes
+//     * @param pax
+//     * @return
+//     * @throws NoSuchAlgorithmException
+//     * @throws UnsupportedEncodingException
+//     */
+//    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
+//        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
+//                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
+//    }
 
     /**
      * Util method to hash passenger attributes
@@ -158,21 +158,21 @@ public class IntegrateUnTaggedPassengerListScheduler {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    private String makeSHA1Hash(String input)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException
-    {
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-        md.reset();
-        byte[] buffer = input.getBytes("UTF-8");
-        md.update(buffer);
-        byte[] digest = md.digest();
-
-        String hexStr = "";
-        for (int i = 0; i < digest.length; i++) {
-            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-        }
-        return hexStr;
-    }
+//    private String makeSHA1Hash(String input)
+//            throws NoSuchAlgorithmException, UnsupportedEncodingException
+//    {
+//        MessageDigest md = MessageDigest.getInstance("SHA1");
+//        md.reset();
+//        byte[] buffer = input.getBytes("UTF-8");
+//        md.update(buffer);
+//        byte[] digest = md.digest();
+//
+//        String hexStr = "";
+//        for (int i = 0; i < digest.length; i++) {
+//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+//        }
+//        return hexStr;
+//    }
 
 
 }

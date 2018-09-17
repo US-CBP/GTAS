@@ -8,18 +8,22 @@ package gov.gtas.services;
 import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.BookingDetailRepository;
+import gov.gtas.util.EntityResolverUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class BookingDetailServiceImpl implements BookingDetailService{
+
+    private static final Logger logger = LoggerFactory.getLogger(BookingDetailServiceImpl.class);
 
     @Autowired
     private BookingDetailRepository bookingDetailRepository;
@@ -48,7 +52,7 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         try {
             //String _paxHash = (new LoaderUtils()).getHashForPassenger(_tempPax);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("Error getting Hash from PAXID", ex);
         }
     }
 
@@ -64,16 +68,17 @@ public class BookingDetailServiceImpl implements BookingDetailService{
     private String makeSHA1Hash(String input)
             throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-        md.reset();
-        byte[] buffer = input.getBytes("UTF-8");
-        md.update(buffer);
-        byte[] digest = md.digest();
-
-        String hexStr = "";
-        for (int i = 0; i < digest.length; i++) {
-            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-        }
-        return hexStr;
+//        MessageDigest md = MessageDigest.getInstance("SHA1");
+//        md.reset();
+//        byte[] buffer = input.getBytes("UTF-8");
+//        md.update(buffer);
+//        byte[] digest = md.digest();
+//
+//        String hexStr = "";
+//        for (int i = 0; i < digest.length; i++) {
+//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
+//        }
+//        return hexStr;
+    	return EntityResolverUtils.makeSHA1Hash(input);
     }
 }

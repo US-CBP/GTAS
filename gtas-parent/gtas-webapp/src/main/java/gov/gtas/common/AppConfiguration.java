@@ -48,13 +48,13 @@ public class AppConfiguration extends WebMvcConfigurerAdapter {
     		language=prop.getProperty("site.language");
     		
     	} catch (IOException ex) {
-    		//ex.printStackTrace();
+    		//logger.error("error!", e);
     	} finally {
     		if (input != null) {
     			try {
     				input.close();
     			} catch (IOException e) {
-    				//e.printStackTrace();
+    				//logger.error("error!", e);
     			}
     		}
     	}

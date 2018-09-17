@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.edifact.Segment;
+import gov.gtas.parsers.edifact.segment.UNA;
 import gov.gtas.parsers.exception.ParseException;
 
 @Component
@@ -44,23 +45,26 @@ public class LoaderQueueThreadManager {
 	static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
 	public void receiveMessages(Message<?> message) {
-		String primeFlight = getPrimeFlightKey(message);
+		String[] primeFlightKeyArray = getPrimeFlightKey(message);
+		//Construct label for individual buckets out of concatenated array values from prime flight key generation
+		String primeFlightKey = primeFlightKeyArray[0]+primeFlightKeyArray[1]+primeFlightKeyArray[2]+primeFlightKeyArray[3];
 		// bucketBucket is a bucket of buckets. It holds a series of queues that are processed sequentially.
 		// This solves the problem where-in which we cannot run the risk of trying to save/update the same flight at the same time. This is done
 		// by shuffling all identical flights into the same queue in order to be processed sequentially. However, by processing multiple
 		// sequential queues at the same time, we in essence multi-thread the process for all non-identical prime flights
-		BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlight);
+		BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlightKey);
 		if (potentialBucket == null) {
 			// Is not existing bucket, make bucket, stuff in bucketBucket,
-			logger.info("New Queue Created For Prime Flight: " + primeFlight);
+			logger.info("New Queue Created For Prime Flight: " + primeFlightKey);
 			BlockingQueue<Message<?>> queue = new ArrayBlockingQueue<Message<?>>(1024);
 			queue.offer(message); // TODO: offer returns false if can't enter the queue, need to make sure we don'tlose messages and have it wait for re-attempt when there is space.
-			bucketBucket.putIfAbsent(primeFlight, queue);
+			bucketBucket.putIfAbsent(primeFlightKey, queue);
 			// Only generate workers on a per queue basis
 			LoaderWorkerThread worker = ctx.getBean(LoaderWorkerThread.class);
 			worker.setQueue(queue);
 			worker.setMap(bucketBucket); // give map reference and key in order to kill queue later
-			worker.setPrimeFlightKey(primeFlight);
+			worker.setPrimeFlightKeyArray(primeFlightKeyArray);
+			worker.setPrimeFlightKey(primeFlightKey);
 			exec.execute(worker);
 		} else {
 			// Is existing bucket, place same prime flight message into bucket
@@ -71,38 +75,42 @@ public class LoaderQueueThreadManager {
 	}
 	
 	//Crafts prime flight key out of TVL0 line in the message
-	private String getPrimeFlightKey(Message<?> message) {
+	private String[] getPrimeFlightKey(Message<?> message) {
 		List<Segment> segments = new ArrayList<>();
+		String[] primeFlightKeyArray = new String[4];
 		String tvlLineText = "";
 		EdifactLexer lexer = new EdifactLexer((String) message.getPayload());
 		try {
 			segments = lexer.tokenize();
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("error tokenizing segments", e);
 		}
 		for (Segment seg : segments) {
 			if (seg.getName().equalsIgnoreCase("TVL")) {
 				tvlLineText = seg.getText();
+				primeFlightKeyArray[0] = seg.getComposite(1).getElement(0);
+				primeFlightKeyArray[1] = seg.getComposite(2).getElement(0);
+				primeFlightKeyArray[2] = seg.getComposite(3).getElement(0)+seg.getComposite(4).getElement(0);
 				break;
 			}
 		}
+		String delimiterChar = "";
 		if (tvlLineText == ""){
 			//Is APIS, need to convert to primeflightkey programmatically from various APIS segments
-			tvlLineText += "TVL+"; //baseline
+			tvlLineText += "TVL"+delimiterChar; //baseline
 			int locCount = 0;
 			String[] orderArray = new String[5];
 			String regex = "((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))";
 			for (Segment seg : segments){
 				if(seg.getName().equals("DTM")){
-					orderArray[0] = seg.getText().split("\\+")[1].replace("'", "");
+					orderArray[0] = seg.getText().split(delimiterChar+"")[1].replace("'", "");
 				}else if(seg.getName().equals("LOC")){
-					orderArray[locCount+1] = seg.getText().split("\\+")[2].replace("'","");
+					orderArray[locCount+1] = seg.getText().split(delimiterChar+"")[2].replace("'","");
+					primeFlightKeyArray[locCount] = seg.getComposite(1).getElement(0);
 					locCount++;
 				}else if(seg.getName().equals("TDT")){
-					String tmpString = seg.getText().split("\\+")[2].replace("'", "");
-					String[] tmpArry = tmpString.split(regex);
-					orderArray[3] = tmpArry[0];
-					orderArray[4] = tmpArry[1];
+					//String[] tmpArry = seg.getComposite(1).getElement(0).split(regex);
+						primeFlightKeyArray[2] = seg.getComposite(1).getElement(0);
 				}
 				if(locCount == 2){
 					break;
@@ -114,11 +122,10 @@ public class LoaderQueueThreadManager {
 				if(i == orderArray.length - 1){
 					tvlLineText +=orderArray[i]+"'";
 				}else{
-					tvlLineText +=orderArray[i]+"+";
+					tvlLineText +=orderArray[i]+delimiterChar;
 				}
 			}
-		}
-		
-		return tvlLineText;
+		}		
+		return primeFlightKeyArray;
 	}
 }

@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ApisGeneratorUtil gets called from controller classes to verify the UGANDA specific files 
@@ -22,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class ApisGeneratorUtil {
-
+	private static final Logger logger = LoggerFactory.getLogger(ApisGeneratorUtil.class);
 	public static final String STR_FLIGHT = "FLIGHT:";
 	public static final String STR_DATE = "DATE:";
 	public static final String STR_EMBARK = "PT.OF EMBARKATION:";
@@ -203,16 +205,16 @@ public class ApisGeneratorUtil {
 		    		 }
 		    	}
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.error("Error in APIS generator:", e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Error in APIS generator", e);
 			}finally{
 				fin.deleteOnExit();
 				if(!(br==null)){
 					try {
 						br.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						logger.error("Error in APIS generator.", e);
 					}
 				}
 			}
@@ -232,7 +234,7 @@ public class ApisGeneratorUtil {
 			date=date1;
 			
 		} catch (ParseException e) {
-			//e.printStackTrace();
+			//logger.error("error!", e);
 		}
 		SimpleDateFormat df = new SimpleDateFormat("ddMMyy");
 		return df.format(date);

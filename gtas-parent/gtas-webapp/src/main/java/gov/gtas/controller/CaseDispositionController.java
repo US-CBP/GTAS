@@ -5,32 +5,43 @@
  */
 package gov.gtas.controller;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
-import gov.gtas.model.udr.Rule;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.mock.web.MockMultipartFile;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import gov.gtas.vo.passenger.CaseVo;
+
 
 @RestController
 public class CaseDispositionController {
@@ -40,15 +51,19 @@ public class CaseDispositionController {
 
     @Autowired
     private RuleCatService ruleCatService;
+    
+    private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
 
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
-                SecurityContextHolder.getContext());
-        return caseDispositionService.findAll(request);
+        
+        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
+
+        CasePageDto casePageDto = caseDispositionService.findAll(request);
+        return casePageDto;
     }
 
     //getOneHistDisp
@@ -73,6 +88,16 @@ public class CaseDispositionController {
         HashMap _tempMap = new HashMap();
 
         return _tempMap;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
+    @ResponseBody
+    public long getCurrentServerTime() {
+        
+        Date currentServerTime = caseDispositionService.getCurrentServerTime();
+        long currentServerTimeMillis = currentServerTime.getTime();
+        
+        return currentServerTimeMillis;
     }
 
     //getRuleCats
@@ -104,7 +129,7 @@ public class CaseDispositionController {
                                                             request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error updating histDisp!", ex);
         }
         return aCase;
     }
@@ -126,7 +151,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile, GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in histDispAttachements!", ex);
         }
         return aCase;
     }
@@ -148,7 +173,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile,  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case attachments", ex);
         }
         return aCase;
     }
@@ -165,7 +190,7 @@ public class CaseDispositionController {
                     request.getRuleCatId(), request.getCaseComments(),  GtasSecurityUtils.fetchLoggedInUserId()
                     );
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case", ex);
         }
         return aCase;
     }
@@ -184,6 +209,33 @@ public class CaseDispositionController {
     @RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
     public @ResponseBody List<HitDispositionStatus> getHitDispositionStatuses() {
         return caseDispositionService.getHitDispositionStatuses();
+    }
+
+
+//    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
+//    public @ResponseBody String getCountdownAPISFlag() {
+//        return caseDispositionService.getCountdownAPISFlag();
+//    }
+
+    
+    @ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)
+	public List<CaseVo> getPassengerCaseHistory(
+			@PathVariable(value = "paxId") Long paxId) {
+
+    	List<CaseVo> vos =new ArrayList<CaseVo>();
+    	
+    	List<Case> cases = caseDispositionService.getCaseHistoryByPaxId(paxId);
+    	
+    	
+    	for(Case _case : cases) {
+    		CaseVo vo = new CaseVo();
+    		CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
+    		vos.add(vo);
+    	}
+    	
+    	return vos;
     }
 
 }

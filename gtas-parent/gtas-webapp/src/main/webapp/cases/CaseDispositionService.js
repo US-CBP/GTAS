@@ -9,9 +9,17 @@
         .service('caseDispositionService', function ($http, $q, Upload) {
 
             function getAllCases(){
+                
+                var startDate = new Date();
+                var endDate = new Date();
+                endDate.setDate(endDate.getDate() + 30);
+                startDate.setDate(startDate.getDate() - 30);                
+        
                 var pageRequest = {
                     pageSize: "10",
-                    pageNumber: "1"
+                    pageNumber: "1",
+                    etaStart: startDate,
+                    etaEnd: endDate
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -25,7 +33,14 @@
             function getPagedCases(params){
                 var pageRequest = {
                     pageSize: params.pageSize.toString(),
-                    pageNumber: params.pageNumber.toString()
+                    pageNumber: params.pageNumber.toString(),
+                    sort: params.sort,
+                    lastName: params.model.name,
+                    flightNumber: params.model.flightNumber,
+                    status: params.model.status,
+                    ruleCatId: params.model.ruleCat,
+                    etaStart: params.model.etaStart,
+                    etaEnd: params.model.etaEnd
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -61,7 +76,10 @@
                     status: model.status,
                     ruleCatId: model.ruleCat,
                     etaStart: model.etaStart,
-                    etaEnd: model.etaEnd
+                    etaEnd: model.etaEnd,
+                    etaEtdFilter: model.etaEtdFilter,
+                    etaEtdSortFlag: model.etaEtdSortFlag,
+                    sort: model.sort
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -221,6 +239,29 @@
                 return dfd.promise;
             }
 
+//            function getAppConfigAPISFlag(){
+//
+//                var dfd = $q.defer();
+//                dfd.resolve($http.get("/gtas/countdownAPISFlag"));
+//                return dfd.promise;
+//
+//            }
+
+             function getCurrentServerTime() {
+  
+                var currentServerTimeMillis = 0;
+                
+                $.ajax({
+                    async: false,
+                    url: "/gtas/getCurrentServerTime",
+                    success: function (data, status, jqXHR) {
+                       currentServerTimeMillis = data;
+                     }
+                });
+                
+                return currentServerTimeMillis;
+             } 
+
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -232,7 +273,9 @@
                 removeFromOneDayLookoutList:removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
-                getByQueryParams: getByQueryParams
+                getByQueryParams: getByQueryParams,
+                getCurrentServerTime: getCurrentServerTime
+                //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
 }());

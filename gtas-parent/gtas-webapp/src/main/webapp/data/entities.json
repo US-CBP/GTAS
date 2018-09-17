@@ -527,6 +527,48 @@
       }
     ]
   },
+  "BookingDetail": {
+    "label": "FLIGHT LEG",
+    "columns": [
+      {
+        "id": "BookingDetail.origin",
+        "label": "Origin",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN",
+          "BEGINS_WITH",
+          "NOT_BEGINS_WITH",
+          "CONTAINS",
+          "NOT_CONTAINS",
+          "ENDS_WITH",
+          "NOT_ENDS_WITH"
+        ],
+        "multiple": true               
+      },
+      {
+        "id": "BookingDetail.destination",
+        "label": "Destination",
+        "type": "string",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "IN",
+          "NOT_IN",
+          "BEGINS_WITH",
+          "NOT_BEGINS_WITH",
+          "CONTAINS",
+          "NOT_CONTAINS",
+          "ENDS_WITH",
+          "NOT_ENDS_WITH"
+        ] ,
+        "multiple": true                  
+      }
+      
+    ]
+  },
   "FrequentFlyer": {
     "label": "FREQUENT FLYER",
     "columns": [
@@ -962,7 +1004,7 @@
           "NOT_ENDS_WITH"
   	  	]
   	  }, {
-  	  	"id":"Bag.dataSource",
+  	  	"id":"Bag.data_source",
   	  	"label":"Data Source",
   	  	"type":"string",
   	  	"operators": [
@@ -1128,7 +1170,7 @@
         "plugin": "datepicker"
       },
       {
-        "id": "Pnr.paymentForms",
+        "id": "Pnr.formOfPayment",
         "label": "Form of Payment",
         "type": "string",
         "operators": [

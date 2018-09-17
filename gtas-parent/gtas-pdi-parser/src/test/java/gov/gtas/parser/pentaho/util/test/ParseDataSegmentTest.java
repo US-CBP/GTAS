@@ -6,7 +6,12 @@ import org.junit.Test;
 
 import gov.gtas.parser.pentaho.util.ParseDataSegment;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ParseDataSegmentTest {
+
+	private static final Logger logger = Logger.getLogger(ParseDataSegmentTest.class.getName());
 
 	private static final String DATA_ELEMENT_SEPARATOR = "+";
 	private static final String COMP_DATA_ELEMENT_SEPARATOR = ":";
@@ -43,7 +48,7 @@ public class ParseDataSegmentTest {
 			assertNull(
 					ParseDataSegment.extractDateFieldData(null, COMP_DATA_ELEMENT_SEPARATOR, "yyMMdd", "yyyy-MM-dd"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error!", e);
 		}
 
 	}
@@ -62,7 +67,7 @@ public class ParseDataSegmentTest {
 					ParseDataSegment.extractFlightDateField(FLIGHT_DATE_SEGMENT_2, COMP_DATA_ELEMENT_SEPARATOR));
 			assertNull(ParseDataSegment.extractFlightDateField(null, COMP_DATA_ELEMENT_SEPARATOR));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error!", e);
 		}
 
 	}
@@ -80,7 +85,7 @@ public class ParseDataSegmentTest {
 					ParseDataSegment.extractFlightDateTimeField(FLIGHT_DATE_SEGMENT_2, COMP_DATA_ELEMENT_SEPARATOR));
 			assertNull(ParseDataSegment.extractFlightDateTimeField(null, COMP_DATA_ELEMENT_SEPARATOR));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error!", e);
 		}
 
 	}
@@ -95,7 +100,7 @@ public class ParseDataSegmentTest {
 			assertNull(ParseDataSegment.extractMiddleField(null, DATA_ELEMENT_SEPARATOR));
 			assertNull(ParseDataSegment.extractMiddleField(DOCUMENT_SEGMENT_1, COMP_DATA_ELEMENT_SEPARATOR));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error!", e);
 		}
 
 	}
@@ -121,7 +126,7 @@ public class ParseDataSegmentTest {
 			assertNotNull(result3);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error!", e);
 		}
 
 	}

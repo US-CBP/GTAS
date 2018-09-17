@@ -20,8 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WatchlistMappingTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(WatchlistMappingTest.class);
     private static final String TEST_JSON =
         "{\"@class\": \"gov.gtas.model.watchlist.json.WatchlistSpec\","
        +" \"name\": \"PASSENGER_WL\","
@@ -80,7 +84,7 @@ public class WatchlistMappingTest {
         mapper.readValue(json, WatchlistSpec.class);
         
         } catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Got exception");
         }
     }
@@ -116,7 +120,7 @@ public class WatchlistMappingTest {
                 }
             }
         } catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
             fail("Got exception");
         }
     }

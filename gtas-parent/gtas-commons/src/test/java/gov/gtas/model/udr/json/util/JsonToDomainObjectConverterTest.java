@@ -21,8 +21,11 @@ import java.util.Date;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonToDomainObjectConverterTest {
+    private static final Logger logger = LoggerFactory.getLogger(JsonToDomainObjectConverter.class);
     private static final String UDR_TITLE = "test";
     private static final String UDR_DESCRIPTION = "test_descr";
     private static final String UDR_AUTHOR = "jpjones";
@@ -39,7 +42,7 @@ public class JsonToDomainObjectConverterTest {
     @Test
     public void testBasicWithId() {
         UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec(UDR_AUTHOR, UDR_TITLE, UDR_DESCRIPTION);
-        System.out.println(spec);
+        logger.info(spec.toString());
         Date startDate = spec.getSummary().getStartDate();
         Date endDate = new Date(System.currentTimeMillis() + 86400000L);//one day in the future
         spec.getSummary().setEndDate(endDate);
@@ -61,7 +64,7 @@ public class JsonToDomainObjectConverterTest {
             RuleMeta meta = rule.getMetaData();
             verifyMeta(meta, UDR_TITLE, UDR_DESCRIPTION, startDate, endDate, true);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.error("error!", ioe);
             fail("Not expecting exception");
         }
 
@@ -89,7 +92,7 @@ public class JsonToDomainObjectConverterTest {
             RuleMeta meta = rule.getMetaData();
             verifyMeta(meta, UDR_TITLE, UDR_DESCRIPTION, startDate, endDate, true);
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.error("error!", ioe);
             fail("Not expecting exception");
         }
 
