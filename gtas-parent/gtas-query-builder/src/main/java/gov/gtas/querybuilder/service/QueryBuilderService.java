@@ -200,27 +200,7 @@ public class QueryBuilderService {
 
 			totalCount = resultList.getTotalPassengers();
 
-			if (hasFlightLeg(queryRequest.getQuery())) {
-				for (Object[] result : resultList.getResult()) {
-					Passenger passenger = (Passenger) result[1];
 
-					PassengerVo vo = new PassengerVo();
-
-					// passenger information
-					BeanUtils.copyProperties(passenger, vo);
-					passengerList.add(vo);
-
-					BookingDetail bookingDetail = (BookingDetail) result[2];
-					vo.setFlightNumber(bookingDetail.getFlightNumber());
-					vo.setFlightOrigin(bookingDetail.getOrigin());
-					vo.setFlightDestination(bookingDetail.getDestination());
-					vo.setEtd(bookingDetail.getEtd());
-					vo.setEta(bookingDetail.getEta());
-
-				}
-			}
-
-			else {
 				for (Object[] result : resultList.getResult()) {
 					Passenger passenger = (Passenger) result[1];
 					Flight flight = (Flight) result[2];
@@ -241,7 +221,7 @@ public class QueryBuilderService {
 					vo.setFlightDestination(flight.getDestination());
 					vo.setEtd(flight.getEtd());
 					vo.setEta(flight.getEta());
-				}
+		
 			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());

@@ -147,13 +147,6 @@ public class JPQLGenerator {
 				query = queryPrefix + join + " " + Constants.WHERE + " " + crossJoinForFlightPax + " " + where;
 			} else if (queryType == EntityEnum.PASSENGER) {
 
-				if (joinEntities.contains(EntityEnum.BOOKING_DETAIL)) {
-
-					queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID
-							+ ", " + EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.BOOKING_DETAIL.getAlias() + " "
-							+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
-							+ EntityEnum.PASSENGER.getAlias();
-				} else {
 
 					/*
 					 * queryPrefix = Constants.SELECT_DISTINCT + " " +
@@ -172,12 +165,14 @@ public class JPQLGenerator {
 							+ Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " "
 							+ EntityEnum.PASSENGER.getAlias() + ", " + EntityEnum.FLIGHT.getEntityName() + " "
 							+ EntityEnum.FLIGHT.getAlias();
+					
+					
 					// Cross join is always required for Passenger side queries
 					crossJoinForFlightPax = Constants.EXISTS + "(" + Constants.SELECT + " fp " + Constants.FROM
 							+ " FlightPassenger fp " + Constants.WHERE + " " + EntityEnum.PASSENGER.getAlias()
 							+ Constants.ID + " = fp.passengerId " + Constants.AND + " " + EntityEnum.FLIGHT.getAlias()
 							+ Constants.ID + " = fp.flightId) " + Constants.AND;
-				}
+			
 					if (paymentFormCondition.isTrue()) {
 						// joinEntities.remove(EntityEnum.PNR);
 					}
