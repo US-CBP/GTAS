@@ -30,6 +30,7 @@ import java.util.Date;
 public class PnrGovParserTest {
     private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
     private static final String PNR_MESSAGE_PG_76 = "/pnr-messages/pnrMessagePg76.txt";
+    private static final String PNR_BAD_FORMAT = "/pnr-messages/pnrBadFormat.txt";
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -71,6 +72,14 @@ public class PnrGovParserTest {
         LocalDate Feb142013 = LocalDate.of(2013, 2, 14);
         assertTrue(Feb142013.isEqual(dateBooked));
     }
+
+    @Test
+    public void badFormattingAtEndOfMessage() throws IOException, URISyntaxException, ParseException {
+        String badFormatMessage = getMessageText(PNR_BAD_FORMAT);
+        PnrVo vo = this.parser.parse(badFormatMessage);
+    }
+
+
 
     private LocalDate getLocalDate(Date date) {
         return Instant.ofEpochMilli(date.getTime())
