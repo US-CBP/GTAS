@@ -8,6 +8,7 @@ package gov.gtas.rule.builder.pnr;
 import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_ATTRIBUTE_ID;
 import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_PNR_ID;
 import gov.gtas.bo.match.PnrAddressLink;
+import gov.gtas.bo.match.PnrBookingLink;
 import gov.gtas.bo.match.PnrCreditCardLink;
 import gov.gtas.bo.match.PnrEmailLink;
 import gov.gtas.bo.match.PnrFrequentFlyerLink;
@@ -42,7 +43,7 @@ public class PnrRuleConditionBuilder {
     private BagConditionBuilder bagConditionBuilder;
     private FlightPaxConditionBuilder flightPaxConditionBuilder;
     private PnrConditionBuilder pnrConditionBuilder;
-
+    private BookingDetailConditionBuilder bookingDetailConditionBuilder;
     public PnrRuleConditionBuilder(
             final Map<EntityEnum, String> entityVariableNameMap) {
         for (Entry<EntityEnum, String> entry : entityVariableNameMap.entrySet()) {
@@ -71,12 +72,16 @@ public class PnrRuleConditionBuilder {
                 this.emailConditionBuilder = new EmailConditionBuilder(
                         entry.getValue());
                 break;
-            case CREDIT_CARD:
-                this.creditCardConditionBuilder = new CreditCardConditionBuilder(
+            case BOOKING_DETAIL:
+                this.bookingDetailConditionBuilder = new BookingDetailConditionBuilder(
                         entry.getValue());
                 break;
             case FREQUENT_FLYER:
                 this.frequentFlyerConditionBuilder = new FrequentFlyerConditionBuilder(
+                        entry.getValue());
+                break;
+            case CREDIT_CARD:
+                this.creditCardConditionBuilder = new CreditCardConditionBuilder(
                         entry.getValue());
                 break;
             default:
@@ -106,6 +111,12 @@ public class PnrRuleConditionBuilder {
                     phoneConditionBuilder.getLinkVariableName(),
                     PnrPhoneLink.class.getSimpleName(), pnrVarName,
                     phoneConditionBuilder);
+        }
+        if (!bookingDetailConditionBuilder.isEmpty()) {
+            addLinkCondition(linkStringBuilder,
+            		bookingDetailConditionBuilder.getLinkVariableName(),
+                    PnrBookingLink.class.getSimpleName(), pnrVarName,
+                    bookingDetailConditionBuilder);
         }
         if (!emailConditionBuilder.isEmpty()) {
             addLinkCondition(linkStringBuilder,
@@ -171,6 +182,7 @@ public class PnrRuleConditionBuilder {
         parentStringBuilder.append(travelAgencyConditionBuilder.build());
         parentStringBuilder.append(frequentFlyerConditionBuilder.build());
         parentStringBuilder.append(dwellTimeConditionBuilder.build());
+        parentStringBuilder.append(bookingDetailConditionBuilder.build());
         
         String linkConditions = generatePnrLinks();
         if (pnrConditionBuilder.isEmpty()
@@ -201,6 +213,7 @@ public class PnrRuleConditionBuilder {
         frequentFlyerConditionBuilder.reset();
         pnrConditionBuilder.reset();
         dwellTimeConditionBuilder.reset();
+        bookingDetailConditionBuilder.reset();
     }
 
     /**
@@ -220,6 +233,10 @@ public class PnrRuleConditionBuilder {
                 break;
             case ADDRESS:
                 addressConditionBuilder.addCondition(opCode, trm.getField(),
+                        attributeType, trm.getValue());
+                break;
+            case BOOKING_DETAIL:
+                bookingDetailConditionBuilder.addCondition(opCode, trm.getField(),
                         attributeType, trm.getValue());
                 break;
             case PHONE:

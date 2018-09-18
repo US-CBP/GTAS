@@ -83,7 +83,7 @@ public class LoaderQueueThreadManager {
 		try {
 			segments = lexer.tokenize();
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("error tokenizing segments", e);
 		}
 		for (Segment seg : segments) {
 			if (seg.getName().equalsIgnoreCase("TVL")) {

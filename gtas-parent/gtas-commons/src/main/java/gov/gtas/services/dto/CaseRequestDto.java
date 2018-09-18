@@ -25,7 +25,7 @@ public class CaseRequestDto implements Serializable {
 
     private Long flightId;
 
-    private Long flightNumber;
+    private String flightNumber;
 
     private Long paxId;
 
@@ -46,10 +46,6 @@ public class CaseRequestDto implements Serializable {
     private Long ruleCatId;
     
     private Boolean oneDayLookoutFlag;
-
-    private String etaEtdFilter;
-
-    private String etaEtdSortFlag;
 
     private MultipartFile multipartFile;
 
@@ -180,11 +176,11 @@ public class CaseRequestDto implements Serializable {
         this.paxName = paxName;
     }
 
-    public Long getFlightNumber() {
+    public String getFlightNumber() {
         return flightNumber;
     }
 
-    public void setFlightNumber(Long flightNumber) {
+    public void setFlightNumber(String flightNumber) {
         this.flightNumber = flightNumber;
     }
 
@@ -203,22 +199,6 @@ public class CaseRequestDto implements Serializable {
 	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
-
-    public String getEtaEtdFilter() {
-        return etaEtdFilter;
-    }
-
-    public void setEtaEtdFilter(String etaEtdFilter) {
-        this.etaEtdFilter = etaEtdFilter;
-    }
-
-    public String getEtaEtdSortFlag() {
-        return etaEtdSortFlag;
-    }
-
-    public void setEtaEtdSortFlag(String etaEtdSortFlag) {
-        this.etaEtdSortFlag = etaEtdSortFlag;
-    }
 
     @Override
     public String toString() {

@@ -31,7 +31,7 @@ import gov.gtas.parsers.util.ParseUtils;
  * TBD+++MP:0741234123456'
  * Total 5 bags, weight 155 pounds, 2 checked to MSP, 3 short
  * checked to JFK
- * TBD++5:155:701+++KL: 8074902824:2:MSP+ KL: 8074902826:3:JFK’
+ * TBD++5:155:701+++KL: 8074902824:2:MSP+ KL: 8074902826:3:JFK
  * 
  * 700 unit qualifier is for KGS
  * 701 unit qualifier is for pounds

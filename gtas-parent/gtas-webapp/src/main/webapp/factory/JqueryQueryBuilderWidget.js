@@ -71,9 +71,28 @@ app.factory('jqueryQueryBuilderWidget', function () {
             },
             filters: []
         };
+        
+        $scope.getApisOnlyFlagAndVersion = function () {
+
+            var apisOnlyFlagAndVersion = "FALSE";
+
+            $.ajax({
+                async: false,
+                url: '/gtas/query/apisOnlyFlag',
+                success: function (data, status, jqXHR) {
+                   apisOnlyFlagAndVersion = data;
+                 }
+             });
+
+           return apisOnlyFlagAndVersion;
+        };
 
         $scope.buildAfterEntitiesLoaded = function (options) {
-            var property = 'entities',
+            
+            var apisOnlyFlagAndVersion = $scope.getApisOnlyFlagAndVersion();
+            var apisVersion = (apisOnlyFlagAndVersion.startsWith("TRUE")) ? apisOnlyFlagAndVersion.split(";")[1] : null;
+            // Could later add the apisVersion to end of property var and reference multiple json files for different versions of APIS.
+            var property = (apisOnlyFlagAndVersion == "FALSE") ? 'entities' : 'entitiesApisOnly',
                 $builder = $('#builder'),
                 supplement = {
                     selectize: function (obj) {

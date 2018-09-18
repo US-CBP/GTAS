@@ -21,11 +21,16 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates test data for rules domain objects.
  */
 public class RuleServiceDataGenUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(RuleServiceDataGenUtils.class);
+
     public static final String TEST_RULE_TITLE_PREFIX = "TestRule";
 
     public static final int TEST_ROLE1_ID = 1;
@@ -51,7 +56,7 @@ public class RuleServiceDataGenUtils {
 
             userService.create(userData);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error!", e);
         }
     }
 
@@ -75,7 +80,7 @@ public class RuleServiceDataGenUtils {
                    meta = createRuleMeta(title, descr, enabled, formatJsonDate(startDate), null);               
             }
         } catch(Exception ex){
-            ex.printStackTrace();
+            logger.error("error!", ex);
         }
         rule.setMetaData(meta);
         return rule;

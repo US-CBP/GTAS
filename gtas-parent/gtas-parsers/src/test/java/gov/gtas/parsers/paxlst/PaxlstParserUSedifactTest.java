@@ -16,9 +16,12 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.FlightVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public final class PaxlstParserUSedifactTest {
+	private static final Logger logger = LoggerFactory.getLogger(PaxlstParserUSedifactTest.class);
     EdifactParser<ApisMessageVo> parser; 
     
     @Before
@@ -52,7 +55,7 @@ public final class PaxlstParserUSedifactTest {
         List<FlightVo> flights = vo.getFlights();
         assertEquals(1, flights.size());
         assertEquals(4, vo.getPassengers().size());
-        System.out.println(vo);
+        logger.info(vo.toString());
     }
 
     /**
@@ -86,7 +89,7 @@ public final class PaxlstParserUSedifactTest {
         List<FlightVo> flights = vo.getFlights();
         assertEquals(3, flights.size());
         assertEquals(1, vo.getPassengers().size());
-        System.out.println(vo);    
+        logger.info(vo.toString());
     }
     
     @Test
@@ -129,7 +132,7 @@ public final class PaxlstParserUSedifactTest {
         List<FlightVo> flights = vo.getFlights();
 //        assertEquals(3, flights.size());
 //        assertEquals(1, vo.getPassengers().size());
-        System.out.println(vo);    
+        logger.info(vo.toString());
     	
     }
 }

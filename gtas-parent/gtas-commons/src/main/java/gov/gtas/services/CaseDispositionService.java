@@ -63,5 +63,7 @@ public interface CaseDispositionService {
     
     public List<Case> getCaseHistoryByPaxId(Long paxId);
 
-    public String getCountdownAPISFlag();
+    public String getAPISOnlyFlagAndVersion();
+    
+    public Date getCurrentServerTime();
 }

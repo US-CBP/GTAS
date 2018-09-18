@@ -27,7 +27,7 @@ public class Bag extends BaseEntity {
 	private Passenger passenger;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
+	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
 	private Flight flight;
 	
     @Column(name = "data_source")

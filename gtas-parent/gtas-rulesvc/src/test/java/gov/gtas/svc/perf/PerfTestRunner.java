@@ -18,6 +18,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -32,20 +34,21 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class PerfTestRunner {
 
+    private static final Logger logger = LoggerFactory.getLogger(PerfTestRunner.class);
+
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = null;
         try {
             ctx = new AnnotationConfigApplicationContext(
                     CommonServicesConfig.class, CachingConfig.class, RuleServiceConfig.class);
             if (args.length < 1) {
-                System.out
-                        .println("The test or command name must be provided! [udrtest,perf, perfall, cleanperf, clean]");
+                logger.info("The test or command name must be provided! [udrtest,perf, perfall, cleanperf, clean]");
                 System.exit(0);
             }
             runTest(ctx, args);
             ctx.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Exception runing perf test runner!", ex);
         } finally {
             if (ctx != null)
                 ctx.close();
@@ -58,13 +61,11 @@ public class PerfTestRunner {
         PerformanceTest test = createTest(ctx, args);
         if (test != null) {
             List<String> result = test.runTest();
-            System.out
-                    .println("******************************************************************");
+            logger.info("******************************************************************");
             for (String line : result) {
-                System.out.println(line);
+                logger.info(line);
             }
-            System.out
-                    .println("******************************************************************");
+            logger.info("******************************************************************");
         }
     }
 
@@ -103,7 +104,7 @@ public class PerfTestRunner {
             cleanupRuleData(ctx);
             break;
         default:
-            System.out.println(">>>>> ERROR unknown test name:" + args[0]);
+            logger.info(">>>>> ERROR unknown test name:" + args[0]);
             break;
         }
         return test;
@@ -123,19 +124,19 @@ public class PerfTestRunner {
                 Query q = em
                         .createQuery("delete from WatchlistItem it where it.id > 0");
                 int del = q.executeUpdate();
-                System.out.println("Number wl item deleted = " + del);
+                logger.info("Number wl item deleted = " + del);
                 q = em.createQuery("delete from Watchlist wl where wl.id > 0");
                 int del2 = q.executeUpdate();
-                System.out.println("Number watch list deleted = " + del2);
+                logger.info("Number watch list deleted = " + del2);
                 q = em.createQuery("delete from RuleMeta rm where rm.id > 0");
                 int del3 = q.executeUpdate();
-                System.out.println("Number RuleMeta deleted = " + del3);
+                logger.info("Number RuleMeta deleted = " + del3);
                 q = em.createQuery("delete from Rule r where r.id > 0");
                 int del4 = q.executeUpdate();
-                System.out.println("Number Rules deleted = " + del4);
+                logger.info("Number Rules deleted = " + del4);
                 q = em.createQuery("delete from UdrRule u where u.id > 0");
                 int del5 = q.executeUpdate();
-                System.out.println("Number Udr deleted = " + del5);
+                logger.info("Number Udr deleted = " + del5);
                 return del + del2 + del3 + del4 + del5;
             }
         });

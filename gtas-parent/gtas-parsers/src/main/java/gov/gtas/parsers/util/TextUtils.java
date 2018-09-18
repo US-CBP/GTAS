@@ -5,6 +5,9 @@
  */
 package gov.gtas.parsers.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class TextUtils {
+    private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
     private TextUtils() { }
     
     /**
@@ -65,7 +69,7 @@ public final class TextUtils {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("error generating md5hash!", e);
         }
         
         return null;

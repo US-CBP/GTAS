@@ -5,22 +5,10 @@
  */
 package gov.gtas.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitDispositionStatus;
@@ -40,8 +27,21 @@ import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.services.dto.SortOptionsDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import gov.gtas.vo.passenger.CaseVo;
+
 
 @RestController
 public class CaseDispositionController {
@@ -59,19 +59,11 @@ public class CaseDispositionController {
     public
     @ResponseBody
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
-                SecurityContextHolder.getContext());
-        SortOptionsDto sortDTO = new SortOptionsDto();
-        //default to earliest ETA
-        if(request.getEtaEtdFilter()!=null && request.getEtaEtdSortFlag()!=null){
-            sortDTO.setColumn(request.getEtaEtdFilter());
-            sortDTO.setDir(request.getEtaEtdSortFlag());
-            ArrayList<SortOptionsDto> _tempSortDtoList = new ArrayList<>();
-            _tempSortDtoList.add(sortDTO);
-            request.setSort(_tempSortDtoList);
-        }
+        
+        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
 
-        return caseDispositionService.findAll(request);
+        CasePageDto casePageDto = caseDispositionService.findAll(request);
+        return casePageDto;
     }
 
     //getOneHistDisp
@@ -96,6 +88,16 @@ public class CaseDispositionController {
         HashMap _tempMap = new HashMap();
 
         return _tempMap;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
+    @ResponseBody
+    public long getCurrentServerTime() {
+        
+        Date currentServerTime = caseDispositionService.getCurrentServerTime();
+        long currentServerTimeMillis = currentServerTime.getTime();
+        
+        return currentServerTimeMillis;
     }
 
     //getRuleCats
@@ -127,7 +129,7 @@ public class CaseDispositionController {
                                                             request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error updating histDisp!", ex);
         }
         return aCase;
     }
@@ -149,7 +151,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile, GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in histDispAttachements!", ex);
         }
         return aCase;
     }
@@ -171,7 +173,7 @@ public class CaseDispositionController {
                     status, validHit,
                     multipartFile,  GtasSecurityUtils.fetchLoggedInUserId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case attachments", ex);
         }
         return aCase;
     }
@@ -188,7 +190,7 @@ public class CaseDispositionController {
                     request.getRuleCatId(), request.getCaseComments(),  GtasSecurityUtils.fetchLoggedInUserId()
                     );
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error("Error in create manual case", ex);
         }
         return aCase;
     }
@@ -208,6 +210,13 @@ public class CaseDispositionController {
     public @ResponseBody List<HitDispositionStatus> getHitDispositionStatuses() {
         return caseDispositionService.getHitDispositionStatuses();
     }
+
+
+//    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
+//    public @ResponseBody String getCountdownAPISFlag() {
+//        return caseDispositionService.getCountdownAPISFlag();
+//    }
+
     
     @ResponseBody
 	@ResponseStatus(HttpStatus.OK)
@@ -227,11 +236,6 @@ public class CaseDispositionController {
     	}
     	
     	return vos;
-    }
- 
-    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
-    public @ResponseBody String getCountdownAPISFlag() {
-        return caseDispositionService.getCountdownAPISFlag();
     }
 
 }

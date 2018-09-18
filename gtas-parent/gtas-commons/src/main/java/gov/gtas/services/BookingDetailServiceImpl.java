@@ -10,18 +10,20 @@ import gov.gtas.model.Passenger;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.util.EntityResolverUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class BookingDetailServiceImpl implements BookingDetailService{
+
+    private static final Logger logger = LoggerFactory.getLogger(BookingDetailServiceImpl.class);
 
     @Autowired
     private BookingDetailRepository bookingDetailRepository;
@@ -50,7 +52,7 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         try {
             //String _paxHash = (new LoaderUtils()).getHashForPassenger(_tempPax);
         }catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("Error getting Hash from PAXID", ex);
         }
     }
 

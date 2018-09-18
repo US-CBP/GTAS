@@ -1,9 +1,7 @@
 package gov.gtas.parsers.redisson.jms;
 
-import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.redisson.RedissonFilter;
 import gov.gtas.parsers.redisson.concurrency.MessageFilterExecutorService;
-import gov.gtas.parsers.redisson.concurrency.MessageFilterTask;
 import gov.gtas.repository.AppConfigurationRepository;
 import org.redisson.Redisson;
 import org.redisson.api.RLiveObjectService;
@@ -24,13 +22,12 @@ import javax.jms.JMSException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @EnableJms
 public class InboundQMessageListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InboundQMessageListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(InboundQMessageListener.class);
 
     @Value("${redis.connection.string}")
     private String redisConnectionString;
@@ -59,7 +56,7 @@ public class InboundQMessageListener {
 
     @PostConstruct
     public void init(){
-        LOG.info("++++++++++INIT Called+++++++++++++++++");
+        logger.info("++++++++++INIT Called+++++++++++++++++");
         config.useSingleServer().setAddress(redisConnectionString);
         //config.useSingleServer().setAddress(redisConnectionString);
         config.setNettyThreads(0);
@@ -77,7 +74,7 @@ public class InboundQMessageListener {
     @JmsListener(destination = INBOUND_QUEUE)
     public void receiveMessage(final Message<?> message) throws JMSException {
 
-        LOG.info("++++++++Message Received++++++++++++");
+        logger.info("++++++++Message Received++++++++++++");
         MessageHeaders headers =  message.getHeaders();
 
         try {
@@ -88,10 +85,10 @@ public class InboundQMessageListener {
             }
         }
         catch (Exception ex){
-            ex.printStackTrace();
+            logger.error("Error receiving message", ex);
         }
 
-        LOG.info("+++++++++++++++++++++++++++++");
+        logger.info("+++++++++++++++++++++++++++++");
     }
 
 

@@ -45,6 +45,8 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.test.context.ContextConfiguration;
@@ -59,6 +61,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class UdrServiceIT {
 
+	private static final Logger logger = LoggerFactory.getLogger(UdrServiceIT.class);
 	private static final String RULE_TITLE1 = "Hello Rule 1";
 	private static final String RULE_DESCRIPTION1 = "This is a test";
 	private static final String RULE_TITLE2 = "Hello Rule 2";
@@ -268,7 +271,7 @@ public class UdrServiceIT {
 			assertEquals(spec.getSummary().getTitle(), specFetched.getSummary()
 					.getTitle());
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error!", ex);
 		}
 	}
 

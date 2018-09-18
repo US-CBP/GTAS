@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +41,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @EnableTransactionManagement
 @Import(AsyncConfig.class)
 public class CommonServicesConfig {
+
+    private static Logger logger = LoggerFactory.getLogger(CommonServicesConfig.class);
 
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "hibernate.connection.driver_class";
     private static final String PROPERTY_NAME_DATABASE_PASSWORD = "hibernate.connection.password";
@@ -126,7 +130,7 @@ public class CommonServicesConfig {
             dataSource.setDriverClass(env
                     .getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
         } catch (PropertyVetoException pve) {
-            pve.printStackTrace();
+            logger.error("Unable to get required property!", pve);
         }
         dataSource.setJdbcUrl(env
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_URL));

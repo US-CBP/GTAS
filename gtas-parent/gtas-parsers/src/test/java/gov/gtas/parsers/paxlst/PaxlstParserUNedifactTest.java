@@ -21,10 +21,15 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.PassengerVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PaxlstParserUNedifactTest {
+  
     private static final String APIS_MESSAGE = "/apis-messages/apisMessage.txt";
     EdifactParser<ApisMessageVo> parser;
+    private static final Logger logger = LoggerFactory.getLogger(PaxlstParserUNedifactTest.class);
+
     
     String header = 
             "UNA:+.? '" + 
@@ -162,7 +167,7 @@ public final class PaxlstParserUNedifactTest {
         ApisMessageVo vo = parser.parse(apis);
         List<FlightVo> flights = vo.getFlights();
         assertEquals(2, flights.size());
-        System.out.println(vo);
+        logger.info(vo.toString());
     }
     
     /**

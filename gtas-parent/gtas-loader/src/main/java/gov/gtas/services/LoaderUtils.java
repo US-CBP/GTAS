@@ -529,9 +529,9 @@ public class LoaderUtils {
     	try {
 			paxIdTag.setIdTag(getHashForPassenger(p));
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			logger.error("error creating passenger id tag:", e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error("error creating passenger id tag.", e);
 		}
     	return paxIdTag;
 	}

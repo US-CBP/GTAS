@@ -35,6 +35,8 @@ public final class Constants {
     public static final String DWELLTIME = "DWELLTIME";
     public static final String BAG = "BAG";
     public static final String FLIGHTPAX = "FLIGHTPAX";
+    //public static final String FLIGHTLEG = "FLIGHTLEG";
+    public static final String BOOKINGDETAIL = "BOOKINGDETAIL";
     
     public static final String QUERYOBJECT_OBJECTNAME = "queryObject";
     public static final String USERQUERY_OBJECTNAME = "userQuery";
@@ -59,6 +61,7 @@ public final class Constants {
     
     public static final String SEAT = "SEAT";
     public static final String PAYMENTFORMS = "PAYMENTFORMS";
+    public static final String FORM_OF_PAYMENT = "formOfPayment";
     
     public static final String QUERY_EXISTS_ERROR_MSG = "A query with the same title already exists. Please rename this query or edit the existing one.";
     public static final String QUERY_DOES_NOT_EXIST_ERROR_MSG = "Query cannot be found.";

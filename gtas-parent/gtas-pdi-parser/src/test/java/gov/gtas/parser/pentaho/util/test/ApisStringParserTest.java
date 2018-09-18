@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +18,8 @@ import org.junit.Test;
 import gov.gtas.parser.pentaho.util.ApisStringParser;
 
 public class ApisStringParserTest {
+
+	private static final Logger logger = Logger.getLogger(ApisStringParserTest.class.getName());
 
 	private static final String dateString1 = "140216";
 	private static final String dateString2 = "220720";
@@ -41,7 +45,7 @@ public class ApisStringParserTest {
 			assertNull(ApisStringParser.getMd5Hash(null));
 			assertNull(ApisStringParser.getMd5Hash(" "));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error", e);
 		}
 
 	}
@@ -56,7 +60,7 @@ public class ApisStringParserTest {
 			assertEquals("20140216", ApisStringParser.parseDateTimeAsStr(dateString1, "yyMMdd", "yyyyMMdd"));
 			assertEquals("07-20-2022", ApisStringParser.parseDateTimeAsStr(dateString2, "yyMMdd", "MM-dd-yyyy"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "error", e);
 		}
 
 	}

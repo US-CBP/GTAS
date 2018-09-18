@@ -62,7 +62,7 @@ public class TargetingResultUtils{
 									resultMap);
 						}
 					} catch (CloneNotSupportedException cnse) {
-						cnse.printStackTrace();
+						logger.error("error - clone not supported:", cnse);
 					}
 				} else {
 					// ERROR we do not have flights for this passenger

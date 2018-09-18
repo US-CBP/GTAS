@@ -43,6 +43,7 @@ import gov.gtas.model.FlightPax;
 import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
@@ -89,7 +90,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Autowired
 	public RuleCatService ruleCatService;
     @Autowired
-    private PassengerIDTagRepository passengerIdTagDao;
+    private PassengerResolverService passengerResolverService;
 	@Resource
 	private AppConfigurationRepository appConfigurationRepository;
 
@@ -411,7 +412,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 					casesToCommit.add(aCase);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error in context cases!", ex);
 		}
 	}
 
@@ -428,7 +429,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			else
 				hitDisp.setRuleCat(ruleCatRepository.findOne(id));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in pull rule category.", ex);
 		}
 	}
 
@@ -440,7 +441,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			return ruleCatService.fetchRuleCatPriorityIdFromRuleId(ruleId);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in high priority rule cat id", ex);
 		}
 		return 1L;
 	}
@@ -449,7 +450,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			return ruleCatService.fetchRuleCatIdFromRuleId(ruleId);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error in get rule cat id", ex);
 		}
 		return 1L;
 	}
@@ -533,7 +534,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				caseDispositionRepository.save(aCase);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error adding case comments: ", ex);
 		}
 
 		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
@@ -636,20 +637,56 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @return
 	 */
 	@Override
-	public CasePageDto findAll(CaseRequestDto dto) {
+	public CasePageDto findAll(CaseRequestDto dto) 
+        {
+            List<CaseVo> vos = new ArrayList<>();
 
-		List<CaseVo> vos = new ArrayList<>();
+            CasePageDto casePageDto = null;
 
-		Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
-		for (Case f : tuple2.getRight()) {
-			CaseVo vo = new CaseVo();
-			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
-			vo.setCurrentTime(new Date());
-			vos.add(vo);
-		}
+            Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
+            for (Case f : tuple2.getRight()) {
+                    CaseVo vo = new CaseVo();
+                    CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+                    vo.setCurrentTime(new Date());
+                    vo.setFlightDirection(f.getFlight().getDirection());
+                    vo.setCountdownTime(f.getCountdown().getTime());
+                    vo = calculateCountDownDisplayString(vo);
+                    vos.add(vo);
+            }
 
-		return new CasePageDto(vos, tuple2.getLeft());
+            casePageDto = new CasePageDto(vos, tuple2.getLeft()); 
+
+            return casePageDto;
 	}
+        
+        private CaseVo calculateCountDownDisplayString(CaseVo caseVo)
+        {
+            Long etdEtaDateTime = caseVo.getCountdownTime();
+            Long currentTimeMillis = caseVo.getCurrentTime().getTime();
+           
+            Long countDownMillis = etdEtaDateTime - currentTimeMillis;
+            Long countDownSeconds = countDownMillis/1000;
+            
+            Long daysLong = countDownSeconds/86400;
+            Long secondsRemainder1 = countDownSeconds % 86400;
+            Long hoursLong = secondsRemainder1/3600;
+            Long secondsRemainder2 = secondsRemainder1 % 3600;
+            Long minutesLong = secondsRemainder2/60;
+            
+            String daysString = (countDownSeconds < 0 && daysLong.longValue() == 0) ? "-" + daysLong.toString() : daysLong.toString();
+            
+            String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
+            caseVo.setCountDownTimeDisplay(countDownString);
+
+            return caseVo;
+        }
+        
+        @Override
+        public Date getCurrentServerTime()
+        {
+            Date currentTime = new Date();
+            return currentTime;
+        }
 
 	/**
 	 * Utility method to fetch model object
@@ -720,7 +757,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				_tempReturnHitsDispSet.add(_tempHitsDisp);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error returning hits disposition.", ex);
 		}
 		// _tempReturnHitsDispSet =
 		// _tempReturnHitsDispSet.stream().sorted(Comparator.comparing(HitsDispositionVo::getHit_disp_id)).collect(Collectors.toSet());
@@ -761,7 +798,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error in manage hits disposition comments.", ex);
 		}
 		return _tempReturnHitsDispSet;
 	}
@@ -801,8 +838,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		if (_tempFlight != null) {
 			aCase.setFlightNumber(_tempFlight.getFlightNumber());
-			aCase.setFlightETADate(_tempFlight.getEtaDate());
-			aCase.setFlightETDDate(_tempFlight.getEtdDate());
+                        aCase.setFlightETADate(_tempFlight.getEta());
+			aCase.setFlightETDDate(_tempFlight.getEtd());
 		}
 	}
 
@@ -836,7 +873,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		try {
 			BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error copying object", ex);
 		}
 	}
 
@@ -968,8 +1005,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		catch (Exception e)
 		{
 			logger.error("An Error has occurred when updating one day lookout flag for CASE ID: " + caseId+ " with flag: "+ flag );
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 			return result;
 	}
@@ -983,31 +1019,29 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	public List<Case> getCaseHistoryByPaxId(Long paxId) {
 		
-		Passenger pax = this.findPaxByID(new Long(paxId));
-
-    	String hash = null;
+		List<Long> pax_group = this.passengerResolverService.resolve(paxId);
     	
-    	try {
-    		hash = EntityResolverUtils.makeHashForPassenger(pax);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-    	 
-    	/**
-    	 * 
-    	 * The hash could be based on gtas tag_id or tamr id (at the moment we only have gtas passenger_tag_id)
-    	 * 
-    	 */
-    	List<Long> paxIds = this.passengerIdTagDao.findPaxIdsByTagId(hash);
-    	
-    	if(paxIds.size()==0)
-    		return Collections.emptyList();
-    	
-    	return this.getCaseByPaxId(paxIds);
+    	return this.getCaseByPaxId(pax_group);
 	}
 
-	public String getCountdownAPISFlag(){
-		return appConfigurationRepository.findByOption(AppConfigurationRepository.CASE_COUNTDOWN_LABEL).getValue();
+        // returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or FALSE
+	@Override
+        public String getAPISOnlyFlagAndVersion()
+        {
+            String apisReturnStr = "";
+            AppConfiguration appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
+            String apisOnlyFlag = (appConfiguration != null) ? appConfiguration.getValue() : "FALSE";
+            if (apisOnlyFlag.equals("TRUE"))
+            {
+                appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_VERSION);
+                String apisVersion = (appConfiguration != null) ? appConfiguration.getValue() : "";
+                apisReturnStr = apisOnlyFlag + ";" + apisVersion;
+            }
+            else
+            {
+               apisReturnStr =  apisOnlyFlag;
+            }
+            return apisReturnStr;
 	}
-
+        
 }

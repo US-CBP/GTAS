@@ -18,6 +18,8 @@ import gov.gtas.services.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,8 @@ import gov.gtas.vo.passenger.SeatVo;
 
 @Controller
 public class PassengerDetailsController {
+
+	private static final Logger logger = LoggerFactory.getLogger(PassengerDetailsController.class);
 
 	@Autowired
 	private PassengerService pService;
@@ -256,6 +260,9 @@ public class PassengerDetailsController {
 				fpVo.setResidencyCountry(fp.getResidenceCountry());
 				fpVo.setPassengerType(fp.getTravelerType());
 				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+                                fpVo.setResRefNumber(fp.getReservationReferenceNumber());
+                                fpVo.setFlightId(fp.getFlight().getId());
+                                fpVo.setPassengerId(fp.getPassenger().getId());
 				apisVo.addFlightpax(fpVo);
 			}
 
@@ -347,6 +354,7 @@ public class PassengerDetailsController {
 			.stream().map(flight -> {
 						FlightVo flightVo = new FlightVo();
 						copyModelToVo(flight, flightVo);
+                                                flightVo.setFlightId(flight.getId().toString());
 						return flightVo;
 					}).collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -467,7 +475,7 @@ public class PassengerDetailsController {
 					BeanUtils.copyProperties(aVo, a);
 
 				} catch (IllegalAccessException | InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Unable to copy properties, catching and moving to next address", e);
 				} 
 
 				target.getAddresses().add(aVo);
@@ -732,7 +740,7 @@ public class PassengerDetailsController {
 		try {
 			BeanUtils.copyProperties(target, source);
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("error copying model to vo", e);
 		} 
 	}
 
@@ -763,7 +771,7 @@ public class PassengerDetailsController {
         }).collect(Collectors.toList()));
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error copying mdoel to vo.", e);
 		}
 
 		return _tempBDFlightsList;
@@ -789,9 +797,10 @@ public class PassengerDetailsController {
 			target.setEtd(((BookingDetail)source).getEtd());
 			target.setEta(((BookingDetail)source).getEta());
 			//target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
+            target.setFlightId(source.getId().toString());
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error populating flight with booking details", e);
         }
     }
 
@@ -815,9 +824,10 @@ public class PassengerDetailsController {
 			target.setEtd(source.getEtd());
 			target.setEta(source.getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
+                        target.setFlightId(source.getId().toString());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error populating flight vo", e);
 		}
 	}
 
@@ -851,7 +861,7 @@ public class PassengerDetailsController {
 		try {
 			org.springframework.beans.BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("error copy properties ignoring null values", ex);
 		}
 	}
 
