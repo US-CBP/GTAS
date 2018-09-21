@@ -1,5 +1,7 @@
 # GTAS Installation
 
+Please refer to the GTAS Technical Guide document for a more detailed set of installation instructions. 
+
 ## Environment
 
 * Java 8
