@@ -5,7 +5,6 @@
  */
 package gov.gtas.parsers.paxlst;
 
-import static gov.gtas.parsers.ParserTestHelper.getMessageText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ import gov.gtas.parsers.vo.PassengerVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class PaxlstParserUNedifactTest {
+public final class PaxlstParserUNedifactTest implements ParserTestHelper {
   
     private static final String APIS_MESSAGE = "/apis-messages/apisMessage.txt";
     EdifactParser<ApisMessageVo> parser;

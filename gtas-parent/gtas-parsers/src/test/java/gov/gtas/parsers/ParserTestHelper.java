@@ -14,22 +14,22 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-//Class to help unit test parsers.
-public class ParserTestHelper {
+//Interface to help unit test parsers.
+public interface ParserTestHelper {
 
-    public static LocalDate getLocalDate(Date date) {
+    default LocalDate getLocalDate(Date date) {
         return Instant.ofEpochMilli(date.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
 
-    public static LocalDateTime getLocalDateTime(Date date) {
+    default LocalDateTime getLocalDateTime(Date date) {
         return Instant.ofEpochMilli(date.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
 
-    public static String getMessageText(String messageRelativePath) throws IOException, URISyntaxException {
+    default String getMessageText(String messageRelativePath) throws IOException, URISyntaxException {
         ClassPathResource resource = new ClassPathResource(messageRelativePath);
         URL url = resource.getURL();
         java.nio.file.Path resPath = Paths.get(url.toURI());

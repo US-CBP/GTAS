@@ -5,6 +5,7 @@
  */
 package gov.gtas.parsers.pnrgov;
 
+import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,16 +13,14 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.PnrVo;
 
-import static gov.gtas.parsers.ParserTestHelper.getLocalDate;
-import static gov.gtas.parsers.ParserTestHelper.getLocalDateTime;
-import static gov.gtas.parsers.ParserTestHelper.getMessageText;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-public class PnrGovParserTest {
+
+public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
     private static final String PNR_MESSAGE_PG_76 = "/pnr-messages/pnrMessagePg76.txt";
     private static final String PNR_BAD_FORMAT = "/pnr-messages/pnrBadFormat.txt";
@@ -59,7 +58,7 @@ public class PnrGovParserTest {
     }
 
     @Test
-    public void bookingDateMapsToFirstDateWithCode710() throws ParseException, IOException, URISyntaxException {
+    public void bookingDateMapsToFirstDateWithCode710() throws ParseException,   IOException, URISyntaxException {
         String message76 = getMessageText(PNR_MESSAGE_PG_76);
         PnrVo vo = this.parser.parse(message76);
         LocalDate dateBooked = getLocalDate(vo.getDateBooked());
