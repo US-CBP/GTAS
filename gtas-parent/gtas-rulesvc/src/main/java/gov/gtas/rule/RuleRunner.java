@@ -40,7 +40,6 @@ public class RuleRunner {
 		ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(CommonServicesConfig.class);
 		TargetingService targetingService = (TargetingService) ctx.getBean("targetingServiceImpl");
 		try {
-			targetingService.preProcessing();
 			targetingService.runningRuleEngine();
 			logger.info("Exiting main().");
 		} catch (Exception exception) {

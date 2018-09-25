@@ -62,7 +62,6 @@ public class RuleRunnerScheduler {
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		try {
-			targetingService.preProcessing();
 			targetingService.runningRuleEngine();
 			logger.info("entering matching service portion of jobScheduling");
 			matchingService.findMatchesBasedOnTimeThreshold();

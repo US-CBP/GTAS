@@ -175,11 +175,16 @@ public class RuleConditionBuilder {
         	this.flightCriteriaPresent = true;
         }
         
-        // if there are passenger conditions then add a link to
-        // the Flight builder
-        if (!passengerConditionBuilder.isEmpty()) {
-            flightConditionBuilder
-                    .addLinkedPassenger(this.passengerVariableName);
+        
+        // add FlightPax as a join table for flights and passengers where no other passenger join possibility exists.
+        // This replaces the addition of 'Passenger in f.passengers' clause that now no longer works due to database changes.
+        if (!flightConditionBuilder.isEmpty() && (bagConditionBuilder.isEmpty()) && 
+                (apisSeatConditionBuilder.isEmpty()) && (flightPaxConditionBuilder.isEmpty()) && (pnrSeatConditionBuilder.isEmpty()))
+        {
+            flightPaxConditionBuilder.addConditionAsString("id > 0"); // gets all rows
+            passengerConditionBuilder.addLinkByIdCondition(flightPaxConditionBuilder.getPassengerIdLinkExpression());
+            flightConditionBuilder.addConditionAsString("id == "+flightPaxConditionBuilder.getFlightIdLinkExpression());
+            this.flightCriteriaPresent = true;
         }
     }
 

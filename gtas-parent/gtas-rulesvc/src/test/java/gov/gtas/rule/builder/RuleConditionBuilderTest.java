@@ -18,6 +18,8 @@ import gov.gtas.querybuilder.mappings.DocumentMapping;
 import gov.gtas.querybuilder.mappings.FlightMapping;
 import gov.gtas.querybuilder.mappings.PNRMapping;
 import gov.gtas.querybuilder.mappings.PassengerMapping;
+import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME;
+import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_VARIABLE_NAME;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -61,8 +63,7 @@ public class RuleConditionBuilderTest {
         assertEquals(
                 "$seat2:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" in (\"A7865\", \"H76\"), apis == true)\n"
                 + "$p:Passenger(id == $seat2.passenger.id)\n"
-                + "$f:Flight(id == $seat2.flight.id)\n"
-                + "Passenger(id == $p.id) from $f.passengers",
+                + "$f:Flight(id == $seat2.flight.id)",
          result.toString().trim());
     }
     @Test
@@ -81,8 +82,7 @@ public class RuleConditionBuilderTest {
         assertEquals(
                 "$seat:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" in (\"A7865\", \"H76\"), apis == false)\n"
                         + "$p:Passenger(id == $seat.passenger.id)\n"
-                        + "$f:Flight(id == $seat.flight.id)\n"
-                        + "Passenger(id == $p.id) from $f.passengers",
+                        + "$f:Flight(id == $seat.flight.id)",
          result.toString().trim());
     }
     @Test
@@ -114,9 +114,11 @@ public class RuleConditionBuilderTest {
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$f:Flight("+FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"))\n"
-                +"$p:Passenger() from $f.passengers",
-                result.toString().trim());
+ 
+        assertEquals(FLIGHT_PAX_VARIABLE_NAME + ":" + EntityEnum.FLIGHT_PAX.getEntityName() + "(id > 0)\n" +
+             PASSENGER_VARIABLE_NAME +":"+ EntityEnum.PASSENGER.getEntityName()+ "(id == " +  FLIGHT_PAX_VARIABLE_NAME + ".passenger.id)\n" +
+             "$f:Flight("+FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"), id == " + FLIGHT_PAX_VARIABLE_NAME + ".flight.id)",
+             result.toString().trim());
     }
 
     @Test
@@ -143,8 +145,7 @@ public class RuleConditionBuilderTest {
                 "$seat2:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" != null, "
                          + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " str[endsWith] \"31\", apis == true)\n"
                 + "$p:Passenger(id == $seat2.passenger.id)\n"
-                + "$f:Flight("+FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"), id == $seat2.flight.id)\n"
-                +"Passenger(id == $p.id) from $f.passengers",
+                + "$f:Flight("+FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"), id == $seat2.flight.id)",
                 result.toString().trim());
     }
 
@@ -172,8 +173,7 @@ public class RuleConditionBuilderTest {
                  + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " str[startsWith] \"29D\", apis == false)\n"
                  +"$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\")\n"
                 +"$p:Passenger(id == $seat.passenger.id, id == $d.passenger.id)\n"
-                + "$f:Flight(id == $seat.flight.id)\n"
-                +"Passenger(id == $p.id) from $f.passengers",
+                + "$f:Flight(id == $seat.flight.id)",
                 result.toString().trim());
     }
 
@@ -502,6 +502,7 @@ public class RuleConditionBuilderTest {
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
+   
         assertEquals(
                 "$seat:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" == \"A7865\", apis == false)\n"
                 +"$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\", "
@@ -516,8 +517,7 @@ public class RuleConditionBuilderTest {
                    +FlightMapping.ETA.getFieldName()+" == \"01-Jan-2015\", "
                    +FlightMapping.ETD.getFieldName()+" == \"01-Jan-2015\", "
                    +FlightMapping.FLIGHT_NUMBER.getFieldName()+" == 2231, "
-                   + "id == $seat.flight.id)\n"
-                +"Passenger(id == $p.id) from $f.passengers",                  
+                   + "id == $seat.flight.id)",
         result.toString().trim());
     }
 }

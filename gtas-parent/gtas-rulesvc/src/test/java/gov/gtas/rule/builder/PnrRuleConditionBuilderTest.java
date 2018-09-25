@@ -16,6 +16,7 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_VARIABLE_SUFFIX;
 import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.PHONE_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.PNR_VARIABLE_NAME;
+import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
@@ -97,19 +98,32 @@ public class PnrRuleConditionBuilderTest {
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals(
-                FLIGHT_VARIABLE_NAME+":"+EntityEnum.FLIGHT.getEntityName()+"("
-                +FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"))\n"
-                + PASSENGER_VARIABLE_NAME+":"+EntityEnum.PASSENGER.getEntityName()+"() from "+ FLIGHT_VARIABLE_NAME+".passengers\n"
-                + ADDRESS_VARIABLE_NAME+":"+EntityEnum.ADDRESS.getEntityName()+"("
-                      +AddressMapping.COUNTRY.getFieldName()+" != \"USA\", "
-                      +AddressMapping.CITY.getFieldName()+" in (\"FOO\", \"BAR\"))\n"  //note "foo" converted to upper case
-                + PNR_VARIABLE_NAME+":"+EntityEnum.PNR.getEntityName()+"()\n"
-                + ADDRESS_VARIABLE_NAME+LINK_VARIABLE_SUFFIX+":PnrAddressLink("+LINK_PNR_ID+" == "
-                       +PNR_VARIABLE_NAME+".id, "+LINK_ATTRIBUTE_ID+" == "+ADDRESS_VARIABLE_NAME+".id)\n"
-                + PASSENGER_VARIABLE_NAME+LINK_VARIABLE_SUFFIX+":PnrPassengerLink("+LINK_PNR_ID+" == "
-                   +PNR_VARIABLE_NAME+".id, "+LINK_ATTRIBUTE_ID+" == "+PASSENGER_VARIABLE_NAME+".id)",
-                result.toString().trim());
+        
+        
+        /*
+$fp:FlightPax(id > 0)
+$p:Passenger(id == $fp.passenger.id)
+$f:Flight(destination in ("DBY", "XYZ", "PQR"), id == $fp.flight.id)
+$addr:Address(country != "USA", city in ("FOO", "BAR"))
+$pnr:Pnr()
+$addrlink:PnrAddressLink(pnrId == $pnr.id, linkAttributeId == $addr.id)
+$plink:PnrPassengerLink(pnrId == $pnr.id, linkAttributeId == $p.id)      
+*/        
+        
+     assertEquals(
+             FLIGHT_PAX_VARIABLE_NAME + ":" + EntityEnum.FLIGHT_PAX.getEntityName() + "(id > 0)\n" +
+             PASSENGER_VARIABLE_NAME +":"+ EntityEnum.PASSENGER.getEntityName()+ "(id == " +  FLIGHT_PAX_VARIABLE_NAME + ".passenger.id)\n" +
+            FLIGHT_VARIABLE_NAME+":"+EntityEnum.FLIGHT.getEntityName()+"("
+            +FlightMapping.AIRPORT_DESTINATION.getFieldName()+" in (\"DBY\", \"XYZ\", \"PQR\"), id == " + FLIGHT_PAX_VARIABLE_NAME + ".flight.id)\n"
+            + ADDRESS_VARIABLE_NAME+":"+EntityEnum.ADDRESS.getEntityName()+"("
+                  +AddressMapping.COUNTRY.getFieldName()+" != \"USA\", "
+                  +AddressMapping.CITY.getFieldName()+" in (\"FOO\", \"BAR\"))\n"  //note "foo" converted to upper case
+            + PNR_VARIABLE_NAME+":"+EntityEnum.PNR.getEntityName()+"()\n"
+            + ADDRESS_VARIABLE_NAME+LINK_VARIABLE_SUFFIX+":PnrAddressLink("+LINK_PNR_ID+" == "
+                   +PNR_VARIABLE_NAME+".id, "+LINK_ATTRIBUTE_ID+" == "+ADDRESS_VARIABLE_NAME+".id)\n"
+            + PASSENGER_VARIABLE_NAME+LINK_VARIABLE_SUFFIX+":PnrPassengerLink("+LINK_PNR_ID+" == "
+               +PNR_VARIABLE_NAME+".id, "+LINK_ATTRIBUTE_ID+" == "+PASSENGER_VARIABLE_NAME+".id)",
+            result.toString().trim());       
     }
 
     @Test

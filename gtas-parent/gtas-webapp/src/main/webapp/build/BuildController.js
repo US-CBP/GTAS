@@ -47,6 +47,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                 $scope.selectedIndex = $scope.qbGrid.data.indexOf(row.entity);
                 jqueryQueryBuilderService.loadRuleById('rule', row.entity.id).then(function (myData) {
                     var result = myData.result;
+                    var rules = result.details.rules;
                     $scope.ruleId = result.id;
                     $scope.loadSummary('rule', result.summary);
                     $scope.$builder.queryBuilder('loadRules', result.details);
@@ -318,6 +319,9 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     $scope.saving = false;
                     return;
                 }
+                
+                // fix IN conditions using non-selectized user input.
+                $scope.fixInClauses(queryObject.query);
 
                 spinnerService.show('html5spinner');
                 jqueryQueryBuilderService.save('query', queryObject).then($scope.updateQueryBuilderOnSave);
@@ -360,6 +364,10 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                         return;
                     }
                 }
+                
+                // fix IN conditions using non-selectized user input.
+                $scope.fixInClauses(ruleObject.details);
+ 
                 spinnerService.show('html5spinner');
                 jqueryQueryBuilderService.save('rule', ruleObject).then($scope.updateQueryBuilderOnSave);
             }
@@ -390,6 +398,23 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         $scope.loadSummary('query', new model.summary.query(obj));
         $scope.$builder.queryBuilder('loadRules', obj.query);
     };
+    
+    $scope.fixInClauses = function (ruleArray) {
+        
+        for (var j = 0; j < ruleArray.rules.length; j++)
+        {
+            if ((ruleArray.rules[j].operator == "IN") && (ruleArray.rules[j].value.length == 1))
+            {
+                var values = ruleArray.rules[j].value[0];
+                if (values.indexOf(",") > 0)
+                {
+                    var valuesArray = values.split(",");
+                    ruleArray.rules[j].value = valuesArray;
+                }
+            }
+        }       
+        
+    }
 
     resetModels($scope);
 
