@@ -335,18 +335,20 @@ public class TargetingServiceImpl implements TargetingService {
 		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx
 				.getRuleServiceRequest());
                 
-                
-                RuleExecutionStatistics res = udrResult.getExecutionStatistics();
-                int totalRulesFired = res.getTotalRulesFired();
-                List<String> ruleFireSequence = res.getRuleFiringSequence();
-                logger.info("Total UDR rules fired: " + totalRulesFired);
-                logger.info("\n****************UDR Rule firing sequence***************************\n");
-                for (String str : ruleFireSequence)
+                if (udrResult != null)
                 {
-                   logger.info("UDR Rule fired: " + str); 
+                    RuleExecutionStatistics res = udrResult.getExecutionStatistics();
+                    int totalRulesFired = res.getTotalRulesFired();
+                    List<String> ruleFireSequence = res.getRuleFiringSequence();
+                    logger.info("Total UDR rules fired: " + totalRulesFired);
+                    logger.info("\n****************UDR Rule firing sequence***************************\n");
+                    for (String str : ruleFireSequence)
+                    {
+                       logger.info("UDR Rule fired: " + str); 
+                    }
+
+                    logger.info("\n\n**********************************************************************"); 
                 }
-                
-                logger.info("\n\n**********************************************************************"); 
                 Bench.end("third", "executeRules invokeRuleEngine udrResult end");
 
                 Bench.start("fourth", "executeRules invokeRuleEngine second start");
