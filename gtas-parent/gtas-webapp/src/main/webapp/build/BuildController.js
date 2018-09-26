@@ -164,6 +164,8 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         var m = moment(),
             timestamp = m.day() + '|' + m.hours() + '|' + m.minutes() + '|' + m.seconds(),
             query = $scope.$builder.queryBuilder('getDrools');
+            $scope.fixInClauses(query);
+    
         if (query === false) {
             $scope.openAlert('Incomplete Query', 'Can not execute / invalid query');
             e.preventDefault();
