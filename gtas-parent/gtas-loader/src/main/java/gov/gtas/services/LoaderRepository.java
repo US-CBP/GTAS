@@ -26,6 +26,7 @@ import gov.gtas.model.ReportingParty;
 import gov.gtas.model.Seat;
 import gov.gtas.model.BookingDetail;
 import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.tamr.TamrConversionService;
 import gov.gtas.parsers.vo.AddressVo;
 import gov.gtas.parsers.vo.AgencyVo;
 import gov.gtas.parsers.vo.BagVo;
@@ -124,6 +125,9 @@ public class LoaderRepository {
     
     @Autowired
     FlightService flightService;
+    
+    @Autowired
+    TamrConversionService tamrService;
 
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -321,7 +325,7 @@ public class LoaderRepository {
         // assoc all passengers w/ flights, update pax counts
         //only associate new passengers, old passengers are still the same id
         startTime = System.nanoTime();
-        for (Flight f : messageFlights) {
+        for (Flight f : messageFlights) { 
             for (Passenger p : newPassengers) {
             	utils.calculateValidVisaDays(f,p);
             	flightService.setSinglePassenger(p.getId(), f.getId());
@@ -339,6 +343,12 @@ public class LoaderRepository {
     			pax.getBookingDetails().add(bD);
     		}
     	}
+    	//****TAMR****
+    	//TODO Make optional via properties
+    	//Commented out to disable conversion, uncomment for integration
+    	//tamrService.sendPassengersToTamr(messageFlights, newPassengers);
+    	//****TAMR****
+    	
         logger.debug("processflightAndPassenger() associate booking details/passengers time = "+(System.nanoTime()-startTime)/1000000);
         
     }
