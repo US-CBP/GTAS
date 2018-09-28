@@ -16,7 +16,7 @@ public enum PNRMapping implements IEntityMapping {
     DATE_RECEIVED ("dateReceived", "Date Received", TypeEnum.DATE.getType()),
     DAYS_BOOKED_BEFORE_TRAVEL ("daysBookedBeforeTravel", "Days Booked Before Travel", TypeEnum.INTEGER.getType()),
     DEPARTURE_DATE ("departureDate", "Departure Date", TypeEnum.DATE.getType()),
-    FORM_OF_PAYMENT ("formOfPayment", "Form of Payment", TypeEnum.STRING.getType()),
+    FORM_OF_PAYMENT ("paymentForms", "Form of Payment", TypeEnum.STRING.getType()),
     PNR_ID ("id", "Pnr Id", TypeEnum.INTEGER.getType()),
     ORIGIN_AIRPORT ("origin", "Origin - Airport", TypeEnum.STRING.getType()),
     ORIGIN_COUNTRY ("originCountry", "Origin - Country", TypeEnum.STRING.getType()),
