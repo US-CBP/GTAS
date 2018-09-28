@@ -63,4 +63,9 @@ public interface HitsSummaryRepository extends
     public List<String> enableFlagByUndeletedAndEnabledRule(
             @Param("flightId") Long flightId,
             @Param("passengerId") Long passengerId);
+    
+    
+    @Query("SELECT hits from HitsSummary hits WHERE hits.flight.id = :flightId AND hits.passenger.id = :passengerId")
+    public List<HitsSummary> retrieveHitsByFlightAndPassengerId(
+            @Param("flightId") Long flightId,@Param("passengerId") Long passengerId);
 }

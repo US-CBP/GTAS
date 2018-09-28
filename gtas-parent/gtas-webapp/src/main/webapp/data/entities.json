@@ -1170,7 +1170,7 @@
         "plugin": "datepicker"
       },
       {
-        "id": "Pnr.formOfPayment",
+        "id": "Pnr.paymentForms",
         "label": "Form of Payment",
         "type": "string",
         "operators": [

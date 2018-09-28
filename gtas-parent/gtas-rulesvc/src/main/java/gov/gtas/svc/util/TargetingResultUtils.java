@@ -13,6 +13,7 @@ import gov.gtas.bo.TargetSummaryVo;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.Flight;
 import gov.gtas.services.PassengerService;
+import gov.gtas.util.Bench;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +48,7 @@ public class TargetingResultUtils{
 		if (logger.isInfoEnabled()) {
 			logger.info("Number of rule hits --> " + resultList.size());
 		}
+                Bench.start("qwerty1", "Before for RuleHitDetail loop in TargetingResultUtils.");
 		for (RuleHitDetail rhd : resultList) {
 			if (rhd.getFlightId() == null) {
 				// get all the flights for the passenger
@@ -56,11 +58,13 @@ public class TargetingResultUtils{
 				Collection<Flight> flights = passengerService.getAllFlights(rhd.getPassengerId());
 				if (flights != null && !CollectionUtils.isEmpty(flights)) {
 					try {
+                                            Bench.start("qwerty2", "Before for Flight loop in TargetingResultUtils.");
 						for (Flight flight : flights) {
 							RuleHitDetail newrhd = rhd.clone();
 							processPassengerFlight(newrhd, flight.getId(),
 									resultMap);
 						}
+                                                Bench.end("qwerty2", "Before for Flight loop in TargetingResultUtils.");
 					} catch (CloneNotSupportedException cnse) {
 						logger.error("error - clone not supported:", cnse);
 					}
@@ -74,6 +78,7 @@ public class TargetingResultUtils{
 			}
 			rhd.setPassenger(null);
 		}
+                Bench.end("qwerty1", "After for RuleHitDetail loop in TargetingResultUtils.");
 		// Now create the return list from the set, thus eliminating duplicates.
 		RuleServiceResult ret = new BasicRuleServiceResult(
 				new LinkedList<RuleHitDetail>(resultMap.values()),

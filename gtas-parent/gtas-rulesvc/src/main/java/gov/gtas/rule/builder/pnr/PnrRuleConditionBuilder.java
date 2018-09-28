@@ -44,6 +44,7 @@ public class PnrRuleConditionBuilder {
     private FlightPaxConditionBuilder flightPaxConditionBuilder;
     private PnrConditionBuilder pnrConditionBuilder;
     private BookingDetailConditionBuilder bookingDetailConditionBuilder;
+    
     public PnrRuleConditionBuilder(
             final Map<EntityEnum, String> entityVariableNameMap) {
         for (Entry<EntityEnum, String> entry : entityVariableNameMap.entrySet()) {
@@ -289,4 +290,50 @@ public class PnrRuleConditionBuilder {
         }
 
     }
+
+    public AddressConditionBuilder getAddressConditionBuilder() {
+        return addressConditionBuilder;
+    }
+
+    public PhoneConditionBuilder getPhoneConditionBuilder() {
+        return phoneConditionBuilder;
+    }
+
+    public EmailConditionBuilder getEmailConditionBuilder() {
+        return emailConditionBuilder;
+    }
+
+    public CreditCardConditionBuilder getCreditCardConditionBuilder() {
+        return creditCardConditionBuilder;
+    }
+
+    public FrequentFlyerConditionBuilder getFrequentFlyerConditionBuilder() {
+        return frequentFlyerConditionBuilder;
+    }
+
+    public TravelAgencyConditionBuilder getTravelAgencyConditionBuilder() {
+        return travelAgencyConditionBuilder;
+    }
+
+    public DwellTimeConditionBuilder getDwellTimeConditionBuilder() {
+        return dwellTimeConditionBuilder;
+    }
+
+    public BagConditionBuilder getBagConditionBuilder() {
+        return bagConditionBuilder;
+    }
+
+    public FlightPaxConditionBuilder getFlightPaxConditionBuilder() {
+        return flightPaxConditionBuilder;
+    }
+
+    public PnrConditionBuilder getPnrConditionBuilder() {
+        return pnrConditionBuilder;
+    }
+
+    public BookingDetailConditionBuilder getBookingDetailConditionBuilder() {
+        return bookingDetailConditionBuilder;
+    }
+    
+    
 }

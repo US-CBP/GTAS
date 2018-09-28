@@ -7,6 +7,7 @@ package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.GTAS_APPLICATION_USERID;
 import gov.gtas.bo.CompositeRuleServiceResult;
+import gov.gtas.bo.RuleExecutionStatistics;
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
@@ -18,7 +19,6 @@ import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
-import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
@@ -34,8 +34,6 @@ import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.udr.KnowledgeBase;
-import gov.gtas.model.udr.UdrRule;
-import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.AuditRecordRepository;
 import gov.gtas.repository.FlightRepository;
@@ -54,6 +52,7 @@ import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.TargetingResultCaseMgmtUtils;
 import gov.gtas.svc.util.TargetingResultUtils;
 import gov.gtas.svc.util.TargetingServiceUtils;
+import gov.gtas.util.Bench;
 import gov.gtas.vo.WhitelistVo;
 
 import java.util.ArrayList;
@@ -66,8 +65,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,7 @@ public class TargetingServiceImpl implements TargetingService {
 
 	@Autowired
 	private HitsSummaryRepository hitsSummaryRepository;
-
+        
 	@Autowired
 	private HitsSummaryService hitsSummaryService;
 
@@ -273,133 +274,7 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 		return ret;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gov.gtas.svc.TargetingService#preProcessing()
-	 */
-	@Override
-	@Transactional
-	public void preProcessing() {
-		logger.info("Entering preProcessing()");
-		// check if there are rules (undeleted & enabled)
-		List<UdrRule> ruleList = udrRuleRepository.findByDeletedAndEnabled(
-				YesNoEnum.N, YesNoEnum.Y);
-
-		Iterable<WatchlistItem> all = watchlistItemRepository.findAll();
-		List<WatchlistItem> target = new ArrayList<>();
-		all.forEach(target::add);
-
-		if (!CollectionUtils.isEmpty(ruleList)
-				|| !CollectionUtils.isEmpty(target)) {
-			logger.info("Db operations...");
-			Iterator<Message> source = messageRepository.findByStatus(
-					MessageStatus.LOADED).iterator();
-
-			List<Message> loadedMessages = new ArrayList<>();
-			source.forEachRemaining(loadedMessages::add);
-			Set<Flight> flights = new HashSet<>();
-			Set<Passenger> passengers = new HashSet<>();
-			if (!loadedMessages.isEmpty()) {
-				logger.info("Loaded messages size -->" + loadedMessages.size());
-				for (Message message : loadedMessages) {
-					if (message instanceof ApisMessage) {
-						ApisMessage apisMsg = (ApisMessage) message;
-						flights = apisMsg.getFlights();
-						passengers = apisMsg.getPassengers();
-					} else if (message instanceof Pnr) {
-						Pnr pnrMsg = (Pnr) message;
-						flights = pnrMsg.getFlights();
-						passengers = pnrMsg.getPassengers();
-					}
-					deleteRelatedRecords(ruleList, target, flights, passengers);
-				}
-			}
-		}
-		logger.info("Exiting preProcessing()");
-	}
-
-	/**
-	 * Delete related records.
-	 *
-	 * @param ruleList
-	 *            the rule list
-	 * @param target
-	 *            the target
-	 * @param flights
-	 *            the flights
-	 * @param passengers
-	 *            the passengers
-	 */
-	@Transactional
-	private void deleteRelatedRecords(List<UdrRule> ruleList,
-			List<WatchlistItem> target, Set<Flight> flights,
-			Set<Passenger> passengers) {
-		for (Flight f : flights) {
-			for (Passenger p : passengers) {
-				// /
-				if (CollectionUtils.isEmpty(ruleList)
-						&& !CollectionUtils.isEmpty(target)) {
-					// deleted anything with Watchlist
-					List<HitsSummary> hitsD = hitsSummaryService
-							.findByFlightIdAndPassengerIdAndWL(f.getId(),
-									p.getId());
-					for (HitsSummary hs : hitsD) {
-						hitDetailRepository.deleteDBData(hs.getId());
-						hitsSummaryRepository.deleteDBData(hs.getId());
-					}
-					// deleted anything with combined rules
-					List<HitsSummary> hitsWithCombined = hitsSummaryService
-							.findByFlightIdAndPassengerIdAndCombinedWithUdrRule(
-									f.getId(), p.getId());
-					for (HitsSummary hs : hitsWithCombined) {
-						hitDetailRepository.deleteDBData(hs.getId());
-						hitsSummaryRepository.deleteDBData(hs.getId());
-					}
-
-				} else if (!CollectionUtils.isEmpty(ruleList)
-						&& CollectionUtils.isEmpty(target)) {
-					List<HitsSummary> hitsR = hitsSummaryService
-							.findByFlightIdAndPassengerIdAndUdrRule(f.getId(),
-									p.getId());
-					List<String> enable = hitsSummaryRepository
-							.enableFlagByUndeletedAndEnabledRule(f.getId(),
-									p.getId());
-					for (HitsSummary hs : hitsR) {
-						if (enable.contains(YesNoEnum.Y)) {
-							hitDetailRepository.deleteDBData(hs.getId());
-							hitsSummaryRepository.deleteDBData(hs.getId());
-						}
-					}
-				} else if (!CollectionUtils.isEmpty(ruleList)
-						&& !CollectionUtils.isEmpty(target)) {
-					//
-					List<HitsSummary> hitsD = hitsSummaryService
-							.findByFlightIdAndPassengerIdAndWL(f.getId(),
-									p.getId());
-					for (HitsSummary hs : hitsD) {
-						hitDetailRepository.deleteDBData(hs.getId());
-						hitsSummaryRepository.deleteDBData(hs.getId());
-					}
-					//
-					List<HitsSummary> hitsR = hitsSummaryService
-							.findByFlightIdAndPassengerIdAndUdrRule(f.getId(),
-									p.getId());
-					List<String> enable = hitsSummaryRepository
-							.enableFlagByUndeletedAndEnabledRule(f.getId(),
-									p.getId());
-					for (HitsSummary hs : hitsR) {
-						if (enable.contains(YesNoEnum.Y)) {
-							hitDetailRepository.deleteDBData(hs.getId());
-							hitsSummaryRepository.deleteDBData(hs.getId());
-						}
-					}
-				}
-			}
-		}
-	}
-
+        
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -416,7 +291,9 @@ public class TargetingServiceImpl implements TargetingService {
 		source.forEachRemaining(target::add);
 		RuleExecutionContext ctx = null;
 		try {
+                    Bench.start("second", "analyzeLoadedMessages executeRules start");
 			ctx = executeRules(target);
+                        Bench.end("second", "analyzeLoadedMessages executeRules end");
 			logger.info("updating messages status from loaded to analyzed.");
 			if (updateProcesssedMessageStat) {
 				for (Message message : target) {
@@ -453,13 +330,32 @@ public class TargetingServiceImpl implements TargetingService {
 		RuleExecutionContext ctx = TargetingServiceUtils
 				.createPnrApisRequestContext(target);
 		logger.debug("Running Rule set.");
+                Bench.start("third", "executeRules invokeRuleEngine start");
 		// default knowledge Base is the UDR KB
 		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx
 				.getRuleServiceRequest());
+                
+                if (udrResult != null)
+                {
+                    RuleExecutionStatistics res = udrResult.getExecutionStatistics();
+                    int totalRulesFired = res.getTotalRulesFired();
+                    List<String> ruleFireSequence = res.getRuleFiringSequence();
+                    logger.info("Total UDR rules fired: " + totalRulesFired);
+                    logger.info("\n****************UDR Rule firing sequence***************************\n");
+                    for (String str : ruleFireSequence)
+                    {
+                       logger.info("UDR Rule fired: " + str); 
+                    }
 
+                    logger.info("\n\n**********************************************************************"); 
+                }
+                Bench.end("third", "executeRules invokeRuleEngine udrResult end");
+
+                Bench.start("fourth", "executeRules invokeRuleEngine second start");
 		RuleServiceResult wlResult = ruleService.invokeRuleEngine(
 				ctx.getRuleServiceRequest(),
 				WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
+                Bench.start("fourth", "executeRules invokeRuleEngine second end");
 
 		if (udrResult == null && wlResult == null) {
 			// currently only two knowledgebases: udr and Watchlist
@@ -493,17 +389,25 @@ public class TargetingServiceImpl implements TargetingService {
 		// eliminate duplicates
 		if (udrResult != null) {
 			logger.debug("Eliminate duplicates from UDR rule running.");
+                        Bench.start("fifth", "executeRules TargetingResultUtils ruleResultPostProcesssing udrResult start");
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult, passengerService);
+                        Bench.end("fifth", "executeRules TargetingResultUtils ruleResultPostProcesssing udrResult end");
 			//make a call to Case Mgmt.
+                        Bench.start("sixth", "executeRules TargetingResultCaseMgmtUtils ruleResultPostProcesssing udrResult start");
 			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService);
+                        Bench.end("sixth", "executeRules TargetingResultCaseMgmtUtils ruleResultPostProcesssing udrResult end");
 
 		}
 		if (wlResult != null) {
 			logger.debug("Eliminate duplicates from watchlist rule running.");
+                        Bench.start("seventh", "executeRules TargetingResultUtils ruleResultPostProcesssing wlResult start");
 			wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult, passengerService);
+                        Bench.end("seventh", "executeRules TargetingResultUtils ruleResultPostProcesssing wlResult end");
 			//make a call to Case Mgmt.
+                        Bench.start("eighth", "executeRules TargetingResultUtils TargetingResultCaseMgmtUtils wlResult start");
 			TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult, caseDispositionService, passengerService);
+                        Bench.end("eighth", "executeRules TargetingResultUtils TargetingResultCaseMgmtUtils wlResult end");
 
 		}
 
@@ -623,7 +527,9 @@ public class TargetingServiceImpl implements TargetingService {
 	 		Set<Long> uniqueFlights = new HashSet<>();
 	  		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
 	  		if (ruleRunningResult != null) {
+                            Bench.start("zxcv1", "start storeHitsInfo");
 	 			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult);
+                            Bench.end("zxcv1", "End storeHitsInfo");
 				for (HitsSummary s : hitsSummaryList) {
 		  			passengerService.createDisposition(s);
 		 			uniqueFlights.add(s.getFlight().getId());
@@ -631,6 +537,7 @@ public class TargetingServiceImpl implements TargetingService {
 	  		writeAuditLogForTargetingRun(ruleRunningResult);
 	  	}
 	 	logger.info("Exiting runningRuleEngine().");
+                //Bench.print();
 	 	//updateFlightHitCounts() was moved here in order to insure manual rule running updated flight hit counts
 	 	updateFlightHitCounts(uniqueFlights);
 	 	return uniqueFlights;
@@ -724,13 +631,95 @@ public class TargetingServiceImpl implements TargetingService {
 				hitsSummaryList.add(hitsSummary);
 			}
 		}
+
+                Bench.start("dedupHits", "start adjustForNewRuleHits");
+                List<HitsSummary> adjustedHitsSummaryList = adjustForNewRuleHits(hitsSummaryList);
+                Bench.end("dedupHits", "End adjustForNewRuleHits");
+                
 		logger.info("Total new hits summary records --> "
-				+ hitsSummaryList.size());
-		hitsSummaryRepository.save(hitsSummaryList);
+				+ adjustedHitsSummaryList.size());
+		hitsSummaryRepository.save(adjustedHitsSummaryList);
 
 		logger.info("Exiting storeHitsInfo().");
-		return hitsSummaryList;
+		return adjustedHitsSummaryList;
+
 	}
+        
+        // This code replaces the code previously in preProcessing() which was way too time consuming.
+        // But this does not do a full clearing of all back hits from all messages and flights.
+        private List<HitsSummary> adjustForNewRuleHits(List<HitsSummary> hitsSummaryList)
+        {
+           List<HitDetail> newHitDetailsToSave = new ArrayList<>();
+           List<HitsSummary> hitSummaryListToRemove = new ArrayList<>();
+           List<HitsSummary> dedupedHitsSummaryList = new ArrayList<>();
+           
+           //logger.info("Length of hitsSummaryList at start of adjustForNewRuleHits: " + hitsSummaryList.size());
+
+           for (HitsSummary hSummary : hitsSummaryList)
+           {
+               HitsSummary existingHitsSummary = null;
+
+               // There should only be one hit returned here. HitDetails with the ruleIds will be returned by blasted eager fetching.
+               List<HitsSummary> existingHits =  hitsSummaryRepository.retrieveHitsByFlightAndPassengerId(
+                                                 hSummary.getFlight().getId(),hSummary.getPassenger().getId());
+               
+               //logger.info("Length of existingHits at middle of adjustForNewRuleHits: " + existingHits.size());
+
+               /* some previous hits in HitSummary table, need to check if any new rules in HitDetail have been added. 
+                  We are not deleting any old rule hits, the decision was made to leave them in place.
+                  if existingHits is null, then no previous hits are present and we leave the hit list alone.
+               */
+               if (existingHits != null && !existingHits.isEmpty())
+               {
+                  existingHitsSummary =  existingHits.get(0);
+                  List<Long> existingRuleIdList = existingHitsSummary.getHitdetails().stream().map(hs -> hs.getRuleId()).collect(Collectors.toList());
+                  
+                  for (HitDetail hitDetail : hSummary.getHitdetails())
+                  {
+                      if (!existingRuleIdList.contains(hitDetail.getRuleId()))
+                      {
+                         hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
+                         newHitDetailsToSave.add(hitDetail);
+                      }
+                  }
+                  // Do not duplicate existing Hit Summary. Add new rules later if needed.
+                  hitSummaryListToRemove.add(hSummary);
+                }
+           }
+
+           List< ImmutablePair<Long,Long> > flightPassengerIdPairList = new ArrayList<>();
+           for (HitsSummary hs : hitSummaryListToRemove)
+           {
+               Long flightId = hs.getFlight().getId();
+               Long passId = hs.getPassenger().getId();
+               ImmutablePair<Long,Long> longPair = new ImmutablePair<>(flightId,passId);
+               flightPassengerIdPairList.add(longPair);
+           }
+           
+           if (!hitSummaryListToRemove.isEmpty())
+           {
+               for (HitsSummary hsum : hitsSummaryList)
+               {
+                   ImmutablePair<Long,Long> longPair = new ImmutablePair<>(hsum.getFlight().getId(),hsum.getPassenger().getId());
+                   if (!flightPassengerIdPairList.contains(longPair))
+                   {
+                     dedupedHitsSummaryList.add(hsum);
+                   }
+               }
+           }
+           else
+           {
+               dedupedHitsSummaryList = hitsSummaryList;
+           }
+           
+           // save new rule hits in HitDetail table.
+           if (!newHitDetailsToSave.isEmpty())
+           {
+               hitDetailRepository.save(newHitDetailsToSave);
+           }
+
+           return dedupedHitsSummaryList;
+        }
 
 	/**
 	 * @param hitSummmaryVo

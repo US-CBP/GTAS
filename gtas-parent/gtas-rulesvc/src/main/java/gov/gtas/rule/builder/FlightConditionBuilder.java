@@ -37,39 +37,9 @@ public class FlightConditionBuilder extends EntityConditionBuilder {
         linkedPassengerList.clear();
     }
 
+    // previous code here has been replaced by new code in generateLinkConditions() in RuleConditionBuilder
     @Override
     protected void addSpecialConditions(StringBuilder bldr) {
-        if(linkedPassengerList.isEmpty()){
-            //this means that all passengers will match
-            logger.debug("FlightConditionBuilder - no linked passenger!");
-            bldr.append(defaultPassengerVariableName).append(":")
-            .append(EntityEnum.PASSENGER.getEntityName()).append("()")
-            .append(" from ")
-            .append(getDrlVariableName())
-            .append(".passengers\n");
-        } else {
-            if(linkedPassengerList.size() == 1){
-                String passengerVariable = linkedPassengerList.get(0);
-                bldr.append(EntityEnum.PASSENGER.getEntityName()).append("(id == ")
-                    .append(passengerVariable).append(".id) from ")
-                    .append(getDrlVariableName())
-                    .append(".passengers\n");
-            } else {
-                bldr.append(EntityEnum.PASSENGER.getEntityName()).append("(id in (");
-                boolean firstTime = true;
-                for(String passengerVariable:linkedPassengerList){
-                    if(firstTime){                  
-                        firstTime = false;
-                    } else {
-                        bldr.append(", ");
-                    }
-                    bldr.append(passengerVariable).append(".id");
-                }
-                
-                bldr.append(")) from ")
-                .append(getDrlVariableName())
-                .append(".passengers\n");
-            }
-        }
+
     }
 }

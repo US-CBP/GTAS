@@ -150,7 +150,6 @@ public class LoaderScheduler {
 		
 		logger.info("entering rule running portion of jobScheduling()");
 		try {
-			targetingService.preProcessing();
 			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
 		} catch (Exception exception) {
 			logger.error(exception.getCause().getMessage());

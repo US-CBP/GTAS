@@ -13,6 +13,7 @@ import gov.gtas.model.Passenger;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
+import gov.gtas.util.Bench;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class TargetingResultCaseMgmtUtils {
         if (logger.isInfoEnabled()) {
             logger.info("Number of rule hits --> " + resultList.size());
         }
+        Bench.start("here2", "Before for RuleHitDetail loop.");
         for (RuleHitDetail rhd : resultList) {
             if (rhd.getFlightId() == null) {
                 // get all the flights for the passenger
@@ -63,11 +65,13 @@ public class TargetingResultCaseMgmtUtils {
                 Collection<Flight> flights = passengerService.getAllFlights(rhd.getPassengerId());
                 if (flights != null && !CollectionUtils.isEmpty(flights)) {
                     try {
+                        Bench.start("here3", "Before for Flight loop.");
                         for (Flight flight : flights) {
                             RuleHitDetail newrhd = rhd.clone();
                             processPassengerFlight(newrhd, flight.getId(),
                                     resultMap, dispositionService);
                         }
+                        Bench.end("here3", "After for Flight loop in ruleResultPostProcesssing.");
                     } catch (CloneNotSupportedException cnse) {
                         logger.error("error, clone not supported", cnse);
                     }
@@ -77,10 +81,13 @@ public class TargetingResultCaseMgmtUtils {
                             + rhd.getPassenger().getId());
                 }
             } else {
+                Bench.start("here4", "start processPassengerFlight call in ruleResultPostProcesssing.");
                 processPassengerFlight(rhd, rhd.getFlightId(), resultMap, dispositionService);
+                Bench.end("here4", " End processPassengerFlight call in ruleResultPostProcesssing.");
             }
             rhd.setPassenger(null);
         }
+        Bench.end("here2", "After for RuleHitDetail loop in ruleResultPostProcesssing.");
         // Now create the return list from the set, thus eliminating duplicates.
         RuleServiceResult ret = new BasicRuleServiceResult(
                 new LinkedList<RuleHitDetail>(resultMap.values()),

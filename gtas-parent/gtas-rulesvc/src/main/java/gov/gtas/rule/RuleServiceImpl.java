@@ -25,6 +25,7 @@ import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.listener.RuleEventListenerUtils;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.UdrService;
+import gov.gtas.util.Bench;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -147,6 +148,7 @@ public class RuleServiceImpl implements RuleService {
 	public RuleServiceResult invokeRuleEngine(RuleServiceRequest req,
 			String kbName) {
 		logger.info("Entering invokeRuleEngine().");
+                Bench.start("asdf1"," start invokeRuleEngine() with kbName");
 		KnowledgeBase kbRecord;
 		// check if there is any undeleted and enabled rule
 		List<UdrRule> ruleList = rulePersistenceService.findAll();
@@ -155,6 +157,7 @@ public class RuleServiceImpl implements RuleService {
 			if (CollectionUtils.isEmpty(ruleList)) {
 				kbRecord = null;
 			} else {
+                            Bench.start("asdf3"," start invokeRuleEngine() findUdrKnowledgeBase");
 				kbRecord = rulePersistenceService.findUdrKnowledgeBase();
 				if (kbRecord != null) {
 					List<Rule> rules = rulePersistenceService
@@ -166,6 +169,7 @@ public class RuleServiceImpl implements RuleService {
 								.findUdrKnowledgeBase();
 					}
 				}
+                                Bench.end("asdf3","End invokeRuleEngine() findUdrKnowledgeBase");
 			}
 		} else {
 			logger.info("Custom knowledge base is loaded.");
@@ -182,17 +186,20 @@ public class RuleServiceImpl implements RuleService {
 			logger.debug("Knowledge based is null.");
 			return null;
 		}
-
+                Bench.end("asdf1","End invokeRuleEngine() with kbName");
+                Bench.start("asdf2"," start invokeRuleEngine() convertKieBasefromBytes "); 
 		try {
 			// create KieBase object from compressed binary data read from db
 			KieBase kb = RuleUtils
 					.convertKieBasefromBytes(kbRecord.getKbBlob());
+                        Bench.end("asdf2","End invokeRuleEngine() convertKieBasefromBytes ");
 			return createSessionAndExecuteRules(kb, req);
 		} catch (IOException | ClassNotFoundException ex) {
 			throw ErrorHandlerFactory.getErrorHandler().createException(
 					RuleServiceConstants.KB_DESERIALIZATION_ERROR_CODE, ex,
 					kbRecord.getId());
 		}
+                
 	}
 
 	@Override

@@ -11,7 +11,8 @@ app.factory('jqueryQueryBuilderWidget', function () {
         var setSelectizeValue = function ($selectize, value) {
                 if($scope.isLoadedSelectize && !$scope.hasDataSource){
                     $scope.isLoadedSelectize = false;
-                    value = value[0].split(',');
+                    // to get the rules with IN cluses to run, fixed the non-sourced multiple inputs to be separate array elements.No need to split.
+                    //value = value[0].split(',');
                     $.each(value, function(index,val){
                         $selectize[0].selectize.addOption({'id':val,'name':val});
                     });
