@@ -7,7 +7,6 @@ package gov.gtas.repository.watchlist;
 
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.watchlist.Watchlist;
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -25,4 +24,7 @@ public interface WatchlistRepository extends CrudRepository<Watchlist, Long>, Jp
     
     @Query("SELECT watchlistName, watchlistEntity FROM Watchlist")
     public List<Object[]> fetchWatchlistSummary();
+    
+    @Query("SELECT wl FROM Watchlist wl WHERE wl.watchlistName in :names")
+    public List<Watchlist> getWatchlistByNames(@Param("names") List<String> names);
 }

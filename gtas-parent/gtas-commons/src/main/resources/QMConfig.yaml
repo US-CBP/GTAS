@@ -1,0 +1,101 @@
+# ---
+# Accuracy Mode options are below, with "Balanced" the default.
+# Balanced
+# HighRecall
+# HighPrecision
+accuracyMode: gtasDefault
+
+derogFilterOutRegex: "^(UNKNOWN|other|NA|\\?|_)$"
+
+# Optionally change the name of the following traveler attributes
+# that GTAS sends to QuickMatch. Next to each default on the left,
+# specify the attribute GTAS provides on the right.
+
+attributeRenames:
+    gtasId: gtasId
+    derogId: derogId
+    first_name: firstName
+    middle_name: middle_name
+    last_name: lastName
+    DOB_Date: DOB_Date
+    GNDR_CD: GNDR_CD
+    CTZNSHP_CTRY_CD: CTZNSHP__CTRY_CD
+    documents: documents
+    DOC_CTRY_CD: DOC_CTRY_CD
+    DOC_TYP_NM: DOC_TYP_NM
+    DOC_ID: DOC_ID
+
+# Under each accuracy mode is an OR of ANDs for exact match,
+# that is, in disjunctive normal form.
+# These were developed and tested by Tamr.
+# "Balanced" is the default.
+
+highRecall:
+    -
+        - full_name
+    -
+        - metaphones
+        - GNDR_CD
+    -
+        - metaphones
+        - DOB_Date
+    -
+        - DOC_ID
+        - DOB_Date
+    -
+        - metaphones
+        - CTZNSHP_CTRY_CD
+    -
+        - metaphones
+        - DOC_CTRY_CD
+    -
+        - last_name
+        - DOB_Date
+    -
+        - DOC_ID
+        - DOC_CTRY_CD
+    -
+        - first_name
+        - DOB_Date
+        - CTZNSHP_CTRY_CD
+
+highPrecision:
+    -
+        - last_name
+        - DOB_Date
+        - GNDR_CD
+        - CTZNSHP_CTRY_CD
+    -
+        - metaphones
+        - DOB_Date
+    -
+        - DOC_ID
+        - DOC_CTRY_CD
+        - GNDR_CD
+
+balanced:
+    -
+        - full_name
+    -
+        - last_name
+        - DOB_Date
+        - GNDR_CD
+        - CTZNSHP_CTRY_CD
+    -
+        - metaphones
+        - DOB_Date
+    -
+        - DOC_ID
+        - DOC_CTRY_CD
+        - GNDR_CD
+    -
+        - first_name
+        - DOB_Date
+        - CTZNSHP_CTRY_CD
+        
+gtasDefault:
+    -
+        - last_name
+        - first_name
+    -
+        - metaphones
