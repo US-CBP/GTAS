@@ -1,10 +1,11 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.pnrgov;
 
+import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,17 +13,64 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.PnrVo;
 
-public class PnrGovParserTest {
-    EdifactParser<PnrVo> parser; 
-    String pnr = "UNA:+.?*'UNB+IATA:1+DL++101209:2100+020A07'UNH+1+PNRGOV:10:1:IA+F6C2C268'MSG+:22'ORG+DL:ATL+52519950'TVL+121210:0915+LHR+JFK+DL+324' EQN+2' SRC' RCI+DL:MFN4TI'SSR+AVML:HK:2:DL'DAT+700:061210:1010+710:061210:1200'IFT+4:28::DL+THIS PASSENGER IS A VIP'IFT+4:28::DL+CTCR 00115555555555'ORG+DL:ATL+52519950:LON+++A+GB:GBP+D050517' ADD++702:45 HIGHSTREET:SLOUGH:BERKSHIRE::GB:SL1AA:00441753637285'EBD+GBP:40.00+4::N' TIF+SMITHJR+JOHNMR:A:1' FTI+DL:1234567890:::ELITE'IFT+4:15:9+LHR DL X/JFK DL YVR GBP/IT END ROE0.618831XT3.10AY6 8.50YQ3.40+YC4.30XY3.10XA2.80XFATL4.5'REF+:38739393AN8739P'FAR+N+++++MIL24' SSR+DOCS:HK::DL:::::/P/GBR/123456789/GBR/12JUL64/M/23AUG19/SMITHJR/JONATHON/ROBERT'TKT+0062120234533:T:1'MON+B:2888.00:GBP+T:2957.94:GBP'PTK+NR++061210:1010+DL+006+LON'TXD++3.10:::AY6+8.50:::YQ+3.40:::YC+4.30:::XY+3.10:::XA+2.80:::XF'DAT+710:061210:1200'FOP+CC:::VI:XXXXXXXX1186:0211'IFT+4:43+TIMOTHY SIMS+2234 MAIN STREET ATLANTA, GA 30067+7705632891'TIF+JONES+WILLIAMMR:A:2' FTI+AF:0093789865:::ELITE'IFT+4:15:9+ LHR DL X/JFK DL YVR GBP/IT END ROE0.618831XT3.10AY6 8.50YQ3.40+YC4.30XY3.10XA2.80XFATL4.5'REF+:38739393AN8780P'FAR+A+++++YN324N' SSR+DOCS:HK::DL:::::////GBR/12JUL64/M//JONES/WILLIAMNEVELL'TKT+0062120234534:T:1'MON+B:2888.00:GBP+T:2957.94:GBP'PTK+NR++061210:1010+DL+006+LON'TXD++3.10:::AY6+8.50:::YQ+3.40:::YC+4.30:::XY+3.10:::XA+2.80:::XF'DAT+710:081210:1200'FOP+CC:::VI:XXXXXXXX1186:0211'IFT+4:43+TIMOTHY SIMS+2234 MAIN STREET ATLANTA, GA 30067+7705632891'TVL+121210:0915::1230+LHR+JFK+DL+324:B' APD+767'SSR+SEAT:HK:2:DL:::LHR:JFK+15A::1+15B::2' DAT+2:111210:0915'TRI++108:::1' TIF+SMITHJR+JOHNMR:A:1' SSD+15A++++Y'TVL+121210:2200::2330+JFK+YVR+DL+330:B' RPI+2+HK'APD+767'SSR+SEAT:HK:2:DL:::JFK:YVR+15E::1+15F::2' EQN+1'RCI+DL:ABCDEF'MSG+8' TVL+121210:1500:151210+YVR:VANCOUVER ARMS++VN+67576:ROH' ABI+1+:LHRRR+LON++DL' DAT+ZT:071210:1010'SAC+++X'TVL+101210:0915::1230+LHR+JFK+DL+324:B' RPI+2+K'SAC+++X'SSR+AVML:HK:2:DL' SAC+++X'SSR+SEAT:HK:2:DL:::LHR:JFK+15A::1+15B::2' SAC+++X'TVL+101210:2200::2330+JFK+YVR+DL+330:B' RPI+2+K'SAC+++X'SSR+AVML:HK:2:DL' SAC+++X'SSR+SEAT:HK:2:DL:::JFK:YVR+15E::1+15F::2' SAC+++A'TVL+121210:0915::1230+LHR+JFK+DL+324:B' RPI+2+K'SAC+++A'SSR+AVML:HK:2:DL' SAC+++A'SSR+SEAT:HK:2:DL:::LHR:JFK+15A::1+15B::2' SAC+++A'TVL+121210:2200::2330+JFK+YVR+DL+330:B' RPI+2+K'SAC+++A'SSR+AVML:HK:2:DL' SAC+++A'SSR+SEAT:HK:2:DL:::JFK:YVR+15E::1+15F::2' UNT+135+1'UNZ+1+020A07'\n";
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+public class PnrGovParserTest implements ParserTestHelper {
+    private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
+    private static final String PNR_MESSAGE_PG_76 = "/pnr-messages/pnrMessagePg76.txt";
+    private static final String PNR_BAD_FORMAT = "/pnr-messages/pnrBadFormat.txt";
+    private EdifactParser<PnrVo> parser;
 
     @Before
     public void setUp() {
         this.parser = new PnrGovParser();
     }
-    
+
+    /*
+     * The following test use slightly modified messages found on page 76 and 77 of the
+     * PASSENGER AND AIRPORT DATA
+     * INTERCHANGE STANDARDS EDIFACT IMPLEMENTATION GUIDE
+     * PNR DATA PUSHED TO STATES  OR OTHER AUTHORITIES
+     * PNRGOV MESSAGE
+     * Version 13.1
+     * */
     @Test
-    public void testSample() throws ParseException {
-        this.parser.parse(pnr);
+    public void reservationDateMapsToRCITimeCreated() throws ParseException, IOException, URISyntaxException {
+        String message77 = getMessageText(PNR_MESSAGE_PG_77);
+        PnrVo vo = this.parser.parse(message77);
+        LocalDateTime reservationDate = getLocalDateTime(vo.getReservationCreateDate());
+        LocalDateTime May23rd2013At181348 = LocalDateTime.of(2013, 5, 23, 18, 13, 48);
+        assertTrue(May23rd2013At181348.isEqual(reservationDate));
     }
+
+    @Test
+    public void dateBookedMapsToPaymentMadeDate() throws ParseException, IOException, URISyntaxException {
+        String message77 = getMessageText(PNR_MESSAGE_PG_77);
+        PnrVo vo = this.parser.parse(message77);
+        LocalDateTime dateBooked = getLocalDateTime(vo.getDateBooked());
+        LocalDateTime May23rd2013At212400 = LocalDateTime.of(2013, 5, 23, 21, 24);
+        assertTrue(May23rd2013At212400.isEqual(dateBooked));
+    }
+
+    @Test
+    public void bookingDateMapsToFirstDateWithCode710() throws ParseException,   IOException, URISyntaxException {
+        String message76 = getMessageText(PNR_MESSAGE_PG_76);
+        PnrVo vo = this.parser.parse(message76);
+        LocalDate dateBooked = getLocalDate(vo.getDateBooked());
+        LocalDate Feb142013 = LocalDate.of(2013, 2, 14);
+        assertTrue(Feb142013.isEqual(dateBooked));
+    }
+
+    @Test
+    public void badFormattingAtEndOfMessage() throws IOException, URISyntaxException, ParseException {
+        String badFormatMessage = getMessageText(PNR_BAD_FORMAT);
+        PnrVo vo = this.parser.parse(badFormatMessage);
+    }
+
+
 }
