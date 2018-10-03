@@ -187,17 +187,15 @@ public class PassengerDetailsController {
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
 				pnrSeatList.addAll(seatRepository.findByFlightIdAndPassengerIdNotApis(Long.parseLong(flightId), p.getId()));
-				FlightPax flightPax = getFlightPax(p);
+				FlightPax flightPax = getPnrFlightPax(p, flight);
 				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
 				bagVoOptional.ifPresent(tempVo::addBag);
 			}
 
-			FlightPax mainPassengerFlightPax = getFlightPax(t);
-			if (mainPassengerFlightPax.getMessageSource() != null &&
-					mainPassengerFlightPax.getMessageSource().equalsIgnoreCase("PNR")) {
-				Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
-				bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
-			}
+			FlightPax mainPassengerFlightPax = getPnrFlightPax(t, flight);
+			Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
+			bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
+
 			for (Seat s : pnrSeatList) {
 				SeatVo seatVo = new SeatVo();
 				seatVo.setFirstName(s.getPassenger().getFirstName());
@@ -282,14 +280,24 @@ public class PassengerDetailsController {
 
 
 
-	private FlightPax getFlightPax(Passenger p) {
+	private FlightPax getPnrFlightPax(Passenger p, Flight flight) {
 		FlightPax flightPax;
 		if (p.getFlightPaxList() != null && !p.getFlightPaxList().isEmpty()) {
-			flightPax = p.getFlightPaxList().iterator().next();
+			flightPax = p.getFlightPaxList()
+					.stream()
+					.filter(fp -> isPnr(fp, flight))
+					.findFirst()
+					.orElse(null);
 		} else {
 			flightPax = null;
 		}
 		return flightPax;
+	}
+
+	private boolean isPnr(FlightPax fp, Flight flight) {
+		return fp.getMessageSource() != null
+				&& fp.getMessageSource().equalsIgnoreCase("PNR")
+				&& fp.getFlight().equals(flight);
 	}
 
 	private Optional<BagVo> getBagOptional(FlightPax fp) {
