@@ -67,7 +67,8 @@ public class RuleRunnerScheduler {
 			matchingService.findMatchesBasedOnTimeThreshold();
 			logger.info("exiting matching service portion of jobScheduling");
 		} catch (Exception exception) {
-			logger.error(exception.getCause().getMessage());
+			String errorMessage = exception.getCause() != null ? exception.getCause().getMessage(): "Error in rule runner";
+			logger.error(errorMessage);
 			ErrorDetailInfo errInfo = ErrorHandlerFactory
 					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
 			errorPersistenceService.create(errInfo);
