@@ -1,18 +1,20 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- *
+ * 
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.pnrgov;
 
 import gov.gtas.parsers.ParserTestHelper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.PnrVo;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -23,7 +25,11 @@ import java.time.LocalDateTime;
 public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
     private static final String PNR_MESSAGE_PG_76 = "/pnr-messages/pnrMessagePg76.txt";
+    private static final String PNR_MESSAGE_PG_75 = "/pnr-messages/pnrMessagePg75.txt";
     private static final String PNR_BAD_FORMAT = "/pnr-messages/pnrBadFormat.txt";
+    private static final String BIG_PNR = "/pnr-messages/pnrWithBags.txt";
+    private static final String PNR_WITH_BAGS = "/pnr-messages/bigMessagePnr.txt";
+    private static final String PNR_EXAMPLE = "/pnr-messages/pnrMessageExample.txt";
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -72,5 +78,26 @@ public class PnrGovParserTest implements ParserTestHelper {
         PnrVo vo = this.parser.parse(badFormatMessage);
     }
 
+    @Test
+    @Ignore
+    public void pnrParsePage75() throws IOException, URISyntaxException, ParseException {
+        String badFormatMessage = getMessageText(PNR_MESSAGE_PG_75);
+        PnrVo vo = this.parser.parse(badFormatMessage);
+    }
+
+    @Test
+    public void pnrWithBgs() throws IOException, URISyntaxException, ParseException {
+        String pnrWithBags = getMessageText(PNR_WITH_BAGS);
+        PnrVo vo = this.parser.parse(pnrWithBags);
+        assertTrue(!vo.getBags().isEmpty());
+    }
+
+    @Test
+    public void pnrExampleTest() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_EXAMPLE);
+        PnrVo vo = this.parser.parse(pnrExample);
+        int bagsInPNRExample = 18;
+        assertEquals(bagsInPNRExample, vo.getBags().size());
+    }
 
 }
