@@ -108,4 +108,23 @@ public class Bag extends BaseEntity {
     public void setBagId(String bagId) {
         this.bagId = bagId;
     }
+    @Override
+	public String toString() {
+
+        return "\nbagid " +
+                bagId +
+                "\npass id " +
+                passenger.getId() +
+                "\nflight id " +
+                flight.getId() +
+                "\ndata source " +
+                data_source +
+                "\nDestination " +
+                destination +
+                "\nDestination airport " +
+                destinationAirport +
+                "\nAirline " +
+                airline;
+	}
+
 }

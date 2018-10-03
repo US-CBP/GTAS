@@ -123,4 +123,13 @@ public class PnrMessageServiceIT extends
 	public void testRunService() throws ParseException {
 		svc.processMessage(this.message, new String[]{"placeholder"});
 	}
+
+	@Test()
+	@Transactional
+	public void testServiceWithBags() {
+		ClassLoader classLoader = getClass().getClassLoader();
+		this.message = new File(classLoader.getResource(
+				"pnr-messages/pnrMessageExample.txt").getFile());
+		svc.processMessage(this.message, new String[]{"placeholder"});
+	}
 }
