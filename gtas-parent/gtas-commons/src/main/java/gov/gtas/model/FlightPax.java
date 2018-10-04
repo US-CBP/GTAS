@@ -250,7 +250,11 @@ public class FlightPax implements Serializable {
         FlightPax dataTarget = ((FlightPax) target);
 
         return ((this.getFlight().getId().equals(dataTarget.getFlight().getId()) && 
-        		(this.getPassenger().getId().equals(dataTarget.getPassenger().getId()))));
+        		(this.getPassenger().getId().equals(dataTarget.getPassenger().getId()))) &&
+				((this.getMessageSource() == null && dataTarget.getMessageSource() == null)
+						|| ((this.getMessageSource() != null
+						&& dataTarget.getMessageSource() != null) &&
+						this.getMessageSource().equals(dataTarget.getMessageSource()))));
     }  
      
 }
