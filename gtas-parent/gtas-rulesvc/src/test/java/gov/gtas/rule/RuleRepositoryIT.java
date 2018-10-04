@@ -1,25 +1,27 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.rule;
 
+import static gov.gtas.IntegrationTestBuilder.MessageTypeGenerated.APIS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import gov.gtas.IntegrationTestBuilder;
+import gov.gtas.IntegrationTestData;
 import gov.gtas.bo.RuleExecutionStatistics;
+import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.config.RuleServiceConfig;
 import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.error.CommonServiceException;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.lookup.PassengerTypeCode;
+import gov.gtas.svc.util.RuleExecutionContext;
 import gov.gtas.svc.util.TargetingServiceUtils;
 
-import java.util.HashSet;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,71 +34,60 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class RuleRepositoryIT {
-	@Autowired
-	private RuleService testTarget;
+    @Autowired
+    private RuleService testTarget;
 
-	@Test(expected = CommonServiceException.class)
-	public void testNullRequest() {
-		testTarget.invokeAdhocRules("gtas.drl", null);
-	}
+    @Autowired
+    private IntegrationTestBuilder integrationTestBuilder;
 
-	@Test
-	@Transactional
-	public void testBasicApisRequest() {
-		Passenger p1 = createPassenger("Medulla", "Oblongata", "Timbuktu");
-		ApisMessage msg = createBasicApisMessage(p1);
-		RuleServiceResult res = testTarget.invokeAdhocRules(
-				RuleServiceConstants.DEFAULT_RULESET_NAME,
-				TargetingServiceUtils.createApisRequest(msg)
-						.getRuleServiceRequest());
-		assertNotNull(res);
-		assertNotNull(res.getResultList());
-		assertEquals("Result list is empty", 1, res.getResultList().size());
-		assertEquals("Expected Passenger", p1, res.getResultList().get(0));
-		RuleExecutionStatistics stats = res.getExecutionStatistics();
-		assertNotNull(stats);
-		assertEquals("Expected 2 rules to be fired", 2,
-				stats.getTotalRulesFired());
-		assertEquals("Expected 2 rule names in list", 2, stats
-				.getRuleFiringSequence().size());
-		// Expecting 1 flight object and one passenger object to be inserted
-		assertEquals("Expected 2 object to be affected", 2,
-				stats.getTotalObjectsModified());
-		assertEquals("Expected 2 object to be inserted", 2, stats
-				.getInsertedObjectClassNameList().size());
-	}
+    private IntegrationTestData integrationTestData;
 
-	/**
-	 * creates a simple passenger object.
-	 * 
-	 * @param fn
-	 * @param ln
-	 * @param embarkation
-	 * @return
-	 */
-	private Passenger createPassenger(final String fn, final String ln,
-			final String embarkation) {
-		Passenger p = new Passenger();
-		p.setPassengerType(PassengerTypeCode.P.name());
-		p.setFirstName(fn);
-		p.setLastName(ln);
-		p.setEmbarkation("Timbuktu");
-		return p;
-	}
+    @Before
+    @Transactional
+    public void setUp() {
+    }
 
-	/**
-	 * Creates a simple ApisMessage with a single passenger
-	 */
-	private ApisMessage createBasicApisMessage(final Passenger passenger) {
-		ApisMessage msg = new ApisMessage();
-		Flight flight = new Flight();
-		HashSet<Passenger> set = new HashSet<Passenger>();
-		set.add(passenger);
-		flight.setPassengers(set);
-		flight.setDestination("foo");
-		HashSet<Flight> flightSet = new HashSet<Flight>();
-		flightSet.add(flight);
-		msg.setFlights(flightSet);
-		return msg;
-	}
+    @After
+    @Transactional
+    public void tearDown() {
+        integrationTestBuilder.reset();
+    }
+
+
+    @Test(expected = CommonServiceException.class)
+    @Transactional
+    public void testNullRequest() {
+        testTarget.invokeAdhocRules("gtas.drl", null);
+    }
+
+    @Test
+    @Transactional
+    public void testBasicApisRequest() {
+        integrationTestData = integrationTestBuilder.messageType(APIS).build();
+        integrationTestData.getPassenger().setEmbarkation("Timbuktu");
+        integrationTestData.getFlight().setFlightNumber("testFlightNum");
+        integrationTestData.getFlightPaxApis().setBagWeight(0);
+
+        RuleExecutionContext ruleExecutionContext = TargetingServiceUtils.createApisRequest(integrationTestData.getApisMessage());
+        RuleServiceRequest ruleServiceRequest = ruleExecutionContext.getRuleServiceRequest();
+        String filePathForDrl = RuleServiceConstants.DEFAULT_RULESET_NAME;
+        RuleServiceResult result = testTarget.invokeAdhocRules(filePathForDrl, ruleServiceRequest);
+        RuleExecutionStatistics executionStatistics = result.getExecutionStatistics();
+
+        assertNotNull(result);
+        assertNotNull(result.getResultList());
+        assertEquals("Result list is empty", 1, result.getResultList().size());
+        //Odd placement - Passenger lives in a RuleHitDetail list due to how the drl file processes.
+        assertEquals("Expected Passenger", integrationTestData.getPassenger(), result.getResultList().get(0));
+        assertNotNull(executionStatistics);
+        assertEquals("Expected 2 rules to be fired", 2,
+                executionStatistics.getTotalRulesFired());
+        assertEquals("Expected 2 rule names in list", 2, executionStatistics
+                .getRuleFiringSequence().size());
+        // Expecting 1 apis flight pax + 1 flight + 1 passenger to be affected / used.
+        assertEquals("Expected 3 object to be affected", 3,
+                executionStatistics.getTotalObjectsModified());
+        assertEquals("Expected 3 object to be inserted", 3, executionStatistics
+                .getInsertedObjectClassNameList().size());
+    }
 }
