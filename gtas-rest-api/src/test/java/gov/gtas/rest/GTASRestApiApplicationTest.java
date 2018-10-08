@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class GTASRestApiApplicationTests {
+public class GTASRestApiApplicationTest {
 
 	@Test
 	public void contextLoads() {

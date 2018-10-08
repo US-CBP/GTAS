@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebAppConfiguration
 @TransactionConfiguration(defaultRollback = true)
 public class WatchlistManagementControllerIT {
-    private static final String TEST_USER = "test";
+    private static final String TEST_USER = "admin";
     private static final String WL_NAME = "TestWL123";
     private MockMvc mockMvc;
 

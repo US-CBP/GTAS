@@ -122,14 +122,6 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setUpdatedAt(new Date());
 			// TODO replace with logged in user id
 			flightToUpdate.setUpdatedBy(flight.getUpdatedBy());
-			if (flight.getPassengers() != null
-					&& flight.getPassengers().size() > 0) {
-				Iterator it = flight.getPassengers().iterator();
-				while (it.hasNext()) {
-					Passenger p = (Passenger) it.next();
-					//flightToUpdate.addPassenger(p);
-				}
-			}
 		}
 		return flightToUpdate;
 	}
@@ -206,10 +198,16 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
-		String sqlStr = "";
-		for(Passenger p: passengers){
-			sqlStr += "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+flightId+","+p.getId()+")";
+		if (passengers.isEmpty()) {
+			return;
+	//		throw new IllegalStateException("Passengers list can not be empty!");
 		}
+		String sqlStr = "";
+		sqlStr += "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES";
+		for(Passenger p: passengers){
+			sqlStr += "("+flightId+","+p.getId()+"),";
+		}
+		sqlStr = sqlStr.substring(0, sqlStr.length() - 1); // remove last comma.
 		em.createNativeQuery(sqlStr).executeUpdate();
 	}
 

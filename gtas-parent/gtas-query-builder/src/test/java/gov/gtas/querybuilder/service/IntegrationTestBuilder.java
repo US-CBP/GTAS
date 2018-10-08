@@ -1,4 +1,4 @@
-package gov.gtas;
+package gov.gtas.querybuilder.service;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -99,8 +99,7 @@ public class IntegrationTestBuilder {
                 flightPaxSet.add(flightPaxPnr);
                 passenger.setFlightPaxList(flightPaxSet);
                 passengerRepository.save(passenger);
-                passengers = new HashSet<>();
-                passengers.addAll(pnrMessage.getPassengers());
+                passengers = new HashSet<>(pnrMessage.getPassengers());
                 linkPassengersAndFlights(passengers, flight.getId());
                 flightRepository.save(flight);
                 break;
@@ -110,8 +109,7 @@ public class IntegrationTestBuilder {
                 flightPaxSet.add(flightPaxApis);
                 passenger.setFlightPaxList(flightPaxSet);
                 passengerRepository.save(passenger);
-                passengers = new HashSet<>();
-                passengers.addAll(apisMessage.getPassengers());
+                passengers = new HashSet<>(apisMessage.getPassengers());
                 linkPassengersAndFlights(passengers, flight.getId());
                 flightRepository.save(flight);
                 break;

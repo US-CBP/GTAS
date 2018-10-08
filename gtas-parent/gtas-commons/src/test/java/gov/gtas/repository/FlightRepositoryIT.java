@@ -1,5 +1,6 @@
 package gov.gtas.repository;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
@@ -52,7 +53,6 @@ public class FlightRepositoryIT extends
 		p.setPassengerType("P");
 		p.setFirstName("john");
 		p.setLastName("doe");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 
 		// DomesticFlight 2
@@ -70,7 +70,6 @@ public class FlightRepositoryIT extends
 		p.setPassengerType("P");
 		p.setFirstName("johnny");
 		p.setLastName("dal");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 
 		// International Flight 1
@@ -88,7 +87,6 @@ public class FlightRepositoryIT extends
 		p.setPassengerType("P");
 		p.setFirstName("ted");
 		p.setLastName("bart");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 
 		// International Flight 2
@@ -106,7 +104,6 @@ public class FlightRepositoryIT extends
 		p.setPassengerType("P");
 		p.setFirstName("mike");
 		p.setLastName("great");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 
 		// International Flight 3
@@ -124,7 +121,6 @@ public class FlightRepositoryIT extends
 		p.setPassengerType("P");
 		p.setFirstName("lora");
 		p.setLastName("speedier");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 	}
 
@@ -141,7 +137,7 @@ public class FlightRepositoryIT extends
 				count++;
 			}
 		}
-		assertTrue(count == 3);
+		assertEquals(3, count);
 		assertTrue(result.getLeft() >= 3);
 	}
 
@@ -159,7 +155,7 @@ public class FlightRepositoryIT extends
 				count++;
 			}
 		}
-		assertTrue(count == 2);
+		assertEquals(2, count);
 		assertTrue(result.getLeft() >= 2);
 	}
 
@@ -178,7 +174,7 @@ public class FlightRepositoryIT extends
 				count++;
 			}
 		}
-		assertTrue(count == 5);
+		assertEquals(5, count);
 		assertTrue(result.getLeft() >= 5);
 	}
 
@@ -196,7 +192,7 @@ public class FlightRepositoryIT extends
 				count++;
 			}
 		}
-		assertTrue(count == 5);
+		assertEquals(5, count);
 		assertTrue(result.getLeft() >= 5);
 	}
 

@@ -2,6 +2,7 @@ package gov.gtas;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.services.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,9 @@ public class IntegrationTestBuilder {
 
     @Autowired
     MessageRepository messageRepository;
+
+    @Autowired
+    FlightService flightService;
 
     public enum MessageTypeGenerated {
         BOTH,
@@ -59,12 +63,13 @@ public class IntegrationTestBuilder {
     private static final double BAG_WEIGHT_APIS = 187;
     private static final double BAG_AVERAGE_WEIGHT_PNR = 5;
     private static final double BAG_AVERAGE_WEIGHT_APIS = 123;
-    private static final String FIRST_NAME = "john";
-    private static final String LAST_NAME = "doe";
+    private static final String FIRST_NAME = "JOHN";
+    private static final String LAST_NAME = "DOE";
 
 
     public IntegrationTestData build() {
         generateDataIfNeeded();
+        flight = flightRepository.save(flight);
         passenger = passengerRepository.save(passenger);
         Set<FlightPax> flightPaxSet;
         switch (messageTypeGenerated) {
@@ -72,11 +77,18 @@ public class IntegrationTestBuilder {
             default:
                 savePnrData();
                 saveApisData();
+
                 flightPaxSet = new HashSet<>();
                 flightPaxSet.add(flightPaxApis);
                 flightPaxSet.add(flightPaxPnr);
                 passenger.setFlightPaxList(flightPaxSet);
                 passengerRepository.save(passenger);
+                Set<Passenger> passengers = new HashSet<>();
+                passengers.addAll(pnrMessage.getPassengers());
+                passengers.addAll(apisMessage.getPassengers());
+                linkPassengersAndFlights(passengers, flight.getId());
+
+                flightRepository.save(flight);
                 break;
             case PNR:
                 savePnrData();
@@ -84,6 +96,9 @@ public class IntegrationTestBuilder {
                 flightPaxSet.add(flightPaxPnr);
                 passenger.setFlightPaxList(flightPaxSet);
                 passengerRepository.save(passenger);
+                passengers = new HashSet<>(pnrMessage.getPassengers());
+                linkPassengersAndFlights(passengers, flight.getId());
+                flightRepository.save(flight);
                 break;
             case APIS:
                 saveApisData();
@@ -91,9 +106,17 @@ public class IntegrationTestBuilder {
                 flightPaxSet.add(flightPaxApis);
                 passenger.setFlightPaxList(flightPaxSet);
                 passengerRepository.save(passenger);
+                passengers = new HashSet<>();
+                passengers.addAll(apisMessage.getPassengers());
+                linkPassengersAndFlights(passengers, flight.getId());
+                flightRepository.save(flight);
                 break;
         }
         return new IntegrationTestData(this);
+    }
+
+    public void linkPassengersAndFlights(Set<Passenger> passengers, long id) {
+        flightService.setAllPassengers(passengers, id);
     }
 
     Flight getFlight() {
@@ -120,7 +143,7 @@ public class IntegrationTestBuilder {
         return apisMessage;
     }
 
-    IntegrationTestBuilder flight(Flight flight) {
+    public IntegrationTestBuilder flight(Flight flight) {
         this.flight = flight;
         return this;
     }
@@ -142,6 +165,7 @@ public class IntegrationTestBuilder {
 
     public IntegrationTestBuilder pnrMessage(Pnr pnrMessage) {
         this.pnrMessage = pnrMessage;
+        this.passengerSetPnr = pnrMessage.getPassengers();
         return this;
     }
 
@@ -171,6 +195,12 @@ public class IntegrationTestBuilder {
 
     private void saveApisData() {
         apisMessage.setPassengers(passengerSetApis);
+        for(Passenger p : passengerSetApis) {
+            if (p.getApisMessage()==null) {
+                p.setApisMessage(new HashSet<>());
+            }
+            p.getApisMessage().add(apisMessage);
+        }
         apisMessage = apisMessageRepository.save(apisMessage);
         flightPaxApis.setPassenger(passenger);
         flightPaxApis.setFlight(flight);
@@ -181,7 +211,16 @@ public class IntegrationTestBuilder {
     }
 
     private void savePnrData() {
+
         pnrMessage.setPassengers(passengerSetPnr);
+
+        for(Passenger p : passengerSetPnr) {
+            if (p.getPnrs()==null) {
+                p.setPnrs(new HashSet<>());
+            }
+            p.getPnrs().add(pnrMessage);
+        }
+
         pnrMessage.setPassengerCount(passengerSetPnr.size());
         List<FlightLeg> flightLegs = new ArrayList<>();
         FlightLeg leg = new FlightLeg();
@@ -192,8 +231,8 @@ public class IntegrationTestBuilder {
         Set<Flight> flightSet = new HashSet<>();
         flightSet.add(flight);
         pnrMessage.setFlights(flightSet);
-        pnrMessage = pnrRepository.save(pnrMessage);
         flight = flightRepository.save(flight);
+        pnrMessage = pnrRepository.save(pnrMessage);
         flightPaxPnr.setFlight(flight);
         flightPaxPnr.setPassenger(passenger);
         flightPaxRepository.save(flightPaxPnr);
@@ -211,13 +250,9 @@ public class IntegrationTestBuilder {
 
         switch (messageTypeGenerated) {
             case PNR:
-                apisMessage = null;
-                flightPaxApis = null;
                 generatePnrDataIfNeeded();
                 break;
             case APIS:
-                pnrMessage = null;
-                flightPaxPnr = null;
                 generateApisDataIfNeeded();
                 break;
             case BOTH:
@@ -244,6 +279,8 @@ public class IntegrationTestBuilder {
         if (passengerSetApis == null) {
             passengerSetApis = defaultPassengerSet();
         }
+        passengerSetApis.add(passenger);
+        generateFlightPaxDataOnPassengerSet(passengerSetApis, "APIS");
     }
 
     private FlightPax defaultPaxApis() {
@@ -275,11 +312,33 @@ public class IntegrationTestBuilder {
             pnrMessage = defaultPnrMessage();
         }
         if (flightPaxPnr == null) {
-            flightPaxPnr = defaultPaxPnr();
+            flightPaxPnr = defaultPaxPnr(passenger);
         }
         if (passengerSetPnr == null) {
             passengerSetPnr = defaultPassengerSet();
         }
+        passengerSetPnr.add(passenger);
+        generateFlightPaxDataOnPassengerSet(passengerSetPnr, "PNR");
+    }
+
+    private void generateFlightPaxDataOnPassengerSet(Set<Passenger> passengerSetPnr, String messageSource) {
+        flight = flightRepository.save(flight);
+        FlightPax flightPax = new FlightPax();
+        for (Passenger p : passengerSetPnr) {
+            passengerRepository.save(p);
+            //equality is set on the three fields below for flight pax.
+            flightPax.setPassenger(p);
+            flightPax.setFlight(flight);
+            flightPax.setMessageSource(messageSource);
+            if (p.getFlightPaxList() == null) {
+                Set<FlightPax> flightPaxSet = new HashSet<>();
+                p.setFlightPaxList(flightPaxSet);
+            }
+            if(!p.getFlightPaxList().contains(flightPax)) {
+                p.getFlightPaxList().add(defaultPaxPnr(p));
+            }
+        }
+
     }
 
     private Set<Passenger> defaultPassengerSet() {
@@ -288,10 +347,10 @@ public class IntegrationTestBuilder {
         return passengerSet;
     }
 
-    private FlightPax defaultPaxPnr() {
+    private FlightPax defaultPaxPnr(Passenger flightPaxPass) {
         FlightPax flightPaxPNR = new FlightPax();
         flightPaxPNR.setBagCount(BAG_COUNT_PNR);
-        flightPaxPNR.setPassenger(passenger);
+        flightPaxPNR.setPassenger(flightPaxPass);
         flightPaxPNR.setFlight(flight);
         flightPaxPNR.setBagWeight(BAG_WEIGHT_PNR);
         flightPaxPNR.setAverageBagWeight(BAG_AVERAGE_WEIGHT_PNR);

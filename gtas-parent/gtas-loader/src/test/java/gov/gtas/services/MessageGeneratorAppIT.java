@@ -7,8 +7,6 @@ package gov.gtas.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Index;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +36,9 @@ import gov.gtas.parsers.exception.ParseException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CommonServicesConfig.class)
 @Transactional
-public class MessageGeneratorApp {
+public class MessageGeneratorAppIT {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageGeneratorApp.class);
+    private static final Logger logger = LoggerFactory.getLogger(MessageGeneratorAppIT.class);
 
     @Autowired
     private ServiceUtil svc;

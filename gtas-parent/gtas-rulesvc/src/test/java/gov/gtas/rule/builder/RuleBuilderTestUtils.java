@@ -10,12 +10,14 @@ import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.TypeEnum;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.model.User;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.RuleMeta;
-//import gov.gtas.model.udr.RuleCond;
-//import gov.gtas.model.udr.RuleCondPk;
 import gov.gtas.model.udr.UdrRule;
+import gov.gtas.model.udr.json.QueryConditionEnum;
 import gov.gtas.model.udr.json.QueryTerm;
+import gov.gtas.model.udr.json.UdrSpecification;
+import gov.gtas.model.udr.json.util.UdrSpecificationBuilder;
 import gov.gtas.querybuilder.mappings.AddressMapping;
 import gov.gtas.querybuilder.mappings.CreditCardMapping;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
@@ -27,11 +29,10 @@ import gov.gtas.querybuilder.mappings.PNRMapping;
 import gov.gtas.querybuilder.mappings.PassengerMapping;
 import gov.gtas.querybuilder.mappings.PhoneMapping;
 import gov.gtas.querybuilder.mappings.TravelAgencyMapping;
+import gov.gtas.svc.util.UdrServiceHelper;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class RuleBuilderTestUtils {
     public static final String UDR_RULE_TITLE="UDR_TEST_RULE";
@@ -51,6 +52,49 @@ public class RuleBuilderTestUtils {
     public static UdrRule createSimpleUdrRule(String userId, int indx) throws ParseException{
         return createSimpleUdrRule(userId, indx, new Date(), null);
     }
+    private static final Long GENERAL_RULE_CAT = 1L;
+
+    public static UdrRule createBaseUdrRule(String userId) {
+        UdrRule ret = new UdrRule(UDR_RULE_ID, YesNoEnum.N, null, new Date());
+        User author = new User();
+        author.setUserId(userId);
+        ret.setAuthor(author);
+        ret.setTitle(UDR_RULE_TITLE);
+        RuleMeta meta = new RuleMeta(ret, UDR_RULE_TITLE, UDR_RULE_TITLE, new Date(), null, YesNoEnum.Y, YesNoEnum.Y, YesNoEnum.Y);
+        Set<RuleCat> ruleCatSet = new HashSet<>();
+        RuleCat ruleCat = new RuleCat();
+        ruleCat.setCatId(GENERAL_RULE_CAT);
+        ruleCatSet.add(ruleCat);
+        meta.setRuleCategories(ruleCatSet);
+        ret.setMetaData(meta);
+        return ret;
+    }
+
+    public static final int INDX = 15; //14 doesn't mean anything, it's a random number.
+    public static Rule generateRule(UdrRule udrRule, List<QueryTerm> ruleMinTerm) {
+        return RuleBuilderTestUtils.createRuleInEngine(udrRule, ruleMinTerm, INDX);
+    }
+
+    public static  Rule generateRule(UdrRule udrRule, List<QueryTerm> ruleMinTerm, int index) {
+        return RuleBuilderTestUtils.createRuleInEngine(udrRule, ruleMinTerm, index);
+    }
+
+    public static UdrRule createBaseUdrRule(String userId, Date startDate, Date endDate) {
+        UdrRule ret = new UdrRule(UDR_RULE_ID, YesNoEnum.N, null, new Date());
+        User author = new User();
+        author.setUserId(userId);
+        ret.setAuthor(author);
+        ret.setTitle(UDR_RULE_TITLE);
+        RuleMeta meta = new RuleMeta(ret, UDR_RULE_TITLE, UDR_RULE_TITLE, startDate, endDate, YesNoEnum.Y, YesNoEnum.Y, YesNoEnum.Y);
+        Set<RuleCat> ruleCatSet = new HashSet<>();
+        RuleCat ruleCat = new RuleCat();
+        ruleCat.setCatId(GENERAL_RULE_CAT);
+        ruleCatSet.add(ruleCat);
+        meta.setRuleCategories(ruleCatSet);
+        ret.setMetaData(meta);
+        return ret;
+    }
+
     public static UdrRule createSimpleUdrRule(String userId, int indx, Date startDate, Date endDate) throws ParseException{
         UdrRule ret = new UdrRule(UDR_RULE_ID, YesNoEnum.N, null, new Date());
         User author = new User();
@@ -64,31 +108,51 @@ public class RuleBuilderTestUtils {
         
         return ret;
     }
-    /**
-     * Create a Rule condition object using common (query and criteria)
-     * enums.
-     * @param ent
-     * @param attr
-     * @param op
-     * @param value
-     * @param type
-     * @return
-     * @throws ParseException
-     */
+
+
+    public static UdrRule getUdrRule(UdrSpecification udrSpecification) {
+        UdrRule udrRule = createBaseUdrRule("123");
+        udrRule.setTitle("RULE_BUILDER_TEST_RULE");
+        UdrServiceHelper.addEngineRulesToUdrRule(udrRule, udrSpecification);
+        udrRule.setId(555L);
+        long ruleId = 899;
+        for (Rule rule : udrRule.getEngineRules()) {
+            rule.setId(ruleId);
+            ruleId++;
+        }
+        return udrRule;
+    }
+
+    public static UdrSpecification getUdrSpecification(List<QueryTerm> builderQueries, QueryConditionEnum queryConditionEnum) {
+        UdrSpecificationBuilder bldr = new UdrSpecificationBuilder(null, queryConditionEnum);
+        for (QueryTerm queryTerm : builderQueries) {
+            bldr.addTerm(queryTerm);
+        }
+        return bldr.build();
+    }
+
+
     public static QueryTerm createQueryTerm(EntityEnum entity,
             IEntityMapping attr, CriteriaOperatorEnum op, String value,
-            TypeEnum type) throws ParseException {
+            TypeEnum type) {
         QueryTerm ret = new QueryTerm(entity.getEntityName(), attr.getFieldName(), type.getType(), op.toString(), new String[]{value});
         return ret;
     }
+
     public static QueryTerm createQueryTerm(EntityEnum entity,
             IEntityMapping attr, CriteriaOperatorEnum op, String[] values,
-            TypeEnum type) throws ParseException {
+            TypeEnum type) {
         QueryTerm ret = new QueryTerm(entity.getEntityName(), attr.getFieldName(), type.getType(), op.toString(), values);
         return ret;
     }
 
-    //////////////////////////////////////////////////////
+    public static Rule createRuleInEngine(UdrRule parent, List<QueryTerm> ruleMinTerm, int indx) {
+        Rule engineRule = EngineRuleUtils.createEngineRule(ruleMinTerm, parent, indx);
+        engineRule.setId(9992L);
+        return engineRule;
+    }
+
+        //////////////////////////////////////////////////////
     //RULES
     /////////////////////////////////////////////////////
     private static Rule createEngineRule(Long id, UdrRule parent, int indx) throws ParseException{

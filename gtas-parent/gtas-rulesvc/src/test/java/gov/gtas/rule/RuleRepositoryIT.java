@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import gov.gtas.IntegrationTestBuilder;
 import gov.gtas.IntegrationTestData;
 import gov.gtas.bo.RuleExecutionStatistics;
+import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.config.RuleServiceConfig;
@@ -65,26 +66,25 @@ public class RuleRepositoryIT {
     public void testBasicApisRequest() {
         integrationTestData = integrationTestBuilder.messageType(APIS).build();
         integrationTestData.getPassenger().setEmbarkation("Timbuktu");
-        integrationTestData.getFlight().setFlightNumber("testFlightNum");
+        integrationTestData.getFlight().setFlightNumber("FAKE");
         integrationTestData.getFlightPaxApis().setBagWeight(0);
-
         RuleExecutionContext ruleExecutionContext = TargetingServiceUtils.createApisRequest(integrationTestData.getApisMessage());
         RuleServiceRequest ruleServiceRequest = ruleExecutionContext.getRuleServiceRequest();
         String filePathForDrl = RuleServiceConstants.DEFAULT_RULESET_NAME;
         RuleServiceResult result = testTarget.invokeAdhocRules(filePathForDrl, ruleServiceRequest);
         RuleExecutionStatistics executionStatistics = result.getExecutionStatistics();
-
         assertNotNull(result);
         assertNotNull(result.getResultList());
-        assertEquals("Result list is empty", 1, result.getResultList().size());
-        //Odd placement - Passenger lives in a RuleHitDetail list due to how the drl file processes.
-        assertEquals("Expected Passenger", integrationTestData.getPassenger(), result.getResultList().get(0));
+        assertEquals("Result list is empty", 2, result.getResultList().size());
+        //Will hit on 2 gts.dl rules. Same passenger will be returned so pick the first one.
+        RuleHitDetail ruleHitDetail = result.getResultList().get(0);
+        assertEquals("Expected Passenger", integrationTestData.getPassenger(), ruleHitDetail.getPassenger());
         assertNotNull(executionStatistics);
         assertEquals("Expected 2 rules to be fired", 2,
                 executionStatistics.getTotalRulesFired());
         assertEquals("Expected 2 rule names in list", 2, executionStatistics
                 .getRuleFiringSequence().size());
-        // Expecting 1 apis flight pax + 1 flight + 1 passenger to be affected / used.
+
         assertEquals("Expected 3 object to be affected", 3,
                 executionStatistics.getTotalObjectsModified());
         assertEquals("Expected 3 object to be inserted", 3, executionStatistics

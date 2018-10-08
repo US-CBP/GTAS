@@ -46,27 +46,6 @@ public class WatchlistRequestBuilder {
     }
 
     /**
-     * Adds an Apis Message.
-     * 
-     * @param apisMessage
-     *            the message to add.
-     */
-    public void addApisMessage(ApisMessage apisMessage) {
-        // add passengers and documents.
-        if (apisMessage.getFlights() != null) {
-            for (Flight flight : apisMessage.getFlights()) {
-                    addPassengerObjects(flight.getPassengers());
-            }
-        }
-        if (this.requestType == null
-                || this.requestType == RuleServiceRequestType.APIS_MESSAGE) {
-            this.requestType = RuleServiceRequestType.APIS_MESSAGE;
-        } else {
-            this.requestType = RuleServiceRequestType.ANY_MESSAGE;
-        }
-    }
-
-    /**
      * Adds a PNR message and its associated components.
      * 
      * @param pnr

@@ -18,6 +18,7 @@ import gov.gtas.testdatagen.PnrDataGenerator;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -65,8 +66,8 @@ public class TargetingServiceUtilsTest {
 		ApisMessage apis = ApisDataGenerator.createSimpleTestApisMesssage();
 		Pnr pnr = PnrDataGenerator.createTestPnr(1L);
 		RuleServiceRequest request = TargetingServiceUtils
-				.createPnrApisRequestContext(Arrays.asList(apis),
-						Arrays.asList(pnr)).getRuleServiceRequest();
+				.createPnrApisRequestContext(Collections.singletonList(apis),
+						Collections.singletonList(pnr)).getRuleServiceRequest();
 		Collection<?> reqObjects = request.getRequestObjects();
 		assertNotNull(reqObjects);
 		assertEquals(47, reqObjects.size());// 32 PNR + 15 APIS
@@ -82,20 +83,14 @@ public class TargetingServiceUtilsTest {
 
 		// BEGIN:create common flights and passengers
 		Collection<Flight> apisFlights = apisMsg.getFlights();
-		Collection<Passenger> apisFlt1Passengers = apisFlights.iterator()
-				.next().getPassengers();
 		for (Flight fl : apisFlights) {
 			pnr.getFlights().add(fl);
-		}
-		// add 3 passengers
-		for (Passenger p : apisFlt1Passengers) {
-			pnr.getPassengers().add(p);
 		}
 		// END:create common flights and passengers
 
 		RuleServiceRequest request = TargetingServiceUtils
-				.createPnrApisRequestContext(Arrays.asList(apisMsg),
-						Arrays.asList(pnr)).getRuleServiceRequest();
+				.createPnrApisRequestContext(Collections.singletonList(apisMsg),
+						Collections.singletonList(pnr)).getRuleServiceRequest();
 		Collection<?> reqObjects = request.getRequestObjects();
 		assertNotNull(reqObjects);
 		assertEquals(50, reqObjects.size());// 32 PNR + 15 APIS + 3 common

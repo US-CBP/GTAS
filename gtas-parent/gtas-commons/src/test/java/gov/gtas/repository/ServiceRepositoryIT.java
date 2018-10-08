@@ -134,7 +134,6 @@ public class ServiceRepositoryIT {
 
         Set<Passenger> passengers = new HashSet<Passenger>();
         passengers.add(passengerToUpdate);
-        f.setPassengers(passengers);
 
         testTarget.create(f);
         logger.info("********************************************************");
@@ -254,22 +253,11 @@ public class ServiceRepositoryIT {
                 Set<Flight> flights = apisMessage.getFlights();
                 if (flights.size() > 0) {
                     assertNotNull(flights);
-
                     Iterator<Flight> itr = flights.iterator();
                     while (itr.hasNext()) {
                         logger.info("Flights are not null \n");
                         Flight aFlight = (Flight) itr.next();
                         assertNotNull(aFlight);
-                        Set<Passenger> passengers = aFlight.getPassengers();
-                        if (passengers.size() > 0) {
-                            assertNotNull(passengers);
-                            Iterator<Passenger> itr2 = passengers.iterator();
-                            while (itr2.hasNext()) {
-                                Passenger passenger = itr2.next();
-                                assertNotNull(passenger);
-                                // logger.info("Passengers are not null \n");
-                            }
-                        }
                     }
                     // logger.info("happy faces!\n");
                 }

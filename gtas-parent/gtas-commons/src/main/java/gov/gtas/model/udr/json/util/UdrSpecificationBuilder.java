@@ -72,6 +72,13 @@ public class UdrSpecificationBuilder {
         return this;
     }
 
+    public UdrSpecificationBuilder addTerm(QueryTerm queryTerm) {
+        queryObjectStack
+                .peek()
+                .getRules()
+                .add(queryTerm);
+        return this;
+    }
     public UdrSpecificationBuilder addNestedQueryObject(
             QueryConditionEnum condition) {
         QueryObject queryObject = new QueryObject();

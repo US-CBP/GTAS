@@ -139,9 +139,9 @@ public class WatchlistManagementController {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.info("******** Received Watchlist DeleteAll request for watch list ="
 				+ name + " by user " + userId);
-		//return watchlistService.deleteWatchlist(userId,name);
+		return watchlistService.deleteWatchlist(userId,name);
 
-		return watchlistService.deleteWatchlist(userId,"NONE");
+	//	return watchlistService.deleteWatchlist(userId,"NONE");
 	}
 
 	/**

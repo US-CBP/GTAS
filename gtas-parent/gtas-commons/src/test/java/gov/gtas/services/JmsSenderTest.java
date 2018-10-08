@@ -74,7 +74,6 @@ public class JmsSenderTest {
 		p.getDocuments().add(d);
 		Flight f=getFlight();
 		//p.getFlights().add(f);
-		f.getPassengers().add(p);
 		pnr.getFlights().add(f);
 		logger.info("-------------------SENDING--------");
 		sender.sendMessage(pnr);

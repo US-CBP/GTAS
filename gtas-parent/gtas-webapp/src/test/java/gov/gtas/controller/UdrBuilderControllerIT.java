@@ -49,7 +49,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @WebAppConfiguration
 @TransactionConfiguration(defaultRollback = true)
 public class UdrBuilderControllerIT {
-	private static final String TEST_USER = "test";
+	private static final String TEST_USER = "admin";
 	private static final String TEST_UDR_TITLE = "TEST_TITLE5634";
 	private static final String TEST_UDR_TITLE2 = "TEST_TITLE2231";
 	private static final String TEST_DESCRIPTION = "TREST_DESCRIPTION";

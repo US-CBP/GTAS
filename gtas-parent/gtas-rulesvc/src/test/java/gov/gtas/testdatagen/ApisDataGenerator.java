@@ -40,31 +40,9 @@ public class ApisDataGenerator {
         //msg.setFlights(createFlights());
         msg.setCreateDate(new Date());
         msg.setStatus(MessageStatus.LOADED);
-        fixPassengerReferences(msg);
-        fixDocReferences(msg);
         return msg;
     }
-    
-    private static void fixPassengerReferences(ApisMessage msg){
-    	Set<Passenger> passengers = new HashSet<>();
-        for(Flight fl:msg.getFlights()){
-        	passengers.addAll(fl.getPassengers());
-        }
-        msg.setPassengers(passengers);
-    }
-    
-    
-    private static void fixDocReferences(ApisMessage msg){
-        for(Flight fl:msg.getFlights()){
-            for(Passenger tr:fl.getPassengers()){
-                for(Document doc:tr.getDocuments()){
-                    if(doc.getPassenger() == null){
-                        doc.setPassenger(tr);
-                    }
-                }
-            }
-        }
-    }
+
     private static Set<Passenger> createPassengerAndDocument(Flight flight, long[] ids, String[][]param){
         Set<Passenger> passengers = new HashSet<Passenger>();
         int passengerCount = 0;
@@ -107,7 +85,6 @@ public class ApisDataGenerator {
                 {"CA", "2011-12-31", "Kalimar", "Rultan", "CA", "YHZ","33"}
                }
                 );
-        flight.setPassengers(passengers);
         for(Passenger pas:passengers){
             //pas.getFlights().add(flight);
         }
@@ -129,7 +106,6 @@ public class ApisDataGenerator {
                 {"GB", "2010-01-15", "Ikstar", "Crondite", "GB", "LHR","66"}
                }
                 );
-        flight.setPassengers(passengers);
         for(Passenger pas:passengers){
             //pas.getFlights().add(flight);
         }
@@ -158,7 +134,6 @@ public class ApisDataGenerator {
         for(int i = 0; i < iso2Array.length; ++i){
             String iso2 = iso2Array[i];
             Document doc = new Document();
-            doc.setId(ids[docCount]);
             doc.setDocumentType(DocumentTypeCode.P.name());
             doc.setId(7786L);
             doc.setDocumentNumber(DOCUMENT_NUMBER);

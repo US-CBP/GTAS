@@ -38,6 +38,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +64,9 @@ public class QueryBuilderServiceIT {
 	@Autowired
 	private FlightService flightService;
 
+	@Autowired
+	private IntegrationTestBuilder integrationTestBuilder;
+
 	private static final String TITLE = "Integration Test";
 	private static final String UPDATED_TITLE = "Updated Int. Test";
 	private static final String DESCRIPTION = "A simple query created during integration test";
@@ -74,6 +78,11 @@ public class QueryBuilderServiceIT {
 	public static void setUp() throws Exception {
 		query = buildSimpleBetweenQuery();
 	}
+
+	@After
+    public void tearDown() {
+	    integrationTestBuilder.reset();
+    }
 
 	@Test
 	@Transactional
@@ -283,22 +292,23 @@ public class QueryBuilderServiceIT {
 		flight.setFlightNumber("123");
 		flight.setOrigin("CAN");
 
-		Set<Flight> flights = new HashSet<>();
-		flights.add(flight);
-
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
 		passenger.setPassengerType("P");
 		passenger.setFirstName("TEST");
 		passenger.setLastName("USER");
 
-		passengerService.setAllFlights(flights, passenger.getId());
 
-		Set<Passenger> passengers = new HashSet<Passenger>();
-		passengers.add(passenger);
-		flight.setPassengers(passengers);
+		IntegrationTestData integrationTestData = integrationTestBuilder
+                .passenger(passenger)
+                .flight(flight)
+                .build();
 
-		flightService.create(flight);
+        Set<Flight> flights = new HashSet<>();
+        flights.add(integrationTestData.getFlight());
+
+		Set<Passenger> passengers = new HashSet<>();
+		passengers.add(integrationTestData.getPassenger());
 
 		// execute flight query
 		FlightsPageDto result = queryService.runFlightQuery(queryRequest);
@@ -339,24 +349,19 @@ public class QueryBuilderServiceIT {
 		flight.setFlightNumber("1234");
 		flight.setOrigin("CAN");
 
-		Set<Flight> flights = new HashSet<>();
-		flights.add(flight);
-
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
 		passenger.setPassengerType("P1");
 		passenger.setFirstName("TEST1");
 		passenger.setLastName("USER1");
 
-		passengerService.setAllFlights(flights, passenger.getId());
+		//get objects in hibernate by building test.
+        integrationTestBuilder
+                .passenger(passenger)
+                .flight(flight)
+                .build();
 
-		Set<Passenger> passengers = new HashSet<Passenger>();
-		passengers.add(passenger);
-		flight.setPassengers(passengers);
-
-		flightService.create(flight);
-
-		// execute flight query
+        // execute flight query
 		PassengersPageDto result = queryService.runPassengerQuery(queryRequest);
 
 		assertNotNull(result);

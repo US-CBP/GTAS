@@ -26,8 +26,8 @@ public class PassengerRepositoryIT {
     private static final Logger logger = LoggerFactory
             .getLogger(PassengerRepositoryIT.class);
 
-    //@Test
-    //@Transactional
+    @Test
+    @Transactional
     public void testRetrieveNotNullIdTagPax() {
 
     }

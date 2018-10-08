@@ -6,18 +6,9 @@
 package gov.gtas.testdatagen;
 
 import java.text.ParseException;
+import java.util.Date;
 
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Document;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.Seat;
+import gov.gtas.model.*;
 import gov.gtas.util.DateCalendarUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +21,15 @@ public class PnrDataGenerator {
     public static final long PNR_ID2 = 251L;
     public static final String PNR_ATTR_CARRIER2 = "AA";
     public static final String PNR_ATTR_RECORD_LOCATOR2 = "MNP32556191";
-    
+
+    public static final long PNR_PASSENGER1_ID = 5123L;
+    public static final long PNR_PASSENGER2_ID = 5124L;
+    public static final long PNR_PASSENGER3_ID = 5125L;
+    public static final long PNR_PASSENGER4_ID = 5126L;
+    public static final long PNR_PASSENGER5_ID = 5127L;
+    public static final long PNR_PASSENGER6_ID = 5128L;
+
+
     public static final String PNR_PASSENGER1 = "C,Actius,Ghoulish,Boozer,CAN,2012-05-01,11A";//pnr1
     public static final String PNR_PASSENGER2 = "P,Bilbo,,Baggins,CAN,2013-06-30,22B";//pnr1
     public static final String PNR_PASSENGER3 = "P,Kilmer,Gaunt,Baggins,CAN,2014-01-30,33C";//pnr1
@@ -77,6 +76,19 @@ public class PnrDataGenerator {
             addPassenger(pnr, 2, flight);
             addPassenger(pnr, 3, flight);
             addPassenger(pnr, 4, flight);
+
+            pnr.setCreateDate(new Date());
+            pnr.setFilePath("testingPath");
+            pnr.setStatus(MessageStatus.LOADED);
+            Long num = 1L;
+            for (Passenger p : pnr.getPassengers()) {
+                for (Document d : p.getDocuments()) {
+                    d.setPassenger(p);
+                    d.setDocumentType("Testing");
+                    d.setDocumentNumber(num.toString());
+                    num++;
+                }
+            }
         } catch (Exception ex) {
             logger.error("error creating test pnr", ex);
         }
@@ -95,8 +107,25 @@ public class PnrDataGenerator {
             addFrequentFlyer(pnr, 2);
 
             Flight flight = addFlight(pnr, 2);
+            addPassenger(pnr, 1, flight);
+            addPassenger(pnr, 2, flight);
+            addPassenger(pnr, 3, flight);
+            addPassenger(pnr, 4, flight);
             addPassenger(pnr, 5, flight);
             addPassenger(pnr, 6, flight);
+
+            pnr.setCreateDate(new Date());
+            pnr.setFilePath("testingPath");
+            pnr.setStatus(MessageStatus.LOADED);
+            Long num = 1L;
+            for (Passenger p : pnr.getPassengers()) {
+                for (Document d : p.getDocuments()) {
+                    d.setPassenger(p);
+                    d.setDocumentType("Testing");
+                    d.setDocumentNumber(num.toString());
+                    num++;
+                }
+            }
         } catch (Exception ex) {
             logger.error("error creating test pnr2", ex);
         }
@@ -223,7 +252,6 @@ public class PnrDataGenerator {
             String[] params = PNR_FREQUENT_FLYER1.split(",");
             ff.setCarrier(params[0].toUpperCase());
             ff.setNumber(params[1]);
-            ff.setId(1L);
             pnr.addFrequentFlyer(ff);
             break;
         case 2:
@@ -231,7 +259,6 @@ public class PnrDataGenerator {
             params = PNR_FREQUENT_FLYER2.split(",");
             ff.setCarrier(params[0].toUpperCase());
             ff.setNumber(params[1]);
-            ff.setId(2L);
             pnr.addFrequentFlyer(ff);
             break;
         }
@@ -239,22 +266,22 @@ public class PnrDataGenerator {
     private static void addPassenger(Pnr pnr, int indx, Flight flight) throws ParseException {
         switch (indx) {
         case 1:
-            configurePassenger(1L, pnr, flight, PNR_PASSENGER1);
+            configurePassenger(PNR_PASSENGER1_ID, pnr, flight, PNR_PASSENGER1);
             break;
         case 2:
-            configurePassenger(2L, pnr, flight, PNR_PASSENGER2);
+            configurePassenger(PNR_PASSENGER2_ID, pnr, flight, PNR_PASSENGER2);
             break;
         case 3:
-            configurePassenger(3L, pnr, flight, PNR_PASSENGER3);
+            configurePassenger(PNR_PASSENGER3_ID, pnr, flight, PNR_PASSENGER3);
             break;
         case 4:
-            configurePassenger(4L, pnr, flight, PNR_PASSENGER4);
+            configurePassenger(PNR_PASSENGER4_ID, pnr, flight, PNR_PASSENGER4);
             break;
         case 5:
-            configurePassenger(5L, pnr, flight, PNR_PASSENGER5);
+            configurePassenger(PNR_PASSENGER5_ID, pnr, flight, PNR_PASSENGER5);
             break;
         case 6:
-            configurePassenger(6L, pnr, flight, PNR_PASSENGER6);
+            configurePassenger(PNR_PASSENGER6_ID, pnr, flight, PNR_PASSENGER6);
             break;
         }
     }
@@ -267,7 +294,7 @@ public class PnrDataGenerator {
         p.setFirstName(params[1].toUpperCase());
         p.setMiddleName(params[2].toUpperCase());
         p.setLastName(params[3].toUpperCase());
-        p.setId(id);
+
         //p.getFlights().add(flight);
         
         addDocumentToPassenger(p, params[4], params[5]);
@@ -304,7 +331,10 @@ public class PnrDataGenerator {
             String[] params = PNR_FLIGHT1.split(",");
             flight.setOrigin(params[0]);
             flight.setDestination(params[1]);
-            flight.setId(1L);
+            flight.setFlightNumber("5555");
+            flight.setCarrier("UA");
+            flight.setDirection("N");
+            flight.setFlightDate(new Date());
             pnr.getFlights().add(flight);
             break;
         case 2:
@@ -312,7 +342,11 @@ public class PnrDataGenerator {
             params = PNR_FLIGHT2.split(",");
             flight.setOrigin(params[0]);
             flight.setDestination(params[1]);
-            flight.setId(2L);
+            flight.setFlightNumber("5123");
+            flight.setCarrier("AA");
+            flight.setDirection("S");
+            flight.setFlightDate(new Date());
+
             pnr.getFlights().add(flight);
             break;
         }

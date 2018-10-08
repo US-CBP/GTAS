@@ -129,13 +129,6 @@ public class Flight extends BaseEntityAudit {
         flightService.setSinglePassenger(passenger.id, this.id);
     }*/
 
-    public Set<Passenger> getPassengers() {
-        return null;
-    }
-    
-    public void setPassengers(Set<Passenger> passengers) {
-       
-    }
 
 	public String getFlightNumber() {
         return flightNumber;
