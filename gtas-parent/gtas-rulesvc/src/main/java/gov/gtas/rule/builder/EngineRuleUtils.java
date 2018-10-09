@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility functions to construct Drools rules
@@ -50,6 +52,9 @@ public class EngineRuleUtils {
      * @throws ParseException
      *             parse exception.
      */
+    
+    private static final Logger logger = LoggerFactory
+			.getLogger(EngineRuleUtils.class);
     public static Rule createEngineRule(List<QueryTerm> ruleData,
             UdrRule parent, int indx) {
 
@@ -66,6 +71,7 @@ public class EngineRuleUtils {
         List<String> causes = ruleConditionBuilder.addRuleAction(stringBuilder,
                 parent, ret, RuleTemplateConstants.PASSENGER_VARIABLE_NAME);
 
+        logger.info("\nDRL string for UDR rule: \n" + stringBuilder.toString() + "\n\n");
         ret.setRuleDrl(stringBuilder.toString());
         ret.addRuleCriteria(causes);
 
