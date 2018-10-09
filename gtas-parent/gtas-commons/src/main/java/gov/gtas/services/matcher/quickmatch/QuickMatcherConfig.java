@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,12 +16,12 @@ public class QuickMatcherConfig {
 
 	enum AccuracyMode {
 
-		HIGH_RECALL("HighRecall"), BALANCED("Balanced"), BALANCED_WITH_TEXT_DISTANCE(
-				"BalancedWithTextDistance"), HIGH_PRECISION("HighPrecision"), GTAS_DEFAULT("GtasDefault");
+		HIGH_RECALL("highRecall"), BALANCED("balanced"), BALANCED_WITH_TEXT_DISTANCE(
+				"balancedWithTextDistance"), HIGH_PRECISION("highPrecision"), GTAS_DEFAULT("gtasDefault");
 
 		private String mode;
 
-		private AccuracyMode(final String value) {
+		AccuracyMode(final String value) {
 			this.mode = value;
 		}
 

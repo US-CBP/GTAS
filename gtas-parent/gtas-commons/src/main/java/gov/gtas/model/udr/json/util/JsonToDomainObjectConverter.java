@@ -10,10 +10,10 @@ import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.RuleCat;
-import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.RuleMeta;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.MetaData;
+import gov.gtas.model.udr.json.MetaDataBuilder;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.UdrSpecification;
 
@@ -84,7 +84,7 @@ public class JsonToDomainObjectConverter {
      *             on error
      */
     public static byte[] convertQueryObjectToBlob(QueryObject qObj)
-            throws IOException, ClassNotFoundException {
+            throws IOException {
         if (qObj != null) {
             final ByteArrayOutputStream bos = new ByteArrayOutputStream();
             final GZIPOutputStream gzipOutStream = new GZIPOutputStream(bos);
@@ -128,20 +128,34 @@ public class JsonToDomainObjectConverter {
     /**
      * Creates a JSON meta data object from the meta data information in a
      * domain UDR rule object.
-     * 
-     * @param uRule
-     *            the domain UDR rule object.
+     *
      * @return JSON meta data object (i.e., the summary item)
      */
     private static MetaData createMetadataJson(String authorUserId, RuleMeta ruleMeta) {
-        
-        final MetaData ret = new MetaData(ruleMeta.getTitle(),
-                ruleMeta.getDescription(), ruleMeta.getStartDt(), authorUserId);
 
-        ret.setEnabled(ruleMeta.getEnabled() == YesNoEnum.Y ? true : false);
-        ret.setEndDate(ruleMeta.getEndDt());
+        MetaDataBuilder metaDataBuilder = new MetaDataBuilder();
+        return   metaDataBuilder
+                .title(ruleMeta.getTitle())
+                .description(ruleMeta.getDescription())
+                .startDate(ruleMeta.getStartDt())
+                .author(authorUserId)
+                .enabled(ruleMeta.getEnabled() == YesNoEnum.Y)
+                .endDate(ruleMeta.getEndDt())
+                .ruleCat(getRuleId(ruleMeta))
+                .build();
+    }
 
-        return ret;
+    private static Long getRuleId(RuleMeta ruleMeta) {
+        Long ruleCatID = null;
+        if (ruleMeta.getRuleCategories() != null && !ruleMeta.getRuleCategories().isEmpty()) {
+            ruleCatID = ruleMeta.getRuleCategories()
+                    .stream()
+                    .filter(ruleCat -> ruleCat.getId() != null)
+                    .findFirst()
+                    .map(RuleCat::getId)
+                    .orElse(null);
+        }
+        return ruleCatID;
     }
 
     /**
@@ -200,12 +214,6 @@ public class JsonToDomainObjectConverter {
      * 
      * @param id
      *            the Id of the domain UDR Rule object.
-     * @param title
-     *            the title of the rule.
-     * @param descr
-     *            the rule description.
-     * @param enabled
-     *            enabled state of the rule.
      * @return the UDR rule domain object.
      */
     private static UdrRule createUdrRule(Long id, RuleMeta meta,

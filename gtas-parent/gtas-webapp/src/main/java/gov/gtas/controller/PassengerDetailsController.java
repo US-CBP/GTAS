@@ -8,7 +8,6 @@ package gov.gtas.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -34,8 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.google.common.base.Strings;
-
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.lookup.DispositionStatus;
@@ -50,8 +47,6 @@ import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
-import gov.gtas.vo.BaseVo;
-import gov.gtas.vo.MessageVo;
 import gov.gtas.vo.passenger.AddressVo;
 import gov.gtas.vo.passenger.AgencyVo;
 import gov.gtas.vo.passenger.ApisMessageVo;
@@ -61,7 +56,6 @@ import gov.gtas.vo.passenger.CreditCardVo;
 import gov.gtas.vo.passenger.DispositionVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.EmailVo;
-import gov.gtas.vo.passenger.FlightHistoryVo;
 import gov.gtas.vo.passenger.FlightLegVo;
 import gov.gtas.vo.passenger.FlightVo;
 import gov.gtas.vo.passenger.FrequentFlyerVo;
@@ -193,7 +187,15 @@ public class PassengerDetailsController {
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
 				pnrSeatList.addAll(seatRepository.findByFlightIdAndPassengerIdNotApis(Long.parseLong(flightId), p.getId()));
+				FlightPax flightPax = getPnrFlightPax(p, flight);
+				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
+				bagVoOptional.ifPresent(tempVo::addBag);
 			}
+
+			FlightPax mainPassengerFlightPax = getPnrFlightPax(t, flight);
+			Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
+			bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
+
 			for (Seat s : pnrSeatList) {
 				SeatVo seatVo = new SeatVo();
 				seatVo.setFirstName(s.getPassenger().getFirstName());
@@ -202,19 +204,7 @@ public class PassengerDetailsController {
 				seatVo.setFlightNumber(s.getFlight()
 						.getFullFlightNumber());
 				tempVo.addSeat(seatVo);
-			}			
-			int bagCount=0;
-			for(Bag b: bagList ) {
-				if(b.getData_source().equalsIgnoreCase("pnr")){
-					BagVo bagVo = new BagVo();
-					bagVo.setBagId(b.getBagId());
-					bagVo.setData_source(b.getData_source());
-					bagVo.setDestination(b.getDestinationAirport());
-					tempVo.addBag(bagVo);
-					bagCount=bagCount+1;
-				}
 			}
-			tempVo.setBagCount(bagCount);
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
@@ -287,6 +277,47 @@ public class PassengerDetailsController {
 		}
 		return vo;
 	}
+
+
+
+	private FlightPax getPnrFlightPax(Passenger p, Flight flight) {
+		FlightPax flightPax;
+		if (p.getFlightPaxList() != null && !p.getFlightPaxList().isEmpty()) {
+			flightPax = p.getFlightPaxList()
+					.stream()
+					.filter(fp -> isPnr(fp, flight))
+					.findFirst()
+					.orElse(null);
+		} else {
+			flightPax = null;
+		}
+		return flightPax;
+	}
+
+	private boolean isPnr(FlightPax fp, Flight flight) {
+		return fp.getMessageSource() != null
+				&& fp.getMessageSource().equalsIgnoreCase("PNR")
+				&& fp.getFlight().equals(flight);
+	}
+
+	private Optional<BagVo> getBagOptional(FlightPax fp) {
+		Optional<BagVo> bagVoOptional;
+		if (fp != null && fp.getBagCount() > 0) {
+			BagVo bagVo = new BagVo();
+			bagVo.setBag_count(fp.getBagCount());
+			bagVo.setAverage_bag_weight(fp.getAverageBagWeight());
+			bagVo.setBag_weight(fp.getBagWeight());
+			bagVo.setData_source(fp.getMessageSource());
+			bagVo.setPassFirstName(fp.getPassenger().getFirstName());
+			bagVo.setPassLastName(fp.getPassenger().getLastName());
+			bagVo.setData_source(fp.getMessageSource());
+			bagVoOptional = Optional.of(bagVo);
+		} else {
+			bagVoOptional = Optional.empty();
+		}
+		return bagVoOptional;
+	}
+
 
 	/**
 	 * Gets the travel history by pnr id and pnr ref.
@@ -604,7 +635,9 @@ public class PassengerDetailsController {
 			final String CC = "FOP";
 			final String FF = "FTI";
 			final String BAG = "TBD";
-					
+			final String TIF = "TIF";
+
+			String tifSegment = "";
 			while (_tempStr.hasMoreTokens()) {
 				String currString = _tempStr.nextToken();
 				StringBuilder segment = new StringBuilder();
@@ -669,12 +702,20 @@ public class PassengerDetailsController {
 						}
 					}
 				}
-				//Bag
+
+				/* GR.7 TIF - the checked-in name.
+				Used to link bags to passengers.*/
+				if (currString.contains(TIF)) {
+					tifSegment = currString;
+				}
+
+//             Bag
 				if (currString.contains(BAG)) {
-					for(BagVo b: targetVo.getBags()) {
-						if(currString.contains(b.getBagId())) {
+					for (BagVo b : targetVo.getBags()) {
+						if (isRelatedToTifPassenger(tifSegment, b)) {
 							segment.append(BAG);
-							segment.append(b.getBagId());
+							segment.append(b.getPassFirstName());
+							segment.append(b.getPassLastName());
 							segment.append(" ");
 						}
 					}
@@ -728,7 +769,15 @@ public class PassengerDetailsController {
 			}
 			targetVo.setSegmentList(segmentList);
 		}
-	}	
+	}
+
+	private boolean isRelatedToTifPassenger(String tifSegment, BagVo b) {
+		return b.getData_source().equalsIgnoreCase("PNR") &&
+				b.getPassFirstName() != null &&
+				tifSegment.contains(b.getPassFirstName()) &&
+				b.getPassLastName() != null &&
+				tifSegment.contains(b.getPassLastName());
+	}
 
 	/**
 	 * 

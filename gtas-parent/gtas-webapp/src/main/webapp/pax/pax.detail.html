@@ -722,31 +722,31 @@
                 <!--Baggage!-->
                 <div class="cbp-card-container gtas-card-container full-width ">
                   <div class="cbp-card cbp-card-shadow">
-                    <h3 class="h-label no-margin-top" >
-                      Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount?passenger.pnrVo.totalbagCount:0}})
-                      <span class="right fnt-small">Passenger Baggage Count ({{passenger.pnrVo.bagCount}})
-                      Total Weight in kgs ({{passenger.pnrVo.baggageWeight}})
-                      </span>
+                    <h3 class="h-label no-margin-top">
+                      Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount ? passenger.pnrVo.totalbagCount:0}})
+                      <span class="right fnt-small">PNR Total Baggage Weight In Kilograms ({{passenger.pnrVo.baggageWeight}})</span>
                     </h3>
                     <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md two-table">
-                      <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
-                        <thead>
-                          <tr>
-                            <th>Bag ID</th>
-                            <th>Destination</th>
-                          </tr>
+                      <table class="cbp-table mdl-js-data-table floating-table-header">
+                        <thead aria-hidden="true">
+                        <tr>
+                          <th>Last Name</th>
+                          <th>First Name</th>
+                          <th>Bag Count</th>
+                          <th>Bag Weight</th>
+                          <th>Bag Average Weight</th>
+                        </tr>
                         </thead>
+                        <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body">
+                        <tr ng-repeat="bag in passenger.pnrVo.bags" ng-click="highlightClass('TBD'+bag.passFirstName+bag.passLastName)">
+                          <td>{{bag.passLastName}}</td>
+                          <td>{{bag.passFirstName}}</td>
+                          <td>{{bag.bag_count}}</td>
+                          <td>{{bag.bag_weight}}</td>
+                          <td>{{bag.average_bag_weight}}</td>
+                        </tr>
+                        </tbody>
                       </table>
-                      <div class="floating-table-body">
-                        <table class="cbp-table-selectable mdl-js-data-table">
-                          <tbody>
-                            <tr ng-repeat="bag in passenger.pnrVo.bags" ng-click="highlightClass('TBD'+bag.bagId)">
-                              <td>{{bag.bagId}}</td>
-                              <td>{{bag.destination}}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </div>
                   </div>
                 </div>
