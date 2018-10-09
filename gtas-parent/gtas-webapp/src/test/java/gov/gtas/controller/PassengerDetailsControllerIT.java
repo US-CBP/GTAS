@@ -7,7 +7,6 @@
 package gov.gtas.controller;
 
 import gov.gtas.IntegrationTestBuilder;
-import gov.gtas.IntegrationTestBuilder.MessageTypeGenerated;
 import gov.gtas.IntegrationTestData;
 import gov.gtas.common.WebAppConfig;
 import gov.gtas.controller.config.TestMvcRestServiceWebConfig;
@@ -63,7 +62,7 @@ public class PassengerDetailsControllerIT {
     @Transactional
     public void setUp() {
         IntegrationTestData integrationTestData = integrationTestBuilder
-                .testDataType(MessageTypeGenerated.BOTH)
+                .testDataType(IntegrationTestBuilder.MessageTypeGenerated.BOTH)
                 .build();
 
         flight = integrationTestData.getFlight();

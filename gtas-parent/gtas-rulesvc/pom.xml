@@ -107,6 +107,14 @@
             <groupId>org.kie</groupId>
             <artifactId>kie-internal</artifactId>
         </dependency>
+        <dependency>
+            <groupId>gov.gtas</groupId>
+            <artifactId>gtas-commons</artifactId>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <version>${gtas-commons.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

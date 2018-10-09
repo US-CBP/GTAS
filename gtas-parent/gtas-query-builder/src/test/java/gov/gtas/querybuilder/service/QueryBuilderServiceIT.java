@@ -7,6 +7,9 @@ package gov.gtas.querybuilder.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import gov.gtas.IntegrationTestBuilder;
+import gov.gtas.IntegrationTestData;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.enumtype.EntityEnum;

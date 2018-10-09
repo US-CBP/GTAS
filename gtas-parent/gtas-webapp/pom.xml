@@ -21,6 +21,7 @@
         <rest-assured.version>2.4.0</rest-assured.version>
         <spring-csrf-token-filter>1.1</spring-csrf-token-filter>
         <maven.exec.skip>false</maven.exec.skip> <!-- default -->
+        <gtas-commons.version>0.1-SNAPSHOT</gtas-commons.version>
     </properties>
 
     <dependencies>
@@ -192,6 +193,14 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sqs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>gov.gtas</groupId>
+            <artifactId>gtas-commons</artifactId>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <version>${gtas-commons.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
