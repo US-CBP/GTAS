@@ -14,6 +14,7 @@ public enum DocumentMapping implements IEntityMapping {
     ISSUANCE_DATE ("issuanceDate", "Issuance Date", TypeEnum.DATE.getType()),
     DOCUMENT_NUMBER ("documentNumber", "Number", TypeEnum.STRING.getType()),
     DOCUMENT_TYPE ("documentType", "Type", TypeEnum.STRING.getType()),
+    DOCUMENT_WATCHLIST_CATEGORY ("categoryId", "Category", TypeEnum.INTEGER.getType()),
     DOCUMENT_OWNER_ID ("passenger.id", "Owner Id", TypeEnum.STRING.getType(), false);
     
     private String fieldName;

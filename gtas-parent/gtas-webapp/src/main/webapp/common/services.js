@@ -694,6 +694,15 @@
                                 cellTemplate: "<md-button class=\"md-primary\"  ng-click=\"grid.appScope.editRecord(row.entity)\" style=\"min-width: 0; margin: 0 auto; width: 100%;\" >{{COL_FIELD}}</md-button>",
                                 "type": "string"
                             }
+                            ,
+                            {
+                                field: "categoryId",
+                                name: "categoryId",
+                                //displayName: "Number",
+                                displayName: 'Category', headerCellFilter: 'translate',
+                                cellTemplate: "<md-button class=\"md-primary\"  ng-click=\"grid.appScope.editRecord(row.entity)\" style=\"min-width: 0; margin: 0 auto; width: 100%;\" >{{grid.appScope.categories[COL_FIELD]}}</md-button>",
+                                "type": "integer"
+                            }
                         ],
                         PASSENGER: [
                             {
@@ -719,6 +728,15 @@
                                 displayName: 'pass.lastname', headerCellFilter: 'translate',
                                 cellTemplate: "<md-button class=\"md-primary\"  ng-click=\"grid.appScope.editRecord(row.entity)\" style=\"min-width: 0; margin: 0 auto; width: 100%;\" >{{COL_FIELD}}</md-button>",
                                 "type": "string"
+                            }
+                            ,
+                            {
+                                field: "categoryId",
+                                name: "categoryId",
+                                //displayName: "Number",
+                                displayName: 'Category', headerCellFilter: 'translate',
+                                cellTemplate: "<md-button class=\"md-primary\"  ng-click=\"grid.appScope.editRecord(row.entity)\" style=\"min-width: 0; margin: 0 auto; width: 100%;\" >{{grid.appScope.categories[COL_FIELD]}}</md-button>",
+                                "type": "integer"
                             }
                         ]
                     }
@@ -931,6 +949,14 @@
                 createListType: function (listName, columns) {
                     //watchlist.types[listName] = {columns: columns, data: []};
                     //return watchlist.types;
+                },
+                getWatchlistCategories: function(){
+                	var request = $http({
+                        method: "get",
+                        url: baseUrl + 'watchlistCategories'
+                    });
+
+                    return (request.then(handleSuccess, handleError));
                 }
             };
         })

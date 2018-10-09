@@ -1,0 +1,2 @@
+insert into watch_list_category (`id`,`name`,`description`) values(1, 'Stolen Passport','Stolen Passport');
+insert into watch_list_category (`id`,`name`,`description`) values(2, 'Lost passport','Lost passport');

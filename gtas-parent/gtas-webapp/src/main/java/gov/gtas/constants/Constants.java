@@ -49,7 +49,7 @@ public final class Constants {
 	public static final String WL_DELETE = "/wl/{entity}/{name}";
 	public static final String WL_COMPILE = "/wl/compile";// GET
 	public static final String WL_TEST = "/testwl";// GET
-
+	public static final String WL_CATEGORY_GETALL = "/wl/watchlistCategories";
 	// Query Messages
 	public static final String QUERY_SAVED_SUCCESS_MSG = "Query saved successfully";
 	public static final String QUERY_EDITED_SUCCESS_MSG = "Query updated successfully";
