@@ -32,6 +32,11 @@ public class RuleTemplateConstants {
     public static final String LINK_PNR_ID = "pnrId";
     public static final String LINK_ATTRIBUTE_ID = "linkAttributeId";
     public static final String BOOKING_DETAIL_VARIABLE_NAME = "$bl";
+    public static final String PAYMENT_FORM_VARIABLE_NAME = "$pf";
+    public static final String PAYMENT_FORM_ENTITY_NAME = "PaymentForm";
+    public static final String PAYMENT_TYPE_ATTRIBUTE_NAME = "paymentType";
+    public static final String PAYMENT_FORM_FIELD_ALIAS = "paymentForms";
+    
     private RuleTemplateConstants() {
         // to prevent instantiation.
     }

@@ -24,6 +24,7 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.rule.builder.EntityConditionBuilder;
 import gov.gtas.rule.builder.PassengerConditionBuilder;
+import gov.gtas.rule.builder.PaymentFormConditionBuilder;
 import gov.gtas.rule.builder.RuleTemplateConstants;
 
 import java.text.ParseException;
@@ -152,7 +153,7 @@ public class PnrRuleConditionBuilder {
         return linkStringBuilder.toString();
     }
 
-    private void addLinkCondition(final StringBuilder parentStringBuilder,
+    public void addLinkCondition(final StringBuilder parentStringBuilder,
             final String linkVarName, final String linkClassName,
             final String pnrVarName, final EntityConditionBuilder entBuilder) {
         parentStringBuilder.append(linkVarName)
@@ -229,8 +230,8 @@ public class PnrRuleConditionBuilder {
         try {
             switch (entity) {
             case PNR:
-                pnrConditionBuilder.addCondition(opCode, trm.getField(),
-                        attributeType, trm.getValue());
+                   pnrConditionBuilder.addCondition(opCode, trm.getField(),
+                           attributeType, trm.getValue());
                 break;
             case ADDRESS:
                 addressConditionBuilder.addCondition(opCode, trm.getField(),
@@ -334,6 +335,5 @@ public class PnrRuleConditionBuilder {
     public BookingDetailConditionBuilder getBookingDetailConditionBuilder() {
         return bookingDetailConditionBuilder;
     }
-    
-    
+ 
 }

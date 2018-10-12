@@ -6,9 +6,14 @@
 package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
+
+import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -96,4 +101,15 @@ public interface WatchlistService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse deleteWatchlist(String userId, String wlName);
+	
+	public List<JsonLookupData> findWatchlistCategories();
+	
+	public void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId);
+	
+	public WatchlistItem fetchWatchlistItemById(Long watchlistItemId);
+	
+	public WatchlistCategory  fetchWatchlistCategoryById(Long categoryID);
+	
+	List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName);
+	
 }

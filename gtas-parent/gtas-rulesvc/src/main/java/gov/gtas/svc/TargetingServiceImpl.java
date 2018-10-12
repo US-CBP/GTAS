@@ -341,13 +341,13 @@ public class TargetingServiceImpl implements TargetingService {
                     int totalRulesFired = res.getTotalRulesFired();
                     List<String> ruleFireSequence = res.getRuleFiringSequence();
                     logger.info("Total UDR rules fired: " + totalRulesFired);
-                    logger.info("\n****************UDR Rule firing sequence***************************\n");
+                    logger.debug("\n****************UDR Rule firing sequence***************************\n");
                     for (String str : ruleFireSequence)
                     {
-                       logger.info("UDR Rule fired: " + str); 
+                       logger.debug("UDR Rule fired: " + str); 
                     }
 
-                    logger.info("\n\n**********************************************************************"); 
+                    logger.debug("\n\n**********************************************************************"); 
                 }
                 Bench.end("third", "executeRules invokeRuleEngine udrResult end");
 
@@ -732,7 +732,7 @@ public class TargetingServiceImpl implements TargetingService {
 		Passenger foundPassenger = passengerRepository.findOne(hitSummmaryVo
 				.getPassengerId());
 		if (foundPassenger != null) {
-			logger.info("Found passenger.");
+			logger.debug("Found passenger.");
 			if (!wVos.isEmpty()) {
 				if (!filteringWhitelist(wVos, foundPassenger)) {
 					hitsSummary.setPassenger(foundPassenger);
@@ -751,7 +751,7 @@ public class TargetingServiceImpl implements TargetingService {
 		Flight foundFlight = flightRepository.findOne(hitSummmaryVo
 				.getFlightId());
 		if (foundFlight != null) {
-			logger.info("Found flight.");
+			logger.debug("Found flight.");
 			hitsSummary.setFlight(foundFlight);
 		} else {
 			logger.debug("No flight found. --> ");
@@ -825,10 +825,10 @@ public class TargetingServiceImpl implements TargetingService {
 		logger.info("Entering createHitDetail().");
 		HitDetail hitDetail = new HitDetail();
 		if (hitDetailVo.getUdrRuleId() != null) {
-			logger.info("Set UDR Rule Id.");
+			logger.debug("Set UDR Rule Id.");
 			hitDetail.setRuleId(hitDetailVo.getUdrRuleId());
 		} else {
-			logger.info("Set Rule Id.");
+			logger.debug("Set Rule Id.");
 			hitDetail.setRuleId(hitDetailVo.getRuleId());
 		}
 

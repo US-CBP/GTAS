@@ -13,12 +13,14 @@
                     this.id = entity ? entity.id : null;
                     this.documentType = entity ? entity.documentType : null;
                     this.documentNumber = entity ? entity.documentNumber : null;
+                    this.categoryId = entity ? entity.categoryId : null;
                 },
                 Passenger: function (entity) {
                     this.id = entity ? entity.id : null;
                     this.firstName = entity ? entity.firstName : null;
                     this.lastName = entity ? entity.lastName : null;
                     this.dob = entity ? entity.dob : undefined;
+                    this.categoryId = entity ? entity.categoryId : null;
                 }
             },
             resetModels = function (m) {
@@ -121,6 +123,16 @@
             {id: "V", label: "VISA"}
         ];
 
+        $scope.categories = {};
+        watchListService.getWatchlistCategories().then(function(res){
+        	$scope.watchlistCategories =  res.data;
+        	$scope.watchlistCategories.forEach(function(item){
+        		
+        		$scope.categories[item.id]=item.label;
+        		
+        	});
+        });
+        
         watchlist.types = {
             "Document": {
                 entity: "DOCUMENT",
@@ -238,7 +250,7 @@
                         value = moment(value).format('YYYY-MM-DD');
                     }
                     terms.push({entity: entity, field: key, type: columnType, value: value});
-                }
+                }        
             });
             if (ready) {
                 watchListService[method](objectType, entity, $scope[objectType].id, terms).then(function (response) {

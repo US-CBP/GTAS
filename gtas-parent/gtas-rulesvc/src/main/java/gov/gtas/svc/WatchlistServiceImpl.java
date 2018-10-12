@@ -10,7 +10,9 @@ import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.error.ErrorHandler;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.error.WatchlistServiceErrorHandler;
+import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.model.lookup.WatchlistCategory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -20,8 +22,10 @@ import gov.gtas.services.watchlist.WatchlistPersistenceService;
 import gov.gtas.svc.util.WatchlistBuilder;
 import gov.gtas.svc.util.WatchlistServiceJsonResponseHelper;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -126,6 +130,42 @@ public class WatchlistServiceImpl implements WatchlistService {
                     null, null, "since it does not exist or has been deleted previously");
         }
     }
+
+	@Override
+	public List<JsonLookupData> findWatchlistCategories() {
+		// 
+		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream().map(w -> {
+			 return new JsonLookupData(w.getId(),w.getName(),w.getDescription());
+		}).collect(Collectors.toList());
+		
+		return result;
+	}
+
+	@Override
+	public void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId) {
+		//
+		WatchlistItem watchlistItem = this.fetchWatchlistItemById(watchlistItemId);
+		watchlistItem.setWatchlistCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));
+		this.watchlistPersistenceService.updateWatchlistItemCategory(watchlistItem);
+	}
+
+	@Override
+	public WatchlistItem fetchWatchlistItemById(Long watchlistItemId) {
+		// 
+		return this.watchlistPersistenceService.findWatchlistItemById(watchlistItemId);
+	}
+
+	@Override
+	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
+		//
+		return this.watchlistPersistenceService.fetchWatchlistCategoryById(categoryID);
+	}
+
+	@Override
+	public List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName) {
+		// TODO 
+		return this.watchlistPersistenceService.findItemsByWatchlistName(watchlistName);
+	}
 
 
 }

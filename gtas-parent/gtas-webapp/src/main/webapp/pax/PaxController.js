@@ -5,7 +5,7 @@
  */
 (function () {
     'use strict';
-    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
+    app.controller('PassengerDetailCtrl', function ($scope, $mdDialog,$mdSidenav,$timeout, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
         $scope.passenger = passenger.data;
         $scope.watchlistLinks = watchlistLinks.data;
         $scope.isLoadingFlightHistory = true;
@@ -16,7 +16,6 @@
         $scope.ruleCats=ruleCats.data;
         $scope.slides = [];
         $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
-
         $scope.getAttachment = function(paxId){
         	//TO-DO add specific pax-id here to grab from current passenger
         	paxDetailService.getPaxAttachments(paxId).then(function(data){
@@ -35,6 +34,12 @@
         		$scope.showAttachments(attList);
         	});
         };
+        
+        $scope.watchlistCategoryId;
+        
+        watchListService.getWatchlistCategories().then(function(res){
+        	$scope.watchlistCategories =  res.data;
+        });
 
         $scope.uploadAttachment = function(){
         	//TO-DO add specific pax information here as well as credentials of some kind to insure we don't get arbitrary uploads.
@@ -262,6 +267,7 @@
    		terms.push({entity: "PASSENGER", field: "firstName", type: "string", value: $scope.passenger.firstName});
    		terms.push({entity: "PASSENGER", field: "lastName", type: "string", value: $scope.passenger.lastName});
    		terms.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
+   		terms.push({entity: "PASSENGER", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
    		watchListService.addItem("Passenger", "PASSENGER", null, terms).then(function(){
    			terms = [];
    	    	//Add documentType and documentNumber to wlservice call
@@ -269,18 +275,30 @@
    	    		if(value.documentType === "P" || value.documentType === "V"){
    	    			terms.push({entity: "DOCUMENT", field: "documentType", type: "string", value: value.documentType});
    	        		terms.push({entity: "DOCUMENT", field: "documentNumber", type: "string", value: value.documentNumber});
+   	        		terms.push({entity: "DOCUMENT", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
    	   	    		watchListService.addItem("Document", "DOCUMENT", null, terms).then(function(response){
-   	   	    			//Compiles after each document add.
-   	   	    			watchListService.compile();
-   	   	    			//clear out terms list
-   	   	    			terms = [];
-   	   	    			spinnerService.hide('html5spinner');
+   	   	    			
+   	   	    			if(response.data.status=='FAILURE'){
+   	   	    				console.log(JSON.stringify(response));
+   	   	    			}else{
+	   	   	    			//Compiles after each document add.
+	   	   	    			watchListService.compile();
+	   	   	    			//clear out terms list
+	   	   	    			terms = [];
+	   	   	    			spinnerService.hide('html5spinner');
+	   	   	    			$mdSidenav('addWatchlist').close();
+   	   	    			}
    	   	    		});
    	   			}
    	   		});
    		});
     };
 
+    $scope.addToWatchlist = function(){
+    	$timeout(function () {
+        	$mdSidenav('addWatchlist').open();
+        });
+    }
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()
@@ -291,7 +309,7 @@
             .cancel('Cancel');
 
         $mdDialog.show(confirm).then(function () {
-            $scope.addEntityToWatchlist();
+           $scope.addEntityToWatchlist();
         }, function () {
             return false;
         });
