@@ -30,6 +30,7 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.FlightPax;
 import gov.gtas.model.FrequentFlyer;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PaymentForm;
 import gov.gtas.model.Phone;
 import gov.gtas.model.Pnr;
 import gov.gtas.model.Seat;
@@ -152,6 +153,7 @@ public class RuleEngineRequestBuilder {
             addPassengerObjects(pnr, pnr.getPassengers());
             addTravelAgencyObjects(pnr, pnr.getAgencies());
             addDwellTimeObjects(pnr, pnr.getDwellTimes());
+            addPaymentFormObjects(pnr.getPaymentForms());
             // add the passenger flight tuples
             if (pnr.getFlights() != null && pnr.getPassengers() != null) {
                 for (Flight flight : pnr.getFlights()) {
@@ -388,5 +390,23 @@ public class RuleEngineRequestBuilder {
             this.passengerLinkSet.add(link);
         }
 
+    }
+    
+    private void addPaymentFormObjects(final Collection<PaymentForm> paymentFormList)
+    {
+        boolean doProceed = true;
+        if (paymentFormList == null || paymentFormList.isEmpty())
+        {
+            doProceed = false;
+        }
+        
+        if (doProceed)
+        {
+            for (PaymentForm paymentForm : paymentFormList)
+            {
+              this.requestObjectList.add(paymentForm);  
+            }
+        }
+        
     }
 }

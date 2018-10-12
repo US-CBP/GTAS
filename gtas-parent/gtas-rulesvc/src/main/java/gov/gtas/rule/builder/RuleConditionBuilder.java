@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Generates the "when" part of a DRL rule.
@@ -42,6 +43,7 @@ public class RuleConditionBuilder {
     
     private BagConditionBuilder bagConditionBuilder;
     private FlightPaxConditionBuilder flightPaxConditionBuilder;
+    private PaymentFormConditionBuilder paymentFormConditionBuilder;
 
     private String passengerVariableName;
     private String flightVariableName;
@@ -88,6 +90,8 @@ public class RuleConditionBuilder {
         
         this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(
                 entityVariableNameMap);
+        
+        this.paymentFormConditionBuilder = new PaymentFormConditionBuilder(RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME);
     }
 
     /**
@@ -120,9 +124,11 @@ public class RuleConditionBuilder {
         parentStringBuilder.append(documentConditionBuilder.build());
         parentStringBuilder.append(passengerConditionBuilder.build());
         parentStringBuilder.append(flightConditionBuilder.build());
+        parentStringBuilder.append(paymentFormConditionBuilder.build());
         
         boolean isPassengerConditionCreated = !passengerConditionBuilder
                 .isEmpty() | !flightConditionBuilder.isEmpty();
+        
         pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder,
                 isPassengerConditionCreated, passengerConditionBuilder);
 
@@ -133,6 +139,7 @@ public class RuleConditionBuilder {
         apisSeatConditionBuilder.reset();
         bagConditionBuilder.reset();
         flightConditionBuilder.reset();
+        paymentFormConditionBuilder.reset();
 
     }
 
@@ -240,9 +247,17 @@ public class RuleConditionBuilder {
             	break;
             default:
                 // try and add PNR related conditions if they exist.
-                if(entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)) {
+                if(entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)) 
+                {
                     pnrSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                } else {
+                }
+                else if (entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.PAYMENT_FORM_FIELD_ALIAS))
+                {
+                    paymentFormConditionBuilder.addCondition(opCode,RuleTemplateConstants.PAYMENT_TYPE_ATTRIBUTE_NAME,attributeType, trm.getValue());
+                    pnrRuleConditionBuilder.getPnrConditionBuilder().addConditionAsString("id == " + RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME + ".pnr.id");
+                }              
+                else 
+                {
                    pnrRuleConditionBuilder.addRuleCondition(entity, attributeType,
                         opCode, trm);
                 }
