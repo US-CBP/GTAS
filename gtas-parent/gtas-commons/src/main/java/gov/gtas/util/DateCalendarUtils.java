@@ -129,7 +129,7 @@ public class DateCalendarUtils {
 
 	public static String formatJsonDateTime(final Date date) {
 		// Display current time in 12 hour format with AM/PM
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		return format.format(date);
 	}
     

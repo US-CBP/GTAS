@@ -5,7 +5,11 @@
  */
 package gov.gtas.vo.passenger;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class FlightLegVo {
+    
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
     
     private String flightReference;
     private String pnrReference;
@@ -15,7 +19,9 @@ public class FlightLegVo {
     private String originAirport;
     private String destinationAirport;
     private String flightDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private String etd;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private String eta;
     private String flightId;
     private String direction;
