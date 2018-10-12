@@ -8,7 +8,11 @@ package gov.gtas.controller;
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
+import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.WatchlistCategory;
 import gov.gtas.services.HitsSummaryService;
+import gov.gtas.services.RuleCatService;
+import gov.gtas.services.watchlist.WatchlistCatService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +38,12 @@ public class HitsSummaryController {
 
     @Autowired
     private HitsSummaryService hitsSummaryService;
+    
+    @Autowired
+    private RuleCatService ruleCatService;
+    
+    @Autowired
+    private WatchlistCatService watchlistCatService;
 
     @RequestMapping(value = "/hit/passenger", method = RequestMethod.GET)
     @Transactional
@@ -87,6 +97,25 @@ public class HitsSummaryController {
                 hdetailVo.setRuleDesc(htd.getDescription());
                 hdetailVo.getHitsDetailsList().add(htd);
                 hdetailVo.setRuleType(htd.getParent().getHitType());
+                try {
+                	String category = "";
+                	if(htd.getHitType()!=null && htd.getHitType().equals("R")) {
+                		RuleCat r = this.ruleCatService.findRuleCatByCatId(this.ruleCatService.fetchRuleCatIdFromRuleId(htd.getRuleId()));
+                		if(r != null)
+                			category = r.getCategory();
+                	}
+                	else if (htd.getHitType()!=null && htd.getHitType().equals("P"))
+            		{
+                		WatchlistCategory c = this.watchlistCatService.findCatByWatchlistItemId(htd.getRuleId());
+                		if(c != null)
+                			category = c.getName();
+            		}
+                	//
+                	hdetailVo.setCategory(category);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 _tempMap.put(Integer.valueOf(i), hdetailVo);
             } else {
                 hdetailVo = _tempMap.get(Integer.valueOf(i));

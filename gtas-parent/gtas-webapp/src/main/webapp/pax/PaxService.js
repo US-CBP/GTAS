@@ -242,7 +242,9 @@
             	var ruleHitsList = [];
             	if(angular.isDefined(ruleSummaryHits) && ruleSummaryHits.data.length > 0){
             	  $.each(ruleSummaryHits.data, function(index,value){
-            		  ruleHitsList.push(value.hitsDetailsList[0]); //First object in this 'array' contains the values needed for the front-end display
+            		  var hitDetail = value.hitsDetailsList[0]; //First object in this 'array' contains the values needed for the front-end display
+            		  hitDetail.category = value.category;
+            		  ruleHitsList.push(hitDetail); 
             	  });
               	}
             	return ruleHitsList;
