@@ -106,5 +106,9 @@
             return function (hit) {
                 return hit ? 'fa fa-user' : '';
             };
+        }).filter('percent',function(){
+        	return function(p){
+        		return p ? p * 100 + "%" : p;
+        	}
         });
 }());
