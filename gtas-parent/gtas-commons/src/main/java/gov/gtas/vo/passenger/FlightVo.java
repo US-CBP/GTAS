@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import gov.gtas.vo.BaseVo;
 
 public class FlightVo extends BaseVo {
-    public static final String DATE_FORMAT = "yyyy-MM-dd hh:mm aaa";
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
     private static final SimpleDateFormat dtFormat = new SimpleDateFormat(DATE_FORMAT);
     
     private String flightId;
