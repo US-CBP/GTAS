@@ -196,18 +196,19 @@
                 <div class="cbp-card cbp-card-shadow">
                   <h3 class="h-label no-margin-top" >Hits Summary</h3>
                   <div class="panel-body flex flex-vert ie-fix-md">
-                    <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
+                    
+                    
+                      <table class="cbp-table-selectable mdl-js-data-table">
                       <thead>
                         <tr>
+                          <th>Category</th>
                           <th>Title</th>
                           <th>Conditions</th>
                         </tr>
                       </thead>
-                    </table>
-                    <div class="floating-table-body">
-                      <table class="cbp-table-selectable mdl-js-data-table">
                         <tbody>
                           <tr ng-repeat="j in ruleHits track by $index">
+                                <td>{{j.category}}</td>
                                 <td>{{j.title}}</td>
                                 <td>{{j.ruleConditions}}</td>
                             </tr>
@@ -216,7 +217,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
         	</div>
         	</div>

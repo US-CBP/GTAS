@@ -30,6 +30,8 @@ public class HitDetailVo {
     
     private String ruleType;
     
+    private String category;
+    
     private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
 
     private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
@@ -107,7 +109,15 @@ public class HitDetailVo {
         HitsRulesAndDetails = hitsRulesAndDetails;
     }
 
-    @Override
+    public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
