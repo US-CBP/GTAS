@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.codec.language.DoubleMetaphone;
-import org.apache.lucene.search.spell.JaroWinklerDistance;
+import org.apache.lucene.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.constant.CommonErrorConstants;
@@ -28,6 +28,7 @@ import gov.gtas.model.PaxWatchlistLink;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
+import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.PassengerRepository;
@@ -39,9 +40,7 @@ import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.DerogResponse;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
-import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
-import gov.gtas.util.DateCalendarUtils;
 
 @Service
 public class MatchingServiceImpl implements MatchingService {
@@ -73,10 +72,37 @@ public class MatchingServiceImpl implements MatchingService {
 
 	private PaxWatchlistLinkVo convertToVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus,
 			Passenger passenger, WatchlistItem item) {
+		String firstName = ""; 
+		String lastName = "";
+		String dob = ""; 
+		try {
+			WatchlistItemSpec itemSpec = mapper.readValue(item.getItemData(), WatchlistItemSpec.class);
+			
+			WatchlistTerm[] items = itemSpec.getTerms();
+			for(int i=0; i< items.length; i++) {
+				if(items[i].getField().equals("firstName")) {
+					firstName=items[i].getValue();
+				}
+				
+				if(items[i].getField().equals("lastName")) {
+					lastName=items[i].getValue();
+				}
 
-		String firstName = passenger.getFirstName();
-		String lastName = passenger.getLastName();
-		String dob = DateCalendarUtils.formatJsonDate(passenger.getDob());
+				if(items[i].getField().equals("dob")) {
+					dob = items[i].getValue();
+				}
+			}
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 		return new PaxWatchlistLinkVo(percentMatch, lastRunTimestamp, verifiedStatus, passenger.getId(), item.getId(),
 				firstName, lastName, dob);
