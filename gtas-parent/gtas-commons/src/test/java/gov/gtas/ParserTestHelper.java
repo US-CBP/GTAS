@@ -1,4 +1,4 @@
-package gov.gtas.parsers;
+package gov.gtas;
 
 import org.springframework.core.io.ClassPathResource;
 
@@ -21,6 +21,10 @@ public interface ParserTestHelper {
         return Instant.ofEpochMilli(date.getTime())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+    }
+
+    default Date getDateFromLocalDate(LocalDate localDate) {
+        return java.sql.Date.valueOf(localDate);
     }
 
     default LocalDateTime getLocalDateTime(Date date) {

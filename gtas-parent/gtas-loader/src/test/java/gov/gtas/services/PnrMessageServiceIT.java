@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -131,5 +132,37 @@ public class PnrMessageServiceIT extends
 		this.message = new File(classLoader.getResource(
 				"pnr-messages/pnrMessageExample.txt").getFile());
 		svc.processMessage(this.message, new String[]{"placeholder"});
+	}
+
+
+	@Test()
+	@Ignore
+	@Transactional
+	public void testPnr2() {
+		ClassLoader classLoader = getClass().getClassLoader();
+		this.message = new File(classLoader.getResource(
+				"pnr-messages/maked_again_pnr20.txt").getFile());
+		svc.processMessage(this.message, new String[]{"placeholder"});
+	}
+
+
+	@Test()
+	@Ignore
+	@Transactional
+	public void testllPnrs() {
+		String filePath = "pnr-messages/pnr";
+		int badPnr = 0;
+		for (int i =1; i <= 20 ; i++) {
+			ClassLoader classLoader = getClass().getClassLoader();
+			String getThisfilePath = filePath + i + ".txt";
+			System.out.println(filePath);
+			this.message = new File(classLoader.getResource(
+					getThisfilePath).getFile());
+				svc.processMessage(this.message, new String[]{"placeholder"});
+				System.out.println("this message failed "  + i );
+		}
+
+		System.out.println("total bad pnr = " +badPnr);
+
 	}
 }

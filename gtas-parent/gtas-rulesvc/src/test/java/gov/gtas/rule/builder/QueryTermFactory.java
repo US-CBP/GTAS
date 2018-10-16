@@ -93,6 +93,12 @@ public class QueryTermFactory {
                             criteriaOperatorEnum,
                             valueArray,
                             TypeEnum.DATE);
+                case DOCUMENT_WATCHLIST_CATEGORY:
+                    return createQueryTerm(EntityEnum.DOCUMENT,
+                            documentMapping,
+                            criteriaOperatorEnum,
+                            new String[]{"1"},
+                            TypeEnum.INTEGER);
                 case ISSUANCE_COUNTRY:
                 case DOCUMENT_NUMBER:
                 case DOCUMENT_TYPE:
@@ -150,7 +156,7 @@ public class QueryTermFactory {
                 case ETA:
                 case ETD:
                 case FLIGHT_DATE:
-                    createQueryTerm(
+                    return createQueryTerm(
                             EntityEnum.FLIGHT,
                             flightMapping,
                             criteriaOperatorEnum,
@@ -336,7 +342,7 @@ public class QueryTermFactory {
                             TypeEnum.STRING);
             }
         }
-        throw new AssertionError("iEntityMapping not implemented");
+        throw new AssertionError("iEntityMapping: " + iEntityMapping.getClass() + ":" +iEntityMapping.getFriendlyName() + "  not implemented");
     }
 
     private boolean isTravelAgencyMapping(IEntityMapping iEntityMapping) {

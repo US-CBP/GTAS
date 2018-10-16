@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import gov.gtas.parsers.ParserTestHelper;
+import gov.gtas.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Test;
 

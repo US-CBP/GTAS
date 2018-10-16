@@ -25,6 +25,7 @@
     </dependencyManagement>
     <properties>
         <gtas-commons.version>0.1-SNAPSHOT</gtas-commons.version>
+        <gtas-loader.version>0.1-SNAPSHOT</gtas-loader.version>
     </properties>
 
     <dependencies>
@@ -113,6 +114,12 @@
             <classifier>tests</classifier>
             <type>test-jar</type>
             <version>${gtas-commons.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>gov.gtas</groupId>
+            <artifactId>gtas-loader</artifactId>
+            <version>${gtas-loader.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

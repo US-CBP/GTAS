@@ -12,7 +12,6 @@
     <artifactId>gtas-parsers</artifactId>
     <packaging>jar</packaging>
     <name>GTAS Parsers</name>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -118,7 +117,10 @@
         <dependency>
             <groupId>gov.gtas</groupId>
             <artifactId>gtas-commons</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <version>${gtas-commons.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
@@ -133,6 +135,7 @@
         <commons-io.version>2.5</commons-io.version>
         <commons-collections4.version>4.1</commons-collections4.version>
         <collections-generic.version>4.01</collections-generic.version>
+        <gtas-commons.version>0.1-SNAPSHOT</gtas-commons.version>
     </properties>
 
 

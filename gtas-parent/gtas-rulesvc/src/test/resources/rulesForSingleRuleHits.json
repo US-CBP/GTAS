@@ -1,0 +1,1028 @@
+{
+  "queryTerms": [
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "city",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "PARIS"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "country",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "HU"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "line1",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "1382"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "line2",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "THURLOW"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "line3",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "AVENUE"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "postalCode",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "361697898832"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Address",
+      "field": "state",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_STATE_EQUAL",
+        "Bar_STATE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "airline",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_AIRLINE_EQUAL",
+        "Bar_AIRLINE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "bagId",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_BAGID_EQUAL",
+        "Bar_BAGID_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "data_source",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DATA_SOURCE_EQUAL",
+        "Bar_DATA_SOURCE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "destination",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DESTINATION_EQUAL",
+        "Bar_DESTINATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "destinationAirport",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DESTINATIONAIRPORT_EQUAL",
+        "Bar_DESTINATIONAIRPORT_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "passenger.id",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "22"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Bag",
+      "field": "flight.id",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "123",
+        "321"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "BookingDetail",
+      "field": "origin",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ORIGIN_EQUAL",
+        "Bar_ORIGIN_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "BookingDetail",
+      "field": "destination",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DESTINATION_EQUAL",
+        "Bar_DESTINATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "CreditCard",
+      "field": "accountHolder",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ACCOUNTHOLDER_EQUAL",
+        "Bar_ACCOUNTHOLDER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "CreditCard",
+      "field": "expiration",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-02-11",
+        "2014-02-21"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "CreditCard",
+      "field": "number",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_NUMBER_EQUAL",
+        "Bar_NUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "CreditCard",
+      "field": "cardType",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CARDTYPE_EQUAL",
+        "Bar_CARDTYPE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "issuanceCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ISSUANCECOUNTRY_EQUAL",
+        "Bar_ISSUANCECOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "expirationDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-02-21",
+        "2014-03-03"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "issuanceDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-03-03",
+        "2014-03-13"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "documentNumber",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DOCUMENTNUMBER_EQUAL",
+        "Bar_DOCUMENTNUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "documentType",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DOCUMENTTYPE_EQUAL",
+        "Bar_DOCUMENTTYPE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Document",
+      "field": "passenger.id",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "132",
+        "123"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "DwellTime",
+      "field": "location",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_LOCATION_EQUAL",
+        "Bar_LOCATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "DwellTime",
+      "field": "dwellTime",
+      "type": "double",
+      "operator": "EQUAL",
+      "value": [
+        "10",
+        "20"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Email",
+      "field": "address",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ADDRESS_EQUAL",
+        "Bar_ADDRESS_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Email",
+      "field": "domain",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DOMAIN_EQUAL",
+        "Bar_DOMAIN_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "destination",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DESTINATION_EQUAL",
+        "Bar_DESTINATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "origin",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ORIGIN_EQUAL",
+        "Bar_ORIGIN_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "carrier",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CARRIER_EQUAL",
+        "Bar_CARRIER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "destinationCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DESTINATIONCOUNTRY_EQUAL",
+        "Bar_DESTINATIONCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "originCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ORIGINCOUNTRY_EQUAL",
+        "Bar_ORIGINCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "direction",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DIRECTION_EQUAL",
+        "Bar_DIRECTION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "etaDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-03-13",
+        "2014-03-23"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "etdDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-03-23",
+        "2014-04-02"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "flightDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-04-02",
+        "2014-04-12"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "flightNumber",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_FLIGHTNUMBER_EQUAL",
+        "Bar_FLIGHTNUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "operatingFlight",
+      "type": "boolean",
+      "operator": "EQUAL",
+      "value": [
+        "true"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Flight",
+      "field": "marketingFlight",
+      "type": "boolean",
+      "operator": "EQUAL",
+      "value": [
+        "true"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "portOfFirstArrival",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_PORTOFFIRSTARRIVAL_EQUAL",
+        "Bar_PORTOFFIRSTARRIVAL_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "residenceCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_RESIDENCECOUNTRY_EQUAL",
+        "Bar_RESIDENCECOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "installationAddress",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_INSTALLATIONADDRESS_EQUAL",
+        "Bar_INSTALLATIONADDRESS_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "embarkation",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_EMBARKATION_EQUAL",
+        "Bar_EMBARKATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "debarkation",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DEBARKATION_EQUAL",
+        "Bar_DEBARKATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "reservationReferenceNumber",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_RESERVATIONREFERENCENUMBER_EQUAL",
+        "Bar_RESERVATIONREFERENCENUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "embarkationCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_EMBARKATIONCOUNTRY_EQUAL",
+        "Bar_EMBARKATIONCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "debarkationCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DEBARKATIONCOUNTRY_EQUAL",
+        "Bar_DEBARKATIONCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "bagWeight",
+      "type": "double",
+      "operator": "EQUAL",
+      "value": [
+        "20",
+        "30"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "bagCount",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "30",
+        "40"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "averageBagWeight",
+      "type": "double",
+      "operator": "EQUAL",
+      "value": [
+        "40",
+        "50"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "headOfPool",
+      "type": "boolean",
+      "operator": "EQUAL",
+      "value": [
+        "true"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "passenger.id",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "123",
+        "123"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FlightPax",
+      "field": "flight.id",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "123",
+        "123"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FrequentFlyer",
+      "field": "carrier",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CARRIER_EQUAL",
+        "Bar_CARRIER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "FrequentFlyer",
+      "field": "number",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_NUMBER_EQUAL",
+        "Bar_NUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "age",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "50",
+        "60"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "citizenshipCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CITIZENSHIPCOUNTRY_EQUAL",
+        "Bar_CITIZENSHIPCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "debarkation",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DEBARKATION_EQUAL",
+        "Bar_DEBARKATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "debarkCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_DEBARKCOUNTRY_EQUAL",
+        "Bar_DEBARKCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "dob",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-04-12",
+        "2014-04-22"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "embarkation",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_EMBARKATION_EQUAL",
+        "Bar_EMBARKATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "embarkCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_EMBARKCOUNTRY_EQUAL",
+        "Bar_EMBARKCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "gender",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_GENDER_EQUAL",
+        "Bar_GENDER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "firstName",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_FIRSTNAME_EQUAL",
+        "Bar_FIRSTNAME_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "lastName",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_LASTNAME_EQUAL",
+        "Bar_LASTNAME_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "middleName",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_MIDDLENAME_EQUAL",
+        "Bar_MIDDLENAME_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "residencyCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_RESIDENCYCOUNTRY_EQUAL",
+        "Bar_RESIDENCYCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "seat",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_SEAT_EQUAL",
+        "Bar_SEAT_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "passengerType",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_PASSENGERTYPE_EQUAL",
+        "Bar_PASSENGERTYPE_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Passenger",
+      "field": "travelFrequency",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Phone",
+      "field": "number",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_NUMBER_EQUAL",
+        "Bar_NUMBER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "bagCount",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "60",
+        "70"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "baggageWeight",
+      "type": "double",
+      "operator": "EQUAL",
+      "value": [
+        "70",
+        "80"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "dateBooked",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-04-22",
+        "2014-05-02"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "carrier",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CARRIER_EQUAL",
+        "Bar_CARRIER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "dateReceived",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-05-02",
+        "2014-05-12"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "daysBookedBeforeTravel",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "80",
+        "90"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "departureDate",
+      "type": "date",
+      "operator": "EQUAL",
+      "value": [
+        "2014-05-12",
+        "2014-05-22"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "paymentForms",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_PAYMENTFORMS_EQUAL",
+        "Bar_PAYMENTFORMS_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "id",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "90",
+        "100"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "origin",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ORIGIN_EQUAL",
+        "Bar_ORIGIN_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "originCountry",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_ORIGINCOUNTRY_EQUAL",
+        "Bar_ORIGINCOUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "passengerCount",
+      "type": "integer",
+      "operator": "EQUAL",
+      "value": [
+        "100",
+        "110"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "recordLocator",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_RECORDLOCATOR_EQUAL",
+        "Bar_RECORDLOCATOR_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Pnr",
+      "field": "seat",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_SEAT_EQUAL",
+        "Bar_SEAT_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "country",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_COUNTRY_EQUAL",
+        "Bar_COUNTRY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "identifier",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_IDENTIFIER_EQUAL",
+        "Bar_IDENTIFIER_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "location",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_LOCATION_EQUAL",
+        "Bar_LOCATION_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "name",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_NAME_EQUAL",
+        "Bar_NAME_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "city",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_CITY_EQUAL",
+        "Bar_CITY_EQUAL"
+      ]
+    },
+    {
+      "type": "gov.gtas.model.udr.json.QueryTerm",
+      "entity": "Agency",
+      "field": "phone",
+      "type": "string",
+      "operator": "EQUAL",
+      "value": [
+        "Foo_PHONE_EQUAL",
+        "Bar_PHONE_EQUAL"
+      ]
+    }
+  ]
+}

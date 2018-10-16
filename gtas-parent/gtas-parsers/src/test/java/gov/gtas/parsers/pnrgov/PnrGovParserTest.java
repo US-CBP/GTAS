@@ -5,7 +5,7 @@
  */
 package gov.gtas.parsers.pnrgov;
 
-import gov.gtas.parsers.ParserTestHelper;
+import gov.gtas.ParserTestHelper;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
