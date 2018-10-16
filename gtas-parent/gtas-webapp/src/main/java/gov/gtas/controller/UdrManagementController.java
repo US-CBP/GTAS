@@ -154,7 +154,7 @@ public class UdrManagementController {
 	 *            the input spec
 	 * @return the json service response
 	 */
-	@RequestMapping(value = Constants.UDR_POST, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = Constants.UDR_POST, method = RequestMethod.POST)
 	public JsonServiceResponse createUDR(@RequestBody UdrSpecification inputSpec) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		logger.debug("******** Received UDR Create request by user =" + userId);
