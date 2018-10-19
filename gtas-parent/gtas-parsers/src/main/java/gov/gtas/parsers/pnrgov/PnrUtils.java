@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import gov.gtas.parsers.exception.ParseRuntimeException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -274,12 +276,8 @@ public class PnrUtils {
 			return null;
 		}
 		EdifactLexer lexer = new EdifactLexer(msg);
-
-		int start = lexer.getStartOfSegment("UNB");
-		int end = lexer.getStartOfSegment("SRC");
-		String header = msg.substring(start, end);
-		start = lexer.getStartOfSegment("UNT");
-		String footer = msg.substring(start);
+		String header = getMessageHeader(msg, lexer);
+		String footer = getMessageFooter(msg, lexer);
 		List<String> rv = new ArrayList<>();
 		int i = 0;
 		for (;;) {
@@ -294,6 +292,26 @@ public class PnrUtils {
 		}
 
 		return rv;
+	}
+
+	private static String getMessageFooter(String msg, EdifactLexer lexer) {
+		int startOfFooter = lexer.getStartOfSegment("UNT");
+		if (startOfFooter == -1) {
+		    throw new ParseRuntimeException("Unable to find segment UNT. Message processing failed.");
+        }
+		return msg.substring(startOfFooter);
+	}
+
+
+	private static String getMessageHeader(String msg, EdifactLexer lexer) {
+		int start = lexer.getStartOfSegment("UNB");
+		int end = lexer.getStartOfSegment("SRC");
+		if (start == -1 || end == -1 ) {
+			String segmentsNotFound = start == -1 ? "UNB ": "";
+			segmentsNotFound += end == -1 ? "SRC": "";
+			throw new ParseRuntimeException("Unable to find segment(s) " + segmentsNotFound + " . Aborting message processing!");
+		}
+		return msg.substring(start, end);
 	}
 
 	private static <T> T safeGet(List<T> list, int i) {
