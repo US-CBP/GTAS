@@ -269,17 +269,13 @@ public class PnrUtils {
 		}
 	}
 
-	public static List<String> getPnrs(String msg) {
+	public static List<String> getPnrs(String msg) throws ParseException {
 		if (StringUtils.isBlank(msg)) {
 			return null;
 		}
 		EdifactLexer lexer = new EdifactLexer(msg);
-
-		int start = lexer.getStartOfSegment("UNB");
-		int end = lexer.getStartOfSegment("SRC");
-		String header = msg.substring(start, end);
-		start = lexer.getStartOfSegment("UNT");
-		String footer = msg.substring(start);
+		String header = getMessageHeader(msg, lexer);
+		String footer = getMessageFooter(msg, lexer);
 		List<String> rv = new ArrayList<>();
 		int i = 0;
 		for (;;) {
@@ -294,6 +290,25 @@ public class PnrUtils {
 		}
 
 		return rv;
+	}
+
+	private static String getMessageFooter(String msg, EdifactLexer lexer) throws ParseException {
+		int startOfFooter = lexer.getStartOfSegment("UNT");
+		if (startOfFooter == -1) {
+		    throw new ParseException("Unable to find segment UNT. Message processing failed.");
+        }
+		return msg.substring(startOfFooter);
+	}
+
+	private static String getMessageHeader(String msg, EdifactLexer lexer) throws ParseException {
+		int start = lexer.getStartOfSegment("UNB");
+		int end = lexer.getStartOfSegment("SRC");
+		if (start == -1 || end == -1 ) {
+			String segmentsNotFound = start == -1 ? "UNB ": "";
+			segmentsNotFound += end == -1 ? "SRC": "";
+			throw new ParseException("Unable to find segment(s) " + segmentsNotFound + " . Aborting message processing!");
+		}
+		return msg.substring(start, end);
 	}
 
 	private static <T> T safeGet(List<T> list, int i) {

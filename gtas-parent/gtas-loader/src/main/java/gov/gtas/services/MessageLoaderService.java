@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import java.util.List;
 
+import gov.gtas.parsers.exception.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public abstract class MessageLoaderService {
     @Autowired
     protected LoaderUtils utils;
 
-    public abstract List<String> preprocess(String message);
+    public abstract List<String> preprocess(String message) throws ParseException;
     public abstract MessageVo parse(String message);
     public abstract boolean load(MessageVo parsedMessage);
 
