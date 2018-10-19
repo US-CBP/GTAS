@@ -22,7 +22,7 @@ public abstract class MessageLoaderService {
     @Autowired
     protected LoaderUtils utils;
 
-    public abstract List<String> preprocess(String message) throws ParseException;
+    public abstract List<String> preprocess(String message);
     public abstract MessageVo parse(String message);
     public abstract boolean load(MessageVo parsedMessage);
 

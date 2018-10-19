@@ -62,7 +62,7 @@ public class PnrMessageService extends MessageLoaderService {
     //private Pnr pnr;
 
     @Override
-    public List<String> preprocess(String message) throws ParseException {
+    public List<String> preprocess(String message) {
         return PnrUtils.getPnrs(message);
     }
     
