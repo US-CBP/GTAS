@@ -22,7 +22,7 @@ public class Case extends BaseEntityAudit {
 
     public Case() { }
 
-    @Column(name = "flightId", nullable = false)
+    @Column(name = "flightId", nullable = false, columnDefinition = "bigint unsigned")
     private Long flightId;
 
     @Column(name = "paxId", nullable = false)

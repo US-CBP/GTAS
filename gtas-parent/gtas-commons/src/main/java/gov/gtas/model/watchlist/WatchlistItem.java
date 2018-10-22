@@ -33,10 +33,10 @@ public class WatchlistItem extends BaseEntity {
 	@JoinColumn(name = "ITM_WL_REF", referencedColumnName = "ID", nullable = false)
 	private Watchlist watchlist;
 
-	@Column(name = "ITM_DATA", nullable = false, length = DomainModelConstants.WL_ITEM_DATA_COLUMN_SIZE)
+	@Column(name = "ITM_DATA", nullable = false, columnDefinition = "TEXT NOT NULL")
 	private String itemData;
 
-	@Column(name = "ITM_RL_DATA", nullable = true, length = DomainModelConstants.WL_RULE_DATA_COLUMN_SIZE)
+	@Column(name = "ITM_RL_DATA", nullable = true, columnDefinition = "TEXT NOT NULL")
 	private String itemRuleData;
 
 	@ManyToOne(fetch = FetchType.EAGER)
