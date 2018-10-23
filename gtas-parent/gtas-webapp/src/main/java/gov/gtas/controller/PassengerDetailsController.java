@@ -758,7 +758,7 @@ public class PassengerDetailsController {
 				
 				//Agency
 				for(AgencyVo a: targetVo.getAgencies()) {
-					if(currString.contains(a.getIdentifier())) {
+					if(a.getIdentifier() != null && currString.contains(a.getIdentifier())) {
 						segment.append("AGEN");
 						segment.append(a.getIdentifier());
 						segment.append(" ");
