@@ -39,12 +39,18 @@ public final class EdifactLexer {
      *         does not exist.
      */
     public int getStartOfSegment(String segmentName) {
-        String format = "%s\\s*(\\%c|\\%c)";
+        String format;
+        String regex;
         if (segmentName.equalsIgnoreCase("UNT")) {
-            format = "%s\\s*(\\%c[0-9]|\\%c)";
+            format = "%s\\s*(\\%c[0-9])";
+            regex = String.format(format, segmentName,
+                    this.una.getDataElementSeparator());
+        } else {
+            format = "%s\\s*(\\%c|\\%c)";
+            regex = String.format(format, segmentName,
+                    this.una.getDataElementSeparator(),
+                    this.una.getSegmentTerminator());
         }
-        String regex = String.format(format, segmentName, this.una.getDataElementSeparator(),
-                this.una.getSegmentTerminator());
         return TextUtils.indexOfRegex(regex, this.message);
     }
     
