@@ -200,6 +200,7 @@ public class LoaderRepository {
             Agency existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
             if (existingAgency == null) {
                 Agency newAgency = utils.convertAgencyVo(avo);
+                newAgency.setCity(newAgency.getCity()!=null?newAgency.getCity().toUpperCase():newAgency.getCity());
                 pnr.addAgency(newAgency);
             } else {
                 pnr.addAgency(existingAgency);
