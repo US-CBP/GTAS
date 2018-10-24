@@ -156,7 +156,9 @@ public class UdrSpecificationBuilder {
                 PassengerMapping.DEBARKATION.getFieldName(),
                 TypeEnum.STRING, CriteriaOperatorEnum.EQUAL,
                 new String[] { "IAD" });
-        bldr.addMeta(title, description, new Date(), null, true, userId);
+        long offset  = DateCalendarUtils.calculateOffsetFromGMT(new Date());
+        Date gmtNow = new Date(new Date().getTime() - offset);
+        bldr.addMeta(title, description, gmtNow, null, true, userId);
         return bldr.build();
     }
 
