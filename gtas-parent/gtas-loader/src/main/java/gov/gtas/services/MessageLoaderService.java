@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import java.util.List;
 
+import gov.gtas.parsers.exception.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
