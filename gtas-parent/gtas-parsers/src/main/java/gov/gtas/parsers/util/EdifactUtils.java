@@ -21,7 +21,7 @@ public final class EdifactUtils {
      */
     public static UNA getUnaSegment(String msg) {
         String regex = String.format("UNA.{%d}\\s*UNB", UNA.NUM_UNA_CHARS);
-        int unaIndex = TextUtils.indexOfRegex(regex, msg);
+        int unaIndex = TextUtils.indexOfRegex(regex,"UNA", msg);
 
         if (unaIndex != -1) {
             int endIndex = unaIndex + "UNA".length() + UNA.NUM_UNA_CHARS;

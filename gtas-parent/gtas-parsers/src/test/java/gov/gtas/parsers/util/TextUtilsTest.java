@@ -89,9 +89,17 @@ public class TextUtilsTest {
     
     @Test
     public void testIndexOfRegex() {
-        String input = "aaaABCbbb";
+        String input = "aaaABCbbbABC";
         String regex = "[A-Z]+";
         int i = TextUtils.indexOfRegex(regex, input);
+        assertEquals(input.indexOf('A'), i);
+    }
+
+    @Test
+    public void testIndexOFRegex() {
+        String input = "aaaABCbbbABC";
+        String regex = "[A-Z]+";
+        int i = TextUtils.indexOfRegex(regex, "ABC",input);
         assertEquals(input.indexOf('A'), i);
     }
 }

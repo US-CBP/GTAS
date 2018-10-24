@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 public final class TextUtils {
     private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
+
     private TextUtils() { }
     
     /**
@@ -87,6 +88,31 @@ public final class TextUtils {
         if (matcher.find()) {
             return matcher.start();
         }        
+        return -1;
+    }
+    /**
+     * Just like String.indexOf but allows use of a regex.
+     *
+     * @param regex regex to use. Must contain segment name targeted.
+     * @param segmentName Segment name used
+     * @param message String of text to search for regex.
+     *
+     * Returns the index in the message where the segment name starts OR returns -1 if
+     * segment does not occur.
+     */
+    public static int indexOfRegex(String regex, String segmentName, CharSequence message) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            CharSequence patternSubString = message.subSequence(matcher.start(), matcher.end());
+            Pattern segmentMatch = Pattern.compile(segmentName);
+            Matcher segmentMatcher = segmentMatch.matcher(patternSubString);
+            segmentMatcher.find(); //segmentName is a part of the regex hit. It is not possible to not find a match.
+            int indexRegexStartsMatching = matcher.start();
+            int indexSegmentStartsMatching = segmentMatcher.start();
+            int startOfSegment = indexRegexStartsMatching + indexSegmentStartsMatching;
+            return startOfSegment;
+        }
         return -1;
     }
 }
