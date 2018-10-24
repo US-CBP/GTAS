@@ -55,7 +55,7 @@ public final class EdifactLexer {
             * followed by a match of the segment terminator
             * followed by a match of the segment
             * followed by a match of either the segment terminator OR the data element separator.\
-             Example looks like (?<!\?)(\?\?)*\\s*'\s*SRC(\+|\')" when using default UNA characters.
+             Example looks like (?<!\?)(\?\?)*\s*'\s*SRC(\+|\') when using default UNA characters.
             * */
             format = "(?<!\\%c)(\\%c\\%c)*\\s*%c\\s*%s(\\%c|\\%c)";
             regex = String.format(format,
