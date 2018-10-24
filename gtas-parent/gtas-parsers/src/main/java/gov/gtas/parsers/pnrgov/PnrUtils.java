@@ -494,7 +494,7 @@ public class PnrUtils {
     		//doc.setDocumentType("P");
     		//doc.setDocumentNumber("NONE");
     		if(StringUtils.isNotBlank(safeGet(strs, genderPos)) && 
-    				("M".equals(safeGet(strs, genderPos)) || "F".equals(safeGet(strs, genderPos)) || "MI".equals(safeGet(strs, genderPos)) || "FI".equals(safeGet(strs, genderPos))
+    				("M".equals(safeGet(strs, genderPos)) || "F".equals(safeGet(strs, genderPos)) || "MI".equals(safeGet(strs, genderPos)) || "FI".equals(safeGet(strs, genderPos)) || "U".equals(safeGet(strs, genderPos))
     						|| "O".equals(safeGet(strs, genderPos)))){
         		/////05MAY02/F//ROBERTS/ELIZABETH-1ROBERTS/ELIZABETH'
         		p.setGender(safeGet(strs, genderPos));
@@ -565,7 +565,7 @@ public class PnrUtils {
     	List<Integer> pos=new ArrayList<>();
     	for(int i=0;i<tokens.size();i++){
     		if(StringUtils.isNotBlank(tokens.get(i)) && tokens.get(i).trim().length()<=2){
-    			if("M".equals(tokens.get(i).trim()) || "F".equals(tokens.get(i).trim()) || "P".equals(tokens.get(i).trim()) || "MI".equals(tokens.get(i).trim()) || "FI".equals(tokens.get(i).trim())
+    			if("M".equals(tokens.get(i).trim()) || "F".equals(tokens.get(i).trim()) || "P".equals(tokens.get(i).trim()) || "MI".equals(tokens.get(i).trim()) || "FI".equals(tokens.get(i).trim()) || "U".equals(tokens.get(i).trim())
     					&& i<=8){
     				pos.add(i);
     			}
