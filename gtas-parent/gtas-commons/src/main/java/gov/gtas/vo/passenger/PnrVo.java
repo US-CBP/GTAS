@@ -5,6 +5,7 @@
  */
 package gov.gtas.vo.passenger;
 
+import gov.gtas.json.KeyValue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,7 @@ public class PnrVo extends MessageVo {
     private String updateMode;
     private String raw;
     private List<String> rawList = new ArrayList<String>();
-	List<Map.Entry<String,String>> segmentList= new ArrayList<>();
+    private List<KeyValue> segmentList= new ArrayList<>();
     private Integer daysBookedBeforeTravel;
     private boolean pnrRecordExists = false; 
     private List<FlightVo> flights = new ArrayList<>();
@@ -303,10 +304,10 @@ public class PnrVo extends MessageVo {
     public void setSeatAssignments(List<SeatVo> seatAssignments) {
         this.seatAssignments = seatAssignments;
     }
-	public List<Map.Entry<String, String>> getSegmentList() {
+	public List<KeyValue> getSegmentList() {
 		return segmentList;
 	}
-	public void setSegmentList(List<Map.Entry<String, String>> segmentList) {
+	public void setSegmentList(List<KeyValue> segmentList) {
 		this.segmentList = segmentList;
 	}
 	@Override

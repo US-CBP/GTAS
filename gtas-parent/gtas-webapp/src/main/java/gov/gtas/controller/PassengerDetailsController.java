@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.json.KeyValue;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
@@ -624,9 +625,9 @@ public class PassengerDetailsController {
 	 */
 	private void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
-			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),
-					"\n");
-			List<Map.Entry<String,String>> segmentList= new ArrayList<>();
+                    
+			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),"\n");
+			List<KeyValue> segmentList= new ArrayList<>();
 			
 			final String ITIN = "TVL";
 			final String NAME = "SSR";
@@ -638,6 +639,8 @@ public class PassengerDetailsController {
 			final String TIF = "TIF";
 
 			String tifSegment = "";
+                        Integer indexInteger = 0;
+                        
 			while (_tempStr.hasMoreTokens()) {
 				String currString = _tempStr.nextToken();
 				StringBuilder segment = new StringBuilder();
@@ -763,9 +766,20 @@ public class PassengerDetailsController {
 						segment.append(a.getIdentifier());
 						segment.append(" ");
 					}
-				}					
-				
-				segmentList.add(new AbstractMap.SimpleEntry<String, String>(segment.toString(), currString));
+				}
+                                
+                                if (segment.toString().isEmpty())
+                                {
+                                   KeyValue kv = new KeyValue(indexInteger.toString(), currString);
+                                   segmentList.add(kv); 
+                                }
+				else
+                                {
+                                   KeyValue kv2 = new KeyValue(segment.toString(), currString);
+                                   segmentList.add(kv2); ;
+                                }
+                                
+                                indexInteger++;
 			}
 			targetVo.setSegmentList(segmentList);
 		}
@@ -1063,4 +1077,5 @@ public class PassengerDetailsController {
 			return null;
 		}
 	}
+        
 }
