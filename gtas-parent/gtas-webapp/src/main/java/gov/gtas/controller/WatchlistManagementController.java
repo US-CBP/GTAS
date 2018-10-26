@@ -167,7 +167,7 @@ public class WatchlistManagementController {
 		for(WatchlistItemSpec spec : inputSpec.getWatchlistItems()) {
 			if(spec.getTerms()!=null) {
 				Long categoryID = new Long(0);
-				
+				_terms= new ArrayList<WatchlistTerm>();
 				for(int i =0; i< spec.getTerms().length;i++) {
 					if(!spec.getTerms()[i].getField().equals("categoryId"))
 						_terms.add(spec.getTerms()[i]);
