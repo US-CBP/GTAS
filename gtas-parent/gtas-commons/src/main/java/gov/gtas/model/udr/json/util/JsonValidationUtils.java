@@ -60,10 +60,7 @@ public class JsonValidationUtils {
     {
         String returnString = SUCCESS;
         Date currentDate = new Date();
-        // start and end date have been adjusted to GMT dates;
-        // doing the equivalent here to the current date so that the comparisons are accurate.
-        long offset = DateCalendarUtils.calculateOffsetFromGMT(currentDate);
-        Date now = new Date(currentDate.getTime() - offset);
+        Date now = new Date(currentDate.getTime());
 
         if (startDate == null) 
         {
