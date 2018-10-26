@@ -172,7 +172,11 @@ public class UdrManagementController {
 		if (meta != null) {
                     
                     meta.setStartDate(adjustHoursMinutesInDate(meta.getStartDate(), true));
-                    meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    if (meta.getEndDate() != null)
+                    {
+                      meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    }
+
 		}
 		return udrService.createUdr(userId, inputSpec);
         }
@@ -263,9 +267,12 @@ public class UdrManagementController {
 
 		MetaData meta = inputSpec.getSummary();
 		if (meta != null) {
-                    
+
                     meta.setStartDate(adjustHoursMinutesInDate(meta.getStartDate(), true));
-                    meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    if (meta.getEndDate() != null)
+                    {                  
+                        meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    }
 		}
 		return udrService.updateUdr(userId, inputSpec);
 	}

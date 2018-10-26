@@ -51,8 +51,11 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     $scope.ruleId = result.id;
                     // endDate will not display in calendar widget unless it is a Date object.
                     var endDateLong = result.summary.endDate;
-                    var endDateObj = new Date(endDateLong);
-                    result.summary.endDate = endDateObj;
+                    if (endDateLong != null)
+                    {
+                        var endDateObj = new Date(endDateLong);
+                        result.summary.endDate = endDateObj;
+                    }
                     // startDate will display , but errors are thrown in the console if not a Date object.
                     var startDateLong = result.summary.startDate;
                     var startDateObj = new Date(startDateLong);
@@ -437,7 +440,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         if (newValue === null || newValue === undefined) {
             $timeout(function () {
                 datepicker = document.querySelectorAll('.md-datepicker-input')[1];
-                datepicker.value = new Date();
+                datepicker.value = '';
             }, 5);
         }
     });
