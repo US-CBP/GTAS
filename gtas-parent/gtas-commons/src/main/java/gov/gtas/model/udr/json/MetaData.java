@@ -22,10 +22,8 @@ public class MetaData implements Serializable {
 
     private Long ruleCat;
         
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date startDate;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date endDate;
     
     private String author;
