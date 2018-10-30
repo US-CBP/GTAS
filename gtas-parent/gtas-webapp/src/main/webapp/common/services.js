@@ -788,7 +788,7 @@
                     return grid.getCellValue(row, col) ? 'rule-hit' : 'invisible';
                 },
                 anyWatchlistHit = function (grid, row) {
-                    if (row.entity.onWatchList || row.entity.onWatchListDoc) {
+                    if (row.entity.onWatchList || row.entity.onWatchListDoc || row.entity.onWatchListLink) {
                         return 'watchlist-hit';
                     }
                 };

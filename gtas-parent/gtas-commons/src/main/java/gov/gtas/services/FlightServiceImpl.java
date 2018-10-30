@@ -10,13 +10,13 @@ import gov.gtas.model.CodeShareFlight;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,9 +67,11 @@ public class FlightServiceImpl implements FlightService {
             FlightVo vo = new FlightVo();
             List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
             BeanUtils.copyProperties(f, vo);
-            vo.setListHitCount(f.getListHitCount());
+			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
+			vo.setListHitCount(f.getListHitCount() + fuzzyHits);
             vo.setRuleHitCount(f.getRuleHitCount());
-            List<CodeShareFlight> csl = (List<CodeShareFlight>)flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
+			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
+            List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
 	        for(CodeShareFlight cs : csl){ // grab all codeshares from it
 		       	CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
 		        BeanUtils.copyProperties(cs, codeshare);
@@ -204,6 +206,21 @@ public class FlightServiceImpl implements FlightService {
 		return resultSet;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Long getFlightFuzzyMatchesOnly(Long flightId) {
+		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
+				"FROM pax_watchlist_link pwl " +
+				"WHERE pwl.passenger_id IN (SELECT DISTINCT p.id " +
+				"                           FROM flight_passenger fp " +
+				"                                  LEFT JOIN passenger p ON (fp.passenger_id = p.id) " +
+				"                           WHERE fp.flight_id = "+flightId+ " " +
+				"                             AND p.id NOT IN " +
+				"                                 (SELECT hitSumm.passenger_id FROM hits_summary hitSumm WHERE fp.flight_id = "+flightId+"))";
+		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
+		return resultList.get(0).longValueExact();
+	}
+
 	@Override
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
 		String sqlStr = "";
@@ -221,7 +238,7 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public int getPassengerCount(Flight f) {
-		String sqlStr = "SELECT COUNT(*) FROM flight_passenger fp JOIN passenger p ON (fp.passenger_id = p.id) where fl.flight_id = "+f.getId();
+		String sqlStr = "SELECT COUNT(*) FROM flight_passenger fp JOIN passenger p ON (fp.passenger_id = p.id) where flight_id = "+f.getId();
 		List<Integer> rList = em.createNativeQuery(sqlStr).getResultList();
 		int tempInt = rList.get(0).intValue();
 		return tempInt;
