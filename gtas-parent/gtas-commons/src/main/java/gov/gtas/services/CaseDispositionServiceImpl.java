@@ -950,6 +950,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			oneDayLookoutVo.setDocument(oneDayLookoutCase.getDocument());
 			oneDayLookoutVo.setFirstName(oneDayLookoutCase.getFirstName());
 			oneDayLookoutVo.setLastName(oneDayLookoutCase.getLastName());
+			oneDayLookoutVo.setDisposition(oneDayLookoutCase.getDisposition());
 			oneDayLookoutVo.setName(oneDayLookoutCase.getLastName() + ", " + oneDayLookoutCase.getFirstName());
 
 			// set flight information
