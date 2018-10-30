@@ -48,6 +48,8 @@ public class CaseRequestDto implements Serializable {
     private Boolean oneDayLookoutFlag;
 
     private MultipartFile multipartFile;
+    
+    private String caseDisposition;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -200,7 +202,18 @@ public class CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-    @Override
+	
+	
+	
+    public String getCaseDisposition() {
+		return caseDisposition;
+	}
+
+	public void setCaseDisposition(String caseDisposition) {
+		this.caseDisposition = caseDisposition;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);

@@ -8,6 +8,7 @@ package gov.gtas.services;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -30,6 +31,8 @@ public interface CaseDispositionService {
     public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
+    
+    public List<CaseDispositionStatus> getCaseDispositionStatuses();
 
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 
@@ -43,7 +46,7 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username);
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
 
     public Passenger findPaxByID(Long id);
 

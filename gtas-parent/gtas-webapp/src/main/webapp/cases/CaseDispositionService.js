@@ -90,8 +90,8 @@
                 return dfd.promise;
             }
 
-            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus,
-                                           paramValidHit, file){
+            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus, 
+                                           paramValidHit, file, paramCaseDisposition){
                 var requestDto = {
                     pageSize: "10",
                     pageNumber: "1",
@@ -100,6 +100,7 @@
                     hitId: paramHit,
                     caseComments: paramComments,
                     status: paramStatus,
+                    caseDisposition: paramCaseDisposition,
                     validHit: paramValidHit
                     // ,
                     // multipartFile: file
@@ -173,6 +174,7 @@
                 return dfd.promise;
             }  
             
+            
             function getDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/dispositionstatuses"));
@@ -185,6 +187,12 @@
                 return dfd.promise;
             }
 
+            function getCaseDisposition() {
+                var dfd = $q.defer();
+                dfd.resolve($http.get("/gtas/casedisposition"));
+                return dfd.promise;
+            }
+            
             function getRuleCats() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/getRuleCats"));
@@ -265,6 +273,7 @@
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
+                getCaseDisposition:getCaseDisposition,
                 getAllCases:getAllCases,
                 getOneHitsDisposition:getOneHitsDisposition,
                 getRuleCats:getRuleCats,

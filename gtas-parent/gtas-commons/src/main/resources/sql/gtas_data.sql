@@ -83,6 +83,15 @@ insert into hit_disposition_status(id, name, description) values(3, 'CLOSED', 'N
 insert into hit_disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
 insert into hit_disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
 
+insert into case_disposition_status(id, name, description) values(1, 'Admit', 'Admit');
+insert into case_disposition_status(id, name, description) values(2, 'Deny Boarding', 'Deny Boarding');
+insert into case_disposition_status(id, name, description) values(3, 'No Show', 'No Show');
+insert into case_disposition_status(id, name, description) values(4, 'Cancelled', 'Cancelled');
+insert into case_disposition_status(id, name, description) values(5, 'Duplicate','Duplicate');
+insert into case_disposition_status(id, name, description) values(6, 'Refuse Entry', 'Refuse Entry');
+insert into case_disposition_status(id, name, description) values(7, 'Secondary Referral', 'Secondary Referral');
+insert into case_disposition_status(id, name, description) values(8, 'False Match', 'False Match');
+
 
 insert into rule_category(catId, category, description, priority) values(1, 'General', 'General category', 5);
 insert into rule_category(catId, category, description, priority) values(2, 'Terrorism', 'Terrorism related entities', 1);

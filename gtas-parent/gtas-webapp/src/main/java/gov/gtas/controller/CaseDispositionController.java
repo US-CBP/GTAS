@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.model.Case;
+import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -120,18 +121,23 @@ public class CaseDispositionController {
     @RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
     public
     @ResponseBody
-    Case updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+    boolean updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         Case aCase = new Case();
+        boolean isUpdateSuccessful = false;
         try {
 
+        	logger.info("Updating a case to disposition: " + request.getCaseDisposition() + " and case status: "+  request.getStatus());
+        	
             aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
                                                             request.getHitId(), request.getCaseComments(),
                                                             request.getStatus(), request.getValidHit(),
-                                                            request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId());
+                                                            request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId(),request.getCaseDisposition());
+            isUpdateSuccessful = true;
+            
         } catch (Exception ex) {
             logger.error("Error updating histDisp!", ex);
         }
-        return aCase;
+        return isUpdateSuccessful;
     }
 
     //updateHistDispAttachments
@@ -141,7 +147,7 @@ public class CaseDispositionController {
     Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
                                    @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
                                    @RequestParam("status")String status,
-                                   @RequestParam("validHit")String validHit) {
+                                   @RequestParam("validHit")String validHit,  @RequestParam("caseDisposition")String caseDisposition) {
         Case aCase = new Case();
         try {
             MultipartFile multipartFile = file;
@@ -149,7 +155,7 @@ public class CaseDispositionController {
             aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
-                    multipartFile, GtasSecurityUtils.fetchLoggedInUserId());
+                    multipartFile, GtasSecurityUtils.fetchLoggedInUserId(),caseDisposition );
         } catch (Exception ex) {
             logger.error("Error in histDispAttachements!", ex);
         }
@@ -171,7 +177,7 @@ public class CaseDispositionController {
             aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
-                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId());
+                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId(), null);
         } catch (Exception ex) {
             logger.error("Error in create manual case attachments", ex);
         }
@@ -211,13 +217,12 @@ public class CaseDispositionController {
         return caseDispositionService.getHitDispositionStatuses();
     }
 
+    @RequestMapping(value = "/casedisposition", method = RequestMethod.GET)
+    public @ResponseBody List<CaseDispositionStatus> getCaseDispositionStatuses() {
+        return caseDispositionService.getCaseDispositionStatuses();
+    }
 
-//    @RequestMapping(value = "/countdownAPISFlag", method = RequestMethod.GET, produces="text/plain")
-//    public @ResponseBody String getCountdownAPISFlag() {
-//        return caseDispositionService.getCountdownAPISFlag();
-//    }
-
-    
+      
     @ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)

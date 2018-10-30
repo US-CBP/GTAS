@@ -44,6 +44,7 @@ import gov.gtas.model.HitsDisposition;
 import gov.gtas.model.HitsDispositionComments;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.AppConfiguration;
+import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.DispositionStatusCode;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
@@ -81,6 +82,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	private RuleCatRepository ruleCatRepository;
 	@Resource
 	private HitDispositionStatusRepository hitDispRepo;
+	@Resource
+	private CaseDispositionStatusRepository caseDispositionStatusRepository;
 	@Resource
 	private HitsDispositionRepository hitsDispositionRepository;
 	@Resource
@@ -475,7 +478,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status,
-			String validHit, MultipartFile fileToAttach, String username) {
+			String validHit, MultipartFile fileToAttach, String username,String caseDisposition) {
 		Case aCase = new Case();
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -488,6 +491,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			if (aCase != null && status != null) { // set case status
 				if (status.startsWith("Case"))
 					aCase.setStatus(status.substring(4));
+					aCase.setDisposition(caseDisposition);
 			}
 			hitsDispCommentsSet = null;
 			hitsDispSet = aCase.getHitsDispositions();
@@ -535,7 +539,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			logger.error("Error adding case comments: ", ex);
 		}
 
-		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
+		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));	
+		
 		return aCase;
 	}
 
@@ -1040,6 +1045,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
                apisReturnStr =  apisOnlyFlag;
             }
             return apisReturnStr;
+	}
+
+	@Override
+	public List<CaseDispositionStatus> getCaseDispositionStatuses() {
+		Iterable<CaseDispositionStatus> i = caseDispositionStatusRepository.findAll();
+		if (i != null) {
+			return IteratorUtils.toList(i.iterator());
+		}
+		return new ArrayList<>();
 	}
         
 }
