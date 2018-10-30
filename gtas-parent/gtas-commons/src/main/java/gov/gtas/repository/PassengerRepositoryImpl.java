@@ -5,10 +5,7 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPassenger;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
@@ -177,6 +174,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Object[]> q = cb.createQuery(Object[].class);
         Root<Passenger> pax = q.from(Passenger.class);
+
         //<NEW STUFF
         Root<Flight> flightRoot = q.from(Flight.class);
         Root<FlightPassenger> fp = q.from(FlightPassenger.class); 
@@ -184,49 +182,58 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         Predicate fpFlightEquals = cb.equal(fp.get("flightId"), flightId);
         //NEW STUFF>
         //Join<Passenger, Flight> flight = pax.join("flights"); 
-        Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
-        List<Predicate> predicates = new ArrayList<Predicate>();
+
+        List<Predicate> predicates = new ArrayList<>();
         predicates.add(fpFlightEquals); //NEW
         predicates.add(fpPaxEquals); //NEW
+
         if (StringUtils.isNotBlank(dto.getLastName())) {
             String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
-            predicates.add(cb.like(pax.<String>get("lastName"), likeString));
+            predicates.add(cb.like(pax.get("lastName"), likeString));
         }
         
+		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
+		Join<Passenger, PaxWatchlistLink> link = pax.join("paxWatchlistLinks", JoinType.LEFT);
+
         if (flightId == null) {
             predicates.addAll(createPredicates(cb, dto, pax, flightRoot));
         } else {
             hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
-            predicates.add(cb.equal(flightRoot.<Long>get("id"), flightId));            
+            predicates.add(cb.equal(flightRoot.<Long>get("id"), flightId));
         }
 
         // sorting
-        if (dto.getSort() != null) {
-            List<Order> orders = new ArrayList<>();
-            for (SortOptionsDto sort : dto.getSort()) {
+		if (dto.getSort() != null) {
+			List<Order> orderList = new ArrayList<>();
+			for (SortOptionsDto sort : dto.getSort()) {
+                List<Expression<?>> orderByItem = new ArrayList<>();
                 String column = sort.getColumn();
-                Expression<?> e = null;
                 if (isFlightColumn(column)) {
-                    e = flightRoot.get(column); 
-                } else if (column.equals("onRuleHitList")) { 
-                    e = hits.get("ruleHitCount");
+					orderByItem.add(flightRoot.get(column));
+                } else if (column.equals("onRuleHitList")) {
+					orderByItem.add(hits.get("ruleHitCount"));
                 } else if (column.equals("onWatchList")) {
-                    e = hits.get("watchListHitCount");
+					orderByItem.add(hits.get("watchListHitCount"));
+					orderByItem.add(link.get("percentMatch"));
                 } else {
-                    e = pax.get(column);
+					orderByItem.add(pax.get(column));
                 }
-                Order order = null;
                 if (sort.getDir().equals("desc")) {
-                    order = cb.desc(e);
+                	for (Expression<?> e : orderByItem){
+						orderList.add(cb.desc(e));
+					}
                 } else {
-                    order = cb.asc(e);
+                	for (Expression<?> e : orderByItem) {
+						orderList.add(cb.asc(e));
+					}
                 }
-                orders.add(order);
             }
-            q.orderBy(orders);
+            q.orderBy(orderList);
         }
 
-        q.multiselect(pax, flightRoot, hits).where(predicates.toArray(new Predicate[]{}));
+        q.multiselect(pax, flightRoot, hits, link).where(predicates.toArray(new Predicate[]{}));
+
+		q.groupBy(pax.get("id")); //makes query distinct to passengers.
         TypedQuery<Object[]> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
         
         // total count: does not require joining on hitssummary
@@ -239,7 +246,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         Predicate cntFpFlightEquals = cb.equal(cntFlightRoot.get("id"), cntFlightPaxRoot.get("flightId"));
         //NEW STUFF>
         //Join<Passenger, Flight> cntFlight = cntPax.join("flights");
-        List<Predicate> cntPred = new ArrayList<Predicate>();
+        List<Predicate> cntPred = new ArrayList<>();
         cntPred.add(cntFpPaxEquals); // NEW
         cntPred.add(cntFpFlightEquals); // NEW
         if (flightId == null) {
@@ -256,9 +263,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         
         logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
 //        logger.info(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-        List<Object[]> results = typedQuery.getResultList();
+
+		List<Object[]> results = typedQuery.getResultList();
         
-        return new ImmutablePair<Long, List<Object[]>>(count, results);
+        return new ImmutablePair<>(count, results);
     }
     
     /**
