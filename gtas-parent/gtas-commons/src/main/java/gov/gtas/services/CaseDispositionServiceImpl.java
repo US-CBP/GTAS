@@ -935,6 +935,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		return oneDayLookoutVoList;
 	}
 
+	//copy One Day Lookout info to the view object
 	private List<OneDayLookoutVo> getOneDaylookoutVo(List<Case> oneDayLookoutList) {
 
 		List<OneDayLookoutVo> oneDayLookoutVoList = new ArrayList<OneDayLookoutVo>();
