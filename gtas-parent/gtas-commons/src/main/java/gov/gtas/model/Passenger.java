@@ -114,6 +114,10 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<HitsSummary> hits = new HashSet<>();
     
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+    private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Bag> bags = new HashSet<>();
 
@@ -447,4 +451,11 @@ public class Passenger extends BaseEntityAudit {
         return true;
     }
 
+    public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
+        return paxWatchlistLinks;
+    }
+
+    public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
+        this.paxWatchlistLinks = paxWatchlistLinks;
+    }
 }

@@ -9,8 +9,6 @@ import gov.gtas.model.DashboardMessageStats;
 import gov.gtas.model.Flight;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Message;
-import gov.gtas.model.Pnr;
 import gov.gtas.model.YTDAirportStatistics;
 import gov.gtas.model.YTDRules;
 import gov.gtas.services.FlightService;
@@ -31,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,51 +81,28 @@ public class DashboardController {
 	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountInbound")
 	public Map<String, Object> getFlightsAndPassengersAndHitsCountInbound(
 			@RequestParam(value = "startDate", required = false) String startDate,
-			@RequestParam(value = "endDate", required = false) String endDate)
-			throws ParseException {
+			@RequestParam(value = "endDate", required = false) String endDate) {
 		// passed in arguments not used currently.
-		HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
 
 		List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
 
-		Integer paxCount = flightList.stream().collect(
-				Collectors.summingInt(flight -> flight.getPassengerCount()));
-		int ruleHits = 0;
-		int watchListHits = 0;
-        AirportVO _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
-        Airport _tempAirport = new Airport();
-        List<AirportVO> _tempAirportList = new ArrayList<AirportVO>();
+		Integer paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
 
-		for (Flight flight : flightList) {
-			List<HitsSummary> hitsSummaryList = hitsSummaryService
-					.findHitsByFlightId(flight.getId());
+        HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
+        int ruleHits = hitAndAirportExtractor.getRuleHits();
+        long watchListHits = hitAndAirportExtractor.getWatchListHits();
 
-			_tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
-            _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
-            _tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
-            _tempAirportVO.setAirportName(_tempAirport.getCity());
-            _tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
-            _tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
-            if(flight.getRuleHitCount()>0 || flight.getListHitCount()>0){
-                _tempAirportVO.setHits(true);
-            }
-            _tempAirportList.add(_tempAirportVO);
-			for (HitsSummary summ : hitsSummaryList) {
-				ruleHits = summ.getRuleHitCount() + ruleHits;
-				watchListHits = summ.getWatchListHitCount() + watchListHits;
-			}
-		}
-		flightsAndPassengersAndHitsCount.put("flightsCount", ((Object)new AtomicInteger(
-				flightList.size())));
+        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
+        flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
+				flightList.size()));
 		flightsAndPassengersAndHitsCount.put("ruleHitsCount",
-                ((Object)new AtomicInteger(ruleHits)));
+                new AtomicInteger(ruleHits));
 		flightsAndPassengersAndHitsCount.put("watchListCount",
-                ((Object)new AtomicInteger(watchListHits)));
+                new AtomicLong(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount",
-                ((Object)new AtomicInteger(paxCount)));
-
+                new AtomicInteger(paxCount));
         flightsAndPassengersAndHitsCount.put("flightsList",
-                _tempAirportList);
+                hitAndAirportExtractor.getAirportList());
 
 		return flightsAndPassengersAndHitsCount;
 	}
@@ -146,51 +121,27 @@ public class DashboardController {
     @RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountOutbound")
     public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(
             @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate)
-            throws ParseException {
+            @RequestParam(value = "endDate", required = false) String endDate) {
         // passed in arguments not used currently.
-        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
 
         List<Flight> flightList = flightService.getFlightsThreeDaysForwardOutbound();
 
-        Integer paxCount = flightList.stream().collect(
-                Collectors.summingInt(flight -> flight.getPassengerCount()));
-        int ruleHits = 0;
-        int watchListHits = 0;
-        AirportVO _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
-        Airport _tempAirport = new Airport();
-        List<AirportVO> _tempAirportList = new ArrayList<AirportVO>();
+        int paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
+        HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
+        int ruleHits = hitAndAirportExtractor.getRuleHits();
+        long watchListHits = hitAndAirportExtractor.getWatchListHits();
 
-        for (Flight flight : flightList) {
-            List<HitsSummary> hitsSummaryList = hitsSummaryService
-                    .findHitsByFlightId(flight.getId());
-
-            _tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
-            _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
-            _tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
-            _tempAirportVO.setAirportName(_tempAirport.getCity());
-            _tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
-            _tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
-            if(flight.getRuleHitCount()>0 || flight.getListHitCount()>0){
-                _tempAirportVO.setHits(true);
-            }
-            _tempAirportList.add(_tempAirportVO);
-            for (HitsSummary summ : hitsSummaryList) {
-                ruleHits = summ.getRuleHitCount() + ruleHits;
-                watchListHits = summ.getWatchListHitCount() + watchListHits;
-            }
-        }
-        flightsAndPassengersAndHitsCount.put("flightsCount", ((Object)new AtomicInteger(
-                flightList.size())));
+        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
+        flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
+                flightList.size()));
         flightsAndPassengersAndHitsCount.put("ruleHitsCount",
-                ((Object)new AtomicInteger(ruleHits)));
+                new AtomicInteger(ruleHits));
         flightsAndPassengersAndHitsCount.put("watchListCount",
-                ((Object)new AtomicInteger(watchListHits)));
+                new AtomicLong(watchListHits));
         flightsAndPassengersAndHitsCount.put("passengersCount",
-                ((Object)new AtomicInteger(paxCount)));
-
+                new AtomicInteger(paxCount));
         flightsAndPassengersAndHitsCount.put("flightsList",
-                _tempAirportList);
+                hitAndAirportExtractor.getAirportList());
 
         return flightsAndPassengersAndHitsCount;
     }
@@ -380,5 +331,54 @@ public class DashboardController {
         }
 
         return returnString;
+    }
+
+    private class HitAndAirportExtractor {
+        private List<Flight> flightList;
+        private int ruleHits = 0;
+        private long watchListHits = 0L;
+        private List<AirportVO> tempAirportList;
+
+        public HitAndAirportExtractor(List<Flight> flightList) {
+            this.flightList = flightList;
+            tempAirportList = new ArrayList<>();
+        }
+
+        public int getRuleHits() {
+            return ruleHits;
+        }
+
+        public List<AirportVO> getAirportList() {
+            return tempAirportList;
+        }
+
+        public long getWatchListHits() {
+            return watchListHits;
+        }
+
+        public HitAndAirportExtractor invoke() {
+            Airport _tempAirport;
+            AirportVO _tempAirportVO;
+            for (Flight flight : flightList) {
+                List<HitsSummary> hitsSummaryList = hitsSummaryService
+                        .findHitsByFlightId(flight.getId());
+                _tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
+                _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
+                _tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
+                _tempAirportVO.setAirportName(_tempAirport.getCity());
+                _tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
+                _tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
+                if(flight.getRuleHitCount()>0 || flight.getListHitCount()>0){
+                    _tempAirportVO.setHits(true);
+                }
+                tempAirportList.add(_tempAirportVO);
+                for (HitsSummary summ : hitsSummaryList) {
+                    ruleHits = summ.getRuleHitCount() + ruleHits;
+                }
+                watchListHits = watchListHits + flight.getListHitCount() + flightService.getFlightFuzzyMatchesOnly(flight.getId());
+            }
+
+            return this;
+        }
     }
 }

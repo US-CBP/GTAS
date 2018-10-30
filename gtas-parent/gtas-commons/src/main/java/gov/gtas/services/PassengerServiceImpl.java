@@ -102,6 +102,7 @@ public class PassengerServiceImpl implements PassengerService {
             Passenger p = (Passenger) objs[0];
             Flight f = (Flight) objs[1];
             HitsSummary hit = (HitsSummary) objs[2];
+            PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
 
             if (hit != null && f.getId() != hit.getFlight().getId()) {
                 continue;
@@ -131,8 +132,6 @@ public class PassengerServiceImpl implements PassengerService {
                     vo.setSeat(seats.get(0));
                 }
             }
-            rv.add(vo);
-            count++;
 
             if (hit != null) {
                 String hitType = hit.getHitType();
@@ -147,6 +146,10 @@ public class PassengerServiceImpl implements PassengerService {
                 }
             }
 
+            if (link != null) {
+                vo.setOnWatchListLink(true);
+            }
+
             // grab flight info
             vo.setFlightId(f.getId().toString());
             vo.setFlightNumber(f.getFlightNumber());
@@ -154,6 +157,8 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setCarrier(f.getCarrier());
             vo.setEtd(f.getEtd());
             vo.setEta(f.getEta());
+            rv.add(vo);
+            count++;
         }
 
         return new PassengersPageDto(rv, tuple.getLeft());
@@ -279,9 +284,6 @@ public class PassengerServiceImpl implements PassengerService {
 
     /**
      * Write audit log for disposition.
-     *
-     * @param passengerId
-     *            the passenger id
      */
     private void writeAuditLogForDisposition(Long pId, User loggedinUser) {
         Passenger passenger = findById(pId);

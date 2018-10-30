@@ -160,6 +160,9 @@
 .warning-color {
   color: #F09511;
 }
+.alert-color {
+    color: #ff9780;
+}
 .primary-outline {
   outline: #00416a 2px solid !important;
 }

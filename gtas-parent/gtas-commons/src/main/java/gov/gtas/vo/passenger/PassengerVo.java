@@ -60,7 +60,8 @@ public class PassengerVo extends BaseVo {
     private Boolean onRuleHitList = Boolean.FALSE;
     private Boolean onWatchList = Boolean.FALSE;
     private Boolean onWatchListDoc = Boolean.FALSE;
-    
+    private Boolean onWatchListLink = Boolean.FALSE;
+
     // co-pax?
     private List<PassengerVo> passengers;
     private List<DocumentVo> documents = new ArrayList<>();
@@ -377,5 +378,13 @@ public class PassengerVo extends BaseVo {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
+    }
+
+    public Boolean getOnWatchListLink() {
+        return onWatchListLink;
+    }
+
+    public void setOnWatchListLink(Boolean onWatchListLink) {
+        this.onWatchListLink = onWatchListLink;
     }
 }

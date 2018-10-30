@@ -45,6 +45,7 @@ public class FlightVo extends BaseVo {
     private Integer passengerCount = Integer.valueOf(0);
     private Integer ruleHitCount = Integer.valueOf(0);
     private Integer listHitCount = Integer.valueOf(0);
+    private Long paxWatchlistLinkHits = 0L;
     private int ruleHits;
     private int listHits;
     private int paxListHit;
@@ -224,5 +225,13 @@ public class FlightVo extends BaseVo {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
+    }
+
+    public Long getPaxWatchlistLinkHits() {
+        return paxWatchlistLinkHits;
+    }
+
+    public void setPaxWatchlistLinkHits(Long paxWatchlistLinkHits) {
+        this.paxWatchlistLinkHits = paxWatchlistLinkHits;
     }
 }
