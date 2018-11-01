@@ -12,6 +12,7 @@ import java.util.List;
 public class FlightQueryVo {
     List<Flight> flights;
     long totalFlights;
+    private boolean queryLimitReached;
     
     public List<Flight> getFlights() {
         return flights;
@@ -24,5 +25,13 @@ public class FlightQueryVo {
     }
     public void setTotalFlights(long totalFlights) {
         this.totalFlights = totalFlights;
+    }
+
+    public boolean isQueryLimitReached() {
+        return queryLimitReached;
+    }
+
+    public void setQueryLimitReached(boolean queryLimitReached) {
+        this.queryLimitReached = queryLimitReached;
     }
 }

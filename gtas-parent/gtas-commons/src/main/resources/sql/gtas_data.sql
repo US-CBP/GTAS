@@ -56,6 +56,8 @@ insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
 insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.70','Threshold which to determine name match');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGER_QUERY_RESULT','1000','Maximum amount of passenger results from query allowed');
+insert into app_configuration (opt, val, description) values('MAX_FLIGHT_QUERY_RESULT','1000','Maximum amount of flight results from query allowed');
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL','5','Number of days indexed REDIS Keys to expire in');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_TIME_UNIT','DAYS','REDIS keys expiration time units - DAYS or MINUTES ');
