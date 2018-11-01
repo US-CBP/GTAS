@@ -56,7 +56,7 @@
             setFlightsGrid = function (grid, response) {
                 //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
                 var data = stateName === 'queryFlights' ? response.data.result : response.data;
-                    grid.totalItems = data.totalFlights === -1 ? 0 : data.totalFlights;
+                grid.totalItems = data.totalFlights === -1 ? 0 : data.totalFlights;
                 grid.data = data.flights;
                 if(!data.flights || data.flights.length == 0){
                     $scope.errorToast("No results found for selected filter criteria");
