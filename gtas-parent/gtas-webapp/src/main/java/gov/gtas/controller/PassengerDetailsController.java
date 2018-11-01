@@ -7,6 +7,7 @@ package gov.gtas.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,8 +15,11 @@ import javax.annotation.Resource;
 
 import gov.gtas.model.*;
 import gov.gtas.services.*;
+import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,22 +52,8 @@ import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
-import gov.gtas.vo.passenger.AddressVo;
-import gov.gtas.vo.passenger.AgencyVo;
-import gov.gtas.vo.passenger.ApisMessageVo;
-import gov.gtas.vo.passenger.BagVo;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.CreditCardVo;
-import gov.gtas.vo.passenger.DispositionVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.EmailVo;
-import gov.gtas.vo.passenger.FlightLegVo;
-import gov.gtas.vo.passenger.FlightVo;
-import gov.gtas.vo.passenger.FrequentFlyerVo;
-import gov.gtas.vo.passenger.PassengerVo;
-import gov.gtas.vo.passenger.PhoneVo;
-import gov.gtas.vo.passenger.PnrVo;
-import gov.gtas.vo.passenger.SeatVo;
+
+import static java.util.stream.Collectors.*;
 
 @Controller
 public class PassengerDetailsController {
@@ -346,7 +336,8 @@ public class PassengerDetailsController {
 		if(pnrId != null || pnrRef!=null) {
 			return pService
 					.getTravelHistoryByItinerary(pnrId, pnrRef)
-					.stream().map(flight -> {
+					.stream()
+					.map(flight -> {
 								FlightVo flightVo = new FlightVo();
 								copyModelToVo(flight, flightVo);
 								return flightVo;
@@ -394,13 +385,12 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/bookingdetailhistory", method = RequestMethod.GET)
-	public List<FlightVo> getBookingDetailHistoryByPassenger(
+	public List<FlightVoForFlightHistory> getBookingDetailHistoryByPassenger(
 			@RequestParam String paxId,
-			@RequestParam String flightId)
-			throws ParseException {
+			@RequestParam String flightId) {
 
-		List<Passenger> _tempPaxList = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
-		return copyBookingDetailFlightModelToVo(_tempPaxList);
+		List<Passenger> passengersWithSamePassengerIdTag = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
+		return copyBookingDetailFlightModelToVo(passengersWithSamePassengerIdTag);
 
 	}
 	
@@ -809,36 +799,69 @@ public class PassengerDetailsController {
 
     /**
      *
-     * @param _tempPaxList
+     * @param allPassengersRelatingToSingleIdTag -
+	 * Passengers represent a single person on a flight once. Passenger Id Tag is how multiple passengers are stored together
+	 *                                           in one identity. The list passed in is several passengers who are mapped to a single
+	 *                                           passenger id tag / passenger identity. The Method will return a list of
+	 *                                           booking details and flights from the list of passenger ids.
      */
-	private List<FlightVo> copyBookingDetailFlightModelToVo(List<Passenger> _tempPaxList) {
+	private List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(List<Passenger> allPassengersRelatingToSingleIdTag) {
 
-	    List<FlightVo> _tempBDFlightsList = new ArrayList<>();
+	    List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
+
         try {
-	    //stuff flights from Passenger
+			List<Pair<Long, List<Flight>>> associatedPaxFlights = allPassengersRelatingToSingleIdTag
+					.stream()
+					.map(pax -> {
+						List<Flight> paxFlights = pService.getAllFlights(pax.getId()).stream()
+								.distinct()
+								.collect(toList());
+						return new ImmutablePair<>(pax.getId(), paxFlights);
+					})
+					.collect(toList());
+			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights
+					.stream()
+					.flatMap(paxFlightPair ->
+							paxFlightPair
+									.getRight()
+									.stream()
+									.map(flight -> {
+										FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
+										populateFlightVoWithFlightDetail(flight, flightVo);
+										flightVo.setPassId(paxFlightPair.getLeft().toString());
+										flightVo.setBookingDetail(false);
+										return flightVo;
+									}))
+					.collect(toList());
 
-        List _tempFLList = _tempPaxList.stream().map(pax->{return pService.getAllFlights(pax.getId());}).collect(Collectors.toList());
-            _tempBDFlightsList.addAll((Collection<? extends FlightVo>)_tempFLList.stream().flatMap(f -> ((Set)f).stream())
-				.map(flight -> {
-            	//for(Flight fl : flight){}
-                FlightVo flightVo = new FlightVo();
-				populateFlightVoWithFlightDetail((Flight)flight, flightVo);
-                return flightVo;
-            }).collect(Collectors.toCollection(LinkedList::new)));
-	    // stuff booking details from Passenger
-        List _tempbdList = _tempPaxList.stream().map(pax -> {return pax.getBookingDetails();}).collect(Collectors.toList());
-        _tempBDFlightsList.addAll((Collection<? extends FlightVo>) _tempbdList.stream().flatMap(f -> ((Set)f).stream()).map(bd -> {
-            FlightVo flightVo = new FlightVo();
-            populateFlightVoWithBookingDetail((BookingDetail) bd, flightVo);
-            return flightVo;
-        }).collect(Collectors.toList()));
+			List<BookingDetail> passengerBookingDetails =
+					allPassengersRelatingToSingleIdTag
+					.stream()
+					.map(Passenger::getBookingDetails)
+					.flatMap(Collection::stream)
+					.distinct()
+					.collect(toList());
+
+			List<FlightVoForFlightHistory> bookingDetailsHistory = passengerBookingDetails.stream()
+					.map(bookingDetail -> {
+						FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
+						populateFlightVoWithBookingDetail(bookingDetail, flightVo);
+						flightVo.setBookingDetail(true);
+						return flightVo;
+					})
+					.collect(toList());
+
+			flightsAndBookingDetailsRelatingToSamePaxIdTag.addAll(flightHistory);
+			flightsAndBookingDetailsRelatingToSamePaxIdTag.addAll(bookingDetailsHistory);
 
 		} catch (Exception e) {
-			logger.error("error copying mdoel to vo.", e);
+			logger.error("error copying model to vo.", e);
 		}
 
-		return _tempBDFlightsList;
+		return flightsAndBookingDetailsRelatingToSamePaxIdTag;
 	}
+
+
 
     /**
      *
