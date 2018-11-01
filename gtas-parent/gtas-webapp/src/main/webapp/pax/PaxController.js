@@ -436,6 +436,7 @@
             getPage = function () {
                 if(stateName === "queryPassengers"){
                     setPassengersGrid($scope.passengerQueryGrid, passengers);
+                    $scope.queryLimitReached = passengers.data.result.queryLimitReached;
                 }else{
                     setPassengersGrid($scope.passengerGrid, passengers);
                 }
