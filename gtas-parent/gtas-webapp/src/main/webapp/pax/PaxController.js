@@ -436,6 +436,7 @@
             getPage = function () {
                 if(stateName === "queryPassengers"){
                     setPassengersGrid($scope.passengerQueryGrid, passengers);
+                    $scope.queryLimitReached = passengers.data.result.queryLimitReached;
                 }else{
                     setPassengersGrid($scope.passengerGrid, passengers);
                 }
@@ -648,8 +649,10 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
-                },
+                    cellTemplate: '<div>' +
+                        '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList || row.entity.onWatchListLink" ' +
+                        'ng-class="(row.entity.onWatchListDoc || row.entity.onWatchList) ? \'danger-color\' : \'alert-color\'" >' +
+                        '<i class="fa fa-flag" aria-hidden="true"></i></span></div>'                },
                 {
                     field: 'passengerType',
                     name: 'passengerType',
@@ -751,7 +754,10 @@
                         direction: uiGridConstants.DESC,
                         priority: 0
                     },
-                    cellTemplate: '<div><span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="danger-color"><i class="fa fa-flag" aria-hidden="true"></i></span></div>'
+                    cellTemplate: '<div>' +
+                        '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList || row.entity.onWatchListLink" ' +
+                        'ng-class="(row.entity.onWatchListDoc || row.entity.onWatchList) ? \'danger-color\' : \'alert-color\'" >' +
+                        '<i class="fa fa-flag" aria-hidden="true"></i></span></div>'
                 },
                 {name: 'passengerType', displayName:'T', width: 50},
                 {

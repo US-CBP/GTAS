@@ -40,9 +40,10 @@ body{
 .gtas-brand:before {
 	content: 'Global Travel Assessment System'
 }
-@media (max-width:550px){
-		.gtas-brand:before {
-	content: 'GTAS'
+@media (max-width:550px) {
+    .gtas-brand:before {
+        content: 'GTAS'
+    }
 }
 	
 [ng\:cloak], [ng-cloak], .ng-cloak {

@@ -38,6 +38,7 @@ public class CaseVo {
     private Date currentTime;
     private String countDownTimeDisplay;
     private Long countdownTime;
+    private String disposition;
 
     public Long getId() {
         return id;
@@ -239,4 +240,14 @@ public class CaseVo {
     public void setCountdownTime(Long countdownTime) {
         this.countdownTime = countdownTime;
     }
+
+	public String getDisposition() {
+		return disposition;
+	}
+
+	public void setDisposition(String disposition) {
+		this.disposition = disposition;
+	}
+    
+    
 }

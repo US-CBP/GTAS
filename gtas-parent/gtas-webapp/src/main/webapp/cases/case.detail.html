@@ -51,26 +51,47 @@
                 </tbody>
               </table>
             </div>
+            
             <div ng-show="dispStatus.caseStatusAdminView">
               <form name="caseForm" ng-submit="caseConfirm()"
                 ng-show="dispStatus.caseStatusShow"
                 class="flex flex-vert">
                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
-                  <select class="mdl-selectfield__select" id="case-status"
+                  <select class="mdl-selectfield__select" id="case-status" ng-change="updateOnStatusChange()"
                     ng-model="caseDispStatus">
                     <option ng-repeat="item in caseDispositionStatuses"
                       value="{{item.name}}">{{item.name}}</option>
                   </select>
-                  <label class="mdl-textfield__label static-label" for="case-status">Case Status</label>
+                  <label class="mdl-textfield__label static-label" for="case-status"><strong>Case Status</strong></label>
                 </div>
-                <button class="btn btn-primary" type="submit">Save</button>
+                <br/>
+                
+                
+                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
+                 <label for="case-disposition-list"><strong>Start Vetting</strong></label>
+                  <select class="mdl-selectfield__select" id="case-disposition-list" ng-change="updateOnDispositionChange()"
+                    ng-model="caseDisposition">
+                    
+                    <option ng-repeat="item in caseDispositionList"
+                      value="{{item.name}}">{{item.name}}</option>
+                  </select>
+                  
+                </div>
+                <br/>
+                <div>  <span name="saveConfirmation"> {{ saveConfirmation }}   </span></div>
+                  <button class="btn btn-primary" type="submit">Save</button>
+                
               </form>
+             
             </div>
+               
             <form class="flex flex-center"name="pdfForm" ng-submit="printCard()">
               <md-input-container>
                 <button class="md-raised btn btn-default" type="submit">Export PDF</button>
               </md-input-container>
             </form>
+            
+            
            <md-button ng-click="addToOneDayLookoutList(caseItem.id)" ng-disabled="isAddOLKButtonDisabled" class="btn btn-default">
           				<md-tooltip>Add to One Day Lookout List</md-tooltip>
           					<i aria-hidden="true"></i>

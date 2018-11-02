@@ -84,6 +84,9 @@ public class Case extends BaseEntityAudit {
     
     @Column(name = "one_day_lookout_flag")
     private Boolean oneDayLookoutFlag;
+    
+    @Column(name = "disposition", nullable = true)
+    private String disposition;
 
     @ManyToOne(optional=true, fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
@@ -243,6 +246,16 @@ public class Case extends BaseEntityAudit {
 
 	public void setOneDayLookoutFlag(Boolean oneDayLookoutFlag) {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
+	}
+
+	
+	
+	public String getDisposition() {
+		return disposition;
+	}
+
+	public void setDisposition(String disposition) {
+		this.disposition = disposition;
 	}
 
 	@Override

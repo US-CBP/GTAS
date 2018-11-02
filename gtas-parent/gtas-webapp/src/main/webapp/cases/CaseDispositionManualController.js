@@ -132,7 +132,7 @@
                     caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
                         $scope.caseItemHitId, $scope.commentText,
                         $scope.caseDispStatus,
-                        $scope.hitDetailTrueHitFlag,null)
+                        $scope.hitDetailTrueHitFlag,null, null)
                         .then(function (aCase) {
                             $scope.caseItem = aCase.data;
                             $scope.caseItemHits = $scope.caseItem.hitsDispositions;

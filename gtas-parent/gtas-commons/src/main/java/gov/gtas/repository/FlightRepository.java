@@ -56,11 +56,11 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     public List<Flight> getFlightByPaxId(@Param("paxId") Long paxId);*/
     
     @Query(nativeQuery = true, 
-    		value="SELECT f.* FROM Flight_Passenger fp join Flight f ON (fp.flight_id = f.id) where fp.pax_id = (:paxId)")
+    		value="SELECT f.* FROM flight_passenger fp join flight f ON (fp.flight_id = f.id) where fp.pax_id = (:paxId)")
     public List<Flight> getFlightByPaxId(@Param("paxId") Long paxId);
 
     @Query(nativeQuery = true,
-            value="SELECT f.* FROM flight_passenger fp join Flight f ON (fp.flight_id = f.id) where fp.passenger_id = (:paxId)")
+            value="SELECT f.* FROM flight_passenger fp join flight f ON (fp.flight_id = f.id) where fp.passenger_id = (:paxId)")
     public List<Flight> getFlightByPassengerId(@Param("paxId") Long paxId);
 
     @Query("SELECT f FROM Flight f WHERE f.flightDate between :startDate AND :endDate")
