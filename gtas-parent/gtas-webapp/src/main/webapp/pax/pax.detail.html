@@ -821,7 +821,20 @@
                     <table class="cbp-table-selectable mdl-js-data-table">
                       <tbody>
                         <tr ng-repeat="k in flight | orderBy:'-etd'">
-                            <td><a class="md-primary md-default-theme" href="#/paxdetail/{{passenger.paxId}}/{{k.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{k.fullFlightNumber}}</a></td>
+                          <td ng-if="!k.bookingDetail">
+                            <a class="md-primary md-default-theme"
+                               href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                               target="pax.detail" title="Show passenger detail"
+                               style="text-decoration: none;
+                               font-weight: bold;" >
+                            {{k.fullFlightNumber}}</a>
+                          </td>
+                          <td class="md-primary md-default-theme"
+                              style="text-decoration: none;
+                               font-weight: bold;"
+                              ng-if="k.bookingDetail">
+                              {{k.fullFlightNumber}}
+                          </td>
                             <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.originCountry}}</td>
