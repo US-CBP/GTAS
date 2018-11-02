@@ -18,7 +18,6 @@ import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
-import gov.gtas.vo.passenger.FlightVo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,6 +39,7 @@ import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerVo;
+import javax.persistence.Query;
 
 /**
  * The Class PassengerServiceImpl.
@@ -398,6 +398,37 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return flightSet;
 	}
+        
+        @Override
+        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList)
+        {
+            String sqlStr = "SELECT fp FROM FlightPax fp JOIN fp.passenger WHERE fp.passenger.id IN :pidList";
+            Query query = em.createQuery(sqlStr);
+            query.setParameter("pidList", passengerIdList);
+            List<FlightPax> flightPaxList = query.getResultList();
+            return flightPaxList;
+        }
+        
+        @Override
+        public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList)
+        {
+            String sqlStr = "SELECT p FROM Passenger p WHERE p.id IN :pidList";
+            Query query = em.createQuery(sqlStr);
+            query.setParameter("pidList", passengerIdList);
+            List<Passenger> passengerList = query.getResultList();
+            return passengerList;           
+        }
+        
+                
+        @Override
+        public List<Flight> getFlightsByIdList(List<Long> flightIdList)
+        {
+            String sqlStr = "SELECT f FROM Flight f WHERE f.id IN :fidList";
+            Query query = em.createQuery(sqlStr);
+            query.setParameter("fidList", flightIdList);
+            List<Flight> flightList = query.getResultList();
+            return flightList;            
+        }
 
 	@Override
 	public void setAllFlights(Set<Flight> flights, Long id) {

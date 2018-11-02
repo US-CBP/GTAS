@@ -9,6 +9,7 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Flight;
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
@@ -87,9 +88,15 @@ public interface PassengerService {
 	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
 
 	public Set<Flight> getAllFlights(Long id);
+        
+        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList);
+        
+        public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
 
 	public void setAllFlights(Set<Flight> flights, Long id);	
 	
 	public void SetSingleFlight(Flight f, Long id);
+        
+        public List<Flight> getFlightsByIdList(List<Long> flightIdList);
 	
 }

@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import gov.gtas.model.lookup.RuleCat;
+import java.util.Map;
 
 public interface CaseDispositionService {
 
@@ -38,7 +40,8 @@ public interface CaseDispositionService {
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
 
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids);
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, 
+                       List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
     public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
 
@@ -56,7 +59,9 @@ public interface CaseDispositionService {
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id);
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, 
+                                                   String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
+                                                   Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
     
     public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
     
@@ -69,4 +74,6 @@ public interface CaseDispositionService {
     public String getAPISOnlyFlagAndVersion();
     
     public Date getCurrentServerTime();
+    
+    public Iterable<RuleCat> findAllRuleCat();
 }

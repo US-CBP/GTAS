@@ -7,9 +7,11 @@
 package gov.gtas.svc.util;
 
 import gov.gtas.bo.*;
+import gov.gtas.model.Case;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
@@ -56,20 +58,30 @@ public class TargetingResultCaseMgmtUtils {
             logger.info("Number of rule hits --> " + resultList.size());
         }
         Bench.start("here2", "Before for RuleHitDetail loop.");
+        
+        // all of these maps prevent many trips to the database in the for loop below.
+        Map<Long, List<Flight> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
+        Map<Long, Passenger> passengerMap = TargetingResultUtils.createPassengerMap(resultList, passengerService);
+        Map<Long, Flight> flightMap = TargetingResultUtils.createFlightMap(resultList, passengerService);
+        Map<Long, Case> caseMap = createCaseMap(resultList, dispositionService);
+        Map<Long, RuleCat> ruleCatMap = createRuleCatMap(dispositionService);
+        
+        
         for (RuleHitDetail rhd : resultList) {
             if (rhd.getFlightId() == null) {
                 // get all the flights for the passenger
                 // and replicate the RuleHitDetail object, for each flight id
                 // Note that the RuleHitDetail key is (UdrId, EngineRuleId,
                 // PassengerId, FlightId)
-                Collection<Flight> flights = passengerService.getAllFlights(rhd.getPassengerId());
+                List<Flight> flights = passengerFlightMap.get(rhd.getPassengerId());
+                
                 if (flights != null && !CollectionUtils.isEmpty(flights)) {
                     try {
                         Bench.start("here3", "Before for Flight loop.");
                         for (Flight flight : flights) {
                             RuleHitDetail newrhd = rhd.clone();
-                            processPassengerFlight(newrhd, flight.getId(),
-                                    resultMap, dispositionService);
+                            processPassengerFlight(newrhd, flight.getId(), caseMap, flightMap,
+                                     passengerMap,ruleCatMap, dispositionService);
                         }
                         Bench.end("here3", "After for Flight loop in ruleResultPostProcesssing.");
                     } catch (CloneNotSupportedException cnse) {
@@ -82,7 +94,7 @@ public class TargetingResultCaseMgmtUtils {
                 }
             } else {
                 Bench.start("here4", "start processPassengerFlight call in ruleResultPostProcesssing.");
-                processPassengerFlight(rhd, rhd.getFlightId(), resultMap, dispositionService);
+                processPassengerFlight(rhd, rhd.getFlightId(),caseMap, flightMap, passengerMap,ruleCatMap, dispositionService);
                 Bench.end("here4", " End processPassengerFlight call in ruleResultPostProcesssing.");
             }
             rhd.setPassenger(null);
@@ -104,7 +116,8 @@ public class TargetingResultCaseMgmtUtils {
      * @param dispositionService
      */
     private static void processPassengerFlight(RuleHitDetail rhd,
-                                               Long flightId, Map<RuleHitDetail, RuleHitDetail> resultMap,
+                                               Long flightId, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
+                                               Map<Long, Passenger> passengerMap,Map<Long, RuleCat> ruleCatMap,
                                                CaseDispositionService dispositionService) {
 
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
@@ -114,8 +127,7 @@ public class TargetingResultCaseMgmtUtils {
         String watchlistItemFlag = "wl_item";
         try {
             _tempPaxId = rhd.getPassengerId();
-            //_tempPax = TargetingResultCaseMgmtUtils.paxRepo.findOne(_tempPaxId);
-            _tempPax = dispositionService.findPaxByID(_tempPaxId);
+           _tempPax = passengerMap.get(_tempPaxId);
             //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
             if(rhd.getUdrRuleId() == null){
                 description = watchlistItemFlag + description;
@@ -127,7 +139,7 @@ public class TargetingResultCaseMgmtUtils {
                 }
                 dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
                         rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, description, rhd.getRuleId());
+                        document, description, rhd.getRuleId(), caseMap, flightMap, passengerMap, ruleCatMap);
             }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId
@@ -171,6 +183,43 @@ public class TargetingResultCaseMgmtUtils {
     public void setPaxRepoInstance(PassengerRepository paxRepoInstance) {
         this.paxRepoInstance = paxRepoInstance;
     }
+    
+    private static Map<Long, RuleCat> createRuleCatMap(CaseDispositionService dispositionService)
+    {
+       Map<Long, RuleCat> ruleCatMap = new HashMap<>();
+       Iterable<RuleCat> ruleCatList = dispositionService.findAllRuleCat();
+       for (RuleCat ruleCat : ruleCatList)
+       {
+         ruleCatMap.put(ruleCat.getId(), ruleCat);
+       }
+        
+       return ruleCatMap;
+    }
+    
+    private static Map<Long, Case> createCaseMap(List<RuleHitDetail> ruleHitDetailList, CaseDispositionService dispositionService)
+    {
+        List<Long> passengerIdList = new ArrayList<>();
+        List<Case> caseResultList = null;
+        Map<Long, Case> caseMap = new HashMap<>();
 
+        for (RuleHitDetail rhd : ruleHitDetailList)
+        {
+           Long passengerId = rhd.getPassengerId();
+           passengerIdList.add(passengerId);
 
+        }
+
+        if (!passengerIdList.isEmpty())
+        {
+            caseResultList = dispositionService.getCaseByPaxId(passengerIdList);
+
+            for (Case caze :  caseResultList)
+            {
+               caseMap.put(caze.getPaxId(), caze);
+
+            }
+        }
+
+        return caseMap;       
+    }
 }
