@@ -53,6 +53,9 @@ public interface HitsSummaryRepository extends
 
     @Query("SELECT hits FROM HitsSummary hits WHERE hits.flight.id = :fid")
     List<HitsSummary> findHitsByFlightId(@Param("fid") Long flightId);
+    
+    @Query("SELECT hits FROM HitsSummary hits WHERE hits.passenger.id in :pidList")
+    List<HitsSummary> findHitsByPassengerIdList(@Param("pidList") List<Long> passengerIdList);
 
     @Query("DELETE FROM HitsSummary hs WHERE hs.id = (:id)")
     @Modifying

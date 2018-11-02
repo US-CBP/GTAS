@@ -56,7 +56,7 @@ public class NameMatchCaseMgmtUtils {
 
                 dispositionService.registerCasesFromRuleService(flightId, pax_id, _tempPax.getFirstName()+_tempPax.getLastName(),
                         _tempPax.getPassengerType(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, description, wl_id);
+                        document, description, wl_id,null, null, null, null);
             }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:" + wl_id + " set", ex);
