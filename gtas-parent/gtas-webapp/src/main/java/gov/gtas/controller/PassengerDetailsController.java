@@ -809,28 +809,29 @@ public class PassengerDetailsController {
 	    List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
 
         try {
-			List<Pair<Long, List<Flight>>> associatedPaxFlights = allPassengersRelatingToSingleIdTag
+
+        	List<Long> passengerIdList = allPassengersRelatingToSingleIdTag
 					.stream()
-					.map(pax -> {
-						List<Flight> paxFlights = pService.getAllFlights(pax.getId()).stream()
-								.distinct()
-								.collect(toList());
-						return new ImmutablePair<>(pax.getId(), paxFlights);
-					})
+					.map(Passenger::getId)
 					.collect(toList());
+
+        	List<FlightPax> flightPassengersList = pService.getFlightPaxByPassengerIdList(passengerIdList);
+
+			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList
+					.stream()
+					.map(flightPax -> new ImmutablePair<>(flightPax.getPassenger(), flightPax.getFlight()))
+					.collect(Collectors.toSet());
+
 			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights
 					.stream()
-					.flatMap(paxFlightPair ->
-							paxFlightPair
-									.getRight()
-									.stream()
-									.map(flight -> {
+					.map(passengerFlightPair -> {
 										FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
-										populateFlightVoWithFlightDetail(flight, flightVo);
-										flightVo.setPassId(paxFlightPair.getLeft().toString());
+										populateFlightVoWithFlightDetail(passengerFlightPair.getRight(), flightVo);
+										Long pId = passengerFlightPair.getLeft().getId();
+										flightVo.setPassId(pId.toString());
 										flightVo.setBookingDetail(false);
 										return flightVo;
-									}))
+									})
 					.collect(toList());
 
 			List<BookingDetail> passengerBookingDetails =
