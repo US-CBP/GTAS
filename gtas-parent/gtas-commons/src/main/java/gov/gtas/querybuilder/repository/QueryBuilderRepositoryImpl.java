@@ -40,9 +40,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import gov.gtas.repository.AppConfigurationRepository;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.validation.Errors;
 
@@ -58,6 +60,9 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
     
     @PersistenceContext 
     private EntityManager entityManager;
+
+    @Autowired
+    private AppConfigurationRepository appConfigurationRepository;
 
     @Override
     @Transactional
@@ -209,13 +214,17 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
             TypedQuery<Flight> query = entityManager.createQuery(jpqlQuery, Flight.class);
             MutableInt positionalParameter = new MutableInt();
             setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
-            
+            Integer maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
+                    .MAX_FLIGHT_QUERY_RESULT).getValue());
+            query.setMaxResults(maxQueryResults);
             // if page size is less than zero, return all flight result
 //          if(queryRequest.getPageSize() < 0) {
             logger.info("Getting all flights with this query: " + jpqlQuery);
             List<Flight> flights = query.getResultList();
             vo.setFlights(flights);
             vo.setTotalFlights(flights.size());
+            vo.setQueryLimitReached(flights.size() >= maxQueryResults);
+
 //          } else {
 //              // get total number of flights
 //              logger.debug("Pagination, Getting total number of flights...");
@@ -252,15 +261,21 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
         
         try {
             String jpqlQuery = JPQLGenerator.generateQuery(queryRequest.getQuery(), EntityEnum.PASSENGER);
+
             TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
             MutableInt positionalParameter = new MutableInt();
             setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
-            
+
+            Integer maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
+                    .MAX_PASSENGER_QUERY_RESULT).getValue());
+            query.setMaxResults(maxQueryResults);
+
 //          if(queryRequest.getPageSize() < 0) {
             logger.info("Getting all passengers with this query: " + jpqlQuery);
             List<Object[]> result = query.getResultList();
             vo.setResult(result);
             vo.setTotalPassengers(result.size());
+            vo.setQueryLimitReached(result.size() >= maxQueryResults);
 //          }
 //          else {
 //              // get total number of passengers

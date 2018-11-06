@@ -11,7 +11,6 @@ import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.ApiAccess;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.AppConfiguration;
-import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ApiAccessService;
 import gov.gtas.services.AuditLogPersistenceService;
@@ -44,6 +43,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static gov.gtas.repository.AppConfigurationRepository.MAX_FLIGHT_QUERY_RESULT;
+import static gov.gtas.repository.AppConfigurationRepository.MAX_PASSENGER_QUERY_RESULT;
 
 /**
  * Back-end REST service interface to support audit/error log viewing and
@@ -139,7 +141,9 @@ public class AdminController {
 		SettingsVo settingsVo = new SettingsVo();
 		settingsVo.setMatchingThreshold(Double.parseDouble(appConfigurationService.findByOption(MATCHING_THRESHOLD).getValue()));
 		settingsVo.setFlightRange(Double.parseDouble(appConfigurationService.findByOption(FLIGHT_RANGE).getValue()));
-                
+		settingsVo.setMaxPassengerQueryResult(Integer.parseInt(appConfigurationService.findByOption(MAX_PASSENGER_QUERY_RESULT).getValue()));
+		settingsVo.setMaxFlightQueryResult(Integer.parseInt(appConfigurationService.findByOption(MAX_FLIGHT_QUERY_RESULT).getValue()));
+
                 AppConfiguration appConfigApisFlag = appConfigurationService.findByOption(APIS_ONLY_FLAG);
                 if (appConfigApisFlag != null)
                 {
@@ -171,8 +175,16 @@ public class AdminController {
 			appConfig = appConfigurationService.findByOption(FLIGHT_RANGE);
 			appConfig.setValue(String.valueOf(settings.getFlightRange()));
 			appConfigurationService.save(appConfig);
-                        
-                        if (settings.getApisOnlyFlag() != null && !settings.getApisOnlyFlag().isEmpty())
+
+			appConfig = appConfigurationService.findByOption(MAX_PASSENGER_QUERY_RESULT);
+			appConfig.setValue(String.valueOf(settings.getMaxPassengerQueryResult()));
+			appConfigurationService.save(appConfig);
+
+			appConfig = appConfigurationService.findByOption(MAX_FLIGHT_QUERY_RESULT);
+			appConfig.setValue(String.valueOf(settings.getMaxFlightQueryResult()));
+			appConfigurationService.save(appConfig);
+
+			if (settings.getApisOnlyFlag() != null && !settings.getApisOnlyFlag().isEmpty())
                         {
 			    appConfig = appConfigurationService.findByOption(APIS_ONLY_FLAG);
                             if (appConfig != null)

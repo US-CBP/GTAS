@@ -8,7 +8,6 @@ package gov.gtas.querybuilder.service;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 
 import gov.gtas.enumtype.EntityEnum;
-import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
@@ -136,8 +135,6 @@ public class QueryBuilderService {
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public FlightsPageDto runFlightQuery(QueryRequest queryRequest) throws InvalidQueryException {
-		List<FlightVo> flightList = new ArrayList<>();
-		long totalCount = 0;
 
 		// validate queryRequest
 		if (queryRequest == null) {
@@ -151,9 +148,12 @@ public class QueryBuilderService {
 			throw new InvalidQueryException(errorMsg, queryRequest.getQuery());
 		}
 
+		List<FlightVo> flightList = new ArrayList<>();
+		long totalCount = 0;
+		boolean queryLimitReached;
 		try {
 			FlightQueryVo flights = queryRepository.getFlightsByDynamicQuery(queryRequest);
-
+			queryLimitReached = flights.isQueryLimitReached();
 			if (flights == null) {
 				return new FlightsPageDto(flightList, totalCount);
 			}
@@ -172,13 +172,12 @@ public class QueryBuilderService {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
 
-		return new FlightsPageDto(flightList, totalCount);
+		return new FlightsPageDto(flightList, totalCount, queryLimitReached);
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest) throws InvalidQueryException {
-		List<PassengerVo> passengerList = new ArrayList<>();
-		long totalCount = 0;
+
 
 		// validate queryRequest
 		if (queryRequest == null) {
@@ -191,9 +190,12 @@ public class QueryBuilderService {
 			logger.info(errorMsg, new InvalidQueryException(errorMsg, queryRequest.getQuery()));
 			throw new InvalidQueryException(errorMsg, queryRequest.getQuery());
 		}
-
+		List<PassengerVo> passengerList = new ArrayList<>();
+		long totalCount = 0;
+		boolean queryLimitReached;
 		try {
 			PassengerQueryVo resultList = queryRepository.getPassengersByDynamicQuery(queryRequest);
+			queryLimitReached = resultList.isQueryLimitReached();
 			if (resultList == null) {
 				return new PassengersPageDto(passengerList, totalCount);
 			}
@@ -227,7 +229,7 @@ public class QueryBuilderService {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
 
-		return new PassengersPageDto(passengerList, totalCount);
+		return new PassengersPageDto(passengerList, totalCount, queryLimitReached);
 	}
 
 	private UserQuery createUserQuery(String userId, UserQueryRequest req) throws JsonProcessingException {

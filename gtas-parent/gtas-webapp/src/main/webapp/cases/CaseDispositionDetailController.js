@@ -16,11 +16,14 @@
             $scope.commentText;
             $scope.hitDispStatus;
             $scope.caseDispStatus;
+            $scope.caseDisposition;
+            $scope.saveConfirmation=null;
             $scope.caseItemHitsVo;
             $scope.ruleCatSet;
             $scope.ruleCat;
             $scope.caseCommentAttachment = null;
             $scope.caseDispositionStatuses = [];
+            $scope.caseDispositionList = [];
             $scope.hitDispositionStatuses = [];
             $scope.dispStatus={
                 hitStatusShow:true,
@@ -66,6 +69,7 @@
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                 $scope.caseItemHitsVo = $scope.caseItem.hitsDispositionVos;
                 $scope.caseDispStatus = $scope.caseItem.status;
+                $scope.caseDisposition = $scope.caseItem.disposition;
                 //$scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
                 $scope.dispStatus.caseStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
                 if($scope.caseItem.oneDayLookoutFlag == true)
@@ -137,9 +141,26 @@
             };
 
             $scope.populateHitDispStatuses();
+            
+            //populates the true Case Statues (Admit, Deny Boarding, Refuse Entry...etc
+            $scope.populateCaseDispositionList = function(){
+                caseDispositionService.getCaseDisposition().then(function (response) {
+                    $scope.caseDispositionList = [];
+                    angular.forEach(response.data, function(item){
+                        $scope.caseDispositionList.push(item);
+                        
+                    });
+                });
+            };
+            
+            $scope.populateCaseDispositionList();
+            
+            
+            
 
             $scope.caseConfirm = function() {
                 $scope.dispStatus.allHitsClosed = true;
+                $scope.saveConfirmation = "";
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
                     if ( ($scope.caseDispStatus === $scope.dispStatus.constants.CLOSED) &&
@@ -153,18 +174,28 @@
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
-                $scope.caseDispStatus = "Case" + $scope.caseDispStatus;
+                //$scope.caseDispStatus = "Case" + $scope.caseDispStatus;
+                var tempCaseDispStatus = "Case" +$scope.caseDispStatus;
                 caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
                     $scope.caseItemHitId, $scope.commentText,
-                    $scope.caseDispStatus,
-                    $scope.hitDetailTrueHitFlag,null)
-                    .then(function (aCase) {
-                        $scope.caseItem = aCase.data;
-                        $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-                        $scope.caseDispStatus = $scope.caseItem.status;
+                    tempCaseDispStatus, 
+                    $scope.hitDetailTrueHitFlag,null, $scope.caseDisposition)
+                    .then(function (result) {
+                       // $scope.caseItem = aCase.data;
+                        //$scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                       // $scope.caseDispStatus = $scope.caseItem.status;
                         //$scope.dispStatus.caseStatusShow = false;
                         spinnerService.hide('html5spinner');
-                        $mdSidenav('comments').close();
+                        //$mdSidenav('comments').close();
+                        if(result.data == true)
+                        {
+                        	 $scope.saveConfirmation = "Saved successfully";
+                        }
+                        else
+                        {
+                        	$scope.saveConfirmation = "Not saved due to errors";
+                        }
+                        
                     });// END of caseDispositionService call
             }else{
                     var toastPosition = angular.element(document.getElementById('caseForm'));
@@ -183,7 +214,7 @@
                                                              $scope.caseItemHitId, $scope.commentText,
                                                              $scope.hitDispStatus,
                                                              $scope.hitDetailTrueHitFlag,
-                                                             $scope.caseCommentAttachment)
+                                                             $scope.caseCommentAttachment, $scope.caseDisposition)
                     .then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
@@ -193,6 +224,16 @@
                     $mdSidenav('comments').close();
                     $state.reload();
                 });
+            };
+            
+            $scope.updateOnStatusChange = function(){
+            	
+            	$scope.saveConfirmation = "";
+            };
+            
+            $scope.updateOnDispositionChange = function(){
+            	
+            	$scope.saveConfirmation = "";
             };
             
             $scope.addToOneDayLookoutList = function(caseId){
@@ -276,6 +317,8 @@
                 angular.element(editor.element.toolbarElement).remove();
             };
 
+           
+            
             // Trix attachment logic
 
             var createStorageKey, host, uploadAttachment;

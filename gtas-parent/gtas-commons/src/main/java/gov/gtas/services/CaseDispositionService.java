@@ -8,6 +8,7 @@ package gov.gtas.services;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -20,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import gov.gtas.model.lookup.RuleCat;
+import java.util.Map;
 
 public interface CaseDispositionService {
 
@@ -30,12 +33,15 @@ public interface CaseDispositionService {
     public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
+    
+    public List<CaseDispositionStatus> getCaseDispositionStatuses();
 
     public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
 
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids);
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, 
+                       List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
     public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
 
@@ -43,7 +49,7 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username);
+    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
 
     public Passenger findPaxByID(Long id);
 
@@ -53,7 +59,9 @@ public interface CaseDispositionService {
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id);
+    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, 
+                                                   String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
+                                                   Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
     
     public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
     
@@ -66,4 +74,6 @@ public interface CaseDispositionService {
     public String getAPISOnlyFlagAndVersion();
     
     public Date getCurrentServerTime();
+    
+    public Iterable<RuleCat> findAllRuleCat();
 }

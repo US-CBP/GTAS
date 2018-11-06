@@ -71,6 +71,7 @@
             getPage = function () {
                 if(stateName === 'queryFlights'){
                     setFlightsGrid($scope.flightsQueryGrid, flights || {flights: [], totalFlights: 0});
+                    $scope.queryLimitReached = flights.data.result.queryLimitReached;
                 }
                 else{
                     setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});

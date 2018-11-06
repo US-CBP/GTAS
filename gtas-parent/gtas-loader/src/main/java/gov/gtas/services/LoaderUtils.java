@@ -387,11 +387,10 @@ public class LoaderUtils {
     
     //These 4 overloaded methods represent the 4 combinations that legs can be compared together
     public void setDwellTime(Flight firstFlight,Flight secondFlight, Pnr pnr){
-    	if(firstFlight != null && secondFlight != null 
+    	if(firstFlight != null && secondFlight != null
     			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
     			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
-    		
+
     	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondFlight.getDestination());
@@ -401,7 +400,6 @@ public class LoaderUtils {
     public void setDwellTime(BookingDetail firstBooking, BookingDetail secondBooking, Pnr pnr){
     	if(firstBooking != null && secondBooking != null 
     			&& firstBooking.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
-    			&& !(secondBooking.getDestination().equals( firstBooking.getOrigin()))
     			&& (firstBooking.getEta()!=null && secondBooking.getEtd() != null)){
     		
     	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
@@ -411,11 +409,10 @@ public class LoaderUtils {
     	}
     }
     public void setDwellTime(Flight firstFlight, BookingDetail secondBooking, Pnr pnr){
-    	if(firstFlight != null && secondBooking != null 
+    	if(firstFlight != null && secondBooking != null
     			&& firstFlight.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
-    			&& !(secondBooking.getDestination().equals( firstFlight.getOrigin()))
     			&& (firstFlight.getEta()!=null && secondBooking.getEtd() != null)){
-    		
+
     	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondBooking.getDestination());
@@ -425,7 +422,6 @@ public class LoaderUtils {
     public void setDwellTime(BookingDetail firstBooking, Flight secondFlight, Pnr pnr){
     	if(firstBooking != null && secondFlight != null 
     			&& firstBooking.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstBooking.getOrigin()))
     			&& (firstBooking.getEta()!=null && secondFlight.getEtd() != null)){
     		
     	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);

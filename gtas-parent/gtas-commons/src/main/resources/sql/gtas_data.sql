@@ -56,6 +56,8 @@ insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
 insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.70','Threshold which to determine name match');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGER_QUERY_RESULT','1000','Maximum amount of passenger results from query allowed');
+insert into app_configuration (opt, val, description) values('MAX_FLIGHT_QUERY_RESULT','1000','Maximum amount of flight results from query allowed');
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL','5','Number of days indexed REDIS Keys to expire in');
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_TIME_UNIT','DAYS','REDIS keys expiration time units - DAYS or MINUTES ');
@@ -82,6 +84,15 @@ insert into hit_disposition_status(id, name, description) values(2, 'OPEN', 'Cas
 insert into hit_disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
 insert into hit_disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
 insert into hit_disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
+
+insert into case_disposition_status(id, name, description) values(1, 'Admit', 'Admit');
+insert into case_disposition_status(id, name, description) values(2, 'Deny Boarding', 'Deny Boarding');
+insert into case_disposition_status(id, name, description) values(3, 'No Show', 'No Show');
+insert into case_disposition_status(id, name, description) values(4, 'Cancelled', 'Cancelled');
+insert into case_disposition_status(id, name, description) values(5, 'Duplicate','Duplicate');
+insert into case_disposition_status(id, name, description) values(6, 'Refuse Entry', 'Refuse Entry');
+insert into case_disposition_status(id, name, description) values(7, 'Secondary Referral', 'Secondary Referral');
+insert into case_disposition_status(id, name, description) values(8, 'False Match', 'False Match');
 
 
 insert into rule_category(catId, category, description, priority) values(1, 'General', 'General category', 5);

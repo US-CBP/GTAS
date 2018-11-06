@@ -54,4 +54,9 @@ public interface FlightService {
 	public void setSinglePassenger(Long passengerId, Long flightId);
 
 	public int getPassengerCount(Flight f);
-}
+
+	/*
+	* Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist matches.
+	* */
+	public Long getFlightFuzzyMatchesOnly(Long flightId);
+	}
