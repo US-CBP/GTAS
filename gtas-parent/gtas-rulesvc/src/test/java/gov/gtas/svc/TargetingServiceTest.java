@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -63,6 +64,7 @@ public class TargetingServiceTest {
     }
 
     @Test
+    @Ignore // move to an IT test class to get needed autowired services.
     public void testAnalyzeApisMessage() {
         ReflectionTestUtils.setField(targetingService, "ruleService",
                 mockRuleService);
