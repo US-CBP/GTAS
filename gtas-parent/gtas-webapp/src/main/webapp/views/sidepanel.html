@@ -129,13 +129,22 @@
             </h3>
             <div id="dispstatusGroup" class="collapse in" aria-expanded="true">
               <div class="filter-group-content">
-                <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
-                  <select class="cbp-non-chip-input mdl-selectfield__select" id="dispstatus"
-                          ng-model="model.status">
-                    <option ng-repeat="item in dispositionStatuses" value="{{item.name}}" translate>
-                      {{item.name}}
-                    </option>
-                  </select>
+                <div data-upgraded=",MaterialSelectfield">
+                  <label>NEW:
+                    <input type="checkbox" ng-model="model.displayStatusCheckBoxes.NEW">
+                  </label><br/>
+                  <label>OPEN:
+                    <input type="checkbox" ng-model="model.displayStatusCheckBoxes.OPEN">
+                  </label><br/>
+                  <label>CLOSED:
+                    <input type="checkbox" ng-model="model.displayStatusCheckBoxes.CLOSED">
+                  </label><br/>
+                  <label>RE-OPEN:
+                    <input type="checkbox" ng-model="model.displayStatusCheckBoxes.REOPEN">
+                  </label><br/>
+                  <label>PENDING CLOSURE:
+                    <input type="checkbox" ng-model="model.displayStatusCheckBoxes.PENDINGCLOSURE">
+                  </label>
                 </div>
               </div>
             </div>
