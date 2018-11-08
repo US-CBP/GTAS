@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
 
 public final class TextUtils {
     private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
+
+    private static final String START_OF_SEGMENT_REGEX = "[a-zA-z]{3}[^a-zA-Z0-9]";
+    private static final Pattern START_OF_SEGMENT_PATTERN = Pattern.compile(START_OF_SEGMENT_REGEX);
+
     private TextUtils() { }
     
     /**
@@ -88,5 +92,20 @@ public final class TextUtils {
             return matcher.start();
         }        
         return -1;
+    }
+
+
+    /**
+     * @param text - Segment text. Can be full or not
+     *             <p>
+     *             Returns true if the segment starts with with 3 characters and a non-alphanumeric number
+     *             otherwise returns false.
+     */
+    public static boolean validSegmentStart(String text) {
+        if (text.length() < 4) {
+            return false;
+        }
+        Matcher startOfSegmentMatcher = START_OF_SEGMENT_PATTERN.matcher(text.substring(0, 4));
+        return startOfSegmentMatcher.matches();
     }
 }

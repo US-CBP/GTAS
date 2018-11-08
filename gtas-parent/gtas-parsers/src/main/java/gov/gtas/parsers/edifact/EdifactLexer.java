@@ -16,15 +16,17 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.EdifactUtils;
 import gov.gtas.parsers.util.TextUtils;
 
+import static gov.gtas.parsers.util.TextUtils.validSegmentStart;
+
 /**
  * Class for tokenizing Edifact files
  */
 public final class EdifactLexer {
     private static final Logger logger = LoggerFactory.getLogger(EdifactLexer.class);
     private final UNA una;
-    
+
     private final String message;
-    
+
     public EdifactLexer(String message) { 
         this.message = message;
         this.una = EdifactUtils.getUnaSegment(message);
@@ -96,7 +98,9 @@ public final class EdifactLexer {
             // add the segment terminator back (removed from split)
             Segment segment = segmentTokenizer.buildSegment(s);
             segment.setText(s + this.una.getSegmentTerminator());
-            segments.add(segment);
+            if (validSegmentStart(segment.getText())) {
+                segments.add(segment);
+            }
         }
         
         return segments;
