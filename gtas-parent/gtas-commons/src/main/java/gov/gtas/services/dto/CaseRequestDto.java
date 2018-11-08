@@ -1,7 +1,6 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,9 +9,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-public class CaseRequestDto implements Serializable {
+public class  CaseRequestDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +24,8 @@ public class CaseRequestDto implements Serializable {
     private Long flightId;
 
     private String flightNumber;
+
+    private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
 
     private Long paxId;
 
@@ -202,9 +202,6 @@ public class CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-	
-	
-	
     public String getCaseDisposition() {
 		return caseDisposition;
 	}
@@ -217,5 +214,13 @@ public class CaseRequestDto implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    public CaseDispositionStatusCheckbox getDisplayStatusCheckBoxes() {
+        return displayStatusCheckBoxes;
+    }
+
+    public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
+        this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     }
 }

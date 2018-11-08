@@ -9,17 +9,13 @@
         .service('caseDispositionService', function ($http, $q, Upload) {
 
             function getAllCases(){
-                
-                var startDate = new Date();
-                var endDate = new Date();
-                endDate.setDate(endDate.getDate() + 30);
-                startDate.setDate(startDate.getDate() - 30);                
-        
+
                 var pageRequest = {
                     pageSize: "10",
                     pageNumber: "1",
-                    etaStart: startDate,
-                    etaEnd: endDate
+                    displayStatusCheckBoxes: getDefaultDispCheckboxes(),
+                    etaStart: getDefaultStartDate(),
+                    etaEnd: getDefaultEndDate()
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -28,6 +24,32 @@
                     data: pageRequest
                 }));
                 return dfd.promise;
+            }
+
+            function getDefaultEndDate() {
+                const DEFAULT_DAYS_FORWARD = 30;
+                return getTargetDate(DEFAULT_DAYS_FORWARD);
+            }
+
+            function getDefaultStartDate() {
+                const DEFAULT_DAYS_BACK = -30;
+                return getTargetDate(DEFAULT_DAYS_BACK);
+            }
+
+            function getTargetDate(days) {
+                let targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + days);
+                return targetDate;
+            }
+
+            function getDefaultDispCheckboxes() {
+                return {
+                    NEW: true,
+                    OPEN: true,
+                    CLOSED: false,
+                    REOPEN: true,
+                    PENDINGCLOSURE: true
+                };
             }
 
             function getPagedCases(params){
@@ -40,7 +62,8 @@
                     status: params.model.status,
                     ruleCatId: params.model.ruleCat,
                     etaStart: params.model.etaStart,
-                    etaEnd: params.model.etaEnd
+                    etaEnd: params.model.etaEnd,
+                    displayStatusCheckBoxes : params.model.displayStatusCheckBoxes
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -72,6 +95,7 @@
                     pageSize: "10",
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
+                    displayStatusCheckBoxes: model.displayStatusCheckBoxes,
                     lastName: model.name,
                     status: model.status,
                     ruleCatId: model.ruleCat,
@@ -268,22 +292,25 @@
                 });
                 
                 return currentServerTimeMillis;
-             } 
+             }
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
-                getCaseDisposition:getCaseDisposition,
-                getAllCases:getAllCases,
-                getOneHitsDisposition:getOneHitsDisposition,
-                getRuleCats:getRuleCats,
-                updateHitsDisposition:updateHitsDisposition,
-                addToOneDayLookout:addToOneDayLookout,
-                removeFromOneDayLookoutList:removeFromOneDayLookoutList,
+                getCaseDisposition: getCaseDisposition,
+                getAllCases: getAllCases,
+                getOneHitsDisposition: getOneHitsDisposition,
+                getRuleCats: getRuleCats,
+                updateHitsDisposition: updateHitsDisposition,
+                addToOneDayLookout: addToOneDayLookout,
+                removeFromOneDayLookoutList: removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
                 getByQueryParams: getByQueryParams,
-                getCurrentServerTime: getCurrentServerTime
+                getCurrentServerTime: getCurrentServerTime,
+                getDefaultStartDate: getDefaultStartDate,
+                getDefaultEndDate: getDefaultEndDate,
+                getDefaultDispCheckboxes: getDefaultDispCheckboxes
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
