@@ -32,6 +32,7 @@ import gov.gtas.parsers.vo.PhoneVo;
 
 public class PnrUtils {
 	private static final Logger logger = LoggerFactory.getLogger(PnrUtils.class);
+	public static final int MAX_ELEMENT_WHERE_GENDER_CAN_EXIST = 8;
 
 	public static Date parseDateTime(String dt) {
 		final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_DAY_FIRST;
@@ -70,7 +71,7 @@ public class PnrUtils {
 	 * <p>
 	 * TODO: was not handling the 4th example below b/c of extra field. check
 	 * whether it's an error in the message or not.
-	 * 
+	 *
 	 * <p>
 	 * Refer to Section "3.13.1 API — Passenger Travel Document Information" in
 	 * "Reservations Interline Message Procedures — Passenger (AIRIMP)"
@@ -239,7 +240,7 @@ public class PnrUtils {
 
 	/**
 	 * Extract the nth PNR from the msg text.
-	 * 
+	 *
 	 * @param msg
 	 *            the entire msg text, including UNA, if it exists
 	 * @param index
@@ -501,25 +502,23 @@ public class PnrUtils {
     		}
     	}
     	return temp;
-    }    
+    }
 
     private static void updatePassengerAndDocument(PassengerVo p,DocumentVo doc,List<String> strs){
     	List<Integer> positions=getPositionalElements(strs);
-    	int docTypePos=0;
-    	int genderPos=0;
-    	if(positions.size() >0 && positions.size()==1){
+    	int docTypePos;
+    	int genderPos;
+    	if(containsOnlyDocTypeOROnlyGenderPosition(positions)){
     		genderPos=positions.get(0);
     		//doc.setDocumentType("P");
     		//doc.setDocumentNumber("NONE");
-    		if(StringUtils.isNotBlank(safeGet(strs, genderPos)) && 
-    				("M".equals(safeGet(strs, genderPos)) || "F".equals(safeGet(strs, genderPos)) || "MI".equals(safeGet(strs, genderPos)) || "FI".equals(safeGet(strs, genderPos)) || "U".equals(safeGet(strs, genderPos))
-    						|| "O".equals(safeGet(strs, genderPos)))){
+			if (StringUtils.isNotBlank(safeGet(strs, genderPos)) && isAGenderElement(safeGet(strs, genderPos))) {
         		/////05MAY02/F//ROBERTS/ELIZABETH-1ROBERTS/ELIZABETH'
         		p.setGender(safeGet(strs, genderPos));
         		setPassengerDob(p,safeGet(strs, genderPos-1));
        			processNames(p, safeGet(strs, genderPos+2), safeGet(strs, genderPos+3), safeGet(strs, genderPos+4), p.getGender());
     		
-    		}else if(StringUtils.isNotBlank(safeGet(strs, genderPos)) && 
+    		}else if(StringUtils.isNotBlank(safeGet(strs, genderPos)) &&
     				("P".equals(safeGet(strs, genderPos)))){
     			// /P/GBR/516442192/GBR/02JUN
       			doc.setDocumentType(safeGet(strs, genderPos));
@@ -535,7 +534,7 @@ public class PnrUtils {
     			processNames(p, safeGet(strs, genderPos+7), safeGet(strs, genderPos+8), safeGet(strs, genderPos+9), p.getGender());
     		}
 
-    	}else if(positions.size() >0 && positions.size()>=2){
+    	} else if(containsGenderAndDocTypePosition(positions)) {
     		docTypePos=positions.get(0);
     		genderPos=positions.get(1);
     		if((genderPos-docTypePos) == 3){
@@ -578,19 +577,52 @@ public class PnrUtils {
 			}
 		}
     }
-    
-    private static List<Integer> getPositionalElements(List<String> tokens){
-    	List<Integer> pos=new ArrayList<>();
-    	for(int i=0;i<tokens.size();i++){
-    		if(StringUtils.isNotBlank(tokens.get(i)) && tokens.get(i).trim().length()<=2){
-    			if("M".equals(tokens.get(i).trim()) || "F".equals(tokens.get(i).trim()) || "P".equals(tokens.get(i).trim()) || "MI".equals(tokens.get(i).trim()) || "FI".equals(tokens.get(i).trim()) || "U".equals(tokens.get(i).trim())
-    					&& i<=8){
-    				pos.add(i);
-    			}
-    		}
-    	}
-    	
-    	return pos;
-    }
+
+	private static List<Integer> getPositionalElements(List<String> tokens) {
+		List<Integer> pos = new ArrayList<>();
+		boolean genderFound = false;
+		for (int i = 0; i < tokens.size(); i++) {
+			if (StringUtils.isNotBlank(tokens.get(i)) && tokens.get(i).trim().length() <= 2) {
+				String element = tokens.get(i).trim();
+				if (isAGenderElement(element) && i <= MAX_ELEMENT_WHERE_GENDER_CAN_EXIST) {
+					if (genderFound) {
+						if (containsGenderAndDocTypePosition(pos)) {
+							pos.set(1, i);
+						} else if (containsOnlyGenderPosition(pos)) {
+							pos.set(0, i);
+						} else {
+							logger.error("Too many indices in list! Parsing went wrong!");
+						}
+					} else {
+						genderFound = true;
+						pos.add(i);
+					}
+				} else if ("P".equals(tokens.get(i).trim()) && i <= 8) {
+					pos.add(i);
+				}
+			}
+		}
+		return pos;
+	}
+
+	private static boolean containsGenderAndDocTypePosition(List<Integer> positions) {
+		return positions.size() == 2;
+	}
+
+	private static boolean containsOnlyGenderPosition(List<Integer> pos) {
+		return pos.size() == 1;
+	}
+
+	private static boolean containsOnlyDocTypeOROnlyGenderPosition(List<Integer> pos) {
+		return pos.size() == 1;
+	}
+
+	private static boolean isAGenderElement(String token) {
+		return "M".equals(token)
+				|| "F".equals(token)
+				|| "MI".equals(token)
+				|| "FI".equals(token)
+				|| "U".equals(token);
+	}
 
 }
