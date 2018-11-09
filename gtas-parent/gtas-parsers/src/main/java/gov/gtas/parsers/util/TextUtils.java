@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public final class TextUtils {
     private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
 
-    private static final String START_OF_SEGMENT_REGEX = "[a-zA-z]{3}[^a-zA-Z0-9]";
+    private static final String START_OF_SEGMENT_REGEX = "[a-zA-Z]{3}[^a-zA-Z0-9]";
     private static final Pattern START_OF_SEGMENT_PATTERN = Pattern.compile(START_OF_SEGMENT_REGEX);
 
     private TextUtils() { }
