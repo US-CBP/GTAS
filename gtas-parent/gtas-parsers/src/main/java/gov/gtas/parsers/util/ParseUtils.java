@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.DocumentVo;
 
 public final class ParseUtils {
@@ -116,4 +117,41 @@ public final class ParseUtils {
     	return (StringUtils.isNotEmpty(d.getDocumentNumber()) && StringUtils.isNotEmpty(d.getDocumentType()));
     }
     
+    /**
+	 * Parses a APIS date in yyMMdd format and adjusts the year to be the current or
+	 * previous century
+	 * 
+	 * This overrides the SimpleDateFormat two-digit year parsing using
+	 * set2DigitYearStart()
+	 * 
+	 * resolves issue #948
+	 * 
+	 * @param dt
+	 * @param format
+	 *            (formatted -> yyMMdd)
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Date parseAPISDOB(String dt, String format) {
+		
+		SimpleDateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+		try {
+		if (format != "yyMMdd") {
+			return timeFormat.parse(dt);
+		} else {
+						//
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.YEAR, -100);
+			timeFormat.set2DigitYearStart(cal.getTime());
+			//
+			
+				return timeFormat.parse(dt);
+			
+		}
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
