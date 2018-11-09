@@ -612,7 +612,7 @@ public class PnrUtils {
     }
 
     private static boolean containsGenderAndDocTypePosition(List<Integer> positions) {
-        return positions.size() == 2;
+        return positions.size() >= 2;
     }
 
     private static boolean containsOnlyGenderPosition(List<Integer> pos) {
