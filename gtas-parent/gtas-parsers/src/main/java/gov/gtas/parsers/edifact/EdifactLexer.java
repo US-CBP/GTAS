@@ -7,6 +7,7 @@ package gov.gtas.parsers.edifact;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,17 +94,26 @@ public final class EdifactLexer {
                 this.una.getSegmentTerminator(), 
                 this.una.getReleaseCharacter());
 
+        Pattern startOfSegmentPattern = getStartOfSegmentPattern();
         List<Segment> segments = new LinkedList<>();
         for (String s : stringSegments) {
             // add the segment terminator back (removed from split)
             Segment segment = segmentTokenizer.buildSegment(s);
             segment.setText(s + this.una.getSegmentTerminator());
-            if (validSegmentStart(segment.getText())) {
+            if (validSegmentStart(segment.getText(), startOfSegmentPattern)) {
                 segments.add(segment);
             }
         }
         
         return segments;
+    }
+
+    private Pattern getStartOfSegmentPattern() {
+        String format = "[a-zA-Z]{3}(\\%c|\\%c)";
+        String formattedRegex = String.format(format,
+                this.una.getDataElementSeparator(),
+                this.una.getSegmentTerminator());
+        return Pattern.compile(formattedRegex);
     }
 
     public UNA getUna() {

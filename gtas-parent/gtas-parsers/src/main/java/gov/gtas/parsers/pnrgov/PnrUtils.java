@@ -33,6 +33,12 @@ import gov.gtas.parsers.vo.PhoneVo;
 public class PnrUtils {
     private static final Logger logger = LoggerFactory.getLogger(PnrUtils.class);
     public static final int MAX_ELEMENT_WHERE_GENDER_CAN_EXIST = 8;
+    private static final String MALE = "M";
+    private static final String FEMALE = "F";
+    private static final String MALE_INFANT = "MI";
+    private static final String FEMALE_INFANT = "FI";
+    private static final String UNDISCLOSED_GENDER = "U";
+    private static final String GENDER_NOT_FOUND = "NF";
 
     public static Date parseDateTime(String dt) {
         final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_DAY_FIRST;
@@ -526,7 +532,7 @@ public class PnrUtils {
                 doc.setDocumentNumber(safeGet(strs, genderPos + 2));
                 p.setCitizenshipCountry(safeGet(strs, genderPos + 3));
                 setPassengerDob(p, safeGet(strs, genderPos + 4));
-                p.setGender(safeGet(strs, genderPos + 5));
+                p.setGender(GENDER_NOT_FOUND);
                 String d = safeGet(strs, genderPos + 6);
                 if (StringUtils.isNotBlank(d)) {
                     doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
@@ -617,12 +623,14 @@ public class PnrUtils {
         return pos.size() == 1;
     }
 
-    private static boolean isAGenderElement(String token) {
-        return "M".equals(token)
-                || "F".equals(token)
-                || "MI".equals(token)
-                || "FI".equals(token)
-                || "U".equals(token);
+
+
+    private static boolean isAGenderElement(String element) {
+        return MALE.equals(element)
+                || FEMALE.equals(element)
+                || MALE_INFANT.equals(element)
+                || FEMALE_INFANT.equals(element)
+                || UNDISCLOSED_GENDER.equals(element);
     }
 
 }
