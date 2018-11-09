@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 
 public final class TextUtils {
     private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
+
+
     private TextUtils() { }
     
     /**
@@ -88,5 +90,14 @@ public final class TextUtils {
             return matcher.start();
         }        
         return -1;
+    }
+
+
+    public static boolean validSegmentStart(String segmentText, Pattern startOfSegmentPattern) {
+        if (segmentText.length() < 4) {
+            return false;
+        }
+        Matcher startOfSegmentMatcher = startOfSegmentPattern.matcher(segmentText.substring(0, 4));
+        return startOfSegmentMatcher.matches();
     }
 }
