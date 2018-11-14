@@ -124,7 +124,7 @@ public class MatchingServiceImpl implements MatchingService {
 	}
 
 	public void saveWatchListMatchByPaxId(Passenger passenger) {
-		final float threshold = 100 * Float
+		final float threshold = Float
 				.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue()));
 		List<Watchlist> _watchlists = watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document"));
 		for (Watchlist watchlist : _watchlists) {

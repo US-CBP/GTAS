@@ -80,7 +80,7 @@ public class PDT extends Segment {
                 this.c_middleNameOrInitial = c.getElement(2);
                 
                 if (StringUtils.isNotBlank(c.getElement(3))) {
-                	this.dob = ParseUtils.parseDateTime(c.getElement(3), DATE_FORMAT);
+                	this.dob = ParseUtils.parseAPISDOB(c.getElement(3), DATE_FORMAT);
             	}
                 this.gender = c.getElement(4);
                 break;

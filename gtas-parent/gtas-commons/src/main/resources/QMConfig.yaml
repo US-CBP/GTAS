@@ -15,7 +15,7 @@ attributeRenames:
     gtasId: gtasId
     derogId: derogId
     first_name: firstName
-    middle_name: middle_name
+    middle_name: middleName
     last_name: lastName
     DOB_Date: DOB_Date
     GNDR_CD: GNDR_CD

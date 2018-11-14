@@ -239,6 +239,8 @@ public class MatchingContext {
 		// that clause
 		String clauseAsString = "";
 		String concatenated;
+		boolean partiallyMatched=false;
+		boolean jaroWinklerDistanceMatched=false;
 		Set<String> clauseHits = new HashSet<>();
 		for (List<String> clause : matchClauses) {
 
@@ -269,6 +271,19 @@ public class MatchingContext {
 
 							clauseHits.add(derogRecord.get("derogId"));
 
+						}else if (traveler.get("partial_metaphones").equals(derogRecord.get("partial_metaphones"))) {
+							
+							logger.info("Partial hit for traveler={}, derog={}.", traveler.get("full_name"),
+									derogRecord.get("full_name"));
+							partiallyMatched=true;
+							clauseHits.add(derogRecord.get("derogId"));
+
+						}else if(this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
+							logger.info("Jaro Winkler Distance hit for traveler={}, derog={}.", traveler.get("full_name"),
+									derogRecord.get("full_name"));
+							jaroWinklerDistanceMatched=true;
+							clauseHits.add(derogRecord.get("derogId"));
+
 						}
 					}
 				}
@@ -277,10 +292,16 @@ public class MatchingContext {
 			// Build DerogHits only for new derogIds for this traveler
 			for (String thisDerogId : clauseHits) {
 				if (!foundDerogIds.contains(thisDerogId)) {
-					if (clause.size() == 1 && clause.get(0).equals("metaphones")) {
+					if (clause.size() == 1 && clause.get(0).equals("metaphones") ) {
 						derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.9f,
 								this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
-					} else
+					} else if (partiallyMatched) {
+						derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.8f,
+								this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+					} else if(jaroWinklerDistanceMatched)
+						derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.80f,
+								this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+					else
 						derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1f,
 								this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
 					foundDerogIds.add(thisDerogId);
@@ -360,7 +381,7 @@ public class MatchingContext {
 
 			// Standardize case
 			for (String attribute : stringAttributes) {
-				if (rec.containsKey(attribute)) {
+				if (rec.containsKey(attribute) && rec.get(attribute) != null) {
 					rec.put(attribute, rec.get(attribute).toUpperCase());
 				}
 			}
@@ -368,7 +389,8 @@ public class MatchingContext {
 			// If an attribute is missing, set its derived attributes to the empty string
 			// Regex cleansing
 			for (String attr : rec.keySet()) {
-				rec.put(attr, rec.get(attr).replaceAll(config.getDerogFilterOutRegex(), ""));
+				if(rec.get(attr) != null)
+					rec.put(attr, rec.get(attr).replaceAll(config.getDerogFilterOutRegex(), ""));
 			}
 
 			// Gender
@@ -385,19 +407,27 @@ public class MatchingContext {
 			// Method dmeta.doublemetaphone() accepts no spaces,
 			// so apply it to name parts individually.
 			String full_name = "";
+			String partial_name_metaphones="";
 			String metaphones = "";
 			for (String namePart : NAME_PARTS) {
-				if (rec.containsKey(namePart) && !rec.get(namePart).equals("")) {
-					full_name += rec.get(namePart) + " ";
-					metaphones += computeMetaphones(dmeta, rec.get(namePart));
+				String name = "";
+				if(rec.containsKey(namePart))
+					name = rec.get(namePart);
+				if (name != null && !name.equals("")) {
+					full_name += name + " ";
+					if(namePart.equals("first_name") || namePart.equals("last_name"))
+						partial_name_metaphones+=computeMetaphones(dmeta, name.split("\\s+")[0]);
+					metaphones += computeMetaphones(dmeta, name);
 				} else {
 					rec.put(namePart, "");
 				}
 			}
+			
 			full_name = full_name.trim();
 			metaphones = metaphones.trim();
 			rec.put("full_name", full_name);
 			rec.put("metaphones", metaphones);
+			rec.put("partial_metaphones", partial_name_metaphones);
 		}
 		return parsedRecords;
 	}
