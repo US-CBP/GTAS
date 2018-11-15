@@ -137,13 +137,18 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         rule: function (myData) {
             var temp, data = [];
             myData.forEach(function (obj) {
-                temp = $.extend({}, obj.summary, {
-                    id: obj.id,
-                    hitCount: obj.hitCount,
-                    modifiedOn: obj.modifiedOn,
-                    modifiedBy: obj.modifiedBy
-                });
-                data.push(temp);
+                
+            var startDateObj = $scope.convertUTCDateToLocalDate(obj.summary.startDate);
+            obj.summary.startDate = startDateObj.toISOString().substring(0,10);
+            var endDateObj  = $scope.convertUTCDateToLocalDate(obj.summary.endDate);
+            obj.summary.endDate = endDateObj.toISOString().substring(0,10);
+            temp = $.extend({}, obj.summary, {
+                id: obj.id,
+                hitCount: obj.hitCount,
+                modifiedOn: obj.modifiedOn,
+                modifiedBy: obj.modifiedBy
+            });
+            data.push(temp);
             });
             $scope.qbGrid.data = data;
         },
@@ -429,7 +434,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         }       
         
     }
-
+    
     resetModels($scope);
 
     $scope.buildAfterEntitiesLoaded({deleteEntity: 'HITS'});
@@ -488,4 +493,16 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
             }
         }
     );
+    
+    $scope.convertUTCDateToLocalDate = function (utcDate) {
+        utcDate = new Date(utcDate);
+        var localOffset = utcDate.getTimezoneOffset() * 60000;
+        var localTime = utcDate.getTime();
+
+        utcDate = localTime - localOffset;
+
+        utcDate = new Date(utcDate);
+        //console.log("Converted time: " + utcDate);
+        return utcDate;
+    }
 });

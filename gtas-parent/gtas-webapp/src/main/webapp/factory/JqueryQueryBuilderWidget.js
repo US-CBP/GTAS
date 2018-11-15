@@ -139,6 +139,11 @@ app.factory('jqueryQueryBuilderWidget', function () {
                             .find('.selectize-control').removeClass('form-control');
                     }
                 });
+                
+            $builder.on('keyup', function (e) {
+                var upper = e.target.value.toUpperCase();
+                e.target.value = upper;
+            });
             
             $builder
                 .on('afterUpdateRuleOperator.queryBuilder', function(e, rule){
