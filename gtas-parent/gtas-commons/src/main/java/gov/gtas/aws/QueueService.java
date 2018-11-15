@@ -23,6 +23,7 @@ public class QueueService {
     private static AmazonSQS sqs;
     static {
         sqs = new AmazonSQSClient();
+        // This needs to be configured from the properties file
         sqs.setRegion(Region.getRegion(Regions.GovCloud));    	
     }
     private String queueName;
