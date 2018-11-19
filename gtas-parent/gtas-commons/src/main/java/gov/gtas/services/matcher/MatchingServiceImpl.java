@@ -3,6 +3,8 @@ package gov.gtas.services.matcher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -126,10 +129,14 @@ public class MatchingServiceImpl implements MatchingService {
 
 	// Overloaded method that will save on erroneous passenger calls during
 	// automated run. Automated run already contains passenger objects.
-//	public void saveWatchListMatchByPaxId(Long id) {
-//		Passenger passenger = passengerRepository.getPassengerById(id);
-//		saveWatchListMatchByPaxId(passenger);
-//	}
+	public void saveWatchListMatchByPaxId(Long id) {
+		Passenger passenger = passengerRepository.getPassengerById(id);
+		List<Long> passengers = Lists.asList(passenger.getId(), new Long[0]);
+		Flight flight = flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst()
+				.orElse(null);
+		saveWatchListMatchByPaxId(createCaseMap(
+				passengers,this.caseDispositionService), flight, passenger);
+	}
 
 	public void saveWatchListMatchByPaxId(Map<Long, Case> existingCases, Flight flight, Passenger passenger) {
 		final float threshold = Float

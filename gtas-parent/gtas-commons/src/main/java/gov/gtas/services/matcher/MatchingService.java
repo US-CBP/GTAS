@@ -12,7 +12,7 @@ public interface MatchingService {
 	
 	List<PaxWatchlistLinkVo> findByPassengerId(Long id);
 
-//	void saveWatchListMatchByPaxId(Long id);
+	void saveWatchListMatchByPaxId(Long id);
 
 	void saveWatchListMatchByPaxId(Map<Long, Case> existingCases, Flight flight,Passenger passenger);
 
