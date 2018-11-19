@@ -810,12 +810,7 @@ public class PassengerDetailsController {
 
         try {
 
-        	List<Long> passengerIdList = allPassengersRelatingToSingleIdTag
-					.stream()
-					.map(Passenger::getId)
-					.collect(toList());
-
-        	List<FlightPax> flightPassengersList = pService.getFlightPaxByPassengerIdList(passengerIdList);
+			List<FlightPax> flightPassengersList = getFlightPaxes(allPassengersRelatingToSingleIdTag);
 
 			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList
 					.stream()
@@ -861,9 +856,26 @@ public class PassengerDetailsController {
 		return flightsAndBookingDetailsRelatingToSamePaxIdTag;
 	}
 
+	private List<FlightPax> getFlightPaxes(List<Passenger> allPassengersRelatingToSingleIdTag) {
 
+		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag
+				.stream()
+				.flatMap(p -> p.getFlightPaxList().stream())
+				.collect(toList());
 
-    /**
+		List<FlightPax> filteredFlightPax = new ArrayList<>();
+		Map<Pair<Passenger, Flight>, Boolean> flightPaxRecorded = new HashMap<>();
+		for (FlightPax fp : flightPaxes) {
+			Pair<Passenger, Flight> flightPaxCombination = new ImmutablePair<>(fp.getPassenger(), fp.getFlight());
+			if (!flightPaxRecorded.containsKey(flightPaxCombination)) {
+				flightPaxRecorded.put(flightPaxCombination, true);
+				filteredFlightPax.add(fp);
+			}
+		}
+		return filteredFlightPax;
+	}
+
+	/**
      *
      * @param source
      * @param target
