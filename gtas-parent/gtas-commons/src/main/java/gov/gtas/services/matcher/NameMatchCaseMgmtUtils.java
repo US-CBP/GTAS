@@ -59,7 +59,7 @@ public class NameMatchCaseMgmtUtils {
                 flightMap.put(flightId, flight);
                 passengerFlightCaseMap.put(passenger.getId(), existingCase);
                 
-                dispositionService.registerCasesFromRuleService(flightId, passenger.getId(), _tempPax.getFirstName()+_tempPax.getLastName(),
+                dispositionService.registerCasesFromRuleService(flightId, passenger.getId(), _tempPax.getFirstName()+" "+_tempPax.getLastName(),
                         _tempPax.getPassengerType(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
                         document, description, wl_id,passengerFlightCaseMap, flightMap, passengerMap, ruleCatMap);
           //  }
