@@ -31,6 +31,7 @@ import gov.gtas.parsers.redisson.jms.InboundQMessageSender;
  * sqs.loader.initialDelay.in.milliseconds=1000
  * sqs.loader.enabled=false
  * sqs.loader.queue= <AWS SQS URL> 
+ * sqs.loader.region=<REGION NAME WHERE THE SQS IS HOSTED>
  * 
  */
 @Component
@@ -38,7 +39,7 @@ public class SQSLoaderScheduler {
 
 	private final Logger logger = LoggerFactory.getLogger(SQSLoaderScheduler.class);
 
-	private QueueService queueService = new QueueService();
+	private QueueService queueService = null;
 
 	@Value("${inbound.loader.jms.queue}")
 	private String inboundLoaderQueue;
@@ -48,7 +49,10 @@ public class SQSLoaderScheduler {
 
 	@Value("${sqs.loader.queue}")
 	private String queue;
-
+	
+	@Value("${sqs.loader.region}")
+	private String region;
+	
 	@Autowired
 	private InboundQMessageSender sender;
 
@@ -61,9 +65,11 @@ public class SQSLoaderScheduler {
 		try {
 
 			logger.info("Scheduler pulling for messages ..... ");
-
-			queueService.configure(this.queue);
-
+			
+			if(this.queueService == null) {
+				this.queueService = new QueueService(this.queue, this.region);
+			}
+			
 			List<Message> messages = queueService.receiveMessages();
 
 			messages.forEach(p -> {
