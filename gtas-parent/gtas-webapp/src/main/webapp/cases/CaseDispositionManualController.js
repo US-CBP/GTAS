@@ -129,7 +129,7 @@
                 if($scope.dispStatus.allHitsClosed){
                     spinnerService.show('html5spinner');
                     $scope.caseDispStatus = "Case" + $scope.caseDispStatus;
-                    caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                    caseDispositionService.updateHitsDisposition($scope.caseItem.id, $scope.caseItem.flightId, $scope.caseItem.paxId,
                         $scope.caseItemHitId, $scope.commentText,
                         $scope.caseDispStatus,
                         $scope.hitDetailTrueHitFlag,null, null)
@@ -161,7 +161,7 @@
                         var toastPosition = angular.element(document.getElementById('hitForm'));
                         $scope.successToast("Case Created");
                         //$timeout($state.transitionTo('caseDisposition'),5000);
-                        $timeout($state.transitionTo('casedetail', { flightId: aCase.data.flightId, paxId: aCase.data.paxId }),5000);
+                        $timeout($state.transitionTo('casedetail', { caseId: aCase.data.id }),5000);
                     });
             };
 

@@ -33,10 +33,11 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     public Case findById(Long id);
 
     @Query("SELECT c FROM Case c WHERE c.flightId = (:flightId) "
-            + "AND c.paxId = (:paxId)")
-    public Case getCaseByFlightIdAndPaxId(
+            + "AND c.paxId = (:paxId) AND c.status in :status")
+    public List<Case> getCaseByFlightIdAndPaxId(
             @Param("flightId") Long flightId,
-            @Param("paxId") Long paxId);
+            @Param("paxId") Long paxId, 
+            @Param("status") List<String> status);
     
     @Query("SELECT c FROM Case c WHERE "
             + " c.paxId in (:paxIds)")

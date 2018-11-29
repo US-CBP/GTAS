@@ -113,9 +113,10 @@
     <md-toolbar class="md-theme-light">
       <h2 class="md-toolbar-tools">Status ({{hitDispStatus}})    --    {{caseItemHitComments.description}}</h2>
     </md-toolbar>
+    <div id="hitForm">
     <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
-        <div class="static-label"> Leave a Comment </div>
+       <h4 class="md-toolbar-tools">  Leave a Comment <div class="small"> (Drag or paste a file into the editor to include an attachment)</div> </h4>
         <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."
             trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);">
         </trix-editor>
@@ -152,6 +153,7 @@
         </button>
       </div>
     </form>
+    </div>
     <h4 class="md-toolbar-tools">Past Comments</h4>
     <div class="flex flex-vert align-items-center">
       <div class="cbp-text-field switch-width-sm-half">

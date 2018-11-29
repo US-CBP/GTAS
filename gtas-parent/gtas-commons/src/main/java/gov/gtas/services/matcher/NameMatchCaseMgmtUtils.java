@@ -57,7 +57,8 @@ public class NameMatchCaseMgmtUtils {
                 Map<Long, Case> passengerFlightCaseMap = new HashMap<Long, Case>(); 
                 passengerMap.put(passenger.getId(), passenger);
                 flightMap.put(flightId, flight);
-                passengerFlightCaseMap.put(passenger.getId(), existingCase);
+                if(existingCase != null)
+                	passengerFlightCaseMap.put(passenger.getId(), existingCase);
                 
                 dispositionService.registerCasesFromRuleService(flightId, passenger.getId(), _tempPax.getFirstName()+" "+_tempPax.getLastName(),
                         _tempPax.getPassengerType(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),

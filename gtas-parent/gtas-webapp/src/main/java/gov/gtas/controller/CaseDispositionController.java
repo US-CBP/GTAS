@@ -74,9 +74,9 @@ public class CaseDispositionController {
     @ResponseBody
     CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
             throws ParseException {
-        HashMap _tempMap = new HashMap();
+    	CasePageDto res = caseDispositionService.findHitsDispositionByCriteria(request);
 
-        return caseDispositionService.findHitsDispositionByCriteria(request);
+        return res;
     }
 
 
@@ -128,7 +128,7 @@ public class CaseDispositionController {
 
         	logger.info("Updating a case to disposition: " + request.getCaseDisposition() + " and case status: "+  request.getStatus());
         	
-            aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
+            aCase = caseDispositionService.addCaseComments(request.getCaseId(),
                                                             request.getHitId(), request.getCaseComments(),
                                                             request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId(),request.getCaseDisposition());
@@ -144,7 +144,7 @@ public class CaseDispositionController {
     @RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
     public
     @ResponseBody
-    Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+    Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId, @RequestParam("caseId") Long caseId,
                                    @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
                                    @RequestParam("status")String status,
                                    @RequestParam("validHit")String validHit,  @RequestParam("caseDisposition")String caseDisposition) {
@@ -152,37 +152,41 @@ public class CaseDispositionController {
         try {
             MultipartFile multipartFile = file;
 
-            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+            aCase = caseDispositionService.addCaseComments(caseId,
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
                     multipartFile, GtasSecurityUtils.fetchLoggedInUserId(),caseDisposition );
         } catch (Exception ex) {
             logger.error("Error in histDispAttachements!", ex);
         }
-        return aCase;
+        //TODO: replace the return type of the method with a DTO object to avoid self referencing loop while converting to JSON by spring 
+        Case newCase = new Case();
+        newCase.setId(aCase.getId());
+        newCase.setHitsDispositions(aCase.getHitsDispositions());
+        return newCase;
     }
 
     //createManualCaseAttachments
-    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
-    public
-    @ResponseBody
-    Case createManualCaseAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
-                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
-                                   @RequestParam("status")String status,
-                                   @RequestParam("validHit")String validHit) {
-        Case aCase = new Case();
-        try {
-            MultipartFile multipartFile = file;
-
-            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
-                    Long.parseLong(hitId), caseComments,
-                    status, validHit,
-                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId(), null);
-        } catch (Exception ex) {
-            logger.error("Error in create manual case attachments", ex);
-        }
-        return aCase;
-    }
+//    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
+//    public
+//    @ResponseBody
+//    Case createManualCaseAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+//                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
+//                                   @RequestParam("status")String status,
+//                                   @RequestParam("validHit")String validHit) {
+//        Case aCase = new Case();
+//        try {
+//            MultipartFile multipartFile = file;
+//
+//            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+//                    Long.parseLong(hitId), caseComments,
+//                    status, validHit,
+//                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId(), null);
+//        } catch (Exception ex) {
+//            logger.error("Error in create manual case attachments", ex);
+//        }
+//        return aCase;
+//    }
 
     //createManualCase
     @RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
