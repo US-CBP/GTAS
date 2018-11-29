@@ -19,7 +19,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="carrier">
@@ -32,7 +32,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="country">
@@ -45,7 +45,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="knowledgebase">
@@ -58,7 +58,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="passenger">
@@ -69,7 +69,7 @@
         <time-to-live-seconds>30</time-to-live-seconds>
         <max-idle-seconds>600</max-idle-seconds>
         <eviction-policy>LRU</eviction-policy>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="flight">
@@ -80,7 +80,7 @@
         <time-to-live-seconds>30</time-to-live-seconds>
         <max-idle-seconds>600</max-idle-seconds>
         <eviction-policy>LRU</eviction-policy>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
 </hazelcast>
