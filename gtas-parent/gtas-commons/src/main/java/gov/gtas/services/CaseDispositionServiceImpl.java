@@ -992,6 +992,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			etaEtdTime = null;
 			calendar = null;
 			oneDayLookoutVo = new OneDayLookoutVo();
+			oneDayLookoutVo.setCaseId(oneDayLookoutCase.getId());
 			oneDayLookoutVo.setDocument(oneDayLookoutCase.getDocument());
 			oneDayLookoutVo.setFirstName(oneDayLookoutCase.getFirstName());
 			oneDayLookoutVo.setLastName(oneDayLookoutCase.getLastName());
