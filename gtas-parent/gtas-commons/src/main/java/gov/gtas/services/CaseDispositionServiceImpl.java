@@ -234,6 +234,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(INITIAL_COMMENT);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitDisp.addHitsDispositionComments(hitsDispositionComments);
 			hitsDispSet.add(hitDisp);
 		}
@@ -309,6 +310,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(comments);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitsDispCommentsSet.add(hitsDispositionComments);
 			hitDisp.setDispComments(hitsDispCommentsSet);
 			hitsDispSet.add(hitDisp);
@@ -393,6 +395,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(INITIAL_COMMENT);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitsDispCommentsSet.add(hitsDispositionComments);
 			hitDisp.setDispComments(hitsDispCommentsSet);
 			hitsDispSet.add(hitDisp);
