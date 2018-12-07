@@ -139,15 +139,10 @@ public class LoaderRepository {
     //@Transactional
     public void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties) {
         for (ReportingPartyVo rvo : parties) {
-            ReportingParty existingRp = rpDao.getReportingParty(rvo.getPartyName(), rvo.getTelephone());
-            if (existingRp == null) {
+        	// removed check for existing ReportingParty, no need to update or check.
                 ReportingParty newRp = utils.createNewReportingParty(rvo);
                 apisMessage.getReportingParties().add(newRp);
-            } else {
-                utils.updateReportingParty(rvo, existingRp);
-                apisMessage.addReportingParty(existingRp);
-            }
-        }
+            } 
     }
 
     //@Transactional

@@ -188,6 +188,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteAllMessages() throws Exception {
 		String[] sqlScript = { 
+				"delete from case_hit_disp_comments",
+				"delete from case_hit_disp",
+				"delete from cases",
 				"delete from ticket_fare",
 				"delete from bag",
 				"delete from disposition",	
@@ -225,9 +228,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from error_detail",
 				"delete from audit_log",
 				"delete from dashboard_message_stats",
-				"delete from case_hit_disp_comments",
-				"delete from case_hit_disp",
-				"delete from cases",
 				"delete from hits_disposition",
 				"delete from hits_disposition_comments"
 				};
