@@ -7,8 +7,8 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.lookup.RuleCat;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import javax.persistence.criteria.Fetch;

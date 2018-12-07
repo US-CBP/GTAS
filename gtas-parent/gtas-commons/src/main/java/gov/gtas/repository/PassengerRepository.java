@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.model.Disposition;
+import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
 import static gov.gtas.querybuilder.constants.Constants.SELECT;
@@ -52,6 +53,12 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 	@Transactional
     @Query("UPDATE Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId")
     public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
+	
+	
+    default Passenger findOne(Long passengerId)
+    {
+    	return findById(passengerId).orElse(null);
+    }
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +
 //            "AND UPPER(p.lastName) = UPPER(:lastName)" +

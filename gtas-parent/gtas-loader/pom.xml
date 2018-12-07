@@ -36,9 +36,15 @@
         </dependency>
 
         <!-- commons -->
+        <!--  
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -52,6 +58,7 @@
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

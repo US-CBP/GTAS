@@ -6,6 +6,7 @@
 package gov.gtas.repository.udr;
 
 import gov.gtas.enumtype.YesNoEnum;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
@@ -62,4 +63,10 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>,
     public List<UdrRule> findByDeletedAndEnabled(
             @Param("deleted") YesNoEnum deleted,
             @Param("enabled") YesNoEnum enabled);
+    
+    
+    default UdrRule findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

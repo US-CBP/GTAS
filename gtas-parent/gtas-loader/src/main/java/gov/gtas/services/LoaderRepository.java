@@ -480,6 +480,6 @@ public class LoaderRepository {
     	for(BookingDetail bD : pnr.getBookingDetails()){
     		bD.getPnrs().add(pnr);
     	}
-    	bookingDetailDao.save(pnr.getBookingDetails());
+    	bookingDetailDao.saveAll(pnr.getBookingDetails());
     }
 }

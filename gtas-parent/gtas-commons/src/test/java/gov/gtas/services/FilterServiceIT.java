@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 /**
  * The Class FilterServiceIT.
@@ -35,6 +35,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 @ContextConfiguration(classes = { CommonServicesConfig.class,
 		CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Rollback(true)
 public class FilterServiceIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(FilterServiceIT.class);

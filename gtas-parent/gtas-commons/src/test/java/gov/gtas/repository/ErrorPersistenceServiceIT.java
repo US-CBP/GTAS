@@ -29,13 +29,13 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
         CachingConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class ErrorPersistenceServiceIT {
 
     @Autowired
@@ -51,6 +51,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void createErrorTest() {
         ErrorDetailInfo err = ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error"));
@@ -62,6 +63,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findErrorTest() {
         ErrorDetailInfo err = ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error"));
@@ -74,6 +76,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findByCodeTest() {
         testTarget.create(ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error1")));
@@ -99,6 +102,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findByDateRangeTest() throws Exception {
         Date start = new Date();
         Thread.sleep(1000L);

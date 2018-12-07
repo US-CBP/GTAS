@@ -16,7 +16,7 @@
         <ruleservice.version>0.3-SNAPSHOT</ruleservice.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.9.0</mockito.version>
-        <spring-security-test.version>4.0.1.RELEASE</spring-security-test.version>
+        <spring-security-test.version>5.1.2.RELEASE</spring-security-test.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <rest-assured.version>2.4.0</rest-assured.version>
         <spring-csrf-token-filter>1.1</spring-csrf-token-filter>
@@ -55,7 +55,7 @@
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-text</artifactId>
-		    <version>1.1</version>
+		    <version>1.6</version>
 		</dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -65,10 +65,16 @@
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
         </dependency>
+        <!--  
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
+        -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+		</dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
@@ -160,6 +166,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+            <version>4.12</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

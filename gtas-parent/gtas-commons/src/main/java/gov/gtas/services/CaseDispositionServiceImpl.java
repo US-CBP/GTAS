@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import gov.gtas.repository.*;
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,9 +286,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
 			hitDisp.setUpdatedAt(new Date());
 			hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
-			RuleCat _tempRuleCat = ruleCatRepository.findOne(rule_cat_id);
+			RuleCat _tempRuleCat = ruleCatRepository.findById(rule_cat_id).orElse(null);
 			if (_tempRuleCat != null)
-				hitDisp.setRuleCat(ruleCatRepository.findOne(rule_cat_id));
+				hitDisp.setRuleCat(ruleCatRepository.findById(rule_cat_id).orElse(null));
 			hitsDispositionComments = new HitsDispositionComments();
 			hitsDispositionComments.setHitId(_tempHitId);
 			hitsDispositionComments.setComments(comments);
@@ -429,10 +429,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             try {
                 if (ruleCatMap == null)
                 {
-                    if (id == null || (ruleCatRepository.findOne(id) == null))
-                            hitDisp.setRuleCat(ruleCatRepository.findOne(1L));
+                    if (id == null || (ruleCatRepository.findById(id).orElse(null) == null))
+                            hitDisp.setRuleCat(ruleCatRepository.findById(1L).orElse(null));
                     else
-                            hitDisp.setRuleCat(ruleCatRepository.findOne(id));
+                            hitDisp.setRuleCat(ruleCatRepository.findById(id).orElse(null));
                 }
                 else
                 {
@@ -584,7 +584,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
 		attachment.setContent(blob);
 		// Grab pax to add attachment to it
-		Passenger pax = passengerRepository.findOne(pax_id);
+		Passenger pax = passengerRepository.findById(pax_id).orElse(null);
 		attachment.setPassenger(pax);
 		attachmentRepository.save(attachment);
 		_tempAttachSet.add(attachment);
@@ -617,7 +617,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public Passenger findPaxByID(Long id) {
-		return passengerRepository.findOne(id);
+		return passengerRepository.findById(id).orElse(null);
 	}
 
 	@Override

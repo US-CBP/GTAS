@@ -7,7 +7,7 @@ import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

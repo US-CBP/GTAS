@@ -9,6 +9,7 @@ import gov.gtas.model.ApisMessage;
 import gov.gtas.model.FlightPax;
 import gov.gtas.model.Message;
 import gov.gtas.model.Pnr;
+import gov.gtas.model.lookup.Airport;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,4 +31,9 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 			@Param("passengerId") Long passengerId);	
     @Query("SELECT apis FROM ApisMessage apis WHERE apis.createDate >= current_date() - 1")
     public List<Message> getAPIsByDates();
+    
+    default ApisMessage findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

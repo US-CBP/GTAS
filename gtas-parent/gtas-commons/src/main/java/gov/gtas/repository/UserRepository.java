@@ -6,9 +6,15 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.User;
+import gov.gtas.model.lookup.RuleCat;
 
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<User, String> {
+	
+    default User findOne(String userId)
+    {
+    	return findById(userId).orElse(null);
+    }
 
 }

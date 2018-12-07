@@ -18,8 +18,8 @@ import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hibernate.Hibernate;
 import org.slf4j.Logger;
@@ -182,7 +182,7 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setMiddleName((String) objs[4]);
             vo.setFlightNumber((String) objs[5]);
 
-            Flight f = flightRespository.findOne(flightId);
+            Flight f = flightRespository.findById(flightId).orElse(null);
             vo.setFlightETADate(f.getEta());
             vo.setFlightETDDate(f.getEtd());
             vo.setFlightDirection(f.getDirection());
@@ -322,7 +322,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     @Transactional
     public Passenger findById(Long id) {
-        return passengerRespository.findOne(id);
+        return passengerRespository.findById(id).orElse(null);
     }
 
     @Override

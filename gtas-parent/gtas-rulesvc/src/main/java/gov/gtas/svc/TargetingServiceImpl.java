@@ -730,7 +730,7 @@ public class TargetingServiceImpl implements TargetingService {
                 
 		logger.info("Total new hits summary records --> "
 				+ adjustedHitsSummaryList.size());
-		hitsSummaryRepository.save(adjustedHitsSummaryList);
+		hitsSummaryRepository.saveAll(adjustedHitsSummaryList);
 
 		//logger.info("Exiting storeHitsInfo().");
 		return adjustedHitsSummaryList;
@@ -826,7 +826,7 @@ public class TargetingServiceImpl implements TargetingService {
            // save new rule hits in HitDetail table.
            if (!newHitDetailsToSave.isEmpty())
            {
-               hitDetailRepository.save(newHitDetailsToSave);
+               hitDetailRepository.saveAll(newHitDetailsToSave);
            }
 
            return dedupedHitsSummaryList;

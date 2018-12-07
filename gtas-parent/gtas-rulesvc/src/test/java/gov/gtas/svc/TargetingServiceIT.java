@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 /**
  * Integration tests for the TargetingService using spring support. (Also contains
@@ -48,7 +48,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RuleServiceConfig.class, CommonServicesConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 public class TargetingServiceIT {
 	private static final Logger logger = LoggerFactory.getLogger(TargetingServiceIT.class);
 	public static final String UDR_RULE_AUTHOR = "test";

@@ -201,7 +201,7 @@ public class BookingDetailCompressScheduler {
 
         // Save TBD records
         if(null != _tempList) {
-            bookingDetailRepository.save(_tempList);
+            bookingDetailRepository.saveAll(_tempList);
             for(BookingDetail bd : _tempList) {
            //     try {
             //        bookingDetailRepository.save(bd);

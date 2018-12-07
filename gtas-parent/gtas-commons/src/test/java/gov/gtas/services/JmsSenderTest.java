@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.jms.config.JmsConfiguration;
@@ -41,7 +41,7 @@ import gov.gtas.model.Pnr;
 //@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { CommonServicesConfig.class,
 		CachingConfig.class,JmsConfiguration.class,MessagingListnerConfiguration.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JmsSenderTest {
 

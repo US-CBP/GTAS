@@ -101,5 +101,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     									 + "OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd")
     public List<Flight> getInboundAndOutboundFlightsWithinTimeFrame(@Param("dateTimeStart")Date date1,
     											  @Param("dateTimeEnd") Date date2);
+    
+    default Flight findOne(Long flightId)
+    {
+    	return findById(flightId).orElse(null);
+    }
 
 }
