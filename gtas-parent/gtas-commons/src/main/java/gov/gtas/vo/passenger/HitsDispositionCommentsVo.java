@@ -7,12 +7,22 @@
 package gov.gtas.vo.passenger;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
 
 public class HitsDispositionCommentsVo implements Serializable {
 
     private static final long serialVersionUID = 1L;
+  
+    private Date createdAt;  
+  
+    private String createdBy;  
+  
+    private Date updatedAt;  
+  
+    private String updatedBy;  
 
     public HitsDispositionCommentsVo() { }
 
@@ -55,4 +65,38 @@ public class HitsDispositionCommentsVo implements Serializable {
     public void setAttachmentSet(Set<AttachmentVo> attachmentSet) {
         this.attachmentSet = attachmentSet;
     }
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+    
+    
 }

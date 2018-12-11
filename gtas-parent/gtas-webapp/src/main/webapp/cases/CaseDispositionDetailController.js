@@ -176,7 +176,7 @@
                 spinnerService.show('html5spinner');
                 //$scope.caseDispStatus = "Case" + $scope.caseDispStatus;
                 var tempCaseDispStatus = "Case" +$scope.caseDispStatus;
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                caseDispositionService.updateHitsDisposition($scope.caseItem.id, $scope.caseItem.flightId, $scope.caseItem.paxId,
                     $scope.caseItemHitId, $scope.commentText,
                     tempCaseDispStatus, 
                     $scope.hitDetailTrueHitFlag,null, $scope.caseDisposition)
@@ -210,7 +210,17 @@
 
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+               
+                if($scope.hitDispStatus === $scope.dispStatus.constants.CLOSED && ( ($scope.hitDetailTrueHitFlag === null)  ||
+                        (typeof($scope.hitDetailTrueHitFlag) === "undefined"))){
+                	var toastPosition = angular.element(document.getElementById('hitForm'));
+                    $mdToast.show($mdToast.simple()
+                        .content("Be sure to validate and mark 'Closed' below to close this hit disposition")
+                        .position('top right')
+                        .hideDelay(4000)
+                        .parent(toastPosition));
+                } else {
+                caseDispositionService.updateHitsDisposition($scope.caseItem.id,$scope.caseItem.flightId, $scope.caseItem.paxId,
                                                              $scope.caseItemHitId, $scope.commentText,
                                                              $scope.hitDispStatus,
                                                              $scope.hitDetailTrueHitFlag,
@@ -224,6 +234,7 @@
                     $mdSidenav('comments').close();
                     $state.reload();
                 });
+                }
             };
             
             $scope.updateOnStatusChange = function(){

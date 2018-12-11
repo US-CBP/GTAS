@@ -24,6 +24,8 @@ public class  CaseRequestDto implements Serializable {
     private Long flightId;
 
     private String flightNumber;
+    
+    private Long caseId;
 
     private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
 
@@ -223,4 +225,13 @@ public class  CaseRequestDto implements Serializable {
     public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
         this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     }
+
+	public Long getCaseId() {
+		return caseId;
+	}
+
+	public void setCaseId(Long caseId) {
+		this.caseId = caseId;
+	}
+ 
 }

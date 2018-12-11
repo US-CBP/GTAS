@@ -36,9 +36,9 @@ public interface CaseDispositionService {
     
     public List<CaseDispositionStatus> getCaseDispositionStatuses();
 
-    public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
-
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
+//    public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
+//
+//    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
 
     public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, 
                        List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
@@ -49,15 +49,15 @@ public interface CaseDispositionService {
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
+    public Case addCaseComments(Long caseID, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
 
     public Passenger findPaxByID(Long id);
 
     public Flight findFlightByID(Long id);
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
-
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
+//    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
+//
+//    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
     public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, 
                                                    String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 

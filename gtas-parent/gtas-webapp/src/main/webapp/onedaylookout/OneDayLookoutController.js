@@ -44,7 +44,7 @@
             	   field: 'name',
             	   name: 'name',
             	   displayName: 'Name', headerCellFilter: 'translate',
-            	   cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+            	   cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.caseId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
             	 
 
                },

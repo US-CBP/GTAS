@@ -343,7 +343,7 @@ var app;
                     }
                 })
                 .state('casedetail', {
-                    url: '/casedetail/:flightId/:paxId',
+                    url: '/casedetail/:caseId',
                     authenticate: true,
                     roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
                     views: {
@@ -355,7 +355,7 @@ var app;
                     ,
                     resolve: {
                         newCases: function(caseDispositionService, $stateParams){
-                            return caseDispositionService.getOneHitsDisposition($stateParams.flightId, $stateParams.paxId);
+                            return caseDispositionService.getOneHitsDisposition($stateParams.caseId);
                         }
                     }
                 })

@@ -12,25 +12,13 @@ INSERT INTO `role` VALUES ('5', 'Manage Rules');
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO `user` VALUES ('nsamha', 1,'Nael', 'Samha', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jmclaughlin', 1,'Jim', 'McLaughlin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('svempati', 1,'Srinivas', 'Vempati', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jtang', 1,'Jeen', 'Tang', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jtaylor',1, 'Jon', 'Taylor', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('mcopenhafer',1, 'Mike', 'Copenhafer', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('gtas',1, 'GTAS', 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('admin',1, 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('test',1, 'test', 'test', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('nsamha', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jmclaughlin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('svempati', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtang', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtaylor', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('mcopenhafer', 1);
+
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 5);
 

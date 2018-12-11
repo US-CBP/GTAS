@@ -74,12 +74,13 @@
                 return dfd.promise;
             }
 
-            function getOneHitsDisposition(paramFlight, paramPax){
+            function getOneHitsDisposition(paramCaseId, paramFlight, paramPax){
                 var param = {
                     pageSize: "10",
                     pageNumber: "1",
                     flightId: paramFlight,
-                    paxId: paramPax
+                    paxId: paramPax,
+                    caseId: paramCaseId
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -114,7 +115,7 @@
                 return dfd.promise;
             }
 
-            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus, 
+            function updateHitsDisposition(paramCaseId, paramFlight, paramPax, paramHit, paramComments, paramStatus, 
                                            paramValidHit, file, paramCaseDisposition){
                 var requestDto = {
                     pageSize: "10",
@@ -125,7 +126,8 @@
                     caseComments: paramComments,
                     status: paramStatus,
                     caseDisposition: paramCaseDisposition,
-                    validHit: paramValidHit
+                    validHit: paramValidHit,
+                    caseId : paramCaseId
                     // ,
                     // multipartFile: file
                 };
@@ -144,7 +146,9 @@
                             caseComments: paramComments,
                             status: paramStatus,
                             validHit: paramValidHit,
-                            file: file
+                            file: file,
+                            caseDisposition: paramCaseDisposition,
+                            caseId : paramCaseId
                         }
                     }))
                     ;
