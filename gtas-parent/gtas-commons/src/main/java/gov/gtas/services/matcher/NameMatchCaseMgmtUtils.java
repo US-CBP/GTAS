@@ -10,6 +10,8 @@ import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
 import org.apache.commons.collections4.CollectionUtils;
+import java.util.Map;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

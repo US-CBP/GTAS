@@ -522,7 +522,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
 
 		try {
-			aCase = caseDispositionRepository.findById(caseId); //getCaseByFlightIdAndPaxId(flight_id, pax_id, Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
+			aCase = caseDispositionRepository.findOne(caseId); //getCaseByFlightIdAndPaxId(flight_id, pax_id, Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
 
 			if (aCase != null && status != null) { // set case status
 				if (status.startsWith("Case"))
@@ -661,7 +661,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto) {
 
-		Case aCase = caseDispositionRepository.findById(dto.getCaseId());
+		Case aCase = caseDispositionRepository.findOne(dto.getCaseId());
 
 		List<CaseVo> vos = new ArrayList<>();
 		CaseVo vo = new CaseVo();
