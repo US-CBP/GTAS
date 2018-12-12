@@ -1,3 +1,4 @@
+
 # Docker Instructions
 ----------
  **Installation**
@@ -9,7 +10,27 @@
 $ docker version
 ```
 
+**Dec 2018** update - 
+Tagged images of GTAS are available on Docker Hub - run these commands to start testing GTAS in your local env.
 
+```
+$ docker network create gtas_default
+
+$ docker container run -d --name mariahost -p 3306:3306 --network gtas_default sanandreas/gtas_mariadb:v3
+
+$ docker container run -d --name redis -p 6379:6379 --network gtas_default redis
+
+$ docker container run -d --name activemq -p 61616:61616 -p 8161:8161 --network gtas_default rmohr/activemq
+
+
+```
+Update this following command with your local volume mounts (place where you drop files to be parsed) to help the application pick API/PNR files from your local hard drive.
+
+Replace this < your local folder> with your local mappings
+```
+$ docker container run -d --name tomcat -p 8080:8080 --network gtas_default -v //c/db/input: < your local input folder> -v //c/db/output: < your local output folder> sanandreas/gtas_tomcat:v3
+```
+---
 **Build Instructions**
  
 There are couple of ways to engage Docker within GTAS
@@ -90,17 +111,3 @@ $ docker run -d --rm --name tomcat -p 8080:8080 --link mariahost:mariahost gtas_
 Give it a couple mins
 
 and then open up the login screen going to _**http://localhost:8080/gtas**_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
