@@ -11,6 +11,8 @@ $ docker version
 ```
 
 **Dec 2018** update - 
+  _**Option1:**_  Type in individual Docker commands
+
 Tagged images of GTAS are available on Docker Hub - run these commands to start testing GTAS in your local env.
 
 ```
@@ -30,6 +32,26 @@ Replace this < your local folder> with your local mappings
 ```
 $ docker container run -d --name tomcat -p 8080:8080 --network gtas_default -v //c/db/input: < your local input folder> -v //c/db/output: < your local output folder> sanandreas/gtas_tomcat:v3
 ```
+
+ _**Option2:**_  Let   __**docker-compose**__    handle the process of building and deploying
+		
+- From under  <**gtas-parent/docker**> folder,  look up this file
+ *docker-compose.yml*
+ - Go ahead and edit lines 30 and 31 to update your local file path where you have API/PNR files and save this file
+ ```
+ volumes:
+
+- <your local input folder> :/usr/local/input:rw
+
+- <your local output folder> :/usr/local/output:rw
+ ```
+ Then go ahead and issue this command
+```
+	$ docker-compose up
+```
+ This will get you up and running with GTAS in your local env.
+Access the application at _**http://localhost:8080/gtas**_
+
 ---
 **Build Instructions**
  
