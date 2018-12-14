@@ -1,4 +1,5 @@
 
+
 # Docker Instructions
 ----------
  **Installation**
@@ -37,13 +38,14 @@ $ docker container run -d --name tomcat -p 8080:8080 --network gtas_default -v /
 		
 - From under  <**gtas-parent/docker**> folder,  look up this file
  *docker-compose.yml*
- - Go ahead and edit lines 30 and 31 to update your local file path where you have API/PNR files and save this file
+ - Run these two following lines to update docker with your local file structure for input and output API/ PNR files - **change the Right Hand Side with your local file system values** 
+ - Ex:  LOCAL_DRIVE_MAPPING_INPUT=<your_local_path>
+ 
+ - Note that for Windows file system - we use two forward slashes //
+ and for Linux/Unix/Mac file system - we use single forward slash /
  ```
- volumes:
-
-- <your local input folder> :/usr/local/input:rw
-
-- <your local output folder> :/usr/local/output:rw
+ echo LOCAL_DRIVE_MAPPING_INPUT=//C/Message > .env
+ echo LOCAL_DRIVE_MAPPING_OUTPUT=//C/MessageOld >> .env
  ```
  Then go ahead and issue this command
 ```

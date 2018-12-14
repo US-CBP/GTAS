@@ -26,9 +26,12 @@ services:
       - gtas_default
     ports: 
       - 8080:8080
+    environment:
+      LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
+      LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}
     volumes:
-      - //C/db/input:/usr/local/input:rw
-      - //C/db/output:/usr/local/output:rw
+      - ${LOCAL_DRIVE_MAPPING_INPUT}:/usr/local/input:rw
+      - ${LOCAL_DRIVE_MAPPING_OUTPUT}:/usr/local/output:rw
 
 networks:
   gtas_default:
