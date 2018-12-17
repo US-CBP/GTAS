@@ -20,7 +20,7 @@ INSERT INTO `user` VALUES ('admin',1, 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7O
 -- ----------------------------
 
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 5);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('gtas', 5);
 
 -- ----------------------------
 -- Records of flight_direction
