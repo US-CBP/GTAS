@@ -1,4 +1,9 @@
 ../**/*
+!wait-for-it.sh
+!gtas-webapp/**
+!gtas-job-scheduler-war/**
+!init.sql
+!init_privileges.sql
 gtas-parent/**/target/**
 !../pom.xml
 !../../gtas-parent/gtas-commons/target/**
