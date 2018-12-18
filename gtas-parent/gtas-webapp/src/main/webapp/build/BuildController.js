@@ -22,6 +22,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     this.endDate = obj ? obj.endDate : undefined;
                     this.enabled = obj ? obj.enabled : true;
                     this.ruleCat = obj ? obj.ruleCat : null;
+                    this.overMaxHits = obj ? obj.overMaxHits : null;
                 }
             }
         },
@@ -137,7 +138,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         rule: function (myData) {
             var temp, data = [];
             myData.forEach(function (obj) {
-                
+
             var startDateObj = $scope.convertUTCDateToLocalDate(obj.summary.startDate);
             obj.summary.startDate = startDateObj.toISOString().substring(0,10);
             var endDateObj  = $scope.convertUTCDateToLocalDate(obj.summary.endDate);
@@ -146,7 +147,8 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                 id: obj.id,
                 hitCount: obj.hitCount,
                 modifiedOn: obj.modifiedOn,
-                modifiedBy: obj.modifiedBy
+                modifiedBy: obj.modifiedBy,
+                overMaxHits : obj.overMaxHits
             });
             data.push(temp);
             });

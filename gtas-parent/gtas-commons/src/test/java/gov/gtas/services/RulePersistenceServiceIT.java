@@ -136,7 +136,7 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "3", RULE_DESCRIPTION,
                 YesNoEnum.Y, testDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         List<UdrRule> udrList = testTarget.findValidUdrOnDate(testDate);
@@ -169,7 +169,7 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "4", RULE_DESCRIPTION,
                 YesNoEnum.N, startDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         List<UdrRule> udrList = testTarget.findValidUdrOnDate(testDate);
@@ -202,20 +202,20 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "4", RULE_DESCRIPTION,
                 YesNoEnum.N, startDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         int count = 0;
-        for (Object[] data : udrSummaryList) {
-            assertNotNull(data[0]);// id
-            String editedBy = (String) data[1];
+        for (UdrRule udrRule : udrSummaryList) {
+            assertNotNull(udrRule.getId());// id
+            String editedBy = udrRule.getEditedBy().getUserId();
             assertNotNull(editedBy);
             if (editedBy.equals(RuleServiceDataGenUtils.TEST_USER1_ID)
-                    && RULE_DESCRIPTION.equals(data[4])) {
-                Date udrStartDate = (Date) data[5];
+                    && RULE_DESCRIPTION.equals(udrRule.getMetaData().getDescription())) {
+                Date udrStartDate = udrRule.getMetaData().getStartDt();
                 assertNotNull(startDate);
                 assertEquals(startDate, udrStartDate);
-                assertEquals(RuleServiceDataGenUtils.TEST_USER1_ID, data[8]);
+                assertEquals(RuleServiceDataGenUtils.TEST_USER1_ID, udrRule.getAuthor().getUserId());
                 count++;
             }
         }
