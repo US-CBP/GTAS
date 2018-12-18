@@ -141,8 +141,10 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
 
             var startDateObj = $scope.convertUTCDateToLocalDate(obj.summary.startDate);
             obj.summary.startDate = startDateObj.toISOString().substring(0,10);
-            var endDateObj  = $scope.convertUTCDateToLocalDate(obj.summary.endDate);
-            obj.summary.endDate = endDateObj.toISOString().substring(0,10);
+            if (obj.summary.endDate != null) {
+                var endDateObj = $scope.convertUTCDateToLocalDate(obj.summary.endDate);
+                obj.summary.endDate = endDateObj.toISOString().substring(0, 10);
+            }
             temp = $.extend({}, obj.summary, {
                 id: obj.id,
                 hitCount: obj.hitCount,
