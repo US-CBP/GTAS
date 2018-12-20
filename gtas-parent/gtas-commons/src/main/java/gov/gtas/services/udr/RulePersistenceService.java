@@ -31,7 +31,7 @@ public interface RulePersistenceService {
 	 * 
 	 * @param rule
 	 *            the UDR rule object to persist in the DB.
-	 * @param user
+	 * @param userId
 	 *            the user persisting the rule (usually also the rule author.)
 	 * @return the persisted rule.
 	 */
@@ -67,7 +67,7 @@ public interface RulePersistenceService {
 	 *            the user Id of the person who authored the UDR,
 	 * @return list of all non-deleted rules.
 	 */
-	public List<Object[]> findAllUdrSummary(String userId);
+	public List<UdrRule> findAllUdrSummary(String userId);
 
 	/**
 	 * Updates a list of entities.
@@ -187,7 +187,7 @@ public interface RulePersistenceService {
 	 * 
 	 * @param rule
 	 *            the UDR rule to update.
-	 * @param User
+	 * @param user
 	 *            the user who represents the author of the update.
 	 * @return the updated rule.
 	 */

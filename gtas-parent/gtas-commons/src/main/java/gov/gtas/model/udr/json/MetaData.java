@@ -28,6 +28,7 @@ public class MetaData implements Serializable {
     
     private String author;
     private boolean enabled;
+    private boolean overMaxHits;
     public MetaData(){
         
     }
@@ -146,5 +147,12 @@ public class MetaData implements Serializable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
+    public boolean isOverMaxHits() {
+        return overMaxHits;
+    }
+
+    public void setOverMaxHits(boolean overMaxHits) {
+        this.overMaxHits = overMaxHits;
+    }
 }

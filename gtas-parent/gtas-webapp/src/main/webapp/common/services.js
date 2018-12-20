@@ -667,6 +667,13 @@
                             cellTemplate: '<md-button aria-label="enabled" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
                             enableCellEdit: false,
                             enableColumnMenu: false
+                        }, {
+                            name: "overMaxHits",
+                            displayName: 'Over Max Hits', headerCellFilter: 'translate',
+                            field: "overMaxHits",
+                            cellTemplate: '<md-button aria-label="overMaxHits" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
+                            enableCellEdit: false,
+                            enableColumnMenu: false
                         },
                         {
                             name: "modifiedOn",
