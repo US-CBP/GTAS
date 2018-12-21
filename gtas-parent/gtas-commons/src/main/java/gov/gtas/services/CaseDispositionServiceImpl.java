@@ -666,6 +666,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		List<CaseVo> vos = new ArrayList<>();
 		CaseVo vo = new CaseVo();
 		vo.setHitsDispositions(aCase.getHitsDispositions());
+		aCase.getFlight().setPnrs(null); //TODO: need to cherry-pick the fields we need to copy to DTO, failed to serialize the lazy loaded entities
 		vo.setHitsDispositionVos(returnHitsDisposition(aCase.getHitsDispositions()));
 		CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
 		manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
@@ -687,6 +688,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
             for (Case f : tuple2.getRight()) {
                     CaseVo vo = new CaseVo();
+                    f.getFlight().setPnrs(null); //TODO: need to cherry-pick the fields we need to copy to DTO, failed to serialize the lazy loaded entities
                     CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
                     vo.setCurrentTime(new Date());
                     vo.setFlightDirection(f.getFlight().getDirection());

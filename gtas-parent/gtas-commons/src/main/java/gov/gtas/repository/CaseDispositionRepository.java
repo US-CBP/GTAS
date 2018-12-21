@@ -52,10 +52,10 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     @Query("update Case set hitsDispositions = :hitsDispositionSet where id = :caseId")
     public Integer updateHitsDispositionsForCase(Long caseId, Set<HitsDisposition> hitsDispositionSet);
 
-    @Modifying
-    @Transactional
-    @Query("update HitsDisposition set hitsDispositions = :hitsDispositionSet where id = :id")
-    public Integer updateDispCommentsForHitsDisposition(Long id, Set<HitsDisposition> hitsDispositionSet);
+//    @Modifying
+//    @Transactional
+//    @Query("update HitsDisposition set hitsDispositions = :hitsDispositionSet where id = :id")
+//    public Integer updateDispCommentsForHitsDisposition(Long id, Set<HitsDisposition> hitsDispositionSet);
 
    @Query("SELECT c " +
 			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I') OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' ))" )

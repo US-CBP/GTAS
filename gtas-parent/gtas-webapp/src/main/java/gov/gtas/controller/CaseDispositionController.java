@@ -240,6 +240,8 @@ public class CaseDispositionController {
     	
     	for(Case _case : cases) {
     		CaseVo vo = new CaseVo();
+    		_case.getFlight().setPnrs(null); //TODO: need to cherry-pick the fields we need to copy to DTO, failed to serialize the lazy loaded entities
+    		_case.setHitsDispositions(null);
     		CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
     		vos.add(vo);
     	}
