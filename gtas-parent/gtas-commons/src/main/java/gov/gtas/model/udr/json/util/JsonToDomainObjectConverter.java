@@ -54,12 +54,13 @@ public class JsonToDomainObjectConverter {
                 : YesNoEnum.N;
         final Date endDate = metaData.getEndDate();
         final Long ruleCatId = metaData.getRuleCat();
+        final Boolean overMaxHits = metaData.isOverMaxHits();
 //
 //        RuleMeta ret = createRuleMeta(id, title, descr, startDate, endDate,
 //                enabled);
         //@RuleCategory changes
         RuleMeta ret = createRuleMeta(id, title, descr, startDate, endDate,
-                enabled, ruleCatId);
+                enabled, ruleCatId, overMaxHits);
         return ret;
     }
 
@@ -277,12 +278,13 @@ public class JsonToDomainObjectConverter {
      *            the day the rule should cease to be active (optional).
      * @param enabled
      *            enabled state of the rule.
+     * @param overMaxHits
      * @return
      */
     private static RuleMeta createRuleMeta(Long id, String title, String descr,
-                                           Date startDate, Date endDate, YesNoEnum enabled, Long _tempRuleCatStr) {
+                                           Date startDate, Date endDate, YesNoEnum enabled, Long _tempRuleCatStr, Boolean overMaxHits) {
         RuleMeta meta = new RuleMeta();
-        Set<RuleCat> _tempRuleCatSet = new HashSet<RuleCat>();
+        Set<RuleCat> _tempRuleCatSet = new HashSet<>();
         RuleCat _tempRuleCat = new RuleCat();
         if (id != null) {
             meta.setId(id);
@@ -294,6 +296,7 @@ public class JsonToDomainObjectConverter {
         meta.setStartDt(startDate);
         meta.setEndDt(endDate);
         meta.setTitle(title);
+        meta.setOverMaxHits(overMaxHits);
         _tempRuleCat.setId(_tempRuleCatStr);
         _tempRuleCatSet.add(_tempRuleCat);
         meta.setRuleCategories(_tempRuleCatSet);
