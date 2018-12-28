@@ -49,7 +49,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*",
 				"/flights/**/*", "/pax/**/*", "/query-builder/**/*",
 				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*",
-				"/dist/**/*", "/jqb/**/*", "/userSettings/**/*", "/cases/**/*","/onedaylookout/**/*",
+				"/dist/**/*", "/jqb/**/*", "/userSettings/**/*", "/cases/**/*","/onedaylookout/**/*","/userlocation/**/*",
 				"/resources/**", "/common/**/*", "/login/**", "/admin/**",
 				"/app.js", "WEB-INF/**/*", "/data/**");
 	}

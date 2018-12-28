@@ -85,5 +85,7 @@ public final class Constants {
 	public static final String FLIGHT_DIRECTION_OUTGOING = "O";
 	public static final String FLIGHT_DIRECTION_INCOMING_DESC = "Inbound";
 	public static final String FLIGHT_DIRECTION_OUTGOING_DESC = "Outbound";
+	
+	public static final String USER_PRIMARY_LOCATION = "USER_PRIMARY_LOCATION";
 
 }
