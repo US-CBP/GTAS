@@ -1,0 +1,89 @@
+pipeline {
+	agent any
+	tools {
+		maven 'Maven3'
+		jdk 'Java_On_Docker'
+	}
+	stages {
+		stage('Initialize') {
+			steps {
+				sh '''
+				echo "PATH = ${PATH}"
+				echo "M2_HOME = ${M2_HOME}"
+				'''
+			}
+		}
+
+		stage('Build') {
+			steps {
+				sh 'cd gtas-parent && mvn clean install -Dskip.unit.tests=true' // -Dskip.unit.tests=true
+			}
+			post {
+				success {
+					sh '''
+					echo "Build Successful"
+					'''
+				}
+			}
+			} // end of Build step
+
+			stage('Test') {
+				steps {
+					sh '''
+				   echo "skipping tests"
+					'''
+			}
+				//def buildContainer = docker.image('sanandreas/mavenjava8gitimage:latest')
+				//buildContainer.pull()
+				//buildContainer.inside {
+				//	sh ''
+				//	sh ''
+			}
+
+			stage('Test with a DB') {
+				steps {
+					sh '''
+				  echo "skipping tests with db"
+					'''
+			}
+				//		 def mysql = docker.image('mysql').run("-e MYSQL_ALLOW_EMPTY_PASSWORD=yes")
+				//		 def buildContainer = docker.image('sanandreas/mavenjava8gitimage:latest')
+				//		 buildContainer.pull()
+				//		 buildContainer.inside("--link ${mysql.id}:localhost") { // using linking, mysql will be available at host: localhost, port: 3306
+				//
+				//			  sh 'mvn clean install '  // this command to build with unit tests
+				//
+				//		 }
+				//		 mysql.stop()
+			}
+
+			stage('Docker build/push') {
+				steps {
+					sh '''
+				  echo "skipping docker push"
+					'''
+			}
+				//docker.withRegistry('https://index.docker.io/v1/', '<dockerhub username>') {
+				//  def app = docker.build("<githubusername>/<repo>:${commit_id}", '.').push()
+				//}
+			}
+		} // end stages
+		post {
+			success {
+				emailext (
+						subject: "BUILD PASSED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+						body: """<p>PASSED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+							<p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+						to: '$DEFAULT_RECIPIENTS'
+					)
+			}
+			failure {
+				emailext (
+						subject: "BUILD FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+						body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+							<p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+						to: '$DEFAULT_RECIPIENTS'
+					)
+			}
+		}
+	}
