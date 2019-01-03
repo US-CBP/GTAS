@@ -66,4 +66,6 @@ public interface UserService {
 	 * @return the user
 	 */
 	public User fetchUser(final String userId);
+	
+	public boolean isAdminUser(String userId);
 }

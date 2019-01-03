@@ -65,6 +65,8 @@ public interface CaseDispositionService {
     
     public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
     
+    public List<OneDayLookoutVo> getOneDayLookoutByDateAndAirport(Date date, String airport);
+    
     public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
     
     public List<Case> getCaseByPaxId(List<Long> paxIds);

@@ -122,9 +122,9 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
 
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = isAdminUser(userId);
+		boolean isAdmin = userService.isAdminUser(userId);
 
-		if (!isAdmin && httpServletRequest.getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
+		if (!isAdmin && httpServletRequest.getSession(false).getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
 			this.setUserPrimaryLocation(httpServletRequest, userId);
 
 		return flightsAndPassengersAndHitsCount;
@@ -148,8 +148,9 @@ public class DashboardController {
 				for (UserLocationVo userLocationVo : userLocationVoList) {
 
 					if (userLocationVo.isPrimaryLocation()) {
-						httpServletRequest.setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
+						httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
 						hasPrimaryLocation = true;
+						logger.info("User Primary Location is set to " + userLocationVo.getAirport()  + " in session. " + this.getClass().getName());
 						break;
 					}
 
@@ -163,8 +164,9 @@ public class DashboardController {
 						if (userLocationVoList.get(i).getAirport() != null
 								&& !userLocationVoList.get(i).getAirport().isEmpty()) {
 							userLocationVoList.get(i).setPrimaryLocation(true);
-							httpServletRequest.setAttribute(Constants.USER_PRIMARY_LOCATION,
+							httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION,
 									userLocationVoList.get(i).getAirport());
+							logger.info("User Primary Location is set to " + userLocationVoList.get(i).getAirport()  + " in session. " + this.getClass().getName());
 							try {
 								userLocationService.updateUserPrimaryLocation(userId,
 										userLocationVoList.get(i).getAirport(), true);
@@ -182,7 +184,12 @@ public class DashboardController {
 				// table and make it the primary location.
 				AppConfiguration appConfiguration = appConfigurationService.findByOption("DASHBOARD_AIRPORT");
 				try {
+					
 					userLocationService.createUserPrimaryLocation(userId, appConfiguration.getValue(), true);
+					httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION,appConfiguration.getValue());
+					logger.info("User Primary Location is set to the default airport from App Config " + appConfiguration.getValue()  + " in session. " + this.getClass().getName());
+					
+					
 				} catch (Exception e) {
 					logger.error("An error has occurred when creating new user location in the database.");
 				}
@@ -192,17 +199,7 @@ public class DashboardController {
 
 	}
 
-	private boolean isAdminUser(String userId) {
-		boolean isAdmin = false;
 
-		for (RoleData r : userService.findById(userId).getRoles()) {
-			if (r.getRoleId() == 1) {
-				isAdmin = true;
-			}
-		}
-
-		return isAdmin;
-	}
 
 	/**
 	 * Gets the flights, passengers and hits count.
