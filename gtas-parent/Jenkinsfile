@@ -4,6 +4,7 @@ pipeline {
 		maven 'Maven3'
 		jdk 'Java_On_Docker'
 	}
+	
 	stages {
 		stage('Initialize') {
 			steps {
