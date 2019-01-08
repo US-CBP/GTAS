@@ -52,6 +52,8 @@ public class  CaseRequestDto implements Serializable {
     private MultipartFile multipartFile;
     
     private String caseDisposition;
+    
+    private String userLocation;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -233,5 +235,16 @@ public class  CaseRequestDto implements Serializable {
 	public void setCaseId(Long caseId) {
 		this.caseId = caseId;
 	}
+
+
+	public String getUserLocation() {
+		return userLocation;
+	}
+
+	public void setUserLocation(String userLocation) {
+		this.userLocation = userLocation;
+	}
+	
+	
  
 }

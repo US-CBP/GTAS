@@ -138,6 +138,12 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
             criteria.add(" (c.flightETADate BETWEEN :etaStart AND :etaEnd OR  c.flightETDDate BETWEEN :etaStart AND :etaEnd) ");
         }
+        
+        if(dto.getUserLocation()!=null && !dto.getUserLocation().isEmpty() )
+        {
+        	 criteria.add("( ( UPPER(c.flight.direction)='I' AND c.flight.destination = :userLocation) OR ( UPPER(c.flight.direction)='O' AND c.flight.origin = :userLocation) )");
+        	 
+        }
 
         return criteria;
     }
@@ -162,6 +168,12 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         if (dto.getRuleCatId() != null) {
             query.setParameter("highPriorityRuleCatId", dto.getRuleCatId());
             countQuery.setParameter("highPriorityRuleCatId", dto.getRuleCatId());
+        }
+        
+        if(dto.getUserLocation()!=null)
+        {
+        	 query.setParameter("userLocation", dto.getUserLocation());
+        	 countQuery.setParameter("userLocation", dto.getUserLocation());
         }
 
         if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
