@@ -5,6 +5,7 @@
  */
 package gov.gtas.controller;
 
+import gov.gtas.services.DataManagementService;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.FlightsPageDto;
@@ -13,6 +14,7 @@ import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,12 +34,16 @@ public class FlightPassengerController {
 
     @Autowired
     private PassengerService paxService;
+    
+    @Autowired
+    private DataManagementService dataManagementService;
 
     @RequestMapping(value = "/flights", method = RequestMethod.POST, 
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody FlightsPageDto getAllFlights(@RequestBody FlightsRequestDto request, HttpServletRequest hsr) {
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
                 SecurityContextHolder.getContext());
+        
     	return flightService.findAll(request);
     }
 

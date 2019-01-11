@@ -63,7 +63,8 @@ public class DashboardController {
 
     @Autowired
     private PnrService pnrService;
-
+    
+    
     private static final String commaStringToAppend = ", ";
     private static final String EMPTY_STRING="";
 
@@ -103,7 +104,7 @@ public class DashboardController {
                 new AtomicInteger(paxCount));
         flightsAndPassengersAndHitsCount.put("flightsList",
                 hitAndAirportExtractor.getAirportList());
-
+        
 		return flightsAndPassengersAndHitsCount;
 	}
 
