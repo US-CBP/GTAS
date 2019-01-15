@@ -128,6 +128,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	
 	private Map< String, Collection<BigInteger> > inClauseIdListsMap;
 	
+	private List<String> messageList;
+	
 	// table name, id name, list key in each row
 	private List< List<String> > sqlDeleteElements;
 	
@@ -144,6 +146,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		
 		sqlDeleteElements = new ArrayList<>();
 		
+		messageList = new ArrayList<>();
+		
 		boolean isEmptyMessageList = false;
 		try
 		{
@@ -159,6 +163,13 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 				deleteFromAllTablesWithDate(localDate);
 				
 				writeActionToAuditLog(localDate, currentUser);
+				
+				// write messages after all deletes have completed successfully. 
+				// If an exception is thrown, then no deletes will happen.
+				for (String message : messageList)
+				{
+					logger.info(message);
+				}
 			}
 			else
 			{
@@ -318,7 +329,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		       Query query = em.createNativeQuery(sqlString);
 		       query.setParameter(listKey, list);
 		       int numDeleted = query.executeUpdate();
-		       logger.info(numDeleted + " rows deleted from table " + tableName);
+		       //logger.info(numDeleted + " rows deleted from table " + tableName);
+		       messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
 		   }
 	       
 		}
@@ -339,7 +351,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	       Query query = em.createNativeQuery(sqlString);
 	       query.setParameter("localDate", localDate);
 	       int numDeleted = query.executeUpdate();
-	       logger.info(numDeleted + " rows deleted from table " + tableName);
+	       //logger.info(numDeleted + " rows deleted from table " + tableName);
+	       messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
 		       
 		}
 		catch (Exception ex)
