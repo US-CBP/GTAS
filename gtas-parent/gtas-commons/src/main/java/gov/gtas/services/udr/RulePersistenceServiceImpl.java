@@ -138,7 +138,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
-	public List<Object[]> findAllUdrSummary(String userId) {
+	public List<UdrRule> findAllUdrSummary(String userId) {
 		if (StringUtils.isEmpty(userId)) {
 			return udrRuleRepository.findAllUdrRuleSummary();
 		} else {

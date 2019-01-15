@@ -33,12 +33,9 @@ public class HitsDisposition extends BaseEntityAudit {
     @Column(name = "hit_id")
     private long hitId;
 
-//    @Column(name = "case_id")
-//    private long caseId;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="case_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional=false)
+    @JoinColumn(name="case_id", insertable=false, updatable=false)
     private Case aCase;
 
     @Column(name = "description")
@@ -50,11 +47,9 @@ public class HitsDisposition extends BaseEntityAudit {
     @Column(name = "valid", nullable = true)
     private String valid;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "hitDispId", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(targetEntity = HitsDispositionComments.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    //@JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
-    @JoinTable(name = "case_hit_disp_comments", joinColumns = @JoinColumn(name = "hit_disp_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_comments_id"))
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hit_disp_id", nullable = false)
     private Set<HitsDispositionComments> dispComments = new HashSet<>();
 
     @JsonIgnore
@@ -106,14 +101,6 @@ public class HitsDisposition extends BaseEntityAudit {
     public void setHitId(long hitId) {
         this.hitId = hitId;
     }
-
-//    public long getCaseId() {
-//        return caseId;
-//    }
-//
-//    public void setCaseId(long caseId) {
-//        this.caseId = caseId;
-//    }
 
 
     public Case getaCase() {

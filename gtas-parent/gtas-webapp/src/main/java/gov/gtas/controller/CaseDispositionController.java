@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.gtas.constants.Constants;
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
@@ -28,6 +29,8 @@ import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.services.security.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,6 +56,9 @@ public class CaseDispositionController {
     @Autowired
     private RuleCatService ruleCatService;
     
+	@Autowired
+	private UserService userService;
+    
     private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
 
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
@@ -62,6 +68,16 @@ public class CaseDispositionController {
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
+        
+        String userId = GtasSecurityUtils.fetchLoggedInUserId();
+        boolean isAdmin = userService.isAdminUser(userId);
+        
+        if(!isAdmin)
+        {
+        	String userLocation = (String) hsr.getSession(true).getAttribute(Constants.USER_PRIMARY_LOCATION);
+        	request.setUserLocation(userLocation);
+        }
+        
 
         CasePageDto casePageDto = caseDispositionService.findAll(request);
         return casePageDto;
@@ -240,6 +256,8 @@ public class CaseDispositionController {
     	
     	for(Case _case : cases) {
     		CaseVo vo = new CaseVo();
+    		_case.getFlight().setPnrs(null); //TODO: need to cherry-pick the fields we need to copy to DTO, failed to serialize the lazy loaded entities
+    		_case.setHitsDispositions(null);
     		CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
     		vos.add(vo);
     	}

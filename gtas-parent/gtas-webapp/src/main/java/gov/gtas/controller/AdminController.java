@@ -56,21 +56,22 @@ public class AdminController {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdminController.class);
-        
+
         public static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
         public static final String FLIGHT_RANGE ="FLIGHT_RANGE";
         public static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
         public static final String APIS_VERSION = "APIS_VERSION";
-     
+        public static final String MAX_RULE_HITS = "MAX_RULE_HITS";
+
         @Autowired
         AppConfigurationService appConfigurationService;
-        
+
 	@Autowired
 	private AuditLogPersistenceService auditService;
 
 	@Autowired
 	private ErrorPersistenceService errorService;
-	
+
 	@Autowired
 	private ApiAccessService apiAccessService;
 
@@ -101,7 +102,7 @@ public class AdminController {
 		}
 		return fetchAuditLogData(user, actionType, st, nd);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
 	public List<ApiAccess> getAllApiAccess(){
 		return apiAccessService.findAll();
@@ -143,6 +144,7 @@ public class AdminController {
 		settingsVo.setFlightRange(Double.parseDouble(appConfigurationService.findByOption(FLIGHT_RANGE).getValue()));
 		settingsVo.setMaxPassengerQueryResult(Integer.parseInt(appConfigurationService.findByOption(MAX_PASSENGER_QUERY_RESULT).getValue()));
 		settingsVo.setMaxFlightQueryResult(Integer.parseInt(appConfigurationService.findByOption(MAX_FLIGHT_QUERY_RESULT).getValue()));
+		settingsVo.setMaxRuleHit(Integer.parseInt(appConfigurationService.findByOption(MAX_RULE_HITS).getValue()));
 
                 AppConfiguration appConfigApisFlag = appConfigurationService.findByOption(APIS_ONLY_FLAG);
                 if (appConfigApisFlag != null)
@@ -155,7 +157,7 @@ public class AdminController {
                   settingsVo.setApisVersion(appConfigApisVersion.getValue());
                 }
 
-		return settingsVo; 
+		return settingsVo;
 	}
 	@RequestMapping(method = RequestMethod.PUT, value = "/settingsinfo")
 	public ResponseEntity setSettings(@Valid SettingsVo settings, BindingResult result, Model model) {
@@ -167,11 +169,11 @@ public class AdminController {
 		} else {
 
 			AppConfiguration appConfig;
-			
+
 			appConfig = appConfigurationService.findByOption(MATCHING_THRESHOLD);
 			appConfig.setValue(String.valueOf(settings.getMatchingThreshold()));
 			appConfigurationService.save(appConfig);
-			
+
 			appConfig = appConfigurationService.findByOption(FLIGHT_RANGE);
 			appConfig.setValue(String.valueOf(settings.getFlightRange()));
 			appConfigurationService.save(appConfig);
@@ -184,43 +186,47 @@ public class AdminController {
 			appConfig.setValue(String.valueOf(settings.getMaxFlightQueryResult()));
 			appConfigurationService.save(appConfig);
 
+			appConfig = appConfigurationService.findByOption(MAX_RULE_HITS);
+			appConfig.setValue(String.valueOf(settings.getMaxRuleHit()));
+			appConfigurationService.save(appConfig);
+
 			if (settings.getApisOnlyFlag() != null && !settings.getApisOnlyFlag().isEmpty())
                         {
 			    appConfig = appConfigurationService.findByOption(APIS_ONLY_FLAG);
                             if (appConfig != null)
                             {
-			        appConfig.setValue(String.valueOf(settings.getApisOnlyFlag())); 
+			        appConfig.setValue(String.valueOf(settings.getApisOnlyFlag()));
                                 appConfigurationService.save(appConfig);
                             }
                             else
                             {
-                              AppConfiguration newAppConfig = new AppConfiguration(); 
+                              AppConfiguration newAppConfig = new AppConfiguration();
                               newAppConfig.setDescription("Is APIS the only message source.");
                               newAppConfig.setOption(APIS_ONLY_FLAG);
                               newAppConfig.setValue(settings.getApisOnlyFlag());
                               appConfigurationService.save(newAppConfig);
                             }
                         }
-                        
+
                         if (settings.getApisVersion() != null && !settings.getApisVersion().isEmpty())
                         {
 			    appConfig = appConfigurationService.findByOption(APIS_VERSION);
                             if (appConfig != null)
                             {
-			        appConfig.setValue(String.valueOf(settings.getApisVersion())); 
+			        appConfig.setValue(String.valueOf(settings.getApisVersion()));
                                 appConfigurationService.save(appConfig);
                             }
                             else
                             {
-                              AppConfiguration newAppConfig = new AppConfiguration(); 
+                              AppConfiguration newAppConfig = new AppConfiguration();
                               newAppConfig.setDescription("Latest APIS version being used.");
                               newAppConfig.setOption(APIS_VERSION);
                               newAppConfig.setValue(settings.getApisVersion());
-                              appConfigurationService.save(newAppConfig);                               
+                              appConfigurationService.save(newAppConfig);
                             }
                         }
-                        
-       
+
+
 			return new ResponseEntity<>(HttpStatus.CREATED);
 		}
 	}

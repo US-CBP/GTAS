@@ -25,13 +25,10 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
     @Column(name = "comments", length = 20000)
     private String comments;
 
-//    @Column(name="hit_disp_id")
-//    private long hitDispId;
 
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name="hit_disp_id")
-    private HitsDisposition hitDispId;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, optional = false)
+    @JoinColumn(name = "hit_disp_id", insertable = false, updatable = false)
+    private HitsDisposition hitDisp;
 
     @Column(name="hit_id")
     private long hitId;
@@ -51,21 +48,12 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
         this.comments = comments;
     }
 
-//    public long getHitDispId() {
-//        return hitDispId;
-//    }
-//
-//    public void setHitDispId(long hitDispId) {
-//        this.hitDispId = hitDispId;
-//    }
-
-
-    public HitsDisposition getHitDispId() {
-        return hitDispId;
+    public HitsDisposition getHitDisp() {
+        return hitDisp;
     }
 
-    public void setHitDispId(HitsDisposition hitDispId) {
-        this.hitDispId = hitDispId;
+    public void setHitDisp(HitsDisposition hitDisp) {
+        this.hitDisp = hitDisp;
     }
 
     public long getHitId() {
@@ -94,7 +82,7 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(hitDispId, that.hitDispId)
+                .append(hitDisp, that.hitDisp)
                 .append(hitId, that.hitId)
                 .append(id, that.id)
                 .isEquals();
@@ -104,7 +92,7 @@ public class HitsDispositionComments extends BaseEntityAudit implements Serializ
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
-                .append(hitDispId)
+                .append(hitDisp)
                 .append(hitId)
                 .append(id)
                 .toHashCode();

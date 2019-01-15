@@ -1,0 +1,70 @@
+<style>
+
+section {
+    border: 1px solid;
+    border-color: LightGray;
+    border-radius: 10px;
+    padding-bottom: 20px;
+}
+.selectize-control {
+    margin-left: 8em;
+}
+.selectize-input input {
+    width: 264px !important;
+}
+
+    .md-contact-suggestion {
+        min-width: 25em;
+    }
+
+    .md-contact-suggestion span.md-contact-email {
+        overflow: visible !important;
+    }
+
+    .md-contact-suggestion .md-contact-name {
+        display: none !important;
+    }
+
+
+     .filter-form {
+        display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box; /* OLD - Firefox 19- (doesn't work very well) */
+        display: -ms-flexbox; /* TWEENER - IE 10 */
+        display: -webkit-flex; /* NEW - Chrome */
+        display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+</style>
+
+
+ <div style="margin-top:50px;align:left;margin-left:10px;border-color: LightGray;border-width:1px;border-style:solid;overflow:hidden;width:20%;" >
+ 
+ 		 <div style="float:left;margin-left:10px;overflow:hidden;width:80%;clear:both"> 
+ 	 
+            <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width" >
+                <label for="user-location-list"><strong>Current Office Location</strong></label>&nbsp;
+                  <select class="mdl-selectfield__select" id="user-location-list" ng-model="userLocation">
+         
+                    <option ng-repeat="item in userLocationList" value="{{item.airport}}">{{item.airport}}</option>
+                      
+                  </select>
+            </div>      
+      	</div>    
+         <br>   
+     	<div style="float:left;margin-left:10px;overflow:hidden;width:60%;clear:both">    
+                 <md-button   class="btn btn-default" ng-click="saveCurrentUserLocation()">
+          			<md-tooltip>Save your current office location.</md-tooltip>
+         		 	<i class="fa fa-save" aria-hidden="true"></i>
+         		 	&nbsp;<Strong>Save</Strong>
+   				 </md-button>
+   	 	</div>
+   		<br>		
+   		<div style="float:left;margin-left:10px;overflow:hidden;clear:both;margin-bottom:20px;margin-top:30px;"> 
+   				<span>{{saveConfMessage}} </span>
+   		</div>
+   		  	
+   			
+    </div>

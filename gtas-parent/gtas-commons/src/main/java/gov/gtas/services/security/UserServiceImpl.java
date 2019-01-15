@@ -158,4 +158,28 @@ public class UserServiceImpl implements UserService {
 		return userServiceUtil.mapUserEntityFromUserData(userData);
 	}
 
+	
+	
+	/**
+	 * Returns true if the user has an Admin Role
+	 * 
+	 * @param userId
+	 *            the ID of the user to fetch.
+	 * @return 
+	 * 			true if the user has Admin role
+	 * 			flase otherwise
+	 */
+	
+	public boolean isAdminUser(String userId) {
+		boolean isAdmin = false;
+
+		for (RoleData r : findById(userId).getRoles()) {
+			if (r.getRoleId() == 1) {
+				isAdmin = true;
+			}
+		}
+
+		return isAdmin;
+	}
+
 }
