@@ -5,7 +5,6 @@
  */
 package gov.gtas.job.scheduler;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.repository.BookingDetailRepository;

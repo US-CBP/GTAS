@@ -528,6 +528,7 @@ public class TargetingServiceImpl implements TargetingService {
 	@Override
 	public Set<Long> runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
+                        Bench.start("total", "Starting Rule Engine processing");
 	 		Set<Long> uniqueFlights = new HashSet<>();
 	  		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
 	  		if (ruleRunningResult != null) {
@@ -540,11 +541,12 @@ public class TargetingServiceImpl implements TargetingService {
 				}
 	  		writeAuditLogForTargetingRun(ruleRunningResult);
 	  	}
+                Bench.end("total", "Ending Rule Engine processing");
 	 	logger.info("Exiting runningRuleEngine().");
                 
 	 	//updateFlightHitCounts() was moved here in order to insure manual rule running updated flight hit counts
 	 	updateFlightHitCounts(uniqueFlights);
-                Bench.print();
+                //Bench.print();
 	 	return uniqueFlights;
 	}
 

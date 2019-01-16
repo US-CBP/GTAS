@@ -15,7 +15,6 @@ import gov.gtas.json.AuditActionTarget;
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.edifact.Segment;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.redisson.model.LedgerLiveObject;
 import gov.gtas.parsers.util.FileUtils;
 
 import java.io.File;
