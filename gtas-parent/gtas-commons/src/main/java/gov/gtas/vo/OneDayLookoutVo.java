@@ -3,6 +3,7 @@ package gov.gtas.vo;
 public class OneDayLookoutVo extends BaseVo{
 
 		private Long paxId;
+		private Long caseId;
 		private Long passengerId;
 		private Long flightId;
 	    private String document;
@@ -97,6 +98,12 @@ public class OneDayLookoutVo extends BaseVo{
                 public void setOrigDestAirportsStr(String origDestAirportsStr) {
                     this.origDestAirportsStr = origDestAirportsStr;
                 }
+				public Long getCaseId() {
+					return caseId;
+				}
+				public void setCaseId(Long caseId) {
+					this.caseId = caseId;
+				}
                 
 		
 		

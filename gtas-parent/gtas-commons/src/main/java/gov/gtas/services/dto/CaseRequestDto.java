@@ -24,6 +24,8 @@ public class  CaseRequestDto implements Serializable {
     private Long flightId;
 
     private String flightNumber;
+    
+    private Long caseId;
 
     private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
 
@@ -50,6 +52,8 @@ public class  CaseRequestDto implements Serializable {
     private MultipartFile multipartFile;
     
     private String caseDisposition;
+    
+    private String userLocation;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -223,4 +227,24 @@ public class  CaseRequestDto implements Serializable {
     public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
         this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     }
+
+	public Long getCaseId() {
+		return caseId;
+	}
+
+	public void setCaseId(Long caseId) {
+		this.caseId = caseId;
+	}
+
+
+	public String getUserLocation() {
+		return userLocation;
+	}
+
+	public void setUserLocation(String userLocation) {
+		this.userLocation = userLocation;
+	}
+	
+	
+ 
 }

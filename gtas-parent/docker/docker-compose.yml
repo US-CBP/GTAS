@@ -1,48 +1,51 @@
-version: '3.3'
+version: "3"
 
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    networks: 
+      - gtas_default
 
-  tomcatgtas:
-    container_name: tomcat
-    build:
-      context: .
-      dockerfile: tomcat.Dockerfile
-    volumes:
-      -  //C/db/:/usr/local/tomcat/webapps:rw
-
-    ports:
-      - "8080:8080"
-
-  mariahost:
-    # image: mariadb:latest
-    environment:
-      #MYSQL_USER: root
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: gtas
-    build:
-       context: .
-       dockerfile: db.Dockerfile
-    container_name: mariahost
-    volumes:
-     -  //C/db/mariadb/data:/var/lib/mysql:rw
-     - //C/db/init_db:/docker-entrypoint-initdb.d:ro
-
-    ports:
-       - "3306:3306"
+  elasticsearch:
+    image: elasticsearch:2.3.2
+    container_name: elastic
+    networks: 
+      - gtas_default
+    ports: 
+      - 9300:9300
+      - 9200:9200
     healthcheck:
-      test: "/usr/bin/mysqladmin --user=root --password=admin status"
-      interval: 5s
-      timeout: 2s
+      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
       retries: 5
 
-  app:
-    build:
-      context: .
-      dockerfile: mvn.Dockerfile
-    links:
-         - mariahost:mariahost
+  activemq:
+    image: rmohr/activemq
+    container_name: activemq
+    networks: 
+      - gtas_default
+
+  mariahost:
+    image: sanandreas/gtas_mariadb:v4
+    container_name: mariahost
+    networks: 
+      - gtas_default
+  
+  tomcatgtas:
+    image: sanandreas/gtas_tomcat:v4
+    container_name: tomcat
+    networks: 
+      - gtas_default
+    ports: 
+      - 8080:8080
+    environment:
+      LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
+      LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}
+    volumes:
+      - ${LOCAL_DRIVE_MAPPING_INPUT}:/usr/local/input:rw
+      - ${LOCAL_DRIVE_MAPPING_OUTPUT}:/usr/local/output:rw
 
 networks:
-  default:
-    external:
-      name: gtas_default
+  gtas_default:

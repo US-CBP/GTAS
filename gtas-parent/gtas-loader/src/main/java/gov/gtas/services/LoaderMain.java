@@ -50,6 +50,9 @@ public class LoaderMain {
         if (args.length == 1 && args[0].startsWith("http")) {
             // queue url
             inputType = InputType.QUEUE;
+        } else if (args.length == 2 && args[0].startsWith("http")) {
+        	// queue url
+            inputType = InputType.QUEUE;
         } else {
             // a list of files or 2 directories
             File arg1 = new File(args[0]);
@@ -117,7 +120,7 @@ public class LoaderMain {
 
     private static void processQueue(String[] args, LoaderStatistics stats) {
         String queueName = args[0].substring(args[0].lastIndexOf('/') + 1);
-        QueueService sqs = new QueueService(queueName);
+        QueueService sqs = new QueueService(queueName,args[1]);
         List<Message> messages = sqs.receiveMessages();
         for (Message m : messages) {
             try {

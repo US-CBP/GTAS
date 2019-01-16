@@ -343,7 +343,7 @@ var app;
                     }
                 })
                 .state('casedetail', {
-                    url: '/casedetail/:flightId/:paxId',
+                    url: '/casedetail/:caseId',
                     authenticate: true,
                     roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
                     views: {
@@ -355,7 +355,7 @@ var app;
                     ,
                     resolve: {
                         newCases: function(caseDispositionService, $stateParams){
-                            return caseDispositionService.getOneHitsDisposition($stateParams.flightId, $stateParams.paxId);
+                            return caseDispositionService.getOneHitsDisposition($stateParams.caseId);
                         }
                     }
                 })
@@ -573,6 +573,22 @@ var app;
                         }
                     }
                 })
+                .state('userlocation', {
+                    url: '/userlocation',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                        '@': {
+                            controller: 'UserLocationController',
+                            templateUrl: 'userlocation/userlocation.html'
+                        }
+                    },
+                    resolve: {
+                        userLocationData: function (userLocationService) {
+                            return userLocationService.getAllUserLocations();
+                        }
+                    }
+                })
                 .state('userSettings', {
                     url: '/userSettings',
                     authenticate: true,
@@ -614,6 +630,7 @@ var app;
                 risks: {mode: ['rule']},
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},
+                userlocation: {name: ['userlocation']},
                 upload: {name: ['upload']},
                 cases: {name: ['cases']},
                 onedaylookout: {name: ['onedaylookout']}

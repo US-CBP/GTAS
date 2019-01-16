@@ -126,11 +126,18 @@
             $scope.watchlistLinks = response.data;
           });
         }
+        
+       $scope.refreshCasesHistory = function () {
+        	 paxDetailService.getPaxCaseHistory($scope.passenger.paxId).then(function(cases){
+        		 $scope.caseHistory = cases.data;
+        	 });
+        }
 
         $scope.saveWatchListMatchByPaxId = function (){
           paxDetailService.savePaxWatchlistLink($scope.passenger.paxId)
           .then(function(response) {
             $scope.getWatchListMatchByPaxId();
+            $scope.refreshCasesHistory($scope.passenger.paxId);
           });
         }
 

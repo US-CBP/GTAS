@@ -3,12 +3,17 @@ package gov.gtas.services.matcher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 import org.apache.lucene.util.StringHelper;
 import org.slf4j.Logger;
@@ -19,17 +24,21 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PaxWatchlistLink;
+import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.CaseDispositionRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PaxWatchlistLinkRepository;
@@ -56,6 +65,8 @@ public class MatchingServiceImpl implements MatchingService {
 	private FlightRepository flightRepository;
 	@Autowired
 	private CaseDispositionService caseDispositionService;
+	@Resource
+	private CaseDispositionRepository caseDispositionRepository;
 	@Autowired
 	private AppConfigurationRepository appConfigRepository;
 
@@ -120,10 +131,14 @@ public class MatchingServiceImpl implements MatchingService {
 	// automated run. Automated run already contains passenger objects.
 	public void saveWatchListMatchByPaxId(Long id) {
 		Passenger passenger = passengerRepository.getPassengerById(id);
-		saveWatchListMatchByPaxId(passenger);
+		List<Long> passengers = Lists.asList(passenger.getId(), new Long[0]);
+		Flight flight = flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst()
+				.orElse(null);
+		saveWatchListMatchByPaxId(createCaseMap(
+				passengers,this.caseDispositionService), flight, passenger);
 	}
 
-	public void saveWatchListMatchByPaxId(Passenger passenger) {
+	public void saveWatchListMatchByPaxId(Map<Long, Case> existingCases, Flight flight, Passenger passenger) {
 		final float threshold = Float
 				.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue()));
 		List<Watchlist> _watchlists = watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document"));
@@ -162,31 +177,72 @@ public class MatchingServiceImpl implements MatchingService {
 						}
 					}
 				}
-
+				
+				long matchingStart = System.nanoTime();
+				logger.info("fuzzy name matching started " + matchingStart);
 				MatchingResult result = qm.match(passenger, derogList, threshold);
-
+				logger.info("fuzzy name matching finished -- " + Long.toString((System.nanoTime() - matchingStart)/1000000)+"ms");
+				
+				
 				logger.info(result.toString());
+				 Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
 
 				if (result.getTotalHits() >= 0) {
 					Map<String, DerogResponse> _responses = result.getResponses();
 					for (String key : _responses.keySet()) {
 						List<DerogHit> derogs = _responses.get(key).getDerogIds();
 						for (DerogHit hit : derogs) {
+
 							paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
 									passenger.getId(), Long.parseLong(hit.getDerogId()));
+
+						    Case existingCase = existingCases.get(passenger.getId()); 
+						    
 							// make a call to open case here
-							new NameMatchCaseMgmtUtils().nameMatchCaseProcessing(passenger.getId(),
+							new NameMatchCaseMgmtUtils().nameMatchCaseProcessing(passenger,
 									Long.parseLong(hit.getDerogId()), hit.getWatchlistName(),
-									(flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst()
-											.orElse(null).getId()),
+									
+										flight	,existingCase,ruleCatMap,
 									caseDispositionService);
 						}
 					}
 				}
+				
 				passengerRepository.setPassengerWatchlistTimestamp(passenger.getId(), new Date());
 			}
 		}
 	}
+	
+	 private static Map<Long, RuleCat> createRuleCatMap(CaseDispositionService dispositionService)
+	    {
+	       Map<Long, RuleCat> ruleCatMap = new HashMap<>();
+	       Iterable<RuleCat> ruleCatList = dispositionService.findAllRuleCat();
+	       for (RuleCat ruleCat : ruleCatList)
+	       {
+	         ruleCatMap.put(ruleCat.getId(), ruleCat);
+	       }
+	        
+	       return ruleCatMap;
+	    }
+	 
+	 private static Map<Long, Case> createCaseMap(List<Long> passengerIdList, CaseDispositionService dispositionService)
+	    {
+	        List<Case> caseResultList = null;
+	        Map<Long, Case> caseMap = new HashMap<>();
+
+	        if (!passengerIdList.isEmpty())
+	        {
+	            caseResultList = dispositionService.getCaseByPaxId(passengerIdList);
+
+	            for (Case caze :  caseResultList)
+	            {
+	               caseMap.put(caze.getPaxId(), caze);
+
+	            }
+	        }
+
+	        return caseMap;       
+	    }
 
 	/**
 	 * receives a time threshold in hours to process potential matches for flights
@@ -200,15 +256,25 @@ public class MatchingServiceImpl implements MatchingService {
 		int totalMatchCount = 0;
 		long startTime = System.nanoTime();
 		// get flights that are arriving between timeOffset and "now".
-		List<Passenger> passengers = getPassengersOnFlightsWithinTimeRange();
+		Map<Flight,List<Passenger>> passengers = getPassengersOnFlightsWithinTimeRange();
 		long endTime = System.nanoTime();
 		logger.info("Execution time for getFlightsWithinTimeRange() = " + (endTime - startTime) / 1000000 + "ms");
-
+		
 		// Begin matching for all passengers on all flights retrieved within time frame.
 		if (passengers != null && passengers.size() > 0) { // Don't try and match if no flights
+			;
 			startTime = System.nanoTime();
-			for (Passenger p : passengers) {
-				saveWatchListMatchByPaxId(p.getId());
+			for (Flight f : passengers.keySet()) {
+				for(Passenger passenger: passengers.get(f)) {
+					saveWatchListMatchByPaxId(createCaseMap(
+							passengers.
+							values().
+							stream().
+							flatMap(List::stream).
+							collect(Collectors.toList()).
+							stream().map(p -> p.getId())
+							.collect(Collectors.toList()),this.caseDispositionService), f, passenger);
+				}
 			}
 			endTime = System.nanoTime();
 			logger.info("Passenger count for matching service: " + passengers.size());
@@ -220,7 +286,7 @@ public class MatchingServiceImpl implements MatchingService {
 		return totalMatchCount;
 	}
 
-	private List<Passenger> getPassengersOnFlightsWithinTimeRange() {
+	private Map<Flight, List<Passenger>> getPassengersOnFlightsWithinTimeRange() {
 		logger.info("entering getFlightsWithinTimeRange()");
 		long startTime, endTime;
 		double timeOffset = Double
@@ -241,11 +307,11 @@ public class MatchingServiceImpl implements MatchingService {
 		// between startDate and endDate
 		ArrayList<Flight> flights = (ArrayList<Flight>) flightRepository
 				.getInboundAndOutboundFlightsWithinTimeFrame(startDate, endDate);
-		ArrayList<Passenger> passengers = new ArrayList<Passenger>();
+		Map<Flight, List<Passenger>> passengers = new HashMap<Flight, List<Passenger>>();
 		if (flights != null && flights.size() > 0) {
 			startTime = System.nanoTime();
 			for (Flight f : flights) {
-				passengers.addAll(passengerRepository.getPassengersByFlightId(f.getId()));
+				passengers.put(f, passengerRepository.getPassengersByFlightId(f.getId()));
 			}
 			endTime = System.nanoTime();
 			logger.info(

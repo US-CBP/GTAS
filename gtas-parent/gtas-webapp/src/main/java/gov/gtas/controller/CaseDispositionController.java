@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.gtas.constants.Constants;
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
@@ -28,6 +29,8 @@ import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.RuleCatService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.services.security.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,6 +56,9 @@ public class CaseDispositionController {
     @Autowired
     private RuleCatService ruleCatService;
     
+	@Autowired
+	private UserService userService;
+    
     private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
 
     @RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST,
@@ -62,6 +68,16 @@ public class CaseDispositionController {
     CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",SecurityContextHolder.getContext());
+        
+        String userId = GtasSecurityUtils.fetchLoggedInUserId();
+        boolean isAdmin = userService.isAdminUser(userId);
+        
+        if(!isAdmin)
+        {
+        	String userLocation = (String) hsr.getSession(true).getAttribute(Constants.USER_PRIMARY_LOCATION);
+        	request.setUserLocation(userLocation);
+        }
+        
 
         CasePageDto casePageDto = caseDispositionService.findAll(request);
         return casePageDto;
@@ -74,9 +90,9 @@ public class CaseDispositionController {
     @ResponseBody
     CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
             throws ParseException {
-        HashMap _tempMap = new HashMap();
+    	CasePageDto res = caseDispositionService.findHitsDispositionByCriteria(request);
 
-        return caseDispositionService.findHitsDispositionByCriteria(request);
+        return res;
     }
 
 
@@ -128,7 +144,7 @@ public class CaseDispositionController {
 
         	logger.info("Updating a case to disposition: " + request.getCaseDisposition() + " and case status: "+  request.getStatus());
         	
-            aCase = caseDispositionService.addCaseComments(request.getFlightId(), request.getPaxId(),
+            aCase = caseDispositionService.addCaseComments(request.getCaseId(),
                                                             request.getHitId(), request.getCaseComments(),
                                                             request.getStatus(), request.getValidHit(),
                                                             request.getMultipartFile(),  GtasSecurityUtils.fetchLoggedInUserId(),request.getCaseDisposition());
@@ -144,7 +160,7 @@ public class CaseDispositionController {
     @RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
     public
     @ResponseBody
-    Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+    Case updateHistDispAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId, @RequestParam("caseId") Long caseId,
                                    @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
                                    @RequestParam("status")String status,
                                    @RequestParam("validHit")String validHit,  @RequestParam("caseDisposition")String caseDisposition) {
@@ -152,37 +168,41 @@ public class CaseDispositionController {
         try {
             MultipartFile multipartFile = file;
 
-            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+            aCase = caseDispositionService.addCaseComments(caseId,
                     Long.parseLong(hitId), caseComments,
                     status, validHit,
                     multipartFile, GtasSecurityUtils.fetchLoggedInUserId(),caseDisposition );
         } catch (Exception ex) {
             logger.error("Error in histDispAttachements!", ex);
         }
-        return aCase;
+        //TODO: replace the return type of the method with a DTO object to avoid self referencing loop while converting to JSON by spring 
+        Case newCase = new Case();
+        newCase.setId(aCase.getId());
+        newCase.setHitsDispositions(aCase.getHitsDispositions());
+        return newCase;
     }
 
     //createManualCaseAttachments
-    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
-    public
-    @ResponseBody
-    Case createManualCaseAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
-                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
-                                   @RequestParam("status")String status,
-                                   @RequestParam("validHit")String validHit) {
-        Case aCase = new Case();
-        try {
-            MultipartFile multipartFile = file;
-
-            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
-                    Long.parseLong(hitId), caseComments,
-                    status, validHit,
-                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId(), null);
-        } catch (Exception ex) {
-            logger.error("Error in create manual case attachments", ex);
-        }
-        return aCase;
-    }
+//    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
+//    public
+//    @ResponseBody
+//    Case createManualCaseAttachments(@RequestParam("file") MultipartFile file, @RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
+//                                   @RequestParam("hitId") String hitId, @RequestParam("caseComments")String caseComments,
+//                                   @RequestParam("status")String status,
+//                                   @RequestParam("validHit")String validHit) {
+//        Case aCase = new Case();
+//        try {
+//            MultipartFile multipartFile = file;
+//
+//            aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId), Long.parseLong(paxId),
+//                    Long.parseLong(hitId), caseComments,
+//                    status, validHit,
+//                    multipartFile,  GtasSecurityUtils.fetchLoggedInUserId(), null);
+//        } catch (Exception ex) {
+//            logger.error("Error in create manual case attachments", ex);
+//        }
+//        return aCase;
+//    }
 
     //createManualCase
     @RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
@@ -236,6 +256,8 @@ public class CaseDispositionController {
     	
     	for(Case _case : cases) {
     		CaseVo vo = new CaseVo();
+    		_case.getFlight().setPnrs(null); //TODO: need to cherry-pick the fields we need to copy to DTO, failed to serialize the lazy loaded entities
+    		_case.setHitsDispositions(null);
     		CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
     		vos.add(vo);
     	}

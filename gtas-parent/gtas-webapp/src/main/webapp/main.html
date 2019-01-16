@@ -116,6 +116,13 @@
                 <a title="Settings" href="#/userSettings">Change Password</a>
               </li>
               <li class="divider"></li>
+              <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
+                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}]">
+                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">Office Location </span>   </a>
+              </li>
+              <li class="divider"></li>
               <li>
                 <a href ng-click="logout()" title="Logout">Logout</a>
               </li>
@@ -262,6 +269,8 @@
 <script src='admin/UploadController.js'></script>
 <script src='userSettings/UserSettingsController.js'></script>
 <script src='userSettings/FilterCtrl.js'></script>
+<script src='userlocation/UserLocationController.js'></script>
+<script src='userlocation/UserLocationService.js'></script>
 <script src='common/languagecontroller.js'></script>
 <script src='cases/CasesController.js'></script>
 <script src='cases/CaseDispositionController.js'></script>

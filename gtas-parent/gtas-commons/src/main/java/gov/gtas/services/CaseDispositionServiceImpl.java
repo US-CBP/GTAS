@@ -6,9 +6,11 @@
 package gov.gtas.services;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.google.common.collect.Lists;
 
 import gov.gtas.constant.OneDayLookoutContants;
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
@@ -93,90 +97,95 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	private FlightPaxRepository flightPaxRepository;
 	@Autowired
 	public RuleCatService ruleCatService;
-        @Autowired
-        private PassengerResolverService passengerResolverService;
+	@Autowired
+	private PassengerResolverService passengerResolverService;
 	@Resource
 	private AppConfigurationRepository appConfigurationRepository;
 
 	public CaseDispositionServiceImpl() {
 	}
 
-	@Override
-	public Case create(Long flight_id, Long pax_id, List<Long> hit_ids) {
-		Case aCase = new Case();
-		HitsDisposition hitDisp = new HitsDisposition();
-		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
-		Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
-		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
-		Long highPriorityRuleCatId = 1L;
-		aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
-		aCase.setFlightId(flight_id);
-		aCase.setPaxId(pax_id);
-		aCase.setStatus(DispositionStatusCode.NEW.toString());
-		for (Long _tempHitId : hit_ids) {
-			hitDisp = new HitsDisposition();
-			hitsDispCommentsSet = new HashSet<>();
-			hitDisp.setHitId(_tempHitId);
-			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
-			hitsDispositionComments = new HitsDispositionComments();
-			hitsDispositionComments.setHitId(_tempHitId);
-			hitsDispositionComments.setComments(INITIAL_COMMENT);
-			hitsDispCommentsSet.add(hitsDispositionComments);
-
-			hitDisp.addHitsDispositionComments(hitsDispositionComments);
-			hitsDispSet.add(hitDisp);
-		}
-		// aCase.setHitsDispositions(hitsDispSet);
-		for (HitsDisposition _tempHit : hitsDispSet)
-			aCase.addHitsDisposition(_tempHit);
-
-		caseDispositionRepository.save(aCase);
-		return aCase;
-	}
-
-	@Override
-	public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc,
-			List<Long> hit_ids) {
-		Case aCase = new Case();
-		HitsDisposition hitDisp = new HitsDisposition();
-		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
-		Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
-		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
-		Long highPriorityRuleCatId = 1L;
-		aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
-		aCase.setFlightId(flight_id);
-		aCase.setPaxId(pax_id);
-		aCase.setPaxName(paxName);
-		aCase.setPaxType(paxType);
-		aCase.setStatus(DispositionStatusCode.NEW.toString());
-		for (Long _tempHitId : hit_ids) {
-			hitDisp = new HitsDisposition();
-			hitsDispCommentsSet = new HashSet<>();
-			hitDisp.setHitId(_tempHitId);
-			hitDisp.setDescription(hitDesc);
-			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
-			hitsDispositionComments = new HitsDispositionComments();
-			hitsDispositionComments.setHitId(_tempHitId);
-			hitsDispositionComments.setComments(INITIAL_COMMENT);
-			hitDisp.addHitsDispositionComments(hitsDispositionComments);
-			hitsDispSet.add(hitDisp);
-		}
-		// aCase.setHitsDispositions(hitsDispSet);
-		for (HitsDisposition _tempHit : hitsDispSet)
-			aCase.addHitsDisposition(_tempHit);
-
-		caseDispositionRepository.save(aCase);
-		return aCase;
-	}
+	// @Override
+	// public Case create(Long flight_id, Long pax_id, List<Long> hit_ids) {
+	// Case aCase = new Case();
+	// HitsDisposition hitDisp = new HitsDisposition();
+	// HitsDispositionComments hitsDispositionComments = new
+	// HitsDispositionComments();
+	// Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+	// Set<HitsDispositionComments> hitsDispCommentsSet = new
+	// HashSet<HitsDispositionComments>();
+	// Long highPriorityRuleCatId = 1L;
+	// aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+	// aCase.setFlightId(flight_id);
+	// aCase.setPaxId(pax_id);
+	// aCase.setStatus(DispositionStatusCode.NEW.toString());
+	// for (Long _tempHitId : hit_ids) {
+	// hitDisp = new HitsDisposition();
+	// hitsDispCommentsSet = new HashSet<>();
+	// hitDisp.setHitId(_tempHitId);
+	// hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+	// hitsDispositionComments = new HitsDispositionComments();
+	// hitsDispositionComments.setHitId(_tempHitId);
+	// hitsDispositionComments.setComments(INITIAL_COMMENT);
+	// hitsDispCommentsSet.add(hitsDispositionComments);
+	//
+	// hitDisp.addHitsDispositionComments(hitsDispositionComments);
+	// hitsDispSet.add(hitDisp);
+	// }
+	// // aCase.setHitsDispositions(hitsDispSet);
+	// for (HitsDisposition _tempHit : hitsDispSet)
+	// aCase.addHitsDisposition(_tempHit);
+	//
+	// caseDispositionRepository.save(aCase);
+	// return aCase;
+	// }
+	//
+	// @Override
+	// public Case create(Long flight_id, Long pax_id, String paxName, String
+	// paxType, String hitDesc,
+	// List<Long> hit_ids) {
+	// Case aCase = new Case();
+	// HitsDisposition hitDisp = new HitsDisposition();
+	// HitsDispositionComments hitsDispositionComments = new
+	// HitsDispositionComments();
+	// Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
+	// Set<HitsDispositionComments> hitsDispCommentsSet = new
+	// HashSet<HitsDispositionComments>();
+	// Long highPriorityRuleCatId = 1L;
+	// aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
+	// aCase.setFlightId(flight_id);
+	// aCase.setPaxId(pax_id);
+	// aCase.setPaxName(paxName);
+	// aCase.setPaxType(paxType);
+	// aCase.setStatus(DispositionStatusCode.NEW.toString());
+	// for (Long _tempHitId : hit_ids) {
+	// hitDisp = new HitsDisposition();
+	// hitsDispCommentsSet = new HashSet<>();
+	// hitDisp.setHitId(_tempHitId);
+	// hitDisp.setDescription(hitDesc);
+	// hitDisp.setStatus(DispositionStatusCode.NEW.toString());
+	// hitsDispositionComments = new HitsDispositionComments();
+	// hitsDispositionComments.setHitId(_tempHitId);
+	// hitsDispositionComments.setComments(INITIAL_COMMENT);
+	// hitDisp.addHitsDispositionComments(hitsDispositionComments);
+	// hitsDispSet.add(hitDisp);
+	// }
+	// // aCase.setHitsDispositions(hitsDispSet);
+	// for (HitsDisposition _tempHit : hitsDispSet)
+	// aCase.addHitsDisposition(_tempHit);
+	//
+	// caseDispositionRepository.save(aCase);
+	// return aCase;
+	// }
 
 	@Override
 	@Transactional
 	public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob,
-			String document, String hitDesc, List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
-                        Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
+			String document, String hitDesc, List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
+			Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 
 		Case aCase = new Case();
-		Case _tempCase = null;
+		List<Case> _tempCases = null;
 		Long highPriorityRuleCatId = 1L;
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -194,24 +203,31 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setStatus(DispositionStatusCode.NEW.toString());
 		aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
 		populatePassengerDetailsInCase(aCase, flight_id, pax_id, flightMap, passengerMap);
-                
-		_tempCase = (caseMap == null) ?  caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id) : caseMap.get(pax_id);
 
-		if (_tempCase != null && (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
-				|| _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
-			aCase = _tempCase;
+		if (caseMap == null || caseMap.isEmpty()) {
+			/*
+			 * fetch existing cases for the flight-passenger where the status is OPEN or NEW
+			 * 
+			 */
+			_tempCases = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id,
+					Arrays.asList(CaseDispositionStatusEnum.NEW.getType(), CaseDispositionStatusEnum.OPEN.getType()));
+		} else
+			aCase = caseMap.get(pax_id);
+
+		if (_tempCases != null && _tempCases.size() > 0) {
+			aCase = _tempCases.get(0);
 		}
 
 		for (Long _tempHitId : hit_ids) {
 			hitDisp = new HitsDisposition();
 			if (hitDesc.startsWith(WL_ITEM_PREFIX)) {
-                                pullRuleCategory(hitDisp, 1L, ruleCatMap);
+				pullRuleCategory(hitDisp, 1L, ruleCatMap);
 				hitDesc = hitDesc.substring(7);
 			} else {
 				pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
-                                // highPriorityRuleCatId will remain 1L for WL hits
-                                highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
-                        }
+				// highPriorityRuleCatId will remain 1L for WL hits
+				highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
+			}
 
 			hitsDispCommentsSet = new HashSet<>();
 			hitDisp.setHitId(_tempHitId);
@@ -224,6 +240,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(INITIAL_COMMENT);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitDisp.addHitsDispositionComments(hitsDispositionComments);
 			hitsDispSet.add(hitDisp);
 		}
@@ -246,11 +263,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		Case aCase = new Case();
 		Long _tempHitIdForManualCase = 9999L;
-		Case _tempCase = null;
-		_tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
-		if (_tempCase != null && (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
-				|| _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
-			aCase = _tempCase;
+		List<Case> _tempCases = null;
+		/*
+		 * fetch existing cases for the flight-passenger where the status is OPEN or NEW
+		 * 
+		 */
+		_tempCases = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id,
+				Arrays.asList(CaseDispositionStatusEnum.NEW.getType(), CaseDispositionStatusEnum.OPEN.getType()));
+
+		if (_tempCases != null && _tempCases.size() > 0) {
+			aCase = _tempCases.get(0);
 		}
 		Long highPriorityRuleCatId = 1L;
 		ArrayList<Long> hit_ids = new ArrayList<>();
@@ -294,6 +316,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(comments);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitsDispCommentsSet.add(hitsDispositionComments);
 			hitDisp.setDispComments(hitsDispCommentsSet);
 			hitsDispSet.add(hitDisp);
@@ -311,11 +334,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		else
 			aCase.setHitsDispositions(hitsDispSet);
 
-		//fix to adjust to the recent flight mappings
+		// fix to adjust to the recent flight mappings
 		aCase.setFlight(null);
 
-		caseDispositionRepository.save(aCase);
+		Case newCase = caseDispositionRepository.save(aCase);
 
+		aCase.setId(newCase.getId());
 		// _tempCase = null;
 		// _tempCase = caseDispositionRepository.getOne(aCase.getId());
 		//
@@ -335,7 +359,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			MultipartFile fileToAttach) {
 
 		Case aCase = new Case();
-		Case _tempCase = null;
+		List<Case> _tempCases = null;
 		Long highPriorityRuleCatId = 1L;
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -352,10 +376,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setDocument(document);
 		aCase.setDob(dob);
 		aCase.setStatus(DispositionStatusCode.NEW.toString());
-		_tempCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
-		if (_tempCase != null && (_tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.NEW))
-				|| _tempCase.getStatus().equalsIgnoreCase(String.valueOf(CaseDispositionStatusEnum.OPEN)))) {
-			aCase = _tempCase;
+		_tempCases = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id,
+				Arrays.asList(CaseDispositionStatusEnum.NEW.getType(), CaseDispositionStatusEnum.OPEN.getType()));
+		if (_tempCases != null && _tempCases.size() > 0) {
+			aCase = _tempCases.get(0);
 		}
 
 		// redundant at this time
@@ -378,6 +402,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitsDispositionComments.setComments(INITIAL_COMMENT);
 			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
 			hitsDispositionComments.setUpdatedAt(new Date());
+			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
 			hitsDispCommentsSet.add(hitsDispositionComments);
 			hitDisp.setDispComments(hitsDispCommentsSet);
 			hitsDispSet.add(hitDisp);
@@ -390,13 +415,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		caseDispositionRepository.save(aCase);
 		return aCase;
 	}
-        
-        @Override
-        public Iterable<RuleCat> findAllRuleCat()
-        {
-          Iterable<RuleCat> ruleCatList =   ruleCatRepository.findAll();
-          return ruleCatList;  
-        }
+
+	@Override
+	public Iterable<RuleCat> findAllRuleCat() {
+		Iterable<RuleCat> ruleCatList = ruleCatRepository.findAll();
+		return ruleCatList;
+	}
 
 	/**
 	 * Utility method to manage cases to persist
@@ -426,30 +450,22 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @param id
 	 */
 	private void pullRuleCategory(HitsDisposition hitDisp, Long id, Map<Long, RuleCat> ruleCatMap) {
-            try {
-                if (ruleCatMap == null)
-                {
-                    if (id == null || (ruleCatRepository.findOne(id) == null))
-                            hitDisp.setRuleCat(ruleCatRepository.findOne(1L));
-                    else
-                            hitDisp.setRuleCat(ruleCatRepository.findOne(id));
-                }
-                else
-                {
-                    if ((id == null) || (ruleCatMap.get(id) == null))
-                    {
-                      hitDisp.setRuleCat(ruleCatMap.get(1L));  
-                    }
-                    else
-                    {
-                      hitDisp.setRuleCat(ruleCatMap.get(id));  
-                    }
-                }
-            } 
-            catch (Exception ex) 
-            {
-                    logger.error("error in pull rule category.", ex);
-            }
+		try {
+			if (ruleCatMap == null) {
+				if (id == null || (ruleCatRepository.findOne(id) == null))
+					hitDisp.setRuleCat(ruleCatRepository.findOne(1L));
+				else
+					hitDisp.setRuleCat(ruleCatRepository.findOne(id));
+			} else {
+				if ((id == null) || (ruleCatMap.get(id) == null)) {
+					hitDisp.setRuleCat(ruleCatMap.get(1L));
+				} else {
+					hitDisp.setRuleCat(ruleCatMap.get(id));
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("error in pull rule category.", ex);
+		}
 	}
 
 	/**
@@ -495,8 +511,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	}
 
 	@Override
-	public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id, String caseComments, String status,
-			String validHit, MultipartFile fileToAttach, String username,String caseDisposition) {
+	public Case addCaseComments(Long caseId, Long hit_id, String caseComments, String status, String validHit,
+			MultipartFile fileToAttach, String username, String caseDisposition) {
 		Case aCase = new Case();
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
@@ -504,21 +520,23 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
 
 		try {
-			aCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id);
+			aCase = caseDispositionRepository.findById(caseId); // getCaseByFlightIdAndPaxId(flight_id, pax_id,
+																// Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
 
 			if (aCase != null && status != null) { // set case status
 				if (status.startsWith("Case"))
 					aCase.setStatus(status.substring(4));
-					aCase.setDisposition(caseDisposition);
+				aCase.setDisposition(caseDisposition);
 			}
 			hitsDispCommentsSet = null;
 			hitsDispSet = aCase.getHitsDispositions();
+			logger.info("There are " + hitsDispSet.size() + " hit dispositions");
 			for (HitsDisposition hit : hitsDispSet) {
 
 				// if ((hit.getCaseId() == aCase.getId()) && (hit_id != null) && (hit.getHitId()
 				// == hit_id)) {
 				// (hit.getaCase().getId() == aCase.getId()) &&
-				if ((hit_id != null) && (hit.getId() == hit_id)) {
+				if ((hit_id != null) && (hit.getId().equals(hit_id))) {
 
 					if (caseComments != null) { // set comments
 						hitsDispositionComments = new HitsDispositionComments();
@@ -529,7 +547,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 						hitsDispCommentsSet = hit.getDispComments();
 						// check whether attachment exists, if yes, populate
 						if (fileToAttach != null && !fileToAttach.isEmpty())
-							populateAttachmentsToCase(fileToAttach, hitsDispositionComments, pax_id);
+							populateAttachmentsToCase(fileToAttach, hitsDispositionComments, aCase.getPaxId());
 						hitsDispCommentsSet.add(hitsDispositionComments);
 						hit.setDispComments(hitsDispCommentsSet);
 					}
@@ -538,7 +556,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 						hit.setStatus(status);
 					}
 
-					if (!(validHit == null)) {
+					if (validHit != null) {
 						hit.setValid(validHit);
 					}
 
@@ -557,8 +575,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			logger.error("Error adding case comments: ", ex);
 		}
 
-		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));	
-		
+		aCase.getHitsDispositions().stream().forEach(x -> x.setaCase(null));
+
 		return aCase;
 	}
 
@@ -592,28 +610,31 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	}
 
-	@Override
-	public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id) {
-		List<Case> _tempCaseList = new ArrayList<>();
-		List<Long> _tempHitIds = new ArrayList<>();
-
-		_tempHitIds.add(hit_id);
-		_tempCaseList.add(create(flight_id, pax_id, _tempHitIds));
-
-		return _tempCaseList;
-	}
-
-	@Override
-	public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
-			String hitDesc, Long hit_id) {
-		List<Case> _tempCaseList = new ArrayList<>();
-		List<Long> _tempHitIds = new ArrayList<>();
-
-		_tempHitIds.add(hit_id);
-		_tempCaseList.add(create(flight_id, pax_id, paxName, paxType, hitDesc, _tempHitIds));
-
-		return _tempCaseList;
-	}
+	// @Override
+	// public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id,
+	// Long hit_id) {
+	// List<Case> _tempCaseList = new ArrayList<>();
+	// List<Long> _tempHitIds = new ArrayList<>();
+	//
+	// _tempHitIds.add(hit_id);
+	// _tempCaseList.add(create(flight_id, pax_id, _tempHitIds));
+	//
+	// return _tempCaseList;
+	// }
+	//
+	// @Override
+	// public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id,
+	// String paxName, String paxType,
+	// String hitDesc, Long hit_id) {
+	// List<Case> _tempCaseList = new ArrayList<>();
+	// List<Long> _tempHitIds = new ArrayList<>();
+	//
+	// _tempHitIds.add(hit_id);
+	// _tempCaseList.add(create(flight_id, pax_id, paxName, paxType, hitDesc,
+	// _tempHitIds));
+	//
+	// return _tempCaseList;
+	// }
 
 	@Override
 	public Passenger findPaxByID(Long id) {
@@ -627,14 +648,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
-			String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, 
-                        Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
+			String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
+			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Case> _tempCaseList = new ArrayList<>();
 		List<Long> _tempHitIds = new ArrayList<>();
 
 		_tempHitIds.add(hit_id);
-		_tempCaseList.add(
-				create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, document, hitDesc, _tempHitIds, caseMap, flightMap, passengerMap, ruleCatMap));
+		_tempCaseList.add(create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, document, hitDesc,
+				_tempHitIds, caseMap, flightMap, passengerMap, ruleCatMap));
 
 		return _tempCaseList;
 	}
@@ -642,11 +663,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto) {
 
-		Case aCase = caseDispositionRepository.getCaseByFlightIdAndPaxId(dto.getFlightId(), dto.getPaxId());
+		Case aCase = caseDispositionRepository.findById(dto.getCaseId());
 
 		List<CaseVo> vos = new ArrayList<>();
 		CaseVo vo = new CaseVo();
 		vo.setHitsDispositions(aCase.getHitsDispositions());
+		aCase.getFlight().setPnrs(null); // TODO: need to cherry-pick the fields we need to copy to DTO, failed to
+											// serialize the lazy loaded entities
 		vo.setHitsDispositionVos(returnHitsDisposition(aCase.getHitsDispositions()));
 		CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
 		manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
@@ -659,56 +682,56 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @return
 	 */
 	@Override
-	public CasePageDto findAll(CaseRequestDto dto) 
-        {
-            List<CaseVo> vos = new ArrayList<>();
+	public CasePageDto findAll(CaseRequestDto dto) {
+		List<CaseVo> vos = new ArrayList<>();
 
-            CasePageDto casePageDto = null;
+		CasePageDto casePageDto = null;
 
-            Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
-            for (Case f : tuple2.getRight()) {
-                    CaseVo vo = new CaseVo();
-                    CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
-                    vo.setCurrentTime(new Date());
-                    vo.setFlightDirection(f.getFlight().getDirection());
-                    vo.setCountdownTime(f.getCountdown().getTime());
-                    vo = calculateCountDownDisplayString(vo);
-                    vos.add(vo);
-            }
+		Pair<Long, List<Case>> tuple2 = caseDispositionRepository.findByCriteria(dto);
+		for (Case f : tuple2.getRight()) {
+			CaseVo vo = new CaseVo();
+			f.getFlight().setPnrs(null); // TODO: need to cherry-pick the fields we need to copy to DTO, failed to
+											// serialize the lazy loaded entities
+			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+			vo.setCurrentTime(new Date());
+			vo.setFlightDirection(f.getFlight().getDirection());
+			vo.setCountdownTime(f.getCountdown().getTime());
+			vo = calculateCountDownDisplayString(vo);
+			vos.add(vo);
+		}
 
-            casePageDto = new CasePageDto(vos, tuple2.getLeft()); 
+		casePageDto = new CasePageDto(vos, tuple2.getLeft());
 
-            return casePageDto;
+		return casePageDto;
 	}
-        
-        private CaseVo calculateCountDownDisplayString(CaseVo caseVo)
-        {
-            Long etdEtaDateTime = caseVo.getCountdownTime();
-            Long currentTimeMillis = caseVo.getCurrentTime().getTime();
-           
-            Long countDownMillis = etdEtaDateTime - currentTimeMillis;
-            Long countDownSeconds = countDownMillis/1000;
-            
-            Long daysLong = countDownSeconds/86400;
-            Long secondsRemainder1 = countDownSeconds % 86400;
-            Long hoursLong = secondsRemainder1/3600;
-            Long secondsRemainder2 = secondsRemainder1 % 3600;
-            Long minutesLong = secondsRemainder2/60;
-            
-            String daysString = (countDownSeconds < 0 && daysLong.longValue() == 0) ? "-" + daysLong.toString() : daysLong.toString();
-            
-            String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
-            caseVo.setCountDownTimeDisplay(countDownString);
 
-            return caseVo;
-        }
-        
-        @Override
-        public Date getCurrentServerTime()
-        {
-            Date currentTime = new Date();
-            return currentTime;
-        }
+	private CaseVo calculateCountDownDisplayString(CaseVo caseVo) {
+		Long etdEtaDateTime = caseVo.getCountdownTime();
+		Long currentTimeMillis = caseVo.getCurrentTime().getTime();
+
+		Long countDownMillis = etdEtaDateTime - currentTimeMillis;
+		Long countDownSeconds = countDownMillis / 1000;
+
+		Long daysLong = countDownSeconds / 86400;
+		Long secondsRemainder1 = countDownSeconds % 86400;
+		Long hoursLong = secondsRemainder1 / 3600;
+		Long secondsRemainder2 = secondsRemainder1 % 3600;
+		Long minutesLong = secondsRemainder2 / 60;
+
+		String daysString = (countDownSeconds < 0 && daysLong.longValue() == 0) ? "-" + daysLong.toString()
+				: daysLong.toString();
+
+		String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
+		caseVo.setCountDownTimeDisplay(countDownString);
+
+		return caseVo;
+	}
+
+	@Override
+	public Date getCurrentServerTime() {
+		Date currentTime = new Date();
+		return currentTime;
+	}
 
 	/**
 	 * Utility method to fetch model object
@@ -852,24 +875,24 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @param paxId
 	 */
 	private void populatePassengerDetailsInCase(Case aCase, Long flightId, Long paxId) {
-            populatePassengerDetailsInCase(aCase, flightId, paxId, null, null);
+		populatePassengerDetailsInCase(aCase, flightId, paxId, null, null);
 	}
-        
-	private void populatePassengerDetailsInCase(Case aCase, Long flightId, Long paxId, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap) 
-        {
-		Passenger _tempPax = (passengerMap == null) ? findPaxByID(paxId): passengerMap.get(paxId);
+
+	private void populatePassengerDetailsInCase(Case aCase, Long flightId, Long paxId, Map<Long, Flight> flightMap,
+			Map<Long, Passenger> passengerMap) {
+		Passenger _tempPax = (passengerMap == null) ? findPaxByID(paxId) : passengerMap.get(paxId);
 		Flight _tempFlight = (flightMap == null) ? findFlightByID(flightId) : flightMap.get(flightId);
-                
+
 		if (_tempPax != null) {
 			aCase.setFirstName(_tempPax.getFirstName());
 			aCase.setLastName(_tempPax.getLastName());
 		}
 		if (_tempFlight != null) {
 			aCase.setFlightNumber(_tempFlight.getFlightNumber());
-                        aCase.setFlightETADate(_tempFlight.getEta());
+			aCase.setFlightETADate(_tempFlight.getEta());
 			aCase.setFlightETDDate(_tempFlight.getEtd());
 		}
-	}        
+	}
 
 	/**
 	 * Static utility method to ignore nulls while copying
@@ -918,21 +941,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date) {
 
 		List<OneDayLookoutVo> oneDayLookoutVoList = null;
-		// set start date
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
-		cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
-		cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
-		cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
-		Date startDate = cal.getTime();
-		// set end date
-		cal.setTime(date);
-		cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
-		cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
-		cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
-		cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
-		Date endDate = cal.getTime();
+		Date startDate = getStartDate(date);
+		Date endDate =  getEndDate(date);
 
 		List<Case> oneDayLookoutResult = caseDispositionRepository.findOneDayLookoutByDate(startDate, endDate);
 
@@ -960,7 +970,66 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		return oneDayLookoutVoList;
 	}
 
-	//copy One Day Lookout info to the view object
+	@Override
+	public List<OneDayLookoutVo> getOneDayLookoutByDateAndAirport(Date date, String airport) {
+		
+		List<OneDayLookoutVo> oneDayLookoutVoList = null;
+		Date startDate = getStartDate(date);
+		Date endDate =  getEndDate(date);
+
+		List<Case> oneDayLookoutResult = caseDispositionRepository.findOneDayLookoutByDateAndAirport(startDate, endDate, airport);
+
+		if (oneDayLookoutResult == null || oneDayLookoutResult.isEmpty()) {
+			return new ArrayList<OneDayLookoutVo>();
+		}
+
+		else {
+
+			oneDayLookoutVoList = getOneDaylookoutVo(oneDayLookoutResult);
+			FlightPax flightPax = null;
+			for (OneDayLookoutVo oneDayLookoutVo : oneDayLookoutVoList) {
+				if (oneDayLookoutVo.getPaxId() != null)
+					flightPax = flightPaxRepository.findOne(oneDayLookoutVo.getPaxId());
+
+				if (flightPax != null) {
+					if (flightPax.getPassenger().getId() != null)
+						oneDayLookoutVo.setPassengerId(flightPax.getPassenger().getId());
+
+				}
+
+			}
+		}
+
+		return oneDayLookoutVoList;
+	}
+
+	private Date getStartDate(Date date) {
+
+		// set start date
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, cal.getMinimum(Calendar.HOUR_OF_DAY));
+		cal.set(Calendar.MINUTE, cal.getMinimum(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, cal.getMinimum(Calendar.SECOND));
+		cal.set(Calendar.MILLISECOND, cal.getMinimum(Calendar.MILLISECOND));
+		Date startDate = cal.getTime();
+		return startDate;
+	}
+
+	private Date getEndDate(Date date) {
+		// set end date
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, cal.getMaximum(Calendar.HOUR_OF_DAY));
+		cal.set(Calendar.MINUTE, cal.getMaximum(Calendar.MINUTE));
+		cal.set(Calendar.SECOND, cal.getMaximum(Calendar.SECOND));
+		cal.set(Calendar.MILLISECOND, cal.getMaximum(Calendar.MILLISECOND));
+		Date endDate = cal.getTime();
+		return endDate;
+
+	}
+
+	// copy One Day Lookout info to the view object
 	private List<OneDayLookoutVo> getOneDaylookoutVo(List<Case> oneDayLookoutList) {
 
 		List<OneDayLookoutVo> oneDayLookoutVoList = new ArrayList<OneDayLookoutVo>();
@@ -973,6 +1042,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			etaEtdTime = null;
 			calendar = null;
 			oneDayLookoutVo = new OneDayLookoutVo();
+			oneDayLookoutVo.setCaseId(oneDayLookoutCase.getId());
 			oneDayLookoutVo.setDocument(oneDayLookoutCase.getDocument());
 			oneDayLookoutVo.setFirstName(oneDayLookoutCase.getFirstName());
 			oneDayLookoutVo.setLastName(oneDayLookoutCase.getLastName());
@@ -985,8 +1055,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				oneDayLookoutVo.setFullFlightNumber(oneDayLookoutCase.getFlight().getFullFlightNumber());
 				oneDayLookoutVo.setPaxId(oneDayLookoutCase.getPaxId());
 				oneDayLookoutVo.setFlightId(oneDayLookoutCase.getFlightId());
-				String origDestFlightsStr = oneDayLookoutCase.getFlight().getOrigin() + "/" + oneDayLookoutCase.getFlight().getDestination();
-                                oneDayLookoutVo.setOrigDestAirportsStr(origDestFlightsStr);
+				String origDestFlightsStr = oneDayLookoutCase.getFlight().getOrigin() + "/"
+						+ oneDayLookoutCase.getFlight().getDestination();
+				oneDayLookoutVo.setOrigDestAirportsStr(origDestFlightsStr);
 
 				if (oneDayLookoutCase.getFlight().getDirection() != null) {
 
@@ -1022,22 +1093,19 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		return oneDayLookoutVoList;
 	}
 
-	
 	public Boolean updateDayLookoutFlag(Long caseId, Boolean flag) {
-		
+
 		boolean result = false;
-		
-		try
-		{
+
+		try {
 			caseDispositionRepository.updateOneDayLookoutFlag(caseId, flag);
 			result = true;
-		}
-		catch (Exception e)
-		{
-			logger.error("An Error has occurred when updating one day lookout flag for CASE ID: " + caseId+ " with flag: "+ flag );
+		} catch (Exception e) {
+			logger.error("An Error has occurred when updating one day lookout flag for CASE ID: " + caseId
+					+ " with flag: " + flag);
 			logger.error(e.getMessage(), e);
 		}
-			return result;
+		return result;
 	}
 
 	@Override
@@ -1048,30 +1116,28 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public List<Case> getCaseHistoryByPaxId(Long paxId) {
-		
+
 		List<Long> pax_group = this.passengerResolverService.resolve(paxId);
-    	
-    	return this.getCaseByPaxId(pax_group);
+
+		return this.getCaseByPaxId(pax_group);
 	}
 
-        // returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or FALSE
+	// returns version with TRUE flag, apisOnlyFlag;apisVersion, e.g. TRUE;16B or
+	// FALSE
 	@Override
-        public String getAPISOnlyFlagAndVersion()
-        {
-            String apisReturnStr = "";
-            AppConfiguration appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
-            String apisOnlyFlag = (appConfiguration != null) ? appConfiguration.getValue() : "FALSE";
-            if (apisOnlyFlag.equals("TRUE"))
-            {
-                appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_VERSION);
-                String apisVersion = (appConfiguration != null) ? appConfiguration.getValue() : "";
-                apisReturnStr = apisOnlyFlag + ";" + apisVersion;
-            }
-            else
-            {
-               apisReturnStr =  apisOnlyFlag;
-            }
-            return apisReturnStr;
+	public String getAPISOnlyFlagAndVersion() {
+		String apisReturnStr = "";
+		AppConfiguration appConfiguration = appConfigurationRepository
+				.findByOption(AppConfigurationRepository.APIS_ONLY_FLAG);
+		String apisOnlyFlag = (appConfiguration != null) ? appConfiguration.getValue() : "FALSE";
+		if (apisOnlyFlag.equals("TRUE")) {
+			appConfiguration = appConfigurationRepository.findByOption(AppConfigurationRepository.APIS_VERSION);
+			String apisVersion = (appConfiguration != null) ? appConfiguration.getValue() : "";
+			apisReturnStr = apisOnlyFlag + ";" + apisVersion;
+		} else {
+			apisReturnStr = apisOnlyFlag;
+		}
+		return apisReturnStr;
 	}
 
 	@Override
@@ -1082,5 +1148,5 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		return new ArrayList<>();
 	}
-        
+
 }
