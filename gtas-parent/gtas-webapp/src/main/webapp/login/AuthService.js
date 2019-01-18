@@ -14,7 +14,7 @@
         var sessionId = '';
 
         authService.getCurrentUser = function() {
-            return $http.get("user").then(function (response) {
+            return $http.get("/gtas/user").then(function (response) {
                 return response.data;
             });
         };
@@ -31,7 +31,7 @@
 
             return $http({
                 method: 'POST',
-                url: 'authenticate',
+                url: '/gtas/authenticate',
                 data: postData
                 ,
                 headers: {
