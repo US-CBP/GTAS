@@ -193,7 +193,9 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	{
              // here we have the trio: table name, id name, and key to list for IN clause. These will be used by deleteFromAllTablesWithInClause().
             // These are in order; do not change the order unless there are database changes.
-		List<String> strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_TABLE_NAME,"hit_disp_id",HIT_DISPOSITION_ID_LIST_KEY);
+                List<String> strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_ATTACHMENT_TABLE_NAME,"attachment_id",ATTACHMENT_ID_LIST_KEY);
+                sqlDeleteElements.add(strList);
+		strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_TABLE_NAME,"hit_disp_id",HIT_DISPOSITION_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(HITS_DISPOSITION_TABLE_NAME,"case_id",CASE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
@@ -281,8 +283,6 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(MESSAGE_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
-                strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_ATTACHMENT_TABLE_NAME,"attachment_id",ATTACHMENT_ID_LIST_KEY);
-                sqlDeleteElements.add(strList);
                 strList = Arrays.asList(ATTACHMENT_TABLE_NAME, "passenger_id",TOTAL_PAX_ID_SET_KEY);
                 sqlDeleteElements.add(strList);
 		strList = Arrays.asList(PASSENGER_ID_TAG_TABLE_NAME,"pax_id",TOTAL_PAX_ID_SET_KEY);
@@ -344,7 +344,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		{
                    String sqlString = " DELETE FROM " + tableName + " WHERE " + idName + " <  :localDate";
                    Query query = em.createNativeQuery(sqlString);
-                   query.setParameter("localDate", localDate);
+                   query.setParameter("localDate", localDate.toString());
                    int numDeleted = query.executeUpdate();
                    //logger.info(numDeleted + " rows deleted from table " + tableName);
                    messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
