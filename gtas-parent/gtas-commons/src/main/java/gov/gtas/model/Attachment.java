@@ -7,6 +7,7 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -58,7 +59,7 @@ public class Attachment implements Serializable {
         
         @ManyToMany(
         mappedBy = "attachmentSet",
-        targetEntity = HitsDispositionComments.class
+        targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL
         )
         private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
     
