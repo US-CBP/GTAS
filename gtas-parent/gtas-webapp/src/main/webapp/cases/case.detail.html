@@ -167,7 +167,7 @@
             </span>
 
             <div id="links" ng-repeat="att in comment.attachmentSet">
-            <a href="" ng-click="packageAttachments(att)">
+            <a ng-href="/gtas/getdownload/{{ att.id }}" ng-click="packageAttachments(att)" >
               <span class="sm-pad">
                 Attachment: {{ att.filename }}
                 </span>
