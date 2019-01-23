@@ -22,8 +22,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.elasticsearch.plugins.NetworkPlugin;
+import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -33,10 +36,12 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.cluster.node.DiscoveryNode;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -44,8 +49,9 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.highlight.HighlightBuilder;
-import org.elasticsearch.search.highlight.HighlightField;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +78,8 @@ import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.LinkPassengerVo;
 import gov.gtas.vo.passenger.PassengerVo;
 
+import org.apache.logging.log4j.message.Message;
+
 /**
  * Methods for interfacing with elastic search engine: indexing
  * and search.  Clients are responsible for initializing the client
@@ -80,8 +88,8 @@ import gov.gtas.vo.passenger.PassengerVo;
 @Service
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
-	public static final String INDEX_NAME = "gtas";
-	public static final String FLIGHTPAX_TYPE = "flightpax";
+	public static final String INDEX_NAME = "flightpax";
+	public static final String FLIGHTPAX_TYPE = "_doc";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 	private static SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
@@ -107,10 +115,10 @@ public class ElasticHelper {
         }
 
 		int port = Integer.valueOf(portStr);
-		client = TransportClient.builder().build();
+		client = new PreBuiltTransportClient(Settings.EMPTY); // TransportClient.builder().build();
 		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
 		try {
-			client.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
+			client.addTransportAddress(new TransportAddress(InetAddress.getByName(hostname), port));
 		} catch (UnknownHostException e) {
 			logger.error("unknown elastic host", e);
 			closeClient();
@@ -175,7 +183,7 @@ public class ElasticHelper {
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
 		for (SearchHit hit : resultsArry) {
-			Map<String, Object> result = hit.getSource();
+			Map<String, Object> result = hit.getSourceAsMap();
 			FlightPassengerVo vo = new FlightPassengerVo();
 			rv.add(vo);
 
@@ -256,12 +264,16 @@ public class ElasticHelper {
 				.should(termsQuery("documents.documentNumber", docNumbers))
 				.should(termsQuery("pnr", docNumbers));
 		
+		//upgrade to 5.6.0
+		HighlightBuilder builder = new HighlightBuilder();
+		builder.field("documents.documentNumber").field("pnr").preTags();
 		SearchResponse response = client.prepareSearch(INDEX_NAME)
                 .setTypes(FLIGHTPAX_TYPE)
 			    .setSearchType(SearchType.QUERY_THEN_FETCH)
 			    .setQuery(qb)
-			    .addHighlightedField("documents.documentNumber")
-			    .addHighlightedField("pnr")
+//			    .addHighlightedField("documents.documentNumber")
+//			    .addHighlightedField("pnr")
+			    .highlighter(builder)
 			    .setFrom(startIndex)
 			    .setSize(pageSize)
 			    .addSort(column, sortOrder)
@@ -274,7 +286,7 @@ public class ElasticHelper {
 
 	    List<LinkPassengerVo> lp = new ArrayList<>();
 		for (SearchHit hit : resultsArry) {
-			Map<String, Object> result = hit.getSource();
+			Map<String, Object> result = hit.getSourceAsMap();
 			if(!((String)result.get("firstName")).equals(pax.getFirstName()) || !((String)result.get("lastName")).equals(pax.getLastName())) {
 				LinkPassengerVo lpVo = new LinkPassengerVo();
 				lpVo.setPassengerId((Integer)result.get("passengerId"));
@@ -289,7 +301,7 @@ public class ElasticHelper {
 				lp.add(lpVo);
 			}
 		}
-		return new LinkAnalysisDto(lp, hits.totalHits());
+		return new LinkAnalysisDto(lp, hits.getTotalHits());
 	}
 	////////////////////////////////////////////////////////////////////
 	// helpers,
@@ -407,7 +419,7 @@ public class ElasticHelper {
 						vo.setPnr(pnr);
 						vo.setAddresses(pm.getAddresses());
 					}
-					indexRequest.source(gson.toJson(vo));
+					indexRequest.source(gson.toJson(vo), XContentType.JSON);
 					client.index(indexRequest).actionGet();
 				}
 			}

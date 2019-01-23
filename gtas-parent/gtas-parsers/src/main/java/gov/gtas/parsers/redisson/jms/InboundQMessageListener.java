@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
@@ -25,6 +27,8 @@ import java.util.concurrent.Executors;
 
 @Component
 @EnableJms
+@DependsOn("{elasticHelper}")
+@ComponentScan("gov.gtas")
 public class InboundQMessageListener {
 
     private static final Logger logger = LoggerFactory.getLogger(InboundQMessageListener.class);
