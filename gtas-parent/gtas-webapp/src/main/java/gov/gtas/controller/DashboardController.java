@@ -81,14 +81,6 @@ public class DashboardController {
 	@Autowired
 	private AppConfigurationService appConfigurationService;
 
-<<<<<<< HEAD
-    @Autowired
-    private PnrService pnrService;
-    
-    
-    private static final String commaStringToAppend = ", ";
-    private static final String EMPTY_STRING="";
-=======
 	@Autowired
 	private UserService userService;
 
@@ -96,7 +88,6 @@ public class DashboardController {
 	private static final String EMPTY_STRING = "";
 
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
->>>>>>> dev
 
 	/**
 	 * Gets the flights, passengers and hits count.
@@ -119,24 +110,6 @@ public class DashboardController {
 
 		Integer paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
 
-<<<<<<< HEAD
-        HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
-        int ruleHits = hitAndAirportExtractor.getRuleHits();
-        long watchListHits = hitAndAirportExtractor.getWatchListHits();
-
-        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
-        flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
-				flightList.size()));
-		flightsAndPassengersAndHitsCount.put("ruleHitsCount",
-                new AtomicInteger(ruleHits));
-		flightsAndPassengersAndHitsCount.put("watchListCount",
-                new AtomicLong(watchListHits));
-		flightsAndPassengersAndHitsCount.put("passengersCount",
-                new AtomicInteger(paxCount));
-        flightsAndPassengersAndHitsCount.put("flightsList",
-                hitAndAirportExtractor.getAirportList());
-        
-=======
 		HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
 		int ruleHits = hitAndAirportExtractor.getRuleHits();
 		long watchListHits = hitAndAirportExtractor.getWatchListHits();
@@ -259,7 +232,6 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
 
->>>>>>> dev
 		return flightsAndPassengersAndHitsCount;
 	}
 

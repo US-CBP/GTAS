@@ -450,32 +450,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @param id
 	 */
 	private void pullRuleCategory(HitsDisposition hitDisp, Long id, Map<Long, RuleCat> ruleCatMap) {
-<<<<<<< HEAD
-            try {
-                if (ruleCatMap == null)
-                {
-                    if (id == null || (ruleCatRepository.findById(id).orElse(null) == null))
-                            hitDisp.setRuleCat(ruleCatRepository.findById(1L).orElse(null));
-                    else
-                            hitDisp.setRuleCat(ruleCatRepository.findById(id).orElse(null));
-                }
-                else
-                {
-                    if ((id == null) || (ruleCatMap.get(id) == null))
-                    {
-                      hitDisp.setRuleCat(ruleCatMap.get(1L));  
-                    }
-                    else
-                    {
-                      hitDisp.setRuleCat(ruleCatMap.get(id));  
-                    }
-                }
-            } 
-            catch (Exception ex) 
-            {
-                    logger.error("error in pull rule category.", ex);
-            }
-=======
 		try {
 			if (ruleCatMap == null) {
 				if (id == null || (ruleCatRepository.findOne(id) == null))
@@ -492,7 +466,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		} catch (Exception ex) {
 			logger.error("error in pull rule category.", ex);
 		}
->>>>>>> dev
 	}
 
 	/**
@@ -547,12 +520,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
 
 		try {
-<<<<<<< HEAD
 			aCase = caseDispositionRepository.findOne(caseId); //getCaseByFlightIdAndPaxId(flight_id, pax_id, Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
-=======
-			aCase = caseDispositionRepository.findById(caseId); // getCaseByFlightIdAndPaxId(flight_id, pax_id,
-																// Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
->>>>>>> dev
+
 
 			if (aCase != null && status != null) { // set case status
 				if (status.startsWith("Case"))
