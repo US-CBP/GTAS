@@ -15,22 +15,51 @@
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
         <javadoc-plugin.version>3.0.1</javadoc-plugin.version>
-        <sonar-plugin.version>5.1</sonar-plugin.version>
-        <elasticsearch.version>2.3.2</elasticsearch.version>
+        <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
+        <elasticsearch.version>6.5.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
         <jackson.version>2.9.7</jackson.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
     </properties>
     
-  <repositories>
+ <repositories>
     <repository>
       <id>maven central</id>
       <url>http://repo.maven.apache.org/maven2/</url>
     </repository>
-  </repositories>    
+  </repositories>
     
     <dependencyManagement>
         <dependencies>
+        	 <!-- elastic -->
+	        <dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>transport</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>2.7</version>
+		
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>2.7</version>
+		
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>2.11.1</version>
+			</dependency>
+        
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -46,12 +75,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- elastic -->
-            <dependency>
-                <groupId>org.elasticsearch</groupId>
-                <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
-            </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
