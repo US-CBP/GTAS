@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 
 @Component
 @EnableJms
-@DependsOn("{elasticHelper}")
+@DependsOn("elasticHelper")
 @ComponentScan("gov.gtas")
 public class InboundQMessageListener {
 
