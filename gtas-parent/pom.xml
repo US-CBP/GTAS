@@ -22,12 +22,12 @@
         <hibernate.version>5.3.7.Final</hibernate.version>
     </properties>
     
-  <repositories>
+ <repositories>
     <repository>
       <id>maven central</id>
       <url>http://repo.maven.apache.org/maven2/</url>
     </repository>
-  </repositories>    
+  </repositories>
     
     <dependencyManagement>
         <dependencies>
