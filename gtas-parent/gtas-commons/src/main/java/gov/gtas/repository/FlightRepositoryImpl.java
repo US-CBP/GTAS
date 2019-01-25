@@ -10,8 +10,7 @@ import static gov.gtas.constant.FlightCategoryConstants.DOMESTIC_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.INTERNATIONAL_FLIGHTS;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.Flight;
+import gov.gtas.model.*;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
@@ -21,15 +20,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -83,11 +75,21 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			predicates.add(etaCondition);
 		}
 
+		Join<Flight, FlightHitsRule> ruleHits = root.join("flightHitsRule", JoinType.LEFT);
+		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
+
 		// sorting
 		if (dto.getSort() != null) {
 			List<Order> orders = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
-				Expression<?> e = root.get(sort.getColumn());
+				Expression<?> e;
+				if (sort.getColumn().equalsIgnoreCase("ruleHitCount")) {
+					e = ruleHits.get("hitCount");
+				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
+					e = watchlistHits.get("hitCount");
+				} else {
+					e = root.get(sort.getColumn());
+				}
 				Order order;
 				if ("desc".equalsIgnoreCase(sort.getDir())) {
 					order = cb.desc(e);

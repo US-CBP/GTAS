@@ -71,4 +71,10 @@ public interface HitsSummaryRepository extends
     @Query("SELECT hits from HitsSummary hits WHERE hits.flight.id = :flightId AND hits.passenger.id = :passengerId")
     public List<HitsSummary> retrieveHitsByFlightAndPassengerId(
             @Param("flightId") Long flightId,@Param("passengerId") Long passengerId);
+
+    @Query("select count(distinct passenger) from HitsSummary where flight.id = :flight and watchListHitCount > 0")
+    Integer watchlistHitCount(@Param("flight") Long flight);
+
+    @Query("select count(distinct passenger) from HitsSummary where flight.id = :flight and ruleHitCount > 0")
+    Integer ruleHitCount(@Param("flight") Long flight);
 }
