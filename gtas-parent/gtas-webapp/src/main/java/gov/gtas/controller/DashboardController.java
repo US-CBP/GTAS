@@ -505,15 +505,15 @@ public class DashboardController {
 				_tempAirportVO.setAirportName(_tempAirport.getCity());
 				_tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
 				_tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
-				if (flight.getRuleHitCount() > 0 || flight.getListHitCount() > 0) {
+				if (!hitsSummaryList.isEmpty()) {
 					_tempAirportVO.setHits(true);
 				}
 				tempAirportList.add(_tempAirportVO);
 				for (HitsSummary summ : hitsSummaryList) {
 					ruleHits = summ.getRuleHitCount() + ruleHits;
+					watchListHits = summ.getWatchListHitCount() + watchListHits;
 				}
-				watchListHits = watchListHits + flight.getListHitCount()
-						+ flightService.getFlightFuzzyMatchesOnly(flight.getId());
+				watchListHits = watchListHits + flightService.getFlightFuzzyMatchesOnly(flight.getId());
 			}
 
 			return this;
