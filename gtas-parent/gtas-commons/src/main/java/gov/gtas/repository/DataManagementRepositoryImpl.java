@@ -60,6 +60,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private static final String PNR_PASSENGER_TABLE_NAME = "pnr_passenger";
 	private static final String PNR_FLIGHT_TABLE_NAME = "pnr_flight";
 	private static final String PNR_CODESHARES_TABLE_NAME = "pnr_codeshares";
+        private static final String FLIGHT_HIT_RULE_TABLE_NAME = "flight_hit_rule";
+        private static final String FLIGHT_HIT_WATCHLIST_TABLE_NAME = "flight_hit_watchlist";
 	private static final String CODE_SHARE_FLIGHT_TABLE_NAME = "code_share_flight";
 	private static final String FLIGHT_TABLE_NAME = "flight";
 	private static final String PNR_AGENCY_TABLE_NAME = "pnr_agency";
@@ -240,6 +242,10 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		strList = Arrays.asList(PNR_FLIGHT_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(PNR_CODESHARES_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+		sqlDeleteElements.add(strList);
+                strList = Arrays.asList(FLIGHT_HIT_RULE_TABLE_NAME,"fhr_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
+		sqlDeleteElements.add(strList);
+                strList = Arrays.asList(FLIGHT_HIT_WATCHLIST_TABLE_NAME,"fhw_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(CODE_SHARE_FLIGHT_TABLE_NAME,"id",CODE_SHARE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
