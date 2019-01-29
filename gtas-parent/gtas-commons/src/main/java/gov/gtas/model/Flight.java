@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -112,10 +114,12 @@ public class Flight extends BaseEntityAudit {
 
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
     private FlightHitsRule flightHitsRule;
 
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
     private FlightHitsWatchlist flightHitsWatchlist;
 
     @ManyToMany(
