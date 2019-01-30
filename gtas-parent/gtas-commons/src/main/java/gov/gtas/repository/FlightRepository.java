@@ -44,10 +44,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
             + "AND f.flightDate between :startDate AND :endDate")
     public Flight getFlightByCriteria(
             @Param("carrier") String carrier,
-            @Param("flightNumber") String flightNumber, 
+            @Param("flightNumber") String flightNumber,
             @Param("origin") String origin,
-            @Param("destination") String destination, 
-            @Param("startDate") Date startDate, 
+            @Param("destination") String destination,
+            @Param("startDate") Date startDate,
             @Param("endDate") Date endDate);
 
     public Page<Flight> findAll(Pageable pageable);
@@ -64,7 +64,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     public List<Flight> getFlightByPassengerId(@Param("paxId") Long paxId);
 
     @Query("SELECT f FROM Flight f WHERE f.flightDate between :startDate AND :endDate")
-    public List<Flight> getFlightsByDates(@Param("startDate") Date startDate, 
+    public List<Flight> getFlightsByDates(@Param("startDate") Date startDate,
                                           @Param("endDate") Date endDate);
 
     /*@Query("SELECT f FROM Flight f join f.passengers p join p.documents d where UPPER(p.firstName) = UPPER(:firstName) "
@@ -82,18 +82,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     public List<Flight> getFlightsByPassengerNameAndDocument(@Param("firstName") String firstName,
 													         @Param("lastName") String lastName,
 													         @Param("documentNumber") String documentNumber);
-    
-    
-    @Modifying
-    @Transactional
-    @Query("update Flight set ruleHitCount = (select count(distinct passenger) from HitsSummary where flight.id = :flightId and ruleHitCount > 0) where id = :flightId")
-    public Integer updateRuleHitCountForFlight(@Param("flightId") Long flightId);
 
-    @Modifying
-    @Transactional
-    @Query("update Flight set listHitCount = (select count(distinct passenger) from HitsSummary where flight.id = :flightId and watchListHitCount > 0) where id = :flightId")
-    public Integer updateListHitCountForFlight(@Param("flightId") Long flightId);
-    
     @Query("SELECT c FROM CodeShareFlight c where c.operatingFlightId = :flightId group by c.marketingFlightNumber")
     public List<CodeShareFlight> getCodeSharesForFlight(@Param("flightId") Long flightId);
     

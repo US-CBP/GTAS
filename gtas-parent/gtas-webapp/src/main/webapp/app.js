@@ -666,7 +666,7 @@ var app;
 
                 $http({
                     method: 'POST',
-                    url: 'logout'
+                    url: '/gtas/logout'
                 }).then(function (response) {
                     if (response.status === 200 || response.status === 403 || response.status === 405) {
                         var cookies = $cookies.getAll();
@@ -681,7 +681,7 @@ var app;
                 });
             };
         };
-
+    const web_root = 'gtas';
     app = angular
         .module('myApp', appDependencies)
         .config(router)
@@ -696,8 +696,8 @@ var app;
             MANAGE_WATCHLIST: 'Manage Watch List'
         })
         .constant('APP_CONSTANTS', {
-            LOGIN_PAGE: '/gtas/login.html',
-            HOME_PAGE: '/gtas/main.html',
+            LOGIN_PAGE: '/' + web_root + '/login.html',
+            HOME_PAGE: '/' + web_root + '/main.html',
             MAIN_PAGE: 'main.html#/dashboard',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',

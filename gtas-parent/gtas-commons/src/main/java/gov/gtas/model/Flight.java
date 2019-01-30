@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -110,18 +112,22 @@ public class Flight extends BaseEntityAudit {
     @Column(name = "passenger_count", nullable = false)
     private Integer passengerCount = Integer.valueOf(0);
 
-    @Column(name = "rule_hit_count", nullable = false)
-    private Integer ruleHitCount = Integer.valueOf(0);
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsRule flightHitsRule;
 
-    @Column(name = "list_hit_count", nullable = false)
-    private Integer listHitCount = Integer.valueOf(0);
-   
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsWatchlist flightHitsWatchlist;
+
     @ManyToMany(
         mappedBy = "flights",
         targetEntity = Pnr.class
-    ) 
+    )
     private Set<Pnr> pnrs = new HashSet<>();
-   
+
    /* public void addPassenger(Passenger passenger) {
     	logger.info(flightService);
     	logger.info(passenger);
@@ -215,18 +221,6 @@ public class Flight extends BaseEntityAudit {
     public void setPassengerCount(Integer passengerCount) {
         this.passengerCount = passengerCount;
     }
-    public Integer getRuleHitCount() {
-        return ruleHitCount;
-    }
-    public void setRuleHitCount(Integer ruleHitCount) {
-        this.ruleHitCount = ruleHitCount;
-    }
-    public Integer getListHitCount() {
-        return listHitCount;
-    }
-    public void setListHitCount(Integer listHitCount) {
-        this.listHitCount = listHitCount;
-    }
 
     /**
      * @return the etdDate
@@ -296,5 +290,21 @@ public class Flight extends BaseEntityAudit {
                 && Objects.equals(this.flightDate, other.flightDate)
                 && Objects.equals(this.origin, other.origin)
                 && Objects.equals(this.destination, other.destination);
+    }
+
+    public FlightHitsRule getFlightHitsRule() {
+        return flightHitsRule;
+    }
+
+    public FlightHitsWatchlist getFlightHitsWatchlist() {
+        return flightHitsWatchlist;
+    }
+
+    public void setFlightHitsRule(FlightHitsRule flightHitsRule) {
+        this.flightHitsRule = flightHitsRule;
+    }
+
+    public void setFlightHitsWatchlist(FlightHitsWatchlist flightHitsWatchlist) {
+        this.flightHitsWatchlist = flightHitsWatchlist;
     }
 }

@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.constants.Constants;
+import gov.gtas.model.Attachment;
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.CaseDispositionServiceImpl;
@@ -45,6 +47,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import gov.gtas.vo.passenger.CaseVo;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 
 
 @RestController
@@ -58,6 +62,9 @@ public class CaseDispositionController {
     
 	@Autowired
 	private UserService userService;
+        
+    @Autowired
+    private AttachmentRepository attachmentRepo;
     
     private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
 
@@ -117,6 +124,30 @@ public class CaseDispositionController {
         return currentServerTimeMillis;
     }
 
+  @RequestMapping(value = "/getdownload/{id}", method = RequestMethod.GET)
+public ResponseEntity<byte[]> getDownloadData(@PathVariable long id) {
+      
+    ResponseEntity returnEntity = null;  
+    try
+    {
+        Attachment attachment = attachmentRepo.findByIntegerId((int) id);
+        byte[] fileData = attachment.getContent().getBytes(1, (int) attachment.getContent().length());
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("charset", "utf-8");
+        responseHeaders.setContentType(MediaType.valueOf(attachment.getContentType()));
+        responseHeaders.setContentLength(attachment.getContent().length());
+        responseHeaders.set("Content-disposition", "attachment; filename=" + attachment.getFilename());
+        returnEntity =  new ResponseEntity<byte[]>(fileData, responseHeaders, HttpStatus.OK); 
+    }
+    catch (Exception ex)
+    {
+        logger.error("Error retrieving file to download : " + ex.getMessage());
+        
+    }
+      
+    return returnEntity;
+}     
+    
     //getRuleCats
     @RequestMapping(method = RequestMethod.GET, value = "/getRuleCats")
     public List<RuleCat> getRuleCats()
@@ -181,7 +212,7 @@ public class CaseDispositionController {
         newCase.setHitsDispositions(aCase.getHitsDispositions());
         return newCase;
     }
-
+    
     //createManualCaseAttachments
 //    @RequestMapping(method = RequestMethod.POST, value = "/createManualCaseAttachments")
 //    public

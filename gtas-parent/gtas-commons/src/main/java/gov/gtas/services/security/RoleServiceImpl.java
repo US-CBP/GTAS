@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.model.Role;
 import gov.gtas.repository.RoleRepository;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -39,6 +42,13 @@ public class RoleServiceImpl implements RoleService {
     public Set<RoleData> findAll() {
 
         Iterable<Role> roleEntityCollection = roleRepository.findAll();
+        
+                // filter out the SysAdmin role; it should not be a choice on the front end.
+        List<Role> filteredRoleList = StreamSupport.stream(roleEntityCollection.spliterator(), false)
+        	      .filter(r -> (r.getRoleId() != 6))
+        	      .collect(Collectors.toList());        
+        
+        Set<RoleData> roles = roleServiceUtil.getRoleDataSetFromEntityCollection(filteredRoleList);
 
         // filter out the SysAdmin role; it should not be a choice on the front end.
         List<Role> filteredRoleList = StreamSupport.stream(roleEntityCollection.spliterator(), false)

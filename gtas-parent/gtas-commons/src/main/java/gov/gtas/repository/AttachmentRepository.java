@@ -17,5 +17,8 @@ public interface AttachmentRepository extends CrudRepository<Attachment, Long> {
 	
 	@Query("FROM Attachment WHERE passenger.id = :passengerId")
 	public List<Attachment>findAllAttachmentsByPassengerId(@Param("passengerId")Long passengerId);
+        
+        @Query("FROM Attachment WHERE id = :idParam")
+        public Attachment findByIntegerId(@Param("idParam") Integer id);
 	
 }

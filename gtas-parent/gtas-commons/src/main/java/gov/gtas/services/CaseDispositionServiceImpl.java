@@ -539,6 +539,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				if ((hit_id != null) && (hit.getId().equals(hit_id))) {
 
 					if (caseComments != null) { // set comments
+                                                caseComments = caseComments.replaceAll("[^\\p{ASCII}]", "");
 						hitsDispositionComments = new HitsDispositionComments();
 						hitsDispositionComments.setHitId(hit_id);
 						hitsDispositionComments.setComments(caseComments);
