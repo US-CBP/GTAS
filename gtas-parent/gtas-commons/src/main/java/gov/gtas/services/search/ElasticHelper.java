@@ -113,7 +113,7 @@ public class ElasticHelper {
     		logger.info("ElasticSearch configuration not found");
         	return;
         }
-
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
 		int port = Integer.valueOf(portStr);
 		client = new PreBuiltTransportClient(Settings.EMPTY); // TransportClient.builder().build();
 		logger.info("ElasticSearch Client Init: " + hostname + ":" + port);
