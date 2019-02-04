@@ -7,12 +7,13 @@ import javax.persistence.*;
 public class FlightHitsWatchlist {
 
     @Id
-    @Column(name = "fhw_flight_id", columnDefinition = "bigint unsigned", unique = true)
+    @Column(name = "fhw_flight_id", columnDefinition = "bigint unsigned")
     private
     Long flightId;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false, unique = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+    @org.hibernate.annotations.ForeignKey( name = "none")
     Flight flight;
 
     @Column(name = "fhw_hit_count")

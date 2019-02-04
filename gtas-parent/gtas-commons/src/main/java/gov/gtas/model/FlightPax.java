@@ -42,7 +42,7 @@ public class FlightPax implements Serializable {
     @ManyToOne
     @JoinColumn(name="install_address_id",nullable = true,referencedColumnName = "id")
     private Address installationAddress;
-    
+
     @Column(name="embarkation")
     private String embarkation;
     

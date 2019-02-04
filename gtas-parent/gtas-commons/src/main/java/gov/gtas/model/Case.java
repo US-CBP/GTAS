@@ -89,9 +89,11 @@ public class Case extends BaseEntityAudit {
     @Column(name = "disposition", nullable = true)
     private String disposition;
 
-    @ManyToOne(optional=true, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
+    @org.hibernate.annotations.ForeignKey( name = "none")
     private Flight flight;
+
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }

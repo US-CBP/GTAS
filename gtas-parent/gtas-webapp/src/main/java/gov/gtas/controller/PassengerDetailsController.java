@@ -234,7 +234,7 @@ public class PassengerDetailsController {
 					add.setCountry(installAdd.getCountry());
 					add.setPostalCode(installAdd.getPostalCode());
 					add.setState(installAdd.getState());
-					fpVo.setInstallationAddress(add);			
+					fpVo.setInstallationAddress(add);
 				}
 				fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
 				fpVo.setResidencyCountry(fp.getResidenceCountry());
@@ -1109,7 +1109,7 @@ public class PassengerDetailsController {
 		if (mostRecentDisposition != null) {
 			return mostRecentDisposition.getStatus();
 		} else {
-			return null;
+		return null;
 		}
 	}
         

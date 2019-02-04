@@ -111,9 +111,10 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Seat> seatAssignments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<HitsSummary> hits = new HashSet<>();
-    
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();

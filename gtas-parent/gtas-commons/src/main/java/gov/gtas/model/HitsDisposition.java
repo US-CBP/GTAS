@@ -7,11 +7,8 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.lookup.RuleCat;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 
 
 import java.util.HashSet;
@@ -122,28 +119,13 @@ public class HitsDisposition extends BaseEntityAudit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         HitsDisposition that = (HitsDisposition) o;
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(hitId, that.hitId)
-               // .append(caseId, that.caseId)
-                .append(aCase, that.aCase)
-                .append(id, that.id)
-                .isEquals();
+        return this.getHitId() == that.getHitId();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(hitId)
-                //.append(caseId)
-                .append(aCase)
-                .append(id)
-                .toHashCode();
+        return Objects.hash(getHitId());
     }
 }

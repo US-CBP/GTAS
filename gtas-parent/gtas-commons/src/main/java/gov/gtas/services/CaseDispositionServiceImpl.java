@@ -180,17 +180,27 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	@Transactional
-	public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob,
-			String document, String hitDesc, List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
-			Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
+	public Case create(
+			Long flight_id,
+			Long pax_id,
+			String paxName,
+			String paxType,
+			String citizenshipCountry,
+			Date dob,
+			String document,
+			String hitDesc,
+			List<Long> hit_ids,
+			Map<Long, Case> caseMap,
+			Map<Long, Flight> flightMap,
+			Map<Long, Passenger> passengerMap,
+			Map<Long, RuleCat> ruleCatMap) {
 
 		Case aCase = new Case();
 		List<Case> _tempCases = null;
 		Long highPriorityRuleCatId = 1L;
-		HitsDisposition hitDisp = new HitsDisposition();
-		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
-		Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
-		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
+		HitsDisposition hitDisp;
+		HitsDispositionComments hitsDispositionComments;
+		Set<HitsDisposition> hitsDispSet = new HashSet<>();
 		aCase.setUpdatedAt(new Date());
 		aCase.setUpdatedBy(UPDATED_BY_INTERNAL); // @ToDo change this to pass-by-value in the next release
 		aCase.setFlightId(flight_id);
@@ -206,16 +216,20 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		if (caseMap == null || caseMap.isEmpty()) {
 			/*
-			 * fetch existing cases for the flight-passenger where the status is OPEN or NEW
+			 * fetch existing case for the flight-passenger where the status is OPEN or NEW
+			 * data structure returns list as many results are possible. Only 1 result is expected.
+			 * More are possible under the condition of a user changing a closed case to open status AFTER
+			 * getting a new case generated (or after generating a manual case).
 			 * 
 			 */
 			_tempCases = caseDispositionRepository.getCaseByFlightIdAndPaxId(flight_id, pax_id,
 					Arrays.asList(CaseDispositionStatusEnum.NEW.getType(), CaseDispositionStatusEnum.OPEN.getType()));
-		} else
+		} else if (caseMap.containsKey(pax_id)) {
 			aCase = caseMap.get(pax_id);
+		}
 
 		if (_tempCases != null && _tempCases.size() > 0) {
-			aCase = _tempCases.get(0);
+			aCase = _tempCases.get(0); //Will be expecting a list of 1 item, therefore get at index 0.
 		}
 
 		for (Long _tempHitId : hit_ids) {
@@ -229,7 +243,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
 			}
 
-			hitsDispCommentsSet = new HashSet<>();
 			hitDisp.setHitId(_tempHitId);
 			hitDisp.setDescription(hitDesc);
 			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
@@ -251,7 +264,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			aCase.setHighPriorityRuleCatId(highPriorityRuleCatId);
 
 		for (HitsDisposition _tempHit : hitsDispSet) {
-			aCase.addHitsDisposition(_tempHit);
+			if (!aCase.getHitsDispositions().contains(_tempHit)) {
+				aCase.addHitsDisposition(_tempHit);
+			}
 		}
 
 		caseDispositionRepository.save(aCase);
@@ -334,12 +349,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		else
 			aCase.setHitsDispositions(hitsDispSet);
 
-		// fix to adjust to the recent flight mappings
-		aCase.setFlight(null);
+		aCase = caseDispositionRepository.save(aCase);
 
-		Case newCase = caseDispositionRepository.save(aCase);
-
-		aCase.setId(newCase.getId());
 		// _tempCase = null;
 		// _tempCase = caseDispositionRepository.getOne(aCase.getId());
 		//
@@ -652,11 +663,25 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
 			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Case> _tempCaseList = new ArrayList<>();
-		List<Long> _tempHitIds = new ArrayList<>();
 
+		List<Long> _tempHitIds = new ArrayList<>();
 		_tempHitIds.add(hit_id);
-		_tempCaseList.add(create(flight_id, pax_id, paxName, paxType, citizenshipCountry, dob, document, hitDesc,
-				_tempHitIds, caseMap, flightMap, passengerMap, ruleCatMap));
+
+
+		_tempCaseList.add(create(
+				flight_id,
+				pax_id,
+				paxName,
+				paxType,
+				citizenshipCountry,
+				dob,
+				document,
+				hitDesc,
+				_tempHitIds,
+				caseMap,
+				flightMap,
+				passengerMap,
+				ruleCatMap));
 
 		return _tempCaseList;
 	}

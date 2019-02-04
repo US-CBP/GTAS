@@ -104,7 +104,7 @@ public class PassengerServiceImpl implements PassengerService {
             HitsSummary hit = (HitsSummary) objs[2];
             PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
 
-            if (hit != null && f.getId() != hit.getFlight().getId()) {
+            if (hit != null && !f.getId().equals(hit.getFlightId())) {
                 continue;
             }
 
@@ -269,7 +269,7 @@ public class PassengerServiceImpl implements PassengerService {
         d.setCreatedBy(disposition.getUser());
         Flight f = new Flight();
         f.setId(disposition.getFlightId());
-        d.setFlight(f);
+        d.setFlightId(f.getId());
         Passenger p = new Passenger();
         p.setId(disposition.getPassengerId());
         d.setPassenger(p);
@@ -310,12 +310,10 @@ public class PassengerServiceImpl implements PassengerService {
         d.setCreatedAt(date);
         d.setCreatedBy("SYSTEM");
         d.setComments("A new disposition has been created on " + date);
-        d.setPassenger(hit.getPassenger());
-        d.setFlight(hit.getFlight());
+        d.setPaxId(hit.getPaxId());
         DispositionStatus status = new DispositionStatus();
         status.setId(1L);
         d.setStatus(status);
-
         dispositionRepo.save(d);
     }
 

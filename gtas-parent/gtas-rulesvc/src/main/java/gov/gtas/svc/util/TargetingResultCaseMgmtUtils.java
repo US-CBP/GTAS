@@ -102,7 +102,7 @@ public class TargetingResultCaseMgmtUtils {
         Bench.end("here2", "After for RuleHitDetail loop in ruleResultPostProcesssing.");
         // Now create the return list from the set, thus eliminating duplicates.
         RuleServiceResult ret = new BasicRuleServiceResult(
-                new LinkedList<RuleHitDetail>(resultMap.values()),
+                new LinkedList<>(resultMap.values()),
                 result.getExecutionStatistics());
         logger.info("Exiting ruleResultPostProcesssing().");
         return ret;
@@ -112,12 +112,14 @@ public class TargetingResultCaseMgmtUtils {
      * Method that does bulk of the Case Mgmt. calls
      * @param rhd
      * @param flightId
-     * @param resultMap
      * @param dispositionService
      */
     private static void processPassengerFlight(RuleHitDetail rhd,
-                                               Long flightId, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
-                                               Map<Long, Passenger> passengerMap,Map<Long, RuleCat> ruleCatMap,
+                                               Long flightId,
+                                               Map<Long, Case> caseMap,
+                                               Map<Long, Flight> flightMap,
+                                               Map<Long, Passenger> passengerMap,
+                                               Map<Long, RuleCat> ruleCatMap,
                                                CaseDispositionService dispositionService) {
 
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
@@ -128,7 +130,7 @@ public class TargetingResultCaseMgmtUtils {
         try {
             _tempPaxId = rhd.getPassengerId();
            _tempPax = passengerMap.get(_tempPaxId);
-            //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+
             if(rhd.getUdrRuleId() == null){
                 description = watchlistItemFlag + description;
             }
@@ -137,9 +139,20 @@ public class TargetingResultCaseMgmtUtils {
                 for (Document documentItem : _tempPax.getDocuments()) {
                     document = documentItem.getDocumentNumber();
                 }
-                dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
-                        rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, description, rhd.getRuleId(), caseMap, flightMap, passengerMap, ruleCatMap);
+                dispositionService.registerCasesFromRuleService(
+                        flightId,
+                        rhd.getPassengerId(),
+                        rhd.getPassengerName(),
+                        rhd.getPassengerType().getPassengerTypeName(),
+                        _tempPax.getCitizenshipCountry(),
+                        _tempPax.getDob(),
+                        document,
+                        description,
+                        rhd.getRuleId(),
+                        caseMap,
+                        flightMap,
+                        passengerMap,
+                        ruleCatMap);
             }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId

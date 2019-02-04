@@ -127,6 +127,7 @@ public class Pnr extends Message {
 
     @ManyToMany(targetEntity = Address.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_address", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
+    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<Address> addresses = new HashSet<>();
 
     @ManyToMany(targetEntity = Phone.class, cascade = { CascadeType.ALL })

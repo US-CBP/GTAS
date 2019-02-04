@@ -5,25 +5,30 @@
  */
 package gov.gtas.model;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import gov.gtas.model.lookup.DispositionStatus;
 
 @Entity
 @Table(name = "disposition")
 public class Disposition extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;  
+    private static final long serialVersionUID = 1L;
 
-    @ManyToOne
-    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
-    private Flight flight;
+    @Column(name = "paxId", columnDefinition = "bigint unsigned")
+    private Long paxId;
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "paxId", referencedColumnName = "id", updatable = false, insertable = false)
+    @org.hibernate.annotations.ForeignKey( name = "none")
     private Passenger passenger;
+
+    @Column(name = "flightId", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "flightId", referencedColumnName = "id", updatable = false, insertable = false)
+    @org.hibernate.annotations.ForeignKey( name = "none")
+    private Flight flight;
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
@@ -31,22 +36,29 @@ public class Disposition extends BaseEntityAudit {
 
     private String comments;  
 
+    public Long getPaxId() {
+        return paxId;
+    }
+
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
+    }
+
     public Flight getFlight() {
         return flight;
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
     }
 
     public void setFlight(Flight flight) {
         this.flight = flight;
     }
-
-    public Passenger getPassenger() {
-        return passenger;
-    }
-
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
-    }
-
     public DispositionStatus getStatus() {
         return status;
     }
@@ -61,5 +73,13 @@ public class Disposition extends BaseEntityAudit {
 
     public void setComments(String comments) {
         this.comments = comments;
+    }
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
     }
 }
