@@ -221,11 +221,6 @@
         
         <!-- elastic -->
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>6.5.0</version>
-        </dependency>
-        <dependency>
     		<groupId>org.elasticsearch.client</groupId>
     		<artifactId>transport</artifactId>
     		<version>6.5.0</version>

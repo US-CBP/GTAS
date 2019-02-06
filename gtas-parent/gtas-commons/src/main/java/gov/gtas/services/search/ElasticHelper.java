@@ -89,7 +89,7 @@ import org.apache.logging.log4j.message.Message;
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
 	public static final String INDEX_NAME = "flightpax";
-	public static final String FLIGHTPAX_TYPE = "_doc";
+	public static final String FLIGHTPAX_TYPE = "doc";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
 	private static SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
