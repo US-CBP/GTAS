@@ -300,7 +300,7 @@
                 }
                 $mdSidenav(id).toggle();
             };
-
+            
             //dialog function for image display dialog
             $scope.showAttachments = function(attachmentList) {
                 $mdDialog.show({
@@ -315,11 +315,14 @@
             };
 
             $scope.packageAttachments = function(value){
-                var attList = '';
-                var slideString = '';
-                slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
-                attList += slideString;
-                $scope.showAttachments(attList);
+                if(value.contentType.startsWith("image")) {
+                
+                    var attList = '';
+                    var slideString = '';
+                    slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
+                    attList += slideString;
+                    $scope.showAttachments(attList);
+                }
             };
 
             //Angular Trix related event handlers

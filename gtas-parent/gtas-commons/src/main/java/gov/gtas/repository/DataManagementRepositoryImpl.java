@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.error.CommonServiceException;
 import gov.gtas.model.User;
 import gov.gtas.services.AuditLogPersistenceService;
 
@@ -38,9 +37,9 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 			.getLogger(DataManagementRepositoryImpl.class);
 	
 	// these tables are listed in the order that they must be truncated
-	private static final String CASE_HIT_DISP_COMMENTS_TABLE_NAME = "case_hit_disp_comments";
-	private static final String CASE_HIT_DISP_TABLE_NAME = "case_hit_disp";
-	private static final String CASES_TABLE_NAME = "cases";
+	private static final String HITS_DISPOSITION_COMMENTS_TABLE_NAME = "hits_disposition_comments";
+	private static final String HITS_DISPOSITION_TABLE_NAME = "hits_disposition";
+        private static final String CASES_TABLE_NAME = "cases";	
 	private static final String TICKET_FARE_TABLE_NAME = "ticket_fare";
 	private static final String BAG_TABLE_NAME = "bag";
 	private static final String DISPOSITION_TABLE_NAME = "disposition";
@@ -61,6 +60,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private static final String PNR_PASSENGER_TABLE_NAME = "pnr_passenger";
 	private static final String PNR_FLIGHT_TABLE_NAME = "pnr_flight";
 	private static final String PNR_CODESHARES_TABLE_NAME = "pnr_codeshares";
+        private static final String FLIGHT_HIT_RULE_TABLE_NAME = "flight_hit_rule";
+        private static final String FLIGHT_HIT_WATCHLIST_TABLE_NAME = "flight_hit_watchlist";
 	private static final String CODE_SHARE_FLIGHT_TABLE_NAME = "code_share_flight";
 	private static final String FLIGHT_TABLE_NAME = "flight";
 	private static final String PNR_AGENCY_TABLE_NAME = "pnr_agency";
@@ -83,21 +84,20 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private static final String PNR_TABLE_NAME = "pnr";
 	private static final String MESSAGE_TABLE_NAME = "message";
 	private static final String PASSENGER_ID_TAG_TABLE_NAME = "passenger_id_tag";
+        private static final String HITS_DISPOSITION_COMMENTS_ATTACHMENT_TABLE_NAME = "hits_disposition_comments_attachment";
+        private static final String ATTACHMENT_TABLE_NAME = "attachment";
 	private static final String PASSENGER_TABLE_NAME = "passenger";
 	private static final String LOADER_AUDIT_LOGS_TABLE_NAME = "loader_audit_logs";
 	private static final String ERROR_DETAIL_TABLE_NAME = "error_detail";
 	private static final String AUDIT_LOG_TABLE_NAME = "audit_log";
 	private static final String DASHBOARD_MESSAGE_STATS_TABLE_NAME = "dashboard_message_stats";
-	private static final String HITS_DISPOSITION_COMMENTS_TABLE_NAME = "hits_disposition_comments";
-	private static final String HITS_DISPOSITION_TABLE_NAME = "hits_disposition";
-	
 
 	
 	private static final String MESSAGE_ID_LIST_KEY = "messageIdList";
 	private static final String TOTAL_PAX_ID_SET_KEY = "totalPaxIdSet";
 	private static final String TOTAL_FLIGHT_ID_SET_KEY = "totalFlightIdSet";
 	private static final String CASE_ID_LIST_KEY = "caseIdList";
-	private static final String CASE_HIT_DISP_ID_LIST_KEY = "caseHitDispIdList";
+        private static final String ATTACHMENT_ID_LIST_KEY = "attachmentIdList";
 	private static final String HITS_SUMMARY_ID_LIST_KEY = "hitsSummaryIdList";
 	private static final String REPORTING_PARTY_ID_LIST_KEY = "reportingPartyIdList";
 	private static final String CODE_SHARE_ID_LIST_KEY = "codeShareIdList";
@@ -125,6 +125,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private static String ADDRESS_ID_SQL = " SELECT address_id from pnr_address where pnr_id in :messageIdList";
 	private static String DWELL_ID_SQL = " SELECT dwell_id from pnr_dwelltime where pnr_id in :messageIdList";
 	private static String BOOKING_ID_SQL = " SELECT booking_detail_id from pnr_booking where pnr_id in :messageIdList";
+        private static String ATTACHMENT_ID_SQL = " SELECT id from attachment where passenger_id in :messageIdList";
 	
 	private Map< String, Collection<BigInteger> > inClauseIdListsMap;
 	
@@ -192,14 +193,17 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	
 	private void initializeSqlDeleteElements()
 	{
-        // here we have the trio: table name, id name, and key to list for IN clause.
-		List<String> strList = Arrays.asList(CASE_HIT_DISP_COMMENTS_TABLE_NAME,"hit_disp_id",CASE_HIT_DISP_ID_LIST_KEY);
+             // here we have the trio: table name, id name, and key to list for IN clause. These will be used by deleteFromAllTablesWithInClause().
+            // These are in order; do not change the order unless there are database changes.
+                List<String> strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_ATTACHMENT_TABLE_NAME,"attachment_id",ATTACHMENT_ID_LIST_KEY);
+                sqlDeleteElements.add(strList);
+		strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_TABLE_NAME,"hit_disp_id",HIT_DISPOSITION_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(CASE_HIT_DISP_TABLE_NAME,"case_id", CASE_ID_LIST_KEY);
+		strList = Arrays.asList(HITS_DISPOSITION_TABLE_NAME,"case_id",CASE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(CASES_TABLE_NAME,"id",CASE_ID_LIST_KEY);
+                strList = Arrays.asList(CASES_TABLE_NAME,"id",CASE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(TICKET_FARE_TABLE_NAME,"passenger_id",TOTAL_PAX_ID_SET_KEY);
+		 strList = Arrays.asList(TICKET_FARE_TABLE_NAME,"passenger_id",TOTAL_PAX_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(BAG_TABLE_NAME,"passenger_id",TOTAL_PAX_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
@@ -238,6 +242,10 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		strList = Arrays.asList(PNR_FLIGHT_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(PNR_CODESHARES_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+		sqlDeleteElements.add(strList);
+                strList = Arrays.asList(FLIGHT_HIT_RULE_TABLE_NAME,"fhr_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
+		sqlDeleteElements.add(strList);
+                strList = Arrays.asList(FLIGHT_HIT_WATCHLIST_TABLE_NAME,"fhw_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(CODE_SHARE_FLIGHT_TABLE_NAME,"id",CODE_SHARE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
@@ -281,17 +289,12 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(MESSAGE_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
+                strList = Arrays.asList(ATTACHMENT_TABLE_NAME, "passenger_id",TOTAL_PAX_ID_SET_KEY);
+                sqlDeleteElements.add(strList);
 		strList = Arrays.asList(PASSENGER_ID_TAG_TABLE_NAME,"pax_id",TOTAL_PAX_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(PASSENGER_TABLE_NAME,"id",TOTAL_PAX_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
-		
-		// these may change if database is unscrambled.
-		strList = Arrays.asList(HITS_DISPOSITION_COMMENTS_TABLE_NAME,"id",CASE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(HITS_DISPOSITION_TABLE_NAME,"id",CASE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-
 		
 	}
 	
@@ -304,9 +307,8 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 			String listKey = strList.get(2);
 			
 			deleteFromTableWithInClause(tableName, idName, listKey);
-			
 		}
-		
+
 	}
 	
 	private void deleteFromAllTablesWithDate(LocalDate localDate)
@@ -315,7 +317,6 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		deleteFromTableWithDate(ERROR_DETAIL_TABLE_NAME, "timestamp", localDate);
 		deleteFromTableWithDate(AUDIT_LOG_TABLE_NAME, "timestamp", localDate);
 		deleteFromTableWithDate(DASHBOARD_MESSAGE_STATS_TABLE_NAME, "dt_modified", localDate);
-		
 	}
 	
 	private void deleteFromTableWithInClause(String tableName, String idName, String listKey)
@@ -347,12 +348,12 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	{
 		try
 		{
-	       String sqlString = " DELETE FROM " + tableName + " WHERE " + idName + " <  :localDate";
-	       Query query = em.createNativeQuery(sqlString);
-	       query.setParameter("localDate", localDate);
-	       int numDeleted = query.executeUpdate();
-	       //logger.info(numDeleted + " rows deleted from table " + tableName);
-	       messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
+                   String sqlString = " DELETE FROM " + tableName + " WHERE " + idName + " <  :localDate";
+                   Query query = em.createNativeQuery(sqlString);
+                   query.setParameter("localDate", localDate.toString());
+                   int numDeleted = query.executeUpdate();
+                   //logger.info(numDeleted + " rows deleted from table " + tableName);
+                   messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
 		       
 		}
 		catch (Exception ex)
@@ -371,63 +372,65 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		
 		if (!messageIdList.isEmpty())
 		{
-			List<BigInteger> apisPaxIdList = getSomeIdList(APIS_PAX_ID_SQL, messageIdList);
-			List<BigInteger> pnrPaxIdList = getSomeIdList(PNR_PAX_ID_SQL, messageIdList);
-			
-			Set<BigInteger> totalPaxIdSet = new HashSet<>();
-			totalPaxIdSet.addAll(apisPaxIdList);
-			totalPaxIdSet.addAll(pnrPaxIdList);
-			
-			List<BigInteger> apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL, messageIdList);
-			List<BigInteger> pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL, messageIdList);
-			
-			Set<BigInteger> totalFlightIdSet = new HashSet<>();
-			totalFlightIdSet.addAll(apisFlightIdList);
-			totalFlightIdSet.addAll(pnrFlightIdList);
-			
-			List<BigInteger> caseIdList = this.getCaseIdList(totalPaxIdSet);
-			List<BigInteger> caseHitDispIdList = this.getCaseHitDispIdList(caseIdList);
-			List<BigInteger> hitsSummaryIdList = this.getHitsSummaryIdList(totalPaxIdSet);
-			
-			List<BigInteger> reportingPartyIdList = getSomeIdList(REPORTING_PARTY_ID_SQL, messageIdList);
-			
-			List<BigInteger>  codeShareIdList = getSomeIdList(CODE_SHARE_ID_SQL, messageIdList);
-			
-			List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, messageIdList);
-			
-			List<BigInteger> creditCardIdList = getSomeIdList(CREDIT_CARD_ID_SQL, messageIdList);
-			
-			List<BigInteger> frequentFlyerIdList = getSomeIdList(FREQUENT_FLYER_ID_SQL, messageIdList);
-			
-			List<BigInteger> phoneIdList = getSomeIdList(PHONE_ID_SQL, messageIdList);
-			
-			List<BigInteger> emailIdList = getSomeIdList(EMAIL_ID_SQL, messageIdList);
-			
-			List<BigInteger> addressIdList = getSomeIdList(ADDRESS_ID_SQL, messageIdList);
-			
-			List<BigInteger> dwellIdList = getSomeIdList(DWELL_ID_SQL, messageIdList);
-			
-			List<BigInteger> bookingIdList =  getSomeIdList(BOOKING_ID_SQL, messageIdList);
-			
-			List<BigInteger> hitDispositionIdList = this.getHitDispositionIdList(caseIdList);
-			
-			addListToMap(ADDRESS_ID_LIST_KEY, addressIdList);
-			addListToMap(AGENCY_ID_LIST_KEY, agencyIdList);
-			addListToMap(BOOKING_ID_LIST_KEY, bookingIdList);
-			addListToMap(CASE_HIT_DISP_ID_LIST_KEY, caseHitDispIdList);
-			addListToMap(CASE_ID_LIST_KEY, caseIdList);
-			addListToMap(CODE_SHARE_ID_LIST_KEY, codeShareIdList);
-			addListToMap(CREDIT_CARD_ID_LIST_KEY, creditCardIdList);
-			addListToMap(DWELL_ID_LIST_KEY, dwellIdList);
-			addListToMap(EMAIL_ID_LIST_KEY, emailIdList);
-			addListToMap(FREQUENT_FLYER_ID_LIST_KEY, frequentFlyerIdList);
-			addListToMap(HITS_SUMMARY_ID_LIST_KEY, hitsSummaryIdList);
-			addListToMap(HIT_DISPOSITION_ID_LIST_KEY, hitDispositionIdList);
-			addListToMap(PHONE_ID_LIST_KEY, phoneIdList);
-			addListToMap(REPORTING_PARTY_ID_LIST_KEY, reportingPartyIdList);
-			addListToMap(TOTAL_FLIGHT_ID_SET_KEY, totalFlightIdSet);
-			addListToMap(TOTAL_PAX_ID_SET_KEY, totalPaxIdSet);
-			addListToMap(MESSAGE_ID_LIST_KEY, messageIdList);
+                    List<BigInteger> apisPaxIdList = getSomeIdList(APIS_PAX_ID_SQL, messageIdList);
+                    List<BigInteger> pnrPaxIdList = getSomeIdList(PNR_PAX_ID_SQL, messageIdList);
+
+                    Set<BigInteger> totalPaxIdSet = new HashSet<>();
+                    totalPaxIdSet.addAll(apisPaxIdList);
+                    totalPaxIdSet.addAll(pnrPaxIdList);
+
+                    List<BigInteger> apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL, messageIdList);
+                    List<BigInteger> pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL, messageIdList);
+
+                    Set<BigInteger> totalFlightIdSet = new HashSet<>();
+                    totalFlightIdSet.addAll(apisFlightIdList);
+                    totalFlightIdSet.addAll(pnrFlightIdList);
+
+                    List<BigInteger> caseIdList = this.getCaseIdList(totalPaxIdSet);
+
+                    List<BigInteger> hitsSummaryIdList = this.getHitsSummaryIdList(totalPaxIdSet);
+
+                    List<BigInteger> reportingPartyIdList = getSomeIdList(REPORTING_PARTY_ID_SQL, messageIdList);
+
+                    List<BigInteger>  codeShareIdList = getSomeIdList(CODE_SHARE_ID_SQL, messageIdList);
+
+                    List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, messageIdList);
+
+                    List<BigInteger> creditCardIdList = getSomeIdList(CREDIT_CARD_ID_SQL, messageIdList);
+
+                    List<BigInteger> frequentFlyerIdList = getSomeIdList(FREQUENT_FLYER_ID_SQL, messageIdList);
+
+                    List<BigInteger> phoneIdList = getSomeIdList(PHONE_ID_SQL, messageIdList);
+
+                    List<BigInteger> emailIdList = getSomeIdList(EMAIL_ID_SQL, messageIdList);
+
+                    List<BigInteger> addressIdList = getSomeIdList(ADDRESS_ID_SQL, messageIdList);
+
+                    List<BigInteger> dwellIdList = getSomeIdList(DWELL_ID_SQL, messageIdList);
+
+                    List<BigInteger> bookingIdList =  getSomeIdList(BOOKING_ID_SQL, messageIdList);
+
+                    List<BigInteger> hitDispositionIdList = this.getHitDispositionIdList(caseIdList);
+
+                    List<BigInteger> attachmentIdList = this.getSomeIdList(ATTACHMENT_ID_SQL, totalPaxIdSet);
+
+                    addListToMap(ADDRESS_ID_LIST_KEY, addressIdList);
+                    addListToMap(AGENCY_ID_LIST_KEY, agencyIdList);
+                    addListToMap(BOOKING_ID_LIST_KEY, bookingIdList);
+                    addListToMap(CASE_ID_LIST_KEY, caseIdList);
+                    addListToMap(CODE_SHARE_ID_LIST_KEY, codeShareIdList);
+                    addListToMap(CREDIT_CARD_ID_LIST_KEY, creditCardIdList);
+                    addListToMap(DWELL_ID_LIST_KEY, dwellIdList);
+                    addListToMap(EMAIL_ID_LIST_KEY, emailIdList);
+                    addListToMap(FREQUENT_FLYER_ID_LIST_KEY, frequentFlyerIdList);
+                    addListToMap(HITS_SUMMARY_ID_LIST_KEY, hitsSummaryIdList);
+                    addListToMap(HIT_DISPOSITION_ID_LIST_KEY, hitDispositionIdList);
+                    addListToMap(PHONE_ID_LIST_KEY, phoneIdList);
+                    addListToMap(REPORTING_PARTY_ID_LIST_KEY, reportingPartyIdList);
+                    addListToMap(TOTAL_FLIGHT_ID_SET_KEY, totalFlightIdSet);
+                    addListToMap(TOTAL_PAX_ID_SET_KEY, totalPaxIdSet);
+                    addListToMap(MESSAGE_ID_LIST_KEY, messageIdList);
+                    addListToMap(ATTACHMENT_ID_LIST_KEY, attachmentIdList);
 		}
 		else
 		{
@@ -453,10 +456,9 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		messageIdList = query.getResultList();
 		
 		return messageIdList;
-		
 	}
 	
-	private List<BigInteger> getSomeIdList(String sqlQuery, List<BigInteger> messageIdList)
+	private List<BigInteger> getSomeIdList(String sqlQuery, Collection<BigInteger> messageIdList)
 	{
 		List<BigInteger> returnIdList = new ArrayList<>();
 		Query query = em.createNativeQuery(sqlQuery);
@@ -479,19 +481,6 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		
 		return caseIdList;		
 		
-	}
-	
-	private List<BigInteger> getCaseHitDispIdList(List<BigInteger> caseIdList)
-	{
-		List<BigInteger> pnrFlightIdList = new ArrayList<>();
-		
-		String sqlQuery = " SELECT hit_disp_id from case_hit_disp where case_id in :caseIdList ";
-		Query query = em.createNativeQuery(sqlQuery);
-		query.setParameter("caseIdList", caseIdList);
-		
-		pnrFlightIdList = query.getResultList();
-		
-		return pnrFlightIdList;
 	}
 	
 	private List<BigInteger> getHitsSummaryIdList(Set<BigInteger> paxIdSet)
@@ -519,8 +508,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		hitDispositionIdList = query.getResultList();
 		
 		return hitDispositionIdList;		
-		
-		
+
 	}
 	
 	private void writeActionToAuditLog(LocalDate localDate, User currentUser)

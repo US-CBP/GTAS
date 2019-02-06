@@ -5,14 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,7 +55,13 @@ public class Attachment implements Serializable {
 	private Date created;
 
 	@ManyToOne
-    private Passenger passenger;
+        private Passenger passenger;
+        
+        @ManyToMany(
+        mappedBy = "attachmentSet",
+        targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL
+        )
+        private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
     
 	public Integer getId() {
 		return id;
@@ -119,6 +127,16 @@ public class Attachment implements Serializable {
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
+
+    public Set<HitsDispositionComments> getHitsDispositionComments() {
+        return hitsDispositionComments;
+    }
+
+    public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
+        this.hitsDispositionComments = hitsDispositionComments;
+    }
+        
+        
 
 	@Override  
     public int hashCode() {  

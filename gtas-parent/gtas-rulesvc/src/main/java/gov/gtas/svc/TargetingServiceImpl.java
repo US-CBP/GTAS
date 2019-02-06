@@ -23,27 +23,9 @@ import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.AuditRecord;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Message;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.User;
+import gov.gtas.model.*;
 import gov.gtas.model.udr.KnowledgeBase;
-import gov.gtas.repository.ApisMessageRepository;
-import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.HitDetailRepository;
-import gov.gtas.repository.HitsSummaryRepository;
-import gov.gtas.repository.MessageRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.repository.PnrRepository;
-import gov.gtas.repository.UserRepository;
+import gov.gtas.repository.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
@@ -156,6 +138,12 @@ public class TargetingServiceImpl implements TargetingService {
         
         @Autowired
         private UserRepository userRepository;
+
+    @Autowired
+	private FlightHitsRuleRepository flightHitsRuleRepository;
+
+    @Autowired
+	private FlightHitsWatchlistRepository flightHitsWatchlistRepository;
 
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
@@ -550,6 +538,7 @@ public class TargetingServiceImpl implements TargetingService {
 	@Override
 	public Set<Long> runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
+                        Bench.start("total", "Starting Rule Engine processing");
 	 		Set<Long> uniqueFlights = new HashSet<>();
 	  		RuleExecutionContext ruleRunningResult = analyzeLoadedMessages(true);
 	  		if (ruleRunningResult != null) {
@@ -562,11 +551,12 @@ public class TargetingServiceImpl implements TargetingService {
 				}
 	  		writeAuditLogForTargetingRun(ruleRunningResult);
 	  	}
+                Bench.end("total", "Ending Rule Engine processing");
 	 	logger.info("Exiting runningRuleEngine().");
                 
 	 	//updateFlightHitCounts() was moved here in order to insure manual rule running updated flight hit counts
 	 	updateFlightHitCounts(uniqueFlights);
-                Bench.print();
+                //Bench.print();
 	 	return uniqueFlights;
 	}
 
@@ -657,11 +647,16 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 		logger.info("update rule hit count on flights.");
 		for (Long flightId : flights){
-			flightRepository.updateRuleHitCountForFlight(flightId);
-			flightRepository.updateListHitCountForFlight(flightId);
+			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
+			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
+			flightHitsRuleRepository.save(ruleFlightHits);
+
+			Integer watchlistHit = hitsSummaryRepository.watchlistHitCount(flightId);
+			FlightHitsWatchlist watchlistHitCount = new FlightHitsWatchlist(flightId, watchlistHit);
+			flightHitsWatchlistRepository.save(watchlistHitCount);
 		}
 	}
-        
+
         private Map<Long, Passenger> makePassengerMap(Collection<TargetSummaryVo> targetSummaryVoList)
         {
             List<Long> passengerIdList = new ArrayList<>();

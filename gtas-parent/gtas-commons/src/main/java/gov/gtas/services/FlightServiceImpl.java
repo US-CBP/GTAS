@@ -6,10 +6,7 @@
 
 package gov.gtas.services;
 
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
@@ -68,8 +65,12 @@ public class FlightServiceImpl implements FlightService {
             List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
             BeanUtils.copyProperties(f, vo);
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
-			vo.setListHitCount(f.getListHitCount() + fuzzyHits);
-            vo.setRuleHitCount(f.getRuleHitCount());
+			if (f.getFlightHitsWatchlist() != null) {
+				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount() + fuzzyHits);
+			}
+			if (f.getFlightHitsRule() != null) {
+				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
+			}
 			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
             List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
 	        for(CodeShareFlight cs : csl){ // grab all codeshares from it
