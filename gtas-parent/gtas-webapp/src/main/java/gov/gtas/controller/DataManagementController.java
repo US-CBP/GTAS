@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
+import gov.gtas.repository.DataManagementRepositoryImpl.DataTruncationType;
 import gov.gtas.services.DataManagementService;
 import gov.gtas.services.security.UserService;
 
@@ -63,7 +64,7 @@ public class DataManagementController
   }
   
   @RequestMapping(method = RequestMethod.POST, value = "/dmcapabilities/process")
-  public ModelAndView processDataTruncation(@RequestParam(value = "date", required = true) String date)
+  public ModelAndView processDataTruncation(@RequestParam(value = "date", required = true) String date, @RequestParam(value = "truncationType", required = true) String truncationType)
   {
       String message = "Successfully truncated all message related data before the selected date.View logs to get info on number of rows deleted.";
       
@@ -79,8 +80,23 @@ public class DataManagementController
 		  LocalDate localDate = LocalDate.of(year, month, day);
 	  
 		  URLEncoder.encode(message, StandardCharsets.UTF_8.toString());
+                  
+                  DataTruncationType type = null;
+                  
+                  if (truncationType.equals("ALL"))
+                  {
+                    type = DataTruncationType.ALL;  
+                  }
+                  else if (truncationType.equals("APIS"))
+                  {
+                      type = DataTruncationType.APIS_ONLY;
+                  }
+                  else if (truncationType.equals("PNR"))
+                  {
+                      type = DataTruncationType.PNR_ONLY;
+                  }
 		  
-	      dataManagementService.truncateAllMessageDataByDate(localDate, currentUser);
+	      dataManagementService.truncateAllMessageDataByDate(localDate, currentUser, type);
 	  }
 	  catch (Exception ex)
 	  {
