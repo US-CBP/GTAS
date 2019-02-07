@@ -1,5 +1,9 @@
 #!/bin/bash
 
+parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+cd "$parent_dir"
+
 # Set environment variable for elastic installation location and version
 source ../set_env.sh
 
