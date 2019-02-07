@@ -76,9 +76,9 @@ public class TargetingResultUtils {
     }
 
 
-    public static Map<Long, List<Flight>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
+    public static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
         List<Long> ruleHitDetailPassengerIdList = new ArrayList<>();
-        Map<Long, List<Flight>> passengerFlightMap = new HashMap<>();
+        Map<Long, List<Long>> passengerFlightMap = new HashMap<>();
 
         for (RuleHitDetail rhd : ruleHitDetailList) {
             Long passengerId = rhd.getPassengerId();
@@ -90,13 +90,13 @@ public class TargetingResultUtils {
             List<FlightPax> allFlightPaxByPassengerId = passengerService.getFlightPaxByPassengerIdList(ruleHitDetailPassengerIdList);
 
             for (FlightPax flightPax : allFlightPaxByPassengerId) {
-                Long passengerId = flightPax.getPassenger().getId();
-                Flight flight = flightPax.getFlight();
+                Long passengerId = flightPax.getPassengerId();
+                Long flightId = flightPax.getFlightId();
                 if (passengerFlightMap.containsKey(passengerId)) {
-                    passengerFlightMap.get(passengerId).add(flight);
+                    passengerFlightMap.get(passengerId).add(flightId);
                 } else {
-                    List<Flight> newFlightList = new ArrayList<>();
-                    newFlightList.add(flight);
+                    List<Long> newFlightList = new ArrayList<>();
+                    newFlightList.add(flightId);
                     passengerFlightMap.put(passengerId, newFlightList);
                 }
             }
@@ -131,7 +131,8 @@ public class TargetingResultUtils {
 
         Bench.start("qwerty1", "Before for RuleHitDetail loop in TargetingResultUtils.");
 
-        Map<Long, List<Flight>> passengerFlightMap = createPassengerFlightMap(resultList, passengerService);
+        //can this be done from a PNR? We have the message in scope...
+        Map<Long, List<Long>> passengerFlightMap = createPassengerFlightMap(resultList, passengerService);
 
         for (RuleHitDetail rhd : resultList) {
             if (rhd.getFlightId() == null) {
@@ -140,14 +141,14 @@ public class TargetingResultUtils {
                 // Note that the RuleHitDetail key is (UdrId, EngineRuleId,
                 // PassengerId, FlightId)
 
-                List<Flight> flights = passengerFlightMap.get(rhd.getPassengerId());
+                List<Long> flightIdList = passengerFlightMap.get(rhd.getPassengerId());
 
-                if (flights != null && !CollectionUtils.isEmpty(flights)) {
+                if (flightIdList != null && !CollectionUtils.isEmpty(flightIdList)) {
                     try {
                         Bench.start("qwerty2", "Before for Flight loop in TargetingResultUtils.");
-                        for (Flight flight : flights) {
+                        for (Long flightId : flightIdList) {
                             RuleHitDetail newrhd = rhd.clone();
-                            processPassengerFlight(newrhd, flight.getId(),
+                            processPassengerFlight(newrhd, flightId,
                                     resultMap);
                         }
                         Bench.end("qwerty2", "Before for Flight loop in TargetingResultUtils.");
@@ -167,7 +168,7 @@ public class TargetingResultUtils {
         Bench.end("qwerty1", "After for RuleHitDetail loop in TargetingResultUtils.");
         // Now create the return list from the set, thus eliminating duplicates.
         RuleServiceResult ret = new BasicRuleServiceResult(
-                new LinkedList<RuleHitDetail>(resultMap.values()),
+                new LinkedList<>(resultMap.values()),
                 result.getExecutionStatistics());
         //logger.info("Exiting ruleResultPostProcesssing().");
         return ret;
@@ -252,10 +253,8 @@ public class TargetingResultUtils {
         //logger.info("Exiting processPassengerFlight().");
     }
 
-    public static void updateRuleExecutionContext(RuleExecutionContext ctx,
-                                                  RuleServiceResult res) {
+    public static void updateRuleExecutionContext(RuleServiceResult res, RuleResults ruleResults) {
         logger.info("Entering updateRuleExecutionContext().");
-        ctx.setRuleExecutionStatistics(res.getExecutionStatistics());
         final Map<String, TargetSummaryVo> hitSummaryMap = new HashMap<>();
         for (RuleHitDetail rhd : res.getResultList()) {
             String key = rhd.getFlightId() + "/" + rhd.getPassengerId();
@@ -270,7 +269,7 @@ public class TargetingResultUtils {
                     .getRuleId(), rhd.getHitType(), rhd.getTitle(), rhd
                     .getHitReasons()));
         }
-        ctx.setTargetingResult(hitSummaryMap.values());
+        ruleResults.setTargetingResult(hitSummaryMap.values());
         logger.info("Exiting updateRuleExecutionContext().");
     }
 }

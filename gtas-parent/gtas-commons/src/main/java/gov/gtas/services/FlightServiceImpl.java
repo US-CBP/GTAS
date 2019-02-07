@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -232,6 +234,8 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
+	@Transactional
+	@Modifying
 	public void setSinglePassenger(Long passengerId, Long flightId) {
 		String sqlStr = "INSERT INTO flight_passenger(flight_id,passenger_id) VALUES("+flightId+","+passengerId+")";
 		em.createNativeQuery(sqlStr).executeUpdate();

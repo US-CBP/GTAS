@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -39,6 +38,8 @@ import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerVo;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.Query;
 
 /**
@@ -81,6 +82,12 @@ public class PassengerServiceImpl implements PassengerService {
     
 	@PersistenceContext
 	private EntityManager em;
+
+    @Autowired
+    PassengerRepository passengerRepository;
+
+    @Autowired
+    FlightPaxRepository flightPaxRepository;
 
     @Override
     @Transactional
@@ -304,7 +311,26 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Transactional
+    public void createDisposition(List<HitsSummary> hitsList) {
+
+        List<Disposition> dispositionsList = new ArrayList<>();
+        for (HitsSummary hit : hitsList) {
+            Disposition d = createDispositionFromHitsSummary(hit);
+            dispositionsList.add(d);
+        }
+        dispositionRepo.save(dispositionsList);
+    }
+
+
+
+    @Override
     public void createDisposition(HitsSummary hit) {
+        Disposition d = createDispositionFromHitsSummary(hit);
+        dispositionRepo.save(d);
+    }
+
+    private Disposition createDispositionFromHitsSummary(HitsSummary hit) {
         Disposition d = new Disposition();
         Date date = new Date();
         d.setCreatedAt(date);
@@ -314,7 +340,7 @@ public class PassengerServiceImpl implements PassengerService {
         DispositionStatus status = new DispositionStatus();
         status.setId(1L);
         d.setStatus(status);
-        dispositionRepo.save(d);
+        return d;
     }
 
     @Override
@@ -396,25 +422,19 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return flightSet;
 	}
-        
+
+
         @Override
         public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList)
         {
-            String sqlStr = "SELECT fp FROM FlightPax fp JOIN fp.passenger WHERE fp.passenger.id IN :pidList";
-            Query query = em.createQuery(sqlStr);
-            query.setParameter("pidList", passengerIdList);
-            List<FlightPax> flightPaxList = query.getResultList();
-            return flightPaxList;
+            return flightPaxRepository.getFlightPaxByPassengerIdList(passengerIdList);
         }
-        
+
+
         @Override
         public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList)
         {
-            String sqlStr = "SELECT p FROM Passenger p WHERE p.id IN :pidList";
-            Query query = em.createQuery(sqlStr);
-            query.setParameter("pidList", passengerIdList);
-            List<Passenger> passengerList = query.getResultList();
-            return passengerList;           
+            return passengerRepository.getPassengersById(passengerIdList);
         }
         
                 

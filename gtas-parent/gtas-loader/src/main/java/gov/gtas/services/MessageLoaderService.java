@@ -7,10 +7,10 @@ package gov.gtas.services;
 
 import java.util.List;
 
-import gov.gtas.parsers.exception.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.services.search.ElasticHelper;
 
@@ -45,5 +45,5 @@ public abstract class MessageLoaderService {
 		this.useIndexer = useIndexer;
 	}
 	public abstract MessageDto parse(MessageDto msgDto);
-	public abstract boolean load(MessageDto msgDto);
+	public abstract MessageStatus load(MessageDto msgDto);
 }

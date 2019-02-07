@@ -106,7 +106,7 @@ public class Pnr extends Message {
 	@Column(name = "form_of_payment")
     private String formOfPayment;
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class)
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
@@ -127,7 +127,6 @@ public class Pnr extends Message {
 
     @ManyToMany(targetEntity = Address.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_address", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<Address> addresses = new HashSet<>();
 
     @ManyToMany(targetEntity = Phone.class, cascade = { CascadeType.ALL })

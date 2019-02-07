@@ -112,7 +112,6 @@ public class Passenger extends BaseEntityAudit {
     private Set<Seat> seatAssignments = new HashSet<>();
 
     @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<HitsSummary> hits = new HashSet<>();
 
 

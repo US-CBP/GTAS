@@ -9,16 +9,7 @@ import java.sql.Clob;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "message")
@@ -42,8 +33,8 @@ public class Message extends BaseEntity {
 	@Column(name = "file_path", nullable = false)
 	private String filePath;
 
-	@Enumerated(EnumType.ORDINAL)
-	@Column(nullable = false)
+	@OneToOne(targetEntity = MessageStatus.class, mappedBy = "message", fetch = FetchType.EAGER)
+	@JoinColumn(name = "id", unique = true, referencedColumnName = "ms_message_id", insertable = false, updatable = false)
 	private MessageStatus status;
 
 	@Column(length = 4000)

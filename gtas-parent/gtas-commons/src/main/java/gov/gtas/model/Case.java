@@ -91,7 +91,6 @@ public class Case extends BaseEntityAudit {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Flight flight;
 
     public Set<HitsDisposition> getHitsDispositions() {
@@ -270,28 +269,19 @@ public class Case extends BaseEntityAudit {
         Case aCase = (Case) o;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
                 .append(flightId, aCase.flightId)
                 .append(paxId, aCase.paxId)
+                .append(status, aCase.status)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
                 .append(flightId)
                 .append(paxId)
+                .append(status)
                 .toHashCode();
     }
 
-//    public String toString() {
-//        return "Case{" +
-//                "flightId=" + flightId +
-//                ", paxId=" + paxId +
-//                ", status='" + status + '\'' +
-//                ", description='" + description + '\'' +
-//                ", hitsDispositions=" + hitsDispositions +
-//                '}';
-//    }
 }

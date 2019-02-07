@@ -39,7 +39,6 @@ public class Address extends BaseEntityAudit {
     private String postalCode;
 
  	@ManyToMany(mappedBy = "addresses", targetEntity = Pnr.class)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<Pnr> pnrs = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress", orphanRemoval = true)

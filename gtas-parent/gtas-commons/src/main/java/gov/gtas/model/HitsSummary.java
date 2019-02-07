@@ -31,7 +31,6 @@ public class HitsSummary extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "flightId", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Flight flight;
 
     @Column(name = "paxId", columnDefinition = "bigint unsigned")
@@ -39,7 +38,6 @@ public class HitsSummary extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paxId", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Passenger passenger;
 
     @Column(name = "rule_hit_count")

@@ -11,9 +11,8 @@ public class FlightHitsWatchlist {
     private
     Long flightId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     Flight flight;
 
     @Column(name = "fhw_hit_count")

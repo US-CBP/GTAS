@@ -17,7 +17,7 @@ import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Pnr;
-import gov.gtas.svc.util.RuleExecutionContext;
+import gov.gtas.svc.util.RuleResults;
 
 /**
  * The API for the Targeting Service.
@@ -63,7 +63,7 @@ public interface TargetingService {
 	 *            each processed message.
 	 * @return the result of the invocation.
 	 */
-	RuleExecutionContext analyzeLoadedMessages(final boolean updateProcesssedMessageStatus);
+	RuleResults analyzeLoadedMessages(final boolean updateProcesssedMessageStatus);
 
 	/**
 	 * Invokes the Rule Engine on an arbitrary list of objects using the
@@ -83,7 +83,11 @@ public interface TargetingService {
 	 * @return 
 	 * 
 	 */
-	public Set<Long> runningRuleEngine();
+	public RuleResults runningRuleEngine();
+
+	public TargetingServiceResults createHitsAndCases(RuleResults ruleRunningResult);
+
+	public void saveEverything(TargetingServiceResults targetingServiceResults);
 
 	/**
 	 * Update the rule and watchlist hit counts for a set of flight id's.

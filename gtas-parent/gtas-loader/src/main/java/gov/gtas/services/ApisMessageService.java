@@ -5,15 +5,12 @@
  */
 package gov.gtas.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
+import gov.gtas.PaxProcessingDto;
+import gov.gtas.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.EdifactMessage;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.paxlst.PaxlstParserUNedifact;
 import gov.gtas.parsers.paxlst.PaxlstParserUSedifact;
@@ -52,21 +41,20 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private LookUpRepository lookupRepo;
-    
-    private ApisMessage apisMessage;
 
     @Override
     public List<String> preprocess(String message) {
-        return Arrays.asList(message);
+        return Collections.singletonList(message);
     }
     
     @Override
     public MessageDto parse(MessageDto msgDto){
         ApisMessage apis = new ApisMessage();
         apis.setCreateDate(new Date());
-        apis.setStatus(MessageStatus.RECEIVED);
         apis.setFilePath(msgDto.getFilepath());
-        
+        apis = msgDao.save(apis);
+        MessageStatus messageStatus = new MessageStatus(apis.getId(), MessageStatusEnum.RECEIVED);
+        msgDto.setMessageStatus(messageStatus);
         MessageVo vo = null;
         try {            
             EdifactParser<ApisMessageVo> parser = null;
@@ -80,7 +68,7 @@ public class ApisMessageService extends MessageLoaderService {
             loaderRepo.checkHashCode(vo.getHashCode());
             apis.setRaw(LobUtils.createClob(vo.getRaw()));
 
-            apis.setStatus(MessageStatus.PARSED);
+            msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.PARSED);
             apis.setHashCode(vo.getHashCode());
             EdifactMessage em = new EdifactMessage();
             em.setTransmissionDate(vo.getTransmissionDate());
@@ -91,114 +79,71 @@ public class ApisMessageService extends MessageLoaderService {
             msgDto.setMsgVo(vo);
 
         } catch (Exception e) {
-            handleException(e, MessageStatus.FAILED_PARSING, apis);
+            msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
+            handleException(e , apis);
             return null;
         } finally {
-            createMessage(apis);
+            if (!createMessage(apis)) {
+                msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
+            }
         }
         msgDto.setApis(apis);
         return msgDto;
     }
     
 	@Override
-    public boolean load(MessageDto msgDto){
-        boolean success = true;
+    public MessageStatus load(MessageDto msgDto){
+        msgDto.getMessageStatus().setSuccess(true);
+
         ApisMessage apis = msgDto.getApis();
         try {
             ApisMessageVo m = (ApisMessageVo)msgDto.getMsgVo();
             loaderRepo.processReportingParties(apis, m.getReportingParties());
-            loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-            		apis.getFlights(), apis.getPassengers(), new ArrayList<FlightLeg>(), msgDto.getPrimeFlightKey(), new HashSet<BookingDetail>());//TODO: Placeholder and -1
+
+            PaxProcessingDto paxProcessingDto = loaderRepo.processFlightsAndPassengers(m.getFlights(),
+            		apis.getFlights(), new ArrayList<>(), msgDto.getPrimeFlightKey(), new HashSet<>());
+
+            loaderRepo.makeNewPassengers(paxProcessingDto, m.getPassengers(), apis.getPassengers(), apis);
             createFlightPax(apis);
-            apis.setStatus(MessageStatus.LOADED);
+            msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
 
         } catch (Exception e) {
-            success = false;
-            handleException(e, MessageStatus.FAILED_LOADING, msgDto.getApis());
+            msgDto.getMessageStatus().setSuccess(false);
+            msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
+            handleException(e, msgDto.getApis());
         } finally {
-            success &= createMessage(apis);            
+            msgDto.getMessageStatus().setSuccess(createMessage(apis));
         }
-        return success;
+        return msgDto.getMessageStatus();
 	}
     
     @Override
     public MessageVo parse(String message) {
-        apisMessage = new ApisMessage();
-        apisMessage.setCreateDate(new Date());
-        apisMessage.setStatus(MessageStatus.RECEIVED);
-        apisMessage.setFilePath(filePath);
-        
-        MessageVo vo = null;
-        try {            
-            EdifactParser<ApisMessageVo> parser = null;
-            if (isUSEdifactFile(message)) {
-                parser = new PaxlstParserUSedifact();
-            } else {
-                parser = new PaxlstParserUNedifact();                
-            }
-    
-            vo = parser.parse(message);
-            loaderRepo.checkHashCode(vo.getHashCode());
-            apisMessage.setRaw(LobUtils.createClob(vo.getRaw()));
-
-            apisMessage.setStatus(MessageStatus.PARSED);
-            apisMessage.setHashCode(vo.getHashCode());
-            EdifactMessage em = new EdifactMessage();
-            em.setTransmissionDate(vo.getTransmissionDate());
-            em.setTransmissionSource(vo.getTransmissionSource());
-            em.setMessageType(vo.getMessageType());
-            em.setVersion(vo.getVersion());
-            apisMessage.setEdifactMessage(em);
-
-        } catch (Exception e) {
-            handleException(e, MessageStatus.FAILED_PARSING, apisMessage);
-            return null;
-        } finally {
-            createMessage(apisMessage);
-        }
-        
-        return vo;
+        return null; //unused
     }
 
     @Override
     public boolean load(MessageVo messageVo) {
-        boolean success = true;
-        try {
-            ApisMessageVo m = (ApisMessageVo)messageVo;
-            loaderRepo.processReportingParties(apisMessage, m.getReportingParties());
-            loaderRepo.processFlightsAndPassengers(m.getFlights(), m.getPassengers(), 
-                    apisMessage.getFlights(), apisMessage.getPassengers(), new ArrayList<FlightLeg>(),new String[]{"placeholder"}, new HashSet<BookingDetail>()); //TODO: Placeholder and -1
-            createFlightPax(apisMessage);
-            apisMessage.setStatus(MessageStatus.LOADED);
-
-        } catch (Exception e) {
-            success = false;
-            handleException(e, MessageStatus.FAILED_LOADING, apisMessage);
-        } finally {
-            success &= createMessage(apisMessage);            
-        }
-        return success;
+        return false;
     }  
 
-    private void handleException(Exception e, MessageStatus status, ApisMessage apisMessage) {
+    private void handleException(Exception e, ApisMessage apisMessage) {
         apisMessage.setFlights(null);
-        apisMessage.setStatus(status);
         String stacktrace = ErrorUtils.getStacktrace(e);
         apisMessage.setError(stacktrace);
         logger.error(stacktrace);
     }
 
-    @Transactional
-    private boolean createMessage(ApisMessage m) {
+    boolean createMessage(ApisMessage m) {
         boolean ret = true;
         try {
-            msgDao.save(m);
+           m = msgDao.save(m);
             if (useIndexer) {
             	indexer.indexApis(m);
             }
         } catch (Exception e) {
             ret = false;
-            handleException(e, MessageStatus.FAILED_LOADING, m);
+            handleException(e, m);
             msgDao.save(m);
         }
         return ret;
@@ -229,9 +174,11 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setPortOfFirstArrival(f.getDestination());
     			fp.setMessageSource("APIS");
     			fp.setFlight(f);
+    			fp.setFlightId(f.getId());
     			fp.setResidenceCountry(p.getResidencyCountry());
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
+    			fp.setPassengerId(p.getId());
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
     			int bCount=0;
     			if(StringUtils.isNotBlank(p.getBagNum())){

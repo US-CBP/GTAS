@@ -19,7 +19,6 @@ public class Disposition extends BaseEntityAudit {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "paxId", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Passenger passenger;
 
     @Column(name = "flightId", columnDefinition = "bigint unsigned")
@@ -27,7 +26,6 @@ public class Disposition extends BaseEntityAudit {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "flightId", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Flight flight;
 
     @ManyToOne

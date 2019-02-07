@@ -7,14 +7,15 @@ package gov.gtas.services;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.model.MessageStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.error.ErrorUtils;
 import gov.gtas.model.Message;
@@ -40,7 +41,7 @@ public class Loader {
     @Autowired
     protected ElasticHelper indexer;
 
-    private boolean isElasticEnabled = true; //TO-DO put this in property file
+    private boolean isElasticEnabled = true; //TODO: put this in property file
     
     /**
      * Processes all the messages in a single file.
@@ -52,17 +53,15 @@ public class Loader {
      * @return array of integers containing loaded message count at index 0 and
      *         failed message count at index 1.
      */
-    @Transactional
-    public int[] processMessage(File f, String[] primeFlightKey) {
+    public ProcessedMessages processMessage(File f, String[] primeFlightKey) {
         String filePath = f.getAbsolutePath();
-        MessageDto msgDto = null;
+        MessageDto msgDto = new MessageDto();
         MessageLoaderService svc = null;
         List<String> rawMessages = null;
         try {
             if (exceedsMaxSize(f)) {
                 throw new LoaderException("exceeds max file size");
             }
-            msgDto = new MessageDto();
             msgDto.setPrimeFlightKey(primeFlightKey);
             
             byte[] raw = FileUtils.readSmallFile(filePath);
@@ -88,11 +87,16 @@ public class Loader {
             m.setError(stacktrace);
             m.setFilePath(filePath);
             m.setCreateDate(new Date());
-            m.setStatus(MessageStatus.FAILED_PARSING);
-            msgDao.save(m);
-            return null;
+            m = msgDao.save(m);
+            MessageStatus messageStatus = new MessageStatus(m.getId(), MessageStatusEnum.FAILED_PARSING);
+            msgDto.setMessageStatus(messageStatus);
+            ProcessedMessages processedMessages = new ProcessedMessages();
+            List<MessageStatus> messageStatuses = new ArrayList<>();
+            messageStatuses.add(messageStatus);
+            processedMessages.setMessageStatusList(messageStatuses);
+            return processedMessages;
         }
-        if (isElasticEnabled == true){
+        if (isElasticEnabled){
         	indexer.initClient();
 			if (indexer.isDown()) {
 				svc.setUseIndexer(false);
@@ -105,20 +109,30 @@ public class Loader {
         int failedMsgCount = 0;
         msgDto.setFilepath(filePath);
         rawMessages = msgDto.getRawMsgs();
+        List<MessageStatus> messageStatuses = new ArrayList<>();
         for (String rawMessage : rawMessages) {
         	msgDto.setRawMsg(rawMessage);
             MessageDto parsedMessageDto = svc.parse(msgDto);
-            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null && svc.load(parsedMessageDto)) {
+            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null) {
+                MessageStatus messageStatus = svc.load(parsedMessageDto);
+                messageStatuses.add(messageStatus);
+                if (messageStatus.isSuccess()) {
                 successMsgCount++;
             } else {
                 failedMsgCount++;
             }
+            } else {
+                failedMsgCount++;
         }
-        return new int[]{successMsgCount, failedMsgCount};
+        }
+        ProcessedMessages processedMessages = new ProcessedMessages();
+        processedMessages.setProcessed(new int[] {successMsgCount, failedMsgCount});
+        processedMessages.setMessageStatusList(messageStatuses);
+        return processedMessages;
     }
 
     private boolean exceedsMaxSize(File f) {
-        final long MAX_SIZE = 4294967295l; // raw column can accommodate 4294967295 bytes 
+        final long MAX_SIZE = 4294967295L; // raw column can accommodate 4294967295 bytes
         double numBytes = f.length();
         return numBytes > MAX_SIZE;
     }

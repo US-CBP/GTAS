@@ -25,19 +25,6 @@ public class NotificationController {
 	@RequestMapping(method = RequestMethod.GET, value = "/errorMessage")
 	public List<ErrorMessageVo> getErrorMessage(){
 		Set<MessageStatus> errorStatuses = new HashSet<>();
-		errorStatuses.add(MessageStatus.FAILED_PARSING);
-		errorStatuses.add(MessageStatus.FAILED_LOADING);
-		errorStatuses.add(MessageStatus.FAILED_ANALYZING);
-		List<ErrorMessageVo> errorMessagesVo = new ArrayList<>();
-		List<Message> messages = messageRepository.findByStatusIn(errorStatuses);
-		for(Message message : messages) {
-			ErrorMessageVo em = new ErrorMessageVo();
-			em.setId(message.getId());
-			em.setCreateDate(message.getCreateDate());
-			em.setError(message.getError());
-			em.setStatus(message.getStatus().name());
-			errorMessagesVo.add(em);
-		}
-		return 	errorMessagesVo;
+		return 	null;
 	}
 }

@@ -263,7 +263,6 @@ public class IntegrationTestBuilder {
         ApisMessage apisMessage = new ApisMessage();
         apisMessage.setCreateDate(new Date());
         apisMessage.setFilePath("Test");
-        apisMessage.setStatus(MessageStatus.PARSED);
         EdifactMessage edifactMessage = new EdifactMessage();
         edifactMessage.setTransmissionDate(new Date());
         apisMessage.setEdifactMessage(edifactMessage);
@@ -303,7 +302,6 @@ public class IntegrationTestBuilder {
         Pnr pnrMessage = new Pnr();
         pnrMessage.setCreateDate(new Date());
         pnrMessage.setFilePath("Test");
-        pnrMessage.setStatus(MessageStatus.PARSED);
         pnrMessage.setBagCount(BAG_COUNT_PNR);
         return pnrMessage;
 

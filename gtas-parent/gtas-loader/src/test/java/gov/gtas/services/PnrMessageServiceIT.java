@@ -112,8 +112,10 @@ public class PnrMessageServiceIT extends
 
 		Set<Flight> dummy = new HashSet<>();
 		Set<Passenger> paxDummy = new HashSet<>();
+/*
 		loaderRepo.processFlightsAndPassengers(flights, passengers, dummy,
 				paxDummy, new ArrayList<FlightLeg>(),new String[]{"placeholder"},new HashSet<BookingDetail>());
+*/
 		List<Passenger> pax = paxDao.getPassengersByLastName("doe");
 		assertEquals(1, pax.size());
 	}

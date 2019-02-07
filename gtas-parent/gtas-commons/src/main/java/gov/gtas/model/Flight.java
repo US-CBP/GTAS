@@ -104,7 +104,6 @@ public class Flight extends BaseEntityAudit {
     private Set<Passenger> passengers = new HashSet<>();*/
 
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Set<HitsSummary> hits = new HashSet<>();
  
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)

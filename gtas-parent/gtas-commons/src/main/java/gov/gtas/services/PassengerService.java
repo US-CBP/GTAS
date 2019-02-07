@@ -43,6 +43,7 @@ public interface PassengerService {
 	public void createDisposition(DispositionData disposition, User user);
 
 	public void createDisposition(HitsSummary hit);
+	public void createDisposition(List<HitsSummary> hit);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
 	public List<DispositionStatus> getDispositionStatuses();

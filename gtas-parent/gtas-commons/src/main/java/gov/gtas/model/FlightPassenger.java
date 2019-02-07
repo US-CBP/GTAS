@@ -59,4 +59,9 @@ public class FlightPassenger {
         return Objects.equals(this.flightId, other.flightId)
                 && Objects.equals(this.passengerId, other.passengerId);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFlightId(), getPassengerId());
+    }
 }
