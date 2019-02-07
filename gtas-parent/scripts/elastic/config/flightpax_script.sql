@@ -9,7 +9,7 @@
 	f.`id` "flight.id",
 	f.`origin` "flight.origin", 
 	f.`origin_country` "flight.origin_country",
-	f.`rule_hit_count` "flight.rule_hit_count",
+-- 	f.`rule_hit_count` "flight.rule_hit_count",
 	f.`passenger_count` "flight.passenger_count",
 	
 	p.`id` "p_id",
