@@ -64,7 +64,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
     		hideDelay   : 0,
             position    : 'top right',
             ok:"OK",
-            template    : '<md-toast style="height:100%"><div class="md-toast-content" style="height:100%">Password Criteria:'+
+            template    : '<md-toast style="height:100%;margin-top:160px;position:fixed;z-index: 10000;"><div class="md-toast-content" style="height:100%">Password Criteria:'+
     			'<ul><li>10 to 20 characters</li>'+
     			'<li>At least one special character (!@#$%^&*)</li>'+
     			'<li>At least one number</li>'+
