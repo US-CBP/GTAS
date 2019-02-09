@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class LoaderRepository {
-
 	private static final Logger logger = LoggerFactory
 			.getLogger(LoaderRepository.class);
 
@@ -266,7 +265,7 @@ public class LoaderRepository {
                 messagePassengers.add(existingPassenger);
                 existingPassengers.add(pvo);
                 logger.debug("@ createSeatAssignment");
-      //          createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
+                createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
                 logger.debug("@ createBags");
                 createBags(pvo.getBags(), existingPassenger, primeFlight);
             }
@@ -279,7 +278,7 @@ public class LoaderRepository {
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
                 }
-        //        createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight);
+                createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight); // revisit creation equality.
                 createBags(pvo.getBags(), newPassenger, primeFlight);
                 utils.calculateValidVisaDays(primeFlight,newPassenger);
                 newPassengers.add(newPassenger);
@@ -384,7 +383,6 @@ public class LoaderRepository {
             bag.setFlight(f);
             bag.setPassenger(p);
             p.getBags().add(bag);
-        //    bagDao.save(bag);
         }
     }
 

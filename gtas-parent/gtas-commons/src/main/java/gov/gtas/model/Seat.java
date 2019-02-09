@@ -73,7 +73,7 @@ public class Seat extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects
-				.hash(this.number, this.apis, this.passenger, this.flight);
+				.hash(this.number, this.apis);// this.passenger, this.flight);
 	}
 
 	@Override
@@ -84,8 +84,8 @@ public class Seat extends BaseEntity {
 			return false;
 		final Seat other = (Seat) obj;
 		return Objects.equals(this.number, other.number)
-				&& Objects.equals(this.apis, other.apis)
-				&& Objects.equals(this.passenger, other.passenger)
-				&& Objects.equals(this.flight, other.flight);
+				&& Objects.equals(this.apis, other.apis);
+			//	&& Objects.equals(this.passenger, other.passenger)
+			//	&& Objects.equals(this.flight, other.flight);
 	}
 }
