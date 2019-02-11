@@ -17,6 +17,10 @@ SELECT c.*,
        p.`citizenship_country` "passenger.citizenship_country",
        p.`debark_country` "passenger.debark_country",
        p.`debarkation` "passenger.debarkation",
+       debark_ar.longitude "passenger.debarkation.lon",
+       debark_ar.latitude "passenger.debarkation.lat",
+       embark_ar.longitude "passenger.embarkation.lon",
+       embark_ar.latitude "passenger.embarkation.lat",
        p.`dob` "passenger.dob",
        p.`embark_country` "passenger.embark_country",
        p.`embarkation` "passenger.embarkation",
@@ -81,4 +85,8 @@ FROM   cases c
        left join `hits_summary` h_summary
        		  on (c.`paxId` = h_summary.`passenger_id` and c.`flightId` = h_summary.`flight_id`)
        left join `hit_detail` h_detail
-       		  on (h_summary.`id` = h_detail.`hits_summary_id`);
+       		  on (h_summary.`id` = h_detail.`hits_summary_id`)
+       left join `airport` debark_ar
+       		  on (debark_ar.iata=p.debarkation and debark_ar.country=p.debark_country)
+        left join `airport` embark_ar
+       		  on (embark_ar.iata=p.embarkation and embark_ar.country=p.embark_country);

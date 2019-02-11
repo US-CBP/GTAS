@@ -249,7 +249,6 @@
             }
           },
           "passenger" : {
-            "type": "nested",
             "properties" : {
               "age" : {
                 "type" : "long"
@@ -284,6 +283,9 @@
                   }
                 }
               },
+               "debarkation_coordination" : {
+              	"type": "geo_point"
+              },
               "dob" : {
                 "type" : "date"
               },
@@ -304,6 +306,9 @@
                     "ignore_above" : 256
                   }
                 }
+              },
+              "embarkation_coordination" : {
+              	"type": "geo_point"
               },
               "first_name" : {
                 "type" : "text",
