@@ -7,6 +7,7 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.Pnr;
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.BookingDetailService;
@@ -39,8 +40,8 @@ public class BookingDetailCompressScheduler {
 
 
     @Transactional
-    @Scheduled(fixedDelayString = "120000", initialDelayString = "5000000")
-    public void jobScheduling() throws IOException {
+    @Scheduled(fixedDelayString = "5000", initialDelayString = "2000")
+    public void jobScheduling() {
 
         ArrayList<Long> _idsToRemove = new ArrayList<Long>();
         List<BookingDetail> _tempList = bookingDetailRepository.getBookingDetailByProcessedFlag();
@@ -61,10 +62,10 @@ public class BookingDetailCompressScheduler {
 
         for(BookingDetail bd : listOfUniques){
             _tempQueryResults = bookingDetailRepository.getSpecificBookingDetail(bd.getFlightNumber(), bd.getOrigin(), bd.getDestination(),
-                                                                                 bd.getEtaDate(), bd.getEtdDate(), Boolean.TRUE);
+                    bd.getEtaDate(), bd.getEtdDate(), Boolean.TRUE);
             if(_tempQueryResults.size()>0){
                 // found existing Booking Detail, line up existing for deletion
-               // _tempQueryResults.stream().filter()
+                // _tempQueryResults.stream().filter()
                 _tempQueryResults = _tempQueryResults.stream().sorted(Comparator.comparing(BookingDetail::getId)).collect(Collectors.toList());
                 //apply this bookingdetail to Pax and PNR
                 applyBDPaxPnr(_tempQueryResults.get(0), bd);

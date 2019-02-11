@@ -11,9 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
-import gov.gtas.PaxProcessingDto;
 import gov.gtas.model.*;
-import gov.gtas.repository.FlightPaxRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -100,12 +98,11 @@ public class PnrMessageService extends MessageLoaderService {
     @Override
     public MessageStatus load(MessageDto msgDto) {
     	logger.debug("@ load");
-    	long startTime = System.nanoTime();
+    //	long startTime = System.nanoTime();
         msgDto.getMessageStatus().setSuccess(true);
         Pnr pnr = msgDto.getPnr();
         try {
             PnrVo vo = (PnrVo)msgDto.getMsgVo();
-            // TODO: fix this, combine methods
             utils.convertPnrVo(pnr, vo);
 			loaderRepo.processPnr(pnr, vo);
 			Flight primeFlight = loaderRepo.processFlightsAndPassengers(
@@ -115,13 +112,15 @@ public class PnrMessageService extends MessageLoaderService {
 					msgDto.getPrimeFlightKey(),
 					pnr.getBookingDetails());
 
-//			logger.info("SAVED FLIGHTS time = "+(System.nanoTime()-startTime)/1000000);
+	//		logger.info("SAVED FLIGHTS time = "+(System.nanoTime()-startTime)/1000000);
+	//		startTime = System.nanoTime();
 			loaderRepo.makeNewPassengers(primeFlight,
 					vo.getPassengers(),
 					pnr.getPassengers(),
 					pnr.getBookingDetails(),
 					pnr);
-			logger.info("SAVED PASSEGNERS time = "+(System.nanoTime()-startTime)/1000000);
+	//		logger.info("SAVED PASSEGNERS time = "+(System.nanoTime()-startTime)/1000000);
+	//		startTime = System.nanoTime();
 
 			createFlightPax(pnr);
 			// update flight legs
@@ -135,25 +134,27 @@ public class PnrMessageService extends MessageLoaderService {
 
 			calculateDwellTimes(pnr);
 			updatePaxEmbarkDebark(pnr);
-			loaderRepo.createBagsFromPnrVo(vo,pnr); //make this good
-			loaderRepo.createFormPfPayments(vo,pnr); //make this good too
+			loaderRepo.createBagsFromPnrVo(vo,pnr);
+			loaderRepo.createFormPfPayments(vo,pnr);
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-//			logger.info("all done with pnr service");
-	//		logger.info("EVERYTHING ELSE"+(System.nanoTime()-startTime)/1000000);
 
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
 			logger.info("ERROR", e);
-        } finally {
-			if (!createMessage(pnr)) { //wont save if this blows up TODO: Make try catch inside finally to ENSURE message status is SET
+		} finally {
+			try {
+				if (!createMessage(pnr)) { //wont save if this blows up TODO: Make try catch inside finally to ENSURE message status is SET
+					msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
+				}
+			} catch (Exception e) {
+				logger.info("Failed to save PNR!", e);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
-		//	logger.info("TOTAL TIME ELSE"+(System.nanoTime()-startTime)/1000000);
 		}
-        return msgDto.getMessageStatus();
-    }
+		return msgDto.getMessageStatus();
+	}
 
 
     @Transactional
@@ -310,7 +311,7 @@ public class PnrMessageService extends MessageLoaderService {
         logger.error(stacktrace);
     }
     
-	boolean createMessage(Pnr m) {
+	private boolean createMessage(Pnr m) {
         boolean ret = true;
         logger.debug("@createMessage");
         long startTime = System.nanoTime();
@@ -327,7 +328,7 @@ public class PnrMessageService extends MessageLoaderService {
         logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
         return ret;
     }
-	Set<FlightPax> createFlightPax(Pnr pnr){
+	private void createFlightPax(Pnr pnr){
     	logger.debug("@ createFlightPax");
     	boolean oneFlight=false;
     	Set<FlightPax> paxRecords=new HashSet<>();
@@ -336,7 +337,6 @@ public class PnrMessageService extends MessageLoaderService {
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	int pnrBagCount=0;
     	double pnrBagWeight=0.0;
-    	Set<FlightPax> flightPaxes = new HashSet<>();
     	for(Flight f : flights){
     		for(Passenger p : pnr.getPassengers()){
     			FlightPax fp = new FlightPax();
@@ -385,9 +385,7 @@ public class PnrMessageService extends MessageLoaderService {
     		}
     		oneFlight=true;
 		}
-
-		return flightPaxes;
-	}
+    }
 
     private void setBagDetails(Set<FlightPax> paxes,Pnr pnr) {
     	int pnrBagCount=0;

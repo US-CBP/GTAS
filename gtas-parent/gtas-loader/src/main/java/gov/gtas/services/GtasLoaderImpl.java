@@ -5,7 +5,6 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.PaxProcessingDto;
 import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.tamr.TamrConversionService;
@@ -42,8 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {
-	private static final Logger logger = LoggerFactory
-			.getLogger(GtasLoaderImpl.class);
+    private static final Logger logger = LoggerFactory
+            .getLogger(GtasLoaderImpl.class);
 
     @Autowired
     private ReportingPartyRepository rpDao;
@@ -83,19 +82,19 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Autowired
     private PaymentFormRepository paymentFormDao;
-    
+
     @Autowired
     private PassengerIDTagRepository passengerIdTagDao;
-    
-    @Autowired 
+
+    @Autowired
     BookingDetailRepository bookingDetailDao;
-    
+
     @Autowired
     PnrRepository pnrDao;
-    
+
     @Autowired
     FlightService flightService;
-    
+
     @Autowired
     TamrConversionService tamrService;
 
@@ -126,8 +125,8 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Transactional
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
-    	logger.debug("@ processPnr");
-    	long startTime = System.nanoTime();
+        logger.debug("@ processPnr");
+        long startTime = System.nanoTime();
 
         for (AddressVo addressVo : vo.getAddresses()) {
             Address existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountry(
@@ -153,7 +152,7 @@ public class GtasLoaderImpl implements GtasLoader {
         for (CreditCardVo creditVo : vo.getCreditCards()) {
             CreditCard existingCard = creditDao.findByCardTypeAndNumberAndExpiration(creditVo.getCardType(), creditVo.getNumber(), creditVo.getExpiration());
             if (existingCard == null) {
-                CreditCard newCard  = utils.convertCreditVo(creditVo);
+                CreditCard newCard = utils.convertCreditVo(creditVo);
                 pnr.addCreditCard(newCard);
             } else {
                 pnr.addCreditCard(existingCard);
@@ -174,54 +173,52 @@ public class GtasLoaderImpl implements GtasLoader {
             Agency existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
             if (existingAgency == null) {
                 Agency newAgency = utils.convertAgencyVo(avo);
-                newAgency.setCity(newAgency.getCity()!=null?newAgency.getCity().toUpperCase():newAgency.getCity());
+                newAgency.setCity(newAgency.getCity() != null ? newAgency.getCity().toUpperCase() : newAgency.getCity());
                 pnr.addAgency(newAgency);
             } else {
                 pnr.addAgency(existingAgency);
             }
         }
         for (EmailVo evo : vo.getEmails()) {
-        	Email email = utils.convertEmailVo(evo);
-        	pnr.addEmail(email);
+            Email email = utils.convertEmailVo(evo);
+            pnr.addEmail(email);
         }
-        for(CodeShareVo cso : vo.getCodeshares()){
-        	CodeShareFlight cs = utils.convertCodeShare(cso);
-        	cs.getPnrs().add(pnr);
-        	pnr.getCodeshares().add(cs);
+        for (CodeShareVo cso : vo.getCodeshares()) {
+            CodeShareFlight cs = utils.convertCodeShare(cso);
+            cs.getPnrs().add(pnr);
+            pnr.getCodeshares().add(cs);
         }
-        logger.debug("processPnr time= "+(System.nanoTime()-startTime)/1000000);
+        logger.debug("processPnr time= " + (System.nanoTime() - startTime) / 1000000);
     }
 
     @Transactional
     public Flight processFlightsAndPassengers(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
-                                                        String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
+                                              String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
 
         long startTime = System.nanoTime();
         // save flight and booking details
         // return flight and booking details
         // first find all existing passengers, create any missing flights
-    	utils.sortFlightsByDate(flights);
-    	Flight primeFlight = null;
-    	boolean isPrimeFlightNew = false;
-        for (int i=0; i<flights.size(); i++) {
+        utils.sortFlightsByDate(flights);
+        Flight primeFlight = null;
+        for (int i = 0; i < flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if(primeFlightKey[0].equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)){ //placeholder is temporary allowance to assist manual running of loader
-	            logger.debug("@ getFlightByCriteria");
-	            Flight currentFlight = null;
-	           	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
-	           		if(existingFlight == null){
-	                	logger.info("Flight Not Found: Creating Flight");
-	                    currentFlight = utils.createNewFlight(fvo);
-	                    flightDao.save(currentFlight);
-	                    logger.info("Flight Created: "+fvo.getFlightNumber());
-	                }
-	                else {
-	                    currentFlight = existingFlight;
-	                    if(fvo.isCodeShareFlight() ){
-	                    	currentFlight.setOperatingFlight(true);
-	                    }
+            if (primeFlightKey[0].equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)) { //placeholder is temporary allowance to assist manual running of loader
+                logger.debug("@ getFlightByCriteria");
+                Flight currentFlight;
+                Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
+                if (existingFlight == null) {
+                    logger.info("Flight Not Found: Creating Flight");
+                    currentFlight = utils.createNewFlight(fvo);
+                    flightDao.save(currentFlight);
+                    logger.info("Flight Created: " + fvo.getFlightNumber());
+                } else {
+                    currentFlight = existingFlight;
+                    if (fvo.isCodeShareFlight()) {
+                        currentFlight.setOperatingFlight(true);
+                    }
 
-	                }
+                }
                 primeFlight = currentFlight;
                 logger.debug("processFlightsAndPassenger: check for existing flights time= " + (System.nanoTime() - startTime) / 1000000);
                 messageFlights.add(currentFlight);
@@ -230,15 +227,15 @@ public class GtasLoaderImpl implements GtasLoader {
                 leg.setLegNumber(i);
                 flightLegs.add(leg);
             }//End if prime flight
-            else{
-            	BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
-            	//create booking details for this pnr
-            	bD = bookingDetailDao.save(bD);
-            	bookingDetails.add(bD);
-            	FlightLeg leg = new FlightLeg();
-            	leg.setBookingDetail(bD);
-            	leg.setLegNumber(i);
-            	flightLegs.add(leg);
+            else {
+                BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
+                //create booking details for this pnr
+                bD = bookingDetailDao.save(bD);
+                bookingDetails.add(bD);
+                FlightLeg leg = new FlightLeg();
+                leg.setBookingDetail(bD);
+                leg.setLegNumber(i);
+                flightLegs.add(leg);
             }
         }
         if (primeFlight == null) {
@@ -253,52 +250,50 @@ public class GtasLoaderImpl implements GtasLoader {
                                   Set<BookingDetail> bookingDetails,
                                   Message message) throws ParseException {
 
-        Set<PassengerVo> existingPassengers = new HashSet<>();
+        Set<Passenger> newPassengers = new HashSet<>();
         for (PassengerVo pvo : passengers) {
             Passenger existingPassenger = findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger != null) {
                 updatePassenger(existingPassenger, pvo);
                 messagePassengers.add(existingPassenger);
-                existingPassengers.add(pvo);
                 logger.debug("@ createSeatAssignment");
                 createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
                 logger.debug("@ createBags");
                 createBags(pvo.getBags(), existingPassenger, primeFlight);
-            }
-        }
-
-        Set<Passenger> newPassengers = new HashSet<>();
-        for (PassengerVo pvo : passengers) {
-            if (!existingPassengers.contains(pvo)) {
+            } else {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
                 }
-                createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight); // revisit creation equality.
+                createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight);
                 createBags(pvo.getBags(), newPassenger, primeFlight);
-                utils.calculateValidVisaDays(primeFlight,newPassenger);
+                utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
                 messagePassengers.add(newPassenger);
             }
         }
+
         passengerDao.save(messagePassengers);
 
         Set<FlightPassenger> flightPassengers = new HashSet<>();
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
+
         for (Passenger p : newPassengers) {
             PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
             passengerIDTags.add(paxIdTag);
         }
+
         for (Passenger p : newPassengers) {
             FlightPassenger fp = new FlightPassenger();
             fp.setPassengerId(p.getId().toString());
             fp.setFlightId(primeFlight.getId().toString());
             flightPassengers.add(fp);
-            primeFlight.setPassengerCount(primeFlight.getPassengerCount()+1);
+            primeFlight.setPassengerCount(primeFlight.getPassengerCount() + 1);
         }
-        if(!bookingDetails.isEmpty()) {
-            for(BookingDetail bD : bookingDetails){
-                for(Passenger pax : messagePassengers){
+
+        if (!bookingDetails.isEmpty()) {
+            for (BookingDetail bD : bookingDetails) {
+                for (Passenger pax : messagePassengers) {
                     bD.getPassengers().add(pax);
                     pax.getBookingDetails().add(bD);
                 }
@@ -308,46 +303,41 @@ public class GtasLoaderImpl implements GtasLoader {
         flightPassengerRepository.save(flightPassengers);
     }
 
-    @Override
-    public void saveAndLinkNewPassengers(PaxProcessingDto paxProcessingDto, List<BookingDetail> bookingDetails, Message message) {
-
-    }
-
 
     /**
      * Create a single seat assignment for the given passenger, flight
      * combination. TODO: Inefficient to have to pass in the entire list of seat
      * assignments from the paxVo.
      *
-     * @param seatAssignments
-     * @param p
-     * @param f
+     * @param seatAssignments seatAssignment Value Object
+     * @param p               Passenger to add seat to
+     * @param f               Flight passenger is on.
      */
-    public void createSeatAssignment(List<SeatVo> seatAssignments, Passenger p, Flight f) {
+    private void createSeatAssignment(List<SeatVo> seatAssignments, Passenger p, Flight f) {
         for (SeatVo seat : seatAssignments) {
             if (seat.getDestination().equals(f.getDestination())
-                && seat.getOrigin().equals(f.getOrigin())) {
+                    && seat.getOrigin().equals(f.getOrigin())) {
                 Seat s = new Seat();
                 s.setPassenger(p);
                 s.setFlight(f);
                 s.setNumber(seat.getNumber());
                 s.setApis(seat.getApis());
                 Boolean alreadyExistsSeat = Boolean.FALSE;
-                for(Seat s2 : p.getSeatAssignments()){      	
-                	if(s.equals(s2)){
-                		alreadyExistsSeat = Boolean.TRUE;
-                	}
+                for (Seat s2 : p.getSeatAssignments()) {
+                    if (s.equals(s2)) {
+                        alreadyExistsSeat = Boolean.TRUE;
+                    }
                 }
-                if(!alreadyExistsSeat){
-                	p.getSeatAssignments().add(s);
+                if (!alreadyExistsSeat) {
+                    p.getSeatAssignments().add(s);
                 }
                 return;
             }
         }
     }
 
-    public void createBags(List<String> bagIds, Passenger p, Flight f) {
-        for (String bagId: bagIds) {
+    private void createBags(List<String> bagIds, Passenger p, Flight f) {
+        for (String bagId : bagIds) {
             Bag bag = new Bag();
             bag.setBagId(bagId);
             bag.setData_source("APIS");
@@ -361,50 +351,52 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Transactional
-    public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) {
-    	for(Flight f : pnr.getFlights()){
-        	if(pvo == null || pvo.getBags() == null ){
-        		break;
-        	}
-    		for(BagVo b : pvo.getBags()){
-    			String destination=f.getDestination();
-    			//flight_pax | bag info not making table #783 code fix
-    			if(b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())){
-    			if(org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())){
-    				destination=b.getDestinationAirport();
-    			}
-    			for(Passenger p: pnr.getPassengers()){
-    					if(StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
-    							StringUtils.equals(p.getLastName(), b.getLastName())){
-    						 Bag bag = new Bag();
-    	    		         bag.setBagId(b.getBagId());
-    	    		         bag.setAirline(b.getAirline());
-    	    		         bag.setData_source(b.getData_source());
-    	    		         bag.setDestinationAirport(destination);
-    	    		         bag.setHeadPool(b.isHeadPool());
-    	    		         bag.setFlight(f);
-    	    		         bag.setPassenger(p);
-    	    		         bagDao.save(bag);
-    	    		         p.getBags().add(bag);
-    					}
-    				}
-    			}
-     		}
-    	}
+    public void createBagsFromPnrVo(PnrVo pvo, Pnr pnr) {
 
+        for (Flight f : pnr.getFlights()) {
+            if (pvo == null || pvo.getBags() == null) {
+                break;
+            }
+            for (BagVo b : pvo.getBags()) {
+                String destination = f.getDestination();
+                //flight_pax | bag info not making table #783 code fix
+                if (b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())) {
+                    if (org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())) {
+                        destination = b.getDestinationAirport();
+                    }
+                    for (Passenger p : pnr.getPassengers()) {
+                        if (StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
+                                StringUtils.equals(p.getLastName(), b.getLastName())) {
+                            Bag bag = new Bag();
+                            bag.setBagId(b.getBagId());
+                            bag.setAirline(b.getAirline());
+                            bag.setData_source(b.getData_source());
+                            bag.setDestinationAirport(destination);
+                            bag.setHeadPool(b.isHeadPool());
+                            bag.setFlight(f);
+                            bag.setPassenger(p);
+                            bagDao.save(bag);
+                            p.getBags().add(bag);
+                        }
+                    }
+                }
+            }
+        }
     }
-    public void createFormPfPayments(PnrVo vo,Pnr pnr){
-    	Set<PaymentForm> chkList=new HashSet<>();
-    	for(PaymentFormVo pvo:vo.getFormOfPayments()){
-    		PaymentForm pf = new PaymentForm();
-    		pf.setPaymentType(pvo.getPaymentType());
-    		pf.setPaymentAmount(pvo.getPaymentAmount());
-    		pf.setPnr(pnr);
-    		chkList.add(pf);
-    	}
+
+    public void createFormPfPayments(PnrVo vo, Pnr pnr) {
+        Set<PaymentForm> chkList = new HashSet<>();
+        for (PaymentFormVo pvo : vo.getFormOfPayments()) {
+            PaymentForm pf = new PaymentForm();
+            pf.setPaymentType(pvo.getPaymentType());
+            pf.setPaymentAmount(pvo.getPaymentAmount());
+            pf.setPnr(pnr);
+            chkList.add(pf);
+        }
         paymentFormDao.save(chkList);
-
     }
+
+
     public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
