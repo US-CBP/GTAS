@@ -81,7 +81,7 @@ public class CaseDispositionController {
         
         if(!isAdmin)
         {
-        	String userLocation = (String) hsr.getSession(true).getAttribute(Constants.USER_PRIMARY_LOCATION);
+        	String userLocation = (String) hsr.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
         	request.setUserLocation(userLocation);
         }
         

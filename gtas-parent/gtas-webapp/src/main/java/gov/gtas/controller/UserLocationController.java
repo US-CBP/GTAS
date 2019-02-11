@@ -55,7 +55,7 @@ public class UserLocationController {
 
 		try {
 
-			httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
+			httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
 			logger.info("The office location is updated successfully to " + userLocationVo.getAirport()
 					+ " in this session.");
 

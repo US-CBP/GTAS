@@ -303,6 +303,9 @@ var app;
                         //TODO research why this resolve doesn't stick...
                         flights: function (passengersBasedOnUserFilter, flightsModel) {
                             return passengersBasedOnUserFilter.load();
+                        },
+                        flightSearchOptions: function(flightService){
+                            return flightService.getFlightDirectionList();
                         }
                     }
                 })

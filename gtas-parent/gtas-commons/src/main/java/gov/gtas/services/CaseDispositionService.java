@@ -12,7 +12,7 @@ import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.vo.OneDayLookoutVo;
+import gov.gtas.vo.passenger.OneDayLookoutVo;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
