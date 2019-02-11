@@ -16,20 +16,25 @@ import gov.gtas.services.search.ElasticHelper;
 
 @Service
 public abstract class MessageLoaderService {
+
     @Autowired
-    protected LoaderRepository loaderRepo;
+    protected GtasLoader loaderRepo;
 
     @Autowired
     protected LoaderUtils utils;
 
     public abstract List<String> preprocess(String message);
+
     public abstract MessageVo parse(String message);
+
     public abstract boolean load(MessageVo parsedMessage);
 
     protected String filePath = null;
+
     public String getFilePath() {
         return filePath;
     }
+
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -41,9 +46,11 @@ public abstract class MessageLoaderService {
 
     protected boolean useIndexer;
 
-	public void setUseIndexer(boolean useIndexer) {
-		this.useIndexer = useIndexer;
-	}
-	public abstract MessageDto parse(MessageDto msgDto);
-	public abstract MessageStatus load(MessageDto msgDto);
+    public void setUseIndexer(boolean useIndexer) {
+        this.useIndexer = useIndexer;
+    }
+
+    public abstract MessageDto parse(MessageDto msgDto);
+
+    public abstract MessageStatus load(MessageDto msgDto);
 }

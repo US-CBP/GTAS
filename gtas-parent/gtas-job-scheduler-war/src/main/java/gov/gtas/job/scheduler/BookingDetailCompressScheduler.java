@@ -39,7 +39,7 @@ public class BookingDetailCompressScheduler {
 
 
     @Transactional
-    @Scheduled(fixedDelayString = "10000000", initialDelayString = "10000000")
+    @Scheduled(fixedDelayString = "120000", initialDelayString = "5000000")
     public void jobScheduling() throws IOException {
 
         ArrayList<Long> _idsToRemove = new ArrayList<Long>();

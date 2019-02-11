@@ -369,7 +369,7 @@ public class TargetingServiceImpl implements TargetingService {
 		return ruleResults;
 	}
 
-	Set<Case> processResultAndMakeCasesPopulateTargetingResult(RuleResults ruleResults) {
+	private Set<Case> processResultAndMakeCasesPopulateTargetingResult(RuleResults ruleResults) {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		Set<Case> casesSet = new HashSet<>();
 		if (ruleResults.getUdrResult() != null) {

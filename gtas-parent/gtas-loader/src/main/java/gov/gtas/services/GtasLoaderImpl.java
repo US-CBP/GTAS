@@ -35,14 +35,15 @@ import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@Repository
-public class LoaderRepository {
+@Service
+public class GtasLoaderImpl implements GtasLoader {
 	private static final Logger logger = LoggerFactory
-			.getLogger(LoaderRepository.class);
+			.getLogger(GtasLoaderImpl.class);
 
     @Autowired
     private ReportingPartyRepository rpDao;
@@ -102,7 +103,7 @@ public class LoaderRepository {
     FlightPassengerRepository flightPassengerRepository;
 
 
-    void checkHashCode(String hash) throws LoaderException {
+    public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
         if (m != null) {
             throw new LoaderException("duplicate message hashcode: " + hash);
@@ -192,7 +193,7 @@ public class LoaderRepository {
     }
 
     @Transactional
-    public PaxProcessingDto processFlightsAndPassengers(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
+    public Flight processFlightsAndPassengers(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
                                                         String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
 
         long startTime = System.nanoTime();
@@ -209,7 +210,6 @@ public class LoaderRepository {
 	            Flight currentFlight = null;
 	           	Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
 	           		if(existingFlight == null){
-                        isPrimeFlightNew = true;
 	                	logger.info("Flight Not Found: Creating Flight");
 	                    currentFlight = utils.createNewFlight(fvo);
 	                    flightDao.save(currentFlight);
@@ -244,21 +244,17 @@ public class LoaderRepository {
         if (primeFlight == null) {
             throw new RuntimeException("oh noes!");
         }
-        PaxProcessingDto paxProcessingDto = new PaxProcessingDto();
-        paxProcessingDto.setBookingDetails(bookingDetails);
-        paxProcessingDto.setPrimeFlight(primeFlight);
-        paxProcessingDto.setPrimeFlightNew(isPrimeFlightNew);
-        return paxProcessingDto;
+        return primeFlight;
     }
 
+    @Transactional
+    public void makeNewPassengers(Flight primeFlight, List<PassengerVo> passengers,
+                                  Set<Passenger> messagePassengers,
+                                  Set<BookingDetail> bookingDetails,
+                                  Message message) throws ParseException {
 
-    void makeNewPassengers(PaxProcessingDto paxProcessingDto, List<PassengerVo> passengers, Set<Passenger> messagePassengers, Message message) throws ParseException {
-
-        Flight primeFlight = paxProcessingDto.getPrimeFlight();
-        Set<BookingDetail> bookingDetails = paxProcessingDto.getBookingDetails();
         Set<PassengerVo> existingPassengers = new HashSet<>();
         for (PassengerVo pvo : passengers) {
-            logger.debug("@ findPassengerOnFlight");
             Passenger existingPassenger = findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger != null) {
                 updatePassenger(existingPassenger, pvo);
@@ -282,61 +278,39 @@ public class LoaderRepository {
                 createBags(pvo.getBags(), newPassenger, primeFlight);
                 utils.calculateValidVisaDays(primeFlight,newPassenger);
                 newPassengers.add(newPassenger);
+                messagePassengers.add(newPassenger);
             }
         }
+        passengerDao.save(messagePassengers);
 
-        saveAndLinkNewPassengers(messagePassengers, primeFlight, bookingDetails, newPassengers, message);
-    }
-
-
-    @Transactional
-    protected void saveAndLinkNewPassengers(Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails, Set<Passenger> newPassengers, Message message) {
-        Iterable<Passenger> passengerIterable = passengerDao.save(messagePassengers);
-        Iterable<Passenger> newPassengerIterable = passengerDao.save(newPassengers);
         Set<FlightPassenger> flightPassengers = new HashSet<>();
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
         for (Passenger p : newPassengers) {
             PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
             passengerIDTags.add(paxIdTag);
         }
-        for (Passenger p : newPassengerIterable) {
+        for (Passenger p : newPassengers) {
             FlightPassenger fp = new FlightPassenger();
             fp.setPassengerId(p.getId().toString());
             fp.setFlightId(primeFlight.getId().toString());
             flightPassengers.add(fp);
-    //        primeFlight.setPassengerCount(primeFlight.getPassengerCount()+1); TODO: FIX THIS BEFORE COMMITTING.
-            }
-
-        Set<Passenger> allPassengersNewAndUpdated = new HashSet<>();
-        //add existing passengers
-        passengerIterable.forEach(allPassengersNewAndUpdated::add);
-        //add new passengers
-        newPassengerIterable.forEach(allPassengersNewAndUpdated::add);
-
-        for(BookingDetail bD : bookingDetails){
-            for(Passenger pax : allPassengersNewAndUpdated){
-                bD.getPassengers().add(pax);
-                pax.getBookingDetails().add(bD);
+            primeFlight.setPassengerCount(primeFlight.getPassengerCount()+1);
+        }
+        if(!bookingDetails.isEmpty()) {
+            for(BookingDetail bD : bookingDetails){
+                for(Passenger pax : messagePassengers){
+                    bD.getPassengers().add(pax);
+                    pax.getBookingDetails().add(bD);
+                }
             }
         }
         passengerIdTagDao.save(passengerIDTags);
         flightPassengerRepository.save(flightPassengers);
-        Iterable<Passenger> savedPassengerIterable =  passengerDao.save(allPassengersNewAndUpdated);
-        Set<Passenger> savedPassengersSet = new HashSet<>();
-        savedPassengerIterable.forEach(savedPassengersSet::add);
+    }
 
-        Set<BookingDetail> savedBookingDetailsSet = new HashSet<>();
-        Iterable<BookingDetail> bookingDetailIterable = bookingDetailDao.save(bookingDetails);
-        bookingDetailIterable.forEach(savedBookingDetailsSet::add);
+    @Override
+    public void saveAndLinkNewPassengers(PaxProcessingDto paxProcessingDto, List<BookingDetail> bookingDetails, Message message) {
 
-        if (message instanceof Pnr) {
-            Pnr pnr = (Pnr) message;
-            pnr.setPassengers(savedPassengersSet);
-            pnr.setBookingDetails(savedBookingDetailsSet);
-        } else if (message instanceof ApisMessage) {
-            ApisMessage apisMessage = (ApisMessage) message;
-            apisMessage.setPassengers(savedPassengersSet);
-        }
     }
 
 
@@ -386,6 +360,7 @@ public class LoaderRepository {
         }
     }
 
+    @Transactional
     public void createBagsFromPnrVo(PnrVo pvo,Pnr pnr) {
     	for(Flight f : pnr.getFlights()){
         	if(pvo == null || pvo.getBags() == null ){
@@ -427,12 +402,10 @@ public class LoaderRepository {
     		pf.setPnr(pnr);
     		chkList.add(pf);
     	}
-    	for(PaymentForm pform : chkList){
-    		paymentFormDao.save(pform);
-    	}
+        paymentFormDao.save(chkList);
 
     }
-    private void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
+    public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
             Document existingDoc = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
@@ -447,7 +420,8 @@ public class LoaderRepository {
     /**
      * TODO: update how we find passengers here, use document ,etc
      */
-    private Passenger findPassengerOnFlight(Flight f, PassengerVo pvo) {
+    @Transactional(propagation = Propagation.MANDATORY)
+    public Passenger findPassengerOnFlight(Flight f, PassengerVo pvo) {
         if (f.getId() == null) {
             return null;
         }
@@ -458,13 +432,5 @@ public class LoaderRepository {
         } else {
             return null;
         }
-    }
-    
-    public void createBookingDetails(Pnr pnr){
-    	
-    	for(BookingDetail bD : pnr.getBookingDetails()){
-    		bD.getPnrs().add(pnr);
-    	}
-    	bookingDetailDao.save(pnr.getBookingDetails());
     }
 }

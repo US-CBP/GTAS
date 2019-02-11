@@ -108,10 +108,21 @@ public class PnrMessageService extends MessageLoaderService {
             // TODO: fix this, combine methods
             utils.convertPnrVo(pnr, vo);
 			loaderRepo.processPnr(pnr, vo);
-			PaxProcessingDto paxProcessingDto = loaderRepo.processFlightsAndPassengers(vo.getFlights(),
-					pnr.getFlights(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey(), pnr.getBookingDetails());
+			Flight primeFlight = loaderRepo.processFlightsAndPassengers(
+					vo.getFlights(),
+					pnr.getFlights(),
+					pnr.getFlightLegs(),
+					msgDto.getPrimeFlightKey(),
+					pnr.getBookingDetails());
 
-			loaderRepo.makeNewPassengers(paxProcessingDto, vo.getPassengers(), pnr.getPassengers(), pnr);
+//			logger.info("SAVED FLIGHTS time = "+(System.nanoTime()-startTime)/1000000);
+			loaderRepo.makeNewPassengers(primeFlight,
+					vo.getPassengers(),
+					pnr.getPassengers(),
+					pnr.getBookingDetails(),
+					pnr);
+			logger.info("SAVED PASSEGNERS time = "+(System.nanoTime()-startTime)/1000000);
+
 			createFlightPax(pnr);
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
@@ -124,24 +135,29 @@ public class PnrMessageService extends MessageLoaderService {
 
 			calculateDwellTimes(pnr);
 			updatePaxEmbarkDebark(pnr);
-			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createFormPfPayments(vo,pnr);
+			loaderRepo.createBagsFromPnrVo(vo,pnr); //make this good
+			loaderRepo.createFormPfPayments(vo,pnr); //make this good too
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-			logger.info("all done with pnr service");
-        } catch (Exception e) {
+//			logger.info("all done with pnr service");
+	//		logger.info("EVERYTHING ELSE"+(System.nanoTime()-startTime)/1000000);
+
+		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
+			logger.info("ERROR", e);
         } finally {
 			if (!createMessage(pnr)) { //wont save if this blows up TODO: Make try catch inside finally to ENSURE message status is SET
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
-        }
+		//	logger.info("TOTAL TIME ELSE"+(System.nanoTime()-startTime)/1000000);
+		}
         return msgDto.getMessageStatus();
     }
 
 
-    private void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
+    @Transactional
+    protected void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
     	logger.debug("@ updatePaxEmbarkDebark");
     	long startTime = System.nanoTime();
     	List<FlightLeg> legs = pnr.getFlightLegs();

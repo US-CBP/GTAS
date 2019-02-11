@@ -225,14 +225,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		for (Long _tempHitId : hit_ids) {
 			hitDisp = new HitsDisposition();
 			if (hitDesc.startsWith(WL_ITEM_PREFIX)) {
-				pullRuleCategory(hitDisp, 1L, ruleCatMap);
+	//			pullRuleCategory(hitDisp, 1L, ruleCatMap);
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
 				hitDesc = hitDesc.substring(7);
 			} else {
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
-				pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
+	//			pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
 				// highPriorityRuleCatId will remain 1L for WL hits
-				highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
+	//			highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
 			}
 
 			hitDisp.setHitId(_tempHitId);

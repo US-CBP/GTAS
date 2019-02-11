@@ -60,7 +60,7 @@ public class RuleRunnerScheduler {
 	 */
 	//This is commented out as a scheduled task in order to remove concurrency issues in the DB involving loader and rule runner. This may not be the final solution to the problem
 	//but it suffices for now. The rule running portion of the scheduler is now tacked into the loader portion at the bottom to insure sequential operation.
-	@Scheduled(fixedDelayString = "5000", initialDelayString = "2000")
+	@Scheduled(fixedDelayString = "5000000", initialDelayString = "2000000")
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		try {

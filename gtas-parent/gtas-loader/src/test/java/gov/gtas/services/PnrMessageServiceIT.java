@@ -9,9 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
 import gov.gtas.model.Passenger;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.FlightVo;
@@ -52,7 +50,7 @@ public class PnrMessageServiceIT extends
 	private FlightRepository flightDao;
 
 	@Autowired
-	private LoaderRepository loaderRepo;
+	private GtasLoaderImpl loaderRepo;
 
 	@Autowired
 	private PassengerRepository paxDao;

@@ -94,16 +94,24 @@ public class ApisMessageService extends MessageLoaderService {
 	@Override
     public MessageStatus load(MessageDto msgDto){
         msgDto.getMessageStatus().setSuccess(true);
-
         ApisMessage apis = msgDto.getApis();
         try {
             ApisMessageVo m = (ApisMessageVo)msgDto.getMsgVo();
             loaderRepo.processReportingParties(apis, m.getReportingParties());
 
-            PaxProcessingDto paxProcessingDto = loaderRepo.processFlightsAndPassengers(m.getFlights(),
-            		apis.getFlights(), new ArrayList<>(), msgDto.getPrimeFlightKey(), new HashSet<>());
+            Flight primeFlight = loaderRepo.processFlightsAndPassengers(
+                    m.getFlights(),
+            		apis.getFlights(),
+                    new ArrayList<>(),
+                    msgDto.getPrimeFlightKey(),
+                    new HashSet<>());
 
-            loaderRepo.makeNewPassengers(paxProcessingDto, m.getPassengers(), apis.getPassengers(), apis);
+            loaderRepo.makeNewPassengers(
+                    primeFlight,
+                    m.getPassengers(),
+                    apis.getPassengers(),
+                    new HashSet<>(),
+                    apis);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
 

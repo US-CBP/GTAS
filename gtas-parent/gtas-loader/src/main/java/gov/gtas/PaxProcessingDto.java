@@ -13,6 +13,16 @@ public class PaxProcessingDto {
     List<PassengerVo> passengers;
     Set<Flight> messageFlights;
     java.util.Set<Passenger> messagePassengers;
+
+    public Set<Passenger> getNewPassengers() {
+        return newPassengers;
+    }
+
+    public void setNewPassengers(Set<Passenger> newPassengers) {
+        this.newPassengers = newPassengers;
+    }
+
+    java.util.Set<Passenger> newPassengers;
     Set<BookingDetail> bookingDetails;
     Set<PassengerVo> existingPassengers;
     Flight primeFlight;
