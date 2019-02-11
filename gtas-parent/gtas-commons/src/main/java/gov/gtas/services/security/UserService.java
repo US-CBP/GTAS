@@ -48,7 +48,7 @@ public interface UserService {
 	 * @param userData the user data
 	 * @return the updated user data
 	 */
-	@PreAuthorize(PRIVILEGE_ADMIN)
+	//@PreAuthorize(PRIVILEGE_ADMIN)
 	public UserData update(UserData user);
 
 	/**

@@ -7,6 +7,7 @@ package gov.gtas.controller;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.validator.UserDataValidator;
@@ -77,13 +78,30 @@ public class UserController {
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse updateUser(@RequestBody @Valid UserData userData) {
+		
+		
+		
 		UserData rUserData = userData;
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
+		if(!isAdmin)
+		{
+			if( !userId.equalsIgnoreCase(userData.getUserId()) )
+			{
+				logger.error("The logged in user does not have a permission to update another user's credentials");
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized to update user credentials", rUserData);
+			}
+		}
+		
 		Validator validator = this.new Validator();
 		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.update(userData);
+			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
 			return new JsonServiceResponse(Status.SUCCESS,
 					validator.getErrMessage(), rUserData);
 		} else {
+			logger.error("The User Information is not updated due to errors for " + userData.getUserId());
 			return new JsonServiceResponse(Status.FAILURE,
 					validator.getErrMessage(), rUserData);
 		}
