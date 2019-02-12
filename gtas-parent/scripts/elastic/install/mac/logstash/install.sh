@@ -25,11 +25,8 @@ ln -s logstash-${ES_INSTALL_VERSION} logstash
 
 rm -f logstash-${ES_INSTALL_VERSION}.tar.gz
 
-echo $CURRENT_DIR
-echo $ES_INSTALL_LOCATION/kibana/config
-
 cd $CURRENT_DIR
 
-cp -Rf ../../../config/* $ES_INSTALL_LOCATION/logstash/config
+cd "$parent_dir"
 
-cp ../../../../../../gtas-parent/gtas-webapp/target/gtas/WEB-INF/lib/mariadb-java-client-2.3.0.jar $ES_INSTALL_LOCATION/logstash/config
+source ../copy_config.sh

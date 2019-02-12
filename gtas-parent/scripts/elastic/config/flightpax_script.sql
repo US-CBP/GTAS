@@ -11,6 +11,7 @@
 	f.`origin_country` "flight.origin_country",
 -- 	f.`rule_hit_count` "flight.rule_hit_count",
 	f.`passenger_count` "flight.passenger_count",
+	f.`direction` "flight.direction",
 	
 	p.`id` "p_id",
 	p.`citizenship_country` "p_citizenship_country", 
