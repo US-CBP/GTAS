@@ -24,7 +24,9 @@ import gov.gtas.model.Case;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.security.UserService;
-import gov.gtas.vo.OneDayLookoutVo;
+import gov.gtas.vo.passenger.OneDayLookoutVo;
+
+
 
 @RestController
 public class OneDayLookoutController {
@@ -65,7 +67,7 @@ public class OneDayLookoutController {
 		} else {
 
 		
-			String userLocation = (String) httpServletRequest.getSession(true)
+			String userLocation = (String) httpServletRequest.getSession()
 					.getAttribute(Constants.USER_PRIMARY_LOCATION);
 
 			if (userLocation != null && !userLocation.trim().isEmpty()) {

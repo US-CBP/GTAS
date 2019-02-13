@@ -39,9 +39,21 @@ app.service("flightService", function ($http, $q) {
     function handleSuccess(response) {
         return ( response.data );
     }
+    
+    function getFlightDirectionList(){
+        
+        var dfd = $q.defer();
+        dfd.resolve($http({
+            method: 'get',
+            url: "/gtas/flightdirectionlist"
+           
+        }));
+        return dfd.promise;
+    }
 
     // Return public API.
     return ({
-        getFlights: getFlights
+        getFlights: getFlights,
+        getFlightDirectionList:getFlightDirectionList
     });
 });

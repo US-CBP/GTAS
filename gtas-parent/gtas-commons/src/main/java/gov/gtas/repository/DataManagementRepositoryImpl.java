@@ -35,6 +35,14 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(DataManagementRepositoryImpl.class);
+        
+        
+        public static enum DataTruncationType
+        {
+           ALL,
+           APIS_ONLY,
+           PNR_ONLY
+        }
 	
 	// these tables are listed in the order that they must be truncated
 	private static final String HITS_DISPOSITION_COMMENTS_TABLE_NAME = "hits_disposition_comments";
@@ -141,7 +149,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void truncateAllMessageDataByDate(LocalDate localDate,  User currentUser) throws Exception
+	public void truncateAllMessageDataByDate(LocalDate localDate,  User currentUser, DataTruncationType type) throws Exception
 	{
 		inClauseIdListsMap = new HashMap<>();
 		
@@ -153,11 +161,11 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		try
 		{
 			// this will be false if there are no messages to delete before the selected date.
-			boolean continueBool = retrieveAllListsAndLoadIntoMap(localDate);
+			boolean continueBool = retrieveAllListsAndLoadIntoMap(localDate, type);
 			
 			if (continueBool)
 			{
-				initializeSqlDeleteElements();
+				initializeSqlDeleteElements(type);
 				
 				deleteFromAllTablesWithInClause();
 				
@@ -191,7 +199,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 
 	}
 	
-	private void initializeSqlDeleteElements()
+	private void initializeSqlDeleteElements(DataTruncationType type)
 	{
              // here we have the trio: table name, id name, and key to list for IN clause. These will be used by deleteFromAllTablesWithInClause().
             // These are in order; do not change the order unless there are database changes.
@@ -237,12 +245,18 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(APIS_MESSAGE_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_PASSENGER_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);	
-		strList = Arrays.asList(PNR_FLIGHT_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_CODESHARES_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
+                
+                if (!type.equals(DataTruncationType.APIS_ONLY))
+                {
+                    strList = Arrays.asList(PNR_PASSENGER_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);	
+                    strList = Arrays.asList(PNR_FLIGHT_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_CODESHARES_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                }
+                
+                
                 strList = Arrays.asList(FLIGHT_HIT_RULE_TABLE_NAME,"fhr_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
                 strList = Arrays.asList(FLIGHT_HIT_WATCHLIST_TABLE_NAME,"fhw_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
@@ -251,42 +265,50 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(FLIGHT_TABLE_NAME,"id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_AGENCY_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(AGENCY_TABLE_NAME,"id",AGENCY_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_CREDIT_CARD_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(CREDIT_CARD_TABLE_NAME,"id",CREDIT_CARD_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_FREQUENT_FLYER_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(FREQUENT_FLYER_TABLE_NAME,"id",FREQUENT_FLYER_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_PHONE_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PHONE_TABLE_NAME,"id",PHONE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_EMAIL_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(EMAIL_TABLE_NAME,"id",EMAIL_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_ADDRESS_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(ADDRESS_TABLE_NAME,"id",ADDRESS_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_DWELLTIME_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(DWELL_TIME_TABLE_NAME,"id",DWELL_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_BOOKING_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PAX_BOOKING_TABLE_NAME,"pax_id",TOTAL_PAX_ID_SET_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(BOOKINGDETAIL_TABLE_NAME,"id",BOOKING_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
-		strList = Arrays.asList(PNR_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
-		sqlDeleteElements.add(strList);
+                
+                 if (!type.equals(DataTruncationType.APIS_ONLY))
+                {               
+                    strList = Arrays.asList(PNR_AGENCY_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(AGENCY_TABLE_NAME,"id",AGENCY_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_CREDIT_CARD_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(CREDIT_CARD_TABLE_NAME,"id",CREDIT_CARD_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_FREQUENT_FLYER_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(FREQUENT_FLYER_TABLE_NAME,"id",FREQUENT_FLYER_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_PHONE_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_EMAIL_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(EMAIL_TABLE_NAME,"id",EMAIL_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_ADDRESS_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(ADDRESS_TABLE_NAME,"id",ADDRESS_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_DWELLTIME_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(DWELL_TIME_TABLE_NAME,"id",DWELL_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_BOOKING_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                    strList = Arrays.asList(PNR_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
+                    sqlDeleteElements.add(strList);
+                }
+                 
+                strList = Arrays.asList(PHONE_TABLE_NAME,"id",PHONE_ID_LIST_KEY);
+                sqlDeleteElements.add(strList);
+                strList = Arrays.asList(PAX_BOOKING_TABLE_NAME,"pax_id",TOTAL_PAX_ID_SET_KEY);
+                sqlDeleteElements.add(strList);
+                
+                
+                strList = Arrays.asList(BOOKINGDETAIL_TABLE_NAME,"id",BOOKING_ID_LIST_KEY);
+                sqlDeleteElements.add(strList); 
+                
 		strList = Arrays.asList(MESSAGE_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
                 strList = Arrays.asList(ATTACHMENT_TABLE_NAME, "passenger_id",TOTAL_PAX_ID_SET_KEY);
@@ -298,7 +320,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		
 	}
 	
-	private void deleteFromAllTablesWithInClause()
+	private void deleteFromAllTablesWithInClause() throws Exception
 	{
 		for (List<String> strList : sqlDeleteElements)
 		{
@@ -311,7 +333,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 
 	}
 	
-	private void deleteFromAllTablesWithDate(LocalDate localDate)
+	private void deleteFromAllTablesWithDate(LocalDate localDate) throws Exception
 	{
 		deleteFromTableWithDate(LOADER_AUDIT_LOGS_TABLE_NAME, "created_at", localDate); 
 		deleteFromTableWithDate(ERROR_DETAIL_TABLE_NAME, "timestamp", localDate);
@@ -319,12 +341,12 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		deleteFromTableWithDate(DASHBOARD_MESSAGE_STATS_TABLE_NAME, "dt_modified", localDate);
 	}
 	
-	private void deleteFromTableWithInClause(String tableName, String idName, String listKey)
+	private void deleteFromTableWithInClause(String tableName, String idName, String listKey) throws Exception
 	{
 		try
 		{
 		   Collection<BigInteger> list = inClauseIdListsMap.get(listKey);
-		   if (!list.isEmpty())
+		   if ((list != null) && (!list.isEmpty()))
 		   {
 		       String sqlString = " DELETE FROM " + tableName + " WHERE " + idName + " IN "	+ ":" + listKey;
 		       Query query = em.createNativeQuery(sqlString);
@@ -339,12 +361,12 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		{
 		   String message = "Error deleting " + tableName + " table: " + ex.getMessage();
 		   logger.error(message);
-		   throw new RuntimeException(message);
+		   throw new Exception(message);
 		}
 		
 	}
 	
-	private void deleteFromTableWithDate(String tableName, String idName, LocalDate localDate)
+	private void deleteFromTableWithDate(String tableName, String idName, LocalDate localDate) throws Exception
 	{
 		try
 		{
@@ -360,27 +382,45 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		{
 		   String message = "Error deleting " + tableName + " table: " + ex.getMessage();
 		   logger.error(message);
-		   throw new RuntimeException(message);
+		   throw new Exception(message);
 		}		
 
 	}
 	
-	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate)
+	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate, DataTruncationType type)
 	{
 		boolean returnBool = true;
 		List<BigInteger> messageIdList = getMessageIdListBeforeDate(localDate);
+                
+                List<BigInteger> apisPaxIdList = new ArrayList<>();
+                List<BigInteger> pnrPaxIdList =  new ArrayList<>();
+                List<BigInteger> apisFlightIdList = new ArrayList<>();
+                List<BigInteger> pnrFlightIdList = new ArrayList<>();
 		
 		if (!messageIdList.isEmpty())
 		{
-                    List<BigInteger> apisPaxIdList = getSomeIdList(APIS_PAX_ID_SQL, messageIdList);
-                    List<BigInteger> pnrPaxIdList = getSomeIdList(PNR_PAX_ID_SQL, messageIdList);
+                    if (!type.equals(DataTruncationType.PNR_ONLY))
+                    {
+                       apisPaxIdList = getSomeIdList(APIS_PAX_ID_SQL, messageIdList);
+                    }
+                    if (!type.equals(DataTruncationType.APIS_ONLY))
+                    {                   
+                       pnrPaxIdList = getSomeIdList(PNR_PAX_ID_SQL, messageIdList);
+                    }
 
                     Set<BigInteger> totalPaxIdSet = new HashSet<>();
                     totalPaxIdSet.addAll(apisPaxIdList);
                     totalPaxIdSet.addAll(pnrPaxIdList);
-
-                    List<BigInteger> apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL, messageIdList);
-                    List<BigInteger> pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL, messageIdList);
+                    
+                    if (!type.equals(DataTruncationType.PNR_ONLY))
+                    {
+                       apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL, messageIdList);
+                    }
+                    
+                    if (!type.equals(DataTruncationType.APIS_ONLY))
+                    {                   
+                       pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL, messageIdList);
+                    }                   
 
                     Set<BigInteger> totalFlightIdSet = new HashSet<>();
                     totalFlightIdSet.addAll(apisFlightIdList);
@@ -393,39 +433,46 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
                     List<BigInteger> reportingPartyIdList = getSomeIdList(REPORTING_PARTY_ID_SQL, messageIdList);
 
                     List<BigInteger>  codeShareIdList = getSomeIdList(CODE_SHARE_ID_SQL, messageIdList);
-
-                    List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, messageIdList);
-
-                    List<BigInteger> creditCardIdList = getSomeIdList(CREDIT_CARD_ID_SQL, messageIdList);
-
-                    List<BigInteger> frequentFlyerIdList = getSomeIdList(FREQUENT_FLYER_ID_SQL, messageIdList);
-
+                    
+                    List<BigInteger> bookingIdList =  getSomeIdList(BOOKING_ID_SQL, messageIdList);
+                    
                     List<BigInteger> phoneIdList = getSomeIdList(PHONE_ID_SQL, messageIdList);
 
-                    List<BigInteger> emailIdList = getSomeIdList(EMAIL_ID_SQL, messageIdList);
+                    
+                    if (!type.equals(DataTruncationType.APIS_ONLY))
+                    { 
+                        List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, messageIdList);
 
-                    List<BigInteger> addressIdList = getSomeIdList(ADDRESS_ID_SQL, messageIdList);
+                        List<BigInteger> creditCardIdList = getSomeIdList(CREDIT_CARD_ID_SQL, messageIdList);
 
-                    List<BigInteger> dwellIdList = getSomeIdList(DWELL_ID_SQL, messageIdList);
+                        List<BigInteger> frequentFlyerIdList = getSomeIdList(FREQUENT_FLYER_ID_SQL, messageIdList);
 
-                    List<BigInteger> bookingIdList =  getSomeIdList(BOOKING_ID_SQL, messageIdList);
+                        List<BigInteger> emailIdList = getSomeIdList(EMAIL_ID_SQL, messageIdList);
+
+                        List<BigInteger> addressIdList = getSomeIdList(ADDRESS_ID_SQL, messageIdList);
+
+                        List<BigInteger> dwellIdList = getSomeIdList(DWELL_ID_SQL, messageIdList);
+
+                        addListToMap(ADDRESS_ID_LIST_KEY, addressIdList);
+                        addListToMap(AGENCY_ID_LIST_KEY, agencyIdList);
+                        
+                        addListToMap(CREDIT_CARD_ID_LIST_KEY, creditCardIdList);
+                        addListToMap(DWELL_ID_LIST_KEY, dwellIdList);
+                        addListToMap(EMAIL_ID_LIST_KEY, emailIdList);
+                        addListToMap(FREQUENT_FLYER_ID_LIST_KEY, frequentFlyerIdList);
+                        
+                    }
 
                     List<BigInteger> hitDispositionIdList = this.getHitDispositionIdList(caseIdList);
 
                     List<BigInteger> attachmentIdList = this.getSomeIdList(ATTACHMENT_ID_SQL, totalPaxIdSet);
 
-                    addListToMap(ADDRESS_ID_LIST_KEY, addressIdList);
-                    addListToMap(AGENCY_ID_LIST_KEY, agencyIdList);
+                    addListToMap(PHONE_ID_LIST_KEY, phoneIdList);
                     addListToMap(BOOKING_ID_LIST_KEY, bookingIdList);
                     addListToMap(CASE_ID_LIST_KEY, caseIdList);
                     addListToMap(CODE_SHARE_ID_LIST_KEY, codeShareIdList);
-                    addListToMap(CREDIT_CARD_ID_LIST_KEY, creditCardIdList);
-                    addListToMap(DWELL_ID_LIST_KEY, dwellIdList);
-                    addListToMap(EMAIL_ID_LIST_KEY, emailIdList);
-                    addListToMap(FREQUENT_FLYER_ID_LIST_KEY, frequentFlyerIdList);
                     addListToMap(HITS_SUMMARY_ID_LIST_KEY, hitsSummaryIdList);
                     addListToMap(HIT_DISPOSITION_ID_LIST_KEY, hitDispositionIdList);
-                    addListToMap(PHONE_ID_LIST_KEY, phoneIdList);
                     addListToMap(REPORTING_PARTY_ID_LIST_KEY, reportingPartyIdList);
                     addListToMap(TOTAL_FLIGHT_ID_SET_KEY, totalFlightIdSet);
                     addListToMap(TOTAL_PAX_ID_SET_KEY, totalPaxIdSet);
@@ -461,10 +508,14 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private List<BigInteger> getSomeIdList(String sqlQuery, Collection<BigInteger> messageIdList)
 	{
 		List<BigInteger> returnIdList = new ArrayList<>();
-		Query query = em.createNativeQuery(sqlQuery);
-		query.setParameter("messageIdList", messageIdList);
-		
-		returnIdList = query.getResultList();
+                
+ 		if (messageIdList != null && !messageIdList.isEmpty())
+                {               
+                    Query query = em.createNativeQuery(sqlQuery);
+                    query.setParameter("messageIdList", messageIdList);
+
+                    returnIdList = query.getResultList();
+                }
 		
 		return returnIdList;		
 	}
@@ -472,12 +523,14 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private List<BigInteger> getCaseIdList(Set<BigInteger> paxIdSet)
 	{
 		List<BigInteger> caseIdList = new ArrayList<>();
-		
-		String sqlQuery = " SELECT id from cases where paxId in :paxIdList ";
-		Query query = em.createNativeQuery(sqlQuery);
-		query.setParameter("paxIdList", paxIdSet);
-		
-		caseIdList = query.getResultList();
+		if (paxIdSet != null && !paxIdSet.isEmpty())
+                {
+                    String sqlQuery = " SELECT id from cases where paxId in :paxIdList ";
+                    Query query = em.createNativeQuery(sqlQuery);
+                    query.setParameter("paxIdList", paxIdSet);
+
+                    caseIdList = query.getResultList();
+                }
 		
 		return caseIdList;		
 		
@@ -486,12 +539,14 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	private List<BigInteger> getHitsSummaryIdList(Set<BigInteger> paxIdSet)
 	{
 		List<BigInteger> hitsSummaryIdList = new ArrayList<>();
-		
-		String sqlQuery = " SELECT id from hits_summary where passenger_id in  :paxIdList ";
-		Query query = em.createNativeQuery(sqlQuery);
-		query.setParameter("paxIdList", paxIdSet);
-		
-		hitsSummaryIdList = query.getResultList();
+		if (paxIdSet != null && !paxIdSet.isEmpty())
+                {
+                    String sqlQuery = " SELECT id from hits_summary where passenger_id in  :paxIdList ";
+                    Query query = em.createNativeQuery(sqlQuery);
+                    query.setParameter("paxIdList", paxIdSet);
+
+                    hitsSummaryIdList = query.getResultList();
+                }
 		
 		return hitsSummaryIdList;		
 		
@@ -501,12 +556,14 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	{
 		List<BigInteger> hitDispositionIdList = new ArrayList<>();
 		
-		String sqlQuery = " SELECT id from hits_disposition where case_id in  :caseIdList ";
-		Query query = em.createNativeQuery(sqlQuery);
-		query.setParameter("caseIdList", caseIdList);
-		
-		hitDispositionIdList = query.getResultList();
-		
+ 		if (caseIdList != null && !caseIdList.isEmpty())
+                {               
+                    String sqlQuery = " SELECT id from hits_disposition where case_id in  :caseIdList ";
+                    Query query = em.createNativeQuery(sqlQuery);
+                    query.setParameter("caseIdList", caseIdList);
+
+                    hitDispositionIdList = query.getResultList();
+                }
 		return hitDispositionIdList;		
 
 	}

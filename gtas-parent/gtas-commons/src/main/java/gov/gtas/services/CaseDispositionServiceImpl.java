@@ -41,11 +41,13 @@ import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.util.EntityResolverUtils;
-import gov.gtas.vo.OneDayLookoutVo;
 import gov.gtas.vo.passenger.AttachmentVo;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.HitsDispositionCommentsVo;
 import gov.gtas.vo.passenger.HitsDispositionVo;
+import gov.gtas.vo.passenger.OneDayLookoutVo;
+
+import java.util.Map;
 
 @Service
 public class CaseDispositionServiceImpl implements CaseDispositionService {
