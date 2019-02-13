@@ -56,8 +56,6 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         }
     }
 
-
-
     /**
      * Util method to hash passenger attributes
      * @param input

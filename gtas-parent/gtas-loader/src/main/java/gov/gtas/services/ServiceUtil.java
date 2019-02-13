@@ -1,30 +1,39 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.services;
 
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.Airport;
 
+import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-public class ServiceUtil {
-    
+public class ServiceUtil implements LoaderServices {
+
     @Autowired
-    private  AirportService airportService;
-    
-    public String getCountry(String airport){
-        
+    private AirportService airportService;
+
+    @Autowired
+    PassengerRepository passengerRepository;
+
+    public String getCountry(String airport) {
+
         Airport a = airportService.getAirportByThreeLetterCode(airport);
-        if(a == null ){
+        if (a == null) {
             return "USA";
         }
         return a.getCountry();
-        
+
     }
 
     public AirportService getAirportService() {
@@ -35,4 +44,20 @@ public class ServiceUtil {
         this.airportService = airportService;
     }
 
+    @Override
+    @Transactional()
+    public Passenger findPassengerOnFlight(Flight f, PassengerVo pvo) {
+        if (f.getId() == null) {
+            return null;
+        }
+
+        List<Passenger> pax = passengerRepository.getPassengersByFlightIdAndName(f.getId(),
+                pvo.getFirstName(), pvo.getLastName());
+        if (pax != null && pax.size() >= 1) {
+            return pax.get(0);
+        } else {
+            return null;
+        }
+    }
 }
+

@@ -5,9 +5,6 @@
  */
 package gov.gtas.services;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,10 +21,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.google.common.collect.Lists;
 
 import gov.gtas.constant.OneDayLookoutContants;
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
@@ -186,7 +180,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			Map<Long, RuleCat> ruleCatMap) {
 
 		Case aCase;
-		List<Case> _tempCases = null;
+		List<Case> _tempCases;
 		Long highPriorityRuleCatId = 1L;
 		if (caseMap == null || caseMap.isEmpty() || !caseMap.containsKey(pax_id)) {
 			/*
@@ -225,14 +219,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		for (Long _tempHitId : hit_ids) {
 			hitDisp = new HitsDisposition();
 			if (hitDesc.startsWith(WL_ITEM_PREFIX)) {
-	//			pullRuleCategory(hitDisp, 1L, ruleCatMap);
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
 				hitDesc = hitDesc.substring(7);
 			} else {
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
-	//			pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
-				// highPriorityRuleCatId will remain 1L for WL hits
-	//			highPriorityRuleCatId = getHighPriorityRuleCatId(_tempHitId);
+				pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
 			}
 
 			hitDisp.setHitId(_tempHitId);
@@ -340,6 +331,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			aCase.getHitsDispositions().addAll(hitsDispSet);
 		else
 			aCase.setHitsDispositions(hitsDispSet);
+
+		// fix to adjust to the recent flight mappings
+		aCase.setFlight(null);
 
 		aCase = caseDispositionRepository.save(aCase);
 
@@ -452,7 +446,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	 * @param hitDisp
 	 * @param id
 	 */
-	private void pullRuleCategory(HitsDisposition hitDisp, Long id, Map<Long, RuleCat> ruleCatMap) {
+	public void pullRuleCategory(HitsDisposition hitDisp, Long id, Map<Long, RuleCat> ruleCatMap) {
 		try {
 			if (ruleCatMap == null) {
 				if (id == null || (ruleCatRepository.findOne(id) == null))

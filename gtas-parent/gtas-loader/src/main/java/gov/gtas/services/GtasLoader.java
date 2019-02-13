@@ -16,13 +16,14 @@ public interface GtasLoader {
                                               List<FlightLeg> flightLegs,
                                                         String[] primeFlightKey,
                                               Set<BookingDetail> bookingDetails) throws ParseException;
-    void makeNewPassengers(Flight primeFlight,
-                                  List<PassengerVo> passengers,
-                                  Set<Passenger> messagePassengers,
-                                  Set<BookingDetail> bookingDetails,
-                                  Message message) throws ParseException;
+    Set<Passenger> makeNewPassengerObjects(Flight primeFlight,
+                                           List<PassengerVo> passengers,
+                                           Set<Passenger> messagePassengers,
+                                           Set<BookingDetail> bookingDetails,
+                                           Message message) throws ParseException;
     void createBagsFromPnrVo(PnrVo pvo,Pnr pnr);
     void createFormPfPayments(PnrVo vo,Pnr pnr);
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
-    Passenger findPassengerOnFlight(Flight f, PassengerVo pvo);
-    }
+    void createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);
+    void createBookingDetails(Set<Passenger> messagePassengers, Set<BookingDetail> bookingDetails);
+}

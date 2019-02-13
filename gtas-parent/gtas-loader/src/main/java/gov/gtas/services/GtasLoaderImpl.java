@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -88,6 +87,12 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Autowired
     BookingDetailRepository bookingDetailDao;
+
+    @Autowired
+    BookingDetailService bookingDetailService;
+
+    @Autowired
+    LoaderServices loaderServices;
 
     @Autowired
     PnrRepository pnrDao;
@@ -150,12 +155,12 @@ public class GtasLoaderImpl implements GtasLoader {
         }
 
         for (CreditCardVo creditVo : vo.getCreditCards()) {
-            CreditCard existingCard = creditDao.findByCardTypeAndNumberAndExpiration(creditVo.getCardType(), creditVo.getNumber(), creditVo.getExpiration());
-            if (existingCard == null) {
+            List<CreditCard> existingCard = creditDao.findByCardTypeAndNumberAndExpiration(creditVo.getCardType(), creditVo.getNumber(), creditVo.getExpiration());
+            if (existingCard.isEmpty()) {
                 CreditCard newCard = utils.convertCreditVo(creditVo);
                 pnr.addCreditCard(newCard);
             } else {
-                pnr.addCreditCard(existingCard);
+                pnr.addCreditCard(existingCard.get(0));
             }
         }
 
@@ -244,15 +249,14 @@ public class GtasLoaderImpl implements GtasLoader {
         return primeFlight;
     }
 
-    @Transactional
-    public void makeNewPassengers(Flight primeFlight, List<PassengerVo> passengers,
-                                  Set<Passenger> messagePassengers,
-                                  Set<BookingDetail> bookingDetails,
-                                  Message message) throws ParseException {
+    public Set<Passenger> makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
+                                                  Set<Passenger> messagePassengers,
+                                                  Set<BookingDetail> bookingDetails,
+                                                  Message message) throws ParseException {
 
         Set<Passenger> newPassengers = new HashSet<>();
         for (PassengerVo pvo : passengers) {
-            Passenger existingPassenger = findPassengerOnFlight(primeFlight, pvo);
+            Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger != null) {
                 updatePassenger(existingPassenger, pvo);
                 messagePassengers.add(existingPassenger);
@@ -272,25 +276,33 @@ public class GtasLoaderImpl implements GtasLoader {
                 messagePassengers.add(newPassenger);
             }
         }
+        return newPassengers;
+    }
 
-        passengerDao.save(messagePassengers);
-
+    @Transactional()
+    public void createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         Set<FlightPassenger> flightPassengers = new HashSet<>();
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
+        passengerDao.save(messagePassengers);
         for (Passenger p : newPassengers) {
             PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
             passengerIDTags.add(paxIdTag);
         }
-
         for (Passenger p : newPassengers) {
             FlightPassenger fp = new FlightPassenger();
             fp.setPassengerId(p.getId().toString());
             fp.setFlightId(primeFlight.getId().toString());
             flightPassengers.add(fp);
-            primeFlight.setPassengerCount(primeFlight.getPassengerCount() + 1);
         }
 
+        passengerIdTagDao.save(passengerIDTags);
+        flightPassengerRepository.save(flightPassengers);
+    }
+
+    @Override
+    @Transactional()
+    public void createBookingDetails(Set<Passenger> messagePassengers, Set<BookingDetail> bookingDetails) {
         if (!bookingDetails.isEmpty()) {
             for (BookingDetail bD : bookingDetails) {
                 for (Passenger pax : messagePassengers) {
@@ -299,8 +311,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 }
             }
         }
-        passengerIdTagDao.save(passengerIDTags);
-        flightPassengerRepository.save(flightPassengers);
+        passengerDao.save(messagePassengers);
     }
 
 
@@ -396,7 +407,6 @@ public class GtasLoaderImpl implements GtasLoader {
         paymentFormDao.save(chkList);
     }
 
-
     public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
@@ -406,23 +416,6 @@ public class GtasLoaderImpl implements GtasLoader {
             } else {
                 utils.updateDocument(dvo, existingDoc);
             }
-        }
-    }
-
-    /**
-     * TODO: update how we find passengers here, use document ,etc
-     */
-    @Transactional(propagation = Propagation.MANDATORY)
-    public Passenger findPassengerOnFlight(Flight f, PassengerVo pvo) {
-        if (f.getId() == null) {
-            return null;
-        }
-
-        List<Passenger> pax = passengerDao.getPassengersByFlightIdAndName(f.getId(), pvo.getFirstName(), pvo.getLastName());
-        if (pax != null && pax.size() >= 1) {
-            return pax.get(0);
-        } else {
-            return null;
         }
     }
 }

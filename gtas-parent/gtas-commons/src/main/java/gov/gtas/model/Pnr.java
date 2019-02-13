@@ -113,7 +113,7 @@ public class Pnr extends Message {
     @ManyToMany(fetch=FetchType.EAGER, mappedBy = "pnrs",targetEntity = BookingDetail.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<BookingDetail> bookingDetails = new HashSet<>();
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class)
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
 

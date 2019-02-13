@@ -7,9 +7,7 @@ package gov.gtas.services;
 
 import java.util.*;
 
-import javax.transaction.Transactional;
 
-import gov.gtas.PaxProcessingDto;
 import gov.gtas.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +24,6 @@ import gov.gtas.repository.LookUpRepository;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.FlightPaxRepository;
 import gov.gtas.util.LobUtils;
 
 @Service
@@ -35,9 +32,6 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private ApisMessageRepository msgDao;
-
-    @Autowired
-    private FlightPaxRepository paxDao;
 
     @Autowired
     private LookUpRepository lookupRepo;
@@ -106,12 +100,14 @@ public class ApisMessageService extends MessageLoaderService {
                     msgDto.getPrimeFlightKey(),
                     new HashSet<>());
 
-            loaderRepo.makeNewPassengers(
+            Set<Passenger> newPassengers = loaderRepo.makeNewPassengerObjects(
                     primeFlight,
                     m.getPassengers(),
                     apis.getPassengers(),
                     new HashSet<>(),
                     apis);
+
+            loaderRepo.createPassengers(newPassengers, apis.getPassengers(), primeFlight, new HashSet<>());
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
 
@@ -152,7 +148,9 @@ public class ApisMessageService extends MessageLoaderService {
         } catch (Exception e) {
             ret = false;
             handleException(e, m);
-            msgDao.save(m);
+            try {
+                msgDao.save(m);
+            } catch (Exception ignored) {}
         }
         return ret;
     }

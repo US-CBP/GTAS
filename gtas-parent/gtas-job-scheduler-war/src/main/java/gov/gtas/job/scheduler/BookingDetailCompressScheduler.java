@@ -6,11 +6,7 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.model.BookingDetail;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.repository.BookingDetailRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.services.BookingDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import java.awt.print.Book;
-import java.io.IOException;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +35,7 @@ public class BookingDetailCompressScheduler {
 
 
     @Transactional
-    @Scheduled(fixedDelayString = "5000", initialDelayString = "2000")
+    @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() {
 
         ArrayList<Long> _idsToRemove = new ArrayList<Long>();
@@ -86,9 +81,7 @@ public class BookingDetailCompressScheduler {
             //_tempTBSList =
             _tempTBSList.parallelStream().forEach(x -> x.getPnrs().stream().forEach(y -> y.getFlights()));
             _tempTBSList.parallelStream().forEach(x -> x.getFlightLegs());
-
             upsertDeleteRecords(_tempTBSList, _tempTBDList);
-
         }catch (Exception ex){
             logger.error("Error in Booking Detail compress:", ex);
         }

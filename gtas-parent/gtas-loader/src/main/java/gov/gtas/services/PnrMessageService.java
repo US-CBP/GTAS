@@ -97,8 +97,6 @@ public class PnrMessageService extends MessageLoaderService {
     
     @Override
     public MessageStatus load(MessageDto msgDto) {
-    	logger.debug("@ load");
-    //	long startTime = System.nanoTime();
         msgDto.getMessageStatus().setSuccess(true);
         Pnr pnr = msgDto.getPnr();
         try {
@@ -111,45 +109,36 @@ public class PnrMessageService extends MessageLoaderService {
 					pnr.getFlightLegs(),
 					msgDto.getPrimeFlightKey(),
 					pnr.getBookingDetails());
-
-	//		logger.info("SAVED FLIGHTS time = "+(System.nanoTime()-startTime)/1000000);
-	//		startTime = System.nanoTime();
-			loaderRepo.makeNewPassengers(primeFlight,
+			Set<Passenger> newPassengers  = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(),
 					pnr.getPassengers(),
 					pnr.getBookingDetails(),
 					pnr);
-	//		logger.info("SAVED PASSEGNERS time = "+(System.nanoTime()-startTime)/1000000);
-	//		startTime = System.nanoTime();
-
+			loaderRepo.createPassengers(newPassengers,
+					pnr.getPassengers(),
+					primeFlight,
+					pnr.getBookingDetails());
 			createFlightPax(pnr);
+			loaderRepo.createBagsFromPnrVo(vo,pnr);
+			loaderRepo.createBookingDetails(pnr.getPassengers(), pnr.getBookingDetails());
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setPnr(pnr);
 			}
-
 			for (BookingDetail bD : pnr.getBookingDetails()){
 				bD.getPnrs().add(pnr);
 			}
-
 			calculateDwellTimes(pnr);
 			updatePaxEmbarkDebark(pnr);
-			loaderRepo.createBagsFromPnrVo(vo,pnr);
 			loaderRepo.createFormPfPayments(vo,pnr);
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
 			logger.info("ERROR", e);
 		} finally {
-			try {
-				if (!createMessage(pnr)) { //wont save if this blows up TODO: Make try catch inside finally to ENSURE message status is SET
-					msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
-				}
-			} catch (Exception e) {
-				logger.info("Failed to save PNR!", e);
+			if (!createMessage(pnr)) {
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
 		}
@@ -312,22 +301,28 @@ public class PnrMessageService extends MessageLoaderService {
     }
     
 	private boolean createMessage(Pnr m) {
-        boolean ret = true;
-        logger.debug("@createMessage");
-        long startTime = System.nanoTime();
-        try {
-        	m = msgDao.save(m);
-            if (useIndexer) {
-            	indexer.indexPnr(m);
-            }
-        } catch (Exception e) {
-            ret = false;
-            handleException(e, m);
-            m = msgDao.save(m);
-        }
-        logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
-        return ret;
-    }
+		boolean ret = true;
+		logger.debug("@createMessage");
+		long startTime = System.nanoTime();
+		try {
+			m = msgDao.save(m);
+			ret = true;
+			if (useIndexer) {
+				indexer.indexPnr(m);
+			}
+		} catch (Exception e) {
+			handleException(e, m);
+			ret = false;
+			try {
+				m = msgDao.save(m);
+			} catch (Exception ignored) {
+			}
+			logger.warn("Error saving message!", e);
+		} finally {
+			logger.debug("createMessage time = " + (System.nanoTime() - startTime) / 1000000);
+		}
+		return ret;
+	}
 	private void createFlightPax(Pnr pnr){
     	logger.debug("@ createFlightPax");
     	boolean oneFlight=false;
