@@ -134,23 +134,23 @@ public class GtasLoaderImpl implements GtasLoader {
         long startTime = System.nanoTime();
 
         for (AddressVo addressVo : vo.getAddresses()) {
-            Address existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountry(
+            List<Address> existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountry(
                     addressVo.getLine1(), addressVo.getCity(), addressVo.getState(), addressVo.getPostalCode(), addressVo.getCountry());
-            if (existingAddress == null) {
+            if (existingAddress.isEmpty()) {
                 Address address = utils.convertAddressVo(addressVo);
                 pnr.addAddress(address);
             } else {
-                pnr.addAddress(existingAddress);
+                pnr.addAddress(existingAddress.get(0));
             }
         }
 
         for (PhoneVo phoneVo : vo.getPhoneNumbers()) {
-            Phone existingPhone = phoneDao.findByNumber(phoneVo.getNumber());
-            if (existingPhone == null) {
+            List<Phone> existingPhone = phoneDao.findByNumber(phoneVo.getNumber());
+            if (existingPhone.isEmpty()) {
                 Phone newPhone = utils.convertPhoneVo(phoneVo);
                 pnr.addPhone(newPhone);
             } else {
-                pnr.addPhone(existingPhone);
+                pnr.addPhone(existingPhone.get(0));
             }
         }
 
@@ -165,23 +165,23 @@ public class GtasLoaderImpl implements GtasLoader {
         }
 
         for (FrequentFlyerVo ffvo : vo.getFrequentFlyerDetails()) {
-            FrequentFlyer existingFf = ffdao.findByCarrierAndNumber(ffvo.getCarrier(), ffvo.getNumber());
-            if (existingFf == null) {
+            List<FrequentFlyer> existingFf = ffdao.findByCarrierAndNumber(ffvo.getCarrier(), ffvo.getNumber());
+            if (existingFf.isEmpty()) {
                 FrequentFlyer newFf = utils.convertFrequentFlyerVo(ffvo);
                 pnr.addFrequentFlyer(newFf);
             } else {
-                pnr.addFrequentFlyer(existingFf);
+                pnr.addFrequentFlyer(existingFf.get(0));
             }
         }
 
         for (AgencyVo avo : vo.getAgencies()) {
-            Agency existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
-            if (existingAgency == null) {
+            List<Agency> existingAgency = agencyDao.findByNameAndLocation(avo.getName(), avo.getLocation());
+            if (existingAgency.isEmpty()) {
                 Agency newAgency = utils.convertAgencyVo(avo);
                 newAgency.setCity(newAgency.getCity() != null ? newAgency.getCity().toUpperCase() : newAgency.getCity());
                 pnr.addAgency(newAgency);
             } else {
-                pnr.addAgency(existingAgency);
+                pnr.addAgency(existingAgency.get(0));
             }
         }
         for (EmailVo evo : vo.getEmails()) {
