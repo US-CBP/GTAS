@@ -280,8 +280,7 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Transactional()
-    public void createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
-        Set<FlightPassenger> flightPassengers = new HashSet<>();
+    public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
         passengerDao.save(messagePassengers);
@@ -289,6 +288,8 @@ public class GtasLoaderImpl implements GtasLoader {
             PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
             passengerIDTags.add(paxIdTag);
         }
+
+        Set<FlightPassenger> flightPassengers = new HashSet<>();
         for (Passenger p : newPassengers) {
             FlightPassenger fp = new FlightPassenger();
             fp.setPassengerId(p.getId().toString());
@@ -298,7 +299,15 @@ public class GtasLoaderImpl implements GtasLoader {
 
         passengerIdTagDao.save(passengerIDTags);
         flightPassengerRepository.save(flightPassengers);
+        return flightPassengers.size();
     }
+
+    @Transactional
+    public void updateFlightPassengerCount(Flight primeFlight, int createdPassengers) {
+        primeFlight.setPassengerCount(primeFlight.getPassengerCount() + createdPassengers);
+        flightDao.save(primeFlight);
+    }
+
 
     @Override
     @Transactional()
