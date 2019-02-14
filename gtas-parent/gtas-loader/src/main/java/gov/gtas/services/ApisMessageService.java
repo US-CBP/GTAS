@@ -108,7 +108,7 @@ public class ApisMessageService extends MessageLoaderService {
                     apis);
 
             int createdPassengers = loaderRepo.createPassengers(newPassengers, apis.getPassengers(), primeFlight, new HashSet<>());
-            loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
+         //   loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
 

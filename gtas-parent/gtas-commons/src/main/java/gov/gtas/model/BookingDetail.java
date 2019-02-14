@@ -177,7 +177,6 @@ public class BookingDetail extends BaseEntityAudit {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
 
 		BookingDetail that = (BookingDetail) o;
 
@@ -190,7 +189,7 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Override
 	public int hashCode() {
-		int result = super.hashCode();
+		int result = 17;
 		result = 31 * result + flightNumber.hashCode();
 		result = 31 * result + etdDate.hashCode();
 		result = 31 * result + etaDate.hashCode();

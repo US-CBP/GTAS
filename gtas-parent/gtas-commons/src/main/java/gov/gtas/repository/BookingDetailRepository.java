@@ -19,8 +19,10 @@ import java.util.List;
 @Service
 public interface BookingDetailRepository extends CrudRepository<BookingDetail, Long>{
 
-    @Query("SELECT bd FROM BookingDetail bd WHERE bd.processed = FALSE")
-    public List<BookingDetail> getBookingDetailByProcessedFlag();
+    @Query(value = "SELECT bd.* FROM BookingDetail bd WHERE bd.processed = FALSE and " +
+            "bd.id in (select pb.booking_detail_id from pax_booking pb) and " +
+            "bd.id in (select fl.bookingDetail_id from flight_leg fl)" , nativeQuery = true)
+    List<BookingDetail> getBookingDetailByProcessedFlag();
 
     @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
             "AND UPPER(p.origin) = UPPER(:origin)" +
@@ -35,6 +37,15 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
     @Query("SELECT bd FROM BookingDetail bd JOIN bd.passengers p WHERE p.id = (:pax_id)")
     public List<BookingDetail> getBookingDetailsByPassengers(@Param("pax_id") Long pax_id);
 
+
+    @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
+            "AND UPPER(p.origin) = UPPER(:origin)" +
+            "AND UPPER(p.destination) = UPPER(:destination)" +
+            "AND p.etaDate = (:eta_date)" +
+            "AND p.etdDate = (:etd_date)")
+    List<BookingDetail> getSpecificBookingDetailNoProcessedTag(@Param("flight_number") String flight_number, @Param("origin") String origin,
+                                                        @Param("destination") String destination, @Param("eta_date") Date eta_date,
+                                                        @Param("etd_date") Date etd_date);
 
     @Query("SELECT pax FROM Passenger pax WHERE pax.id IN (" +
             "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
