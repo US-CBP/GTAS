@@ -672,6 +672,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				passengerMap,
 				ruleCatMap));
 
+		//Name match case depends on this save to create a case.
+		caseDispositionRepository.save(_tempCaseList);
+
 		return _tempCaseList;
 	}
 
