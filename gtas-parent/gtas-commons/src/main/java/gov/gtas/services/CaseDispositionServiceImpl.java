@@ -250,10 +250,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			}
 		}
 
-		if (caseMap == null) {
-			caseMap = new HashMap<>();
-			caseMap.put(pax_id, aCase);
-		} else {
+		if (caseMap != null) {
 			caseMap.put(pax_id, aCase);
 		}
 		return aCase;
@@ -927,12 +924,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		if (passengerMap == null || passengerMap.isEmpty() || !passengerMap.containsKey(paxId)) {
 			logger.info("Manual get of passenger.");
-			Passenger p = findPaxByID(paxId);
-			if (passengerMap == null ) {
-				passengerMap = new HashMap<>();
-			}
-			passengerMap.put(paxId, p);
-			_tempPax = passengerMap.get(paxId);
+			_tempPax = findPaxByID(paxId);
 		} else {
 			_tempPax = passengerMap.get(paxId);
 		}
@@ -940,12 +932,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		if (flightMap == null || flightMap.isEmpty() || !flightMap.containsKey(flightId)) {
 			logger.info("manual get of flights");
-			Flight f = findFlightByID(flightId);
-			if (flightMap == null) {
-				flightMap = new HashMap<>();
-			}
-			flightMap.put(flightId, f);
-			_tempFlight = flightMap.get(flightId);
+			_tempFlight = findFlightByID(flightId);
 		} else {
 			_tempFlight = flightMap.get(flightId);
 		}
