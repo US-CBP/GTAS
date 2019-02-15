@@ -60,6 +60,9 @@ public class PassengerDetailsController {
 	private static final Logger logger = LoggerFactory.getLogger(PassengerDetailsController.class);
 
 	@Autowired
+	private ApisControllerService apisControllerService;
+
+	@Autowired
 	private PassengerService pService;
 
 	@Autowired
@@ -206,44 +209,18 @@ public class PassengerDetailsController {
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 			
 			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());			
-			List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(refList.get(0));
 			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId())
 					.stream().filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
-			
+
 			if(!apisMessageFlightPaxs.isEmpty()) {
 				FlightPax apisMessageFlightPax = apisMessageFlightPaxs.get(0);
 				apisVo.setBagCount(apisMessageFlightPax.getBagCount());
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
-			Iterator<FlightPax> fpIter = fpList.iterator();
-			while (fpIter.hasNext()) {
-				FlightPax fp= fpIter.next();
-				FlightPassengerVo fpVo = new FlightPassengerVo();
-				fpVo.setFirstName(fp.getPassenger().getFirstName());
-				fpVo.setLastName(fp.getPassenger().getLastName());
-				fpVo.setMiddleName(fp.getPassenger().getMiddleName());
-				fpVo.setEmbarkation(fp.getEmbarkation());
-				fpVo.setDebarkation(fp.getDebarkation());
-				if(fp.getInstallationAddress() != null){
-					AddressVo add = new AddressVo();
-					Address installAdd = fp.getInstallationAddress();
-					add.setLine1(installAdd.getLine1());
-					add.setLine2(installAdd.getLine2());
-					add.setLine3(installAdd.getLine3());
-					add.setCity(installAdd.getCity());
-					add.setCountry(installAdd.getCountry());
-					add.setPostalCode(installAdd.getPostalCode());
-					add.setState(installAdd.getState());
-					fpVo.setInstallationAddress(add);
-				}
-				fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
-				fpVo.setResidencyCountry(fp.getResidenceCountry());
-				fpVo.setPassengerType(fp.getTravelerType());
-				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
-                                fpVo.setResRefNumber(fp.getReservationReferenceNumber());
-                                fpVo.setFlightId(fp.getFlight().getId());
-                                fpVo.setPassengerId(fp.getPassenger().getId());
-				apisVo.addFlightpax(fpVo);
+
+			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0));
+			for (FlightPassengerVo flightPassengerVo : fpList) {
+				apisVo.addFlightpax(flightPassengerVo);
 			}
 
 			for(Bag b: bagList) {

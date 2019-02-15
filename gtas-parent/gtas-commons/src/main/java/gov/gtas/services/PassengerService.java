@@ -90,7 +90,7 @@ public interface PassengerService {
 
 	public Set<Flight> getAllFlights(Long id);
         
-        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList);
+        public List<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
         
         public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
 

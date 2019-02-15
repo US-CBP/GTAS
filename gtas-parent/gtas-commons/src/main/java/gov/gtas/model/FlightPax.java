@@ -79,7 +79,7 @@ public class FlightPax implements Serializable {
 	private
 	Long flightId;
 
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Flight flight;
 
@@ -95,7 +95,7 @@ public class FlightPax implements Serializable {
 	private
 	Long passengerId;
 
-	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Passenger passenger;
 

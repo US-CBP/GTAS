@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface FlightPaxRepository extends CrudRepository<FlightPax, Long>{
 
-    @Query("SELECT fp FROM FlightPax fp WHERE fp.passenger.id IN :pidList")
-    List<FlightPax> getFlightPaxByPassengerIdList(@Param("pidList") List<Long> pidList);
+    @Query("SELECT fps FROM FlightPax fps WHERE fps.passenger.id IN :pidList")
+    List<FlightPax> findFlightFromPassIdList(@Param("pidList") List<Long> pidList);
 
 }

@@ -321,7 +321,19 @@ public class TargetingServiceImpl implements TargetingService {
 				logger.info("************************");
 				logger.info(cse.getMessage());
 				logger.info("************************");
+				if (updateProcesssedMessageStat) {
+					for (MessageStatus ms : source) {
+						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
+					}
+					messageStatusRepository.save(source);
+				}
 			} else {
+				if (updateProcesssedMessageStat) {
+					for (MessageStatus ms : source) {
+						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
+					}
+					messageStatusRepository.save(source);
+				}
 				throw cse;
 			}
 		}

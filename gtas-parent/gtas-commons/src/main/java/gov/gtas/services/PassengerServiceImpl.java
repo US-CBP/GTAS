@@ -425,9 +425,9 @@ public class PassengerServiceImpl implements PassengerService {
 
 
         @Override
-        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList)
+        public List<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList)
         {
-            return flightPaxRepository.getFlightPaxByPassengerIdList(passengerIdList);
+            return flightPaxRepository.findFlightFromPassIdList(passengerIdList);
         }
 
 
