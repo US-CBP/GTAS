@@ -19,6 +19,6 @@ public interface BookingDetailService {
 
     List<BookingDetail> deDuplicateBookingDetails(List<BookingDetail> listContainingDuplicates);
 
-    BookingDetail transferBDData(BookingDetail newBD, BookingDetail oldBD);
+    BookingDetail mergeBookingDetails(BookingDetail newBD, BookingDetail oldBD);
 
 }

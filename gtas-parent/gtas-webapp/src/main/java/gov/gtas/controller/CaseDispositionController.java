@@ -273,7 +273,7 @@ public ResponseEntity<byte[]> getDownloadData(@PathVariable long id) {
         return caseDispositionService.getCaseDispositionStatuses();
     }
 
-      
+
     @ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)

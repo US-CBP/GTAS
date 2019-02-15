@@ -36,12 +36,13 @@ public class BookingDetailCompressScheduler {
         logger.info("Booking Detail compress START , collection size -- " + unprocessedBookingDetails.size());
         long time = System.nanoTime();
 
-        //We want to save the earliest booking detail, which we expect to have the lowest ID.
+        // We want to save the earliest booking detail, which we expect to have the lowest ID.
         unprocessedBookingDetails.sort(comparing(BookingDetail::getId));
 
-        //Populate the unique and duplicate booking details.
+        // Merge all booking details into a single booking detail list.
        List<BookingDetail> uniqueBookingDetails =  bookingDetailService.deDuplicateBookingDetails(unprocessedBookingDetails);
 
+       // Search the database for duplicates of each booking detail. Merge when appropriate.
        List<BookingDetail> finalDBToSaveList = new ArrayList<>();
         for (BookingDetail bd : uniqueBookingDetails) {
             List<BookingDetail> checkAgainstDatabaseList = bookingDetailRepository.getSpecificBookingDetail(bd.getFlightNumber(), bd.getOrigin(), bd.getDestination(),
@@ -51,14 +52,14 @@ public class BookingDetailCompressScheduler {
             } else {
                 checkAgainstDatabaseList.sort(comparing(BookingDetail::getId));
                 try {
-                    finalDBToSaveList.add(bookingDetailService.transferBDData(checkAgainstDatabaseList.get(0), bd));
+                    finalDBToSaveList.add(bookingDetailService.mergeBookingDetails(checkAgainstDatabaseList.get(0), bd));
                 } catch (Exception e) {
                     logger.error("Error in Booking Detail compress:", e);
                 }
             }
         }
-        //calling database in loop intentionally. We do not care about performance gains of calling by list and
-        //the locking created by updating can cause issues with the loader.
+        // calling database in loop intentionally. We do not care about performance gains of calling by list and
+        // the locking created by updating can cause issues with the loader.
         for (BookingDetail bd : finalDBToSaveList) {
             if (!bd.getProcessed()) {
                 bd.setProcessed(true);
@@ -69,8 +70,8 @@ public class BookingDetailCompressScheduler {
         if (finalDBToSaveList.isEmpty()) {
             logger.info("Nothing to process");
         } else {
-            logger.info("Booking detail compress finished in " + (System.nanoTime() - time) / 1000000 + "ms with " + finalDBToSaveList.size() + " merged " + unprocessedBookingDetails.size()
-                    + " to " + finalDBToSaveList.size());
+            logger.info("Booking detail compress finished in " + (System.nanoTime() - time) / 1000000 + "m/s. Merged " + unprocessedBookingDetails.size()
+                    + " into to " + finalDBToSaveList.size() +" distinct booking details.");
         }
     }
 }

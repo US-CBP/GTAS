@@ -70,14 +70,18 @@ public class BookingDetailServiceImpl implements BookingDetailService{
     public List<BookingDetail> deDuplicateBookingDetails(List<BookingDetail> listContainingDuplicates) {
         List<BookingDetail> uniqueBookingDetails = new ArrayList<>();
         for (BookingDetail bd : listContainingDuplicates) {
-            BookingDetail _tempBD = uniqueBookingDetails.stream()
+            //Check to see if we already have a unique booking detail.
+            BookingDetail uniqueBookingDetail = uniqueBookingDetails.stream()
                     .filter(bd1 -> bd1.equals(bd))
                     .findFirst().orElse(null);
-            if (null == _tempBD) {
+
+            //If no booking detail exists in the list add current as a unique BD.
+            if (null == uniqueBookingDetail) {
                 uniqueBookingDetails.add(bd);
             } else {
+                //If booking detail exists in list transfer information from duplicate bd to existing unique BD.
                 try {
-                    transferBDData(_tempBD, bd);
+                    mergeBookingDetails(uniqueBookingDetail, bd);
                 } catch (Exception ignored) {
                     logger.error("failed booking a booking detail with error: " + ignored.getMessage() );
                 }
@@ -88,7 +92,8 @@ public class BookingDetailServiceImpl implements BookingDetailService{
 
     @Override
     @Transactional
-    public BookingDetail transferBDData(BookingDetail newBD, BookingDetail oldBD) {
+    public BookingDetail mergeBookingDetails(BookingDetail newBD, BookingDetail oldBD) {
+        //Save to get the booking details managed by hibernate.
         BookingDetail nbd = bookingDetailRepository.save(newBD);
         BookingDetail obd = bookingDetailRepository.save(oldBD);
 

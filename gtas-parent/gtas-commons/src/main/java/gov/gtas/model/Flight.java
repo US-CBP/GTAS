@@ -105,12 +105,10 @@ public class Flight extends BaseEntityAudit {
 
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
- 
+
 //    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
 //    private Set<FlightPax> flightPaxDetails = new HashSet<>();
-    
-    @Column(name = "passenger_count", nullable = false)
-    private Integer passengerCount = Integer.valueOf(0);
+
 
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)
@@ -121,6 +119,11 @@ public class Flight extends BaseEntityAudit {
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
     @JsonIgnore
     private FlightHitsWatchlist flightHitsWatchlist;
+
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightPassengerCount flightPassengerCount;
 
     @ManyToMany(
         mappedBy = "flights",
@@ -215,12 +218,6 @@ public class Flight extends BaseEntityAudit {
     public void setPnrs(Set<Pnr> pnrs) {
         this.pnrs = pnrs;
     }
-    public Integer getPassengerCount() {
-        return passengerCount;
-    }
-    public void setPassengerCount(Integer passengerCount) {
-        this.passengerCount = passengerCount;
-    }
 
     /**
      * @return the etdDate
@@ -306,5 +303,13 @@ public class Flight extends BaseEntityAudit {
 
     public void setFlightHitsWatchlist(FlightHitsWatchlist flightHitsWatchlist) {
         this.flightHitsWatchlist = flightHitsWatchlist;
+    }
+
+    public FlightPassengerCount getFlightPassengerCount() {
+        return flightPassengerCount;
+    }
+
+    public void setFlightPassengerCount(FlightPassengerCount flightPassengerCount) {
+        this.flightPassengerCount = flightPassengerCount;
     }
 }

@@ -89,7 +89,7 @@ public class Case extends BaseEntityAudit {
     @Column(name = "disposition", nullable = true)
     private String disposition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
 

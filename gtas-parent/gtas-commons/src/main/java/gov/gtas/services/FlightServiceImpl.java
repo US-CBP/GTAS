@@ -67,11 +67,15 @@ public class FlightServiceImpl implements FlightService {
             List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
             BeanUtils.copyProperties(f, vo);
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
+
 			if (f.getFlightHitsWatchlist() != null) {
 				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount() + fuzzyHits);
 			}
 			if (f.getFlightHitsRule() != null) {
 				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
+			}
+			if (f.getFlightPassengerCount() != null) {
+				vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
 			}
 			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
             List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
@@ -219,7 +223,7 @@ public class FlightServiceImpl implements FlightService {
 				"                                  LEFT JOIN passenger p ON (fp.passenger_id = p.id) " +
 				"                           WHERE fp.flight_id = "+flightId+ " " +
 				"                             AND p.id NOT IN " +
-				"                                 (SELECT hitSumm.passenger_id FROM hits_summary hitSumm WHERE fp.flight_id = "+flightId+"))";
+				"                                 (SELECT hitSumm.paxId FROM hits_summary hitSumm WHERE fp.flight_id = "+flightId+"))";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}

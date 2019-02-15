@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import gov.gtas.repository.*;
 import org.apache.commons.collections.IteratorUtils;
@@ -1178,10 +1179,10 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	}
 
 	@Override
+	@Transactional
 	public List<Case> getCaseHistoryByPaxId(Long paxId) {
 
 		List<Long> pax_group = this.passengerResolverService.resolve(paxId);
-
 		return this.getCaseByPaxId(pax_group);
 	}
 

@@ -17,20 +17,6 @@ import java.util.Objects;
 public class Bag extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Bag bag = (Bag) o;
-		return getBagId().equals(bag.getBagId()) &&
-				getData_source().equals(bag.getData_source());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getBagId(), getData_source());
-	}
-
 	public Bag() {
     }
 
@@ -141,5 +127,22 @@ public class Bag extends BaseEntity {
                 "\nAirline " +
                 airline;
 	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Bag bag = (Bag) o;
+		return getBagId().equals(bag.getBagId()) &&
+				getData_source().equals(bag.getData_source());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getBagId(), getData_source());
+	}
+
+
 
 }

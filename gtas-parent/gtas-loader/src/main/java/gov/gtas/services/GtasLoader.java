@@ -11,11 +11,11 @@ public interface GtasLoader {
     void checkHashCode(String hash) throws LoaderException;
     void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties);
     void processPnr(Pnr pnr, PnrVo vo) throws ParseException;
-    Flight processFlightsAndPassengers(List<FlightVo> flights,
-                                              Set<Flight> messageFlights,
-                                              List<FlightLeg> flightLegs,
-                                                        String[] primeFlightKey,
-                                              Set<BookingDetail> bookingDetails) throws ParseException;
+    Flight processFlightsAndBookingDetails(List<FlightVo> flights,
+                                           Set<Flight> messageFlights,
+                                           List<FlightLeg> flightLegs,
+                                           String[] primeFlightKey,
+                                           Set<BookingDetail> bookingDetails) throws ParseException;
     Set<Passenger> makeNewPassengerObjects(Flight primeFlight,
                                            List<PassengerVo> passengers,
                                            Set<Passenger> messagePassengers,

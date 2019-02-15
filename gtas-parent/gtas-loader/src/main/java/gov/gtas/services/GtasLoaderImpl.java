@@ -106,7 +106,11 @@ public class GtasLoaderImpl implements GtasLoader {
     @Autowired
     FlightPassengerRepository flightPassengerRepository;
 
+    @Autowired
+    FlightPassengerCountRepository flightPassengerCountRepository;
 
+
+    @Override
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
         if (m != null) {
@@ -114,6 +118,7 @@ public class GtasLoaderImpl implements GtasLoader {
         }
     }
 
+    @Override
     @Transactional
     public void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties) {
         for (ReportingPartyVo rvo : parties) {
@@ -128,6 +133,7 @@ public class GtasLoaderImpl implements GtasLoader {
         }
     }
 
+    @Override
     @Transactional
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
         logger.debug("@ processPnr");
@@ -196,9 +202,10 @@ public class GtasLoaderImpl implements GtasLoader {
         logger.debug("processPnr time= " + (System.nanoTime() - startTime) / 1000000);
     }
 
+    @Override
     @Transactional
-    public Flight processFlightsAndPassengers(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
-                                              String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
+    public Flight processFlightsAndBookingDetails(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
+                                                  String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
 
         long startTime = System.nanoTime();
         // save flight and booking details
@@ -249,6 +256,7 @@ public class GtasLoaderImpl implements GtasLoader {
         return primeFlight;
     }
 
+    @Override
     public Set<Passenger> makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
                                                   Set<Passenger> messagePassengers,
                                                   Set<BookingDetail> bookingDetails,
@@ -279,6 +287,7 @@ public class GtasLoaderImpl implements GtasLoader {
         return newPassengers;
     }
 
+    @Override
     @Transactional()
     public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
@@ -299,13 +308,19 @@ public class GtasLoaderImpl implements GtasLoader {
 
         passengerIdTagDao.save(passengerIDTags);
         flightPassengerRepository.save(flightPassengers);
-        return flightPassengers.size();
+        return newPassengers.size();
     }
 
     @Transactional
     public void updateFlightPassengerCount(Flight primeFlight, int createdPassengers) {
-        primeFlight.setPassengerCount(primeFlight.getPassengerCount() + createdPassengers);
-        flightDao.save(primeFlight);
+        FlightPassengerCount flightPassengerCount = flightPassengerCountRepository.findOne(primeFlight.getId());
+        if (flightPassengerCount == null) {
+            flightPassengerCount = new FlightPassengerCount(primeFlight.getId(), createdPassengers);
+        } else {
+            int currentPassengers = flightPassengerCount.getPassengerCount();
+            flightPassengerCount.setPassengerCount(currentPassengers + createdPassengers);
+        }
+        flightPassengerCountRepository.save(flightPassengerCount);
     }
 
 
@@ -370,6 +385,7 @@ public class GtasLoaderImpl implements GtasLoader {
         }
     }
 
+    @Override
     @Transactional
     public void createBagsFromPnrVo(PnrVo pvo, Pnr pnr) {
 
@@ -404,6 +420,7 @@ public class GtasLoaderImpl implements GtasLoader {
         }
     }
 
+    @Override
     public void createFormPfPayments(PnrVo vo, Pnr pnr) {
         Set<PaymentForm> chkList = new HashSet<>();
         for (PaymentFormVo pvo : vo.getFormOfPayments()) {
@@ -416,6 +433,7 @@ public class GtasLoaderImpl implements GtasLoader {
         paymentFormDao.save(chkList);
     }
 
+    @Override
     public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {

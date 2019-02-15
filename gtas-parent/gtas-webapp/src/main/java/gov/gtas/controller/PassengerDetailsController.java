@@ -97,7 +97,7 @@ public class PassengerDetailsController {
 		PassengerVo vo = new PassengerVo();
 		Passenger t = pService.findById(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
-		List<Bag> bagList = new ArrayList<Bag>();		
+		List<Bag> bagList = new ArrayList<>();
 		List<Seat> pnrSeatList = new ArrayList<Seat>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
@@ -118,7 +118,7 @@ public class PassengerDetailsController {
 					vo.setSeat(seats.get(0));
 				}
 			}
-			bagList = bagRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
+			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
@@ -246,7 +246,7 @@ public class PassengerDetailsController {
 				apisVo.addFlightpax(fpVo);
 			}
 
-			for(Bag b:bagList) {
+			for(Bag b: bagList) {
 				if(b.getData_source().equalsIgnoreCase("apis")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
@@ -326,7 +326,7 @@ public class PassengerDetailsController {
 			@RequestParam String paxId,
 			@RequestParam String flightId)
 			throws ParseException {
-		
+
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
 		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
 		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;
@@ -343,7 +343,7 @@ public class PassengerDetailsController {
 							}).collect(Collectors.toCollection(LinkedList::new));
 		}
 		else {
-			return new ArrayList<FlightVo>();
+		return new ArrayList<FlightVo>();
 		}
 
 	}
