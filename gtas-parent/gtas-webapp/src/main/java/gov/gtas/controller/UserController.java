@@ -140,7 +140,7 @@ public class UserController {
 		
 		else
 		{
-			rUserData = userService.update(userData);
+			rUserData = userService.updateByAdmin(userData);
 			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
 			return new JsonServiceResponse(Status.SUCCESS,
 					validator.getErrMessage(), rUserData);

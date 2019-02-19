@@ -5,15 +5,6 @@
  */
 package gov.gtas.services.security;
 
-import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.Filter;
-import gov.gtas.model.Role;
-import gov.gtas.model.User;
-import gov.gtas.repository.FilterRepository;
-import gov.gtas.repository.UserRepository;
-import gov.gtas.services.Filter.FilterServiceUtil;
-
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -23,10 +14,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import gov.gtas.constant.CommonErrorConstants;
+import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.model.Filter;
+import gov.gtas.model.Role;
+import gov.gtas.model.User;
+import gov.gtas.repository.FilterRepository;
+import gov.gtas.repository.UserRepository;
+import gov.gtas.services.Filter.FilterServiceUtil;
 
 /**
  * The Class UserServiceImpl.
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService {
 
 	private Pattern BCRYPT_PATTERN = Pattern
 			.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(UserServiceImpl.class);
 
 	@Override
 	@Transactional
@@ -107,7 +111,7 @@ public class UserServiceImpl implements UserService {
 			}
 
 			entity.setActive(mappedEnity.getActive());
-			if (data.getRoles() != null) {
+			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
 				Set<Role> oRoles = entity.getRoles();
 				oRoles.clear();
 				Set<Role> roleCollection = roleServiceUtil
@@ -186,6 +190,7 @@ public class UserServiceImpl implements UserService {
 	public UserData updateByAdmin(UserData data) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		User entity = userRepository.findOne(data.getUserId());
+		
 		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
@@ -202,7 +207,7 @@ public class UserServiceImpl implements UserService {
 			}
 
 			entity.setActive(mappedEnity.getActive());
-			if (data.getRoles() != null) {
+			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
 				Set<Role> oRoles = entity.getRoles();
 				oRoles.clear();
 				Set<Role> roleCollection = roleServiceUtil
@@ -217,6 +222,8 @@ public class UserServiceImpl implements UserService {
 				entity.setFilter(filterEntity);
 			}
 			User savedEntity = userRepository.save(entity);
+			logger.debug("Updated by Admin successfully in " + this.getClass().getName());
+			
 			return userServiceUtil.mapUserDataFromEntity(savedEntity);
 		}
 		return null;

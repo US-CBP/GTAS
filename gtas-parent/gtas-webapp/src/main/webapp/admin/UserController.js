@@ -168,11 +168,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
       
         $scope.user.roles = getSelectedRoles();
         
-        if ($scope.user.roles.length === 0 &&  ($scope.user.password === null || angular.isUndefined($scope.user.password) ||  $scope.user.password.length === 0) ) {
-            $scope.validationErrorMessage = "At least one role or a password change is required to save changes for this user."
-            $scope.error=true;
-            return;
-        }
+
         userService[$scope.action]($scope.user).then(backToAdmin);
     };
 
