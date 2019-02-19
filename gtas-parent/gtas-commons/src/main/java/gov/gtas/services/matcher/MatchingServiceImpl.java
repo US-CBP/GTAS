@@ -131,14 +131,16 @@ public class MatchingServiceImpl implements MatchingService {
 	// automated run. Automated run already contains passenger objects.
 	public void saveWatchListMatchByPaxId(Long id) {
 		Passenger passenger = passengerRepository.getPassengerById(id);
-		List<Long> passengers = Lists.asList(passenger.getId(), new Long[0]);
+		List<Long> passengers = Collections.singletonList(passenger.getId());
 		Flight flight = flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst()
 				.orElse(null);
-		saveWatchListMatchByPaxId(createCaseMap(
-				passengers,this.caseDispositionService), flight, passenger);
+		Map<Long, Case> caseMap = createCaseMap(passengers, this.caseDispositionService);
+		Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
+
+		saveWatchListMatchByPaxId(caseMap,ruleCatMap, flight, passenger);
 	}
 
-	public void saveWatchListMatchByPaxId(Map<Long, Case> existingCases, Flight flight, Passenger passenger) {
+	public void saveWatchListMatchByPaxId(Map<Long, Case> existingCases,  Map<Long, RuleCat> ruleCatMap, Flight flight, Passenger passenger) {
 		final float threshold = Float
 				.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue()));
 		List<Watchlist> _watchlists = watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document"));
@@ -185,7 +187,6 @@ public class MatchingServiceImpl implements MatchingService {
 				
 				
 				logger.info(result.toString());
-				 Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
 
 				if (result.getTotalHits() >= 0) {
 					Map<String, DerogResponse> _responses = result.getResponses();
@@ -264,16 +265,20 @@ public class MatchingServiceImpl implements MatchingService {
 		if (passengers != null && passengers.size() > 0) { // Don't try and match if no flights
 			;
 			startTime = System.nanoTime();
+
+			List<Long> passengerIds = new ArrayList<>();
+			for (List<Passenger> passList : passengers.values()) {
+				for (Passenger p : passList) {
+					passengerIds.add(p.getId());
+				}
+			}
+
+			Map<Long, Case> caseMap = createCaseMap(passengerIds, this.caseDispositionService);
+			Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
+
 			for (Flight f : passengers.keySet()) {
 				for(Passenger passenger: passengers.get(f)) {
-					saveWatchListMatchByPaxId(createCaseMap(
-							passengers.
-							values().
-							stream().
-							flatMap(List::stream).
-							collect(Collectors.toList()).
-							stream().map(p -> p.getId())
-							.collect(Collectors.toList()),this.caseDispositionService), f, passenger);
+					saveWatchListMatchByPaxId(caseMap,ruleCatMap, f, passenger);
 				}
 			}
 			endTime = System.nanoTime();
