@@ -5,13 +5,6 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.security.UserData;
-import gov.gtas.services.security.UserService;
-import gov.gtas.validator.UserDataValidator;
-
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +32,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.JsonServiceResponse;
+import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.security.UserData;
+import gov.gtas.services.security.UserService;
+import gov.gtas.validator.UserDataValidator;
 
 @RestController
 public class UserController {
@@ -79,8 +79,7 @@ public class UserController {
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse updateUser(@RequestBody @Valid UserData userData) {
 		
-		
-		
+			
 		UserData rUserData = userData;
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
@@ -101,11 +100,55 @@ public class UserController {
 			return new JsonServiceResponse(Status.SUCCESS,
 					validator.getErrMessage(), rUserData);
 		} else {
-			logger.error("The User Information is not updated due to errors for " + userData.getUserId());
+			logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "+ validator.getErrMessage());
 			return new JsonServiceResponse(Status.FAILURE,
 					validator.getErrMessage(), rUserData);
 		}
 	}
+	
+	@RequestMapping(method = RequestMethod.PUT, value = "/manageuser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse manageuser(@RequestBody UserData userData) {
+		
+		
+		UserData rUserData = userData;
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
+		if(!isAdmin)
+		{
+					logger.error("The logged in user does not have a permission to update another user's credentials");
+				return new JsonServiceResponse(Status.FAILURE,
+						"Not Authorized to update user credentials", rUserData);
+		}
+		
+		Validator validator = this.new Validator();
+		
+		if(userData.getPassword()!=null && !userData.getPassword().isEmpty())
+		{
+			if (validator.isValid(userData.getPassword(), userData.getUserId())) 
+			{
+				rUserData = userService.updateByAdmin(userData);
+				logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+				return new JsonServiceResponse(Status.SUCCESS,
+						validator.getErrMessage(), rUserData);
+			}
+			else {
+				logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "+ validator.getErrMessage());
+				return new JsonServiceResponse(Status.FAILURE,
+						validator.getErrMessage(), rUserData);
+			}
+		}
+		
+		else
+		{
+			rUserData = userService.update(userData);
+			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+			return new JsonServiceResponse(Status.SUCCESS,
+					validator.getErrMessage(), rUserData);
+		}
+	}
+
+	
+	
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping("/user")

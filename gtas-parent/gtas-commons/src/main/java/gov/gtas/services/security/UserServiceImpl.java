@@ -182,4 +182,44 @@ public class UserServiceImpl implements UserService {
 		return isAdmin;
 	}
 
+	@Override
+	public UserData updateByAdmin(UserData data) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		User entity = userRepository.findOne(data.getUserId());
+		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
+		if (entity != null) {
+			entity.setFirstName(mappedEnity.getFirstName());
+			entity.setLastName(mappedEnity.getLastName());
+			
+			if(data.getPassword()!=null && !data.getPassword().isEmpty())
+			{
+				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
+					entity.setPassword(passwordEncoder.encode(mappedEnity
+						.getPassword()));
+				} else {
+					entity.setPassword(mappedEnity.getPassword());
+				}
+			}
+
+			entity.setActive(mappedEnity.getActive());
+			if (data.getRoles() != null) {
+				Set<Role> oRoles = entity.getRoles();
+				oRoles.clear();
+				Set<Role> roleCollection = roleServiceUtil
+						.mapEntityCollectionFromRoleDataSet(data.getRoles());
+				oRoles.addAll(roleCollection);
+				entity.setRoles(oRoles);
+			}
+
+			if (data.getFilter() != null) {
+				Filter filterEntity = filterServiceUtil
+						.mapFilterEntityFromFilterData(data.getFilter());
+				entity.setFilter(filterEntity);
+			}
+			User savedEntity = userRepository.save(entity);
+			return userServiceUtil.mapUserDataFromEntity(savedEntity);
+		}
+		return null;
+	}
+
 }
