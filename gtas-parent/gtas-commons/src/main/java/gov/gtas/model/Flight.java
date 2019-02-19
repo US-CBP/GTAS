@@ -7,11 +7,7 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -145,6 +141,7 @@ public class Flight extends BaseEntityAudit {
     public void setPassengers(Set<Passenger> passengers) {
        
     }
+
 
 	public String getFlightNumber() {
         return flightNumber;

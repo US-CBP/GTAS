@@ -289,14 +289,11 @@ public class TargetingServiceImpl implements TargetingService {
 				.getMessagesFromStatus(
 				MessageStatusEnum.LOADED);
 
-		List<Message> target = new ArrayList<>();
-		for (MessageStatus ms : source) {
-			target.add(ms.getMessage());
-			if (ms.getMessage() instanceof Pnr) {
-				Pnr pnr = (Pnr)ms.getMessage();
-				pnr.getAddresses().iterator();
-			}
-			}
+		List<Message> target = source
+				.stream()
+				.map(MessageStatus::getMessage)
+				.collect(Collectors.toList());
+
 		RuleResults ruleResults = null;
 		try {
 			Bench.start("second", "analyzeLoadedMessages executeRules start");
@@ -565,7 +562,6 @@ public class TargetingServiceImpl implements TargetingService {
 	@Override
 	public RuleResults runningRuleEngine() {
 		logger.info("Entering runningRuleEngine().");
-                        Bench.start("total", "Starting Rule Engine processing");
 	  	return analyzeLoadedMessages(true);
 	}
 

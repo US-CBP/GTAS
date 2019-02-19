@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 
+
 @Entity
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {

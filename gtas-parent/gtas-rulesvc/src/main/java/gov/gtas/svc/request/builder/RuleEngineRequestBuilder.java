@@ -359,6 +359,7 @@ public class RuleEngineRequestBuilder {
     }
 
     private void addPassengerAndDependdencies(Passenger passenger) {
+
         requestObjectList.add(passenger);
         if (passenger.getDocuments() != null) {
             for (Document doc : passenger.getDocuments()) {

@@ -110,6 +110,10 @@ public class GtasLoaderImpl implements GtasLoader {
     FlightPassengerCountRepository flightPassengerCountRepository;
 
 
+    @Autowired
+    FlightPaxRepository flightPaxRepository;
+
+
     @Override
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
@@ -326,16 +330,20 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Override
     @Transactional()
-    public void createBookingDetails(Set<Passenger> messagePassengers, Set<BookingDetail> bookingDetails) {
+    public void createBookingDetails(Pnr pnr) {
+        Set<BookingDetail> bookingDetails = pnr.getBookingDetails();
+        Set<Passenger> messagePassengers = pnr.getPassengers();
         if (!bookingDetails.isEmpty()) {
             for (BookingDetail bD : bookingDetails) {
+                bD.getPnrs().add(pnr);
                 for (Passenger pax : messagePassengers) {
-                    bD.getPassengers().add(pax);
-                    pax.getBookingDetails().add(bD);
+                    if (!pax.getBookingDetails().contains(bD)) {
+                        bD.getPassengers().add(pax);
+                    }
                 }
             }
         }
-        passengerDao.save(messagePassengers);
+        bookingDetailDao.save(bookingDetails);
     }
 
 

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
+import gov.gtas.repository.FlightPaxRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,7 +46,11 @@ public class PnrMessageService extends MessageLoaderService {
     @Autowired
     private LookUpRepository lookupRepo;
 
-    //private Pnr pnr;
+
+	@Autowired
+	FlightPaxRepository flightPaxRepository;
+
+	//private Pnr pnr;
 
     @Override
     public List<String> preprocess(String message) {
@@ -122,7 +127,7 @@ public class PnrMessageService extends MessageLoaderService {
 
 			createFlightPax(pnr);
 			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createBookingDetails(pnr.getPassengers(), pnr.getBookingDetails());
+			loaderRepo.createBookingDetails(pnr);
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setPnr(pnr);
@@ -334,6 +339,7 @@ public class PnrMessageService extends MessageLoaderService {
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	int pnrBagCount=0;
     	double pnrBagWeight=0.0;
+    	List<FlightPax> flightPaxes = new ArrayList<>();
     	for(Flight f : flights){
     		for(Passenger p : pnr.getPassengers()){
     			FlightPax fp = new FlightPax();
@@ -376,13 +382,16 @@ public class PnrMessageService extends MessageLoaderService {
     			setHeadPool( fp,p,f);
     			p.getFlightPaxList().add(fp);
     			paxRecords.add(fp);
+				flightPaxes.add(fp);
     		}
     		if(!oneFlight) {
     			setBagDetails(paxRecords,pnr);
     		}
     		oneFlight=true;
 		}
-    }
+		flightPaxRepository.save(flightPaxes);
+
+	}
 
     private void setBagDetails(Set<FlightPax> paxes,Pnr pnr) {
     	int pnrBagCount=0;

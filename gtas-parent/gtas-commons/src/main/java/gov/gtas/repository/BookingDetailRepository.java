@@ -19,9 +19,19 @@ import java.util.List;
 @Service
 public interface BookingDetailRepository extends CrudRepository<BookingDetail, Long>{
 
-    @Query(value = "SELECT bd.* FROM BookingDetail bd WHERE bd.processed = FALSE and " +
-            "bd.id in (select pb.booking_detail_id from pax_booking pb) and " +
-            "bd.id in (select fl.bookingDetail_id from flight_leg fl)" , nativeQuery = true)
+
+    //Enforce booking detail processing on messages that have been analyzed or processed.
+    @Query(value =
+            "SELECT bd.* FROM BookingDetail bd " +
+            "WHERE bd.processed = FALSE " +
+            "AND bd.id IN (SELECT pnrbk.booking_detail_id FROM gtas.pnr_booking pnrbk " +
+                "WHERE pnrbk.booking_detail_id = bd.id " +
+                "AND pnrbk.pnr_id IN " +
+                "   (SELECT ms.ms_message_id FROM message_status ms " +
+                "        WHERE (ms.ms_message_id = pnrbk.pnr_id " +
+                "               AND ms.ms_status != 'PARSED' " +
+                "               AND ms.ms_status != 'RECEIVED'" +
+                    "           AND ms.ms_status != 'LOADED')))" , nativeQuery = true)
     List<BookingDetail> getBookingDetailByProcessedFlag();
 
     @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
