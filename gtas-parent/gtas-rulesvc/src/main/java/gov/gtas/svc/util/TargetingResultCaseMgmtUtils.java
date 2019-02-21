@@ -60,8 +60,6 @@ public class TargetingResultCaseMgmtUtils {
         if (logger.isInfoEnabled()) {
             logger.info("Number of rule hits --> " + resultList.size());
         }
-        Bench.start("here2", "Before for RuleHitDetail loop.");
-        
         // all of these maps prevent many trips to the database in the for loop below.
         Map<Long, List<Long> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
         Map<Long, Passenger> passengerMap = TargetingResultUtils.createPassengerMap(resultList, passengerService);
@@ -75,8 +73,12 @@ public class TargetingResultCaseMgmtUtils {
                 List<Long> flightIdList = passengerFlightMap.get(rhd.getPassengerId());
                 if (flightIdList != null && !CollectionUtils.isEmpty(flightIdList)) {
                         for (Long flightId : flightIdList) {
-                            casesSet.add(processPassengerFlight(rhd, flightId, caseMap, flightMap,
-                                     passengerMap,ruleCatMap, dispositionService));
+                            Case caze = processPassengerFlight(rhd, flightId, caseMap, flightMap,
+                                    passengerMap,ruleCatMap, dispositionService);
+                            if (!casesSet.add(caze)) {
+                                casesSet.remove(caze);
+                                casesSet.add(caze);
+                            }
                         }
                 } else {
                     // ERROR we do not have flights for this passenger
@@ -84,7 +86,11 @@ public class TargetingResultCaseMgmtUtils {
                             + rhd.getPassenger().getId());
                 }
             } else {
-                casesSet.add(processPassengerFlight(rhd, rhd.getFlightId(),caseMap, flightMap, passengerMap,ruleCatMap, dispositionService));
+                Case caze = processPassengerFlight(rhd, rhd.getFlightId(),caseMap, flightMap, passengerMap,ruleCatMap, dispositionService);
+                if (!casesSet.add(caze)) {
+                    casesSet.remove(caze);
+                    casesSet.add(caze);
+                }
             }
             rhd.setPassenger(null);
         }
@@ -125,7 +131,7 @@ public class TargetingResultCaseMgmtUtils {
                 if (_tempPax.getDocuments() != null) {
                     document = _tempPax.getDocuments().stream().findFirst().map(Document::getDocumentNumber).orElse(null);
                 }
-                newCase = dispositionService.registerCasesFromRuleServiceCase(
+                newCase = dispositionService.registerCaseFromRuleService(
                         flightId,
                         rhd.getPassengerId(),
                         rhd.getPassengerName(),

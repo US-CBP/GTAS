@@ -378,21 +378,23 @@ public class TargetingServiceImpl implements TargetingService {
 		return ruleResults;
 	}
 
-	private Set<Case> processResultAndMakeCasesPopulateTargetingResult(RuleResults ruleResults) {
+	private Set<Case> processResultAndMakeCases(RuleResults ruleResults) {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		Set<Case> casesSet = new HashSet<>();
 		if (ruleResults.getUdrResult() != null) {
 			RuleServiceResult udrResult = ruleResults.getUdrResult();
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult, targetingResultServices);
-			casesSet.addAll(TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService));
+			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService));
+			mergeSets(casesSet, resultCases);
 			ruleResults.setUdrResult(udrResult);
 		}
 		if (ruleResults.getWatchListResult() != null) {
 			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
 			//make a call to Case Mgmt.
-			casesSet.addAll(TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult, caseDispositionService, passengerService));
+			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult, caseDispositionService, passengerService);
+			mergeSets(casesSet, resultCases);
 			ruleResults.setWatchListResult(watchlistResult);
 		}
 
@@ -401,6 +403,18 @@ public class TargetingServiceImpl implements TargetingService {
 		return casesSet;
 	}
 
+	private void mergeSets(Set<Case> casesSet, Set<Case> resultCases) {
+		for (Case caze : resultCases) {
+			if (!casesSet.add(caze)) {
+				Case oldCase = casesSet.stream().filter(c -> c.equals(caze)).findFirst().orElse(null);
+				if (oldCase != null) {
+					caze.getHitsDispositions().addAll(oldCase.getHitsDispositions());
+					casesSet.remove(caze);
+					casesSet.add(caze);
+				}
+			}
+		}
+	}
 	/**
 	 * Filtering whitelist.
 	 *
@@ -569,7 +583,7 @@ public class TargetingServiceImpl implements TargetingService {
 		TargetingServiceResults targetingServiceResults = null;
 		if (ruleRunningResult != null && ruleRunningResult.hasResults()) {
 			targetingServiceResults = new TargetingServiceResults();
-			Set<Case> casesSet = processResultAndMakeCasesPopulateTargetingResult(ruleRunningResult);
+			Set<Case> casesSet = processResultAndMakeCases(ruleRunningResult);
 			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult.getTargetingResult());
 			targetingServiceResults.setCaseSet(casesSet);
 			targetingServiceResults.setHitsSummaryList(hitsSummaryList);

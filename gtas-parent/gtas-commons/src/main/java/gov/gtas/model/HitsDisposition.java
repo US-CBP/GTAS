@@ -19,7 +19,6 @@ import java.util.Set;
 @Table(name = "hits_disposition")
 public class HitsDisposition extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
-
     public HitsDisposition() {
     }
 
@@ -27,11 +26,14 @@ public class HitsDisposition extends BaseEntityAudit {
         this.hitId = hit;
     }
 
+    @Column(name = "rule_type")
+    private String ruleType;
+
     @Column(name = "hit_id")
     private long hitId;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name="case_id", insertable=false, updatable=false)
     private Case aCase;
 
@@ -120,12 +122,24 @@ public class HitsDisposition extends BaseEntityAudit {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof HitsDisposition)) return false;
         HitsDisposition that = (HitsDisposition) o;
-        return this.getHitId() == that.getHitId();
+        return
+                this.getHitId() == that.getHitId()
+                        && ((this.getRuleType() == null ? that.getRuleType() == null : this.getRuleType().equalsIgnoreCase(that.getRuleType())));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getHitId());
+        return Objects.hash(getHitId(), getRuleType());
+    }
+
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
     }
 }

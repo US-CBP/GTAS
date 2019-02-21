@@ -60,6 +60,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	private static final String UPDATED_BY_INTERNAL = "Internal";
 	private static final String CASE_CREATION_MANUAL_DESC = "Agent Created Case";
 	private static final String WL_ITEM_PREFIX = "wl_item";
+	private static final String WATCHLIST = "WATCHLIST";
+	private static final String UDR = "UDR";
+	private static final String MANUAL = "MANUAL";
 
 	@Resource
 	private CaseDispositionRepository caseDispositionRepository;
@@ -223,9 +226,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitDisp = new HitsDisposition();
 			if (hitDesc.startsWith(WL_ITEM_PREFIX)) {
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
+				hitDisp.setRuleType(WATCHLIST);
 				hitDesc = hitDesc.substring(7);
 			} else {
 				hitDisp.setRuleCat(ruleCatMap.get(1L));
+				hitDisp.setRuleType(UDR);
 				pullRuleCategory(hitDisp, getRuleCatId(_tempHitId), ruleCatMap);
 			}
 
@@ -296,6 +301,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 		for (Long _tempHitId : hit_ids) {
 			hitDisp = new HitsDisposition();
+			hitDisp.setRuleType(MANUAL);
 			// pullRuleCategory(hitDisp, rule_cat_id);
 			// hitDisp.getRuleCat().setHitsDispositions(null);
 			highPriorityRuleCatId = 1L;
@@ -418,7 +424,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Iterable<RuleCat> ruleCatList = ruleCatRepository.findAll();
 		return ruleCatList;
 	}
-
 	/**
 	 * Utility method to manage cases to persist
 	 *
@@ -645,7 +650,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	}
 
 	@Override
-	public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
+	public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType,
 			String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
 			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Case> _tempCaseList = new ArrayList<>();
@@ -675,9 +680,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		return _tempCaseList;
 	}
 
-
 	@Override
-	public Case registerCasesFromRuleServiceCase(Long flight_id, Long pax_id, String paxName, String paxType,
+	public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
 												 String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
 												 Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Long> _tempHitIds = new ArrayList<>();

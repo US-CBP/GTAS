@@ -218,12 +218,8 @@ public class FlightServiceImpl implements FlightService {
 	public Long getFlightFuzzyMatchesOnly(Long flightId) {
 		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
 				"FROM pax_watchlist_link pwl " +
-				"WHERE pwl.passenger_id IN (SELECT DISTINCT p.id " +
-				"                           FROM flight_passenger fp " +
-				"                                  LEFT JOIN passenger p ON (fp.passenger_id = p.id) " +
-				"                           WHERE fp.flight_id = "+flightId+ " " +
-				"                             AND p.id NOT IN " +
-				"                                 (SELECT hitSumm.paxId FROM hits_summary hitSumm WHERE fp.flight_id = "+flightId+"))";
+				"WHERE pwl.passenger_id not in (SELECT hitSumm.paxId " +
+				"FROM hits_summary hitSumm where wl_hit_count > 0)";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}

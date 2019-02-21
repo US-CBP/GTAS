@@ -71,6 +71,9 @@ public class MatchingServiceImpl implements MatchingService {
 	private AppConfigurationRepository appConfigRepository;
 
 	@Autowired
+	NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils;
+
+	@Autowired
 	private QuickMatcher qm;
 	
 	private ObjectMapper mapper = new ObjectMapper();
@@ -197,14 +200,17 @@ public class MatchingServiceImpl implements MatchingService {
 							paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
 									passenger.getId(), Long.parseLong(hit.getDerogId()));
 
-						    Case existingCase = existingCases.get(passenger.getId()); 
-						    
+						    Case existingCase = existingCases.get(passenger.getId());
+
 							// make a call to open case here
-							new NameMatchCaseMgmtUtils().nameMatchCaseProcessing(passenger,
-									Long.parseLong(hit.getDerogId()), hit.getWatchlistName(),
-									
-										flight	,existingCase,ruleCatMap,
-									caseDispositionService);
+							nameMatchCaseMgmtUtils
+									.processPassengerFlight(
+									hit.getWatchlistName(),
+									passenger,
+									Long.parseLong(hit.getDerogId()),
+									flight,
+									existingCase,
+									ruleCatMap);
 						}
 					}
 				}
@@ -282,7 +288,7 @@ public class MatchingServiceImpl implements MatchingService {
 				}
 			}
 			endTime = System.nanoTime();
-			logger.info("Passenger count for matching service: " + passengers.size());
+			logger.info("Passenger count for matching service: " + passengerIds.size());
 			logger.info("Execution time for saveWatchListMatchByPaxId() for loop = " + (endTime - startTime) / 1000000
 					+ "ms");
 		}

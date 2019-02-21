@@ -59,11 +59,11 @@ public interface CaseDispositionService {
 //
 //    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, 
+    public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
                                                    String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
                                                    Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
-    public Case registerCasesFromRuleServiceCase(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
+    public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
                                                  String hitDesc, Long hit_id, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
                                                  Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
