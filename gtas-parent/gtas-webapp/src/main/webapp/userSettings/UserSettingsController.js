@@ -13,14 +13,26 @@ app.controller('UserSettingsController', function ($scope, $state, $interval,$ht
     };
     $scope.updateCredentials=function()
     {
+    	$scope.success=false;
+    	$scope.error=false;
+    	
         user.data.firstName=$scope.userCredentials.firstName;
         user.data.lastName=$scope.userCredentials.lastName;
-        user.data.password=$scope.userCredentials.newPassword;
+        user.data.password=$scope.userCredentials.newUserPassword;
         userService.updateUser(user.data).
             then(
-            function () {
-                $scope.successMessage="Your credentials were updated successfully." ;
-                $scope.success=true;
+            function (result) {
+            	if(result.status === "SUCCESS")
+            	{
+            		 $scope.successMessage="Your credentials were updated successfully." ;
+                     $scope.success=true;
+            	}
+            	else if(result.status === "FAILURE" || result.data.status === "undefined")
+            	{
+            		 $scope.successMessage="Your credentials were not updated due to errors." ;
+                     $scope.error=true;
+            	}
+               
             }
         );
     };
@@ -28,8 +40,8 @@ app.controller('UserSettingsController', function ($scope, $state, $interval,$ht
     {
         $scope.userCredentials.firstName=user.data.firstName;
         $scope.userCredentials.lastName=user.data.lastName;
-        $scope.userCredentials.newPassword=user.data.password;
-        $scope.userCredentials.confirmPassword=user.data.password;
+       $scope.userCredentials.newPassword=user.data.password;
+       $scope.userCredentials.confirmPassword=user.data.password;
         $scope.success=false;
         $scope.error=false;
     };
@@ -44,7 +56,7 @@ app.controller('UserSettingsController', function ($scope, $state, $interval,$ht
     		hideDelay   : 0,
             position    : 'top right',
             ok:"OK",
-            template    : '<md-toast style="height:100%"><div class="md-toast-content" style="height:100%">Password Criteria:'+
+            template    : '<md-toast style="height:100%;margin-top:160px;"><div class="md-toast-content" style="height:100%">Password Criteria:'+
     			'<ul><li>10 to 20 characters</li>'+
     			'<li>At least one special character (!@#$%^&*)</li>'+
     			'<li>At least one number</li>'+
