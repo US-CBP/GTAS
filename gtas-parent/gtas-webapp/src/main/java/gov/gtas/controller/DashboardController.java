@@ -124,7 +124,7 @@ public class DashboardController {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
 
-		if (!isAdmin && httpServletRequest.getSession(false).getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
+		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
 			this.setUserPrimaryLocation(httpServletRequest, userId);
 
 		return flightsAndPassengersAndHitsCount;
@@ -148,7 +148,7 @@ public class DashboardController {
 				for (UserLocationVo userLocationVo : userLocationVoList) {
 
 					if (userLocationVo.isPrimaryLocation()) {
-						httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
+						httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
 						hasPrimaryLocation = true;
 						logger.info("User Primary Location is set to " + userLocationVo.getAirport()  + " in session. " + this.getClass().getName());
 						break;
@@ -164,7 +164,7 @@ public class DashboardController {
 						if (userLocationVoList.get(i).getAirport() != null
 								&& !userLocationVoList.get(i).getAirport().isEmpty()) {
 							userLocationVoList.get(i).setPrimaryLocation(true);
-							httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION,
+							httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
 									userLocationVoList.get(i).getAirport());
 							logger.info("User Primary Location is set to " + userLocationVoList.get(i).getAirport()  + " in session. " + this.getClass().getName());
 							try {
@@ -186,7 +186,7 @@ public class DashboardController {
 				try {
 					
 					userLocationService.createUserPrimaryLocation(userId, appConfiguration.getValue(), true);
-					httpServletRequest.getSession(false).setAttribute(Constants.USER_PRIMARY_LOCATION,appConfiguration.getValue());
+					httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,appConfiguration.getValue());
 					logger.info("User Primary Location is set to the default airport from App Config " + appConfiguration.getValue()  + " in session. " + this.getClass().getName());
 					
 					

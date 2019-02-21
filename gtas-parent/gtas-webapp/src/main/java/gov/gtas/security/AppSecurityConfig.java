@@ -50,7 +50,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/flights/**/*", "/pax/**/*", "/query-builder/**/*",
 				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*",
 				"/dist/**/*", "/jqb/**/*", "/userSettings/**/*", "/cases/**/*","/onedaylookout/**/*","/userlocation/**/*",
-				"/resources/**", "/common/**/*", "/login/**", "/admin/**",
+				"/resources/**", "/common/**/*", "/login/**", "/admin/**","/flightdirectionlist/**/*",
 				"/app.js", "WEB-INF/**/*", "/data/**");
 	}
 

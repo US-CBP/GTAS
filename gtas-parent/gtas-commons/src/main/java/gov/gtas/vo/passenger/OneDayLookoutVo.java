@@ -1,4 +1,6 @@
-package gov.gtas.vo;
+package gov.gtas.vo.passenger;
+
+import gov.gtas.vo.BaseVo;
 
 public class OneDayLookoutVo extends BaseVo{
 

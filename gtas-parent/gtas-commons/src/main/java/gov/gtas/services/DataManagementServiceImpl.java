@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.model.User;
 import gov.gtas.repository.DataManagementRepository;
+import gov.gtas.repository.DataManagementRepositoryImpl.DataTruncationType;
 
 @Service
 public class DataManagementServiceImpl implements DataManagementService
@@ -19,9 +20,9 @@ public class DataManagementServiceImpl implements DataManagementService
 
 	@Override
 	@Transactional
-	public void truncateAllMessageDataByDate(LocalDate localDate, User currentUser) throws Exception
+	public void truncateAllMessageDataByDate(LocalDate localDate, User currentUser, DataTruncationType type) throws Exception
 	{
-		dataManagementRepository.truncateAllMessageDataByDate(localDate, currentUser);
+		dataManagementRepository.truncateAllMessageDataByDate(localDate, currentUser, type);
 		
 	}
 }
