@@ -16,7 +16,6 @@ import gov.gtas.repository.*;
 import org.apache.commons.collections4.IteratorUtils;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import gov.gtas.vo.passenger.*;
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
