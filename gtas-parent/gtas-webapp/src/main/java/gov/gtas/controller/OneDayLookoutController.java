@@ -9,9 +9,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import gov.gtas.services.UserLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,6 +40,9 @@ public class OneDayLookoutController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserLocationService userLocationService;
 
 	@RequestMapping(value = "/onedaylookout", method = RequestMethod.GET)
 	public @ResponseBody List<OneDayLookoutVo> getOneDayLookout(HttpServletRequest httpServletRequest,
@@ -69,6 +74,13 @@ public class OneDayLookoutController {
 		
 			String userLocation = (String) httpServletRequest.getSession()
 					.getAttribute(Constants.USER_PRIMARY_LOCATION);
+
+			//set user location if it does not exist.
+			if (userLocation == null) {
+				userLocation = getUserLocation(userId);
+				httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocation);
+			}
+
 
 			if (userLocation != null && !userLocation.trim().isEmpty()) {
 				try {
@@ -103,6 +115,17 @@ public class OneDayLookoutController {
 		}
 
 		return OneDayLookoutVoList;
+	}
+
+
+	public String getUserLocation(String userId) {
+		String loc = null;
+		try {
+			loc = userLocationService.getUserLocation(userId).get(0).getAirport();
+		} catch (Exception e) {
+			logger.info("error getting user location from database!");
+		}
+		return loc;
 	}
 
 	@RequestMapping(value = "/addonedaylookout", method = RequestMethod.GET)
