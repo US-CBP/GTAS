@@ -86,6 +86,9 @@ public class PassengerDetailsController {
 	@Resource
 	private ApisMessageRepository apisMessageRepository;
 
+	@Autowired
+	private UserService userService;
+
 	static final String EMPTY_STRING = "";
 
 	@ResponseBody
@@ -316,7 +319,7 @@ public class PassengerDetailsController {
 	 *            the passenger id
 	 * @param flightId
 	 *            the flight id
-	 * @return the travel history by passenger and document
+		 * @return the travel history by passenger and document
 	 * @throws ParseException
 	 */
 	@ResponseBody
@@ -409,7 +412,15 @@ public class PassengerDetailsController {
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
 	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
-		return pService.getDispositionStatuses();
+
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		User user = userService.fetchUser(userId);
+		Role oneDay = new Role(7, "One Day Lookout");
+		if (user.getRoles().contains(oneDay)) {
+			return null;
+		} else {
+			return pService.getDispositionStatuses();
+		}
 	}
 
 	@RequestMapping(value = "/allcases", method = RequestMethod.GET)

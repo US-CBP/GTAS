@@ -5,25 +5,18 @@
  */
 package gov.gtas.services;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import org.apache.commons.collections4.IteratorUtils;
+import gov.gtas.services.dto.CaseCommentRequestDto;
+import gov.gtas.vo.passenger.*;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,18 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.collect.Lists;
-
 import gov.gtas.constant.OneDayLookoutContants;
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
-import gov.gtas.model.Attachment;
-import gov.gtas.model.Case;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.HitsDisposition;
-import gov.gtas.model.HitsDispositionComments;
-import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.DispositionStatusCode;
@@ -54,14 +37,8 @@ import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.util.EntityResolverUtils;
-import gov.gtas.vo.passenger.AttachmentVo;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.HitsDispositionCommentsVo;
-import gov.gtas.vo.passenger.HitsDispositionVo;
-import gov.gtas.vo.passenger.OneDayLookoutVo;
 
-import java.util.Map;
+import static java.util.Comparator.comparing;
 
 @Service
 public class CaseDispositionServiceImpl implements CaseDispositionService {
@@ -512,6 +489,27 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	}
 
 	@Override
+	@Transactional
+	public Case addGeneralCaseComment(CaseCommentRequestDto caseCommentRequestDto) {
+		Case aCase = caseDispositionRepository.caseWithCommentsById(caseCommentRequestDto.getCaseId());
+		if (caseCommentRequestDto.getCaseStatus() != null
+				&& !caseCommentRequestDto.getCaseStatus().equalsIgnoreCase(aCase.getCaseOfficerStatus())) {
+			aCase.setCaseOfficerStatus(caseCommentRequestDto.getCaseStatus());
+		}
+		if (caseCommentRequestDto.getComment() != null) {
+			CaseComment newCaseComment = new CaseComment();
+			newCaseComment.setaCase(aCase);
+			newCaseComment.setCreatedAt(new Date());
+			newCaseComment.setCreatedBy(caseCommentRequestDto.getUser());
+			newCaseComment.setCommentType(CommentType.GENERAL);
+			newCaseComment.setComment(caseCommentRequestDto.getComment());
+			aCase.getCaseComments().add(newCaseComment);
+		}
+		//Save comment through cascading case.
+		return caseDispositionRepository.save(aCase);
+	}
+
+	@Override
 	public Case addCaseComments(Long caseId, Long hit_id, String caseComments, String status, String validHit,
 			MultipartFile fileToAttach, String username, String caseDisposition) {
 		Case aCase = new Case();
@@ -664,19 +662,28 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto) {
-
-		Case aCase = caseDispositionRepository.findOne(dto.getCaseId());
-
+		Case aCase = caseDispositionRepository.caseWithCommentsById(dto.getCaseId());
 		List<CaseVo> vos = new ArrayList<>();
 		CaseVo vo = new CaseVo();
 		vo.setHitsDispositions(aCase.getHitsDispositions());
-		aCase.getFlight().setPnrs(null); // TODO: need to cherry-pick the fields we need to copy to DTO, failed to
-											// serialize the lazy loaded entities
+		aCase.getFlight().setPnrs(null);
 		vo.setHitsDispositionVos(returnHitsDisposition(aCase.getHitsDispositions()));
+		vo.setGeneralCaseCommentVos(convertCommentsToVo(aCase.getCaseComments()));
 		CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
 		manageHitsDispositionCommentsAttachments(vo.getHitsDispositions());
 		vos.add(vo);
-		return new CasePageDto(vos, new Long(1L));
+		return new CasePageDto(vos, 1L);
+	}
+
+	private Set<GeneralCaseCommentVo> convertCommentsToVo(Set<CaseComment> caseComments) {
+		List<GeneralCaseCommentVo> generalCaseCommentVoSet = new ArrayList<>();
+		for (CaseComment cc : caseComments) {
+			GeneralCaseCommentVo generalCaseCommentVo = new GeneralCaseCommentVo();
+			CaseDispositionServiceImpl.copyIgnoringNullValues(cc, generalCaseCommentVo);
+			generalCaseCommentVoSet.add(generalCaseCommentVo);
+		}
+		generalCaseCommentVoSet.sort(comparing(GeneralCaseCommentVo::getCreatedAt).reversed());
+		return new LinkedHashSet<>(generalCaseCommentVoSet);
 	}
 
 	/**
