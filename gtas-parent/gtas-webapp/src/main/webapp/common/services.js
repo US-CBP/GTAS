@@ -215,6 +215,7 @@
         .service('userService', function ($http, $q) {
             var USER_ROLES_URL = "/gtas/roles/",
                 USERS_URL = "/gtas/users/",
+                MANAGE_USER_URL = "/gtas/manageuser/",
                 USER_URL = "/gtas/user/";
 
             function handleError(response) {
@@ -254,6 +255,15 @@
                 });
                 return (request.then(handleSuccess, handleError));
             }
+            
+            function manageUser(user) {
+                var request = $http({
+                    method: "put",
+                    url: MANAGE_USER_URL + user.userId,
+                    data: user
+                });
+                return (request.then(handleSuccess, handleError));
+            }
 
             function createUser(user) {
                 var request = $http({
@@ -278,6 +288,7 @@
                 getRoles: getRoles,
                 createUser: createUser,
                 updateUser: updateUser,
+                manageUser:manageUser,
                 getUserData: getUserData,
                 getAllUsers: function () {
                     var request = $http({

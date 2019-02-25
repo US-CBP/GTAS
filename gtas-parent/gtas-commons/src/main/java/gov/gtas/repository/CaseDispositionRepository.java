@@ -33,11 +33,14 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     public Page<Case> findAll(Pageable pageable);
 
     //public Case findById(Long id);
-    
+
     default Case findOne(Long id)
     {
     	return findById(id).orElse(null);
     }
+
+    @Query("SELECT c FROM Case c  left join fetch c.caseComments where c.id = :id")
+    public Case caseWithCommentsById(@Param("id") Long id);
 
     @Query("SELECT c FROM Case c WHERE c.flightId = (:flightId) "
             + "AND c.paxId = (:paxId) AND c.status in :status")

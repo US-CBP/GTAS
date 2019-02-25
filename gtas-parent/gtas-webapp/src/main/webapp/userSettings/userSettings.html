@@ -57,25 +57,25 @@ section {
 
                     <md-input-container style="padding-top: 0.5px; padding-bottom: 0.5px;">
                         <label>First name</label>
-                        <input ng-model="userCredentials.firstName">
+                        <input ng-model="userCredentials.firstName" >
                     </md-input-container>
                     <md-input-container  style="padding-top: 0.5px; padding-bottom: 0.5px;">
                         <label>Last Name</label>
                         <input ng-model="userCredentials.lastName">
                     </md-input-container>
                     <md-input-container style="padding-top: 0.5px; padding-bottom: 0.5px;">
-                        <label>New Password</label>
-                        <input ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/" ng-focus="displayPasswordRules()" ng-blur="hideToast()" ng-model="userCredentials.newPassword" type="password" name="newPassword" >
+                        <label><strong>New Password</strong></label>
+                        <input ng-pattern="/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/" ng-focus="displayPasswordRules()" ng-blur="hideToast()" ng-model="userCredentials.newUserPassword" type="password" name="newUserPassword" >
                     </md-input-container>
                     <md-input-container style="padding-top: 0.5px; padding-bottom: 0.5px;">
-                        <label>Confirm Password</label>
-                        <input ng-model="userCredentials.confirmPassword" type="password" name="confirmPassword" compare-to="userCredentials.newPassword" >
-                        <div ng-messages="userSettings.confirmPassword.$error">
+                        <label><strong>Confirm Password</strong></label>
+                        <input ng-model="userCredentials.confirmUserPassword" type="password" name="confirmUserPassword" compare-to="userCredentials.newUserPassword" >
+                        <div ng-messages="userSettings.confirmUserPassword.$error">
                             <div ng-messages-include="userSettings/messages.html"></div>
                         </div>
                     </md-input-container>
                     <div class="actions">
-                        <md-button class="md-raised md-primary" ng-click="updateCredentials()" ng-disabled="userSettings.$invalid || ! userCredentials.firstName || ! userCredentials.lastName">Update</md-button>
+                        <md-button class="md-raised md-primary" ng-click="updateCredentials()" ng-disabled="userSettings.$invalid || (userCredentials.newUserPassword==null) || (userCredentials.confirmUserPassword==null) || (userCredentials.newUserPassword=='') || (userCredentials.confirmUserPassword=='')">Update</md-button>
                     </div>
                 </section>
                 </form>

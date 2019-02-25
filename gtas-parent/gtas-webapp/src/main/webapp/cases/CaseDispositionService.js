@@ -153,13 +153,7 @@
                     }))
                     ;
                 }else{
-
                     dfd.resolve(
-                        //
-                        // $http.post("/gtas/updateHistDisp/", requestDto, {
-                        //     transformRequest: angular.identity,
-                        //     headers: {'Content-Type': undefined}
-                        // })
                             $http({
                             method: 'post',
                             url: "/gtas/updateHistDisp/",
@@ -167,10 +161,28 @@
                             })
                     );
                 }
-
                 return dfd.promise;
             }
 
+            function updateGeneralComments(caseId, comment,
+                                           caseStatus) {
+                const requestDto = {
+                    comment: comment,
+                    caseId : caseId,
+                    caseStatus: caseStatus
+                };
+                const deferredQuery = $q.defer();
+                deferredQuery.resolve(
+                    $http({
+                        method: 'post',
+                        url: "/gtas/addCaseComment/",
+                        data: requestDto
+                    })
+                );
+
+                return deferredQuery.promise;
+
+            }
             function addToOneDayLookout(caseIdParam){
                 
                  var dfd = $q.defer();
@@ -184,7 +196,7 @@
         		 
         	        		 
                  return dfd.promise;
-             }  
+             }
      
                     
             function removeFromOneDayLookoutList(caseIdParam){
@@ -314,7 +326,8 @@
                 getCurrentServerTime: getCurrentServerTime,
                 getDefaultStartDate: getDefaultStartDate,
                 getDefaultEndDate: getDefaultEndDate,
-                getDefaultDispCheckboxes: getDefaultDispCheckboxes
+                getDefaultDispCheckboxes: getDefaultDispCheckboxes,
+                updateGeneralComments : updateGeneralComments
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
