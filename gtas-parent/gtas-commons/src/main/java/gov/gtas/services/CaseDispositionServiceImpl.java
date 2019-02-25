@@ -754,14 +754,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
 		RuleCat _tempRuleCat = new RuleCat();
 		Set<AttachmentVo> _tempAttachmentVoSet = new HashSet<AttachmentVo>();
-		Set<HitsDispositionCommentsVo> _tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+		List<HitsDispositionCommentsVo> _tempHitsDispCommentsVoSet;
 		HitsDispositionCommentsVo _tempDispCommentsVo = new HitsDispositionCommentsVo();
 
 		try {
 			for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
 				_tempHitsDisp = new HitsDispositionVo();
 				_tempRuleCat = new RuleCat();
-				_tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+				_tempHitsDispCommentsVoSet = new ArrayList<>();
 				_tempAttachmentVoSet = new HashSet<AttachmentVo>();
 
 				CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
@@ -803,8 +803,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 						}
 						_tempDispCommentsVo.setAttachmentSet(_tempAttachmentVoSet);
 					}
-					_tempHitsDisp.setDispCommentsVo(_tempHitsDispCommentsVoSet);
-
+					_tempHitsDispCommentsVoSet.sort(comparing(HitsDispositionCommentsVo::getCreatedAt).reversed());
+					_tempHitsDisp.setDispCommentsVo(new LinkedHashSet<>(_tempHitsDispCommentsVoSet));
 				} // end
 
 				_tempReturnHitsDispSet.add(_tempHitsDisp);
