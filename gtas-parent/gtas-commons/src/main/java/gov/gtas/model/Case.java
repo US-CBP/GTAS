@@ -65,6 +65,14 @@ public class Case extends BaseEntityAudit {
     @JoinColumn(name="case_id", nullable = false)
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "cc_id")
+    private Set<CaseComment> caseComments = new HashSet<>();
+
+    @Column(name = "case_officer_status")
+    private String caseOfficerStatus;
+
+
     @Transient
     @Temporal(TemporalType.TIMESTAMP)
     private Date countdown;
@@ -94,6 +102,26 @@ public class Case extends BaseEntityAudit {
     private Flight flight;
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
+    }
+
+
+
+    public String getCaseOfficerStatus() {
+        return caseOfficerStatus;
+    }
+
+    public void setCaseOfficerStatus(String caseOfficerStatus) {
+        this.caseOfficerStatus = caseOfficerStatus;
+    }
+
+
+
+    public Set<CaseComment> getCaseComments() {
+        return caseComments;
+    }
+
+    public void setCaseComments(Set<CaseComment> caseComments) {
+        this.caseComments = caseComments;
     }
 
     public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {

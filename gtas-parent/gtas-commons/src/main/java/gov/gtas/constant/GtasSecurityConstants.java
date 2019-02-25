@@ -39,6 +39,8 @@ public class GtasSecurityConstants {
 
     public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES = "hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List', 'Manage Queries')";
 
+    public static final String ALL_PRIVS_AND_ONE_DAY = "hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List', 'Manage Queries', 'One Day Lookout')";
+
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES = "hasAnyAuthority('Admin', 'Manage Rules')";
 
 }

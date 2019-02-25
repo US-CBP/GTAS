@@ -348,7 +348,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -396,7 +396,7 @@ var app;
                 .state('onedaylookout', {
                     url: '/onedaylookout',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'OneDayLookoutCtrl',
@@ -525,7 +525,7 @@ var app;
                 .state('detail', {
                     url: '/paxdetail/{paxId}/{flightId}',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'PassengerDetailCtrl',
@@ -595,7 +595,7 @@ var app;
                 .state('userSettings', {
                     url: '/userSettings',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
                     views: {
                         '@': {
                             controller: 'UserSettingsController',
@@ -612,7 +612,7 @@ var app;
             $httpProvider.defaults.withCredentials = false;
         },
 
-        NavCtrl = function ($scope, $http, APP_CONSTANTS, $sessionStorage, $rootScope, $cookies, notificationService) {
+        NavCtrl = function ($scope, $http, APP_CONSTANTS,USER_ROLES, $sessionStorage, $rootScope, $cookies, notificationService) {
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
@@ -648,7 +648,19 @@ var app;
               $scope.errorList = value;
             }, function(reason){
               alert("Error Loading Notifications: " + reason);
-            })
+            });
+            let oneDayLookoutUser = false;
+            let user = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
+            user.roles.forEach(function (role) {
+                if (role.roleDescription === USER_ROLES.ONE_DAY_LOOKOUT) {
+                    oneDayLookoutUser = true;
+                }
+            });
+            if (oneDayLookoutUser) {
+                $scope.homePage = "onedaylookout";
+            } else {
+                $scope.homePage = "dashboard";
+            }
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
@@ -695,12 +707,14 @@ var app;
             VIEW_FLIGHT_PASSENGERS: 'View Flight And Passenger',
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
-            MANAGE_WATCHLIST: 'Manage Watch List'
+            MANAGE_WATCHLIST: 'Manage Watch List',
+            ONE_DAY_LOOKOUT: 'One Day Lookout'
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: '/' + web_root + '/login.html',
             HOME_PAGE: '/' + web_root + '/main.html',
             MAIN_PAGE: 'main.html#/dashboard',
+            ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',
             LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '
