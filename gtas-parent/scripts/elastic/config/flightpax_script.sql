@@ -12,6 +12,7 @@
 -- 	f.`rule_hit_count` "flight.rule_hit_count",
 	f.`passenger_count` "flight.passenger_count",
 	f.`direction` "flight.direction",
+	seat.`number` "flight.seat_number",
 	
 	p.`id` "p_id",
 	p.`citizenship_country` "p_citizenship_country", 
@@ -45,7 +46,14 @@
 	a.`created_by` "address.created_by",
 	
 	pnr_message.`raw` "pnr",
-	apis_message.`raw` "apis"
+	apis_message.`raw` "apis",
+
+	pax_watchlist.`id` "pax_watchlist.id",
+	pax_watchlist.`last_run_timestamp` "pax_watchlist.last_run_timestamp",
+	pax_watchlist.`passenger_id` "pax_watchlist.passenger_id",
+	pax_watchlist.`percent_match` "pax_watchlist.percent_match",
+	pax_watchlist.`verified_status` "pax_watchlist.verified_status",
+	pax_watchlist.`watchlist_item_id` "pax_watchlist.watchlist_item_id"
 	
 	from `flight_pax` fp 
 	join `passenger` p 
@@ -72,4 +80,8 @@
 		on (apis_fp.`apis_message_id` = apis.id)
 	left join `message` apis_message
 		on (apis.id = apis_message.id)
-	 ) a;
+	left join `pax_watchlist_link` pax_watchlist
+		on (pax_watchlist.passenger_id=p.id)
+	left join seat 
+		on (seat.flight_id=f.ID and seat.passenger_id=p.id)
+	 ) a

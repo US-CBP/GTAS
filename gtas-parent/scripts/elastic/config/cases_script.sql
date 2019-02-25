@@ -11,6 +11,8 @@ SELECT c.*,
        f.`origin_country` "flight.origin_country", 
 --        f.`rule_hit_count` "flight.rule_hit_count", 
        f.`passenger_count` "flight.passenger_count",
+       f.`direction` "flight.direction",
+       seat.`number` "flight.seat_number",
        
        p.`id` "passenger.paxid",
        p.`age` "passenger.age",
@@ -71,7 +73,14 @@ SELECT c.*,
 	   h_detail.`hits_summary_id` "h_detail_hits_summary_id",
 	   h_detail.`id` "h_detail.id",
 	   h_detail.`rule_id` "h_detail_rule_id",
-	   h_detail.`title` "h_detail_title"
+	   h_detail.`title` "h_detail_title",
+
+          	pax_watchlist.`id` "pax_watchlist.id",
+	pax_watchlist.`last_run_timestamp` "pax_watchlist.last_run_timestamp",
+	pax_watchlist.`passenger_id` "pax_watchlist.passenger_id",
+	pax_watchlist.`percent_match` "pax_watchlist.percent_match",
+	pax_watchlist.`verified_status` "pax_watchlist.verified_status",
+	pax_watchlist.`watchlist_item_id` "pax_watchlist.watchlist_item_id"
 	   	   
 FROM   cases c 
        LEFT JOIN flight f 
@@ -89,4 +98,8 @@ FROM   cases c
        left join `airport` debark_ar
        		  on (debark_ar.iata=p.debarkation and debark_ar.country=p.debark_country)
         left join `airport` embark_ar
-       		  on (embark_ar.iata=p.embarkation and embark_ar.country=p.embark_country);
+       		  on (embark_ar.iata=p.embarkation and embark_ar.country=p.embark_country)
+       left join `pax_watchlist_link` pax_watchlist
+		on (pax_watchlist.passenger_id=p.id)
+       left join `seat` seat 
+              on seat.flight_id=f.ID and seat.passenger_id=p.id

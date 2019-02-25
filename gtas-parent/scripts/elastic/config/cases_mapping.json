@@ -56,7 +56,6 @@
             }
           },
           "flight" : {
-            "type" : "nested",
             "properties" : {
               "id" : {
                 "type" : "long"
@@ -136,10 +135,10 @@
             "type" : "long"
           },
           "hit_disposition" : {
-            "type" : "nested",
+            
             "properties" : {
               "comments" : {
-                "type" : "nested",
+               
                 "properties" : {
                   "comments" : {
                     "type" : "text",
