@@ -10,54 +10,67 @@ import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "flight_passenger",
-uniqueConstraints={@UniqueConstraint(columnNames={"flight_id","passenger_id"})})
+@Table(name = "flight_passenger")
+@IdClass(FlightPassengerId.class)
 public class FlightPassenger {
-	private static final long serialVersionUID = 1L;  
-	
-    @Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-    @Basic(optional = false)  
-    @Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")  
-    protected Long id;  
-  
+
     public FlightPassenger() { }
 
-    @Column(name = "flight_id", nullable = false)
-    private String flightId;
-    
-    @Column(name = "passenger_id", nullable = false)
-    private String passengerId;
-    
-    public String getPassengerId() {
-		return passengerId;
+    @Id
+    @Column(name = "flight_id", nullable = false, columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @Id
+    @Column(name = "passenger_id", nullable = false, columnDefinition = "bigint unsigned")
+    private Long passengerId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+    Flight flight;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
+    Passenger passenger;
+
+    public Flight getFlight() {
+        return flight;
     }
 
-	public void setPassengerId(String passengerId) {
-		this.passengerId = passengerId;
-	}
-
-	public String getFlightId() {
-		return flightId;
-	}
-
-	public void setFlightId(String flightId) {
-		this.flightId = flightId;
-	}
-	
-    public Long getId() {  
-        return id;  
+    public void setFlight(Flight flight) {
+        this.flight = flight;
     }
 
-	@Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Flight))
-            return false;
-        final FlightPassenger other = (FlightPassenger)obj;
-        return Objects.equals(this.flightId, other.flightId)
-                && Objects.equals(this.passengerId, other.passengerId);
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
+
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FlightPassenger)) return false;
+        FlightPassenger that = (FlightPassenger) o;
+        return getFlightId().equals(that.getFlightId()) &&
+                getPassengerId().equals(that.getPassengerId());
     }
 
     @Override

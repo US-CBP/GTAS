@@ -305,8 +305,8 @@ public class GtasLoaderImpl implements GtasLoader {
         Set<FlightPassenger> flightPassengers = new HashSet<>();
         for (Passenger p : newPassengers) {
             FlightPassenger fp = new FlightPassenger();
-            fp.setPassengerId(p.getId().toString());
-            fp.setFlightId(primeFlight.getId().toString());
+            fp.setPassengerId(p.getId());
+            fp.setFlightId(primeFlight.getId());
             flightPassengers.add(fp);
         }
 

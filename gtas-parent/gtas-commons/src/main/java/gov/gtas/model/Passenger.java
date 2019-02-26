@@ -5,6 +5,8 @@
  */
 package gov.gtas.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -57,6 +59,7 @@ public class Passenger extends BaseEntityAudit {
     private Date dob;
 
     /** calculated field */
+    @Column(name = "age")
     private Integer age;
 
     /** calculated field */
@@ -91,6 +94,15 @@ public class Passenger extends BaseEntityAudit {
     private Date watchlistCheckTimestamp;
 
 
+    // This is a convenience method to see the flight associated with the passenger.
+    // This relationship is manually made in the loader.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name="flight_passenger",
+            joinColumns={@JoinColumn(name="passenger_id")},
+            inverseJoinColumns={@JoinColumn(name="flight_id")})
+    @JsonIgnore
+    private Flight flight;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
 
@@ -114,9 +126,17 @@ public class Passenger extends BaseEntityAudit {
     private Set<FlightPax> flightPaxList = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<TicketFare> tickets = new HashSet<>();    
-    
-	public Set<BookingDetail> getBookingDetails() {
+    private Set<TicketFare> tickets = new HashSet<>();
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    public Set<BookingDetail> getBookingDetails() {
 		return bookingDetails;
 	}
 

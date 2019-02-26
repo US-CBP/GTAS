@@ -127,23 +127,25 @@ public class Flight extends BaseEntityAudit {
     )
     private Set<Pnr> pnrs = new HashSet<>();
 
-   /* public void addPassenger(Passenger passenger) {
-    	logger.info(flightService);
-    	logger.info(passenger);
-    	logger.info(this);
-        flightService.setSinglePassenger(passenger.id, this.id);
-    }*/
+    // This is a convenience method to see the passengers associated with the flight.
+    // Managing passengers this way is recommended against as flight passenger is manually made in the
+    // loader.
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="flight_passenger",
+            joinColumns={@JoinColumn(name="flight_id")},
+            inverseJoinColumns={@JoinColumn(name="passenger_id")})
+    @JsonIgnore
+    private Set<Passenger> passengers;
 
     public Set<Passenger> getPassengers() {
-        return null;
+        return passengers;
     }
-    
+
     public void setPassengers(Set<Passenger> passengers) {
-       
+        this.passengers = passengers;
     }
 
-
-	public String getFlightNumber() {
+    public String getFlightNumber() {
         return flightNumber;
     }
     public void setFlightNumber(String flightNumber) {
@@ -256,16 +258,6 @@ public class Flight extends BaseEntityAudit {
         public Long getId() {
             return id;
         }
-        
-        
-
-//	public Set<FlightPax> getFlightPaxDetails() {
-//		return flightPaxDetails;
-//	}
-//
-//	public void setFlightPaxDetails(Set<FlightPax> flightPaxDetails) {
-//		this.flightPaxDetails = flightPaxDetails;
-//	}
 
 	@Override
     public int hashCode() {
