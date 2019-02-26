@@ -28,11 +28,14 @@ import static gov.gtas.constant.GtasSecurityConstants.*;
 
 public interface CaseDispositionService {
 
-    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public CasePageDto findAll(CaseRequestDto dto);
 
-    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
+
+    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    public CasePageDto caseWithoutHitDispositions(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
     

@@ -100,15 +100,12 @@ public class CaseDispositionController {
     @ResponseBody
     CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        User user = userService.fetchUser(userId);
-        Role oneDay = new Role(7, "One Day Lookout");
-        CasePageDto res = caseDispositionService.findHitsDispositionByCriteria(request);
-        if (user.getRoles().contains(oneDay)) {
-            for (CaseVo caze : res.getcases()) {
-                caze.setHitType(null);
-                caze.setHitsDispositions(null);
-                caze.setHitsDispositionVos(null);
-            }
+        CasePageDto res;
+        boolean treatAsOneDay = userService.treatAsOneDay(userId);
+        if (treatAsOneDay) {
+            res = caseDispositionService.caseWithoutHitDispositions(request);
+        } else {
+            res = caseDispositionService.findHitsDispositionByCriteria(request);
         }
         return res;
     }

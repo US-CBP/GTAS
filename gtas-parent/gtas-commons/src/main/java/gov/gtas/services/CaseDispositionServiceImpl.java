@@ -504,7 +504,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 	@Override
 	@Transactional
 	public Case addGeneralCaseComment(CaseCommentRequestDto caseCommentRequestDto) {
-		Case aCase = caseDispositionRepository.caseWithCommentsById(caseCommentRequestDto.getCaseId());
+		Case aCase = caseDispositionRepository.caseWithComments(caseCommentRequestDto.getCaseId());
 		if (caseCommentRequestDto.getCaseStatus() != null
 				&& !caseCommentRequestDto.getCaseStatus().equalsIgnoreCase(aCase.getCaseOfficerStatus())) {
 			aCase.setCaseOfficerStatus(caseCommentRequestDto.getCaseStatus());
@@ -715,7 +715,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto) {
-		Case aCase = caseDispositionRepository.caseWithCommentsById(dto.getCaseId());
+		Case aCase = caseDispositionRepository.caseWithCommentsAndHitDispositionsById(dto.getCaseId());
 		List<CaseVo> vos = new ArrayList<>();
 		CaseVo vo = new CaseVo();
 		vo.setHitsDispositions(aCase.getHitsDispositions());
@@ -727,6 +727,20 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		vos.add(vo);
 		return new CasePageDto(vos, 1L);
 	}
+
+	public CasePageDto caseWithoutHitDispositions(CaseRequestDto dto) {
+		Case aCase = caseDispositionRepository.caseWithComments(dto.getCaseId());
+		List<CaseVo> vos = new ArrayList<>();
+		CaseVo vo = new CaseVo();
+		aCase.getFlight().setPnrs(null);
+		vo.setGeneralCaseCommentVos(convertCommentsToVo(aCase.getCaseComments()));
+		CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
+		vo.setHitsDispositions(null);
+		vo.setHitsDispositionVos(null);
+		vos.add(vo);
+		return new CasePageDto(vos, 1L);
+	}
+
 
 	private Set<GeneralCaseCommentVo> convertCommentsToVo(Set<CaseComment> caseComments) {
 		List<GeneralCaseCommentVo> generalCaseCommentVoSet = new ArrayList<>();

@@ -10,6 +10,7 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.Airport;
 
 import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PassengerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class ServiceUtil implements LoaderServices {
 
     @Autowired
     PassengerRepository passengerRepository;
+
+    @Autowired
+    FlightPassengerRepository flightPassengerRepository;
 
     public String getCountry(String airport) {
 
@@ -51,9 +55,9 @@ public class ServiceUtil implements LoaderServices {
             return null;
         }
 
-        List<Passenger> pax = passengerRepository.getPassengersByFlightIdAndName(f.getId(),
+        List<Passenger> pax = flightPassengerRepository.returnAPassengerFromParameters(f.getId(),
                 pvo.getFirstName(), pvo.getLastName());
-        if (pax != null && pax.size() >= 1) {
+    if (pax != null && pax.size() >= 1) {
             return pax.get(0);
         } else {
             return null;

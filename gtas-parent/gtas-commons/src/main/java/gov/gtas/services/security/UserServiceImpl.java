@@ -185,6 +185,16 @@ public class UserServiceImpl implements UserService {
 
 		return isAdmin;
 	}
+	public boolean treatAsOneDay(String userId) {
+
+		UserData user = findById(userId);
+		Set<RoleData> userRoles = user.getRoles();
+		RoleData oneDay = new RoleData(7, "One Day Lookout");
+
+		return userRoles.contains(oneDay) && userRoles.size() == 1;
+
+
+	}
 
 	@Override
 	public UserData updateByAdmin(UserData data) {
