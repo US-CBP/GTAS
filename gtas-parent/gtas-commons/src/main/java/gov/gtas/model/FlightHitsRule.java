@@ -7,12 +7,12 @@ import javax.persistence.*;
 public class FlightHitsRule  {
 
     @Id
-    @Column(name = "fhr_flight_id", columnDefinition = "bigint unsigned", unique = true)
+    @Column(name = "fhr_flight_id", columnDefinition = "bigint unsigned")
     private
     Long flightId;
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fhr_flight_id", referencedColumnName = "id", updatable = false, insertable = false, unique = true)
+    @JoinColumn(name = "fhr_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
     Flight flight;
 
     @Column(name = "fhr_hit_count")

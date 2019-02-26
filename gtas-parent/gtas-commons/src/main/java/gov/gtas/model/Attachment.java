@@ -56,7 +56,7 @@ public class Attachment implements Serializable {
 
 	@ManyToOne
         private Passenger passenger;
-        
+
         @ManyToMany(
         mappedBy = "attachmentSet",
         targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL

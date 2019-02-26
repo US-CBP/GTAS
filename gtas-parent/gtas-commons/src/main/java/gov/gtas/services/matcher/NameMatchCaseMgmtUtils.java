@@ -17,12 +17,17 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 
+@Component
 public class NameMatchCaseMgmtUtils {
 
     private static final Logger logger = LoggerFactory
             .getLogger(NameMatchCaseMgmtUtils.class);
+
+    @Autowired
+    CaseDispositionService caseDispositionService;
 
     /**
      *
@@ -32,9 +37,8 @@ public class NameMatchCaseMgmtUtils {
      * @param flightId
      * @param dispositionService
      */
-    private boolean processPassengerFlight(String ruleDescription, Passenger passenger, Long wl_id,
-                                               Flight flight, Case existingCase,Map<Long, RuleCat> ruleCatMap,
-                                               CaseDispositionService dispositionService) {
+    public boolean processPassengerFlight(String ruleDescription, Passenger passenger, Long wl_id,
+                                               Flight flight, Case existingCase,Map<Long, RuleCat> ruleCatMap) {
 
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
         Long _tempPaxId = passenger.getId(); //pax_id;
@@ -59,31 +63,25 @@ public class NameMatchCaseMgmtUtils {
                 flightMap.put(flightId, flight);
                 if(existingCase != null)
                 	passengerFlightCaseMap.put(passenger.getId(), existingCase);
-                
-                dispositionService.registerCasesFromRuleService(flightId, passenger.getId(), _tempPax.getFirstName()+" "+_tempPax.getLastName(),
-                        _tempPax.getPassengerType(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, description, wl_id,passengerFlightCaseMap, flightMap, passengerMap, ruleCatMap);
+
+           caseDispositionService
+                   .registerAndSaveNewCaseFromFuzzyMatching(flightId,
+                           passenger.getId(),
+                           _tempPax.getFirstName()+" "+_tempPax.getLastName(),
+                           _tempPax.getPassengerType(),
+                           _tempPax.getCitizenshipCountry(),
+                           _tempPax.getDob(),
+                           document,
+                           description,
+                           wl_id,
+                           passengerFlightCaseMap,
+                           flightMap,
+                           passengerMap,
+                           ruleCatMap);
           //  }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:" + wl_id + " set", ex);
           }
         return true;
     }
-
-
-    /**
-     * Util method to help process Jaro Winkler(JW), Double Metaphone(DM) name matches and open cases
-     * @param pax_id
-     * @param wl_id
-     * @param ruleDescriptionText
-     * @return
-     */
-
-    public boolean nameMatchCaseProcessing(Passenger passenger, Long wl_id, String ruleDescriptionText, Flight flight,Case existingCase, Map<Long, RuleCat> ruleCatMap,
-                                           CaseDispositionService dispositionService){
-
-        return processPassengerFlight(ruleDescriptionText, passenger, wl_id, flight, existingCase,ruleCatMap, dispositionService);
-
-    }
-
 }

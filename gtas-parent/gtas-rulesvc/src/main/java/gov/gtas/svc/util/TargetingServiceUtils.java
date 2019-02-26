@@ -16,12 +16,18 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class TargetingServiceUtils {
     
     private static final Logger logger = LoggerFactory
             .getLogger(TargetingServiceUtils.class);
-    
+
+    public TargetingServiceUtils() {
+    }
+
     /**
      * Creates a request from a API message.
      * 
@@ -111,6 +117,7 @@ public class TargetingServiceUtils {
      *            List of Messages
      * @return the rule engine request object.
      */
+
     public static RuleExecutionContext createPnrApisRequestContext(
             final List<Message> loadedMessages) {
         logger.info("Entering createPnrApisRequestContext().");

@@ -7,11 +7,8 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.lookup.RuleCat;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 
 
 import java.util.HashSet;
@@ -22,7 +19,6 @@ import java.util.Set;
 @Table(name = "hits_disposition")
 public class HitsDisposition extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
-
     public HitsDisposition() {
     }
 
@@ -30,11 +26,14 @@ public class HitsDisposition extends BaseEntityAudit {
         this.hitId = hit;
     }
 
+    @Column(name = "rule_type")
+    private String ruleType;
+
     @Column(name = "hit_id")
     private long hitId;
 
 
-    @ManyToOne(fetch = FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name="case_id", insertable=false, updatable=false)
     private Case aCase;
 
@@ -122,28 +121,25 @@ public class HitsDisposition extends BaseEntityAudit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof HitsDisposition)) return false;
         HitsDisposition that = (HitsDisposition) o;
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(hitId, that.hitId)
-               // .append(caseId, that.caseId)
-                .append(aCase, that.aCase)
-                .append(id, that.id)
-                .isEquals();
+        return
+                this.getHitId() == that.getHitId()
+                        && ((this.getRuleType() == null ? that.getRuleType() == null : this.getRuleType().equalsIgnoreCase(that.getRuleType())));
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(hitId)
-                //.append(caseId)
-                .append(aCase)
-                .append(id)
-                .toHashCode();
+        return Objects.hash(getHitId(), getRuleType());
+    }
+
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
     }
 }

@@ -113,7 +113,6 @@ public class HitsSummaryRepositoryIT {
         f.setFlightDate(new Date());
         f.setFlightNumber("899");
         f.setOrigin("IAD");
-        f.setPassengerCount(234);
         f.setCarrier("DL");
         f.setDestination("DXB");
         f.setDirection("I");

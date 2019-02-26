@@ -33,7 +33,7 @@ public class RuleCat extends BaseEntityAudit {
     private Long priority;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
     public Long getCatId() {

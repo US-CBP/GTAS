@@ -6,14 +6,13 @@
 package gov.gtas.services;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 
+import gov.gtas.model.*;
+import gov.gtas.repository.FlightPaxRepository;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,18 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.error.ErrorUtils;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Bag;
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.DwellTime;
-import gov.gtas.model.EdifactMessage;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightLeg;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
@@ -59,7 +46,11 @@ public class PnrMessageService extends MessageLoaderService {
     @Autowired
     private LookUpRepository lookupRepo;
 
-    //private Pnr pnr;
+
+	@Autowired
+	FlightPaxRepository flightPaxRepository;
+
+	//private Pnr pnr;
 
     @Override
     public List<String> preprocess(String message) {
@@ -72,17 +63,18 @@ public class PnrMessageService extends MessageLoaderService {
     	long startTime = System.nanoTime();
     	Pnr pnr = new Pnr();
         pnr.setCreateDate(new Date());
-        pnr.setStatus(MessageStatus.RECEIVED);
         pnr.setFilePath(msgDto.getFilepath());
-        
+		pnr = msgDao.save(pnr); //make an ID for the PNR
+		msgDto.setPnr(pnr);
+		MessageStatus messageStatus;
         MessageVo vo = null;
         try {
             EdifactParser<PnrVo> parser = new PnrGovParser();
             vo = parser.parse(msgDto.getRawMsg());
             loaderRepo.checkHashCode(vo.getHashCode());
             pnr.setRaw(LobUtils.createClob(vo.getRaw()));
-
-            pnr.setStatus(MessageStatus.PARSED);
+			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.PARSED);
+			msgDto.setMessageStatus(messageStatus);
             pnr.setHashCode(vo.getHashCode());            
             EdifactMessage em = new EdifactMessage();
             em.setTransmissionDate(vo.getTransmissionDate());
@@ -92,61 +84,77 @@ public class PnrMessageService extends MessageLoaderService {
             pnr.setEdifactMessage(em);
             msgDto.setMsgVo(vo);
         } catch (Exception e) {
-            handleException(e, MessageStatus.FAILED_PARSING, pnr);
+			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.FAILED_PARSING);
+			msgDto.setMessageStatus(messageStatus);
+			handleException(e, pnr);
             return null;
         } finally {
-            createMessage(pnr);
-        }
-        msgDto.setPnr(pnr);
+       		 msgDto.setPnr(pnr);
+			if (!createMessage(pnr)) {
+				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
+			}
+		}
         logger.debug("load time = "+(System.nanoTime()-startTime)/1000000);
         return msgDto;
     }
+
+
     
     @Override
-    public boolean load(MessageDto msgDto) {
-    	logger.debug("@ load");
-    	long startTime = System.nanoTime();
-        boolean success = true;
+    public MessageStatus load(MessageDto msgDto) {
+        msgDto.getMessageStatus().setSuccess(true);
         Pnr pnr = msgDto.getPnr();
         try {
             PnrVo vo = (PnrVo)msgDto.getMsgVo();
-            // TODO: fix this, combine methods
             utils.convertPnrVo(pnr, vo);
-            loaderRepo.processPnr(pnr, vo);
-            loaderRepo.processFlightsAndPassengers(vo.getFlights(), vo.getPassengers(), 
-                    pnr.getFlights(), pnr.getPassengers(), pnr.getFlightLegs(), msgDto.getPrimeFlightKey(), pnr.getBookingDetails());
-            
-            // update flight legs
-           	for (FlightLeg leg : pnr.getFlightLegs()) {
-               	leg.setPnr(pnr);
-            }
-           	
-           	for (BookingDetail bD : pnr.getBookingDetails()){
-           		bD.getPnrs().add(pnr);
-           	}
+			loaderRepo.processPnr(pnr, vo);
+			Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
+					vo.getFlights(),
+					pnr.getFlights(),
+					pnr.getFlightLegs(),
+					msgDto.getPrimeFlightKey(),
+					pnr.getBookingDetails());
+			Set<Passenger> newPassengers  = loaderRepo.makeNewPassengerObjects(primeFlight,
+					vo.getPassengers(),
+					pnr.getPassengers(),
+					pnr.getBookingDetails(),
+					pnr);
+			int createdPassengers = loaderRepo.createPassengers(newPassengers,
+					pnr.getPassengers(),
+					primeFlight,
+					pnr.getBookingDetails());
+			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 
-            calculateDwellTimes(pnr);
-            updatePaxEmbarkDebark(pnr);
-            loaderRepo.createBagsFromPnrVo(vo,pnr);
-            loaderRepo.createFormPfPayments(vo,pnr);
-            setCodeShareFlights(pnr);
-            //if(vo.getBags() != null && vo.getBags().size() >0 ){
-            createFlightPax(pnr);
-            //}
-            pnr.setStatus(MessageStatus.LOADED);
+			createFlightPax(pnr);
+			loaderRepo.createBagsFromPnrVo(vo,pnr);
+			loaderRepo.createBookingDetails(pnr);
+			// update flight legs
+			for (FlightLeg leg : pnr.getFlightLegs()) {
+				leg.setPnr(pnr);
+			}
+			for (BookingDetail bD : pnr.getBookingDetails()){
+				bD.getPnrs().add(pnr);
+			}
+			calculateDwellTimes(pnr);
+			updatePaxEmbarkDebark(pnr);
+			loaderRepo.createFormPfPayments(vo,pnr);
+			setCodeShareFlights(pnr);
+			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+		} catch (Exception e) {
+			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
+			msgDto.getMessageStatus().setSuccess(false);
+			logger.info("ERROR", e);
+		} finally {
+			if (!createMessage(pnr)) {
+				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
+			}
+		}
+		return msgDto.getMessageStatus();
+	}
 
-        } catch (Exception e) {
-            success = false;
-            handleException(e, MessageStatus.FAILED_LOADING, pnr);
-        } finally {
-            success &= createMessage(pnr);            
-        }
-        logger.debug("load time = "+(System.nanoTime()-startTime)/1000000);
-        return success;
-    }
-    
 
-    private void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
+    @Transactional
+    protected void updatePaxEmbarkDebark(Pnr pnr) throws ParseException {
     	logger.debug("@ updatePaxEmbarkDebark");
     	long startTime = System.nanoTime();
     	List<FlightLeg> legs = pnr.getFlightLegs();
@@ -281,7 +289,7 @@ public class PnrMessageService extends MessageLoaderService {
     	}
 
     }
-    private void handleException(Exception e, MessageStatus status, Pnr pnr) {
+    private void handleException(Exception e, Pnr pnr) {
         // set all the collections to null so we can save the message itself
         pnr.setFlights(null);
         pnr.setPassengers(null);
@@ -294,53 +302,57 @@ public class PnrMessageService extends MessageLoaderService {
         pnr.setPhones(null);
         pnr.setDwellTimes(null);
         pnr.setPaymentForms(null);
-        pnr.setStatus(status);
         String stacktrace = ErrorUtils.getStacktrace(e);
         pnr.setError(stacktrace);
         logger.error(stacktrace);
     }
     
-    @Transactional
-    private boolean createMessage(Pnr m) {
-        boolean ret = true;
-        logger.debug("@createMessage");
-        long startTime = System.nanoTime();
-        try {
-        	msgDao.save(m);
-            if (useIndexer) {
-            	indexer.indexPnr(m);
-            }
-        } catch (Exception e) {
-            ret = false;
-            handleException(e, MessageStatus.FAILED_LOADING, m);
-            	msgDao.save(m);
-        }
-        logger.debug("createMessage time = "+(System.nanoTime()-startTime)/1000000);
-        return ret;
-    }
-    
-    private void createFlightPax(Pnr pnr){
+	private boolean createMessage(Pnr m) {
+		boolean ret = true;
+		logger.debug("@createMessage");
+		long startTime = System.nanoTime();
+		try {
+			m = msgDao.save(m);
+			ret = true;
+			if (useIndexer) {
+				indexer.indexPnr(m);
+			}
+		} catch (Exception e) {
+			handleException(e, m);
+			ret = false;
+			try {
+				m = msgDao.save(m);
+			} catch (Exception ignored) {
+			}
+			logger.warn("Error saving message!", e);
+		} finally {
+			logger.debug("createMessage time = " + (System.nanoTime() - startTime) / 1000000);
+		}
+		return ret;
+	}
+	private void createFlightPax(Pnr pnr){
     	logger.debug("@ createFlightPax");
     	boolean oneFlight=false;
-    	List<FlightPax> paxRecords=new ArrayList<>();
+    	Set<FlightPax> paxRecords=new HashSet<>();
     	long startTime = System.nanoTime();
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	int pnrBagCount=0;
     	double pnrBagWeight=0.0;
+    	List<FlightPax> flightPaxes = new ArrayList<>();
     	for(Flight f : flights){
     		for(Passenger p : pnr.getPassengers()){
-    			FlightPax fp=new FlightPax();
+    			FlightPax fp = new FlightPax();
     			fp.setDebarkation(f.getDestination());
     			fp.setDebarkationCountry(f.getDestinationCountry());
     			fp.setEmbarkation(f.getOrigin());
     			fp.setEmbarkationCountry(f.getOriginCountry());
     			fp.setPortOfFirstArrival(f.getDestination());
     			fp.setMessageSource("PNR");
-    			fp.setFlight(f);
+    			fp.setFlightId(f.getId());
     			fp.setResidenceCountry(p.getResidencyCountry());
     			fp.setTravelerType(p.getPassengerType());
-    			fp.setPassenger(p);
+    			fp.setPassengerId(p.getId());
     			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
     			int passengerBags=0;
     			if(StringUtils.isNotBlank(p.getBagNum())){
@@ -370,16 +382,18 @@ public class PnrMessageService extends MessageLoaderService {
     			setHeadPool( fp,p,f);
     			p.getFlightPaxList().add(fp);
     			paxRecords.add(fp);
+				flightPaxes.add(fp);
     		}
     		if(!oneFlight) {
     			setBagDetails(paxRecords,pnr);
     		}
     		oneFlight=true;
-    	}
-    	logger.debug("createFlightPax time = "+(System.nanoTime()-startTime)/1000000);
-    }
+		}
+		flightPaxRepository.save(flightPaxes);
 
-    private void setBagDetails(List<FlightPax> paxes,Pnr pnr) {
+	}
+
+    private void setBagDetails(Set<FlightPax> paxes,Pnr pnr) {
     	int pnrBagCount=0;
     	double pnrBagWeight=0.0;
     	for(FlightPax fp:paxes) {

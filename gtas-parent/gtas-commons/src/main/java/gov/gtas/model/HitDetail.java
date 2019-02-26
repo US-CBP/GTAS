@@ -30,7 +30,7 @@ public class HitDetail extends BaseEntity {
     }
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hits_summary_id", nullable = false, referencedColumnName = "id")
     private HitsSummary parent;
 

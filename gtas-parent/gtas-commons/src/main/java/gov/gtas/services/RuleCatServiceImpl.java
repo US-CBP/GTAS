@@ -11,6 +11,7 @@ import gov.gtas.repository.RuleCatRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,6 +55,7 @@ public class RuleCatServiceImpl implements RuleCatService {
     }
 
     @Override
+    @Cacheable(value = "ruleCatCache")
     public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception{
 
         UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
@@ -76,7 +78,8 @@ public class RuleCatServiceImpl implements RuleCatService {
 
 
     @Override
-    public Long fetchRuleCatIdFromRuleId(Long ruleId) throws Exception{
+    @Cacheable("ruleCategoryCache")
+    public Long fetchRuleCatIdFromRuleId(Long ruleId) {
 
         UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
         RuleCat _tempRuleCat = null;

@@ -9,17 +9,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "apis_message")
@@ -34,17 +32,13 @@ public class ApisMessage extends Message {
 
     @ManyToMany(targetEntity = ReportingParty.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "apis_message_reporting_party", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "reporting_party_id"))
-    Set<ReportingParty> reportingParties = new HashSet<>();
+    private Set<ReportingParty> reportingParties = new HashSet<>();
 
-  //TODO Remove from ApisMessage
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class)
     @JoinTable(name = "apis_message_flight", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-  //TODO Remove from ApisMessage
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class)
     @JoinTable(name = "apis_message_passenger", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
     
@@ -57,9 +51,9 @@ public class ApisMessage extends Message {
     @ManyToMany(fetch=FetchType.EAGER, targetEntity = Phone.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "apis_phone", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
     private Set<Phone> phones = new HashSet<>();
-    
-   
-    
+
+
+    @SuppressWarnings("unused")
     public Set<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}
@@ -96,6 +90,7 @@ public class ApisMessage extends Message {
         return reportingParties;
     }
 
+    @SuppressWarnings("unused")
     public void setReportingParties(Set<ReportingParty> reportingParties) {
         this.reportingParties = reportingParties;
     }

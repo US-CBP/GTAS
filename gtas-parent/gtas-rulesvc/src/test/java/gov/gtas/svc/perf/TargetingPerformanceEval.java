@@ -87,11 +87,11 @@ public class TargetingPerformanceEval {
     @Transactional
     public void runPerformance() {
         long start = System.currentTimeMillis();
-        RuleExecutionContext ctx = targetingService
+    /*    RuleExecutionContext ctx = targetingService
                 .analyzeLoadedMessages(false);
-        long elapsed = System.currentTimeMillis() - start;
-        logger.info(String.format(
+   */     long elapsed = System.currentTimeMillis() - start;
+/*        logger.info(String.format(
                 "******* result count = %d, elapsed millis = %d", ctx
-                        .getTargetingResult().size(), elapsed));
+                        .getTargetingResult().size(), elapsed));*/
     }
 }

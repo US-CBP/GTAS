@@ -78,10 +78,12 @@ public class TargetingManagementController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = Constants.TARGET_ALL_MSG, method = RequestMethod.GET)
 	public Collection getTargetingResult() {
-		RuleExecutionContext result = targetingService
+	/*	RuleExecutionContext result = targetingService
 				.analyzeLoadedMessages(true);
 		logger.info("TargetingManagementController.getTargetingResult() - rules fired ="
 				+ result.getRuleExecutionStatistics().getTotalRulesFired());
 		return result.getTargetingResult();
-	}
+
+*/
+	return null;}
 }

@@ -66,6 +66,7 @@ public class AirportServiceImpl implements AirportService{
 
     @Override
     @Transactional
+    @Cacheable(value = "airportCache", key = "#airportCode")
     public Airport getAirportByThreeLetterCode(String airportCode) {
         Airport airport = null;
         List<Airport> airports =airportRespository.getAirportByThreeLetterCode(airportCode);
@@ -76,6 +77,7 @@ public class AirportServiceImpl implements AirportService{
 
     @Override
     @Transactional
+    @Cacheable(value = "airportCache", key = "#airportCode")
     public Airport getAirportByFourLetterCode(String airportCode) {
         Airport airport = null;
         List<Airport> airports =airportRespository.getAirportByFourLetterCode(airportCode);

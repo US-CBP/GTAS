@@ -22,6 +22,47 @@
         <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
     </map>
 
+
+    <map name="countryCache">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <read-backup-data>false</read-backup-data>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>30</time-to-live-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <max-size policy="PER_NODE">0</max-size>
+        <eviction-percentage>25</eviction-percentage>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+    <map name="ruleCategoryCache">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <read-backup-data>false</read-backup-data>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>1200</time-to-live-seconds>
+        <max-idle-seconds>600</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <max-size policy="PER_NODE">0</max-size>
+        <eviction-percentage>25</eviction-percentage>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+    <map name="ruleCatCache">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <read-backup-data>false</read-backup-data>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>1200</time-to-live-seconds>
+        <max-idle-seconds>600</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <max-size policy="PER_NODE">0</max-size>
+        <eviction-percentage>25</eviction-percentage>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+
     <map name="carrier">
         <in-memory-format>BINARY</in-memory-format>
         <backup-count>1</backup-count>

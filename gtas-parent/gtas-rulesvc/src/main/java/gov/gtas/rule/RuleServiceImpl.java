@@ -187,7 +187,7 @@ public class RuleServiceImpl implements RuleService {
 			return null;
 		}
                 Bench.end("asdf1","End invokeRuleEngine() with kbName");
-                Bench.start("asdf2"," start invokeRuleEngine() convertKieBasefromBytes "); 
+                Bench.start("asdf2"," start invokeRuleEngine() convertKieBasefromBytes ");
 		try {
 			// create KieBase object from compressed binary data read from db
 			KieBase kb = RuleUtils
@@ -199,7 +199,6 @@ public class RuleServiceImpl implements RuleService {
 					RuleServiceConstants.KB_DESERIALIZATION_ERROR_CODE, ex,
 					kbRecord.getId());
 		}
-                
 	}
 
 	@Override

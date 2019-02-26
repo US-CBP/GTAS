@@ -11,7 +11,14 @@ import java.util.List;
 
 public interface BookingDetailService {
 
-    public List<BookingDetail> getBookingDetailsByProcessedFlag();
+    List<BookingDetail> getBookingDetailsByProcessedFlag();
 
-    public List<BookingDetail> getBookingDetailsByPassengers(Long pax_id) throws Exception;
+    List<BookingDetail> getBookingDetailsByPassengers(Long pax_id) throws Exception;
+
+    BookingDetail saveAndGetBookingDetail(BookingDetail bookingDetail);
+
+    List<BookingDetail> deDuplicateBookingDetails(List<BookingDetail> listContainingDuplicates);
+
+    BookingDetail mergeBookingDetails(BookingDetail newBD, BookingDetail oldBD);
+
 }

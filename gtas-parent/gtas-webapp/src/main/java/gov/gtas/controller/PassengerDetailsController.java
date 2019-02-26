@@ -60,6 +60,9 @@ public class PassengerDetailsController {
 	private static final Logger logger = LoggerFactory.getLogger(PassengerDetailsController.class);
 
 	@Autowired
+	private ApisControllerService apisControllerService;
+
+	@Autowired
 	private PassengerService pService;
 
 	@Autowired
@@ -100,7 +103,7 @@ public class PassengerDetailsController {
 		PassengerVo vo = new PassengerVo();
 		Passenger t = pService.findById(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
-		List<Bag> bagList = new ArrayList<Bag>();		
+		List<Bag> bagList = new ArrayList<>();
 		List<Seat> pnrSeatList = new ArrayList<Seat>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
@@ -121,7 +124,7 @@ public class PassengerDetailsController {
 					vo.setSeat(seats.get(0));
 				}
 			}
-			bagList = bagRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
+			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
@@ -209,47 +212,21 @@ public class PassengerDetailsController {
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
 			
 			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());			
-			List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(refList.get(0));
 			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId())
 					.stream().filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
-			
+
 			if(!apisMessageFlightPaxs.isEmpty()) {
 				FlightPax apisMessageFlightPax = apisMessageFlightPaxs.get(0);
 				apisVo.setBagCount(apisMessageFlightPax.getBagCount());
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
 			}
-			Iterator<FlightPax> fpIter = fpList.iterator();
-			while (fpIter.hasNext()) {
-				FlightPax fp= fpIter.next();
-				FlightPassengerVo fpVo = new FlightPassengerVo();
-				fpVo.setFirstName(fp.getPassenger().getFirstName());
-				fpVo.setLastName(fp.getPassenger().getLastName());
-				fpVo.setMiddleName(fp.getPassenger().getMiddleName());
-				fpVo.setEmbarkation(fp.getEmbarkation());
-				fpVo.setDebarkation(fp.getDebarkation());
-				if(fp.getInstallationAddress() != null){
-					AddressVo add = new AddressVo();
-					Address installAdd = fp.getInstallationAddress();
-					add.setLine1(installAdd.getLine1());
-					add.setLine2(installAdd.getLine2());
-					add.setLine3(installAdd.getLine3());
-					add.setCity(installAdd.getCity());
-					add.setCountry(installAdd.getCountry());
-					add.setPostalCode(installAdd.getPostalCode());
-					add.setState(installAdd.getState());
-					fpVo.setInstallationAddress(add);			
-				}
-				fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
-				fpVo.setResidencyCountry(fp.getResidenceCountry());
-				fpVo.setPassengerType(fp.getTravelerType());
-				fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
-                                fpVo.setResRefNumber(fp.getReservationReferenceNumber());
-                                fpVo.setFlightId(fp.getFlight().getId());
-                                fpVo.setPassengerId(fp.getPassenger().getId());
-				apisVo.addFlightpax(fpVo);
+
+			List<FlightPassengerVo> fpList = apisControllerService.generateFlightPaxVoByApisRef(refList.get(0));
+			for (FlightPassengerVo flightPassengerVo : fpList) {
+				apisVo.addFlightpax(flightPassengerVo);
 			}
 
-			for(Bag b:bagList) {
+			for(Bag b: bagList) {
 				if(b.getData_source().equalsIgnoreCase("apis")){
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
@@ -329,7 +306,7 @@ public class PassengerDetailsController {
 			@RequestParam String paxId,
 			@RequestParam String flightId)
 			throws ParseException {
-		
+
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
 		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
 		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;
@@ -346,7 +323,7 @@ public class PassengerDetailsController {
 							}).collect(Collectors.toCollection(LinkedList::new));
 		}
 		else {
-			return new ArrayList<FlightVo>();
+		return new ArrayList<FlightVo>();
 		}
 
 	}
@@ -1120,7 +1097,7 @@ public class PassengerDetailsController {
 		if (mostRecentDisposition != null) {
 			return mostRecentDisposition.getStatus();
 		} else {
-			return null;
+		return null;
 		}
 	}
         

@@ -19,8 +19,20 @@ import java.util.List;
 @Service
 public interface BookingDetailRepository extends CrudRepository<BookingDetail, Long>{
 
-    @Query("SELECT bd FROM BookingDetail bd WHERE bd.processed = FALSE")
-    public List<BookingDetail> getBookingDetailByProcessedFlag();
+
+    //Enforce booking detail processing on messages that have been analyzed or processed.
+    @Query(value =
+            "SELECT bd.* FROM BookingDetail bd " +
+            "WHERE bd.processed = FALSE " +
+            "AND bd.id IN (SELECT pnrbk.booking_detail_id FROM gtas.pnr_booking pnrbk " +
+                "WHERE pnrbk.booking_detail_id = bd.id " +
+                "AND pnrbk.pnr_id IN " +
+                "   (SELECT ms.ms_message_id FROM message_status ms " +
+                "        WHERE (ms.ms_message_id = pnrbk.pnr_id " +
+                "               AND ms.ms_status != 'PARSED' " +
+                "               AND ms.ms_status != 'RECEIVED'" +
+                    "           AND ms.ms_status != 'LOADED')))" , nativeQuery = true)
+    List<BookingDetail> getBookingDetailByProcessedFlag();
 
     @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
             "AND UPPER(p.origin) = UPPER(:origin)" +
@@ -35,6 +47,15 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
     @Query("SELECT bd FROM BookingDetail bd JOIN bd.passengers p WHERE p.id = (:pax_id)")
     public List<BookingDetail> getBookingDetailsByPassengers(@Param("pax_id") Long pax_id);
 
+
+    @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
+            "AND UPPER(p.origin) = UPPER(:origin)" +
+            "AND UPPER(p.destination) = UPPER(:destination)" +
+            "AND p.etaDate = (:eta_date)" +
+            "AND p.etdDate = (:etd_date)")
+    List<BookingDetail> getSpecificBookingDetailNoProcessedTag(@Param("flight_number") String flight_number, @Param("origin") String origin,
+                                                        @Param("destination") String destination, @Param("eta_date") Date eta_date,
+                                                        @Param("etd_date") Date etd_date);
 
     @Query("SELECT pax FROM Passenger pax WHERE pax.id IN (" +
             "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")

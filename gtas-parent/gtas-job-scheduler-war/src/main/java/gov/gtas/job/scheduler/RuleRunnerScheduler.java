@@ -6,6 +6,8 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.svc.TargetingServiceResults;
+import gov.gtas.svc.util.RuleResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,9 @@ public class RuleRunnerScheduler {
 	public void jobScheduling() {
 		logger.info("entering jobScheduling()");
 		try {
-			targetingService.runningRuleEngine();
+			RuleResults ruleResults = targetingService.runningRuleEngine();
+			TargetingServiceResults targetingServiceResults = targetingService.createHitsAndCases(ruleResults);
+			targetingService.saveEverything(targetingServiceResults);
 			logger.info("entering matching service portion of jobScheduling");
 			matchingService.findMatchesBasedOnTimeThreshold();
 			logger.info("exiting matching service portion of jobScheduling");

@@ -28,11 +28,14 @@ import static gov.gtas.constant.GtasSecurityConstants.*;
 
 public interface CaseDispositionService {
 
-    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public CasePageDto findAll(CaseRequestDto dto);
 
-    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
     public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
+
+    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+    public CasePageDto caseWithoutHitDispositions(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
     
@@ -63,10 +66,14 @@ public interface CaseDispositionService {
 //
 //    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, 
+    public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
                                                    String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
                                                    Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
-    
+
+    public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
+                                                 String hitDesc, Long hit_id, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
+                                                 Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+
     public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
     
     public List<OneDayLookoutVo> getOneDayLookoutByDateAndAirport(Date date, String airport);

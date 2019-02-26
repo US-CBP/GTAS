@@ -97,9 +97,10 @@ public class Case extends BaseEntityAudit {
     @Column(name = "disposition", nullable = true)
     private String disposition;
 
-    @ManyToOne(optional=true, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
+
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
@@ -296,28 +297,19 @@ public class Case extends BaseEntityAudit {
         Case aCase = (Case) o;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
                 .append(flightId, aCase.flightId)
                 .append(paxId, aCase.paxId)
+                .append(status, aCase.status)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
                 .append(flightId)
                 .append(paxId)
+                .append(status)
                 .toHashCode();
     }
 
-//    public String toString() {
-//        return "Case{" +
-//                "flightId=" + flightId +
-//                ", paxId=" + paxId +
-//                ", status='" + status + '\'' +
-//                ", description='" + description + '\'' +
-//                ", hitsDispositions=" + hitsDispositions +
-//                '}';
-//    }
 }
