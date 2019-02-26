@@ -42,7 +42,7 @@ public class Loader {
     protected ElasticHelper indexer;
 
     private boolean isElasticEnabled = true; //TODO: put this in property file
-    
+
     /**
      * Processes all the messages in a single file.
      * 
@@ -56,8 +56,8 @@ public class Loader {
     public ProcessedMessages processMessage(File f, String[] primeFlightKey) {
         String filePath = f.getAbsolutePath();
         MessageDto msgDto = new MessageDto();
-        MessageLoaderService svc = null;
-        List<String> rawMessages = null;
+        MessageLoaderService svc;
+        List<String> rawMessages;
         try {
             if (exceedsMaxSize(f)) {
                 throw new LoaderException("exceeds max file size");
@@ -96,14 +96,18 @@ public class Loader {
             processedMessages.setMessageStatusList(messageStatuses);
             return processedMessages;
         }
-        if (isElasticEnabled){
-        	indexer.initClient();
-			if (indexer.isDown()) {
-				svc.setUseIndexer(false);
-			} else {
-				svc.setUseIndexer(true);
-			}
-    	}
+        try {
+            if (isElasticEnabled) {
+                indexer.initClient();
+                if (indexer.isDown()) {
+                    svc.setUseIndexer(false);
+                } else {
+                    svc.setUseIndexer(true);
+                }
+            }
+        } catch (Exception logged) {
+            logger.error("Error with redis-  This message WILL NOT BE INDEXED!", logged);
+        }
         
         int successMsgCount = 0;
         int failedMsgCount = 0;
