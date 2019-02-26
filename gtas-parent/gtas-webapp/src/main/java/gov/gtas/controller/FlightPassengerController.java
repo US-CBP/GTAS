@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,5 +61,12 @@ public class FlightPassengerController {
         hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
                 SecurityContextHolder.getContext());
     	return paxService.getPassengersByCriteria(null, request);
+    }
+    
+    @RequestMapping(value = "/flights/seats/{flightId}", method = RequestMethod.GET)
+    public @ResponseBody java.util.List<String> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId, HttpServletRequest hsr) {
+        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
+                SecurityContextHolder.getContext());
+    	return flightService.getSeatsByFlightId(flightId);
     }
 }

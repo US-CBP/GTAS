@@ -607,6 +607,17 @@ var app;
                             return userService.getUserData();
                         }
                     }
+                })
+                .state('seatsMap', {
+                	url: '/seatsMap/{paxId}/{flightId}/{seat}',
+                	authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                    	'@' : {
+                    		controller: 'SeatsMapController',
+                    		templateUrl: 'seatsMap/seats.html'
+                    	}
+                    }
                 });               
 
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';

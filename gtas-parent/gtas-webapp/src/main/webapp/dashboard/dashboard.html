@@ -1,82 +1,15 @@
-<body>
-  <div class="upper-cnt panel">
+<body style="height: 100%;">
+  <div class="upper-cnt panel" style="height: 100%;">
     <!--Information Cards -->
-    <div class="container">
-      <h3 class="h-label">Next 72 hrs</h3>
-      <div class="flex flex-center flex-wrap cbp-card-container gtas-card-container">
-        <div class="primary-outline cbp-card cbp-card-shadow fixed-width-sm">
-          <div class="cbp-card__title">
-            <h3 class="cbp-card__title-text txt-color">Flights</h3>
-          </div>
-          <div class="flex justify-around align-items-center ie-fix-sm">
-            <i class="fa fa-plane fa-3x" aria-hidden="true"></i>
-            <div>
-              <div class="txt-color sm-pad txt-right">
-                Inbound: {{numberOfFlightsInbound}}
-              </div>
-              <div class="txt-color sm-pad txt-right">
-                Outbound: {{numberOfFlightsOutbound}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="success-outline cbp-card cbp-card-shadow fixed-width-sm">
-          <div class="cbp-card__title">
-            <h3 class="cbp-card__title-text txt-color">Passengers</h3>
-          </div>
-          <div class="flex justify-around align-items-center ie-fix-sm">
-            <i class="fa fa-user fa-3x" aria-hidden="true"></i>
-            <div>
-              <div class="txt-color sm-pad txt-right">
-                Inbound: {{numberOfPassengersInbound}}
-              </div>
-              <div class="txt-color sm-pad txt-right">
-                Outbound: {{numberOfPassengersOutbound}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="warning-outline cbp-card cbp-card-shadow fixed-width-sm">
-         <div class="cbp-card__title">
-            <h3 class="cbp-card__title-text txt-color">Rule Hits</h3>
-          </div>
-          <div class="flex justify-around align-items-center ie-fix-sm">
-            <i class="fa fa-flag fa-3x" aria-hidden="true"></i>
-            <div>
-              <div class="txt-color sm-pad txt-right">
-                Inbound: {{numberOfRuleHitsInbound}}
-              </div>
-              <div class="txt-color sm-pad txt-right">
-                Outbound: {{numberOfRuleHitsOutbound}}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="danger-outline cbp-card cbp-card-shadow fixed-width-sm">
-         <div class="cbp-card__title">
-            <h3 class="cbp-card__title-text txt-color">Watchlist Hits</h3>
-          </div>
-          <div class="flex justify-around align-items-center ie-fix-sm">
-            <i class="fa fa-eye fa-3x" aria-hidden="true"></i>
-            <div>
-              <div class="txt-color sm-pad txt-right">
-                Inbound: {{numberOfWatchListHitsInbound}}
-              </div>
-              <div class="txt-color sm-pad txt-right">
-                Outbound: {{numberOfWatchListHitsOutbound}}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+   
     <!--Flight Map Card-->
-    <div class="container">
-      <div class="cbp-card-container gtas-card-container">
-        <div class="cbp-card cbp-card-shadow">
-          <div class="panel-body">
-            <my-elem ></my-elem>
-          </div>
+    <div class="container-fluid" style="height: 100%;">
+      <div class="cbp-card-container gtas-card-container" style="height: 100%;">
+        <div class="cbp-card cbp-card-shadow" style="height: 100%;">
+          <div class="panel-body" style="height: 100%;">
+            <!-- <my-elem ></my-elem> -->
+<iframe src="http://localhost:5601/app/kibana#/dashboard/7cfbbdc0-2e13-11e9-81a3-0f5bd8b0a7ac?embed=true&_g=(refreshInterval%3A(pause%3A!f%2Cvalue%3A900000)%2Ctime%3A(from%3Anow-24h%2Cmode%3Aquick%2Cto%3Anow))" height="100%" width="100%" frameBorder="0"></iframe>                    
+</div>
         </div>
       </div>
     </div>
@@ -132,5 +65,6 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
 </body>

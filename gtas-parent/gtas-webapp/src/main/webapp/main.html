@@ -31,6 +31,7 @@
 </head>
 
 <body ng-cloak>
+
   <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -190,9 +191,10 @@
       </div>
     </div>
   </div>
+    
   <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
-  <div class="content" ui-view=""></div>
+  <div class="content" ui-view=""  style="height: 100%;"></div>
   <div ui-view="footer"></div>
 
   <script src="resources/bower_components/angular/angular.js"></script>
@@ -243,6 +245,8 @@
   <script src="resources/bower_components/angular-summernote/dist/angular-summernote.min.js"></script>
   <script src="resources/bower_components/trix/dist/trix.js"></script>
   <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
+  <script src='seatsMap/jquery.seat-charts.min.js'></script>
+  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
 
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
@@ -281,6 +285,8 @@
 <script src='onedaylookout/OneDayLookoutService.js'></script>
 <script src='adhocquery/AdhocQueryController.js'></script>
 <script src='adhocquery/AdhocQueryService.js'></script>
+<script src='seatsMap/SeatsMapController.js'></script>
+<script src='seatsMap/SeatService.js'></script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>

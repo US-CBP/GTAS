@@ -59,4 +59,6 @@ public interface FlightService {
 	* Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist matches.
 	* */
 	public Long getFlightFuzzyMatchesOnly(Long flightId);
+	
+	public List<String> getSeatsByFlightId(Long flightId);
 	}

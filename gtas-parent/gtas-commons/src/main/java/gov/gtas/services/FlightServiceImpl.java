@@ -244,4 +244,12 @@ public class FlightServiceImpl implements FlightService {
 		int tempInt = rList.get(0).intValue();
 		return tempInt;
 	}
+
+	@Override
+	public List<String> getSeatsByFlightId(Long flightId) {
+		// 
+		String sql = "select number from seat where flight_id="+flightId;
+		
+		return em.createNativeQuery(sql).getResultList();
+	}
 }
