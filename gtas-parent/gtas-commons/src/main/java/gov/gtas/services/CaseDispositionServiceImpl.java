@@ -755,6 +755,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			f.getFlight().setPnrs(null); // TODO: need to cherry-pick the fields we need to copy to DTO, failed to
 											// serialize the lazy loaded entities
 			CaseDispositionServiceImpl.copyIgnoringNullValues(f, vo);
+			vo.setHitsDispositions(null);
+			vo.setGeneralCaseCommentVos(null);
 			vo.setCurrentTime(new Date());
 			vo.setFlightDirection(f.getFlight().getDirection());
 			vo.setCountdownTime(f.getCountdown().getTime());
