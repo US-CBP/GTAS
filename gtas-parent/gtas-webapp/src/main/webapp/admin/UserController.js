@@ -18,7 +18,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
                 $scope.user = selectedUser;
                 $scope.roles.forEach(setRole);
                 $scope.setNonAdminRoles($scope.roles[adminIndex]);
-                $scope.action = 'updateUser';
+                $scope.action = 'manageUser';
             } else {
                 $scope.user = newUser;
                 $scope.action = 'createUser';
@@ -75,6 +75,13 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
        });
     };
     
+    $scope.updatedPassword = "";
+    $scope.confirmUpdatedPassword = "";
+    $scope.validationErrorMessage = "";
+    $scope.error=false;
+    
+
+    
     $scope.hideToast = function(){
     	$mdToast.hide();
     };
@@ -91,21 +98,77 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
     };
 
     $scope.saveUser = function () {
+    	
+    	$scope.error=false;
+    	$scope.validationErrorMessage = "";
         $scope.user.userId = $scope.user.userId.trim();
-        if (angular.isUndefined($scope.user.password)){
-        	$scope.displayPasswordRules();
-        	return;
-        }
-        $scope.user.password = $scope.user.password.trim();
-        if ($scope.user.userId.length === 0 || $scope.user.password.length === 0) {
-            alertUser('userId or password cannot be blank space(s)');
-            return;
-        }
+        
+         if(!$scope.updatedPassword!==null)
+        	$scope.updatedPassword = $scope.updatedPassword.trim();
+         if($scope.confirmUpdatedPassword!==null)
+        	 $scope.confirmUpdatedPassword = $scope.confirmUpdatedPassword.trim();
+         
+        if($scope.updatedPassword)
+        	{
+        		var enteredPassword = $scope.updatedPassword;
+        		var passwordRegEx = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/;
+        		var regExResult = passwordRegEx.test(enteredPassword);
+		  
+        		if(!regExResult)
+        		{
+        			$scope.validationErrorMessage = "The password you entered does not satisfy the password criteria.";
+        			$scope.error=true;
+        			return;
+        		}
+        
+        	}
+        if ( ( ($scope.updatedPassword!==null && $scope.updatedPassword.trim()!=='')  && (($scope.confirmUpdatedPassword===null) || ($scope.confirmUpdatedPassword.trim() ==='')) ) || 
+        	 ( ($scope.updatedPassword===null || $scope.updatedPassword.trim()==='') &&  (($scope.confirmUpdatedPassword!==null) && ($scope.confirmUpdatedPassword.trim()!=='')) ) )
+        	{
+        		$scope.validationErrorMessage = "Both the Password and Confirm Password fields should have a value.";
+        		$scope.error=true;
+        		return;
+        	}
+    	
+       
+       if( ($scope.updatedPassword) && ($scope.confirmUpdatedPassword)  )
+        {
+    	 
+    		   $scope.updatedPassword = $scope.updatedPassword.trim();
+    		   $scope.confirmUpdatedPassword = $scope.confirmUpdatedPassword.trim();
+    		   $scope.user.password = $scope.updatedPassword.trim();
+    		 
+    		  if( $scope.updatedPassword !== $scope.confirmUpdatedPassword )
+    			{
+    			   $scope.validationErrorMessage = "The passwords you entered in the Password and Confirm Password fields are not the same.";
+                   $scope.error=true;
+                   return;
+    			}
+   	 
+    	 }
+   
+       else if( ($scope.updatedPassword===null ||$scope.updatedPassword.trim()==='' ) && ($scope.confirmUpdatedPassword === null || $scope.confirmUpdatedPassword.trim()===''  ) ) 
+    	   {
+    	   		$scope.user.password= null;
+    	   }
+       
+       else  
+ 	  	{
+ 	  		$scope.validationErrorMessage = "Either the Password or Confirm Password fields have invalid value.";
+ 	  		$scope.error=true;
+ 	  		return;
+ 	  	}
+    	  
+       if ($scope.user.userId.length === 0 ) {
+           $scope.validationErrorMessage = "The User Id can not be blank.";
+           $scope.error=true;
+           return;
+       }  
+    	  
+      
         $scope.user.roles = getSelectedRoles();
-        if ($scope.user.roles.length === 0) {
-            alertUser('One or More User Roles Have To Be Selected');
-            return;
-        }
+        
+
         userService[$scope.action]($scope.user).then(backToAdmin);
     };
 

@@ -6,6 +6,9 @@
 package gov.gtas.controller;
 
 
+import gov.gtas.model.Role;
+import gov.gtas.model.User;
+import gov.gtas.services.dto.CaseCommentRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -95,10 +98,18 @@ public class CaseDispositionController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
-    CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr)
-            throws ParseException {
-    	CasePageDto res = caseDispositionService.findHitsDispositionByCriteria(request);
-
+    CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+        String userId = GtasSecurityUtils.fetchLoggedInUserId();
+        User user = userService.fetchUser(userId);
+        Role oneDay = new Role(7, "One Day Lookout");
+        CasePageDto res = caseDispositionService.findHitsDispositionByCriteria(request);
+        if (user.getRoles().contains(oneDay)) {
+            for (CaseVo caze : res.getcases()) {
+                caze.setHitType(null);
+                caze.setHitsDispositions(null);
+                caze.setHitsDispositionVos(null);
+            }
+        }
         return res;
     }
 
@@ -183,6 +194,26 @@ public ResponseEntity<byte[]> getDownloadData(@PathVariable long id) {
             
         } catch (Exception ex) {
             logger.error("Error updating histDisp!", ex);
+        }
+        return isUpdateSuccessful;
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/addCaseComment")
+    public
+    @ResponseBody
+    boolean addCaseComment(@RequestBody CaseCommentRequestDto caseCommentRequestDto) {
+        boolean isUpdateSuccessful = false;
+        String userId = GtasSecurityUtils.fetchLoggedInUserId();
+        caseCommentRequestDto.setUser(userId);
+        try {
+            if ("MISSED".equalsIgnoreCase(caseCommentRequestDto.getCaseStatus()) && caseCommentRequestDto.getComment() == null) {
+                throw new RuntimeException("Updating to missed MUST have a comment");
+            }
+        	logger.info("Adding case comment");
+            caseDispositionService.addGeneralCaseComment(caseCommentRequestDto);
+            isUpdateSuccessful = true;
+        } catch (Exception ex) {
+            logger.error("Error updating general case comment!", ex);
         }
         return isUpdateSuccessful;
     }

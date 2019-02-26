@@ -29,14 +29,21 @@
                 hitStatusShow:true,
                 caseStatusShow:true,
                 allHitsClosed:true,
-                caseStatusAdminView:false
+                caseStatusAdminView:false,
+                oneDay: false
             };
+            $scope.caseGeneralComment = [];
             $scope.dispStatus.constants={
                 CLOSED: 'CLOSED',
                 NEW: 'NEW',
                 PENDINGCLOSURE: 'PENDING CLOSURE'
             };
             $scope.hitValidityStatuses=[
+                {id: 1, name: 'Yes'},
+                {id: 1, name: 'No'},
+                {id: 1, name: 'N/A'}
+            ];
+            $scope.caseValidityStatuses=[
                 {id: 1, name: 'Yes'},
                 {id: 1, name: 'No'},
                 {id: 1, name: 'N/A'}
@@ -57,6 +64,13 @@
             AuthService.getCurrentUser().then(function (user) {
                 $scope.currentUser = user;
                 $scope.dispStatus.caseStatusAdminView = ($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())? true: false;
+                let oneDayLookoutUser = false;
+                user.roles.forEach(function (role) {
+                    if (role.roleDescription === USER_ROLES.ONE_DAY_LOOKOUT) {
+                        oneDayLookoutUser = true;
+                    }
+                });
+                $scope.dispStatus.oneDay = !oneDayLookoutUser;
             });
 
             $scope.changeState = function(){
@@ -184,6 +198,9 @@
             };
 
 
+            $scope.sideNavGeneralComments = function() {
+                $mdSidenav("generalComments").toggle();
+            };
             //Angular Trix related event handlers
             $scope.trixInitialize = function(e, editor) {
                 angular.element(editor.element).prop('contenteditable', false);

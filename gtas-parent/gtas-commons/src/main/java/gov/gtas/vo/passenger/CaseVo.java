@@ -34,11 +34,22 @@ public class CaseVo {
     private String description;
     private Set<HitsDisposition> hitsDispositions;
     private Set<HitsDispositionVo> hitsDispositionVos;
+    private Set<GeneralCaseCommentVo> generalCaseCommentVos;
+    private String caseOfficerStatus;
     private Boolean oneDayLookoutFlag;
     private Date currentTime;
     private String countDownTimeDisplay;
     private Long countdownTime;
     private String disposition;
+
+
+    public String getCaseOfficerStatus() {
+        return caseOfficerStatus;
+    }
+
+    public void setCaseOfficerStatus(String caseOfficerStatus) {
+        this.caseOfficerStatus = caseOfficerStatus;
+    }
 
     public Long getId() {
         return id;
@@ -248,6 +259,14 @@ public class CaseVo {
 	public void setDisposition(String disposition) {
 		this.disposition = disposition;
 	}
-    
-    
+
+
+    public Set<GeneralCaseCommentVo> getGeneralCaseCommentVos() {
+        return generalCaseCommentVos;
+    }
+
+    public void setGeneralCaseCommentVos(Set<GeneralCaseCommentVo> generalCaseCommentVos) {
+        this.generalCaseCommentVos = generalCaseCommentVos;
+    }
+
 }
