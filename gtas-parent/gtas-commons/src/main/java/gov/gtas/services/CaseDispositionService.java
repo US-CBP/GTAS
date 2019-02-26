@@ -10,6 +10,7 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
+import gov.gtas.services.dto.CaseCommentRequestDto;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.vo.passenger.OneDayLookoutVo;
@@ -20,16 +21,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
 import gov.gtas.model.lookup.RuleCat;
 import java.util.Map;
 
+import static gov.gtas.constant.GtasSecurityConstants.*;
+
 public interface CaseDispositionService {
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
     public CasePageDto findAll(CaseRequestDto dto);
 
-    @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
     public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
     public List<HitDispositionStatus> getHitDispositionStatuses();
@@ -48,6 +50,8 @@ public interface CaseDispositionService {
     public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids, String username, MultipartFile fileToAttach);
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
+
+    public Case addGeneralCaseComment(CaseCommentRequestDto caseCommentRequestDto);
 
     public Case addCaseComments(Long caseID, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
 
@@ -82,4 +86,5 @@ public interface CaseDispositionService {
     public Date getCurrentServerTime();
     
     public Iterable<RuleCat> findAllRuleCat();
+
 }
