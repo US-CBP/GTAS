@@ -3,7 +3,6 @@ package gov.gtas.services.matcher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,11 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.lucene.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -132,37 +128,47 @@ public class MatchingServiceImpl implements MatchingService {
 
 	// Overloaded method that will save on erroneous passenger calls during
 	// automated run. Automated run already contains passenger objects.
-	public void saveWatchListMatchByPaxId(Long id) {
-		Passenger passenger = passengerRepository.getPassengerById(id);
+	public void performFuzzyMatching(Long id) {
+		Passenger passenger = passengerRepository.getFullPassengerById(id);
 		List<Long> passengers = Collections.singletonList(passenger.getId());
-		Flight flight = flightRepository.getFlightByPassengerId(passenger.getId()).stream().findFirst()
-				.orElse(null);
-		Map<Long, Case> caseMap = createCaseMap(passengers, this.caseDispositionService);
-		Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
-
-		saveWatchListMatchByPaxId(caseMap,ruleCatMap, flight, passenger);
+		Flight flight = passenger.getFlight();
+		MatcherParameters matcherParameters = getMatcherParameters(passengers);
+		performFuzzyMatching(flight, passenger, matcherParameters);
 	}
 
-	public void saveWatchListMatchByPaxId(Map<Long, Case> existingCases,  Map<Long, RuleCat> ruleCatMap, Flight flight, Passenger passenger) {
-		final float threshold = Float
-				.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue()));
-		List<Watchlist> _watchlists = watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document"));
-		for (Watchlist watchlist : _watchlists) {
-			if (passenger.getWatchlistCheckTimestamp() == null
-					|| passenger.getWatchlistCheckTimestamp().before(watchlist.getEditTimestamp())) {
-				List<WatchlistItem> watchlists = watchlistItemRepository
-						.getItemsByWatchlistName(watchlist.getWatchlistName());
-				Set<Long> watchlistIds = new HashSet<Long>(
-						paxWatchlistLinkRepository.findWatchlistItemByPassengerId(passenger.getId()));
-				List<HashMap<String, String>> derogList = new ArrayList<HashMap<String, String>>();
-				for (WatchlistItem item : watchlists) {
+	private MatcherParameters getMatcherParameters(List<Long> passengers) {
+		MatcherParameters matcherParameters = new MatcherParameters();
+		matcherParameters.setCaseMap(createCaseMap(passengers, this.caseDispositionService));
+		matcherParameters.setRuleCatMap(createRuleCatMap(caseDispositionService));
+		matcherParameters.set_watchlists(watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document")));
+		Map<Long, List<WatchlistItem>> watchlistListMap = new HashMap<>();
+		for (Watchlist watchlist : matcherParameters.get_watchlists()) {
+			List<WatchlistItem> watchlistsItemList = watchlistItemRepository
+					.getItemsByWatchlistName(watchlist.getWatchlistName());
+			watchlistListMap.put(watchlist.getId(), watchlistsItemList);
+		}
+		matcherParameters.setWatchlistListMap(watchlistListMap);
+		matcherParameters.setThreshold(Float
+				.parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue())));
+		return matcherParameters;
+	}
 
+	public void performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
+		List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
+		for (Watchlist watchlist : watchlistsList) {
+			if (passengerNeedsWatchlistCheck(passenger, watchlist)) {
+				Set<Long> wlItemIds = new HashSet<>();
+				for (PaxWatchlistLink paxWatchlistLink : passenger.getPaxWatchlistLinks()) {
+					wlItemIds.add(paxWatchlistLink.getWatchlistItem().getId());
+				}
+				List<HashMap<String, String>> derogList = new ArrayList<>();
+				Map<Long, List<WatchlistItem>> watchlistMap = matcherParameters.getWatchlistListMap();
+				for (WatchlistItem item : watchlistMap.get(watchlist.getId())) {
 					// If watchlist-pax connection doesn't exist (Prevents Duplicate Inserts)
-					if (!watchlistIds.contains(item.getId())) {
+					if (!wlItemIds.contains(item.getId())) {
 						try {
 							WatchlistItemSpec itemSpec = mapper.readValue(item.getItemData(), WatchlistItemSpec.class);
-							HashMap<String, String> derogItem = new HashMap<String, String>();
-
+							HashMap<String, String> derogItem = new HashMap<>();
 							derogItem.put("gtasId", passenger.getId().toString());
 							derogItem.put("derogId", item.getId().toString());
 							derogItem.put(DerogHit.WATCH_LIST_NAME, item.getWatchlist().getWatchlistName());
@@ -171,9 +177,7 @@ public class MatchingServiceImpl implements MatchingService {
 									derogItem.put(itemSpec.getTerms()[i].getField(), itemSpec.getTerms()[i].getValue());
 								}
 							}
-
 							derogList.add(derogItem);
-
 						} catch (IOException ioe) {
 							logger.error("Matching Service" + ioe.getMessage());
 							throw ErrorHandlerFactory.getErrorHandler().createException(
@@ -182,26 +186,17 @@ public class MatchingServiceImpl implements MatchingService {
 						}
 					}
 				}
-				
-				long matchingStart = System.nanoTime();
-				logger.info("fuzzy name matching started " + matchingStart);
-				MatchingResult result = qm.match(passenger, derogList, threshold);
-				logger.info("fuzzy name matching finished -- " + Long.toString((System.nanoTime() - matchingStart)/1000000)+"ms");
-				
-				
-				logger.info(result.toString());
-
+				MatchingResult result = qm.match(passenger, derogList, matcherParameters.getThreshold());
+				// These will make calls to the database to save a watchlist link and make a case.
+				// This will cause performance issues IF every passenger hits on a watchlist.
 				if (result.getTotalHits() >= 0) {
 					Map<String, DerogResponse> _responses = result.getResponses();
 					for (String key : _responses.keySet()) {
 						List<DerogHit> derogs = _responses.get(key).getDerogIds();
 						for (DerogHit hit : derogs) {
-
 							paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
 									passenger.getId(), Long.parseLong(hit.getDerogId()));
-
-						    Case existingCase = existingCases.get(passenger.getId());
-
+						    Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
 							// make a call to open case here
 							nameMatchCaseMgmtUtils
 									.processPassengerFlight(
@@ -210,17 +205,21 @@ public class MatchingServiceImpl implements MatchingService {
 									Long.parseLong(hit.getDerogId()),
 									flight,
 									existingCase,
-									ruleCatMap);
+									matcherParameters.getRuleCatMap());
 						}
 					}
 				}
-				
-				passengerRepository.setPassengerWatchlistTimestamp(passenger.getId(), new Date());
 			}
 		}
 	}
-	
-	 private static Map<Long, RuleCat> createRuleCatMap(CaseDispositionService dispositionService)
+
+	private boolean passengerNeedsWatchlistCheck(Passenger passenger, Watchlist watchlist) {
+		return passenger.getWatchlistCheckTimestamp() == null
+				|| passenger.getWatchlistCheckTimestamp()
+				.before(watchlist.getEditTimestamp());
+	}
+
+	private static Map<Long, RuleCat> createRuleCatMap(CaseDispositionService dispositionService)
 	    {
 	       Map<Long, RuleCat> ruleCatMap = new HashMap<>();
 	       Iterable<RuleCat> ruleCatList = dispositionService.findAllRuleCat();
@@ -263,41 +262,42 @@ public class MatchingServiceImpl implements MatchingService {
 		int totalMatchCount = 0;
 		long startTime = System.nanoTime();
 		// get flights that are arriving between timeOffset and "now".
-		Map<Flight,List<Passenger>> passengers = getPassengersOnFlightsWithinTimeRange();
+		Map<Flight,Set<Passenger>> passengers = getPassengersOnFlightsWithinTimeRange();
 		long endTime = System.nanoTime();
 		logger.info("Execution time for getFlightsWithinTimeRange() = " + (endTime - startTime) / 1000000 + "ms");
-		
 		// Begin matching for all passengers on all flights retrieved within time frame.
 		if (passengers != null && passengers.size() > 0) { // Don't try and match if no flights
-			;
 			startTime = System.nanoTime();
-
 			List<Long> passengerIds = new ArrayList<>();
-			for (List<Passenger> passList : passengers.values()) {
+
+			for (Set<Passenger> passList : passengers.values()) {
 				for (Passenger p : passList) {
 					passengerIds.add(p.getId());
 				}
 			}
 
-			Map<Long, Case> caseMap = createCaseMap(passengerIds, this.caseDispositionService);
-			Map<Long, RuleCat> ruleCatMap = createRuleCatMap(caseDispositionService);
-
+			MatcherParameters matcherParameters = getMatcherParameters(passengerIds);
 			for (Flight f : passengers.keySet()) {
-				for(Passenger passenger: passengers.get(f)) {
-					saveWatchListMatchByPaxId(caseMap,ruleCatMap, f, passenger);
+				for (Passenger passenger : passengers.get(f)) {
+					try {
+						performFuzzyMatching(f, passenger, matcherParameters);
+					} catch (Exception e) {
+						logger.error("failed to run watchlist check on passenger. " +
+								"Will attempt a run on next pass." + passenger);
+						passengerIds.remove(passenger.getId());
+					}
 				}
 			}
+			passengerRepository.setPassengersWatchlistTimestamp(passengerIds, new Date());
 			endTime = System.nanoTime();
 			logger.info("Passenger count for matching service: " + passengerIds.size());
-			logger.info("Execution time for saveWatchListMatchByPaxId() for loop = " + (endTime - startTime) / 1000000
+			logger.info("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
 					+ "ms");
 		}
-		// TODO totalMatchCount is not being added at the moment, but is something that
-		// could be used in the future
 		return totalMatchCount;
 	}
 
-	private Map<Flight, List<Passenger>> getPassengersOnFlightsWithinTimeRange() {
+	private Map<Flight, Set<Passenger>> getPassengersOnFlightsWithinTimeRange() {
 		logger.info("entering getFlightsWithinTimeRange()");
 		long startTime, endTime;
 		double timeOffset = Double
@@ -318,11 +318,11 @@ public class MatchingServiceImpl implements MatchingService {
 		// between startDate and endDate
 		ArrayList<Flight> flights = (ArrayList<Flight>) flightRepository
 				.getInboundAndOutboundFlightsWithinTimeFrame(startDate, endDate);
-		Map<Flight, List<Passenger>> passengers = new HashMap<Flight, List<Passenger>>();
+		Map<Flight, Set<Passenger>> passengers = new HashMap<>();
 		if (flights != null && flights.size() > 0) {
 			startTime = System.nanoTime();
 			for (Flight f : flights) {
-				passengers.put(f, passengerRepository.getPassengersByFlightId(f.getId()));
+				passengers.put(f, f.getPassengers());
 			}
 			endTime = System.nanoTime();
 			logger.info(
