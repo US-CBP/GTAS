@@ -377,7 +377,7 @@ public class PassengerDetailsController {
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/savewatchlistlink", method = RequestMethod.GET)
 	public void saveWatchListMatchByPaxId (@RequestParam String paxId) {
-		matchingService.saveWatchListMatchByPaxId(Long.valueOf(paxId));
+		matchingService.performFuzzyMatching(Long.valueOf(paxId));
 	}
 	
 	@ResponseBody
