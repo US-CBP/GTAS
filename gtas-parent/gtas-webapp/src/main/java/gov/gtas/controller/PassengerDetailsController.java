@@ -1094,6 +1094,12 @@ public class PassengerDetailsController {
 				+ " and breaks expected conventions");
 
 	}
+	
+	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
+    public @ResponseBody java.util.List<String> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
+        
+    	return fService.getSeatsByFlightId(flightId);
+    }
 
 	private Pnr getLatestPnrFromList(List<Pnr> pnrList) {
 		Pnr latest = pnrList.get(0);

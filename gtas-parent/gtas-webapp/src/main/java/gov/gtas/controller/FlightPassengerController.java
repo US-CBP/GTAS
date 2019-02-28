@@ -62,11 +62,5 @@ public class FlightPassengerController {
                 SecurityContextHolder.getContext());
     	return paxService.getPassengersByCriteria(null, request);
     }
-    
-    @RequestMapping(value = "/flights/seats/{flightId}", method = RequestMethod.GET)
-    public @ResponseBody java.util.List<String> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId, HttpServletRequest hsr) {
-        hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT",
-                SecurityContextHolder.getContext());
-    	return flightService.getSeatsByFlightId(flightId);
-    }
+   
 }

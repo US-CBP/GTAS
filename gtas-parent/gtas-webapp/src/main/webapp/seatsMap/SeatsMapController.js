@@ -7,30 +7,12 @@
 (function () {
     'use strict';
     app.controller('SeatsMapController',
-        function ($state, $scope, $rootScope, $q, $stateParams, $mdToast, $mdDialog, seatService) {
+        function ($state, $scope, $rootScope, $q, $stateParams, $mdToast, $mdDialog, seatData) {
         
     		$scope.paxId=$stateParams.paxId;
     		$scope.flightId = $stateParams.flightId;
     		$scope.selectedSeat = $stateParams.seat;
-    		
-    		console.log('my data is: '+ JSON.stringify(data));
-    		
-    		$scope.mydata = data;
-    		var data = {};
-    		var promise = seatService.getSeatsByFlightId($stateParams.flightId);
-    		
-			 console.log(promise);
-			 promise.then(res => {
-			 console.log('res' + res);
-			    			 
-			 data = {
-					 map : res.data
-			 };
-			    			
-			 console.log('after resolving a promise '+ JSON.stringify(data));
-			 	loadChart();
-			 });
-			    		
+    		    		  			 
 
   var loadChart =   function(){	   
     	    var columns = [];
@@ -126,7 +108,14 @@
 	    	     "height": "24px",
 	    	   "background-color": '#f4f'
    	   });
-    }
+    };
+  
+	var  data = {
+			 map : seatData.data
+	 };
+   			
+	loadChart();
+  
         }); 
 
 }());

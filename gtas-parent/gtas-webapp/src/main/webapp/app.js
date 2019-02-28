@@ -617,6 +617,11 @@ var app;
                     		controller: 'SeatsMapController',
                     		templateUrl: 'seatsMap/seats.html'
                     	}
+                    },
+                    resolve: {
+                    	seatData : function($stateParams, seatService){
+                    		return seatService.getSeatsByFlightId($stateParams.flightId)
+                    	}
                     }
                 });               
 

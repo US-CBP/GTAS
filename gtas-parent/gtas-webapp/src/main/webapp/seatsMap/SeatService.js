@@ -6,11 +6,11 @@
 (function() {
 	'use strict';
 	app.
-		service('seatService', function($http, $q, Upload) {
+		service('seatService', function($http, $q) {
 		
 			function getSeatsByFlightId(flightId) {
 				var dfd = $q.defer();
-				dfd.resolve($http.get("/gtas/flights/seats/" + flightId));
+				dfd.resolve($http.get("/gtas/seats/" + flightId));
 			return dfd.promise;
 		}
 		
