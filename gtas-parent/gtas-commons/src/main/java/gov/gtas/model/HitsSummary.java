@@ -8,6 +8,7 @@ package gov.gtas.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -121,4 +122,17 @@ public class HitsSummary extends BaseEntity {
         this.flight = flight;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HitsSummary)) return false;
+        HitsSummary that = (HitsSummary) o;
+        return getFlightId().equals(that.getFlightId()) &&
+                getPaxId().equals(that.getPaxId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFlightId(), getPaxId());
+    }
 }

@@ -669,7 +669,7 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
-	Map<Long, Passenger> makePassengerMap(Collection<TargetSummaryVo> targetSummaryVoList)
+	private Map<Long, Passenger> makePassengerMap(Collection<TargetSummaryVo> targetSummaryVoList)
         {
             List<Long> passengerIdList = new ArrayList<>();
             List<Passenger> passengerResultList = null;
@@ -696,7 +696,7 @@ public class TargetingServiceImpl implements TargetingService {
 
         }
 
-	Map<Long, Flight> makeFlightMap(Collection<TargetSummaryVo> targetSummaryVoList)
+	private Map<Long, Flight> makeFlightMap(Collection<TargetSummaryVo> targetSummaryVoList)
         {
             List<Long> flightIdList = new ArrayList<>();
             List<Flight> flightResultList = null;
@@ -728,7 +728,7 @@ public class TargetingServiceImpl implements TargetingService {
 	 *            the rule running result
 	 * @return the list
 	 */
-	List<HitsSummary> storeHitsInfo(
+	private List<HitsSummary> storeHitsInfo(
 			Collection<TargetSummaryVo> results) {
 		logger.info("Entering storeHitsInfo().");
 
@@ -746,102 +746,55 @@ public class TargetingServiceImpl implements TargetingService {
 				hitsSummaryList.add(hitsSummary);
 			}
 		}
-		List<HitsSummary> adjustedHitsSummaryList = adjustForNewRuleHits(hitsSummaryList);
-		logger.info("Total new hits summary records --> "
-				+ adjustedHitsSummaryList.size());
-		return adjustedHitsSummaryList;
+		return adjustForNewRuleHits(hitsSummaryList);
 
 	}
 
-        // This code replaces the code previously in preProcessing() which was way too time consuming.
-        // But this does not do a full clearing of all back hits from all messages and flights.
-        private List<HitsSummary> adjustForNewRuleHits(List<HitsSummary> hitsSummaryList)
-        {
-           List<HitDetail> newHitDetailsToSave = new ArrayList<>();
-           List<HitsSummary> hitSummaryListToRemove = new ArrayList<>();
-           List<HitsSummary> dedupedHitsSummaryList = new ArrayList<>();
-           List<Long> passengerIdList = new ArrayList<>();
-           List<HitsSummary> existingHits = new ArrayList<>();
-           Map<Long, HitsSummary> existingHitsMap  = new HashMap<>();
-           
-           //logger.info("Length of hitsSummaryList at start of adjustForNewRuleHits: " + hitsSummaryList.size());
-           for (HitsSummary hSummary : hitsSummaryList)
-           {
-              Long passengerId = hSummary.getPaxId();
-              passengerIdList.add(passengerId);
-           }
+	private List<HitsSummary> adjustForNewRuleHits(List<HitsSummary> hitsSummaryList) {
+		List<Long> passengerIdList = new ArrayList<>();
+		for (HitsSummary hSummary : hitsSummaryList) {
+			Long passengerId = hSummary.getPaxId();
+			passengerIdList.add(passengerId);
+		}
 
-           if (!passengerIdList.isEmpty())
-           {
-               existingHits = hitsSummaryRepository.findHitsByPassengerIdList(passengerIdList);
+		Set<HitsSummary> existingHits = new HashSet<>();
+		Map<Long, HitsSummary> existingHitsMap = new HashMap<>();
+		if (!passengerIdList.isEmpty()) {
+			existingHits = hitsSummaryRepository.findHitsByPassengerIdList(passengerIdList);
+			for (HitsSummary existingHit : existingHits) {
+				existingHitsMap.put(existingHit.getPaxId(), existingHit);
+			}
+		}
 
-               for (HitsSummary existingHit : existingHits)
-               {
-                  existingHitsMap.put(existingHit.getPaxId(), existingHit);
-               }
-           }
-
-			for (HitsSummary hSummary : hitsSummaryList) {
-				HitsSummary existingHitsSummary = null;
-               /* some previous hits in HitSummary table, need to check if any new rules in HitDetail have been added. 
-                  We are not deleting any old rule hits, the decision was made to leave them in place.
-                  if existingHits is null, then no previous hits are present and we leave the hit list alone.
-               */
-				if (!existingHitsMap.isEmpty() && existingHitsMap.containsKey(hSummary.getPaxId())) {
-					existingHitsSummary = existingHitsMap.get(hSummary.getPaxId());
-					List<Long> existingRuleIdList = existingHitsSummary
-							.getHitdetails()
-							.stream()
-							.map(HitDetail::getRuleId)
-							.collect(Collectors.toList());
-
-					for (HitDetail hitDetail : hSummary.getHitdetails()) {
-						if (!existingRuleIdList.contains(hitDetail.getRuleId())) {
-							hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
-							newHitDetailsToSave.add(hitDetail);
-						}
+		int updated = 0;
+		for (HitsSummary hSummary : hitsSummaryList) {
+			if (existingHits.contains(hSummary)) {
+				HitsSummary existingHitsSummary = existingHitsMap.get(hSummary.getPaxId());
+				for (HitDetail hitDetail : hSummary.getHitdetails()) {
+					if (!existingHitsSummary.getHitdetails().contains(hitDetail)) {
+						hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
+						existingHitsSummary.getHitdetails().add(hitDetail);
+						updated++;
 					}
-					// Do not duplicate existing Hit Summary. Add new rules later if needed.
-					hitSummaryListToRemove.add(hSummary);
 				}
 			}
+		}
 
-           List< ImmutablePair<Long,Long> > flightPassengerIdPairList = new ArrayList<>();
-           for (HitsSummary hs : hitSummaryListToRemove)
-           {
-               Long flightId = hs.getFlightId();
-               Long passId = hs.getPaxId();
-               ImmutablePair<Long,Long> longPair = new ImmutablePair<>(flightId,passId);
-               flightPassengerIdPairList.add(longPair);
-           }
+		//Replace existing hit summaries
+		for (HitsSummary updatedExistingHits : existingHits) {
+			if (hitsSummaryList.contains(updatedExistingHits)) {
+				hitsSummaryList.remove(updatedExistingHits);
+				hitsSummaryList.add(updatedExistingHits);
+			}
+		}
 
-           if (!hitSummaryListToRemove.isEmpty())
-           {
-               for (HitsSummary hsum : hitsSummaryList)
-               {
-                   ImmutablePair<Long,Long> longPair = new ImmutablePair<>(hsum.getFlightId(),hsum.getPaxId());
-                   if (!flightPassengerIdPairList.contains(longPair))
-                   {
-                     dedupedHitsSummaryList.add(hsum);
-                   }
-               }
-           }
-           else
-           {
-               dedupedHitsSummaryList = hitsSummaryList;
-           }
-
-           // save new rule hits in HitDetail table.
-           if (!newHitDetailsToSave.isEmpty())
-           {
-               hitDetailRepository.save(newHitDetailsToSave);
-           }
-
-           return dedupedHitsSummaryList;
-        }
+		int totalNewRecords = hitsSummaryList.size() - existingHits.size();
+		logger.info("Updated " + updated + " hit details to hit summaries. Created " + totalNewRecords + " new hit summaries.");
+		return hitsSummaryList;
+	}
 
 	/**
-	 * @param hitSummmaryVo
+	 * @param hitSummmaryVo hits summary value object
 	 * @return HitsSummary
 	 */
 	private HitsSummary constructHitsInfo(TargetSummaryVo hitSummmaryVo, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, User gtasUser) {
