@@ -9,6 +9,7 @@ import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -55,7 +56,7 @@ public interface HitsSummaryRepository extends
     List<HitsSummary> findHitsByFlightId(@Param("fid") Long flightId);
     
     @Query("SELECT hits FROM HitsSummary hits WHERE hits.paxId in :pidList")
-    List<HitsSummary> findHitsByPassengerIdList(@Param("pidList") List<Long> passengerIdList);
+    Set<HitsSummary> findHitsByPassengerIdList(@Param("pidList") List<Long> passengerIdList);
 
     @Query("DELETE FROM HitsSummary hs WHERE hs.id = (:id)")
     @Modifying
