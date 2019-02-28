@@ -85,8 +85,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     @Query( "SELECT DISTINCT f FROM Flight f " +
             "LEFT JOIN FETCH f.passengers pass " +
             "LEFT JOIN FETCH pass.paxWatchlistLinks " +
-            "WHERE f.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
-            "OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd ")
+            "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
+            "            OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd) " +
+            "       AND (((SELECT MIN(pass.watchlistCheckTimestamp) from pass where pass.flight.id = f.id) <= (SELECT MAX(wl.editTimestamp) FROM Watchlist wl)) " +
+            "               OR ((SELECT count(pass.id) from pass where pass.flight.id = f.id AND pass.watchlistCheckTimestamp IS NULL) > 0))")
     public List<Flight> getInboundAndOutboundFlightsWithinTimeFrame(@Param("dateTimeStart")Date date1,
     											  @Param("dateTimeEnd") Date date2);
 }
