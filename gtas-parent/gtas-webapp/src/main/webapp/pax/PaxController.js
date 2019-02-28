@@ -267,46 +267,74 @@
             });
         };
 
-    //Adds user from pax detail page to watchlist.
-    $scope.addEntityToWatchlist = function(){
-    	spinnerService.show('html5spinner');
-    	var terms = [];
-    	//Add passenger firstName, lastName, dob to wlservice call
-   		terms.push({entity: "PASSENGER", field: "firstName", type: "string", value: $scope.passenger.firstName});
-   		terms.push({entity: "PASSENGER", field: "lastName", type: "string", value: $scope.passenger.lastName});
-   		terms.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
-   		terms.push({entity: "PASSENGER", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
-   		watchListService.addItem("Passenger", "PASSENGER", null, terms).then(function(){
-   			terms = [];
-   	    	//Add documentType and documentNumber to wlservice call
-   			$.each($scope.passenger.documents, function(index,value){
-   	    		if(value.documentType === "P" || value.documentType === "V"){
-   	    			terms.push({entity: "DOCUMENT", field: "documentType", type: "string", value: value.documentType});
-   	        		terms.push({entity: "DOCUMENT", field: "documentNumber", type: "string", value: value.documentNumber});
-   	        		terms.push({entity: "DOCUMENT", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
-   	   	    		watchListService.addItem("Document", "DOCUMENT", null, terms).then(function(response){
-   	   	    			
-   	   	    			if(response.data.status=='FAILURE'){
-   	   	    				console.log(JSON.stringify(response));
-   	   	    			}else{
-	   	   	    			//Compiles after each document add.
-	   	   	    			watchListService.compile();
-	   	   	    			//clear out terms list
-	   	   	    			terms = [];
-	   	   	    			spinnerService.hide('html5spinner');
-	   	   	    			$mdSidenav('addWatchlist').close();
-   	   	    			}
-   	   	    		});
-   	   			}
-   	   		});
-   		});
-    };
+        //Adds user from pax detail page to watchlist.
+        $scope.addEntityToWatchlist = function () {
+            spinnerService.show('html5spinner');
+            let passengerInformation = [];
+            //Add passenger firstName, lastName, dob to wlservice call
+            passengerInformation.push({
+                entity: "PASSENGER",
+                field: "firstName",
+                type: "string",
+                value: $scope.passenger.firstName
+            });
+            passengerInformation.push({
+                entity: "PASSENGER",
+                field: "lastName",
+                type: "string",
+                value: $scope.passenger.lastName
+            });
+            passengerInformation.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
+            passengerInformation.push({
+                entity: "PASSENGER",
+                field: "categoryId",
+                type: "integer",
+                value: $scope.watchlistCategoryId
+            });
+            watchListService.addItem("Passenger", "PASSENGER", null, passengerInformation)
+                .then(function () {
+                    let catId = $scope.watchlistCategoryId;
+                    //Add documentType and documentNumber to wlservice call
+                    $.each($scope.passenger.documents, function (index, value) {
+                        if (value.documentType === "P" || value.documentType === "V") {
+                            let documentVariables = [];
+                            documentVariables.push({
+                                entity: "DOCUMENT",
+                                field: "documentType",
+                                type: "string",
+                                value: value.documentType
+                            });
+                            documentVariables.push({
+                                entity: "DOCUMENT",
+                                field: "documentNumber",
+                                type: "string",
+                                value: value.documentNumber
+                            });
+                            documentVariables.push({
+                                entity: "DOCUMENT",
+                                field: "categoryId",
+                                type: "integer",
+                                value: catId
+                            });
+                            watchListService.addItem("Document", "DOCUMENT", null, documentVariables).then(function (response) {
+                                if (response.data.status === 'FAILURE') {
+                                    console.log(JSON.stringify(response));
+                                } else {
+                                    spinnerService.hide('html5spinner');
+                                    $mdSidenav('addWatchlist').close();
+                                    watchListService.compile();
+                                }
+                            });
+                        }
+                    });
+                });
+        };
 
     $scope.addToWatchlist = function(){
     	$timeout(function () {
         	$mdSidenav('addWatchlist').open();
         });
-    }
+    };
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()
