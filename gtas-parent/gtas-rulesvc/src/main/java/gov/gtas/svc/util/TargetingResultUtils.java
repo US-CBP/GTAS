@@ -125,11 +125,10 @@ public class TargetingResultUtils {
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+            logger.debug("Number of hits --> " + resultList.size());
         }
         resultList = filterRuleHitDetails(resultList, targetingResultServices);
 
-        Bench.start("qwerty1", "Before for RuleHitDetail loop in TargetingResultUtils.");
 
         //can this be done from a PNR? We have the message in scope...
         Map<Long, List<Long>> passengerFlightMap = createPassengerFlightMap(resultList, passengerService);
@@ -145,13 +144,11 @@ public class TargetingResultUtils {
 
                 if (flightIdList != null && !CollectionUtils.isEmpty(flightIdList)) {
                     try {
-                        Bench.start("qwerty2", "Before for Flight loop in TargetingResultUtils.");
                         for (Long flightId : flightIdList) {
                             RuleHitDetail newrhd = rhd.clone();
                             processPassengerFlight(newrhd, flightId,
                                     resultMap);
                         }
-                        Bench.end("qwerty2", "Before for Flight loop in TargetingResultUtils.");
                     } catch (CloneNotSupportedException cnse) {
                         logger.error("error - clone not supported:", cnse);
                     }
@@ -165,13 +162,9 @@ public class TargetingResultUtils {
             }
             rhd.setPassenger(null);
         }
-        Bench.end("qwerty1", "After for RuleHitDetail loop in TargetingResultUtils.");
-        // Now create the return list from the set, thus eliminating duplicates.
-        RuleServiceResult ret = new BasicRuleServiceResult(
+        return new BasicRuleServiceResult(
                 new LinkedList<>(resultMap.values()),
                 result.getExecutionStatistics());
-        //logger.info("Exiting ruleResultPostProcesssing().");
-        return ret;
     }
 
     private static List<RuleHitDetail> filterRuleHitDetails(List<RuleHitDetail> resultList, TargetingResultServices targetingResultServices) {
@@ -210,7 +203,7 @@ public class TargetingResultUtils {
         if (ruleFiltered) {
             logger.warn("WARNING: THE FOLLOWING RULE(S) WITH PRIMARY KEY(S) LISTED DID NOT RUN DUE " +
                     "TO PULLING BACK MORE THAN THE MAX NUMBER OF " + MAX_RULE_HITS + " HITS: " + Arrays.toString(filteredRules.toArray()));
-            logger.info("Updating Rule Flag");
+            logger.debug("Updating Rule Flag");
             try {
                 RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
                 ruleMetaRepository.flagUdrRule(filteredRules);
@@ -234,14 +227,14 @@ public class TargetingResultUtils {
         // details.
         rhd.setPassenger(null);
         RuleHitDetail resrhd = resultMap.get(rhd);
-        if (resrhd != null && resrhd.getRuleId() != rhd.getRuleId()) {
+        if (resrhd != null && !resrhd.getRuleId().equals(rhd.getRuleId())) {
             resrhd.incrementHitCount();
             if (resrhd.getUdrRuleId() != null) {
-                logger.info("This is a rule hit so increment the rule hit count.");
+                logger.debug("This is a rule hit so increment the rule hit count.");
                 // this is a rule hit
                 resrhd.incrementRuleHitCount();
             } else {
-                logger.info("This is a watch list hit.");
+                logger.debug("This is a watch list hit.");
                 // this is a watch list hit
                 if (resrhd.getHitType() != rhd.getHitType()) {
                     resrhd.setHitType(HitTypeEnum.PD);
@@ -254,7 +247,7 @@ public class TargetingResultUtils {
     }
 
     public static void updateRuleExecutionContext(RuleServiceResult res, RuleResults ruleResults) {
-        logger.info("Entering updateRuleExecutionContext().");
+        logger.debug("Entering updateRuleExecutionContext().");
         final Map<String, TargetSummaryVo> hitSummaryMap = new HashMap<>();
         for (RuleHitDetail rhd : res.getResultList()) {
             String key = rhd.getFlightId() + "/" + rhd.getPassengerId();
@@ -270,6 +263,6 @@ public class TargetingResultUtils {
                     .getHitReasons()));
         }
         ruleResults.setTargetingResult(hitSummaryMap.values());
-        logger.info("Exiting updateRuleExecutionContext().");
+        logger.debug("Exiting updateRuleExecutionContext().");
     }
 }

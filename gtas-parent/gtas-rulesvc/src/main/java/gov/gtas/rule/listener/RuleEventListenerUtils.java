@@ -76,7 +76,7 @@ public class RuleEventListenerUtils {
      */
     public static List<EventListener> createEventListeners(
             final RuleExecutionStatistics stats) {
-        logger.info("Entering createEventListeners().");
+        logger.debug("Entering createEventListeners().");
         List<EventListener> eventListenerList = new LinkedList<EventListener>();
 
         eventListenerList.add(new GtasAgendaEventListener(stats));

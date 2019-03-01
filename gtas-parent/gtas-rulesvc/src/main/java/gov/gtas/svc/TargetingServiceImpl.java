@@ -47,8 +47,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -282,7 +280,7 @@ public class TargetingServiceImpl implements TargetingService {
 	@Override
 	public RuleResults analyzeLoadedMessages(
 			final boolean updateProcesssedMessageStat) {
-		logger.info("Entering analyzeLoadedMessages()");
+		logger.debug("Entering analyzeLoadedMessages()");
 
 		List<MessageStatus> source =
 				messageStatusRepository
@@ -296,19 +294,18 @@ public class TargetingServiceImpl implements TargetingService {
 
 		RuleResults ruleResults = null;
 		try {
-			Bench.start("second", "analyzeLoadedMessages executeRules start");
 			ruleResults = executeRules(target);
                         Bench.end("second", "analyzeLoadedMessages executeRules end");
-			logger.info("updating messages status from loaded to analyzed.");
+			logger.debug("updating messages status from loaded to analyzed.");
 			if (updateProcesssedMessageStat) {
 				for (MessageStatus ms : source) {
 					ms.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
 				}
 			}
-			logger.info("saving message status");
+			logger.debug("saving message status");
 			messageStatusRepository.save(source);
-			logger.info("done saving message status");
-			logger.info("Exiting analyzeLoadedMessages()");
+			logger.debug("done saving message status");
+			logger.debug("Exiting analyzeLoadedMessages()");
 			return ruleResults;
 		} catch (CommonServiceException cse) {
 			if (cse.getErrorCode().equals(
@@ -345,7 +342,7 @@ public class TargetingServiceImpl implements TargetingService {
 	 * @return the rule execution context
 	 */
 	private RuleResults executeRules(List<Message> target) {
-		logger.info("Entering executeRules().");
+		logger.debug("Entering executeRules().");
 
 		RuleExecutionContext ctx = TargetingServiceUtils
 				.createPnrApisRequestContext(target);
@@ -358,7 +355,7 @@ public class TargetingServiceImpl implements TargetingService {
                     RuleExecutionStatistics res = udrResult.getExecutionStatistics();
                     int totalRulesFired = res.getTotalRulesFired();
                     List<String> ruleFireSequence = res.getRuleFiringSequence();
-                    logger.info("Total UDR rules fired: " + totalRulesFired);
+                    logger.debug("Total UDR rules fired: " + totalRulesFired);
                     logger.debug("\n****************UDR Rule firing sequence***************************\n");
                     for (String str : ruleFireSequence)
                     {
@@ -383,6 +380,7 @@ public class TargetingServiceImpl implements TargetingService {
 		Set<Case> casesSet = new HashSet<>();
 		if (ruleResults.getUdrResult() != null) {
 			RuleServiceResult udrResult = ruleResults.getUdrResult();
+			logger.debug("Rule Hits....");
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult, targetingResultServices);
 			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService));
@@ -391,6 +389,7 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 		if (ruleResults.getWatchListResult() != null) {
 			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
+			logger.debug("Watchlist...");
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
 			//make a call to Case Mgmt.
 			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult, caseDispositionService, passengerService);
@@ -575,7 +574,7 @@ public class TargetingServiceImpl implements TargetingService {
 	@Transactional
 	@Override
 	public RuleResults runningRuleEngine() {
-		logger.info("Entering runningRuleEngine().");
+		logger.debug("Entering runningRuleEngine().");
 	  	return analyzeLoadedMessages(true);
 	}
 
@@ -652,12 +651,12 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	@Override
 	public void updateFlightHitCounts(Set<Long> flights) {
-		logger.info("Entering updateFlightHitCounts().");
+		logger.debug("Entering updateFlightHitCounts().");
 		if (CollectionUtils.isEmpty(flights)) {
-			logger.info("no flight");
+			logger.debug("no flight");
 			return;
 		}
-		logger.info("update rule hit count on flights.");
+		logger.debug("update rule hit count on flights.");
 		for (Long flightId : flights){
 			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
@@ -730,15 +729,12 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	private List<HitsSummary> storeHitsInfo(
 			Collection<TargetSummaryVo> results) {
-		logger.info("Entering storeHitsInfo().");
 
 		List<HitsSummary> hitsSummaryList = new ArrayList<>();
 
-                Map<Long, Flight> flightMap = makeFlightMap(results);
-                Map<Long, Passenger> passengerMap = makePassengerMap(results);
-                User gtasUser = userRepository.findOne(GTAS_APPLICATION_USERID);
-
-                Bench.start("storeHits1", "Starting constructHitsInfo ");
+		Map<Long, Flight> flightMap = makeFlightMap(results);
+		Map<Long, Passenger> passengerMap = makePassengerMap(results);
+		User gtasUser = userRepository.findOne(GTAS_APPLICATION_USERID);
 
 		for (TargetSummaryVo ruleDetail : results) {
 			HitsSummary hitsSummary = constructHitsInfo(ruleDetail, flightMap, passengerMap, gtasUser);
@@ -767,16 +763,40 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 
 		int updated = 0;
+		int newDetails = 0;
 		for (HitsSummary hSummary : hitsSummaryList) {
+			int watchlistCount = 0;
+			int ruleHitCount = 0;
 			if (existingHits.contains(hSummary)) {
 				HitsSummary existingHitsSummary = existingHitsMap.get(hSummary.getPaxId());
 				for (HitDetail hitDetail : hSummary.getHitdetails()) {
+					//Recalculate rules and watchlist hits by counting each hit detail.
+					if (isRuleHitDetail(hitDetail)) {
+						ruleHitCount++;
+					} else {
+						watchlistCount++;
+					}
 					if (!existingHitsSummary.getHitdetails().contains(hitDetail)) {
 						hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
 						existingHitsSummary.getHitdetails().add(hitDetail);
 						updated++;
 					}
 				}
+				//Existing hit will override the hit so update it instead of the hit summary passed in to the method.
+				existingHitsSummary.setRuleHitCount(ruleHitCount);
+				existingHitsSummary.setWatchListHitCount(watchlistCount);
+			} else {
+				//Calculate rules and watchlist hits by counting each hit detail.
+				for (HitDetail hitDetail : hSummary.getHitdetails()) {
+					newDetails++;
+					if (isRuleHitDetail(hitDetail)) {
+						ruleHitCount++;
+					} else {
+						watchlistCount++;
+					}
+				}
+				hSummary.setWatchListHitCount(watchlistCount);
+				hSummary.setRuleHitCount(ruleHitCount);
 			}
 		}
 
@@ -787,10 +807,16 @@ public class TargetingServiceImpl implements TargetingService {
 				hitsSummaryList.add(updatedExistingHits);
 			}
 		}
-
 		int totalNewRecords = hitsSummaryList.size() - existingHits.size();
-		logger.info("Updated " + updated + " hit details to hit summaries. Created " + totalNewRecords + " new hit summaries.");
+		if (updated > 0 || newDetails > 0) {
+			logger.info("Added " + updated + " hit details to existing hit summaries. " +
+					"Created " + totalNewRecords + " new hit summaries with " + newDetails + " new details.");
+		}
 		return hitsSummaryList;
+	}
+
+	private boolean isRuleHitDetail(HitDetail hitDetail) {
+		return hitDetail.getHitType() != null && hitDetail.getHitType().equalsIgnoreCase("R");
 	}
 
 	/**

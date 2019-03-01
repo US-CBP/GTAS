@@ -50,15 +50,15 @@ public class TargetingResultCaseMgmtUtils {
      */
     public static Set<Case> ruleResultPostProcesssing(
             RuleServiceResult result, CaseDispositionService dispositionService, PassengerService passengerService) {
-        logger.info("Entering ruleResultPostProcesssing().");
+        logger.debug("Entering ruleResultPostProcesssing().");
         // get the list of RuleHitDetail objects returned by the Rule Engine
         List<RuleHitDetail> resultList = result.getResultList();
 
         // create a Map to eliminate duplicates
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
-        if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Number of hits --> " + resultList.size());
         }
         // all of these maps prevent many trips to the database in the for loop below.
         Map<Long, List<Long> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
@@ -95,7 +95,7 @@ public class TargetingResultCaseMgmtUtils {
             rhd.setPassenger(null);
         }
 
-        logger.info("Exiting ruleResultPostProcesssing().");
+        logger.debug("Exiting ruleResultPostProcesssing().");
         return casesSet;
     }
 

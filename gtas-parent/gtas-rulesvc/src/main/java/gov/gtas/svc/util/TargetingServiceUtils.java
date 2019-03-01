@@ -120,7 +120,7 @@ public class TargetingServiceUtils {
 
     public static RuleExecutionContext createPnrApisRequestContext(
             final List<Message> loadedMessages) {
-        logger.info("Entering createPnrApisRequestContext().");
+        logger.debug("Entering createPnrApisRequestContext().");
         RuleEngineRequestBuilder bldr = new RuleEngineRequestBuilder();
 
         if (loadedMessages != null) {

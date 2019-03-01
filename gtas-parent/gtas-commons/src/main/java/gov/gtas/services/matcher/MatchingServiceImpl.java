@@ -258,13 +258,13 @@ public class MatchingServiceImpl implements MatchingService {
 	 * @return totalMatchCount
 	 */
 	public int findMatchesBasedOnTimeThreshold() {
-		logger.info("entering findMatchesBasedOnTimeThreshold()");
+		logger.debug("entering findMatchesBasedOnTimeThreshold()");
 		int totalMatchCount = 0;
 		long startTime = System.nanoTime();
 		// get flights that are arriving between timeOffset and "now".
 		Map<Flight,Set<Passenger>> passengers = getPassengersOnFlightsWithinTimeRange();
 		long endTime = System.nanoTime();
-		logger.info("Execution time for getFlightsWithinTimeRange() = " + (endTime - startTime) / 1000000 + "ms");
+		logger.debug("Execution time for getFlightsWithinTimeRange() = " + (endTime - startTime) / 1000000 + "ms");
 		// Begin matching for all passengers on all flights retrieved within time frame.
 		if (passengers != null && passengers.size() > 0) { // Don't try and match if no flights
 			startTime = System.nanoTime();
@@ -290,15 +290,15 @@ public class MatchingServiceImpl implements MatchingService {
 			}
 			passengerRepository.setPassengersWatchlistTimestamp(passengerIds, new Date());
 			endTime = System.nanoTime();
-			logger.info("Passenger count for matching service: " + passengerIds.size());
-			logger.info("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
+			logger.debug("Passenger count for matching service: " + passengerIds.size());
+			logger.debug("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
 					+ "ms");
 		}
 		return totalMatchCount;
 	}
 
 	private Map<Flight, Set<Passenger>> getPassengersOnFlightsWithinTimeRange() {
-		logger.info("entering getFlightsWithinTimeRange()");
+		logger.debug("entering getFlightsWithinTimeRange()");
 		long startTime, endTime;
 		double timeOffset = Double
 				.parseDouble(appConfigRepository.findByOption(appConfigRepository.FLIGHT_RANGE).getValue());
@@ -325,11 +325,11 @@ public class MatchingServiceImpl implements MatchingService {
 				passengers.put(f, f.getPassengers());
 			}
 			endTime = System.nanoTime();
-			logger.info(
+			logger.debug(
 					"Execution time for getPassengersOnFlightsWithingTimeRange() get passenger by flight ID for loop = "
 							+ (endTime - startTime) / 1000000 + "ms");
 		}
-		logger.info("Number of flights found within " + timeOffsetHours + " hours and " + timeOffsetMinutes
+		logger.debug("Number of flights found within " + timeOffsetHours + " hours and " + timeOffsetMinutes
 				+ " minutes of arrival or departure. Flight Count: " + flights.size());
 		return passengers;
 	}

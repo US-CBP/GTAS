@@ -29,7 +29,7 @@ public class HitsSummaryServiceImpl implements HitsSummaryService {
     
     @Override
     @PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
-    public List<HitDetail> findByPassengerId(Long id) {
+    public HitsSummary findByPassengerId(Long id) {
         return hitsSummaryRepository.findRuleHitsByPassengerId(id);
     }
 

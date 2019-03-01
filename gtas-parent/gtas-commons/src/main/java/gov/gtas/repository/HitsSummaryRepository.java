@@ -37,8 +37,8 @@ public interface HitsSummaryRepository extends
      *            pax id
      * @return RULE hits only
      */
-    @Query("SELECT d FROM HitsSummary h join h.hitdetails d WHERE h.paxId = (:id) and d.hitType = 'R'")
-    public List<HitDetail> findRuleHitsByPassengerId(@Param("id") Long id);
+    @Query("SELECT h FROM HitsSummary h WHERE h.paxId = (:id)")
+    public HitsSummary findRuleHitsByPassengerId(@Param("id") Long id);
 
     @Query("SELECT s FROM HitsSummary s")
     public Iterable<HitsSummary> findAll();
