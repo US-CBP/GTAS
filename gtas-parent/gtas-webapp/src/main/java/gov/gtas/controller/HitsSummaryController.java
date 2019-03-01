@@ -51,7 +51,7 @@ public class HitsSummaryController {
             @RequestParam(value = "passengerId", required = false) String id) {
 
         return getHitDetailsMapped(hitsSummaryService.findByPassengerId(Long
-                .parseLong(id)));
+                    .parseLong(id)).getHitdetails());
     }
     
     @RequestMapping(value = "/hit/flightpassenger", method = RequestMethod.GET)
@@ -104,7 +104,7 @@ public class HitsSummaryController {
                 		if(r != null)
                 			category = r.getCategory();
                 	}
-                	else if (htd.getHitType()!=null && htd.getHitType().equals("P"))
+                	else if (htd.getHitType()!=null && (htd.getHitType().equals("P") || htd.getHitType().equals("D")))
             		{
                 		WatchlistCategory c = this.watchlistCatService.findCatByWatchlistItemId(htd.getRuleId());
                 		if(c != null)

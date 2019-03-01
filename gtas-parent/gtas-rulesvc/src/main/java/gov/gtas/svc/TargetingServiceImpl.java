@@ -47,8 +47,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -383,6 +381,7 @@ public class TargetingServiceImpl implements TargetingService {
 		Set<Case> casesSet = new HashSet<>();
 		if (ruleResults.getUdrResult() != null) {
 			RuleServiceResult udrResult = ruleResults.getUdrResult();
+			logger.info("Rule Hits....");
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult, targetingResultServices);
 			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService));
@@ -391,6 +390,7 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 		if (ruleResults.getWatchListResult() != null) {
 			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
+			logger.info("Watchlist...");
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
 			//make a call to Case Mgmt.
 			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult, caseDispositionService, passengerService);
@@ -767,17 +767,41 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 
 		int updated = 0;
+		int newDetails = 0;
 		for (HitsSummary hSummary : hitsSummaryList) {
+			int watchlistCount = 0;
+			int ruleHitCount = 0;
 			if (existingHits.contains(hSummary)) {
 				HitsSummary existingHitsSummary = existingHitsMap.get(hSummary.getPaxId());
 				for (HitDetail hitDetail : hSummary.getHitdetails()) {
+					//Recalculate rules and watchlist hits by counting each hit detail.
+					if (isRuleHitDetail(hitDetail)) {
+						ruleHitCount++;
+					} else {
+						watchlistCount++;
+					}
 					if (!existingHitsSummary.getHitdetails().contains(hitDetail)) {
 						hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
 						existingHitsSummary.getHitdetails().add(hitDetail);
 						updated++;
 					}
 				}
+				//Existing hit will override the hit so update it first.
+				existingHitsSummary.setRuleHitCount(ruleHitCount);
+				existingHitsSummary.setWatchListHitCount(watchlistCount);
+			} else {
+				//Calculate rules and watchlist hits by counting each hit detail.
+				for (HitDetail hitDetail : hSummary.getHitdetails()) {
+					newDetails++;
+					if (isRuleHitDetail(hitDetail)) {
+						ruleHitCount++;
+					} else {
+						watchlistCount++;
+					}
+				}
 			}
+			hSummary.setWatchListHitCount(watchlistCount);
+			hSummary.setRuleHitCount(ruleHitCount);
 		}
 
 		//Replace existing hit summaries
@@ -787,10 +811,14 @@ public class TargetingServiceImpl implements TargetingService {
 				hitsSummaryList.add(updatedExistingHits);
 			}
 		}
-
 		int totalNewRecords = hitsSummaryList.size() - existingHits.size();
-		logger.info("Updated " + updated + " hit details to hit summaries. Created " + totalNewRecords + " new hit summaries.");
+		logger.info("Added " + updated + " hit details to existing hit summaries. " +
+				"Created " + totalNewRecords + " new hit summaries with " + newDetails + " new details.");
 		return hitsSummaryList;
+	}
+
+	private boolean isRuleHitDetail(HitDetail hitDetail) {
+		return hitDetail.getHitType() != null && hitDetail.getHitType().equalsIgnoreCase("R");
 	}
 
 	/**

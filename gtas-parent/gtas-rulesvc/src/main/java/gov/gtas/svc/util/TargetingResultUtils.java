@@ -125,7 +125,7 @@ public class TargetingResultUtils {
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+            logger.info("Number of hits --> " + resultList.size());
         }
         resultList = filterRuleHitDetails(resultList, targetingResultServices);
 

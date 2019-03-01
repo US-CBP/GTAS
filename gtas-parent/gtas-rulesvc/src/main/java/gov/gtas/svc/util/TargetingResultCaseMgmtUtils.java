@@ -58,7 +58,7 @@ public class TargetingResultCaseMgmtUtils {
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+            logger.info("Number of hits --> " + resultList.size());
         }
         // all of these maps prevent many trips to the database in the for loop below.
         Map<Long, List<Long> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
