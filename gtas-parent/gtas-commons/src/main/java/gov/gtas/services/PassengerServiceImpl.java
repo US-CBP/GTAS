@@ -141,15 +141,17 @@ public class PassengerServiceImpl implements PassengerService {
             }
 
             if (hit != null) {
-                String hitType = hit.getHitType();
-                if (hitType.contains(HitTypeEnum.R.toString())) {
-                    vo.setOnRuleHitList(true);
-                }
-                if (hitType.contains(HitTypeEnum.P.toString())) {
-                    vo.setOnWatchList(true);
-                }
-                if (hitType.contains(HitTypeEnum.D.toString())) {
-                    vo.setOnWatchListDoc(true);
+                for (HitDetail hd : hit.getHitdetails()) {
+
+                    if ("R".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnRuleHitList(true);
+                    }
+                    if ("P".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnWatchList(true);
+                    }
+                    if ("D".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnWatchListDoc(true);
+                    }
                 }
             }
 
