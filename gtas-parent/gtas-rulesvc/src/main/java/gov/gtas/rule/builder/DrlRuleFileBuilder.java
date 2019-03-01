@@ -71,7 +71,7 @@ public class DrlRuleFileBuilder {
     }
 
     public DrlRuleFileBuilder addRule(final UdrRule udrRule) {
-        logger.info("DrlRuleFileBuilder - generating DRL code for UDR with title:"
+        logger.debug("DrlRuleFileBuilder - generating DRL code for UDR with title:"
                 + udrRule.getTitle());
         for (Rule rule : udrRule.getEngineRules()) {
             String drl = String.format(rule.getRuleDrl(), udrRule.getId(),

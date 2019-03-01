@@ -56,7 +56,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 		try {
 			KieBase kieBase = RuleUtils.createKieBaseFromDrlString(drlString);
 			byte[] kbBlob = RuleUtils.convertKieBaseToBytes(kieBase);
-			logger.info("Size of the compiled Knowledge Base = "
+			logger.debug("Size of the compiled Knowledge Base = "
 					+ kbBlob.length);
 			KnowledgeBase kb = rulePersistenceService
 					.findUdrKnowledgeBase(kbName);

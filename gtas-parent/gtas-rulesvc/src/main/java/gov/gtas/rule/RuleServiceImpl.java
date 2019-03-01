@@ -106,7 +106,7 @@ public class RuleServiceImpl implements RuleService {
 	 */
 	private RuleServiceResult createSessionAndExecuteRules(KieBase kbase,
 			RuleServiceRequest req) {
-		logger.info("Entering createSessionAndExecuteRules() and creating Stateless session.");
+		logger.debug("Entering createSessionAndExecuteRules() and creating Stateless session.");
 
 		StatelessKieSession ksession = kbase.newStatelessKieSession();
 		ksession.setGlobal(RuleServiceConstants.RULE_RESULT_LIST_NAME,
@@ -121,7 +121,7 @@ public class RuleServiceImpl implements RuleService {
 		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession,
 				listeners);
 
-		logger.info("Retrieved Rule input objects and executed the rules.");
+		logger.debug("Retrieved Rule input objects and executed the rules.");
 		Collection<?> requestObjects = req.getRequestObjects();
 		ksession.execute(requestObjects);
 
@@ -131,7 +131,7 @@ public class RuleServiceImpl implements RuleService {
 		Iterator<String> iter = keys.iterator();
 		RuleServiceResult res = null;
 
-		logger.info("Retrieved Rule execution statistics objects.");
+		logger.debug("Retrieved Rule execution statistics objects.");
 		while (iter.hasNext()) {
 			if (iter.next().equals(RuleServiceConstants.RULE_RESULT_LIST_NAME)) {
 				@SuppressWarnings("unchecked")
@@ -140,24 +140,22 @@ public class RuleServiceImpl implements RuleService {
 				res = new BasicRuleServiceResult(resList, stats);
 			}
 		}
-		logger.info("Retrieved Rule execution result objects and exit createSessionAndExecuteRules().");
+		logger.debug("Retrieved Rule execution result objects and exit createSessionAndExecuteRules().");
 		return res;
 	}
 
 	@Override
 	public RuleServiceResult invokeRuleEngine(RuleServiceRequest req,
 			String kbName) {
-		logger.info("Entering invokeRuleEngine().");
-                Bench.start("asdf1"," start invokeRuleEngine() with kbName");
+		logger.debug("Entering invokeRuleEngine().");
 		KnowledgeBase kbRecord;
 		// check if there is any undeleted and enabled rule
 		List<UdrRule> ruleList = rulePersistenceService.findAll();
 		if (StringUtils.isEmpty(kbName)) {
-			logger.info("Default rule knowledge base is loaded.");
+			logger.debug("Default rule knowledge base is loaded.");
 			if (CollectionUtils.isEmpty(ruleList)) {
 				kbRecord = null;
 			} else {
-                            Bench.start("asdf3"," start invokeRuleEngine() findUdrKnowledgeBase");
 				kbRecord = rulePersistenceService.findUdrKnowledgeBase();
 				if (kbRecord != null) {
 					List<Rule> rules = rulePersistenceService
@@ -169,10 +167,9 @@ public class RuleServiceImpl implements RuleService {
 								.findUdrKnowledgeBase();
 					}
 				}
-                                Bench.end("asdf3","End invokeRuleEngine() findUdrKnowledgeBase");
 			}
 		} else {
-			logger.info("Custom knowledge base is loaded.");
+			logger.debug("Custom knowledge base is loaded.");
 			Iterable<WatchlistItem> all = watchlistItemRepository.findAll();
 			List<WatchlistItem> target = new ArrayList<>();
 			all.forEach(target::add);
@@ -186,13 +183,10 @@ public class RuleServiceImpl implements RuleService {
 			logger.debug("Knowledge based is null.");
 			return null;
 		}
-                Bench.end("asdf1","End invokeRuleEngine() with kbName");
-                Bench.start("asdf2"," start invokeRuleEngine() convertKieBasefromBytes ");
 		try {
 			// create KieBase object from compressed binary data read from db
 			KieBase kb = RuleUtils
 					.convertKieBasefromBytes(kbRecord.getKbBlob());
-                        Bench.end("asdf2","End invokeRuleEngine() convertKieBasefromBytes ");
 			return createSessionAndExecuteRules(kb, req);
 		} catch (IOException | ClassNotFoundException ex) {
 			throw ErrorHandlerFactory.getErrorHandler().createException(

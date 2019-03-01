@@ -33,7 +33,6 @@ public class BookingDetailCompressScheduler {
     public void jobScheduling() {
 
         List<BookingDetail> unprocessedBookingDetails = bookingDetailRepository.getBookingDetailByProcessedFlag();
-        logger.info("Booking Detail compress START , collection size -- " + unprocessedBookingDetails.size());
         long time = System.nanoTime();
 
         // We want to save the earliest booking detail, which we expect to have the lowest ID.
@@ -67,11 +66,9 @@ public class BookingDetailCompressScheduler {
             }
         }
 
-        if (finalDBToSaveList.isEmpty()) {
-            logger.info("Nothing to process");
-        } else {
+        if (!finalDBToSaveList.isEmpty()) {
             logger.info("Booking detail compress finished in " + (System.nanoTime() - time) / 1000000 + "m/s. Merged " + unprocessedBookingDetails.size()
-                    + " into to " + finalDBToSaveList.size() +" distinct booking details.");
+                    + " into to " + finalDBToSaveList.size() + " distinct booking details.");
         }
     }
 }
