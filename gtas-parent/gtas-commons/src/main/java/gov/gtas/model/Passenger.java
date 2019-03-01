@@ -21,6 +21,15 @@ public class Passenger extends BaseEntityAudit {
     public Passenger() {
     }
 
+	@OneToOne(mappedBy = "passenger", targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
+    private Set<PassengerDetails> passengerDetails;
+    
+    @OneToOne(mappedBy = "passenger", targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
+    private PassengerTripDetails passengerTripDetails;
+    
+    @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
+    private PassengerWLTimestamp passengerWLTimestamp;
+
     @Column(name = "passenger_type", length = 3, nullable = false)
     private String passengerType;
 
@@ -398,6 +407,30 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setAttachments(Set<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+    
+    public Set<PassengerDetails> getPassengerDetails() {
+		return passengerDetails;
+	}
+
+	public void setPassengerDetails(Set<PassengerDetails> passengerDetails) {
+		this.passengerDetails = passengerDetails;
+	}
+
+	public PassengerTripDetails getPassengerTripDetails() {
+		return passengerTripDetails;
+	}
+
+	public void setPassengerTripDetails(PassengerTripDetails passengerTripDetails) {
+		this.passengerTripDetails = passengerTripDetails;
+	}
+
+	public PassengerWLTimestamp getPassengerWLTimestamp() {
+		return passengerWLTimestamp;
+	}
+
+	public void setPassengerWLTimestamp(PassengerWLTimestamp passengerWLTimestamp) {
+		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
 
 /*    public PassengerIDTag getPaxIdTag() {
