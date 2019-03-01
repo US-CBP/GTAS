@@ -3,6 +3,7 @@ package gov.gtas.services;
 import java.util.List;
 
 import gov.gtas.model.ApisMessage;
+import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Pnr;
 import gov.gtas.parsers.vo.MessageVo;
 
@@ -16,7 +17,8 @@ public class MessageDto {
 	private List<String> rawMsgs;
 	private String filepath;
 	private String[] primeFlightKey;
-	
+	private MessageStatus messageStatus;
+
 	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo, String[] primeFlightKey){
 		this.pnr = pnr;
 		this.apis = apis;
@@ -95,4 +97,11 @@ public class MessageDto {
 		this.primeFlightKey = primeFlightKey;
 	}
 	
+	public MessageStatus getMessageStatus() {
+		return messageStatus;
+	}
+
+	public void setMessageStatus(MessageStatus messageStatus) {
+		this.messageStatus = messageStatus;
+	}
 }

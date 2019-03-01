@@ -241,42 +241,6 @@ public class ServiceRepositoryIT {
         logger.info("************* Done***********************\n");
     }
 
-    @Test
-    @Transactional
-    public void testGetApisMessageByStatus() {
-        MessageStatus messageStatus = MessageStatus.LOADED;
-
-        List<ApisMessage> listApisMessages = apisMessageRepository
-                .findByStatus(messageStatus);
-        assertNotNull(listApisMessages);
-        if (listApisMessages.size() > 0) {
-            for (ApisMessage apisMessage : listApisMessages) {
-                Set<Flight> flights = apisMessage.getFlights();
-                if (flights.size() > 0) {
-                    assertNotNull(flights);
-
-                    Iterator<Flight> itr = flights.iterator();
-                    while (itr.hasNext()) {
-                        logger.info("Flights are not null \n");
-                        Flight aFlight = (Flight) itr.next();
-                        assertNotNull(aFlight);
-                        Set<Passenger> passengers = aFlight.getPassengers();
-                        if (passengers.size() > 0) {
-                            assertNotNull(passengers);
-                            Iterator<Passenger> itr2 = passengers.iterator();
-                            while (itr2.hasNext()) {
-                                Passenger passenger = itr2.next();
-                                assertNotNull(passenger);
-                                // logger.info("Passengers are not null \n");
-                            }
-                        }
-                    }
-                    // logger.info("happy faces!\n");
-                }
-            }
-        }
-        // logger.info("happy faces again!\n");
-    }
 
     @Test
     @Transactional
@@ -286,7 +250,6 @@ public class ServiceRepositoryIT {
         m.setHashCode(hash);
         m.setCreateDate(new Date());
         m.setFilePath("/tmp/nothing.txt");
-        m.setStatus(MessageStatus.ANALYZED);
         apisMessageRepository.save(m);
 
         ApisMessage m2 = apisMessageRepository.findByHashCode(hash);

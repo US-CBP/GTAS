@@ -39,7 +39,6 @@ public class ApisDataGenerator {
         msg.setId(9999L);
         //msg.setFlights(createFlights());
         msg.setCreateDate(new Date());
-        msg.setStatus(MessageStatus.LOADED);
         fixPassengerReferences(msg);
         fixDocReferences(msg);
         return msg;

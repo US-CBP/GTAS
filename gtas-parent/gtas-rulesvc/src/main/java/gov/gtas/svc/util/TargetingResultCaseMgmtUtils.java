@@ -39,113 +39,119 @@ public class TargetingResultCaseMgmtUtils {
         TargetingResultCaseMgmtUtils.paxRepo = paxRepo;
     }
 
+    public TargetingResultCaseMgmtUtils() {
+    }
+
     /**
      * Eliminates duplicates and adds flight id, if missing.
      *
      * @param result
      * @return
      */
-    public static RuleServiceResult ruleResultPostProcesssing(
+    public static Set<Case> ruleResultPostProcesssing(
             RuleServiceResult result, CaseDispositionService dispositionService, PassengerService passengerService) {
-        logger.info("Entering ruleResultPostProcesssing().");
+        logger.debug("Entering ruleResultPostProcesssing().");
         // get the list of RuleHitDetail objects returned by the Rule Engine
         List<RuleHitDetail> resultList = result.getResultList();
 
         // create a Map to eliminate duplicates
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
-        if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Number of hits --> " + resultList.size());
         }
-        Bench.start("here2", "Before for RuleHitDetail loop.");
-        
         // all of these maps prevent many trips to the database in the for loop below.
-        Map<Long, List<Flight> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
+        Map<Long, List<Long> > passengerFlightMap = TargetingResultUtils.createPassengerFlightMap(resultList, passengerService);
         Map<Long, Passenger> passengerMap = TargetingResultUtils.createPassengerMap(resultList, passengerService);
         Map<Long, Flight> flightMap = TargetingResultUtils.createFlightMap(resultList, passengerService);
         Map<Long, Case> caseMap = createCaseMap(resultList, dispositionService);
         Map<Long, RuleCat> ruleCatMap = createRuleCatMap(dispositionService);
         
-        
+        Set<Case> casesSet = new HashSet<>();
         for (RuleHitDetail rhd : resultList) {
             if (rhd.getFlightId() == null) {
-                // get all the flights for the passenger
-                // and replicate the RuleHitDetail object, for each flight id
-                // Note that the RuleHitDetail key is (UdrId, EngineRuleId,
-                // PassengerId, FlightId)
-                List<Flight> flights = passengerFlightMap.get(rhd.getPassengerId());
-                
-                if (flights != null && !CollectionUtils.isEmpty(flights)) {
-                    try {
-                        Bench.start("here3", "Before for Flight loop.");
-                        for (Flight flight : flights) {
-                            RuleHitDetail newrhd = rhd.clone();
-                            processPassengerFlight(newrhd, flight.getId(), caseMap, flightMap,
-                                     passengerMap,ruleCatMap, dispositionService);
+                List<Long> flightIdList = passengerFlightMap.get(rhd.getPassengerId());
+                if (flightIdList != null && !CollectionUtils.isEmpty(flightIdList)) {
+                        for (Long flightId : flightIdList) {
+                            Case caze = processPassengerFlight(rhd, flightId, caseMap, flightMap,
+                                    passengerMap,ruleCatMap, dispositionService);
+                            if (!casesSet.add(caze)) {
+                                casesSet.remove(caze);
+                                casesSet.add(caze);
+                            }
                         }
-                        Bench.end("here3", "After for Flight loop in ruleResultPostProcesssing.");
-                    } catch (CloneNotSupportedException cnse) {
-                        logger.error("error, clone not supported", cnse);
-                    }
                 } else {
                     // ERROR we do not have flights for this passenger
                     logger.error("TargetingServiceUtils.ruleResultPostProcesssing() no flight information for passenger  with ID:"
                             + rhd.getPassenger().getId());
                 }
             } else {
-                Bench.start("here4", "start processPassengerFlight call in ruleResultPostProcesssing.");
-                processPassengerFlight(rhd, rhd.getFlightId(),caseMap, flightMap, passengerMap,ruleCatMap, dispositionService);
-                Bench.end("here4", " End processPassengerFlight call in ruleResultPostProcesssing.");
+                Case caze = processPassengerFlight(rhd, rhd.getFlightId(),caseMap, flightMap, passengerMap,ruleCatMap, dispositionService);
+                if (!casesSet.add(caze)) {
+                    casesSet.remove(caze);
+                    casesSet.add(caze);
+                }
             }
             rhd.setPassenger(null);
         }
-        Bench.end("here2", "After for RuleHitDetail loop in ruleResultPostProcesssing.");
-        // Now create the return list from the set, thus eliminating duplicates.
-        RuleServiceResult ret = new BasicRuleServiceResult(
-                new LinkedList<RuleHitDetail>(resultMap.values()),
-                result.getExecutionStatistics());
-        logger.info("Exiting ruleResultPostProcesssing().");
-        return ret;
+
+        logger.debug("Exiting ruleResultPostProcesssing().");
+        return casesSet;
     }
 
     /**
      * Method that does bulk of the Case Mgmt. calls
      * @param rhd
      * @param flightId
-     * @param resultMap
      * @param dispositionService
      */
-    private static void processPassengerFlight(RuleHitDetail rhd,
-                                               Long flightId, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
-                                               Map<Long, Passenger> passengerMap,Map<Long, RuleCat> ruleCatMap,
-                                               CaseDispositionService dispositionService) {
+    private static Case processPassengerFlight(RuleHitDetail rhd,
+                                                    Long flightId,
+                                                    Map<Long, Case> caseMap,
+                                                    Map<Long, Flight> flightMap,
+                                                    Map<Long, Passenger> passengerMap,
+                                                    Map<Long, RuleCat> ruleCatMap,
+                                                    CaseDispositionService dispositionService) {
 
         // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
         Long _tempPaxId = null;
         Passenger _tempPax = null;
         String description = rhd.getDescription();
         String watchlistItemFlag = "wl_item";
+        Case newCase = null;
         try {
             _tempPaxId = rhd.getPassengerId();
            _tempPax = passengerMap.get(_tempPaxId);
-            //dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getRuleId());
+
             if(rhd.getUdrRuleId() == null){
                 description = watchlistItemFlag + description;
             }
             if (_tempPax != null) {
                 String document = null;
-                for (Document documentItem : _tempPax.getDocuments()) {
-                    document = documentItem.getDocumentNumber();
+                if (_tempPax.getDocuments() != null) {
+                    document = _tempPax.getDocuments().stream().findFirst().map(Document::getDocumentNumber).orElse(null);
                 }
-                dispositionService.registerCasesFromRuleService(flightId, rhd.getPassengerId(), rhd.getPassengerName(),
-                        rhd.getPassengerType().getPassengerTypeName(), _tempPax.getCitizenshipCountry(), _tempPax.getDob(),
-                        document, description, rhd.getRuleId(), caseMap, flightMap, passengerMap, ruleCatMap);
+                newCase = dispositionService.registerCaseFromRuleService(
+                        flightId,
+                        rhd.getPassengerId(),
+                        rhd.getPassengerName(),
+                        rhd.getPassengerType().getPassengerTypeName(),
+                        _tempPax.getCitizenshipCountry(),
+                        _tempPax.getDob(),
+                        document,
+                        description,
+                        rhd.getRuleId(),
+                        caseMap,
+                        flightMap,
+                        passengerMap,
+                        ruleCatMap);
             }
         } catch (Exception ex) {
             logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId
                     + "  Rule:" + rhd.getRuleId() + " set",ex);
         }
 
+        return newCase;
     }
 
     /**

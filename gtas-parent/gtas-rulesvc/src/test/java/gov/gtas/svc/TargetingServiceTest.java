@@ -76,33 +76,4 @@ public class TargetingServiceTest {
         targetingService.analyzeApisMessage(message);
         verify(mockRuleService).invokeRuleEngine(any(RuleServiceRequest.class));
     }
-
-    @Test
-    public void testRetrieveApisMessage() {
-        ReflectionTestUtils.setField(targetingService, "apisMsgRepository",
-                mockApisMsgRepository);
-        List<ApisMessage> messages = new ArrayList<ApisMessage>();
-        ApisMessage nApisMessage = new ApisMessage();
-        nApisMessage.setStatus(MessageStatus.LOADED);
-        messages.add(nApisMessage);
-        MessageStatus messageStatus = MessageStatus.LOADED;
-        when(mockApisMsgRepository.findByStatus(messageStatus)).thenReturn(
-                messages);
-        targetingService.retrieveApisMessage(messageStatus);
-        verify(mockApisMsgRepository).findByStatus(messageStatus);
-    }
-
-    @Test
-    public void testNullReturnRetrieveApisMessage() {
-        ReflectionTestUtils.setField(targetingService, "apisMsgRepository",
-                mockApisMsgRepository);
-        List<ApisMessage> messages = new ArrayList<ApisMessage>();
-        MessageStatus messageStatus = MessageStatus.LOADED;
-        when(mockApisMsgRepository.findByStatus(messageStatus)).thenReturn(
-                messages);
-        List<ApisMessage> result = targetingService
-                .retrieveApisMessage(messageStatus);
-        verify(mockApisMsgRepository).findByStatus(messageStatus);
-        assertEquals(new ArrayList<>(0), result);
-    }
 }

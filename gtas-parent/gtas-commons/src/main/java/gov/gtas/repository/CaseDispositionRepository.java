@@ -40,7 +40,11 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
     }
 
     @Query("SELECT c FROM Case c  left join fetch c.caseComments where c.id = :id")
-    public Case caseWithCommentsById(@Param("id") Long id);
+    public Case caseWithComments(@Param("id") Long id);
+
+
+   @Query("SELECT c FROM Case c  left join fetch c.caseComments left join fetch c.hitsDispositions where c.id = :id")
+    public Case caseWithCommentsAndHitDispositionsById(@Param("id") Long id);
 
     @Query("SELECT c FROM Case c WHERE c.flightId = (:flightId) "
             + "AND c.paxId = (:paxId) AND c.status in :status")
@@ -70,11 +74,11 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
    @Query("SELECT c " +
 			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I') OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' ))" )
 	public List<Case> findOneDayLookoutByDate(@Param("startDate") Date startDate, @Param("endDate")Date endDate);
-   
+
    @Query("SELECT c " +
 			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I' AND flt.destination = :airport) OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' AND flt.origin=:airport ))" )
 	public List<Case> findOneDayLookoutByDateAndAirport(@Param("startDate") Date startDate, @Param("endDate")Date endDate, @Param("airport")String airport);
-   
+
    @Modifying
    @Transactional
    @Query("update Case set oneDayLookoutFlag = :flag where id = :caseId")

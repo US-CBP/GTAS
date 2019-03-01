@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -61,6 +63,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
+    @Cacheable(value = "countryCache", key = "#country")
     public Country getCountryByTwoLetterCode(String country) {
         Country ctry = null;
         List<Country> countries = (List<Country>)countryRespository.getCountryByTwoLetterCode(country);
@@ -71,6 +74,7 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional
+    @Cacheable(value = "countryCache", key = "#country")
     public Country getCountryByThreeLetterCode(String country) {
         Country ctry = null;
         List<Country> countries = (List<Country>)countryRespository.getCountryByThreeLetterCode(country);

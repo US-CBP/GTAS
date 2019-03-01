@@ -61,4 +61,5 @@ public interface PassengerRepositoryCustom {
 	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName);
 	
 	public List<Passenger> getPassengersByFlightId(Long flightId);
-}
+
+	}

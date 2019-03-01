@@ -77,4 +77,6 @@ public interface UserService {
 	public User fetchUser(final String userId);
 	
 	public boolean isAdminUser(String userId);
+
+	public boolean treatAsOneDay(String userId);
 }

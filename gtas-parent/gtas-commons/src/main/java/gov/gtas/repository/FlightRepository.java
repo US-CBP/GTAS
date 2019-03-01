@@ -59,10 +59,6 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     		value="SELECT f.* FROM flight_passenger fp join flight f ON (fp.flight_id = f.id) where fp.pax_id = (:paxId)")
     public List<Flight> getFlightByPaxId(@Param("paxId") Long paxId);
 
-    @Query(nativeQuery = true,
-            value="SELECT f.* FROM flight_passenger fp join flight f ON (fp.flight_id = f.id) where fp.passenger_id = (:paxId)")
-    public List<Flight> getFlightByPassengerId(@Param("paxId") Long paxId);
-
     @Query("SELECT f FROM Flight f WHERE f.flightDate between :startDate AND :endDate")
     public List<Flight> getFlightsByDates(@Param("startDate") Date startDate,
                                           @Param("endDate") Date endDate);
@@ -86,11 +82,16 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     @Query("SELECT c FROM CodeShareFlight c where c.operatingFlightId = :flightId group by c.marketingFlightNumber")
     public List<CodeShareFlight> getCodeSharesForFlight(@Param("flightId") Long flightId);
     
-    @Query("SELECT f FROM Flight f WHERE f.eta BETWEEN :dateTimeStart AND :dateTimeEnd "
-    									 + "OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd")
+    @Query( "SELECT DISTINCT f FROM Flight f " +
+            "LEFT JOIN FETCH f.passengers pass " +
+            "LEFT JOIN FETCH pass.paxWatchlistLinks " +
+            "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
+            "            OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd) " +
+            "       AND (((SELECT MIN(pass.watchlistCheckTimestamp) from pass where pass.flight.id = f.id) <= (SELECT MAX(wl.editTimestamp) FROM Watchlist wl)) " +
+            "               OR ((SELECT count(pass.id) from pass where pass.flight.id = f.id AND pass.watchlistCheckTimestamp IS NULL) > 0))")
     public List<Flight> getInboundAndOutboundFlightsWithinTimeFrame(@Param("dateTimeStart")Date date1,
     											  @Param("dateTimeEnd") Date date2);
-    
+
     default Flight findOne(Long flightId)
     {
     	return findById(flightId).orElse(null);

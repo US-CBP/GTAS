@@ -8,17 +8,9 @@ package gov.gtas.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "hits_summary")
@@ -35,12 +27,18 @@ public class HitsSummary extends BaseEntity {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HitDetail> hitdetails = new ArrayList<HitDetail>();
 
-    @ManyToOne
-    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
+    @Column(name = "flightId", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flightId", referencedColumnName = "id", updatable = false, insertable = false)
     private Flight flight;
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id", nullable = false)
+    @Column(name = "paxId", columnDefinition = "bigint unsigned")
+    private Long paxId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paxId", referencedColumnName = "id", updatable = false, insertable = false)
     private Passenger passenger;
 
     @Column(name = "rule_hit_count")
@@ -92,12 +90,20 @@ public class HitsSummary extends BaseEntity {
         this.watchListHitCount = watchListHitCount;
     }
 
-    public Flight getFlight() {
-        return flight;
+    public Long getFlightId() {
+        return flightId;
     }
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public Long getPaxId() {
+        return paxId;
+    }
+
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
     }
 
     public Passenger getPassenger() {
@@ -106,5 +112,27 @@ public class HitsSummary extends BaseEntity {
 
     public void setPassenger(Passenger passenger) {
         this.passenger = passenger;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HitsSummary)) return false;
+        HitsSummary that = (HitsSummary) o;
+        return getFlightId().equals(that.getFlightId()) &&
+                getPaxId().equals(that.getPaxId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFlightId(), getPaxId());
     }
 }

@@ -76,9 +76,9 @@ public class TargetingResultUtils {
     }
 
 
-    public static Map<Long, List<Flight>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
+    public static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
         List<Long> ruleHitDetailPassengerIdList = new ArrayList<>();
-        Map<Long, List<Flight>> passengerFlightMap = new HashMap<>();
+        Map<Long, List<Long>> passengerFlightMap = new HashMap<>();
 
         for (RuleHitDetail rhd : ruleHitDetailList) {
             Long passengerId = rhd.getPassengerId();
@@ -87,16 +87,16 @@ public class TargetingResultUtils {
 
         // TODO: check for no rule hits, empty ruleHitDetailPassengerIdList
         if (!ruleHitDetailPassengerIdList.isEmpty()) {
-            List<FlightPax> allFlightPaxByPassengerId = passengerService.getFlightPaxByPassengerIdList(ruleHitDetailPassengerIdList);
+            List<FlightPax> allFlightPaxByPassengerId = passengerService.findFlightPaxFromPassengerIds(ruleHitDetailPassengerIdList);
 
             for (FlightPax flightPax : allFlightPaxByPassengerId) {
-                Long passengerId = flightPax.getPassenger().getId();
-                Flight flight = flightPax.getFlight();
+                Long passengerId = flightPax.getPassengerId();
+                Long flightId = flightPax.getFlightId();
                 if (passengerFlightMap.containsKey(passengerId)) {
-                    passengerFlightMap.get(passengerId).add(flight);
+                    passengerFlightMap.get(passengerId).add(flightId);
                 } else {
-                    List<Flight> newFlightList = new ArrayList<>();
-                    newFlightList.add(flight);
+                    List<Long> newFlightList = new ArrayList<>();
+                    newFlightList.add(flightId);
                     passengerFlightMap.put(passengerId, newFlightList);
                 }
             }
@@ -125,13 +125,13 @@ public class TargetingResultUtils {
         Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isInfoEnabled()) {
-            logger.info("Number of rule hits --> " + resultList.size());
+            logger.debug("Number of hits --> " + resultList.size());
         }
         resultList = filterRuleHitDetails(resultList, targetingResultServices);
 
-        Bench.start("qwerty1", "Before for RuleHitDetail loop in TargetingResultUtils.");
 
-        Map<Long, List<Flight>> passengerFlightMap = createPassengerFlightMap(resultList, passengerService);
+        //can this be done from a PNR? We have the message in scope...
+        Map<Long, List<Long>> passengerFlightMap = createPassengerFlightMap(resultList, passengerService);
 
         for (RuleHitDetail rhd : resultList) {
             if (rhd.getFlightId() == null) {
@@ -140,17 +140,15 @@ public class TargetingResultUtils {
                 // Note that the RuleHitDetail key is (UdrId, EngineRuleId,
                 // PassengerId, FlightId)
 
-                List<Flight> flights = passengerFlightMap.get(rhd.getPassengerId());
+                List<Long> flightIdList = passengerFlightMap.get(rhd.getPassengerId());
 
-                if (flights != null && !CollectionUtils.isEmpty(flights)) {
+                if (flightIdList != null && !CollectionUtils.isEmpty(flightIdList)) {
                     try {
-                        Bench.start("qwerty2", "Before for Flight loop in TargetingResultUtils.");
-                        for (Flight flight : flights) {
+                        for (Long flightId : flightIdList) {
                             RuleHitDetail newrhd = rhd.clone();
-                            processPassengerFlight(newrhd, flight.getId(),
+                            processPassengerFlight(newrhd, flightId,
                                     resultMap);
                         }
-                        Bench.end("qwerty2", "Before for Flight loop in TargetingResultUtils.");
                     } catch (CloneNotSupportedException cnse) {
                         logger.error("error - clone not supported:", cnse);
                     }
@@ -164,13 +162,9 @@ public class TargetingResultUtils {
             }
             rhd.setPassenger(null);
         }
-        Bench.end("qwerty1", "After for RuleHitDetail loop in TargetingResultUtils.");
-        // Now create the return list from the set, thus eliminating duplicates.
-        RuleServiceResult ret = new BasicRuleServiceResult(
-                new LinkedList<RuleHitDetail>(resultMap.values()),
+        return new BasicRuleServiceResult(
+                new LinkedList<>(resultMap.values()),
                 result.getExecutionStatistics());
-        //logger.info("Exiting ruleResultPostProcesssing().");
-        return ret;
     }
 
     private static List<RuleHitDetail> filterRuleHitDetails(List<RuleHitDetail> resultList, TargetingResultServices targetingResultServices) {
@@ -209,7 +203,7 @@ public class TargetingResultUtils {
         if (ruleFiltered) {
             logger.warn("WARNING: THE FOLLOWING RULE(S) WITH PRIMARY KEY(S) LISTED DID NOT RUN DUE " +
                     "TO PULLING BACK MORE THAN THE MAX NUMBER OF " + MAX_RULE_HITS + " HITS: " + Arrays.toString(filteredRules.toArray()));
-            logger.info("Updating Rule Flag");
+            logger.debug("Updating Rule Flag");
             try {
                 RuleMetaRepository ruleMetaRepository = targetingResultServices.getRuleMetaRepository();
                 ruleMetaRepository.flagUdrRule(filteredRules);
@@ -233,14 +227,14 @@ public class TargetingResultUtils {
         // details.
         rhd.setPassenger(null);
         RuleHitDetail resrhd = resultMap.get(rhd);
-        if (resrhd != null && resrhd.getRuleId() != rhd.getRuleId()) {
+        if (resrhd != null && !resrhd.getRuleId().equals(rhd.getRuleId())) {
             resrhd.incrementHitCount();
             if (resrhd.getUdrRuleId() != null) {
-                logger.info("This is a rule hit so increment the rule hit count.");
+                logger.debug("This is a rule hit so increment the rule hit count.");
                 // this is a rule hit
                 resrhd.incrementRuleHitCount();
             } else {
-                logger.info("This is a watch list hit.");
+                logger.debug("This is a watch list hit.");
                 // this is a watch list hit
                 if (resrhd.getHitType() != rhd.getHitType()) {
                     resrhd.setHitType(HitTypeEnum.PD);
@@ -252,10 +246,8 @@ public class TargetingResultUtils {
         //logger.info("Exiting processPassengerFlight().");
     }
 
-    public static void updateRuleExecutionContext(RuleExecutionContext ctx,
-                                                  RuleServiceResult res) {
-        logger.info("Entering updateRuleExecutionContext().");
-        ctx.setRuleExecutionStatistics(res.getExecutionStatistics());
+    public static void updateRuleExecutionContext(RuleServiceResult res, RuleResults ruleResults) {
+        logger.debug("Entering updateRuleExecutionContext().");
         final Map<String, TargetSummaryVo> hitSummaryMap = new HashMap<>();
         for (RuleHitDetail rhd : res.getResultList()) {
             String key = rhd.getFlightId() + "/" + rhd.getPassengerId();
@@ -270,7 +262,7 @@ public class TargetingResultUtils {
                     .getRuleId(), rhd.getHitType(), rhd.getTitle(), rhd
                     .getHitReasons()));
         }
-        ctx.setTargetingResult(hitSummaryMap.values());
-        logger.info("Exiting updateRuleExecutionContext().");
+        ruleResults.setTargetingResult(hitSummaryMap.values());
+        logger.debug("Exiting updateRuleExecutionContext().");
     }
 }

@@ -63,7 +63,7 @@ public class WatchlistServiceImpl implements WatchlistService {
     }
 
     @Override
-    public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
+    public synchronized JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
             WatchlistSpec wlToCreateUpdate) {
         WatchlistValidationAdapter.validateWatchlistSpec(wlToCreateUpdate);
         WatchlistBuilder bldr = new WatchlistBuilder(wlToCreateUpdate);
@@ -142,7 +142,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	}
 
 	@Override
-	public void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId) {
+	public synchronized void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId) {
 		//
 		WatchlistItem watchlistItem = this.fetchWatchlistItemById(watchlistItemId);
 		watchlistItem.setWatchlistCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));

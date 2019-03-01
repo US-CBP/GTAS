@@ -229,7 +229,6 @@ public class LoaderUtils {
     }
 
     public void convertPnrVo(Pnr pnr, PnrVo vo) throws ParseException {
-
         BeanUtils.copyProperties(vo, pnr);
         Airport origin = getAirport(vo.getOrigin());
         String originCountry = null;
@@ -432,11 +431,7 @@ public class LoaderUtils {
     }
     //The parsed message did not have the flights in proper order for flight leg generation (needed for dwell time and appropriate display)
     public void sortFlightsByDate(List<FlightVo> flights){
-    	Collections.sort(flights, new Comparator<FlightVo>(){
-    		public int compare(FlightVo f1, FlightVo f2){
-    			return f1.getEtd().compareTo(f2.getEtd());
-    		}
-    	});
+    	Collections.sort(flights, Comparator.comparing(FlightVo::getEtd));
     }
 
     /**

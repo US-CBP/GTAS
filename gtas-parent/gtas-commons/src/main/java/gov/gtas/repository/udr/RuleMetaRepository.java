@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.Set;
 
 public interface RuleMetaRepository extends CrudRepository<RuleMeta, Long>,
         JpaSpecificationExecutor<RuleMeta> {
 
+    @Transactional
     @Modifying
     @Query("Update RuleMeta rm set rm.overMaxHits = true where rm.parent.id in :udrRulesWithTooManyHits")
     void flagUdrRule(@Param("udrRulesWithTooManyHits") Set<Long> udrRulesWithTooManyHits);

@@ -30,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -65,11 +67,15 @@ public class FlightServiceImpl implements FlightService {
             List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
             BeanUtils.copyProperties(f, vo);
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
+
 			if (f.getFlightHitsWatchlist() != null) {
 				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount() + fuzzyHits);
 			}
 			if (f.getFlightHitsRule() != null) {
 				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
+			}
+			if (f.getFlightPassengerCount() != null) {
+				vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
 			}
 			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
             List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
@@ -212,12 +218,8 @@ public class FlightServiceImpl implements FlightService {
 	public Long getFlightFuzzyMatchesOnly(Long flightId) {
 		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
 				"FROM pax_watchlist_link pwl " +
-				"WHERE pwl.passenger_id IN (SELECT DISTINCT p.id " +
-				"                           FROM flight_passenger fp " +
-				"                                  LEFT JOIN passenger p ON (fp.passenger_id = p.id) " +
-				"                           WHERE fp.flight_id = "+flightId+ " " +
-				"                             AND p.id NOT IN " +
-				"                                 (SELECT hitSumm.passenger_id FROM hits_summary hitSumm WHERE fp.flight_id = "+flightId+"))";
+				"WHERE pwl.passenger_id not in (SELECT hitSumm.paxId " +
+				"FROM hits_summary hitSumm where wl_hit_count > 0)";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}
@@ -232,6 +234,8 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
+	@Transactional
+	@Modifying
 	public void setSinglePassenger(Long passengerId, Long flightId) {
 		String sqlStr = "INSERT INTO flight_passenger(flight_id,passenger_id) VALUES("+flightId+","+passengerId+")";
 		em.createNativeQuery(sqlStr).executeUpdate();
