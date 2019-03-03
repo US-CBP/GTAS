@@ -7,29 +7,8 @@ package gov.gtas.services;
 
 import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.tamr.TamrConversionService;
-import gov.gtas.parsers.vo.AddressVo;
-import gov.gtas.parsers.vo.AgencyVo;
-import gov.gtas.parsers.vo.BagVo;
-import gov.gtas.parsers.vo.CodeShareVo;
-import gov.gtas.parsers.vo.CreditCardVo;
-import gov.gtas.parsers.vo.DocumentVo;
-import gov.gtas.parsers.vo.EmailVo;
-import gov.gtas.parsers.vo.FlightVo;
-import gov.gtas.parsers.vo.FrequentFlyerVo;
-import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.parsers.vo.PaymentFormVo;
-import gov.gtas.parsers.vo.PhoneVo;
-import gov.gtas.parsers.vo.PnrVo;
-import gov.gtas.parsers.vo.ReportingPartyVo;
-import gov.gtas.parsers.vo.SeatVo;
+import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,81 +16,96 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {
     private static final Logger logger = LoggerFactory
             .getLogger(GtasLoaderImpl.class);
 
-    @Autowired
-    private ReportingPartyRepository rpDao;
+    private final ReportingPartyRepository rpDao;
 
-    @Autowired
-    private FlightRepository flightDao;
+    private final FlightRepository flightDao;
 
-    @Autowired
-    private PassengerRepository passengerDao;
+    private final PassengerRepository passengerDao;
 
-    @Autowired
-    private DocumentRepository docDao;
+    private final DocumentRepository docDao;
 
-    @Autowired
-    private PhoneRepository phoneDao;
+    private final PhoneRepository phoneDao;
 
-    @Autowired
-    private CreditCardRepository creditDao;
+    private final CreditCardRepository creditDao;
 
-    @Autowired
-    private AddressRepository addressDao;
+    private final AddressRepository addressDao;
 
-    @Autowired
-    private AgencyRepository agencyDao;
+    private final AgencyRepository agencyDao;
 
-    @Autowired
-    private MessageRepository<Message> messageDao;
+    private final MessageRepository<Message> messageDao;
 
-    @Autowired
-    private FrequentFlyerRepository ffdao;
+    private final FrequentFlyerRepository ffdao;
 
-    @Autowired
-    private LoaderUtils utils;
+    private final LoaderUtils utils;
 
-    @Autowired
-    private BagRepository bagDao;
+    private final BagRepository bagDao;
 
-    @Autowired
-    private PaymentFormRepository paymentFormDao;
+    private final PaymentFormRepository paymentFormDao;
 
-    @Autowired
-    private PassengerIDTagRepository passengerIdTagDao;
+    private final PassengerIDTagRepository passengerIdTagDao;
 
-    @Autowired
+    private final
     BookingDetailRepository bookingDetailDao;
 
-    @Autowired
-    BookingDetailService bookingDetailService;
-
-    @Autowired
+    private final
     LoaderServices loaderServices;
 
-    @Autowired
-    PnrRepository pnrDao;
-
-    @Autowired
-    FlightService flightService;
-
-    @Autowired
-    TamrConversionService tamrService;
-
-    @Autowired
+    private final
     FlightPassengerRepository flightPassengerRepository;
 
-    @Autowired
+    private final
     FlightPassengerCountRepository flightPassengerCountRepository;
 
-
     @Autowired
-    FlightPaxRepository flightPaxRepository;
+    public GtasLoaderImpl(
+                          PassengerRepository passengerDao,
+                          ReportingPartyRepository rpDao,
+                          LoaderServices loaderServices,
+                          FlightRepository flightDao,
+                          DocumentRepository docDao,
+                          PhoneRepository phoneDao,
+                          PaymentFormRepository paymentFormDao,
+                          CreditCardRepository creditDao,
+                          FlightPassengerCountRepository flightPassengerCountRepository,
+                          AddressRepository addressDao,
+                          AgencyRepository agencyDao,
+                          BagRepository bagDao,
+                          MessageRepository<Message> messageDao,
+                          PassengerIDTagRepository passengerIdTagDao,
+                          FlightPassengerRepository flightPassengerRepository,
+                          FrequentFlyerRepository ffdao,
+                          LoaderUtils utils,
+                          BookingDetailRepository bookingDetailDao) {
+        this.passengerDao = passengerDao;
+        this.rpDao = rpDao;
+        this.loaderServices = loaderServices;
+        this.flightDao = flightDao;
+        this.docDao = docDao;
+        this.phoneDao = phoneDao;
+        this.paymentFormDao = paymentFormDao;
+        this.creditDao = creditDao;
+        this.flightPassengerCountRepository = flightPassengerCountRepository;
+        this.addressDao = addressDao;
+        this.agencyDao = agencyDao;
+        this.bagDao = bagDao;
+        this.messageDao = messageDao;
+        this.passengerIdTagDao = passengerIdTagDao;
+        this.flightPassengerRepository = flightPassengerRepository;
+        this.ffdao = ffdao;
+        this.utils = utils;
+        this.bookingDetailDao = bookingDetailDao;
+    }
 
 
     @Override
@@ -296,7 +290,7 @@ public class GtasLoaderImpl implements GtasLoader {
     public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
-        passengerDao.save(messagePassengers);
+        passengerDao.saveAll(messagePassengers);
         for (Passenger p : newPassengers) {
             PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
             passengerIDTags.add(paxIdTag);
@@ -310,14 +304,15 @@ public class GtasLoaderImpl implements GtasLoader {
             flightPassengers.add(fp);
         }
 
-        passengerIdTagDao.save(passengerIDTags);
-        flightPassengerRepository.save(flightPassengers);
+        passengerIdTagDao.saveAll(passengerIDTags);
+        flightPassengerRepository.saveAll(flightPassengers);
         return newPassengers.size();
     }
 
     @Transactional
     public void updateFlightPassengerCount(Flight primeFlight, int createdPassengers) {
-        FlightPassengerCount flightPassengerCount = flightPassengerCountRepository.findOne(primeFlight.getId());
+        FlightPassengerCount flightPassengerCount = flightPassengerCountRepository.findById(primeFlight.getId())
+                .orElse(null);
         if (flightPassengerCount == null) {
             flightPassengerCount = new FlightPassengerCount(primeFlight.getId(), createdPassengers);
         } else {
@@ -343,7 +338,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 }
             }
         }
-        bookingDetailDao.save(bookingDetails);
+        bookingDetailDao.saveAll(bookingDetails);
     }
 
 
@@ -438,7 +433,7 @@ public class GtasLoaderImpl implements GtasLoader {
             pf.setPnr(pnr);
             chkList.add(pf);
         }
-        paymentFormDao.save(chkList);
+        paymentFormDao.saveAll(chkList);
     }
 
     @Override

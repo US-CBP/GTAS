@@ -303,7 +303,7 @@ public class TargetingServiceImpl implements TargetingService {
 				}
 			}
 			logger.debug("saving message status");
-			messageStatusRepository.save(source);
+			messageStatusRepository.saveAll(source);
 			logger.debug("done saving message status");
 			logger.debug("Exiting analyzeLoadedMessages()");
 			return ruleResults;
@@ -319,14 +319,14 @@ public class TargetingServiceImpl implements TargetingService {
 					for (MessageStatus ms : source) {
 						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 					}
-					messageStatusRepository.save(source);
+					messageStatusRepository.saveAll(source);
 				}
 			} else {
 				if (updateProcesssedMessageStat) {
 					for (MessageStatus ms : source) {
 						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 					}
-					messageStatusRepository.save(source);
+					messageStatusRepository.saveAll(source);
 				}
 				throw cse;
 			}
@@ -595,8 +595,8 @@ public class TargetingServiceImpl implements TargetingService {
 		try {
 			if (targetingServiceResults != null) {
 				Set<Long> uniqueFlights = new HashSet<>();
-				caseDispositionRepository.save(targetingServiceResults.getCaseSet());
-				hitsSummaryRepository.save(targetingServiceResults.getHitsSummaryList());
+				caseDispositionRepository.saveAll(targetingServiceResults.getCaseSet());
+				hitsSummaryRepository.saveAll(targetingServiceResults.getHitsSummaryList());
 				passengerService.createDisposition(targetingServiceResults.getHitsSummaryList());
 				for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
 					uniqueFlights.add(s.getFlightId());

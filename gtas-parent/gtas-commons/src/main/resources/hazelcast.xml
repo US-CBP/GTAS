@@ -33,7 +33,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="ruleCategoryCache">
@@ -46,7 +46,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
     <map name="ruleCatCache">
@@ -59,7 +59,7 @@
         <eviction-policy>LRU</eviction-policy>
         <max-size policy="PER_NODE">0</max-size>
         <eviction-percentage>25</eviction-percentage>
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>LatestUpdateMergePolicy</merge-policy>
     </map>
 
 

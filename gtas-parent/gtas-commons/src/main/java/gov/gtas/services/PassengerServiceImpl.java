@@ -321,7 +321,7 @@ public class PassengerServiceImpl implements PassengerService {
             Disposition d = createDispositionFromHitsSummary(hit);
             dispositionsList.add(d);
         }
-        dispositionRepo.save(dispositionsList);
+        dispositionRepo.saveAll(dispositionsList);
     }
 
 

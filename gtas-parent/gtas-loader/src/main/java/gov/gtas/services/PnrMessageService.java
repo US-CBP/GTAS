@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.FlightPaxRepository;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -389,7 +389,7 @@ public class PnrMessageService extends MessageLoaderService {
     		}
     		oneFlight=true;
 		}
-		flightPaxRepository.save(flightPaxes);
+		flightPaxRepository.saveAll(flightPaxes);
 
 	}
 

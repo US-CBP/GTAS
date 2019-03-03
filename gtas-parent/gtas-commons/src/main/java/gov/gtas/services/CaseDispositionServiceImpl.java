@@ -685,7 +685,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				ruleCatMap));
 
 		//Name match case depends on this save to create a case.
-		caseDispositionRepository.save(_tempCaseList);
+		caseDispositionRepository.saveAll(_tempCaseList);
 
 		return _tempCaseList;
 	}
