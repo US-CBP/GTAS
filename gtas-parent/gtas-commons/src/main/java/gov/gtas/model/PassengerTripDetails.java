@@ -123,7 +123,8 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		//int result = super.hashCode();
+		int result = 10;
 		result = prime * result + ((bagNum == null) ? 0 : bagNum.hashCode());
 		result = prime * result + ((debarkCountry == null) ? 0 : debarkCountry.hashCode());
 		result = prime * result + ((debarkation == null) ? 0 : debarkation.hashCode());

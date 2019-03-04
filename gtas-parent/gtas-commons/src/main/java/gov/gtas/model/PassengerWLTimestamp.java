@@ -34,7 +34,8 @@ public class PassengerWLTimestamp extends BaseEntityAudit {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
+		//int result = super.hashCode();
+		int result = 10;
 		result = prime * result + ((passenger == null) ? 0 : passenger.hashCode());
 		result = prime * result + ((watchlistCheckTimestamp == null) ? 0 : watchlistCheckTimestamp.hashCode());
 		return result;
