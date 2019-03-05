@@ -327,8 +327,9 @@ public class MatchingServiceImpl implements MatchingService {
 					"Execution time for getPassengersOnFlightsWithingTimeRange() get passenger by flight ID for loop = "
 							+ (endTime - startTime) / 1000000 + "ms");
 		}
+		int flightSize = flights == null? 0 : flights.size();
 		logger.debug("Number of flights found within " + timeOffsetHours + " hours and " + timeOffsetMinutes
-				+ " minutes of arrival or departure. Flight Count: " + flights.size());
+				+ " minutes of arrival or departure. Flight Count: " + flightSize);
 		return passengers;
 	}
 }
