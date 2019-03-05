@@ -99,9 +99,6 @@ public class Passenger extends BaseEntityAudit {
  
     @Transient
     private String bagNum;
-    
-    private Date watchlistCheckTimestamp;
-
 
     // This is a convenience method to see the flight associated with the passenger.
     // This relationship is manually made in the loader.
@@ -191,14 +188,6 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
-	}
-
-	public Date getWatchlistCheckTimestamp() {
-		return watchlistCheckTimestamp;
-	}
-
-	public void setWatchlistCheckTimestamp(Date watchlistCheckTimestamp) {
-		this.watchlistCheckTimestamp = watchlistCheckTimestamp;
 	}
 
 	public String getReservationReferenceNumber() {
