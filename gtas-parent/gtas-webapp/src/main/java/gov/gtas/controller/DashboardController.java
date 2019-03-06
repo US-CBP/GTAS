@@ -108,7 +108,7 @@ public class DashboardController {
 
 		List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
 
-		Integer paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
+		Integer paxCount = flightList.stream().mapToInt(f -> f.getFlightPassengerCount().getPassengerCount()).sum();
 
 		HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
 		int ruleHits = hitAndAirportExtractor.getRuleHits();
@@ -220,7 +220,7 @@ public class DashboardController {
 
 		List<Flight> flightList = flightService.getFlightsThreeDaysForwardOutbound();
 
-		int paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
+		int paxCount = flightList.stream().mapToInt(f -> f.getFlightPassengerCount().getPassengerCount()).sum();
 		HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
 		int ruleHits = hitAndAirportExtractor.getRuleHits();
 		long watchListHits = hitAndAirportExtractor.getWatchListHits();

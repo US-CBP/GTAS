@@ -5,15 +5,14 @@
  */
 package gov.gtas.model;
 
-import org.springframework.cache.annotation.Cacheable;
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
-@Cacheable
+
 @Entity
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
@@ -25,9 +24,6 @@ public class Passenger extends BaseEntityAudit {
     @Column(name = "passenger_type", length = 3, nullable = false)
     private String passengerType;
 
-/*    @ManyToMany(mappedBy = "passengers", targetEntity = Flight.class)
-    private Set<Flight> flights = new HashSet<>();*/
-
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
@@ -36,11 +32,6 @@ public class Passenger extends BaseEntityAudit {
 
     @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
-
-
-    /*@ManyToOne(fetch=FetchType.EAGER, targetEntity = PassengerIDTag.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "pax_tag_id"))
-    private PassengerIDTag paxIdTag;*/
 
     private String title;
 
@@ -68,6 +59,7 @@ public class Passenger extends BaseEntityAudit {
     private Date dob;
 
     /** calculated field */
+    @Column(name = "age")
     private Integer age;
 
     /** calculated field */
@@ -102,6 +94,15 @@ public class Passenger extends BaseEntityAudit {
     private Date watchlistCheckTimestamp;
 
 
+    // This is a convenience method to see the flight associated with the passenger.
+    // This relationship is manually made in the loader.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name="flight_passenger",
+            joinColumns={@JoinColumn(name="passenger_id")},
+            inverseJoinColumns={@JoinColumn(name="flight_id")})
+    @JsonIgnore
+    private Flight flight;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
 
@@ -111,9 +112,9 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Seat> seatAssignments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
-    
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
@@ -125,9 +126,17 @@ public class Passenger extends BaseEntityAudit {
     private Set<FlightPax> flightPaxList = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<TicketFare> tickets = new HashSet<>();    
-    
-	public Set<BookingDetail> getBookingDetails() {
+    private Set<TicketFare> tickets = new HashSet<>();
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    public Set<BookingDetail> getBookingDetails() {
 		return bookingDetails;
 	}
 

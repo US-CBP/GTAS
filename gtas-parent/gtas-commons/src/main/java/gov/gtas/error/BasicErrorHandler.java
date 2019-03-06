@@ -115,6 +115,7 @@ public class BasicErrorHandler implements ErrorHandler {
 	@Override
 	public ErrorDetailInfo processError(final Exception exception) {
 		ErrorDetailInfo ret = null;
+		logger.error("",exception);
 		Function<Exception, ErrorDetailInfo> processor = exceptionProcessorMap
 				.get(exception.getClass().getName());
 		if (processor != null) {

@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
@@ -39,6 +38,8 @@ import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerVo;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.Query;
 
 /**
@@ -82,6 +83,12 @@ public class PassengerServiceImpl implements PassengerService {
 	@PersistenceContext
 	private EntityManager em;
 
+    @Autowired
+    PassengerRepository passengerRepository;
+
+    @Autowired
+    FlightPaxRepository flightPaxRepository;
+
     @Override
     @Transactional
     public Passenger create(Passenger passenger) {
@@ -104,7 +111,7 @@ public class PassengerServiceImpl implements PassengerService {
             HitsSummary hit = (HitsSummary) objs[2];
             PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
 
-            if (hit != null && f.getId() != hit.getFlight().getId()) {
+            if (hit != null && !f.getId().equals(hit.getFlightId())) {
                 continue;
             }
 
@@ -134,15 +141,17 @@ public class PassengerServiceImpl implements PassengerService {
             }
 
             if (hit != null) {
-                String hitType = hit.getHitType();
-                if (hitType.contains(HitTypeEnum.R.toString())) {
-                    vo.setOnRuleHitList(true);
-                }
-                if (hitType.contains(HitTypeEnum.P.toString())) {
-                    vo.setOnWatchList(true);
-                }
-                if (hitType.contains(HitTypeEnum.D.toString())) {
-                    vo.setOnWatchListDoc(true);
+                for (HitDetail hd : hit.getHitdetails()) {
+
+                    if ("R".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnRuleHitList(true);
+                    }
+                    if ("P".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnWatchList(true);
+                    }
+                    if ("D".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnWatchListDoc(true);
+                    }
                 }
             }
 
@@ -269,7 +278,7 @@ public class PassengerServiceImpl implements PassengerService {
         d.setCreatedBy(disposition.getUser());
         Flight f = new Flight();
         f.setId(disposition.getFlightId());
-        d.setFlight(f);
+        d.setFlightId(f.getId());
         Passenger p = new Passenger();
         p.setId(disposition.getPassengerId());
         d.setPassenger(p);
@@ -304,19 +313,36 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Transactional
+    public void createDisposition(List<HitsSummary> hitsList) {
+
+        List<Disposition> dispositionsList = new ArrayList<>();
+        for (HitsSummary hit : hitsList) {
+            Disposition d = createDispositionFromHitsSummary(hit);
+            dispositionsList.add(d);
+        }
+        dispositionRepo.saveAll(dispositionsList);
+    }
+
+
+
+    @Override
     public void createDisposition(HitsSummary hit) {
+        Disposition d = createDispositionFromHitsSummary(hit);
+        dispositionRepo.save(d);
+    }
+
+    private Disposition createDispositionFromHitsSummary(HitsSummary hit) {
         Disposition d = new Disposition();
         Date date = new Date();
         d.setCreatedAt(date);
         d.setCreatedBy("SYSTEM");
         d.setComments("A new disposition has been created on " + date);
-        d.setPassenger(hit.getPassenger());
-        d.setFlight(hit.getFlight());
+        d.setPaxId(hit.getPaxId());
         DispositionStatus status = new DispositionStatus();
         status.setId(1L);
         d.setStatus(status);
-
-        dispositionRepo.save(d);
+        return d;
     }
 
     @Override
@@ -398,25 +424,19 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return flightSet;
 	}
-        
+
+
         @Override
-        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList)
+        public List<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList)
         {
-            String sqlStr = "SELECT fp FROM FlightPax fp JOIN fp.passenger WHERE fp.passenger.id IN :pidList";
-            Query query = em.createQuery(sqlStr);
-            query.setParameter("pidList", passengerIdList);
-            List<FlightPax> flightPaxList = query.getResultList();
-            return flightPaxList;
+            return flightPaxRepository.findFlightFromPassIdList(passengerIdList);
         }
-        
+
+
         @Override
         public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList)
         {
-            String sqlStr = "SELECT p FROM Passenger p WHERE p.id IN :pidList";
-            Query query = em.createQuery(sqlStr);
-            query.setParameter("pidList", passengerIdList);
-            List<Passenger> passengerList = query.getResultList();
-            return passengerList;           
+            return passengerRepository.getPassengersById(passengerIdList);
         }
         
                 

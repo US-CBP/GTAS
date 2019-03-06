@@ -5,24 +5,21 @@
  */
 package gov.gtas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "bag")
 public class Bag extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    public Bag() {
+	public Bag() {
     }
 
     @Column(name = "bag_identification", nullable = false)
     private String bagId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	private Passenger passenger;
 
@@ -126,5 +123,22 @@ public class Bag extends BaseEntity {
                 "\nAirline " +
                 airline;
 	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Bag bag = (Bag) o;
+		return getBagId().equals(bag.getBagId()) &&
+				getData_source().equals(bag.getData_source());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getBagId(), getData_source());
+	}
+
+
 
 }

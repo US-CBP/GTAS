@@ -18,10 +18,9 @@ import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.services.AuditLogPersistenceService;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.services.Loader;
-import gov.gtas.services.LoaderStatistics;
+import gov.gtas.model.MessageStatus;
+import gov.gtas.repository.MessageStatusRepository;
+import gov.gtas.services.*;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
 
@@ -90,6 +89,10 @@ public class LoaderScheduler {
 	@Autowired
 	private MatchingService matchingService;
 
+	@Autowired
+	private MessageStatusRepository messageStatusRepository;
+
+
 	@Value("${message.dir.origin}")
 	private String messageOriginDir;
 
@@ -102,102 +105,12 @@ public class LoaderScheduler {
 	@Value("${maxNumofFiles}")
 	private int maxNumofFiles;
 
-	/**
-	 * Loader Scheduler running on configured schedule
-	 */
-	//@Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
-	public void jobScheduling() {
-		logger.info("entering jobScheduling()");
-		logger.info("entering loader scheduler portion of jobScheduling");
-		boolean exitStatus = false;
-		Path dInputDir = Paths.get(messageOriginDir).normalize();
-		File inputDirFile = dInputDir.toFile();
-		Path dOutputDir = Paths.get(messageProcessedDir).normalize();
-		File outputDirFile = dOutputDir.toFile();
-
-		if (!inputDirFile.exists() || !outputDirFile.exists()) {
-			logger.error("directory does not exist.");
-			Exception fileNotExist = new RuntimeException(
-					"directory does not exist.");
-			ErrorDetailInfo errInfo = ErrorHandlerFactory
-					.createErrorDetails(fileNotExist);
-			errorPersistenceService.create(errInfo);
-			exitStatus = true;
-		} else if (!inputDirFile.isDirectory() || !outputDirFile.isDirectory()) {
-			logger.error("Not a directory: '" + inputDirFile + "'");
-			Exception notADirectory = new RuntimeException("Not a directory.");
-			ErrorDetailInfo errInfo = ErrorHandlerFactory
-					.createErrorDetails(notADirectory);
-			errorPersistenceService.create(errInfo);
-			exitStatus = true;
-		}
-		if (exitStatus) {
-			Thread.currentThread().interrupt();
-		}
-
-		LoaderStatistics stats = new LoaderStatistics();
-		if (inputType.equalsIgnoreCase(InputType.TWO_DIRS.name())) {
-			processInputAndOutputDirectories(dInputDir, dOutputDir, stats, new String[]{"placeHolder"}); //TODO: Placeholder removed
-		} else {
-			logger.warn("No inputType selection.");
-		}
-		writeAuditLog(stats);
-		logger.info("exiting loader scheduler portion of jobScheduling");
-		
-		logger.info("entering matching service portion of jobScheduling");
-		matchingService.findMatchesBasedOnTimeThreshold();
-		logger.info("exiting matching service portion of jobScheduling");
-		
-		logger.info("entering rule running portion of jobScheduling()");
-		try {
-			Set<Long> uniqueFlights = targetingService.runningRuleEngine();
-		} catch (Exception exception) {
-			logger.error(exception.getCause().getMessage());
-			ErrorDetailInfo errInfo = ErrorHandlerFactory
-					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
-			errorPersistenceService.create(errInfo);
-		}
-		logger.info("exiting rule running portion of jobScheduling()");
-		
-		logger.info("exiting jobScheduling()");
-	}
-
-	private void processInputAndOutputDirectories(Path incomingDir,
-			Path outgoingDir, LoaderStatistics stats, String[] primeFlightKey) {
-		// No hidden files.
-		DirectoryStream.Filter<Path> filter = entry -> {
-			File f = entry.toFile();
-			return !f.isHidden() && f.isFile();
-		};
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(
-				incomingDir, filter)) {
-
-			final Iterator<Path> iterator = stream.iterator();
-			List<File> files = new ArrayList<>();
-			for (int i = 0; iterator.hasNext() && i < maxNumofFiles; i++) {
-				files.add(iterator.next().toFile());
-			}
-			Collections.sort(files,
-					LastModifiedFileComparator.LASTMODIFIED_COMPARATOR);
-			files.stream().forEach(
-					f -> {
-						processSingleFile(f, stats, primeFlightKey);
-						f.renameTo(new File(outgoingDir.toFile()
-								+ File.separator + f.getName()));
-					});
-			stream.close();
-		} catch (IOException ex) {
-			logger.error("IOException:" + ex.getMessage(), ex);
-			ErrorDetailInfo errInfo = ErrorHandlerFactory
-					.createErrorDetails(ex);
-			errorPersistenceService.create(errInfo);
-		}
-	}
-
 	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.info(String.format("Processing %s", f.getAbsolutePath()));
-		int[] result = loader.processMessage(f, primeFlightKey);
-		// update loader statistics.
+		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
+		int[] result = processedMessages.getProcessed();
+		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
+		messageStatusRepository.saveAll(messageStatusList);
 		if (result != null) {
 			stats.incrementNumFilesProcessed();
 			stats.incrementNumMessagesProcessed(result[0]);

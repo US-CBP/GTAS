@@ -77,6 +77,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 		Join<Flight, FlightHitsRule> ruleHits = root.join("flightHitsRule", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
+		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 
 		// sorting
 		if (dto.getSort() != null) {
@@ -87,6 +88,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					e = ruleHits.get("hitCount");
 				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
 					e = watchlistHits.get("hitCount");
+				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
+					e = passengerCountJoin.get("passengerCount");
 				} else {
 					e = root.get(sort.getColumn());
 				}

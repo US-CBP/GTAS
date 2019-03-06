@@ -411,6 +411,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(Transactional.TxType.MANDATORY)
 	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName) {
 		String nativeQuery = "SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where "
 				+ "fp.flight_id = (\""+flightId+"\") "

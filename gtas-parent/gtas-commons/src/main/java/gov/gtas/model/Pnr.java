@@ -106,14 +106,14 @@ public class Pnr extends Message {
 	@Column(name = "form_of_payment")
     private String formOfPayment;
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class)
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "pnrs",targetEntity = BookingDetail.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "pnrs",targetEntity = BookingDetail.class)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class)
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
 

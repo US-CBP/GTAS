@@ -9,6 +9,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.FrequentFlyer;
 
+import java.util.List;
+
 public interface FrequentFlyerRepository extends CrudRepository<FrequentFlyer, Long> {
-    public FrequentFlyer findByCarrierAndNumber(String carrier, String number);
+    List<FrequentFlyer> findByCarrierAndNumber(String carrier, String number);
 }

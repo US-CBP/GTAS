@@ -9,12 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "address")
@@ -43,16 +38,13 @@ public class Address extends BaseEntityAudit {
     @Column(name = "postal_code")
     private String postalCode;
 
- 	@ManyToMany(
-        mappedBy = "addresses",
-        targetEntity = Pnr.class
-    )
+ 	@ManyToMany(mappedBy = "addresses", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "installationAddress", orphanRemoval = true)
     private Set<FlightPax> flightPaxList = new HashSet<>();
 
-    
+
     public Set<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}

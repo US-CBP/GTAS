@@ -93,7 +93,6 @@ public class PnrServiceIT {
 	private void preparePnr(Pnr pnr) {
 		pnr.setCreateDate(new Date("7/7/2015"));
 		pnr.setFilePath("toHeaven");
-		pnr.setStatus(MessageStatus.LOADED);
 		pnr.setBagCount(2);
 		pnr.setDateBooked(new Date("7/7/2015"));
 		pnr.setDateReceived(new Date("7/7/2015"));
