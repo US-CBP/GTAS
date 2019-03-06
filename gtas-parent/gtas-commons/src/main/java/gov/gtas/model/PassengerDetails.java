@@ -12,55 +12,63 @@ import javax.persistence.*;
 @Entity
 @Table(name = "passenger_details")
 public class PassengerDetails {
-    private static final long serialVersionUID = 1L;
-    
+
+    @SuppressWarnings("unused")
     public PassengerDetails() {
+    }
+
+    @SuppressWarnings("unused")
+    public PassengerDetails(Long passengerId) {
+        this.passengerId = passengerId;
     }
     
     @Id
-    @Column(name = "passenger_id", columnDefinition = "bigint unsigned")
+    @Column(name = "pd_passenger_id", columnDefinition = "bigint unsigned")
     private
     Long passengerId;
     
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="passenger_id")
+    @OneToOne(optional = false, fetch=FetchType.LAZY)
+    @JoinColumn(name="pd_passenger_id", updatable = false, insertable = false)
     Passenger passenger; 
     
-    @Column(name = "passenger_type", length = 3, nullable = false)
+    @Column(name = "pd_passenger_type", length = 3, nullable = false)
     private String passengerType;
 
+    @Column(name = "pd_title")
     private String title;
 
-    @Column(name = "first_name")
+    @Column(name = "pd_first_name")
     private String firstName;
 
-    @Column(name = "middle_name")
+    @Column(name = "pd_middle_name")
     private String middleName;
 
-    @Column(name = "last_name")
+    @Column(name = "pd_last_name")
     private String lastName;
 
+    @Column(name = "pd_suffix")
     private String suffix;
 
-    @Column(length = 2)
+    @Column(name = "pd_gender", length = 2)
     private String gender;
 
-    @Column(name = "citizenship_country")
+    @Column(name = "pd_citizenship_country")
     private String citizenshipCountry;
 
-    @Column(name = "residency_country")
+    @Column(name = "pd_residency_country")
     private String residencyCountry;
 
     @Temporal(TemporalType.DATE)
     private Date dob;
 
     /** calculated field */
-    @Column(name = "age")
+    @Column(name = "pd_age")
     private Integer age;
     
-    @Column(nullable = false)
+    @Column(name = "pd_deleted", nullable = false)
     private Boolean deleted = Boolean.FALSE;
-    
+
+    @SuppressWarnings("unused")
 	public void addApisMessage(ApisMessage apisMessage) {
 	}
 
@@ -171,7 +179,6 @@ public class PassengerDetails {
     @Override
     public int hashCode() {
         final int prime = 31;
-        // int result = super.hashCode();
         int result = 10;
         result = prime * result + ((age == null) ? 0 : age.hashCode());
         result = prime * result + ((dob == null) ? 0 : dob.hashCode());
@@ -204,7 +211,7 @@ public class PassengerDetails {
                 return false;
         } else if (!firstName.equals(other.firstName))
             return false;
-        if (gender != other.gender)
+        if (!gender.equals(other.gender))
             return false;
         if (lastName == null) {
             if (other.lastName != null)
@@ -212,11 +219,8 @@ public class PassengerDetails {
         } else if (!lastName.equals(other.lastName))
             return false;
         if (middleName == null) {
-            if (other.middleName != null)
-                return false;
-        } else if (!middleName.equals(other.middleName))
-            return false;
+            return other.middleName == null;
+        } else return middleName.equals(other.middleName);
 
-        return true;
     }
 }

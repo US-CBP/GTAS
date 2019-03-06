@@ -30,7 +30,7 @@ public class Passenger extends BaseEntityAudit {
     @JsonIgnore
     private Flight flight;
 
-    @OneToOne(mappedBy = "passenger", targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
+    @OneToOne(cascade = {CascadeType.PERSIST}, targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
     private PassengerDetails passengerDetails;
     
     @OneToOne(cascade =  {CascadeType.PERSIST}, targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
@@ -357,7 +357,7 @@ public class Passenger extends BaseEntityAudit {
                 return false;
         } else if (!firstName.equals(other.firstName))
             return false;
-        if (gender != other.gender)
+        if (!gender.equals(other.gender))
             return false;
         if (lastName == null) {
             if (other.lastName != null)
@@ -365,12 +365,9 @@ public class Passenger extends BaseEntityAudit {
         } else if (!lastName.equals(other.lastName))
             return false;
         if (middleName == null) {
-            if (other.middleName != null)
-                return false;
-        } else if (!middleName.equals(other.middleName))
-            return false;
+            return other.middleName == null;
+        } else return middleName.equals(other.middleName);
 
-        return true;
     }
 
     public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
