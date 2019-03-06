@@ -620,7 +620,8 @@ var app;
                     },
                     resolve: {
                     	seatData : function($stateParams, seatService){
-                    		return seatService.getSeatsByFlightId($stateParams.flightId)
+                    		var data = seatService.getSeatsByFlightId($stateParams.flightId);
+                    		return data;
                     	}
                     }
                 });               

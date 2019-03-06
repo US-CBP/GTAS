@@ -11,6 +11,7 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.SeatVo;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -60,5 +61,5 @@ public interface FlightService {
 	* */
 	public Long getFlightFuzzyMatchesOnly(Long flightId);
 	
-	public List<String> getSeatsByFlightId(Long flightId);
+	public List<SeatVo> getSeatsByFlightId(Long flightId);
 	}

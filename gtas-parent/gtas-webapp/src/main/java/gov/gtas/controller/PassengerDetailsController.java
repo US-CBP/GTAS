@@ -1096,7 +1096,7 @@ public class PassengerDetailsController {
 	}
 	
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
-    public @ResponseBody java.util.List<String> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
+    public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
         
     	return fService.getSeatsByFlightId(flightId);
     }
