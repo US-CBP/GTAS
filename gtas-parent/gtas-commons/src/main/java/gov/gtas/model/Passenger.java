@@ -22,7 +22,7 @@ public class Passenger extends BaseEntityAudit {
     }
 
 	@OneToOne(mappedBy = "passenger", targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
-    private Set<PassengerDetails> passengerDetails;
+    private PassengerDetails passengerDetails;
     
     @OneToOne(mappedBy = "passenger", targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
     private PassengerTripDetails passengerTripDetails;
@@ -229,7 +229,7 @@ public class Passenger extends BaseEntityAudit {
         passengerService.setAllFlights(flights, this.id);
     }*/
 
-    public String getTitle() {
+/*    public String getTitle() {
         return title;
     }
 
@@ -307,7 +307,7 @@ public class Passenger extends BaseEntityAudit {
 
     public void setResidencyCountry(String residencyCountry) {
         this.residencyCountry = residencyCountry;
-    }
+    } */
 
     public String getEmbarkation() {
         return embarkation;
@@ -398,11 +398,11 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
     
-    public Set<PassengerDetails> getPassengerDetails() {
+    public PassengerDetails getPassengerDetails() {
 		return passengerDetails;
 	}
 
-	public void setPassengerDetails(Set<PassengerDetails> passengerDetails) {
+	public void setPassengerDetails(PassengerDetails passengerDetails) {
 		this.passengerDetails = passengerDetails;
 	}
 

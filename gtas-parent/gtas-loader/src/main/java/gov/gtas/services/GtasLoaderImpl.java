@@ -409,8 +409,8 @@ public class GtasLoaderImpl implements GtasLoader {
                         destination = b.getDestinationAirport();
                     }
                     for (Passenger p : pnr.getPassengers()) {
-                        if (StringUtils.equals(p.getFirstName(), b.getFirstName()) &&
-                                StringUtils.equals(p.getLastName(), b.getLastName())) {
+                        if (StringUtils.equals(p.getPassengerDetails().getFirstName(), b.getFirstName()) &&
+                                StringUtils.equals(p.getPassengerDetails().getLastName(), b.getLastName())) {
                             Bag bag = new Bag();
                             bag.setBagId(b.getBagId());
                             bag.setAirline(b.getAirline());

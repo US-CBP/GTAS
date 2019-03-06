@@ -275,9 +275,9 @@ public class AuditLogPersistenceServiceIT {
 
 		Passenger testPassenger = new Passenger();
 		testPassenger.setId(99990L);
-		testPassenger.setFirstName("JJ");
-		testPassenger.setMiddleName("Marc");
-		testPassenger.setLastName("Strong");
+		testPassenger.getPassengerDetails().setFirstName("JJ");
+		testPassenger.getPassengerDetails().setMiddleName("Marc");
+		testPassenger.getPassengerDetails().setLastName("Strong");
 		AuditActionTarget target = new AuditActionTarget(testPassenger);
 		AuditActionData actionData = new AuditActionData();
 		actionData.addProperty("testProperty",

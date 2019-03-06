@@ -170,22 +170,22 @@ public class PnrServiceIT {
 
 	private void preparePassengerData(Passenger passengerToUpdate) {
 		passengerToUpdate.setPassengerType(PassengerTypeCode.P.name());
-		passengerToUpdate.setAge(30);
+		passengerToUpdate.getPassengerDetails().setAge(30);
 		String c = "US";
 		String b = "JFK";
-		passengerToUpdate.setCitizenshipCountry(c);
+		passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
 		passengerToUpdate.setDebarkation(b);
 		passengerToUpdate.setDebarkCountry(c);
-		passengerToUpdate.setDob(new Date("04/06/1966"));
+		passengerToUpdate.getPassengerDetails().setDob(new Date("04/06/1966"));
 		passengerToUpdate.setEmbarkation(b);
 		passengerToUpdate.setEmbarkCountry(c);
-		passengerToUpdate.setFirstName("Srinivas");
-		passengerToUpdate.setLastName("Test");
+		passengerToUpdate.getPassengerDetails().setFirstName("Srinivas");
+		passengerToUpdate.getPassengerDetails().setLastName("Test");
 		passengerToUpdate.setCreatedBy("JUNIT");
 		passengerToUpdate.setCreationDate();
-		passengerToUpdate.setGender("M");
-		passengerToUpdate.setSuffix("Jr");
-		passengerToUpdate.setTitle("Mr");
-		passengerToUpdate.setResidencyCountry(c);
+		passengerToUpdate.getPassengerDetails().setGender("M");
+		passengerToUpdate.getPassengerDetails().setSuffix("Jr");
+		passengerToUpdate.getPassengerDetails().setTitle("Mr");
+		passengerToUpdate.getPassengerDetails().setResidencyCountry(c);
 	}
 }

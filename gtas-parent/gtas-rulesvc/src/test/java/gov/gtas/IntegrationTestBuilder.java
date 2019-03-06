@@ -310,8 +310,8 @@ public class IntegrationTestBuilder {
     private Passenger defaultPassenger() {
         passenger = new Passenger();
         passenger.setPassengerType("P");
-        passenger.setFirstName(FIRST_NAME);
-        passenger.setLastName(LAST_NAME);
+        passenger.getPassengerDetails().setFirstName(FIRST_NAME);
+        passenger.getPassengerDetails().setLastName(LAST_NAME);
         return passenger;
     }
 

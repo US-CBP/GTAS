@@ -490,13 +490,13 @@ public class TargetingServiceImpl implements TargetingService {
 		List<WhitelistVo> pwlVos = new ArrayList<>();
 		docs.forEach(doc -> {
 			WhitelistVo pwl = new WhitelistVo();
-			pwl.setFirstName(passenger.getFirstName());
-			pwl.setMiddleName(passenger.getMiddleName());
-			pwl.setLastName(passenger.getLastName());
-			pwl.setGender(passenger.getGender());
-			pwl.setDob(passenger.getDob());
-			pwl.setCitizenshipCountry(passenger.getCitizenshipCountry());
-			pwl.setResidencyCountry(passenger.getResidencyCountry());
+			pwl.setFirstName(passenger.getPassengerDetails().getFirstName());
+			pwl.setMiddleName(passenger.getPassengerDetails().getMiddleName());
+			pwl.setLastName(passenger.getPassengerDetails().getLastName());
+			pwl.setGender(passenger.getPassengerDetails().getGender());
+			pwl.setDob(passenger.getPassengerDetails().getDob());
+			pwl.setCitizenshipCountry(passenger.getPassengerDetails().getCitizenshipCountry());
+			pwl.setResidencyCountry(passenger.getPassengerDetails().getResidencyCountry());
 			pwl.setDocumentType(doc.getDocumentType());
 			pwl.setDocumentNumber(doc.getDocumentNumber());
 			pwl.setExpirationDate(doc.getExpirationDate());
@@ -871,7 +871,7 @@ public class TargetingServiceImpl implements TargetingService {
 			AuditActionData actionData = new AuditActionData();
 
 			actionData.addProperty("CitizenshipCountry",
-					passenger.getCitizenshipCountry());
+					passenger.getPassengerDetails().getCitizenshipCountry());
 			actionData.addProperty("PassengerType",
 					passenger.getPassengerType());
 

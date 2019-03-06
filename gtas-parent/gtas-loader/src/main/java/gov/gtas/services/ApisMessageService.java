@@ -182,7 +182,7 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setMessageSource("APIS");
     			fp.setFlight(f);
     			fp.setFlightId(f.getId());
-    			fp.setResidenceCountry(p.getResidencyCountry());
+    			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassenger(p);
     			fp.setPassengerId(p.getId());

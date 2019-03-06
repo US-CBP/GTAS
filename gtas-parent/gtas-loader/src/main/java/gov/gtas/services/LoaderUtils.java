@@ -113,11 +113,11 @@ public class LoaderUtils {
         }
 
         if (vo.getCitizenshipCountry() != null) {
-            p.setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
+            p.getPassengerDetails().setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
         }
 
         if (vo.getResidencyCountry() != null) {
-            p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
+            p.getPassengerDetails().setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
         p.setBagNum(vo.getBagNum());
         if(vo.getTickets() != null && vo.getTickets().size() >0){

@@ -49,14 +49,14 @@ public class AuditActionTarget implements Serializable {
 	public AuditActionTarget(Passenger passenger) {
 		this.targetType = "PASSENGER";
 		StringBuilder sb = new StringBuilder();
-		if (passenger.getFirstName() != null) {
-			sb.append(passenger.getFirstName());
+		if (passenger.getPassengerDetails().getFirstName() != null) {
+			sb.append(passenger.getPassengerDetails().getFirstName());
 		}
-		if (passenger.getMiddleName() != null) {
-			sb.append(" " + passenger.getMiddleName());
+		if (passenger.getPassengerDetails().getMiddleName() != null) {
+			sb.append(" " + passenger.getPassengerDetails().getMiddleName());
 		}
-		if (passenger.getLastName() != null) {
-			sb.append(" " + passenger.getLastName());
+		if (passenger.getPassengerDetails().getLastName() != null) {
+			sb.append(" " + passenger.getPassengerDetails().getLastName());
 		}
 		this.targetName = sb.toString();
 		this.targetId = String.valueOf(passenger.getId());

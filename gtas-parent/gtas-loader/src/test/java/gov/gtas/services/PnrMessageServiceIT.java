@@ -74,8 +74,8 @@ public class PnrMessageServiceIT extends
 		f.setDestination("IAD");
 		Passenger p = new Passenger();
 		p.setPassengerType("P");
-		p.setFirstName("john");
-		p.setLastName("doe");
+		p.getPassengerDetails().setFirstName("john");
+		p.getPassengerDetails().setLastName("doe");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 		assertNotNull(f.getId());

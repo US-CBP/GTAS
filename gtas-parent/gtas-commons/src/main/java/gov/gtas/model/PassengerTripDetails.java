@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "passenger_trip_details")
-public class PassengerTripDetails extends BaseEntityAudit {
+public class PassengerTripDetails {
     private static final long serialVersionUID = 1L;
     
     public PassengerTripDetails() {

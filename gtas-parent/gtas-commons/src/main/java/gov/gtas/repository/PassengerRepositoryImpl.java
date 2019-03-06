@@ -120,23 +120,23 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		List<Predicate> predicates = new ArrayList<>();
 		// passenger-related
 		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
-		if (StringUtils.isNotBlank(pax.getFirstName())) {
-			String likeString = String.format("%%%s%%", pax.getFirstName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getFirstName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getFirstName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("firstName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getLastName())) {
-			String likeString = String.format("%%%s%%", pax.getLastName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getLastName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getLastName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("lastName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getGender())) {
-			String likeString = String.format("%%%s%%", pax.getGender()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getGender())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getGender()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("gender"), likeString));
 		}
-		if (pax.getDob() != null) {
-			predicates.add(cb.equal(root.<String> get("dob"), pax.getDob()));
+		if (pax.getPassengerDetails().getDob() != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), pax.getPassengerDetails().getDob()));
 		}
 		// document-related
 		if (StringUtils.isNotBlank(docNum)) {

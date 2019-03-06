@@ -264,9 +264,9 @@ public class PnrDataGenerator {
         
         // setup passenger
         p.setPassengerType(params[0]);
-        p.setFirstName(params[1].toUpperCase());
-        p.setMiddleName(params[2].toUpperCase());
-        p.setLastName(params[3].toUpperCase());
+        p.getPassengerDetails().setFirstName(params[1].toUpperCase());
+        p.getPassengerDetails().setMiddleName(params[2].toUpperCase());
+        p.getPassengerDetails().setLastName(params[3].toUpperCase());
         p.setId(id);
         //p.getFlights().add(flight);
         

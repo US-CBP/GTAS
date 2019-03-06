@@ -128,19 +128,19 @@ public class PassengerDetailsController {
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
 		vo.setPassengerType(t.getPassengerType());
-		vo.setLastName(t.getLastName());
-		vo.setFirstName(t.getFirstName());
-		vo.setMiddleName(t.getMiddleName());
-		vo.setCitizenshipCountry(t.getCitizenshipCountry());
+		vo.setLastName(t.getPassengerDetails().getLastName());
+		vo.setFirstName(t.getPassengerDetails().getFirstName());
+		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
+		vo.setCitizenshipCountry(t.getPassengerDetails().getCitizenshipCountry());
 		vo.setDebarkation(t.getDebarkation());
 		vo.setDebarkCountry(t.getDebarkCountry());
-		vo.setDob(t.getDob());
+		vo.setDob(t.getPassengerDetails().getDob());
 		vo.setEmbarkation(t.getEmbarkation());
 		vo.setEmbarkCountry(t.getEmbarkCountry());
-		vo.setGender(t.getGender() != null ? t.getGender() : "");
-		vo.setResidencyCountry(t.getResidencyCountry());
-		vo.setSuffix(t.getSuffix());
-		vo.setTitle(t.getTitle());
+		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
+		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
+		vo.setSuffix(t.getPassengerDetails().getSuffix());
+		vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {
@@ -194,8 +194,8 @@ public class PassengerDetailsController {
 
 			for (Seat s : pnrSeatList) {
 				SeatVo seatVo = new SeatVo();
-				seatVo.setFirstName(s.getPassenger().getFirstName());
-				seatVo.setLastName(s.getPassenger().getLastName());
+				seatVo.setFirstName(s.getPassenger().getPassengerDetails().getFirstName());
+				seatVo.setLastName(s.getPassenger().getPassengerDetails().getLastName());
 				seatVo.setNumber(s.getNumber());
 				seatVo.setFlightNumber(s.getFlight()
 						.getFullFlightNumber());
@@ -278,8 +278,8 @@ public class PassengerDetailsController {
 			bagVo.setAverage_bag_weight(fp.getAverageBagWeight());
 			bagVo.setBag_weight(fp.getBagWeight());
 			bagVo.setData_source(fp.getMessageSource());
-			bagVo.setPassFirstName(fp.getPassenger().getFirstName());
-			bagVo.setPassLastName(fp.getPassenger().getLastName());
+			bagVo.setPassFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
+			bagVo.setPassLastName(fp.getPassenger().getPassengerDetails().getLastName());
 			bagVo.setData_source(fp.getMessageSource());
 			bagVoOptional = Optional.of(bagVo);
 		} else {
@@ -571,19 +571,19 @@ public class PassengerDetailsController {
 			while (it4.hasNext()) {
 				Passenger p = (Passenger) it4.next();
 				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getLastName());
-				pVo.setFirstName(p.getFirstName());
-				pVo.setMiddleName(p.getMiddleName());
-				pVo.setAge(p.getAge());
-				pVo.setGender(p.getGender());
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
 				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
 				
 				Set<Document> documents = p.getDocuments();
 				for (Document d: documents) {
 					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getFirstName());
-					documentVo.setLastName(d.getPassenger().getLastName());
+					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
 					documentVo.setDocumentType(d.getDocumentType());
 					documentVo.setIssuanceCountry(d.getIssuanceCountry());
 					documentVo.setDocumentNumber(d.getDocumentNumber());

@@ -5,19 +5,22 @@
  */
 package gov.gtas.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.Date;
 import javax.persistence.*;
 
 
 @Entity
 @Table(name = "passenger_details")
-public class PassengerDetails extends BaseEntityAudit {
+public class PassengerDetails {
     private static final long serialVersionUID = 1L;
     
     public PassengerDetails() {
     }
+    
+    @Id
+    @Column(name = "passenger_id", columnDefinition = "bigint unsigned")
+    private
+    Long passengerId;
     
     @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="passenger_id")

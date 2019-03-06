@@ -216,22 +216,22 @@ public class PassengerServiceImpl implements PassengerService {
     public Passenger update(Passenger passenger) {
         Passenger passengerToUpdate = this.findById(passenger.getId());
         if (passengerToUpdate != null) {
-            passengerToUpdate.setAge(passenger.getAge());
-            passengerToUpdate.setCitizenshipCountry(passenger.getCitizenshipCountry());
+            passengerToUpdate.getPassengerDetails().setAge(passenger.getPassengerDetails().getAge());
+            passengerToUpdate.getPassengerDetails().setCitizenshipCountry(passenger.getPassengerDetails().getCitizenshipCountry());
             passengerToUpdate.setDebarkation(passenger.getDebarkation());
             passengerToUpdate.setDebarkCountry(passenger.getDebarkCountry());
-            passengerToUpdate.setDob(passenger.getDob());
+            passengerToUpdate.getPassengerDetails().setDob(passenger.getPassengerDetails().getDob());
             passengerToUpdate.setEmbarkation(passenger.getEmbarkation());
             passengerToUpdate.setEmbarkCountry(passenger.getEmbarkCountry());
-            passengerToUpdate.setFirstName(passenger.getFirstName());
+            passengerToUpdate.getPassengerDetails().setFirstName(passenger.getPassengerDetails().getFirstName());
             //passengerToUpdate.setFlights(passenger.getFlights()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
-            passengerToUpdate.setGender(passenger.getGender());
-            passengerToUpdate.setLastName(passenger.getLastName());
-            passengerToUpdate.setMiddleName(passenger.getMiddleName());
-            passengerToUpdate.setResidencyCountry(passenger.getResidencyCountry());
+            passengerToUpdate.getPassengerDetails().setGender(passenger.getPassengerDetails().getGender());
+            passengerToUpdate.getPassengerDetails().setLastName(passenger.getPassengerDetails().getLastName());
+            passengerToUpdate.getPassengerDetails().setMiddleName(passenger.getPassengerDetails().getMiddleName());
+            passengerToUpdate.getPassengerDetails().setResidencyCountry(passenger.getPassengerDetails().getResidencyCountry());
             passengerToUpdate.setDocuments(passenger.getDocuments());
-            passengerToUpdate.setSuffix(passenger.getSuffix());
-            passengerToUpdate.setTitle(passenger.getTitle());
+            passengerToUpdate.getPassengerDetails().setSuffix(passenger.getPassengerDetails().getSuffix());
+            passengerToUpdate.getPassengerDetails().setTitle(passenger.getPassengerDetails().getTitle());
         }
         return passengerToUpdate;
     }
@@ -300,7 +300,7 @@ public class PassengerServiceImpl implements PassengerService {
             AuditActionTarget target = new AuditActionTarget(passenger);
             AuditActionData actionData = new AuditActionData();
 
-            actionData.addProperty("CitizenshipCountry", passenger.getCitizenshipCountry());
+            actionData.addProperty("CitizenshipCountry", passenger.getPassengerDetails().getCitizenshipCountry());
             actionData.addProperty("PassengerType", passenger.getPassengerType());
             //
             String message = "Disposition Status Change run on " + passenger.getCreatedAt();
