@@ -218,11 +218,11 @@ public class PassengerServiceImpl implements PassengerService {
         if (passengerToUpdate != null) {
             passengerToUpdate.getPassengerDetails().setAge(passenger.getPassengerDetails().getAge());
             passengerToUpdate.getPassengerDetails().setCitizenshipCountry(passenger.getPassengerDetails().getCitizenshipCountry());
-            passengerToUpdate.setDebarkation(passenger.getDebarkation());
-            passengerToUpdate.setDebarkCountry(passenger.getDebarkCountry());
+            passengerToUpdate.getPassengerTripDetails().setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
+            passengerToUpdate.getPassengerTripDetails().setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
             passengerToUpdate.getPassengerDetails().setDob(passenger.getPassengerDetails().getDob());
-            passengerToUpdate.setEmbarkation(passenger.getEmbarkation());
-            passengerToUpdate.setEmbarkCountry(passenger.getEmbarkCountry());
+            passengerToUpdate.getPassengerTripDetails().setEmbarkation(passenger.getPassengerTripDetails().getEmbarkation());
+            passengerToUpdate.getPassengerTripDetails().setEmbarkCountry(passenger.getPassengerTripDetails().getEmbarkCountry());
             passengerToUpdate.getPassengerDetails().setFirstName(passenger.getPassengerDetails().getFirstName());
             //passengerToUpdate.setFlights(passenger.getFlights()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
             passengerToUpdate.getPassengerDetails().setGender(passenger.getPassengerDetails().getGender());

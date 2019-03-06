@@ -21,17 +21,23 @@ public class Passenger extends BaseEntityAudit {
     public Passenger() {
     }
 
-	@OneToOne(mappedBy = "passenger", targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
+    // This is a convenience method to see the flight associated with the passenger.
+    // This relationship is manually made in the loader.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinTable(name="flight_passenger",
+            joinColumns={@JoinColumn(name="passenger_id")},
+            inverseJoinColumns={@JoinColumn(name="flight_id")})
+    @JsonIgnore
+    private Flight flight;
+
+    @OneToOne(mappedBy = "passenger", targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
     private PassengerDetails passengerDetails;
     
-    @OneToOne(mappedBy = "passenger", targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
+    @OneToOne(cascade =  {CascadeType.PERSIST}, targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
     private PassengerTripDetails passengerTripDetails;
     
     @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
     private PassengerWLTimestamp passengerWLTimestamp;
-
-    @Column(name = "passenger_type", length = 3, nullable = false)
-    private String passengerType;
 
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
@@ -41,6 +47,30 @@ public class Passenger extends BaseEntityAudit {
 
     @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<Document> documents = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<Attachment> attachments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<Seat> seatAssignments = new HashSet<>();
+
+    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+    private Set<HitsSummary> hits = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+    private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<Bag> bags = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    private Set<FlightPax> flightPaxList = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    private Set<TicketFare> tickets = new HashSet<>();
 
     private String title;
 
@@ -67,72 +97,14 @@ public class Passenger extends BaseEntityAudit {
     @Temporal(TemporalType.DATE)
     private Date dob;
 
+    @Column(name = "passenger_type", length = 3, nullable = false)
+    private String passengerType;
     /** calculated field */
     @Column(name = "age")
     private Integer age;
 
-    /** calculated field */
-    @Column(name = "days_visa_valid")
-    private Integer numberOfDaysVisaValid;
-    
-    private String embarkation;
-
-    private String debarkation;
-
-    @Column(name = "embark_country")
-    private String embarkCountry;
-
-    @Column(name = "debark_country")
-    private String debarkCountry;
-
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
-
-    @Column(name = "ref_number")
-    private String reservationReferenceNumber;
- 
-    @Column(name = "travel_frequency")
-    private Integer travelFrequency=0;
-    
-    @Transient
-    private String totalBagWeight;
- 
-    @Transient
-    private String bagNum;
-
-    // This is a convenience method to see the flight associated with the passenger.
-    // This relationship is manually made in the loader.
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="flight_passenger",
-            joinColumns={@JoinColumn(name="passenger_id")},
-            inverseJoinColumns={@JoinColumn(name="flight_id")})
-    @JsonIgnore
-    private Flight flight;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<Document> documents = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<Attachment> attachments = new HashSet<>();
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<Seat> seatAssignments = new HashSet<>();
-
-    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<HitsSummary> hits = new HashSet<>();
-
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<Bag> bags = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
-    private Set<FlightPax> flightPaxList = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
-    private Set<TicketFare> tickets = new HashSet<>();
 
     public Flight getFlight() {
         return flight;
@@ -158,44 +130,12 @@ public class Passenger extends BaseEntityAudit {
 		this.tickets = tickets;
 	}
 
-	public Integer getTravelFrequency() {
-		return travelFrequency;
-	}
-
-	public void setTravelFrequency(Integer travelFrequency) {
-		this.travelFrequency = travelFrequency;
-	}
-
-	public String getBagNum() {
-		return bagNum;
-	}
-
-	public void setBagNum(String bagNum) {
-		this.bagNum = bagNum;
-	}
-
-	public String getTotalBagWeight() {
-		return totalBagWeight;
-	}
-
-	public void setTotalBagWeight(String totalBagWeight) {
-		this.totalBagWeight = totalBagWeight;
-	}
-
 	public Set<FlightPax> getFlightPaxList() {
 		return flightPaxList;
 	}
 
 	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
-	}
-
-	public String getReservationReferenceNumber() {
-		return reservationReferenceNumber;
-	}
-
-	public void setReservationReferenceNumber(String reservationReferenceNumber) {
-		this.reservationReferenceNumber = reservationReferenceNumber;
 	}
 
     public Set<ApisMessage> getApisMessage() {
@@ -309,38 +249,6 @@ public class Passenger extends BaseEntityAudit {
         this.residencyCountry = residencyCountry;
     } */
 
-    public String getEmbarkation() {
-        return embarkation;
-    }
-
-    public void setEmbarkation(String embarkation) {
-        this.embarkation = embarkation;
-    }
-
-    public String getDebarkation() {
-        return debarkation;
-    }
-
-    public void setDebarkation(String debarkation) {
-        this.debarkation = debarkation;
-    }
-
-    public String getEmbarkCountry() {
-        return embarkCountry;
-    }
-
-    public void setEmbarkCountry(String embarkCountry) {
-        this.embarkCountry = embarkCountry;
-    }
-
-    public String getDebarkCountry() {
-        return debarkCountry;
-    }
-
-    public void setDebarkCountry(String debarkCountry) {
-        this.debarkCountry = debarkCountry;
-    }
-
     public Set<Document> getDocuments() {
         return documents;
     }
@@ -380,15 +288,6 @@ public class Passenger extends BaseEntityAudit {
     public void setSeatAssignments(Set<Seat> seatAssignments) {
         this.seatAssignments = seatAssignments;
     }
-
-    
-    public Integer getNumberOfDaysVisaValid() {
-		return numberOfDaysVisaValid;
-	}
-
-	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
-		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
-	}
 	
     public Set<Attachment> getAttachments() {
 		return attachments;
@@ -421,14 +320,6 @@ public class Passenger extends BaseEntityAudit {
 	public void setPassengerWLTimestamp(PassengerWLTimestamp passengerWLTimestamp) {
 		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
-
-/*    public PassengerIDTag getPaxIdTag() {
-        return paxIdTag;
-    }
-
-    public void setPaxIdTag(PassengerIDTag paxIdTag) {
-        this.paxIdTag = paxIdTag;
-    }*/
 
     @Override
     public int hashCode() {

@@ -102,11 +102,11 @@ public class ServiceRepositoryIT {
         passengerToUpdate.setPassengerType(PassengerTypeCode.P.name());
         passengerToUpdate.getPassengerDetails().setAge(30);
         passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
-        passengerToUpdate.setDebarkation(b);
-        passengerToUpdate.setDebarkCountry(c);
+        passengerToUpdate.getPassengerTripDetails().setDebarkation(b);
+        passengerToUpdate.getPassengerTripDetails().setDebarkCountry(c);
         passengerToUpdate.getPassengerDetails().setDob(new Date("04/06/1980"));
-        passengerToUpdate.setEmbarkation(b);
-        passengerToUpdate.setEmbarkCountry(c);
+        passengerToUpdate.getPassengerTripDetails().setEmbarkation(b);
+        passengerToUpdate.getPassengerTripDetails().setEmbarkCountry(c);
         passengerToUpdate.getPassengerDetails().setFirstName("Mike");
         Set hs = new HashSet<Flight>();
         hs.add(f);

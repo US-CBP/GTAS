@@ -174,11 +174,11 @@ public class PnrServiceIT {
 		String c = "US";
 		String b = "JFK";
 		passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
-		passengerToUpdate.setDebarkation(b);
-		passengerToUpdate.setDebarkCountry(c);
+		passengerToUpdate.getPassengerTripDetails().setDebarkation(b);
+		passengerToUpdate.getPassengerTripDetails().setDebarkCountry(c);
 		passengerToUpdate.getPassengerDetails().setDob(new Date("04/06/1966"));
-		passengerToUpdate.setEmbarkation(b);
-		passengerToUpdate.setEmbarkCountry(c);
+		passengerToUpdate.getPassengerTripDetails().setEmbarkation(b);
+		passengerToUpdate.getPassengerTripDetails().setEmbarkCountry(c);
 		passengerToUpdate.getPassengerDetails().setFirstName("Srinivas");
 		passengerToUpdate.getPassengerDetails().setLastName("Test");
 		passengerToUpdate.setCreatedBy("JUNIT");

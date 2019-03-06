@@ -132,11 +132,11 @@ public class PassengerDetailsController {
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
 		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
 		vo.setCitizenshipCountry(t.getPassengerDetails().getCitizenshipCountry());
-		vo.setDebarkation(t.getDebarkation());
-		vo.setDebarkCountry(t.getDebarkCountry());
+		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
+		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
 		vo.setDob(t.getPassengerDetails().getDob());
-		vo.setEmbarkation(t.getEmbarkation());
-		vo.setEmbarkCountry(t.getEmbarkCountry());
+		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
+		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
 		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
 		vo.setSuffix(t.getPassengerDetails().getSuffix());

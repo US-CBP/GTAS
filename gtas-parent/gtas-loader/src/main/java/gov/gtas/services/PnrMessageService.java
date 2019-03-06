@@ -200,16 +200,16 @@ public class PnrMessageService extends MessageLoaderService {
     	}
     	setTripDurationTimeForPnr(pnr,firstDeparture,finalArrival);
     	for (Passenger p : pnr.getPassengers()) {
-    		p.setEmbarkation(embark);
+    		p.getPassengerTripDetails().setEmbarkation(embark);
     		Airport airport = utils.getAirport(embark);
     		if (airport != null) {
-    			p.setEmbarkCountry(airport.getCountry());
+    			p.getPassengerTripDetails().setEmbarkCountry(airport.getCountry());
     		}
     		
-    		p.setDebarkation(debark);
+    		p.getPassengerTripDetails().setDebarkation(debark);
     		airport = utils.getAirport(debark);
     		if (airport != null) {
-    			p.setDebarkCountry(airport.getCountry());
+    			p.getPassengerTripDetails().setDebarkCountry(airport.getCountry());
     		}
     	}
     	logger.debug("updatePaxEmbarkDebark time = "+(System.nanoTime()-startTime)/1000000);
@@ -353,11 +353,11 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
     			fp.setTravelerType(p.getPassengerType());
     			fp.setPassengerId(p.getId());
-    			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
+    			fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
     			int passengerBags=0;
-    			if(StringUtils.isNotBlank(p.getBagNum())){
+    			if(StringUtils.isNotBlank(p.getPassengerTripDetails().getBagNum())){
     				try {
-    					passengerBags=Integer.parseInt(p.getBagNum());
+    					passengerBags=Integer.parseInt(p.getPassengerTripDetails().getBagNum());
 					} catch (NumberFormatException e) {
 						passengerBags=0;
 					}
@@ -365,8 +365,8 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setBagCount(passengerBags);
     			pnrBagCount=pnrBagCount+passengerBags;
     			try {
-					if(StringUtils.isNotBlank(p.getTotalBagWeight()) && (passengerBags >0)){
-						Double weight=Double.parseDouble(p.getTotalBagWeight());
+					if(StringUtils.isNotBlank(p.getPassengerTripDetails().getTotalBagWeight()) && (passengerBags >0)){
+						Double weight=Double.parseDouble(p.getPassengerTripDetails().getTotalBagWeight());
 						fp.setAverageBagWeight(Math.round(weight/passengerBags));
 						fp.setBagWeight(weight);
 						pnrBagWeight=pnrBagWeight+weight;
@@ -376,7 +376,7 @@ public class PnrMessageService extends MessageLoaderService {
 				}
     			if(StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())){
     				if(homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())){
-    					p.setTravelFrequency(p.getTravelFrequency()+1);
+    					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
     			setHeadPool( fp,p,f);
