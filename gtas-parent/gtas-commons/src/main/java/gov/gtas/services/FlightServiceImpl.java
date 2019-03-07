@@ -17,28 +17,25 @@ import gov.gtas.vo.passenger.FlightVo;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.lang3.tuple.Pair;import org.apache.logging.log4j.core.appender.mom.kafka.KafkaAppender;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,15 +43,15 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class FlightServiceImpl implements FlightService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FlightServiceImpl.class);
-	
+
 	@Autowired
 	private FlightRepository flightRespository;
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@Autowired
 	private SeatRepository seatRespository;
 
@@ -64,17 +61,23 @@ public class FlightServiceImpl implements FlightService {
 		return flightRespository.save(flight);
 	}
 
-	@Override
-	@Transactional
-	public FlightsPageDto findAll(FlightsRequestDto dto) {
-		List<FlightVo> vos = new ArrayList<>();
-		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+    @Override
+    @Transactional
+    public FlightsPageDto findAll(FlightsRequestDto dto) {
+        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
 		flightRespository.flush();
-
 		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
-		for (Flight f : tuple2.getRight()) {
+		List<Flight> flights = tuple2.getRight();
+		List<FlightVo> vos = convertFlightToFlightVo(flights);
+		return new FlightsPageDto(vos, tuple.getLeft());
+    }
+
+    @Override
+	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights) {
+		List<FlightVo> flightVos = new ArrayList<>();
+		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
-			List<CodeShareVo> codeshareList = new ArrayList<CodeShareVo>();
+			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
 
@@ -88,17 +91,16 @@ public class FlightServiceImpl implements FlightService {
 				vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
 			}
 			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
-			List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); // get codeshare list
-			for (CodeShareFlight cs : csl) { // grab all codeshares from it
-				CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
+			List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
+			for(CodeShareFlight cs : csl){ // grab all codeshares from it
+				   CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
 				BeanUtils.copyProperties(cs, codeshare);
-				codeshareList.add(codeshare); // Add csVo to list
+				codeshareList.add(codeshare); //Add csVo to list
 			}
-			vo.setCodeshares(codeshareList); // add csVOlist to flightvo
-			vos.add(vo);
+			vo.setCodeshares(codeshareList); //add csVOlist to flightvo
+			flightVos.add(vo);
 		}
-
-		return new FlightsPageDto(vos, tuple.getLeft());
+		return flightVos;
 	}
 
 	@Override
@@ -139,13 +141,13 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setUpdatedAt(new Date());
 			// TODO replace with logged in user id
 			flightToUpdate.setUpdatedBy(flight.getUpdatedBy());
-			if (flight.getPassengers() != null && flight.getPassengers().size() > 0) {
+			/*if (flight.getPassengers() != null && flight.getPassengers().size() > 0) {
 				Iterator it = flight.getPassengers().iterator();
 				while (it.hasNext()) {
 					Passenger p = (Passenger) it.next();
 					// flightToUpdate.addPassenger(p);
 				}
-			}
+			}*/
 		}
 		return flightToUpdate;
 	}
@@ -257,14 +259,12 @@ public class FlightServiceImpl implements FlightService {
 
 	@Override
 	public List<SeatVo> getSeatsByFlightId(Long flightId) {
-		
+
 		List<Seat> seats = seatRespository.findByFlightId(flightId);
-		
+
 		List<SeatVo> seatVos = new ArrayList<>();
-		
-		for(Seat p: seats) {
-			
-			SeatVo vo =  new SeatVo();
+		for (Seat p : seats) {
+			SeatVo vo = new SeatVo();
 			vo.setNumber(p.getNumber());
 			vo.setFlightId(p.getFlight().getId());
 			vo.setPaxId(p.getPassenger().getId());
@@ -273,15 +273,30 @@ public class FlightServiceImpl implements FlightService {
 			vo.setMiddleInitial(p.getPassenger().getMiddleName());
 			vo.setFlightNumber(p.getFlight().getFlightNumber());
 			vo.setRefNumber(p.getPassenger().getReservationReferenceNumber());
-			//vo.setHasHits(p.getPassenger().getHits().size()>0);
 			seatVos.add(vo);
 		}
-		
-		seatVos.forEach(p -> {
-			if(p.getRefNumber() != null)
-				p.setCoTravellers(seatVos.stream().filter(l -> l.getRefNumber() != null & !p.getNumber().equals(l.getNumber()) & p.getRefNumber().equals(l.getRefNumber())).collect(Collectors.toList()).stream().map(k -> k.getNumber()).collect(Collectors.toList()).toArray(new String[0]));
+
+		seatVos.forEach(parentSeatVo -> {
+			if (parentSeatVo.getRefNumber() == null) {
+				parentSeatVo.setCoTravellers(new String[0]);
+			} else {
+				parentSeatVo.setCoTravellers(seatVos
+						.stream()
+						.filter(isCoTravelerSeat(parentSeatVo))
+						.collect(Collectors.toList())
+						.stream()
+						.map(SeatVo::getNumber)
+						.toArray(String[]::new));
+			}
 		});
-		
+
 		return seatVos;
+	}
+
+	private Predicate<SeatVo> isCoTravelerSeat(SeatVo parentSeatVo) {
+		return childSeatVo ->
+				childSeatVo.getRefNumber() != null
+				& !parentSeatVo.getNumber().equals(childSeatVo.getNumber())
+				& parentSeatVo.getRefNumber().equals(childSeatVo.getRefNumber());
 	}
 }

@@ -18,7 +18,6 @@ public class MessageStatus {
 
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ms_message_id", referencedColumnName = "id", updatable = false, insertable = false)
-    @org.hibernate.annotations.ForeignKey( name = "none")
     private Message message;
 
     @Enumerated(EnumType.STRING)

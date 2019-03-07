@@ -87,24 +87,9 @@ public class Flight extends BaseEntityAudit {
     
     @Column(length = 1, nullable = false)
     private String direction;
-    
-    /*@ManyToMany(
-        targetEntity=Passenger.class,
-        cascade={CascadeType.ALL}
-    )
-    	@JoinTable(
-        name="flight_passenger",
-        joinColumns=@JoinColumn(name="flight_id"),
-        inverseJoinColumns=@JoinColumn(name="passenger_id")
-    )    
-    private Set<Passenger> passengers = new HashSet<>();*/
 
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
-
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
-//    private Set<FlightPax> flightPaxDetails = new HashSet<>();
-
 
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)

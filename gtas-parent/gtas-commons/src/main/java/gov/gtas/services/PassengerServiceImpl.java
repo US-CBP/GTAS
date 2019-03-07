@@ -20,7 +20,6 @@ import gov.gtas.repository.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.Hibernate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
@@ -224,7 +222,7 @@ public class PassengerServiceImpl implements PassengerService {
             passengerToUpdate.setEmbarkation(passenger.getEmbarkation());
             passengerToUpdate.setEmbarkCountry(passenger.getEmbarkCountry());
             passengerToUpdate.setFirstName(passenger.getFirstName());
-            //passengerToUpdate.setFlights(passenger.getFlights()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
+            //passengerToUpdate.setFlight(passenger.getFlight()); TODO: UNCALLED METHOD, CONSIDER REMOVAL
             passengerToUpdate.setGender(passenger.getGender());
             passengerToUpdate.setLastName(passenger.getLastName());
             passengerToUpdate.setMiddleName(passenger.getMiddleName());
@@ -353,6 +351,12 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     @Transactional
+    public Passenger findByIdWithFlightPaxAndDocuments(Long paxId){
+        return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
+    }
+
+    @Override
+    @Transactional
     public List<Passenger> getPassengersByLastName(String lastName) {
         return passengerRespository.getPassengersByLastName(lastName);
     }
@@ -361,18 +365,14 @@ public class PassengerServiceImpl implements PassengerService {
     public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId) {
         List<HitsSummary> hitsSummary = hitsSummaryRepository.findByFlightIdAndPassengerId(flightId, passengerId);
         if (!CollectionUtils.isEmpty(hitsSummary)) {
+            boolean isRuleHit = false;
+            boolean isWatchlistHit = false;
             for (HitsSummary hs : hitsSummary) {
-                String hitType = hs.getHitType();
-                if (hitType.contains(HitTypeEnum.R.toString())) {
-                    vo.setOnRuleHitList(true);
-                }
-                if (hitType.contains(HitTypeEnum.P.toString())) {
-                    vo.setOnWatchList(true);
-                }
-                if (hitType.contains(HitTypeEnum.D.toString())) {
-                    vo.setOnWatchListDoc(true);
-                }
+                isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
+                isWatchlistHit =  hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
             }
+            vo.setOnRuleHitList(isRuleHit);
+            vo.setOnWatchList(isWatchlistHit);
         }
     }
 
@@ -380,7 +380,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
        /* List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum, docIssuCountry, docExpDate);
-        return paxL.stream().map(pax -> pax.getFlights()).flatMap(Set::stream).collect(Collectors.toList());*/
+        return paxL.stream().map(pax -> pax.getFlight()).flatMap(Set::stream).collect(Collectors.toList());*/
     	return null;
     }
     
@@ -398,19 +398,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     @Transactional
     public List<Passenger> getBookingDetailHistoryByPaxID(Long pId) {
-        //return
-        List<Passenger> _tempPaxList = bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
-        //List<FlightVo> _tempBDFlightsList = new ArrayList<>();
-        try {
-            //stuff flights from Passenger
-            List _tempbdList = _tempPaxList.stream().map(pax -> {
-                Hibernate.initialize(pax.getBookingDetails());
-                return pax.getBookingDetails();
-            }).collect(Collectors.toList());
-        } catch (Exception ex) {
-                logger.error("Get booking detail history failed.", ex);
-        }
-        return _tempPaxList;
+        return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
     }
 
     @SuppressWarnings("unchecked")

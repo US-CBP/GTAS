@@ -57,7 +57,7 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
                                                         @Param("destination") String destination, @Param("eta_date") Date eta_date,
                                                         @Param("etd_date") Date etd_date);
 
-    @Query("SELECT pax FROM Passenger pax WHERE pax.id IN (" +
+    @Query("SELECT pax FROM Passenger pax left join fetch pax.bookingDetails left join fetch pax.flightPaxList pfpl left join fetch pfpl.flight left join fetch pfpl.passenger  WHERE pax.id IN (" +
             "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
     public List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id);
 

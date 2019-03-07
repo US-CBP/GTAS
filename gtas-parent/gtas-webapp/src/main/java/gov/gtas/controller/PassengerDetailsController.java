@@ -101,7 +101,7 @@ public class PassengerDetailsController {
 			@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Passenger t = pService.findById(Long.valueOf(paxId));
+		Passenger t = pService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
 		List<Bag> bagList = new ArrayList<>();
 		List<Seat> pnrSeatList = new ArrayList<Seat>();

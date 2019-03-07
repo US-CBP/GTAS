@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
-	@Query("SELECT apis FROM ApisMessage apis join apis.passengers pax join apis.flights f where pax.id = :passengerId and f.id = :flightId")
+	@Query("SELECT apis FROM ApisMessage apis left join fetch apis.phones join fetch apis.passengers pax join fetch apis.flights f where pax.id = :passengerId and f.id = :flightId")
 	List<ApisMessage> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 	@Query("SELECT fp.reservationReferenceNumber FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")

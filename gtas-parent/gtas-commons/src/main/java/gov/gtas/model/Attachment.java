@@ -7,18 +7,7 @@ import java.sql.Blob;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name="attachment")
@@ -54,7 +43,7 @@ public class Attachment implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)  
 	private Date created;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
         private Passenger passenger;
 
         @ManyToMany(
