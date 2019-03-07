@@ -601,7 +601,7 @@ public class TargetingServiceImpl implements TargetingService {
 				for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
 					uniqueFlights.add(s.getFlightId());
 				}
-				writeAuditLogForTargetingRun(targetingServiceResults);
+		//		writeAuditLogForTargetingRun(targetingServiceResults);
 				updateFlightHitCounts(uniqueFlights);
 			}
 		} catch (Exception e) {
@@ -831,7 +831,7 @@ public class TargetingServiceImpl implements TargetingService {
 		if (foundPassenger != null) {
 			logger.debug("Found passenger.");
 				hitsSummary.setPaxId(foundPassenger.getId());
-				writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString(), gtasUser);
+		//		writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString(), gtasUser);
 
 		} else {
 			logger.debug("No passenger found. --> ");
