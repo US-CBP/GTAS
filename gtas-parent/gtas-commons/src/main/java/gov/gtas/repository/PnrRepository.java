@@ -17,6 +17,7 @@ public interface PnrRepository extends MessageRepository<Pnr> {
     @Query("select pnr from Pnr pnr " +
             "join fetch pnr.passengers pax " +
             "left join fetch pax.documents " +
+            "left join fetch pax.seatAssignments " +
             "join fetch pax.flightPaxList fpxl " +
             "join fetch fpxl.flight " +
             "join fetch pnr.flights f " +

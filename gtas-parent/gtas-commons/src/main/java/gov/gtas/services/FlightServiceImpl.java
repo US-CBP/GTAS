@@ -16,13 +16,7 @@ import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -189,10 +183,11 @@ public class FlightServiceImpl implements FlightService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I'";
-		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('I') AND csfl.operating_flight_id = fl.id";
-		String codeShareQueryFix = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'I' AND ((marketing_flight = FALSE AND operating_flight = FALSE) OR operating_flight = TRUE)";
-		return (List<Flight>) em.createNativeQuery(codeShareQueryFix, Flight.class).getResultList();
+		final Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -3);
+		Date now = new Date();
+		Date threeDays = cal.getTime();
+		return flightRespository.getFlightsThreeDaysForwardInbound(now, threeDays);
 	}
 
 	@Override
@@ -260,20 +255,22 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	public List<SeatVo> getSeatsByFlightId(Long flightId) {
 
-		List<Seat> seats = seatRespository.findByFlightId(flightId);
+		Flight flight = flightRespository.getFlightPassengerAndSeatById(flightId);
 
 		List<SeatVo> seatVos = new ArrayList<>();
-		for (Seat p : seats) {
-			SeatVo vo = new SeatVo();
-			vo.setNumber(p.getNumber());
-			vo.setFlightId(p.getFlight().getId());
-			vo.setPaxId(p.getPassenger().getId());
-			vo.setFirstName(p.getPassenger().getFirstName());
-			vo.setLastName(p.getPassenger().getLastName());
-			vo.setMiddleInitial(p.getPassenger().getMiddleName());
-			vo.setFlightNumber(p.getFlight().getFlightNumber());
-			vo.setRefNumber(p.getPassenger().getReservationReferenceNumber());
-			seatVos.add(vo);
+		for (Passenger passenger : flight.getPassengers()) {
+			for (Seat seat : passenger.getSeatAssignments()) {
+				SeatVo vo = new SeatVo();
+				vo.setNumber(seat.getNumber());
+				vo.setFlightId(flight.getId());
+				vo.setPaxId(passenger.getId());
+				vo.setFirstName(passenger.getFirstName());
+				vo.setLastName(passenger.getLastName());
+				vo.setMiddleInitial(passenger.getMiddleName());
+				vo.setFlightNumber(flight.getFlightNumber());
+				vo.setRefNumber(passenger.getReservationReferenceNumber());
+				seatVos.add(vo);
+			}
 		}
 
 		seatVos.forEach(parentSeatVo -> {

@@ -60,7 +60,7 @@ public class InboundQMessageListener {
 
     @PostConstruct
     public void init(){
-        logger.info("++++++++++INIT Called+++++++++++++++++");
+        logger.debug("++++++++++INIT Called+++++++++++++++++");
         config.useSingleServer().setAddress(redisConnectionString);
         //config.useSingleServer().setAddress(redisConnectionString);
         config.setNettyThreads(0);
@@ -78,7 +78,7 @@ public class InboundQMessageListener {
     @JmsListener(destination = INBOUND_QUEUE)
     public void receiveMessage(final Message<?> message) throws JMSException {
 
-        logger.info("++++++++Message Received++++++++++++");
+        logger.debug("++++++++Message Received++++++++++++");
         MessageHeaders headers =  message.getHeaders();
 
         try {
@@ -92,7 +92,7 @@ public class InboundQMessageListener {
             logger.error("Error receiving message", ex);
         }
 
-        logger.info("+++++++++++++++++++++++++++++");
+        logger.debug("+++++++++++++++++++++++++++++");
     }
 
 

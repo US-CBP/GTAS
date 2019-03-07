@@ -149,14 +149,14 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
                 map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
-                logger.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
+                logger.debug("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
                 if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)){throw new Exception("Error publishing to parsing queue");};
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
                 if(payload == null) {
-                    logger.info("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
+                    logger.debug("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
                 }else {
-                    logger.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
+                    logger.debug("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
                 }
             }
 
@@ -189,7 +189,7 @@ public class RedissonFilter {
         for (int i=0;i<mdbytes.length;i++) {
             hexString.append(Integer.toHexString(0xFF & mdbytes[i]));
         }
-        logger.info("Hex format : " + hexString.toString());
+        logger.debug("Hex format : " + hexString.toString());
         return hexString.toString();
     }
 

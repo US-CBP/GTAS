@@ -120,13 +120,13 @@ public class GtasLoaderImpl implements GtasLoader {
     @Transactional
     public void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties) {
         for (ReportingPartyVo rvo : parties) {
-            ReportingParty existingRp = rpDao.getReportingParty(rvo.getPartyName(), rvo.getTelephone());
-            if (existingRp == null) {
+            List<ReportingParty> existingRp = rpDao.getReportingParty(rvo.getPartyName(), rvo.getTelephone());
+            if (existingRp.isEmpty()) {
                 ReportingParty newRp = utils.createNewReportingParty(rvo);
                 apisMessage.getReportingParties().add(newRp);
             } else {
-                utils.updateReportingParty(rvo, existingRp);
-                apisMessage.addReportingParty(existingRp);
+                utils.updateReportingParty(rvo, existingRp.get(0));
+                apisMessage.addReportingParty(existingRp.get(0));
             }
         }
     }

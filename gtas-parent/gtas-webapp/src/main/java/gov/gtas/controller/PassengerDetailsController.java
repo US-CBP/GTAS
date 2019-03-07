@@ -104,7 +104,6 @@ public class PassengerDetailsController {
 		Passenger t = pService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
 		List<Bag> bagList = new ArrayList<>();
-		List<Seat> pnrSeatList = new ArrayList<Seat>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
 			vo.setCarrier(flight.getCarrier());
@@ -182,25 +181,23 @@ public class PassengerDetailsController {
 			
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
-				pnrSeatList.addAll(seatRepository.findByFlightIdAndPassengerIdNotApis(Long.parseLong(flightId), p.getId()));
 				FlightPax flightPax = getPnrFlightPax(p, flight);
 				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
 				bagVoOptional.ifPresent(tempVo::addBag);
+				for (Seat s : p.getSeatAssignments()) {
+					SeatVo seatVo = new SeatVo();
+					seatVo.setFirstName(p.getFirstName());
+					seatVo.setLastName(p.getLastName());
+					seatVo.setNumber(s.getNumber());
+					seatVo.setFlightNumber(flight.getFullFlightNumber());
+					tempVo.addSeat(seatVo);
+				}
 			}
 
 			FlightPax mainPassengerFlightPax = getPnrFlightPax(t, flight);
 			Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
 			bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
 
-			for (Seat s : pnrSeatList) {
-				SeatVo seatVo = new SeatVo();
-				seatVo.setFirstName(s.getPassenger().getFirstName());
-				seatVo.setLastName(s.getPassenger().getLastName());
-				seatVo.setNumber(s.getNumber());
-				seatVo.setFlightNumber(s.getFlight()
-						.getFullFlightNumber());
-				tempVo.addSeat(seatVo);
-			}
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
