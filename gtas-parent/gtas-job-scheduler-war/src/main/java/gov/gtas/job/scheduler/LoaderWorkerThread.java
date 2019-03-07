@@ -55,11 +55,11 @@ public class LoaderWorkerThread implements Runnable {
 	    		MessageHeaders headers =  msg.getHeaders();
 	    		this.fileName = headers.get("Filename").toString();
 	    		this.text = msg.getPayload().toString();
-	    		logger.info(Thread.currentThread().getName()+" FileName = "+fileName);
+	    		logger.debug(Thread.currentThread().getName()+" FileName = "+fileName);
 	        	try{
 	        		processCommand();
 	        	}catch(Exception e){
-	        		logger.info("Catastrophic failure, uncaught exception would cause thread destruction without queue destruction causing memory leak; Rerouting process");
+	        		logger.error("Catastrophic failure, uncaught exception would cause thread destruction without queue destruction causing memory leak; Rerouting process");
 	        		logger.error("Catastrophic failure!", e);
 	        	}
 	    	}

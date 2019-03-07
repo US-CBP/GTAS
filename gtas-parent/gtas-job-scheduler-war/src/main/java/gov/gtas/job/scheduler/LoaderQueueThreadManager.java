@@ -68,7 +68,7 @@ public class LoaderQueueThreadManager {
 			exec.execute(worker);
 		} else {
 			// Is existing bucket, place same prime flight message into bucket
-			logger.info("Existing Queue Found! Placing message inside...");
+			logger.debug("Existing Queue Found! Placing message inside...");
 			potentialBucket.offer(message);
 			// No need to execute worker here, if queue exists then worker is already on it.
 		}
