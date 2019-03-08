@@ -30,7 +30,7 @@ public class Passenger extends BaseEntityAudit {
     @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
 
-    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class, fetch = FetchType.EAGER)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
     private String title;
@@ -103,7 +103,7 @@ public class Passenger extends BaseEntityAudit {
     @JsonIgnore
     private Flight flight;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<Document> documents = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.LAZY)

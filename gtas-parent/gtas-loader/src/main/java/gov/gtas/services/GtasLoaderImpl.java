@@ -218,16 +218,15 @@ public class GtasLoaderImpl implements GtasLoader {
                 Flight currentFlight;
                 Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
                 if (existingFlight == null) {
-                    logger.info("Flight Not Found: Creating Flight");
+                    logger.debug("Flight Not Found: Creating Flight");
                     currentFlight = utils.createNewFlight(fvo);
                     flightDao.save(currentFlight);
-                    logger.info("Flight Created: " + fvo.getFlightNumber());
+                    logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId());
                 } else {
                     currentFlight = existingFlight;
                     if (fvo.isCodeShareFlight()) {
                         currentFlight.setOperatingFlight(true);
                     }
-
                 }
                 primeFlight = currentFlight;
                 logger.debug("processFlightsAndPassenger: check for existing flights time= " + (System.nanoTime() - startTime) / 1000000);
@@ -261,16 +260,10 @@ public class GtasLoaderImpl implements GtasLoader {
                                                   Message message) throws ParseException {
 
         Set<Passenger> newPassengers = new HashSet<>();
+        Set<Long> oldPassengersId = new HashSet<>();
         for (PassengerVo pvo : passengers) {
             Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
-            if (existingPassenger != null) {
-                updatePassenger(existingPassenger, pvo);
-                messagePassengers.add(existingPassenger);
-                logger.debug("@ createSeatAssignment");
-                createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
-                logger.debug("@ createBags");
-                createBags(pvo.getBags(), existingPassenger, primeFlight);
-            } else {
+            if (existingPassenger == null ) {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
@@ -280,6 +273,15 @@ public class GtasLoaderImpl implements GtasLoader {
                 utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
                 messagePassengers.add(newPassenger);
+            } else if (!oldPassengersId.contains(existingPassenger.getId())) {
+                oldPassengersId.add(existingPassenger.getId());
+                updatePassenger(existingPassenger, pvo);
+                messagePassengers.add(existingPassenger);
+                logger.debug("@ createSeatAssignment");
+                createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
+                logger.debug("@ createBags");
+                createBags(pvo.getBags(), existingPassenger, primeFlight);
+
             }
         }
         return newPassengers;
@@ -292,8 +294,12 @@ public class GtasLoaderImpl implements GtasLoader {
 
         passengerDao.saveAll(messagePassengers);
         for (Passenger p : newPassengers) {
-            PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
-            passengerIDTags.add(paxIdTag);
+            try {
+                PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
+                passengerIDTags.add(paxIdTag);
+            } catch (Exception ignored) {
+                logger.error("Failed to make a pax id - passenger lacks fname, lname, gender, or dob. ");
+            }
         }
 
         Set<FlightPassenger> flightPassengers = new HashSet<>();

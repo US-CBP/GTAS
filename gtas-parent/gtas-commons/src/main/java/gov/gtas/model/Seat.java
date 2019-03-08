@@ -67,8 +67,12 @@ public class Seat extends BaseEntity {
 
 	@Override
 	public int hashCode() {
+		String num =  this.number == null ? null : this.number.toUpperCase();
+		if (num != null) {
+			num = num.replaceAll("\\\\", "");
+		}
 		return Objects
-				.hash(this.number, this.apis, this.passenger.getId(), this.flight);
+				.hash(num, this.apis, this.passenger.getId());
 	}
 
 	@Override
@@ -78,9 +82,16 @@ public class Seat extends BaseEntity {
 		if (!(obj instanceof Seat))
 			return false;
 		final Seat other = (Seat) obj;
-		return Objects.equals(this.number, other.number)
+		String num =   this.number == null ? null : this.number.toUpperCase();
+		if (num != null) {
+			num = num.replaceAll("\\\\", "");
+		}
+		String num2 =  other.getNumber() == null ? null : other.getNumber().toUpperCase();
+		if (num2 != null) {
+			num2 = num2.replaceAll("\\\\", "");
+		}
+		return Objects.equals(num, num2)
 				&& Objects.equals(this.apis, other.apis)
-				&& Objects.equals(this.passenger.getId(), other.passenger.getId())
-				&& Objects.equals(this.flight, other.flight);
+				&& Objects.equals(this.passenger.getId(), other.passenger.getId());
 	}
 }
