@@ -248,7 +248,7 @@ public class GtasLoaderImpl implements GtasLoader {
             }
         }
         if (primeFlight == null) {
-            throw new RuntimeException("oh noes!");
+            throw new RuntimeException("No prime flight. ERROR!!!!!");
         }
         return primeFlight;
     }
