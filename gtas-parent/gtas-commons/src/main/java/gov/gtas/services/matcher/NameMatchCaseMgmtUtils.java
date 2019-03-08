@@ -68,7 +68,7 @@ public class NameMatchCaseMgmtUtils {
                    .registerAndSaveNewCaseFromFuzzyMatching(flightId,
                            passenger.getId(),
                            _tempPax.getPassengerDetails().getFirstName()+" "+_tempPax.getPassengerDetails().getLastName(),
-                           _tempPax.getPassengerType(),
+                           _tempPax.getPassengerDetails().getPassengerType(),
                            _tempPax.getPassengerDetails().getCitizenshipCountry(),
                            _tempPax.getPassengerDetails().getDob(),
                            document,

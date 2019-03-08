@@ -288,7 +288,7 @@ public class QueryBuilderServiceIT {
 
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
-		passenger.setPassengerType("P");
+		passenger.getPassengerDetails().setPassengerType("P");
 		passenger.getPassengerDetails().setFirstName("TEST");
 		passenger.getPassengerDetails().setLastName("USER");
 
@@ -344,7 +344,7 @@ public class QueryBuilderServiceIT {
 
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
-		passenger.setPassengerType("P1");
+		passenger.getPassengerDetails().setPassengerType("P1");
 		passenger.getPassengerDetails().setFirstName("TEST1");
 		passenger.getPassengerDetails().setLastName("USER1");
 

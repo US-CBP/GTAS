@@ -127,7 +127,7 @@ public class PassengerDetailsController {
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
-		vo.setPassengerType(t.getPassengerType());
+		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
 		vo.setMiddleName(t.getPassengerDetails().getMiddleName());

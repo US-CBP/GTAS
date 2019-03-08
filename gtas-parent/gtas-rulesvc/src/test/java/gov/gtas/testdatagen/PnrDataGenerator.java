@@ -263,7 +263,7 @@ public class PnrDataGenerator {
         String[] params = passengerData.split(",");
         
         // setup passenger
-        p.setPassengerType(params[0]);
+        p.getPassengerDetails().setPassengerType(params[0]);
         p.getPassengerDetails().setFirstName(params[1].toUpperCase());
         p.getPassengerDetails().setMiddleName(params[2].toUpperCase());
         p.getPassengerDetails().setLastName(params[3].toUpperCase());

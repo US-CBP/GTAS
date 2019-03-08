@@ -351,7 +351,7 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setMessageSource("PNR");
     			fp.setFlightId(f.getId());
     			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
-    			fp.setTravelerType(p.getPassengerType());
+    			fp.setTravelerType(p.getPassengerDetails().getPassengerType());
     			fp.setPassengerId(p.getId());
     			fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
     			int passengerBags=0;

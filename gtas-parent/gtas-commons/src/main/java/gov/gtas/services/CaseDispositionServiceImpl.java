@@ -279,7 +279,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setPaxId(pax_id);
 		aCase.setPaxName(pax.getPassengerDetails().getFirstName() + " " + pax.getPassengerDetails().getLastName());
 		populatePassengerDetailsInCase(aCase, flight_id, pax_id);
-		aCase.setPaxType(pax.getPassengerType());
+		aCase.setPaxType(pax.getPassengerDetails().getPassengerType());
 		aCase.setCitizenshipCountry(pax.getPassengerDetails().getCitizenshipCountry());
 		aCase.setDocument(((Document) pax.getDocuments().parallelStream().findFirst().orElse(new Document("xxxxxxxxx")))
 				.getDocumentNumber());

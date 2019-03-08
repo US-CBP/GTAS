@@ -99,7 +99,7 @@ public class ServiceRepositoryIT {
         f.setUpdatedBy("TEST");
 
         Passenger passengerToUpdate = new Passenger();
-        passengerToUpdate.setPassengerType(PassengerTypeCode.P.name());
+        passengerToUpdate.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
         passengerToUpdate.getPassengerDetails().setAge(30);
         passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
         passengerToUpdate.getPassengerTripDetails().setDebarkation(b);

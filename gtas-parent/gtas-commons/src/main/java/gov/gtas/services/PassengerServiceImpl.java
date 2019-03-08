@@ -301,7 +301,7 @@ public class PassengerServiceImpl implements PassengerService {
             AuditActionData actionData = new AuditActionData();
 
             actionData.addProperty("CitizenshipCountry", passenger.getPassengerDetails().getCitizenshipCountry());
-            actionData.addProperty("PassengerType", passenger.getPassengerType());
+            actionData.addProperty("PassengerType", passenger.getPassengerDetails().getPassengerType());
             //
             String message = "Disposition Status Change run on " + passenger.getCreatedAt();
             auditLogRepository.save(new AuditRecord(AuditActionType.DISPOSITION_STATUS_CHANGE, target.toString(),

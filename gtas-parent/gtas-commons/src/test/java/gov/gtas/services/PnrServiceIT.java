@@ -169,7 +169,7 @@ public class PnrServiceIT {
 	}
 
 	private void preparePassengerData(Passenger passengerToUpdate) {
-		passengerToUpdate.setPassengerType(PassengerTypeCode.P.name());
+		passengerToUpdate.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
 		passengerToUpdate.getPassengerDetails().setAge(30);
 		String c = "US";
 		String b = "JFK";

@@ -70,7 +70,7 @@ public class ApisDataGenerator {
         for(String[] args:param){
             Passenger passenger = new Passenger();
             passenger.setId(ids[passengerCount]);
-            passenger.setPassengerType(PassengerTypeCode.P.name());
+            passenger.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
             passenger.setId(new Long(args[6]));
             passenger.setDocuments(createDocuments(new long[]{ids[passengerCount]},
                     new String[]{args[0]}, new String[]{args[1]}));

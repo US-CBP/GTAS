@@ -183,7 +183,7 @@ public class ApisMessageService extends MessageLoaderService {
     			fp.setFlight(f);
     			fp.setFlightId(f.getId());
     			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
-    			fp.setTravelerType(p.getPassengerType());
+    			fp.setTravelerType(p.getPassengerDetails().getPassengerType());
     			fp.setPassenger(p);
     			fp.setPassengerId(p.getId());
     			fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());

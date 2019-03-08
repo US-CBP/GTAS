@@ -873,7 +873,7 @@ public class TargetingServiceImpl implements TargetingService {
 			actionData.addProperty("CitizenshipCountry",
 					passenger.getPassengerDetails().getCitizenshipCountry());
 			actionData.addProperty("PassengerType",
-					passenger.getPassengerType());
+					passenger.getPassengerDetails().getPassengerType());
 
 			String message = "API/PNR MESSAGE Ingest and Parsing  "
 					+ passenger.getCreatedAt();

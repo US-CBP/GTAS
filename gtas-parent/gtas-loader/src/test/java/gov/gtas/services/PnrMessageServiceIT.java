@@ -73,7 +73,7 @@ public class PnrMessageServiceIT extends
 		f.setOrigin("LAX");
 		f.setDestination("IAD");
 		Passenger p = new Passenger();
-		p.setPassengerType("P");
+		p.getPassengerDetails().setPassengerType("P");
 		p.getPassengerDetails().setFirstName("john");
 		p.getPassengerDetails().setLastName("doe");
 		f.getPassengers().add(p);

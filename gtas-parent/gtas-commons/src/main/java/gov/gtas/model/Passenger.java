@@ -72,7 +72,7 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<TicketFare> tickets = new HashSet<>();
 
-    private String title;
+    /*private String title;
 
     @Column(name = "first_name")
     private String firstName;
@@ -99,10 +99,10 @@ public class Passenger extends BaseEntityAudit {
 
     @Column(name = "passenger_type", length = 3, nullable = false)
     private String passengerType;
-    /** calculated field */
+    *//** calculated field *//*
     @Column(name = "age")
     private Integer age;
-
+     */
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
 
@@ -153,13 +153,13 @@ public class Passenger extends BaseEntityAudit {
         d.setPassenger(this);
     }
 
-    public String getPassengerType() {
+ /*   public String getPassengerType() {
         return passengerType;
     }
 
     public void setPassengerType(String passengerType) {
         this.passengerType = passengerType;
-    }
+    }*/
 
    /* public Set<Flight> getFlights() {
         return passengerService.getAllFlights(this.id);
@@ -326,16 +326,16 @@ public class Passenger extends BaseEntityAudit {
         final int prime = 31;
         // int result = super.hashCode();
         int result = 10;
-        result = prime * result + ((age == null) ? 0 : age.hashCode());
+/*        result = prime * result + ((age == null) ? 0 : age.hashCode());
         result = prime * result + ((dob == null) ? 0 : dob.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((gender == null) ? 0 : gender.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
+        result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());*/
         return result;
     }
 
-    @Override
+/*    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -368,7 +368,7 @@ public class Passenger extends BaseEntityAudit {
             return other.middleName == null;
         } else return middleName.equals(other.middleName);
 
-    }
+    }*/
 
     public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
         return paxWatchlistLinks;

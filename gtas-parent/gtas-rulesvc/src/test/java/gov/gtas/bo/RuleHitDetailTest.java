@@ -30,7 +30,7 @@ public class RuleHitDetailTest {
     @Test
     public void testHashCodeEquals() {
         Passenger p = new Passenger();
-        p.setPassengerType("P");
+        p.getPassengerDetails().setPassengerType("P");
         p.setId(1L);
         Flight f = new Flight();
         f.setId(35L);
