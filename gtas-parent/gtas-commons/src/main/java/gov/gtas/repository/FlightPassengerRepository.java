@@ -16,6 +16,7 @@ public interface FlightPassengerRepository extends CrudRepository<FlightPassenge
             "LEFT JOIN FETCH pax.bags " +
             "LEFT JOIN FETCH pax.flightPaxList " +
             "LEFT JOIN FETCH pax.tickets " +
+            "LEFT JOIN FETCH pax.bookingDetails " +
             "WHERE UPPER(fp.passenger.firstName) = UPPER(:firstName) " +
             "AND UPPER(fp.passenger.lastName) = UPPER(:lastName) " +
             "AND fp.flightId = :flightId")

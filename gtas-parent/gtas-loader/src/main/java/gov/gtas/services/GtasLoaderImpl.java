@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -254,13 +251,14 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    public Set<Passenger> makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
+    public CreatedAndOldPassengerInformation makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
                                                   Set<Passenger> messagePassengers,
                                                   Set<BookingDetail> bookingDetails,
                                                   Message message) throws ParseException {
 
         Set<Passenger> newPassengers = new HashSet<>();
         Set<Long> oldPassengersId = new HashSet<>();
+        Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
         for (PassengerVo pvo : passengers) {
             Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger == null ) {
@@ -274,6 +272,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 newPassengers.add(newPassenger);
                 messagePassengers.add(newPassenger);
             } else if (!oldPassengersId.contains(existingPassenger.getId())) {
+                bookingDetailsAPassengerOwns.put(existingPassenger.getId(), existingPassenger.getBookingDetails());
                 oldPassengersId.add(existingPassenger.getId());
                 updatePassenger(existingPassenger, pvo);
                 messagePassengers.add(existingPassenger);
@@ -284,7 +283,10 @@ public class GtasLoaderImpl implements GtasLoader {
 
             }
         }
-        return newPassengers;
+        CreatedAndOldPassengerInformation createdAndOldPassengerInformation = new CreatedAndOldPassengerInformation();
+        createdAndOldPassengerInformation.setBdSet(bookingDetailsAPassengerOwns);
+        createdAndOldPassengerInformation.setNewPax(newPassengers);
+        return createdAndOldPassengerInformation ;
     }
 
     @Override
@@ -331,14 +333,15 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Override
     @Transactional()
-    public void createBookingDetails(Pnr pnr) {
+    public void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> paxBookingDetailsMap) {
         Set<BookingDetail> bookingDetails = pnr.getBookingDetails();
         Set<Passenger> messagePassengers = pnr.getPassengers();
         if (!bookingDetails.isEmpty()) {
             for (BookingDetail bD : bookingDetails) {
                 bD.getPnrs().add(pnr);
                 for (Passenger pax : messagePassengers) {
-                    if (!pax.getBookingDetails().contains(bD)) {
+                    Set<BookingDetail> paxBdSet = paxBookingDetailsMap.get(pax.getId());
+                    if (paxBdSet == null || !paxBookingDetailsMap.get(pax.getId()).contains(bD)) {
                         bD.getPassengers().add(pax);
                     }
                 }

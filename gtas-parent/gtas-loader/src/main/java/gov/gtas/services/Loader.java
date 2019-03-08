@@ -41,8 +41,6 @@ public class Loader {
     @Autowired
     protected ElasticHelper indexer;
 
-    private boolean isElasticEnabled = true; //TODO: put this in property file
-
     /**
      * Processes all the messages in a single file.
      * 
@@ -96,7 +94,7 @@ public class Loader {
             processedMessages.setMessageStatusList(messageStatuses);
             return processedMessages;
         }
-        try {
+/*        try {
             if (isElasticEnabled) {
                 indexer.initClient();
                 if (indexer.isDown()) {
@@ -108,7 +106,7 @@ public class Loader {
         } catch (Exception logged) {
             logger.error("Error with redis-  This message WILL NOT BE INDEXED!", logged);
         }
-        
+        */
         int successMsgCount = 0;
         int failedMsgCount = 0;
         msgDto.setFilepath(filePath);

@@ -114,12 +114,14 @@ public class PnrMessageService extends MessageLoaderService {
 					pnr.getFlightLegs(),
 					msgDto.getPrimeFlightKey(),
 					pnr.getBookingDetails());
-			Set<Passenger> newPassengers  = loaderRepo.makeNewPassengerObjects(primeFlight,
+			CreatedAndOldPassengerInformation createdAndOldPassengerInformation  = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(),
 					pnr.getPassengers(),
 					pnr.getBookingDetails(),
 					pnr);
-			int createdPassengers = loaderRepo.createPassengers(newPassengers,
+
+
+			int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(),
 					pnr.getPassengers(),
 					primeFlight,
 					pnr.getBookingDetails());
@@ -127,7 +129,7 @@ public class PnrMessageService extends MessageLoaderService {
 
 			createFlightPax(pnr);
 			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createBookingDetails(pnr);
+			loaderRepo.createBookingDetails(pnr, createdAndOldPassengerInformation.getBdSet());
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setPnr(pnr);
@@ -314,9 +316,9 @@ public class PnrMessageService extends MessageLoaderService {
 		try {
 			m = msgDao.save(m);
 			ret = true;
-			if (useIndexer) {
+/*			if (useIndexer) {
 				indexer.indexPnr(m);
-			}
+			}*/
 		} catch (Exception e) {
 			handleException(e, m);
 			ret = false;
