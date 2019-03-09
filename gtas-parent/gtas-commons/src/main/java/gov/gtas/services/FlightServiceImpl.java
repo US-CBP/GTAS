@@ -180,24 +180,25 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		final Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -3);
 		Date now = new Date();
-		Date threeDays = cal.getTime();
-		return flightRespository.getFlightsThreeDaysForwardInbound(now, threeDays);
+		Date threeDays = getThreeDaysForward();
+		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "I");
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
-		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY  AND direction = 'O'";
-		String sqlStrForCodeShare = "SELECT * FROM flight fl JOIN code_share_flight csfl WHERE fl.eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND fl.direction IN ('O') AND csfl.operating_flight_id = fl.id";
-		String codeShareQueryFix = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY AND direction = 'O' AND ((marketing_flight = FALSE AND operating_flight = FALSE) OR operating_flight = TRUE)";
-		return (List<Flight>) em.createNativeQuery(codeShareQueryFix, Flight.class).getResultList();
+		Date now = new Date();
+		Date threeDays = getThreeDaysForward();
+		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "O");
+	}
+
+	private Date getThreeDaysForward() {
+		final Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, 3);
+		return cal.getTime();
 	}
 
 	@SuppressWarnings("unchecked")

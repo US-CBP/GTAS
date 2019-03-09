@@ -98,11 +98,12 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     @Query( "SELECT f FROM Flight f " +
             "LEFT JOIN FETCH f.flightPassengerCount " +
             "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd) " +
-            "AND f.direction = 'I' " +
+            "AND f.direction = :direction " +
             "AND ((f.isOperatingFlight = FALSE" +
             "    AND f.isOperatingFlight = FALSE ) OR f.isOperatingFlight = true) ")
-    List<Flight> getFlightsThreeDaysForwardInbound(@Param("dateTimeStart")Date date1,
-                                                   @Param("dateTimeEnd") Date date2);
+    List<Flight> getFlightsThreeDaysForwardWithDirection(@Param("dateTimeStart")Date date1,
+                                                         @Param("dateTimeEnd") Date date2,
+                                                         @Param("direction") String direction);
 
     @Query("SELECT f from Flight f " +
             "LEFT JOIN FETCH f.passengers pax " +
