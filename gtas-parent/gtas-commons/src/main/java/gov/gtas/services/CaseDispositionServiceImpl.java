@@ -268,7 +268,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		Long highPriorityRuleCatId = 1L;
 		ArrayList<Long> hit_ids = new ArrayList<>();
-		Passenger pax = passengerRepository.getPassengerById(pax_id);
+		Passenger pax = passengerRepository.getFullPassengerById(pax_id);
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
 		Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
@@ -962,7 +962,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Flight _tempFlight;
 
 		if (passengerMap == null || passengerMap.isEmpty() || !passengerMap.containsKey(paxId)) {
-			logger.info("Manual get of passenger.");
+			logger.debug("Manual get of passenger.");
 			_tempPax = findPaxByID(paxId);
 		} else {
 			_tempPax = passengerMap.get(paxId);
@@ -970,7 +970,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 
 		if (flightMap == null || flightMap.isEmpty() || !flightMap.containsKey(flightId)) {
-			logger.info("manual get of flights");
+			logger.debug("manual get of flights");
 			_tempFlight = findFlightByID(flightId);
 		} else {
 			_tempFlight = flightMap.get(flightId);

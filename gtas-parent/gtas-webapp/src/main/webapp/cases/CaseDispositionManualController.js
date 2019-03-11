@@ -64,13 +64,6 @@
             AuthService.getCurrentUser().then(function (user) {
                 $scope.currentUser = user;
                 $scope.dispStatus.caseStatusAdminView = ($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())? true: false;
-                let oneDayLookoutUser = false;
-                user.roles.forEach(function (role) {
-                    if (role.roleDescription === USER_ROLES.ONE_DAY_LOOKOUT) {
-                        oneDayLookoutUser = true;
-                    }
-                });
-                $scope.dispStatus.oneDay = !oneDayLookoutUser;
             });
 
             $scope.changeState = function(){
