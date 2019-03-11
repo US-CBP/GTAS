@@ -311,7 +311,6 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    @Transactional
     public void createDisposition(List<HitsSummary> hitsList) {
 
         List<Disposition> dispositionsList = new ArrayList<>();

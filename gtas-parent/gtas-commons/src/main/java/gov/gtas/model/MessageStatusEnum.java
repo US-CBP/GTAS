@@ -5,10 +5,17 @@ public enum MessageStatusEnum
     RECEIVED("RECEIVED"),  // 0
     PARSED("PARSED"),  // 1
     LOADED("LOADED"),  // 2
-    ANALYZED("ANALYZED"),  // 3
-    FAILED_PARSING("FAILED_PARSE"),  // 4
-    FAILED_LOADING("FAILED_LOAD"),  // 5
-    FAILED_ANALYZING("FAILED_ANALYZE");  // 6
+    RUNNING_RULES("RUNNING_RULES"),  // 3
+    ANALYZED("ANALYZED"),  // 4
+    FAILED_PARSING("FAILED_PARSE"),  // 5
+    FAILED_LOADING("FAILED_LOAD"),  // 6
+    FAILED_ANALYZING("FAILED_ANALYZE"),  // 7
+    PARTIAL_ANALYZE("PARTIAL_ANALYZE");  // 8
+
+    public String getName() {
+        return name;
+    }
+
     String name;
     MessageStatusEnum(String name) {
         this.name = name;

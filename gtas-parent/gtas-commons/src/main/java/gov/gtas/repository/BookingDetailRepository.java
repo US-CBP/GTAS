@@ -28,11 +28,12 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
                 "WHERE pnrbk.booking_detail_id = bd.id " +
                 "AND pnrbk.pnr_id IN " +
                 "   (SELECT ms.ms_message_id FROM message_status ms " +
-                "        WHERE (ms.ms_message_id = pnrbk.pnr_id " +
-                "               AND ms.ms_status != 'PARSED' " +
-                "               AND ms.ms_status != 'RECEIVED'" +
-                    "           AND ms.ms_status != 'LOADED')))" , nativeQuery = true)
-    List<BookingDetail> getBookingDetailByProcessedFlag();
+                "        WHERE (ms.ms_message_id = pnrbk.pnr_id) " +
+                "               AND (ms.ms_status = 'ANALYZED' " +
+                "               OR ms.ms_status = 'PARTIAL_ANALYZE' " +
+                "               OR ms.ms_status = 'FAILED_ANALYZE'" +
+                    "           OR ms.ms_status = 'FAILED_LOAD'))) LIMIT :theLimit" , nativeQuery = true)
+    List<BookingDetail> getBookingDetailByProcessedFlag(@Param("theLimit") Long theLimit);
 
     @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
             "AND UPPER(p.origin) = UPPER(:origin)" +

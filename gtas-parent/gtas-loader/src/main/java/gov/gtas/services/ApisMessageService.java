@@ -116,6 +116,7 @@ public class ApisMessageService extends MessageLoaderService {
             msgDto.getMessageStatus().setSuccess(false);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
             handleException(e, msgDto.getApis());
+            logger.error("ERROR", e);
         } finally {
             msgDto.getMessageStatus().setSuccess(createMessage(apis));
         }

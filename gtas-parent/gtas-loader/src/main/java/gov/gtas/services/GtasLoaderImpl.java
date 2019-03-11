@@ -217,7 +217,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 if (existingFlight == null) {
                     logger.debug("Flight Not Found: Creating Flight");
                     currentFlight = utils.createNewFlight(fvo);
-                    flightDao.save(currentFlight);
+                    currentFlight = flightDao.save(currentFlight);
                     logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId());
                 } else {
                     currentFlight = existingFlight;
@@ -300,7 +300,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
                 passengerIDTags.add(paxIdTag);
             } catch (Exception ignored) {
-                logger.error("Failed to make a pax id - passenger lacks fname, lname, gender, or dob. ");
+                logger.error("Failed to make a pax hash id from pax with id " + p.getId() + ". Passenger lacks fname, lname, gender, or dob. ");
             }
         }
 

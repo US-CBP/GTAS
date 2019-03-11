@@ -8,19 +8,19 @@ import java.util.Set;
 
 public class TargetingServiceResults {
 
-    Set<Case> getCaseSet() {
+   public Set<Case> getCaseSet() {
         return caseSet;
     }
 
-    void setCaseSet(Set<Case> caseSet) {
+    public void setCaseSet(Set<Case> caseSet) {
         this.caseSet = caseSet;
     }
 
-    List<HitsSummary> getHitsSummaryList() {
+    public List<HitsSummary> getHitsSummaryList() {
         return hitsSummaryList;
     }
 
-    void setHitsSummaryList(List<HitsSummary> hitsSummaryList) {
+    public void setHitsSummaryList(List<HitsSummary> hitsSummaryList) {
         this.hitsSummaryList = hitsSummaryList;
     }
 
