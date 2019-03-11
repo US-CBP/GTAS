@@ -100,14 +100,14 @@ public class ApisMessageService extends MessageLoaderService {
                     msgDto.getPrimeFlightKey(),
                     new HashSet<>());
 
-            Set<Passenger> newPassengers = loaderRepo.makeNewPassengerObjects(
+            CreatedAndOldPassengerInformation createdAndOldPassengerInformation = loaderRepo.makeNewPassengerObjects(
                     primeFlight,
                     m.getPassengers(),
                     apis.getPassengers(),
                     new HashSet<>(),
                     apis);
 
-            int createdPassengers = loaderRepo.createPassengers(newPassengers, apis.getPassengers(), primeFlight, new HashSet<>());
+            int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(), apis.getPassengers(), primeFlight, new HashSet<>());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
@@ -116,6 +116,7 @@ public class ApisMessageService extends MessageLoaderService {
             msgDto.getMessageStatus().setSuccess(false);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
             handleException(e, msgDto.getApis());
+            logger.error("ERROR", e);
         } finally {
             msgDto.getMessageStatus().setSuccess(createMessage(apis));
         }
@@ -143,10 +144,10 @@ public class ApisMessageService extends MessageLoaderService {
         boolean ret = true;
         try {
            m = msgDao.save(m);
-            if (useIndexer) {
+       /*     if (useIndexer) {
             	indexer.indexApis(m);
             }
-        } catch (Exception e) {
+       */ } catch (Exception e) {
             ret = false;
             handleException(e, m);
             try {

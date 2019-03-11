@@ -26,14 +26,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
+
 
 /**
  * Load tests for the Rule Engine using Watch list rules.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
-@TransactionConfiguration(defaultRollback = false)
+@Rollback(true)
 public class TargetingPerformanceEval {
     private static final Logger logger = LoggerFactory.getLogger(TargetingPerformanceEval.class);
     public static final String PASSENGER_WL_NAME = "PerfTest Passenger WL";

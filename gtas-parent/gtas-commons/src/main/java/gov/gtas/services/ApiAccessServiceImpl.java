@@ -63,7 +63,7 @@ public class ApiAccessServiceImpl implements ApiAccessService {
     @Override
     @Transactional
     public ApiAccess findById(Long id) {
-        return apiAccessRepository.findOne(id);
+        return apiAccessRepository.findById(id).orElse(null);
     }
     
 }

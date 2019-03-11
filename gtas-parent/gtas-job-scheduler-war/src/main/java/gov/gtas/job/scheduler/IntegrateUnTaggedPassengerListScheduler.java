@@ -96,7 +96,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
                 _checkedListOfNullIdTagPassenger.setPaxIdTag(_tempPaxIDTag);
                 //_tempPaxIDTag.getPassengers().add(_checkedListOfNullIdTagPassenger);
             }*/
-            passengerIDTagRepository.save(_tempPaxIdTagList);
+            passengerIDTagRepository.saveAll(_tempPaxIdTagList);
             passengerDao.save(_checkedListOfNullIdTagPassenger);
         }
 

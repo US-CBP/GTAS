@@ -5,19 +5,19 @@
  */
 package gov.gtas.querybuilder.vo;
 
-import gov.gtas.model.Flight;
+import gov.gtas.vo.passenger.FlightVo;
 
 import java.util.List;
 
 public class FlightQueryVo {
-    List<Flight> flights;
-    long totalFlights;
+    private List<FlightVo> flights;
+    private long totalFlights;
     private boolean queryLimitReached;
     
-    public List<Flight> getFlights() {
+    public List<FlightVo> getFlights() {
         return flights;
     }
-    public void setFlights(List<Flight> flights) {
+    public void setFlights(List<FlightVo> flights) {
         this.flights = flights;
     }
     public long getTotalFlights() {

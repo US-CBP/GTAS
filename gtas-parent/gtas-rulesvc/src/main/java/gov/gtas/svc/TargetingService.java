@@ -18,6 +18,7 @@ import gov.gtas.model.ApisMessage;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Pnr;
 import gov.gtas.svc.util.RuleResults;
+import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 
 /**
  * The API for the Targeting Service.
@@ -63,7 +64,7 @@ public interface TargetingService {
 	 *            each processed message.
 	 * @return the result of the invocation.
 	 */
-	RuleResults analyzeLoadedMessages(final boolean updateProcesssedMessageStatus);
+	RuleResultsWithMessageStatus analyzeLoadedMessages(final boolean updateProcesssedMessageStatus);
 
 	/**
 	 * Invokes the Rule Engine on an arbitrary list of objects using the
@@ -83,9 +84,12 @@ public interface TargetingService {
 	 * @return 
 	 * 
 	 */
-	public RuleResults runningRuleEngine();
+	public RuleResultsWithMessageStatus runningRuleEngine();
 
-	public TargetingServiceResults createHitsAndCases(RuleResults ruleRunningResult);
+	public void saveMessageStatuses(List<MessageStatus> setMessagesToAnalyzed);
+
+	public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult);
+
 
 	public void saveEverything(TargetingServiceResults targetingServiceResults);
 

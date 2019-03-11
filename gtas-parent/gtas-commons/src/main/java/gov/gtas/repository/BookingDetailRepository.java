@@ -28,11 +28,12 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
                 "WHERE pnrbk.booking_detail_id = bd.id " +
                 "AND pnrbk.pnr_id IN " +
                 "   (SELECT ms.ms_message_id FROM message_status ms " +
-                "        WHERE (ms.ms_message_id = pnrbk.pnr_id " +
-                "               AND ms.ms_status != 'PARSED' " +
-                "               AND ms.ms_status != 'RECEIVED'" +
-                    "           AND ms.ms_status != 'LOADED')))" , nativeQuery = true)
-    List<BookingDetail> getBookingDetailByProcessedFlag();
+                "        WHERE (ms.ms_message_id = pnrbk.pnr_id) " +
+                "               AND (ms.ms_status = 'ANALYZED' " +
+                "               OR ms.ms_status = 'PARTIAL_ANALYZE' " +
+                "               OR ms.ms_status = 'FAILED_ANALYZE'" +
+                    "           OR ms.ms_status = 'FAILED_LOAD'))) LIMIT :theLimit" , nativeQuery = true)
+    List<BookingDetail> getBookingDetailByProcessedFlag(@Param("theLimit") Long theLimit);
 
     @Query("SELECT p FROM BookingDetail p WHERE p.flightNumber = (:flight_number) " +
             "AND UPPER(p.origin) = UPPER(:origin)" +
@@ -57,7 +58,7 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
                                                         @Param("destination") String destination, @Param("eta_date") Date eta_date,
                                                         @Param("etd_date") Date etd_date);
 
-    @Query("SELECT pax FROM Passenger pax WHERE pax.id IN (" +
+    @Query("SELECT pax FROM Passenger pax left join fetch pax.bookingDetails left join fetch pax.flightPaxList pfpl left join fetch pfpl.flight left join fetch pfpl.passenger  WHERE pax.id IN (" +
             "SELECT pxtag.pax_id FROM PassengerIDTag pxtag WHERE pxtag.idTag IN (SELECT p.idTag FROM PassengerIDTag p WHERE p.pax_id = (:pax_id) ))")
     public List<Passenger> getBookingDetailsByPassengerIdTag(@Param("pax_id") Long pax_id);
 

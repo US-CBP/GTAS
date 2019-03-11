@@ -90,7 +90,7 @@ public class CaseDispositionRepositoryIT {
             }
 
             @Override
-            public int getOffset() {
+            public long getOffset() {
                 return 0;
             }
 

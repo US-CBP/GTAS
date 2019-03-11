@@ -64,7 +64,7 @@ public class PnrServiceImpl implements PnrService {
 	@Override
 	@Transactional
 	public Pnr findById(Long id) {
-		return pnrRespository.findOne(id);
+		return pnrRespository.findById(id).orElse(null);
 	}
 
 	@Override

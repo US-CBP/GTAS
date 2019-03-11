@@ -32,10 +32,10 @@ public class Passenger extends BaseEntityAudit {
 
     @OneToOne(cascade = {CascadeType.PERSIST}, targetEntity = PassengerDetails.class, fetch=FetchType.LAZY)
     private PassengerDetails passengerDetails;
-    
+
     @OneToOne(cascade =  {CascadeType.PERSIST}, targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY)
     private PassengerTripDetails passengerTripDetails;
-    
+
     @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
     private PassengerWLTimestamp passengerWLTimestamp;
 
@@ -296,7 +296,7 @@ public class Passenger extends BaseEntityAudit {
 	public void setAttachments(Set<Attachment> attachments) {
 		this.attachments = attachments;
 	}
-    
+
     public PassengerDetails getPassengerDetails() {
 		return passengerDetails;
 	}

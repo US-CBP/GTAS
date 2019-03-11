@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class,
 		WebAppConfig.class })
 @WebAppConfiguration
-@TransactionConfiguration(defaultRollback = true)
+@Rollback(true)
 public class SecurityUserDetailsServiceIT {
 
 	private static final Logger logger = LoggerFactory.getLogger(SecurityUserDetailsServiceIT.class);

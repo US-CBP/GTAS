@@ -8,6 +8,8 @@ package gov.gtas.repository;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsDisposition;
+import gov.gtas.model.lookup.Airport;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,7 +32,12 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
 
     public Page<Case> findAll(Pageable pageable);
 
-    public Case findById(Long id);
+    //public Case findById(Long id);
+
+    default Case findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 
     @Query("SELECT c FROM Case c  left join fetch c.caseComments where c.id = :id")
     public Case caseWithComments(@Param("id") Long id);

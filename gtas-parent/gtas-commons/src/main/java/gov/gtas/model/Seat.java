@@ -7,12 +7,7 @@ package gov.gtas.model;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "seat", uniqueConstraints = { @UniqueConstraint(columnNames = {
@@ -30,11 +25,11 @@ public class Seat extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean apis = Boolean.valueOf(false);
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	private Passenger passenger;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
 	private Flight flight;
 
@@ -72,8 +67,12 @@ public class Seat extends BaseEntity {
 
 	@Override
 	public int hashCode() {
+		String num =  this.number == null ? null : this.number.toUpperCase();
+		if (num != null) {
+			num = num.replaceAll("\\\\", "");
+		}
 		return Objects
-				.hash(this.number, this.apis, this.passenger, this.flight);
+				.hash(num, this.apis, this.passenger.getId());
 	}
 
 	@Override
@@ -83,9 +82,16 @@ public class Seat extends BaseEntity {
 		if (!(obj instanceof Seat))
 			return false;
 		final Seat other = (Seat) obj;
-		return Objects.equals(this.number, other.number)
+		String num =   this.number == null ? null : this.number.toUpperCase();
+		if (num != null) {
+			num = num.replaceAll("\\\\", "");
+		}
+		String num2 =  other.getNumber() == null ? null : other.getNumber().toUpperCase();
+		if (num2 != null) {
+			num2 = num2.replaceAll("\\\\", "");
+		}
+		return Objects.equals(num, num2)
 				&& Objects.equals(this.apis, other.apis)
-				&& Objects.equals(this.passenger, other.passenger)
-				&& Objects.equals(this.flight, other.flight);
+				&& Objects.equals(this.passenger.getId(), other.passenger.getId());
 	}
 }

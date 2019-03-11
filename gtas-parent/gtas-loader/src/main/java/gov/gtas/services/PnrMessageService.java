@@ -13,7 +13,7 @@ import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.FlightPaxRepository;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,12 +114,14 @@ public class PnrMessageService extends MessageLoaderService {
 					pnr.getFlightLegs(),
 					msgDto.getPrimeFlightKey(),
 					pnr.getBookingDetails());
-			Set<Passenger> newPassengers  = loaderRepo.makeNewPassengerObjects(primeFlight,
+			CreatedAndOldPassengerInformation createdAndOldPassengerInformation  = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(),
 					pnr.getPassengers(),
 					pnr.getBookingDetails(),
 					pnr);
-			int createdPassengers = loaderRepo.createPassengers(newPassengers,
+
+
+			int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(),
 					pnr.getPassengers(),
 					primeFlight,
 					pnr.getBookingDetails());
@@ -127,7 +129,7 @@ public class PnrMessageService extends MessageLoaderService {
 
 			createFlightPax(pnr);
 			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createBookingDetails(pnr);
+			loaderRepo.createBookingDetails(pnr, createdAndOldPassengerInformation.getBdSet());
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setPnr(pnr);
@@ -143,7 +145,9 @@ public class PnrMessageService extends MessageLoaderService {
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
-			logger.info("ERROR", e);
+			pnr.setBookingDetails(null);
+			pnr.setFlightLegs(null);
+			logger.error("ERROR", e);
 		} finally {
 			if (!createMessage(pnr)) {
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
@@ -314,9 +318,9 @@ public class PnrMessageService extends MessageLoaderService {
 		try {
 			m = msgDao.save(m);
 			ret = true;
-			if (useIndexer) {
+/*			if (useIndexer) {
 				indexer.indexPnr(m);
-			}
+			}*/
 		} catch (Exception e) {
 			handleException(e, m);
 			ret = false;
@@ -389,7 +393,7 @@ public class PnrMessageService extends MessageLoaderService {
     		}
     		oneFlight=true;
 		}
-		flightPaxRepository.save(flightPaxes);
+		flightPaxRepository.saveAll(flightPaxes);
 
 	}
 

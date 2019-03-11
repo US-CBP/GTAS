@@ -224,7 +224,7 @@ public class RuleEngineRequestBuilder {
 
     private void addPhoneObjects(final Pnr pnr, final Collection<Phone> phones) {
         if (phones == null || phones.isEmpty()) {
-            logger.info("No phones info.");
+            logger.debug("No phones info.");
             return;
         }
         for (Phone phone : phones) {

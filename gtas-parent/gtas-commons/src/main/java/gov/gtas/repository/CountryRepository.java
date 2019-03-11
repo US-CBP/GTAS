@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.FlightPax;
 import gov.gtas.model.lookup.Country;
 
 import java.util.List;
@@ -22,5 +23,10 @@ public interface CountryRepository extends CrudRepository<Country, Long>{
     public List<Country> getCountryByThreeLetterCode(@Param("countryCode") String countryCode);
     
     public Country findByName(String name);
+    
+    default Country findOne(Long countryId)
+    {
+    	return findById(countryId).orElse(null);
+    }
 
 }

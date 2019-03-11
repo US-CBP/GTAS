@@ -12,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Disposition;
+import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
 
@@ -20,15 +21,20 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 	@Query("SELECT p FROM Passenger p WHERE p.id = :id")
 	Passenger getPassengerById(@Param("id") Long id);
 
-	@Query("SELECT p FROM Passenger p left join fetch p.flight left join fetch  p.paxWatchlistLinks left join fetch p.passengerWLTimestamp WHERE p.id = :id")
+	@Query("SELECT p FROM Passenger p left join fetch p.documents left join fetch p.flight left join fetch  p.paxWatchlistLinks WHERE p.id = :id")
 	Passenger getFullPassengerById(@Param("id") Long id);
 
-	@Query("SELECT p from Passenger p where p.id in :id")
+	@Query("SELECT p from Passenger p left join fetch p.documents where p.id in :id")
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
-	
 
+    @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
+    List<Passenger> getPassengerByName(@Param("firstName") String firstName,@Param("lastName") String lastName);
+    
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.lastName) = UPPER(:lastName)")
     List<Passenger> getPassengersByLastName(@Param("lastName") String lastName);
+
+    @Query("SELECT p FROM Passenger p left join fetch p.documents left join fetch p.flightPaxList pfl left join fetch pfl.flight WHERE p.id = :id")
+    Passenger findByIdWithFlightPaxAndDocuments(@Param("id") Long id);
 
   /*  @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId)")MESSAGE RECEIVED FROM QUEUE:
     public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);*/

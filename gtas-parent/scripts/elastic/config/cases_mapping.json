@@ -1,0 +1,444 @@
+{
+    "template" : "case*",
+    "version" : 1,
+    "settings" : {
+      "index.refresh_interval" : "5s"
+    },
+    "mappings" : {
+      "_default_" : {
+        "properties" : {
+          "@timestamp" : {
+            "type" : "date"
+          },
+          "@version" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "citizenshipcountry" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "created_at" : {
+            "type" : "date"
+          },
+          "disposition" : {
+            "type" : "text"
+          },
+          "dob" : {
+            "type" : "date"
+          },
+          "document" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "firstname" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "flight" : {
+            "properties" : {
+              "id" : {
+                "type" : "long"
+              },
+              "eta" : {
+                "type" : "date"
+              },
+              "eta_date" : {
+                "type" : "date"
+              },
+              "etd" : {
+                "type" : "date"
+              },
+              "etd_date" : {
+                "type" : "date"
+              },
+              "flight_date" : {
+                "type" : "date"
+              },
+              "flight_number" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "full_flight_number" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "origin" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "origin_country" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "passenger_count" : {
+                "type" : "long"
+              },
+              "rule_hit_count" : {
+                "type" : "long"
+              }
+            }
+          },
+          "flightid" : {
+            "type" : "long"
+          },
+          "flightnumber" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "highpriorityrulecatid" : {
+            "type" : "long"
+          },
+          "hit_disposition" : {
+            
+            "properties" : {
+              "comments" : {
+               
+                "properties" : {
+                  "comments" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "created_at" : {
+                    "type" : "date"
+                  },
+                  "created_by" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "id" : {
+                    "type" : "long"
+                  },
+                  "hit_id" : {
+                    "type" : "long"
+                  },
+                  "updated_at" : {
+                    "type" : "date"
+                  },
+                  "updated_by" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  }
+                }
+              },
+              "created_at" : {
+                "type" : "date"
+              },
+              "description" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "hit_id" : {
+                "type" : "long"
+              },
+              "id" : {
+                "type" : "long"
+              },
+              "rule_cat_id" : {
+                "type" : "long"
+              },
+              "status" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "updated_at" : {
+                "type" : "date"
+              },
+              "updated_by" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "valid" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              }
+            }
+          },
+          "id" : {
+            "type" : "long"
+          },
+          
+          "lastname" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "passenger" : {
+            "properties" : {
+              "age" : {
+                "type" : "long"
+              },
+              "citizenship_country" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "days_visa_valid" : {
+                "type" : "long"
+              },
+              "debark_country" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "debarkation" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+               "debarkation_coordination" : {
+              	"type": "geo_point"
+              },
+              "dob" : {
+                "type" : "date"
+              },
+              "embark_country" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "embarkation" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "embarkation_coordination" : {
+              	"type": "geo_point"
+              },
+              "first_name" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "gender" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "id" : {
+                "type" : "long"
+              },
+              "last_name" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "passenger_type" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "paxid" : {
+                "type" : "long"
+              },
+              "ref_number" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "residency_country" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "travel_frequency" : {
+                "type" : "long"
+              },
+              "watchlistchecktimestamp" : {
+                "type" : "date"
+              }
+            }
+          },
+          "passengerType" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "passengername" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "passengertype" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+         
+          "paxid" : {
+            "type" : "long"
+          },
+          "status" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "tags" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "updated_at" : {
+            "type" : "date"
+          },
+          "updated_by" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          }
+        }
+      }
+    }
+}

@@ -160,7 +160,7 @@ public class QueryBuilderService {
 
 			totalCount = flights.getTotalFlights();
 
-			for (Flight flight : flights.getFlights()) {
+			for (FlightVo flight : flights.getFlights()) {
 				if (flight != null && flight.getId() > 0) {
 					FlightVo flightVo = new FlightVo();
 

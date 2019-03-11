@@ -110,7 +110,7 @@ public class LoaderScheduler {
 		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
-		messageStatusRepository.save(messageStatusList);
+		messageStatusRepository.saveAll(messageStatusList);
 		if (result != null) {
 			stats.incrementNumFilesProcessed();
 			stats.incrementNumMessagesProcessed(result[0]);

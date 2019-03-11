@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
@@ -25,6 +27,8 @@ import java.util.concurrent.Executors;
 
 @Component
 @EnableJms
+@DependsOn("elasticHelper")
+@ComponentScan("gov.gtas")
 public class InboundQMessageListener {
 
     private static final Logger logger = LoggerFactory.getLogger(InboundQMessageListener.class);
@@ -56,7 +60,7 @@ public class InboundQMessageListener {
 
     @PostConstruct
     public void init(){
-        logger.info("++++++++++INIT Called+++++++++++++++++");
+        logger.debug("++++++++++INIT Called+++++++++++++++++");
         config.useSingleServer().setAddress(redisConnectionString);
         //config.useSingleServer().setAddress(redisConnectionString);
         config.setNettyThreads(0);
@@ -74,7 +78,7 @@ public class InboundQMessageListener {
     @JmsListener(destination = INBOUND_QUEUE)
     public void receiveMessage(final Message<?> message) throws JMSException {
 
-        logger.info("++++++++Message Received++++++++++++");
+        logger.debug("++++++++Message Received++++++++++++");
         MessageHeaders headers =  message.getHeaders();
 
         try {
@@ -88,7 +92,7 @@ public class InboundQMessageListener {
             logger.error("Error receiving message", ex);
         }
 
-        logger.info("+++++++++++++++++++++++++++++");
+        logger.debug("+++++++++++++++++++++++++++++");
     }
 
 

@@ -84,6 +84,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     @Query( "SELECT DISTINCT f FROM Flight f " +
             "LEFT JOIN FETCH f.passengers pass " +
             "LEFT JOIN FETCH pass.paxWatchlistLinks " +
+            "LEFT JOIN FETCH pass.documents " +
             "LEFT JOIN FETCH pass.passengerWLTimestamp pwts " +
             "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
             "            OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd) " +
@@ -92,4 +93,25 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
                                 " OR (SELECT COUNT(pass.id) FROM pass WHERE pass.flight.id = f.id AND pass.id = pwts.id AND pwts.watchlistCheckTimestamp IS NULL) > 0))")
     List<Flight> getInboundAndOutboundFlightsWithinTimeFrame(@Param("dateTimeStart")Date date1,
     											  @Param("dateTimeEnd") Date date2);
+
+    default Flight findOne(Long flightId)
+    {
+    	return findById(flightId).orElse(null);
+    }
+
+    @Query( "SELECT f FROM Flight f " +
+            "LEFT JOIN FETCH f.flightPassengerCount " +
+            "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd) " +
+            "AND f.direction = :direction " +
+            "AND ((f.isOperatingFlight = FALSE" +
+            "    AND f.isOperatingFlight = FALSE ) OR f.isOperatingFlight = true) ")
+    List<Flight> getFlightsThreeDaysForwardWithDirection(@Param("dateTimeStart")Date date1,
+                                                         @Param("dateTimeEnd") Date date2,
+                                                         @Param("direction") String direction);
+
+    @Query("SELECT f from Flight f " +
+            "LEFT JOIN FETCH f.passengers pax " +
+            "LEFT JOIN FETCH pax.seatAssignments " +
+            "WHERE f.id = :id" )
+    Flight getFlightPassengerAndSeatById(@Param("id") Long flightId);
 }

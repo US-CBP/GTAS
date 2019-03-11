@@ -101,10 +101,9 @@ public class PassengerDetailsController {
 			@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
-		Passenger t = pService.findById(Long.valueOf(paxId));
+		Passenger t = pService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
 		Flight flight = fService.findById(Long.parseLong(flightId));
 		List<Bag> bagList = new ArrayList<>();
-		List<Seat> pnrSeatList = new ArrayList<Seat>();
 		if (flightId != null && flight.getId().toString().equals(flightId)) {
 			vo.setFlightNumber(flight.getFlightNumber());
 			vo.setCarrier(flight.getCarrier());
@@ -182,25 +181,23 @@ public class PassengerDetailsController {
 			
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
-				pnrSeatList.addAll(seatRepository.findByFlightIdAndPassengerIdNotApis(Long.parseLong(flightId), p.getId()));
 				FlightPax flightPax = getPnrFlightPax(p, flight);
 				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
 				bagVoOptional.ifPresent(tempVo::addBag);
+				for (Seat s : p.getSeatAssignments()) {
+					SeatVo seatVo = new SeatVo();
+					seatVo.setFirstName(p.getPassengerDetails().getFirstName());
+					seatVo.setLastName(p.getPassengerDetails().getLastName());
+					seatVo.setNumber(s.getNumber());
+					seatVo.setFlightNumber(flight.getFullFlightNumber());
+					tempVo.addSeat(seatVo);
+				}
 			}
 
 			FlightPax mainPassengerFlightPax = getPnrFlightPax(t, flight);
 			Optional<BagVo> bagOptional = getBagOptional(mainPassengerFlightPax);
 			bagOptional.ifPresent(bagVo -> tempVo.setBagCount(bagVo.getBag_count()));
 
-			for (Seat s : pnrSeatList) {
-				SeatVo seatVo = new SeatVo();
-				seatVo.setFirstName(s.getPassenger().getPassengerDetails().getFirstName());
-				seatVo.setLastName(s.getPassenger().getPassengerDetails().getLastName());
-				seatVo.setNumber(s.getNumber());
-				seatVo.setFlightNumber(s.getFlight()
-						.getFullFlightNumber());
-				tempVo.addSeat(seatVo);
-			}
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
@@ -1071,6 +1068,12 @@ public class PassengerDetailsController {
 				+ " and breaks expected conventions");
 
 	}
+
+	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
+    public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
+
+    	return fService.getSeatsByFlightId(flightId);
+    }
 
 	private Pnr getLatestPnrFromList(List<Pnr> pnrList) {
 		Pnr latest = pnrList.get(0);

@@ -5,6 +5,7 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface GtasLoader {
@@ -16,7 +17,7 @@ public interface GtasLoader {
                                            List<FlightLeg> flightLegs,
                                            String[] primeFlightKey,
                                            Set<BookingDetail> bookingDetails) throws ParseException;
-    Set<Passenger> makeNewPassengerObjects(Flight primeFlight,
+    CreatedAndOldPassengerInformation makeNewPassengerObjects(Flight primeFlight,
                                            List<PassengerVo> passengers,
                                            Set<Passenger> messagePassengers,
                                            Set<BookingDetail> bookingDetails,
@@ -26,5 +27,5 @@ public interface GtasLoader {
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
     int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);
     void updateFlightPassengerCount(Flight primeFlight, int createdPassengers);
-    void createBookingDetails(Pnr pnr);
+    void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> passBookDetails);
 }
