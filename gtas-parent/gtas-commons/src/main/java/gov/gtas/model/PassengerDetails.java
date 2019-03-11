@@ -11,24 +11,39 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "passenger_details")
-public class PassengerDetails {
+public class PassengerDetails extends BaseEntityAudit{
 
     @SuppressWarnings("unused")
     public PassengerDetails() {
     }
 
     @SuppressWarnings("unused")
-    public PassengerDetails(Long passengerId) {
+    public PassengerDetails(Passenger passenger) {
+        this.passenger= passenger;
+    }
+
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(Long passengerId) {
         this.passengerId = passengerId;
     }
-    
-    @Id
-    @Column(name = "pd_passenger_id", columnDefinition = "bigint unsigned")
+
+    @Column(name = "pd_passenger_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
     private
     Long passengerId;
-    
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
+
     @OneToOne(optional = false, fetch=FetchType.LAZY)
-    @JoinColumn(name="pd_passenger_id", updatable = false, insertable = false)
+    @JoinColumn(name="pd_passenger_id")
     Passenger passenger; 
     
     @Column(name = "pd_passenger_type", length = 3, nullable = false)

@@ -10,18 +10,25 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "passenger_trip_details")
-public class PassengerTripDetails {
+public class PassengerTripDetails extends BaseEntityAudit {
 
     public PassengerTripDetails() {
     }
 
-	@Id
-	@Column(name = "ptd_id", columnDefinition = "bigint unsigned")
+	@Column(name = "ptd_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
 	private
 	Long paxId;
 
-    @OneToOne(optional = false, fetch=FetchType.LAZY)
-	@JoinColumn(name = "ptd_id", referencedColumnName = "id", updatable = false, insertable = false)
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
+
+	@OneToOne(optional = false, fetch=FetchType.LAZY)
+	@JoinColumn(name = "ptd_id", referencedColumnName = "id")
     Passenger passenger; 
     
     /** calculated field */
