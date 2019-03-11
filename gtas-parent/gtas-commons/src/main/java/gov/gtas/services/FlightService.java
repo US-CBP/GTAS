@@ -11,12 +11,14 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.SeatVo;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.vo.passenger.FlightVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface FlightService {
@@ -59,4 +61,9 @@ public interface FlightService {
 	* Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist matches.
 	* */
 	public Long getFlightFuzzyMatchesOnly(Long flightId);
-	}
+	
+	public List<SeatVo> getSeatsByFlightId(Long flightId);
+
+	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights);
+
+}

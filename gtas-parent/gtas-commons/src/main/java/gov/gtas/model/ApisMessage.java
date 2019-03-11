@@ -34,21 +34,21 @@ public class ApisMessage extends Message {
     @JoinTable(name = "apis_message_reporting_party", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "reporting_party_id"))
     private Set<ReportingParty> reportingParties = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class)
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Flight.class)
     @JoinTable(name = "apis_message_flight", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class)
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Passenger.class)
     @JoinTable(name = "apis_message_passenger", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = FlightPax.class, cascade = {
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = FlightPax.class, cascade = {
             CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "apis_message_flight_pax", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "flight_pax_id"))
     private Set<FlightPax> flightPaxList = new HashSet<>();
     
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Phone.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Phone.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "apis_phone", joinColumns = @JoinColumn(name = "apis_message_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
     private Set<Phone> phones = new HashSet<>();
 

@@ -5,9 +5,15 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.model.AuditRecord;
 import gov.gtas.model.InvalidObjectInfo;
 import org.springframework.data.repository.CrudRepository;
 
 public interface ErrorLoggingRepository extends CrudRepository<InvalidObjectInfo, Long>{
+	
+    default InvalidObjectInfo findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 
 }

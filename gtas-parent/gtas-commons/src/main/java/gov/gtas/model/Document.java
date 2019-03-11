@@ -8,12 +8,7 @@ package gov.gtas.model;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
@@ -44,7 +39,7 @@ public class Document extends BaseEntity {
 	@Column(name = "issuance_country")
 	private String issuanceCountry;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
     /** calculated field */

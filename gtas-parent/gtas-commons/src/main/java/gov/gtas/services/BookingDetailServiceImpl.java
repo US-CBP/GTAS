@@ -81,7 +81,7 @@ public class BookingDetailServiceImpl implements BookingDetailService{
             } else {
                 //If booking detail exists in list transfer information from duplicate bd to existing unique BD.
                 try {
-                    mergeBookingDetails(uniqueBookingDetail, bd);
+                    this.mergeBookingDetails(uniqueBookingDetail, bd);
                 } catch (Exception ignored) {
                     logger.error("failed booking a booking detail with error: " + ignored.getMessage() );
                 }

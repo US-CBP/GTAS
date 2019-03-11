@@ -9,6 +9,7 @@ import gov.gtas.model.ApisMessage;
 import gov.gtas.model.FlightPax;
 import gov.gtas.model.Message;
 import gov.gtas.model.Pnr;
+import gov.gtas.model.lookup.Airport;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
-	@Query("SELECT apis FROM ApisMessage apis join apis.passengers pax join apis.flights f where pax.id = :passengerId and f.id = :flightId")
+	@Query("SELECT apis FROM ApisMessage apis left join fetch apis.phones join fetch apis.passengers pax join fetch apis.flights f where pax.id = :passengerId and f.id = :flightId")
 	List<ApisMessage> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 	@Query("SELECT fp.reservationReferenceNumber FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")
@@ -30,4 +31,9 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 			@Param("passengerId") Long passengerId);	
     @Query("SELECT apis FROM ApisMessage apis WHERE apis.createDate >= current_date() - 1")
     public List<Message> getAPIsByDates();
+    
+    default ApisMessage findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

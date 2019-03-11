@@ -32,7 +32,11 @@ public class BookingDetailCompressScheduler {
     @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() {
 
-        List<BookingDetail> unprocessedBookingDetails = bookingDetailRepository.getBookingDetailByProcessedFlag();
+        List<BookingDetail> unprocessedBookingDetails = bookingDetailRepository.getBookingDetailByProcessedFlag(50L);
+        if (unprocessedBookingDetails.isEmpty()) {
+            return;
+        }
+
         long time = System.nanoTime();
 
         // We want to save the earliest booking detail, which we expect to have the lowest ID.
@@ -57,14 +61,11 @@ public class BookingDetailCompressScheduler {
                 }
             }
         }
-        // calling database in loop intentionally. We do not care about performance gains of calling by list and
-        // the locking created by updating can cause issues with the loader.
+
         for (BookingDetail bd : finalDBToSaveList) {
-            if (!bd.getProcessed()) {
                 bd.setProcessed(true);
-                bookingDetailRepository.save(bd);
-            }
         }
+        bookingDetailRepository.saveAll(finalDBToSaveList);
 
         if (!finalDBToSaveList.isEmpty()) {
             logger.info("Booking detail compress finished in " + (System.nanoTime() - time) / 1000000 + "m/s. Merged " + unprocessedBookingDetails.size()

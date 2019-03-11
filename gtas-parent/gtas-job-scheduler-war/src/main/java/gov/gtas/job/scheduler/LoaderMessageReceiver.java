@@ -25,10 +25,10 @@ public class LoaderMessageReceiver {
 	
 	@JmsListener(destination = GTAS_LOADER_QUEUE, concurrency = "10")
 	public void receiveMessagesForLoader(Message<?> message, Session session, javax.jms.Message msg){
-		logger.info("+++++++++++++++++IN LOADER QUEUE++++++++++++++++++++++++++++++++++++");
+		logger.debug("+++++++++++++++++IN LOADER QUEUE++++++++++++++++++++++++++++++++++++");
 		MessageHeaders headers =  message.getHeaders();
-		logger.info("Application : headers received : {}", headers);
-		logger.info("Filename: "+headers.get("Filename"));
+		logger.debug("Application : headers received : {}", headers);
+		logger.debug("Filename: "+headers.get("Filename"));
 		
 		queueManager.receiveMessages(message);
 	}

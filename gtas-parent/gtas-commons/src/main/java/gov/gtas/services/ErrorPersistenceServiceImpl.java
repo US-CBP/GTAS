@@ -32,7 +32,7 @@ public class ErrorPersistenceServiceImpl implements ErrorPersistenceService{
 
     @Override
     public ErrorDetailInfo findById(Long id) {
-        ErrorRecord err =  errorRecordRepository.findOne(id);
+        ErrorRecord err =  errorRecordRepository.findById(id).orElse(null);
         return new BasicErrorDetailInfo(err.getId(), err.getCode(), err.getTimestamp(), err.getDescription(), err.fetchErrorDetails());
     }
 

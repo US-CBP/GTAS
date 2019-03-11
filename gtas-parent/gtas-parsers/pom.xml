@@ -24,8 +24,8 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -112,24 +112,18 @@
             <artifactId>gtas-commons</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>gov.gtas</groupId>
-            <artifactId>gtas-commons</artifactId>
-            <version>0.1-SNAPSHOT</version>
-        </dependency>
 
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <jedis.version>2.9.0</jedis.version>
         <embedded-redis.version>0.6</embedded-redis.version>
-        <commons-lang3.version>3.5</commons-lang3.version>
+        <commons-lang3.version>3.8</commons-lang3.version>
         <commons-math3.version>3.6.1</commons-math3.version>
-        <commons-io.version>2.5</commons-io.version>
-        <commons-collections4.version>4.1</commons-collections4.version>
-        <collections-generic.version>4.01</collections-generic.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-collections4.version>4.2</commons-collections4.version>
     </properties>
 
 
@@ -137,12 +131,12 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>build-gtas-parser</id>
                         <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
+                            <appendAssemblyId>true</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass>gov.gtas.parsers.redisson.RedisLoaderMain</mainClass>

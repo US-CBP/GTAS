@@ -71,7 +71,7 @@
                 <div>Flight:&nbsp;
                   <strong>{{passenger.carrier + passenger.flightNumber }}</strong>
                 </div>
-                <div>SEAT:&nbsp; <strong>{{ passenger.seat }}</strong></div>
+                <div>SEAT:&nbsp; <strong><a ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a></strong></div>
               </div>
               <div>
                 <div>Origin Airport:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>

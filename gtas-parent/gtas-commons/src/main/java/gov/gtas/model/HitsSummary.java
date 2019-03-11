@@ -27,18 +27,18 @@ public class HitsSummary extends BaseEntity {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HitDetail> hitdetails = new ArrayList<HitDetail>();
 
-    @Column(name = "flightId", columnDefinition = "bigint unsigned")
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
     private Long flightId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flightId", referencedColumnName = "id", updatable = false, insertable = false)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
     private Flight flight;
 
-    @Column(name = "paxId", columnDefinition = "bigint unsigned")
+    @Column(name = "passenger_id", columnDefinition = "bigint unsigned")
     private Long paxId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paxId", referencedColumnName = "id", updatable = false, insertable = false)
+    @JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
     private Passenger passenger;
 
     @Column(name = "rule_hit_count")

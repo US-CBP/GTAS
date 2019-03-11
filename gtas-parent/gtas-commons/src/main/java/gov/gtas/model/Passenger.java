@@ -103,29 +103,28 @@ public class Passenger extends BaseEntityAudit {
     @JsonIgnore
     private Flight flight;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Document> documents = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Attachment> attachments = new HashSet<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Seat> seatAssignments = new HashSet<>();
 
     @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
 
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Bag> bags = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY, mappedBy="passenger")
     private Set<FlightPax> flightPaxList = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<TicketFare> tickets = new HashSet<>();
 
     public Flight getFlight() {

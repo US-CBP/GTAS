@@ -24,12 +24,12 @@ import org.kie.api.KieBase;
 import org.kie.api.runtime.KieSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 public class RuleUtilsIT {
 	private static final String testDrl = "package gov.gtas.rule; "
 			+ "import gov.gtas.model.ApisMessage; "

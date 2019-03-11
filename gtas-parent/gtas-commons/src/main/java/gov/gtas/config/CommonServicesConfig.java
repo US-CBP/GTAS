@@ -68,6 +68,7 @@ public class CommonServicesConfig {
     private static final String PROPERTY_NAME_C3P0_MAX_SIZE = "c3p0.max_size";
     private static final String PROPERTY_NAME_C3P0_MAX_IDLETIME = "c3p0.max_idletime";
     private static final String PROPERTY_NAME_C3P0_MAX_STATEMENTS = "c3p0.max_statements";
+    private static final String PROPERTY_NAME_C3P0_MAX_CONNECT = "c3p0.idleConnectionTestPeriod";
 
     private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
 
@@ -147,6 +148,8 @@ public class CommonServicesConfig {
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_IDLETIME)));
         dataSource.setMaxStatements(Integer.parseInt(env
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_STATEMENTS)));
+        dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env
+                .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_CONNECT)));
 
         return dataSource;
     }

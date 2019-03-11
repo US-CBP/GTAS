@@ -41,6 +41,8 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.FlightService;
+import gov.gtas.vo.passenger.FlightVo;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +65,9 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
 
     @Autowired
     private AppConfigurationRepository appConfigurationRepository;
+
+    @Autowired
+    private FlightService flightService;
 
     @Override
     @Transactional
@@ -214,14 +219,15 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
             TypedQuery<Flight> query = entityManager.createQuery(jpqlQuery, Flight.class);
             MutableInt positionalParameter = new MutableInt();
             setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
-            Integer maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
+            int maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
                     .MAX_FLIGHT_QUERY_RESULT).getValue());
             query.setMaxResults(maxQueryResults);
             // if page size is less than zero, return all flight result
 //          if(queryRequest.getPageSize() < 0) {
             logger.info("Getting all flights with this query: " + jpqlQuery);
             List<Flight> flights = query.getResultList();
-            vo.setFlights(flights);
+            List<FlightVo> flightVos = flightService.convertFlightToFlightVo(flights);
+            vo.setFlights(flightVos);
             vo.setTotalFlights(flights.size());
             vo.setQueryLimitReached(flights.size() >= maxQueryResults);
 
@@ -262,11 +268,11 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
         try {
             String jpqlQuery = JPQLGenerator.generateQuery(queryRequest.getQuery(), EntityEnum.PASSENGER);
 
-            TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
+             TypedQuery<Object[]> query = entityManager.createQuery(jpqlQuery, Object[].class);
             MutableInt positionalParameter = new MutableInt();
             setJPQLParameters(query, queryRequest.getQuery(), positionalParameter);
 
-            Integer maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
+            int maxQueryResults =  Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository
                     .MAX_PASSENGER_QUERY_RESULT).getValue());
             query.setMaxResults(maxQueryResults);
 

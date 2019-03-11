@@ -278,15 +278,16 @@ public class TargetingServiceImpl implements TargetingService {
 	 * @see gov.gtas.svc.TargetingService#analyzeLoadedMessages(boolean)
 	 */
 	@Override
-	public RuleResults analyzeLoadedMessages(
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(
 			final boolean updateProcesssedMessageStat) {
 		logger.debug("Entering analyzeLoadedMessages()");
 
 		List<MessageStatus> source =
 				messageStatusRepository
 				.getMessagesFromStatus(
-				MessageStatusEnum.LOADED);
-
+				MessageStatusEnum.LOADED.getName(), 250L);
+		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
+		ruleResultsWithMessageStatus.setMessageStatusList(source);
 		List<Message> target = source
 				.stream()
 				.map(MessageStatus::getMessage)
@@ -299,14 +300,14 @@ public class TargetingServiceImpl implements TargetingService {
 			logger.debug("updating messages status from loaded to analyzed.");
 			if (updateProcesssedMessageStat) {
 				for (MessageStatus ms : source) {
-					ms.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
+					ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
 				}
 			}
-			logger.debug("saving message status");
-			messageStatusRepository.save(source);
-			logger.debug("done saving message status");
+			messageStatusRepository.saveAll(source);
+			ruleResultsWithMessageStatus.setRuleResults(ruleResults);
+			ruleResultsWithMessageStatus.setMessageStatusList(source);
 			logger.debug("Exiting analyzeLoadedMessages()");
-			return ruleResults;
+			return ruleResultsWithMessageStatus;
 		} catch (CommonServiceException cse) {
 			if (cse.getErrorCode().equals(
 					RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
@@ -319,19 +320,20 @@ public class TargetingServiceImpl implements TargetingService {
 					for (MessageStatus ms : source) {
 						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 					}
-					messageStatusRepository.save(source);
+					messageStatusRepository.saveAll(source);
 				}
 			} else {
 				if (updateProcesssedMessageStat) {
 					for (MessageStatus ms : source) {
 						ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
 					}
-					messageStatusRepository.save(source);
+					messageStatusRepository.saveAll(source);
 				}
 				throw cse;
 			}
 		}
-		return ruleResults;
+		ruleResultsWithMessageStatus.setRuleResults(ruleResults);
+		return ruleResultsWithMessageStatus;
 	}
 
 	/**
@@ -573,21 +575,59 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	@Transactional
 	@Override
-	public RuleResults runningRuleEngine() {
+	public RuleResultsWithMessageStatus runningRuleEngine() {
 		logger.debug("Entering runningRuleEngine().");
 	  	return analyzeLoadedMessages(true);
 	}
 
-	public TargetingServiceResults createHitsAndCases(RuleResults ruleRunningResult) {
-		TargetingServiceResults targetingServiceResults = null;
+	@Transactional
+	@Override
+	public void saveMessageStatuses(List<MessageStatus> messageStatuses) {
+		messageStatusRepository.saveAll(messageStatuses);
+	}
+
+	@SuppressWarnings("Duplicates")
+    public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult) {
+		List<TargetingServiceResults> targetingServiceResultsList = new ArrayList<>();
 		if (ruleRunningResult != null && ruleRunningResult.hasResults()) {
-			targetingServiceResults = new TargetingServiceResults();
-			Set<Case> casesSet = processResultAndMakeCases(ruleRunningResult);
-			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult.getTargetingResult());
-			targetingServiceResults.setCaseSet(casesSet);
-			targetingServiceResults.setHitsSummaryList(hitsSummaryList);
+            Set<Case> casesSet = processResultAndMakeCases(ruleRunningResult);
+            List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult.getTargetingResult());
+
+            Map<Long, Set<Case>> caseToFlightIdMap = new HashMap<>();
+			for (Case caze : casesSet) {
+				Long flightId = caze.getFlightId();
+				if (caseToFlightIdMap.containsKey(flightId)) {
+					caseToFlightIdMap.get(flightId).add(caze);
+				} else {
+					Set<Case> cazeList = new HashSet<>();
+					cazeList.add(caze);
+					caseToFlightIdMap.put(flightId, cazeList);
+				}
+			}
+            Map<Long, List<HitsSummary>> hitSummaryToFlightIdMap = new HashMap<>();
+            for (HitsSummary hitsSummary : hitsSummaryList) {
+                Long flightId = hitsSummary.getFlightId();
+                if (hitSummaryToFlightIdMap.containsKey(flightId)) {
+                    hitSummaryToFlightIdMap.get(flightId).add(hitsSummary);
+                } else {
+                    List<HitsSummary> hitsSummaries = new ArrayList<>();
+                    hitsSummaries.add(hitsSummary);
+                    hitSummaryToFlightIdMap.put(flightId, hitsSummaries);
+                }
+            }
+            Set<Long> flightIdsToProcess = new HashSet<>();
+            flightIdsToProcess.addAll(caseToFlightIdMap.keySet());
+            flightIdsToProcess.addAll(hitSummaryToFlightIdMap.keySet());
+            for (Long flightId : flightIdsToProcess) {
+                Set<Case> cases = caseToFlightIdMap.get(flightId);
+                List<HitsSummary> hitsSummaries = hitSummaryToFlightIdMap.get(flightId);
+                TargetingServiceResults targetingServiceResults = new TargetingServiceResults();
+                targetingServiceResults.setCaseSet(cases);
+                targetingServiceResults.setHitsSummaryList(hitsSummaries);
+                targetingServiceResultsList.add(targetingServiceResults);
+            }
 		}
-		return targetingServiceResults;
+		return targetingServiceResultsList;
 	}
 
 	@Transactional
@@ -595,13 +635,13 @@ public class TargetingServiceImpl implements TargetingService {
 		try {
 			if (targetingServiceResults != null) {
 				Set<Long> uniqueFlights = new HashSet<>();
-				caseDispositionRepository.save(targetingServiceResults.getCaseSet());
-				hitsSummaryRepository.save(targetingServiceResults.getHitsSummaryList());
+				caseDispositionRepository.saveAll(targetingServiceResults.getCaseSet());
+				hitsSummaryRepository.saveAll(targetingServiceResults.getHitsSummaryList());
 				passengerService.createDisposition(targetingServiceResults.getHitsSummaryList());
 				for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
 					uniqueFlights.add(s.getFlightId());
 				}
-				writeAuditLogForTargetingRun(targetingServiceResults);
+		//		writeAuditLogForTargetingRun(targetingServiceResults);
 				updateFlightHitCounts(uniqueFlights);
 			}
 		} catch (Exception e) {
@@ -831,7 +871,7 @@ public class TargetingServiceImpl implements TargetingService {
 		if (foundPassenger != null) {
 			logger.debug("Found passenger.");
 				hitsSummary.setPaxId(foundPassenger.getId());
-				writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString(), gtasUser);
+		//		writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString(), gtasUser);
 
 		} else {
 			logger.debug("No passenger found. --> ");

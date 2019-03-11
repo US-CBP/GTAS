@@ -23,7 +23,7 @@ public class Bag extends BaseEntity {
 	@JoinColumn(nullable = false)
 	private Passenger passenger;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
 	private Flight flight;
 	

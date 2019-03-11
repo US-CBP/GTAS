@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import gov.gtas.model.Disposition;
+import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
 import static gov.gtas.querybuilder.constants.Constants.SELECT;
@@ -22,19 +23,22 @@ import static gov.gtas.querybuilder.constants.Constants.SELECT;
 public interface PassengerRepository extends PagingAndSortingRepository<Passenger, Long>, PassengerRepositoryCustom {
     
 	@Query("SELECT p FROM Passenger p WHERE p.id = :id")
-	public Passenger getPassengerById(@Param("id") Long id);
+	Passenger getPassengerById(@Param("id") Long id);
 
-	@Query("SELECT p FROM Passenger p left join fetch p.flight left join fetch  p.paxWatchlistLinks WHERE p.id = :id")
-	public Passenger getFullPassengerById(@Param("id") Long id);
+	@Query("SELECT p FROM Passenger p left join fetch p.documents left join fetch p.flight left join fetch  p.paxWatchlistLinks WHERE p.id = :id")
+	Passenger getFullPassengerById(@Param("id") Long id);
 
-	@Query("SELECT p from Passenger p where p.id in :id")
+	@Query("SELECT p from Passenger p left join fetch p.documents where p.id in :id")
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
-	
+
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
-    public List<Passenger> getPassengerByName(@Param("firstName") String firstName,@Param("lastName") String lastName);
+    List<Passenger> getPassengerByName(@Param("firstName") String firstName,@Param("lastName") String lastName);
     
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.lastName) = UPPER(:lastName)")
-    public List<Passenger> getPassengersByLastName(@Param("lastName") String lastName);
+    List<Passenger> getPassengersByLastName(@Param("lastName") String lastName);
+
+    @Query("SELECT p FROM Passenger p left join fetch p.documents left join fetch p.flightPaxList pfl left join fetch pfl.flight WHERE p.id = :id")
+    Passenger findByIdWithFlightPaxAndDocuments(@Param("id") Long id);
 
   /*  @Query("SELECT p FROM Flight f join f.passengers p where f.id = (:flightId)")
     public List<Passenger> getPassengersByFlightId(@Param("flightId") Long flightId);*/
@@ -52,17 +56,23 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     public List<Passenger> getPassengersByFlightIdAndName(@Param("flightId") Long flightId, @Param("firstName") String firstName,@Param("lastName") String lastName);*/
     
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
-    public List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
+    List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
 
 	@Modifying
 	@Transactional
     @Query("UPDATE Passenger set watchlistCheckTimestamp =:lastTimestamp WHERE id=:passengerId")
-    public void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
+    void setPassengerWatchlistTimestamp(@Param("passengerId") Long passengerId, @Param("lastTimestamp") Date lastTimestamp);
+
+
+    default Passenger findOne(Long passengerId)
+    {
+    	return findById(passengerId).orElse(null);
+    }
 
 	@Modifying
     @Transactional
     @Query("UPDATE Passenger set watchlistCheckTimestamp = :lastTimestamp where id in :passengerId")
-    public void setPassengersWatchlistTimestamp(@Param("passengerId") List<Long> passengerId, @Param("lastTimestamp") Date lastTimestamp);
+    void setPassengersWatchlistTimestamp(@Param("passengerId") List<Long> passengerId, @Param("lastTimestamp") Date lastTimestamp);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Flight;
+import gov.gtas.model.FlightPassenger;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.Airport;
 
@@ -55,10 +56,10 @@ public class ServiceUtil implements LoaderServices {
             return null;
         }
 
-        List<Passenger> pax = flightPassengerRepository.returnAPassengerFromParameters(f.getId(),
+        List<FlightPassenger> pax = flightPassengerRepository.returnAPassengerFromParameters(f.getId(),
                 pvo.getFirstName(), pvo.getLastName());
     if (pax != null && pax.size() >= 1) {
-            return pax.get(0);
+            return pax.get(0).getPassenger();
         } else {
             return null;
         }

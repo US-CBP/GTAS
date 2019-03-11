@@ -24,10 +24,6 @@ public class PassengerIDTag extends BaseEntityAudit {
     @Column(name = "tamr_id")
     private String tamrId;
 
-//    @OneToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-//    @JoinTable(name = "pax_idtag", joinColumns = @JoinColumn(name = "pax_tag_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
-//    private Set<Passenger> passengers = new HashSet<>();
-
     public String getTamrId() {
 		return tamrId;
 	}

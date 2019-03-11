@@ -8,6 +8,7 @@ package gov.gtas.repository;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
+import gov.gtas.model.lookup.Country;
 
 import java.util.Date;
 import java.util.List;
@@ -36,5 +37,11 @@ public interface AuditRecordRepository extends CrudRepository<AuditRecord, Long>
     public List<AuditRecord> findByUserActionTimestampRange(@Param("user") User user, @Param("action") AuditActionType action, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);  
 
     @Query("SELECT ar FROM AuditRecord ar WHERE ar.timestamp >= :fromDate")
-    public List<AuditRecord> findByTimestampFrom(@Param("fromDate") Date fromDate);   
+    public List<AuditRecord> findByTimestampFrom(@Param("fromDate") Date fromDate); 
+    
+    
+    default AuditRecord findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

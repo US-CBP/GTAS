@@ -14,9 +14,9 @@ import javax.transaction.Transactional;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import org.apache.commons.collections4.IteratorUtils;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import gov.gtas.vo.passenger.*;
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -268,7 +268,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		Long highPriorityRuleCatId = 1L;
 		ArrayList<Long> hit_ids = new ArrayList<>();
-		Passenger pax = passengerRepository.getPassengerById(pax_id);
+		Passenger pax = passengerRepository.getFullPassengerById(pax_id);
 		HitsDisposition hitDisp = new HitsDisposition();
 		HitsDispositionComments hitsDispositionComments = new HitsDispositionComments();
 		Set<HitsDisposition> hitsDispSet = new HashSet<HitsDisposition>();
@@ -301,9 +301,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
 			hitDisp.setUpdatedAt(new Date());
 			hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
-			RuleCat _tempRuleCat = ruleCatRepository.findOne(rule_cat_id);
+			RuleCat _tempRuleCat = ruleCatRepository.findById(rule_cat_id).orElse(null);
 			if (_tempRuleCat != null)
-				hitDisp.setRuleCat(ruleCatRepository.findOne(rule_cat_id));
+				hitDisp.setRuleCat(ruleCatRepository.findById(rule_cat_id).orElse(null));
 			hitsDispositionComments = new HitsDispositionComments();
 			hitsDispositionComments.setHitId(_tempHitId);
 			hitsDispositionComments.setComments(comments);
@@ -532,8 +532,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Set<HitsDispositionComments> hitsDispCommentsSet = new HashSet<HitsDispositionComments>();
 
 		try {
-			aCase = caseDispositionRepository.findById(caseId); // getCaseByFlightIdAndPaxId(flight_id, pax_id,
-																// Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
+			aCase = caseDispositionRepository.findOne(caseId); //getCaseByFlightIdAndPaxId(flight_id, pax_id, Arrays.asList(CaseDispositionStatusEnum.NEW.getType(),CaseDispositionStatusEnum.OPEN.getType())).stream().findFirst().get();
+
 
 			if (aCase != null && status != null) { // set case status
 				if (status.startsWith("Case"))
@@ -615,7 +615,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
 		attachment.setContent(blob);
 		// Grab pax to add attachment to it
-		Passenger pax = passengerRepository.findOne(pax_id);
+		Passenger pax = passengerRepository.findById(pax_id).orElse(null);
 		attachment.setPassenger(pax);
 		attachmentRepository.save(attachment);
 		_tempAttachSet.add(attachment);
@@ -651,7 +651,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public Passenger findPaxByID(Long id) {
-		return passengerRepository.findOne(id);
+		return passengerRepository.findById(id).orElse(null);
 	}
 
 	@Override
@@ -685,7 +685,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				ruleCatMap));
 
 		//Name match case depends on this save to create a case.
-		caseDispositionRepository.save(_tempCaseList);
+		caseDispositionRepository.saveAll(_tempCaseList);
 
 		return _tempCaseList;
 	}
@@ -824,14 +824,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		HitsDispositionVo _tempHitsDisp = new HitsDispositionVo();
 		RuleCat _tempRuleCat = new RuleCat();
 		Set<AttachmentVo> _tempAttachmentVoSet = new HashSet<AttachmentVo>();
-		Set<HitsDispositionCommentsVo> _tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+		List<HitsDispositionCommentsVo> _tempHitsDispCommentsVoSet;
 		HitsDispositionCommentsVo _tempDispCommentsVo = new HitsDispositionCommentsVo();
 
 		try {
 			for (HitsDisposition hitDisp : _tempHitsDispositionSet) {
 				_tempHitsDisp = new HitsDispositionVo();
 				_tempRuleCat = new RuleCat();
-				_tempHitsDispCommentsVoSet = new HashSet<HitsDispositionCommentsVo>();
+				_tempHitsDispCommentsVoSet = new ArrayList<>();
 				_tempAttachmentVoSet = new HashSet<AttachmentVo>();
 
 				CaseDispositionServiceImpl.copyIgnoringNullValues(hitDisp, _tempHitsDisp);
@@ -873,8 +873,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 						}
 						_tempDispCommentsVo.setAttachmentSet(_tempAttachmentVoSet);
 					}
-					_tempHitsDisp.setDispCommentsVo(_tempHitsDispCommentsVoSet);
-
+					_tempHitsDispCommentsVoSet.sort(comparing(HitsDispositionCommentsVo::getCreatedAt).reversed());
+					_tempHitsDisp.setDispCommentsVo(new LinkedHashSet<>(_tempHitsDispCommentsVoSet));
 				} // end
 
 				_tempReturnHitsDispSet.add(_tempHitsDisp);
@@ -962,7 +962,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Flight _tempFlight;
 
 		if (passengerMap == null || passengerMap.isEmpty() || !passengerMap.containsKey(paxId)) {
-			logger.info("Manual get of passenger.");
+			logger.debug("Manual get of passenger.");
 			_tempPax = findPaxByID(paxId);
 		} else {
 			_tempPax = passengerMap.get(paxId);
@@ -970,7 +970,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 
 		if (flightMap == null || flightMap.isEmpty() || !flightMap.containsKey(flightId)) {
-			logger.info("manual get of flights");
+			logger.debug("manual get of flights");
 			_tempFlight = findFlightByID(flightId);
 		} else {
 			_tempFlight = flightMap.get(flightId);

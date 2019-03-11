@@ -11,9 +11,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Pnr;
+import gov.gtas.model.lookup.Airport;
 
 public interface PnrRepository extends MessageRepository<Pnr> {
-    @Query("select pnr from Pnr pnr join pnr.passengers pax join pnr.flights f where pax.id = :passengerId and f.id = :flightId")
+    @Query("select pnr from Pnr pnr " +
+            "join fetch pnr.passengers pax " +
+            "left join fetch pax.documents " +
+            "left join fetch pax.seatAssignments " +
+            "join fetch pax.flightPaxList fpxl " +
+            "join fetch fpxl.flight " +
+            "join fetch pnr.flights f " +
+            "where pax.id = :passengerId and f.id = :flightId")
     public List<Pnr> getPnrsByPassengerIdAndFlightId(@Param("passengerId") Long passengerId,
                                         @Param("flightId") Long flightId);
     
@@ -22,4 +30,9 @@ public interface PnrRepository extends MessageRepository<Pnr> {
 
     @Query("SELECT pnr FROM Pnr pnr WHERE pnr.createDate >= current_date() - 1")
     public List<Pnr> getPNRsByDates();
+    
+    default Pnr findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

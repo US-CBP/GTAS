@@ -83,7 +83,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	@Override
 	@Transactional
 	public void delete(Long id, String userId) {
-		Whitelist wl = whitelistRepository.findOne(id);
+		Whitelist wl = whitelistRepository.findById(id).orElse(null);
 		if (wl != null) {
 			wl.setDeleted(YesNoEnum.Y);
 		} else {
@@ -102,7 +102,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	@Transactional
 	public Whitelist create(WhitelistVo wlv, String userId) {
 		Whitelist newWl = mapWhitelistfromWhitelistVo(wlv);
-		User userEntity = userRepository.findOne(userId);
+		User userEntity = userRepository.findById(userId).orElse(null);
 		newWl.setDeleted(YesNoEnum.N);
 		newWl.setWhiteListEditor(userEntity);
 		return whitelistRepository.save(newWl);
@@ -136,7 +136,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	public void update(WhitelistVo wlv, String userId) {
 		Whitelist existing = null;
 		if (wlv.getId() != null)
-			existing = whitelistRepository.findOne(wlv.getId());
+			existing = whitelistRepository.findById(wlv.getId()).orElse(null);
 		else {
 			throw new RuntimeException(
 					"the id of a existing whitelist object is null.");
@@ -166,7 +166,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 				existing.setMiddleName(wlv.getMiddleName());
 			if (wlv.getResidencyCountry() != null)
 				existing.setResidencyCountry(wlv.getResidencyCountry());
-			User userEntity = userRepository.findOne(userId);
+			User userEntity = userRepository.findById(userId).orElse(null);
 			existing.setWhiteListEditor(userEntity);
 		}
 	}
