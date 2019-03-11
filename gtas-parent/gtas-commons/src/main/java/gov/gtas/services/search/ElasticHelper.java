@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.elasticsearch.plugins.NetworkPlugin;
@@ -286,7 +285,7 @@ public class ElasticHelper {
 
 	    List<LinkPassengerVo> lp = new ArrayList<>();
 		for (SearchHit hit : resultsArry) {
-			Map<String, Object> result = hit.getSource();
+			Map<String, Object> result = hit.getSourceAsMap();
 			if(!((String)result.get("firstName")).equals(pax.getPassengerDetails().getFirstName()) || !((String)result.get("lastName")).equals(pax.getPassengerDetails().getLastName())) {
 				LinkPassengerVo lpVo = new LinkPassengerVo();
 				lpVo.setPassengerId((Integer)result.get("passengerId"));

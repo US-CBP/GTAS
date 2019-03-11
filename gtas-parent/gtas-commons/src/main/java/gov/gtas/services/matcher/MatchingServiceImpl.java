@@ -286,7 +286,7 @@ public class MatchingServiceImpl implements MatchingService {
 					}
 				}
 			}
-			passengerWatchlistRepository.save(savingPassengerSet);
+			passengerWatchlistRepository.saveAll(savingPassengerSet);
 			endTime = System.nanoTime();
 			logger.debug("Passenger count for matching service: " + passengerIds.size());
 			logger.debug("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000

@@ -354,12 +354,12 @@ public class PassengerServiceImpl implements PassengerService {
         return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
     }
 
-    @Override
+ /*   @Override
     @Transactional
     public List<Passenger> getPassengersByLastName(String lastName) {
         return passengerRespository.getPassengersByLastName(lastName);
     }
-
+*/
     @Override
     public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId) {
         List<HitsSummary> hitsSummary = hitsSummaryRepository.findByFlightIdAndPassengerId(flightId, passengerId);

@@ -37,7 +37,9 @@ public interface PassengerService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
 
+/*
 	List<Passenger> getPassengersByLastName(String lastName);
+*/
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
 	List<Disposition> getPassengerDispositionHistory(Long passengerId,

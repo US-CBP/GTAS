@@ -26,12 +26,14 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
 	@Query("SELECT p from Passenger p left join fetch p.documents where p.id in :id")
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
+/*
 
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
     List<Passenger> getPassengerByName(@Param("firstName") String firstName,@Param("lastName") String lastName);
     
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.lastName) = UPPER(:lastName)")
     List<Passenger> getPassengersByLastName(@Param("lastName") String lastName);
+*/
 
     @Query("SELECT p FROM Passenger p left join fetch p.documents left join fetch p.flightPaxList pfl left join fetch pfl.flight WHERE p.id = :id")
     Passenger findByIdWithFlightPaxAndDocuments(@Param("id") Long id);
@@ -57,6 +59,13 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     
     @Query("SELECT d FROM Disposition d where d.passenger.id = (:passengerId) AND d.flight.id = (:flightId)")
     List<Disposition> getPassengerDispositionHistory(@Param("passengerId") Long passengerId, @Param("flightId") Long flightId);
+
+
+    default Passenger findOne(Long passengerId)
+    {
+        return findById(passengerId).orElse(null);
+    }
+
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +
 //            "AND UPPER(p.lastName) = UPPER(:lastName)" +

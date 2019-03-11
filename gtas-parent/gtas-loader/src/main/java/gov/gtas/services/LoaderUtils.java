@@ -81,11 +81,11 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
         p.setUpdatedBy(LOADER_USER);
 
-        if (p.getFirstName() != null && p.getFirstName().length() > 254) {
-            p.setFirstName(p.getFirstName().substring(0,254));
+        if (p.getPassengerDetails().getFirstName() != null && p.getPassengerDetails().getFirstName().length() > 254) {
+            p.getPassengerDetails().setFirstName(p.getPassengerDetails().getFirstName().substring(0,254));
         }
-        if (p.getLastName() != null && p.getLastName().length() > 254) {
-            p.setLastName(p.getLastName().substring(0,254));
+        if (p.getPassengerDetails().getLastName() != null && p.getPassengerDetails().getLastName().length() > 254) {
+            p.getPassengerDetails().setLastName(p.getPassengerDetails().getLastName().substring(0,254));
         }
 
         if (vo.getDebarkation() != null) {
