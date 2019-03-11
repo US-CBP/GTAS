@@ -12,7 +12,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Disposition;
-import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
 
