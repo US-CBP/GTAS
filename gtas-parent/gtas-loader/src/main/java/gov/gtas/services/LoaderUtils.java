@@ -70,7 +70,9 @@ public class LoaderUtils {
 
     public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
         Passenger p = new Passenger();
-        PassengerTripDetails passengerTripDetails = new PassengerTripDetails();
+        PassengerTripDetails passengerTripDetails = new PassengerTripDetails(p);
+        PassengerDetails passengerDetails = new PassengerDetails(p);
+        p.setPassengerDetails(passengerDetails);
         p.setPassengerTripDetails(passengerTripDetails);
         p.setCreatedBy(LOADER_USER);
         updatePassenger(vo, p);
@@ -79,22 +81,9 @@ public class LoaderUtils {
 
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
-        PassengerDetails passengerDetails = p.getPassengerDetails();
-        PassengerTripDetails passengerTripDetails = p.getPassengerTripDetails();
-        if (p.getPassengerDetails() == null) {
-            passengerDetails = new PassengerDetails();
-        }
-        if (p.getPassengerTripDetails() == null) {
-            passengerTripDetails = new PassengerTripDetails();
-        }
-        passengerDetails.setPassengerId(p.getId());
-        passengerTripDetails.setPaxId(p.getId());
-        passengerDetails.setPassenger(p);
-        passengerTripDetails.setPassenger(p);
-        BeanUtils.copyProperties(vo, passengerDetails, getNullPropertyNames(vo));
-        BeanUtils.copyProperties(vo, passengerTripDetails, getNullPropertyNames(vo));
-        p.setPassengerTripDetails(passengerTripDetails);
-        p.setPassengerDetails(passengerDetails);
+        BeanUtils.copyProperties(vo, p.getPassengerDetails(), getNullPropertyNames(vo));
+        BeanUtils.copyProperties(vo, p.getPassengerTripDetails(), getNullPropertyNames(vo));
+
 
         p.setUpdatedBy(LOADER_USER);
 

@@ -11,13 +11,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "passenger_details")
-public class PassengerDetails extends BaseEntityAudit{
+public class PassengerDetails extends BaseEntityAudit {
 
     @SuppressWarnings("unused")
     public PassengerDetails() {
     }
 
-    @SuppressWarnings("unused")
     public PassengerDetails(Passenger passenger) {
         this.passenger= passenger;
     }

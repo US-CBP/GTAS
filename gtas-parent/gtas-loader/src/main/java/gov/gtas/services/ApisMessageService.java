@@ -100,14 +100,17 @@ public class ApisMessageService extends MessageLoaderService {
                     msgDto.getPrimeFlightKey(),
                     new HashSet<>());
 
-            CreatedAndOldPassengerInformation createdAndOldPassengerInformation = loaderRepo.makeNewPassengerObjects(
+            PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(
                     primeFlight,
                     m.getPassengers(),
                     apis.getPassengers(),
                     new HashSet<>(),
                     apis);
 
-            int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(), apis.getPassengers(), primeFlight, new HashSet<>());
+            int createdPassengers = loaderRepo.createPassengers(
+                    passengerInformationDTO.getNewPax(),
+                    passengerInformationDTO.getOldPax(),
+                    apis.getPassengers(), primeFlight, new HashSet<>());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);

@@ -19,8 +19,8 @@ public interface FlightPassengerRepository extends CrudRepository<FlightPassenge
             "LEFT JOIN FETCH pax.bookingDetails " +
             "LEFT JOIN FETCH pax.passengerDetails " +
             "LEFT JOIN FETCH pax.passengerTripDetails " +
-            "WHERE UPPER(fp.passenger.passengerDetails.firstName) = UPPER(:firstName) " +
-            "AND UPPER(fp.passenger.passengerDetails.lastName) = UPPER(:lastName) " +
+            "WHERE (UPPER(fp.passenger.passengerDetails.firstName) = UPPER(:firstName) " +
+            "AND UPPER(fp.passenger.passengerDetails.lastName) = UPPER(:lastName)) " +
             "AND fp.flightId = :flightId")
     List<FlightPassenger> returnAPassengerFromParameters(@Param("flightId") Long flightId, @Param("firstName")String firstName, @Param("lastName")String lastName);
 }

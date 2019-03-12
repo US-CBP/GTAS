@@ -75,7 +75,7 @@ public abstract class BaseEntityAudit extends BaseEntity {
     /** 
      * Sets updatedAt before update 
      */  
-    @PreUpdate  
+    @PreUpdate
     public void setChangeDate() {  
         this.updatedAt = new Date();  
     }  

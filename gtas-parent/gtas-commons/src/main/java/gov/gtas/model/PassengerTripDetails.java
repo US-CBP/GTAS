@@ -19,7 +19,11 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	private
 	Long paxId;
 
-	public Passenger getPassenger() {
+	public PassengerTripDetails(Passenger p) {
+		this.passenger = p;
+	}
+
+    public Passenger getPassenger() {
 		return passenger;
 	}
 

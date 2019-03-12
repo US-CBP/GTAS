@@ -64,6 +64,14 @@ public class GtasLoaderImpl implements GtasLoader {
     private final
     FlightPassengerCountRepository flightPassengerCountRepository;
 
+    private final
+    PassengerTripRepository passengerTripRepository;
+
+    private final
+    PassengerDetailRepository passengerDetailRepository;
+
+
+
     @Autowired
     public GtasLoaderImpl(
                           PassengerRepository passengerDao,
@@ -83,7 +91,9 @@ public class GtasLoaderImpl implements GtasLoader {
                           FlightPassengerRepository flightPassengerRepository,
                           FrequentFlyerRepository ffdao,
                           LoaderUtils utils,
-                          BookingDetailRepository bookingDetailDao) {
+                          BookingDetailRepository bookingDetailDao,
+                          PassengerTripRepository passengerTripRepository,
+                          PassengerDetailRepository passengerDetailRepository) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -102,6 +112,8 @@ public class GtasLoaderImpl implements GtasLoader {
         this.ffdao = ffdao;
         this.utils = utils;
         this.bookingDetailDao = bookingDetailDao;
+        this.passengerTripRepository = passengerTripRepository;
+        this.passengerDetailRepository = passengerDetailRepository;
     }
 
 
@@ -251,16 +263,20 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    public CreatedAndOldPassengerInformation makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
-                                                  Set<Passenger> messagePassengers,
-                                                  Set<BookingDetail> bookingDetails,
-                                                  Message message) throws ParseException {
+    @Transactional
+    public PassengerInformationDTO makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
+                                                           Set<Passenger> messagePassengers,
+                                                           Set<BookingDetail> bookingDetails,
+                                                           Message message) throws ParseException {
 
         Set<Passenger> newPassengers = new HashSet<>();
+        Set<Passenger> oldPassengers = new HashSet<>();
         Set<Long> oldPassengersId = new HashSet<>();
+        List<PassengerDetails> passengerDetailsList = new ArrayList<>();
+        List<PassengerTripDetails> passengerTripDetails = new ArrayList<>();
         Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
         for (PassengerVo pvo : passengers) {
-            Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
+            Passenger existingPassenger =  loaderServices.findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger == null ) {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
                 for (DocumentVo dvo : pvo.getDocuments()) {
@@ -270,7 +286,6 @@ public class GtasLoaderImpl implements GtasLoader {
                 createBags(pvo.getBags(), newPassenger, primeFlight);
                 utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
-                messagePassengers.add(newPassenger);
             } else if (!oldPassengersId.contains(existingPassenger.getId())) {
                 bookingDetailsAPassengerOwns.put(existingPassenger.getId(), existingPassenger.getBookingDetails());
                 oldPassengersId.add(existingPassenger.getId());
@@ -280,21 +295,27 @@ public class GtasLoaderImpl implements GtasLoader {
                 createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
                 logger.debug("@ createBags");
                 createBags(pvo.getBags(), existingPassenger, primeFlight);
-
+                oldPassengers.add(existingPassenger);
+                passengerDetailsList.add(existingPassenger.getPassengerDetails());
+                passengerTripDetails.add(existingPassenger.getPassengerTripDetails());
             }
         }
-        CreatedAndOldPassengerInformation createdAndOldPassengerInformation = new CreatedAndOldPassengerInformation();
-        createdAndOldPassengerInformation.setBdSet(bookingDetailsAPassengerOwns);
-        createdAndOldPassengerInformation.setNewPax(newPassengers);
-        return createdAndOldPassengerInformation ;
+        passengerTripRepository.saveAll(passengerTripDetails);
+        passengerDetailRepository.saveAll(passengerDetailsList);
+        messagePassengers.addAll(oldPassengers);
+        PassengerInformationDTO passengerInformationDTO = new PassengerInformationDTO();
+        passengerInformationDTO.setBdSet(bookingDetailsAPassengerOwns);
+        passengerInformationDTO.setNewPax(newPassengers);
+        return passengerInformationDTO;
     }
 
     @Override
     @Transactional()
-    public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
+    public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldSet, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
-        passengerDao.saveAll(messagePassengers);
+        passengerDao.saveAll(newPassengers);
+        messagePassengers.addAll(newPassengers);
         for (Passenger p : newPassengers) {
             try {
                 PassengerIDTag paxIdTag = utils.createPassengerIDTag(p);
