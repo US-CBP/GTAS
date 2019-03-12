@@ -272,8 +272,6 @@ public class GtasLoaderImpl implements GtasLoader {
         Set<Passenger> newPassengers = new HashSet<>();
         Set<Passenger> oldPassengers = new HashSet<>();
         Set<Long> oldPassengersId = new HashSet<>();
-        List<PassengerDetails> passengerDetailsList = new ArrayList<>();
-        List<PassengerTripDetails> passengerTripDetails = new ArrayList<>();
         Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
         for (PassengerVo pvo : passengers) {
             Passenger existingPassenger =  loaderServices.findPassengerOnFlight(primeFlight, pvo);
@@ -296,12 +294,8 @@ public class GtasLoaderImpl implements GtasLoader {
                 logger.debug("@ createBags");
                 createBags(pvo.getBags(), existingPassenger, primeFlight);
                 oldPassengers.add(existingPassenger);
-                passengerDetailsList.add(existingPassenger.getPassengerDetails());
-                passengerTripDetails.add(existingPassenger.getPassengerTripDetails());
             }
         }
-        passengerTripRepository.saveAll(passengerTripDetails);
-        passengerDetailRepository.saveAll(passengerDetailsList);
         messagePassengers.addAll(oldPassengers);
         PassengerInformationDTO passengerInformationDTO = new PassengerInformationDTO();
         passengerInformationDTO.setBdSet(bookingDetailsAPassengerOwns);
