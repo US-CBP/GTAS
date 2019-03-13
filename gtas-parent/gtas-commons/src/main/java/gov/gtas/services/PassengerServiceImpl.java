@@ -40,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
 
+import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
+
 /**
  * The Class PassengerServiceImpl.
  */
@@ -115,6 +117,9 @@ public class PassengerServiceImpl implements PassengerService {
 
             PassengerVo vo = new PassengerVo();
             BeanUtils.copyProperties(p, vo);
+            BeanUtils.copyProperties(p.getPassengerDetails(), vo);
+            BeanUtils.copyProperties(p.getPassengerTripDetails(), vo);
+
 
             
             Iterator<Document> docIter = p.getDocuments().iterator();
