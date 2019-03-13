@@ -127,7 +127,15 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<TicketFare> tickets = new HashSet<>();
 
-    public Flight getFlight() {
+    public Set<HitsSummary> getHits() {
+		return hits;
+	}
+
+	public void setHits(Set<HitsSummary> hits) {
+		this.hits = hits;
+	}
+
+	public Flight getFlight() {
         return flight;
     }
 
