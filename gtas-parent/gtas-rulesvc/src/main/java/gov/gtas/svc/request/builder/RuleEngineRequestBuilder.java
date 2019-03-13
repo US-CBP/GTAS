@@ -360,27 +360,22 @@ public class RuleEngineRequestBuilder {
 
     private void addPassengerAndDependdencies(Passenger passenger) {
 
-        requestObjectList.add(passenger);
+        this.requestObjectList.add(passenger);
+        this.requestObjectList.add(passenger.getPassengerDetails());
+        this.requestObjectList.add(passenger.getPassengerTripDetails());
         if (passenger.getDocuments() != null) {
-            for (Document doc : passenger.getDocuments()) {
-                this.requestObjectList.add(doc);
-            }
+            this.requestObjectList.addAll(passenger.getDocuments());
         }
         if (passenger.getSeatAssignments() != null) {
-            for (Seat seat : passenger.getSeatAssignments()) {
-                this.requestObjectList.add(seat);
-            }
+            this.requestObjectList.addAll(passenger.getSeatAssignments());
         }
         if(passenger.getBags() != null){
-        	for (Bag bag : passenger.getBags()) {
-                this.requestObjectList.add(bag);
-            }
+            this.requestObjectList.addAll(passenger.getBags());
         }
         if(passenger.getFlightPaxList() != null){
-        	for (FlightPax flightPax : passenger.getFlightPaxList()) {
-                this.requestObjectList.add(flightPax);
-            }
+            this.requestObjectList.addAll(passenger.getFlightPaxList());
         }
+
     }
 
     private void addPnrPassengerLink(final Pnr pnr, final Passenger passenger) {

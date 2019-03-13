@@ -76,18 +76,20 @@ public class RuleRunnerScheduler {
 			List<TargetingServiceResults> targetingServiceResultsList = targetingService.createHitsAndCases(ruleResults.getRuleResults());
 			List<TargetingServiceResults> batchedTargetingServiceResults = batchResults(targetingServiceResultsList);
 			int count = 1;
-			ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.ANALYZED));
-			for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
-				try {
-					targetingService.saveEverything(targetingServiceResults);
-					logger.info("Saved rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + ".");
-				} catch (Exception ignored) {
-					ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
-					logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
+			if (ruleResults.getMessageStatusList() != null) {
+				ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.ANALYZED));
+				for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
+					try {
+						targetingService.saveEverything(targetingServiceResults);
+						logger.info("Saved rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + ".");
+					} catch (Exception ignored) {
+						ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
+						logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
+					}
+					count++;
 				}
-                count++;
-            }
-			targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+			}
 			logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
 			logger.debug("entering matching service portion of jobScheduling");
 			long fuzzyStart = System.nanoTime();

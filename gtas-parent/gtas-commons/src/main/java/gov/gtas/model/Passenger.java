@@ -6,10 +6,9 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import javax.persistence.*;
 
 
@@ -30,7 +29,7 @@ public class Passenger extends BaseEntityAudit {
     @JsonIgnore
     private Flight flight;
 
-    @OneToOne(cascade = {CascadeType.PERSIST}, targetEntity = PassengerDetails.class, fetch=FetchType.EAGER, mappedBy = "passenger", optional = false)
+    @OneToOne(cascade = {CascadeType.PERSIST}, targetEntity = PassengerDetails.class, fetch=FetchType.LAZY, mappedBy = "passenger", optional = false)
     private PassengerDetails passengerDetails;
 
     @OneToOne(cascade =  {CascadeType.PERSIST}, targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY, mappedBy = "passenger", optional = false)
@@ -72,37 +71,10 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
     private Set<TicketFare> tickets = new HashSet<>();
 
-    /*private String title;
+    @Type(type = "uuid-char")
+    @Column(name = "uuid")
+    private UUID uuid = UUID.randomUUID();
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "middle_name")
-    private String middleName;
-
-    @Column(name = "last_name")
-    private String lastName;
-
-    private String suffix;
-
-    @Column(length = 2)
-    private String gender;
-
-    @Column(name = "citizenship_country")
-    private String citizenshipCountry;
-
-    @Column(name = "residency_country")
-    private String residencyCountry;
-
-    @Temporal(TemporalType.DATE)
-    private Date dob;
-
-    @Column(name = "passenger_type", length = 3, nullable = false)
-    private String passengerType;
-    *//** calculated field *//*
-    @Column(name = "age")
-    private Integer age;
-     */
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
 
@@ -153,101 +125,13 @@ public class Passenger extends BaseEntityAudit {
         d.setPassenger(this);
     }
 
- /*   public String getPassengerType() {
-        return passengerType;
+    public UUID getUuid() {
+        return uuid;
     }
 
-    public void setPassengerType(String passengerType) {
-        this.passengerType = passengerType;
-    }*/
-
-   /* public Set<Flight> getFlights() {
-        return passengerService.getAllFlights(this.id);
-    }*/
-
-  /*  public void setFlights(Set<Flight> flights) {
-        passengerService.setAllFlights(flights, this.id);
-    }*/
-
-/*    public String getTitle() {
-        return title;
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
-    }
-
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
-    }
-
-    public String getResidencyCountry() {
-        return residencyCountry;
-    }
-
-    public void setResidencyCountry(String residencyCountry) {
-        this.residencyCountry = residencyCountry;
-    } */
 
     public Set<Document> getDocuments() {
         return documents;
@@ -323,7 +207,7 @@ public class Passenger extends BaseEntityAudit {
 
     @Override
     public int hashCode() {
-        return this.getPassengerDetails().hashCode();
+        return Objects.hash(getUuid());
     }
 
     @Override
@@ -331,7 +215,7 @@ public class Passenger extends BaseEntityAudit {
         if (this == o) return true;
         if (!(o instanceof Passenger)) return false;
         Passenger passenger = (Passenger) o;
-        return getPassengerDetails().equals(passenger.getPassengerDetails());
+        return uuid.equals(passenger.getUuid());
     }
 
     public Set<PaxWatchlistLink> getPaxWatchlistLinks() {

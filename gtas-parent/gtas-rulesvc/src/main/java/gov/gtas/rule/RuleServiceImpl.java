@@ -161,10 +161,10 @@ public class RuleServiceImpl implements RuleService {
 					List<Rule> rules = rulePersistenceService
 							.findRulesByKnowledgeBaseId(kbRecord.getId());
 					if (!CollectionUtils.isEmpty(rules)) {
-						udrService.recompileRules(
+						/*udrService.recompileRules(
 								RuleConstants.UDR_KNOWLEDGE_BASE_NAME, null);
 						kbRecord = rulePersistenceService
-								.findUdrKnowledgeBase();
+								.findUdrKnowledgeBase();*/
 					}
 				}
 			}

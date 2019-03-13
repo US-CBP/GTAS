@@ -287,6 +287,9 @@ public class TargetingServiceImpl implements TargetingService {
 				.getMessagesFromStatus(
 				MessageStatusEnum.LOADED.getName(), 250L);
 		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
+		if (source.isEmpty()) {
+			return ruleResultsWithMessageStatus;
+		}
 		ruleResultsWithMessageStatus.setMessageStatusList(source);
 		List<Message> target = source
 				.stream()

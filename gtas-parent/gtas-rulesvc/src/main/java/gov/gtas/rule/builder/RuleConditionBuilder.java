@@ -23,7 +23,6 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Generates the "when" part of a DRL rule.
@@ -33,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 public class RuleConditionBuilder {
 
     private PassengerConditionBuilder passengerConditionBuilder;
+    private PassengerDetailsConditionBuilder detailsConditionBuilder;
+    private PassengerTripDetailsConditionBuilder tripDetailsConditionBuilder;
     private DocumentConditionBuilder documentConditionBuilder;
     private FlightConditionBuilder flightConditionBuilder;
 
@@ -75,6 +76,13 @@ public class RuleConditionBuilder {
                 passengerVariableName);
         this.documentConditionBuilder = new DocumentConditionBuilder(
                 documentVariableName, passengerVariableName);
+
+        this.detailsConditionBuilder = new PassengerDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_DETAILS_VARIABLE_NAME);
+
+        this.tripDetailsConditionBuilder = new PassengerTripDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_TRIP_VARIABLE_NAME);
+
+        this.documentConditionBuilder = new DocumentConditionBuilder(
+                documentVariableName, passengerVariableName);
         this.flightConditionBuilder = new FlightConditionBuilder(
                 flightVariableName, passengerVariableName);
 
@@ -115,23 +123,27 @@ public class RuleConditionBuilder {
 
         generateLinkConditions();
 
-        parentStringBuilder.append(bagConditionBuilder.build());
-        parentStringBuilder.append(flightPaxConditionBuilder.build());
-        
-        parentStringBuilder.append(apisSeatConditionBuilder.build());
-        parentStringBuilder.append(pnrSeatConditionBuilder.build());
+        //order doesn't matter.
+        parentStringBuilder.append(bagConditionBuilder.build())
+        .append(flightPaxConditionBuilder.build())
+        .append(apisSeatConditionBuilder.build())
+        .append(detailsConditionBuilder.build())
+        .append(tripDetailsConditionBuilder.build())
+        .append(pnrSeatConditionBuilder.build())
+        .append(documentConditionBuilder.build())
+        .append(passengerConditionBuilder.build())
+        .append(flightConditionBuilder.build())
+        .append(paymentFormConditionBuilder.build());
 
-        parentStringBuilder.append(documentConditionBuilder.build());
-        parentStringBuilder.append(passengerConditionBuilder.build());
-        parentStringBuilder.append(flightConditionBuilder.build());
-        parentStringBuilder.append(paymentFormConditionBuilder.build());
-        
         boolean isPassengerConditionCreated = !passengerConditionBuilder
                 .isEmpty() | !flightConditionBuilder.isEmpty();
         
         pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder,
                 isPassengerConditionCreated, passengerConditionBuilder);
 
+        //order doesn't matter
+        tripDetailsConditionBuilder.reset();
+        detailsConditionBuilder.reset();
         passengerConditionBuilder.reset();
         documentConditionBuilder.reset();
         flightConditionBuilder.reset();
@@ -181,6 +193,12 @@ public class RuleConditionBuilder {
         	flightConditionBuilder.addConditionAsString("id == "+flightPaxConditionBuilder.getFlightIdLinkExpression());
         	this.flightCriteriaPresent = true;
         }
+        if (!detailsConditionBuilder.isEmpty()){
+        	passengerConditionBuilder.addLinkByIdCondition(detailsConditionBuilder.getPassengerIdLinkExpression());
+        }
+        if (!tripDetailsConditionBuilder.isEmpty()){
+        	passengerConditionBuilder.addLinkByIdCondition(tripDetailsConditionBuilder.getPassengerIdLinkExpression());
+        }
         
         
         // add FlightPax as a join table for flights and passengers where no other passenger join possibility exists.
@@ -220,48 +238,48 @@ public class RuleConditionBuilder {
                     .getOperator());
             String field = trm.getField();
             switch (entity) {
-            case PASSENGER:
-                if(field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)){
-                   apisSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                } else {
-                   passengerConditionBuilder.addCondition(opCode, field,
-                        attributeType, trm.getValue());
-                }
-                break;
-            case DOCUMENT:
-                documentConditionBuilder.addCondition(opCode, trm.getField(),
-                        attributeType, trm.getValue());
-                break;
-            case FLIGHT:
-                flightConditionBuilder.addCondition(opCode, trm.getField(),
-                        attributeType, trm.getValue());
-                this.flightCriteriaPresent = true;
-                break;
-            case BAG:
-            	bagConditionBuilder.addCondition(opCode, trm.getField(),
-            			attributeType, trm.getValue());
-            	break;
-            case FLIGHT_PAX:
-            	flightPaxConditionBuilder.addCondition(opCode, trm.getField(),
-            			attributeType, trm.getValue());
-            	break;
-            default:
-                // try and add PNR related conditions if they exist.
-                if(entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)) 
-                {
-                    pnrSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                }
-                else if (entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.PAYMENT_FORM_FIELD_ALIAS))
-                {
-                    paymentFormConditionBuilder.addCondition(opCode,RuleTemplateConstants.PAYMENT_TYPE_ATTRIBUTE_NAME,attributeType, trm.getValue());
-                    pnrRuleConditionBuilder.getPnrConditionBuilder().addConditionAsString("id == " + RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME + ".pnr.id");
-                }              
-                else 
-                {
-                   pnrRuleConditionBuilder.addRuleCondition(entity, attributeType,
-                        opCode, trm);
-                }
-                break;
+                case PASSENGER:
+                    if (RuleTemplateConstants.SEAT_ENTITY_NAME.equalsIgnoreCase(field)) {
+                        apisSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
+                    } else if (RuleTemplateConstants.PASSENGER_DETAILS.contains(field.toUpperCase())) {
+                        detailsConditionBuilder.addCondition(opCode, field,
+                                attributeType, trm.getValue());
+                    } else if (RuleTemplateConstants.PASSENGER_TRIP_DETAILS.contains(field.toUpperCase())) {
+                        tripDetailsConditionBuilder.addCondition(opCode, field,
+                                attributeType, trm.getValue());
+                    } else {
+                        throw new RuntimeException("ERROR: PASSENGER HAS NO INFORMATION FOR RULE. CHECK DETAILS OR TRIP IMPLEMENTATION");
+                    }
+                    break;
+                case DOCUMENT:
+                    documentConditionBuilder.addCondition(opCode, trm.getField(),
+                            attributeType, trm.getValue());
+                    break;
+                case FLIGHT:
+                    flightConditionBuilder.addCondition(opCode, trm.getField(),
+                            attributeType, trm.getValue());
+                    this.flightCriteriaPresent = true;
+                    break;
+                case BAG:
+                    bagConditionBuilder.addCondition(opCode, trm.getField(),
+                            attributeType, trm.getValue());
+                    break;
+                case FLIGHT_PAX:
+                    flightPaxConditionBuilder.addCondition(opCode, trm.getField(),
+                            attributeType, trm.getValue());
+                    break;
+                default:
+                    // try and add PNR related conditions if they exist.
+                    if (entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.SEAT_ENTITY_NAME)) {
+                        pnrSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
+                    } else if (entity == EntityEnum.PNR && field.equalsIgnoreCase(RuleTemplateConstants.PAYMENT_FORM_FIELD_ALIAS)) {
+                        paymentFormConditionBuilder.addCondition(opCode, RuleTemplateConstants.PAYMENT_TYPE_ATTRIBUTE_NAME, attributeType, trm.getValue());
+                        pnrRuleConditionBuilder.getPnrConditionBuilder().addConditionAsString("id == " + RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME + ".pnr.id");
+                    } else {
+                        pnrRuleConditionBuilder.addRuleCondition(entity, attributeType,
+                                opCode, trm);
+                    }
+                    break;
             }
         } catch (ParseException pe) {
             StringBuilder bldr = new StringBuilder("[");

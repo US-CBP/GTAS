@@ -5,16 +5,31 @@
  */
 package gov.gtas.rule.builder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import gov.gtas.constant.RuleServiceConstants;
 
 public class RuleTemplateConstants {
     public static final String SEAT_ENTITY_NAME = "Seat";
     public static final String SEAT_ATTRIBUTE_NAME = "number";
-    
+
+
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    public static final List<String> passDetails = Arrays.asList("AGE", "DOB", "GENDER", "FIRSTNAME","LASTNAME", "MIDDLENAME", "RESIDENCYCOUNTRY", "CITIZENSHIPCOUNTRY","PASSENGERTYPE");
+    public static final Set<String> PASSENGER_DETAILS= Collections.unmodifiableSet(new HashSet<>(passDetails));
+    public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
+
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
+    public static final List<String> passTripDetails = Arrays.asList("EMBARKATION", "DEBARKATION", "RESERVATIONREFERENCENUMBER",
+            "TRAVELFREQUENCY", "TOTALBAGWEIGHT", "BAGNUM", "EMBARKCOUNTRY", "DEBARKCOUNTRY");
+    public static final Set<String> PASSENGER_TRIP_DETAILS= Collections.unmodifiableSet(new HashSet<>(passTripDetails));
+
+
+
     public static final String PASSENGER_VARIABLE_NAME = "$p";
+    public static final String PASSENGER_DETAILS_VARIABLE_NAME = "$pcb";
+    public static final String PASSENGER_TRIP_VARIABLE_NAME = "$ptcb";
     public static final String DOCUMENT_VARIABLE_NAME = "$d";
     public static final String FLIGHT_VARIABLE_NAME = "$f";
     public static final String ADDRESS_VARIABLE_NAME = "$addr";
