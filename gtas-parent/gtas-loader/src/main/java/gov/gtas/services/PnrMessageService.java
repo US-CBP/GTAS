@@ -340,7 +340,6 @@ public class PnrMessageService extends MessageLoaderService {
     	logger.debug("@ createFlightPax");
     	boolean oneFlight=false;
     	Set<FlightPax> paxRecords=new HashSet<>();
-    	long startTime = System.nanoTime();
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	int pnrBagCount=0;
@@ -386,10 +385,12 @@ public class PnrMessageService extends MessageLoaderService {
     				}
     			}
     			setHeadPool( fp,p,f);
-    			p.getFlightPaxList().add(fp);
-    			paxRecords.add(fp);
-				flightPaxes.add(fp);
-    		}
+    			boolean newFlightPax = p.getFlightPaxList().add(fp);
+				if (newFlightPax) {
+					flightPaxes.add(fp);
+				}
+				paxRecords.add(fp);
+			}
     		if(!oneFlight) {
     			setBagDetails(paxRecords,pnr);
     		}

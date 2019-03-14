@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
 
-import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * The Class PassengerServiceImpl.
@@ -319,11 +319,17 @@ public class PassengerServiceImpl implements PassengerService {
     public void createDisposition(List<HitsSummary> hitsList) {
 
         List<Disposition> dispositionsList = new ArrayList<>();
+        Set<Long> hitsIds = hitsList.stream().map(HitsSummary::getPaxId).collect(toSet());
+        Set<Long> passengerIdsWithDisposition = dispositionRepo.getExisitngPaxIds(hitsIds);
         for (HitsSummary hit : hitsList) {
-            Disposition d = createDispositionFromHitsSummary(hit);
-            dispositionsList.add(d);
+            if (!passengerIdsWithDisposition.contains(hit.getPaxId())) {
+                Disposition d = createDispositionFromHitsSummary(hit);
+                dispositionsList.add(d);
+            }
         }
-        dispositionRepo.saveAll(dispositionsList);
+        if (!dispositionsList.isEmpty()) {
+            dispositionRepo.saveAll(dispositionsList);
+        }
     }
 
 

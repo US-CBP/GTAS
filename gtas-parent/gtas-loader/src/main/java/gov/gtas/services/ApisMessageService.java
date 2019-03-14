@@ -214,7 +214,15 @@ public class ApisMessageService extends MessageLoaderService {
     					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
-    			apisMessage.addToFlightPax(fp);
+    			if (p.getFlightPaxList().add(fp)) {
+                    apisMessage.addToFlightPax(fp);
+                } else {
+    			     p.getFlightPaxList()
+                             .stream()
+                             .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
+                             .findFirst()
+                             .ifPresent(apisMessage::addToFlightPax);
+                }
     		}
     	}
     }
