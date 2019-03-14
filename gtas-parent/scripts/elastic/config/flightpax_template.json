@@ -6,7 +6,7 @@
         "number_of_shards": 1
     },
     "mappings": {
-        "_default_": {
+        "doc": {
             "properties": {
                 "addresses": {
                     "properties": {
