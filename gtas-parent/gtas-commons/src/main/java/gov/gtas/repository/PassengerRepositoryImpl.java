@@ -194,8 +194,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         
 		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
 		Join<Passenger, PaxWatchlistLink> link = pax.join("paxWatchlistLinks", JoinType.LEFT);
+		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.LEFT);
+//		Join<Passenger, PassengerTripDetails> passengerCountJoin = pax.join("passengerTripDetails", JoinType.LEFT);
 
-        if (flightId == null) {
+		if (flightId == null) {
             predicates.addAll(createPredicates(cb, dto, pax, flightRoot));
         } else {
             hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
@@ -215,8 +217,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
                 } else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
 					orderByItem.add(link.get("percentMatch"));
-                } else {
-					orderByItem.add(pax.get(column));
+                } else if (!"documentNumber".equalsIgnoreCase(column)){
+					orderByItem.add(paxDetailsJoin.get(column));
                 }
                 if (sort.getDir().equals("desc")) {
                 	for (Expression<?> e : orderByItem){
