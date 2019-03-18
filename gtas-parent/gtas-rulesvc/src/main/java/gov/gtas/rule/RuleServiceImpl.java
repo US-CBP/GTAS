@@ -121,10 +121,10 @@ public class RuleServiceImpl implements RuleService {
 		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession,
 				listeners);
 
-		logger.debug("Retrieved Rule input objects and executed the rules.");
+		logger.debug("About to run rules.");
 		Collection<?> requestObjects = req.getRequestObjects();
 		ksession.execute(requestObjects);
-
+		logger.debug("ran rules against kie (knowledge is everything)");
 		Globals globals = ksession.getGlobals();
 		Collection<String> keys = globals.getGlobalKeys();
 

@@ -114,7 +114,7 @@ public class ApisMessageService extends MessageLoaderService {
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-
+            apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {
             msgDto.getMessageStatus().setSuccess(false);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);

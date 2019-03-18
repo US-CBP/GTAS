@@ -100,7 +100,7 @@ public interface PassengerService {
 
 	Set<Flight> getAllFlights(Long id);
         
-    List<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
+    Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
         
     List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
 

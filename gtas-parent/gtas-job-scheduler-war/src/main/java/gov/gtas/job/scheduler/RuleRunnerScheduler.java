@@ -8,6 +8,8 @@ package gov.gtas.job.scheduler;
 import gov.gtas.model.Case;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.MessageStatusEnum;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingServiceResults;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
@@ -44,6 +46,9 @@ public class RuleRunnerScheduler {
 	/** The error persistence service. */
 	private ErrorPersistenceService errorPersistenceService;
 
+	@Autowired
+	private AppConfigurationService appConfigurationService;
+
 
 	@Autowired
 	private MatchingService matchingService;
@@ -74,14 +79,16 @@ public class RuleRunnerScheduler {
 		try {
 			RuleResultsWithMessageStatus ruleResults = targetingService.runningRuleEngine();
 			List<TargetingServiceResults> targetingServiceResultsList = targetingService.createHitsAndCases(ruleResults.getRuleResults());
+			logger.debug("About to batch");
 			List<TargetingServiceResults> batchedTargetingServiceResults = batchResults(targetingServiceResultsList);
+			logger.debug("done batching");
 			int count = 1;
 			if (ruleResults.getMessageStatusList() != null) {
 				ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.ANALYZED));
 				for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
 					try {
+						logger.info("Saving rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + "...");
 						targetingService.saveEverything(targetingServiceResults);
-						logger.info("Saved rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + ".");
 					} catch (Exception ignored) {
 						ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
 						logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
@@ -109,7 +116,7 @@ public class RuleRunnerScheduler {
 
     private List<TargetingServiceResults> batchResults(List<TargetingServiceResults> targetingServiceResultsList) {
 
-	    int BATCH_SIZE = 50;
+	    int BATCH_SIZE = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
         List<TargetingServiceResults> batchedResults = new ArrayList<>();
         TargetingServiceResults conglomerateResults = new TargetingServiceResults();
         int counter = 0;

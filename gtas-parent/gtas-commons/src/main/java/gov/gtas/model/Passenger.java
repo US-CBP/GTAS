@@ -47,13 +47,13 @@ public class Passenger extends BaseEntityAudit {
     @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Document> documents = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Attachment> attachments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Seat> seatAssignments = new HashSet<>();
 
     @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
@@ -62,13 +62,13 @@ public class Passenger extends BaseEntityAudit {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<Bag> bags = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="passenger")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY, mappedBy="passenger")
     private Set<FlightPax> flightPaxList = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
     private Set<TicketFare> tickets = new HashSet<>();
 
     @Type(type = "uuid-char")
@@ -93,7 +93,7 @@ public class Passenger extends BaseEntityAudit {
 	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
 		this.bookingDetails = bookingDetails;
 	}
-	
+
 	public Set<TicketFare> getTickets() {
 		return tickets;
 	}
@@ -119,7 +119,7 @@ public class Passenger extends BaseEntityAudit {
 	}
 	public void addApisMessage(ApisMessage apisMessage) {
     }
-	
+
 	public void addDocument(Document d) {
         this.documents.add(d);
         d.setPassenger(this);
@@ -172,7 +172,7 @@ public class Passenger extends BaseEntityAudit {
     public void setSeatAssignments(Set<Seat> seatAssignments) {
         this.seatAssignments = seatAssignments;
     }
-	
+
     public Set<Attachment> getAttachments() {
 		return attachments;
 	}

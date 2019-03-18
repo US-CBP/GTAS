@@ -144,6 +144,7 @@ public class PnrMessageService extends MessageLoaderService {
 			loaderRepo.createFormPfPayments(vo,pnr);
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+			pnr.setPassengerCount(pnr.getPassengers().size());
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);

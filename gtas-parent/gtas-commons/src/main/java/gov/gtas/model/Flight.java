@@ -21,7 +21,7 @@ public class Flight extends BaseEntityAudit {
     
     @Column(nullable = false)
     private String carrier;
-    
+
     @Size(min = 4, max = 4)
     @Column(name = "flight_number", length = 4, nullable = false)
     private String flightNumber;
@@ -112,6 +112,12 @@ public class Flight extends BaseEntityAudit {
     )
     private Set<Pnr> pnrs = new HashSet<>();
 
+    @ManyToMany(
+        mappedBy = "flights",
+        targetEntity = ApisMessage.class
+    )
+    private Set<ApisMessage> apis = new HashSet<>();
+
     // This is a convenience method to see the passengers associated with the flight.
     // Managing passengers this way is recommended against as flight passenger is manually made in the
     // loader.
@@ -201,6 +207,13 @@ public class Flight extends BaseEntityAudit {
     }
     public void setPnrs(Set<Pnr> pnrs) {
         this.pnrs = pnrs;
+    }
+    public Set<ApisMessage> getApis() {
+        return apis;
+    }
+
+    public void setApis(Set<ApisMessage> apis) {
+        this.apis = apis;
     }
 
     /**

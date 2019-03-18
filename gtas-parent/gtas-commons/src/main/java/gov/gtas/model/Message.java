@@ -40,6 +40,17 @@ public class Message extends BaseEntity {
 	@Column(length = 4000)
 	private String error;
 
+	@Column(name="passenger_count")
+	protected Integer passengerCount;
+
+
+	public Integer getPassengerCount() {
+		return passengerCount;
+	}
+
+	public void setPassengerCount(Integer passengerCount) {
+		this.passengerCount = passengerCount;
+	}
 	public Date getCreateDate() {
 		return createDate;
 	}

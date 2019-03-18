@@ -390,6 +390,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 s.setPassenger(p);
                 s.setFlight(f);
                 s.setNumber(seat.getNumber());
+                s.setPaxId(p.getId());
                 s.setApis(seat.getApis());
                 Boolean alreadyExistsSeat = Boolean.FALSE;
                 for (Seat s2 : p.getSeatAssignments()) {

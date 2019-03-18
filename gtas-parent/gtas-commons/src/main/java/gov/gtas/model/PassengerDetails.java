@@ -194,6 +194,7 @@ public class PassengerDetails extends BaseEntityAudit {
     public int hashCode() {
         final int prime = 31;
         int result = 10;
+        result = prime * result + ((passengerId == null) ? 0 : passengerId.hashCode());
         result = prime * result + ((age == null) ? 0 : age.hashCode());
         result = prime * result + ((dob == null) ? 0 : dob.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
@@ -210,6 +211,12 @@ public class PassengerDetails extends BaseEntityAudit {
         if (!(obj instanceof PassengerDetails))
             return false;
         PassengerDetails other = (PassengerDetails) obj;
+        if (passengerId == null) {
+            if (other.passengerId != null)
+                return false;
+        } else if (!passengerId.equals(other.getPassengerId())){
+            return false;
+        }
         if (age == null) {
             if (other.age != null)
                 return false;

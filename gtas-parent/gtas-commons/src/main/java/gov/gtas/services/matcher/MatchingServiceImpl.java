@@ -317,10 +317,17 @@ public class MatchingServiceImpl implements MatchingService {
 		ArrayList<Flight> flights = (ArrayList<Flight>) flightRepository
 				.getInboundAndOutboundFlightsWithinTimeFrame(startDate, endDate);
 		Map<Flight, Set<Passenger>> passengers = new HashMap<>();
+		int maxPassengerForFuzzyRun = Integer
+				.parseInt(appConfigRepository.findByOption(appConfigRepository.MAX_PASSENGERS_PER_FUZZY_MATCH).getValue());
+		int counter = 0;
 		if (flights != null && flights.size() > 0) {
 			startTime = System.nanoTime();
 			for (Flight f : flights) {
+				counter += f.getPassengers().size();
 				passengers.put(f, f.getPassengers());
+				if (counter >= maxPassengerForFuzzyRun) {
+					break;
+				}
 			}
 			endTime = System.nanoTime();
 			logger.debug(

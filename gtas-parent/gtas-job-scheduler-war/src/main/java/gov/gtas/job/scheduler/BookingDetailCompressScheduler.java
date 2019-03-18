@@ -6,7 +6,9 @@
 package gov.gtas.job.scheduler;
 
 import gov.gtas.model.BookingDetail;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.BookingDetailRepository;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.BookingDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +31,12 @@ public class BookingDetailCompressScheduler {
 
     @Autowired private BookingDetailService bookingDetailService;
 
+    @Autowired private AppConfigurationService appConfigurationService;
+
     @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() {
-
-        List<BookingDetail> unprocessedBookingDetails = bookingDetailRepository.getBookingDetailByProcessedFlag(50L);
+        long theLimit = Long.parseLong(appConfigurationService.findByOption(AppConfigurationRepository.BOOKING_COMPRESSION_AMOUNT).getValue());
+        List<BookingDetail> unprocessedBookingDetails = bookingDetailRepository.getBookingDetailByProcessedFlag(theLimit);
         if (unprocessedBookingDetails.isEmpty()) {
             return;
         }

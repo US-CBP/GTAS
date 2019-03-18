@@ -28,6 +28,11 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     //public static String CASE_COUNTDOWN_LABEL = "CASE_COUNTDOWN_LABEL";
     public static String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
     public static String APIS_VERSION = "APIS_VERSION";
+    public static String BOOKING_COMPRESSION_AMOUNT = "BOOKING_COMPRESSION_AMOUNT";
+    public static String MAX_PASSENGERS_PER_RULE_RUN = "MAX_PASSENGERS_PER_RULE_RUN";
+    public static String MAX_PASSENGERS_PER_FUZZY_MATCH = "MAX_PASSENGERS_PER_FUZZY_MATCH";
+    public static String MAX_MESSAGES_PER_RULE_RUN = "MAX_MESSAGES_PER_RULE_RUN";
+    public static String MAX_FLIGHTS_SAVED_PER_BATCH = "MAX_FLIGHTS_PER_BATCH";
 
     public AppConfiguration findByOption(String option);
     public AppConfiguration save(AppConfiguration appConfig);
