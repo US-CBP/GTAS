@@ -25,6 +25,7 @@
 	p.`dob` "p_dob", 
 	p.`passenger_type`, 
 	p.`residency_country`,
+	seat.`number` "passenger.seat_number",
 	
 	d.`document_number` "d_document_number",
 	d.`document_type` "d_document_type",
