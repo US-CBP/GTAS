@@ -10,7 +10,7 @@
 	f.`origin` "flight.origin", 
 	f.`origin_country` "flight.origin_country",
 -- 	f.`rule_hit_count` "flight.rule_hit_count",
-	f.`passenger_count` "flight.passenger_count",
+	-- f.`passenger_count` "flight.passenger_count",
 	f.`direction` "flight.direction",
 	seat.`number` "flight.seat_number",
 	
@@ -25,6 +25,7 @@
 	p.`dob` "p_dob", 
 	p.`passenger_type`, 
 	p.`residency_country`,
+	seat.`number` "passenger.seat_number",
 	
 	d.`document_number` "d_document_number",
 	d.`document_type` "d_document_type",
