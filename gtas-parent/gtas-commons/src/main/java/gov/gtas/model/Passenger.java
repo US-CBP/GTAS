@@ -205,6 +205,21 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
 
+    public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
+        return paxWatchlistLinks;
+    }
+
+    public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
+        this.paxWatchlistLinks = paxWatchlistLinks;
+    }
+
+    public Set<HitsSummary> getHits() {
+        return hits;
+    }
+
+    public void setHits(Set<HitsSummary> hits) {
+        this.hits = hits;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(getUuid());
@@ -218,11 +233,4 @@ public class Passenger extends BaseEntityAudit {
         return uuid.equals(passenger.getUuid());
     }
 
-    public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
-        return paxWatchlistLinks;
-    }
-
-    public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
-        this.paxWatchlistLinks = paxWatchlistLinks;
-    }
 }
