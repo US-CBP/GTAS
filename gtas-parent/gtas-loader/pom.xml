@@ -89,7 +89,11 @@
         </dependency>
     </dependencies>
 
-    <build>
+<profiles>
+	<profile>
+		<id>gtas-loader-with-dependencies</id>
+		<activation><activeByDefault>false</activeByDefault></activation>
+		<build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -120,5 +124,8 @@
             </plugin>
         </plugins>
     </build>
+	</profile>
+</profiles>
+    
 </project>
 

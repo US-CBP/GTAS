@@ -125,36 +125,41 @@
         <commons-io.version>2.6</commons-io.version>
         <commons-collections4.version>4.2</commons-collections4.version>
     </properties>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>build-gtas-parser</id>
-                        <configuration>
-                            <appendAssemblyId>true</appendAssemblyId>
-                            <archive>
-                                <manifest>
-                                    <mainClass>gov.gtas.parsers.redisson.RedisLoaderMain</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>gtas-parsers</finalName>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+	
+	<profiles>
+		<profile>
+			<id>gtas-parser-with-dependencies</id>
+			<activation><activeByDefault>false</activeByDefault></activation>
+			    <build>
+			        <plugins>
+			            <plugin>
+			                <artifactId>maven-assembly-plugin</artifactId>
+			                <version>3.1.0</version>
+			                <executions>
+			                    <execution>
+			                        <id>build-gtas-parser</id>
+			                        <configuration>
+			                            <appendAssemblyId>true</appendAssemblyId>
+			                            <archive>
+			                                <manifest>
+			                                    <mainClass>gov.gtas.parsers.redisson.RedisLoaderMain</mainClass>
+			                                </manifest>
+			                            </archive>
+			                            <descriptorRefs>
+			                                <descriptorRef>jar-with-dependencies</descriptorRef>
+			                            </descriptorRefs>
+			                            <finalName>gtas-parsers</finalName>
+			                        </configuration>
+			                        <phase>package</phase>
+			                        <goals>
+			                            <goal>single</goal>
+			                        </goals>
+			                    </execution>
+			                </executions>
+			            </plugin>
+			        </plugins>
+			    </build>
+		</profile>
+	</profiles>
 </project>
 

@@ -111,6 +111,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
 
     @Query("SELECT f from Flight f " +
             "LEFT JOIN FETCH f.passengers pax " +
+    		"LEFT JOIN FETCH pax.hits hit " +
             "LEFT JOIN FETCH pax.seatAssignments " +
             "WHERE f.id = :id" )
     Flight getFlightPassengerAndSeatById(@Param("id") Long flightId);
