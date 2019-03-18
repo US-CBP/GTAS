@@ -13,6 +13,7 @@ import java.util.Set;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
+import gov.gtas.model.PassengerDetails;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,10 @@ public class RuleHitDetailTest {
     @Test
     public void testHashCodeEquals() {
         Passenger p = new Passenger();
-        p.getPassengerDetails().setPassengerType("P");
+        PassengerDetails passengerDetails = new PassengerDetails();
+        passengerDetails.setPassengerType("P");
+        passengerDetails.setPassenger(p);
+        p.setPassengerDetails(passengerDetails);
         p.setId(1L);
         Flight f = new Flight();
         f.setId(35L);
