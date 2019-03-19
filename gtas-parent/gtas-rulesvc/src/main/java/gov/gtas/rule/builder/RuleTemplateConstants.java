@@ -5,16 +5,44 @@
  */
 package gov.gtas.rule.builder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import gov.gtas.constant.RuleServiceConstants;
 
 public class RuleTemplateConstants {
     public static final String SEAT_ENTITY_NAME = "Seat";
     public static final String SEAT_ATTRIBUTE_NAME = "number";
-    
+
+
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERDETAILS.AGE","age");
+    	put("PASSENGERDETAILS.DOB","dob");
+    	put("PASSENGERDETAILS.GENDER","gender");
+    	put("PASSENGERDETAILS.FIRSTNAME","firstName");
+    	put("PASSENGERDETAILS.LASTNAME","lastName");
+    	put("PASSENGERDETAILS.MIDDLENAME","middleName");
+    	put("PASSENGERDETAILS.RESIDENCYCOUNTRY","residencyCountry");
+    	put("PASSENGERDETAILS.CITIZENSHIPCOUNTRY","citizenshipCountry");
+    	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
+    }});
+    public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passTripDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERTRIPDETAILS.EMBARKATION","embarkation");
+    	put("PASSENGERTRIPDETAILS.DEBARKATION","debarkation");
+    	put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY","travelFrequency");
+    	put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY","embarkCountry");
+    	put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY","debarkCountry");
+    }});
+    public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
+
+
     public static final String PASSENGER_VARIABLE_NAME = "$p";
+    public static final String PASSENGER_DETAILS_VARIABLE_NAME = "$pcb";
+    public static final String PASSENGER_TRIP_VARIABLE_NAME = "$ptcb";
     public static final String DOCUMENT_VARIABLE_NAME = "$d";
     public static final String FLIGHT_VARIABLE_NAME = "$f";
     public static final String ADDRESS_VARIABLE_NAME = "$addr";

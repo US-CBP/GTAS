@@ -25,9 +25,20 @@ public class Seat extends BaseEntity {
 	@Column(nullable = false)
 	private Boolean apis = Boolean.valueOf(false);
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "passenger_id", nullable = false)
 	private Passenger passenger;
+
+	public Long getPaxId() {
+		return paxId;
+	}
+
+	public void setPaxId(Long paxId) {
+		this.paxId = paxId;
+	}
+
+	@Column(name = "passenger_id", updatable = false, insertable = false, columnDefinition = "bigint unsigned")
+	private Long paxId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
@@ -72,7 +83,7 @@ public class Seat extends BaseEntity {
 			num = num.replaceAll("\\\\", "");
 		}
 		return Objects
-				.hash(num, this.apis, this.passenger.getId());
+				.hash(num, this.apis, this.paxId);
 	}
 
 	@Override
@@ -92,6 +103,6 @@ public class Seat extends BaseEntity {
 		}
 		return Objects.equals(num, num2)
 				&& Objects.equals(this.apis, other.apis)
-				&& Objects.equals(this.passenger.getId(), other.passenger.getId());
+				&& Objects.equals(this.paxId, other.paxId);
 	}
 }

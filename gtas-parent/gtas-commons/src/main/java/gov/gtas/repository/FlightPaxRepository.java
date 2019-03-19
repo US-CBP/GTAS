@@ -6,7 +6,9 @@ import org.springframework.data.repository.CrudRepository;
 import gov.gtas.model.FlightPax;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.Set;
 
 
 public interface FlightPaxRepository extends CrudRepository<FlightPax, Long>{
@@ -16,7 +18,8 @@ public interface FlightPaxRepository extends CrudRepository<FlightPax, Long>{
     	return findById(flightPaxId).orElse(null);
     }
 
+    @Transactional
     @Query("SELECT fps FROM FlightPax fps WHERE fps.passenger.id IN :pidList")
-    List<FlightPax> findFlightFromPassIdList(@Param("pidList") List<Long> pidList);
+    Set<FlightPax> findFlightFromPassIdList(@Param("pidList") Collection<Long> pidList);
 
 }

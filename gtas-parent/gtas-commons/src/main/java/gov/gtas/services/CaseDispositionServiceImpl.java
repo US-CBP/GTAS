@@ -277,13 +277,13 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setUpdatedBy(username);
 		aCase.setFlightId(flight_id);
 		aCase.setPaxId(pax_id);
-		aCase.setPaxName(pax.getFirstName() + " " + pax.getLastName());
+		aCase.setPaxName(pax.getPassengerDetails().getFirstName() + " " + pax.getPassengerDetails().getLastName());
 		populatePassengerDetailsInCase(aCase, flight_id, pax_id);
-		aCase.setPaxType(pax.getPassengerType());
-		aCase.setCitizenshipCountry(pax.getCitizenshipCountry());
+		aCase.setPaxType(pax.getPassengerDetails().getPassengerType());
+		aCase.setCitizenshipCountry(pax.getPassengerDetails().getCitizenshipCountry());
 		aCase.setDocument(((Document) pax.getDocuments().parallelStream().findFirst().orElse(new Document("xxxxxxxxx")))
 				.getDocumentNumber());
-		aCase.setDob(pax.getDob());
+		aCase.setDob(pax.getPassengerDetails().getDob());
 		aCase.setStatus(DispositionStatusCode.NEW.toString());
 
 		hit_ids.add(_tempHitIdForManualCase); // Manual Distinction
@@ -937,8 +937,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		Passenger _tempPax = findPaxByID(paxId);
 		Flight _tempFlight = findFlightByID(flightId);
 		if (_tempPax != null) {
-			aCaseVo.setFirstName(_tempPax.getFirstName());
-			aCaseVo.setLastName(_tempPax.getLastName());
+			aCaseVo.setFirstName(_tempPax.getPassengerDetails().getFirstName());
+			aCaseVo.setLastName(_tempPax.getPassengerDetails().getLastName());
 		}
 		if (_tempFlight != null) {
 			aCaseVo.setFlightNumber(_tempFlight.getFlightNumber());
@@ -977,8 +977,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 
 		if (_tempPax != null) {
-			aCase.setFirstName(_tempPax.getFirstName());
-			aCase.setLastName(_tempPax.getLastName());
+			aCase.setFirstName(_tempPax.getPassengerDetails().getFirstName());
+			aCase.setLastName(_tempPax.getPassengerDetails().getLastName());
 		}
 		if (_tempFlight != null) {
 			aCase.setFlightNumber(_tempFlight.getFlightNumber());

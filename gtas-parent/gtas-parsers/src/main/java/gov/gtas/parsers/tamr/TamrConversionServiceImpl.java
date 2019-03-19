@@ -98,13 +98,13 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			
 			//pax related
 			List<String> citizenshipCountries = new ArrayList<String>();
-			citizenshipCountries.add(passenger.getCitizenshipCountry());
+			citizenshipCountries.add(passenger.getPassengerDetails().getCitizenshipCountry());
 			tamrPax.setCTZNSHP_CTRY_CD(citizenshipCountries);
-			tamrPax.setDOB_Date(passenger.getDob());
-			tamrPax.setFirst_name(passenger.getFirstName());		
-			tamrPax.setGNDR_CD(passenger.getGender());
+			tamrPax.setDOB_Date(passenger.getPassengerDetails().getDob());
+			tamrPax.setFirst_name(passenger.getPassengerDetails().getFirstName());		
+			tamrPax.setGNDR_CD(passenger.getPassengerDetails().getGender());
 			tamrPax.setGtasId(passenger.getId().toString());
-			tamrPax.setLast_name(passenger.getLastName());
+			tamrPax.setLast_name(passenger.getPassengerDetails().getLastName());
 			
 			//temp values
 			tamrPax.setUid("");

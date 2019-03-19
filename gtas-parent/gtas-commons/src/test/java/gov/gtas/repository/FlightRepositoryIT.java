@@ -49,9 +49,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("USA");
 		Passenger p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("john");
-		p.setLastName("doe");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("john");
+		p.getPassengerDetails().setLastName("doe");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -67,9 +67,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("johnny");
-		p.setLastName("dal");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("johnny");
+		p.getPassengerDetails().setLastName("dal");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -85,9 +85,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("MEX");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("ted");
-		p.setLastName("bart");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("ted");
+		p.getPassengerDetails().setLastName("bart");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -103,9 +103,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("SLE");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("mike");
-		p.setLastName("great");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("mike");
+		p.getPassengerDetails().setLastName("great");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -121,9 +121,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("LBR");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("lora");
-		p.setLastName("speedier");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("lora");
+		p.getPassengerDetails().setLastName("speedier");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 	}

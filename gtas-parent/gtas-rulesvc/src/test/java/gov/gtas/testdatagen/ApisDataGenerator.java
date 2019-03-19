@@ -70,14 +70,14 @@ public class ApisDataGenerator {
         for(String[] args:param){
             Passenger passenger = new Passenger();
             passenger.setId(ids[passengerCount]);
-            passenger.setPassengerType(PassengerTypeCode.P.name());
+            passenger.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
             passenger.setId(new Long(args[6]));
             passenger.setDocuments(createDocuments(new long[]{ids[passengerCount]},
                     new String[]{args[0]}, new String[]{args[1]}));
-            passenger.setFirstName(args[2]);
-            passenger.setLastName(args[3]);
-            passenger.setCitizenshipCountry(args[4]);
-            passenger.setEmbarkation(args[5]);
+            passenger.getPassengerDetails().setFirstName(args[2]);
+            passenger.getPassengerDetails().setLastName(args[3]);
+            passenger.getPassengerDetails().setCitizenshipCountry(args[4]);
+            passenger.getPassengerTripDetails().setEmbarkation(args[5]);
             if(args.length > 7){
                 passenger.getSeatAssignments().add(createSeat(passenger, flight, args[7]));
             }

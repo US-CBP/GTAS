@@ -120,23 +120,23 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		List<Predicate> predicates = new ArrayList<>();
 		// passenger-related
 		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
-		if (StringUtils.isNotBlank(pax.getFirstName())) {
-			String likeString = String.format("%%%s%%", pax.getFirstName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getFirstName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getFirstName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("firstName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getLastName())) {
-			String likeString = String.format("%%%s%%", pax.getLastName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getLastName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getLastName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("lastName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getGender())) {
-			String likeString = String.format("%%%s%%", pax.getGender()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getGender())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getGender()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("gender"), likeString));
 		}
-		if (pax.getDob() != null) {
-			predicates.add(cb.equal(root.<String> get("dob"), pax.getDob()));
+		if (pax.getPassengerDetails().getDob() != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), pax.getPassengerDetails().getDob()));
 		}
 		// document-related
 		if (StringUtils.isNotBlank(docNum)) {
@@ -194,8 +194,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         
 		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
 		Join<Passenger, PaxWatchlistLink> link = pax.join("paxWatchlistLinks", JoinType.LEFT);
+		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.LEFT);
+//		Join<Passenger, PassengerTripDetails> passengerCountJoin = pax.join("passengerTripDetails", JoinType.LEFT);
 
-        if (flightId == null) {
+		if (flightId == null) {
             predicates.addAll(createPredicates(cb, dto, pax, flightRoot));
         } else {
             hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
@@ -215,8 +217,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
                 } else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
 					orderByItem.add(link.get("percentMatch"));
-                } else {
-					orderByItem.add(pax.get(column));
+                } else if (!"documentNumber".equalsIgnoreCase(column)){
+					orderByItem.add(paxDetailsJoin.get(column));
                 }
                 if (sort.getDir().equals("desc")) {
                 	for (Expression<?> e : orderByItem){

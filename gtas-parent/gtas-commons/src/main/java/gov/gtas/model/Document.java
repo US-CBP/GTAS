@@ -105,7 +105,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( this.documentNumber
+		return Objects.hash( this.documentNumber, documentType
 				);
 	}
 
@@ -116,6 +116,6 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentNumber, other.documentNumber);
+		return Objects.equals(this.documentNumber, other.documentNumber) && Objects.equals(this.documentType, other.documentType);
 	}
 }

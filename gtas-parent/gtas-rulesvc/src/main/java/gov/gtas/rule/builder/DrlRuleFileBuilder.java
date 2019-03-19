@@ -19,22 +19,7 @@ import gov.gtas.bo.match.PnrFrequentFlyerLink;
 import gov.gtas.bo.match.PnrPassengerLink;
 import gov.gtas.bo.match.PnrPhoneLink;
 import gov.gtas.bo.match.PnrTravelAgencyLink;
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.Bag;
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Document;
-import gov.gtas.model.DwellTime;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.Seat;
-import gov.gtas.model.PaymentForm;
+import gov.gtas.model.*;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -53,7 +38,7 @@ public class DrlRuleFileBuilder {
             .getLogger(DrlRuleFileBuilder.class);
 
     private static final Class<?>[] IMPORT_LIST = { Flight.class,
-            Passenger.class, Document.class, Pnr.class, Address.class,
+            Passenger.class, PassengerDetails.class, PassengerTripDetails.class, Document.class, Pnr.class, Address.class,
             Phone.class, Email.class, FrequentFlyer.class, CreditCard.class,BookingDetail.class,
             Agency.class, DwellTime.class, FlightPax.class, Bag.class, PnrAddressLink.class, PnrCreditCardLink.class,
             PnrEmailLink.class, PnrFrequentFlyerLink.class,PnrBookingLink.class,
