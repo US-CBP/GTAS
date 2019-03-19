@@ -17,12 +17,12 @@
 - pipeline.id: cases
   pipeline.workers: 1
   pipeline.batch.size: 125
-  path.config: "logstash/config/logstash-cases.conf"
+  path.config: "./config/logstash-cases.conf"
 
 - pipeline.id: flightpax
   # pipeline.workers: 1
   pipeline.batch.size: 125
-  path.config: "logstash/config/logstash-flightpax.conf"
+  path.config: "./config/logstash-flightpax.conf"
   
 # - pipeline.id: countries
 #   pipeline.workers: 1

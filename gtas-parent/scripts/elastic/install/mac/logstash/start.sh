@@ -8,6 +8,8 @@ source ../set_env.sh
 
 cd $ES_INSTALL_LOCATION
 
+cd "logstash"
+
 # Start Elstic Search
 
-./logstash/bin/logstash & echo $! > ./logstash/pid
+./bin/logstash & echo $! > ./pid
