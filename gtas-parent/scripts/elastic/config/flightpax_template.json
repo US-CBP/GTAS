@@ -7,7 +7,20 @@
     },
     "mappings": {
         "doc": {
+            "dynamic": "strict",
             "properties": {
+                "@timestamp" : {
+                    "type" : "date"
+                  },
+                  "@version" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
                 "addresses": {
                     "properties": {
                         "city": {
@@ -72,6 +85,15 @@
                         }
                     }
                 },
+                "id" : {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
                 "apis": {
                     "type": "text",
                     "fields": {
@@ -82,6 +104,24 @@
                     }
                 },
                 "carrier": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "direction": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "seatNumber": {
                     "type": "text",
                     "fields": {
                         "keyword": {
@@ -282,6 +322,28 @@
                             "ignore_above": 256
                         }
                     }
+                },
+                "watchlist_match" : {
+                  "properties" : {
+                    "id" : {
+                      "type" : "long"
+                    },
+                    "last_run_timestamp" : {
+                      "type" : "date"
+                    },
+                    "passenger_id" : {
+                      "type" : "long"
+                    },
+                    "percent_match" : {
+                      "type" : "float"
+                    },
+                    "verified_status" : {
+                      "type" : "long"
+                    },
+                    "watchlist_item_id" : {
+                      "type" : "long"
+                    }
+                  }
                 }
             }
         }

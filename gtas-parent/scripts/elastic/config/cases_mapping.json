@@ -7,6 +7,7 @@
     },
     "mappings" : {
       "doc" : {
+        "dynamic" : "strict",
         "properties" : {
           "@timestamp" : {
             "type" : "date"
@@ -20,6 +21,15 @@
               }
             }
           },
+          "description": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                }
+            }
+        },
           "citizenshipcountry" : {
             "type" : "text",
             "fields" : {
@@ -47,7 +57,7 @@
               }
             }
           },
-          "firstname" : {
+          "firstName" : {
             "type" : "text",
             "fields" : {
               "keyword" : {
@@ -58,6 +68,15 @@
           },
           "flight" : {
             "properties" : {
+              "direction" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
               "id" : {
                 "type" : "long"
               },
@@ -120,10 +139,19 @@
               }
             }
           },
-          "flightid" : {
+          "flightId" : {
             "type" : "long"
           },
-          "flightnumber" : {
+          "direction": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                }
+            }
+        },
+          "flightNumber" : {
             "type" : "text",
             "fields" : {
               "keyword" : {
@@ -132,7 +160,7 @@
               }
             }
           },
-          "highpriorityrulecatid" : {
+          "highPriorityRuleCatId" : {
             "type" : "long"
           },
           "hit_disposition" : {
@@ -141,7 +169,7 @@
               "comments" : {
                
                 "properties" : {
-                  "comments" : {
+                  "comment" : {
                     "type" : "text",
                     "fields" : {
                       "keyword" : {
@@ -163,6 +191,9 @@
                     }
                   },
                   "id" : {
+                    "type" : "long"
+                  },
+                  "hit_disp_id" : {
                     "type" : "long"
                   },
                   "hit_id" : {
@@ -235,11 +266,94 @@
               }
             }
           },
+          "hit_summary" : {
+            "properties" : {
+              "created_date" : {
+                "type" : "date"
+              },
+              "flight_id" : {
+                "type" : "long"
+              },
+              "hit_detail" : {
+                "properties" : {
+                  "cond_text" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "created_date" : {
+                    "type" : "date"
+                  },
+                  "description" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "hit_type" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  },
+                  "hits_summary_id" : {
+                    "type" : "long"
+                  },
+                  "id" : {
+                    "type" : "long"
+                  },
+                  "rule_id" : {
+                    "type" : "long"
+                  },
+                  "title" : {
+                    "type" : "text",
+                    "fields" : {
+                      "keyword" : {
+                        "type" : "keyword",
+                        "ignore_above" : 256
+                      }
+                    }
+                  }
+                }
+              },
+              "hit_type" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "id" : {
+                "type" : "long"
+              },
+              "passenger_id" : {
+                "type" : "long"
+              },
+              "rule_hit_count" : {
+                "type" : "long"
+              },
+              "wl_hit_count" : {
+                "type" : "long"
+              }
+            }
+          },
           "id" : {
             "type" : "long"
           },
           
-          "lastname" : {
+          "lastName" : {
             "type" : "text",
             "fields" : {
               "keyword" : {
@@ -247,6 +361,9 @@
                 "ignore_above" : 256
               }
             }
+          },
+          "one_day_lookout_flag" : {
+            "type" : "boolean"
           },
           "passenger" : {
             "properties" : {
@@ -319,6 +436,24 @@
                   }
                 }
               },
+              "seatNumber": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    }
+                }
+            },
+            "description": {
+              "type": "text",
+              "fields": {
+                  "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                  }
+              }
+          },
               "gender" : {
                 "type" : "text",
                 "fields" : {
@@ -332,6 +467,24 @@
                 "type" : "long"
               },
               "last_name" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "middle_name" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                    "type" : "keyword",
+                    "ignore_above" : 256
+                  }
+                }
+              },
+              "p_citizenship_country" : {
                 "type" : "text",
                 "fields" : {
                   "keyword" : {
@@ -373,6 +526,28 @@
               "travel_frequency" : {
                 "type" : "long"
               },
+              "watchlist_match" : {
+                "properties" : {
+                  "id" : {
+                    "type" : "long"
+                  },
+                  "last_run_timestamp" : {
+                    "type" : "date"
+                  },
+                  "passenger_id" : {
+                    "type" : "long"
+                  },
+                  "percent_match" : {
+                    "type" : "float"
+                  },
+                  "verified_status" : {
+                    "type" : "long"
+                  },
+                  "watchlist_item_id" : {
+                    "type" : "long"
+                  }
+                }
+              },
               "watchlistchecktimestamp" : {
                 "type" : "date"
               }
@@ -387,16 +562,7 @@
               }
             }
           },
-          "passengername" : {
-            "type" : "text",
-            "fields" : {
-              "keyword" : {
-                "type" : "keyword",
-                "ignore_above" : 256
-              }
-            }
-          },
-          "passengertype" : {
+          "passengerName" : {
             "type" : "text",
             "fields" : {
               "keyword" : {
@@ -406,7 +572,7 @@
             }
           },
          
-          "paxid" : {
+          "paxId" : {
             "type" : "long"
           },
           "status" : {
@@ -431,6 +597,15 @@
             "type" : "date"
           },
           "updated_by" : {
+            "type" : "text",
+            "fields" : {
+              "keyword" : {
+                "type" : "keyword",
+                "ignore_above" : 256
+              }
+            }
+          },
+          "created_by" : {
             "type" : "text",
             "fields" : {
               "keyword" : {

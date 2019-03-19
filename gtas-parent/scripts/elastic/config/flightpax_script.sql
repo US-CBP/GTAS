@@ -12,8 +12,7 @@
 -- 	f.`rule_hit_count` "flight.rule_hit_count",
 	-- f.`passenger_count` "flight.passenger_count",
 	f.`direction` "flight.direction",
-	seat.`number` "flight.seat_number",
-	
+		
 	p.`id` "p_id",
 	p.`citizenship_country` "p_citizenship_country", 
 	p.`debarkation` "p_debarkation", 
