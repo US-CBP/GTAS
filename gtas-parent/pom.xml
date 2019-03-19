@@ -191,7 +191,7 @@
 					</executions>
 					<configuration>
 						<executable>bash</executable>	
-						<workingDirectory>${project.basedir}/scripts/elastic/config/</workingDirectory>			
+						<workingDirectory>${project.basedir}/scripts/elastic/config/kibana/</workingDirectory>			
 					</configuration>
 				</plugin>
 			</plugins>
