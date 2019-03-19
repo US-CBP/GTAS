@@ -241,11 +241,11 @@ public class RuleConditionBuilder {
                 case PASSENGER:
                     if (RuleTemplateConstants.SEAT_ENTITY_NAME.equalsIgnoreCase(field)) {
                         apisSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                    } else if (RuleTemplateConstants.PASSENGER_DETAILS.contains(field.toUpperCase())) {
-                        detailsConditionBuilder.addCondition(opCode, field,
+                    } else if (RuleTemplateConstants.passDetailsMap.keySet().contains(field.toUpperCase())) {
+                        detailsConditionBuilder.addCondition(opCode, RuleTemplateConstants.passDetailsMap.get(field.toUpperCase()),
                                 attributeType, trm.getValue());
-                    } else if (RuleTemplateConstants.PASSENGER_TRIP_DETAILS.contains(field.toUpperCase())) {
-                        tripDetailsConditionBuilder.addCondition(opCode, field,
+                    } else if (RuleTemplateConstants.passTripDetailsMap.keySet().contains(field.toUpperCase())) {
+                        tripDetailsConditionBuilder.addCondition(opCode, RuleTemplateConstants.passTripDetailsMap.get(field.toUpperCase()),
                                 attributeType, trm.getValue());
                     } else {
                         throw new RuntimeException("ERROR: PASSENGER HAS NO INFORMATION FOR RULE. CHECK DETAILS OR TRIP IMPLEMENTATION");

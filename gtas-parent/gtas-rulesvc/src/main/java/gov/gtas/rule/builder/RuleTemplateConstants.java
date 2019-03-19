@@ -15,16 +15,29 @@ public class RuleTemplateConstants {
 
 
     //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
-    public static final List<String> passDetails = Arrays.asList("AGE", "DOB", "GENDER", "FIRSTNAME","LASTNAME", "MIDDLENAME", "RESIDENCYCOUNTRY", "CITIZENSHIPCOUNTRY","PASSENGERTYPE");
-    public static final Set<String> PASSENGER_DETAILS= Collections.unmodifiableSet(new HashSet<>(passDetails));
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERDETAILS.AGE","age");
+    	put("PASSENGERDETAILS.DOB","dob");
+    	put("PASSENGERDETAILS.GENDER","gender");
+    	put("PASSENGERDETAILS.FIRSTNAME","firstName");
+    	put("PASSENGERDETAILS.LASTNAME","lastName");
+    	put("PASSENGERDETAILS.MIDDLENAME","middleName");
+    	put("PASSENGERDETAILS.RESIDENCYCOUNTRY","residencyCountry");
+    	put("PASSENGERDETAILS.CITIZENSHIPCOUNTRY","citizenshipCountry");
+    	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
+    }});
     public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
-
     //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passTripDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERTRIPDETAILS.EMBARKATION","embarkation");
+    	put("PASSENGERTRIPDETAILS.DEBARKATION","debarkation");
+    	put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY","travelFrequency");
+    	put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY","embarkCountry");
+    	put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY","debarkCountry");
+    }});
     public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
-    public static final List<String> passTripDetails = Arrays.asList("EMBARKATION", "DEBARKATION", "RESERVATIONREFERENCENUMBER",
-            "TRAVELFREQUENCY", "TOTALBAGWEIGHT", "BAGNUM", "EMBARKCOUNTRY", "DEBARKCOUNTRY");
-    public static final Set<String> PASSENGER_TRIP_DETAILS= Collections.unmodifiableSet(new HashSet<>(passTripDetails));
-
 
 
     public static final String PASSENGER_VARIABLE_NAME = "$p";
