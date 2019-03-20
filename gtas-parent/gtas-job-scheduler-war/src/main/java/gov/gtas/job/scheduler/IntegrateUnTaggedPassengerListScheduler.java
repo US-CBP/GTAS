@@ -65,11 +65,11 @@ public class IntegrateUnTaggedPassengerListScheduler {
                 boolean paxFoundFlag = false;
                 Passenger _tempPaxWithIdTagThatMatched = new Passenger();
                 for (Passenger _tempPaxWithNoIdTag : paxListWithNullIdTags) {
-                    if ((_tempPaxWithIdTag.getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getFirstName()))
-                            && (_tempPaxWithIdTag.getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getLastName()))
-                            && (_tempPaxWithIdTag.getDob().equals(_tempPaxWithNoIdTag.getDob()))
+                    if ((_tempPaxWithIdTag.getPassengerDetails().getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getFirstName()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getLastName()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getDob().equals(_tempPaxWithNoIdTag.getPassengerDetails().getDob()))
 //                            && (_tempPaxWithIdTag.getCitizenshipCountry().equalsIgnoreCase(_tempPaxWithNoIdTag.getCitizenshipCountry()))
-                            && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getGender()))
                             ) {
                         // match found
                         //_tempPaxWithNoIdTag.setPaxIdTag(_tempPaxWithIdTag.getPaxIdTag());

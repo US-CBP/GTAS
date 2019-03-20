@@ -106,7 +106,7 @@ public class HitsSummaryRepositoryIT {
     private Object[] createPassengerFlight() {
         Passenger p = new Passenger();
         p.setDeleted(false);
-        p.setPassengerType("P");
+        p.getPassengerDetails().setPassengerType("P");
         passengerRepository.save(p);
 
         Flight f = new Flight();

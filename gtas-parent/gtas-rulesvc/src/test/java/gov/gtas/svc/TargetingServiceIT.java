@@ -69,7 +69,7 @@ public class TargetingServiceIT {
 		Flight flight = msg.getFlights().iterator().next();
 		assertEquals(3, flight.getPassengers().size());
 		Passenger pax = flight.getPassengers().iterator().next();
-		assertTrue(pax.getPassengerType().equals(PassengerTypeCode.P.name()));
+		assertTrue(pax.getPassengerDetails().getPassengerType().equals(PassengerTypeCode.P.name()));
 		assertNotNull("Pax ID is null", pax.getId());
 		assertEquals(1, pax.getDocuments().size());
 		Document doc = pax.getDocuments().iterator().next();

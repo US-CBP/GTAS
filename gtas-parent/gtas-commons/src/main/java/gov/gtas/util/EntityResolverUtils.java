@@ -44,8 +44,8 @@ public class EntityResolverUtils {
 		String hash = "";
 
 		hash = makeSHA1Hash(
-				String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-						pax.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getDob()))));
+				String.join("", Arrays.asList(pax.getPassengerDetails().getFirstName().toUpperCase(), pax.getPassengerDetails().getLastName().toUpperCase(),
+						pax.getPassengerDetails().getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getPassengerDetails().getDob()))));
 
 		return hash;
 	}

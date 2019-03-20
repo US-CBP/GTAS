@@ -61,9 +61,6 @@ public class Pnr extends Message {
     @Column(name = "days_booked_before_travel")
     private Integer daysBookedBeforeTravel;
 
-    @Column(name = "passenger_count")
-    private Integer passengerCount;
-
     @Column(name = "bag_count")
     private Integer bagCount;
     
@@ -397,14 +394,6 @@ public class Pnr extends Message {
 
     public void setDaysBookedBeforeTravel(Integer daysBookedBeforeTravel) {
         this.daysBookedBeforeTravel = daysBookedBeforeTravel;
-    }
-
-    public Integer getPassengerCount() {
-        return passengerCount;
-    }
-
-    public void setPassengerCount(Integer passengerCount) {
-        this.passengerCount = passengerCount;
     }
 
     public String getFormOfPayment() {

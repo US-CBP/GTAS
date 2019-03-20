@@ -54,7 +54,11 @@ insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_TIM
 insert into app_configuration (opt, val, description) values('APIS_ONLY_FLAG','FALSE','Is APIS the only message source in use.');
 insert into app_configuration (opt, val, description) values('APIS_VERSION','16B','Latest APIS version being used.');
 insert into app_configuration (opt, val, description) values('MAX_RULE_HITS','300','Number of rule hits allowed per rule');
-
+insert into app_configuration (opt, val, description) values('BOOKING_COMPRESSION_AMOUNT','50','Maximum number of messages processed by compression job at each run');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_RULE_RUN','3000','Maximum number of passengers processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_FUZZY_MATCH','2','Maximum number of passengers processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
 -- ----------------------------
 -- Records of dashboard_message_stats
 -- ----------------------------

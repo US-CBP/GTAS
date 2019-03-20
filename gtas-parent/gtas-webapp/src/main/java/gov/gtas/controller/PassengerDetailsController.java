@@ -126,20 +126,20 @@ public class PassengerDetailsController {
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
-		vo.setPassengerType(t.getPassengerType());
-		vo.setLastName(t.getLastName());
-		vo.setFirstName(t.getFirstName());
-		vo.setMiddleName(t.getMiddleName());
-		vo.setCitizenshipCountry(t.getCitizenshipCountry());
-		vo.setDebarkation(t.getDebarkation());
-		vo.setDebarkCountry(t.getDebarkCountry());
-		vo.setDob(t.getDob());
-		vo.setEmbarkation(t.getEmbarkation());
-		vo.setEmbarkCountry(t.getEmbarkCountry());
-		vo.setGender(t.getGender() != null ? t.getGender() : "");
-		vo.setResidencyCountry(t.getResidencyCountry());
-		vo.setSuffix(t.getSuffix());
-		vo.setTitle(t.getTitle());
+		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
+		vo.setLastName(t.getPassengerDetails().getLastName());
+		vo.setFirstName(t.getPassengerDetails().getFirstName());
+		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
+		vo.setCitizenshipCountry(t.getPassengerDetails().getCitizenshipCountry());
+		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
+		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
+		vo.setDob(t.getPassengerDetails().getDob());
+		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
+		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
+		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
+		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
+		vo.setSuffix(t.getPassengerDetails().getSuffix());
+		vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {
@@ -186,8 +186,8 @@ public class PassengerDetailsController {
 				bagVoOptional.ifPresent(tempVo::addBag);
 				for (Seat s : p.getSeatAssignments()) {
 					SeatVo seatVo = new SeatVo();
-					seatVo.setFirstName(p.getFirstName());
-					seatVo.setLastName(p.getLastName());
+					seatVo.setFirstName(p.getPassengerDetails().getFirstName());
+					seatVo.setLastName(p.getPassengerDetails().getLastName());
 					seatVo.setNumber(s.getNumber());
 					seatVo.setFlightNumber(flight.getFullFlightNumber());
 					tempVo.addSeat(seatVo);
@@ -275,8 +275,8 @@ public class PassengerDetailsController {
 			bagVo.setAverage_bag_weight(fp.getAverageBagWeight());
 			bagVo.setBag_weight(fp.getBagWeight());
 			bagVo.setData_source(fp.getMessageSource());
-			bagVo.setPassFirstName(fp.getPassenger().getFirstName());
-			bagVo.setPassLastName(fp.getPassenger().getLastName());
+			bagVo.setPassFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
+			bagVo.setPassLastName(fp.getPassenger().getPassengerDetails().getLastName());
 			bagVo.setData_source(fp.getMessageSource());
 			bagVoOptional = Optional.of(bagVo);
 		} else {
@@ -568,19 +568,19 @@ public class PassengerDetailsController {
 			while (it4.hasNext()) {
 				Passenger p = (Passenger) it4.next();
 				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getLastName());
-				pVo.setFirstName(p.getFirstName());
-				pVo.setMiddleName(p.getMiddleName());
-				pVo.setAge(p.getAge());
-				pVo.setGender(p.getGender());
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
 				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
 				
 				Set<Document> documents = p.getDocuments();
 				for (Document d: documents) {
 					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getFirstName());
-					documentVo.setLastName(d.getPassenger().getLastName());
+					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
 					documentVo.setDocumentType(d.getDocumentType());
 					documentVo.setIssuanceCountry(d.getIssuanceCountry());
 					documentVo.setDocumentNumber(d.getDocumentNumber());
@@ -1068,10 +1068,10 @@ public class PassengerDetailsController {
 				+ " and breaks expected conventions");
 
 	}
-	
+
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
     public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
-        
+
     	return fService.getSeatsByFlightId(flightId);
     }
 

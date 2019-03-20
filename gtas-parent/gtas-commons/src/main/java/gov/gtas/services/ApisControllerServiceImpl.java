@@ -25,9 +25,9 @@ public class ApisControllerServiceImpl implements ApisControllerService {
         List<FlightPassengerVo> flightPassengerVos = new ArrayList<>();
         for (FlightPax fp : fpList) {
             FlightPassengerVo fpVo = new FlightPassengerVo();
-            fpVo.setFirstName(fp.getPassenger().getFirstName());
-            fpVo.setLastName(fp.getPassenger().getLastName());
-            fpVo.setMiddleName(fp.getPassenger().getMiddleName());
+            fpVo.setFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
+            fpVo.setLastName(fp.getPassenger().getPassengerDetails().getLastName());
+            fpVo.setMiddleName(fp.getPassenger().getPassengerDetails().getMiddleName());
             fpVo.setEmbarkation(fp.getEmbarkation());
             fpVo.setDebarkation(fp.getDebarkation());
             if (fp.getInstallationAddress() != null) {
@@ -45,7 +45,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
             fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
             fpVo.setResidencyCountry(fp.getResidenceCountry());
             fpVo.setPassengerType(fp.getTravelerType());
-            fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+            fpVo.setCitizenshipCountry(fp.getPassenger().getPassengerDetails().getCitizenshipCountry());
             fpVo.setResRefNumber(fp.getReservationReferenceNumber());
             fpVo.setFlightId(fp.getFlight().getId());
             fpVo.setPassengerId(fp.getPassenger().getId());

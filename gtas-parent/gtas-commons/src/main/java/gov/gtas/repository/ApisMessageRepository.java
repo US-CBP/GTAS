@@ -5,17 +5,13 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.Message;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.lookup.Airport;
+import gov.gtas.model.*;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 	@Query("SELECT apis FROM ApisMessage apis left join fetch apis.phones join fetch apis.passengers pax join fetch apis.flights f where pax.id = :passengerId and f.id = :flightId")
@@ -36,4 +32,7 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
     {
     	return findById(id).orElse(null);
     }
+	@Query("SELECT passenger from ApisMessage apismessage join apismessage.passengers passenger left join fetch passenger.flight where apismessage.id in :apisIds")
+    Set<Passenger> getPassengerWithFlightInfo(@Param("apisIds")Set<Long> apisIds);
 }
+

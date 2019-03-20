@@ -114,14 +114,16 @@ public class PnrMessageService extends MessageLoaderService {
 					pnr.getFlightLegs(),
 					msgDto.getPrimeFlightKey(),
 					pnr.getBookingDetails());
-			CreatedAndOldPassengerInformation createdAndOldPassengerInformation  = loaderRepo.makeNewPassengerObjects(primeFlight,
+			PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
 					vo.getPassengers(),
 					pnr.getPassengers(),
 					pnr.getBookingDetails(),
 					pnr);
 
 
-			int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(),
+			int createdPassengers = loaderRepo.createPassengers(
+					passengerInformationDTO.getNewPax(),
+					passengerInformationDTO.getOldPax(),
 					pnr.getPassengers(),
 					primeFlight,
 					pnr.getBookingDetails());
@@ -129,7 +131,7 @@ public class PnrMessageService extends MessageLoaderService {
 
 			createFlightPax(pnr);
 			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createBookingDetails(pnr, createdAndOldPassengerInformation.getBdSet());
+			loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
 			// update flight legs
 			for (FlightLeg leg : pnr.getFlightLegs()) {
 				leg.setPnr(pnr);
@@ -142,6 +144,7 @@ public class PnrMessageService extends MessageLoaderService {
 			loaderRepo.createFormPfPayments(vo,pnr);
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+			pnr.setPassengerCount(pnr.getPassengers().size());
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
@@ -204,16 +207,16 @@ public class PnrMessageService extends MessageLoaderService {
     	}
     	setTripDurationTimeForPnr(pnr,firstDeparture,finalArrival);
     	for (Passenger p : pnr.getPassengers()) {
-    		p.setEmbarkation(embark);
+    		p.getPassengerTripDetails().setEmbarkation(embark);
     		Airport airport = utils.getAirport(embark);
     		if (airport != null) {
-    			p.setEmbarkCountry(airport.getCountry());
+    			p.getPassengerTripDetails().setEmbarkCountry(airport.getCountry());
     		}
     		
-    		p.setDebarkation(debark);
+    		p.getPassengerTripDetails().setDebarkation(debark);
     		airport = utils.getAirport(debark);
     		if (airport != null) {
-    			p.setDebarkCountry(airport.getCountry());
+    			p.getPassengerTripDetails().setDebarkCountry(airport.getCountry());
     		}
     	}
     	logger.debug("updatePaxEmbarkDebark time = "+(System.nanoTime()-startTime)/1000000);
@@ -338,7 +341,6 @@ public class PnrMessageService extends MessageLoaderService {
     	logger.debug("@ createFlightPax");
     	boolean oneFlight=false;
     	Set<FlightPax> paxRecords=new HashSet<>();
-    	long startTime = System.nanoTime();
     	Set<Flight> flights=pnr.getFlights();
     	String homeAirport=lookupRepo.getAppConfigOption(AppConfigurationRepository.DASHBOARD_AIRPORT);
     	int pnrBagCount=0;
@@ -354,14 +356,14 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setPortOfFirstArrival(f.getDestination());
     			fp.setMessageSource("PNR");
     			fp.setFlightId(f.getId());
-    			fp.setResidenceCountry(p.getResidencyCountry());
-    			fp.setTravelerType(p.getPassengerType());
+    			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
+    			fp.setTravelerType(p.getPassengerDetails().getPassengerType());
     			fp.setPassengerId(p.getId());
-    			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
+    			fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
     			int passengerBags=0;
-    			if(StringUtils.isNotBlank(p.getBagNum())){
+    			if(StringUtils.isNotBlank(p.getPassengerTripDetails().getBagNum())){
     				try {
-    					passengerBags=Integer.parseInt(p.getBagNum());
+    					passengerBags=Integer.parseInt(p.getPassengerTripDetails().getBagNum());
 					} catch (NumberFormatException e) {
 						passengerBags=0;
 					}
@@ -369,8 +371,8 @@ public class PnrMessageService extends MessageLoaderService {
     			fp.setBagCount(passengerBags);
     			pnrBagCount=pnrBagCount+passengerBags;
     			try {
-					if(StringUtils.isNotBlank(p.getTotalBagWeight()) && (passengerBags >0)){
-						Double weight=Double.parseDouble(p.getTotalBagWeight());
+					if(StringUtils.isNotBlank(p.getPassengerTripDetails().getTotalBagWeight()) && (passengerBags >0)){
+						Double weight=Double.parseDouble(p.getPassengerTripDetails().getTotalBagWeight());
 						fp.setAverageBagWeight(Math.round(weight/passengerBags));
 						fp.setBagWeight(weight);
 						pnrBagWeight=pnrBagWeight+weight;
@@ -380,14 +382,16 @@ public class PnrMessageService extends MessageLoaderService {
 				}
     			if(StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())){
     				if(homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())){
-    					p.setTravelFrequency(p.getTravelFrequency()+1);
+    					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
     			setHeadPool( fp,p,f);
-    			p.getFlightPaxList().add(fp);
-    			paxRecords.add(fp);
-				flightPaxes.add(fp);
-    		}
+    			boolean newFlightPax = p.getFlightPaxList().add(fp);
+				if (newFlightPax) {
+					flightPaxes.add(fp);
+				}
+				paxRecords.add(fp);
+			}
     		if(!oneFlight) {
     			setBagDetails(paxRecords,pnr);
     		}

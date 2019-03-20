@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 
+import gov.gtas.model.*;
+import gov.gtas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.Case;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PaxWatchlistLink;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.CaseDispositionRepository;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.PassengerRepository;
-import gov.gtas.repository.PaxWatchlistLinkRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.CaseDispositionService;
@@ -61,8 +53,10 @@ public class MatchingServiceImpl implements MatchingService {
 	private FlightRepository flightRepository;
 	@Autowired
 	private CaseDispositionService caseDispositionService;
-	@Resource
-	private CaseDispositionRepository caseDispositionRepository;
+
+	@Autowired
+	private PassengerWatchlistRepository passengerWatchlistRepository;
+
 	@Autowired
 	private AppConfigurationRepository appConfigRepository;
 
@@ -214,8 +208,11 @@ public class MatchingServiceImpl implements MatchingService {
 	}
 
 	private boolean passengerNeedsWatchlistCheck(Passenger passenger, Watchlist watchlist) {
-		return passenger.getWatchlistCheckTimestamp() == null
-				|| passenger.getWatchlistCheckTimestamp()
+		return  passenger.getPassengerWLTimestamp() == null ||
+				passenger.getPassengerWLTimestamp()
+						 .getWatchlistCheckTimestamp() == null ||
+				passenger.getPassengerWLTimestamp()
+				.getWatchlistCheckTimestamp()
 				.before(watchlist.getEditTimestamp());
 	}
 
@@ -275,20 +272,21 @@ public class MatchingServiceImpl implements MatchingService {
 					passengerIds.add(p.getId());
 				}
 			}
-
+			Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
 			MatcherParameters matcherParameters = getMatcherParameters(passengerIds);
 			for (Flight f : passengers.keySet()) {
 				for (Passenger passenger : passengers.get(f)) {
 					try {
 						performFuzzyMatching(f, passenger, matcherParameters);
+						PassengerWLTimestamp passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
+						savingPassengerSet.add(passengerWLTimestamp);
 					} catch (Exception e) {
 						logger.error("failed to run watchlist check on passenger. " +
-								"Will attempt a run on next pass." + passenger);
-						passengerIds.remove(passenger.getId());
+								"Will attempt a run on next pass.",  e);
 					}
 				}
 			}
-			passengerRepository.setPassengersWatchlistTimestamp(passengerIds, new Date());
+			passengerWatchlistRepository.saveAll(savingPassengerSet);
 			endTime = System.nanoTime();
 			logger.debug("Passenger count for matching service: " + passengerIds.size());
 			logger.debug("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
@@ -319,18 +317,26 @@ public class MatchingServiceImpl implements MatchingService {
 		ArrayList<Flight> flights = (ArrayList<Flight>) flightRepository
 				.getInboundAndOutboundFlightsWithinTimeFrame(startDate, endDate);
 		Map<Flight, Set<Passenger>> passengers = new HashMap<>();
+		int maxPassengerForFuzzyRun = Integer
+				.parseInt(appConfigRepository.findByOption(appConfigRepository.MAX_PASSENGERS_PER_FUZZY_MATCH).getValue());
+		int counter = 0;
 		if (flights != null && flights.size() > 0) {
 			startTime = System.nanoTime();
 			for (Flight f : flights) {
+				counter += f.getPassengers().size();
 				passengers.put(f, f.getPassengers());
+				if (counter >= maxPassengerForFuzzyRun) {
+					break;
+				}
 			}
 			endTime = System.nanoTime();
 			logger.debug(
 					"Execution time for getPassengersOnFlightsWithingTimeRange() get passenger by flight ID for loop = "
 							+ (endTime - startTime) / 1000000 + "ms");
 		}
+		int flightSize = flights == null? 0 : flights.size();
 		logger.debug("Number of flights found within " + timeOffsetHours + " hours and " + timeOffsetMinutes
-				+ " minutes of arrival or departure. Flight Count: " + flights.size());
+				+ " minutes of arrival or departure. Flight Count: " + flightSize);
 		return passengers;
 	}
 }

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import gov.gtas.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Document;
-import gov.gtas.model.DwellTime;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerIDTag;
-import gov.gtas.model.PaymentForm;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.ReportingParty;
-import gov.gtas.model.TicketFare;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.FlightDirectionCode;
@@ -86,6 +70,10 @@ public class LoaderUtils {
 
     public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
         Passenger p = new Passenger();
+        PassengerTripDetails passengerTripDetails = new PassengerTripDetails(p);
+        PassengerDetails passengerDetails = new PassengerDetails(p);
+        p.setPassengerDetails(passengerDetails);
+        p.setPassengerTripDetails(passengerTripDetails);
         p.setCreatedBy(LOADER_USER);
         updatePassenger(vo, p);
         return p;
@@ -93,41 +81,45 @@ public class LoaderUtils {
 
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
+        BeanUtils.copyProperties(vo, p.getPassengerDetails(), getNullPropertyNames(vo));
+        BeanUtils.copyProperties(vo, p.getPassengerTripDetails(), getNullPropertyNames(vo));
+
+
         p.setUpdatedBy(LOADER_USER);
 
-        if (p.getFirstName() != null && p.getFirstName().length() > 254) {
-            p.setFirstName(p.getFirstName().substring(0,254));
+        if (p.getPassengerDetails().getFirstName() != null && p.getPassengerDetails().getFirstName().length() > 254) {
+            p.getPassengerDetails().setFirstName(p.getPassengerDetails().getFirstName().substring(0,254));
         }
-        if (p.getLastName() != null && p.getLastName().length() > 254) {
-            p.setLastName(p.getLastName().substring(0,254));
+        if (p.getPassengerDetails().getLastName() != null && p.getPassengerDetails().getLastName().length() > 254) {
+            p.getPassengerDetails().setLastName(p.getPassengerDetails().getLastName().substring(0,254));
         }
 
         if (vo.getDebarkation() != null) {
             String airportCode = vo.getDebarkation();
-            p.setDebarkation(airportCode);
+            p.getPassengerTripDetails().setDebarkation(airportCode);
             Airport debark = getAirport(airportCode);
             if (debark != null) {
-                p.setDebarkCountry(debark.getCountry());
+                p.getPassengerTripDetails().setDebarkCountry(debark.getCountry());
             }
         }
 
         if (vo.getEmbarkation() != null) {
             String airportCode = vo.getEmbarkation();
-            p.setEmbarkation(airportCode);
+            p.getPassengerTripDetails().setEmbarkation(airportCode);
             Airport embark = getAirport(airportCode);
             if (embark != null) {
-                p.setEmbarkCountry(embark.getCountry());
+                p.getPassengerTripDetails().setEmbarkCountry(embark.getCountry());
             }
         }
 
         if (vo.getCitizenshipCountry() != null) {
-            p.setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
+            p.getPassengerDetails().setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
         }
 
         if (vo.getResidencyCountry() != null) {
-            p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
+            p.getPassengerDetails().setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
-        p.setBagNum(vo.getBagNum());
+        p.getPassengerTripDetails().setBagNum(vo.getBagNum());
         if(vo.getTickets() != null && vo.getTickets().size() >0){
         	updateTicketDetails(vo,p);
         }
@@ -186,7 +178,7 @@ public class LoaderUtils {
     			docExpDate=d.getExpirationDate();
          		validdays=DateUtils.calculateValidVisaPeriod(etd, docExpDate);
          		if(d.getExpirationDate().after(etd)){
-         			p.setNumberOfDaysVisaValid(validdays);
+         			p.getPassengerTripDetails().setNumberOfDaysVisaValid(validdays);
          		}
          		d.setNumberOfDaysValid(validdays);
     		}

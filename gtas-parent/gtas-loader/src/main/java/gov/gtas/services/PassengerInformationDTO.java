@@ -8,10 +8,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class CreatedAndOldPassengerInformation {
+public class PassengerInformationDTO {
 
 
     private Set<Passenger> newPax = new HashSet<>();
+
+    public Set<Passenger> getOldPax() {
+        return oldPax;
+    }
+
+    public void setOldPax(Set<Passenger> oldPax) {
+        this.oldPax = oldPax;
+    }
+
+    private Set<Passenger> oldPax = new HashSet<>();
     private Map<Long, Set<BookingDetail>> bdSet = new HashMap<>();
 
     public Set<Passenger> getNewPax() {

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 import org.elasticsearch.plugins.NetworkPlugin;
@@ -259,8 +258,8 @@ public class ElasticHelper {
 		QueryBuilder qb = QueryBuilders
 				.boolQuery()
 				.should(QueryBuilders.boolQuery()
-						.must(matchQuery("pnr",pax.getFirstName()))
-						.must(matchQuery("pnr",pax.getLastName())))
+						.must(matchQuery("pnr",pax.getPassengerDetails().getFirstName()))
+						.must(matchQuery("pnr",pax.getPassengerDetails().getLastName())))
 				.should(termsQuery("documents.documentNumber", docNumbers))
 				.should(termsQuery("pnr", docNumbers));
 		
@@ -287,7 +286,7 @@ public class ElasticHelper {
 	    List<LinkPassengerVo> lp = new ArrayList<>();
 		for (SearchHit hit : resultsArry) {
 			Map<String, Object> result = hit.getSourceAsMap();
-			if(!((String)result.get("firstName")).equals(pax.getFirstName()) || !((String)result.get("lastName")).equals(pax.getLastName())) {
+			if(!((String)result.get("firstName")).equals(pax.getPassengerDetails().getFirstName()) || !((String)result.get("lastName")).equals(pax.getPassengerDetails().getLastName())) {
 				LinkPassengerVo lpVo = new LinkPassengerVo();
 				lpVo.setPassengerId((Integer)result.get("passengerId"));
 				lpVo.setFlightId((Integer)result.get("flightId"));
@@ -403,8 +402,8 @@ public class ElasticHelper {
 						temp.setDocumentNumber(d.getDocumentNumber()!=null?d.getDocumentNumber():"");
 						temp.setDocumentType(d.getDocumentType()!=null?d.getDocumentType():"");
 						temp.setExpirationDate(d.getExpirationDate()!=null?d.getExpirationDate():new Date());
-						temp.setFirstName(d.getPassenger().getFirstName()!=null?d.getPassenger().getFirstName():"");
-						temp.setLastName(d.getPassenger().getLastName()!=null?d.getPassenger().getLastName():"");
+						temp.setFirstName(d.getPassenger().getPassengerDetails().getFirstName()!=null?d.getPassenger().getPassengerDetails().getFirstName():"");
+						temp.setLastName(d.getPassenger().getPassengerDetails().getLastName()!=null?d.getPassenger().getPassengerDetails().getLastName():"");
 						temp.setIssuanceCountry(d.getIssuanceCountry()!=null?d.getIssuanceCountry():"");
 						temp.setIssuanceDate(d.getIssuanceDate()!=null?d.getIssuanceDate():new Date());
 						documents.add(temp);

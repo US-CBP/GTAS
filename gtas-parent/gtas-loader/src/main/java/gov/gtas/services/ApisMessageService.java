@@ -100,18 +100,21 @@ public class ApisMessageService extends MessageLoaderService {
                     msgDto.getPrimeFlightKey(),
                     new HashSet<>());
 
-            CreatedAndOldPassengerInformation createdAndOldPassengerInformation = loaderRepo.makeNewPassengerObjects(
+            PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(
                     primeFlight,
                     m.getPassengers(),
                     apis.getPassengers(),
                     new HashSet<>(),
                     apis);
 
-            int createdPassengers = loaderRepo.createPassengers(createdAndOldPassengerInformation.getNewPax(), apis.getPassengers(), primeFlight, new HashSet<>());
+            int createdPassengers = loaderRepo.createPassengers(
+                    passengerInformationDTO.getNewPax(),
+                    passengerInformationDTO.getOldPax(),
+                    apis.getPassengers(), primeFlight, new HashSet<>());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-
+            apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {
             msgDto.getMessageStatus().setSuccess(false);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
@@ -175,30 +178,30 @@ public class ApisMessageService extends MessageLoaderService {
     		for(Passenger p:apisMessage.getPassengers()){
     			FlightPax fp=new FlightPax();
     			fp.getApisMessage().add(apisMessage);
-    			fp.setDebarkation(p.getDebarkation());
-    			fp.setDebarkationCountry(p.getDebarkCountry());
-    			fp.setEmbarkation(p.getEmbarkation());
-    			fp.setEmbarkationCountry(p.getEmbarkCountry());
+    			fp.setDebarkation(p.getPassengerTripDetails().getDebarkation());
+    			fp.setDebarkationCountry(p.getPassengerTripDetails().getDebarkCountry());
+    			fp.setEmbarkation(p.getPassengerTripDetails().getEmbarkation());
+    			fp.setEmbarkationCountry(p.getPassengerTripDetails().getEmbarkCountry());
     			fp.setPortOfFirstArrival(f.getDestination());
     			fp.setMessageSource("APIS");
     			fp.setFlight(f);
     			fp.setFlightId(f.getId());
-    			fp.setResidenceCountry(p.getResidencyCountry());
-    			fp.setTravelerType(p.getPassengerType());
+    			fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
+    			fp.setTravelerType(p.getPassengerDetails().getPassengerType());
     			fp.setPassenger(p);
     			fp.setPassengerId(p.getId());
-    			fp.setReservationReferenceNumber(p.getReservationReferenceNumber());
+    			fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
     			int bCount=0;
-    			if(StringUtils.isNotBlank(p.getBagNum())){
+    			if(StringUtils.isNotBlank(p.getPassengerTripDetails().getBagNum())){
     				try {
-						bCount=Integer.parseInt(p.getBagNum());
+						bCount=Integer.parseInt(p.getPassengerTripDetails().getBagNum());
 					} catch (NumberFormatException e) {
 						bCount=0;
 					}
     			}
     			fp.setBagCount(bCount);
     			try {
-					double weight=p.getTotalBagWeight() == null?0:Double.parseDouble(p.getTotalBagWeight());
+					double weight=p.getPassengerTripDetails().getTotalBagWeight() == null?0:Double.parseDouble(p.getPassengerTripDetails().getTotalBagWeight());
 					fp.setBagWeight(weight);
 					if(weight > 0 && bCount >0){
 						fp.setAverageBagWeight(Math.round(weight/bCount));
@@ -208,10 +211,18 @@ public class ApisMessageService extends MessageLoaderService {
 				}
     			if(StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())){
     				if(homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())){
-    					p.setTravelFrequency(p.getTravelFrequency()+1);
+    					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
-    			apisMessage.addToFlightPax(fp);
+    			if (p.getFlightPaxList().add(fp)) {
+                    apisMessage.addToFlightPax(fp);
+                } else {
+    			     p.getFlightPaxList()
+                             .stream()
+                             .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
+                             .findFirst()
+                             .ifPresent(apisMessage::addToFlightPax);
+                }
     		}
     	}
     }
