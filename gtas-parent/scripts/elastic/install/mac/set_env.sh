@@ -4,7 +4,7 @@
 # Set environment variable for elastic installation location and version
 
 # set below the location where you want to have elastic stack installed
-export ES_INSTALL_LOCATION=
+export ES_INSTALL_LOCATION=~/elastic_stack
 
 export ES_INSTALL_VERSION="6.5.0"
 

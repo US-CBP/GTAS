@@ -1,0 +1,1 @@
+yum remove logstash -y
