@@ -1,31 +1,13 @@
 #!/bin/bash
 
-cp ../../elastic_stack_yum_repos.repo /etc/yum.repos.d/elastic_stack.repo
+CURRENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-sudo yum install elasticsearch -y
+cd $CURRENT_DIR
+
+../set_env.sh
+
+sudo yum install elasticsearch-6.5.0-1 -y
 
 systemctl daemon-reload
 
 systemctl enable elasticsearch
-
-systemctl start elasticsearch
-
-# Install and start kabana
-
-sudo yum install kibana -y
-
-systemctl daemon-reload
-
-systemctl enable kibana
-
-systemctl start kibana
-
-# Install and start logstash
-
-sudo yum install logstash -y
-
-systemctl daemon-reload
-
-systemctl enable logstashipt
-
-systemctl start logstash
