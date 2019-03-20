@@ -126,7 +126,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional
     public void processReportingParties(ApisMessage apisMessage, List<ReportingPartyVo> parties) {
         for (ReportingPartyVo rvo : parties) {
             List<ReportingParty> existingRp = rpDao.getReportingParty(rvo.getPartyName(), rvo.getTelephone());
@@ -141,7 +140,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
         logger.debug("@ processPnr");
         long startTime = System.nanoTime();
@@ -210,7 +208,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional
     public Flight processFlightsAndBookingDetails(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
                                                   String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
 
@@ -263,7 +260,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional
     public PassengerInformationDTO makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
                                                            Set<Passenger> messagePassengers,
                                                            Set<BookingDetail> bookingDetails,
@@ -311,7 +307,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional()
     public int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldSet, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails) {
         List<PassengerIDTag> passengerIDTags = new ArrayList<>();
 
@@ -339,7 +334,6 @@ public class GtasLoaderImpl implements GtasLoader {
         return newPassengers.size();
     }
 
-    @Transactional
     public void updateFlightPassengerCount(Flight primeFlight, int createdPassengers) {
         FlightPassengerCount flightPassengerCount = flightPassengerCountRepository.findById(primeFlight.getId())
                 .orElse(null);
@@ -354,7 +348,6 @@ public class GtasLoaderImpl implements GtasLoader {
 
 
     @Override
-    @Transactional()
     public void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> paxBookingDetailsMap) {
         Set<BookingDetail> bookingDetails = pnr.getBookingDetails();
         Set<Passenger> messagePassengers = pnr.getPassengers();
@@ -421,7 +414,6 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    @Transactional
     public void createBagsFromPnrVo(PnrVo pvo, Pnr pnr) {
 
         for (Flight f : pnr.getFlights()) {

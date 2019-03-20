@@ -24,6 +24,7 @@ import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.repository.MessageRepository;
 import gov.gtas.services.search.ElasticHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class Loader {
@@ -51,6 +52,7 @@ public class Loader {
      * @return array of integers containing loaded message count at index 0 and
      *         failed message count at index 1.
      */
+    @Transactional
     public ProcessedMessages processMessage(File f, String[] primeFlightKey) {
         String filePath = f.getAbsolutePath();
         MessageDto msgDto = new MessageDto();
