@@ -209,7 +209,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 
 		HitsDisposition hitDisp;
-		HitsDispositionComments hitsDispositionComments;
 		Set<HitsDisposition> hitsDispSet = new HashSet<>();
 		for (Long _tempHitId : hit_ids) {
 			hitDisp = new HitsDisposition();
@@ -228,13 +227,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			hitDisp.setStatus(DispositionStatusCode.NEW.toString());
 			hitDisp.setUpdatedAt(new Date());
 			hitDisp.setUpdatedBy(UPDATED_BY_INTERNAL);
-			hitsDispositionComments = new HitsDispositionComments();
-			hitsDispositionComments.setHitId(_tempHitId);
-			hitsDispositionComments.setComments(INITIAL_COMMENT);
-			hitsDispositionComments.setUpdatedBy(UPDATED_BY_INTERNAL);
-			hitsDispositionComments.setUpdatedAt(new Date());
-			hitsDispositionComments.setCreatedBy(UPDATED_BY_INTERNAL);
-			hitDisp.addHitsDispositionComments(hitsDispositionComments);
 			hitsDispSet.add(hitDisp);
 		}
 
@@ -720,6 +712,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		CaseVo vo = new CaseVo();
 		vo.setHitsDispositions(aCase.getHitsDispositions());
 		aCase.getFlight().setPnrs(null);
+		aCase.getFlight().setApis(null);
 		vo.setHitsDispositionVos(returnHitsDisposition(aCase.getHitsDispositions()));
 		vo.setGeneralCaseCommentVos(convertCommentsToVo(aCase.getCaseComments()));
 		CaseDispositionServiceImpl.copyIgnoringNullValues(aCase, vo);
