@@ -13,22 +13,7 @@ import gov.gtas.model.udr.json.QueryEntity;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
 import gov.gtas.querybuilder.constants.Constants;
-import gov.gtas.querybuilder.mappings.AddressMapping;
-import gov.gtas.querybuilder.mappings.BagMapping;
-import gov.gtas.querybuilder.mappings.CreditCardMapping;
-import gov.gtas.querybuilder.mappings.DocumentMapping;
-import gov.gtas.querybuilder.mappings.DwellTimeMapping;
-import gov.gtas.querybuilder.mappings.EmailMapping;
-import gov.gtas.querybuilder.mappings.BookingDetailMapping;
-import gov.gtas.querybuilder.mappings.FlightMapping;
-import gov.gtas.querybuilder.mappings.FlightPaxMapping;
-import gov.gtas.querybuilder.mappings.FrequentFlyerMapping;
-import gov.gtas.querybuilder.mappings.HitsMapping;
-import gov.gtas.querybuilder.mappings.IEntityMapping;
-import gov.gtas.querybuilder.mappings.PNRMapping;
-import gov.gtas.querybuilder.mappings.PhoneMapping;
-import gov.gtas.querybuilder.mappings.TravelAgencyMapping;
-import gov.gtas.querybuilder.mappings.PassengerMapping;
+import gov.gtas.querybuilder.mappings.*;
 import gov.gtas.querybuilder.model.UserQuery;
 
 import java.io.IOException;
@@ -168,7 +153,7 @@ public class QueryValidationUtils {
                         validField = validateField(HitsMapping.values(), field);
                         break;
                     case Constants.PASSENGER:
-                        validField = validateField(PassengerMapping.values(), field);
+                        validField = validateField(PassengerMapping.values(), field) || validateField(PassengerDetailsMapping.values(), field);
                         break;
                     case Constants.PHONE:
                         validField = validateField(PhoneMapping.values(), field);

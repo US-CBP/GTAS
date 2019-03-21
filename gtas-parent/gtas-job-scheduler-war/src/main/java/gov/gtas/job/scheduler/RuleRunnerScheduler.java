@@ -74,7 +74,7 @@ public class RuleRunnerScheduler {
 	//but it suffices for now. The rule running portion of the scheduler is now tacked into the loader portion at the bottom to insure sequential operation.
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
-		logger.info("Starting rule running scheduled task");
+		logger.debug("Starting rule running scheduled task");
 		long start = System.nanoTime();
 		try {
 			RuleResultsWithMessageStatus ruleResults = targetingService.runningRuleEngine();
@@ -96,14 +96,14 @@ public class RuleRunnerScheduler {
 					count++;
 				}
 				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+				logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
 			}
-			logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
 			logger.debug("entering matching service portion of jobScheduling");
 			long fuzzyStart = System.nanoTime();
 			matchingService.findMatchesBasedOnTimeThreshold();
 			logger.debug("exiting matching service portion of jobScheduling");
-			logger.info("Fuzzy Matching Run in  "+(System.nanoTime()-fuzzyStart)/1000000 + "m/s.");
-			logger.info("Total rule running scheduled task took  "+(System.nanoTime()-start)/1000000 + "m/s.");
+			logger.debug("Fuzzy Matching Run in  "+(System.nanoTime()-fuzzyStart)/1000000 + "m/s.");
+			logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
 		} catch (Exception exception) {
 			String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage(): "Error in rule runner";
 			logger.error(errorMessage);

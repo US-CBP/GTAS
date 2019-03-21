@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_DETAILS_SET;
+
 /**
  * Generates the "when" part of a DRL rule.
  * procedure:
@@ -241,7 +243,7 @@ public class RuleConditionBuilder {
                 case PASSENGER:
                     if (RuleTemplateConstants.SEAT_ENTITY_NAME.equalsIgnoreCase(field)) {
                         apisSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                    } else if (RuleTemplateConstants.passDetailsMap.keySet().contains(field.toUpperCase())) {
+                    } else if (RuleTemplateConstants.passDetailsMap.keySet().contains(field.toUpperCase()) || PASSENGER_DETAILS_SET.contains(field.toUpperCase())) {
                         detailsConditionBuilder.addCondition(opCode, RuleTemplateConstants.passDetailsMap.get(field.toUpperCase()),
                                 attributeType, trm.getValue());
                     } else if (RuleTemplateConstants.passTripDetailsMap.keySet().contains(field.toUpperCase())) {

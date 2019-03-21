@@ -27,6 +27,19 @@ public class RuleTemplateConstants {
     	put("PASSENGERDETAILS.CITIZENSHIPCOUNTRY","citizenshipCountry");
     	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
     }});
+
+    public static final Set<String> PASSENGER_DETAILS_SET = Collections.unmodifiableSet(new HashSet<String>(){{
+        add("AGE");
+        add("DOB");
+        add("GENDER");
+        add("FIRSTNAME");
+        add("LASTNAME");
+        add("MIDDLENAME");
+        add("RESIDENCYCOUNTRY");
+        add("CITIZENSHIPCOUNTRY");
+        add("PASSENGERTYPE");
+    }});
+
     public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
     //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
     //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
