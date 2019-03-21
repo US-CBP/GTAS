@@ -78,7 +78,7 @@ public class WatchlistPersistenceServiceImpl implements
 
 	@Override
 	@Transactional
-	public synchronized List<Long> createUpdateDelete(String wlName, EntityEnum entity,
+	public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
 			List<WatchlistItem> createUpdateList,
 			List<WatchlistItem> deleteList, String userId) {
 		final User user = userService.fetchUser(userId);
