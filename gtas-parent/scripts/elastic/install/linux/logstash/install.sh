@@ -13,3 +13,5 @@ sudo yum install logstash-6.5.0 -y
 systemctl daemon-reload
 
 systemctl enable logstash
+
+./copy_config.sh
