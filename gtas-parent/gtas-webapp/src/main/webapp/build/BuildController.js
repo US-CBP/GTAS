@@ -334,12 +334,11 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     return;
                 }
 
-                //=========================
                 $scope.saving=true;
                 $timeout(function() {
                     $scope.saving=false;
                 }, 1000);
-                //============================
+               
                 if (queryObject.title && queryObject.title.length) {
                     queryObject.title = queryObject.title.trim();
                 }
@@ -369,12 +368,12 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     return;
                 }
                 
-              //=========================
+              
                 $scope.saving=true;
                 $timeout(function() {
                     $scope.saving=false;
                 }, 1000);
-                //============================
+
 
                 if (ruleObject.summary.title && ruleObject.summary.title.length) {
                     ruleObject.summary.title = ruleObject.summary.title.trim();
@@ -524,14 +523,6 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         return utcDate;
     }
     
-  //================================   
-    
-    // $scope.betDelay=false;
-    $scope.login = function () {
-        $scope.saving=true;
-       $timeout(function() {
-           $scope.saving=false;
-       }, 1000);
-    }
+
          
 });
