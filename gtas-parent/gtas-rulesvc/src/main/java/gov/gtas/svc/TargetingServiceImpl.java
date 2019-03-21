@@ -276,7 +276,9 @@ public class TargetingServiceImpl implements TargetingService {
 			Message message = ms.getMessage();
 		    target.add(message);
 			procssedMessages.add(ms);
-			runningTotal += message.getPassengerCount();
+			if (message.getPassengerCount() != null) {
+				runningTotal += message.getPassengerCount();
+			}
 			if (runningTotal >= maxPassengers) {
 				break;
 			}

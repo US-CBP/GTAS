@@ -323,8 +323,10 @@ public class MatchingServiceImpl implements MatchingService {
 		if (flights != null && flights.size() > 0) {
 			startTime = System.nanoTime();
 			for (Flight f : flights) {
-				counter += f.getPassengers().size();
-				passengers.put(f, f.getPassengers());
+				if (f.getPassengers() != null) {
+					counter += f.getPassengers().size();
+					passengers.put(f, f.getPassengers());
+				}
 				if (counter >= maxPassengerForFuzzyRun) {
 					break;
 				}
