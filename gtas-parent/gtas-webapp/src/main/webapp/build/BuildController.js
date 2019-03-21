@@ -322,6 +322,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     $scope.save = {
         query: {
             confirm: function () {
+                
                 var queryObject = {
                     id: setId(),
                     title: $scope.query.title,
@@ -333,6 +334,12 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     return;
                 }
 
+                //=========================
+                $scope.saving=true;
+                $timeout(function() {
+                    $scope.saving=false;
+                }, 1000);
+                //============================
                 if (queryObject.title && queryObject.title.length) {
                     queryObject.title = queryObject.title.trim();
                 }
@@ -361,6 +368,13 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                 if ($scope.saving) {
                     return;
                 }
+                
+              //=========================
+                $scope.saving=true;
+                $timeout(function() {
+                    $scope.saving=false;
+                }, 1000);
+                //============================
 
                 if (ruleObject.summary.title && ruleObject.summary.title.length) {
                     ruleObject.summary.title = ruleObject.summary.title.trim();
@@ -509,4 +523,15 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         //console.log("Converted time: " + utcDate);
         return utcDate;
     }
+    
+  //================================   
+    
+    // $scope.betDelay=false;
+    $scope.login = function () {
+        $scope.saving=true;
+       $timeout(function() {
+           $scope.saving=false;
+       }, 1000);
+    }
+         
 });
