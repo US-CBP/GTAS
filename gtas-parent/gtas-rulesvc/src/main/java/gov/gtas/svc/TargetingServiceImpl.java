@@ -283,7 +283,7 @@ public class TargetingServiceImpl implements TargetingService {
 				break;
 			}
 		}
-		ruleResultsWithMessageStatus.setMessageStatusList(source);
+		ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
 
 		RuleResults ruleResults = null;
 		try {
