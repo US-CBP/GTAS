@@ -243,9 +243,13 @@ public class RuleConditionBuilder {
                 case PASSENGER:
                     if (RuleTemplateConstants.SEAT_ENTITY_NAME.equalsIgnoreCase(field)) {
                         apisSeatConditionBuilder.addCondition(opCode, RuleTemplateConstants.SEAT_ATTRIBUTE_NAME, attributeType, trm.getValue());
-                    } else if (RuleTemplateConstants.passDetailsMap.keySet().contains(field.toUpperCase()) || PASSENGER_DETAILS_SET.contains(field.toUpperCase())) {
+                    } else if (RuleTemplateConstants.passDetailsMap.keySet().contains(field.toUpperCase())) {
+                        //front end path from query builder
                         detailsConditionBuilder.addCondition(opCode, RuleTemplateConstants.passDetailsMap.get(field.toUpperCase()),
                                 attributeType, trm.getValue());
+                    } else if (PASSENGER_DETAILS_SET.contains(field.toUpperCase())) {
+                        //front end path from watchlist
+                        detailsConditionBuilder.addCondition(opCode, field, attributeType, trm.getValue());
                     } else if (RuleTemplateConstants.passTripDetailsMap.keySet().contains(field.toUpperCase())) {
                         tripDetailsConditionBuilder.addCondition(opCode, RuleTemplateConstants.passTripDetailsMap.get(field.toUpperCase()),
                                 attributeType, trm.getValue());
