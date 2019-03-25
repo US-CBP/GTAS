@@ -1,3 +1,4 @@
+CREATE VIEW neo4j_hit_vw AS
 SELECT 
 	hs.id as gtas_hit_summary_id,
 	hs.created_date as hit_summary_create_date,
