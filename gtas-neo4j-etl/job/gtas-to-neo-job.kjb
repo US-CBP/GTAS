@@ -1286,11 +1286,11 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
   <notepads>
     <notepad>
       <note>This ETL job pulls data  from GTAS MariaDB database (neo4j view) and merge the data into a Neo4j Graph database using parameters
-stored in the GTAS database. Once processing is done successfully, the parameters will be updated so that the job starts pulling
-data created after the time shown on the timestamp of the updated parameters. </note>
+stored in the GTAS database. Once processing is done successfully, the parameters will be updated so that next time when the job starts to pull data
+it uses the time shown on the timestamp of the updated parameters as a staring point</note>
       <xloc>144</xloc>
       <yloc>128</yloc>
-      <width>1081</width>
+      <width>1171</width>
       <heigth>79</heigth>
       <fontname>Times New Roman</fontname>
       <fontsize>12</fontsize>

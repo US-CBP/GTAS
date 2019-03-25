@@ -458,14 +458,14 @@
     </notepad>
   </notepads>
   <connection>
-    <name>gtas-LOCAL</name>
-    <server>localhost</server>
+    <name>gtas-db</name>
+    <server>${EXT_VAR_GTAS_DB_HOST_NAME}</server>
     <type>MARIADB</type>
     <access>Native</access>
-    <database>gtas</database>
+    <database>${EXT_VAR_GTAS_DB_NAME}</database>
     <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce71da9fa6d4</password>
+    <username>${EXT_VAR_GTAS_DB_USER_NAME}</username>
+    <password>${EXT_VAR_GTAS_DB_PASSWORD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -480,7 +480,7 @@
       </attribute>
       <attribute>
         <code>INITIAL_POOL_SIZE</code>
-        <attribute>2</attribute>
+        <attribute>3</attribute>
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
@@ -488,7 +488,7 @@
       </attribute>
       <attribute>
         <code>MAXIMUM_POOL_SIZE</code>
-        <attribute>4</attribute>
+        <attribute>5</attribute>
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
@@ -1018,7 +1018,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-LOCAL</connection>
+    <connection>neo4j-db</connection>
     <batch_size>${EXT_VAR_PASSENGER_HIT_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>
@@ -1487,7 +1487,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>gtas-LOCAL</connection>
+    <connection>gtas-db</connection>
     <sql>SELECT * FROM neo4j_hit_vw</sql>
     <limit>0</limit>
     <lookup/>

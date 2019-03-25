@@ -1380,7 +1380,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-LOCAL</connection>
+    <connection>neo4j-db</connection>
     <batch_size>${EXT_VAR_EMAIL_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>

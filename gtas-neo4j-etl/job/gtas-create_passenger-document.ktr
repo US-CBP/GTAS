@@ -1450,7 +1450,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>neo4j-LOCAL</connection>
+    <connection>neo4j-db</connection>
     <batch_size>${EXT_VAR_DOCUMENT_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>

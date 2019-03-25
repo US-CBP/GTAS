@@ -474,14 +474,14 @@
     </notepad>
   </notepads>
   <connection>
-    <name>gtas-LOCAL</name>
-    <server>localhost</server>
+    <name>gtas-db</name>
+    <server>${EXT_VAR_GTAS_DB_HOST_NAME}</server>
     <type>MARIADB</type>
     <access>Native</access>
-    <database>gtas</database>
+    <database>${EXT_VAR_GTAS_DB_NAME}</database>
     <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb79ce71da9fa6d4</password>
+    <username>${EXT_VAR_GTAS_DB_USER_NAME}</username>
+    <password>${EXT_VAR_GTAS_DB_PASSWORD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -496,7 +496,7 @@
       </attribute>
       <attribute>
         <code>INITIAL_POOL_SIZE</code>
-        <attribute>2</attribute>
+        <attribute>3</attribute>
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
@@ -504,7 +504,7 @@
       </attribute>
       <attribute>
         <code>MAXIMUM_POOL_SIZE</code>
-        <attribute>4</attribute>
+        <attribute>5</attribute>
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
@@ -584,8 +584,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>368</xloc>
-      <yloc>384</yloc>
+      <xloc>352</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -794,7 +794,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>gtas-LOCAL</connection>
+    <connection>gtas-db</connection>
     <skip_lookup>Y</skip_lookup>
     <commit>100</commit>
     <use_batch>N</use_batch>
@@ -919,7 +919,7 @@
     </remotesteps>
     <GUI>
       <xloc>784</xloc>
-      <yloc>384</yloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
