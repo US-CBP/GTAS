@@ -1,3 +1,4 @@
+
 CREATE VIEW neo4j_vw AS
 SELECT pit.idTag,
 	pd.pd_first_name as first_name,
