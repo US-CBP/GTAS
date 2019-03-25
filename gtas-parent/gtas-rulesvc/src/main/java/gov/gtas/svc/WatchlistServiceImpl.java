@@ -63,7 +63,7 @@ public class WatchlistServiceImpl implements WatchlistService {
     }
 
     @Override
-    public synchronized JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
+    public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
             WatchlistSpec wlToCreateUpdate) {
         WatchlistValidationAdapter.validateWatchlistSpec(wlToCreateUpdate);
         WatchlistBuilder bldr = new WatchlistBuilder(wlToCreateUpdate);

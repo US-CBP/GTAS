@@ -220,10 +220,13 @@ public class FlightServiceImpl implements FlightService {
 		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
 				"FROM pax_watchlist_link pwl " +
 				"WHERE pwl.passenger_id not in (SELECT hitSumm.passenger_id " +
-				"FROM hits_summary hitSumm where wl_hit_count > 0)";
+				"FROM hits_summary hitSumm where wl_hit_count > 0) " +
+				"and pwl.passenger_id in " +
+				"(select passenger_id from gtas.flight_passenger where flight_id = " + flightId + " )";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}
+
 
 	@Override
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
