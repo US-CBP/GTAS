@@ -1,4 +1,4 @@
- select * from (select 
+select * from (select 
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
 	f.`eta`  "flight.eta",
 	f.`carrier`  "flight.carrier",
@@ -14,16 +14,16 @@
 	f.`direction` "flight.direction",
 		
 	p.`id` "p_id",
-	p.`citizenship_country` "p_citizenship_country", 
-	p.`debarkation` "p_debarkation", 
-	p.`embarkation` "p_embarkation", 
-	p.`gender` "p_gender", 
-	p.`last_name`, 
-	p.`first_name`, 
-	p.`middle_name`, 
-	p.`dob` "p_dob", 
-	p.`passenger_type`, 
-	p.`residency_country`,
+	pd.`pd_citizenship_country` "p_citizenship_country", 
+	td.`debarkation` "p_debarkation", 
+	td.`embarkation` "p_embarkation", 
+	pd.`pd_gender` "p_gender", 
+	pd.`pd_last_name`, 
+	pd.`pd_first_name`, 
+	pd.`pd_middle_name`, 
+	pd.`dob` "p_dob", 
+	pd.`pd_passenger_type`, 
+	pd.`pd_residency_country`,
 	seat.`number` "passenger.seat_number",
 	
 	d.`document_number` "d_document_number",
@@ -58,6 +58,10 @@
 	from `flight_pax` fp 
 	join `passenger` p 
 		on (p.`id` = fp.`passenger_id`) 
+	join `passenger_details` pd
+		on (p.id = pd.pd_passenger_id)
+	join `passenger_trip_details` td
+		on (td.ptd_id = p.id)
 	join `flight` f 
 		on (fp.`flight_id` = f.`id`) 
 	left join `document` d 
