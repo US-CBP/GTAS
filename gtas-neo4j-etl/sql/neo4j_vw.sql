@@ -1,12 +1,13 @@
+CREATE VIEW neo4j_vw AS
 SELECT pit.idTag,
-	p.first_name,
-	p.middle_name,
-	p.last_name,
-	p.citizenship_country,
-	p.dob,
-	p.gender,
-	p.title,
-	p.suffix, 
+	pd.pd_first_name as first_name,
+	pd.pd_middle_name as middle_name,
+	pd.pd_last_name as last_name,
+	pd.pd_citizenship_country as citizenship_country,
+	pd.dob,
+	pd.pd_gender as gender,
+	pd.pd_title title,
+	pd.pd_suffix suffix, 
 	a.line1,
 	a.line2,
 	a.line3,
@@ -47,12 +48,24 @@ SELECT pit.idTag,
 	cc.id as credit_card_id,
 	em.id as email_id,
 	p.updated_at as passenger_update_date,
-  a.updated_at as address_update_date,
-	em.updated_at as email_update_date
+	a.updated_at as address_update_date,
+	em.updated_at as email_update_date,
+	ptd.created_at as passenger_td_crt_dtm,
+	ptd.updated_at as passenger_td_upd_dtm,
+	ptd.debark_country,
+	ptd.debarkation,
+	ptd.embark_country,
+	ptd.embarkation,
+	ptd.days_visa_valid,
+	ptd.ref_number,
+	ptd.travel_frequency
+	
 
 	
 FROM gtas.passenger_id_tag pit
 INNER JOIN gtas.passenger p ON pit.pax_id = p.id 
+INNER JOIN gtas.passenger_details pd ON p.id = pd.pd_passenger_id
+INNER JOIN gtas.passenger_trip_details ptd ON p.id = ptd.ptd_id
 INNER JOIN gtas.flight_passenger fp ON fp.passenger_id = p.id
 INNER JOIN gtas.flight f ON f.id = fp.flight_id
 LEFT JOIN  gtas.flight_passenger_count fpc ON fpc.fp_flight_id = fp.flight_id
@@ -70,7 +83,7 @@ LEFT JOIN gtas.credit_card cc ON pnc.credit_card_id = cc.id
 LEFT JOIN gtas.pnr_email pne ON pne.pnr_id = pnr.id
 LEFT JOIN gtas.email em ON pne.email_id = em.id
 WHERE pit.idTag IS NOT NULL 
-AND p.first_name IS NOT NULL AND p.last_name IS NOT NULL AND p.gender IS NOT NULL AND p.citizenship_country IS NOT NULL AND p.dob IS NOT NULL
+AND pd.pd_first_name IS NOT NULL AND pd.pd_last_name IS NOT NULL AND pd.pd_gender IS NOT NULL AND pd.pd_citizenship_country IS NOT NULL AND pd.dob IS NOT NULL
 AND f.full_flight_number IS NOT NULL AND f.flight_date IS NOT NULL
 AND (pit.created_at > (SELECT last_proc_pid_tag_dtm FROM neo4j_parameters njp WHERE njp.id =1)
 OR p.updated_at >  (SELECT last_passenger_upd_dtm FROM neo4j_parameters njp WHERE njp.id =1)
