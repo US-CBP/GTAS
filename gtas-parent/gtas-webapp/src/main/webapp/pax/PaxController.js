@@ -16,7 +16,23 @@
         $scope.ruleCats=ruleCats.data;
         $scope.slides = [];
         $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
-
+        
+        $scope.passengerDOB = $scope.passenger.dob.split(' ', 1).join(' ');
+        $scope.passengerAge = getAge();
+        
+        //Calculate age
+        function getAge() {
+        	var today = new Date();
+        	var dob = new Date($scope.passengerDOB);
+        	var age = today.getFullYear() - dob.getFullYear();
+        	
+        	if (today.getMonth() < dob.getMonth() || (today.getMonth() == dob.getMonth() && today.getDate() < dob.getDay())) {
+        		  age--;
+        	}
+        	return age;
+        }
+       
+        
         $scope.getAttachment = function(paxId){
         	//TO-DO add specific pax-id here to grab from current passenger
         	paxDetailService.getPaxAttachments(paxId).then(function(data){
@@ -35,6 +51,7 @@
         		$scope.showAttachments(attList);
         	});
         };
+        
         
         $scope.watchlistCategoryId;
         
