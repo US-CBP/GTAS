@@ -20,14 +20,14 @@ import javax.transaction.Transactional;
 
 public interface PnrRepository extends MessageRepository<Pnr> {
     @Query("select pnr from Pnr pnr " +
-            "join fetch pnr.passengers pax " +
+            "left join fetch pnr.passengers pax " +
             "left join fetch pax.documents " +
             "left join fetch pax.seatAssignments " +
-            "join fetch pax.flightPaxList fpxl " +
-            "join fetch fpxl.flight " +
-            "join fetch pnr.flights f " +
-            "where pax.id = :passengerId and f.id = :flightId")
-    public List<Pnr> getPnrsByPassengerIdAndFlightId(@Param("passengerId") Long passengerId,
+            "left join fetch pax.flightPaxList fpxl " +
+            "left join fetch fpxl.flight " +
+            "left join fetch pnr.flights f " +
+            "where :passengerId in (select p.id from pnr.passengers p) and f.id = :flightId")
+    public Set<Pnr> getPnrsByPassengerIdAndFlightId(@Param("passengerId") Long passengerId,
                                         @Param("flightId") Long flightId);
     
     @Query("select pnr from Pnr pnr join pnr.passengers pax where pax.id = :passengerId")

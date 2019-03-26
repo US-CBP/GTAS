@@ -95,7 +95,7 @@ public class PnrServiceImpl implements PnrService {
 
 		Pnr rv = new Pnr();
 		List<Pnr> _retList = new ArrayList<Pnr>();
-		List<Pnr> _tempPnrList = pnrRespository
+		Set<Pnr> _tempPnrList = pnrRespository
 				.getPnrsByPassengerIdAndFlightId(passengerId, flightId);
 
 		for (Pnr _tempPnr : _tempPnrList) {
