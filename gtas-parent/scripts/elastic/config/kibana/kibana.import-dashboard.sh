@@ -2,6 +2,10 @@
 
 # Initialize kibana dashboard
 
+CURRENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+
+cd $CURRENT_DIR
+
 #Default host
 KIBANA_HOST='localhost'
 
