@@ -54,3 +54,6 @@ gradle/
 .gradle/
 *.gradle
 gradle*
+
+.apt_generated
+.vscode
