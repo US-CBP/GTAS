@@ -66,7 +66,7 @@ public class DataManagementController
   @RequestMapping(method = RequestMethod.POST, value = "/dmcapabilities/process")
   public ModelAndView processDataTruncation(@RequestParam(value = "date", required = true) String date, @RequestParam(value = "truncationType", required = true) String truncationType)
   {
-      String message = "Successfully truncated all message related data before the selected date.View logs to get info on number of rows deleted.";
+      String message = "Successfully truncated all flight related data before the selected date.View logs to get info on number of rows deleted.";
       
       User currentUser = fetchCurrentUser();
       

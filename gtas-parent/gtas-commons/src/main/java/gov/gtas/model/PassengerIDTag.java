@@ -34,6 +34,9 @@ public class PassengerIDTag extends BaseEntityAudit {
 
 	@Column(name = "pax_id")
     private Long pax_id;
+        
+        @Column(name = "doc_hash_id")
+        private String docHashId;
 
     public String getIdTag() {
         return idTag;
@@ -58,4 +61,14 @@ public class PassengerIDTag extends BaseEntityAudit {
     public void setPax_id(Long pax_id) {
         this.pax_id = pax_id;
     }
+
+    public String getDocHashId() {
+        return docHashId;
+    }
+
+    public void setDocHashId(String docHashId) {
+        this.docHashId = docHashId;
+    }
+    
+    
 }
