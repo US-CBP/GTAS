@@ -34,11 +34,11 @@
     </div>
     <div>
         <div>Gender:&nbsp; <strong> {{ passenger.gender }}</strong></div>
-        <div>DOB:&nbsp; <strong> {{ passengerDOB | date:"MM/dd/yyyy" }}</strong> <strong>({{passengerAge}})</strong></div>
+        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"yyyy-MM-dd" }}</strong> <strong>({{passenger.age}})</strong></div>
         <div>Pax Type:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
     </div>
     <div>
-        <div>Origin Country:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
+        <div>Origin Country:&nbsp; <strong> {{passenger.embarkCountry }}</strong></div>
         <div>Destination Country:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
         <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
     </div>

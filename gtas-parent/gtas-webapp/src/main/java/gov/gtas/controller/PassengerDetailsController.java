@@ -134,6 +134,7 @@ public class PassengerDetailsController {
 		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
 		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
 		vo.setDob(t.getPassengerDetails().getDob());
+		vo.setAge(t.getPassengerDetails().getAge());
 		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
 		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");

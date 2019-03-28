@@ -12,21 +12,21 @@
             <div class="span12 flex justify-around upper-cnt flex-wrap">
                 <div class="span12 flex justify-around upper-cnt flex-wrap">
                     <div>
-                        <div>Last Name:&nbsp; <strong>{{ passenger.lastName }}</strong></div>
-                        <div>First Name:&nbsp; <strong>{{ passenger.firstName }}</strong></div>
-                        <div>Middle Name:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
+                        <div>Last Name:&nbsp; <strong>{{ passenger.lastName }}&nbsp;</strong></div>
+                        <div>First Name:&nbsp; <strong>{{ passenger.firstName }}&nbsp;</strong></div>
+                        <div>Middle Name:&nbsp; <strong>{{ passenger.middleName }}&nbsp;</strong></div>
                     </div>
                     <br>
                     <div>
-                        <div>Gender:&nbsp; <strong> {{ passenger.gender }}</strong></div>
-                        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
-                        <div>Type:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
+                        <div>Gender:&nbsp; <strong> {{ passenger.gender }}&nbsp;</strong></div>
+                        <div>DOB:&nbsp; <strong> {{ passenger.dob | date: "yyyy-MM-dd" }}</strong> <strong>({{passenger.age}})</strong>&nbsp;</div>
+                        <div>Type:&nbsp; <strong> {{ passenger.passengerType }}&nbsp;</strong></div>
                     </div>
                     <br>
                     <div>
-                        <div>Origin:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
-                        <div>Destination:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
-                        <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
+                        <div>Origin:&nbsp; <strong> {{ passenger.embarkCountry }}&nbsp;</strong></div>
+                        <div>Destination:&nbsp; <strong> {{ passenger.debarkCountry }}&nbsp;</strong></div>
+                        <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}&nbsp;</strong></div>
                     </div>
 
                 </div>
