@@ -23,7 +23,6 @@ import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.repository.MessageRepository;
-import gov.gtas.services.search.ElasticHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -38,9 +37,6 @@ public class Loader {
 
     @Autowired
     private PnrMessageService pnrLoader;
-
-    @Autowired
-    protected ElasticHelper indexer;
 
     /**
      * Processes all the messages in a single file.
@@ -96,19 +92,7 @@ public class Loader {
             processedMessages.setMessageStatusList(messageStatuses);
             return processedMessages;
         }
-/*        try {
-            if (isElasticEnabled) {
-                indexer.initClient();
-                if (indexer.isDown()) {
-                    svc.setUseIndexer(false);
-                } else {
-                    svc.setUseIndexer(true);
-                }
-            }
-        } catch (Exception logged) {
-            logger.error("Error with redis-  This message WILL NOT BE INDEXED!", logged);
-        }
-        */
+
         int successMsgCount = 0;
         int failedMsgCount = 0;
         msgDto.setFilepath(filePath);
