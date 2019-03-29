@@ -1234,5 +1234,29 @@
         	return({
         		getCodeTooltipData:getCodeTooltipData
         	});
+        })
+        .service('configService', function($rootScope, $http,$q){
+        	/*
+        	 * Read Kibana settings from ./config/kibana_settings.json
+        	 * 
+        	 * By default kibana-dashboard is disabled. The landing page after successful login is flights page for now
+        	 */
+        	function defaultHomePage(){
+        		
+        		var dfd = $q.defer();
+        		
+                dfd.resolve($http({
+                     method: 'get',
+                     url: './config/kibana_settings.json'
+                 }));
+                 
+               
+                return dfd.promise;
+                
+        	};
+        	
+        	return ({
+        		defaultHomePage : defaultHomePage
+        	});
         });
 }());
