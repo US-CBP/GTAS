@@ -2015,7 +2015,13 @@ for logging purposes</note>
     </to>
     <relationship>PASSENGER_FLIGHT_LABEL</relationship>
     <relationship_value/>
-    <relprops/>
+    <relprops>
+      <relprop>
+        <name>pnr_record_locator</name>
+        <value>pnr_record_locator</value>
+        <type>String</type>
+      </relprop>
+    </relprops>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -2438,7 +2444,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>560</xloc>
+      <xloc>544</xloc>
       <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
@@ -4095,8 +4101,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>656</yloc>
+      <xloc>752</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
