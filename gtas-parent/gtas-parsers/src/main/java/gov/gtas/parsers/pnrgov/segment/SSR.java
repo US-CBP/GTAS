@@ -47,6 +47,7 @@ public class SSR extends Segment {
     public static final String CTCE="CTCE";
     public static final String FQTV="FQTV";
     public static final String CTCM="CTCM";
+    public static final String CTCH="CTCH";
     private String typeOfRequest;
     private String action;
     private String quantity;
