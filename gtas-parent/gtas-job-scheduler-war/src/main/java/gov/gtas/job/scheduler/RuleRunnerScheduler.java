@@ -100,9 +100,11 @@ public class RuleRunnerScheduler {
 			}
 			logger.debug("entering matching service portion of jobScheduling");
 			long fuzzyStart = System.nanoTime();
-			matchingService.findMatchesBasedOnTimeThreshold();
+			int passengersProcessed = matchingService.findMatchesBasedOnTimeThreshold();
 			logger.debug("exiting matching service portion of jobScheduling");
-			logger.debug("Fuzzy Matching Run in  "+(System.nanoTime()-fuzzyStart)/1000000 + "m/s.");
+			if (passengersProcessed > 0) {
+				logger.info("Fuzzy Matching Run in  " + (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
+			}
 			logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
 		} catch (Exception exception) {
 			String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage(): "Error in rule runner";
