@@ -75,6 +75,9 @@ public class Pnr extends Message {
 
 	@Column(name = "total_bag_weight")
     private float total_bag_weight;
+        
+    @Column(name = "trip_type", length = 50)
+    private String tripType;
 
     public float getTotal_bag_weight() {
 		return total_bag_weight;
@@ -443,6 +446,16 @@ public class Pnr extends Message {
 	public void setBaggageUnit(String baggageUnit) {
 		this.baggageUnit = baggageUnit;
 	}
+
+    public String getTripType() {
+        return tripType;
+    }
+
+    public void setTripType(String tripType) {
+        this.tripType = tripType;
+    }
+        
+        
 
 	@Override
     public int hashCode() {

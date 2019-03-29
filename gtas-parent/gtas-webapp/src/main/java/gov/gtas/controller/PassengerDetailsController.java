@@ -469,6 +469,8 @@ public class PassengerDetailsController {
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotalbagCount(source.getTotal_bag_count());
 		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
+                
+                target.setTripType(source.getTripType());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();

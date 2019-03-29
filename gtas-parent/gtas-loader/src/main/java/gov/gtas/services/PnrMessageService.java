@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -145,6 +146,10 @@ public class PnrMessageService extends MessageLoaderService {
 			setCodeShareFlights(pnr);
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
 			pnr.setPassengerCount(pnr.getPassengers().size());
+                        
+                        TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
+                        pnr.setTripType(tripType.toString());
+
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
@@ -220,6 +225,88 @@ public class PnrMessageService extends MessageLoaderService {
     		}
     	}
     	logger.debug("updatePaxEmbarkDebark time = "+(System.nanoTime()-startTime)/1000000);
+    }
+    
+    private TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet)
+    {
+        String firstLegOrigin = "";
+        String lastLegDestination = "";
+        Integer maxFlightLegNumber = 0;
+        TripTypeEnum tripType = null;
+        boolean hasLongDwellTime = false;
+
+        if (flightLegList.size() > 1)
+        {
+            for (FlightLeg flightLeg : flightLegList)
+            {
+                Integer flightLegNumber = flightLeg.getLegNumber();
+                if (flightLegNumber > maxFlightLegNumber)
+                {
+                    maxFlightLegNumber = flightLegNumber;
+                }
+            }
+
+            for (int i = 0;i <  flightLegList.size(); i++)
+            {
+               if (flightLegList.get(i).getLegNumber().equals(0))
+               {
+                  FlightLeg firstFlightLeg = flightLegList.get(i);
+                  if (firstFlightLeg.getBookingDetail() != null)
+                  {
+                    firstLegOrigin = firstFlightLeg.getBookingDetail().getOrigin();
+                  }
+                  else // we have a prime flight
+                  {
+                    firstLegOrigin = firstFlightLeg.getFlight().getOrigin();
+                  }
+               }
+
+               if (flightLegList.get(i).getLegNumber().equals(maxFlightLegNumber))
+               {
+                  FlightLeg lastFlightLeg = flightLegList.get(i);
+                  if (lastFlightLeg.getBookingDetail() != null)
+                  {
+                    lastLegDestination = lastFlightLeg.getBookingDetail().getDestination();
+                  }
+                  else // we have a prime flight
+                  {
+                    lastLegDestination = lastFlightLeg.getFlight().getDestination();
+                  }                               
+               }
+            } 
+
+            if (firstLegOrigin.equalsIgnoreCase(lastLegDestination))
+            {
+                tripType = TripTypeEnum.ROUNDTRIP;
+            }
+            else
+            {
+               tripType = TripTypeEnum.ONEWAY; 
+            }
+            
+            // check dwell times for ones over 24 hours
+            for (DwellTime dwellTime : dwellTimeSet)
+            {
+                double dwellTimeHours = dwellTime.getDwellTime();
+                if (dwellTimeHours > 24.0)
+                {
+                  hasLongDwellTime = true;
+                          break;
+                }
+            }
+            
+            if (tripType.equals(TripTypeEnum.ONEWAY) && hasLongDwellTime)
+            {
+               tripType =  TripTypeEnum.MULTICITY;
+            }
+
+        }
+        else
+        {
+          tripType = TripTypeEnum.ONEWAY;  
+        }
+        
+        return tripType;
     }
     
     private void calculateDwellTimes(Pnr pnr){

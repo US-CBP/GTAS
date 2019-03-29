@@ -380,7 +380,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		       Query query = em.createNativeQuery(sqlString);
 		       query.setParameter(listKey, list);
 		       int numDeleted = query.executeUpdate();
-		       logger.info(numDeleted + " rows deleted from table " + tableName);
+		       //logger.info(numDeleted + " rows deleted from table " + tableName);
 		       messageList.add("Data truncation: " + numDeleted + " rows deleted from table " + tableName);
 		   }
 	       
