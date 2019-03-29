@@ -73,6 +73,8 @@ public class FlightServiceImpl implements FlightService {
 			FlightVo vo = new FlightVo();
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
+			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
+
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
 
 			if (f.getFlightHitsWatchlist() != null) {
@@ -125,9 +127,6 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setChangeDate();
 			flightToUpdate.setDestination(flight.getDestination());
 			flightToUpdate.setDestinationCountry(flight.getDestinationCountry());
-			flightToUpdate.setEta(flight.getEta());
-			flightToUpdate.setEtd(flight.getEtd());
-			flightToUpdate.setFlightDate(flight.getFlightDate());
 			flightToUpdate.setFlightNumber(flight.getFlightNumber());
 			flightToUpdate.setOrigin(flight.getOrigin());
 			flightToUpdate.setOriginCountry(flight.getOriginCountry());

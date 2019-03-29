@@ -9,11 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.Carrier;
 import gov.gtas.model.lookup.Country;
@@ -84,9 +80,10 @@ public class ServiceRepositoryIT {
         // Airport b = new Airport (3584l,"Atlanta","ATL","KATL");
 
         f.setDestination(b);
-        f.setEta(new Date());
-        f.setEtd(new Date("6/20/2015"));
-        f.setFlightDate(new Date());
+        MutableFlightDetails mutableFlightDetails = new MutableFlightDetails(f.getId());
+        mutableFlightDetails.setEta(new Date());
+        mutableFlightDetails.setEtd(new Date("6/20/2015"));
+        f.setMutableFlightDetails(mutableFlightDetails);
         f.setFlightNumber("8002");
 
         String c = "US";

@@ -141,7 +141,7 @@ public class QueryValidationUtils {
                         validField = validateField(EmailMapping.values(), field);
                         break;
                     case Constants.FLIGHT:
-                        validField = validateField(FlightMapping.values(), field);
+                        validField = validateField(FlightMapping.values(), field) || validateField(MutableFlightInformationMapping.values(), field);
                         break;
                     case Constants.BOOKINGDETAIL:
                         validField = validateField(BookingDetailMapping.values(), field);

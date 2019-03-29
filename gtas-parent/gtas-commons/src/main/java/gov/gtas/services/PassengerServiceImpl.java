@@ -109,7 +109,7 @@ public class PassengerServiceImpl implements PassengerService {
             Passenger p = (Passenger) objs[0];
             Flight f = (Flight) objs[1];
             HitsSummary hit = (HitsSummary) objs[2];
-            PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
+        //    PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
 
             if (hit != null && !f.getId().equals(hit.getFlightId())) {
                 continue;
@@ -157,8 +157,7 @@ public class PassengerServiceImpl implements PassengerService {
                     }
                 }
             }
-
-            if (link != null) {
+            if (!p.getPaxWatchlistLinks().isEmpty()) {
                 vo.setOnWatchListLink(true);
             }
 
@@ -167,8 +166,8 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setFlightNumber(f.getFlightNumber());
             vo.setFullFlightNumber(f.getFullFlightNumber());
             vo.setCarrier(f.getCarrier());
-            vo.setEtd(f.getEtd());
-            vo.setEta(f.getEta());
+            vo.setEtd(f.getMutableFlightDetails().getEtd());
+            vo.setEta(f.getMutableFlightDetails().getEta());
             rv.add(vo);
             count++;
         }
@@ -195,8 +194,8 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setFlightNumber((String) objs[5]);
 
             Flight f = flightRespository.findById(flightId).orElse(null);
-            vo.setFlightETADate(f.getEta());
-            vo.setFlightETDDate(f.getEtd());
+            vo.setFlightETADate(f.getMutableFlightDetails().getEta());
+            vo.setFlightETDDate(f.getMutableFlightDetails().getEtd());
             vo.setFlightDirection(f.getDirection());
 
             Timestamp ts = (Timestamp) objs[6];

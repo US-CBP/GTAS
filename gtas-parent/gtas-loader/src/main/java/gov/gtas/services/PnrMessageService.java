@@ -74,6 +74,7 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.checkHashCode(vo.getHashCode());
             pnr.setRaw(LobUtils.createClob(vo.getRaw()));
 			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.PARSED);
+			messageStatus.setSuccess(true);
 			msgDto.setMessageStatus(messageStatus);
             pnr.setHashCode(vo.getHashCode());            
             EdifactMessage em = new EdifactMessage();
@@ -86,11 +87,12 @@ public class PnrMessageService extends MessageLoaderService {
         } catch (Exception e) {
 			messageStatus = new MessageStatus(pnr.getId(), MessageStatusEnum.FAILED_PARSING);
 			msgDto.setMessageStatus(messageStatus);
+			msgDto.getMessageStatus().setSuccess(false);
 			handleException(e, pnr);
-            return null;
         } finally {
        		 msgDto.setPnr(pnr);
 			if (!createMessage(pnr)) {
+				msgDto.getMessageStatus().setSuccess(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
 			}
 		}
@@ -106,53 +108,55 @@ public class PnrMessageService extends MessageLoaderService {
         Pnr pnr = msgDto.getPnr();
         try {
             PnrVo vo = (PnrVo)msgDto.getMsgVo();
-            utils.convertPnrVo(pnr, vo);
-			loaderRepo.processPnr(pnr, vo);
-			Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
-					vo.getFlights(),
-					pnr.getFlights(),
-					pnr.getFlightLegs(),
-					msgDto.getPrimeFlightKey(),
-					pnr.getBookingDetails());
-			PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
-					vo.getPassengers(),
-					pnr.getPassengers(),
-					pnr.getBookingDetails(),
-					pnr);
+				utils.convertPnrVo(pnr, vo);
+				loaderRepo.processPnr(pnr, vo);
+				Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
+						vo.getFlights(),
+						pnr.getFlights(),
+						pnr.getFlightLegs(),
+						msgDto.getPrimeFlightKey(),
+						pnr.getBookingDetails());
+				PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
+						vo.getPassengers(),
+						pnr.getPassengers(),
+						pnr.getBookingDetails(),
+						pnr);
 
 
-			int createdPassengers = loaderRepo.createPassengers(
-					passengerInformationDTO.getNewPax(),
-					passengerInformationDTO.getOldPax(),
-					pnr.getPassengers(),
-					primeFlight,
-					pnr.getBookingDetails());
-			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
+				int createdPassengers = loaderRepo.createPassengers(
+						passengerInformationDTO.getNewPax(),
+						passengerInformationDTO.getOldPax(),
+						pnr.getPassengers(),
+						primeFlight,
+						pnr.getBookingDetails());
+				loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 
-			createFlightPax(pnr);
-			loaderRepo.createBagsFromPnrVo(vo,pnr);
-			loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
-			// update flight legs
-			for (FlightLeg leg : pnr.getFlightLegs()) {
-				leg.setPnr(pnr);
-			}
-			for (BookingDetail bD : pnr.getBookingDetails()){
-				bD.getPnrs().add(pnr);
-			}
-			calculateDwellTimes(pnr);
-			updatePaxEmbarkDebark(pnr);
-			loaderRepo.createFormPfPayments(vo,pnr);
-			setCodeShareFlights(pnr);
-			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
-			pnr.setPassengerCount(pnr.getPassengers().size());
+				createFlightPax(pnr);
+				loaderRepo.createBagsFromPnrVo(vo, pnr);
+				loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
+				// update flight legs
+				for (FlightLeg leg : pnr.getFlightLegs()) {
+					leg.setPnr(pnr);
+				}
+				for (BookingDetail bD : pnr.getBookingDetails()) {
+					bD.getPnrs().add(pnr);
+				}
+				calculateDwellTimes(pnr);
+				updatePaxEmbarkDebark(pnr);
+				loaderRepo.createFormPfPayments(vo, pnr);
+				setCodeShareFlights(pnr);
+				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+				pnr.setPassengerCount(pnr.getPassengers().size());
 		} catch (Exception e) {
 			msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			msgDto.getMessageStatus().setSuccess(false);
 			pnr.setBookingDetails(null);
 			pnr.setFlightLegs(null);
+			pnr.setError(e.toString());
 			logger.error("ERROR", e);
 		} finally {
 			if (!createMessage(pnr)) {
+				msgDto.getMessageStatus().setSuccess(false);
 				msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
 			}
 		}
@@ -174,7 +178,7 @@ public class PnrMessageService extends MessageLoaderService {
     	//If flight is null in either of these checks, then the particular leg must be comprised of a booking detail...
     	if(legs.get(0).getFlight() != null){
     		embark = legs.get(0).getFlight().getOrigin();
-    		firstDeparture=legs.get(0).getFlight().getEtd();
+    		firstDeparture=legs.get(0).getFlight().getMutableFlightDetails().getEtd();
     	}else{ //use BD instead
     		embark = legs.get(0).getBookingDetail().getOrigin();
     		firstDeparture=legs.get(0).getBookingDetail().getEtd();
@@ -182,7 +186,7 @@ public class PnrMessageService extends MessageLoaderService {
     	
     	if(legs.get(legs.size()-1).getFlight() != null){
     		debark = legs.get(legs.size() - 1).getFlight().getDestination();
-    		finalArrival=legs.get(legs.size() - 1).getFlight().getEta();
+    		finalArrival=legs.get(legs.size() - 1).getFlight().getMutableFlightDetails().getEta();
     	} else{ //use BD instead
     		debark = legs.get(legs.size() - 1).getBookingDetail().getDestination();
     		finalArrival=legs.get(legs.size() - 1).getBookingDetail().getEta();
@@ -192,7 +196,7 @@ public class PnrMessageService extends MessageLoaderService {
     	if(legs.size() <=2 && (embark.equals(debark))){
     		if(legs.get(0).getFlight() != null){
     			debark=legs.get(0).getFlight().getDestination();
-    			finalArrival=legs.get(0).getFlight().getEta();
+    			finalArrival=legs.get(0).getFlight().getMutableFlightDetails().getEta();
     		}else{ //use BD instead
     			debark=legs.get(0).getBookingDetail().getDestination();
     			finalArrival=legs.get(0).getBookingDetail().getEta();

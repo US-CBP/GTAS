@@ -975,8 +975,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		}
 		if (_tempFlight != null) {
 			aCase.setFlightNumber(_tempFlight.getFlightNumber());
-			aCase.setFlightETADate(_tempFlight.getEta());
-			aCase.setFlightETDDate(_tempFlight.getEtd());
+			aCase.setFlightETADate(_tempFlight.getMutableFlightDetails().getEta());
+			aCase.setFlightETDDate(_tempFlight.getMutableFlightDetails().getEtd());
 		}
 	}
 
@@ -1151,7 +1151,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 					if (oneDayLookoutCase.getFlight().getDirection()
 							.equalsIgnoreCase(OneDayLookoutContants.FLIGHT_DIRECTION_INCOMING)) {
 						oneDayLookoutVo.setDirection(OneDayLookoutContants.FLIGHT_DIRECTION_INCOMING_DESC);
-						etaEtdDate = oneDayLookoutCase.getFlight().getEta();
+						etaEtdDate = oneDayLookoutCase.getFlight().getMutableFlightDetails().getEta();
 						if (etaEtdDate != null) {
 							calendar = Calendar.getInstance();
 							calendar.setTime(etaEtdDate);
@@ -1163,7 +1163,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 					} else if (oneDayLookoutCase.getFlight().getDirection()
 							.equalsIgnoreCase(OneDayLookoutContants.FLIGHT_DIRECTION_OUTGOING)) {
 						oneDayLookoutVo.setDirection(OneDayLookoutContants.FLIGHT_DIRECTION_OUTGOING_DESC);
-						etaEtdDate = oneDayLookoutCase.getFlight().getEtd();
+						etaEtdDate = oneDayLookoutCase.getFlight().getMutableFlightDetails().getEtd();
 						calendar = Calendar.getInstance();
 						calendar.setTime(etaEtdDate);
 						etaEtdTime = String.format("%02d", Integer.valueOf(calendar.get(Calendar.HOUR_OF_DAY)))

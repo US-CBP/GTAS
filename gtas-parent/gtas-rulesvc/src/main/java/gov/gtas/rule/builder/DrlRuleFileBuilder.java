@@ -44,7 +44,7 @@ public class DrlRuleFileBuilder {
             PnrEmailLink.class, PnrFrequentFlyerLink.class,PnrBookingLink.class,
             PnrPassengerLink.class, PnrPhoneLink.class,
             PnrTravelAgencyLink.class,PnrDwellTimeLink.class,
-            Seat.class,PaymentForm.class};
+            Seat.class,PaymentForm.class, MutableFlightDetails.class};
 
     private StringBuilder stringBuilder;
 

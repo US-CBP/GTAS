@@ -110,7 +110,6 @@ public class HitsSummaryRepositoryIT {
         passengerRepository.save(p);
 
         Flight f = new Flight();
-        f.setFlightDate(new Date());
         f.setFlightNumber("899");
         f.setOrigin("IAD");
         f.setCarrier("DL");

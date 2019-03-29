@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Cacheable
 @Entity
 @Table(name = "flight",
-uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})})
+uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "etd_date", "origin", "destination"})})
 public class Flight extends BaseEntityAudit {
     private static final long serialVersionUID = 1L; 
     public Flight() { }
@@ -25,20 +25,6 @@ public class Flight extends BaseEntityAudit {
     @Size(min = 4, max = 4)
     @Column(name = "flight_number", length = 4, nullable = false)
     private String flightNumber;
-    
-    @Column(name = "marketing_flight")
-    private boolean isMarketingFlight=false;
-    
-    @Column(name = "operating_flight")
-    private boolean isOperatingFlight=false;
-
-	public boolean isOperatingFlight() {
-		return isOperatingFlight;
-	}
-
-	public void setOperatingFlight(boolean isOperatingFlight) {
-		this.isOperatingFlight = isOperatingFlight;
-	}
 
 	/** combination of carrier and flight number used for reporting */
     @Column(name = "full_flight_number")
@@ -56,35 +42,14 @@ public class Flight extends BaseEntityAudit {
     @Column(name = "destination_country", length = 3)
     private String destinationCountry;
 
-    /** calculated field */
-    @Column(name = "flight_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date flightDate;
-    
-    /** calculated field */
+
+    /** Application will strip the timestamp off and use this when making a flight.
+     *  This is the date (**not** the time) that the flight will take place.
+     *  */
     @Column(name = "etd_date")
     @Temporal(TemporalType.DATE)
     private Date etdDate;
-    
-    /** calculated field */
-    @Column(name = "eta_date")
-    @Temporal(TemporalType.DATE)
-    private Date etaDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date etd;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date eta;
-    
-    @Column(name = "utc_etd")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar utcEtd;
- 
-    @Column(name = "utc_eta")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar utcEta;
-    
     @Column(length = 1, nullable = false)
     private String direction;
 
@@ -105,6 +70,11 @@ public class Flight extends BaseEntityAudit {
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
     @JsonIgnore
     private FlightPassengerCount flightPassengerCount;
+
+    @OneToOne(mappedBy = "flight") // Mutable flight details are separated as a concurrency concern and therefore are EAGER fetched.
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private MutableFlightDetails mutableFlightDetails;
 
     @ManyToMany(
         mappedBy = "flights",
@@ -147,24 +117,6 @@ public class Flight extends BaseEntityAudit {
     }
     public void setFullFlightNumber(String fullFlightNumber) {
         this.fullFlightNumber = fullFlightNumber;
-    }
-    public Date getFlightDate() {
-        return flightDate;
-    }
-    public void setFlightDate(Date flightDate) {
-        this.flightDate = flightDate;
-    }
-    public Date getEtd() {
-        return etd;
-    }
-    public void setEtd(Date etd) {
-        this.etd = etd;
-    }
-    public Date getEta() {
-        return eta;
-    }
-    public void setEta(Date eta) {
-        this.eta = eta;
     }
     public String getDirection() {
         return direction;
@@ -215,43 +167,7 @@ public class Flight extends BaseEntityAudit {
     public void setApis(Set<ApisMessage> apis) {
         this.apis = apis;
     }
-
-    /**
-     * @return the etdDate
-     */
-    public Date getEtdDate() {
-        return etdDate;
-    }
-
-    /**
-     * @param etdDate the etdDate to set
-     */
-    public void setEtdDate(Date etdDate) {
-        this.etdDate = etdDate;
-    }
-
-    /**
-     * @return the etaDate
-     */
-    public Date getEtaDate() {
-        return etaDate;
-    }
-
-    /**
-     * @param etaDate the etaDate to set
-     */
-    public void setEtaDate(Date etaDate) {
-        this.etaDate = etaDate;
-    }
-
     
-	public boolean isMarketingFlight() {
-		return isMarketingFlight;
-	}
-
-	public void setMarketingFlight(boolean isMarketingFlight) {
-		this.isMarketingFlight = isMarketingFlight;
-	}
 
         public Long getId() {
             return id;
@@ -259,7 +175,7 @@ public class Flight extends BaseEntityAudit {
 
 	@Override
     public int hashCode() {
-       return Objects.hash(this.carrier, this.flightNumber, this.flightDate, this.origin, this.destination);
+       return Objects.hash(this.carrier, this.flightNumber, this.etdDate, this.origin, this.destination);
     }
     
     @Override
@@ -271,7 +187,7 @@ public class Flight extends BaseEntityAudit {
         final Flight other = (Flight)obj;
         return Objects.equals(this.carrier, other.carrier)
                 && Objects.equals(this.flightNumber, other.flightNumber)
-                && Objects.equals(this.flightDate, other.flightDate)
+                && Objects.equals(this.etdDate, other.etdDate)
                 && Objects.equals(this.origin, other.origin)
                 && Objects.equals(this.destination, other.destination);
     }
@@ -298,5 +214,21 @@ public class Flight extends BaseEntityAudit {
 
     public void setFlightPassengerCount(FlightPassengerCount flightPassengerCount) {
         this.flightPassengerCount = flightPassengerCount;
+    }
+
+    public MutableFlightDetails getMutableFlightDetails() {
+        return mutableFlightDetails;
+    }
+
+    public void setMutableFlightDetails(MutableFlightDetails mutableFlightDetails) {
+        this.mutableFlightDetails = mutableFlightDetails;
+    }
+
+    public Date getEtdDate() {
+        return etdDate;
+    }
+
+    public void setEtdDate(Date etdDate) {
+        this.etdDate = etdDate;
     }
 }

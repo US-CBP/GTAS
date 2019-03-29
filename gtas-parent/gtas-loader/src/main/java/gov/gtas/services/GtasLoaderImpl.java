@@ -7,22 +7,31 @@ package gov.gtas.services;
 
 import gov.gtas.model.*;
 import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
 import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
 
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {
     private static final Logger logger = LoggerFactory
             .getLogger(GtasLoaderImpl.class);
+    public static final int ETD_DATE_WITH_TIMESTAMP = 5;
+    public static final int ETD_DATE_NO_TIMESTAMP_AS_LONG = 4;
+    public static final int PRIME_FLIGHT_NUMBER_STRING = 3;
+    public static final int PRIME_FLIGHT_CARRIER = 2;
+    public static final int PRIME_FLIGHT_DESTINATION = 1;
+    public static final int PRIME_FLIGHT_ORIGIN = 0;
 
     private final ReportingPartyRepository rpDao;
 
@@ -70,30 +79,33 @@ public class GtasLoaderImpl implements GtasLoader {
     private final
     PassengerDetailRepository passengerDetailRepository;
 
+    private final
+    MutableFlightDetailsRepository mutableFlightDetailsRepository;
 
 
     @Autowired
     public GtasLoaderImpl(
-                          PassengerRepository passengerDao,
-                          ReportingPartyRepository rpDao,
-                          LoaderServices loaderServices,
-                          FlightRepository flightDao,
-                          DocumentRepository docDao,
-                          PhoneRepository phoneDao,
-                          PaymentFormRepository paymentFormDao,
-                          CreditCardRepository creditDao,
-                          FlightPassengerCountRepository flightPassengerCountRepository,
-                          AddressRepository addressDao,
-                          AgencyRepository agencyDao,
-                          BagRepository bagDao,
-                          MessageRepository<Message> messageDao,
-                          PassengerIDTagRepository passengerIdTagDao,
-                          FlightPassengerRepository flightPassengerRepository,
-                          FrequentFlyerRepository ffdao,
-                          LoaderUtils utils,
-                          BookingDetailRepository bookingDetailDao,
-                          PassengerTripRepository passengerTripRepository,
-                          PassengerDetailRepository passengerDetailRepository) {
+            PassengerRepository passengerDao,
+            ReportingPartyRepository rpDao,
+            LoaderServices loaderServices,
+            FlightRepository flightDao,
+            DocumentRepository docDao,
+            PhoneRepository phoneDao,
+            PaymentFormRepository paymentFormDao,
+            CreditCardRepository creditDao,
+            FlightPassengerCountRepository flightPassengerCountRepository,
+            AddressRepository addressDao,
+            AgencyRepository agencyDao,
+            BagRepository bagDao,
+            MessageRepository<Message> messageDao,
+            PassengerIDTagRepository passengerIdTagDao,
+            FlightPassengerRepository flightPassengerRepository,
+            FrequentFlyerRepository ffdao,
+            LoaderUtils utils,
+            BookingDetailRepository bookingDetailDao,
+            PassengerTripRepository passengerTripRepository,
+            PassengerDetailRepository passengerDetailRepository,
+            MutableFlightDetailsRepository mutableFlightDetailsRepository) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -114,6 +126,7 @@ public class GtasLoaderImpl implements GtasLoader {
         this.bookingDetailDao = bookingDetailDao;
         this.passengerTripRepository = passengerTripRepository;
         this.passengerDetailRepository = passengerDetailRepository;
+        this.mutableFlightDetailsRepository = mutableFlightDetailsRepository;
     }
 
 
@@ -212,6 +225,22 @@ public class GtasLoaderImpl implements GtasLoader {
                                                   String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
 
         long startTime = System.nanoTime();
+        /*
+         * If pnrVo flights on tvl level deos not 5 exist then make
+         * the tvl level 0 the prime flight.
+         *
+         * */
+        if (flights.isEmpty()) {
+            FlightVo flightVo = new FlightVo();
+            Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
+            flightVo.setEta(primeFlightDate);
+            flightVo.setCarrier(primeFlightKey[PRIME_FLIGHT_CARRIER]);
+            flightVo.setFlightNumber(primeFlightKey[PRIME_FLIGHT_NUMBER_STRING]);
+            flightVo.setOrigin(primeFlightKey[PRIME_FLIGHT_ORIGIN]);
+            flightVo.setDestination(primeFlightKey[PRIME_FLIGHT_DESTINATION]);
+            flights.add(flightVo);
+        }
+
         // save flight and booking details
         // return flight and booking details
         // first find all existing passengers, create any missing flights
@@ -219,21 +248,39 @@ public class GtasLoaderImpl implements GtasLoader {
         Flight primeFlight = null;
         for (int i = 0; i < flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if (primeFlightKey[0].equalsIgnoreCase("placeholder") || utils.isPrimeFlight(fvo, primeFlightKey)) { //placeholder is temporary allowance to assist manual running of loader
-                logger.debug("@ getFlightByCriteria");
-                Flight currentFlight;
-                Flight existingFlight = flightDao.getFlightByCriteria(fvo.getCarrier(), fvo.getFlightNumber(), fvo.getOrigin(), fvo.getDestination(), fvo.getFlightDate());
-                if (existingFlight == null) {
+            /*
+            * A prime flight is determined by the level 0 TVL of a PNR or a combination
+            * of fields in an APIS.
+            * The isPrimeFlight will check to see if the flightVo being processed matches the prime flight
+            * and set the flight accordingly.
+            * */
+            if (utils.isPrimeFlight(fvo, primeFlightKey)) {
+                Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
+                Flight currentFlight = flightDao.getFlightByCriteria(primeFlightKey[PRIME_FLIGHT_CARRIER],
+                                                                     primeFlightKey[PRIME_FLIGHT_NUMBER_STRING],
+                                                                     primeFlightKey[PRIME_FLIGHT_ORIGIN],
+                                                                     primeFlightKey[PRIME_FLIGHT_DESTINATION],
+                                                                     primeFlightDate);
+                if (currentFlight == null) {
                     logger.debug("Flight Not Found: Creating Flight");
-                    currentFlight = utils.createNewFlight(fvo);
+                    currentFlight = utils.createNewFlight(fvo, primeFlightKey);
                     currentFlight = flightDao.save(currentFlight);
                     logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId());
-                } else {
-                    currentFlight = existingFlight;
-                    if (fvo.isCodeShareFlight()) {
-                        currentFlight.setOperatingFlight(true);
-                    }
                 }
+                /*
+                * Update the information on a flight that can change. Always save the most recent one as it will contain the
+                * most up to date information.
+                * */
+                MutableFlightDetails mfd = mutableFlightDetailsRepository.findById(currentFlight.getId()).orElse(new MutableFlightDetails(currentFlight.getId()));
+                BeanUtils.copyProperties(fvo, mfd, getNullPropertyNames(fvo));
+                mfd.setEtaDate(DateUtils.stripTime(mfd.getEta()));
+                if (mfd.getEtd() == null) {
+                    //Special case where flight doesnt have a timestamp - use the prime flight's timestamp if this is the case.
+                    Date primeFlightTimeStamp = new Date(Long.parseLong(primeFlightKey[ETD_DATE_WITH_TIMESTAMP]));
+                    mfd.setEtd(primeFlightTimeStamp);
+                }
+                mfd = mutableFlightDetailsRepository.save(mfd);
+                currentFlight.setMutableFlightDetails(mfd);
                 primeFlight = currentFlight;
                 logger.debug("processFlightsAndPassenger: check for existing flights time= " + (System.nanoTime() - startTime) / 1000000);
                 messageFlights.add(currentFlight);
@@ -241,10 +288,9 @@ public class GtasLoaderImpl implements GtasLoader {
                 leg.setFlight(currentFlight);
                 leg.setLegNumber(i);
                 flightLegs.add(leg);
-            }//End if prime flight
-            else {
+            } else {
+                // All flights that are not prime flights are considered booking details.
                 BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
-                //create booking details for this pnr
                 bD = bookingDetailDao.save(bD);
                 bookingDetails.add(bD);
                 FlightLeg leg = new FlightLeg();
@@ -258,6 +304,7 @@ public class GtasLoaderImpl implements GtasLoader {
         }
         return primeFlight;
     }
+
 
     @Override
     public PassengerInformationDTO makeNewPassengerObjects(Flight primeFlight, List<PassengerVo> passengers,
@@ -464,7 +511,10 @@ public class GtasLoaderImpl implements GtasLoader {
     public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
-            Document existingDoc = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
+            Document existingDoc = null;
+            if (dvo.getDocumentNumber() != null) {
+                existingDoc = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
+            }
             if (existingDoc == null) {
                 existingPassenger.addDocument(utils.createNewDocument(dvo));
             } else {
