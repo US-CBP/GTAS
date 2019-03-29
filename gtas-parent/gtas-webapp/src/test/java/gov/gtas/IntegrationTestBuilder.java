@@ -319,7 +319,6 @@ public class IntegrationTestBuilder {
         flight = new Flight();
         flight.setCarrier("DL");
         flight.setDirection("O");
-        flight.setFlightDate(new Date());
         flight.setFlightNumber("0012");
         flight.setOrigin("LAX");
         flight.setDestination("IAD");

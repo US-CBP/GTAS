@@ -84,7 +84,7 @@ public class Loader {
             m.setFilePath(filePath);
             m.setCreateDate(new Date());
             m = msgDao.save(m);
-            MessageStatus messageStatus = new MessageStatus(m.getId(), MessageStatusEnum.FAILED_PARSING);
+            MessageStatus messageStatus = new MessageStatus(m.getId(), MessageStatusEnum.FAILED_PRE_PROCESS);
             msgDto.setMessageStatus(messageStatus);
             ProcessedMessages processedMessages = new ProcessedMessages();
             List<MessageStatus> messageStatuses = new ArrayList<>();
@@ -99,19 +99,20 @@ public class Loader {
         rawMessages = msgDto.getRawMsgs();
         List<MessageStatus> messageStatuses = new ArrayList<>();
         for (String rawMessage : rawMessages) {
-        	msgDto.setRawMsg(rawMessage);
+            msgDto.setRawMsg(rawMessage);
             MessageDto parsedMessageDto = svc.parse(msgDto);
-            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null) {
+            if (parsedMessageDto.getMessageStatus().isSuccess()) {
                 MessageStatus messageStatus = svc.load(parsedMessageDto);
                 messageStatuses.add(messageStatus);
                 if (messageStatus.isSuccess()) {
-                successMsgCount++;
+                    successMsgCount++;
+                } else {
+                    failedMsgCount++;
+                }
             } else {
+                messageStatuses.add(parsedMessageDto.getMessageStatus());
                 failedMsgCount++;
             }
-            } else {
-                failedMsgCount++;
-        }
         }
         ProcessedMessages processedMessages = new ProcessedMessages();
         processedMessages.setProcessed(new int[] {successMsgCount, failedMsgCount});

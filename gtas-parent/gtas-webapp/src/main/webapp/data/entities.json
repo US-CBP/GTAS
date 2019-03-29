@@ -455,7 +455,7 @@
         }
       },
       {
-        "id": "Flight.etaDate",
+        "id": "Flight.mutableFlightDetails.etaDate",
         "label": "ETA",
         "type": "date",
         "operators": [

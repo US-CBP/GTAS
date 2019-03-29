@@ -63,6 +63,7 @@ public class ApisMessageService extends MessageLoaderService {
             apis.setRaw(LobUtils.createClob(vo.getRaw()));
 
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.PARSED);
+            msgDto.getMessageStatus().setSuccess(true);
             apis.setHashCode(vo.getHashCode());
             EdifactMessage em = new EdifactMessage();
             em.setTransmissionDate(vo.getTransmissionDate());
@@ -71,13 +72,13 @@ public class ApisMessageService extends MessageLoaderService {
             em.setVersion(vo.getVersion());
             apis.setEdifactMessage(em);
             msgDto.setMsgVo(vo);
-
         } catch (Exception e) {
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
+            msgDto.getMessageStatus().setSuccess(false);
             handleException(e , apis);
-            return null;
         } finally {
             if (!createMessage(apis)) {
+                msgDto.getMessageStatus().setSuccess(false);
                 msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_PARSING);
             }
         }
@@ -137,7 +138,6 @@ public class ApisMessageService extends MessageLoaderService {
     }  
 
     private void handleException(Exception e, ApisMessage apisMessage) {
-        apisMessage.setFlights(null);
         String stacktrace = ErrorUtils.getStacktrace(e);
         apisMessage.setError(stacktrace);
         logger.error(stacktrace);

@@ -23,7 +23,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
             + "AND f.flightNumber = :flightNumber "
             + "AND f.origin = :origin "
             + "AND f.destination=:destination "
-            + "AND f.flightDate = :flightDate")
+            + "AND f.etdDate = :flightDate")
     Flight getFlightByCriteria(@Param("carrier") String carrier,
             @Param("flightNumber") String flightNumber,@Param("origin") String origin,
             @Param("destination") String destination,@Param("flightDate") Date flightDate);
@@ -58,7 +58,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
     		value="SELECT f.* FROM flight_passenger fp join flight f ON (fp.flight_id = f.id) where fp.passenger_id = (:paxId)")
     List<Flight> getFlightByPaxId(@Param("paxId") Long paxId);
 
-    @Query("SELECT f FROM Flight f WHERE f.flightDate between :startDate AND :endDate")
+    @Query("SELECT f FROM Flight f WHERE f.etdDate between :startDate AND :endDate")
     List<Flight> getFlightsByDates(@Param("startDate") Date startDate,
                                           @Param("endDate") Date endDate);
 
@@ -86,8 +86,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
             "LEFT JOIN FETCH pass.paxWatchlistLinks " +
             "LEFT JOIN FETCH pass.documents " +
             "LEFT JOIN FETCH pass.passengerWLTimestamp pwts " +
-            "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
-            "            OR f.etd BETWEEN :dateTimeStart AND :dateTimeEnd) " +
+            "WHERE (f.mutableFlightDetails.eta BETWEEN :dateTimeStart AND :dateTimeEnd " +
+            "            OR f.mutableFlightDetails.etd BETWEEN :dateTimeStart AND :dateTimeEnd) " +
             "AND (((SELECT MIN(pwts.watchlistCheckTimestamp) from pwts where pass.flight.id = f.id and pwts.id = pass.id ) <= (SELECT MAX(wl.editTimestamp) FROM Watchlist wl)) " +
             "       OR (((SELECT COUNT(pass.id) FROM pass WHERE pass.flight.id = f.id AND pass.id NOT IN (SELECT id FROM pwts)) > 0) " +
                                 " OR (SELECT COUNT(pass.id) FROM pass WHERE pass.flight.id = f.id AND pass.id = pwts.id AND pwts.watchlistCheckTimestamp IS NULL) > 0))")
@@ -101,10 +101,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
 
     @Query( "SELECT f FROM Flight f " +
             "LEFT JOIN FETCH f.flightPassengerCount " +
-            "WHERE (f.eta BETWEEN :dateTimeStart AND :dateTimeEnd) " +
-            "AND f.direction = :direction " +
-            "AND ((f.isOperatingFlight = FALSE" +
-            "    AND f.isOperatingFlight = FALSE ) OR f.isOperatingFlight = true) ")
+            "WHERE (f.mutableFlightDetails.eta BETWEEN :dateTimeStart AND :dateTimeEnd) " +
+            "AND f.direction = :direction ")
     List<Flight> getFlightsThreeDaysForwardWithDirection(@Param("dateTimeStart")Date date1,
                                                          @Param("dateTimeEnd") Date date2,
                                                          @Param("direction") String direction);

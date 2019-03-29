@@ -18,7 +18,12 @@ public class FlightVo implements Validatable {
     private String flightNumber;
     private String origin;
     private String destination;
-    private Date flightDate;
+    /*
+    Etd is a field with a timestamp in the parser.
+    Importantly the label made on the bucket/thread used in the loader will not be with a timestamp.
+    It will be only the date.
+    ETD date with a timestamp exist within mutable flight object.
+    * */
     private Date etd;
     private Date eta;
     private String marketingFlightNumber;
@@ -68,12 +73,7 @@ public class FlightVo implements Validatable {
     public void setDestination(String destination) {
         this.destination = destination;
     }
-    public Date getFlightDate() {
-        return flightDate;
-    }
-    public void setFlightDate(Date flightDate) {
-        this.flightDate = flightDate;
-    }
+
     public Date getEtd() {
         return etd;
     }
@@ -97,7 +97,7 @@ public class FlightVo implements Validatable {
          return StringUtils.isNotBlank(this.destination) 
                 && StringUtils.isNotBlank(this.origin) 
                 && StringUtils.isNotBlank(this.flightNumber)
-                && this.flightDate != null 
-                && StringUtils.isNotBlank(this.carrier);
+                && StringUtils.isNotBlank(this.carrier)
+                && this.etd != null;
     }  
 }

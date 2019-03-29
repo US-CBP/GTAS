@@ -67,9 +67,6 @@ public class RuleEngineRequestBuilder {
     private final
     ApisMessageRepository apisMessageRepository;
 
-    final
-    FlightPassengerRepository flightPassengerRepository;
-
     private final
     PassengerTripRepository passengerTripRepository;
 
@@ -95,7 +92,6 @@ public class RuleEngineRequestBuilder {
                                     SeatRepository seatRepository, BagRepository bagRepository,
                                     FlightPaxRepository flightPaxRepository,
                                     DocumentRepository documentRepository,
-                                    FlightPassengerRepository flightPassengerRepository,
                                     ApisMessageRepository apisMessageRepository) {
         this.requestObjectList = new ArrayList<>(30000);
         this.addressIdSet = new HashSet<>();
@@ -117,7 +113,6 @@ public class RuleEngineRequestBuilder {
         this.bagRepository = bagRepository;
         this.flightPaxRepository = flightPaxRepository;
         this.documentRepository = documentRepository;
-        this.flightPassengerRepository = flightPassengerRepository;
         this.apisMessageRepository = apisMessageRepository;
     }
 

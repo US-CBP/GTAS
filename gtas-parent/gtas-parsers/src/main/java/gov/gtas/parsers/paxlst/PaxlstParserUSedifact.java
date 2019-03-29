@@ -130,7 +130,6 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
                 f.setDestination(dest);
                 f.setEta(eta);
                 f.setEtd(etd);
-                f.setFlightDate(FlightUtils.determineFlightDate(etd, eta, parsedMessage.getTransmissionDate()));
 
                 if (f.isValid()) {
                     parsedMessage.addFlight(f);

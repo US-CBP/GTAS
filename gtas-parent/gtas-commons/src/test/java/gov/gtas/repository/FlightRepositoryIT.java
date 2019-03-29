@@ -41,7 +41,6 @@ public class FlightRepositoryIT extends
 		Flight f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0012");
 		f.setFullFlightNumber("XX0012");
 		f.setOrigin("LAX");
@@ -59,7 +58,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0010");
 		f.setFullFlightNumber("XX0010");
 		f.setOrigin("LAS");
@@ -77,7 +75,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0013");
 		f.setFullFlightNumber("YY0013");
 		f.setOrigin("LAS");
@@ -95,7 +92,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0014");
 		f.setFullFlightNumber("YY0014");
 		f.setOrigin("BTE");
@@ -113,7 +109,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0016");
 		f.setFullFlightNumber("YY0016");
 		f.setOrigin("MLW");

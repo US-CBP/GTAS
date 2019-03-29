@@ -6,21 +6,19 @@
 package gov.gtas.parsers.pnrgov;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import gov.gtas.parsers.exception.ParseRuntimeException;
+import gov.gtas.parsers.pnrgov.segment.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import gov.gtas.parsers.edifact.EdifactLexer;
-import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.pnrgov.segment.ADD;
-import gov.gtas.parsers.pnrgov.segment.SSR;
-import gov.gtas.parsers.pnrgov.segment.TIF;
 import gov.gtas.parsers.pnrgov.segment.TIF.TravelerDetails;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.ParseUtils;
@@ -32,14 +30,6 @@ import gov.gtas.parsers.vo.PhoneVo;
 
 public class PnrUtils {
     private static final Logger logger = LoggerFactory.getLogger(PnrUtils.class);
-    public static final int MAX_ELEMENT_WHERE_GENDER_CAN_EXIST = 8;
-    private static final String MALE = "M";
-    private static final String FEMALE = "F";
-    private static final String MALE_INFANT = "MI";
-    private static final String FEMALE_INFANT = "FI";
-    private static final String UNDISCLOSED_GENDER = "U";
-    private static final String GENDER_NOT_FOUND = "NF";
-
     public static Date parseDateTime(String dt) {
         final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_DAY_FIRST;
         final String DATE_TIME_FORMAT = DateUtils.DT_FORMAT_DAY_FIRST;
@@ -88,82 +78,29 @@ public class PnrUtils {
      * </pre>
      */
 
-    private static SSR getBestSsrFromList(List<SSR> ssrDocs) {
-        for (SSR ssr : ssrDocs) {
-            String ssrText = ssr.getFreeText();
-            if (StringUtils.isNotBlank(ssrText) && (!ssrText.startsWith("/"))) {
-                ssrText = "/" + ssrText;
-                ssr.setFreeText(ssrText);
-            }
-            List<String> tokens = splitSsrFreeText(ssr);
-            if (tokens != null && tokens.size() > 7) {
-                if (StringUtils.isNotBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(3))
-                        && StringUtils.isNotBlank(tokens.get(6))) {
-                    //SSR+DOCS:HK:1:AV:::::/P/DEU/C4FG15LP2/DEU/23AUG77/M/13FEB24/GREWE/MARK'
-                    if ((tokens.get(1).trim().length() == 1) && (tokens.get(6).trim().length() == 1)) {
-                        return ssr;
-                    }
-                }
-                //P/P00266142/14JUL71/M/28MAY23/AVDIU/ILIR
-                if (StringUtils.isBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(2))
-                        && StringUtils.isNotBlank(tokens.get(3))) {
-                    if ((tokens.get(2).trim().length() == 1) && (tokens.get(5).trim().length() == 1)) {
-                        return ssr;
-                    }
-                }
-                if (StringUtils.isBlank(tokens.get(1)) && StringUtils.isNotBlank(tokens.get(2))
-                        && StringUtils.isNotBlank(tokens.get(7))) {
-                    //P/USA/554416148/USA/06MAY02/F/27SEP21/ROBERTS/ELIZABETH/ANNE'
-                    if ((tokens.get(2).trim().length() == 1) && (tokens.get(7).trim().length() == 1)) {
-                        return ssr;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public static PassengerVo createPassenger(List<SSR> ssrDocs, TIF tif) throws ParseException {
-        SSR bestSsr = null;
-        bestSsr = getBestSsrFromList(ssrDocs);
-        if (bestSsr == null) {
-            for (SSR ssr : ssrDocs) {
-                String ssrText = ssr.getFreeText();
-                if (ssrText == null) {
-                    continue;
-                } else if (bestSsr == null || ssrText.length() > bestSsr.getFreeText().length()) {
-                    bestSsr = ssr;
-                }
-            }
-        }
-        if (bestSsr == null) {
-            return null;
-        }
-        List<String> strs = splitSsrFreeText(bestSsr);
-        if (CollectionUtils.isEmpty(strs)) {
-            return null;
-        }
+    public static PassengerVo createPassenger(List<SSRDocs> ssrDocs, TIF tif)  {
+        //Reversed ORDER to get the best SSR doc - Passport is best, followed by passport card, followed by everything else.
+        ssrDocs.sort(Comparator.comparing(SSRDocs::getSsrDocsType).reversed());
+        SSRDocs bestDocument = ssrDocs.get(0);
         PassengerVo p = new PassengerVo();
         p.setPassengerType("P");
-        DocumentVo doc = new DocumentVo();
-        updatePassengerAndDocument(p, doc, strs);
-        captureMissingInfoFromSSRs(p, ssrDocs);
+        String gender = bestDocument.getGender() == null ? null : bestDocument.getGender().toString();
+        p.setGender(gender);
+        processNames(p, bestDocument.getSurname(), bestDocument.getFirstGivenName(), bestDocument.getSecondGivenName());
+        setPassengerDob(p, bestDocument.getDob());
+        p.setCitizenshipCountry(bestDocument.getNationality());
+        processEachSSRDoc(ssrDocs, p);
+        updateNameToTIFName(tif, p);
+        return p;
+    }
 
-        if (StringUtils.isNotBlank(doc.getDocumentType()) && StringUtils.isNotBlank(doc.getDocumentNumber())) {
-            // FIX for issue #316
-            if (StringUtils.isBlank(p.getCitizenshipCountry())) {
-                p.setCitizenshipCountry(doc.getIssuanceCountry());
-            }
-            p.addDocument(doc);
-        } else {
-            // ToDo: logger invalid document
-        }
+    private static void updateNameToTIFName(TIF tif, PassengerVo p) {
         if (!tif.getTravelerDetails().isEmpty()) {
             TravelerDetails td = tif.getTravelerDetails().get(0);
             p.setTravelerReferenceNumber(td.getTravelerReferenceNumber());
             PassengerVo tmp = new PassengerVo();
             if (tif.getTravelerSurname() != null && td.getTravelerGivenName() != null)
-                processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null, p.getGender());
+                processNames(tmp, tif.getTravelerSurname(), td.getTravelerGivenName(), null);
             if (StringUtils.isNoneBlank(tif.getTravelerSurname()) && StringUtils.isBlank(p.getLastName())) {
                 p.setLastName(tmp.getLastName());
             }
@@ -174,7 +111,33 @@ public class PnrUtils {
             p.setTitle(tmp.getTitle());
             p.setSuffix(tmp.getSuffix());
         }
-        return p;
+    }
+
+    private static void processEachSSRDoc(List<SSRDocs> ssrDocs, PassengerVo p) {
+        for (SSRDocs ssrDoc : ssrDocs) {
+            if (p.getGender() == null) {
+                if (ssrDoc.getGender() != null) {
+                    p.setGender(ssrDoc.getGender().toString());
+                }
+            }
+            if (p.getCitizenshipCountry() == null) {
+                if (ssrDoc.getNationality() != null) {
+                    p.setCitizenshipCountry(ssrDoc.getNationality());
+                }
+            }
+            if (p.getDob() == null) {
+                if (ssrDoc.getDob() != null) {
+                    setPassengerDob(p, ssrDoc.getDob());
+                }
+            }
+            DocumentVo documentVo = ssrDoc.toDocumentVo();
+            if (StringUtils.isNotBlank(documentVo.getDocumentNumber()) && StringUtils.isBlank(p.getCitizenshipCountry())) {
+                p.setCitizenshipCountry(documentVo.getIssuanceCountry());
+            }
+            if (StringUtils.isNotBlank(documentVo.getDocumentNumber())) {
+                p.addDocument(documentVo);
+            }
+        }
     }
 
     //Handling names with a 1 #478 code fix
@@ -249,7 +212,6 @@ public class PnrUtils {
     /**
      * Extract the nth PNR from the msg text.
      *
-     * @param msg   the entire msg text, including UNA, if it exists
      * @param index 0-based index of the PNR
      * @return text of the nth PNR; null if does not exist.
      */
@@ -331,7 +293,7 @@ public class PnrUtils {
     private static final String[] SUFFIXES = {"JR", "SR"};
     private static final String[] PREFIXES = {"MR", "MRS", "MS", "DR", "MISS", "SIR", "MADAM", "MAYOR", "PRESIDENT"};
 
-    private static void processNames(PassengerVo p, String last, String first, String middle, String gender) {
+    private static void processNames(PassengerVo p, String last, String first, String middle) {
         p.setFirstName(first);
         p.setMiddleName(middle);
         p.setLastName(last);
@@ -348,7 +310,7 @@ public class PnrUtils {
                 if (firstName != null) {
                     p.setTitle(prefix);
                     p.setFirstName(firstName);
-                    if (StringUtils.isNotEmpty(gender) && "F".equalsIgnoreCase(gender)
+                    if (StringUtils.isNotEmpty(p.getGender()) && "F".equalsIgnoreCase(p.getGender())
                             && "MR".equalsIgnoreCase(prefix)) {
                         continue;
                     } else {
@@ -453,30 +415,10 @@ public class PnrUtils {
         return thePax;
     }
 
-    private static void captureMissingInfoFromSSRs(PassengerVo pvo, List<SSR> ssrDocs) {
-        if (StringUtils.isBlank(pvo.getCitizenshipCountry())) {
-            for (SSR ssr : ssrDocs) {
-                String ssrText = ssr.getFreeText();
-                List<String> strs = splitSsrFreeText(ssr);
-                if (CollectionUtils.isEmpty(strs)) {
-                    continue;
-                }
-                if (StringUtils.isNotEmpty(safeGet(strs, 1))
-                        || (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isEmpty(safeGet(strs, 2)))) {
-                    pvo.setCitizenshipCountry(safeGet(strs, 4));
-
-                } else if (StringUtils.isEmpty(safeGet(strs, 1)) && StringUtils.isNotEmpty(safeGet(strs, 2))
-                        && StringUtils.isNotEmpty(safeGet(strs, 4))) {
-                    pvo.setCitizenshipCountry(safeGet(strs, 5));
-                }
-            }
-        }
-    }
-
     public static String getPhoneNumberFromLTS(String phoneText) {
         try {
             phoneText = phoneText.replaceAll("\\s+", "");
-            phoneText = phoneText.substring(phoneText.indexOf("APM") + 3, phoneText.length());
+            phoneText = phoneText.substring(phoneText.indexOf(LTS.APM) + 3);
             if (phoneText.indexOf("/") > 0) {
                 phoneText = phoneText.substring(0, phoneText.indexOf("/"));
             }
@@ -510,127 +452,15 @@ public class PnrUtils {
         return temp;
     }
 
-    private static void updatePassengerAndDocument(PassengerVo p, DocumentVo doc, List<String> strs) {
-        List<Integer> positions = getPositionalElements(strs);
-        int docTypePos;
-        int genderPos;
-        if (containsOnlyDocTypeOROnlyGenderPosition(positions)) {
-            genderPos = positions.get(0);
-            //doc.setDocumentType("P");
-            //doc.setDocumentNumber("NONE");
-            if (StringUtils.isNotBlank(safeGet(strs, genderPos)) && isAGenderElement(safeGet(strs, genderPos))) {
-                /////05MAY02/F//ROBERTS/ELIZABETH-1ROBERTS/ELIZABETH'
-                p.setGender(safeGet(strs, genderPos));
-                setPassengerDob(p, safeGet(strs, genderPos - 1));
-                processNames(p, safeGet(strs, genderPos + 2), safeGet(strs, genderPos + 3), safeGet(strs, genderPos + 4), p.getGender());
-
-            } else if (StringUtils.isNotBlank(safeGet(strs, genderPos)) &&
-                    ("P".equals(safeGet(strs, genderPos)))) {
-                // /P/GBR/516442192/GBR/02JUN
-                doc.setDocumentType(safeGet(strs, genderPos));
-                doc.setIssuanceCountry(safeGet(strs, genderPos + 1));
-                doc.setDocumentNumber(safeGet(strs, genderPos + 2));
-                p.setCitizenshipCountry(safeGet(strs, genderPos + 3));
-                setPassengerDob(p, safeGet(strs, genderPos + 4));
-                p.setGender(GENDER_NOT_FOUND);
-                String d = safeGet(strs, genderPos + 6);
-                if (StringUtils.isNotBlank(d)) {
-                    doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-                }
-                processNames(p, safeGet(strs, genderPos + 7), safeGet(strs, genderPos + 8), safeGet(strs, genderPos + 9), p.getGender());
-            }
-
-        } else if (containsGenderAndDocTypePosition(positions)) {
-            docTypePos = positions.get(0);
-            genderPos = positions.get(1);
-            if ((genderPos - docTypePos) == 3) {
-                //P/P00266142/14JUL71/M/28MAY23/AVDIU/ILIR
-                doc.setDocumentType(safeGet(strs, docTypePos));
-                doc.setDocumentNumber(safeGet(strs, docTypePos + 1));
-                setPassengerDob(p, safeGet(strs, docTypePos + 2));
-                p.setGender(safeGet(strs, genderPos));
-                String d = safeGet(strs, genderPos + 1);
-                if (StringUtils.isNotBlank(d)) {
-                    doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-                }
-                processNames(p, safeGet(strs, genderPos + 2), safeGet(strs, genderPos + 3), safeGet(strs, genderPos + 4), p.getGender());
-
-            } else if ((genderPos - docTypePos) == 5) {
-                //P/USA/554416148/USA/06MAY02/F/27SEP21/ROBERTS/ELIZABETH/ANNE
-                doc.setDocumentType(safeGet(strs, docTypePos));
-                doc.setIssuanceCountry(safeGet(strs, docTypePos + 1));
-                doc.setDocumentNumber(safeGet(strs, docTypePos + 2));
-                p.setCitizenshipCountry(safeGet(strs, docTypePos + 3));
-                setPassengerDob(p, safeGet(strs, docTypePos + 4));
-                p.setGender(safeGet(strs, genderPos));
-                String d = safeGet(strs, genderPos + 1);
-                if (StringUtils.isNotBlank(d)) {
-                    doc.setExpirationDate(ParseUtils.parseDateTime(d, DOC_DATE_FORMAT));
-                }
-                processNames(p, safeGet(strs, genderPos + 2), safeGet(strs, genderPos + 3), safeGet(strs, genderPos + 4), p.getGender());
-            }
-        }
-    }
-
     private static void setPassengerDob(PassengerVo p, String d) {
         if (StringUtils.isNotBlank(d)) {
             try {
-                Date dob = ParseUtils.parseDateTime(d, DOC_DATE_FORMAT);
+                Date dob = ParseUtils.parseBirthday(d, DOC_DATE_FORMAT);
                 p.setDob(dob);
                 p.setAge(DateUtils.calculateAge(dob));
             } catch (Exception e) {
-
+                logger.warn("Failed to process DOB");
             }
         }
     }
-
-    private static List<Integer> getPositionalElements(List<String> tokens) {
-        List<Integer> pos = new ArrayList<>();
-        boolean genderFound = false;
-        for (int i = 0; i < tokens.size(); i++) {
-            if (StringUtils.isNotBlank(tokens.get(i)) && tokens.get(i).trim().length() <= 2) {
-                String element = tokens.get(i).trim();
-                if (isAGenderElement(element) && i <= MAX_ELEMENT_WHERE_GENDER_CAN_EXIST) {
-                    if (genderFound) {
-                        if (containsGenderAndDocTypePosition(pos)) {
-                            pos.set(1, i);
-                        } else if (containsOnlyGenderPosition(pos)) {
-                            pos.set(0, i);
-                        } else {
-                            logger.error("Too many indices in list! Parsing went wrong!");
-                        }
-                    } else {
-                        genderFound = true;
-                        pos.add(i);
-                    }
-                } else if ("P".equals(tokens.get(i).trim()) && i <= 8) {
-                    pos.add(i);
-                }
-            }
-        }
-        return pos;
-    }
-
-    private static boolean containsGenderAndDocTypePosition(List<Integer> positions) {
-        return positions.size() >= 2;
-    }
-
-    private static boolean containsOnlyGenderPosition(List<Integer> pos) {
-        return pos.size() == 1;
-    }
-
-    private static boolean containsOnlyDocTypeOROnlyGenderPosition(List<Integer> pos) {
-        return pos.size() == 1;
-    }
-
-
-
-    private static boolean isAGenderElement(String element) {
-        return MALE.equals(element)
-                || FEMALE.equals(element)
-                || MALE_INFANT.equals(element)
-                || FEMALE_INFANT.equals(element)
-                || UNDISCLOSED_GENDER.equals(element);
-    }
-
 }

@@ -280,7 +280,6 @@ public class QueryBuilderServiceIT {
 		flight.setCarrier("AB");
 		flight.setDestination("USA");
 		flight.setDirection("O");
-		flight.setFlightDate(new Date());
 		flight.setFlightNumber("123");
 		flight.setOrigin("CAN");
 
@@ -336,7 +335,6 @@ public class QueryBuilderServiceIT {
 		flight.setCarrier("AB1");
 		flight.setDestination("USA");
 		flight.setDirection("O");
-		flight.setFlightDate(new Date());
 		flight.setFlightNumber("1234");
 		flight.setOrigin("CAN");
 

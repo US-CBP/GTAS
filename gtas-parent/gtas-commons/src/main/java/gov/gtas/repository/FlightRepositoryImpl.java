@@ -17,6 +17,7 @@ import gov.gtas.services.dto.SortOptionsDto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -61,23 +62,11 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Root<Flight> root = q.from(Flight.class);
 		List<Predicate> predicates = new ArrayList<>();
 
-		// dates
-		Predicate etaCondition;
-		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
-			Path<Date> eta = root.<Date> get("eta");
-			Predicate startPredicate = cb.or(
-					cb.isNull(eta),
-					cb.greaterThanOrEqualTo(root.<Date> get("eta"),
-							dto.getEtaStart()));
-			Predicate endPredicate = cb.or(cb.isNull(eta),
-					cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
-			etaCondition = cb.and(startPredicate, endPredicate);
-			predicates.add(etaCondition);
-		}
-
 		Join<Flight, FlightHitsRule> ruleHits = root.join("flightHitsRule", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
+		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
 
 		// sorting
 		if (dto.getSort() != null) {
@@ -90,6 +79,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					e = watchlistHits.get("hitCount");
 				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
 					e = passengerCountJoin.get("passengerCount");
+				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
+					e = mutableFlightDetailsJoin.get(sort.getColumn());
 				} else {
 					e = root.get(sort.getColumn());
 				}
@@ -105,19 +96,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		}
 
 		// filters
-		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
-			Expression<String> originExp = root.<String> get("origin");
-			Predicate originPredicate = originExp.in(dto.getOriginAirports());
-			Predicate originAirportsPredicate = cb.and(originPredicate);
-			predicates.add(originAirportsPredicate);
-		}
-
-		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
-			Expression<String> destExp = root.<String> get("destination");
-			Predicate destPredicate = destExp.in(dto.getDestinationAirports());
-			Predicate destAirportsPredicate = cb.and(destPredicate);
-			predicates.add(destAirportsPredicate);
-		}
+		generateFilters(dto, cb, predicates, root.get("origin"), root.get("destination"));
 
 		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
 			String likeString = String.format("%%%s%%", dto.getFlightNumber());
@@ -165,14 +144,12 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			}
 		}
 
+		List<Predicate> countPredicates = new ArrayList<>(predicates);
+		if (etaCondition != null) {
+			predicates.add(etaCondition);
+		}
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Flight> typedQuery = em.createQuery(q);
-
-		// total count
-		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-		countQuery.select(cb.count(countQuery.from(Flight.class))).where(
-				predicates.toArray(new Predicate[] {}));
-		Long count = em.createQuery(countQuery).getSingleResult();
 
 		// pagination
 		int pageNumber = dto.getPageNumber();
@@ -181,13 +158,60 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		typedQuery.setFirstResult(firstResultIndex);
 		typedQuery.setMaxResults(dto.getPageSize());
 
+		// Runs exact query above without limits to get a count.
+		long count = getCountOfQuery(dto, cb, countPredicates);
+
 		logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
 				.getQueryString());
 		List<Flight> results = typedQuery.getResultList();
 
 		return new ImmutablePair<>(count, results);
 	}
-	
+
+	static void generateFilters(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> predicates, Path<String> origin, Path<String> destination) {
+		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
+			Predicate originPredicate = origin.in(dto.getOriginAirports());
+			Predicate originAirportsPredicate = cb.and(originPredicate);
+			predicates.add(originAirportsPredicate);
+		}
+
+		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
+			Predicate destPredicate = destination.in(dto.getDestinationAirports());
+			Predicate destAirportsPredicate = cb.and(destPredicate);
+			predicates.add(destAirportsPredicate);
+		}
+	}
+
+	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates) {
+		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+		Root<Flight> countRoot = countQuery.from(Flight.class);
+		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
+		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
+		if (countEtaCondition != null) {
+			countPredicates.add(countEtaCondition);
+		}
+		countQuery.select(cb.count(countQuery.from(Flight.class))).where(
+				countPredicates.toArray(new Predicate[] {})).groupBy(countRoot);
+		TypedQuery countQuert = em.createQuery(countQuery);
+		Optional countResult = countQuert.getResultList().stream().findFirst();
+		return countResult.isPresent() ? (Long)countResult.get() : 0L;
+	}
+
+	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
+		Predicate etaCondition = null;
+		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
+			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
+			Predicate startPredicate = cb.or(
+					cb.isNull(eta),
+					cb.greaterThanOrEqualTo(mutableFlightDetailsJoin.get("eta"),
+							dto.getEtaStart()));
+			Predicate endPredicate = cb.or(cb.isNull(eta),
+					cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
+			etaCondition = cb.and(startPredicate, endPredicate);
+		}
+		return etaCondition;
+	}
+
 	@Override
 	@Transactional
 	@PreAuthorize(PRIVILEGE_ADMIN)

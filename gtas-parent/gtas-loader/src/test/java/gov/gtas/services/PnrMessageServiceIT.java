@@ -68,7 +68,6 @@ public class PnrMessageServiceIT extends
 		Flight f = new Flight();
 		f.setCarrier("DL");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0012");
 		f.setOrigin("LAX");
 		f.setDestination("IAD");
@@ -87,7 +86,6 @@ public class PnrMessageServiceIT extends
 		Flight f = new Flight();
 		f.setCarrier("DL");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0012");
 		f.setOrigin("LAX");
 		f.setDestination("IAD");

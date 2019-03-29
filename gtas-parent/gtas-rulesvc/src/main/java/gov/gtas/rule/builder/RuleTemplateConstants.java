@@ -50,6 +50,13 @@ public class RuleTemplateConstants {
     	put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY","embarkCountry");
     	put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY","debarkCountry");
     }});
+    public static final Set<String> FLIGHT_MUTABLE_DETAILS = Collections.unmodifiableSet(new HashSet<String>(){{
+        add("ETADATE");
+    }});
+    public static final Map<String,String> flightMutableDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("MUTABLEFLIGHTDETAILS.ETA","etadate");
+    }});
+
     public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
 
 

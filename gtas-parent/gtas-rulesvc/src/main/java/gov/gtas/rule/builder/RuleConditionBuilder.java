@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_DETAILS_SET;
+import static gov.gtas.rule.builder.RuleTemplateConstants.*;
 
 /**
  * Generates the "when" part of a DRL rule.
@@ -38,6 +38,7 @@ public class RuleConditionBuilder {
     private PassengerTripDetailsConditionBuilder tripDetailsConditionBuilder;
     private DocumentConditionBuilder documentConditionBuilder;
     private FlightConditionBuilder flightConditionBuilder;
+    private MutableFlightDetailsConditionBuilder mutableFlightDetailsConditionBuilder;
 
     private PnrRuleConditionBuilder pnrRuleConditionBuilder;
 
@@ -88,6 +89,9 @@ public class RuleConditionBuilder {
         this.flightConditionBuilder = new FlightConditionBuilder(
                 flightVariableName, passengerVariableName);
 
+        this.mutableFlightDetailsConditionBuilder = new MutableFlightDetailsConditionBuilder(
+                "$mfd");
+
         this.pnrSeatConditionBuilder = new SeatConditionBuilder(
                 RuleTemplateConstants.SEAT_VARIABLE_NAME, false);
         this.apisSeatConditionBuilder = new SeatConditionBuilder(
@@ -125,7 +129,7 @@ public class RuleConditionBuilder {
 
         generateLinkConditions();
 
-        //order doesn't matter.
+        // order does matter. Some things will build conditionals that rely
         parentStringBuilder.append(bagConditionBuilder.build())
         .append(flightPaxConditionBuilder.build())
         .append(apisSeatConditionBuilder.build())
@@ -135,6 +139,7 @@ public class RuleConditionBuilder {
         .append(documentConditionBuilder.build())
         .append(passengerConditionBuilder.build())
         .append(flightConditionBuilder.build())
+        .append(mutableFlightDetailsConditionBuilder.build())
         .append(paymentFormConditionBuilder.build());
 
         boolean isPassengerConditionCreated = !passengerConditionBuilder
@@ -143,7 +148,7 @@ public class RuleConditionBuilder {
         pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder,
                 isPassengerConditionCreated, passengerConditionBuilder);
 
-        //order doesn't matter
+        // order doesn't matter
         tripDetailsConditionBuilder.reset();
         detailsConditionBuilder.reset();
         passengerConditionBuilder.reset();
@@ -154,6 +159,7 @@ public class RuleConditionBuilder {
         bagConditionBuilder.reset();
         flightConditionBuilder.reset();
         paymentFormConditionBuilder.reset();
+        mutableFlightDetailsConditionBuilder.reset();
 
     }
 
@@ -201,7 +207,13 @@ public class RuleConditionBuilder {
         if (!tripDetailsConditionBuilder.isEmpty()){
         	passengerConditionBuilder.addLinkByIdCondition(tripDetailsConditionBuilder.getPassengerIdLinkExpression());
         }
-        
+        if (!mutableFlightDetailsConditionBuilder.isEmpty()) {
+            flightPaxConditionBuilder.addConditionAsString("id > 0"); // gets all rows
+            passengerConditionBuilder.addLinkByIdCondition(flightPaxConditionBuilder.getPassengerIdLinkExpression());
+            flightConditionBuilder.addConditionAsString("id == "+flightPaxConditionBuilder.getFlightIdLinkExpression());
+            mutableFlightDetailsConditionBuilder.addConditionAsString("flightId == $f.id");
+            this.flightCriteriaPresent = true;
+        }
         
         // add FlightPax as a join table for flights and passengers where no other passenger join possibility exists.
         // This replaces the addition of 'Passenger in f.passengers' clause that now no longer works due to database changes.
@@ -262,9 +274,17 @@ public class RuleConditionBuilder {
                             attributeType, trm.getValue());
                     break;
                 case FLIGHT:
-                    flightConditionBuilder.addCondition(opCode, trm.getField(),
-                            attributeType, trm.getValue());
-                    this.flightCriteriaPresent = true;
+                    if (RuleTemplateConstants.flightMutableDetailsMap.containsKey(field.toUpperCase())) {
+                        mutableFlightDetailsConditionBuilder.addCondition(opCode, flightMutableDetailsMap.get(trm.getField().toUpperCase()),
+                                attributeType, trm.getValue());
+                    } else if (FLIGHT_MUTABLE_DETAILS.contains(field.toUpperCase())) {
+                        mutableFlightDetailsConditionBuilder.addCondition(opCode, trm.getField(),
+                                attributeType, trm.getValue());
+                    } else {
+                        flightConditionBuilder.addCondition(opCode, trm.getField(),
+                                attributeType, trm.getValue());
+                        this.flightCriteriaPresent = true;
+                    }
                     break;
                 case BAG:
                     bagConditionBuilder.addCondition(opCode, trm.getField(),
