@@ -126,6 +126,7 @@ public class PnrServiceImpl implements PnrService {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(source.getRaw());
 		target.setEdifactMessage(source.getEdifactMessage());
+                target.setTripType(source.getTripType());
 
 		if (source.getAddresses() != null && source.getAddresses().size() > 0) {
 			Iterator it = source.getAddresses().iterator();
