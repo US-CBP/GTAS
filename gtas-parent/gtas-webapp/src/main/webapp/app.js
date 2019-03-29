@@ -80,7 +80,7 @@ var app;
                 return moment(date).format('YYYY-MM-DD');
             };
         },
-        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog) {
+        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService) {
             $rootScope.ROLES = USER_ROLES;
             $rootScope.$on('$stateChangeStart',
 
@@ -118,8 +118,8 @@ var app;
         	  $rootScope.carriersList = data;
            });
 
-
-           $rootScope.airportsList =
+          
+          // $rootScope.airportsList =
 
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
@@ -630,7 +630,7 @@ var app;
             $httpProvider.defaults.withCredentials = false;
         },
 
-        NavCtrl = function ($scope, $http, APP_CONSTANTS,USER_ROLES, $sessionStorage, $rootScope, $cookies, notificationService) {
+        NavCtrl = function ($scope, $http, APP_CONSTANTS,USER_ROLES, $sessionStorage, $rootScope, $cookies, notificationService, configService) {
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
@@ -674,11 +674,20 @@ var app;
                     oneDayLookoutUser = true;
                 }
             });
+           
             if (oneDayLookoutUser) {
                 $scope.homePage = "onedaylookout";
             } else {
-                $scope.homePage = "dashboard";
+            	//reads kibana configuration from ./config/kibana_settings.json
+            	configService.defaultHomePage().then(function success(response){
+            		
+           		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';   
+               }, function errorMessage(error){
+            	   $scope.homePage = 'flights';
+               });  
+            	
             }
+            
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
@@ -731,7 +740,7 @@ var app;
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: '/' + web_root + '/login.html',
             HOME_PAGE: '/' + web_root + '/main.html',
-            MAIN_PAGE: 'main.html#/dashboard',
+            MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',

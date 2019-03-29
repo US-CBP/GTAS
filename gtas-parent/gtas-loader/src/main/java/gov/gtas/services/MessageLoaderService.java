@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.vo.MessageVo;
-import gov.gtas.services.search.ElasticHelper;
 
 @Service
 public abstract class MessageLoaderService {
@@ -38,11 +37,6 @@ public abstract class MessageLoaderService {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-
-    // indexer
-
-    @Autowired
-    protected ElasticHelper indexer;
 
     protected boolean useIndexer;
 
