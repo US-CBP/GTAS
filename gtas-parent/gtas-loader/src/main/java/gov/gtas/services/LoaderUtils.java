@@ -447,7 +447,13 @@ public class LoaderUtils {
 //            	
 //           return hash;
     	return EntityResolverUtils.makeHashForPassenger(pax);
-    } 
+    }
+    
+    private String getDocIdHashForPassenger(Passenger passenger)  throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        String hashString = EntityResolverUtils.makeDocIdHashForPassenger(passenger);
+        return hashString;
+    }
 
     /**
      * Util method to hash passenger attributes
@@ -518,6 +524,8 @@ public class LoaderUtils {
     	paxIdTag.setCreatedBy(LOADER_USER);
     	try {
 			paxIdTag.setIdTag(getHashForPassenger(p));
+                        paxIdTag.setDocHashId(getDocIdHashForPassenger(p));
+                        
 		} catch (NoSuchAlgorithmException e) {
 			logger.error("error creating passenger id tag:", e);
 		} catch (UnsupportedEncodingException e) {
