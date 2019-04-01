@@ -119,6 +119,7 @@ public class PassengerServiceImpl implements PassengerService {
             BeanUtils.copyProperties(p, vo);
             BeanUtils.copyProperties(p.getPassengerDetails(), vo);
             BeanUtils.copyProperties(p.getPassengerTripDetails(), vo);
+            vo.setId(p.getId());
 
 
             

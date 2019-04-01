@@ -72,6 +72,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
         private static final String FLIGHT_HIT_RULE_TABLE_NAME = "flight_hit_rule";
         private static final String FLIGHT_HIT_WATCHLIST_TABLE_NAME = "flight_hit_watchlist";
 	private static final String CODE_SHARE_FLIGHT_TABLE_NAME = "code_share_flight";
+        private static final String MUTABLE_FLIGHT_DETAILS_TABLE_NAME = "mutable_flight_details";
 	private static final String FLIGHT_TABLE_NAME = "flight";
 	private static final String PNR_AGENCY_TABLE_NAME = "pnr_agency";
 	private static final String AGENCY_TABLE_NAME = "agency";
@@ -175,7 +176,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		try
 		{
 			// this will be false if there are no messages to delete before the selected date.
-			boolean continueBool = retrieveAllListsAndLoadIntoMap2(localDate, type);
+			boolean continueBool = retrieveAllListsAndLoadIntoMap(localDate, type);
 			
 			if (continueBool)
 			{
@@ -280,7 +281,9 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		strList = Arrays.asList(CODE_SHARE_FLIGHT_TABLE_NAME,"id",CODE_SHARE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(FLIGHT_PASSENGER_COUNT_TABLE_NAME,"fp_flight_id",TOTAL_FLIGHT_ID_SET_KEY);
-		sqlDeleteElements.add(strList);                
+		sqlDeleteElements.add(strList);
+        	strList = Arrays.asList(MUTABLE_FLIGHT_DETAILS_TABLE_NAME,"flight_id",TOTAL_FLIGHT_ID_SET_KEY);
+		sqlDeleteElements.add(strList);
 		strList = Arrays.asList(FLIGHT_TABLE_NAME,"id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
                 
@@ -415,7 +418,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 
 	}
         
-	private boolean retrieveAllListsAndLoadIntoMap2(LocalDate localDate, DataTruncationType type)
+	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate, DataTruncationType type)
 	{
             boolean returnBool = true; 
 
@@ -550,106 +553,6 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
            return returnBool;
         }        
 	
-	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate, DataTruncationType type)
-	{
-		boolean returnBool = true;
-		List<BigInteger> messageIdList = getMessageIdListBeforeDate(localDate);
-                
-                List<BigInteger> apisPaxIdList = new ArrayList<>();
-                List<BigInteger> pnrPaxIdList =  new ArrayList<>();
-                List<BigInteger> apisFlightIdList = new ArrayList<>();
-                List<BigInteger> pnrFlightIdList = new ArrayList<>();
-		
-		if (!messageIdList.isEmpty())
-		{
-                    if (!type.equals(DataTruncationType.PNR_ONLY))
-                    {
-                       apisPaxIdList = getSomeIdList(APIS_PAX_ID_SQL, messageIdList);
-                    }
-                    if (!type.equals(DataTruncationType.APIS_ONLY))
-                    {                   
-                       pnrPaxIdList = getSomeIdList(PNR_PAX_ID_SQL, messageIdList);
-                    }
-
-                    Set<BigInteger> totalPaxIdSet = new HashSet<>();
-                    totalPaxIdSet.addAll(apisPaxIdList);
-                    totalPaxIdSet.addAll(pnrPaxIdList);
-                    
-                    if (!type.equals(DataTruncationType.PNR_ONLY))
-                    {
-                       apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL, messageIdList);
-                    }
-                    
-                    if (!type.equals(DataTruncationType.APIS_ONLY))
-                    {                   
-                       pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL, messageIdList);
-                    }                   
-
-                    Set<BigInteger> totalFlightIdSet = new HashSet<>();
-                    totalFlightIdSet.addAll(apisFlightIdList);
-                    totalFlightIdSet.addAll(pnrFlightIdList);
-
-                    List<BigInteger> caseIdList = this.getCaseIdList(totalPaxIdSet);
-
-                    List<BigInteger> hitsSummaryIdList = this.getHitsSummaryIdList(totalPaxIdSet);
-
-                    List<BigInteger> reportingPartyIdList = getSomeIdList(REPORTING_PARTY_ID_SQL, messageIdList);
-
-                    List<BigInteger>  codeShareIdList = getSomeIdList(CODE_SHARE_ID_SQL, messageIdList);
-                    
-                    List<BigInteger> bookingIdList =  getSomeIdList(BOOKING_ID_SQL, messageIdList);
-                    
-                    List<BigInteger> phoneIdList = getSomeIdList(PHONE_ID_SQL, messageIdList);
-
-                    
-                    if (!type.equals(DataTruncationType.APIS_ONLY))
-                    { 
-                        List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, messageIdList);
-
-                        List<BigInteger> creditCardIdList = getSomeIdList(CREDIT_CARD_ID_SQL, messageIdList);
-
-                        List<BigInteger> frequentFlyerIdList = getSomeIdList(FREQUENT_FLYER_ID_SQL, messageIdList);
-
-                        List<BigInteger> emailIdList = getSomeIdList(EMAIL_ID_SQL, messageIdList);
-
-                        List<BigInteger> addressIdList = getSomeIdList(ADDRESS_ID_SQL, messageIdList);
-
-                        List<BigInteger> dwellIdList = getSomeIdList(DWELL_ID_SQL, messageIdList);
-
-                        addListToMap(ADDRESS_ID_LIST_KEY, addressIdList);
-                        addListToMap(AGENCY_ID_LIST_KEY, agencyIdList);
-                        
-                        addListToMap(CREDIT_CARD_ID_LIST_KEY, creditCardIdList);
-                        addListToMap(DWELL_ID_LIST_KEY, dwellIdList);
-                        addListToMap(EMAIL_ID_LIST_KEY, emailIdList);
-                        addListToMap(FREQUENT_FLYER_ID_LIST_KEY, frequentFlyerIdList);
-                        
-                    }
-
-                    List<BigInteger> hitDispositionIdList = this.getHitDispositionIdList(caseIdList);
-
-                    List<BigInteger> attachmentIdList = this.getSomeIdList(ATTACHMENT_ID_SQL, totalPaxIdSet);
-
-                    addListToMap(PHONE_ID_LIST_KEY, phoneIdList);
-                    addListToMap(BOOKING_ID_LIST_KEY, bookingIdList);
-                    addListToMap(CASE_ID_LIST_KEY, caseIdList);
-                    addListToMap(CODE_SHARE_ID_LIST_KEY, codeShareIdList);
-                    addListToMap(HITS_SUMMARY_ID_LIST_KEY, hitsSummaryIdList);
-                    addListToMap(HIT_DISPOSITION_ID_LIST_KEY, hitDispositionIdList);
-                    addListToMap(REPORTING_PARTY_ID_LIST_KEY, reportingPartyIdList);
-                    addListToMap(TOTAL_FLIGHT_ID_SET_KEY, totalFlightIdSet);
-                    addListToMap(TOTAL_PAX_ID_SET_KEY, totalPaxIdSet);
-                    addListToMap(MESSAGE_ID_LIST_KEY, messageIdList);
-                    addListToMap(ATTACHMENT_ID_LIST_KEY, attachmentIdList);
-		}
-		else
-		{
-			returnBool = false;
-		}
-
-		return returnBool;
-	}
-	
 	private void addListToMap(String key, Collection<BigInteger> value)
 	{
 		this.getInClauseIdListsMap().put(key,value);		
@@ -671,7 +574,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
         private List<BigInteger> getFlightIdListBeforeDate(LocalDate localDate)
         {
             List<BigInteger> flightIdList = new ArrayList<>();
-            String sqlQuery = " SELECT id from flight where eta < :localDate ";
+            String sqlQuery = " SELECT flight_id from mutable_flight_details where eta_date < :localDate ";
             Query query = em.createNativeQuery(sqlQuery);
             query.setParameter("localDate", Date.valueOf(localDate)); 
             

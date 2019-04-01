@@ -210,6 +210,7 @@ public class QueryBuilderService {
 					BeanUtils.copyProperties(passenger, vo);
 					BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
 					BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+					vo.setId(passenger.getId());
 					passengerList.add(vo);
 
 					// populate with hits information
