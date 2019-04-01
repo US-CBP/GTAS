@@ -128,11 +128,21 @@ public class LoaderQueueThreadManager {
                         DTM dtm = new DTM(seg.getComposites());
                         primeFlightKeyArray[ETD_DATE_NO_TIMESTAMP_AS_LONG] = Long.toString(DateUtils.stripTime(dtm.getDtmValue()).getTime());
                         primeFlightKeyArray[ETD_DATE_WITH_TIMESTAMP] = Long.toString(dtm.getDtmValue().getTime());
+                        // DTM is the last element of a prime flight on an apis.
+                        // End the generation of APIS prime flight key with first DTM after LOC is populated.
+                        if (locCount == 2) {
+                            break;
+                        }
                         break;
                     case "LOC":
                         LOC loc = new LOC(seg.getComposites());
-                        primeFlightKeyArray[locCount] = loc.getLocationNameCode();
-                        locCount++;
+                        if (loc.getFunctionCode() == LOC.LocCode.ARRIVAL_AIRPORT) {
+                            primeFlightKeyArray[PRIME_FLIGHT_DESTINATION] = loc.getLocationNameCode();
+                            locCount++;
+                        } else if (loc.getFunctionCode() == LOC.LocCode.DEPARTURE_AIRPORT) {
+                            primeFlightKeyArray[PRIME_FLIGHT_ORIGIN] = loc.getLocationNameCode();
+                            locCount++;
+                        }
                         break;
                     case "TDT":
                         TDT tdt = new TDT(seg.getComposites());
@@ -143,11 +153,6 @@ public class LoaderQueueThreadManager {
                         break;
                     default:
                         break;
-                }
-                // Loc will get the origin and destination of a flight. The destination is the last found element.
-                // End the generation of APIS prime flight key when second LOC (destination) is found.
-                if (locCount == 2) {
-                    break;
                 }
             }
         }
