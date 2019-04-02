@@ -19,6 +19,7 @@ import gov.gtas.parsers.paxlst.segment.unedifact.LOC;
 import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import gov.gtas.parsers.util.DateUtils;
+import gov.gtas.repository.AppConfigurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,19 @@ public class LoaderQueueThreadManager {
 
     private final ApplicationContext ctx;
 
-    private int maxNumOfThreads = 5;
-
-    private ExecutorService exec = Executors.newFixedThreadPool(maxNumOfThreads);
+    private ExecutorService exec;
 
     private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<>();
 
     static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
     @Autowired
-    public LoaderQueueThreadManager(ApplicationContext ctx) {
+    public LoaderQueueThreadManager(
+                                    ApplicationContext ctx,
+                                    AppConfigurationRepository appConfigurationRepository) {
         this.ctx = ctx;
+        int maxNumOfThreads = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+        this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
     }
 
     void receiveMessages(Message<?> message) throws ParseException {
