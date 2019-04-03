@@ -5,6 +5,7 @@
  */
 package gov.gtas.job.scheduler;
 
+import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,12 @@ public class LoaderWorkerThread implements Runnable {
 			}	    	
 	    	if(msg != null){
 	    		MessageHeaders headers =  msg.getHeaders();
-	    		this.fileName = headers.get("Filename").toString();
+	    		String filename = (String)headers.get("Filename");
+	    		if (filename != null) {
+					this.fileName = filename;
+				} else {
+	    			this.fileName = UUID.randomUUID().toString();
+				}
 	    		this.text = msg.getPayload().toString();
 	    		logger.debug(Thread.currentThread().getName()+" FileName = "+fileName);
 	        	try{

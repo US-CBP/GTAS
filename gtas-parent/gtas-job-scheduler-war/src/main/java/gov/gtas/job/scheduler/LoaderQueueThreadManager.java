@@ -19,6 +19,7 @@ import gov.gtas.parsers.paxlst.segment.unedifact.LOC;
 import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import gov.gtas.parsers.util.DateUtils;
+import gov.gtas.repository.AppConfigurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +38,19 @@ public class LoaderQueueThreadManager {
 
     private final ApplicationContext ctx;
 
-    private int maxNumOfThreads = 5;
-
-    private ExecutorService exec = Executors.newFixedThreadPool(maxNumOfThreads);
+    private ExecutorService exec;
 
     private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<>();
 
     static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
     @Autowired
-    public LoaderQueueThreadManager(ApplicationContext ctx) {
+    public LoaderQueueThreadManager(
+                                    ApplicationContext ctx,
+                                    AppConfigurationRepository appConfigurationRepository) {
         this.ctx = ctx;
+        int maxNumOfThreads = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+        this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
     }
 
     void receiveMessages(Message<?> message) throws ParseException {
@@ -118,41 +121,52 @@ public class LoaderQueueThreadManager {
         // If the attempt to parse a PNR doesn't result in a prime flight key attempt to read segments as an APIS message.
         if (apisMessage) {
             int locCount = 0;
+            boolean primeFlightArrivalFound = false;
+            boolean primeFlightDepartFound = false;
+            boolean primeFlightDepartDateFound = false;
             for (Segment seg : messageSegments) {
                 // Extract the prime flight information from an APIS message.
                 // This will mirror prime flight array result of a PNR message.
                 // PNR and APIS messages relating to the same prime flight
                 // will always generate the same label.
                 switch (seg.getName()) {
-                    case "DTM":
-                        DTM dtm = new DTM(seg.getComposites());
-                        primeFlightKeyArray[ETD_DATE_NO_TIMESTAMP_AS_LONG] = Long.toString(DateUtils.stripTime(dtm.getDtmValue()).getTime());
-                        primeFlightKeyArray[ETD_DATE_WITH_TIMESTAMP] = Long.toString(dtm.getDtmValue().getTime());
-                        // DTM is the last element of a prime flight on an apis.
-                        // End the generation of APIS prime flight key with first DTM after LOC is populated.
-                        if (locCount == 2) {
-                            break;
-                        }
-                        break;
-                    case "LOC":
-                        LOC loc = new LOC(seg.getComposites());
-                        if (loc.getFunctionCode() == LOC.LocCode.ARRIVAL_AIRPORT) {
-                            primeFlightKeyArray[PRIME_FLIGHT_DESTINATION] = loc.getLocationNameCode();
-                            locCount++;
-                        } else if (loc.getFunctionCode() == LOC.LocCode.DEPARTURE_AIRPORT) {
-                            primeFlightKeyArray[PRIME_FLIGHT_ORIGIN] = loc.getLocationNameCode();
-                            locCount++;
-                        }
-                        break;
                     case "TDT":
+                        // TDT is the parent of LOC and DTM. We are basing processing the loop off the messages in the
+                        // messages below. This means the information relating the TDT can be overwritten several times
+                        // before finding a prime flight.
                         TDT tdt = new TDT(seg.getComposites());
                         primeFlightKeyArray[PRIME_FLIGHT_CARRIER] = tdt.getC_carrierIdentifier();
                         String primeFlightNumber = tdt.getFlightNumber().trim();
                         primeFlightNumber = addZerosToPrimeFlightIfNeeded(primeFlightNumber);
                         primeFlightKeyArray[PRIME_FLIGHT_NUMBER_STRING] = primeFlightNumber;
                         break;
+                    case "LOC":
+                        LOC loc = new LOC(seg.getComposites());
+                        // The arrival airport corresponds to the prime flight's arrival airport.
+                        if (loc.getFunctionCode() == LOC.LocCode.ARRIVAL_AIRPORT) {
+                            primeFlightKeyArray[PRIME_FLIGHT_DESTINATION] = loc.getLocationNameCode();
+                            primeFlightArrivalFound = true;
+                        // The departure airport corresponds with the prime flight's departure airport.
+                        } else if (loc.getFunctionCode() == LOC.LocCode.DEPARTURE_AIRPORT) {
+                            primeFlightKeyArray[PRIME_FLIGHT_ORIGIN] = loc.getLocationNameCode();
+                            primeFlightDepartFound = true;
+                        }
+                        break;
+                    case "DTM":
+                        DTM dtm = new DTM(seg.getComposites());
+                        // Take advantage that the next DTM after the prime flight departure airport will hold the prime flight ETD.
+                        if (dtm.getDtmCode() == DTM.DtmCode.DEPARTURE && primeFlightDepartFound) {
+                            primeFlightKeyArray[ETD_DATE_NO_TIMESTAMP_AS_LONG] = Long.toString(DateUtils.stripTime(dtm.getDtmValue()).getTime());
+                            primeFlightKeyArray[ETD_DATE_WITH_TIMESTAMP] = Long.toString(dtm.getDtmValue().getTime());
+                            primeFlightDepartDateFound = true;
+                        }
+                        break;
                     default:
                         break;
+                }
+                if (primeFlightArrivalFound && primeFlightDepartFound && primeFlightDepartDateFound) {
+                    //Prime flight generated - stop processing message!
+                    break;
                 }
             }
         }
