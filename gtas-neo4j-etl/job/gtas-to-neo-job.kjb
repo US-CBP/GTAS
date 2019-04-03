@@ -1098,7 +1098,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <to>Write To Log - Update neo4j params error</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
     </hop>
