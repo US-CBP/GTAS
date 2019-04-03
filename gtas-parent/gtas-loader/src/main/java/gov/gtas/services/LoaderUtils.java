@@ -81,7 +81,6 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, p.getPassengerTripDetails(), getNullPropertyNames(vo));
 
 
-        p.setUpdatedBy(LOADER_USER);
 
         if (p.getPassengerDetails().getFirstName() != null && p.getPassengerDetails().getFirstName().length() > 254) {
             p.getPassengerDetails().setFirstName(p.getPassengerDetails().getFirstName().substring(0,254));
@@ -200,7 +199,6 @@ public class LoaderUtils {
  
     
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
-        f.setUpdatedBy(LOADER_USER);
         String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);
 
         BeanUtils.copyProperties(vo, f, getNullPropertyNames(vo));

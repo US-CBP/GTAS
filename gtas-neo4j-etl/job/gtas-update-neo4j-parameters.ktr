@@ -615,57 +615,37 @@
           <condition>
             <negated>N</negated>
             <operator>AND</operator>
-            <conditions>
-              <condition>
-                <negated>N</negated>
-                <leftvalue>LAST_PSNGR_UPDATE_DATE</leftvalue>
-                <function>IS NOT NULL</function>
-                <rightvalue/>
-              </condition>
-              <condition>
-                <negated>N</negated>
-                <operator>AND</operator>
-                <conditions>
-                  <condition>
-                    <negated>N</negated>
-                    <leftvalue>LAST_ADDR_UPDATE_DATE</leftvalue>
-                    <function>IS NOT NULL</function>
-                    <rightvalue/>
-                  </condition>
-                  <condition>
-                    <negated>N</negated>
-                    <operator>AND</operator>
-                    <conditions>
-                      <condition>
-                        <negated>N</negated>
-                        <leftvalue>LAST_EMAIL_UPDATE_DATE</leftvalue>
-                        <function>IS NOT NULL</function>
-                        <rightvalue/>
-                      </condition>
-                      <condition>
-                        <negated>N</negated>
-                        <operator>AND</operator>
-                        <conditions>
-                          <condition>
-                            <negated>N</negated>
-                            <leftvalue>LAST_HIT_SUMMARY_CREATE_DATE</leftvalue>
-                            <function>IS NOT NULL</function>
-                            <rightvalue/>
-                          </condition>
-                          <condition>
-                            <negated>N</negated>
-                            <operator>AND</operator>
-                            <leftvalue>NEO4J_PARAMETER_ID</leftvalue>
-                            <function>IS NOT NULL</function>
-                            <rightvalue/>
-                          </condition>
-                        </conditions>
-                      </condition>
-                    </conditions>
-                  </condition>
-                </conditions>
-              </condition>
-            </conditions>
+            <leftvalue>LAST_PSNGR_UPDATE_DATE</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>LAST_ADDR_UPDATE_DATE</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>LAST_EMAIL_UPDATE_DATE</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>LAST_HIT_SUMMARY_CREATE_DATE</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>NEO4J_PARAMETER_ID</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
           </condition>
         </conditions>
       </condition>

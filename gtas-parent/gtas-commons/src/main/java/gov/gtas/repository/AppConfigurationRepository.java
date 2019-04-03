@@ -22,6 +22,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
     public static String MAX_PASSENGER_QUERY_RESULT = "MAX_PASSENGER_QUERY_RESULT";
     public static String MAX_FLIGHT_QUERY_RESULT = "MAX_FLIGHT_QUERY_RESULT";
+    public static String THREADS_ON_LOADER = "THREADS_ON_LOADER";
     public static String FLIGHT_RANGE = "FLIGHT_RANGE";
     public static String REDIS_KEYS_TTL = "REDIS_KEYS_TTL";
     public static String REDIS_KEYS_TTL_TIME_UNIT = "REDIS_KEYS_TTL_TIME_UNIT";
