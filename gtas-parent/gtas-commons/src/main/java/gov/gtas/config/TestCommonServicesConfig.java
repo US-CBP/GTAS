@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * The configuration class can be imported into an XML configuration by:<br>
  * <context:annotation-config/> <bean
- * class="gov.gtas.config.CommonServicesConfig"/>
+ * class="gov.gtas.config.TestCommonServicesConfig"/>
  */
 @Configuration
 @ComponentScan("gov.gtas")
@@ -36,14 +37,25 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import(AsyncConfig.class)
-public class CommonServicesConfig {
+public class TestCommonServicesConfig {
 
-    private static Logger logger = LoggerFactory.getLogger(CommonServicesConfig.class);
+    private static Logger logger = LoggerFactory.getLogger(TestCommonServicesConfig.class);
 
     private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
 
     @Resource
     private Environment env;
+
+    /**
+     * Do not remove the <code>JndiBean</bean> jndiBean field below.
+     * 
+     * Since there is no Java EE server running at the unit test level 
+     * the JNDI connection was constructed manually and injected here to be used '
+     * the unit and integration tests.
+     */
+    @SuppressWarnings("unused")
+	@Autowired
+    private JndiBean jndiBean;
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -53,6 +65,7 @@ public class CommonServicesConfig {
 	}
     
     @Bean
+    @Autowired
     public DataSource dataSource() {
     	
     	DataSource dataSource = null;
@@ -88,5 +101,7 @@ public class CommonServicesConfig {
                 .getObject());
         return transactionManager;
     }
+    
+    
 
 }

@@ -7,7 +7,7 @@ package gov.gtas.services;
 
 import static org.junit.Assert.assertEquals;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.services.Filter.FilterData;
 import gov.gtas.services.Filter.FilterService;
 import gov.gtas.services.Filter.FilterServiceUtil;
@@ -32,7 +32,7 @@ import org.springframework.test.annotation.Rollback;
  * The Class FilterServiceIT.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Rollback(true)

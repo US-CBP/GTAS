@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
@@ -39,7 +39,7 @@ import org.springframework.test.annotation.Rollback;
  * Persistence layer tests for Audit Logging.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @Rollback(true)
 public class AuditLogPersistenceServiceIT {
