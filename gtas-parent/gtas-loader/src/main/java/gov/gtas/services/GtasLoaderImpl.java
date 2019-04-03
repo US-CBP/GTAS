@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
-import gov.gtas.util.RedisUtils;
 
 
 @Service
@@ -380,18 +379,9 @@ public class GtasLoaderImpl implements GtasLoader {
             flightPassengers.add(fp);
         }
 
-        // experimental drop of border crossing data to Redis. GAB.
-        //storeBorderCrossingsInRedis(passengerIDTags, primeFlight.getDirection());
-        
         passengerIdTagDao.saveAll(passengerIDTags);
         flightPassengerRepository.saveAll(flightPassengers);
         return newPassengers.size();
-    }
-    
-    private void storeBorderCrossingsInRedis(List<PassengerIDTag> passengerIDTags, String flightDirection)
-    {
-        RedisUtils.storePersonHistoryBorderCrossingsOnRedis(passengerIDTags, flightDirection);
-        
     }
 
     public void updateFlightPassengerCount(Flight primeFlight, int createdPassengers) {
