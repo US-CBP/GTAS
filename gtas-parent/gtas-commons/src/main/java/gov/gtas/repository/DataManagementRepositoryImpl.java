@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import gov.gtas.enumtype.DataManagementTruncation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,12 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 			.getLogger(DataManagementRepositoryImpl.class);
         
         
-        public static enum DataTruncationType
-        {
-           ALL,
-           APIS_ONLY,
-           PNR_ONLY
-        }
+//        public static enum DataTruncationType
+//        {
+//           ALL,
+//           APIS_ONLY,
+//           PNR_ONLY
+//        }
 	
 	// these tables are listed in the order that they must be truncated
 	private static final String HITS_DISPOSITION_COMMENTS_TABLE_NAME = "hits_disposition_comments";
@@ -164,7 +165,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public void truncateAllMessageDataByDate(LocalDate localDate,  User currentUser, DataTruncationType type) throws Exception
+	public void truncateAllMessageDataByDate(LocalDate localDate,  User currentUser, DataManagementTruncation type) throws Exception
 	{
 		inClauseIdListsMap = new HashMap<>();
 		
@@ -214,7 +215,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 
 	}
 	
-	private void initializeSqlDeleteElements(DataTruncationType type)
+	private void initializeSqlDeleteElements(DataManagementTruncation type)
 	{
              // here we have the trio: table name, id name, and key to list for IN clause. These will be used by deleteFromAllTablesWithInClause().
             // These are in order; do not change the order unless there are database changes.
@@ -263,7 +264,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		strList = Arrays.asList(APIS_MESSAGE_TABLE_NAME,"id",MESSAGE_ID_LIST_KEY);
 		sqlDeleteElements.add(strList);
                 
-                if (!type.equals(DataTruncationType.APIS_ONLY))
+                if (!type.equals(DataManagementTruncation.APIS_ONLY))
                 {
                     strList = Arrays.asList(PNR_PASSENGER_TABLE_NAME,"pnr_id",MESSAGE_ID_LIST_KEY);
                     sqlDeleteElements.add(strList);	
@@ -287,7 +288,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 		strList = Arrays.asList(FLIGHT_TABLE_NAME,"id",TOTAL_FLIGHT_ID_SET_KEY);
 		sqlDeleteElements.add(strList);
                 
-                 if (!type.equals(DataTruncationType.APIS_ONLY))
+                 if (!type.equals(DataManagementTruncation.APIS_ONLY))
                 {               
                     strList = Arrays.asList(PNR_AGENCY_TABLE_NAME,"agency_id",AGENCY_ID_LIST_KEY);
                     sqlDeleteElements.add(strList);
@@ -418,7 +419,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
 
 	}
         
-	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate, DataTruncationType type)
+	private boolean retrieveAllListsAndLoadIntoMap(LocalDate localDate, DataManagementTruncation type)
 	{
             boolean returnBool = true; 
 
@@ -446,7 +447,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
                 // delete messages that failed parsing with an error and have no associated flight.
                 totalMessageIdSet.addAll(messagesWithError);
 
-                if (type.equals(DataTruncationType.ALL))
+                if (type.equals(DataManagementTruncation.ALL))
                 {
                     totalMessageIdSet.addAll(apisMessageIdList);
                     totalMessageIdSet.addAll(pnrIdList);
@@ -454,7 +455,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
                     totalPaxIdSet.addAll(pnrPaxIdList);
                     
                 }
-                else if (type.equals(DataTruncationType.APIS_ONLY))
+                else if (type.equals(DataManagementTruncation.APIS_ONLY))
                 {
                    apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL2, totalFlightIdList);
                    pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL2, totalFlightIdList);
@@ -473,7 +474,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
                    //totalPaxIdSet.addAll(apisPaxIdList);
                    totalPaxIdSet.addAll(filteredApisPaxList);
                 }
-                else if (type.equals(DataTruncationType.PNR_ONLY))
+                else if (type.equals(DataManagementTruncation.PNR_ONLY))
                 {
                     pnrFlightIdList = getSomeIdList(PNR_FLIGHT_ID_SQL2, totalFlightIdList); 
                     apisFlightIdList = getSomeIdList(APIS_FLIGHT_ID_SQL2, totalFlightIdList);
@@ -505,7 +506,7 @@ public class DataManagementRepositoryImpl implements DataManagementRepository
                     List<BigInteger> phoneIdList = getSomeIdList(PHONE_ID_SQL, totalMessageIdSet);
 
                     
-                    if (!type.equals(DataTruncationType.APIS_ONLY))
+                    if (!type.equals(DataManagementTruncation.APIS_ONLY))
                     { 
                         List<BigInteger> agencyIdList = getSomeIdList(AGENCY_ID_LIST, totalMessageIdSet);
 
