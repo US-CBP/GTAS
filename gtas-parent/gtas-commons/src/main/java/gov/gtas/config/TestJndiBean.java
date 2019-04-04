@@ -5,8 +5,6 @@
  */
 package gov.gtas.config;
 
-import javax.naming.NamingException;
-
 import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
 import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
 import org.slf4j.Logger;
@@ -15,12 +13,12 @@ import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JndiBean {
+public class TestJndiBean {
 
-	private final Logger logger  = LoggerFactory.getLogger(JndiBean.class);
+	private final Logger logger  = LoggerFactory.getLogger(TestJndiBean.class);
 
 	
-	public JndiBean() {
+	public TestJndiBean() {
 		try {
             DriverAdapterCPDS cpds = new DriverAdapterCPDS();
             cpds.setDriver("org.mariadb.jdbc.Driver");
@@ -36,8 +34,8 @@ public class JndiBean {
             SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
             builder.bind("java:comp/env/jdbc/gtasDataSource", dataSource);
             builder.activate();
-        } catch (NamingException | ClassNotFoundException ex) {
-            logger.error(ex.getMessage() );
+        } catch (Exception ex) {
+            logger.warn(ex.getMessage());
         }
 	}
 }

@@ -54,8 +54,7 @@ public class TestCommonServicesConfig {
      * the unit and integration tests.
      */
     @SuppressWarnings("unused")
-	@Autowired
-    private JndiBean jndiBean;
+    private TestJndiBean jndiBean = new TestJndiBean();
 
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
