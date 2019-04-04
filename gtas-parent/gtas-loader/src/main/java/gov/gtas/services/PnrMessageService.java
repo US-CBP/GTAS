@@ -108,21 +108,20 @@ public class PnrMessageService extends MessageLoaderService {
         msgDto.getMessageStatus().setSuccess(true);
         Pnr pnr = msgDto.getPnr();
         try {
-            PnrVo vo = (PnrVo) msgDto.getMsgVo();
-            utils.convertPnrVo(pnr, vo);
-            loaderRepo.processPnr(pnr, vo);
-            Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
-                    vo.getFlights(),
-                    pnr.getFlights(),
-                    pnr.getFlightLegs(),
-                    msgDto.getPrimeFlightKey(),
-                    pnr.getBookingDetails());
-            PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
-                    vo.getPassengers(),
-                    pnr.getPassengers(),
-                    pnr.getBookingDetails(),
-                    pnr);
-
+            PnrVo vo = (PnrVo)msgDto.getMsgVo();
+				utils.convertPnrVo(pnr, vo);
+				Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
+						vo.getFlights(),
+						pnr.getFlights(),
+						pnr.getFlightLegs(),
+						msgDto.getPrimeFlightKey(),
+						pnr.getBookingDetails());
+				PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
+						vo.getPassengers(),
+						pnr.getPassengers(),
+						pnr.getBookingDetails(),
+						pnr);
+				loaderRepo.processPnr(pnr, vo);
 
             int createdPassengers = loaderRepo.createPassengers(
                     passengerInformationDTO.getNewPax(),
@@ -229,7 +228,7 @@ public class PnrMessageService extends MessageLoaderService {
         }
         logger.debug("updatePaxEmbarkDebark time = " + (System.nanoTime() - startTime) / 1000000);
     }
-
+    
     private TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
         String firstLegOrigin = "";
         String lastLegDestination = "";
@@ -305,10 +304,10 @@ public class PnrMessageService extends MessageLoaderService {
         return tripType;
     }
 
-    private void calculateDwellTimes(Pnr pnr) {
-        logger.debug("@ calculateDwellTimes");
-        long startTime = System.nanoTime();
-        List<FlightLeg> legs = pnr.getFlightLegs();
+    private void calculateDwellTimes(Pnr pnr){
+    	logger.debug("@ calculateDwellTimes");
+    	long startTime = System.nanoTime();
+    	List<FlightLeg> legs=pnr.getFlightLegs();
         if (CollectionUtils.isEmpty(legs)) {
             return;
         }

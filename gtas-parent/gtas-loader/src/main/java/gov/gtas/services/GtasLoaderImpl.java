@@ -156,12 +156,13 @@ public class GtasLoaderImpl implements GtasLoader {
     public void processPnr(Pnr pnr, PnrVo vo) throws ParseException {
         logger.debug("@ processPnr");
         long startTime = System.nanoTime();
-
+        Long flightId = pnr.getFlights().iterator().next().getId();
         for (AddressVo addressVo : vo.getAddresses()) {
-            List<Address> existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountry(
-                    addressVo.getLine1(), addressVo.getCity(), addressVo.getState(), addressVo.getPostalCode(), addressVo.getCountry());
+            List<Address> existingAddress = addressDao.findByLine1AndCityAndStateAndPostalCodeAndCountryAndFlightId(
+                    addressVo.getLine1(), addressVo.getCity(), addressVo.getState(), addressVo.getPostalCode(), addressVo.getCountry(), flightId);
             if (existingAddress.isEmpty()) {
                 Address address = utils.convertAddressVo(addressVo);
+                address.setFlightId(flightId);
                 pnr.addAddress(address);
             } else {
                 pnr.addAddress(existingAddress.get(0));
@@ -169,9 +170,10 @@ public class GtasLoaderImpl implements GtasLoader {
         }
 
         for (PhoneVo phoneVo : vo.getPhoneNumbers()) {
-            List<Phone> existingPhone = phoneDao.findByNumber(phoneVo.getNumber());
+            List<Phone> existingPhone = phoneDao.findByNumberAndFlightId(phoneVo.getNumber(), flightId);
             if (existingPhone.isEmpty()) {
                 Phone newPhone = utils.convertPhoneVo(phoneVo);
+                newPhone.setFlightId(flightId);
                 pnr.addPhone(newPhone);
             } else {
                 pnr.addPhone(existingPhone.get(0));
@@ -179,9 +181,10 @@ public class GtasLoaderImpl implements GtasLoader {
         }
 
         for (CreditCardVo creditVo : vo.getCreditCards()) {
-            List<CreditCard> existingCard = creditDao.findByCardTypeAndNumberAndExpiration(creditVo.getCardType(), creditVo.getNumber(), creditVo.getExpiration());
+            List<CreditCard> existingCard = creditDao.findByCardTypeAndNumberAndExpirationAndFlightId(creditVo.getCardType(), creditVo.getNumber(), creditVo.getExpiration(), flightId);
             if (existingCard.isEmpty()) {
                 CreditCard newCard = utils.convertCreditVo(creditVo);
+                newCard.setFlightId(flightId);
                 pnr.addCreditCard(newCard);
             } else {
                 pnr.addCreditCard(existingCard.get(0));

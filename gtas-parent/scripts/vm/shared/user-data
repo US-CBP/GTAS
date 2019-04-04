@@ -1,0 +1,43 @@
+#cloud-config
+user: gtas
+password: admin
+ssh_pwauth: False
+sudo: ALL=(ALL) NOPASSWD:ALL
+
+packages:
+  - git
+  - maven
+  - firewalld
+
+runcmd:
+  - [git, clone, "https://github.com/US-CBP/GTAS.git"]
+  - [cd, /GTAS/gtas-parent]
+  - [git, checkout, dev]
+  - [cd /GTAS/gtas-parent/scripts/elastic/install/linux]
+  - [/GTAS/gtas-parent/scripts/elastic/install/linux/elasticsearch/install.sh]
+  - [/GTAS/gtas-parent/scripts/elastic/install/linux/kibana/install.sh]
+  - [/GTAS/gtas-parent/scripts/elastic/install/linux/logstash/install.sh]
+  - [git, clone, https://github.com/tsegay/shell-scripts.git]
+  - [sudo, /shell-scripts/install/install_tomcat.sh]
+  - [sudo, /shell-scripts/install/install_redis.sh]
+  - [sudo, /shell-scripts/install/install_node_bower.sh]
+  - [sudo, /shell-scripts/install/install_activemq.sh]
+  -	[sudo, /shell-scripts/install/install_mariadb.sh]
+
+# yum_repos:
+#     epel-testing:
+#         baseUrl:  https://artifacts.elastic.co/packages/6.x/yum
+#         enable: 1
+#         failovermethod: priority
+#         gpgcheck: 1
+#         gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+#         name: Elastic Stack Repository for 6.x packages
+#         autorefresh:  1
+#         type: rpm-md
+
+power_state:
+  delay: "+1"
+  mode: poweroff
+  message: Bye Bye
+  timeout: 30
+  condition: True

@@ -34,6 +34,8 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String MAX_PASSENGERS_PER_FUZZY_MATCH = "MAX_PASSENGERS_PER_FUZZY_MATCH";
     public static String MAX_MESSAGES_PER_RULE_RUN = "MAX_MESSAGES_PER_RULE_RUN";
     public static String MAX_FLIGHTS_SAVED_PER_BATCH = "MAX_FLIGHTS_PER_BATCH";
+    public static String DATA_MANAGEMENT_TRUNC_TYPE_FLAG = "DATA_MANAGEMENT_TRUNC_TYPE_FLAG";
+    public static String DATA_MANAGEMENT_CUT_OFF_TIME_SPAN = "DATA_MANAGEMENT_CUT_OFF_TIME_SPAN";
 
     public AppConfiguration findByOption(String option);
     public AppConfiguration save(AppConfiguration appConfig);

@@ -501,7 +501,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>CSV file input-credit-card</from>
+      <from>CSV file input-credit card</from>
       <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
@@ -546,7 +546,7 @@
     </GUI>
   </step>
   <step>
-    <name>CSV file input-credit-card</name>
+    <name>CSV file input-credit card</name>
     <type>CsvInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -571,25 +571,256 @@
     <encoding/>
     <fields>
       <field>
-        <name>account_holder</name>
+        <name>ADDRESS_LABEL</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>17</length>
+        <length>7</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>gtas_address_id</name>
+        <name>ADDRESS_LABEL_1</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>7</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>CREDIT_CARD_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>10</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>DOCUMENT_CREATED</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>DOCUMENT_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>8</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>EMAIL_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>EMAIL_LABEL_1</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>FLIGHT_CREATED</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>FLIGHT_LABEL</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
         <length>6</length>
-        <precision>1</precision>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_ADDRESS_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_CREDIT_CARD_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_DOCUMENT_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_EMAIL_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_FLIGHT_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_PASSENGER_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>IS_PHONE_AVAILABLE</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>NEO4J_PARAMETER_ID</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>PASSENGER_CREATED</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>PASSENGER_FLIGHT_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>7</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>PASSENGER_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>9</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>PHONE_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>PHONE_LABEL_1</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>5</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>account_holder</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
+        <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
@@ -599,7 +830,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>29</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -621,7 +852,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>2</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -632,7 +863,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>2</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -643,7 +874,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>3</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -654,7 +885,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>13</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -665,7 +896,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>3</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -676,7 +907,40 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>16</length>
+        <length>255</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>days_visa_valid</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>debark_country</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>debarkation</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -687,7 +951,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>3</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -742,7 +1006,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>1</length>
+        <length>3</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -753,7 +1017,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>11</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -765,6 +1029,28 @@
         <decimal>.</decimal>
         <group>,</group>
         <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>embark_country</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>embarkation</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -819,19 +1105,30 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>9</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>flight_date</name>
+        <name>flight_hit_rule_count</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>flight_hit_watchlist_count</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
@@ -841,7 +1138,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>6</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -852,8 +1149,74 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>1</length>
+        <length>2</length>
         <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_address_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_creditcard_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_document_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_email_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_flight_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_phone_id</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>16</length>
+        <precision>1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
@@ -863,18 +1226,40 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>40</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>middle_name</name>
+        <name>isLastRow</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>7</length>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>issuance_country</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>255</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>issuance_date</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>-1</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -885,29 +1270,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>8</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>title</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>3</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>suffix</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -918,7 +1281,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>19</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -929,8 +1292,8 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
@@ -940,29 +1303,18 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>state</name>
+        <name>middle_name</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>postal_code</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -973,7 +1325,7 @@
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>3</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
@@ -1000,18 +1352,29 @@
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>issuance_country</name>
+        <name>passenger_td_crt_dtm</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>3</length>
+        <length>29</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>issuance_date</name>
+        <name>passenger_td_upd_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency>$</currency>
+        <decimal>.</decimal>
+        <group>,</group>
+        <length>29</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>passenger_update_date</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
@@ -1044,172 +1407,18 @@
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>gtas_document_id</name>
+        <name>pnr_record_locator</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>8</length>
-        <precision>1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>gtas_flight_id</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>6</length>
-        <precision>1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>gtas_phone_id</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>5</length>
-        <precision>1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>gtas_creditcard_id</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>5</length>
-        <precision>1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>gtas_email_id</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>6</length>
-        <precision>1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>passenger_update_date</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
+        <length>20</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>PASSENGER_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>FLIGHT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>DOCUMENT_CREATED</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_ADDRESS_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_FLIGHT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_DOCUMENT_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_PHONE_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_EMAIL_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>IS_CREDIT_CARD_AVAILABLE</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>NEO4J_PARAMETER_ID</name>
+        <name>postal_code</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
@@ -1220,113 +1429,69 @@
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>IS_PASSENGER_AVAILABLE</name>
+        <name>ref_number</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>-1</length>
+        <length>255</length>
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>PASSENGER_LABEL</name>
+        <name>state</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>9</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>DOCUMENT_LABEL</name>
+        <name>suffix</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>8</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>PHONE_LABEL</name>
+        <name>title</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>5</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>EMAIL_LABEL</name>
+        <name>travel_frequency</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>5</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>CREDIT_CARD_LABEL</name>
+        <name>flight_number</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
         <decimal>.</decimal>
         <group>,</group>
-        <length>10</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>ADDRESS_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>7</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>FLIGHT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>6</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>PASSENGER_FLIGHT_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>7</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-      </field>
-      <field>
-        <name>isLastRow</name>
-        <type>String</type>
-        <format/>
-        <currency>$</currency>
-        <decimal>.</decimal>
-        <group>,</group>
-        <length>-1</length>
-        <precision>-1</precision>
+        <length>15</length>
+        <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
     </fields>
@@ -1431,7 +1596,7 @@
         <property>
           <name>exp_date</name>
           <value>expiration</value>
-          <type>String</type>
+          <type>Date</type>
           <primary>Y</primary>
         </property>
       </properties>
@@ -1490,6 +1655,23 @@
         <length>-2</length>
         <precision>-2</precision>
         <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>expiration</name>
+        <rename>expiration</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>

@@ -52,7 +52,16 @@ public class Flight extends BaseEntityAudit {
 
     @Column(length = 1, nullable = false)
     private String direction;
-
+    
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Phone> phone;
+    
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Address> address;
+    
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<CreditCard> creditCard;
+    
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
 
@@ -231,4 +240,28 @@ public class Flight extends BaseEntityAudit {
     public void setEtdDate(Date etdDate) {
         this.etdDate = etdDate;
     }
+
+	public Set<Phone> getPhone() {
+		return phone;
+	}
+
+	public void setPhone(Set<Phone> phone) {
+		this.phone = phone;
+	}
+
+	public Set<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(Set<Address> address) {
+		this.address = address;
+	}
+
+	public Set<CreditCard> getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(Set<CreditCard> creditCard) {
+		this.creditCard = creditCard;
+	}
 }
