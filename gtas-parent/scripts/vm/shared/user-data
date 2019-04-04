@@ -18,11 +18,11 @@ runcmd:
   - [/GTAS/gtas-parent/scripts/elastic/install/linux/kibana/install.sh]
   - [/GTAS/gtas-parent/scripts/elastic/install/linux/logstash/install.sh]
   - [git, clone, https://github.com/tsegay/shell-scripts.git]
-  - [sudo, /shell-scripts/install/install_tomcat.sh]
-  - [sudo, /shell-scripts/install/install_redis.sh]
-  - [sudo, /shell-scripts/install/install_node_bower.sh]
-  - [sudo, /shell-scripts/install/install_activemq.sh]
-  -	[sudo, /shell-scripts/install/install_mariadb.sh]
+ # - [sudo, /shell-scripts/install/install_tomcat.sh]
+ # - [sudo, /shell-scripts/install/install_redis.sh]
+ # - [sudo, /shell-scripts/install/install_node_bower.sh]
+ # - [sudo, /shell-scripts/install/install_activemq.sh]
+ # -	[sudo, /shell-scripts/install/install_mariadb.sh]
 
 # yum_repos:
 #     epel-testing:
