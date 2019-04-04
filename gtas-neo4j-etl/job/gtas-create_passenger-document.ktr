@@ -554,7 +554,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>592</xloc>
+      <xloc>736</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1518,7 +1518,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>112</xloc>
+      <xloc>176</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1543,8 +1543,8 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>400</xloc>
-      <yloc>464</yloc>
+      <xloc>528</xloc>
+      <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1599,7 +1599,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>400</xloc>
+      <xloc>528</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1660,13 +1660,13 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
         <property>
           <name>exp_date</name>
           <value>expiration_date</value>
-          <type>String</type>
+          <type>Date</type>
           <primary>Y</primary>
         </property>
         <property>
           <name>issue_date</name>
           <value>issuance_date</value>
-          <type>String</type>
+          <type>Date</type>
           <primary>N</primary>
         </property>
         <property>
@@ -1741,6 +1741,40 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
         <currency_symbol/>
         <storage_type/>
       </meta>
+      <meta>
+        <name>expiration_date</name>
+        <rename>expiration_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>issuance_date</name>
+        <rename>issuance_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1751,7 +1785,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>288</xloc>
+      <xloc>368</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1801,7 +1835,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>832</xloc>
+      <xloc>944</xloc>
       <yloc>336</yloc>
       <draw>Y</draw>
     </GUI>
