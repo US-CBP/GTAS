@@ -37,6 +37,8 @@ import static gov.gtas.services.GtasLoaderImpl.*;
 public class LoaderQueueThreadManager {
 
     private final ApplicationContext ctx;
+    
+    private static final int  DEFAULT_THREADS_ON_LOADER = 5;
 
     private ExecutorService exec;
 
@@ -45,13 +47,28 @@ public class LoaderQueueThreadManager {
     static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
     @Autowired
-    public LoaderQueueThreadManager(
-                                    ApplicationContext ctx,
-                                    AppConfigurationRepository appConfigurationRepository) {
-        this.ctx = ctx;
-        int maxNumOfThreads = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
-        this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
-    }
+	public LoaderQueueThreadManager(ApplicationContext ctx, AppConfigurationRepository appConfigurationRepository) {
+		this.ctx = ctx;
+
+		/**
+		 * Fail safe and fall back to 5 number of threads when the database
+		 * configuration is set incorrectly
+		 */
+		int maxNumOfThreads = DEFAULT_THREADS_ON_LOADER;
+
+		try {
+
+			maxNumOfThreads = Integer.parseInt(
+					appConfigurationRepository.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+
+		} catch (Exception e) {
+			logger.error(String.format(
+					"Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",
+					AppConfigurationRepository.THREADS_ON_LOADER, DEFAULT_THREADS_ON_LOADER));
+		}
+
+		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
+	}
 
     void receiveMessages(Message<?> message) throws ParseException {
         String[] primeFlightKeyArray = generatePrimeFlightKey(message);
