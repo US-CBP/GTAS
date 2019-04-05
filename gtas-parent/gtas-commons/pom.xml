@@ -19,7 +19,7 @@
         
         <hibernate.connection.driver_class>org.mariadb.jdbc.Driver</hibernate.connection.driver_class>
   		<hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
-  		<hibernate.connection.url><![CDATA[jdbc:mariadb://localhost:3306/gtas]]></hibernate.connection.url>
+  		<hibernate.connection.url><![CDATA[jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true]]></hibernate.connection.url>
   		<hibernate.connection.username>root</hibernate.connection.username>
   		<hibernate.connection.password>admin</hibernate.connection.password>
   		
@@ -337,7 +337,7 @@
                 </dependencies>
                 <configuration>
                     <force>true</force>
-                    <url><![CDATA[jdbc:mariadb://localhost:3306/gtas]]></url>
+                    <url><![CDATA[jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true]]></url>
                 </configuration>
             </plugin>
         </plugins>
