@@ -5,21 +5,10 @@
  */
 package gov.gtas.services;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.vo.FlightVo;
-import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.PassengerRepository;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,15 +18,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.redisson.config.RedisLoaderConfig;
+import gov.gtas.parsers.vo.FlightVo;
+import gov.gtas.parsers.vo.PassengerVo;
+import gov.gtas.repository.FlightLegRepository;
+import gov.gtas.repository.FlightRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class })
+		CachingConfig.class, RedisLoaderConfig.class })
 @Rollback(true)
 public class PnrMessageServiceIT extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -48,12 +48,9 @@ public class PnrMessageServiceIT extends
 
 	@Autowired
 	private FlightRepository flightDao;
-
+	
 	@Autowired
-	private GtasLoaderImpl loaderRepo;
-
-	@Autowired
-	private PassengerRepository paxDao;
+	private FlightLegRepository flightLegRepository;
 
 	@Before
 	public void setUp() throws Exception {
@@ -129,5 +126,13 @@ public class PnrMessageServiceIT extends
 		this.message = new File(classLoader.getResource(
 				"pnr-messages/pnrMessageExample.txt").getFile());
 		svc.processMessage(this.message, new String[]{"placeholder"});
+	}
+	
+	@Test
+	@Transactional
+	public void testProgressiveFlightWithDomesticContinuance() {
+		this.message = new File(
+				getClass().getClassLoader().getResource("pnr-messages/multiple_flight_leg_pnr.txt").getFile());
+		svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
 	}
 }

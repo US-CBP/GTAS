@@ -8,6 +8,7 @@ package gov.gtas.services;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.redisson.config.RedisLoaderConfig;
 
 import java.io.File;
 
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes =  {TestCommonServicesConfig.class,
-		CachingConfig.class })
+		CachingConfig.class, RedisLoaderConfig.class  })
 @Rollback(true)
 public class ApisMessageServiceIT extends
 		AbstractTransactionalJUnit4SpringContextTests {
@@ -43,5 +44,13 @@ public class ApisMessageServiceIT extends
 	@Transactional
 	public void testRunService() throws ParseException {
 		svc.processMessage(this.message, new String[]{"placeholder"});
+	}
+	
+	@Test
+	@Transactional
+	public void testProgressiveFlightWithDomesticContinuance() {
+		this.message = new File(
+				getClass().getClassLoader().getResource("apis-messages/multiple_flight_leg_apis.txt").getFile());
+		svc.processMessage(this.message, new String[] { "JFK", "CDG", "QQ", "0827", "1218340800000", "1218412800000" });
 	}
 }

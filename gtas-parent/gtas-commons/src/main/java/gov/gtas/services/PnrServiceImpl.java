@@ -225,24 +225,26 @@ public class PnrServiceImpl implements PnrService {
 		}
 		return flag;
 	}
-	private boolean checkFlightLegExistence(List<FlightLeg> flightLegs, FlightLeg fl) {
-		boolean flag = false;		
-		for (FlightLeg leg: flightLegs) {
-			if(leg.getFlight() != null && fl.getFlight() != null){
-				if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getPnr()).equals(fl.getPnr())) {
-					flag=true;
-					break;
-				} 
-			} else{ //Check instead for booking detail as a flight leg
-				if(leg.getBookingDetail() != null && fl.getBookingDetail() != null){
-					if ((leg.getBookingDetail()).equals(fl.getBookingDetail()) && (leg.getPnr()).equals(fl.getPnr())) {
-						flag=true;
-						break;
-					} 
+
+	private boolean checkFlightLegExistence(List<FlightLeg> flightLegs, final FlightLeg fl) {
+
+		if (fl.getFlight() == null)
+			return false;
+		
+		for (FlightLeg leg : flightLegs) {
+			if (leg.getFlight() != null) {
+				if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getMessage()).equals(fl.getMessage())) {
+					return true;
+				}
+			} else { // Check instead for booking detail as a flight leg
+				if (leg.getBookingDetail() != null && fl.getBookingDetail() != null
+						&& ((leg.getBookingDetail()).equals(fl.getBookingDetail())
+								&& (leg.getMessage()).equals(fl.getMessage()))) {
+					return true;
 				}
 			}
 		}
-		return flag;
+		return false;
 	}
 	
 	private Address getExistingAddress(Address a, Set<Address> addresses) {
