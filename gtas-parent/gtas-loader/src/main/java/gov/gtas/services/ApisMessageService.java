@@ -143,7 +143,7 @@ public class ApisMessageService extends MessageLoaderService {
         logger.error(stacktrace);
     }
 
-    boolean createMessage(ApisMessage m) {
+    private boolean createMessage(ApisMessage m) {
         boolean ret = true;
         try {
            m = msgDao.save(m);
@@ -214,14 +214,16 @@ public class ApisMessageService extends MessageLoaderService {
     					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
-    			if (p.getFlightPaxList().add(fp)) {
-                    apisMessage.addToFlightPax(fp);
+
+    			Optional<FlightPax> optionalFlightPax = p.getFlightPaxList()
+                        .stream()
+                        .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
+                        .findFirst();
+
+    			if (optionalFlightPax.isPresent()) {
+                    optionalFlightPax.ifPresent(apisMessage::addToFlightPax);
                 } else {
-    			     p.getFlightPaxList()
-                             .stream()
-                             .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
-                             .findFirst()
-                             .ifPresent(apisMessage::addToFlightPax);
+                    apisMessage.addToFlightPax(fp);
                 }
     		}
     	}
