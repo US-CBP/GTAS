@@ -54,7 +54,9 @@
           password="admin"
           maxTotal="20"
           maxIdle="10"
-          maxWaitMillis="-1"/>
+          maxWaitMillis="10000"
+          validationQuery="select 1"
+          testOnBorrow="true" />
           
   </GlobalNamingResources>
 
