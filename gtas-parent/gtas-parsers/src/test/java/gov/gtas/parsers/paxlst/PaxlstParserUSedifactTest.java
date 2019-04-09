@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import gov.gtas.parsers.edifact.EdifactParser;
@@ -93,6 +94,7 @@ public final class PaxlstParserUSedifactTest {
     }
     
     @Test
+	@Ignore // invalid apis message.
     public void testMultiMessagePart1() throws ParseException {
     	String apis = 
     	"UNA:+.? '" +

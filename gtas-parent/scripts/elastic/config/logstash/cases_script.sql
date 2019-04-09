@@ -1,10 +1,8 @@
 SELECT c.*, 
 	   f.`id` "flight.id",
-       f.`eta` "flight.eta", 
-       f.`eta_date` "flight.eta_date", 
-       f.`etd` "flight.etd", 
+       fd.`eta_date` "flight.eta_date", 
        f.`etd_date` "flight.etd_date", 
-       f.`flight_date` "flight.flight_date", 
+       f.`etd_date` "flight.flight_date", 
        f.`flight_number` "flight.flight_number", 
        f.`full_flight_number` "flight.full_flight_number", 
        f.`origin` "flight.origin", 
@@ -15,28 +13,28 @@ SELECT c.*,
        seat.`number` "passenger.seat_number",
        
        p.`id` "passenger.paxid",
-       p.`age` "passenger.age",
-       p.`citizenship_country` "passenger.citizenship_country",
-       p.`debark_country` "passenger.debark_country",
-       p.`debarkation` "passenger.debarkation",
+       pd.`pd_age` "passenger.age",
+       pd.`pd_citizenship_country` "passenger.citizenship_country",
+       td.`debark_country` "passenger.debark_country",
+       td.`debarkation` "passenger.debarkation",
        debark_ar.longitude "passenger.debarkation.lon",
        debark_ar.latitude "passenger.debarkation.lat",
        embark_ar.longitude "passenger.embarkation.lon",
        embark_ar.latitude "passenger.embarkation.lat",
-       p.`dob` "passenger.dob",
-       p.`embark_country` "passenger.embark_country",
-       p.`embarkation` "passenger.embarkation",
-       p.`first_name` "passenger.first_name",
-       p.`last_name` "passenger.last_name",
-       p.`gender` "passenger.gender",
-       p.`middle_name` "passenger.middle_name",
-       p.`days_visa_valid` "passenger.days_visa_valid",
-       p.`passenger_type` "passenger.passenger_type",
-       p.`ref_number` "passenger.ref_number",
-       p.`residency_country` "passenger.residency_country",
-       p.`suffix` "passenger.suffix",
-       p.`travel_frequency` "passenger.travel_frequency",
-       p.`watchlistCheckTimestamp` "passenger.watchlistCheckTimestamp",
+       pd.`dob` "passenger.dob",
+       td.`embark_country` "passenger.embark_country",
+       td.`embarkation` "passenger.embarkation",
+       pd.`pd_first_name` "passenger.first_name",
+       pd.`pd_last_name` "passenger.last_name",
+       pd.`pd_gender` "passenger.gender",
+       pd.`pd_middle_name` "passenger.middle_name",
+       td.`days_visa_valid` "passenger.days_visa_valid",
+       pd.`pd_passenger_type` "passenger.passenger_type",
+       td.`ref_number` "passenger.ref_number",
+       pd.`pd_residency_country` "passenger.residency_country",
+       pd.`pd_suffix` "passenger.suffix",
+       td.`travel_frequency` "passenger.travel_frequency",
+       -- p.`watchlistCheckTimestamp` "passenger.watchlistCheckTimestamp",
        
        hd.`id` "hit_disposition.id",
        hd.`status` "hit_disposition.status",
@@ -84,9 +82,15 @@ SELECT c.*,
 	   	   
 FROM   cases c 
        LEFT JOIN flight f 
-              ON ( c.flightid = f.id )
+              ON (c.flightid = f.id )
+       left join `mutable_flight_details` fd
+		on (f.id = fd.flight_id)
        LEFT JOIN passenger p
               ON (c.paxId = p.id)
+       JOIN `passenger_details` pd
+		ON (p.id = pd.pd_passenger_id)
+	JOIN `passenger_trip_details` td
+		ON (td.ptd_id = p.id)
        LEFT JOIN `hits_disposition` hd
        		  ON (hd.`case_id` = c.`id`)
        LEFT JOIN `hits_disposition_comments` hdc
@@ -96,9 +100,9 @@ FROM   cases c
        left join `hit_detail` h_detail
        		  on (h_summary.`id` = h_detail.`hits_summary_id`)
        left join `airport` debark_ar
-       		  on (debark_ar.iata=p.debarkation and debark_ar.country=p.debark_country)
+       		  on (debark_ar.iata=td.debarkation and debark_ar.country=td.debark_country)
         left join `airport` embark_ar
-       		  on (embark_ar.iata=p.embarkation and embark_ar.country=p.embark_country)
+       		  on (embark_ar.iata=td.embarkation and embark_ar.country=td.embark_country)
        left join `pax_watchlist_link` pax_watchlist
 		on (pax_watchlist.passenger_id=p.id)
        left join `seat` seat 

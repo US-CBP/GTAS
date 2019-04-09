@@ -67,7 +67,11 @@ public class DTM extends Segment {
             String d = c.getElement(1);
             if (d != null) {
                 String dateFormat = (d.length() == DATE_TIME_FORMAT.length()) ? DATE_TIME_FORMAT : DATE_ONLY_FORMAT;
-                this.dtmValue = ParseUtils.parseDateTime(d, dateFormat);
+                if (this.dtmCode == DtmCode.DATE_OF_BIRTH) {
+                    this.dtmValue = ParseUtils.parseBirthday(d, dateFormat);
+                } else {
+                    this.dtmValue = ParseUtils.parseDateTime(d, dateFormat);
+                }
             }
         }
     }

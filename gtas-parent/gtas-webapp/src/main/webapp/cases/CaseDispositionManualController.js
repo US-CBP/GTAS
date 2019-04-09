@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService, $timeout,
                   spinnerService, caseDispositionService, caseService, $state, $mdSidenav, AuthService,
-                  passenger, ruleCats) {
+                  passenger, ruleCats, codeTooltipService) {
 
             $scope.passenger = passenger.data;
             $scope.caseItem;
@@ -251,6 +251,15 @@
                 day = date.toISOString().slice(0, 10);
                 time = date.getTime();
                 return "tmp/" + day + "/" + time + "-" + file.name;
+            };
+            
+          //Service call for tooltip data
+            $scope.getCodeTooltipData = function(field, type){
+            	return codeTooltipService.getCodeTooltipData(field,type);
+            }
+            
+            $scope.resetTooltip = function(){
+            	$('md-tooltip').remove();
             };
 
 

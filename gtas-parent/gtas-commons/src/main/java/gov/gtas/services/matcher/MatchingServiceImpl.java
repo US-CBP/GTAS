@@ -123,11 +123,15 @@ public class MatchingServiceImpl implements MatchingService {
 	// Overloaded method that will save on erroneous passenger calls during
 	// automated run. Automated run already contains passenger objects.
 	public void performFuzzyMatching(Long id) {
+		logger.debug("Starting fuzzy matching");
 		Passenger passenger = passengerRepository.getFullPassengerById(id);
 		List<Long> passengers = Collections.singletonList(passenger.getId());
 		Flight flight = passenger.getFlight();
 		MatcherParameters matcherParameters = getMatcherParameters(passengers);
 		performFuzzyMatching(flight, passenger, matcherParameters);
+		logger.debug("ending fuzzy matching");
+
+
 	}
 
 	private MatcherParameters getMatcherParameters(List<Long> passengers) {
@@ -148,6 +152,8 @@ public class MatchingServiceImpl implements MatchingService {
 	}
 
 	public void performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
+		logger.debug("Starting perform fuzzy matching");
+
 		List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
 		for (Watchlist watchlist : watchlistsList) {
 			if (passengerNeedsWatchlistCheck(passenger, watchlist)) {
@@ -190,7 +196,7 @@ public class MatchingServiceImpl implements MatchingService {
 						for (DerogHit hit : derogs) {
 							paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
 									passenger.getId(), Long.parseLong(hit.getDerogId()));
-						    Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
+							Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
 							// make a call to open case here
 							nameMatchCaseMgmtUtils
 									.processPassengerFlight(
@@ -280,6 +286,7 @@ public class MatchingServiceImpl implements MatchingService {
 						performFuzzyMatching(f, passenger, matcherParameters);
 						PassengerWLTimestamp passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
 						savingPassengerSet.add(passengerWLTimestamp);
+						totalMatchCount++;
 					} catch (Exception e) {
 						logger.error("failed to run watchlist check on passenger. " +
 								"Will attempt a run on next pass.",  e);

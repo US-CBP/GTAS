@@ -1128,7 +1128,7 @@
         <type>String</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss XXX</conversion_mask>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
         <date_format_lenient>true</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1140,12 +1140,12 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>flight_date</name>
-        <rename>flight_date</rename>
+        <name>etd_date</name>
+        <rename>etd_date</rename>
         <type>String</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
         <date_format_lenient>true</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1197,6 +1197,23 @@
         <length>-2</length>
         <precision>-2</precision>
         <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>eta_date</name>
+        <rename>eta_date</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1559,7 +1576,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>16</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1571,7 +1588,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>0</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1583,7 +1600,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>255</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1595,7 +1612,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>9</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1607,7 +1624,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>9</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1619,7 +1636,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>16</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1631,7 +1648,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>255</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1643,7 +1660,7 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>255</length>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1655,35 +1672,35 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>65535</length>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>rule_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>hit_detail_create_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
         <name>idTag</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>full_flight_number</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>255</length>
-        <precision>-1</precision>
-      </field>
-      <field>
-        <name>flight_date</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -1703,7 +1720,139 @@
         <group/>
         <nullif/>
         <trim_type>both</trim_type>
-        <length>16</length>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>origin</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>flight_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>destination</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>carrier</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>direction</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>origin_country</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>destination_country</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>eta_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>etd_date</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>flight_number</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>full_flight_number</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
         <precision>-1</precision>
       </field>
       <field>
@@ -1728,7 +1877,7 @@
         <nullif/>
         <trim_type>both</trim_type>
         <length>-1</length>
-        <precision>0</precision>
+        <precision>-1</precision>
       </field>
       <field>
         <name>HIT_LABEL</name>
@@ -1778,18 +1927,6 @@
         <length>-1</length>
         <precision>-1</precision>
       </field>
-      <field>
-        <name>rule_id</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <trim_type>both</trim_type>
-        <length>-1</length>
-        <precision>-1</precision>
-      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1800,7 +1937,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>672</xloc>
+      <xloc>688</xloc>
       <yloc>432</yloc>
       <draw>Y</draw>
     </GUI>

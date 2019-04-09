@@ -11,3 +11,7 @@ sudo yum install elasticsearch-6.5.0-1 -y
 systemctl daemon-reload
 
 systemctl enable elasticsearch
+
+# Import flightpax and case indices
+
+../../../config/elasticsearch/update_template.sh

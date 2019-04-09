@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.User;
 import gov.gtas.model.watchlist.Watchlist;
@@ -39,7 +39,7 @@ import org.springframework.test.annotation.Rollback;
  * Persistence layer tests for Watch list.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @Rollback(true)
 public class WatchlistPersistenceServiceIT {

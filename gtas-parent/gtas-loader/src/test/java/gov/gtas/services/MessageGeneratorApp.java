@@ -7,8 +7,6 @@ package gov.gtas.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Index;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.dto.FlightDto;
 import gov.gtas.dto.PaxDto;
 import gov.gtas.parsers.exception.ParseException;
@@ -36,7 +34,7 @@ import gov.gtas.parsers.exception.ParseException;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = CommonServicesConfig.class)
+@ContextConfiguration(classes = {TestCommonServicesConfig.class })
 @Transactional
 public class MessageGeneratorApp {
 

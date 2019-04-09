@@ -9,50 +9,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.parsers.pnrgov.segment.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.pnrgov.segment.ABI;
-import gov.gtas.parsers.pnrgov.segment.ADD;
-import gov.gtas.parsers.pnrgov.segment.APD;
-import gov.gtas.parsers.pnrgov.segment.DAT_G1;
-import gov.gtas.parsers.pnrgov.segment.DAT_G10;
-import gov.gtas.parsers.pnrgov.segment.DAT_G6;
-import gov.gtas.parsers.pnrgov.segment.EBD;
-import gov.gtas.parsers.pnrgov.segment.EQN;
-import gov.gtas.parsers.pnrgov.segment.FAR;
-import gov.gtas.parsers.pnrgov.segment.FOP;
 import gov.gtas.parsers.pnrgov.segment.FOP.Payment;
-import gov.gtas.parsers.pnrgov.segment.FTI;
 import gov.gtas.parsers.pnrgov.segment.FTI.FrequentFlierDetails;
-import gov.gtas.parsers.pnrgov.segment.IFT;
-import gov.gtas.parsers.pnrgov.segment.LTS;
-import gov.gtas.parsers.pnrgov.segment.MON;
-import gov.gtas.parsers.pnrgov.segment.MSG;
-import gov.gtas.parsers.pnrgov.segment.ORG;
-import gov.gtas.parsers.pnrgov.segment.PTK;
-import gov.gtas.parsers.pnrgov.segment.RCI;
 import gov.gtas.parsers.pnrgov.segment.RCI.ReservationControlInfo;
-import gov.gtas.parsers.pnrgov.segment.REF;
-import gov.gtas.parsers.pnrgov.segment.RPI;
-import gov.gtas.parsers.pnrgov.segment.SAC;
-import gov.gtas.parsers.pnrgov.segment.SRC;
-import gov.gtas.parsers.pnrgov.segment.SSD;
-import gov.gtas.parsers.pnrgov.segment.SSR;
 import gov.gtas.parsers.pnrgov.segment.SSR.SpecialRequirementDetails;
-import gov.gtas.parsers.pnrgov.segment.TBD;
 import gov.gtas.parsers.pnrgov.segment.TBD.BagDetails;
-import gov.gtas.parsers.pnrgov.segment.TIF;
 import gov.gtas.parsers.pnrgov.segment.TIF.TravelerDetails;
-import gov.gtas.parsers.pnrgov.segment.TKT;
-import gov.gtas.parsers.pnrgov.segment.TRA;
-import gov.gtas.parsers.pnrgov.segment.TRI;
-import gov.gtas.parsers.pnrgov.segment.TVL;
-import gov.gtas.parsers.pnrgov.segment.TVL_L0;
-import gov.gtas.parsers.pnrgov.segment.TXD;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.parsers.vo.AddressVo;
@@ -90,7 +58,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if(msg != null && msg.getMessageTypeCode() != null){
             parsedMessage.setMessageCode(msg.getMessageTypeCode().getCode());
         }
-        
+
         getMandatorySegment(ORG.class);
         TVL_L0 tvl = getMandatorySegment(TVL_L0.class, "TVL");
         getMandatorySegment(EQN.class);
@@ -106,13 +74,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         parsedMessage.setCarrier(tvl_l0.getCarrier());
         parsedMessage.setOrigin(tvl_l0.getOrigin());
         parsedMessage.setDepartureDate(tvl_l0.getEtd());
-        
-        RCI rci = getMandatorySegment(RCI.class);
-        ReservationControlInfo controlInfo = rci.getReservations().get(0);
-        parsedMessage.setRecordLocator(controlInfo.getReservationControlNumber());
-        if(controlInfo.getTimeCreated() != null){
-        	parsedMessage.setReservationCreateDate(controlInfo.getTimeCreated());
-        }
+        /*
+        * RCI is mandatory but commonly not included in PNR. Because of this we have loosened the parser to accept it
+        * as a conditional field.
+        * */
+        RCI rci = getConditionalSegment(RCI.class);
+        addRCIInfo(rci);
 
         for (;;) {
             SSR ssr = getConditionalSegment(SSR.class, "SSR");
@@ -136,9 +103,10 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             processIft(ift);
         }
 
-        ORG org = getMandatorySegment(ORG.class);
-        processAgencyInfo(org);
-
+        ORG org = getConditionalSegment(ORG.class);
+        if (org != null) {
+            processAgencyInfo(org);
+        }
         for (;;) {
             ADD add = getConditionalSegment(ADD.class);
             if (add == null) {
@@ -155,11 +123,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             processExcessBaggage(ebd);
         }
-        
-        TIF tif = getMandatorySegment(TIF.class);
-        processGroup2_Passenger(tif);
+
         for (;;) {
-            tif = getConditionalSegment(TIF.class);
+            TIF tif = getConditionalSegment(TIF.class);
             if (tif == null) {
                 break;
             }
@@ -176,8 +142,44 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             
         }
+
+        for (;;) {
+            EQN eqn = getConditionalSegment(EQN.class);
+            if (eqn == null) {
+                break;
+            }
+            processGroup8_SplitPassenger(eqn);
+        }
+
+        for (;;) {
+            MSG msg = getConditionalSegment(MSG.class);
+            if (msg == null) {
+                break;
+            }
+            processGroup9_NonAir(msg);
+        }
+
+        for (;;) {
+            ABI abi = getConditionalSegment(ABI.class);
+            if (abi == null) {
+                break;
+            }
+            processGroup10_History(abi);
+        }
+
         processLTS();
     }
+
+    private void addRCIInfo(RCI rci) {
+        if (rci != null && parsedMessage.getRecordLocator() == null){
+            ReservationControlInfo controlInfo = rci.getReservations().get(0);
+            parsedMessage.setRecordLocator(controlInfo.getReservationControlNumber());
+            if(controlInfo.getTimeCreated() != null){
+                parsedMessage.setReservationCreateDate(controlInfo.getTimeCreated());
+            }
+        }
+    }
+
     private boolean validTvl(TVL tvl) {
     	boolean check=true;
 
@@ -225,7 +227,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
 
         // SSR’s in GR.2 apply to the specific passenger.
-        List<SSR> ssrDocs = new ArrayList<>();
+        List<SSRDocs> ssrDocs = new ArrayList<>();
         List<DocumentVo> visas = new ArrayList<>();
         for (;;) {
             SSR ssr = getConditionalSegment(SSR.class);
@@ -235,7 +237,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             String code = ssr.getTypeOfRequest();
             if (SSR.DOCS.equals(code)) {
             	if(StringUtils.isNotBlank(ssr.getFreeText())){
-            		ssrDocs.add(ssr);
+            		ssrDocs.add(new SSRDocs(ssr));
             	}
                 
             } else if (SSR.DOCA.equals(code)) {
@@ -249,13 +251,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                     visas.add(visa);
                 }
             }
-            if(SSR.CTCE.equals(code)){
-            	String emailText=ssr.getFreeText();
-            	if(emailText.indexOf("-1") > -1){
-                	emailText=emailText.substring(0,emailText.indexOf("-1"));
-            	}
-            	extractEmailInfo(emailText);
-            }
+            getEmail(ssr, code);
             if(SSR.FQTV.equals(code)){
             	//SSR+FQTV:HK::DL' (just the carrier code of the frequent flyer program)
             	//SSR+FQTV:HK:1:OZ:::::/DL1234567890-LASTNAME/FIRSTNAMEMI'
@@ -281,7 +277,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             		}
             	}
             }
-            if(SSR.CTCM.equals(code) && StringUtils.isNotBlank(ssr.getFreeText())){
+            if((SSR.CTCM.equals(code) || SSR.CTCH.equals(code))
+                    && StringUtils.isNotBlank(ssr.getFreeText())){
             	String phone=PnrUtils.getPhoneNumberFromFreeText(ssr.getFreeText());
             	if(StringUtils.isNotBlank(phone)){
             		PhoneVo pvo=new PhoneVo();
@@ -298,7 +295,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 parsedMessage.getPassengers().add(p);
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
                 currentPassenger=p;
-                
             } else {
                 throw new ParseException("Invalid passenger: " + p);
             }
@@ -453,8 +449,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         	f.setEta(f.getEtd());
         }
         f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
-        Date flightDate = FlightUtils.determineFlightDate(tvl.getEtd(), tvl.getEta(), parsedMessage.getTransmissionDate());
-        f.setFlightDate(flightDate);
         if (f.isValid()) {
             parsedMessage.getFlights().add(f);
         } else {
@@ -480,7 +474,6 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              if(csFlight.getEta() == null){
             	 csFlight.setEta(csFlight.getEtd());
              }
-             csFlight.setFlightDate(flightDate);
              csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
              csFlight.setCodeShareFlight(true);
              //f.setMarketingFlight(true);
@@ -533,16 +526,15 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                     // TODO: figure out seats
                 }
             }
-            if(SSR.CTCE.equals(code)){
-            	String emailText=ssr.getFreeText();
-            	if(emailText.indexOf("-1") > -1){
-                	emailText=emailText.substring(0,emailText.indexOf("-1"));
-            	}
-            	extractEmailInfo(emailText);
-            }
+            getEmail(ssr, code);
         }
 
-        getConditionalSegment(RCI.class);
+        /*
+        * Some messages are not to spec and do not have a level 2 RCI
+        * If the level 2 RCI wasn't given attempt to parse it from the TVL.
+        * */
+        RCI rci  = getConditionalSegment(RCI.class);
+        addRCIInfo(rci);
 
         for (;;) {
             IFT ift = getConditionalSegment(IFT.class);
@@ -559,85 +551,40 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
             processGroup6_Agent(dat, tvl);
         }
-        
-        for (;;) {
-            EQN eqn = getConditionalSegment(EQN.class);
-            if (eqn == null) {
-                break;
-            }
-            processGroup8_SplitPassenger(eqn);
-        }
-
-        for (;;) {
-            MSG msg = getConditionalSegment(MSG.class);
-            if (msg == null) {
-                break;
-            }
-            processGroup9_NonAir(msg);
-        }
-
-        for (;;) {
-            ABI abi = getConditionalSegment(ABI.class);
-            if (abi == null) {
-                break;
-            }
-            processGroup10_History(abi);
-        }
-
-//        for (;;) {
-//            LTS lts = getConditionalSegment(LTS.class);
-//            if (lts == null) {
-//                break;
-//            }
-//            if(lts.isAgency()){
-//            	processAgencyInfo(lts.getTheText());
-//            }else if(lts.isPhone()){
-//            	processPhoneInfo(lts.getTheText());
-//            }
-//            else if(lts.isFormPayment()){
-//            	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
-//            }
-//            else if(lts.isEmail()){
-//            	extractEmailInfo(lts.getTheText());
-//            }
-//            else if(lts.isSeat()){
-//            	extractSeatInfo(lts.getTheText());
-//            }
-//            if(lts.isFrequentFlyer()){
-//            	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
-//            	if(ffvo != null && ffvo.isValid()){
-//            		parsedMessage.getFrequentFlyerDetails().add(ffvo);
-//            	}
-//            }
-//            extractContactInfo(lts.getText());
-//        }
     }
 
-    private void processLTS() throws ParseException{
-        for (;;) {
+    private void getEmail(SSR ssr, String code) {
+        if(SSR.CTCE.equals(code)){
+            String emailText=ssr.getFreeText();
+            if(emailText.indexOf("-1") > -1){
+                emailText=emailText.substring(0,emailText.indexOf("-1"));
+            }
+            extractEmailInfo(emailText);
+        }
+    }
+
+    private void processLTS() throws ParseException {
+        for (; ; ) {
             LTS lts = getConditionalSegment(LTS.class);
             if (lts == null) {
                 break;
             }
-            if(lts.isAgency()){
-            	processAgencyInfo(lts.getTheText());
-            }else if(lts.isPhone()){
-            	processPhoneInfo(lts.getTheText());
+            if (lts.isAgency()) {
+                processAgencyInfo(lts.getTheText());
+            } else if (lts.isPhone()) {
+                processPhoneInfo(lts.getTheText());
+            } else if (lts.isFormPayment()) {
+                processFormOfPayment(lts.getTheText(), lts.isCashPayment());
+            } else if (lts.isEmail()) {
+                extractEmailInfo(lts.getTheText());
+            } else if (lts.isSeat()) {
+                extractSeatInfo(lts.getTheText());
             }
-            else if(lts.isFormPayment()){
-            	processFormOfPayment(lts.getTheText(),lts.isCashPayment());
-            }
-            else if(lts.isEmail()){
-            	extractEmailInfo(lts.getTheText());
-            }
-            else if(lts.isSeat()){
-            	extractSeatInfo(lts.getTheText());
-            }
-            if(lts.isFrequentFlyer()){
-            	FrequentFlyerVo ffvo=getFrequentFlyerFromLtsText(lts.getTheText());
-            	if(ffvo != null && ffvo.isValid()){
-            		parsedMessage.getFrequentFlyerDetails().add(ffvo);
-            	}
+            if (lts.isFrequentFlyer()) {
+                FrequentFlyerVo ffvo = getFrequentFlyerFromLtsText(lts.getTheText());
+                if (ffvo != null && ffvo.isValid()) {
+                    parsedMessage.getFrequentFlyerDetails().add(ffvo);
+                }
             }
             extractContactInfo(lts.getText());
         }
@@ -754,7 +701,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     		parsedMessage.getBags().add(bvo);
     	}
     	}
-    	
+
     	}
     }
     

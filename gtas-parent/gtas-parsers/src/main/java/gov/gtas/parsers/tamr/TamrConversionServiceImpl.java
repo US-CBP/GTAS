@@ -92,7 +92,7 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			//flight related
 			tamrPax.setAPIS_ARVL_APRT_CD(flight.getDestination());
 			tamrPax.setAPIS_DPRTR_APRT_CD(flight.getOrigin());
-			tamrPax.setETA_DT(flight.getEtaDate());
+			tamrPax.setETA_DT(flight.getMutableFlightDetails().getEtaDate());
 			tamrPax.setIATA_CARR_CD(flight.getCarrier());
 			tamrPax.setFLIT_NBR(flight.getFullFlightNumber());
 			

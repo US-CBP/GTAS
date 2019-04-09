@@ -5,12 +5,12 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.Case;
-import gov.gtas.repository.CaseDispositionRepository;
-import gov.gtas.services.dto.CasePageDto;
-import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,14 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.*;
-
-import static org.junit.Assert.assertTrue;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.repository.CaseDispositionRepository;
 
 //import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class })
 public class CaseDispositionServiceImplTest {
     @Before
     public void setUp() throws Exception {

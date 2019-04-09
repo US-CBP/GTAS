@@ -1,13 +1,7 @@
 package gov.gtas.repository;
 
 import static org.junit.Assert.assertTrue;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.services.dto.FlightsRequestDto;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,13 +11,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
+
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+import gov.gtas.services.dto.FlightsRequestDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @Rollback(true)
 public class FlightRepositoryIT extends
@@ -41,7 +41,6 @@ public class FlightRepositoryIT extends
 		Flight f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0012");
 		f.setFullFlightNumber("XX0012");
 		f.setOrigin("LAX");
@@ -59,7 +58,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0010");
 		f.setFullFlightNumber("XX0010");
 		f.setOrigin("LAS");
@@ -77,7 +75,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0013");
 		f.setFullFlightNumber("YY0013");
 		f.setOrigin("LAS");
@@ -95,7 +92,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0014");
 		f.setFullFlightNumber("YY0014");
 		f.setOrigin("BTE");
@@ -113,7 +109,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0016");
 		f.setFullFlightNumber("YY0016");
 		f.setOrigin("MLW");

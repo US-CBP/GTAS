@@ -112,7 +112,6 @@ public class ApisDataGenerator {
         }
         flight.setCarrier("V7");//Continental
         flight.setDestination("BOB");
-        flight.setFlightDate(new Date());
         flight.setFlightNumber("0012");
         flight.setOrigin("YHZ");
         flight.setOriginCountry("CA");
@@ -139,7 +138,6 @@ public class ApisDataGenerator {
         try{
             flDate = DateCalendarUtils.parseJsonDate("2015-07-20");
             flDate = new Date(flDate.getTime()+36000000L);//add 10 hours
-            flight.setFlightDate(flDate);
         }catch(ParseException pe){
             logger.error("error parsing flight information!", pe);
         }

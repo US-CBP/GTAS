@@ -52,6 +52,7 @@ public class PnrVo extends MessageVo {
     private List<FlightLegVo> flightLegs = new ArrayList<>();
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
+    private String tripType;
     
     
     public Long getId() {
@@ -310,6 +311,16 @@ public class PnrVo extends MessageVo {
 	public void setSegmentList(List<KeyValue> segmentList) {
 		this.segmentList = segmentList;
 	}
+
+    public String getTripType() {
+        return tripType;
+    }
+
+    public void setTripType(String tripType) {
+        this.tripType = tripType;
+    }
+        
+        
 	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

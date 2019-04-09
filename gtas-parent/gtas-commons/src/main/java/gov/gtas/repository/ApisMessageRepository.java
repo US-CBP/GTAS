@@ -14,7 +14,13 @@ import java.util.List;
 import java.util.Set;
 
 public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
-	@Query("SELECT apis FROM ApisMessage apis left join fetch apis.phones join fetch apis.passengers pax join fetch apis.flights f where pax.id = :passengerId and f.id = :flightId")
+	@Query("SELECT distinct apis " +
+			"FROM ApisMessage apis " +
+			"left join fetch apis.phones " +
+			"left join fetch apis.passengers pax " +
+			"left join fetch apis.flights f " +
+			"where :passengerId in (select p.id from apis.passengers p) " +
+			"and f.id = :flightId")
 	List<ApisMessage> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
 	@Query("SELECT fp.reservationReferenceNumber FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")

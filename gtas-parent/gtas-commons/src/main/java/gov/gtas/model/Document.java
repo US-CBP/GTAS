@@ -22,10 +22,10 @@ public class Document extends BaseEntity {
 		this.documentNumber = documentNumber;
 	}
 
-	@Column(name = "document_type", length = 3, nullable = false)
+	@Column(name = "document_type", length = 3)
 	private String documentType;
 
-	@Column(name = "document_number", nullable = false)
+	@Column(name = "document_number")
 	private String documentNumber;
 
 	@Column(name = "expiration_date")
@@ -105,8 +105,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( this.documentNumber, documentType
-				);
+		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType);
 	}
 
 	@Override
@@ -116,6 +115,8 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentNumber, other.documentNumber) && Objects.equals(this.documentType, other.documentType);
+		return Objects.equals(this.documentNumber, other.documentNumber)
+				&& Objects.equals(this.issuanceCountry, other.issuanceCountry)
+				&& Objects.equals(this.documentType, other.documentType);
 	}
 }

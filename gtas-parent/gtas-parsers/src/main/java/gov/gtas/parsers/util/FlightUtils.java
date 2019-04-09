@@ -41,27 +41,7 @@ public final class FlightUtils {
         String carrier = s.substring(0, s.length() - fn.length());
         return new FlightNumber(carrier, fn.reverse().toString());
     }
-    
-    /**
-     * rules for setting calculated field 'flightDate'
-     */
-    public static Date determineFlightDate(Date etd, Date eta, Date transmissionDate) {
-        Date d = null;
-        if (etd != null) {
-            d = etd;
-        } else if (eta != null) {
-            d = eta;
-        } else {
-            d = transmissionDate;
-        }
 
-        if (d != null) {
-            return DateUtils.stripTime(d);
-        }
-        
-        return null;
-    }
-    
     public static String padFlightNumberWithZeroes(String fn) {
     	if(StringUtils.isBlank(fn)){
     		return null;

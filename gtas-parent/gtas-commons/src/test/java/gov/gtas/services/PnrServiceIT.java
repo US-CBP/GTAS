@@ -6,21 +6,6 @@
 package gov.gtas.services;
 
 import static org.junit.Assert.assertNotNull;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
-//import gov.gtas.model.Pax;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.lookup.PassengerTypeCode;
-import gov.gtas.repository.ApisMessageRepository;
-import gov.gtas.repository.LookUpRepository;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -35,13 +20,28 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
+
+import gov.gtas.config.AsyncConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.model.Address;
+import gov.gtas.model.Agency;
+import gov.gtas.model.CreditCard;
+import gov.gtas.model.Flight;
+import gov.gtas.model.FrequentFlyer;
+import gov.gtas.model.MutableFlightDetails;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.PassengerTripDetails;
+import gov.gtas.model.Phone;
+import gov.gtas.model.Pnr;
+//import gov.gtas.model.Pax;
+import gov.gtas.model.lookup.PassengerTypeCode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
-		CachingConfig.class })
+@ContextConfiguration(classes = { AsyncConfig.class , TestCommonServicesConfig.class})
 @Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
@@ -50,33 +50,14 @@ public class PnrServiceIT {
 	@Autowired
 	private PnrService pnrService;
 
-	@Autowired
-	private FlightService testTarget;
-
-	@Autowired
-	private AirportService aService;
-
-	@Autowired
-	private CountryService cService;
-
-	@Autowired
-	private CarrierService crService;
-
-	@Autowired
-	private LookUpRepository lookupDao;
-
-	@Autowired
-	private ApisMessageRepository apisMessageRepository;
-
-	@Autowired
-	private PassengerService passengerService;
-	
 	@Test
 	@Transactional
 	public void testPnrSave() {
 		Flight f = new Flight();
 		prepareFlightData(f);
 		Passenger passengerToUpdate = new Passenger();
+		passengerToUpdate.setPassengerDetails(new PassengerDetails());
+		passengerToUpdate.setPassengerTripDetails(new PassengerTripDetails());
 		preparePassengerData(passengerToUpdate);
 		Pnr pnr = new Pnr();
 		preparePnr(pnr);
@@ -155,9 +136,9 @@ public class PnrServiceIT {
 		f.setOrigin(a);
 		String b = "JFK";
 		f.setDestination(b);
-		f.setEta(new Date());
-		f.setEtd(new Date("7/31/2015"));
-		f.setFlightDate(new Date());
+		MutableFlightDetails mutableFlightDetails = new MutableFlightDetails(f.getId());
+		mutableFlightDetails.setEta(new Date());
+		mutableFlightDetails.setEtd(new Date("7/31/2015"));
 		f.setFlightNumber("528");
 		String c = "US";
 		f.setDestinationCountry(c);

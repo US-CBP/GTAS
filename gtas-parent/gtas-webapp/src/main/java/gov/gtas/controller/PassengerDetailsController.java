@@ -109,10 +109,10 @@ public class PassengerDetailsController {
 			vo.setCarrier(flight.getCarrier());
 			vo.setFlightOrigin(flight.getOrigin());
 			vo.setFlightDestination(flight.getDestination());
-			vo.setFlightETA((flight.getEta() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getEta()) : EMPTY_STRING);
-			vo.setFlightETD((flight.getEtd() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getEtd()) : EMPTY_STRING);
+			vo.setFlightETA((flight.getMutableFlightDetails().getEta() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getMutableFlightDetails().getEta()) : EMPTY_STRING);
+			vo.setFlightETD((flight.getMutableFlightDetails().getEtd() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getMutableFlightDetails().getEtd()) : EMPTY_STRING);
 			vo.setFlightId(flight.getId().toString());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
@@ -469,6 +469,8 @@ public class PassengerDetailsController {
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotalbagCount(source.getTotal_bag_count());
 		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
+                
+                target.setTripType(source.getTripType());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
@@ -546,9 +548,8 @@ public class PassengerDetailsController {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setFlightDate(fl.getFlight().getFlightDate().toString());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEta()));
+					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
+					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else{
@@ -897,15 +898,14 @@ public class PassengerDetailsController {
 
 			target.setFlightNumber(source.getFlightNumber());
 			target.setCarrier(source.getCarrier());
-			target.setEtaDate(source.getEtaDate());
+			target.setEtaDate(source.getMutableFlightDetails().getEtaDate());
 			target.setEtdDate(source.getEtdDate());
 			target.setOriginCountry(source.getOriginCountry());
 			target.setOrigin(source.getOrigin());
 			target.setDestinationCountry(source.getDestinationCountry());
 			target.setDestination(source.getDestination());
-			target.setFlightDate(source.getFlightDate());
-			target.setEtd(source.getEtd());
-			target.setEta(source.getEta());
+			target.setEtd(source.getMutableFlightDetails().getEtd());
+			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
                         target.setFlightId(source.getId().toString());
 

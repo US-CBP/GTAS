@@ -94,7 +94,7 @@ public class JPQLGenerator {
             } else if (queryType == EntityEnum.PASSENGER) {
 
                 queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", " + EntityEnum.PASSENGER.getAlias() + ", p.flight " +
-                        Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias();
+                        Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias() + " left join p.flight f ";
 
 //					if (paymentFormCondition.isTrue()) {
 //						// joinEntities.remove(EntityEnum.PNR);

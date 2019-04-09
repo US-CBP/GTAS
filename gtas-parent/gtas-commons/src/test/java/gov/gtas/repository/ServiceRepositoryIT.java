@@ -6,25 +6,9 @@
 package gov.gtas.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.ApisMessage;
-import gov.gtas.model.Document;
-import gov.gtas.model.Flight;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.lookup.Airport;
-import gov.gtas.model.lookup.Carrier;
-import gov.gtas.model.lookup.Country;
-import gov.gtas.model.lookup.DocumentTypeCode;
-import gov.gtas.model.lookup.PassengerTypeCode;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.PassengerService;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,8 +27,23 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.model.ApisMessage;
+import gov.gtas.model.Document;
+import gov.gtas.model.Flight;
+import gov.gtas.model.MutableFlightDetails;
+import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.Airport;
+import gov.gtas.model.lookup.Carrier;
+import gov.gtas.model.lookup.Country;
+import gov.gtas.model.lookup.DocumentTypeCode;
+import gov.gtas.model.lookup.PassengerTypeCode;
+import gov.gtas.services.FlightService;
+import gov.gtas.services.PassengerService;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ServiceRepositoryIT {
@@ -84,9 +83,10 @@ public class ServiceRepositoryIT {
         // Airport b = new Airport (3584l,"Atlanta","ATL","KATL");
 
         f.setDestination(b);
-        f.setEta(new Date());
-        f.setEtd(new Date("6/20/2015"));
-        f.setFlightDate(new Date());
+        MutableFlightDetails mutableFlightDetails = new MutableFlightDetails(f.getId());
+        mutableFlightDetails.setEta(new Date());
+        mutableFlightDetails.setEtd(new Date("6/20/2015"));
+        f.setMutableFlightDetails(mutableFlightDetails);
         f.setFlightNumber("8002");
 
         String c = "US";

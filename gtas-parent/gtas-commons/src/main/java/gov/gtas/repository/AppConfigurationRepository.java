@@ -22,6 +22,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
     public static String MAX_PASSENGER_QUERY_RESULT = "MAX_PASSENGER_QUERY_RESULT";
     public static String MAX_FLIGHT_QUERY_RESULT = "MAX_FLIGHT_QUERY_RESULT";
+    public static String THREADS_ON_LOADER = "THREADS_ON_LOADER";
     public static String FLIGHT_RANGE = "FLIGHT_RANGE";
     public static String REDIS_KEYS_TTL = "REDIS_KEYS_TTL";
     public static String REDIS_KEYS_TTL_TIME_UNIT = "REDIS_KEYS_TTL_TIME_UNIT";
@@ -33,6 +34,8 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     public static String MAX_PASSENGERS_PER_FUZZY_MATCH = "MAX_PASSENGERS_PER_FUZZY_MATCH";
     public static String MAX_MESSAGES_PER_RULE_RUN = "MAX_MESSAGES_PER_RULE_RUN";
     public static String MAX_FLIGHTS_SAVED_PER_BATCH = "MAX_FLIGHTS_PER_BATCH";
+    public static String DATA_MANAGEMENT_TRUNC_TYPE_FLAG = "DATA_MANAGEMENT_TRUNC_TYPE_FLAG";
+    public static String DATA_MANAGEMENT_CUT_OFF_TIME_SPAN = "DATA_MANAGEMENT_CUT_OFF_TIME_SPAN";
 
     public AppConfiguration findByOption(String option);
     public AppConfiguration save(AppConfiguration appConfig);

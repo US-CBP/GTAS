@@ -23,7 +23,6 @@ import gov.gtas.model.MessageStatus;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.repository.MessageRepository;
-import gov.gtas.services.search.ElasticHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -38,9 +37,6 @@ public class Loader {
 
     @Autowired
     private PnrMessageService pnrLoader;
-
-    @Autowired
-    protected ElasticHelper indexer;
 
     /**
      * Processes all the messages in a single file.
@@ -88,7 +84,7 @@ public class Loader {
             m.setFilePath(filePath);
             m.setCreateDate(new Date());
             m = msgDao.save(m);
-            MessageStatus messageStatus = new MessageStatus(m.getId(), MessageStatusEnum.FAILED_PARSING);
+            MessageStatus messageStatus = new MessageStatus(m.getId(), MessageStatusEnum.FAILED_PRE_PROCESS);
             msgDto.setMessageStatus(messageStatus);
             ProcessedMessages processedMessages = new ProcessedMessages();
             List<MessageStatus> messageStatuses = new ArrayList<>();
@@ -96,38 +92,27 @@ public class Loader {
             processedMessages.setMessageStatusList(messageStatuses);
             return processedMessages;
         }
-/*        try {
-            if (isElasticEnabled) {
-                indexer.initClient();
-                if (indexer.isDown()) {
-                    svc.setUseIndexer(false);
-                } else {
-                    svc.setUseIndexer(true);
-                }
-            }
-        } catch (Exception logged) {
-            logger.error("Error with redis-  This message WILL NOT BE INDEXED!", logged);
-        }
-        */
+
         int successMsgCount = 0;
         int failedMsgCount = 0;
         msgDto.setFilepath(filePath);
         rawMessages = msgDto.getRawMsgs();
         List<MessageStatus> messageStatuses = new ArrayList<>();
         for (String rawMessage : rawMessages) {
-        	msgDto.setRawMsg(rawMessage);
+            msgDto.setRawMsg(rawMessage);
             MessageDto parsedMessageDto = svc.parse(msgDto);
-            if (parsedMessageDto != null && parsedMessageDto.getMsgVo() != null) {
+            if (parsedMessageDto.getMessageStatus().isSuccess()) {
                 MessageStatus messageStatus = svc.load(parsedMessageDto);
                 messageStatuses.add(messageStatus);
                 if (messageStatus.isSuccess()) {
-                successMsgCount++;
+                    successMsgCount++;
+                } else {
+                    failedMsgCount++;
+                }
             } else {
+                messageStatuses.add(parsedMessageDto.getMessageStatus());
                 failedMsgCount++;
             }
-            } else {
-                failedMsgCount++;
-        }
         }
         ProcessedMessages processedMessages = new ProcessedMessages();
         processedMessages.setProcessed(new int[] {successMsgCount, failedMsgCount});

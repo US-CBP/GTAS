@@ -51,13 +51,29 @@ public final class ParseUtils {
         
         return rv;
     }
-    
+    public static Date parseBirthday(String dt, String format) {
+        try {
+            DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+            Date parsedDate = timeFormat.parse(dt);
+            if (parsedDate.after(new Date())) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(parsedDate);
+                cal.add(Calendar.YEAR, -100);
+                parsedDate = cal.getTime();
+            }
+            return parsedDate;
+        } catch (java.text.ParseException pe) {
+            logger.warn(String.format("Could not make a birthday from %s using format %s. Birthday needs a day month and year to be created.", dt, format));
+        }
+
+        return null;
+    }
     public static Date parseDateTime(String dt, String format) {
         try {
             DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
             return timeFormat.parse(dt);
         } catch (java.text.ParseException pe) {
-            logger.warn(String.format("Could not parse date %s using format %s", dt, format));
+            logger.warn(String.format("Could not parse date %s using format : %s", dt, format));
         }
         
         return null;
@@ -73,7 +89,7 @@ public final class ParseUtils {
             c.add(Calendar.DATE, daysInMonth-1);
             return c.getTime();
         } catch (java.text.ParseException pe) {
-            logger.warn(String.format("Could not parse date %s using format %s", dt, format));
+            logger.warn(String.format("Could not parse date %s using format: %s", dt, format));
         }
         
         return null;
@@ -136,21 +152,13 @@ public final class ParseUtils {
 		
 		SimpleDateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
 		try {
-		if (format != "yyMMdd") {
+		if (!"yyMMdd".equalsIgnoreCase(format)) {
 			return timeFormat.parse(dt);
 		} else {
-						//
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, -100);
-			timeFormat.set2DigitYearStart(cal.getTime());
-			//
-			
-				return timeFormat.parse(dt);
-			
+			return ParseUtils.parseBirthday(dt, format);
 		}
 		} catch (java.text.ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Failed to parse DOB (APIS)");
 		}
 		return null;
 	}

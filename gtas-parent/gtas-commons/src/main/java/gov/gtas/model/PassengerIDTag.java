@@ -9,12 +9,13 @@ package gov.gtas.model;
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Cacheable
 @Entity
-@Table(name = "passenger_id_tag")
+@Table(name = "passenger_id_tag", indexes = {
+        @Index(columnList = "idTag", name = "id_index"),
+        @Index(columnList = "doc_hash_id", name = "doc_hash_id_index")
+})
 public class PassengerIDTag extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
 
@@ -34,6 +35,9 @@ public class PassengerIDTag extends BaseEntityAudit {
 
 	@Column(name = "pax_id")
     private Long pax_id;
+        
+        @Column(name = "doc_hash_id")
+        private String docHashId;
 
     public String getIdTag() {
         return idTag;
@@ -58,4 +62,14 @@ public class PassengerIDTag extends BaseEntityAudit {
     public void setPax_id(Long pax_id) {
         this.pax_id = pax_id;
     }
+
+    public String getDocHashId() {
+        return docHashId;
+    }
+
+    public void setDocHashId(String docHashId) {
+        this.docHashId = docHashId;
+    }
+    
+    
 }
