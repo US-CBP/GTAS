@@ -1,21 +1,20 @@
 package gov.gtas.parsers.redisson.jms;
 
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.jms.config.JmsConfiguration;
-import gov.gtas.jms.config.MessagingListnerConfiguration;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.jms.config.JmsConfiguration;
+import gov.gtas.jms.config.MessagingListnerConfiguration;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class,JmsConfiguration.class,MessagingListnerConfiguration.class })
 @ComponentScan("gov.gtas.parsers.redisson")
 @Rollback(true)

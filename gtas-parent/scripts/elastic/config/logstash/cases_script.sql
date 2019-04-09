@@ -1,10 +1,8 @@
 SELECT c.*, 
 	   f.`id` "flight.id",
-       f.`eta` "flight.eta", 
-       f.`eta_date` "flight.eta_date", 
-       f.`etd` "flight.etd", 
+       fd.`eta_date` "flight.eta_date", 
        f.`etd_date` "flight.etd_date", 
-       f.`flight_date` "flight.flight_date", 
+       f.`etd_date` "flight.flight_date", 
        f.`flight_number` "flight.flight_number", 
        f.`full_flight_number` "flight.full_flight_number", 
        f.`origin` "flight.origin", 
@@ -85,6 +83,8 @@ SELECT c.*,
 FROM   cases c 
        LEFT JOIN flight f 
               ON (c.flightid = f.id )
+       left join `mutable_flight_details` fd
+		on (f.id = fd.flight_id)
        LEFT JOIN passenger p
               ON (c.paxId = p.id)
        JOIN `passenger_details` pd

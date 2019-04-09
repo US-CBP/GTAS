@@ -767,11 +767,6 @@ for logging purposes</note>
     </hop>
     <hop>
       <from>Dummy (do nothing)</from>
-      <to>Neo4J Output -passenger-flight</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing)</from>
       <to>Select values - id-to-string</to>
       <enabled>Y</enabled>
     </hop>
@@ -798,6 +793,11 @@ for logging purposes</note>
     <hop>
       <from>Add constants 2</from>
       <to>Set Variables-set variables to null</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing)</from>
+      <to>Neo4J Output -passenger-flight</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -1876,7 +1876,7 @@ for logging purposes</note>
         <property>
           <name>dob</name>
           <value>dob</value>
-          <type>String</type>
+          <type>Date</type>
           <primary>N</primary>
         </property>
       </properties>
@@ -1915,7 +1915,7 @@ for logging purposes</note>
         <property>
           <name>etd_date</name>
           <value>etd_date</value>
-          <type>String</type>
+          <type>Date</type>
           <primary>Y</primary>
         </property>
         <property>
@@ -1969,7 +1969,19 @@ for logging purposes</note>
         <property>
           <name>eta_date</name>
           <value>eta_date</value>
-          <type>String</type>
+          <type>Date</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>full_eta_dtm</name>
+          <value>full_eta_dtm</value>
+          <type>LocalDateTime</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>full_etd_dtm</name>
+          <value>full_etd_dtm</value>
+          <type>LocalDateTime</type>
           <primary>N</primary>
         </property>
       </properties>
@@ -1992,7 +2004,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
+      <xloc>864</xloc>
       <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2231,6 +2243,40 @@ for logging purposes</note>
         <currency_symbol/>
         <storage_type/>
       </meta>
+      <meta>
+        <name>full_eta_dtm</name>
+        <rename>full_eta_dtm</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>full_etd_dtm</name>
+        <rename>full_etd_dtm</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -2242,7 +2288,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>1408</yloc>
+      <yloc>1392</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2485,7 +2531,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>688</xloc>
-      <yloc>1424</yloc>
+      <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2577,7 +2623,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>1136</xloc>
-      <yloc>1424</yloc>
+      <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2891,7 +2937,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2903,7 +2949,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2915,7 +2961,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2927,7 +2973,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2939,7 +2985,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2951,7 +2997,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2963,7 +3009,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2975,7 +3021,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2987,7 +3033,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -2999,7 +3045,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3011,7 +3057,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3023,7 +3069,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3035,7 +3081,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3047,7 +3093,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3059,7 +3105,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3071,7 +3117,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3083,7 +3129,7 @@ for logging purposes</note>
         <decimal>.</decimal>
         <group>,</group>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>0</precision>
       </field>
@@ -3095,7 +3141,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3107,7 +3153,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3119,7 +3165,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3131,7 +3177,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3143,7 +3189,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3155,7 +3201,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3167,7 +3213,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3179,7 +3225,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3191,7 +3237,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3203,7 +3249,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3215,7 +3261,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3227,7 +3273,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3239,7 +3285,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3251,7 +3297,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3263,7 +3309,7 @@ for logging purposes</note>
         <decimal>.</decimal>
         <group>,</group>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>9</length>
         <precision>0</precision>
       </field>
@@ -3275,7 +3321,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3287,7 +3333,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3299,7 +3345,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3311,7 +3357,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>3</length>
         <precision>-1</precision>
       </field>
@@ -3323,7 +3369,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>1</length>
         <precision>-1</precision>
       </field>
@@ -3335,7 +3381,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3347,7 +3393,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3359,7 +3405,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>3</length>
         <precision>-1</precision>
       </field>
@@ -3371,7 +3417,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3383,7 +3429,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3395,7 +3441,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3407,7 +3453,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3419,7 +3465,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3431,7 +3477,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3443,7 +3489,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3455,7 +3501,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3467,7 +3513,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3479,7 +3525,7 @@ for logging purposes</note>
         <decimal>.</decimal>
         <group>,</group>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>9</length>
         <precision>0</precision>
       </field>
@@ -3491,7 +3537,7 @@ for logging purposes</note>
         <decimal>.</decimal>
         <group>,</group>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>9</length>
         <precision>0</precision>
       </field>
@@ -3503,7 +3549,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3515,7 +3561,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>2</length>
         <precision>-1</precision>
       </field>
@@ -3527,7 +3573,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3539,7 +3585,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3551,7 +3597,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3563,7 +3609,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3575,7 +3621,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3587,7 +3633,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>16</length>
         <precision>-1</precision>
       </field>
@@ -3599,7 +3645,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3611,7 +3657,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3623,7 +3669,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3635,7 +3681,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -3647,7 +3693,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3659,7 +3705,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3671,7 +3717,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3683,7 +3729,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3695,7 +3741,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3707,7 +3753,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3719,7 +3765,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>3</length>
         <precision>-1</precision>
       </field>
@@ -3731,7 +3777,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>9</length>
         <precision>-1</precision>
       </field>
@@ -3743,7 +3789,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3755,7 +3801,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3767,7 +3813,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3779,7 +3825,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3791,7 +3837,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>0</length>
         <precision>-1</precision>
       </field>
@@ -3803,7 +3849,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>20</length>
         <precision>-1</precision>
       </field>
@@ -3815,7 +3861,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3827,7 +3873,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3839,7 +3885,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3851,7 +3897,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3863,7 +3909,7 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>255</length>
         <precision>-1</precision>
       </field>
@@ -3875,7 +3921,7 @@ for logging purposes</note>
         <decimal>.</decimal>
         <group>,</group>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
         <length>9</length>
         <precision>0</precision>
       </field>
@@ -3887,7 +3933,31 @@ for logging purposes</note>
         <decimal/>
         <group/>
         <nullif/>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>full_eta_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>full_etd_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
         <length>-1</length>
         <precision>-1</precision>
       </field>
@@ -4005,8 +4075,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1360</xloc>
-      <yloc>1424</yloc>
+      <xloc>1408</xloc>
+      <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

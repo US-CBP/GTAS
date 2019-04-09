@@ -7,7 +7,7 @@ package gov.gtas.services;
 
 import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.ApisStatistics;
 import gov.gtas.model.PnrStatistics;
 import gov.gtas.model.YTDAirportStatistics;
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DashboardCountsIT {

@@ -24,6 +24,7 @@ import gov.gtas.repository.LookUpRepository;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.FlightLegRepository;
 import gov.gtas.util.LobUtils;
 
 @Service
@@ -35,6 +36,7 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private LookUpRepository lookupRepo;
+
 
     @Override
     public List<String> preprocess(String message) {
@@ -97,7 +99,7 @@ public class ApisMessageService extends MessageLoaderService {
             Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
                     m.getFlights(),
             		apis.getFlights(),
-                    new ArrayList<>(),
+                    apis.getFlightLegs(),
                     msgDto.getPrimeFlightKey(),
                     new HashSet<>());
 
@@ -114,6 +116,7 @@ public class ApisMessageService extends MessageLoaderService {
                     apis.getPassengers(), primeFlight, new HashSet<>());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
+            createFlightLegs(apis);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
             apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {
@@ -123,11 +126,22 @@ public class ApisMessageService extends MessageLoaderService {
             logger.error("ERROR", e);
         } finally {
             msgDto.getMessageStatus().setSuccess(createMessage(apis));
+       
         }
         return msgDto.getMessageStatus();
 	}
     
-    @Override
+    private void createFlightLegs(ApisMessage apis) {
+		
+    	if(apis != null && apis.getFlightLegs() != null) {
+			for(FlightLeg leg : apis.getFlightLegs()) {
+				leg.setMessage(apis);
+			}
+		}
+		
+	}
+
+	@Override
     public MessageVo parse(String message) {
         return null; //unused
     }
@@ -143,14 +157,11 @@ public class ApisMessageService extends MessageLoaderService {
         logger.error(stacktrace);
     }
 
-    boolean createMessage(ApisMessage m) {
+    private boolean createMessage(ApisMessage m) {
         boolean ret = true;
         try {
            m = msgDao.save(m);
-       /*     if (useIndexer) {
-            	indexer.indexApis(m);
-            }
-       */ } catch (Exception e) {
+        } catch (Exception e) {
             ret = false;
             handleException(e, m);
             try {
@@ -214,14 +225,16 @@ public class ApisMessageService extends MessageLoaderService {
     					p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency()+1);
     				}
     			}
-    			if (p.getFlightPaxList().add(fp)) {
-                    apisMessage.addToFlightPax(fp);
+
+    			Optional<FlightPax> optionalFlightPax = p.getFlightPaxList()
+                        .stream()
+                        .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
+                        .findFirst();
+
+    			if (optionalFlightPax.isPresent()) {
+                    optionalFlightPax.ifPresent(apisMessage::addToFlightPax);
                 } else {
-    			     p.getFlightPaxList()
-                             .stream()
-                             .filter(fpax -> "APIS".equalsIgnoreCase(fpax.getMessageSource().toUpperCase()))
-                             .findFirst()
-                             .ifPresent(apisMessage::addToFlightPax);
+                    apisMessage.addToFlightPax(fp);
                 }
     		}
     	}

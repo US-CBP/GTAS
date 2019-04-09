@@ -136,7 +136,7 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
             // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {
-                leg.setPnr(pnr);
+                leg.setMessage(pnr);
             }
             for (BookingDetail bD : pnr.getBookingDetails()) {
                 bD.getPnrs().add(pnr);

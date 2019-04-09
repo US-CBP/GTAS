@@ -60,6 +60,8 @@ insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER
 insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
+insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
+insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
 -- ----------------------------
 -- Records of dashboard_message_stats
 -- ----------------------------

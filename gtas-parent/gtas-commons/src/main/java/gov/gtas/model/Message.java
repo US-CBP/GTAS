@@ -6,7 +6,9 @@
 package gov.gtas.model;
 
 import java.sql.Clob;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.*;
@@ -36,6 +38,9 @@ public class Message extends BaseEntity {
 	@OneToOne(targetEntity = MessageStatus.class, mappedBy = "message", fetch = FetchType.EAGER)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "ms_message_id", insertable = false, updatable = false)
 	private MessageStatus status;
+	
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="message")
+    private List<FlightLeg> flightLegs = new ArrayList<>();
 
 	@Column(length = 4000)
 	private String error;
@@ -103,6 +108,24 @@ public class Message extends BaseEntity {
 	public int hashCode() {
 		return Objects.hash(this.hashCode);
 	}
+
+	public void addFlightLeg(FlightLeg leg) {
+        flightLegs.add(leg);
+        leg.setMessage(this);
+    }
+
+	public void removeFlightLeg(FlightLeg leg) {
+		 flightLegs.remove(leg);
+	     leg.setMessage(null);
+	}
+	
+    public List<FlightLeg> getFlightLegs() {
+        return flightLegs;
+    }
+
+    public void setFlightLegs(List<FlightLeg> flightLegs) {
+        this.flightLegs = flightLegs;
+    }
 
 	@Override
 	public boolean equals(Object obj) {

@@ -144,9 +144,7 @@ public class Pnr extends Message {
     @ManyToMany(targetEntity = CodeShareFlight.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_codeshares", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "codeshare_id"))
     private Set<CodeShareFlight> codeshares = new HashSet<>();
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
-    private List<FlightLeg> flightLegs = new ArrayList<>();
+
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<PaymentForm> paymentForms = new ArrayList<>();
@@ -216,11 +214,6 @@ public class Pnr extends Message {
 	public void setDwellTimes(Set<DwellTime> dwellTimes) {
 		this.dwellTimes = dwellTimes;
 	}
-
-
-	public void addFlightLeg(FlightLeg leg) {
-        flightLegs.add(leg);
-    }
 
 	public void addPaymentForm(PaymentForm payment) {
         paymentForms.add(payment);
@@ -421,14 +414,6 @@ public class Pnr extends Message {
 
     public void setAgencies(Set<Agency> agencies) {
         this.agencies = agencies;
-    }
-
-    public List<FlightLeg> getFlightLegs() {
-        return flightLegs;
-    }
-
-    public void setFlightLegs(List<FlightLeg> flightLegs) {
-        this.flightLegs = flightLegs;
     }
 
     public Double getBaggageWeight() {

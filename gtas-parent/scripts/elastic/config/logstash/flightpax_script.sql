@@ -1,11 +1,11 @@
 select * from (select 
 	concat(fp.`passenger_id`,'+',fp.`flight_id`) "id",
-	f.`eta`  "flight.eta",
+	fd.`eta_date`  "flight.eta",
 	f.`carrier`  "flight.carrier",
-	f.`etd` "flight.etd", 
+	f.`etd_date` "flight.etd", 
 	f.`flight_number` "flight.flight_number",
 	f.`full_flight_number` "flight.full_flight_number",
-	f.`flight_date` "flight.flight_date",
+	f.`etd_date` "flight.flight_date",
 	f.`id` "flight.id",
 	f.`origin` "flight.origin", 
 	f.`origin_country` "flight.origin_country",
@@ -64,6 +64,8 @@ select * from (select
 		on (td.ptd_id = p.id)
 	join `flight` f 
 		on (fp.`flight_id` = f.`id`) 
+	left join `mutable_flight_details` fd
+		on (f.id = fd.flight_id)
 	left join `document` d 
 		on (d.`passenger_id` = p.id)
 	left join `pnr_passenger` pnr_p
