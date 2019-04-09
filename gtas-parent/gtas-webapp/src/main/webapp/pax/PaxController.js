@@ -36,6 +36,15 @@
         	});
         };
         
+        //Service call for tooltip data
+          $scope.getCodeTooltipData = function(field, type){
+          	return codeTooltipService.getCodeTooltipData(field,type);
+          }
+          
+          $scope.resetTooltip = function(){
+          	$('md-tooltip').remove();
+          };
+        
         $scope.watchlistCategoryId;
         
         watchListService.getWatchlistCategories().then(function(res){
@@ -888,4 +897,5 @@
         getPage();
         mapAirports();
     });
+    
 }());

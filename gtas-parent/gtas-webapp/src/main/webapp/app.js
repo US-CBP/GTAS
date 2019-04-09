@@ -117,6 +117,21 @@ var app;
            $.getJSON('./data/carriers.json', function(data){
         	  $rootScope.carriersList = data;
            });
+           
+           //For tooltips
+           $.getJSON('./data/passenger_types.json', function(data){
+         	  $rootScope.passengerTypes = data;
+            });
+           
+           //For tooltips
+           $.getJSON('./data/doc_types.json', function(data){
+         	  $rootScope.documentTypes = data;
+            });
+           
+           //For tooltips
+           $.getJSON('./data/genders.json', function(data){
+         	  $rootScope.genders = data;
+            });
 
           
           // $rootScope.airportsList =
