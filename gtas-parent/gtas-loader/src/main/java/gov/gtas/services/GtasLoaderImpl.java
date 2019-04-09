@@ -505,22 +505,27 @@ public class GtasLoaderImpl implements GtasLoader {
                     bag.setHeadPool(b.isHeadPool());
                     bag.setBagSerialCount(b.getConsecutiveTagNumber());
                     bag.setFlight(primeFlight);
+                    bag.setFlightId(primeFlight.getId());
                     bag.setPassenger(p);
                     bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));
-
-                    for (UUID flightUUID : b.getFlightVoId()) {
-                        if (uuidBookingDetailMap.containsKey(flightUUID)) {
-                            bag.getBookingDetail().add(uuidBookingDetailMap.get(flightUUID));
-                        } else if (flightUUID.equals(primeFlight.getParserUUID())) {
-                            bag.setPrimeFlight(true);
-                        } else if (orphanToBD.containsKey(flightUUID)) {
-                            UUID bookingDetailUUID = orphanToBD.get(flightUUID);
-                            bag.getBookingDetail().add(uuidBookingDetailMap.get(bookingDetailUUID));
-                        } else {
-                            logger.warn("Could not find a place to put the bag!");
-                        }
+                    if (b.getFlightVoId().contains(primeFlight.getParserUUID())) {
+                        bag.setPrimeFlight(true);
                     }
                     bagDao.save(bag);
+                    primeFlight.getBags().add(bag);
+                    for (UUID flightUUID : b.getFlightVoId()) {
+                        if (uuidBookingDetailMap.containsKey(flightUUID)) {
+                            BookingDetail bookingDetail = uuidBookingDetailMap.get(flightUUID);
+                            bookingDetail.getBags().add(bag);
+                        } else if (orphanToBD.containsKey(flightUUID)) {
+                            UUID bookingDetailUUID = orphanToBD.get(flightUUID);
+                            BookingDetail bookingDetail = uuidBookingDetailMap.get(bookingDetailUUID);
+                            bookingDetail.getBags().add(bag);
+                        } else if (!flightUUID.equals(primeFlight.getParserUUID())) {
+                            logger.warn("No connection to booking detail can be made!");
+                        }
+                    }
+                    bookingDetailDao.saveAll(pnr.getBookingDetails());
                 }
             }
         }

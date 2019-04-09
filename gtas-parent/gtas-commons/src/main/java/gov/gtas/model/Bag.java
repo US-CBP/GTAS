@@ -22,9 +22,11 @@ public class Bag extends BaseEntity {
     @Column(name = "bag_identification", nullable = false)
     private String bagId;
 
+	@Column (name = "flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
 	private Flight flight;
 
 	@Column(name = "data_source")
@@ -75,7 +77,13 @@ public class Bag extends BaseEntity {
 		this.country = country;
 	}
 
+	public Long getFlightId() {
+		return flightId;
+	}
 
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 	public String getBagSerialCount() {
 		return bagSerialCount;
 	}
