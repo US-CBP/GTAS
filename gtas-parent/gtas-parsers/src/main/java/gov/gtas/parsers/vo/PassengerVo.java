@@ -8,6 +8,7 @@ package gov.gtas.parsers.vo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,6 +24,7 @@ public class PassengerVo implements Validatable {
      */
     private String travelerReferenceNumber;
 
+    private UUID uuid = UUID.randomUUID();
     private String title;
     private String firstName;
     private String middleName;
@@ -40,6 +42,7 @@ public class PassengerVo implements Validatable {
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
     private List<TicketFareVo> tickets = new ArrayList<>();
+    private List<BagVo> bagVos = new ArrayList<>();
     private String address;
     private String bagId;
     private String bagNum;
@@ -307,5 +310,21 @@ public class PassengerVo implements Validatable {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
+    }
+
+    public List<BagVo> getBagVos() {
+        return bagVos;
+    }
+
+    public void setBagVos(List<BagVo> bagVos) {
+        this.bagVos = bagVos;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

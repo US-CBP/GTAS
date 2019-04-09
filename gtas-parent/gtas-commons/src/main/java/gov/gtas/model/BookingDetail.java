@@ -3,6 +3,7 @@ package gov.gtas.model;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -59,7 +60,28 @@ public class BookingDetail extends BaseEntityAudit {
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
-    
+
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class)
+	@JoinTable(name = "bag_booking_detail_join", joinColumns = @JoinColumn(name = "bd_id"), inverseJoinColumns = @JoinColumn(name = "bag_id"))
+	private Set<Bag> bags = new HashSet<>();
+
+
+    /*
+    *
+    * Used to keep a referenced to FlightVO from parser.
+    * Only used in loader to help establish relationships.
+    * */
+	@Transient
+	private UUID parserUUID;
+
+	public UUID getParserUUID() {
+		return parserUUID;
+	}
+
+	public void setParserUUID(UUID parserUUID) {
+		this.parserUUID = parserUUID;
+	}
+
 	public Set<Passenger> getPassengers() {
 		return passengers;
 	}
@@ -215,5 +237,13 @@ public class BookingDetail extends BaseEntityAudit {
 				", passengers=" + passengers +
 				", pnrs=" + pnrs +
 				'}';
+	}
+
+	public Set<Bag> getBags() {
+		return bags;
+	}
+
+	public void setBags(Set<Bag> bags) {
+		this.bags = bags;
 	}
 }

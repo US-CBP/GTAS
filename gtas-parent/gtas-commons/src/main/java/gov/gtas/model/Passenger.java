@@ -78,6 +78,23 @@ public class Passenger extends BaseEntityAudit {
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
 
+
+    /*
+     * Used to keep a referenced to passengerVO from parser.
+     * Only used in loader to help establish relationships.
+     * This is *not* used
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
+
     public Flight getFlight() {
         return flight;
     }

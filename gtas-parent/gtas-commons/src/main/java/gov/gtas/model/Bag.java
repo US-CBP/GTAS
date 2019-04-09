@@ -6,7 +6,10 @@
 package gov.gtas.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "bag")
@@ -19,29 +22,74 @@ public class Bag extends BaseEntity {
     @Column(name = "bag_identification", nullable = false)
     private String bagId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false)
-	private Passenger passenger;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
 	private Flight flight;
-	
-    @Column(name = "data_source")
-    private String data_source;
-    
-    private String destination;
 
-    @Column(name = "destination_airport")
+	@Column(name = "data_source")
+    private String data_source;
+
+	@Column(name = "destination_city")
+	private String destination;
+
+	@Column(name = "destination_country")
+	private String country;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(nullable = false)
+	private Passenger passenger;
+
+	@Column(name = "destination_airport")
 	private String destinationAirport;
-    
+
     @Column(name = "airline")
 	private String airline;
     
     @Column(name = "headpool")
 	private boolean headPool=false;
 
-    
+    @Column(name = "primeFlight")
+	private boolean primeFlight;
+
+    @ManyToOne()
+	@JoinColumn(name = "bagMeasurements")
+	private BagMeasurements bagMeasurements;
+
+	@ManyToMany(fetch = FetchType.LAZY,  mappedBy = "bags",targetEntity = BookingDetail.class)
+	private Set<BookingDetail> bookingDetail = new HashSet<>();
+
+
+	@Column(name = "bag_serial_count")
+	private String bagSerialCount;
+
+	@Transient
+	private UUID parserUUID;
+
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+
+	public String getBagSerialCount() {
+		return bagSerialCount;
+	}
+
+	public void setBagSerialCount(String bagSerialCount) {
+		this.bagSerialCount = bagSerialCount;
+	}
+	public UUID getParserUUID() {
+		return parserUUID;
+	}
+
+	public void setParserUUID(UUID parserUUID) {
+		this.parserUUID = parserUUID;
+	}
 	public boolean isHeadPool() {
 		return headPool;
 	}
@@ -140,5 +188,27 @@ public class Bag extends BaseEntity {
 	}
 
 
+    public void setBookingDetail(Set<BookingDetail> bookingDetail) {
+        this.bookingDetail = bookingDetail;
+    }
 
+    public Set<BookingDetail> getBookingDetail() {
+        return bookingDetail;
+    }
+
+	public boolean isPrimeFlight() {
+		return primeFlight;
+	}
+
+	public void setPrimeFlight(boolean primeFlight) {
+		this.primeFlight = primeFlight;
+	}
+
+	public BagMeasurements getBagMeasurements() {
+		return bagMeasurements;
+	}
+
+	public void setBagMeasurements(BagMeasurements bagMeasurements) {
+		this.bagMeasurements = bagMeasurements;
+	}
 }

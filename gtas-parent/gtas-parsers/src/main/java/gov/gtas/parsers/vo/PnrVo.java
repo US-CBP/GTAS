@@ -6,9 +6,11 @@
 package gov.gtas.parsers.vo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.parsers.pnrgov.segment.TVL_L0;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,16 +29,17 @@ public class PnrVo extends MessageVo implements Validatable {
     private Date departureDate;
     private Integer passengerCount;
     private Integer bagCount;
-    private Integer total_bag_count;
-    private Double baggageWeight;
+    private int total_bag_count = 0;
+    private double baggageWeight = 0;
     private String baggageUnit;
     private String formOfPayment;
-
+    private TVL_L0 primeFlight;
     private Integer daysBookedBeforeTravel;
     
     private List<FlightVo> flights = new ArrayList<>();
     private List<PassengerVo> passengers = new ArrayList<>();
     private List<BagVo> bags = new ArrayList<>();
+    private List<BagMeasurementsVo> bagMeasurements = new ArrayList<>();
     private List<AddressVo> addresses = new ArrayList<>();
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
     private List<CreditCardVo> creditCards = new ArrayList<>();
@@ -294,4 +297,19 @@ public class PnrVo extends MessageVo implements Validatable {
         return true;
     }
 
+    public TVL_L0 getPrimeFlight() {
+        return primeFlight;
+    }
+
+    public void setPrimeFlight(TVL_L0 primeFlight) {
+        this.primeFlight = primeFlight;
+    }
+
+    public List<BagMeasurementsVo> getBagMeasurements() {
+        return bagMeasurements;
+    }
+
+    public void setBagMeasurements(List<BagMeasurementsVo> bagMeasurements) {
+        this.bagMeasurements = bagMeasurements;
+    }
 }

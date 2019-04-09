@@ -321,7 +321,7 @@ public class LoaderUtils {
         return a;
     }
 
-    public Airport getAirport(String code) throws ParseException {
+    public Airport getAirport(String code) {
         if (StringUtils.isBlank(code)) {
             return null;
         }

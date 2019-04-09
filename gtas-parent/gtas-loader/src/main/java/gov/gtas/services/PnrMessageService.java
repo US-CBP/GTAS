@@ -130,9 +130,8 @@ public class PnrMessageService extends MessageLoaderService {
                     primeFlight,
                     pnr.getBookingDetails());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
-
             createFlightPax(pnr);
-            loaderRepo.createBagsFromPnrVo(vo, pnr);
+            loaderRepo.createBagInformation(vo, pnr, primeFlight);
             loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
             // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {

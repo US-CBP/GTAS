@@ -6,11 +6,12 @@
 package gov.gtas.services;
 
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
 
@@ -57,6 +59,8 @@ public class GtasLoaderImpl implements GtasLoader {
 
     private final BagRepository bagDao;
 
+    private final BagMeasurementsRepository bagMeasurementsRepository;
+
     private final PaymentFormRepository paymentFormDao;
 
     private final PassengerIDTagRepository passengerIdTagDao;
@@ -83,6 +87,9 @@ public class GtasLoaderImpl implements GtasLoader {
     MutableFlightDetailsRepository mutableFlightDetailsRepository;
 
 
+    private final LoaderUtils loaderUtils;
+
+
     @Autowired
     public GtasLoaderImpl(
             PassengerRepository passengerDao,
@@ -105,7 +112,9 @@ public class GtasLoaderImpl implements GtasLoader {
             BookingDetailRepository bookingDetailDao,
             PassengerTripRepository passengerTripRepository,
             PassengerDetailRepository passengerDetailRepository,
-            MutableFlightDetailsRepository mutableFlightDetailsRepository) {
+            MutableFlightDetailsRepository mutableFlightDetailsRepository,
+            BagMeasurementsRepository bagMeasurementsRepository,
+            LoaderUtils loaderUtils) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -127,6 +136,8 @@ public class GtasLoaderImpl implements GtasLoader {
         this.passengerTripRepository = passengerTripRepository;
         this.passengerDetailRepository = passengerDetailRepository;
         this.mutableFlightDetailsRepository = mutableFlightDetailsRepository;
+        this.bagMeasurementsRepository = bagMeasurementsRepository;
+        this.loaderUtils = loaderUtils;
     }
 
 
@@ -285,6 +296,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 mfd = mutableFlightDetailsRepository.save(mfd);
                 currentFlight.setMutableFlightDetails(mfd);
                 primeFlight = currentFlight;
+                primeFlight.setParserUUID(fvo.getUuid());
                 logger.debug("processFlightsAndPassenger: check for existing flights time= " + (System.nanoTime() - startTime) / 1000000);
                 messageFlights.add(currentFlight);
                 FlightLeg leg = new FlightLeg();
@@ -295,6 +307,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 // All flights that are not prime flights are considered booking details.
                 BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
                 bD = bookingDetailDao.save(bD);
+                bD.setParserUUID(fvo.getUuid());
                 bookingDetails.add(bD);
                 FlightLeg leg = new FlightLeg();
                 leg.setBookingDetail(bD);
@@ -325,6 +338,7 @@ public class GtasLoaderImpl implements GtasLoader {
             Passenger existingPassenger =  loaderServices.findPassengerOnFlight(primeFlight, pvo);
             if (existingPassenger == null ) {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
+                newPassenger.setParserUUID(pvo.getUuid());
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
                 }
@@ -333,6 +347,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
             } else if (!oldPassengersId.contains(existingPassenger.getId())) {
+                existingPassenger.setParserUUID(pvo.getUuid());
                 bookingDetailsAPassengerOwns.put(existingPassenger.getId(), existingPassenger.getBookingDetails());
                 oldPassengersId.add(existingPassenger.getId());
                 updatePassenger(existingPassenger, pvo);
@@ -464,38 +479,120 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    public void createBagsFromPnrVo(PnrVo pvo, Pnr pnr) {
+    public void createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight) {
 
-        for (Flight f : pnr.getFlights()) {
-            if (pvo == null || pvo.getBags() == null) {
-                break;
-            }
-            for (BagVo b : pvo.getBags()) {
-                String destination = f.getDestination();
-                //flight_pax | bag info not making table #783 code fix
-                if (b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())) {
-                        destination = b.getDestinationAirport();
+        List<BagVo> bagVoList = handleDuplicateBags(pvo);
+        List<BagMeasurementsVo> bagMeasurementsToSave = bagVoList.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toList());
+
+        Map<UUID, UUID> orphanToBD = getOrphanMap(pvo, pnr);
+        Map<UUID, BagMeasurements> uuidBagMeasurementsMap = saveBagMeasurements(bagMeasurementsToSave);
+        Map<UUID, BookingDetail> uuidBookingDetailMap = pnr.getBookingDetails()
+                .stream()
+                .collect(Collectors.toMap(BookingDetail::getParserUUID, bd -> bd));
+
+        for (BagVo b : bagVoList) {
+            for (Passenger p : pnr.getPassengers()) {
+                if (p.getParserUUID().equals(b.getPassengerId()) && b.getBagId() != null) {
+                    Bag bag = new Bag();
+                    bag.setBagId(b.getBagId());
+                    bag.setAirline(b.getAirline());
+                    bag.setData_source(b.getData_source());
+                    bag.setDestinationAirport(b.getDestinationAirport());
+                    Airport airport = loaderUtils.getAirport(b.getDestinationAirport());
+                    if (airport != null) {
+                        bag.setCountry(airport.getCountry());
                     }
-                    for (Passenger p : pnr.getPassengers()) {
-                        if (StringUtils.equals(p.getPassengerDetails().getFirstName(), b.getFirstName()) &&
-                                StringUtils.equals(p.getPassengerDetails().getLastName(), b.getLastName())) {
-                            Bag bag = new Bag();
-                            bag.setBagId(b.getBagId());
-                            bag.setAirline(b.getAirline());
-                            bag.setData_source(b.getData_source());
-                            bag.setDestinationAirport(destination);
-                            bag.setHeadPool(b.isHeadPool());
-                            bag.setFlight(f);
-                            bag.setPassenger(p);
-                            bagDao.save(bag);
-                            p.getBags().add(bag);
+                    bag.setHeadPool(b.isHeadPool());
+                    bag.setBagSerialCount(b.getConsecutiveTagNumber());
+                    bag.setFlight(primeFlight);
+                    bag.setPassenger(p);
+                    bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));
+
+                    for (UUID flightUUID : b.getFlightVoId()) {
+                        if (uuidBookingDetailMap.containsKey(flightUUID)) {
+                            bag.getBookingDetail().add(uuidBookingDetailMap.get(flightUUID));
+                        } else if (flightUUID.equals(primeFlight.getParserUUID())) {
+                            bag.setPrimeFlight(true);
+                        } else if (orphanToBD.containsKey(flightUUID)) {
+                            UUID bookingDetailUUID = orphanToBD.get(flightUUID);
+                            bag.getBookingDetail().add(uuidBookingDetailMap.get(bookingDetailUUID));
+                        } else {
+                            logger.warn("Could not find a place to put the bag!");
+                        }
+                    }
+                    bagDao.save(bag);
+                }
+            }
+        }
+    }
+
+    private Map<UUID, UUID> getOrphanMap(PnrVo pvo, Pnr pnr) {
+        Map<UUID, UUID> orphanToBD = new HashMap<>();
+        if (pnr.getBookingDetails().size() < pvo.getFlights().size() - 1) {
+            Set<FlightVo> orphanedFlightVo = new HashSet<>();
+            Set<UUID> bookingDetails = pnr.getBookingDetails().stream().map(BookingDetail::getParserUUID).collect(Collectors.toSet());
+            for (FlightVo flightVo : pvo.getFlights()) {
+                if (!bookingDetails.contains(flightVo.getUuid())) {
+                    orphanedFlightVo.add(flightVo);
+                }
+            }
+            for (FlightVo orphan : orphanedFlightVo) {
+                for (BookingDetail bookingDetail : pnr.getBookingDetails()) {
+                    if (orphan.equalsThisBD(bookingDetail)) {
+                        if (!orphanToBD.containsKey(orphan.getUuid())) {
+                            orphanToBD.put(orphan.getUuid(), bookingDetail.getParserUUID());
                         }
                     }
                 }
             }
         }
+        return orphanToBD;
     }
+
+    private Map<UUID, BagMeasurements> saveBagMeasurements(List<BagMeasurementsVo> bagMeasurementsToSave) {
+        Map<UUID, BagMeasurements> uuidBagMeasurementsMap = new HashMap<>();
+        for (BagMeasurementsVo bagMeasurementsVo : bagMeasurementsToSave) {
+            BagMeasurements bagMeasurements = new BagMeasurements();
+            bagMeasurements.setBagCount(bagMeasurementsVo.getQuantity());
+            bagMeasurements.setWeight(bagMeasurementsVo.getWeight());
+            bagMeasurements.setParserUUID(bagMeasurementsVo.getUuid());
+            uuidBagMeasurementsMap.put(bagMeasurements.getParserUUID(), bagMeasurements);
+            bagMeasurementsRepository.save(bagMeasurements);
+        }
+        return uuidBagMeasurementsMap;
+    }
+
+    private List<BagVo> handleDuplicateBags(PnrVo pvo) {
+        List<BagVo> bagVoList = pvo.getBags();
+        //Prime flight bags take priority and get merged into.
+        bagVoList.sort(Comparator.comparing(BagVo::isPrimeFlight).reversed());
+        for (BagVo bagvo : new ArrayList<>(bagVoList)) {
+            for (BagVo secondBag : new ArrayList<>(bagVoList)) {
+                if (bagvo != secondBag && isSameBag(bagvo, secondBag)) {
+                    bagvo.getFlightVoId().addAll(secondBag.getFlightVoId());
+                    secondBag.setFlightVoId(new HashSet<>());
+                    secondBag.setBagMeasurementsVo(new BagMeasurementsVo());
+                    secondBag.setConsecutiveTagNumber("");
+                    secondBag.setBagTagIssuerCode("");
+                    secondBag.setPassengerId(null);
+                    bagVoList.remove(secondBag);
+                }
+            }
+        }
+        return bagVoList;
+    }
+
+    private boolean isSameBag(BagVo bagvo, BagVo secondBag) {
+        return
+           ((StringUtils.isBlank(bagvo.getConsecutiveTagNumber()) && StringUtils.isBlank(secondBag.getConsecutiveTagNumber()))
+                   || (bagvo.getConsecutiveTagNumber() != null && bagvo.getConsecutiveTagNumber().equals(secondBag.getConsecutiveTagNumber())))
+           &&(StringUtils.isNotBlank(bagvo.getBagId()) && bagvo.getBagId().equals(secondBag.getBagId()))
+           && ((bagvo.getBagMeasurementsVo() == null && secondBag.getBagMeasurementsVo() == null)
+                || (bagvo.getBagMeasurementsVo().getWeight() == secondBag.getBagMeasurementsVo().getWeight()
+                    && bagvo.getBagMeasurementsVo().getQuantity() == secondBag.getBagMeasurementsVo().getQuantity()))
+           && bagvo.getPassengerId() == secondBag.getPassengerId();
+    }
+
 
     @Override
     public void createFormPfPayments(PnrVo vo, Pnr pnr) {

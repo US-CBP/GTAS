@@ -5,21 +5,14 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.FlightLeg;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
+import gov.gtas.model.*;
 import gov.gtas.repository.BookingDetailRepository;
-import gov.gtas.util.EntityResolverUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +22,12 @@ public class BookingDetailServiceImpl implements BookingDetailService{
 
     private static final Logger logger = LoggerFactory.getLogger(BookingDetailServiceImpl.class);
 
-    @Autowired
-    private BookingDetailRepository bookingDetailRepository;
+    private final BookingDetailRepository bookingDetailRepository;
 
     @Autowired
-    private PassengerService passengerService;
+    public BookingDetailServiceImpl(BookingDetailRepository bookingDetailRepository) {
+        this.bookingDetailRepository = bookingDetailRepository;
+    }
 
     @Override
     public List<BookingDetail> getBookingDetailsByProcessedFlag() {
@@ -41,23 +35,10 @@ public class BookingDetailServiceImpl implements BookingDetailService{
     }
 
     @Override
-    public List<BookingDetail> getBookingDetailsByPassengers(Long pax_id) throws Exception {
-        List<BookingDetail> _bd = new ArrayList<>();
+    public List<BookingDetail> getBookingDetailsByPassengers(Long pax_id) {
+        List<BookingDetail> _bd;
         _bd = bookingDetailRepository.getBookingDetailsByPassengers(pax_id);
         return _bd;
-    }
-
-    /**
-     *
-     * @param pax_id
-     */
-    private void getHashFromPaxID(Long pax_id){
-        Passenger _tempPax = passengerService.findById(pax_id);
-        try {
-            //String _paxHash = (new LoaderUtils()).getHashForPassenger(_tempPax);
-        }catch (Exception ex){
-            logger.error("Error getting Hash from PAXID", ex);
-        }
     }
 
     public BookingDetail saveAndGetBookingDetail(BookingDetail bookingDetail) {
@@ -101,10 +82,16 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         Set<Passenger> oldBookingDetailsPassenger = obd.getPassengers();
         Set<FlightLeg> oldBookingDetailsFlightLeg = obd.getFlightLegs();
         Set<Pnr> oldBookingDetailsPnr = obd.getPnrs();
+        Set<Bag> oldBookingDetailsBags = obd.getBags();
 
         oldBookingDetailsPnr.forEach(bd -> {
             bd.getBookingDetails().add(nbd);
             bd.getBookingDetails().remove(obd);
+        });
+
+        oldBookingDetailsBags.forEach( bd -> {
+           bd.getBookingDetail().add(nbd);
+           bd.getBookingDetail().remove(obd);
         });
 
         oldBookingDetailsFlightLeg.forEach(fl ->
@@ -114,34 +101,13 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         oldBD.setPassengers(null);
         oldBD.setPnrs(null);
         oldBD.setFlightLegs(null);
+        oldBD.setBags(null);
         nbd.getPassengers().addAll(oldBookingDetailsPassenger);
         nbd.getPnrs().addAll(oldBookingDetailsPnr);
         nbd.getFlightLegs().addAll(oldBookingDetailsFlightLeg);
+        nbd.getBags().addAll(oldBookingDetailsBags);
         bookingDetailRepository.save(nbd);
         bookingDetailRepository.delete(obd);
         return nbd;
-    }
-    /**
-     * Util method to hash passenger attributes
-     * @param input
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws UnsupportedEncodingException
-     */
-    private String makeSHA1Hash(String input)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException
-    {
-//        MessageDigest md = MessageDigest.getInstance("SHA1");
-//        md.reset();
-//        byte[] buffer = input.getBytes("UTF-8");
-//        md.update(buffer);
-//        byte[] digest = md.digest();
-//
-//        String hexStr = "";
-//        for (int i = 0; i < digest.length; i++) {
-//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-//        }
-//        return hexStr;
-    	return EntityResolverUtils.makeSHA1Hash(input);
     }
 }
