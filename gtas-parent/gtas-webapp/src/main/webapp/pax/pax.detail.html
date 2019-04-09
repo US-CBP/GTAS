@@ -33,14 +33,45 @@
         <div>Middle Name:&nbsp; <strong>{{ passenger.middleName }}</strong></div>
     </div>
     <div>
-        <div>Gender:&nbsp; <strong> {{ passenger.gender }}</strong></div>
+        <div>Gender:&nbsp;
+        	<span ng-mouseleave="resetTooltip()"><strong>{{ passenger.gender}}</strong>
+       			<md-tooltip class="multi-tooltip" md-direction="right">
+        			<div>{{getCodeTooltipData( passenger.gender,"gender")}}</div>
+       			</md-tooltip>
+        	</span>
+        </div>
         <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
-        <div>Pax Type:&nbsp; <strong> {{ passenger.passengerType }}</strong></div>
+        <div>Pax Type:&nbsp;
+        	<span ng-mouseleave="resetTooltip()"><strong>{{ passenger.passengerType}}</strong>
+       			<md-tooltip class="multi-tooltip" md-direction="right">
+        			<div>{{getCodeTooltipData( passenger.passengerType,"passenger")}}</div>
+       			</md-tooltip>
+        	</span>
+        </div>
     </div>
-    <div>
-        <div>Origin Country:&nbsp; <strong> {{ passenger.embarkCountry }}</strong></div>
-        <div>Destination Country:&nbsp; <strong> {{ passenger.debarkCountry }}</strong></div>
-        <div>Citizenship:&nbsp; <strong> {{ passenger.citizenshipCountry }}</strong></div>
+    <div>    
+        <div>Origin Country:&nbsp; 
+        	<span ng-mouseleave="resetTooltip()"> <strong>{{ passenger.embarkCountry }}</strong>
+        		<md-tooltip class="multi-tooltip" md-direction="left">
+        			<div>{{getCodeTooltipData(passenger.embarkCountry,"country")}}</div>
+       			</md-tooltip>
+       		</span>    		
+       		
+       	</div>               
+        <div>Destination Country:&nbsp; 
+        	<span ng-mouseleave="resetTooltip()"><strong> {{ passenger.debarkCountry}}</strong>
+        		<md-tooltip class="multi-tooltip" md-direction="left">
+        			<div>{{getCodeTooltipData(passenger.debarkCountry,"country")}}</div>
+       			</md-tooltip>
+        	</span>        
+        </div>
+        <div>Citizenship:&nbsp; 
+        	<span ng-mouseleave="resetTooltip()"><strong> {{ passenger.citizenshipCountry }}</strong>
+        		<md-tooltip class="multi-tooltip" md-direction="left">
+        			<div>{{getCodeTooltipData(passenger.citizenshipCountry,"country")}}</div>
+       			</md-tooltip>
+        	</span>
+        </div>
     </div>
   </div>
   <div class="flex justify-around">
@@ -74,8 +105,21 @@
                 <div>SEAT:&nbsp; <strong><a ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a></strong></div>
               </div>
               <div>
-                <div>Origin Airport:&nbsp; <strong>{{ passenger.flightOrigin }}</strong></div>
-                <div>Destination Airport:&nbsp; <strong>{{ passenger.flightDestination }}</strong></div>
+                <div>Origin Airport:&nbsp; 
+                	<span ng-mouseleave="resetTooltip()"><strong> {{ passenger.flightOrigin }}</strong>
+       					<md-tooltip class="multi-tooltip" md-direction="right">
+        					<div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
+       					</md-tooltip>
+        			</span> 
+        			
+                </div>
+                <div>Destination Airport:&nbsp; 
+                	<span ng-mouseleave="resetTooltip()"><strong> {{ passenger.flightDestination }}</strong>
+       					<md-tooltip class="multi-tooltip" md-direction="right">
+        					<div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
+       					</md-tooltip>
+        			</span>
+                </div>
               </div>
               <div>
                 <div>ETD:&nbsp; <strong>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</strong></div>
@@ -142,8 +186,20 @@
                         <tbody>
                           <tr ng-repeat="doc in passenger.documents">
                             <td>{{doc.documentNumber}}</td>
-                            <td>{{doc.documentType}}</td>
-                            <td>{{doc.issuanceCountry}}</td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{ doc.documentType }}
+        							<md-tooltip class="multi-tooltip" md-direction="bottom">
+        								<div>{{getCodeTooltipData(doc.documentType,"document")}}</div>
+       								</md-tooltip>
+        						</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()"><strong> {{ doc.issuanceCountry }}</strong>
+        							<md-tooltip class="multi-tooltip" md-direction="bottom">
+        								<div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div>
+       								</md-tooltip>
+        						</span>
+                            </td>
                             <td>{{doc.expirationDate}}</td>
                           </tr>
                         </tbody>
@@ -228,18 +284,38 @@
             <div class="span12 flex justify-around flex-wrap">
               <div>
                 <div>
-                  Embarkation:&nbsp; <strong>{{ passenger.embarkation }}</strong>
+                  Embarkation:&nbsp;                   
+                  <span ng-mouseleave="resetTooltip()"><strong> {{ passenger.embarkation }}</strong>
+       				<md-tooltip class="multi-tooltip" md-direction="right">
+        				<div>{{getCodeTooltipData(passenger.embarkation,"airport")}}</div>
+       				</md-tooltip>
+        		  </span> 
                 </div>
                 <div>
-                  Debarkation:&nbsp; <strong>{{ passenger.debarkation}}</strong>
+                  Debarkation:&nbsp; 
+                  <span ng-mouseleave="resetTooltip()"><strong> {{ passenger.debarkation }}</strong>
+       				<md-tooltip class="multi-tooltip" md-direction="right">
+        				<div>{{getCodeTooltipData(passenger.debarkation,"airport")}}</div>
+       				</md-tooltip>
+        		  </span>
                 </div>
               </div>
               <div>
                 <div>
-                  Residence:&nbsp; <strong>{{ passenger.residencyCountry}}</strong>
+                  Residence:&nbsp;
+                  <span ng-mouseleave="resetTooltip()"><strong> {{ passenger.residencyCountry }}</strong>
+       				<md-tooltip class="multi-tooltip" md-direction="right">
+        				<div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
+       				</md-tooltip>
+        		  </span>
                 </div>
                 <div>
-                  Passenger Type:&nbsp; <strong>{{ passenger.passengerType}}</strong>
+                  Passenger Type:&nbsp; 
+                  <span ng-mouseleave="resetTooltip()"><strong>{{ passenger.passengerType}}</strong>
+       				<md-tooltip class="multi-tooltip" md-direction="right">
+        				<div>{{getCodeTooltipData( passenger.passengerType,"passenger")}}</div>
+       				</md-tooltip>
+        		  </span>
                 </div>
               </div>
               <div>
@@ -338,9 +414,27 @@
                             <td>{{flightpax.firstName}}</td>
                             <td>{{flightpax.middleName}}</td>
                             <td><a class="md-primary md-default-theme" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{flightpax.lastName}}</a></td>
-                            <td>{{flightpax.passengerType}}</td>
-                            <td>{{flightpax.residencyCountry}}</td>
-                            <td>{{flightpax.portOfFirstArrival}}</td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
+       								<md-tooltip class="multi-tooltip" md-direction="left">
+        								<div>{{getCodeTooltipData(flightpax.passengerType,"passenger")}}</div>
+       								</md-tooltip>
+        		  				</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{ flightpax.residencyCountry }}
+       								<md-tooltip class="multi-tooltip" md-direction="left">
+        								<div>{{getCodeTooltipData(flightpax.residencyCountry,"country")}}</div>
+       								</md-tooltip>
+        		  				</span> 
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{ flightpax.portOfFirstArrival }}
+       								<md-tooltip class="multi-tooltip" md-direction="left">
+        								<div>{{getCodeTooltipData(flightpax.portOfFirstArrival,"airport")}}</div>
+       								</md-tooltip>
+        		  				</span> 
+                            </td>
                             <td>{{flightpax.resRefNumber}}</td>
                           </tr>
                         </tbody>
@@ -397,7 +491,14 @@
                               <td style="align-items: center;">{{leg.legNumber }}</td>
                               <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;"><a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
                               <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
-                              <td>{{leg.originAirport }} / {{leg.destinationAirport }}</td>
+                              <td>
+                              	<span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
+                              		<md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div></md-tooltip>
+                              	</span> 
+                              	/ <span ng-mouseleave="resetTooltip()">{{leg.destinationAirport  }}
+                              		<md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.destinationAirport,"airport")}}</div></md-tooltip>
+                              	</span>                              	
+                              </td>
                               <!--<td>{{leg.destinationAirport }}</td>-->
                               <td>{{leg.etd }}</td>
                               <td>{{leg.eta }}</td>
@@ -437,7 +538,13 @@
                                   {{ pass.lastName }}
                                 </a>
                               </td>
-                              <td>{{ pass.gender }}</td>
+                              <td>
+                              	<span ng-mouseleave="resetTooltip()">{{ pass.gender }}
+        							<md-tooltip class="multi-tooltip" md-direction="left">
+        								<div>{{getCodeTooltipData(pass.gender,"gender")}}</div>
+       								</md-tooltip>
+        						</span>
+                              </td>
                               <td>{{ pass.age }}</td>
                             </tr>
                           </tbody>
@@ -471,8 +578,16 @@
                             <tr ng-repeat="doc in passenger.pnrVo.documents" ng-click="highlightClass('DOCS'+doc.documentNumber)">
                               <td>{{doc.firstName}}</td>
                               <td>{{doc.lastName}}</td>
-                              <td>{{doc.documentType}}</td>
-                              <td>{{doc.issuanceCountry}}</td>
+                              <td>
+                              	<span ng-mouseleave="resetTooltip()">{{doc.documentType}}
+                              		<md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"document")}}</div></md-tooltip>
+							  	</span>
+                              </td>
+                              <td>
+                               	<span ng-mouseleave="resetTooltip()">{{doc.issuanceCountry}}
+                              		<md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div></md-tooltip>
+							  	</span>
+							  </td>
                               <td>{{doc.documentNumber}}</td>
                               <td>{{doc.expirationDate}}</td>
                             </tr>
@@ -505,7 +620,11 @@
                             <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index" ng-click="highlightClass('ADD'+addr.city)">
                               <td>{{ addr.city }}</td>
                               <td>{{ addr.state }}</td>
-                              <td>{{ addr.country }}</td>
+                              <td> 
+                              	<span ng-mouseleave="resetTooltip()">{{ addr.country }}
+                              		<md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(addr.country,"country")}}</div></md-tooltip>
+                              	</span>
+                              </td>
                               <td>{{ addr.line1 }}</td>
                             </tr>
                           </tbody>
@@ -619,7 +738,9 @@
                         <table class="cbp-table-selectable mdl-js-data-table">
                           <tbody>
                             <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index" ng-click="highlightClass('FTI'+ff.number)">
-                                <td>{{ff.carrier}}</td>
+                                <td><span ng-mouseleave="resetTooltip()">{{ff.carrier}}
+                                	<md-tooltip class="multi-tooltip" md-direction="right"><div>{{getCodeTooltipData(ff.carrier,"carrier")}}</div></md-tooltip></span>
+                                </td>
                                 <td>{{ff.number}}</td>
                             </tr>
                           </tbody>
@@ -709,7 +830,9 @@
                               <td>{{agency.type}}</td>
                               <td>{{agency.city}}</td>
                               <td>{{agency.identifier}}</td>
-                              <td>{{agency.location}}</td>
+                           	  <td><span ng-mouseleave="resetTooltip()">{{agency.location}}
+                               	<md-tooltip class="multi-tooltip" md-direction="top"><div>{{getCodeTooltipData(agency.location,"airport")}}</div></md-tooltip></span>
+                              </td>   
                               <td>{{agency.name}}</td>
                               <td>{{agency.phone}}</td>
                             </tr>
@@ -741,7 +864,8 @@
                         <tr ng-repeat="bag in passenger.pnrVo.bags" ng-click="highlightClass('TBD'+bag.passFirstName+bag.passLastName)">
                           <td>{{bag.passLastName}}</td>
                           <td>{{bag.passFirstName}}</td>
-                          <td>{{bag.bag_count}}</td>
+                          <td>{{bag.bag_count}}                     	
+                          </td>
                           <td>{{bag.bag_weight}}</td>
                           <td>{{bag.average_bag_weight}}</td>
                         </tr>
@@ -786,10 +910,26 @@
                             <td>{{j.fullFlightNumber}}</td>
                             <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
-                            <td>{{j.originCountry}}</td>
-                            <td>{{j.origin}}</td>
-                            <td>{{j.destinationCountry}}</td>
-                            <td>{{j.destination}}</td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{j.originCountry}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.originCountry,"country")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{j.origin}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.origin,"airport")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{j.destinationCountry}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destinationCountry,"country")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{j.destination}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destination,"airport")}}</div></md-tooltip>
+                          		</span>
+                            </td>
                         </tr>
                       </tbody>
                     </table>
@@ -837,10 +977,26 @@
                           </td>
                             <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
-                            <td>{{k.originCountry}}</td>
-                            <td>{{k.origin}}</td>
-                            <td>{{k.destinationCountry}}</td>
-                            <td>{{k.destination}}</td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{k.originCountry}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.originCountry,"country")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{k.origin}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.origin,"airport")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{k.destinationCountry}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destinationCountry,"country")}}</div></md-tooltip>
+                          		</span>
+                            </td>
+                            <td>
+                            	<span ng-mouseleave="resetTooltip()">{{k.destination}}
+                               		<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destination,"airport")}}</div></md-tooltip>
+                          		</span>
+                            </td>
                         </tr>
                       </tbody>
                     </table>

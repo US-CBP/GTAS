@@ -61,3 +61,6 @@ gradle*
 *.raw
 *.raw.tar.gz
 *.vdi
+
+**/bower_components
+*yarn.lock
