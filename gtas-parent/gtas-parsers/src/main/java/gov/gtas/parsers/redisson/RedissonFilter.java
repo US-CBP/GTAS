@@ -149,14 +149,17 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
                 map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
-                logger.debug("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
-                if(!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)){throw new Exception("Error publishing to parsing queue");};
+                logger.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
+				if (!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)) {
+					throw new Exception("Error publishing to parsing queue");
+				}
+				
             }else{
                 //key exists, derivative logic goes here (time processed and placement on Queues)
                 if(payload == null) {
-                    logger.debug("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
+                    logger.info("++++++++++++++++++ Message Payload Is Empty - Publish to Downstream Q +++++++++++++++++++++++++++++++++++");
                 }else {
-                    logger.debug("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
+                    logger.info("++++++++++++++++++ REDIS Key Exists +++++++++++++++++++++++++++++++++++");
                 }
             }
 
