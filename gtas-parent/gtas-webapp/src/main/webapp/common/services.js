@@ -1217,6 +1217,15 @@
             		else if(type === 'carrier'){
             			return getFullNameByCodeAndCodeList(field, $rootScope.carriersList);
             		}
+            		else if (type === 'passenger'){
+            			return getFullNameByCodeAndCodeList(field, $rootScope.passengerTypes);
+            		}
+            		else if (type === 'document'){
+            			return getFullNameByCodeAndCodeList(field,$rootScope.documentTypes)
+            		}
+            		else if (type === 'gender') {
+            			return getFullNameByCodeAndCodeList(field,$rootScope.genders)
+            		}
             	}
             };
 
