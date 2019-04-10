@@ -30,6 +30,7 @@ public class PnrVo extends MessageVo {
     private Integer passengerCount;
     private Integer bagCount;
     private List<BagVo> bags = new ArrayList<>();
+    private BagSummaryVo bagSummaryVo;
 
     private Integer total_bag_count;
     private double baggageWeight;
@@ -324,5 +325,13 @@ public class PnrVo extends MessageVo {
 
     public void setTotal_bag_count(Integer total_bag_count) {
         this.total_bag_count = total_bag_count;
+    }
+
+    public BagSummaryVo getBagSummaryVo() {
+        return bagSummaryVo;
+    }
+
+    public void setBagSummaryVo(BagSummaryVo bagSummaryVo) {
+        this.bagSummaryVo = bagSummaryVo;
     }
 }

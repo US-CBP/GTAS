@@ -175,10 +175,15 @@ public class PassengerDetailsController {
 				t.getId(), new Long(flightId));
 		
 		if (!pnrList.isEmpty()) {
+			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
+			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
+
 			Pnr source=getLatestPnrFromList(pnrList);
 			vo.setPnrVo(mapPnrToPnrVo(source));			
 			PnrVo tempVo = vo.getPnrVo();
-			
+			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromFlightAndBookingDetails(pnrBag);
+			tempVo.setBagSummaryVo(bagSummaryVo);
+
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
 				FlightPax flightPax = getPnrFlightPax(p, flight);

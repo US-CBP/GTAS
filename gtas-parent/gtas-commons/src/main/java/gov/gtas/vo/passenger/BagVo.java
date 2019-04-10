@@ -5,6 +5,8 @@
  */
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.Bag;
+
 public class BagVo {
     private String bagId;
     private String data_source;
@@ -12,10 +14,28 @@ public class BagVo {
     private double average_bag_weight;
     private double bag_weight;
     private int bag_count = 0;
+    private Long passengerId;
     private String passFirstName;
     private String passLastName;
+    private boolean headPool;
+    private boolean isPrime;
 
     public BagVo() {
+    }
+
+    public static BagVo fromBag(Bag bag) {
+        BagVo bagVo = new BagVo();
+        bagVo.setBagId(bag.getBagId());
+        if (bag.getBagMeasurements() != null) {
+            bagVo.setBag_weight(bag.getBagMeasurements().getWeight());
+            bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
+        }
+        bagVo.setPassengerId(bag.getPassenger().getId());
+        bagVo.setData_source(bag.getData_source());
+        bagVo.setDestination(bag.getDestinationAirport());
+        bagVo.setPrime(bag.isPrimeFlight());
+        bagVo.setHeadPool(bag.isHeadPool());
+        return bagVo;
     }
 
     public String getDestination() {
@@ -80,5 +100,29 @@ public class BagVo {
 
     public double getAverage_bag_weight() {
         return average_bag_weight;
+    }
+
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
+
+    public boolean isHeadPool() {
+        return headPool;
+    }
+
+    public void setHeadPool(boolean headPool) {
+        this.headPool = headPool;
+    }
+
+    public boolean isPrime() {
+        return isPrime;
+    }
+
+    public void setPrime(boolean prime) {
+        isPrime = prime;
     }
 }

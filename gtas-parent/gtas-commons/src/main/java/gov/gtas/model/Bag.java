@@ -35,7 +35,7 @@ public class Bag extends BaseEntity {
 	@Column(name = "destination_country")
 	private String country;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne()
 	@JoinColumn(nullable = false)
 	private Passenger passenger;
 
