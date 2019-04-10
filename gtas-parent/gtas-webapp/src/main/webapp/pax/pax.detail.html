@@ -40,7 +40,7 @@
        			</md-tooltip>
         	</span>
         </div>
-        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
+        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"yyyy-MM-dd" }} ({{passenger.age}})</strong></div>
         <div>Pax Type:&nbsp;
         	<span ng-mouseleave="resetTooltip()"><strong>{{ passenger.passengerType}}</strong>
        			<md-tooltip class="multi-tooltip" md-direction="right">
