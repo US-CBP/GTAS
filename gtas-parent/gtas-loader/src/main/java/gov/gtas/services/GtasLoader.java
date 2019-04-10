@@ -22,7 +22,7 @@ public interface GtasLoader {
                                                     Set<Passenger> messagePassengers,
                                                     Set<BookingDetail> bookingDetails,
                                                     Message message) throws ParseException;
-    void createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight);
+    List<Bag> createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight);
     void createFormPfPayments(PnrVo vo,Pnr pnr);
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
     int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers,

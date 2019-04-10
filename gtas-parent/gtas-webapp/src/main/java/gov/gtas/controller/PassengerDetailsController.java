@@ -467,7 +467,7 @@ public class PassengerDetailsController {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
-		target.setTotalbagCount(source.getTotal_bag_count());
+		target.setTotal_bag_count(source.getTotal_bag_count());
 		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
                 
                 target.setTripType(source.getTripType());

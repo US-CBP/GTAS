@@ -22,11 +22,8 @@ public class Bag extends BaseEntity {
     @Column(name = "bag_identification", nullable = false)
     private String bagId;
 
-	@Column (name = "flight_id", columnDefinition = "bigint unsigned")
-	private Long flightId;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
+	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
 	private Flight flight;
 
 	@Column(name = "data_source")
@@ -51,6 +48,9 @@ public class Bag extends BaseEntity {
     @Column(name = "headpool")
 	private boolean headPool=false;
 
+	@Column(name = "memberpool")
+	private boolean memberPool = false;
+
     @Column(name = "primeFlight")
 	private boolean primeFlight;
 
@@ -61,13 +61,19 @@ public class Bag extends BaseEntity {
 	@ManyToMany(fetch = FetchType.LAZY,  mappedBy = "bags",targetEntity = BookingDetail.class)
 	private Set<BookingDetail> bookingDetail = new HashSet<>();
 
-
 	@Column(name = "bag_serial_count")
 	private String bagSerialCount;
 
 	@Transient
 	private UUID parserUUID;
 
+	public boolean isMemberPool() {
+		return memberPool;
+	}
+
+	public void setMemberPool(boolean memberPool) {
+		this.memberPool = memberPool;
+	}
 
 	public String getCountry() {
 		return country;
@@ -77,13 +83,6 @@ public class Bag extends BaseEntity {
 		this.country = country;
 	}
 
-	public Long getFlightId() {
-		return flightId;
-	}
-
-	public void setFlightId(Long flightId) {
-		this.flightId = flightId;
-	}
 	public String getBagSerialCount() {
 		return bagSerialCount;
 	}
@@ -181,21 +180,6 @@ public class Bag extends BaseEntity {
 	}
 
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Bag bag = (Bag) o;
-		return getBagId().equals(bag.getBagId()) &&
-				getData_source().equals(bag.getData_source());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getBagId(), getData_source());
-	}
-
-
     public void setBookingDetail(Set<BookingDetail> bookingDetail) {
         this.bookingDetail = bookingDetail;
     }
@@ -218,5 +202,23 @@ public class Bag extends BaseEntity {
 
 	public void setBagMeasurements(BagMeasurements bagMeasurements) {
 		this.bagMeasurements = bagMeasurements;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Bag)) return false;
+		if (!super.equals(o)) return false;
+		Bag bag = (Bag) o;
+		return isPrimeFlight() == bag.isPrimeFlight() &&
+				getData_source().equals(bag.getData_source()) &&
+				Objects.equals(getDestinationAirport(), bag.getDestinationAirport()) &&
+				Objects.equals(getAirline(), bag.getAirline()) &&
+				Objects.equals(getBagSerialCount(), bag.getBagSerialCount());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getData_source(), getDestinationAirport(), getAirline(), isPrimeFlight(), getBagSerialCount());
 	}
 }

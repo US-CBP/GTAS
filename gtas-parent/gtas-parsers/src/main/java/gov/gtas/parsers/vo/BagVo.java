@@ -4,11 +4,13 @@ import gov.gtas.parsers.pnrgov.segment.TBD_BagTagDetails;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
 public class BagVo {
 
+	private UUID bagVoUUID = UUID.randomUUID();
 	private UUID passengerId;
 	private Set<UUID> flightVoId = new HashSet<>();
 	private BagMeasurementsVo bagMeasurementsVo;
@@ -19,6 +21,7 @@ public class BagVo {
 	private String airline;
 	private String bagTagIssuerCode;
 	private boolean headPool=false;
+	private boolean memberPool=false;
 	private boolean primeFlight = false;
 	private String consecutiveTagNumber;
 	private BagVo(){
@@ -36,7 +39,6 @@ public class BagVo {
 
 		return bagVo;
 	}
-
 
 
 	public boolean isHeadPool() {
@@ -124,5 +126,34 @@ public class BagVo {
 
 	public void setBagMeasurementsVo(BagMeasurementsVo bagMeasurementsVo) {
 		this.bagMeasurementsVo = bagMeasurementsVo;
+	}
+
+	public UUID getBagVoUUID() {
+		return bagVoUUID;
+	}
+
+	public void setBagVoUUID(UUID bagVoUUID) {
+		this.bagVoUUID = bagVoUUID;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BagVo)) return false;
+		BagVo bagVo = (BagVo) o;
+		return getBagVoUUID().equals(bagVo.getBagVoUUID());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getBagVoUUID());
+	}
+
+	public boolean isMemberPool() {
+		return memberPool;
+	}
+
+	public void setMemberPool(boolean memberPool) {
+		this.memberPool = memberPool;
 	}
 }

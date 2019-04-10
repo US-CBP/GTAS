@@ -1,5 +1,6 @@
 package gov.gtas.parsers.vo;
 
+import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import gov.gtas.parsers.pnrgov.segment.TBD_BD;
 
 
@@ -9,8 +10,9 @@ import java.util.UUID;
 public class BagMeasurementsVo {
     private UUID uuid = UUID.randomUUID();
     private String measurementType;
-    private int quantity = 0;
-    private double weightInKilos = 0;
+    private Integer quantity;
+    private Double weightInKilos;
+    private Double weight;
 
     public static BagMeasurementsVo fromTbdBD(List<TBD_BD> baggageDetails) {
 
@@ -20,13 +22,25 @@ public class BagMeasurementsVo {
         }
         // Always use the first baggageDetails provided.
         TBD_BD tbd_bd = baggageDetails.get(0);
-        int quantity =  tbd_bd.getQuantityAsInteger();
-        double weight = tbd_bd.getWeightInKilos();
-        String measurementType = tbd_bd.getMeasureUnitQualifier();
+        Integer quantity =  tbd_bd.getQuantityAsInteger();
+        Double weightInKilos = tbd_bd.getWeightInKilos();
+        Double rawWeight = tbd_bd.getRawWeight();
         bagMeasurementsVo.setQuantity(quantity);
-        bagMeasurementsVo.setWeight(weight);
-        bagMeasurementsVo.setMeasurementType(measurementType);
+        bagMeasurementsVo.setRawWeight(rawWeight);
+        bagMeasurementsVo.setWeightInKilos(weightInKilos);
+        MeasurementQualifier measurementType = tbd_bd.getMeasurementQualifierEnum();
+        bagMeasurementsVo.setMeasurementType(measurementType.getEnglishName());
         return bagMeasurementsVo;
+    }
+
+
+
+    public Double getWeightInKilos() {
+        return weightInKilos;
+    }
+
+    public void setWeightInKilos(Double weightInKilos) {
+        this.weightInKilos = weightInKilos;
     }
 
     public String getMeasurementType() {
@@ -37,20 +51,20 @@ public class BagMeasurementsVo {
         this.measurementType = measurementType;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public double getWeight() {
-        return weightInKilos;
+    public Double getRawWeight() {
+        return weight;
     }
 
-    public void setWeight(double weight) {
-        this.weightInKilos = weight;
+    public void setRawWeight(Double weight) {
+        this.weight = weight;
     }
 
     public UUID getUuid() {

@@ -479,11 +479,11 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    public void createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight) {
+    public List<Bag> createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight) {
 
+        List<Bag> bagList = new ArrayList<>();
         List<BagVo> bagVoList = handleDuplicateBags(pvo);
-        List<BagMeasurementsVo> bagMeasurementsToSave = bagVoList.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toList());
-
+        Set<BagMeasurementsVo> bagMeasurementsToSave = bagVoList.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toSet());
         Map<UUID, UUID> orphanToBD = getOrphanMap(pvo, pnr);
         Map<UUID, BagMeasurements> uuidBagMeasurementsMap = saveBagMeasurements(bagMeasurementsToSave);
         Map<UUID, BookingDetail> uuidBookingDetailMap = pnr.getBookingDetails()
@@ -503,9 +503,9 @@ public class GtasLoaderImpl implements GtasLoader {
                         bag.setCountry(airport.getCountry());
                     }
                     bag.setHeadPool(b.isHeadPool());
+                    bag.setMemberPool(b.isMemberPool());
                     bag.setBagSerialCount(b.getConsecutiveTagNumber());
                     bag.setFlight(primeFlight);
-                    bag.setFlightId(primeFlight.getId());
                     bag.setPassenger(p);
                     bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));
                     if (b.getFlightVoId().contains(primeFlight.getParserUUID())) {
@@ -525,10 +525,14 @@ public class GtasLoaderImpl implements GtasLoader {
                             logger.warn("No connection to booking detail can be made!");
                         }
                     }
+                    //Booking details owns the bag relationship, save the relationship through BD.
                     bookingDetailDao.saveAll(pnr.getBookingDetails());
+                    bagList.add(bag);
+                    p.getBags().add(bag);
                 }
             }
         }
+        return bagList;
     }
 
     private Map<UUID, UUID> getOrphanMap(PnrVo pvo, Pnr pnr) {
@@ -554,13 +558,18 @@ public class GtasLoaderImpl implements GtasLoader {
         return orphanToBD;
     }
 
-    private Map<UUID, BagMeasurements> saveBagMeasurements(List<BagMeasurementsVo> bagMeasurementsToSave) {
+    private Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave) {
         Map<UUID, BagMeasurements> uuidBagMeasurementsMap = new HashMap<>();
         for (BagMeasurementsVo bagMeasurementsVo : bagMeasurementsToSave) {
             BagMeasurements bagMeasurements = new BagMeasurements();
             bagMeasurements.setBagCount(bagMeasurementsVo.getQuantity());
-            bagMeasurements.setWeight(bagMeasurementsVo.getWeight());
+            if (bagMeasurementsVo.getWeightInKilos() != null) {
+                Long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
+                bagMeasurements.setWeight(rounded.doubleValue());
+            }
+            bagMeasurements.setRawWeight(bagMeasurementsVo.getRawWeight());
             bagMeasurements.setParserUUID(bagMeasurementsVo.getUuid());
+            bagMeasurements.setMeasurementIn(bagMeasurementsVo.getMeasurementType());
             uuidBagMeasurementsMap.put(bagMeasurements.getParserUUID(), bagMeasurements);
             bagMeasurementsRepository.save(bagMeasurements);
         }
@@ -570,31 +579,47 @@ public class GtasLoaderImpl implements GtasLoader {
     private List<BagVo> handleDuplicateBags(PnrVo pvo) {
         List<BagVo> bagVoList = pvo.getBags();
         //Prime flight bags take priority and get merged into.
-        bagVoList.sort(Comparator.comparing(BagVo::isPrimeFlight).reversed());
-        for (BagVo bagvo : new ArrayList<>(bagVoList)) {
-            for (BagVo secondBag : new ArrayList<>(bagVoList)) {
-                if (bagvo != secondBag && isSameBag(bagvo, secondBag)) {
-                    bagvo.getFlightVoId().addAll(secondBag.getFlightVoId());
-                    secondBag.setFlightVoId(new HashSet<>());
-                    secondBag.setBagMeasurementsVo(new BagMeasurementsVo());
-                    secondBag.setConsecutiveTagNumber("");
-                    secondBag.setBagTagIssuerCode("");
-                    secondBag.setPassengerId(null);
-                    bagVoList.remove(secondBag);
+        List<BagVo> returningBagVos = new ArrayList<>();
+        bagVoList.sort(Comparator.comparing(BagVo::isPrimeFlight));
+        Set<BagVo> badVos = new HashSet<>();
+        for (BagVo bagvo : bagVoList) {
+            if (!badVos.contains(bagvo)) {
+                for (BagVo secondBag : new ArrayList<>(bagVoList)) {
+                    if (!bagvo.equals(secondBag) && hasSameBagInfo(bagvo, secondBag)) {
+                        bagvo.getFlightVoId().addAll(secondBag.getFlightVoId());
+                        badVos.add(secondBag);
+                    }
                 }
+                returningBagVos.add(bagvo);
             }
         }
-        return bagVoList;
+        return returningBagVos;
     }
 
-    private boolean isSameBag(BagVo bagvo, BagVo secondBag) {
+    private boolean hasSameBagInfo(BagVo bagvo, BagVo secondBag) {
+
+        boolean sameWeight = false;
+        boolean sameQuantity = false;
+        if (bagvo.getBagMeasurementsVo() != null && secondBag.getBagMeasurementsVo() != null) {
+            Double bagVoWeight = bagvo.getBagMeasurementsVo().getWeightInKilos();
+            Integer bagVoQuanitity = bagvo.getBagMeasurementsVo().getQuantity();
+            Double secondBagWeight = secondBag.getBagMeasurementsVo().getWeightInKilos();
+            Integer secondBagQuanity = secondBag.getBagMeasurementsVo().getQuantity();
+
+            sameWeight = (
+                    ((bagVoWeight != null && secondBagWeight != null) && bagVoWeight.equals(secondBagWeight))
+                            || (bagVoWeight == null && secondBagWeight == null));
+
+            sameQuantity = (
+                    ((bagVoQuanitity != null && secondBagQuanity != null) && bagVoQuanitity.equals(secondBagQuanity))
+                            || (bagVoQuanitity == null && secondBagQuanity == null));
+        }
         return
            ((StringUtils.isBlank(bagvo.getConsecutiveTagNumber()) && StringUtils.isBlank(secondBag.getConsecutiveTagNumber()))
                    || (bagvo.getConsecutiveTagNumber() != null && bagvo.getConsecutiveTagNumber().equals(secondBag.getConsecutiveTagNumber())))
            &&(StringUtils.isNotBlank(bagvo.getBagId()) && bagvo.getBagId().equals(secondBag.getBagId()))
            && ((bagvo.getBagMeasurementsVo() == null && secondBag.getBagMeasurementsVo() == null)
-                || (bagvo.getBagMeasurementsVo().getWeight() == secondBag.getBagMeasurementsVo().getWeight()
-                    && bagvo.getBagMeasurementsVo().getQuantity() == secondBag.getBagMeasurementsVo().getQuantity()))
+                || (sameQuantity && sameWeight))
            && bagvo.getPassengerId() == secondBag.getPassengerId();
     }
 

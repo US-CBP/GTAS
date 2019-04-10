@@ -1,6 +1,7 @@
 package gov.gtas.parsers.pnrgov.segment;
 
 import com.google.common.collect.Iterables;
+import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,15 +54,15 @@ public class TBD_BD {
     }
 
     public String getUnitQualifierAsKgsOrLbs() {
-        if ("701".equals(measurementAndValue)) {
+        if ("701".equals(allowanceOrChargeQualifier)) {
             return "Lbs";
         } else {
             return "Kgs";
         }
     }
 
-    public int getQuantityAsInteger() {
-        int quantityOfBags = 0;
+    public Integer getQuantityAsInteger() {
+        Integer quantityOfBags = null;
         if (quantity != null) {
             try {
                 quantityOfBags = Integer.parseInt(quantity);
@@ -71,17 +72,29 @@ public class TBD_BD {
         }
         return quantityOfBags;
     }
-    public Double getWeightInKilos() {
-        double weight = 0;
+
+    public Double getRawWeight() {
+        Double weight = null;
         if (measurementAndValue != null) {
             try {
                 weight = Double.parseDouble(measurementAndValue);
             } catch (Exception e) {
                 logger.warn("Failed to parse double" + weight);
             }
-            // We attempt to parse all weight in kilos.
-            if ("701".equals(measurementAndValue)) {
-                weight = weight * 0.45359237;
+        }
+        return weight;
+    }
+
+    public Double getWeightInKilos() {
+        Double weight = null;
+        if (measurementAndValue != null) {
+            try {
+                weight = Double.parseDouble(measurementAndValue);
+                if ("701".equals(allowanceOrChargeQualifier)) {
+                    weight = weight * 0.45359237;
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to parse double" + weight);
             }
         }
         return weight;
@@ -120,6 +133,10 @@ public class TBD_BD {
 
     public String getMeasureUnitQualifier() {
         return measureUnitQualifier;
+    }
+
+    public MeasurementQualifier getMeasurementQualifierEnum() {
+        return MeasurementQualifier.fromString(allowanceOrChargeQualifier).orElse(MeasurementQualifier.UNKNOWN);
     }
 
     public void setMeasureUnitQualifier(String measureUnitQualifier) {

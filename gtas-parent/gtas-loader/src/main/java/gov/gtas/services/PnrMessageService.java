@@ -10,6 +10,7 @@ import gov.gtas.enumtype.TripTypeEnum;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -130,9 +131,10 @@ public class PnrMessageService extends MessageLoaderService {
                     primeFlight,
                     pnr.getBookingDetails());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
-            createFlightPax(pnr);
-            loaderRepo.createBagInformation(vo, pnr, primeFlight);
+            List<Bag> bagList = loaderRepo.createBagInformation(vo, pnr, primeFlight);
+            updatePnrBagAndWeight(pnr, bagList);
             loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
+            createFlightPax(pnr);
             // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setMessage(pnr);
@@ -164,6 +166,22 @@ public class PnrMessageService extends MessageLoaderService {
             }
         }
         return msgDto.getMessageStatus();
+    }
+
+    private void updatePnrBagAndWeight(Pnr pnr, List<Bag> bagList) {
+       Set<BagMeasurements> bagMeasurementsSet = bagList.stream().map(Bag::getBagMeasurements).collect(Collectors.toSet());
+       Integer bagCount = 0;
+       Double bagWeight = 0D;
+       for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
+           if (bagMeasurements.getBagCount() != null) {
+               bagCount += bagMeasurements.getBagCount();
+           }
+           if (bagMeasurements.getWeight() != null) {
+               bagWeight += bagMeasurements.getWeight();
+           }
+       }
+       pnr.setBagCount(bagCount);
+       pnr.setBaggageWeight(bagWeight);
     }
 
 
@@ -475,26 +493,9 @@ public class PnrMessageService extends MessageLoaderService {
                 }
                 paxRecords.add(fp);
             }
-            if (!oneFlight) {
-                setBagDetails(paxRecords, pnr);
-            }
-            oneFlight = true;
         }
         flightPaxRepository.saveAll(flightPaxes);
 
-    }
-
-    private void setBagDetails(Set<FlightPax> paxes, Pnr pnr) {
-        int pnrBagCount = 0;
-        double pnrBagWeight = 0.0;
-        for (FlightPax fp : paxes) {
-            pnrBagCount = pnrBagCount + fp.getBagCount();
-            pnrBagWeight = pnrBagWeight + fp.getBagWeight();
-        }
-        pnr.setBagCount(pnrBagCount);
-        pnr.setBaggageWeight(pnrBagWeight);
-        pnr.setTotal_bag_count(pnrBagCount);
-        pnr.setTotal_bag_weight((float) pnrBagWeight);
     }
 
     private void setHeadPool(FlightPax fp, Passenger p, Flight f) {

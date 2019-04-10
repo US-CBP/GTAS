@@ -684,11 +684,18 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     private void updateMessageBagInfo(TBD tbd) {
         if (!tbd.getBaggageDetails().isEmpty()) {
             TBD_BD tbd_bd = tbd.getBaggageDetails().get(0);
-            double bagWeight = tbd_bd.getWeightInKilos();
-            parsedMessage.setBaggageWeight(parsedMessage.getBaggageWeight() + bagWeight);
-            parsedMessage.setBaggageUnit("Kgs");
-            int bagQuantity = tbd_bd.getQuantityAsInteger();
-            parsedMessage.setTotal_bag_count(parsedMessage.getBagCount() + bagQuantity);
+            Double bagWeight = tbd_bd.getWeightInKilos();
+            if (bagWeight != null) {
+                double runningWeight = bagWeight + parsedMessage.getTotal_bag_weight();
+                runningWeight = Math.round(runningWeight);
+                parsedMessage.setTotal_bag_weight(runningWeight);
+                parsedMessage.setBaggageUnit("Kgs");
+            }
+            Integer bagQuantity = tbd_bd.getQuantityAsInteger();
+            if (bagQuantity != null) {
+                int bagCount = parsedMessage.getTotal_bag_count() + bagQuantity;
+                parsedMessage.setTotal_bag_count(bagCount);
+            }
         }
     }
 
@@ -713,7 +720,8 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
     boolean isPrimeFlight = isPrimeFlightTVL(tvl);
     if (tbd.hasBagInformation()) {
         BagMeasurementsVo bagMeasurementsVo = BagMeasurementsVo.fromTbdBD(tbd.getBaggageDetails());
-        if (bagMeasurementsVo.getQuantity() > 0 || bagMeasurementsVo.getWeight() > 0) {
+        if ((bagMeasurementsVo.getQuantity() != null && bagMeasurementsVo.getQuantity()  > 0)
+                || (bagMeasurementsVo.getWeightInKilos() != null && bagMeasurementsVo.getWeightInKilos() > 0)) {
             parsedMessage.getBagMeasurements().add(bagMeasurementsVo);
             for (TBD_BagTagDetails bagTagSegment : tbd.getBagTagDetails()) {
                 BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);
@@ -739,6 +747,8 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
         bagVo.setPrimeFlight(isPrimeFlight);
         if (ProcessingIndicatorCode.HEAD_OF_POOL.toString().equalsIgnoreCase(tbd.getPooledBagIndicator())) {
             bagVo.setHeadPool(true);
+        } else if (ProcessingIndicatorCode.MEMBER_OF_POOL.toString().equalsIgnoreCase(tbd.getPooledBagIndicator())) {
+            bagVo.setMemberPool(true);
         }
         return bagVo;
     }

@@ -29,8 +29,9 @@ public class PnrVo extends MessageVo implements Validatable {
     private Date departureDate;
     private Integer passengerCount;
     private Integer bagCount;
-    private int total_bag_count = 0;
     private double baggageWeight = 0;
+    private int total_bag_count = 0;
+    private double total_bag_weight = 0;
     private String baggageUnit;
     private String formOfPayment;
     private TVL_L0 primeFlight;
@@ -50,8 +51,15 @@ public class PnrVo extends MessageVo implements Validatable {
     private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
     private Date reservationCreateDate;
     private Boolean headPool = Boolean.FALSE;
-    
 
+
+    public double getTotal_bag_weight() {
+        return total_bag_weight;
+    }
+
+    public void setTotal_bag_weight(double total_bag_weight) {
+        this.total_bag_weight = total_bag_weight;
+    }
 	public Boolean getHeadPool() {
 		return headPool;
 	}
