@@ -154,8 +154,6 @@ public class PnrMessageService extends MessageLoaderService {
         } catch (Exception e) {
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
             msgDto.getMessageStatus().setSuccess(false);
-            pnr.setBookingDetails(null);
-            pnr.setFlightLegs(null);
             pnr.setError(e.toString());
             logger.error("ERROR", e);
         } finally {
