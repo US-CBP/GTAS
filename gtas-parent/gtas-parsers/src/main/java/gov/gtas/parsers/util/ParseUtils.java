@@ -33,7 +33,7 @@ public final class ParseUtils {
      * characters STX and ETX. This method removes the header and trailer from
      * the message. See https://en.wikipedia.org/wiki/Control_characters
      * 
-     * @param text
+     * @param text header
      * @return message text without header or footer
      */
     public static String stripStxEtxHeaderAndFooter(String text) {
@@ -100,8 +100,7 @@ public final class ParseUtils {
         if (StringUtils.isBlank(number)) {
             return null;
         } else {
-            String removedCharacters =  number.replaceAll("[^0-9]", "");
-            return validateOrScrubPhoneNumber(removedCharacters);
+            return number.replaceAll("[^0-9]", "");
         }
     }
 
@@ -122,11 +121,10 @@ public final class ParseUtils {
            }
         }
 
-        String phoneNumber = formatedPhoneNumber.toString();
-        return validateOrScrubPhoneNumber(phoneNumber);
+        return formatedPhoneNumber.toString();
     }
 
-    private static String validateOrScrubPhoneNumber(String phoneNumber) {
+/*    private static String validateOrScrubPhoneNumber(String phoneNumber) {
         PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
         //ZZ is unknown region.
         boolean canBeAPhoneNumber = phoneNumberUtil.isPossibleNumber(phoneNumber, "ZZ");
@@ -134,7 +132,7 @@ public final class ParseUtils {
             phoneNumber = ""; //We are ignoring impossible phone numbers
         }
         return phoneNumber;
-    }
+    }*/
 
     public static Integer returnNumberOrNull(String s) {
         if (StringUtils.isBlank(s)) {
@@ -161,11 +159,9 @@ public final class ParseUtils {
 	 * 
 	 * resolves issue #948
 	 * 
-	 * @param dt
+	 * @param dt date
 	 * @param format
 	 *            (formatted -> yyMMdd)
-	 * @return
-	 * @throws ParseException
 	 */
 	public static Date parseAPISDOB(String dt, String format) {
 		

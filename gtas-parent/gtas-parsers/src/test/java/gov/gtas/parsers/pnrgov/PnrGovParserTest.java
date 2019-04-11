@@ -96,8 +96,15 @@ public class PnrGovParserTest implements ParserTestHelper {
     public void pnrExampleTest() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(PNR_EXAMPLE);
         PnrVo vo = this.parser.parse(pnrExample);
-        int bagsInPNRExample = 18;
-        assertEquals(bagsInPNRExample, vo.getBags().size());
+        Integer bagsInPNRExample = 18;
+        assertEquals(bagsInPNRExample, vo.getTotal_bag_count());
     }
+
+    /*    @Test
+    public void failingMessage1() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(failingMessage1);
+        PnrVo dob = this.parser.parse(pnrExample);
+        System.out.println("test");
+    }*/
 
 }
