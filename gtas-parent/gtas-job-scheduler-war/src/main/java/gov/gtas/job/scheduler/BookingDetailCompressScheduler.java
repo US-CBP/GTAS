@@ -26,12 +26,20 @@ public class BookingDetailCompressScheduler {
     private static final Logger logger = LoggerFactory
             .getLogger(BookingDetailCompressScheduler.class);
 
+    private final BookingDetailRepository bookingDetailRepository;
+
+    private final BookingDetailService bookingDetailService;
+
+    private final AppConfigurationService appConfigurationService;
+
     @Autowired
-    private BookingDetailRepository bookingDetailRepository;
-
-    @Autowired private BookingDetailService bookingDetailService;
-
-    @Autowired private AppConfigurationService appConfigurationService;
+    public BookingDetailCompressScheduler(BookingDetailRepository bookingDetailRepository,
+                                          BookingDetailService bookingDetailService,
+                                          AppConfigurationService appConfigurationService) {
+        this.bookingDetailRepository = bookingDetailRepository;
+        this.bookingDetailService = bookingDetailService;
+        this.appConfigurationService = appConfigurationService;
+    }
 
     @Scheduled(fixedDelayString = "${cleanup.fixedDelay.in.milliseconds}", initialDelayString = "${cleanup.initialDelay.in.milliseconds}")
     public void jobScheduling() {

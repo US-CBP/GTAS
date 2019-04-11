@@ -67,6 +67,17 @@ public class Bag extends BaseEntity {
 	@Transient
 	private UUID parserUUID;
 
+	@Transient
+	private Set<UUID> flightVoUUID = new HashSet<>();
+
+	public Set<UUID> getFlightVoUUID() {
+		return flightVoUUID;
+	}
+
+	public void setFlightVoUUID(Set<UUID> flightVoUUID) {
+		this.flightVoUUID = flightVoUUID;
+	}
+
 	public boolean isMemberPool() {
 		return memberPool;
 	}
@@ -208,17 +219,30 @@ public class Bag extends BaseEntity {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof Bag)) return false;
-		if (!super.equals(o)) return false;
 		Bag bag = (Bag) o;
-		return isPrimeFlight() == bag.isPrimeFlight() &&
-				getData_source().equals(bag.getData_source()) &&
+		return isHeadPool() == bag.isHeadPool() &&
+				isMemberPool() == bag.isMemberPool() &&
+				isPrimeFlight() == bag.isPrimeFlight() &&
+				Objects.equals(getBagId(), bag.getBagId()) &&
+				Objects.equals(getFlight(), bag.getFlight()) &&
+				Objects.equals(getData_source(), bag.getData_source()) &&
+				Objects.equals(getDestination(), bag.getDestination()) &&
+				Objects.equals(getPassenger(), bag.getPassenger()) &&
 				Objects.equals(getDestinationAirport(), bag.getDestinationAirport()) &&
-				Objects.equals(getAirline(), bag.getAirline()) &&
-				Objects.equals(getBagSerialCount(), bag.getBagSerialCount());
+				Objects.equals(getAirline(), bag.getAirline());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getData_source(), getDestinationAirport(), getAirline(), isPrimeFlight(), getBagSerialCount());
+		return Objects.hash(getBagId(),
+				getFlight(),
+				getData_source(),
+				getDestination(),
+				getPassenger(),
+				getDestinationAirport(),
+				getAirline(),
+				isHeadPool(),
+				isMemberPool(),
+				isPrimeFlight());
 	}
 }

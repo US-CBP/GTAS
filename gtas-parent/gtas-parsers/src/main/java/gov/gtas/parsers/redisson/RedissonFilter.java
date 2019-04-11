@@ -149,7 +149,7 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
                 map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
-                logger.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
+                logger.debug("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
 				if (!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)) {
 					throw new Exception("Error publishing to parsing queue");
 				}

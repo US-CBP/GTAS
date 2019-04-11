@@ -481,8 +481,13 @@ public class GtasLoaderImpl implements GtasLoader {
     @Override
     public List<Bag> createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight) {
 
-        List<Bag> bagList = new ArrayList<>();
-        List<BagVo> bagVoList = handleDuplicateBags(pvo);
+        Set<Bag> passengerBags = new HashSet<>();
+        for (Passenger p : pnr.getPassengers()) {
+            passengerBags.addAll(p.getBags());
+        }
+
+        BagInformationDTO bagInformationDTO = handleDuplicateBags(pvo, passengerBags);
+        List<BagVo> bagVoList = bagInformationDTO.getNewBags();
         Set<BagMeasurementsVo> bagMeasurementsToSave = bagVoList.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toSet());
         Map<UUID, UUID> orphanToBD = getOrphanMap(pvo, pnr);
         Map<UUID, BagMeasurements> uuidBagMeasurementsMap = saveBagMeasurements(bagMeasurementsToSave);
@@ -490,6 +495,41 @@ public class GtasLoaderImpl implements GtasLoader {
                 .stream()
                 .collect(Collectors.toMap(BookingDetail::getParserUUID, bd -> bd));
 
+
+        List<Bag> newBags = makeNewBags(pnr, primeFlight, bagVoList, uuidBagMeasurementsMap);
+        bagDao.saveAll(newBags);
+        List<Bag> allBags = new ArrayList<>(bagInformationDTO.getExistingBags());
+        allBags.addAll(newBags);
+
+
+        for (Bag bag : allBags ) {
+            for (UUID flightUUID : bag.getFlightVoUUID()) {
+                if (uuidBookingDetailMap.containsKey(flightUUID)) {
+                    BookingDetail bookingDetail = uuidBookingDetailMap.get(flightUUID);
+                    bookingDetail.getBags().add(bag);
+                } else if (orphanToBD.containsKey(flightUUID)) {
+                    UUID bookingDetailUUID = orphanToBD.get(flightUUID);
+                    BookingDetail bookingDetail = uuidBookingDetailMap.get(bookingDetailUUID);
+                    bookingDetail.getBags().add(bag);
+                } else if (!flightUUID.equals(primeFlight.getParserUUID())) {
+                    logger.warn("No connection to booking detail can be made!");
+                }
+            }
+        }
+        //Save relationship to booking details.
+        bookingDetailDao.saveAll(pnr.getBookingDetails());
+        return allBags;
+    }
+
+/*
+* Converts bagVo into a bag, creates relationship with BD as appropriate, toggles as prime flight where appriorate.
+* Returns list of bags.
+* */
+    private List<Bag> makeNewBags(Pnr pnr,
+                                  Flight primeFlight,
+                                  List<BagVo> bagVoList,
+                                  Map<UUID, BagMeasurements> uuidBagMeasurementsMap ) {
+        List<Bag> bagList = new ArrayList<>();
         for (BagVo b : bagVoList) {
             for (Passenger p : pnr.getPassengers()) {
                 if (p.getParserUUID().equals(b.getPassengerId()) && b.getBagId() != null) {
@@ -511,22 +551,8 @@ public class GtasLoaderImpl implements GtasLoader {
                     if (b.getFlightVoId().contains(primeFlight.getParserUUID())) {
                         bag.setPrimeFlight(true);
                     }
-                    bagDao.save(bag);
+                    bag.getFlightVoUUID().addAll(b.getFlightVoId());
                     primeFlight.getBags().add(bag);
-                    for (UUID flightUUID : b.getFlightVoId()) {
-                        if (uuidBookingDetailMap.containsKey(flightUUID)) {
-                            BookingDetail bookingDetail = uuidBookingDetailMap.get(flightUUID);
-                            bookingDetail.getBags().add(bag);
-                        } else if (orphanToBD.containsKey(flightUUID)) {
-                            UUID bookingDetailUUID = orphanToBD.get(flightUUID);
-                            BookingDetail bookingDetail = uuidBookingDetailMap.get(bookingDetailUUID);
-                            bookingDetail.getBags().add(bag);
-                        } else if (!flightUUID.equals(primeFlight.getParserUUID())) {
-                            logger.warn("No connection to booking detail can be made!");
-                        }
-                    }
-                    //Booking details owns the bag relationship, save the relationship through BD.
-                    bookingDetailDao.saveAll(pnr.getBookingDetails());
                     bagList.add(bag);
                     p.getBags().add(bag);
                 }
@@ -576,7 +602,7 @@ public class GtasLoaderImpl implements GtasLoader {
         return uuidBagMeasurementsMap;
     }
 
-    private List<BagVo> handleDuplicateBags(PnrVo pvo) {
+    private BagInformationDTO handleDuplicateBags(PnrVo pvo, Set<Bag> existingBags) {
         List<BagVo> bagVoList = pvo.getBags();
         //Prime flight bags take priority and get merged into.
         List<BagVo> returningBagVos = new ArrayList<>();
@@ -593,7 +619,21 @@ public class GtasLoaderImpl implements GtasLoader {
                 returningBagVos.add(bagvo);
             }
         }
-        return returningBagVos;
+
+        List<Bag> bagsToUpdate = new ArrayList<>();
+        for (Bag bag : existingBags) {
+            for (BagVo bagVo : new ArrayList<>(returningBagVos)) {
+                if (bagVo.hasSameBagInfo(bag)) {
+                    bag.getFlightVoUUID().addAll(bagVo.getFlightVoId());
+                    returningBagVos.remove(bagVo);
+                    bagsToUpdate.add(bag);
+                }
+            }
+        }
+        BagInformationDTO bagInformationDTO = new BagInformationDTO();
+        bagInformationDTO.setExistingBags(bagsToUpdate);
+        bagInformationDTO.setNewBags(returningBagVos);
+        return bagInformationDTO;
     }
 
     private boolean hasSameBagInfo(BagVo bagvo, BagVo secondBag) {
