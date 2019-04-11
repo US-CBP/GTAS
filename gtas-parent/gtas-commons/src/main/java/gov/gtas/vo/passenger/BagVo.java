@@ -27,7 +27,16 @@ public class BagVo {
         BagVo bagVo = new BagVo();
         bagVo.setBagId(bag.getBagId());
         if (bag.getBagMeasurements() != null) {
-            bagVo.setBag_weight(bag.getBagMeasurements().getWeight());
+            if (bag.getBagMeasurements().getWeight() == null) {
+                bagVo.setBag_weight(0);
+            } else {
+                bagVo.setBag_weight(bag.getBagMeasurements().getWeight());
+            }
+            if (bag.getBagMeasurements().getBagCount() == null) {
+                bagVo.setBag_count(0);
+            } else {
+                bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
+            }
             bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
         }
         bagVo.setPassengerId(bag.getPassenger().getId());
