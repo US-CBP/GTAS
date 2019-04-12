@@ -2,6 +2,7 @@ package gov.gtas.parsers.pnrgov.segment;
 
 import com.google.common.collect.Iterables;
 import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
+import gov.gtas.util.MathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +92,7 @@ public class TBD_BD {
             try {
                 weight = Double.parseDouble(measurementAndValue);
                 if ("701".equals(allowanceOrChargeQualifier)) {
-                    weight = weight * 0.45359237;
+                    weight = MathUtils.poundsToKilos(weight);
                 }
             } catch (Exception e) {
                 logger.warn("Failed to parse double" + weight);

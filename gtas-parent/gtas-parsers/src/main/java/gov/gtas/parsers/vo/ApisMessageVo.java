@@ -21,9 +21,11 @@ public class ApisMessageVo extends MessageVo implements Validatable {
     private List<ReportingPartyVo> reportingParties = new ArrayList<>();
     private List<FlightVo> flights = new ArrayList<>();
     private List<PassengerVo> passengers = new ArrayList<>();
+    private List<BagVo> bagVos = new ArrayList<>();
     
     public ApisMessageVo() { }
-    
+
+    public void addBagVo(BagVo b) {bagVos.add(b);}
     public void addFlight(FlightVo f) {
         flights.add(f);
     }
@@ -72,5 +74,13 @@ public class ApisMessageVo extends MessageVo implements Validatable {
             return false;
         }
         return true;
+    }
+
+    public List<BagVo> getBagVos() {
+        return bagVos;
+    }
+
+    public void setBagVos(List<BagVo> bagVos) {
+        this.bagVos = bagVos;
     }
 }

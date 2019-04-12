@@ -7,6 +7,7 @@ import gov.gtas.parsers.vo.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public interface GtasLoader {
     void checkHashCode(String hash) throws LoaderException;
@@ -22,7 +23,8 @@ public interface GtasLoader {
                                                     Set<Passenger> messagePassengers,
                                                     Set<BookingDetail> bookingDetails,
                                                     Message message) throws ParseException;
-    List<Bag> createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight);
+    BagInformationDTO handleDuplicateBags(List<BagVo> bagVoList, Set<Bag> existingBags);
+    Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave);
     void createFormPfPayments(PnrVo vo,Pnr pnr);
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
     int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers,

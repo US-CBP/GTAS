@@ -2,12 +2,16 @@ package gov.gtas.parsers.vo;
 
 import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
 import gov.gtas.parsers.pnrgov.segment.TBD_BD;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
 import java.util.UUID;
 
 public class BagMeasurementsVo {
+    private Logger logger= LoggerFactory.getLogger(BagMeasurementsVo.class);
     private UUID uuid = UUID.randomUUID();
     private String measurementType;
     private Integer quantity;
@@ -73,5 +77,26 @@ public class BagMeasurementsVo {
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public Integer getBagCountFromString(String numBagsAsString) {
+        if (StringUtils.isBlank(numBagsAsString)) {return null;}
+        Integer bagCount = null;
+        try {
+            bagCount = Integer.parseInt(numBagsAsString);
+        } catch (Exception e) {
+            logger.warn("failed to parse bag from string " + numBagsAsString);
+        }
+        return bagCount;
+    }
+    public Double getBagWeightFromString(String bagWeight) {
+        if (StringUtils.isBlank(bagWeight)) {return null;}
+        Double weight = null;
+        try {
+            weight = Double.parseDouble(bagWeight);
+        } catch (Exception e) {
+            logger.warn("failed to parse bag weight from string " + bagWeight);
+        }
+        return weight;
     }
 }

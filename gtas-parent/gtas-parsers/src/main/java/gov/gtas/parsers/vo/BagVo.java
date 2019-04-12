@@ -27,7 +27,7 @@ public class BagVo {
     private boolean primeFlight = false;
     private String consecutiveTagNumber;
 
-    private BagVo() {
+    public BagVo() {
     }
 
     public static BagVo fromTbdBagTagDetails(TBD_BagTagDetails bagTagSegment) {
@@ -183,6 +183,10 @@ public class BagVo {
 
             Double bagWeight = bagMeasurements.getWeight();
             Double voWeight = VoMeasurements.getWeightInKilos();
+            if (voWeight != null) {
+                Long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
+                voWeight = rounded.doubleValue();
+            }
             sameWeight = Objects.equals(bagWeight, voWeight);
 
         }

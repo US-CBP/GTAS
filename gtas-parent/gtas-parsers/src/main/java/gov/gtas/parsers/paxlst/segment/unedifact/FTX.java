@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.paxlst.segment.unedifact;
@@ -33,9 +33,11 @@ public class FTX extends Segment {
 
     private FtxCode ftxCode;
 
-    /** This element reports the Bag Tag identification reference */
+    /**
+     * This element reports the Bag Tag identification reference
+     */
     private String bagId;
-    
+
     //UGANDA SPECIFIC WEIGHT-NOT AVAILABLE IN REGULAR APIS FILE
     private String bagWeight;
 
@@ -50,45 +52,34 @@ public class FTX extends Segment {
         super(FTX.class.getSimpleName(), composites);
         for (int i = 0; i < numComposites(); i++) {
             Composite c = getComposite(i);
-            
+
             switch (i) {
-            case 0:
-                switch (c.getElement(0)) {
-                case "BAG":
-                    this.ftxCode = FtxCode.BAG;
+                case 0:
+                    if ("BAG".equals(c.getElement(0))) {
+                        this.ftxCode = FtxCode.BAG;
+                    }
                     break;
-                }
-                
-                break;
-            case 1:
-                if (this.ftxCode == FtxCode.BAG) {
-                    this.bagWeight = c.getElement(0);
-                    
-                }
-                break;
-             
-            case 3:
-                if (this.ftxCode == FtxCode.BAG) {
-                    this.bagId = c.getElement(0);
-                    //if(c.getElement(1) == null || StringUtils.isBlank(c.getElement(1))){
-                    	//this.numBags = "1";
-                    //}else{
-                    	this.numBags = c.getElement(1);
-                    //}
-                }
-                break;
+                case 1:
+                    if (this.ftxCode == FtxCode.BAG) {
+                        this.bagWeight = c.getElement(0);
+                    }
+                    break;
+                case 3:
+                    if (this.ftxCode == FtxCode.BAG) {
+                        this.bagId = c.getElement(0);
+                        this.numBags = c.getElement(1);
+                    }
+                    break;
             }
-            
         }
     }
 
-    
+
     public String getBagWeight() {
-		return bagWeight;
-	}
+        return bagWeight;
+    }
 
-
-	public FtxCode getFtxCode() {
+    public FtxCode getFtxCode() {
         return ftxCode;
     }
 
