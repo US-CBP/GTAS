@@ -24,11 +24,11 @@ public interface BookingDetailRepository extends CrudRepository<BookingDetail, L
     @Query(value =
             "SELECT bd.* FROM BookingDetail bd " +
             "WHERE bd.processed = FALSE " +
-            "AND bd.id IN (SELECT pnrbk.booking_detail_id FROM gtas.pnr_booking pnrbk " +
+            "AND bd.id IN (SELECT pnrbk.booking_detail_id FROM gtas.message_booking pnrbk " +
                 "WHERE pnrbk.booking_detail_id = bd.id " +
-                "AND pnrbk.pnr_id IN " +
+                "AND pnrbk.message_id IN " +
                 "   (SELECT ms.ms_message_id FROM message_status ms " +
-                "        WHERE (ms.ms_message_id = pnrbk.pnr_id) " +
+                "        WHERE (ms.ms_message_id = pnrbk.message_id) " +
                 "               AND (ms.ms_status = 'ANALYZED' " +
                 "               OR ms.ms_status = 'PARTIAL_ANALYZE' " +
                 "               OR ms.ms_status = 'FAILED_ANALYZE'" +

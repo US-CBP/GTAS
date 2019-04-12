@@ -8,7 +8,8 @@ package gov.gtas.services;
 import gov.gtas.model.BookingDetail;
 import gov.gtas.model.FlightLeg;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.Pnr;
+import gov.gtas.model.Message;
+
 import gov.gtas.repository.BookingDetailRepository;
 import gov.gtas.util.EntityResolverUtils;
 
@@ -100,7 +101,7 @@ public class BookingDetailServiceImpl implements BookingDetailService{
 
         Set<Passenger> oldBookingDetailsPassenger = obd.getPassengers();
         Set<FlightLeg> oldBookingDetailsFlightLeg = obd.getFlightLegs();
-        Set<Pnr> oldBookingDetailsPnr = obd.getPnrs();
+        Set<Message> oldBookingDetailsPnr = obd.getMessages();
 
         oldBookingDetailsPnr.forEach(bd -> {
             bd.getBookingDetails().add(nbd);
@@ -112,10 +113,10 @@ public class BookingDetailServiceImpl implements BookingDetailService{
         );
 
         oldBD.setPassengers(null);
-        oldBD.setPnrs(null);
+        oldBD.setMessages(null);
         oldBD.setFlightLegs(null);
         nbd.getPassengers().addAll(oldBookingDetailsPassenger);
-        nbd.getPnrs().addAll(oldBookingDetailsPnr);
+        nbd.getMessages().addAll(oldBookingDetailsPnr);
         nbd.getFlightLegs().addAll(oldBookingDetailsFlightLeg);
         bookingDetailRepository.save(nbd);
         bookingDetailRepository.delete(obd);

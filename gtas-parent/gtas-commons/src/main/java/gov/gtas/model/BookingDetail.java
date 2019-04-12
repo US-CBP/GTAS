@@ -53,9 +53,9 @@ public class BookingDetail extends BaseEntityAudit {
     @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
     private Set<Passenger> passengers = new HashSet<>();
    
-    @ManyToMany(targetEntity = Pnr.class)
-    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pnr_id"))     
-    private Set<Pnr> pnrs = new HashSet<>();
+    @ManyToMany(targetEntity = Message.class)
+    @JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))     
+    private Set<Message> messages = new HashSet<>();
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
@@ -68,12 +68,12 @@ public class BookingDetail extends BaseEntityAudit {
 		this.passengers = passengers;
 	}
 
-	public Set<Pnr> getPnrs() {
-		return pnrs;
+	public Set<Message> getMessages() {
+		return messages;
 	}
 
-	public void setPnrs(Set<Pnr> pnrs) {
-		this.pnrs = pnrs;
+	public void setMessages(Set<Message> pnrs) {
+		this.messages = pnrs;
 	}
 
 
@@ -213,7 +213,7 @@ public class BookingDetail extends BaseEntityAudit {
 				", processed=" + processed +
 				", flightLegs=" + flightLegs +
 				", passengers=" + passengers +
-				", pnrs=" + pnrs +
+				", pnrs=" + messages +
 				'}';
 	}
 }

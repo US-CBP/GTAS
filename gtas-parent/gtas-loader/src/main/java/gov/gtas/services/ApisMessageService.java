@@ -101,22 +101,28 @@ public class ApisMessageService extends MessageLoaderService {
             		apis.getFlights(),
                     apis.getFlightLegs(),
                     msgDto.getPrimeFlightKey(),
-                    new HashSet<>());
+                    apis.getBookingDetails());
 
             PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(
                     primeFlight,
                     m.getPassengers(),
                     apis.getPassengers(),
-                    new HashSet<>(),
+                    apis.getBookingDetails(),
                     apis);
 
             int createdPassengers = loaderRepo.createPassengers(
                     passengerInformationDTO.getNewPax(),
                     passengerInformationDTO.getOldPax(),
-                    apis.getPassengers(), primeFlight, new HashSet<>());
+                    apis.getPassengers(), primeFlight, apis.getBookingDetails());
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             createFlightLegs(apis);
+            loaderRepo.updateBookingDetails(apis, apis.getPassengers(), passengerInformationDTO.getBdSet());
+            
+            for (BookingDetail bD : apis.getBookingDetails()) {
+                bD.getMessages().add(apis);
+            }
+            
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
             apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {

@@ -398,12 +398,11 @@ public class GtasLoaderImpl implements GtasLoader {
 
 
     @Override
-    public void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> paxBookingDetailsMap) {
-        Set<BookingDetail> bookingDetails = pnr.getBookingDetails();
-        Set<Passenger> messagePassengers = pnr.getPassengers();
+    public void updateBookingDetails(Message message, Set<Passenger> messagePassengers, Map<Long, Set<BookingDetail>> paxBookingDetailsMap) {
+        Set<BookingDetail> bookingDetails = message.getBookingDetails();
         if (!bookingDetails.isEmpty()) {
             for (BookingDetail bD : bookingDetails) {
-                bD.getPnrs().add(pnr);
+                bD.getMessages().add(message);
                 for (Passenger pax : messagePassengers) {
                     Set<BookingDetail> paxBdSet = paxBookingDetailsMap.get(pax.getId());
                     if (paxBdSet == null || !paxBookingDetailsMap.get(pax.getId()).contains(bD)) {
