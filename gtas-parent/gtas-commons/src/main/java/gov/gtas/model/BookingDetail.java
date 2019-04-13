@@ -42,24 +42,26 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Column(name = "destination_country", length = 3)
 	private String destinationCountry;
-
-	@Column(name = "processed")
-	private Boolean processed = Boolean.FALSE;
 	
 	@OneToMany(mappedBy ="bookingDetail")
 	private Set<FlightLeg> flightLegs;
 
-    @ManyToMany(targetEntity = Passenger.class)
-    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Passenger.class)
     private Set<Passenger> passengers = new HashSet<>();
-   
-    @ManyToMany(targetEntity = Message.class)
-    @JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))     
+
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Message.class)
     private Set<Message> messages = new HashSet<>();
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
     
+    @ManyToOne(optional = false)
+	@JoinColumn(name = "flight", updatable = false, insertable = false)
+	private Flight flight;
+
+	@Column(name = "flight", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
 	public Set<Passenger> getPassengers() {
 		return passengers;
 	}
@@ -149,14 +151,6 @@ public class BookingDetail extends BaseEntityAudit {
 		this.destinationCountry = destinationCountry;
 	}
 
-	public Boolean getProcessed() {
-		return processed;
-	}
-
-	public void setProcessed(Boolean processed) {
-		this.processed = processed;
-	}
-
 	public Set<FlightLeg> getFlightLegs() {
 		return flightLegs;
 	}
@@ -171,6 +165,14 @@ public class BookingDetail extends BaseEntityAudit {
 
 	public void setFullFlightNumber(String fullFlightNumber) {
 		this.fullFlightNumber = fullFlightNumber;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
 	}
 
 	@Override
@@ -210,10 +212,17 @@ public class BookingDetail extends BaseEntityAudit {
 				", originCountry='" + originCountry + '\'' +
 				", destination='" + destination + '\'' +
 				", destinationCountry='" + destinationCountry + '\'' +
-				", processed=" + processed +
 				", flightLegs=" + flightLegs +
 				", passengers=" + passengers +
 				", pnrs=" + messages +
 				'}';
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
 	}
 }

@@ -44,7 +44,8 @@ public class Passenger extends BaseEntityAudit {
     @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
 
-    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    @ManyToMany(targetEntity = BookingDetail.class)
+    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)

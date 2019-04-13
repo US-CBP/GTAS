@@ -117,12 +117,7 @@ public class ApisMessageService extends MessageLoaderService {
             loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
             createFlightLegs(apis);
-            loaderRepo.updateBookingDetails(apis, apis.getPassengers(), passengerInformationDTO.getBdSet());
-            
-            for (BookingDetail bD : apis.getBookingDetails()) {
-                bD.getMessages().add(apis);
-            }
-            
+
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
             apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {

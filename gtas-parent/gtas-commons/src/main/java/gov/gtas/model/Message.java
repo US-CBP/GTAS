@@ -44,8 +44,9 @@ public class Message extends BaseEntity {
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="message")
     private List<FlightLeg> flightLegs = new ArrayList<>();
     
-    @ManyToMany(fetch=FetchType.LAZY, mappedBy = "messages",targetEntity = BookingDetail.class)
-    private Set<BookingDetail> bookingDetails = new HashSet<>();
+    @ManyToMany(fetch=FetchType.LAZY,targetEntity = BookingDetail.class)
+	@JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "message_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
+	private Set<BookingDetail> bookingDetails = new HashSet<>();
 
 	@Column(length = 4000)
 	private String error;

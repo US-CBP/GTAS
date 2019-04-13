@@ -133,13 +133,9 @@ public class PnrMessageService extends MessageLoaderService {
 
             createFlightPax(pnr);
             loaderRepo.createBagsFromPnrVo(vo, pnr);
-            loaderRepo.updateBookingDetails(pnr,pnr.getPassengers(), passengerInformationDTO.getBdSet());
             // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setMessage(pnr);
-            }
-            for (BookingDetail bD : pnr.getBookingDetails()) {
-                bD.getMessages().add(pnr);
             }
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);
