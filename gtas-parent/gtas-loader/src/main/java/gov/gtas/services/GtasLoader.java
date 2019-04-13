@@ -30,5 +30,4 @@ public interface GtasLoader {
     int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers,
                          Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);
     void updateFlightPassengerCount(Flight primeFlight, int createdPassengers);
-    void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> passBookDetails);
 }

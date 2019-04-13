@@ -43,46 +43,51 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Column(name = "destination_country", length = 3)
 	private String destinationCountry;
-
-	@Column(name = "processed")
-	private Boolean processed = Boolean.FALSE;
 	
 	@OneToMany(mappedBy ="bookingDetail")
 	private Set<FlightLeg> flightLegs;
 
-    @ManyToMany(targetEntity = Passenger.class)
-    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Passenger.class)
     private Set<Passenger> passengers = new HashSet<>();
-   
-    @ManyToMany(targetEntity = Pnr.class)
-    @JoinTable(name = "pnr_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pnr_id"))     
-    private Set<Pnr> pnrs = new HashSet<>();
+
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Message.class)
+    private Set<Message> messages = new HashSet<>();
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
 
-	@ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class)
-	@JoinTable(name = "bag_booking_detail_join", joinColumns = @JoinColumn(name = "bd_id"), inverseJoinColumns = @JoinColumn(name = "bag_id"))
-	private Set<Bag> bags = new HashSet<>();
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "flight", updatable = false, insertable = false)
+    private Flight flight;
+
+    @Column(name = "flight", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class)
+    @JoinTable(name = "bag_booking_detail_join", joinColumns = @JoinColumn(name = "bd_id"), inverseJoinColumns = @JoinColumn(name = "bag_id"))
+    private Set<Bag> bags = new HashSet<>();
 
 
     /*
-    *
-    * Used to keep a referenced to FlightVO from parser.
-    * Only used in loader to help establish relationships.
-    * */
-	@Transient
-	private UUID parserUUID;
+     *
+     * Used to keep a referenced to FlightVO from parser.
+     * Only used in loader to help establish relationships.
+     * */
+    @Transient
+    private UUID parserUUID;
 
-	public UUID getParserUUID() {
-		return parserUUID;
-	}
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
 
-	public void setParserUUID(UUID parserUUID) {
-		this.parserUUID = parserUUID;
-	}
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
 
-	public Set<Passenger> getPassengers() {
+
+
+    public Set<Passenger> getPassengers() {
 		return passengers;
 	}
 
@@ -90,12 +95,12 @@ public class BookingDetail extends BaseEntityAudit {
 		this.passengers = passengers;
 	}
 
-	public Set<Pnr> getPnrs() {
-		return pnrs;
+	public Set<Message> getMessages() {
+		return messages;
 	}
 
-	public void setPnrs(Set<Pnr> pnrs) {
-		this.pnrs = pnrs;
+	public void setMessages(Set<Message> pnrs) {
+		this.messages = pnrs;
 	}
 
 
@@ -171,14 +176,6 @@ public class BookingDetail extends BaseEntityAudit {
 		this.destinationCountry = destinationCountry;
 	}
 
-	public Boolean getProcessed() {
-		return processed;
-	}
-
-	public void setProcessed(Boolean processed) {
-		this.processed = processed;
-	}
-
 	public Set<FlightLeg> getFlightLegs() {
 		return flightLegs;
 	}
@@ -194,6 +191,30 @@ public class BookingDetail extends BaseEntityAudit {
 	public void setFullFlightNumber(String fullFlightNumber) {
 		this.fullFlightNumber = fullFlightNumber;
 	}
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+    public Set<Bag> getBags() {
+        return bags;
+    }
+
+    public void setBags(Set<Bag> bags) {
+        this.bags = bags;
+    }
 
 	@Override
 	public boolean equals(Object o) {
@@ -232,18 +253,9 @@ public class BookingDetail extends BaseEntityAudit {
 				", originCountry='" + originCountry + '\'' +
 				", destination='" + destination + '\'' +
 				", destinationCountry='" + destinationCountry + '\'' +
-				", processed=" + processed +
 				", flightLegs=" + flightLegs +
 				", passengers=" + passengers +
-				", pnrs=" + pnrs +
+				", pnrs=" + messages +
 				'}';
-	}
-
-	public Set<Bag> getBags() {
-		return bags;
-	}
-
-	public void setBags(Set<Bag> bags) {
-		this.bags = bags;
 	}
 }

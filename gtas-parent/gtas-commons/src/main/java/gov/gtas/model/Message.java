@@ -8,8 +8,10 @@ package gov.gtas.model;
 import java.sql.Clob;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -41,6 +43,10 @@ public class Message extends BaseEntity {
 	
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="message")
     private List<FlightLeg> flightLegs = new ArrayList<>();
+    
+    @ManyToMany(fetch=FetchType.LAZY,targetEntity = BookingDetail.class)
+	@JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "message_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
+	private Set<BookingDetail> bookingDetails = new HashSet<>();
 
 	@Column(length = 4000)
 	private String error;
@@ -126,6 +132,30 @@ public class Message extends BaseEntity {
     public void setFlightLegs(List<FlightLeg> flightLegs) {
         this.flightLegs = flightLegs;
     }
+    
+    public Set<BookingDetail> getBookingDetails() {
+		return bookingDetails;
+	}
+
+	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+		this.bookingDetails = bookingDetails;
+	}
+
+//    public void addPassenger(Passenger p) {
+//        if (this.passengers == null) {
+//            this.passengers = new HashSet<>();
+//        }
+//        this.passengers.add(p);
+//    }
+//
+//    public Set<Passenger> getPassengers() {
+//        return passengers;
+//    }
+//
+//    public void setPassengers(Set<Passenger> passengers) {
+//        this.passengers = passengers;
+//    }
+//
 
 	@Override
 	public boolean equals(Object obj) {

@@ -100,6 +100,10 @@ public class Flight extends BaseEntityAudit {
     )
     private Set<ApisMessage> apis = new HashSet<>();
 
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+
     // This is a convenience method to see the passengers associated with the flight.
     // Managing passengers this way is recommended against as flight passenger is manually made in the
     // loader.
@@ -195,6 +199,15 @@ public class Flight extends BaseEntityAudit {
         this.apis = apis;
     }
     
+
+    public Set<BookingDetail> getBookingDetails() {
+        return bookingDetails;
+    }
+
+    public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+        this.bookingDetails = bookingDetails;
+    }
+
 
         public Long getId() {
             return id;

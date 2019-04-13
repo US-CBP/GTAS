@@ -44,7 +44,8 @@ public class Passenger extends BaseEntityAudit {
     @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
 
-    @ManyToMany(mappedBy = "passengers",targetEntity = BookingDetail.class)
+    @ManyToMany(targetEntity = BookingDetail.class)
+    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
     private Set<BookingDetail> bookingDetails = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
@@ -126,7 +127,7 @@ public class Passenger extends BaseEntityAudit {
 	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
 	}
-
+	
     public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}
@@ -134,8 +135,7 @@ public class Passenger extends BaseEntityAudit {
 	public void setApisMessage(Set<ApisMessage> apisMessage) {
 		this.apisMessage = apisMessage;
 	}
-	public void addApisMessage(ApisMessage apisMessage) {
-    }
+	
 
 	public void addDocument(Document d) {
         this.documents.add(d);
@@ -165,7 +165,7 @@ public class Passenger extends BaseEntityAudit {
 	public void setDocuments(Set<Document> documents) {
         this.documents = documents;
     }
-
+	
     public Set<Pnr> getPnrs() {
         return pnrs;
     }
@@ -237,7 +237,8 @@ public class Passenger extends BaseEntityAudit {
     public void setHits(Set<HitsSummary> hits) {
         this.hits = hits;
     }
-    @Override
+
+	@Override
     public int hashCode() {
         return Objects.hash(getUuid());
     }

@@ -149,14 +149,10 @@ public class PnrMessageService extends MessageLoaderService {
             WeightCountDto weightCountDto = getBagStatistics(bagList);
             pnr.setBagCount(weightCountDto.getCount());
             pnr.setBaggageWeight(weightCountDto.getWeight());
-            loaderRepo.createBookingDetails(pnr, passengerInformationDTO.getBdSet());
             createFlightPax(pnr);
             // update flight legs
             for (FlightLeg leg : pnr.getFlightLegs()) {
                 leg.setMessage(pnr);
-            }
-            for (BookingDetail bD : pnr.getBookingDetails()) {
-                bD.getPnrs().add(pnr);
             }
             calculateDwellTimes(pnr);
             updatePaxEmbarkDebark(pnr);

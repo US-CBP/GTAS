@@ -5,19 +5,14 @@
  */
 package gov.gtas.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
@@ -29,7 +24,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.MutableFlightDetails;
@@ -242,17 +236,18 @@ public class ServiceRepositoryIT {
     }
 
 
-    @Test
-    @Transactional
-    public void testGetApisMessageByHashcode() {
-        final String hash = "1122233";
-        ApisMessage m = new ApisMessage();
-        m.setHashCode(hash);
-        m.setCreateDate(new Date());
-        m.setFilePath("/tmp/nothing.txt");
-        apisMessageRepository.save(m);
-
-        ApisMessage m2 = apisMessageRepository.findByHashCode(hash);
-        assertEquals(m, m2);
-    }
+//    @Test
+//    @Transactional
+//    public void testGetApisMessageByHashcode() {
+//        final String hash = "1122233";
+//        TextUtils.getMd5Hash(payload, StandardCharsets.US_ASCII);
+//        ApisMessage m = new ApisMessage();
+//        m.setHashCode(hash);
+//        m.setCreateDate(new Date());
+//        m.setFilePath("/tmp/nothing.txt");
+//        apisMessageRepository.save(m);
+//
+//        ApisMessage m2 = apisMessageRepository.findByHashCode(hash);
+//        assertEquals(m, m2);
+//    }
 }

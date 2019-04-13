@@ -77,9 +77,6 @@ public class PassengerDetailsController {
 	@Autowired
 	private MatchingService matchingService;
 
-	@Autowired
-	private BookingDetailService bookingDetailService;
-	
 	@Resource
 	private BagRepository bagRepository;
 	

@@ -110,13 +110,10 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.LAZY, mappedBy = "pnrs",targetEntity = BookingDetail.class)
-    private Set<BookingDetail> bookingDetails = new HashSet<>();
-    
     @ManyToMany(fetch=FetchType.LAZY, targetEntity = Passenger.class)
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
-
+    
     @ManyToMany(targetEntity = CreditCard.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_credit_card", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "credit_card_id"))
     private Set<CreditCard> creditCards = new HashSet<>();
@@ -153,14 +150,6 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    
-    public Set<BookingDetail> getBookingDetails() {
-		return bookingDetails;
-	}
-
-	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
-		this.bookingDetails = bookingDetails;
-	}
 
 	@Column(name = "resrvation_create_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -219,12 +208,6 @@ public class Pnr extends Message {
         paymentForms.add(payment);
     }
 	
-    public void addPassenger(Passenger p) {
-        if (this.passengers == null) {
-            this.passengers = new HashSet<>();
-        }
-        this.passengers.add(p);
-    }
 
     public void addFlight(Flight f) {
         if (this.flights == null) {
@@ -278,14 +261,6 @@ public class Pnr extends Message {
 
     public void setEdifactMessage(EdifactMessage edifactMessage) {
         this.edifactMessage = edifactMessage;
-    }
-
-    public Set<Passenger> getPassengers() {
-        return passengers;
-    }
-
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
     }
 
     public Set<CreditCard> getCreditCards() {
@@ -440,7 +415,20 @@ public class Pnr extends Message {
         this.tripType = tripType;
     }
         
-        
+    public void addPassenger(Passenger p) {
+        if (this.passengers == null) {
+            this.passengers = new HashSet<>();
+        }
+        this.passengers.add(p);
+    }
+
+	public Set<Passenger> getPassengers() {
+		return passengers;
+	}
+
+	public void setPassengers(Set<Passenger> passengers) {
+		this.passengers = passengers;
+	}
 
 	@Override
     public int hashCode() {
