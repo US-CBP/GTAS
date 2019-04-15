@@ -89,7 +89,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     public void pnrWithBgs() throws IOException, URISyntaxException, ParseException {
         String pnrWithBags = getMessageText(PNR_WITH_BAGS);
         PnrVo vo = this.parser.parse(pnrWithBags);
-        assertTrue(!vo.getBags().isEmpty());
+        assertTrue(!vo.getBagVos().isEmpty());
     }
 
     @Test

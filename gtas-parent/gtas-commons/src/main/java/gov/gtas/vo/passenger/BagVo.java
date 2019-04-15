@@ -39,7 +39,7 @@ public class BagVo {
             }
             bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
         }
-        bagVo.setPassengerId(bag.getPassenger().getId());
+        bagVo.setPassengerId(bag.getPassengerId());
         bagVo.setData_source(bag.getData_source());
         bagVo.setDestination(bag.getDestinationAirport());
         bagVo.setPrime(bag.isPrimeFlight());

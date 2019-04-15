@@ -6,11 +6,9 @@
 package gov.gtas.services;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 import gov.gtas.model.*;
-import gov.gtas.parsers.vo.BagMeasurementsVo;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +37,9 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private BagRepository bagDao;
+
+    @Autowired
+    private BookingBagRepository bookingBagRepository;
 
     @Override
     public List<String> preprocess(String message) {
@@ -117,10 +118,10 @@ public class ApisMessageService extends MessageLoaderService {
                     passengerInformationDTO.getOldPax(),
                     apis.getPassengers(), primeFlight, apis.getBookingDetails());
 
-            //MUST be after creation of passengers - otherise APIS will have empty list of passengers.
+            //MUST be after creation of passengers - otherwise APIS will have empty list of passengers.
             createBagInformation(m, apis, primeFlight);
-            loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightPax(apis);
+            loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
             createFlightLegs(apis);
 
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
@@ -142,25 +143,36 @@ public class ApisMessageService extends MessageLoaderService {
      * PNR and APIS make different assumptions about bags and are treated differently.
      * PNR specifies which bags made it on the plane. We assume all apis flights have the same bags.
      * */
+    @SuppressWarnings("Duplicates")
+    // Logic similar to PNR but booking detail relationship creation and bag creation differ.
     private void createBagInformation(ApisMessageVo m, ApisMessage apis, Flight primeFlight) {
 
         Set<Bag> passengerBags = new HashSet<>();
         for (Passenger p : apis.getPassengers()) {
             passengerBags.addAll(p.getBags());
         }
-        BagInformationDTO bagInformationDTO = loaderRepo.handleDuplicateBags(m.getBagVos(), passengerBags);
+        BagVoToBagAdapter bvoAdapter = new BagVoToBagAdapter(m, passengerBags, apis.getBookingDetails());
+        Map<UUID, BagMeasurements> bagMeasurementsMap = loaderRepo.saveBagMeasurements(bvoAdapter.getBagMeasurementsVos());
+        Set<Bag> newBags = makeNewBags(apis, primeFlight, bvoAdapter.getPaxMapBagVo(), bagMeasurementsMap);
+        Set<Bag> allBags = bvoAdapter.getExistingBags();
+        allBags.addAll(newBags);
+        bagDao.saveAll(allBags);
+        // We do not have a good way to bring back the many to many relationship in memory.
+        // I model the join table so I do not have to pull back the whole set in memory.
+        Set<BookingBag> bookingBagsJoin = new HashSet<>();
+        for (Bag bag : allBags) {
+            for (BookingDetail bd : apis.getBookingDetails()) {
+                bookingBagsJoin.add(new BookingBag(bag.getId(), bd.getId()));
+            }
+        }
+        bookingBagRepository.saveAll(bookingBagsJoin);
+    }
 
-        Set<BagVo> bagVoList = bagInformationDTO.getNewBags();
-
-        Set<BagMeasurementsVo> bagMeasurementsToSave = bagVoList
-                .stream()
-                .map(BagVo::getBagMeasurementsVo)
-                .collect(Collectors.toSet());
-        Map<UUID, BagMeasurements> uuidBagMeasurementsMap = loaderRepo.saveBagMeasurements(bagMeasurementsToSave);
-
-        List<Bag> newBags = new ArrayList<>();
-        for (BagVo b : bagVoList) {
-            for (Passenger p : apis.getPassengers()) {
+    private Set<Bag> makeNewBags(ApisMessage apis, Flight primeFlight, Map<UUID, Set<BagVo>> bagVoMap, Map<UUID, BagMeasurements> uuidBagMeasurementsMap) {
+        Set<Bag> bagSet = new HashSet<>();
+        for (Passenger p : apis.getPassengers()) {
+            Set<BagVo> bagVoSet = bagVoMap.getOrDefault(p.getParserUUID(), Collections.emptySet());
+            for (BagVo b : bagVoSet) {
                 if (p.getParserUUID().equals(b.getPassengerId()) && b.getBagId() != null) {
                     Bag bag = new Bag();
                     bag.setBagId(b.getBagId());
@@ -176,17 +188,14 @@ public class ApisMessageService extends MessageLoaderService {
                     bag.setCountry(primeFlight.getDestinationCountry());
                     bag.setPrimeFlight(true);
                     bag.setPassenger(p);
-
+                    bag.setPassengerId(p.getId());
                     primeFlight.getBags().add(bag);
+                    bagSet.add(bag);
                     p.getBags().add(bag);
-                    newBags.add(bag);
                 }
             }
         }
-        bagDao.saveAll(newBags);
-        Set<Bag> allBags = bagInformationDTO.getExistingBags();
-        allBags.addAll(newBags);
-        //booking detail relationship will go here.
+        return bagSet;
     }
 
     private void createFlightLegs(ApisMessage apis) {
@@ -249,7 +258,7 @@ public class ApisMessageService extends MessageLoaderService {
                 FlightPax fp = p.getFlightPaxList().stream()
                         .filter(flightPax -> "APIS".equalsIgnoreCase(flightPax.getMessageSource()))
                         .findFirst()
-                        .orElse(new FlightPax());
+                        .orElse( new FlightPax(p.getId()));
                 fp.getApisMessage().add(apisMessage);
                 fp.setDebarkation(p.getPassengerTripDetails().getDebarkation());
                 fp.setDebarkationCountry(p.getPassengerTripDetails().getDebarkCountry());
@@ -261,8 +270,6 @@ public class ApisMessageService extends MessageLoaderService {
                 fp.setFlightId(f.getId());
                 fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
                 fp.setTravelerType(p.getPassengerDetails().getPassengerType());
-                fp.setPassenger(p);
-                fp.setPassengerId(p.getId());
                 fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
                 int bCount = 0;
                 if (StringUtils.isNotBlank(p.getPassengerTripDetails().getBagNum())) {

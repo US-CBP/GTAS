@@ -184,8 +184,8 @@ public class BagVo {
             Double bagWeight = bagMeasurements.getWeight();
             Double voWeight = VoMeasurements.getWeightInKilos();
             if (voWeight != null) {
-                Long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
-                voWeight = rounded.doubleValue();
+                long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
+                voWeight = (double) rounded;
             }
             sameWeight = Objects.equals(bagWeight, voWeight);
 
@@ -207,15 +207,12 @@ public class BagVo {
         String voConseq = this.getConsecutiveTagNumber();
         boolean sameConseqId = Objects.equals(bagConseq, voConseq);
 
-        boolean samePrime = bag.isPrimeFlight() == this.isPrimeFlight();
-
         return sameCount
                 && sameWeight
                 && sameAirline
                 && sameDestination
                 && sameId
-                && sameConseqId
-                && samePrime;
+                && sameConseqId;
     }
 
     private boolean objectsAreBothNullOrNotNull(Object o1, Object o2) {

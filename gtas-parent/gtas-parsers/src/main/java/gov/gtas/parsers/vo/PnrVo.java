@@ -37,9 +37,7 @@ public class PnrVo extends MessageVo implements Validatable {
     private TVL_L0 primeFlight;
     private Integer daysBookedBeforeTravel;
     
-    private List<FlightVo> flights = new ArrayList<>();
     private List<PassengerVo> passengers = new ArrayList<>();
-    private List<BagVo> bags = new ArrayList<>();
     private List<BagMeasurementsVo> bagMeasurements = new ArrayList<>();
     private List<AddressVo> addresses = new ArrayList<>();
     private List<PhoneVo> phoneNumbers = new ArrayList<>();
@@ -90,14 +88,6 @@ public class PnrVo extends MessageVo implements Validatable {
 
 	public void setCodeshares(List<CodeShareVo> codeshares) {
 		this.codeshares = codeshares;
-	}
-
-	public List<BagVo> getBags() {
-		return bags;
-	}
-
-	public void setBags(List<BagVo> bags) {
-		this.bags = bags;
 	}
 
 	public Double getBaggageWeight() {
@@ -223,14 +213,6 @@ public class PnrVo extends MessageVo implements Validatable {
 
     public void setFormOfPayment(String formOfPayment) {
         this.formOfPayment = formOfPayment;
-    }
-
-    public List<FlightVo> getFlights() {
-        return flights;
-    }
-
-    public void setFlights(List<FlightVo> flights) {
-        this.flights = flights;
     }
 
     public List<PassengerVo> getPassengers() {

@@ -48,8 +48,7 @@ public class PnrMessageService extends MessageLoaderService {
     FlightPaxRepository flightPaxRepository;
 
     private final
-    BookingDetailRepository bookingDetailDao;
-
+    BookingBagRepository bookingBagRepository;
 
 
     @Autowired
@@ -58,15 +57,14 @@ public class PnrMessageService extends MessageLoaderService {
                              LookUpRepository lookupRepo,
                              FlightPaxRepository flightPaxRepository,
                              BagRepository bagRepository,
-                             BookingDetailRepository bookingDetailDao
+                             BookingBagRepository bookingBagRepository
     ) {
         this.msgDao = msgDao;
         this.utils = utils;
         this.lookupRepo = lookupRepo;
         this.flightPaxRepository = flightPaxRepository;
         this.bagDao = bagRepository;
-        this.bookingDetailDao = bookingDetailDao;
-
+        this.bookingBagRepository = bookingBagRepository;
     }
 
     @Override
@@ -123,20 +121,20 @@ public class PnrMessageService extends MessageLoaderService {
         msgDto.getMessageStatus().setSuccess(true);
         Pnr pnr = msgDto.getPnr();
         try {
-            PnrVo vo = (PnrVo)msgDto.getMsgVo();
-				utils.convertPnrVo(pnr, vo);
-				Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
-						vo.getFlights(),
-						pnr.getFlights(),
-						pnr.getFlightLegs(),
-						msgDto.getPrimeFlightKey(),
-						pnr.getBookingDetails());
-				PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
-						vo.getPassengers(),
-						pnr.getPassengers(),
-						pnr.getBookingDetails(),
-						pnr);
-				loaderRepo.processPnr(pnr, vo);
+            PnrVo vo = (PnrVo) msgDto.getMsgVo();
+            utils.convertPnrVo(pnr, vo);
+            Flight primeFlight = loaderRepo.processFlightsAndBookingDetails(
+                    vo.getFlights(),
+                    pnr.getFlights(),
+                    pnr.getFlightLegs(),
+                    msgDto.getPrimeFlightKey(),
+                    pnr.getBookingDetails());
+            PassengerInformationDTO passengerInformationDTO = loaderRepo.makeNewPassengerObjects(primeFlight,
+                    vo.getPassengers(),
+                    pnr.getPassengers(),
+                    pnr.getBookingDetails(),
+                    pnr);
+            loaderRepo.processPnr(pnr, vo);
 
             int createdPassengers = loaderRepo.createPassengers(
                     passengerInformationDTO.getNewPax(),
@@ -163,7 +161,6 @@ public class PnrMessageService extends MessageLoaderService {
 
             TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
             pnr.setTripType(tripType.toString());
-
         } catch (Exception e) {
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.FAILED_LOADING);
             msgDto.getMessageStatus().setSuccess(false);
@@ -179,26 +176,26 @@ public class PnrMessageService extends MessageLoaderService {
     }
 
     private WeightCountDto getBagStatistics(Set<Bag> bagSet) {
-       Set<BagMeasurements> bagMeasurementsSet = bagSet.stream().map(Bag::getBagMeasurements).collect(Collectors.toSet());
-       Integer bagCount = 0;
-       Double bagWeight = 0D;
-       for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
-           if (bagMeasurements.getBagCount() != null) {
-               bagCount += bagMeasurements.getBagCount();
-           }
-           if (bagMeasurements.getWeight() != null) {
-               bagWeight += bagMeasurements.getWeight();
-           }
-       }
-       WeightCountDto weightCountDto = new WeightCountDto();
-       weightCountDto.setCount(bagCount);
-       weightCountDto.setWeight(bagWeight);
-       return weightCountDto;
-}
+        Set<BagMeasurements> bagMeasurementsSet = bagSet.stream().map(Bag::getBagMeasurements).collect(Collectors.toSet());
+        Integer bagCount = 0;
+        Double bagWeight = 0D;
+        for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
+            if (bagMeasurements.getBagCount() != null) {
+                bagCount += bagMeasurements.getBagCount();
+            }
+            if (bagMeasurements.getWeight() != null) {
+                bagWeight += bagMeasurements.getWeight();
+            }
+        }
+        WeightCountDto weightCountDto = new WeightCountDto();
+        weightCountDto.setCount(bagCount);
+        weightCountDto.setWeight(bagWeight);
+        return weightCountDto;
+    }
 
 
     @Transactional
-    protected void updatePaxEmbarkDebark(Pnr pnr)  {
+    protected void updatePaxEmbarkDebark(Pnr pnr) {
         logger.debug("@ updatePaxEmbarkDebark");
         long startTime = System.nanoTime();
         List<FlightLeg> legs = pnr.getFlightLegs();
@@ -257,7 +254,7 @@ public class PnrMessageService extends MessageLoaderService {
         }
         logger.debug("updatePaxEmbarkDebark time = " + (System.nanoTime() - startTime) / 1000000);
     }
-    
+
     private TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
         String firstLegOrigin = "";
         String lastLegDestination = "";
@@ -265,45 +262,35 @@ public class PnrMessageService extends MessageLoaderService {
         TripTypeEnum tripType = null;
         boolean hasLongDwellTime = false;
 
-        if (flightLegList.size() > 1)
-        {
-            for (FlightLeg flightLeg : flightLegList)
-            {
+        if (flightLegList.size() > 1) {
+            for (FlightLeg flightLeg : flightLegList) {
                 Integer flightLegNumber = flightLeg.getLegNumber();
-                if (flightLegNumber > maxFlightLegNumber)
-                {
+                if (flightLegNumber > maxFlightLegNumber) {
                     maxFlightLegNumber = flightLegNumber;
                 }
             }
 
-            for (int i = 0;i <  flightLegList.size(); i++)
-            {
-               if (flightLegList.get(i).getLegNumber().equals(0))
-               {
-                  FlightLeg firstFlightLeg = flightLegList.get(i);
-                  if (firstFlightLeg.getBookingDetail() != null)
-                  {
-                    firstLegOrigin = firstFlightLeg.getBookingDetail().getOrigin();
-                  }
-                  else // we have a prime flight
-                  {
-                    firstLegOrigin = firstFlightLeg.getFlight().getOrigin();
-                  }
-               }
+            for (int i = 0; i < flightLegList.size(); i++) {
+                if (flightLegList.get(i).getLegNumber().equals(0)) {
+                    FlightLeg firstFlightLeg = flightLegList.get(i);
+                    if (firstFlightLeg.getBookingDetail() != null) {
+                        firstLegOrigin = firstFlightLeg.getBookingDetail().getOrigin();
+                    } else // we have a prime flight
+                    {
+                        firstLegOrigin = firstFlightLeg.getFlight().getOrigin();
+                    }
+                }
 
-               if (flightLegList.get(i).getLegNumber().equals(maxFlightLegNumber))
-               {
-                  FlightLeg lastFlightLeg = flightLegList.get(i);
-                  if (lastFlightLeg.getBookingDetail() != null)
-                  {
-                    lastLegDestination = lastFlightLeg.getBookingDetail().getDestination();
-                  }
-                  else // we have a prime flight
-                  {
-                    lastLegDestination = lastFlightLeg.getFlight().getDestination();
-                  }                               
-               }
-            } 
+                if (flightLegList.get(i).getLegNumber().equals(maxFlightLegNumber)) {
+                    FlightLeg lastFlightLeg = flightLegList.get(i);
+                    if (lastFlightLeg.getBookingDetail() != null) {
+                        lastLegDestination = lastFlightLeg.getBookingDetail().getDestination();
+                    } else // we have a prime flight
+                    {
+                        lastLegDestination = lastFlightLeg.getFlight().getDestination();
+                    }
+                }
+            }
 
             if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
                 tripType = TripTypeEnum.ROUNDTRIP;
@@ -333,10 +320,10 @@ public class PnrMessageService extends MessageLoaderService {
         return tripType;
     }
 
-    private void calculateDwellTimes(Pnr pnr){
-    	logger.debug("@ calculateDwellTimes");
-    	long startTime = System.nanoTime();
-    	List<FlightLeg> legs=pnr.getFlightLegs();
+    private void calculateDwellTimes(Pnr pnr) {
+        logger.debug("@ calculateDwellTimes");
+        long startTime = System.nanoTime();
+        List<FlightLeg> legs = pnr.getFlightLegs();
         if (CollectionUtils.isEmpty(legs)) {
             return;
         }
@@ -460,7 +447,7 @@ public class PnrMessageService extends MessageLoaderService {
                 FlightPax fp = p.getFlightPaxList().stream()
                         .filter(flightPax -> "PNR".equalsIgnoreCase(flightPax.getMessageSource()))
                         .findFirst()
-                        .orElse(new FlightPax());
+                        .orElse(new FlightPax(p.getId()));
 
                 Set<Bag> pnrBags = p.getBags()
                         .stream()
@@ -484,7 +471,6 @@ public class PnrMessageService extends MessageLoaderService {
                 fp.setFlightId(f.getId());
                 fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
                 fp.setTravelerType(p.getPassengerDetails().getPassengerType());
-                fp.setPassengerId(p.getId());
                 fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
                 if (StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())) {
                     if (homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())) {
@@ -497,46 +483,46 @@ public class PnrMessageService extends MessageLoaderService {
         flightPaxRepository.saveAll(paxRecords);
     }
 
+    @SuppressWarnings("Duplicates")
+    // Logic similar to APIS but differ in making new bags and booking detail relationship.
     private Set<Bag> createBagInformation(PnrVo pvo, Pnr pnr, Flight primeFlight) {
 
         Set<Bag> passengerBags = new HashSet<>();
         for (Passenger p : pnr.getPassengers()) {
             passengerBags.addAll(p.getBags());
         }
-
-        BagInformationDTO bagInformationDTO = loaderRepo.handleDuplicateBags(pvo.getBags(), passengerBags);
-        Set<BagVo> bagVoList = bagInformationDTO.getNewBags();
-        Set<BagMeasurementsVo> bagMeasurementsToSave = bagVoList.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toSet());
-        Map<UUID, BagMeasurements> uuidBagMeasurementsMap = loaderRepo.saveBagMeasurements(bagMeasurementsToSave);
-        Map<UUID, UUID> orphanToBD = getOrphanMap(pvo, pnr);
-        Map<UUID, BookingDetail> uuidBookingDetailMap = pnr.getBookingDetails()
-                .stream()
-                .collect(Collectors.toMap(BookingDetail::getParserUUID, bd -> bd));
-
-
-        Set<Bag> newBags = makeNewBags(pnr, primeFlight, bagVoList, uuidBagMeasurementsMap);
-        bagDao.saveAll(newBags);
-        Set<Bag> allBags = new HashSet<>(bagInformationDTO.getExistingBags());
+        BagVoToBagAdapter bvoAdapter = new BagVoToBagAdapter(pvo, passengerBags, pnr.getBookingDetails());
+        Map<UUID, BagMeasurements> bagMeasurementsMap = loaderRepo.saveBagMeasurements(bvoAdapter.getBagMeasurementsVos());
+        Set<Bag> newBags = makeNewBags(pnr, primeFlight, bvoAdapter.getPaxMapBagVo(), bagMeasurementsMap);
+        Set<Bag> allBags = bvoAdapter.getExistingBags();
         allBags.addAll(newBags);
+        bagDao.saveAll(allBags);
+        // We do not have a good way to bring back the many to many relationship in memory.
+        // I model the join table and just save everything.
+        Set<BookingBag> bdBagRelationship = addBookingDetailRelationship(primeFlight, allBags, bvoAdapter);
+        bookingBagRepository.saveAll(bdBagRelationship);
+        return allBags;
+    }
 
-
-        for (Bag bag : allBags ) {
+    private Set<BookingBag> addBookingDetailRelationship(Flight primeFlight, Set<Bag> allBags, BagVoToBagAdapter bvoAdapter) {
+        Map<UUID, BookingDetail> uuidBookingDetailMap = bvoAdapter.getUuidBookingDetailMap();
+        Map<UUID, UUID> orphanToBD = bvoAdapter.getOrphanToBD();
+        Set<BookingBag> joinTable = new HashSet<>();
+        for (Bag bag : allBags) {
             for (UUID flightUUID : bag.getFlightVoUUID()) {
                 if (uuidBookingDetailMap.containsKey(flightUUID)) {
                     BookingDetail bookingDetail = uuidBookingDetailMap.get(flightUUID);
-                    bookingDetail.getBags().add(bag);
+                    joinTable.add(new BookingBag(bag.getId(), bookingDetail.getId()));
                 } else if (orphanToBD.containsKey(flightUUID)) {
                     UUID bookingDetailUUID = orphanToBD.get(flightUUID);
                     BookingDetail bookingDetail = uuidBookingDetailMap.get(bookingDetailUUID);
-                    bookingDetail.getBags().add(bag);
+                    joinTable.add(new BookingBag(bag.getId(),bookingDetail.getId()));
                 } else if (!flightUUID.equals(primeFlight.getParserUUID())) {
                     logger.warn("No connection to booking detail can be made!");
                 }
             }
         }
-        //Save relationship to booking details.
-        bookingDetailDao.saveAll(pnr.getBookingDetails());
-        return allBags;
+        return joinTable;
     }
 
     /*
@@ -544,66 +530,37 @@ public class PnrMessageService extends MessageLoaderService {
      * Returns list of bags.
      * */
     private Set<Bag> makeNewBags(Pnr pnr,
-                                  Flight primeFlight,
-                                  Set<BagVo> bagVoList,
-                                  Map<UUID, BagMeasurements> uuidBagMeasurementsMap ) {
+                                 Flight primeFlight,
+                                 Map<UUID, Set<BagVo>> paxBagVoMap,
+                                 Map<UUID, BagMeasurements> uuidBagMeasurementsMap) {
         Set<Bag> bagList = new HashSet<>();
-        for (BagVo b : bagVoList) {
-            for (Passenger p : pnr.getPassengers()) {
-                if (p.getParserUUID().equals(b.getPassengerId()) && b.getBagId() != null) {
-                    Bag bag = new Bag();
-                    bag.setBagId(b.getBagId());
-                    bag.setAirline(b.getAirline());
-                    bag.setData_source(b.getData_source());
-                    bag.setDestinationAirport(b.getDestinationAirport());
-                    Airport airport = utils.getAirport(b.getDestinationAirport());
-                    if (airport != null) {
-                        bag.setCountry(airport.getCountry());
-                    }
-                    bag.setHeadPool(b.isHeadPool());
-                    bag.setMemberPool(b.isMemberPool());
-                    bag.setBagSerialCount(b.getConsecutiveTagNumber());
-                    bag.setFlight(primeFlight);
-                    bag.setPassenger(p);
-                    bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));
-                    bag.setPrimeFlight(b.isPrimeFlight());
-                    bag.getFlightVoUUID().addAll(b.getFlightVoId());
-                    primeFlight.getBags().add(bag);
-                    bagList.add(bag);
-                    p.getBags().add(bag);
+        for (Passenger p : pnr.getPassengers()) {
+            Set<BagVo> bagVoSet = paxBagVoMap.getOrDefault(p.getParserUUID(), Collections.emptySet());
+            for (BagVo b : bagVoSet) {
+                Bag bag = new Bag();
+                bag.setBagId(b.getBagId());
+                bag.setAirline(b.getAirline());
+                bag.setData_source(b.getData_source());
+                bag.setDestinationAirport(b.getDestinationAirport());
+                Airport airport = utils.getAirport(b.getDestinationAirport());
+                if (airport != null) {
+                    bag.setCountry(airport.getCountry());
                 }
+                bag.setHeadPool(b.isHeadPool());
+                bag.setMemberPool(b.isMemberPool());
+                bag.setBagSerialCount(b.getConsecutiveTagNumber());
+                bag.setFlight(primeFlight);
+                bag.setPassenger(p);
+                bag.setPassengerId(p.getId());
+                bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));
+                bag.setPrimeFlight(b.isPrimeFlight());
+                bag.getFlightVoUUID().addAll(b.getFlightVoId());
+                bagList.add(bag);
+                p.getBags().add(bag);
             }
         }
         return bagList;
     }
-
-    private Map<UUID, UUID> getOrphanMap(PnrVo pvo, Pnr pnr) {
-        Map<UUID, UUID> orphanToBD = new HashMap<>();
-        if (pnr.getBookingDetails().size() < pvo.getFlights().size() - 1) {
-            Set<FlightVo> orphanedFlightVo = new HashSet<>();
-            Set<UUID> bookingDetails = pnr.getBookingDetails().stream().map(BookingDetail::getParserUUID).collect(Collectors.toSet());
-            for (FlightVo flightVo : pvo.getFlights()) {
-                if (!bookingDetails.contains(flightVo.getUuid())) {
-                    orphanedFlightVo.add(flightVo);
-                }
-            }
-            for (FlightVo orphan : orphanedFlightVo) {
-                for (BookingDetail bookingDetail : pnr.getBookingDetails()) {
-                    if (orphan.equalsThisBD(bookingDetail)) {
-                        if (!orphanToBD.containsKey(orphan.getUuid())) {
-                            orphanToBD.put(orphan.getUuid(), bookingDetail.getParserUUID());
-                        }
-                    }
-                }
-            }
-        }
-        return orphanToBD;
-    }
-
-
-
-
-
 
     @Override
     public MessageVo parse(String message) {

@@ -727,13 +727,19 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
                 BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);
                 bagVo.setBagMeasurementUUID(bagMeasurementsVo.getUuid());
                 bagVo.setBagMeasurementsVo(bagMeasurementsVo);
-                bagVo.setConsecutiveTagNumber(bagTagSegment.getTotalNumItems());
-                parsedMessage.getBags().add(bagVo);
+                if (StringUtils.isNotBlank(bagTagSegment.getTotalNumItems())) {
+                    bagVo.setConsecutiveTagNumber(bagTagSegment.getTotalNumItems());
+                }
+                if (StringUtils.isNotBlank(bagVo.getBagId())) {
+                    parsedMessage.getBagVos().add(bagVo);
+                }
             }
         } else {
             for (TBD_BagTagDetails bagTagSegment : tbd.getBagTagDetails()) {
                 BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);
-                parsedMessage.getBags().add(bagVo);
+                if (StringUtils.isNotBlank(bagVo.getBagId())) {
+                    parsedMessage.getBagVos().add(bagVo);
+                }
             }
         }
     }
@@ -741,7 +747,7 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
 
     private BagVo populateBagVo(TBD tbd, PassengerVo currentPassenger, FlightVo flightVo, boolean isPrimeFlight, TBD_BagTagDetails bagTagSegment) {
         BagVo bagVo = BagVo.fromTbdBagTagDetails(bagTagSegment);
-        bagVo.setPassengerId(currentPassenger.getUuid());
+        bagVo.setPassengerId(currentPassenger.getPassengerVoUUID());
         bagVo.getFlightVoId().add(flightVo.getUuid());
         bagVo.setData_source("PNR");
         bagVo.setPrimeFlight(isPrimeFlight);

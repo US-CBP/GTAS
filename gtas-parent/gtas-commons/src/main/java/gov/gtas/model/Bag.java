@@ -36,8 +36,11 @@ public class Bag extends BaseEntity {
 	private String country;
 
 	@ManyToOne()
-	@JoinColumn(nullable = false)
+	@JoinColumn(name = "passenger_id", nullable = false, insertable = false, updatable = false)
 	private Passenger passenger;
+
+	@Column(name = "passenger_id", columnDefinition = "bigint unsigned")
+	private Long passengerId;
 
 	@Column(name = "destination_airport")
 	private String destinationAirport;
@@ -58,7 +61,8 @@ public class Bag extends BaseEntity {
 	@JoinColumn(name = "bagMeasurements")
 	private BagMeasurements bagMeasurements;
 
-	@ManyToMany(fetch = FetchType.LAZY,  mappedBy = "bags",targetEntity = BookingDetail.class)
+	@ManyToMany(fetch = FetchType.LAZY ,targetEntity = BookingDetail.class)
+	@JoinTable(name = "bag_bd_join", joinColumns = @JoinColumn(name = "bag_id"), inverseJoinColumns = @JoinColumn(name = "bd_id"))
 	private Set<BookingDetail> bookingDetail = new HashSet<>();
 
 	@Column(name = "bag_serial_count")
@@ -152,6 +156,14 @@ public class Bag extends BaseEntity {
 		return passenger;
 	}
 
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
@@ -224,25 +236,19 @@ public class Bag extends BaseEntity {
 				isMemberPool() == bag.isMemberPool() &&
 				isPrimeFlight() == bag.isPrimeFlight() &&
 				Objects.equals(getBagId(), bag.getBagId()) &&
-				Objects.equals(getFlight(), bag.getFlight()) &&
 				Objects.equals(getData_source(), bag.getData_source()) &&
 				Objects.equals(getDestination(), bag.getDestination()) &&
-				Objects.equals(getPassenger(), bag.getPassenger()) &&
+				Objects.equals(getPassengerId(), bag.getPassengerId()) &&
 				Objects.equals(getDestinationAirport(), bag.getDestinationAirport()) &&
+				Objects.equals(getBagSerialCount(), bag.getBagSerialCount()) &&
 				Objects.equals(getAirline(), bag.getAirline());
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(getBagId(),
-				getFlight(),
 				getData_source(),
-				getDestination(),
-				getPassenger(),
-				getDestinationAirport(),
-				getAirline(),
-				isHeadPool(),
-				isMemberPool(),
-				isPrimeFlight());
+				getPassengerId(),
+				getBagSerialCount());
 	}
 }

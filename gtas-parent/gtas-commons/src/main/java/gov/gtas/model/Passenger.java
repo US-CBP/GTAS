@@ -73,7 +73,7 @@ public class Passenger extends BaseEntityAudit {
     private Set<TicketFare> tickets = new HashSet<>();
 
     @Type(type = "uuid-char")
-    @Column(name = "uuid")
+    @Column(name = "uuid", updatable = false)
     private UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false)

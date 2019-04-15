@@ -24,7 +24,7 @@ public class PassengerVo implements Validatable {
      */
     private String travelerReferenceNumber;
 
-    private UUID uuid = UUID.randomUUID();
+    private UUID passengerVoUUID = UUID.randomUUID();
     private String title;
     private String firstName;
     private String middleName;
@@ -320,11 +320,11 @@ public class PassengerVo implements Validatable {
         this.bagVos = bagVos;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getPassengerVoUUID() {
+        return passengerVoUUID;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setPassengerVoUUID(UUID passengerVoUUID) {
+        this.passengerVoUUID = passengerVoUUID;
     }
 }

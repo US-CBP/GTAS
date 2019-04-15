@@ -23,9 +23,8 @@ public interface GtasLoader {
                                                     Set<Passenger> messagePassengers,
                                                     Set<BookingDetail> bookingDetails,
                                                     Message message) throws ParseException;
-    BagInformationDTO handleDuplicateBags(List<BagVo> bagVoList, Set<Bag> existingBags);
     Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave);
-    void createFormPfPayments(PnrVo vo,Pnr pnr);
+    void createFormPfPayments(PnrVo vo, Pnr pnr);
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
     int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers,
                          Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);

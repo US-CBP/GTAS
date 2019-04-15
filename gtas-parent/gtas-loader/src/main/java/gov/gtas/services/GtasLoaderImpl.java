@@ -10,7 +10,6 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -345,7 +344,7 @@ public class GtasLoaderImpl implements GtasLoader {
             if (existingPassenger == null) {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
                 newPassenger.getBookingDetails().addAll(bookingDetails);
-                newPassenger.setParserUUID(pvo.getUuid());
+                newPassenger.setParserUUID(pvo.getPassengerVoUUID());
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
                 }
@@ -353,7 +352,7 @@ public class GtasLoaderImpl implements GtasLoader {
                 utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
             } else if (!oldPassengersId.contains(existingPassenger.getId())) {
-                existingPassenger.setParserUUID(pvo.getUuid());
+                existingPassenger.setParserUUID(pvo.getPassengerVoUUID());
                 existingPassenger.getBookingDetails().addAll(bookingDetails);
                 oldPassengersId.add(existingPassenger.getId());
                 updatePassenger(existingPassenger, pvo);
@@ -412,85 +411,22 @@ public class GtasLoaderImpl implements GtasLoader {
     }
 
     @Override
-    public BagInformationDTO handleDuplicateBags(List<BagVo> bagVoList, Set<Bag> existingBags) {
-        //Prime flight bags take priority and get merged into.
-        Set<BagVo> returningBagVos = new HashSet<>();
-        bagVoList.sort(Comparator.comparing(BagVo::isPrimeFlight));
-        Set<BagVo> badVos = new HashSet<>();
-        for (BagVo bagvo : bagVoList) {
-            if (!badVos.contains(bagvo)) {
-                for (BagVo secondBag : new ArrayList<>(bagVoList)) {
-                    if (!bagvo.equals(secondBag) && hasSameBagInfo(bagvo, secondBag)) {
-                        if (secondBag.isPrimeFlight()) {
-                            bagvo.setPrimeFlight(true);
-                        }
-                        bagvo.getFlightVoId().addAll(secondBag.getFlightVoId());
-                        badVos.add(secondBag);
-                    }
-                }
-                returningBagVos.add(bagvo);
-            }
-        }
-
-        Set<Bag> bagsToUpdate = new HashSet<>();
-        for (Bag bag : existingBags) {
-            for (BagVo bagVo : new ArrayList<>(returningBagVos)) {
-                if (bagVo.hasSameBagInfo(bag)) {
-                    bag.getFlightVoUUID().addAll(bagVo.getFlightVoId());
-                    returningBagVos.remove(bagVo);
-                    bagsToUpdate.add(bag);
-                }
-            }
-        }
-        BagInformationDTO bagInformationDTO = new BagInformationDTO();
-        bagInformationDTO.setExistingBags(bagsToUpdate);
-        bagInformationDTO.setNewBags(returningBagVos);
-        return bagInformationDTO;
-    }
-
-    @Override
     public Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave) {
         Map<UUID, BagMeasurements> uuidBagMeasurementsMap = new HashMap<>();
         for (BagMeasurementsVo bagMeasurementsVo : bagMeasurementsToSave) {
             BagMeasurements bagMeasurements = new BagMeasurements();
             bagMeasurements.setBagCount(bagMeasurementsVo.getQuantity());
             if (bagMeasurementsVo.getWeightInKilos() != null) {
-                Long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
-                bagMeasurements.setWeight(rounded.doubleValue());
+                long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
+                bagMeasurements.setWeight((double) rounded);
             }
             bagMeasurements.setRawWeight(bagMeasurementsVo.getRawWeight());
             bagMeasurements.setParserUUID(bagMeasurementsVo.getUuid());
             bagMeasurements.setMeasurementIn(bagMeasurementsVo.getMeasurementType());
-            uuidBagMeasurementsMap.put(bagMeasurements.getParserUUID(), bagMeasurements);
             bagMeasurementsRepository.save(bagMeasurements);
+            uuidBagMeasurementsMap.put(bagMeasurements.getParserUUID(), bagMeasurements);
         }
         return uuidBagMeasurementsMap;
-    }
-    private boolean hasSameBagInfo(BagVo bagvo, BagVo secondBag) {
-
-        boolean sameWeight = false;
-        boolean sameQuantity = false;
-        if (bagvo.getBagMeasurementsVo() != null && secondBag.getBagMeasurementsVo() != null) {
-            Double bagVoWeight = bagvo.getBagMeasurementsVo().getWeightInKilos();
-            Integer bagVoQuanitity = bagvo.getBagMeasurementsVo().getQuantity();
-            Double secondBagWeight = secondBag.getBagMeasurementsVo().getWeightInKilos();
-            Integer secondBagQuanity = secondBag.getBagMeasurementsVo().getQuantity();
-
-            sameWeight = (
-                    ((bagVoWeight != null && secondBagWeight != null) && bagVoWeight.equals(secondBagWeight))
-                            || (bagVoWeight == null && secondBagWeight == null));
-
-            sameQuantity = (
-                    ((bagVoQuanitity != null && secondBagQuanity != null) && bagVoQuanitity.equals(secondBagQuanity))
-                            || (bagVoQuanitity == null && secondBagQuanity == null));
-        }
-        return
-                ((StringUtils.isBlank(bagvo.getConsecutiveTagNumber()) && StringUtils.isBlank(secondBag.getConsecutiveTagNumber()))
-                        || (bagvo.getConsecutiveTagNumber() != null && bagvo.getConsecutiveTagNumber().equals(secondBag.getConsecutiveTagNumber())))
-                        &&(StringUtils.isNotBlank(bagvo.getBagId()) && bagvo.getBagId().equals(secondBag.getBagId()))
-                        && ((bagvo.getBagMeasurementsVo() == null && secondBag.getBagMeasurementsVo() == null)
-                        || (sameQuantity && sameWeight))
-                        && bagvo.getPassengerId() == secondBag.getPassengerId();
     }
 
     /**
@@ -525,7 +461,6 @@ public class GtasLoaderImpl implements GtasLoader {
             }
         }
     }
-
 
 
     @Override

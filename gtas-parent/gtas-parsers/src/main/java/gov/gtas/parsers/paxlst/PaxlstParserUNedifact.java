@@ -363,7 +363,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                     // first bag ID is always what is given. we infer the rest as they are sequential.
                     numericPartOfBagId = Integer.parseInt(numberPartOfBagIdAsString);
                     for (int i = 0; i < repeatedBagIdentification; i++) {
-                        String inferredBagId = airlineCodePartOfBagId + numericPartOfBagId;
+                        String inferredBagId = addZerosToGetFour(Integer.toString(numericPartOfBagId));
                         BagVo bagVo = getBagVo(p, bagMeasurementsVo, airlineCodePartOfBagId, inferredBagId);
                         parsedMessage.addBagVo(bagVo);
                         numericPartOfBagId++;
@@ -462,10 +462,18 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         }
     }
 
+    private String addZerosToGetFour(String bagId) {
+        StringBuilder bagIdNumberBuilder = new StringBuilder(bagId);
+        while (bagIdNumberBuilder.length() < 4) {
+            bagIdNumberBuilder.insert(0, "0");
+        }
+        return bagIdNumberBuilder.toString();
+    }
+
     private String getNumericPartOfBagId(String bagId) {
         String numberPartOfBagId = "";
         if (bagId.length() > 2) {
-            numberPartOfBagId = bagId.substring(2, Math.min(bagId.length(), 2));
+            numberPartOfBagId = bagId.substring(2);
         }
         return numberPartOfBagId;
     }
@@ -488,11 +496,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         BagVo bagVo = new BagVo();
         bagVo.setData_source("APIS");
         bagVo.setPrimeFlight(true); // apis bags always are prime flight.
+        bagVo.setAirline(airlineCode);
         bagVo.setBagId(bagId);
         bagVo.setBagMeasurementsVo(bagMeasurementsVo);
         bagVo.setBagMeasurementUUID(bagMeasurementsVo.getUuid());
-        bagVo.setPassengerId(p.getUuid());
-        bagVo.setAirline(airlineCode);
+        bagVo.setPassengerId(p.getPassengerVoUUID());
         return bagVo;
     }
 

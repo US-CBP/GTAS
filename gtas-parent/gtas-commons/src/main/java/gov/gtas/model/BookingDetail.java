@@ -64,8 +64,7 @@ public class BookingDetail extends BaseEntityAudit {
     private Long flightId;
 
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class)
-    @JoinTable(name = "bag_booking_detail_join", joinColumns = @JoinColumn(name = "bd_id"), inverseJoinColumns = @JoinColumn(name = "bag_id"))
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class, mappedBy = "bookingDetail")
     private Set<Bag> bags = new HashSet<>();
 
 
