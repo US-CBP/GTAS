@@ -101,17 +101,80 @@
         	return orderedTvlData
         };
 
+        function setId(coll) {
+            var result = [];
+            for (var rec of coll) {
+                var res = rec;
+                var id = (res.bookingDetailId == null) ? "P" + res.flightId : "D" + res.bookingDetailId;
+                res.id = id;
+                result.push(res);
+            }
+            return result;
+        }
+
+        var getPassengerBags = function (legs) {
+            var passengers = $scope.passenger.pnrVo.passengers;
+            var bags = $scope.passenger.pnrVo.bagSummaryVo.bagsByFlightLeg;
+            var newbags = setId(bags);
+
+            newbags.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+            newbags.sort((a, b) => (a.passengerId > b.passengerId) ? 1 : ((b.passengerId > a.passengerId) ? -1 : 0));
+
+            // merge bag records by pax/flight
+            var prevId;
+            var prevPax;
+            var prevBag;
+            var acc = undefined;
+            var result = [];
+            for (var bag of newbags) {
+                if (bag.id !== prevId || bag.passengerId !== prevPax) {
+                    if (acc !== undefined) {
+                        result.push(acc);
+                    }
+                    acc = bag;
+                    acc.bagList = bag.bagId;
+                    var pax = passengers.find((p) => {
+                        return p.paxId === bag.passengerId;
+                    });
+
+                    if (pax) {
+                        acc.passLastName = pax.lastName;
+                        acc.passFirstName = pax.firstName;
+                    }
+                } else {
+                    if (bag.bagId !== prevBag)
+                        acc.bagList = acc.bagList + ", " + bag.bagId;
+                }
+                prevId = bag.id;
+                prevPax = bag.passengerId;
+                prevBag = bag.bagId
+            }
+
+            result.push(acc);
+            return result;
+        };
+
         if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
-        	$scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
-        	$scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
-    	}
+            $scope.orderedFlightLegs = setId(reorderTVLdata($scope.passenger.pnrVo.flightLegs));
+            $scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
+
+            $scope.orderedBags = getPassengerBags($scope.orderedFlightLegs);
+        }
 
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
         	$.each($scope.ruleHits, function(index,value){
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
-    	}
+        }
+
+        $scope.getTotalOf = function (coll, id, fieldToTotal) {
+            var filtered = coll.filter(item => item.id === id) || [];
+
+            return filtered.reduce(function (accum, current) {
+                return current[fieldToTotal] + accum;
+            }, 0);
+        };
 
         $scope.getCodeTooltipData = function(field,type){
         	return codeTooltipService.getCodeTooltipData(field,type);
@@ -184,8 +247,6 @@
         		}
         	});
         }
-
-
 
      var getMostRecentCase = function(dispHistory){
     	var mostRecentCase = null;

@@ -9,6 +9,8 @@ import gov.gtas.model.Bag;
 
 public class BagVo {
     private String bagId;
+    private Long flightId;
+    private Long bookingDetailId;
     private String data_source;
     private String destination;
     private double average_bag_weight;
@@ -44,6 +46,7 @@ public class BagVo {
         bagVo.setDestination(bag.getDestinationAirport());
         bagVo.setPrime(bag.isPrimeFlight());
         bagVo.setHeadPool(bag.isHeadPool());
+        bagVo.setFlightId(bag.getFlight().getId());
         return bagVo;
     }
 
@@ -63,6 +66,22 @@ public class BagVo {
         this.bagId = bagId;
     }
 
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public Long getBookingDetailId() {
+        return bookingDetailId;
+    }
+
+    public void setBookingDetailId(Long bookingDetailId) {
+        this.bookingDetailId = bookingDetailId;
+    }
+    
     public String getData_source() {
         return data_source;
     }
