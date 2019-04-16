@@ -160,7 +160,7 @@
         	$scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
             $scope.orderedFlightLegs = setId($scope.passenger.pnrVo.flightLegs);
             $scope.orderedBags = getPassengerBags($scope.orderedFlightLegs);
-            }
+        }
 
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
@@ -172,9 +172,16 @@
         $scope.getTotalOf = function(coll, id, fieldToTotal) {
             var filtered = coll.filter(item => (item || {}).id == id);
 
-            return filtered.reduce(function(accum, current){
+            var total = filtered.reduce(function(accum, current){
                 return current[fieldToTotal] + accum;
             }, 0);
+
+            //refac - set the bag count header to the greatest bag count per leg.
+            if ( fieldToTotal === "bag_count" && ($scope.passenger.pnrVo.totalbagCount || 0) < total) {
+                $scope.passenger.pnrVo.totalbagCount = total;
+            }
+
+            return total;
         }
 
         $scope.getCodeTooltipData = function(field,type){
