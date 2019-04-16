@@ -1333,6 +1333,23 @@
           "ENDS_WITH",
           "NOT_ENDS_WITH"
         ]             
+      },     
+      {
+      	"id": "Pnr.tripType",
+      	"label": "Trip Type",
+      	"type" : "string",
+      	"input": "select",
+  		  "multiple": false,		 
+  		  "values": {
+  		   	"ONE-WAY": "ONE-WAY",
+  		   	"ROUND-TRIP":"ROUND-TRIP",
+  		   	"MULTI-CITY":"MULTI-CITY",
+  		   	"OPEN JAW": "OPEN JAW"
+  		  },
+  		  "operators": [
+  		  	"EQUAL",
+  		  	"NOT_EQUAL"	  	
+  		 ]
       }
     ]
   },

@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class DocumentVo {
     private String documentType;
     private String documentNumber;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
     private Date expirationDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
     private Date issuanceDate;
     private String issuanceCountry;
     private String firstName;
