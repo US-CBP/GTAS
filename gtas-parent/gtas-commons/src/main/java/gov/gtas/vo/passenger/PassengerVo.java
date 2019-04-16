@@ -30,7 +30,7 @@ public class PassengerVo extends BaseVo {
     private String residencyCountry;
     private String passengerType;
     private Integer age;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
     private Date dob;
     private String embarkation;
     private String debarkation;

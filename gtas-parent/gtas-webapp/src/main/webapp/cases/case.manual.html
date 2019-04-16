@@ -23,7 +23,7 @@
                                	<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(passenger.gender,"gender")}}</div></md-tooltip>
                           	</span>
                         </div>
-                        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }}</strong></div>
+                        <div>DOB:&nbsp; <strong> {{ passenger.dob | date:"MM/dd/yyyy" }} ({{passenger.age}})</strong></div>
                         <div>Type:&nbsp;
                         	<span ng-mouseleave="resetTooltip()"><strong> {{ passenger.passengerType }}</strong>
                                	<md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(passenger.passengerType,"passenger")}}</div></md-tooltip>
