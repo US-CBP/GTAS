@@ -2,6 +2,7 @@ package gov.gtas.vo.passenger;
 
 import gov.gtas.model.Bag;
 import gov.gtas.model.BookingDetail;
+
 import java.util.*;
 
 public class BagSummaryVo {
@@ -14,12 +15,11 @@ public class BagSummaryVo {
             if (bag.isPrimeFlight()) {
                 BagVo bagVo = BagVo.fromBag(bag);
                 bagSummaryVo.getBagsByFlightLeg().add(bagVo);
-            } else {
-                for (BookingDetail detail : bag.getBookingDetail()) {
-                    BagVo bagVo = BagVo.fromBag(bag);
-                    bagVo.setBookingDetailId(detail.getId());
-                    bagSummaryVo.getBagsByFlightLeg().add(bagVo);
-                }
+            }
+            for (BookingDetail detail : bag.getBookingDetail()) {
+                BagVo bagVo = BagVo.fromBag(bag);
+                bagVo.setBookingDetailId(detail.getId());
+                bagSummaryVo.getBagsByFlightLeg().add(bagVo);
             }
         }
         return bagSummaryVo;
