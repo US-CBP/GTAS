@@ -462,7 +462,7 @@
                       <div class="cbp-card cbp-card-shadow">
                         <h3 class="h-label no-margin-top" >Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span style="font-size:18px;"> Trip Type: {{passenger.pnrVo.tripType}}</span></h3>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header"> <!-- floating-table-header-->
+                          <table aria-hidden="true" class="cbp-table mdl-js-data-table floating-table-header">
                             <thead class="floating-table-header flex-center">
                               <tr>
                                 <th>Leg</th>
@@ -688,7 +688,7 @@
                                 <th>Number</th>
                               </tr>
                             </thead>
-                            <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body" ng-repeat="leg in orderedFlightLegs">
+                            <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body">
                               <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index" ng-click="highlightClass('FTI'+ff.number)">
                                 <td><span ng-mouseleave="resetTooltip()">{{ff.carrier}}
                                   <md-tooltip class="multi-tooltip" md-direction="right"><div>{{getCodeTooltipData(ff.carrier,"carrier")}}</div></md-tooltip></span>
@@ -789,8 +789,8 @@
                     <div class="cbp-card-container gtas-card-container full-width ">
                       <div class="cbp-card cbp-card-shadow">
                         <h3 class="h-label no-margin-top">
-                          Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount ? passenger.pnrVo.totalbagCount:0}})
-                          <span class="right fnt-small">PNR Total Baggage Weight In Kilograms ({{passenger.pnrVo.baggageWeight}})</span>
+                          Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
+                          <span style="font-size:18px;">PNR Total Baggage Weight In Kilograms ({{passenger.pnrVo.baggageWeight}})</span>
                         </h3>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                           <table class="cbp-table mdl-js-data-table floating-table-header">
