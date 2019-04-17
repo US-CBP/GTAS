@@ -6,7 +6,10 @@
 package gov.gtas.parsers.vo;
 
 import java.util.Date;
+import java.util.UUID;
 
+import gov.gtas.model.BookingDetail;
+import gov.gtas.parsers.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,6 +17,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import gov.gtas.validators.Validatable;
 
 public class FlightVo implements Validatable {
+
+    private UUID uuid = UUID.randomUUID();
     private String carrier;
     private String flightNumber;
     private String origin;
@@ -29,8 +34,11 @@ public class FlightVo implements Validatable {
     private String marketingFlightNumber;
     private boolean isCodeShareFlight=false;
     private boolean isMarketingFlight=false;
-    
-    
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     public boolean isMarketingFlight() {
 		return isMarketingFlight;
 	}
@@ -99,5 +107,17 @@ public class FlightVo implements Validatable {
                 && StringUtils.isNotBlank(this.flightNumber)
                 && StringUtils.isNotBlank(this.carrier)
                 && this.etd != null;
-    }  
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public boolean equalsThisBD(BookingDetail bookingDetail) {
+   return
+        flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber()) &&
+        etd != null && DateUtils.stripTime(etd).equals(bookingDetail.getEtdDate()) &&
+        origin != null && origin.equals(bookingDetail.getOrigin()) &&
+        destination != null && destination.equals(bookingDetail.getDestination());
+    }
 }

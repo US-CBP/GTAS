@@ -3,6 +3,7 @@ package gov.gtas.model;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -54,15 +55,38 @@ public class BookingDetail extends BaseEntityAudit {
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
-    
-    @ManyToOne(optional = false)
-	@JoinColumn(name = "flight", updatable = false, insertable = false)
-	private Flight flight;
 
-	@Column(name = "flight", columnDefinition = "bigint unsigned")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "flight", updatable = false, insertable = false)
+    private Flight flight;
+
+    @Column(name = "flight", columnDefinition = "bigint unsigned")
     private Long flightId;
 
-	public Set<Passenger> getPassengers() {
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class, mappedBy = "bookingDetail")
+    private Set<Bag> bags = new HashSet<>();
+
+
+    /*
+     *
+     * Used to keep a referenced to FlightVO from parser.
+     * Only used in loader to help establish relationships.
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
+
+
+
+    public Set<Passenger> getPassengers() {
 		return passengers;
 	}
 
@@ -167,6 +191,14 @@ public class BookingDetail extends BaseEntityAudit {
 		this.fullFlightNumber = fullFlightNumber;
 	}
 
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
 	public Long getFlightId() {
 		return flightId;
 	}
@@ -174,6 +206,14 @@ public class BookingDetail extends BaseEntityAudit {
 	public void setFlightId(Long flightId) {
 		this.flightId = flightId;
 	}
+
+    public Set<Bag> getBags() {
+        return bags;
+    }
+
+    public void setBags(Set<Bag> bags) {
+        this.bags = bags;
+    }
 
 	@Override
 	public boolean equals(Object o) {
@@ -216,13 +256,5 @@ public class BookingDetail extends BaseEntityAudit {
 				", passengers=" + passengers +
 				", pnrs=" + messages +
 				'}';
-	}
-
-	public Flight getFlight() {
-		return flight;
-	}
-
-	public void setFlight(Flight flight) {
-		this.flight = flight;
 	}
 }

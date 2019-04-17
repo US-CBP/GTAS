@@ -5,17 +5,49 @@
  */
 package gov.gtas.vo.passenger;
 
+import gov.gtas.model.Bag;
+
 public class BagVo {
     private String bagId;
+    private Long flightId;
+    private Long bookingDetailId;
     private String data_source;
     private String destination;
     private double average_bag_weight;
     private double bag_weight;
     private int bag_count = 0;
+    private Long passengerId;
     private String passFirstName;
     private String passLastName;
+    private boolean headPool;
+    private boolean isPrime;
 
     public BagVo() {
+    }
+
+    public static BagVo fromBag(Bag bag) {
+        BagVo bagVo = new BagVo();
+        bagVo.setBagId(bag.getBagId());
+        if (bag.getBagMeasurements() != null) {
+            if (bag.getBagMeasurements().getWeight() == null) {
+                bagVo.setBag_weight(0);
+            } else {
+                bagVo.setBag_weight(bag.getBagMeasurements().getWeight());
+            }
+            if (bag.getBagMeasurements().getBagCount() == null) {
+                bagVo.setBag_count(0);
+            } else {
+                bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
+            }
+            bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
+        }
+        bagVo.setPassengerId(bag.getPassengerId());
+        bagVo.setData_source(bag.getData_source());
+        bagVo.setDestination(bag.getDestinationAirport());
+        bagVo.setPrime(bag.isPrimeFlight());
+        bagVo.setHeadPool(bag.isHeadPool());
+        bagVo.setFlightId(bag.getFlight().getId());
+        return bagVo;
     }
 
     public String getDestination() {
@@ -34,6 +66,22 @@ public class BagVo {
         this.bagId = bagId;
     }
 
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public Long getBookingDetailId() {
+        return bookingDetailId;
+    }
+
+    public void setBookingDetailId(Long bookingDetailId) {
+        this.bookingDetailId = bookingDetailId;
+    }
+    
     public String getData_source() {
         return data_source;
     }
@@ -80,5 +128,29 @@ public class BagVo {
 
     public double getAverage_bag_weight() {
         return average_bag_weight;
+    }
+
+    public Long getPassengerId() {
+        return passengerId;
+    }
+
+    public void setPassengerId(Long passengerId) {
+        this.passengerId = passengerId;
+    }
+
+    public boolean isHeadPool() {
+        return headPool;
+    }
+
+    public void setHeadPool(boolean headPool) {
+        this.headPool = headPool;
+    }
+
+    public boolean isPrime() {
+        return isPrime;
+    }
+
+    public void setPrime(boolean prime) {
+        isPrime = prime;
     }
 }

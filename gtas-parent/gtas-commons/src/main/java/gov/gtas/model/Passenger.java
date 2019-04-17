@@ -73,11 +73,28 @@ public class Passenger extends BaseEntityAudit {
     private Set<TicketFare> tickets = new HashSet<>();
 
     @Type(type = "uuid-char")
-    @Column(name = "uuid")
+    @Column(name = "uuid", updatable = false)
     private UUID uuid = UUID.randomUUID();
 
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
+
+
+    /*
+     * Used to keep a referenced to passengerVO from parser.
+     * Only used in loader to help establish relationships.
+     * This is *not* used
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
 
     public Flight getFlight() {
         return flight;

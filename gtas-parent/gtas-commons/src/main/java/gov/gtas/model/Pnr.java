@@ -74,16 +74,16 @@ public class Pnr extends Message {
     private Integer total_bag_count;
 
 	@Column(name = "total_bag_weight")
-    private float total_bag_weight;
+    private double total_bag_weight;
         
     @Column(name = "trip_type", length = 50)
     private String tripType;
 
-    public float getTotal_bag_weight() {
+    public double getTotal_bag_weight() {
 		return total_bag_weight;
 	}
 
-	public void setTotal_bag_weight(float total_bag_weight) {
+	public void setTotal_bag_weight(double total_bag_weight) {
 		this.total_bag_weight = total_bag_weight;
 	}
 

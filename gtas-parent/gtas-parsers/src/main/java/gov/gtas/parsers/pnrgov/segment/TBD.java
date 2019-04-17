@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP)
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.pnrgov.segment;
@@ -8,15 +8,16 @@ package gov.gtas.parsers.pnrgov.segment;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Splitter;
+import gov.gtas.parsers.edifact.segment.UNA;
+import gov.gtas.parsers.pnrgov.PnrUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
-import gov.gtas.parsers.pnrgov.PnrUtils;
-import gov.gtas.parsers.pnrgov.segment.SSR.SpecialRequirementDetails;
-import gov.gtas.parsers.util.ParseUtils;
+import org.elasticsearch.search.aggregations.metrics.percentiles.hdr.InternalHDRPercentiles;
 
 /**
  * <p>
@@ -32,217 +33,111 @@ import gov.gtas.parsers.util.ParseUtils;
  * Total 5 bags, weight 155 pounds, 2 checked to MSP, 3 short
  * checked to JFK
  * TBD++5:155:701+++KL: 8074902824:2:MSP+ KL: 8074902826:3:JFK
- * 
+ * <p>
  * 700 unit qualifier is for KGS
  * 701 unit qualifier is for pounds
  * 702 No Unit
  */
 public class TBD extends Segment {
-    private Integer numBags;
-    private Double baggageWeight;
-    private String unitQualifier="Kgs";
-    private boolean headOrMemberPool=false;
-    private String freeText;
-    
-    public class BagDetails {
-        private String airline;
-        private String tagNumber;
-        private List<String> bagIds = new ArrayList<>();
-        private Integer numConsecutiveTags;
-        private String destAirport;
-        private boolean memberPool=false;
-        private boolean isCarryOn=false;
-        
-        
-		public boolean isCarryOn() {
-			return isCarryOn;
-		}
-		public void setCarryOn(boolean isCarryOn) {
-			this.isCarryOn = isCarryOn;
-		}
-		public boolean isMemberPool() {
-			return memberPool;
-		}
-		public void setMemberPool(boolean pool) {
-			this.memberPool = pool;
-		}
-		public List<String> getBagIds() {
-			return bagIds;
-		}
-		public void setBagIds(List<String> bagIds) {
-			this.bagIds = bagIds;
-		}
-		public String getAirline() {
-            return airline;
-        }
-        public void setAirline(String airline) {
-            this.airline = airline;
-        }
-        public String getTagNumber() {
-            return tagNumber;
-        }
-        public void setTagNumber(String tagNumber) {
-            this.tagNumber = tagNumber;
-        }
-        public Integer getNumConsecutiveTags() {
-            return numConsecutiveTags;
-        }
-        public void setNumConsecutiveTags(Integer numConsecutiveTags) {
-            this.numConsecutiveTags = numConsecutiveTags;
-        }
-        public String getDestAirport() {
-            return destAirport;
-        }
-        public void setDestAirport(String destAirport) {
-            this.destAirport = destAirport;
-        }
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
-        }
-    }
-    
-    private List<BagDetails> bagDetails;
+    /*
+     * Please refer to spec guide for individual data components of the elements.
+     * Parsing the TBD has 4 data elements,
+     * STATUS, CODED (up to 1x)
+     * BAGGAGE DETAILS (up to 2x)
+     * BAGGAGE REFERENCE DETAILS (up to 1x)
+     * BAGTAG DETAILS (up to 99x)
+     **/
 
+    private String codedStatus;
+    private List<TBD_BD> baggageDetails = new ArrayList<>();
+    private List<TBD_BagTagDetails> bagTagDetails = new ArrayList<>();
+    private String pooledBagIndicator;
+    private String baggagePoolReferenceNumber;
 
     public TBD(List<Composite> composites) {
-
         super(TBD.class.getSimpleName(), composites);
-        setMemberPool(composites);
-        setFreeText(composites);
-        Composite c = getComposite(1);
-        this.bagDetails = new ArrayList<>();
-        if (c != null && StringUtils.isNotBlank(c.getElement(0))) {
-             this.numBags = ParseUtils.returnNumberOrNull(c.getElement(0));
-            if(StringUtils.isNotBlank(c.getElement(1))){
-            	this.baggageWeight = Double.valueOf(c.getElement(1));
-            }
-            if(StringUtils.isNotBlank(c.getElement(2))){
-            	if("701".equals(c.getElement(2))){
-            		this.baggageWeight=(double) Math.round(this.baggageWeight*0.45359237);
-            	}
-            }
-            if(numComposites() > 4 ){
-            	c = getComposite(4);
-            	if(this.numBags >0 && c != null){
-            		for(int i=1;i<=numBags;i++){
-            			BagDetails bag = new BagDetails();
-            			bag.setAirline(c.getElement(0));
-            			//bag.setTagNumber(c.getElement(1)+":"+i);
-            			bag.setTagNumber("Bag"+i);
-            			if (c.numElements() >= 3){
-            				bag.setDestAirport(c.getElement(3));
-            				
-            			}
-            			bagDetails.add(bag);
-            		}
-            	}
-            }else if(numComposites() <=4 && this.numBags >0 ){
-            	if(getComposite(3) != null){
-            		c = getComposite(3);
-            		for(int i=1;i<=numBags;i++){
-            			BagDetails bag = new BagDetails();
-            			bag.setAirline(c.getElement(0));
-            			//bag.setTagNumber(c.getElement(1)+":"+i);
-            			bag.setTagNumber("Bag"+i);
-            			if(c.numElements() > 3){
-            				bag.setDestAirport(c.getElement(3));
-            			}
-            			bagDetails.add(bag);
-            		}
-            	}else{
-            		//TBD++3:95:K'
-            		if(this.baggageWeight > 0 && numBags >0  ){
-            			for(int i=1;i<=numBags;i++){
-            				BagDetails bag = new BagDetails();
-            				bag.setAirline("--");
-            				bag.setTagNumber("Bag"+i);
-            				bag.setDestAirport("---");
-            				bagDetails.add(bag);
-            			}
-            		}
-            	}
-            }
-            
-        }else{
-        	Composite mpc = getComposite(2);
-        	if(mpc != null && mpc.numElements() >1){
-        		BagDetails bag = new BagDetails();
-        		bag.setTagNumber(mpc.getElement(1));
-        		bag.setMemberPool(true);
-        		this.numBags=1;
-        		this.baggageWeight = 0.0;
-        		this.unitQualifier="kgs";
-        		bagDetails.add(bag);
-        	}
-        }
-    }
+        final int CODED_STATUS = 0;
+        final int BAGGAGE_DETAILS_1 = 1;
+        final int BAGGAGE_DETAILS_2 = 2;
+        final int BAGGAGE_REFERENCE_DETAILS = 3;
+        final int BAG_TAG_DETAILS = 4;
 
-    private void setMemberPool(List<Composite> composites){
-    	for(Composite c: composites){
-    		if(c != null && (c.toString().contains("HP") ||(c.toString().contains("HP")))){
-    			this.headOrMemberPool=true;
-    		}
-    	}
-    }
-    public Integer getNumBags() {
-        return numBags;
-    }
-
-    public List<BagDetails> getBagDetails() {
-        return bagDetails;
-    }
-
-	public Double getBaggageWeight() {
-		return baggageWeight;
-	}
-
-	public void setBaggageWeight(Double bWeight) {
-		this.baggageWeight = bWeight;
-	}
-
-	public String getUnitQualifier() {
-		return unitQualifier;
-	}
-
-	public void setUnitQualifier(String unitQualifier) {
-		this.unitQualifier = unitQualifier;
-	}
-
-	public void setNumBags(Integer numBags) {
-		this.numBags = numBags;
-	}
-
-	public void setBagDetails(List<BagDetails> bagDetails) {
-		this.bagDetails = bagDetails;
-	}
-	public boolean isHeadOrMemberPool() {
-		return headOrMemberPool;
-	}
-	public void setHeadOrMemberPool(boolean headOrMemberPool) {
-		this.headOrMemberPool = headOrMemberPool;
-	}
-
-	public String getFreeText() {
-		return freeText;
-	}
-
-	public void setFreeText(String freeText) {
-		this.freeText = freeText;
-	}
-    private void setFreeText(List<Composite> composites){
-    	StringBuffer b = new StringBuffer();
-        for (int i=3; i<getComposites().size(); i++) {
-        	Composite c = getComposite(i);
-            if (c != null) {
-                 for (int j=0; j<c.numElements(); j++) {
-                    b.append(c.getElement(j));
-                    b.append(" ");
-                }
+        for (int i = 0; i < composites.size(); i++) {
+            switch (i) {
+                case CODED_STATUS:
+                    Composite codeComposite = composites.get(CODED_STATUS);
+                    codedStatus = codeComposite.getElement(0); //Only 1 element in data element. No parsing required.
+                    break;
+                case BAGGAGE_DETAILS_1:
+                case BAGGAGE_DETAILS_2:
+                    //Baggage details repeats up to two times.
+                    Composite baggageDetailsComposite = composites.get(i);
+                    if (baggageDetailsComposite.hasPopulatedElements()) {
+                        TBD_BD tbd_bd = new TBD_BD(this, baggageDetailsComposite.getElements());
+                        baggageDetails.add(tbd_bd);
+                    }
+                    break;
+                case BAGGAGE_REFERENCE_DETAILS:
+                    Composite bagReferenceComp = composites.get(BAGGAGE_REFERENCE_DETAILS);
+                    // BAGGAGE REFERENCE DETAILS
+                    // 0 :  Processing indicator, coded
+                    // 1 :  Identify number
+                    pooledBagIndicator = bagReferenceComp.getElement(0);
+                    baggagePoolReferenceNumber = bagReferenceComp.getElement(1);
+                    break;
+                //Bag tag details can happen 0-99 times.
+                case BAG_TAG_DETAILS:
+                default:
+                    Composite bagTagDetailsComposite = composites.get(i);
+                    if (bagTagDetailsComposite.hasPopulatedElements()) {
+                        TBD_BagTagDetails tbd_bagTagDetails = new TBD_BagTagDetails(this, bagTagDetailsComposite.getElements());
+                        bagTagDetails.add(tbd_bagTagDetails);
+                    }
             }
         }
-        if (b.length() != 0) {
-            this.freeText = b.toString();
-        }
+    }
+
+    public boolean hasBagInformation() {
+        return !bagTagDetails.isEmpty();
+    }
+    public String getCodedStatus() {
+        return codedStatus;
+    }
+
+    public void setCodedStatus(String codedStatus) {
+        this.codedStatus = codedStatus;
+    }
+
+    public List<TBD_BD> getBaggageDetails() {
+        return baggageDetails;
+    }
+
+    public void setBaggageDetails(List<TBD_BD> baggageDetails) {
+        this.baggageDetails = baggageDetails;
+    }
+
+    public List<TBD_BagTagDetails> getBagTagDetails() {
+        return bagTagDetails;
+    }
+
+    public void setBagTagDetails(List<TBD_BagTagDetails> bagTagDetails) {
+        this.bagTagDetails = bagTagDetails;
+    }
+
+    public String getPooledBagIndicator() {
+        return pooledBagIndicator;
+    }
+
+    public void setPooledBagIndicator(String pooledBagIndicator) {
+        this.pooledBagIndicator = pooledBagIndicator;
+    }
+
+    public String getBaggagePoolReferenceNumber() {
+        return baggagePoolReferenceNumber;
+    }
+
+    public void setBaggagePoolReferenceNumber(String baggagePoolReferenceNumber) {
+        this.baggagePoolReferenceNumber = baggagePoolReferenceNumber;
     }
 }
+
