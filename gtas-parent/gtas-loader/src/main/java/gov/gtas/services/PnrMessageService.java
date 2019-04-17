@@ -545,6 +545,7 @@ public class PnrMessageService extends MessageLoaderService {
                 Airport airport = utils.getAirport(b.getDestinationAirport());
                 if (airport != null) {
                     bag.setCountry(airport.getCountry());
+                    bag.setDestination(airport.getCity());
                 }
                 bag.setHeadPool(b.isHeadPool());
                 bag.setMemberPool(b.isMemberPool());

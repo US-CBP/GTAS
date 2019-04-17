@@ -9,6 +9,7 @@ import java.util.*;
 
 
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.vo.BagVo;
 import gov.gtas.repository.*;
 import org.apache.commons.lang3.StringUtils;
@@ -176,6 +177,11 @@ public class ApisMessageService extends MessageLoaderService {
                 if (p.getParserUUID().equals(b.getPassengerId()) && b.getBagId() != null) {
                     Bag bag = new Bag();
                     bag.setBagId(b.getBagId());
+                    Airport airport = utils.getAirport(primeFlight.getDestination());
+                    if (airport != null) {
+                        bag.setDestination(airport.getCity());
+                        bag.setDestinationAirport(airport.getIata());
+                    }
                     bag.setAirline(b.getAirline());
                     bag.setData_source(b.getData_source());
                     bag.setBagMeasurements(uuidBagMeasurementsMap.get(b.getBagMeasurementUUID()));

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import gov.gtas.model.BookingDetail;
+import gov.gtas.parsers.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -113,10 +114,10 @@ public class FlightVo implements Validatable {
     }
 
     public boolean equalsThisBD(BookingDetail bookingDetail) {
-   return flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber());
-     //   if (etd != null && !DateUtils.stripTime(etd).equals(bookingDetail.getEtdDate())) return false;
-    //    if (eta != null && !DateUtils.stripTime(eta).equals(bookingDetail.getEtaDate())) return false;
-//        if (origin != null && !origin.equals(bookingDetail.getOrigin())) return false;
-   //     return //destination != null && destination.equals(bookingDetail.getDestination());
+   return
+        flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber()) &&
+        etd != null && DateUtils.stripTime(etd).equals(bookingDetail.getEtdDate()) &&
+        origin != null && origin.equals(bookingDetail.getOrigin()) &&
+        destination != null && destination.equals(bookingDetail.getDestination());
     }
 }
