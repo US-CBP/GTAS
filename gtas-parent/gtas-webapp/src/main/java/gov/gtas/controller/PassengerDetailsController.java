@@ -77,9 +77,6 @@ public class PassengerDetailsController {
 	@Autowired
 	private MatchingService matchingService;
 
-	@Autowired
-	private BookingDetailService bookingDetailService;
-	
 	@Resource
 	private BagRepository bagRepository;
 	
@@ -134,6 +131,7 @@ public class PassengerDetailsController {
 		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
 		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
 		vo.setDob(t.getPassengerDetails().getDob());
+		vo.setAge(t.getPassengerDetails().getAge());
 		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
 		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
@@ -175,10 +173,15 @@ public class PassengerDetailsController {
 				t.getId(), new Long(flightId));
 		
 		if (!pnrList.isEmpty()) {
+			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
+			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
+
 			Pnr source=getLatestPnrFromList(pnrList);
 			vo.setPnrVo(mapPnrToPnrVo(source));			
 			PnrVo tempVo = vo.getPnrVo();
-			
+			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromFlightAndBookingDetails(pnrBag);
+			tempVo.setBagSummaryVo(bagSummaryVo);
+
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
 				FlightPax flightPax = getPnrFlightPax(p, flight);
@@ -467,7 +470,7 @@ public class PassengerDetailsController {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
-		target.setTotalbagCount(source.getTotal_bag_count());
+		target.setTotal_bag_count(source.getTotal_bag_count());
 		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
                 
                 target.setTripType(source.getTripType());

@@ -65,6 +65,9 @@ public class Flight extends BaseEntityAudit {
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private Set<HitsSummary> hits = new HashSet<>();
 
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Bag> bags = new HashSet<>();
+
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)
     @JsonIgnore
@@ -97,6 +100,10 @@ public class Flight extends BaseEntityAudit {
     )
     private Set<ApisMessage> apis = new HashSet<>();
 
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+
     // This is a convenience method to see the passengers associated with the flight.
     // Managing passengers this way is recommended against as flight passenger is manually made in the
     // loader.
@@ -106,6 +113,21 @@ public class Flight extends BaseEntityAudit {
             inverseJoinColumns={@JoinColumn(name="passenger_id")})
     @JsonIgnore
     private Set<Passenger> passengers;
+
+    /*
+     * Used to keep a referenced to FlightVO from parser.
+     * Only used in loader to help establish relationships.
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
 
     public Set<Passenger> getPassengers() {
         return passengers;
@@ -177,6 +199,15 @@ public class Flight extends BaseEntityAudit {
         this.apis = apis;
     }
     
+
+    public Set<BookingDetail> getBookingDetails() {
+        return bookingDetails;
+    }
+
+    public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+        this.bookingDetails = bookingDetails;
+    }
+
 
         public Long getId() {
             return id;
@@ -264,4 +295,12 @@ public class Flight extends BaseEntityAudit {
 	public void setCreditCard(Set<CreditCard> creditCard) {
 		this.creditCard = creditCard;
 	}
+
+    public Set<Bag> getBags() {
+        return bags;
+    }
+
+    public void setBags(Set<Bag> bags) {
+        this.bags = bags;
+    }
 }

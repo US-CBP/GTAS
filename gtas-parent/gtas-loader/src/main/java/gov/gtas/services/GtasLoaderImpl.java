@@ -10,7 +10,6 @@ import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import gov.gtas.repository.*;
-import org.apache.commons.codec.binary.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -55,7 +54,7 @@ public class GtasLoaderImpl implements GtasLoader {
 
     private final LoaderUtils utils;
 
-    private final BagRepository bagDao;
+    private final BagMeasurementsRepository bagMeasurementsRepository;
 
     private final PaymentFormRepository paymentFormDao;
 
@@ -74,12 +73,6 @@ public class GtasLoaderImpl implements GtasLoader {
     FlightPassengerCountRepository flightPassengerCountRepository;
 
     private final
-    PassengerTripRepository passengerTripRepository;
-
-    private final
-    PassengerDetailRepository passengerDetailRepository;
-
-    private final
     MutableFlightDetailsRepository mutableFlightDetailsRepository;
 
 
@@ -96,16 +89,14 @@ public class GtasLoaderImpl implements GtasLoader {
             FlightPassengerCountRepository flightPassengerCountRepository,
             AddressRepository addressDao,
             AgencyRepository agencyDao,
-            BagRepository bagDao,
             MessageRepository<Message> messageDao,
             PassengerIDTagRepository passengerIdTagDao,
             FlightPassengerRepository flightPassengerRepository,
             FrequentFlyerRepository ffdao,
             LoaderUtils utils,
             BookingDetailRepository bookingDetailDao,
-            PassengerTripRepository passengerTripRepository,
-            PassengerDetailRepository passengerDetailRepository,
-            MutableFlightDetailsRepository mutableFlightDetailsRepository) {
+            MutableFlightDetailsRepository mutableFlightDetailsRepository,
+            BagMeasurementsRepository bagMeasurementsRepository) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -117,16 +108,14 @@ public class GtasLoaderImpl implements GtasLoader {
         this.flightPassengerCountRepository = flightPassengerCountRepository;
         this.addressDao = addressDao;
         this.agencyDao = agencyDao;
-        this.bagDao = bagDao;
         this.messageDao = messageDao;
         this.passengerIdTagDao = passengerIdTagDao;
         this.flightPassengerRepository = flightPassengerRepository;
         this.ffdao = ffdao;
         this.utils = utils;
         this.bookingDetailDao = bookingDetailDao;
-        this.passengerTripRepository = passengerTripRepository;
-        this.passengerDetailRepository = passengerDetailRepository;
         this.mutableFlightDetailsRepository = mutableFlightDetailsRepository;
+        this.bagMeasurementsRepository = bagMeasurementsRepository;
     }
 
 
@@ -229,8 +218,11 @@ public class GtasLoaderImpl implements GtasLoader {
 
         long startTime = System.nanoTime();
         /*
-         * If pnrVo flights on tvl level deos not 5 exist then make
-         * the tvl level 0 the prime flight.
+         * A special case exist where a pnrVo
+         * has a flight on tvl 0 but not a corresponding
+         * flight on tvl 5. This is a valid case.
+         * In this scenario we make a flightVo containing
+         * data from the TVL 0.
          *
          * */
         if (flights.isEmpty()) {
@@ -244,26 +236,26 @@ public class GtasLoaderImpl implements GtasLoader {
             flights.add(flightVo);
         }
 
-        // save flight and booking details
-        // return flight and booking details
-        // first find all existing passengers, create any missing flights
+
         utils.sortFlightsByDate(flights);
         Flight primeFlight = null;
         for (int i = 0; i < flights.size(); i++) {
             FlightVo fvo = flights.get(i);
             /*
-            * A prime flight is determined by the level 0 TVL of a PNR or a combination
-            * of fields in an APIS.
-            * The isPrimeFlight will check to see if the flightVo being processed matches the prime flight
-            * and set the flight accordingly.
-            * */
+             * A prime flight is determined by the level 0 TVL of a PNR or a combination
+             * of TDT, LOC, DTM fields in an APIS representing flight with LOC code of 125/87 and DTM code of 189.
+             * The isPrimeFlight will check to see if the flightVo being processed matches the prime flight
+             * and set the flight accordingly.
+             * In short:  The prime flight is the reason the message was received.
+             * There is 1 and only 1 prime flight per message.
+             * */
             if (utils.isPrimeFlight(fvo, primeFlightKey)) {
                 Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
                 Flight currentFlight = flightDao.getFlightByCriteria(primeFlightKey[PRIME_FLIGHT_CARRIER],
-                                                                     primeFlightKey[PRIME_FLIGHT_NUMBER_STRING],
-                                                                     primeFlightKey[PRIME_FLIGHT_ORIGIN],
-                                                                     primeFlightKey[PRIME_FLIGHT_DESTINATION],
-                                                                     primeFlightDate);
+                        primeFlightKey[PRIME_FLIGHT_NUMBER_STRING],
+                        primeFlightKey[PRIME_FLIGHT_ORIGIN],
+                        primeFlightKey[PRIME_FLIGHT_DESTINATION],
+                        primeFlightDate);
                 if (currentFlight == null) {
                     logger.debug("Flight Not Found: Creating Flight");
                     currentFlight = utils.createNewFlight(fvo, primeFlightKey);
@@ -271,39 +263,67 @@ public class GtasLoaderImpl implements GtasLoader {
                     logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId());
                 }
                 /*
-                * Update the information on a flight that can change. Always save the most recent one as it will contain the
-                * most up to date information.
-                * */
+                 * Update the information on a prime flight that can change. Always save the most recent one as it will contain the
+                 * most up to date information.
+                 * */
                 MutableFlightDetails mfd = mutableFlightDetailsRepository.findById(currentFlight.getId()).orElse(new MutableFlightDetails(currentFlight.getId()));
                 BeanUtils.copyProperties(fvo, mfd, getNullPropertyNames(fvo));
                 mfd.setEtaDate(DateUtils.stripTime(mfd.getEta()));
                 if (mfd.getEtd() == null) {
-                    //Special case where flight doesnt have a timestamp - use the prime flight's timestamp if this is the case.
+                    // Special case where prime flight doesnt have a timestamp
+                    //  we use the prime TDT with the 125 or 87 LOC code \ 189 DTM code for APIS
+                    //  or tvl level 0 etd timestamp for PNR if this is the case.
                     Date primeFlightTimeStamp = new Date(Long.parseLong(primeFlightKey[ETD_DATE_WITH_TIMESTAMP]));
                     mfd.setEtd(primeFlightTimeStamp);
                 }
                 mfd = mutableFlightDetailsRepository.save(mfd);
                 currentFlight.setMutableFlightDetails(mfd);
                 primeFlight = currentFlight;
+                primeFlight.setParserUUID(fvo.getUuid());
                 logger.debug("processFlightsAndPassenger: check for existing flights time= " + (System.nanoTime() - startTime) / 1000000);
                 messageFlights.add(currentFlight);
                 FlightLeg leg = new FlightLeg();
                 leg.setFlight(currentFlight);
                 leg.setLegNumber(i);
                 flightLegs.add(leg);
-            } else {
-                // All flights that are not prime flights are considered booking details.
+            }
+            if (primeFlight != null) { // break when prime flight is found.
+                break;
+            }
+        }
+
+        if (primeFlight == null) {
+            throw new RuntimeException("No prime flight. ERROR!!!!!");
+        }
+        // Now that we have a prime flight populate the various other flights on the trip.
+        // All flights that are not prime flights are considered booking details.
+        // Note there is only one "prime" flight per message. The prime flight is the reason the message was received.
+        // The "booking details" below are all flights received along with the prime flight on a message.
+        for (int i = 0; i < flights.size(); i++) {
+            FlightVo fvo = flights.get(i);
+            if (!utils.isPrimeFlight(fvo, primeFlightKey)) {
                 BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
-                bD = bookingDetailDao.save(bD);
+                List<BookingDetail> existingBookingDetail =
+                        bookingDetailDao.getBookingDetailByCriteria(
+                                bD.getFullFlightNumber(),
+                                bD.getDestination(),
+                                bD.getOrigin(),
+                                bD.getEtd(),
+                                primeFlight.getId());
+                if (existingBookingDetail.isEmpty()) {
+                    bD.setFlight(primeFlight);
+                    bD.setFlightId(primeFlight.getId());
+                    bD = bookingDetailDao.save(bD);
+                } else {
+                    bD = existingBookingDetail.get(0);
+                }
+                bD.setParserUUID(fvo.getUuid());
                 bookingDetails.add(bD);
                 FlightLeg leg = new FlightLeg();
                 leg.setBookingDetail(bD);
                 leg.setLegNumber(i);
                 flightLegs.add(leg);
             }
-        }
-        if (primeFlight == null) {
-            throw new RuntimeException("No prime flight. ERROR!!!!!");
         }
         return primeFlight;
     }
@@ -318,37 +338,31 @@ public class GtasLoaderImpl implements GtasLoader {
         Set<Passenger> newPassengers = new HashSet<>();
         Set<Passenger> oldPassengers = new HashSet<>();
         Set<Long> oldPassengersId = new HashSet<>();
-        List<PassengerDetails> passengerDetailsList = new ArrayList<>();
-        List<PassengerTripDetails> passengerTripDetails = new ArrayList<>();
         Map<Long, Set<BookingDetail>> bookingDetailsAPassengerOwns = new HashMap<>();
         for (PassengerVo pvo : passengers) {
-            Passenger existingPassenger =  loaderServices.findPassengerOnFlight(primeFlight, pvo);
-            if (existingPassenger == null ) {
+            Passenger existingPassenger = loaderServices.findPassengerOnFlight(primeFlight, pvo);
+            if (existingPassenger == null) {
                 Passenger newPassenger = utils.createNewPassenger(pvo);
+                newPassenger.getBookingDetails().addAll(bookingDetails);
+                newPassenger.setParserUUID(pvo.getPassengerVoUUID());
                 for (DocumentVo dvo : pvo.getDocuments()) {
                     newPassenger.addDocument(utils.createNewDocument(dvo));
                 }
                 createSeatAssignment(pvo.getSeatAssignments(), newPassenger, primeFlight);
-                createBags(pvo.getBags(), newPassenger, primeFlight);
                 utils.calculateValidVisaDays(primeFlight, newPassenger);
                 newPassengers.add(newPassenger);
             } else if (!oldPassengersId.contains(existingPassenger.getId())) {
-                bookingDetailsAPassengerOwns.put(existingPassenger.getId(), existingPassenger.getBookingDetails());
+                existingPassenger.setParserUUID(pvo.getPassengerVoUUID());
+                existingPassenger.getBookingDetails().addAll(bookingDetails);
                 oldPassengersId.add(existingPassenger.getId());
                 updatePassenger(existingPassenger, pvo);
                 messagePassengers.add(existingPassenger);
                 logger.debug("@ createSeatAssignment");
                 createSeatAssignment(pvo.getSeatAssignments(), existingPassenger, primeFlight);
                 logger.debug("@ createBags");
-                createBags(pvo.getBags(), existingPassenger, primeFlight);
                 oldPassengers.add(existingPassenger);
-                passengerDetailsList.add(existingPassenger.getPassengerDetails());
-                passengerTripDetails.add(existingPassenger.getPassengerTripDetails());
             }
         }
-
-        passengerTripRepository.saveAll(passengerTripDetails);
-        passengerDetailRepository.saveAll(passengerDetailsList);
         messagePassengers.addAll(oldPassengers);
         PassengerInformationDTO passengerInformationDTO = new PassengerInformationDTO();
         passengerInformationDTO.setBdSet(bookingDetailsAPassengerOwns);
@@ -396,24 +410,24 @@ public class GtasLoaderImpl implements GtasLoader {
         flightPassengerCountRepository.save(flightPassengerCount);
     }
 
-
     @Override
-    public void updateBookingDetails(Message message, Set<Passenger> messagePassengers, Map<Long, Set<BookingDetail>> paxBookingDetailsMap) {
-        Set<BookingDetail> bookingDetails = message.getBookingDetails();
-        if (!bookingDetails.isEmpty()) {
-            for (BookingDetail bD : bookingDetails) {
-                bD.getMessages().add(message);
-                for (Passenger pax : messagePassengers) {
-                    Set<BookingDetail> paxBdSet = paxBookingDetailsMap.get(pax.getId());
-                    if (paxBdSet == null || !paxBookingDetailsMap.get(pax.getId()).contains(bD)) {
-                        bD.getPassengers().add(pax);
-                    }
-                }
+    public Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave) {
+        Map<UUID, BagMeasurements> uuidBagMeasurementsMap = new HashMap<>();
+        for (BagMeasurementsVo bagMeasurementsVo : bagMeasurementsToSave) {
+            BagMeasurements bagMeasurements = new BagMeasurements();
+            bagMeasurements.setBagCount(bagMeasurementsVo.getQuantity());
+            if (bagMeasurementsVo.getWeightInKilos() != null) {
+                long rounded = Math.round(bagMeasurementsVo.getWeightInKilos());
+                bagMeasurements.setWeight((double) rounded);
             }
+            bagMeasurements.setRawWeight(bagMeasurementsVo.getRawWeight());
+            bagMeasurements.setParserUUID(bagMeasurementsVo.getUuid());
+            bagMeasurements.setMeasurementIn(bagMeasurementsVo.getMeasurementType());
+            bagMeasurementsRepository.save(bagMeasurements);
+            uuidBagMeasurementsMap.put(bagMeasurements.getParserUUID(), bagMeasurements);
         }
-        bookingDetailDao.saveAll(bookingDetails);
+        return uuidBagMeasurementsMap;
     }
-
 
     /**
      * Create a single seat assignment for the given passenger, flight
@@ -448,53 +462,6 @@ public class GtasLoaderImpl implements GtasLoader {
         }
     }
 
-    private void createBags(List<String> bagIds, Passenger p, Flight f) {
-        for (String bagId : bagIds) {
-            Bag bag = new Bag();
-            bag.setBagId(bagId);
-            bag.setData_source("APIS");
-            //APIS Tab | Remove Baggage destination #657 code fix
-            //bag.setDestinationAirport(f.getDestination());
-            bag.setAirline(f.getCarrier());
-            bag.setFlight(f);
-            bag.setPassenger(p);
-            p.getBags().add(bag);
-        }
-    }
-
-    @Override
-    public void createBagsFromPnrVo(PnrVo pvo, Pnr pnr) {
-
-        for (Flight f : pnr.getFlights()) {
-            if (pvo == null || pvo.getBags() == null) {
-                break;
-            }
-            for (BagVo b : pvo.getBags()) {
-                String destination = f.getDestination();
-                //flight_pax | bag info not making table #783 code fix
-                if (b.getDestinationAirport() != null && b.getDestinationAirport().equals(f.getDestination())) {
-                    if (org.apache.commons.lang3.StringUtils.isNotBlank(b.getDestinationAirport())) {
-                        destination = b.getDestinationAirport();
-                    }
-                    for (Passenger p : pnr.getPassengers()) {
-                        if (StringUtils.equals(p.getPassengerDetails().getFirstName(), b.getFirstName()) &&
-                                StringUtils.equals(p.getPassengerDetails().getLastName(), b.getLastName())) {
-                            Bag bag = new Bag();
-                            bag.setBagId(b.getBagId());
-                            bag.setAirline(b.getAirline());
-                            bag.setData_source(b.getData_source());
-                            bag.setDestinationAirport(destination);
-                            bag.setHeadPool(b.isHeadPool());
-                            bag.setFlight(f);
-                            bag.setPassenger(p);
-                            bagDao.save(bag);
-                            p.getBags().add(bag);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     @Override
     public void createFormPfPayments(PnrVo vo, Pnr pnr) {

@@ -3,6 +3,7 @@ package gov.gtas.model;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
@@ -42,25 +43,50 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Column(name = "destination_country", length = 3)
 	private String destinationCountry;
-
-	@Column(name = "processed")
-	private Boolean processed = Boolean.FALSE;
 	
 	@OneToMany(mappedBy ="bookingDetail")
 	private Set<FlightLeg> flightLegs;
 
-    @ManyToMany(targetEntity = Passenger.class)
-    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "pax_id"))
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Passenger.class)
     private Set<Passenger> passengers = new HashSet<>();
-   
-    @ManyToMany(targetEntity = Message.class)
-    @JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "booking_detail_id"), inverseJoinColumns = @JoinColumn(name = "message_id"))     
+
+    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Message.class)
     private Set<Message> messages = new HashSet<>();
     
     @Column(name="full_flight_number")
     private String fullFlightNumber;
-    
-	public Set<Passenger> getPassengers() {
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "flight", updatable = false, insertable = false)
+    private Flight flight;
+
+    @Column(name = "flight", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class, mappedBy = "bookingDetail")
+    private Set<Bag> bags = new HashSet<>();
+
+
+    /*
+     *
+     * Used to keep a referenced to FlightVO from parser.
+     * Only used in loader to help establish relationships.
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
+
+
+
+    public Set<Passenger> getPassengers() {
 		return passengers;
 	}
 
@@ -149,14 +175,6 @@ public class BookingDetail extends BaseEntityAudit {
 		this.destinationCountry = destinationCountry;
 	}
 
-	public Boolean getProcessed() {
-		return processed;
-	}
-
-	public void setProcessed(Boolean processed) {
-		this.processed = processed;
-	}
-
 	public Set<FlightLeg> getFlightLegs() {
 		return flightLegs;
 	}
@@ -172,6 +190,30 @@ public class BookingDetail extends BaseEntityAudit {
 	public void setFullFlightNumber(String fullFlightNumber) {
 		this.fullFlightNumber = fullFlightNumber;
 	}
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+    public Set<Bag> getBags() {
+        return bags;
+    }
+
+    public void setBags(Set<Bag> bags) {
+        this.bags = bags;
+    }
 
 	@Override
 	public boolean equals(Object o) {
@@ -210,7 +252,6 @@ public class BookingDetail extends BaseEntityAudit {
 				", originCountry='" + originCountry + '\'' +
 				", destination='" + destination + '\'' +
 				", destinationCountry='" + destinationCountry + '\'' +
-				", processed=" + processed +
 				", flightLegs=" + flightLegs +
 				", passengers=" + passengers +
 				", pnrs=" + messages +

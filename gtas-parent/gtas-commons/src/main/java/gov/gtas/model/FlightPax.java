@@ -14,6 +14,10 @@ public class FlightPax implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public FlightPax(){}
+
+	public FlightPax(Long passengerId) {
+		this.passengerId = passengerId;
+	}
 	
     @Id  
     @GeneratedValue(strategy = GenerationType.AUTO)  
