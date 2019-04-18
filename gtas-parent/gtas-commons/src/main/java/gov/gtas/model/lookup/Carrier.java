@@ -9,13 +9,14 @@ import gov.gtas.model.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "carrier")
+@Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index") })
 public class Carrier extends BaseEntity {
     public Carrier() { }
     
