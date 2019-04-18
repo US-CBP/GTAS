@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ApisControllerServiceImpl implements ApisControllerService {
@@ -21,7 +22,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 
     @Transactional
     public List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref) {
-        List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref);
+        Set<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref);
         List<FlightPassengerVo> flightPassengerVos = new ArrayList<>();
         for (FlightPax fp : fpList) {
             FlightPassengerVo fpVo = new FlightPassengerVo();
