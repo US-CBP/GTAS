@@ -11,6 +11,7 @@ import gov.gtas.constant.RuleServiceConstants;
 
 public class RuleTemplateConstants {
     public static final String SEAT_ENTITY_NAME = "Seat";
+    public static final String SEAT_ENTITY_NAME_LOWERCASE = "seat";
     public static final String SEAT_ATTRIBUTE_NAME = "number";
 
 
@@ -73,6 +74,7 @@ public class RuleTemplateConstants {
     public static final String FREQUENT_FLYER_VARIABLE_NAME = "$ff";
     public static final String PNR_VARIABLE_NAME = "$pnr";
     public static final String SEAT_VARIABLE_NAME = "$seat";
+    public static final String PNR_SEAT = "$pnr_seat";
     public static final String DWELL_TIME_VARIABLE_NAME = "$dwell";
     public static final String FLIGHT_PAX_VARIABLE_NAME = "$fp";
     public static final String BAG_VARIABLE_NAME = "$b";
@@ -84,7 +86,8 @@ public class RuleTemplateConstants {
     public static final String PAYMENT_FORM_ENTITY_NAME = "PaymentForm";
     public static final String PAYMENT_TYPE_ATTRIBUTE_NAME = "paymentType";
     public static final String PAYMENT_FORM_FIELD_ALIAS = "paymentForms";
-    
+    public static final String PAYMENT_FORM_FIELD_ALIAS_LOWERCASE = "paymentforms";
+
     private RuleTemplateConstants() {
         // to prevent instantiation.
     }
