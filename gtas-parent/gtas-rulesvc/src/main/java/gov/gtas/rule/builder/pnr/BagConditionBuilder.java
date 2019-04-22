@@ -8,13 +8,11 @@ package gov.gtas.rule.builder.pnr;
 import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_VARIABLE_SUFFIX;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.querybuilder.mappings.BagMapping;
-import gov.gtas.querybuilder.mappings.FlightPaxMapping;
 import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class BagConditionBuilder extends EntityConditionBuilder {
 
-    public BagConditionBuilder(final String drlVariableName,
-    		final String passengerVariableName) {
+    public BagConditionBuilder(final String drlVariableName) {
         super(drlVariableName, EntityEnum.BAG.getEntityName());
     }
 
