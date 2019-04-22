@@ -13,6 +13,7 @@ public class RuleTemplateConstants {
     public static final String SEAT_ENTITY_NAME = "Seat";
     public static final String SEAT_ENTITY_NAME_LOWERCASE = "seat";
     public static final String SEAT_ATTRIBUTE_NAME = "number";
+    public static final String DOLLAR_SIGN = "$";
 
 
     //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.

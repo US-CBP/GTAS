@@ -48,8 +48,14 @@ public class RuleConditionBuilderHelper {
                 ret = FALSE_STRING;
             } else if (TRUE_STRING.equalsIgnoreCase(value)) {
                 ret = TRUE_STRING;
-            } else {
+            } else if (FALSE_STRING.equalsIgnoreCase(value)) {
                 ret = FALSE_STRING;
+            } else if (value.charAt(0) == '1') {
+                ret = TRUE_STRING;
+            } else if (value.charAt(0) == '0') {
+                ret = FALSE_STRING;
+            } else {
+                throw new RuntimeException("Unsupported boolean value");
             }
             break;
         case STRING:

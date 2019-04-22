@@ -30,6 +30,8 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String BIG_PNR = "/pnr-messages/pnrWithBags.txt";
     private static final String PNR_WITH_BAGS = "/pnr-messages/bigMessagePnr.txt";
     private static final String PNR_EXAMPLE = "/pnr-messages/pnrMessageExample.txt";
+    private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
+
     private EdifactParser<PnrVo> parser;
 
     @Before

@@ -12,12 +12,9 @@ import gov.gtas.enumtype.CriteriaOperatorEnum;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.TypeEnum;
 import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.QueryTerm;
-import gov.gtas.rule.builder.pnr.BagConditionBuilder;
-import gov.gtas.rule.builder.pnr.FlightPaxConditionBuilder;
-import gov.gtas.rule.builder.pnr.PnrRuleConditionBuilder;
+import gov.gtas.rule.builder.pnr.*;
 
 import java.text.ParseException;
 import java.util.*;
@@ -31,74 +28,126 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.*;
  */
 public class RuleConditionBuilder {
 
+    private List<DocumentConditionBuilder> documentConditionBuilder = new ArrayList<>();
+    private List<BagConditionBuilder> bagConditionBuilder = new ArrayList<>();
+
+    private PnrRuleConditionBuilder pnrRuleConditionBuilder;
+    private SeatConditionBuilder pnrSeatConditionBuilder;
+    private SeatConditionBuilder apisSeatConditionBuilder;
+    private PaymentFormConditionBuilder paymentFormConditionBuilder;
+    private FlightPaxConditionBuilder flightPaxConditionBuilder;
+    private MutableFlightDetailsConditionBuilder mutableFlightDetailsConditionBuilder;
     private PassengerConditionBuilder passengerConditionBuilder;
     private PassengerDetailsConditionBuilder detailsConditionBuilder;
     private PassengerTripDetailsConditionBuilder tripDetailsConditionBuilder;
-    private DocumentConditionBuilder documentConditionBuilder;
     private FlightConditionBuilder flightConditionBuilder;
-    private MutableFlightDetailsConditionBuilder mutableFlightDetailsConditionBuilder;
 
-    private PnrRuleConditionBuilder pnrRuleConditionBuilder;
 
-    private SeatConditionBuilder apisSeatConditionBuilder;
-
-    private BagConditionBuilder bagConditionBuilder;
-    private FlightPaxConditionBuilder flightPaxConditionBuilder;
-    private PaymentFormConditionBuilder paymentFormConditionBuilder;
-
-    private String passengerVariableName;
-    private String flightVariableName;
+    private String passengerVariableName = PASSENGER_VARIABLE_NAME;
+    private String flightVariableName = FLIGHT_VARIABLE_NAME;
 
     private StringBuilder conditionDescriptionBuilder;
 
     private boolean flightCriteriaPresent;
 
-    /**
-     * Constructor for the Simple Rules:<br>
-     * (i.e., One Passenger, one document, one flight.)
-     *
-     * @param entityVariableNameMap a lookup for variable name to use when generating rules<br>
-     *                              For example, to get the variable for passenger lookup using
-     *                              the key EntityEnum.PASSENGER.
-     */
-    public RuleConditionBuilder(
-            final Map<EntityEnum, String> entityVariableNameMap) {
+    private Map<UUID, EntityConditionBuilder> conditionBuilderMap = new HashMap<>();
 
-        this.passengerVariableName = entityVariableNameMap
-                .get(EntityEnum.PASSENGER);
-        this.flightVariableName = entityVariableNameMap.get(EntityEnum.FLIGHT);
-        final String documentVariableName = entityVariableNameMap
-                .get(EntityEnum.DOCUMENT);
+    public RuleConditionBuilder(List<QueryTerm> queryTermList) {
 
-        this.passengerConditionBuilder = new PassengerConditionBuilder(
-                passengerVariableName);
-        this.documentConditionBuilder = new DocumentConditionBuilder(
-                documentVariableName, passengerVariableName);
+        /*
+          Constructor for the Simple Rules:<br>
+          (i.e., One Passenger, one document, one flight.)
 
-        this.detailsConditionBuilder = new PassengerDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_DETAILS_VARIABLE_NAME);
-
-        this.tripDetailsConditionBuilder = new PassengerTripDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_TRIP_VARIABLE_NAME);
-
-        this.documentConditionBuilder = new DocumentConditionBuilder(
-                documentVariableName, passengerVariableName);
-        this.flightConditionBuilder = new FlightConditionBuilder(
-                flightVariableName, passengerVariableName);
-
-        this.mutableFlightDetailsConditionBuilder = new MutableFlightDetailsConditionBuilder(
-                "$mfd");
-
+          @param entityVariableNameMap
+         * a lookup for variable name to use when generating rules<br>
+         *                              For example, to get the variable for passenger lookup using
+         *                              the key EntityEnum.PASSENGER.
+         */
+        Map<UUID, EntityEnum> uuidEntityEnumMap = new HashMap<>();
+        Set<UUID> orderedUUIDList = new LinkedHashSet<>();
+        for (QueryTerm qt : queryTermList) {
+            EntityEnum entity = EntityEnum.fromString(qt.getEntity()).orElse(EntityEnum.NOT_LISTED);
+            uuidEntityEnumMap.putIfAbsent(qt.getUuid(), entity);
+            orderedUUIDList.add(qt.getUuid());
+        }
+        int groupNumber;
+        EntityConditionBuilder ecb;
+        for (UUID uuid : orderedUUIDList) {
+            EntityEnum entityEnum = uuidEntityEnumMap.get(uuid);
+            switch (entityEnum) {
+                case DOCUMENT:
+                case BAG:
+                    groupNumber = conditionBuilderMap.size() + 1;
+                    ecb = getEntityConditionBuilder(entityEnum, groupNumber);
+                    conditionBuilderMap.put(uuid, ecb);
+                    break;
+                case EMAIL:
+                case FLIGHT:
+                case FREQUENT_FLYER:
+                case HITS:
+                case PHONE:
+                case PASSENGER:
+                case FLIGHT_PAX:
+                case PNR:
+                case ADDRESS:
+                case BOOKING_DETAIL:
+                case CREDIT_CARD:
+                case TRAVEL_AGENCY:
+                case DWELL_TIME:
+                case NOT_LISTED:
+                default:
+                    break;
+            }
+        }
+        this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(queryTermList);
+        this.paymentFormConditionBuilder = new PaymentFormConditionBuilder(RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME);
+        this.pnrSeatConditionBuilder = new SeatConditionBuilder(
+                RuleTemplateConstants.SEAT_VARIABLE_NAME, false);
         this.apisSeatConditionBuilder = new SeatConditionBuilder(
                 RuleTemplateConstants.SEAT_VARIABLE_NAME + "2", true);
-
-        this.bagConditionBuilder = new BagConditionBuilder(
-                RuleTemplateConstants.BAG_VARIABLE_NAME, passengerVariableName);
-        this.flightPaxConditionBuilder = new FlightPaxConditionBuilder(
-                RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME, passengerVariableName);
-
-        this.pnrRuleConditionBuilder = new PnrRuleConditionBuilder(1);
-
-        this.paymentFormConditionBuilder = new PaymentFormConditionBuilder(RuleTemplateConstants.PAYMENT_FORM_VARIABLE_NAME);
+        this.flightPaxConditionBuilder = new FlightPaxConditionBuilder(FLIGHT_PAX_VARIABLE_NAME);
+        this.passengerConditionBuilder = new PassengerConditionBuilder(
+                passengerVariableName);
+        this.detailsConditionBuilder = new PassengerDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_DETAILS_VARIABLE_NAME);
+        this.tripDetailsConditionBuilder = new PassengerTripDetailsConditionBuilder(RuleTemplateConstants.PASSENGER_TRIP_VARIABLE_NAME);
+        this.flightConditionBuilder = new FlightConditionBuilder(
+                flightVariableName, passengerVariableName);
+        this.mutableFlightDetailsConditionBuilder = new MutableFlightDetailsConditionBuilder(
+                "$mfd");
     }
+
+    private EntityConditionBuilder getEntityConditionBuilder(EntityEnum entityEnum, int groupNumber) {
+        EntityConditionBuilder ecb;
+        String drlVariableName = DOLLAR_SIGN + entityEnum.getAlias() + groupNumber;
+        switch (entityEnum) {
+            case DOCUMENT:
+                ecb = new DocumentConditionBuilder(drlVariableName);
+                documentConditionBuilder.add((DocumentConditionBuilder) ecb);
+                break;
+            case BAG:
+                ecb = new BagConditionBuilder(drlVariableName);
+                bagConditionBuilder.add((BagConditionBuilder) ecb);
+                break;
+            case EMAIL:
+            case FREQUENT_FLYER:
+            case PHONE:
+            case TRAVEL_AGENCY:
+            case DWELL_TIME:
+            case ADDRESS:
+            case BOOKING_DETAIL:
+            case CREDIT_CARD:
+            case PNR:
+            case FLIGHT_PAX:
+            case HITS:
+            case PASSENGER:
+            case FLIGHT:
+            case NOT_LISTED:
+            default:
+                throw new RuntimeException("Attempted to make list condition builder on unsupported field!");
+        }
+        return ecb;
+    }
+
 
     /**
      * @return the flightCriteriaPresent
@@ -112,7 +161,6 @@ public class RuleConditionBuilder {
      * document.
      *
      * @param parentStringBuilder the rule document builder.
-     * @throws ParseException if the UDR has invalid formatting.
      */
     public void buildConditionsAndApppend(
             final StringBuilder parentStringBuilder) {
@@ -125,22 +173,26 @@ public class RuleConditionBuilder {
                 .isEmpty() | !flightConditionBuilder.isEmpty();
 
 
-        pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder,
-                isPassengerConditionCreated, passengerConditionBuilder);
-        parentStringBuilder.append(bagConditionBuilder.build())
-                .append(flightPaxConditionBuilder.build())
+        pnrRuleConditionBuilder.buildConditionsAndApppend(parentStringBuilder);
+        for (BagConditionBuilder bcb : bagConditionBuilder) {
+            parentStringBuilder.append(bcb.build());
+        }
+        parentStringBuilder.append(flightPaxConditionBuilder.build())
                 .append(apisSeatConditionBuilder.build())
                 .append(detailsConditionBuilder.build())
-                .append(tripDetailsConditionBuilder.build())
-                .append(documentConditionBuilder.build());
+                .append(tripDetailsConditionBuilder.build());
+        for (DocumentConditionBuilder dcb : documentConditionBuilder) {
+            parentStringBuilder.append(dcb.build());
+        }
+        parentStringBuilder
+                .append(paymentFormConditionBuilder.build());
         if (isPassengerConditionCreated) {
             parentStringBuilder.append(passengerConditionBuilder.build())
                     .append(flightConditionBuilder.build())
                     .append(mutableFlightDetailsConditionBuilder.build());
         }
-        parentStringBuilder
-                .append(paymentFormConditionBuilder.build());
         pnrRuleConditionBuilder.addPnrLinkConditions(parentStringBuilder, isPassengerConditionCreated, passengerConditionBuilder);
+
 
 
         // order doesn't matter
@@ -148,15 +200,15 @@ public class RuleConditionBuilder {
         tripDetailsConditionBuilder.reset();
         detailsConditionBuilder.reset();
         passengerConditionBuilder.reset();
-        documentConditionBuilder.reset();
+        documentConditionBuilder = new ArrayList<>();
         flightConditionBuilder.reset();
+        flightPaxConditionBuilder.reset();
+        pnrSeatConditionBuilder.reset();
         apisSeatConditionBuilder.reset();
-        bagConditionBuilder.reset();
-        flightConditionBuilder.reset();
-        pnrRuleConditionBuilder.reset();
+        bagConditionBuilder = new ArrayList<>();
         paymentFormConditionBuilder.reset();
+        flightConditionBuilder.reset();
         mutableFlightDetailsConditionBuilder.reset();
-
     }
 
     /**
@@ -178,17 +230,23 @@ public class RuleConditionBuilder {
         }
 
         if (!documentConditionBuilder.isEmpty()) {
-            // add a link condition to the passenger builder.
-            passengerConditionBuilder
-                    .addLinkByIdCondition(documentConditionBuilder
-                            .getPassengerIdLinkExpression());
+            for (DocumentConditionBuilder dcb : documentConditionBuilder) {
+                // add a link condition to the passenger builder.
+                passengerConditionBuilder
+                        .addLinkByIdCondition(dcb
+                                .getPassengerIdLinkExpression());
+            }
         }
         //If there are bag or flightpax conditions add link to passenger builder
         //Add link to flight condition builder because of flight id existence in each. 
         if (!bagConditionBuilder.isEmpty()) {
-            passengerConditionBuilder.addLinkByIdCondition(bagConditionBuilder.getPassengerIdLinkExpression());
-            flightConditionBuilder.addConditionAsString("id == " + bagConditionBuilder.getFlightIdLinkExpression());
-            this.flightCriteriaPresent = true;
+            for (BagConditionBuilder bcb : bagConditionBuilder) {
+                if (!bcb.isEmpty()) {
+                    passengerConditionBuilder.addLinkByIdCondition(bcb.getPassengerIdLinkExpression());
+                    flightConditionBuilder.addConditionAsString("id == " + bcb.getFlightIdLinkExpression());
+                    this.flightCriteriaPresent = true;
+                }
+            }
         }
 
         if (!flightPaxConditionBuilder.isEmpty()) {
@@ -220,7 +278,6 @@ public class RuleConditionBuilder {
             this.flightCriteriaPresent = true;
         }
     }
-
     /**
      * Adds a rule condition to the builder.
      *
@@ -239,11 +296,13 @@ public class RuleConditionBuilder {
             RuleConditionBuilderHelper.addConditionDescription(trm,
                     conditionDescriptionBuilder);
 
-            EntityEnum entity = EntityEnum.getEnum(trm.getEntity());
             TypeEnum attributeType = TypeEnum.getEnum(trm.getType());
             CriteriaOperatorEnum opCode = CriteriaOperatorEnum.getEnum(trm
                     .getOperator());
             String field = trm.getField();
+            // All entities that are a part of a list live int he conditionBuilderMap.
+            EntityConditionBuilder ebd;
+            EntityEnum entity = EntityEnum.fromString(trm.getEntity()).orElse(EntityEnum.NOT_LISTED);
             switch (entity) {
                 case PASSENGER:
                     if (RuleTemplateConstants.SEAT_ENTITY_NAME.equalsIgnoreCase(field)) {
@@ -262,10 +321,6 @@ public class RuleConditionBuilder {
                         throw new RuntimeException("ERROR: PASSENGER HAS NO INFORMATION FOR RULE. CHECK DETAILS OR TRIP IMPLEMENTATION");
                     }
                     break;
-                case DOCUMENT:
-                    documentConditionBuilder.addCondition(opCode, trm.getField(),
-                            attributeType, trm.getValue());
-                    break;
                 case FLIGHT:
                     if (RuleTemplateConstants.flightMutableDetailsMap.containsKey(field.toUpperCase())) {
                         mutableFlightDetailsConditionBuilder.addCondition(opCode, flightMutableDetailsMap.get(trm.getField().toUpperCase()),
@@ -279,17 +334,19 @@ public class RuleConditionBuilder {
                         this.flightCriteriaPresent = true;
                     }
                     break;
-                case BAG:
-                    bagConditionBuilder.addCondition(opCode, trm.getField(),
-                            attributeType, trm.getValue());
-                    break;
                 case FLIGHT_PAX:
                     flightPaxConditionBuilder.addCondition(opCode, trm.getField(),
                             attributeType, trm.getValue());
                     break;
+                case DOCUMENT:
+                case BAG:
+                    ebd = conditionBuilderMap.get(trm.getUuid());
+                    ebd.addCondition(opCode, trm.getField(),
+                            attributeType, trm.getValue());
+                    break;
                 /*
                  *
-                 * Several Entities are PNR specific and handled in teh pnr rule condition builder.
+                 * Several Entities are PNR specific and handled in the pnr rule condition builders.
                  * */
                 case PNR:
                 case FREQUENT_FLYER:
@@ -300,13 +357,12 @@ public class RuleConditionBuilder {
                 case ADDRESS:
                 case BOOKING_DETAIL:
                 case CREDIT_CARD:
-                    pnrRuleConditionBuilder.addRuleCondition(entity, attributeType,
-                            opCode, trm);
+                    pnrRuleConditionBuilder.addRuleCondition(attributeType, opCode, trm);
                     break;
                 case HITS:
-                    throw new RuntimeException("Hits are not currently implemented for rules");
+                case NOT_LISTED:
                 default:
-                    throw new RuntimeException("This field is not currently implemented for rules!");
+                    throw new RuntimeException("This field is not currently implemented for rules!" + trm.getEntity());
             }
         } catch (ParseException pe) {
             StringBuilder bldr = new StringBuilder("[");
@@ -336,7 +392,7 @@ public class RuleConditionBuilder {
     private static final String ACTION_PASSENGER_HIT_WITH_FLIGHT = "resultList.add(new RuleHitDetail(%s, %s, \"%s\", %s, %s, \"%s\"));\n";
 
     List<String> addRuleAction(StringBuilder ruleStringBuilder,
-                               UdrRule parent, Rule rule, String passengerVariableName) {
+                               UdrRule parent) {
         String cause = conditionDescriptionBuilder.toString()
                 .replace("\"", "'");
         ruleStringBuilder.append("then\n");
@@ -362,8 +418,7 @@ public class RuleConditionBuilder {
 
     private static final String ACTION_WATCHLIST_HIT = "resultList.add(new RuleHitDetail(%s, \"%s\", %s, \"%s\"));\n";
 
-    public List<String> addWatchlistRuleAction(StringBuilder ruleStringBuilder, EntityEnum entity, String title,
-                                               String passengerVariableName) {
+    public List<String> addWatchlistRuleAction(StringBuilder ruleStringBuilder, EntityEnum entity) {
         String cause = conditionDescriptionBuilder.toString()
                 .replace("\"", "'");
         ruleStringBuilder.append("then\n");

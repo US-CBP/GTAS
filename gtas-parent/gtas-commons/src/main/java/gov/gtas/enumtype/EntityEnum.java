@@ -6,6 +6,12 @@
 package gov.gtas.enumtype;
 
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
+
 public enum EntityEnum {
     
         ADDRESS ("ADDRESS", "Address", "a", ".addresses"),
@@ -22,21 +28,35 @@ public enum EntityEnum {
         PNR ("PNR", "Pnr", "pnr", ".pnrs"),
         TRAVEL_AGENCY ("TRAVEL AGENCY", "Agency", "ag", ".agencies"),
 		DWELL_TIME ("DWELL TIME", "DwellTime", "dwell", ".dwellTimes"),
-		BAG("BAG","Bag","bag",".bags"), 
-		FLIGHT_PAX("FLIGHT PAX", "FlightPax", "flightpax",".flightPaxList");
-        
+    BAG("BAG", "Bag", "bag", ".bags"),
+    FLIGHT_PAX("FLIGHT PAX", "FlightPax", "flightpax", ".flightPaxList"),
+    NOT_LISTED("NOT LISTED!", "BAD VALUE", "ERROR", "BAD VALUE");
+
         private String friendlyName;
         private String entityName;
         private String alias;
         private String entityReference;
-        
-        private EntityEnum(String friendlyName, String entityName, String alias, String entityReference) {
+
+    EntityEnum(String friendlyName, String entityName, String alias, String entityReference) {
             this.friendlyName = friendlyName;
             this.entityName = entityName;
             this.alias = alias;
             this.entityReference = entityReference;
             
         }
+
+    private static final Map<String, EntityEnum> stringToEnum =
+            Stream.of(values()).collect(
+                    toMap(Object::toString, e -> e));
+
+    public static Optional<EntityEnum> fromString(String entityName) {
+        return Optional.ofNullable(stringToEnum.get(entityName));
+    }
+
+    @Override
+    public String toString() {
+        return this.entityName;
+    }
 
         public String getFriendlyName() {
             return friendlyName;
