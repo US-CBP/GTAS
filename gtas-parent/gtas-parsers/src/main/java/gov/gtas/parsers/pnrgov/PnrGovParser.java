@@ -720,8 +720,8 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
     boolean isPrimeFlight = isPrimeFlightTVL(tvl);
     if (tbd.hasBagInformation()) {
         BagMeasurementsVo bagMeasurementsVo = BagMeasurementsVo.fromTbdBD(tbd.getBaggageDetails());
-        if ((bagMeasurementsVo.getQuantity() != null && bagMeasurementsVo.getQuantity()  > 0)
-                || (bagMeasurementsVo.getWeightInKilos() != null && bagMeasurementsVo.getWeightInKilos() > 0)) {
+        if ((bagMeasurementsVo.getQuantity() != null)
+                || (bagMeasurementsVo.getWeightInKilos() != null)) {
             parsedMessage.getBagMeasurements().add(bagMeasurementsVo);
             for (TBD_BagTagDetails bagTagSegment : tbd.getBagTagDetails()) {
                 BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);

@@ -24,7 +24,10 @@ class BagVoToBagAdapter {
         this.messageBookingDetails = messageBookingDetails;
         this.messageVo = messageVo;
         handleDuplicateBags(messageVo.getBagVos(), passengerBags);
-        bagMeasurementsVos = newBags.stream().map(BagVo::getBagMeasurementsVo).collect(Collectors.toSet());
+        bagMeasurementsVos = newBags.stream()
+                .map(BagVo::getBagMeasurementsVo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
 

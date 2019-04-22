@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.svc.request.builder;
@@ -34,11 +34,7 @@ import org.springframework.util.CollectionUtils;
  * APIS and PNR messages. The constructed request contains all entities (e.g.,
  * passenger, flight) associated with the APIS and PNR messages supplied.
  * Duplicate entities are removed in the construction process.
- *
- *
  */
-
-
 
 
 @Component
@@ -49,13 +45,21 @@ public class RuleEngineRequestBuilder {
     private Set<PnrPassengerLink> passengerLinkSet;
     private Set<Long> flightIdSet;
     private Set<Long> addressIdSet;
-    private  Set<Long> phoneIdSet;
+    private Set<Long> phoneIdSet;
     private Set<Long> emailIdSet;
     private Set<Long> creditCardIdSet;
     private Set<Long> frequentFlyerIdSet;
     private Set<Long> travelAgencyIdSet;
     private Set<Long> dwellTimeIdSet;
     private Set<Long> bookingDetailIdSet;
+    private Set<PnrAddressLink> addressLinks;
+    private Set<PnrPhoneLink> phoneLinks;
+    private Set<PnrEmailLink> emailLinks;
+    private Set<PnrCreditCardLink> creditCardLinks;
+    private Set<PnrFrequentFlyerLink> frequentFlyerLinks;
+    private Set<PnrTravelAgencyLink> travelAgencyLinks;
+    private Set<PnrDwellTimeLink> dwellTimeLinks;
+    private Set<PnrBookingLink> pnrBookingLinks;
     private Set<PassengerFlightTuple> passengerFlightSet;
 
     private RuleServiceRequestType requestType;
@@ -104,7 +108,15 @@ public class RuleEngineRequestBuilder {
         this.phoneIdSet = new HashSet<>();
         this.travelAgencyIdSet = new HashSet<>();
         this.passengerFlightSet = new HashSet<>();
-        this.dwellTimeIdSet=new HashSet<>();
+        this.dwellTimeIdSet = new HashSet<>();
+        this.addressLinks = new HashSet<>();
+        this.phoneLinks = new HashSet<>();
+        this.emailLinks = new HashSet<>();
+        this.creditCardLinks = new HashSet<>();
+        this.frequentFlyerLinks = new HashSet<>();
+        this.travelAgencyLinks = new HashSet<>();
+        this.dwellTimeLinks = new HashSet<>();
+        this.pnrBookingLinks = new HashSet<>();
         this.requestType = null;
         this.pnrRepository = pnrRepository;
         this.passengerTripRepository = passengerTripRepository;
@@ -118,7 +130,7 @@ public class RuleEngineRequestBuilder {
 
     /**
      * Builds and returns the request object.
-     * 
+     *
      * @return the request object.
      */
     public RuleServiceRequest build() {
@@ -134,7 +146,15 @@ public class RuleEngineRequestBuilder {
         this.phoneIdSet = new HashSet<>();
         this.travelAgencyIdSet = new HashSet<>();
         this.passengerFlightSet = new HashSet<>();
-        this.dwellTimeIdSet=new HashSet<>();
+        this.dwellTimeIdSet = new HashSet<>();
+        this.addressLinks = new HashSet<>();
+        this.phoneLinks = new HashSet<>();
+        this.emailLinks = new HashSet<>();
+        this.creditCardLinks = new HashSet<>();
+        this.frequentFlyerLinks = new HashSet<>();
+        this.travelAgencyLinks = new HashSet<>();
+        this.dwellTimeLinks = new HashSet<>();
+        this.pnrBookingLinks = new HashSet<>();
         this.requestType = null;
         return basicRuleServiceRequest;
     }
@@ -148,14 +168,13 @@ public class RuleEngineRequestBuilder {
 
     /**
      * Adds an Apis Message and its associated entities.
-     * 
-     * @param apisMessage
-     *            the message to add.
+     *
+     * @param apisMessage the message to add.
      */
     public void addApisMessage(List<ApisMessage> apisMessage) {
         logger.debug("Entering APIS messages");
         Set<Long> apisIds = apisMessage.stream().map(ApisMessage::getId).collect(Collectors.toSet());
-        Set<Passenger>  passengerSet = apisMessageRepository.getPassengerWithFlightInfo(apisIds);
+        Set<Passenger> passengerSet = apisMessageRepository.getPassengerWithFlightInfo(apisIds);
         addFlights(passengerSet);
         Set<Flight> flightSet = addFlights(passengerSet);
         addFlights(flightSet);
@@ -181,8 +200,8 @@ public class RuleEngineRequestBuilder {
 
     /**
      * Adds a PNR message and its associated entities.
-     * 
-     *            the pnr to add.
+     * <p>
+     * the pnr to add.
      */
     public void addPnr(List<Pnr> pnrList) {
         // add PNR objects
@@ -264,7 +283,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<Passenger>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getPax(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             Passenger object = (Passenger) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
@@ -275,7 +294,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<DwellTime>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getDwellTimeByPnr(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             DwellTime object = (DwellTime) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
@@ -286,7 +305,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<Agency>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getTravelAgencyByPnr(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             Agency object = (Agency) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
@@ -297,7 +316,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<FrequentFlyer>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getFrequentFlyerByPnrId(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             FrequentFlyer object = (FrequentFlyer) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
@@ -308,7 +327,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<BookingDetail>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getBookingDetailsByPnrId(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             BookingDetail object = (BookingDetail) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
@@ -320,17 +339,18 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<CreditCard>> objectMap = new HashMap<>();
         List<Object[]> oList = pnrRepository.getCreditCardByIds(pnrIds);
         for (Object[] answerKey : oList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             CreditCard object = (CreditCard) answerKey[1];
             processObject(object, objectMap, pnrId);
         }
         return objectMap;
     }
+
     private Map<Long, Set<Email>> createEmailMap(Set<Long> pnrIds) {
         Map<Long, Set<Email>> emailMap = new HashMap<>();
         List<Object[]> emailList = pnrRepository.getEmailByPnrIds(pnrIds);
         for (Object[] answerKey : emailList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             Email email = (Email) answerKey[1];
             processObject(email, emailMap, pnrId);
         }
@@ -341,7 +361,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<Phone>> phoneMap = new HashMap<>();
         List<Object[]> phoneList = pnrRepository.getPhonesByPnr(pnrIds);
         for (Object[] answerKey : phoneList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             Phone phone = (Phone) answerKey[1];
             processObject(phone, phoneMap, pnrId);
         }
@@ -352,7 +372,7 @@ public class RuleEngineRequestBuilder {
         Map<Long, Set<Address>> addressMap = new HashMap<>();
         List<Object[]> addressList = pnrRepository.getAddressesByPnr(pnrIds);
         for (Object[] answerKey : addressList) {
-            Long pnrId = (Long)answerKey[0];
+            Long pnrId = (Long) answerKey[0];
             Address address = (Address) answerKey[1];
             processObject(address, addressMap, pnrId);
         }
@@ -375,11 +395,11 @@ public class RuleEngineRequestBuilder {
             map.put(pnrId, objectHashSet);
         }
     }
+
     /**
      * Adds flight objects to the builders list.
-     *  @param flights
-     *            the flights to add
      *
+     * @param flights the flights to add
      */
     private void addFlights(Collection<Flight> flights) {
         if (flights != null) {
@@ -395,7 +415,7 @@ public class RuleEngineRequestBuilder {
     }
 
     private void addAddressObjects(final Long pnrId,
-            final Collection<Address> addresses) {
+                                   final Collection<Address> addresses) {
         if (addresses == null || addresses.isEmpty()) {
             return;
         }
@@ -403,9 +423,12 @@ public class RuleEngineRequestBuilder {
             Long id = addr.getId();
             if (!this.addressIdSet.contains(id)) {
                 requestObjectList.add(addr);
+                this.addressIdSet.add(id);
+            }
+            PnrAddressLink pnrAddressLink = new PnrAddressLink(pnrId, addr.getId());
+            if (!this.addressLinks.contains(pnrAddressLink)) {
                 requestObjectList.add(new PnrAddressLink(pnrId, addr
                         .getId()));
-                this.addressIdSet.add(id);
             }
         }
     }
@@ -419,9 +442,14 @@ public class RuleEngineRequestBuilder {
             Long id = phone.getId();
             if (!this.phoneIdSet.contains(id)) {
                 requestObjectList.add(phone);
-                requestObjectList.add(new PnrPhoneLink(pnrId, phone
-                        .getId()));
                 this.phoneIdSet.add(id);
+            }
+
+            PnrPhoneLink pnrPhoneLink = new PnrPhoneLink(pnrId, phone
+                    .getId());
+            if (!phoneLinks.contains(pnrPhoneLink)) {
+                requestObjectList.add(pnrPhoneLink);
+                phoneLinks.add(pnrPhoneLink);
             }
         }
     }
@@ -434,87 +462,113 @@ public class RuleEngineRequestBuilder {
             long id = email.getId();
             if (!this.emailIdSet.contains(id)) {
                 requestObjectList.add(email);
-                requestObjectList.add(new PnrEmailLink(pnrId, email
-                        .getId()));
                 this.emailIdSet.add(id);
+            }
+            PnrEmailLink pnrEmailLink = new PnrEmailLink(pnrId, email.getId());
+            if (!emailLinks.contains(pnrEmailLink)) {
+                requestObjectList.add(pnrEmailLink);
+                emailLinks.add(pnrEmailLink);
             }
         }
     }
 
     private void addFrequentFlyerObjects(final Long pnrId,
-            final Collection<FrequentFlyer> frequentFlyers) {
+                                         final Collection<FrequentFlyer> frequentFlyers) {
         if (frequentFlyers == null || frequentFlyers.isEmpty()) {
             return;
         }
         for (FrequentFlyer ff : frequentFlyers) {
             Long id = ff.getId();
             if (!this.frequentFlyerIdSet.contains(id)) {
-                requestObjectList.add(ff);
-                requestObjectList.add(new PnrFrequentFlyerLink(pnrId, ff
-                        .getId()));
+                this.requestObjectList.add(ff);
                 this.frequentFlyerIdSet.add(id);
+            }
+            PnrFrequentFlyerLink pnrFrequentFlyerLink = new PnrFrequentFlyerLink(pnrId, ff
+                    .getId());
+            if (!this.frequentFlyerLinks.contains(pnrFrequentFlyerLink)) {
+                this.requestObjectList.add(pnrFrequentFlyerLink);
+                this.frequentFlyerLinks.add(pnrFrequentFlyerLink);
             }
         }
     }
 
     private void addCreditCardObjects(final Long pnrId,
-            final Collection<CreditCard> creditCards) {
+                                      final Collection<CreditCard> creditCards) {
         if (creditCards == null || creditCards.isEmpty()) {
             return;
         }
         for (CreditCard cc : creditCards) {
             Long id = cc.getId();
             if (!this.creditCardIdSet.contains(id)) {
-                requestObjectList.add(cc);
-                requestObjectList.add(new PnrCreditCardLink(pnrId, cc
-                        .getId()));
+                this.requestObjectList.add(cc);
                 this.creditCardIdSet.add(id);
+            }
+            PnrCreditCardLink pnrCreditCardLink = new PnrCreditCardLink(pnrId, cc
+                    .getId());
+            if (this.creditCardLinks.contains(pnrCreditCardLink)) {
+                this.requestObjectList.add(pnrCreditCardLink);
+                this.creditCardLinks.add(pnrCreditCardLink);
             }
         }
     }
+
     private void addBookingDetailObjects(final Long pnrId,
-            final Collection<BookingDetail> bookingDetails) {
+                                         final Collection<BookingDetail> bookingDetails) {
         if (bookingDetails == null || bookingDetails.isEmpty()) {
             return;
         }
         for (BookingDetail bl : bookingDetails) {
             Long id = bl.getId();
             if (!this.bookingDetailIdSet.contains(id)) {
-                requestObjectList.add(bl);
-                requestObjectList.add(new PnrBookingLink(pnrId, bl
-                        .getId()));
+                this.requestObjectList.add(bl);
                 this.bookingDetailIdSet.add(id);
+            }
+            PnrBookingLink pnrBookingLink = new PnrBookingLink(pnrId, bl
+                    .getId());
+            if (!this.pnrBookingLinks.contains(pnrBookingLink)) {
+                this.requestObjectList.add(pnrBookingLink);
+                this.pnrBookingLinks.add(pnrBookingLink);
             }
         }
     }
+
     private void addDwellTimeObjects(final Long pnrId,
-            final Collection<DwellTime> dwellTimes) {
+                                     final Collection<DwellTime> dwellTimes) {
         if (CollectionUtils.isEmpty(dwellTimes)) {
             return;
         }
         for (DwellTime a : dwellTimes) {
             Long id = a.getId();
             if (!this.dwellTimeIdSet.contains(id)) {
-                requestObjectList.add(a);
-                requestObjectList.add(new PnrDwellTimeLink(pnrId, a
-                        .getId()));
+                this.requestObjectList.add(a);
                 this.dwellTimeIdSet.add(id);
+            }
+
+            PnrDwellTimeLink pnrDwellTimeLink = new PnrDwellTimeLink(pnrId, a
+                    .getId());
+            if (!this.dwellTimeLinks.contains(pnrDwellTimeLink)) {
+                this.requestObjectList.add(pnrDwellTimeLink);
+                this.dwellTimeLinks.add(pnrDwellTimeLink);
             }
         }
     }
-    
+
     private void addTravelAgencyObjects(final Long pnrId,
-            final Collection<Agency> agencies) {
+                                        final Collection<Agency> agencies) {
         if (CollectionUtils.isEmpty(agencies)) {
             return;
         }
         for (Agency a : agencies) {
             Long id = a.getId();
             if (!this.travelAgencyIdSet.contains(id)) {
-                requestObjectList.add(a);
-                requestObjectList.add(new PnrTravelAgencyLink(pnrId, a
-                        .getId()));
+                this.requestObjectList.add(a);
                 this.travelAgencyIdSet.add(id);
+            }
+            PnrTravelAgencyLink pnrTravelAgencyLink = new PnrTravelAgencyLink(pnrId, a
+                    .getId());
+            if (!this.travelAgencyLinks.contains(pnrTravelAgencyLink)) {
+                requestObjectList.add(pnrTravelAgencyLink);
+                this.travelAgencyLinks.add(pnrTravelAgencyLink);
             }
         }
     }
@@ -522,14 +576,14 @@ public class RuleEngineRequestBuilder {
     /**
      * Adds passenger and documents for PNR and APIS messages. In case of PNR a
      * link object is also created.
-     * 
-     *            the PNR object. If not null then a link object is also
-     *            created.
-     * @param passengers
-     *            the collection of passengers.
+     * <p>
+     * the PNR object. If not null then a link object is also
+     * created.
+     *
+     * @param passengers the collection of passengers.
      */
     private void addPassengerObjects(final Long pnrId,
-            final Collection<Passenger> passengers) {
+                                     final Collection<Passenger> passengers) {
         if (passengers == null || passengers.isEmpty()) {
             return;
         }
@@ -548,21 +602,11 @@ public class RuleEngineRequestBuilder {
             requestObjectList.add(link);
             this.passengerLinkSet.add(link);
         }
-
     }
-    
-    private void addPaymentFormObjects(final Collection<PaymentForm> paymentFormList)
-    {
-        boolean doProceed = true;
-        if (paymentFormList == null || paymentFormList.isEmpty())
-        {
-            doProceed = false;
-        }
-        
-        if (doProceed)
-        {
+
+    private void addPaymentFormObjects(final Collection<PaymentForm> paymentFormList) {
+        if (paymentFormList != null && !paymentFormList.isEmpty()) {
             this.requestObjectList.addAll(paymentFormList);
         }
-        
     }
 }
