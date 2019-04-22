@@ -176,7 +176,11 @@ public class PnrMessageService extends MessageLoaderService {
     }
 
     private WeightCountDto getBagStatistics(Set<Bag> bagSet) {
-        Set<BagMeasurements> bagMeasurementsSet = bagSet.stream().map(Bag::getBagMeasurements).collect(Collectors.toSet());
+        Set<BagMeasurements> bagMeasurementsSet = bagSet
+                .stream()
+                .map(Bag::getBagMeasurements)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
         Integer bagCount = 0;
         Double bagWeight = 0D;
         for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
