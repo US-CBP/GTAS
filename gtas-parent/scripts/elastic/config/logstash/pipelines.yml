@@ -23,7 +23,9 @@
   # pipeline.workers: 1
   # pipeline.batch.size: 125
   path.config: "./config/logstash-flightpax.conf"
-  
+
+- pipeline.id:  flightleg
+  path.config:  "./config/logstash-flight_legs.conf"
 # - pipeline.id: countries
 #   pipeline.workers: 1
 #   pipeline.batch.size: 125
