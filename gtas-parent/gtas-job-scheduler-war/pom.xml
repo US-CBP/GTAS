@@ -21,6 +21,21 @@
     </properties>
 
     <dependencies>
+    <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+             <version>1.11.535</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+             <version>1.11.535</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+             <version>1.11.535</version>
+        </dependency> 
         <dependency>
             <groupId>gov.gtas</groupId>
             <artifactId>gtas-rulesvc</artifactId>
