@@ -38,6 +38,12 @@ public class Passenger extends BaseEntityAudit {
     @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
     private PassengerWLTimestamp passengerWLTimestamp;
 
+    @OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
+    private PassengerIDTag passengerIDTag;
+
+    @OneToMany(mappedBy = "passenger", targetEntity = GraphHitDetail.class, fetch = FetchType.LAZY)
+    private Set<GraphHitDetail> graphHitDetails;
+
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
@@ -78,7 +84,6 @@ public class Passenger extends BaseEntityAudit {
 
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
-
 
     /*
      * Used to keep a referenced to passengerVO from parser.
@@ -251,4 +256,19 @@ public class Passenger extends BaseEntityAudit {
         return uuid.equals(passenger.getUuid());
     }
 
+    public PassengerIDTag getPassengerIDTag() {
+        return passengerIDTag;
+    }
+
+    public void setPassengerIDTag(PassengerIDTag passengerIDTag) {
+        this.passengerIDTag = passengerIDTag;
+    }
+
+    public Set<GraphHitDetail> getGraphHitDetails() {
+        return graphHitDetails;
+    }
+
+    public void setGraphHitDetails(Set<GraphHitDetail> graphHitDetails) {
+        this.graphHitDetails = graphHitDetails;
+    }
 }

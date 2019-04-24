@@ -6,6 +6,7 @@
 package gov.gtas.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -38,6 +39,11 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
             "left join fetch p.documents " +
             "where p.id in :id")
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
+
+    @Query("SELECT p from Passenger p " +
+            "left join fetch p.graphHitDetails " +
+            "where p.id in :id")
+    Set<Passenger> getPassengerWithGraphHit(@Param("id") Set<Long> id);
 /*
 
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
@@ -83,6 +89,14 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     {
         return findById(passengerId).orElse(null);
     }
+
+
+    @Query("Select p " +
+            "from Passenger p " +
+            "left join fetch p.passengerIDTag " +
+            "where p.apisMessage.id in :messageId " +
+            "or p.pnrs.id in :messageId")
+    Set<Passenger> getPassengerByMessageId(@Param("messageId") Set<Long> messageId);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

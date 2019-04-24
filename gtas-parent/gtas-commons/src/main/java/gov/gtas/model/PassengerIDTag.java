@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 
-@Cacheable
 @Entity
 @Table(name = "passenger_id_tag", indexes = {
         @Index(columnList = "idTag", name = "id_index"),
@@ -33,8 +32,12 @@ public class PassengerIDTag extends BaseEntityAudit {
 		this.tamrId = tamrId;
 	}
 
-	@Column(name = "pax_id")
+    @Column(name = "pax_id", columnDefinition = "bigint unsigned")
     private Long pax_id;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "pax_id", updatable = false, insertable = false)
+    private Passenger passenger;
         
         @Column(name = "doc_hash_id")
         private String docHashId;
@@ -70,6 +73,13 @@ public class PassengerIDTag extends BaseEntityAudit {
     public void setDocHashId(String docHashId) {
         this.docHashId = docHashId;
     }
-    
-    
+
+
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
 }
