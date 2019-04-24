@@ -62,6 +62,10 @@ insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BA
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
+insert into app_configuration (opt, val, description)
+values ('GRAPH_DB_URL', 'localhost:7687', 'Neo4J Address');
+insert into app_configuration (opt, val, description)
+values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
 -- ----------------------------
 -- Records of dashboard_message_stats
 -- ----------------------------

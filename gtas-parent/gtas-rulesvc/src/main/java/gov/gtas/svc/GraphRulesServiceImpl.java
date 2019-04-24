@@ -35,7 +35,14 @@ public class GraphRulesServiceImpl implements GraphRulesService {
         this.graphRuleRepository = graphRuleRepository;
         this.graphHitDetailRepository = graphHitDetailRepository;
         String url = appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_URL).getValue();
-        this.neo4JClient = new Neo4JClient(url);
+        Boolean neo4J = Boolean.valueOf(
+                appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue()
+        );
+        if (neo4J) {
+            this.neo4JClient = new Neo4JClient(url);
+        } else {
+            this.neo4JClient = null;
+        }
         this.passengerRepository = passengerRepository;
     }
 

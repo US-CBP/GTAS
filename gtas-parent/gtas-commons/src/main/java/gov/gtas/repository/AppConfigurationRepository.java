@@ -37,6 +37,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String DATA_MANAGEMENT_TRUNC_TYPE_FLAG = "DATA_MANAGEMENT_TRUNC_TYPE_FLAG";
     String DATA_MANAGEMENT_CUT_OFF_TIME_SPAN = "DATA_MANAGEMENT_CUT_OFF_TIME_SPAN";
     String GRAPH_DB_URL = "GRAPH_DB_URL";
+    String GRAPH_DB_TOGGLE = "GRAPH_DB_TOGGLE";
 
     AppConfiguration findByOption(String option);
 

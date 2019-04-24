@@ -93,9 +93,11 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
     @Query("Select p " +
             "from Passenger p " +
+            "join p.apisMessage apis " +
+            "join p.pnrs pnrs " +
             "left join fetch p.passengerIDTag " +
-            "where p.apisMessage.id in :messageId " +
-            "or p.pnrs.id in :messageId")
+            "where apis.id in :messageId " +
+            "or pnrs.id in :messageId")
     Set<Passenger> getPassengerByMessageId(@Param("messageId") Set<Long> messageId);
 
 
