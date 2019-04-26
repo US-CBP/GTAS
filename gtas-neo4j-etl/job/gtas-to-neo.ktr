@@ -520,8 +520,8 @@
 the last idTag record 
 as a global variable 
 for logging purposes</note>
-      <xloc>816</xloc>
-      <yloc>1456</yloc>
+      <xloc>1088</xloc>
+      <yloc>1296</yloc>
       <width>153</width>
       <heigth>90</heigth>
       <fontname>Segoe UI</fontname>
@@ -686,11 +686,6 @@ for logging purposes</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Dummy (do nothing) 2</from>
-      <to>Get System Info</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Set Variables-set create date of last rec</from>
       <to>Write to log</to>
       <enabled>Y</enabled>
@@ -702,11 +697,11 @@ for logging purposes</note>
     </hop>
     <hop>
       <from>User Defined Java Expression</from>
-      <to>Select values 2</to>
+      <to>Select values - cast output params</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 2</from>
+      <from>Select values - cast output params</from>
       <to>Set Variables-set create date of last rec</to>
       <enabled>Y</enabled>
     </hop>
@@ -797,7 +792,27 @@ for logging purposes</note>
     </hop>
     <hop>
       <from>Dummy (do nothing)</from>
-      <to>Neo4J Output -passenger-flight</to>
+      <to>Select values 3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing) 2</from>
+      <to>Select values - cast message id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values - cast message id</from>
+      <to>Get System Info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 3</from>
+      <to>Unique rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Unique rows</from>
+      <to>Neo4J Output - message - flight</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -1135,6 +1150,30 @@ for logging purposes</note>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
       </field>
+      <field>
+        <name>MESSAGE_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>Message</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>MESSAGE_FLIGHT_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>has_flight</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1145,7 +1184,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>320</xloc>
+      <xloc>464</xloc>
       <yloc>1696</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1163,7 +1202,7 @@ for logging purposes</note>
     </partitioning>
     <fields>
       <field>
-        <name>LAST_REC_CRT_DTM_OUT</name>
+        <name>LAST_MSG_CREATE_DATE_OUT</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -1175,31 +1214,7 @@ for logging purposes</note>
         <set_empty_string>N</set_empty_string>
       </field>
       <field>
-        <name>LAST_PSNGR_UPDATE_DATE_OUT</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>LAST_ADDR_UPDATE_DATE_OUT</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>LAST_EMAIL_UPDATE_DATE_OUT</name>
+        <name>LAST_MSG_ID_OUT</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -1232,7 +1247,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
+      <xloc>976</xloc>
       <yloc>1600</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1753,8 +1768,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>480</xloc>
-      <yloc>1536</yloc>
+      <xloc>496</xloc>
+      <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1780,7 +1795,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1392</xloc>
+      <xloc>1040</xloc>
       <yloc>1696</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1812,7 +1827,7 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
-    <name>Neo4J Output -passenger-flight</name>
+    <name>Neo4J Output - message - flight</name>
     <type>Neo4JOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1833,50 +1848,20 @@ for logging purposes</note>
     <from>
       <read_only_from_node>N</read_only_from_node>
       <labels>
-        <label>PASSENGER_LABEL</label>
+        <label>MESSAGE_LABEL</label>
         <value/>
       </labels>
       <properties>
         <property>
-          <name>id_tag</name>
-          <value>idTag</value>
-          <type>String</type>
+          <name>gtas_message_id</name>
+          <value>gtas_message_id</value>
+          <type>Integer</type>
           <primary>Y</primary>
         </property>
         <property>
-          <name>first_name</name>
-          <value>first_name</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>middle_name</name>
-          <value>middle_name</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>last_name</name>
-          <value>last_name</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>citizenship_country</name>
-          <value>citizenship_country</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>gender</name>
-          <value>gender</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>dob</name>
-          <value>dob</value>
-          <type>Date</type>
+          <name>gtas_message_create_dtm</name>
+          <value>gtas_message_create_dtm</value>
+          <type>LocalDateTime</type>
           <primary>N</primary>
         </property>
       </properties>
@@ -1986,15 +1971,9 @@ for logging purposes</note>
         </property>
       </properties>
     </to>
-    <relationship>PASSENGER_FLIGHT_LABEL</relationship>
+    <relationship>MESSAGE_FLIGHT_LABEL</relationship>
     <relationship_value/>
-    <relprops>
-      <relprop>
-        <name>pnr_record_locator</name>
-        <value>pnr_record_locator</value>
-        <type>String</type>
-      </relprop>
-    </relprops>
+    <relprops/>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -2004,7 +1983,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>864</xloc>
+      <xloc>1232</xloc>
       <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2293,6 +2272,113 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
+    <name>Select values - cast message id</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>gtas_message_id</name>
+        <rename>gtas_message_id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>496</xloc>
+      <yloc>1536</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values - cast output params</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>LAST_MSG_CREATE_DATE_OUT</name>
+        <rename>LAST_MSG_CREATE_DATE_OUT</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>LAST_MSG_ID_OUT</name>
+        <rename>LAST_MSG_ID_OUT</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>992</xloc>
+      <yloc>1408</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Select values - id-to-string</name>
     <type>SelectValues</type>
     <description/>
@@ -2434,13 +2520,13 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>560</xloc>
-      <yloc>576</yloc>
+      <xloc>608</xloc>
+      <yloc>608</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Select values 2</name>
+    <name>Select values 3</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -2453,12 +2539,12 @@ for logging purposes</note>
     <fields>
       <select_unspecified>N</select_unspecified>
       <meta>
-        <name>LAST_REC_CRT_DTM_OUT</name>
-        <rename>LAST_REC_CRT_DTM_OUT</rename>
-        <type>Date</type>
+        <name>gtas_message_id</name>
+        <rename>gtas_message_id</rename>
+        <type>Integer</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <conversion_mask/>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -2470,12 +2556,12 @@ for logging purposes</note>
         <storage_type/>
       </meta>
       <meta>
-        <name>LAST_PSNGR_UPDATE_DATE_OUT</name>
-        <rename>LAST_PSNGR_UPDATE_DATE_OUT</rename>
-        <type>Date</type>
+        <name>gtas_flight_id</name>
+        <rename>gtas_flight_id</rename>
+        <type>Integer</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <conversion_mask/>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -2487,25 +2573,8 @@ for logging purposes</note>
         <storage_type/>
       </meta>
       <meta>
-        <name>LAST_EMAIL_UPDATE_DATE_OUT</name>
-        <rename>LAST_EMAIL_UPDATE_DATE_OUT</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>LAST_ADDR_UPDATE_DATE_OUT</name>
-        <rename>LAST_ADDR_UPDATE_DATE_OUT</rename>
+        <name>gtas_message_create_dtm</name>
+        <rename>gtas_message_create_dtm</rename>
         <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
@@ -2530,8 +2599,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>688</xloc>
-      <yloc>1408</yloc>
+      <xloc>720</xloc>
+      <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2582,26 +2651,14 @@ for logging purposes</note>
     </partitioning>
     <fields>
       <field>
-        <field_name>LAST_REC_CRT_DTM_OUT</field_name>
-        <variable_name>VAR_LAST_REC_CRT_DTM_OUT</variable_name>
+        <field_name>LAST_MSG_CREATE_DATE_OUT</field_name>
+        <variable_name>VAR_LAST_MSG_CREATE_DATE_OUT</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
       <field>
-        <field_name>LAST_PSNGR_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_LAST_PSNGR_UPDATE_DTM_OUT</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-      <field>
-        <field_name>LAST_ADDR_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_LAST_ADDR_UPDATE_DTM_OUT</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-      <field>
-        <field_name>LAST_EMAIL_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_EMAIL_UPDATE_DTM_OUT</variable_name>
+        <field_name>LAST_MSG_ID_OUT</field_name>
+        <variable_name>VAR_LAST_MSG_ID_OUT</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
@@ -2622,7 +2679,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1136</xloc>
+      <xloc>1280</xloc>
       <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2640,26 +2697,14 @@ for logging purposes</note>
     </partitioning>
     <fields>
       <field>
-        <field_name>LAST_REC_CRT_DTM_OUT</field_name>
-        <variable_name>VAR_LAST_REC_CRT_DTM_OUT</variable_name>
+        <field_name>LAST_MSG_CREATE_DATE_OUT</field_name>
+        <variable_name>LAST_MSG_CREATE_DATE_OUT</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
       <field>
-        <field_name>LAST_PSNGR_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_LAST_PSNGR_UPDATE_DTM_OUT</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-      <field>
-        <field_name>LAST_ADDR_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_LAST_ADDR_UPDATE_DTM_OUT</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-      <field>
-        <field_name>LAST_EMAIL_UPDATE_DATE_OUT</field_name>
-        <variable_name>VAR_EMAIL_UPDATE_DTM_OUT</variable_name>
+        <field_name>LAST_MSG_ID_OUT</field_name>
+        <variable_name>VAR_LAST_MSG_ID_OUT</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
@@ -2882,7 +2927,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1024</xloc>
+      <xloc>784</xloc>
       <yloc>1696</yloc>
       <draw>Y</draw>
     </GUI>
@@ -3961,6 +4006,42 @@ for logging purposes</note>
         <length>-1</length>
         <precision>-1</precision>
       </field>
+      <field>
+        <name>gtas_message_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_passenger_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>gtas_message_create_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -3971,8 +4052,47 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>640</xloc>
-      <yloc>656</yloc>
+      <xloc>624</xloc>
+      <yloc>720</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Unique rows</name>
+    <type>Unique</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <count_rows>N</count_rows>
+    <count_field/>
+    <reject_duplicate_row>N</reject_duplicate_row>
+    <error_description/>
+    <fields>
+      <field>
+        <name>gtas_message_id</name>
+        <case_insensitive>N</case_insensitive>
+      </field>
+      <field>
+        <name>gtas_flight_id</name>
+        <case_insensitive>N</case_insensitive>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>960</xloc>
+      <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -3988,33 +4108,17 @@ for logging purposes</note>
       <schema_name/>
     </partitioning>
     <formula>
-      <field_name>LAST_ADDR_UPDATE_DATE_OUT</field_name>
-      <formula_string>(address_update_date==null)?CURRENT_DATE_TIME : address_update_date</formula_string>
+      <field_name>LAST_MSG_CREATE_DATE_OUT</field_name>
+      <formula_string>(gtas_message_create_dtm==null)?CURRENT_DATE_TIME : gtas_message_create_dtm</formula_string>
       <value_type>Date</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
       <replace_field/>
     </formula>
     <formula>
-      <field_name>LAST_EMAIL_UPDATE_DATE_OUT</field_name>
-      <formula_string>(email_update_date==null)?CURRENT_DATE_TIME : email_update_date</formula_string>
-      <value_type>Date</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <formula>
-      <field_name>LAST_PSNGR_UPDATE_DATE_OUT</field_name>
-      <formula_string>(passenger_update_date==null)?CURRENT_DATE_TIME : passenger_update_date</formula_string>
-      <value_type>Date</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <replace_field/>
-    </formula>
-    <formula>
-      <field_name>LAST_REC_CRT_DTM_OUT</field_name>
-      <formula_string>(pid_tag_creat_date==null) ? CURRENT_DATE_TIME : pid_tag_creat_date</formula_string>
-      <value_type>Date</value_type>
+      <field_name>LAST_MSG_ID_OUT</field_name>
+      <formula_string>(gtas_message_id==null)?0 : gtas_message_id</formula_string>
+      <value_type>Integer</value_type>
       <value_length>-1</value_length>
       <value_precision>-1</value_precision>
       <replace_field/>
@@ -4028,8 +4132,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>688</xloc>
-      <yloc>1536</yloc>
+      <xloc>752</xloc>
+      <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -4051,16 +4155,10 @@ for logging purposes</note>
     <logmessage>#### LAST ROW PARAMETERS #########</logmessage>
     <fields>
       <field>
-        <name>LAST_REC_CRT_DTM_OUT</name>
+        <name>LAST_MSG_CREATE_DATE_OUT</name>
       </field>
       <field>
-        <name>LAST_PSNGR_UPDATE_DATE_OUT</name>
-      </field>
-      <field>
-        <name>LAST_EMAIL_UPDATE_DATE_OUT</name>
-      </field>
-      <field>
-        <name>LAST_ADDR_UPDATE_DATE_OUT</name>
+        <name>LAST_MSG_ID_OUT</name>
       </field>
       <field>
         <name>NEO4J_PARAMETER_ID</name>
@@ -4075,7 +4173,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1408</xloc>
+      <xloc>1472</xloc>
       <yloc>1408</yloc>
       <draw>Y</draw>
     </GUI>
