@@ -90,4 +90,6 @@ public interface CaseDispositionService {
     
     public Iterable<RuleCat> findAllRuleCat();
 
+	public Boolean updateEncounteredStatus(Long caseIdAsLong, String encStatus);
+
 }

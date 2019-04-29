@@ -100,8 +100,23 @@ public class Case extends BaseEntityAudit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
+    
+    @Column(name = "encountered_status", nullable=false)
+    private String encounteredStatus = "Not Encountered Yet";//The default value for encountered status
 
-    public Set<HitsDisposition> getHitsDispositions() {
+ 
+	public String getEncounteredStatus() {
+		return encounteredStatus;
+	}
+
+
+	public void setEncounteredStatus(String encounteredStatus) {
+		this.encounteredStatus = encounteredStatus;
+	}
+
+
+
+	public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
 

@@ -173,5 +173,25 @@ public class OneDayLookoutController {
 
 		return result;
 	}
+	
+	@RequestMapping(value = "/encounteredstatus", method = RequestMethod.POST)
+	public @ResponseBody Boolean updateEncounteredStatus(@RequestParam(value = "caseId", required = true) Long caseId,
+			@RequestParam(value = "newStatus", required = true) String newStatus) {
+		boolean result = false;
+		logger.debug("...Encountered status is being updated for case ID: " + caseId);
+
+		if (caseId != null) {
+			try {
+
+				result = caseDispositionService.updateEncounteredStatus(caseId, newStatus);
+			} catch (Exception e) {
+				logger.error("An Exception occurred when updating encountred status", e);
+				result = false;
+
+			}
+
+		}
+		return result;
+	}
 
 }
