@@ -27,11 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.constants.Constants;
-import gov.gtas.model.DashboardMessageStats;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
-import gov.gtas.model.YTDAirportStatistics;
-import gov.gtas.model.YTDRules;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -40,11 +37,9 @@ import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.FlightService;
 import gov.gtas.services.HitsSummaryService;
 import gov.gtas.services.MessageService;
-import gov.gtas.services.MessageStatisticsService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.PnrService;
 import gov.gtas.services.UserLocationService;
-import gov.gtas.services.YTDStatisticsService;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.UserLocationVo;
@@ -65,12 +60,6 @@ public class DashboardController {
 
 	@Autowired
 	private MessageService apisMessageService;
-
-	@Autowired
-	private MessageStatisticsService messageStatsService;
-
-	@Autowired
-	private YTDStatisticsService ytdStatsService;
 
 	@Autowired
 	private PnrService pnrService;
@@ -350,125 +339,10 @@ public class DashboardController {
 		// List<Pnr> _tempPnrList = pnrService.getPNRsByDates(sdf.parse(startDate),
 		// sdf.parse(endDate));
 
-		DashboardMessageStats apisStatistics = messageStatsService.getDashboardAPIMessageStats();
-		DashboardMessageStats pnrStatistics = messageStatsService.getDashboardPNRMessageStats();
-
 		// apisMessageCount = _tempApisList.size();
 		// pnrMessageCount = _tempPnrList.size();
 
-		MessageCount mc = new MessageCount(stateLabel, EMPTY_STRING, EMPTY_STRING);
-		for (int i = 0; i < clockTicks; i++) {
-
-			mc = new MessageCount(displayTokens[i] + EMPTY_STRING,
-					Arrays.asList(getApiPnrCountPerRow(apisStatistics, pnrStatistics, i).split(",")).get(0),
-					Arrays.asList(getApiPnrCountPerRow(apisStatistics, pnrStatistics, i).split(",")).get(1));
-			_apisAndPnrCount.add(mc);
-		}
-
 		return _apisAndPnrCount;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/getYtdRulesCount")
-	public List<YTDRules> getYtdRulesCount() {
-		List<YTDRules> ruleList = new ArrayList<YTDRules>();
-
-		ruleList = ytdStatsService.getYTDRules();
-
-		return ruleList;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/getYtdAirportStats")
-	public List<YTDAirportStatistics> getYtdAirportStats() {
-		List<YTDAirportStatistics> ruleList = new ArrayList<YTDAirportStatistics>();
-
-		ruleList = ytdStatsService.getYTDAirportStats();
-
-		return ruleList;
-	}
-
-	private String getApiPnrCountPerRow(DashboardMessageStats apisStatistics, DashboardMessageStats pnrStatistics,
-			int position) {
-
-		String returnString = "";
-
-		switch (position) {
-
-		case 0:
-			returnString = apisStatistics.getZero() + commaStringToAppend + pnrStatistics.getZero();
-			break;
-		case 1:
-			returnString = apisStatistics.getOne() + commaStringToAppend + pnrStatistics.getOne();
-			break;
-		case 2:
-			returnString = apisStatistics.getTwo() + commaStringToAppend + pnrStatistics.getTwo();
-			break;
-		case 3:
-			returnString = apisStatistics.getThree() + commaStringToAppend + pnrStatistics.getThree();
-			break;
-		case 4:
-			returnString = apisStatistics.getFour() + commaStringToAppend + pnrStatistics.getFour();
-			break;
-		case 5:
-			returnString = apisStatistics.getFive() + commaStringToAppend + pnrStatistics.getFive();
-			break;
-		case 6:
-			returnString = apisStatistics.getSix() + commaStringToAppend + pnrStatistics.getSix();
-			break;
-		case 7:
-			returnString = apisStatistics.getSeven() + commaStringToAppend + pnrStatistics.getSeven();
-			break;
-		case 8:
-			returnString = apisStatistics.getEight() + commaStringToAppend + pnrStatistics.getEight();
-			break;
-		case 9:
-			returnString = apisStatistics.getNine() + commaStringToAppend + pnrStatistics.getNine();
-			break;
-		case 10:
-			returnString = apisStatistics.getTen() + commaStringToAppend + pnrStatistics.getTen();
-			break;
-		case 11:
-			returnString = apisStatistics.getEleven() + commaStringToAppend + pnrStatistics.getEleven();
-			break;
-		case 12:
-			returnString = apisStatistics.getTwelve() + commaStringToAppend + pnrStatistics.getTwelve();
-			break;
-		case 13:
-			returnString = apisStatistics.getThirteen() + commaStringToAppend + pnrStatistics.getThirteen();
-			break;
-		case 14:
-			returnString = apisStatistics.getFourteen() + commaStringToAppend + pnrStatistics.getFourteen();
-			break;
-		case 15:
-			returnString = apisStatistics.getFifteen() + commaStringToAppend + pnrStatistics.getFifteen();
-			break;
-		case 16:
-			returnString = apisStatistics.getSixteen() + commaStringToAppend + pnrStatistics.getSixteen();
-			break;
-		case 17:
-			returnString = apisStatistics.getSeventeen() + commaStringToAppend + pnrStatistics.getSeventeen();
-			break;
-		case 18:
-			returnString = apisStatistics.getEighteen() + commaStringToAppend + pnrStatistics.getEighteen();
-			break;
-		case 19:
-			returnString = apisStatistics.getNineteen() + commaStringToAppend + pnrStatistics.getNineteen();
-			break;
-		case 20:
-			returnString = apisStatistics.getTwenty() + commaStringToAppend + pnrStatistics.getTwenty();
-			break;
-		case 21:
-			returnString = apisStatistics.getTwentyOne() + commaStringToAppend + pnrStatistics.getTwentyOne();
-			break;
-		case 22:
-			returnString = apisStatistics.getTwentyTwo() + commaStringToAppend + pnrStatistics.getTwentyTwo();
-			break;
-		case 23:
-			returnString = apisStatistics.getTwentyThree() + commaStringToAppend + pnrStatistics.getTwentyThree();
-			break;
-
-		}
-
-		return returnString;
 	}
 
 	private class HitAndAirportExtractor {

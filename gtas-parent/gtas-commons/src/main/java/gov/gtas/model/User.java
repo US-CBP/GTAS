@@ -33,8 +33,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles,
-            Filter filter) {
+    public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles) {
 
         this.userId = userId;
         this.password = password;
@@ -42,11 +41,7 @@ public class User implements Serializable {
         this.lastName = lastName;
         this.active = active;
         this.roles = roles;
-        this.filter=filter;
     }
-    @OneToOne(mappedBy = "user", targetEntity = Filter.class,cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
-    private Filter filter;
-
 
     @Id
     @Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
@@ -116,14 +111,6 @@ public class User implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    public Filter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(Filter filter) {
-        this.filter = filter;
-    }
     
     @Override
     public int hashCode() {
@@ -145,14 +132,13 @@ public class User implements Serializable {
         return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
                 .append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
                 .append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
-                .append(this.roles, dataTarget.getRoles())
-                .append(this.filter, dataTarget.getFilter()).isEquals();
+                .append(this.roles, dataTarget.getRoles()).isEquals();
     }
     
     @Override
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
-                + lastName + ", active=" + active + ", roles=" + roles + ", filter=" + filter+"]";
+                + lastName + ", active=" + active + ", roles=" + roles + "]";
     }
 
 }

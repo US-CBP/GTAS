@@ -5,11 +5,8 @@
  */
 package gov.gtas.services.security;
 
-import gov.gtas.model.Filter;
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
-import gov.gtas.services.Filter.FilterData;
-import gov.gtas.services.Filter.FilterServiceUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,9 +22,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserServiceUtil {
-
-	@Autowired
-	private FilterServiceUtil filterServiceUtil;
 
 	/**
 	 * Gets the user data list from entity collection.
@@ -59,17 +52,9 @@ public class UserServiceUtil {
 									}
 
 								}).collect(Collectors.toSet());
-						FilterData filterData = null;
-						if (user.getFilter() != null) {
-
-							filterData = filterServiceUtil
-									.mapFilterDataFromEntity(user.getFilter());
-
-						}
 						return new UserData(user.getUserId(), user
 								.getPassword(), user.getFirstName(), user
-								.getLastName(), user.getActive(), roles,
-								filterData);
+								.getLastName(), user.getActive(), roles);
 					}
 				}).collect(Collectors.toList());
 		aStream.close();
@@ -93,16 +78,9 @@ public class UserServiceUtil {
 					}
 				}).collect(Collectors.toSet());
 
-		FilterData filterData = null;
-
-		if (entity.getFilter() != null) {
-			filterData = filterServiceUtil.mapFilterDataFromEntity(entity
-					.getFilter());
-		}
-
 		return new UserData(entity.getUserId(), entity.getPassword(),
 				entity.getFirstName(), entity.getLastName(),
-				entity.getActive(), roles, filterData);
+				entity.getActive(), roles);
 	}
 
 	/**
@@ -124,15 +102,8 @@ public class UserServiceUtil {
 
 				}).collect(Collectors.toSet());
 
-		Filter filter = null;
-		if (userData.getFilter() != null) {
-
-			filter = filterServiceUtil.mapFilterEntityFromFilterData(userData
-					.getFilter());
-		}
-
 		return new User(userData.getUserId(), userData.getPassword(),
 				userData.getFirstName(), userData.getLastName(),
-				userData.getActive(), roles, filter);
+				userData.getActive(), roles);
 	}
 }

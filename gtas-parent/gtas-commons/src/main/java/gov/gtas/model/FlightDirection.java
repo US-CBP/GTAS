@@ -43,9 +43,6 @@ public class FlightDirection extends BaseEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    @OneToMany(mappedBy="flightDirection",cascade = { CascadeType.ALL })
-    Set<Filter> filter= new HashSet<Filter>();
 
     @Override
     public int hashCode() {
