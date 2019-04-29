@@ -84,6 +84,11 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
    @Query("update Case set oneDayLookoutFlag = :flag where id = :caseId")
    public Integer updateOneDayLookoutFlag(@Param("caseId")Long caseId, @Param("flag") Boolean flag);
    
+   @Modifying
+   @Transactional
+   @Query("update Case set encounteredStatus = :encStatus where id = :caseId")
+   public Integer updateEncounteredStatus(@Param("caseId")Long caseId, @Param("encStatus")String encStatus);
+   
 
 	
 }

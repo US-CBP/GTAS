@@ -1145,6 +1145,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			oneDayLookoutVo.setLastName(oneDayLookoutCase.getLastName());
 			oneDayLookoutVo.setDisposition(oneDayLookoutCase.getDisposition());
 			oneDayLookoutVo.setName(oneDayLookoutCase.getLastName() + ", " + oneDayLookoutCase.getFirstName());
+			oneDayLookoutVo.setEncounteredStatus(oneDayLookoutCase.getEncounteredStatus());
 
 			// set flight information
 			if (oneDayLookoutCase.getFlight() != null) {
@@ -1244,6 +1245,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			return IteratorUtils.toList(i.iterator());
 		}
 		return new ArrayList<>();
+	}
+	
+	public Boolean updateEncounteredStatus(Long caseId, String encStatus) {
+
+	  return caseDispositionRepository.updateEncounteredStatus(caseId, encStatus) == 1;
+
 	}
 
 }
