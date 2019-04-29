@@ -126,6 +126,8 @@ public class ApisMessageService extends MessageLoaderService {
             createFlightLegs(apis);
 
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+            msgDto.getMessageStatus().setFlightId(primeFlight.getId());
+            msgDto.getMessageStatus().setFlight(primeFlight);
             apis.setPassengerCount(apis.getPassengers().size());
         } catch (Exception e) {
             msgDto.getMessageStatus().setSuccess(false);

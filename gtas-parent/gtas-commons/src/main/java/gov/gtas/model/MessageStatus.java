@@ -28,6 +28,13 @@ public class MessageStatus {
     @Column(name = "ms_analyzed_timestamp")
     private Date analyzedTimestamp;
 
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne()
+    @JoinColumn(name = "flight_id", insertable = false, updatable = false)
+    private Flight flight;
+
     public boolean isSuccess() {
         return success;
     }
@@ -55,6 +62,13 @@ public class MessageStatus {
     }
 
 
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
     public Message getMessage() {
         return message;
     }
@@ -80,4 +94,11 @@ public class MessageStatus {
     }
 
 
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
 }
