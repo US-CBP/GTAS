@@ -50,4 +50,4 @@ select
     left join `airport` booking_d_destination_ar 
 		on (booking_d_destination_ar.iata=booking_detail.destination and booking_d_destination_ar.country=booking_detail.destination_country)
        
-	order by leg.message_id, bd.flight_id, leg.leg_number
+	order by id, leg.leg_number, bd.message_id

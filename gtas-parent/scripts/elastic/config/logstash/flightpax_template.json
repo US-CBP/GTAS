@@ -327,6 +327,50 @@
                         }
                     }
                 },
+                "flight_edges": {
+                    "properties": {
+                        "from": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "to": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "leg_number": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "flight_nodes": {
+                    "properties": {
+                        "id": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "lon": {
+                            "type": "float"
+                        },
+                        "lat": {
+                            "type": "float"
+                        }
+                    }
+                },
                 "gender": {
                     "type": "text",
                     "fields": {

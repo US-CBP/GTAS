@@ -15,17 +15,18 @@
 #   path.config: "/tmp/logstash/*.config"
 #
 - pipeline.id: cases
-  # pipeline.workers: 1
+  pipeline.workers: 1
   # pipeline.batch.size: 125
   path.config: "./config/logstash-cases.conf"
 
 - pipeline.id: flightpax
-  # pipeline.workers: 1
+  pipeline.workers: 1
   # pipeline.batch.size: 125
   path.config: "./config/logstash-flightpax.conf"
 
 - pipeline.id:  flightleg
   path.config:  "./config/logstash-flight_legs.conf"
+  pipeline.workers: 1
 # - pipeline.id: countries
 #   pipeline.workers: 1
 #   pipeline.batch.size: 125
