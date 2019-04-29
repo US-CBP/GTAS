@@ -8,7 +8,9 @@ import gov.gtas.repository.GraphHitDetailRepository;
 import gov.gtas.repository.GraphRuleRepository;
 import gov.gtas.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 
 
     @Override
+    @Transactional
     public void saveResults(Set<GraphHitDetail> graphHitDetailSet) {
         if (graphHitDetailSet.isEmpty()) {
             return;
@@ -58,23 +61,30 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                 .flatMap(p -> p.getGraphHitDetails().stream())
                 .collect(Collectors.toSet());
         Set<GraphHitDetail> newHits =
-                graphHitDetailSet.stream().filter(existingDetails::contains).collect(Collectors.toSet());
+                graphHitDetailSet
+                        .stream()
+                        .filter(ex -> !existingDetails.contains(ex))
+                        .collect(Collectors.toSet());
         graphHitDetailRepository.saveAll(newHits);
     }
 
     @Override
+    @Transactional
     public Set<GraphHitDetail> graphResults(Set<Passenger> passengers) {
         Iterable<GraphRule> graphRules = getGraphRules();
         Set<GraphHitDetail> graphHitDetails = new HashSet<>();
-        Map<String, Passenger> paxMap = passengers.stream().collect(Collectors
-                .toMap(p -> p.getPassengerIDTag().getIdTag(), p -> p));
+        Map<String, Passenger> paxMap = new HashMap<>();
+        for (Passenger p : passengers) {
+            paxMap.put(p.getPassengerIDTag().getIdTag(), p);
+        }
+
+
         for (GraphRule graphRule : graphRules) {
             Set<String> passengerHitIds = getPassengerHitIds(graphRule, paxMap.keySet());
             for (String idTag : passengerHitIds) {
                 Passenger passenger = paxMap.get(idTag);
                 GraphHitDetail graphHitDetail = new GraphHitDetail();
                 graphHitDetail.setGraphRule(graphRule);
-                graphHitDetail.setPassenger(passenger);
                 graphHitDetail.setPassenger_id(passenger.getId());
                 graphHitDetails.add(graphHitDetail);
             }

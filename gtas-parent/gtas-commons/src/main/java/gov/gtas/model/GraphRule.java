@@ -14,6 +14,9 @@ public class GraphRule extends BaseEntityAudit {
     @OneToMany(mappedBy = "graphRule")
     private Set<GraphRuleParameter> graphParameter = new HashSet<>();
 
+    @OneToMany(mappedBy = "graphRule")
+    private Set<GraphHitDetail> graphHits = new HashSet<>();
+
     public String getCipherQuery() {
         return cipherQuery;
     }
@@ -33,7 +36,8 @@ public class GraphRule extends BaseEntityAudit {
     @SuppressWarnings("unchecked") // unchecked cast  - Object to List<String>
     public Map<String, Object> getParameterMap(Set<String> paxIds) {
         Map<String, Object> queryParameters = new HashMap<>(this.getGraphParameter().size() / 2);
-        queryParameters.put("id_tag", paxIds);
+        List<String> paxList = new ArrayList<>(paxIds);
+        queryParameters.put("id_tag", paxList);
         for (GraphRuleParameter graphRuleParameter : this.getGraphParameter()) {
             String key = graphRuleParameter.getKeyValue();
             if (queryParameters.containsKey(key)) {

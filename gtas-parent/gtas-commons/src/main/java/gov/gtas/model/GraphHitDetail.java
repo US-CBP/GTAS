@@ -1,8 +1,6 @@
 package gov.gtas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -12,10 +10,11 @@ public class GraphHitDetail extends BaseEntity {
     @Column(name = "passenger_id", columnDefinition = "bigint unsigned")
     private Long passenger_id;
 
-    @Column(name = "passenger_id", updatable = false, insertable = false, columnDefinition = "bigint unsigned")
+    @ManyToOne()
+    @JoinColumn(name = "passenger_id", updatable = false, insertable = false)
     private Passenger passenger;
 
-    @Column(name = "graph_rule_id")
+    @ManyToOne()
     private GraphRule graphRule;
 
 

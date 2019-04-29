@@ -22,6 +22,6 @@ public class MessageUpdateController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     void updateMessages(@RequestBody List<Long> processedMessageIds, HttpServletRequest hsr) {
-        messageStatusRepository.updateMessageWithIdAndEnum(processedMessageIds, MessageStatusEnum.LOADED_IN_NEO_4_J);
+        messageStatusRepository.updateMessageWithIdAndEnum(processedMessageIds, MessageStatusEnum.NEO_LOADED);
     }
 }

@@ -45,10 +45,11 @@ public class GraphRulesScheduler {
     @Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
     public void jobScheduling() {
         int messageLimit = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
+        long start = System.nanoTime();
         List<MessageStatus> source =
                 messageStatusRepository
                         .getMessagesFromStatus(
-                                MessageStatusEnum.LOADED_IN_NEO_4_J.getName(), messageLimit);
+                                MessageStatusEnum.NEO_LOADED.getName(), messageLimit);
         if (source.isEmpty()) {
             return;
         }
@@ -75,12 +76,16 @@ public class GraphRulesScheduler {
             Set<Passenger> passengers = passengerRepository.getPassengerByMessageId(messageId);
             Set<GraphHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
             graphRulesService.saveResults(graphHitDetailSet);
-            procssedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.ANALYZED_BY_NEO_4_J));
+            procssedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
+            if (!graphHitDetailSet.isEmpty()) {
+                logger.info("Processed neo 4 j hits saving now..." + (System.nanoTime() - start) / 1000000 + "m/s.");
+            }
         } catch (Exception e) {
             logger.warn("Exception running neo4j rules! ", e);
             procssedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
         } finally {
             messageStatusRepository.saveAll(procssedMessages);
+
         }
     }
 }

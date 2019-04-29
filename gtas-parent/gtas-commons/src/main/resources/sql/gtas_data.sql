@@ -63,9 +63,9 @@ insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER'
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
 insert into app_configuration (opt, val, description)
-values ('GRAPH_DB_URL', 'localhost:7687', 'Neo4J Address');
+values ('GRAPH_DB_URL', 'bolt://localhost:7687', 'Neo4J Address');
 insert into app_configuration (opt, val, description)
-values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
+values ('GRAPH_DB_TOGGLE', 'true', 'Neo4J Toggle');
 -- ----------------------------
 -- Records of dashboard_message_stats
 -- ----------------------------

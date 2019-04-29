@@ -24,7 +24,6 @@ class Neo4JClient implements AutoCloseable {
 
         final String cipherQuery = graphRule.getCipherQuery();
         Set<String> paxList;
-
         try (Session session = driver.session()) {
             List<Record> neo4JResults;
             Map<String, Object> queryParameters = graphRule.getParameterMap(paxIds);
@@ -35,8 +34,8 @@ class Neo4JClient implements AutoCloseable {
 
             paxList = neo4JResults
                     .stream()
-                    .filter(r -> r.asMap().get("id_tag") != null)
-                    .map(r -> r.asMap().get("id_tag").toString()).collect(Collectors.toSet());
+                    .filter(r -> r.asMap().get("p.id_tag") != null)
+                    .map(r -> r.asMap().get("p.id_tag").toString()).collect(Collectors.toSet());
         }
         return paxList;
     }

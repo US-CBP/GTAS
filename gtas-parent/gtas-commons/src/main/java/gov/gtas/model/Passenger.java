@@ -42,7 +42,7 @@ public class Passenger extends BaseEntityAudit {
     private PassengerIDTag passengerIDTag;
 
     @OneToMany(mappedBy = "passenger", targetEntity = GraphHitDetail.class, fetch = FetchType.LAZY)
-    private Set<GraphHitDetail> graphHitDetails;
+    private Set<GraphHitDetail> graphHitDetails = new HashSet<>();
 
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
