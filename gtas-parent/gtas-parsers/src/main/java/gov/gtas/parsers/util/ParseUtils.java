@@ -32,7 +32,7 @@ public final class ParseUtils {
      * characters STX and ETX. This method removes the header and trailer from
      * the message. See https://en.wikipedia.org/wiki/Control_characters
      * 
-     * @param text
+     * @param text header
      * @return message text without header or footer
      */
     public static String stripStxEtxHeaderAndFooter(String text) {
@@ -98,25 +98,41 @@ public final class ParseUtils {
     public static String prepTelephoneNumber(String number) {
         if (StringUtils.isBlank(number)) {
             return null;
+        } else {
+            return number.replaceAll("[^0-9]", "");
         }
-        number=number.replace(" ", "");
-        if(number.indexOf("H") >-1){
-        	number=number.replaceAll("H", " H-");
-        }
-        if(number.indexOf("W") >-1){
-        	number=number.replaceAll("W", " W-");
-        }
-        if(number.indexOf("O") >-1){
-        	number=number.replaceAll("O", " O-");
-        }
-        if(number.indexOf("M") >-1){
-        	number=number.replaceAll("M", " M-");
-        }
-        
-        return number;
-        //return number.replaceAll("[^0-9]", "");
     }
-       
+
+    public static String prepIFTTelephoneNumber(String textContainingTelephoneNumber) {
+        StringBuilder formatedPhoneNumber = new StringBuilder();
+        if (StringUtils.isBlank(textContainingTelephoneNumber)) {
+            return null;
+        } else {
+           String [] tokenizedSegments =  textContainingTelephoneNumber.split("[^A-Z0-9]+|(?<=[A-Z])(?=[0-9])|(?<=[0-9])(?=[A-Z])");
+           boolean startedProcessingNumber = false;
+           for (String token : tokenizedSegments) {
+               if (token.matches("[a-zA-Z]") && startedProcessingNumber) {
+                   break;
+               } else if (token.matches("[0-9]+")){
+                   startedProcessingNumber = true;
+                   formatedPhoneNumber.append(token);
+               }
+           }
+        }
+
+        return formatedPhoneNumber.toString();
+    }
+
+/*    private static String validateOrScrubPhoneNumber(String phoneNumber) {
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        //ZZ is unknown region.
+        boolean canBeAPhoneNumber = phoneNumberUtil.isPossibleNumber(phoneNumber, "ZZ");
+        if (!canBeAPhoneNumber) {
+            phoneNumber = ""; //We are ignoring impossible phone numbers
+        }
+        return phoneNumber;
+    }*/
+
     public static Integer returnNumberOrNull(String s) {
         if (StringUtils.isBlank(s)) {
             return null;
@@ -142,11 +158,9 @@ public final class ParseUtils {
 	 * 
 	 * resolves issue #948
 	 * 
-	 * @param dt
+	 * @param dt date
 	 * @param format
 	 *            (formatted -> yyMMdd)
-	 * @return
-	 * @throws ParseException
 	 */
 	public static Date parseAPISDOB(String dt, String format) {
 		

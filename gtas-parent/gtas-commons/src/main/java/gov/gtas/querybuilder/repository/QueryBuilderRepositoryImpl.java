@@ -491,7 +491,7 @@ public class QueryBuilderRepositoryImpl implements QueryBuilderRepository {
                     }
                     else if(TypeEnum.DATETIME.toString().equalsIgnoreCase(type)) {
                         query.setParameter(positionalParameter.intValue(), dtFormat.parse(value), TemporalType.DATE);
-                    }else if(TypeEnum.BOOLEAN.toString().equalsIgnoreCase(type) && entityEnum == EntityEnum.FLIGHT){
+                    } else if (TypeEnum.BOOLEAN.toString().equalsIgnoreCase(type)) {
                     	//For Marketing Flights/Operating Flights
                     	//0 = False 1 = True
                     	if(value.equals("0")){

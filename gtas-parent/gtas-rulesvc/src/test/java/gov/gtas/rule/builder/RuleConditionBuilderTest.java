@@ -22,8 +22,10 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NA
 import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_VARIABLE_NAME;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,21 +34,21 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class RuleConditionBuilderTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RuleConditionBuilderTest.class);
     
     private RuleConditionBuilder testTarget;
-
-    @Before
-    public void setUp() throws Exception {
-        testTarget = new RuleConditionBuilder(EngineRuleUtils.createEngineRuleVariableMap());
-    }
+    private List<QueryTerm> queryTerms;
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
-
+    @Before
+    public void setUp() {
+        queryTerms = new ArrayList<>();
+    }
     @Test
     public void testSingleConditionApisSeat() throws ParseException {
         /*
@@ -56,8 +58,10 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PASSENGER,
                 PassengerMapping.SEAT,
                 CriteriaOperatorEnum.IN, new String[]{"A7865","H76"}, TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
         StringBuilder result = new StringBuilder();
+        setTestTargetUp(queryTerms);
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
         logger.info(result.toString().trim());
@@ -67,24 +71,38 @@ public class RuleConditionBuilderTest {
                 + "$f:Flight(id == $seat2.flight.id)",
          result.toString().trim());
     }
+
+    private void setTestTargetUp(List<QueryTerm> queryTerms) {
+        testTarget = new RuleConditionBuilder(queryTerms);
+        for (QueryTerm qt : queryTerms) {
+            testTarget.addRuleCondition(qt);
+        }
+    }
+
     @Test
     public void testSingleConditionPnrSeat() throws ParseException {
         /*
          * just one Seat condition.
          * also test IN operator.
          */
+
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PNR,
                 PassengerMapping.SEAT,
                 CriteriaOperatorEnum.IN, new String[]{"A7865","H76"}, TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
+
+
+
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
+        String expectedDrools = "$pnr_seat0:Seat(number in (\"A7865\", \"H76\"), apis == false)\n" +
+                "$p:Passenger(id == $pnr_seat0.passenger.id)\n" +
+                "$f:Flight(id == $pnr_seat0.flight.id)";
         assertEquals(
-                "$seat:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" in (\"A7865\", \"H76\"), apis == false)\n"
-                        + "$p:Passenger(id == $seat.passenger.id)\n"
-                        + "$f:Flight(id == $seat.flight.id)",
-         result.toString().trim());
+                expectedDrools, result.toString().trim());
     }
     @Test
     public void testSingleConditionPassenger() throws ParseException {
@@ -92,10 +110,14 @@ public class RuleConditionBuilderTest {
          * just one passenger condition.
          * also test BETWEEN operator.
          */
+
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PASSENGER,
                 PassengerMapping.DOB,
                 CriteriaOperatorEnum.BETWEEN, new String[]{"1990-01-01","1998-12-31"}, TypeEnum.DATE);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
+
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
@@ -111,7 +133,9 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.FLIGHT,
                 FlightMapping.AIRPORT_DESTINATION,
                 CriteriaOperatorEnum.IN, new String[]{"DBY","XYZ","PQR"}, TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
@@ -131,12 +155,15 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.FLIGHT,
                 FlightMapping.AIRPORT_DESTINATION,
                 CriteriaOperatorEnum.IN, new String[]{"DBY","XYZ","PQR"}, TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
 
         cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PASSENGER,
                 PassengerMapping.SEAT,
                 CriteriaOperatorEnum.ENDS_WITH, new String[]{"31"}, TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
 
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
@@ -159,22 +186,27 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_COUNTRY,
                 CriteriaOperatorEnum.NOT_EQUAL, "US", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
 
         cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.PNR,
                 PNRMapping.SEAT,
                 CriteriaOperatorEnum.BEGINS_WITH, "29D", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
+
+
 
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals(
-                "$seat:Seat("+RuleTemplateConstants.SEAT_ATTRIBUTE_NAME+" != null, "
-                 + RuleTemplateConstants.SEAT_ATTRIBUTE_NAME + " str[startsWith] \"29D\", apis == false)\n"
-                 +"$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\")\n"
-                +"$p:Passenger(id == $seat.passenger.id, id == $d.passenger.id)\n"
-                + "$f:Flight(id == $seat.flight.id)",
+        String expectedDrools = "$pnr_seat0:Seat(number != null, number str[startsWith] \"29D\", apis == false)\n" +
+                "$d1:Document(issuanceCountry != \"US\")\n" +
+                "$p:Passenger(id == $pnr_seat0.passenger.id, id == $d1.passenger.id)\n" +
+                "$f:Flight(id == $pnr_seat0.flight.id)";
+        assertEquals(expectedDrools,
                 result.toString().trim());
     }
 
@@ -187,13 +219,16 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_COUNTRY,
                 CriteriaOperatorEnum.NOT_EQUAL, "US", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
         StringBuilder result = new StringBuilder();
+        setTestTargetUp(queryTerms);
+
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\")\n"
-                +"$p:Passenger(id == $d.passenger.id)", 
-                result.toString().trim());
+        String expectedDrools = "$d1:Document(issuanceCountry != \"US\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     
     @Test
@@ -364,21 +399,25 @@ public class RuleConditionBuilderTest {
          * test multiple document conditions.
          * also test GREATER_EQUAL and NOT_EQUAL.
          */
+        UUID docUUID = UUID.randomUUID();
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_COUNTRY,
                 CriteriaOperatorEnum.NOT_EQUAL, "US", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
         cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_DATE,
                 CriteriaOperatorEnum.GREATER_OR_EQUAL, "2010-01-01", TypeEnum.DATE);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
+
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\", "
-        +DocumentMapping.ISSUANCE_DATE.getFieldName()+" >= \"01-Jan-2010\")\n"
-        +"$p:Passenger(id == $d.passenger.id)", 
-        result.toString().trim());
+        String expectedDrools = "$d1:Document(issuanceCountry != \"US\", issuanceDate >= \"01-Jan-2010\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     
     @Test
@@ -386,21 +425,26 @@ public class RuleConditionBuilderTest {
         /*
          * one document condition and one type equality
          */
+        UUID docUUID = UUID.randomUUID();
+
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_COUNTRY,
                 CriteriaOperatorEnum.NOT_EQUAL, "US", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
         cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.DOCUMENT_TYPE,
                 CriteriaOperatorEnum.EQUAL, "P", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
+
+        setTestTargetUp(queryTerms);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\", "
-                        + DocumentMapping.DOCUMENT_TYPE.getFieldName()+" == \"P\")\n"
-                        +"$p:"+ EntityEnum.PASSENGER.getEntityName()+"(id == $d."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName()+")",
-        result.toString().trim());
+        String expectedDrools = "$d1:Document(issuanceCountry != \"US\", documentType == \"P\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     @Test
     public void testDocumentTypeEqualityOnly() throws ParseException {
@@ -410,35 +454,45 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.DOCUMENT_TYPE,
                 CriteriaOperatorEnum.EQUAL, "P", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document(" + DocumentMapping.DOCUMENT_TYPE.getFieldName()+" == \"P\")\n"
-                +"$p:"+ EntityEnum.PASSENGER.getEntityName()+"(id == $d."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName()+")",
-        result.toString().trim());
+        String expectedDrools = "$d1:Document(documentType == \"P\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     @Test
     public void testDocumentWithTypeInEquality() throws ParseException {
         /*
          * one document condition and one type equality
          */
+
+        UUID docUUID = UUID.randomUUID();
+
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.ISSUANCE_COUNTRY,
                 CriteriaOperatorEnum.NOT_EQUAL, "US", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
         cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.DOCUMENT_TYPE,
                 CriteriaOperatorEnum.NOT_EQUAL, "P", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(docUUID);
+        queryTerms.add(cond);
+
+        setTestTargetUp(queryTerms);
+
+
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         logger.info(result.toString());
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document("+DocumentMapping.ISSUANCE_COUNTRY.getFieldName()+" != \"US\", "
-            + DocumentMapping.DOCUMENT_TYPE.getFieldName()+" != \"P\")\n"
-            +"$p:"+ EntityEnum.PASSENGER.getEntityName()+"(id == $d."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName()+")",
-        result.toString().trim());
+        String expectedDrools = "$d1:Document(issuanceCountry != \"US\", documentType != \"P\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     @Test
     public void testDocumentTypeInEqualityOnly() throws ParseException {
@@ -448,13 +502,15 @@ public class RuleConditionBuilderTest {
         QueryTerm cond = RuleBuilderTestUtils.createQueryTerm(EntityEnum.DOCUMENT,
                 DocumentMapping.DOCUMENT_TYPE,
                 CriteriaOperatorEnum.NOT_EQUAL, "P", TypeEnum.STRING);
-        testTarget.addRuleCondition(cond);
+        cond.setUuid(UUID.randomUUID());
+        queryTerms.add(cond);
+        setTestTargetUp(queryTerms);
         StringBuilder result = new StringBuilder();
         testTarget.buildConditionsAndApppend(result);
         assertTrue(result.length() > 0);
-        assertEquals("$d:Document(" + DocumentMapping.DOCUMENT_TYPE.getFieldName()+" != \"P\")\n"
-                +"$p:"+ EntityEnum.PASSENGER.getEntityName()+"(id == $d."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName()+")",
-        result.toString().trim());
+        String expectedDrools = "$d1:Document(documentType != \"P\")\n" +
+                "$p:Passenger(id == $d1.passenger.id)";
+        assertEquals(expectedDrools, result.toString().trim());
     }
     @Test
     @Ignore

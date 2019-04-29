@@ -12,8 +12,7 @@ public class DocumentConditionBuilder extends EntityConditionBuilder {
     /*
      * The logger for the DocumentConditionBuilder.
      */
-    public DocumentConditionBuilder(final String drlVariableName,
-            final String passengerVariableName) {
+    DocumentConditionBuilder(final String drlVariableName) {
         super(drlVariableName, EntityEnum.DOCUMENT.getEntityName());
     }
 
@@ -21,7 +20,7 @@ public class DocumentConditionBuilder extends EntityConditionBuilder {
     protected void addSpecialConditions(StringBuilder bldr) {
     }
 
-    public String getPassengerIdLinkExpression(){
+    String getPassengerIdLinkExpression() {
         return getDrlVariableName()+"."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName();
     }
 

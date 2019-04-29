@@ -164,13 +164,8 @@ public class JPQLGenerator {
             queryObject = (QueryObject) queryEntity;
             condition = queryObject.getCondition();
             level.increment();
-
             List<QueryEntity> rules = queryObject.getRules();
-
-            if (level.intValue() > 1) {
-                where.append("(");
-            }
-
+            where.append("(");
             int index = 0;
             for (QueryEntity rule : rules) {
 
@@ -181,10 +176,7 @@ public class JPQLGenerator {
                         paymentFormCondition);
                 index++;
             }
-
-            if (level.intValue() > 1) {
-                where.append(")");
-            }
+            where.append(")");
         } else if (queryEntity instanceof QueryTerm) {
             queryTerm = (QueryTerm) queryEntity;
 

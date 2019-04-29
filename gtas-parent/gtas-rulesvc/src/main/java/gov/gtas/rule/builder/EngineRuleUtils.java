@@ -5,33 +5,15 @@
  */
 package gov.gtas.rule.builder;
 
-import static gov.gtas.rule.builder.RuleTemplateConstants.ADDRESS_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.CREDIT_CARD_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.DOCUMENT_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.EMAIL_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.FREQUENT_FLYER_VARIABLE_NAME;
 import static gov.gtas.rule.builder.RuleTemplateConstants.NEW_LINE;
-import static gov.gtas.rule.builder.RuleTemplateConstants.PASSENGER_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.PHONE_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.PNR_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.TRAVEL_AGENCY_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.DWELL_TIME_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.FLIGHT_PAX_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.BAG_VARIABLE_NAME;
-import static gov.gtas.rule.builder.RuleTemplateConstants.BOOKING_DETAIL_VARIABLE_NAME;
 import static gov.gtas.util.DateCalendarUtils.addOneDayToDate;
 import static gov.gtas.util.DateCalendarUtils.formatRuleEngineDate;
-import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.QueryTerm;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +31,6 @@ public class EngineRuleUtils {
      * @param indx
      *            the ordering index of the rule with respect to the parent.
      * @return the engine rule created.
-     * @throws ParseException
      *             parse exception.
      */
     
@@ -59,8 +40,7 @@ public class EngineRuleUtils {
             UdrRule parent, int indx) {
 
         StringBuilder stringBuilder = new StringBuilder();
-        RuleConditionBuilder ruleConditionBuilder = new RuleConditionBuilder(
-                createEngineRuleVariableMap());
+        RuleConditionBuilder ruleConditionBuilder = new RuleConditionBuilder(ruleData);
 
         Rule ret = new Rule(parent, indx, null);
         addRuleHeader(parent, ret, stringBuilder);
@@ -68,8 +48,7 @@ public class EngineRuleUtils {
             ruleConditionBuilder.addRuleCondition(trm);
         }
         ruleConditionBuilder.buildConditionsAndApppend(stringBuilder);
-        List<String> causes = ruleConditionBuilder.addRuleAction(stringBuilder,
-                parent, ret, RuleTemplateConstants.PASSENGER_VARIABLE_NAME);
+        List<String> causes = ruleConditionBuilder.addRuleAction(stringBuilder, parent);
 
         logger.info("\nDRL string for UDR rule: \n" + stringBuilder.toString() + "\n\n");
         ret.setRuleDrl(stringBuilder.toString());
@@ -98,28 +77,4 @@ public class EngineRuleUtils {
         }
         bldr.append("when\n");
     }
-    /**
-     * Creates a map of rule variables to use when generating engine rules.
-     * 
-     * @return the rule variable map.
-     */
-    public static Map<EntityEnum, String> createEngineRuleVariableMap() {
-        Map<EntityEnum, String> ret = new HashMap<EntityEnum, String>();
-        ret.put(EntityEnum.PASSENGER, PASSENGER_VARIABLE_NAME);
-        ret.put(EntityEnum.DOCUMENT, DOCUMENT_VARIABLE_NAME);
-        ret.put(EntityEnum.FLIGHT, FLIGHT_VARIABLE_NAME);
-        ret.put(EntityEnum.PNR, PNR_VARIABLE_NAME);
-        ret.put(EntityEnum.ADDRESS, ADDRESS_VARIABLE_NAME);
-        ret.put(EntityEnum.PHONE, PHONE_VARIABLE_NAME);
-        ret.put(EntityEnum.EMAIL, EMAIL_VARIABLE_NAME);
-        ret.put(EntityEnum.FREQUENT_FLYER, FREQUENT_FLYER_VARIABLE_NAME);
-        ret.put(EntityEnum.TRAVEL_AGENCY, TRAVEL_AGENCY_VARIABLE_NAME);
-        ret.put(EntityEnum.CREDIT_CARD, CREDIT_CARD_VARIABLE_NAME);
-        ret.put(EntityEnum.DWELL_TIME, DWELL_TIME_VARIABLE_NAME);
-        ret.put(EntityEnum.FLIGHT_PAX, FLIGHT_PAX_VARIABLE_NAME);
-        ret.put(EntityEnum.BAG, BAG_VARIABLE_NAME);
-        ret.put(EntityEnum.BOOKING_DETAIL, BOOKING_DETAIL_VARIABLE_NAME);
-        return ret;
-    }
-
 }

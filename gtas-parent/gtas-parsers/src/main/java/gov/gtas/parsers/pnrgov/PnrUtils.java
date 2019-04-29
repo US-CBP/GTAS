@@ -283,7 +283,7 @@ public class PnrUtils {
         return msg.substring(start, end);
     }
 
-    private static <T> T safeGet(List<T> list, int i) {
+    public static <T> T safeGet(List<T> list, int i) {
         if (i < 0 || i >= list.size()) {
             return null;
         }
@@ -327,37 +327,6 @@ public class PnrUtils {
             for (String suffix : SUFFIXES) {
                 if (last.endsWith(suffix)) {
                     p.setSuffix(suffix);
-                    String lastName = last.substring(0, last.length() - suffix.length()).trim();
-                    p.setLastName(lastName);
-                    break;
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static void processBagNames(BagVo p, String last, String first) {
-        if (first != null) {
-            for (String prefix : PREFIXES) {
-                String firstName = null;
-                if (first.startsWith(prefix)) {
-                    firstName = first.substring(prefix.length()).trim();
-                } else if (first.endsWith(prefix)) {
-                    firstName = first.substring(0, first.length() - prefix.length()).trim();
-                }
-
-                if (firstName != null) {
-                    p.setFirstName(firstName);
-                    break;
-                }
-            }
-        }
-        if (last != null) {
-            if (last.indexOf("-1") > 0) {
-                last = last.substring(0, last.indexOf("-1"));
-            }
-            for (String suffix : SUFFIXES) {
-                if (last.endsWith(suffix)) {
                     String lastName = last.substring(0, last.length() - suffix.length()).trim();
                     p.setLastName(lastName);
                     break;
@@ -420,7 +389,7 @@ public class PnrUtils {
             phoneText = phoneText.replaceAll("\\s+", "");
             phoneText = phoneText.substring(phoneText.indexOf(LTS.APM) + 3);
             if (phoneText.indexOf("/") > 0) {
-                phoneText = phoneText.substring(0, phoneText.indexOf("/"));
+                phoneText = ParseUtils.prepTelephoneNumber(phoneText.substring(0, phoneText.indexOf("/")));
             }
         } catch (Exception e) {
             //e.getMessage();

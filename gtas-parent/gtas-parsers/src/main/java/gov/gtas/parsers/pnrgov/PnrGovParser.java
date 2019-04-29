@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import gov.gtas.parsers.pnrgov.enums.PhoneCodes;
+import gov.gtas.parsers.pnrgov.enums.ProcessingIndicatorCode;
 import gov.gtas.parsers.pnrgov.segment.*;
+import gov.gtas.parsers.util.DateUtils;
+import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,25 +23,9 @@ import gov.gtas.parsers.pnrgov.segment.FOP.Payment;
 import gov.gtas.parsers.pnrgov.segment.FTI.FrequentFlierDetails;
 import gov.gtas.parsers.pnrgov.segment.RCI.ReservationControlInfo;
 import gov.gtas.parsers.pnrgov.segment.SSR.SpecialRequirementDetails;
-import gov.gtas.parsers.pnrgov.segment.TBD.BagDetails;
 import gov.gtas.parsers.pnrgov.segment.TIF.TravelerDetails;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
-import gov.gtas.parsers.vo.AddressVo;
-import gov.gtas.parsers.vo.AgencyVo;
-import gov.gtas.parsers.vo.BagVo;
-import gov.gtas.parsers.vo.CodeShareVo;
-import gov.gtas.parsers.vo.CreditCardVo;
-import gov.gtas.parsers.vo.DocumentVo;
-import gov.gtas.parsers.vo.EmailVo;
-import gov.gtas.parsers.vo.FlightVo;
-import gov.gtas.parsers.vo.FrequentFlyerVo;
-import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.parsers.vo.PaymentFormVo;
-import gov.gtas.parsers.vo.PhoneVo;
-import gov.gtas.parsers.vo.PnrVo;
-import gov.gtas.parsers.vo.SeatVo;
-import gov.gtas.parsers.vo.TicketFareVo;
 
 
 public final class PnrGovParser extends EdifactParser<PnrVo> {
@@ -70,7 +58,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      * start of a new PNR
      */
     private void processGroup1_PnrStart(TVL_L0 tvl_l0) throws ParseException {
-    	
+    	parsedMessage.setPrimeFlight(tvl_l0);
         parsedMessage.setCarrier(tvl_l0.getCarrier());
         parsedMessage.setOrigin(tvl_l0.getOrigin());
         parsedMessage.setDepartureDate(tvl_l0.getEtd());
@@ -455,7 +443,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             throw new ParseException("Invalid flight: " + f);
         }
         
-        processFlightSegments(tvl);
+        processFlightSegments(tvl, f);
         
         if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
             // codeshare flight: create a separate flight with the same
@@ -479,18 +467,20 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              //f.setMarketingFlight(true);
              parsedMessage.getCodeshares().add(cso);
              if (csFlight.isValid()) {
+                 csFlight.setUuid(f.getUuid());
                  parsedMessage.getFlights().add(csFlight);
                  parsedMessage.getFlights().remove(f);
-               
+                 f = csFlight;
+
              } else {
                  throw new ParseException("Invalid flight: " + csFlight);
              }
             
-            processFlightSegments(tvl);
+            processFlightSegments(tvl, f);
         }
     }
     
-    private void processFlightSegments(TVL tvl) throws ParseException {
+    private void processFlightSegments(TVL tvl, FlightVo flightVo) throws ParseException {
         getConditionalSegment(TRA.class);
         getConditionalSegment(RPI.class);
         getConditionalSegment(APD.class);
@@ -549,7 +539,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if (dat == null) {
                 break;
             }
-            processGroup6_Agent(dat, tvl);
+            processGroup6_Agent(dat, tvl, flightVo);
         }
     }
 
@@ -576,7 +566,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             } else if (lts.isFormPayment()) {
                 processFormOfPayment(lts.getTheText(), lts.isCashPayment());
             } else if (lts.isEmail()) {
-                extractEmailInfo(lts.getTheText());
+                String tmp = getRawEmailString(lts.getTheText());
+                String email = processSpecialCharactersForLTSAndADD(tmp);
+                addEmailVoToMessage(email);
             } else if (lts.isSeat()) {
                 extractSeatInfo(lts.getTheText());
             }
@@ -589,11 +581,33 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             extractContactInfo(lts.getText());
         }
     }
-    
+
+    //Some segments can contan a slash after the email address and so require a special case to parse correctly.
+    private String processSpecialCharactersForLTSAndADD(String tmp) {
+        if(tmp.contains("/")){
+            tmp=tmp.substring(0,tmp.indexOf("/"));
+        }
+        tmp = genericReplacements(tmp);
+        return tmp;
+    }
+
+    private String genericReplacements(String tmp) {
+        if(tmp.contains("//")){
+            tmp=tmp.replace("//", "@");
+        }
+        if(tmp.contains("EK ")){
+            tmp=tmp.replace("EK ", "");
+        }
+        if(tmp.contains("..")){
+            tmp=tmp.replace("..", "_");
+        }
+        return tmp;
+    }
+
     /**
      * the agent info that checked-in the passenger
      */
-    private void processGroup6_Agent(DAT_G6 dat, TVL tvl) throws ParseException {
+    private void processGroup6_Agent(DAT_G6 dat, TVL tvl, FlightVo flightVo) throws ParseException {
     
         ORG org = getConditionalSegment(ORG.class, "ORG");
         processAgencyInfo(org);
@@ -613,22 +627,22 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 break;
             }
             
-            processGroup7_SeatInfo(tri, tvl);
+            processGroup7_SeatInfo(tri, tvl, flightVo);
         }        
     }
     
     /**
      * boarding, seat number and checked bag info
      */
-    private void processGroup7_SeatInfo(TRI tri, TVL tvl) throws ParseException {
+    private void processGroup7_SeatInfo(TRI tri, TVL tvl, FlightVo flightVo) throws ParseException {
     	
-        PassengerVo thePax = null;
+        PassengerVo currentPassenger = null;
         String refNumber = tri.getTravelerReferenceNumber();
         if (refNumber != null) {
-            thePax = findPaxByReferenceNumber(refNumber);
+            currentPassenger = findPaxByReferenceNumber(refNumber);
         }
         TIF tif = getConditionalSegment(TIF.class);
-        if (thePax == null && tif != null) {
+        if (currentPassenger == null && tif != null) {
             // try finding pax based on tif info
             String surname = tif.getTravelerSurname();
             List<TravelerDetails> td = tif.getTravelerDetails();
@@ -636,7 +650,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 String firstName = td.get(0).getTravelerGivenName();
                 for (PassengerVo pax : parsedMessage.getPassengers()) {
                     if (surname.equals(pax.getLastName()) && firstName.equals(pax.getFirstName())) {
-                        thePax = pax;
+                        currentPassenger = pax;
                         break;
                     }
                 }
@@ -644,14 +658,14 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
         // TODO: how does this relate to ssr:seat?
         SSD ssd = getConditionalSegment(SSD.class);
-        if (thePax != null && ssd != null) {
+        if (currentPassenger != null && ssd != null) {
             SeatVo seat = new SeatVo();
-            seat.setTravelerReferenceNumber(thePax.getTravelerReferenceNumber());
+            seat.setTravelerReferenceNumber(currentPassenger.getTravelerReferenceNumber());
             seat.setNumber(ssd.getSeatNumber());
             seat.setOrigin(tvl.getOrigin());
             seat.setDestination(tvl.getDestination());
             if (seat.isValid()) {
-                thePax.getSeatAssignments().add(seat);
+                currentPassenger.getSeatAssignments().add(seat);
             }
         }
         
@@ -659,52 +673,117 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (tbd == null) {
             return;
         }
-
-        Integer n = tbd.getNumBags()== null ? 0 : tbd.getNumBags();
-        Double weight= (tbd.getBaggageWeight()) == null ?0:tbd.getBaggageWeight();
-        if (n != null) {
-            parsedMessage.setBagCount(n);
-            if(parsedMessage.getTotal_bag_count()!= null && parsedMessage.getTotal_bag_count() >0){
-            	parsedMessage.setTotal_bag_count(parsedMessage.getTotal_bag_count()+n);
-            }else{
-            	parsedMessage.setTotal_bag_count(n);
-            }
-            parsedMessage.setBaggageWeight(weight);
-            parsedMessage.setBaggageUnit(tbd.getUnitQualifier());
+        updateMessageBagInfo(tbd);
+        if (currentPassenger != null) {
+            generateBagVos(tbd, tvl, currentPassenger, flightVo);
         }
-        getBagVosFromTBD(tbd.getBagDetails(),tif,weight,n,tbd.isHeadOrMemberPool(),tvl.getDestination(),tbd.getFreeText());
-       
     }
-    
 
-    private void getBagVosFromTBD(List<BagDetails> bDetails,TIF tif,Double weight,Integer numBags,boolean headPool,String dest,String text){
-    	if(!(bDetails == null || bDetails.size()==0)){
-    	if(CollectionUtils.isNotEmpty(parsedMessage.getPassengers())){
-    	PassengerVo pvo=PnrUtils.getPaxFromTIF(tif,parsedMessage.getPassengers());
-   		pvo.setBagNum(numBags.toString());
-   		pvo.setTotalBagWeight(weight.toString());
-    	for (BagDetails bd : bDetails){
-    		BagVo bvo=new BagVo();
-    		if(headPool){
-    			bvo.setAirline(parsedMessage.getCarrier());
-    			bvo.setBagId(bd.getTagNumber() +" ("+text+" )");
-    			bvo.setData_source("PNR");
-    			bvo.setDestinationAirport(dest);
-    			bvo.setFirstName(pvo.getFirstName());
-    			bvo.setLastName(pvo.getLastName());
-    			bvo.setHeadPool(true);
-    			parsedMessage.setHeadPool(true);
-    		}
-    		else{
-    			bvo=new BagVo(bd.getTagNumber()+" ("+text+" )","PNR",dest,bd.getAirline(),pvo.getFirstName(),pvo.getLastName());
-    		}
-    		parsedMessage.getBags().add(bvo);
-    	}
-    	}
-
-    	}
+    // Pick the first TBD Baggage Details to add to PNR.
+    // If this field doesn't exist there is no way to update bag count/weight.
+    private void updateMessageBagInfo(TBD tbd) {
+        if (!tbd.getBaggageDetails().isEmpty()) {
+            TBD_BD tbd_bd = tbd.getBaggageDetails().get(0);
+            Double bagWeight = tbd_bd.getWeightInKilos();
+            if (bagWeight != null) {
+                double runningWeight = bagWeight + parsedMessage.getTotal_bag_weight();
+                runningWeight = Math.round(runningWeight);
+                parsedMessage.setTotal_bag_weight(runningWeight);
+                parsedMessage.setBaggageUnit("Kgs");
+            }
+            Integer bagQuantity = tbd_bd.getQuantityAsInteger();
+            if (bagQuantity != null) {
+                int bagCount = parsedMessage.getTotal_bag_count() + bagQuantity;
+                parsedMessage.setTotal_bag_count(bagCount);
+            }
+        }
     }
-    
+
+
+/*
+*
+* The bags generated from a PNR can be associated the following ways.
+*  1. The bag information comes in, has a license plate and bag information,
+*       is NOT the head of a baggage pool, (can be a member of no pool or a member of a pool).
+*  2. The bag information comes in, has no license plate or bag information, and CAN BE a member of a baggage pool.
+*  3. The bag information comes in, has a license plate and bag info, and is the member of a head pool.
+*
+*   Scenario 1 results in baggage crated and related to the passenger. The status is ignored.
+*   Scenario 2 results in no bag being created. Baggage that is apart of a member pool or without sufficient business information would fall under this.
+*   Scenario 3 results in baggage created and related to the passenger with a flag of "head pool" set to show baggage ownership is shared among a baggage pool.
+*
+*   Multiple bag vo can be created per TBD line, as some baggage could be short checked or have different license plate information.
+*   Note: Only scenario 2 results in no baggage creation.
+*
+* */
+private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, FlightVo flightVo) {
+    boolean isPrimeFlight = isPrimeFlightTVL(tvl);
+    if (tbd.hasBagInformation()) {
+        BagMeasurementsVo bagMeasurementsVo = BagMeasurementsVo.fromTbdBD(tbd.getBaggageDetails());
+        if ((bagMeasurementsVo.getQuantity() != null)
+                || (bagMeasurementsVo.getWeightInKilos() != null)) {
+            parsedMessage.getBagMeasurements().add(bagMeasurementsVo);
+            for (TBD_BagTagDetails bagTagSegment : tbd.getBagTagDetails()) {
+                BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);
+                bagVo.setBagMeasurementUUID(bagMeasurementsVo.getUuid());
+                bagVo.setBagMeasurementsVo(bagMeasurementsVo);
+                if (StringUtils.isNotBlank(bagTagSegment.getTotalNumItems())) {
+                    bagVo.setConsecutiveTagNumber(bagTagSegment.getTotalNumItems());
+                }
+                if (StringUtils.isNotBlank(bagVo.getBagId())) {
+                    parsedMessage.getBagVos().add(bagVo);
+                }
+            }
+        } else {
+            for (TBD_BagTagDetails bagTagSegment : tbd.getBagTagDetails()) {
+                BagVo bagVo = populateBagVo(tbd, currentPassenger, flightVo, isPrimeFlight, bagTagSegment);
+                if (StringUtils.isNotBlank(bagVo.getBagId())) {
+                    parsedMessage.getBagVos().add(bagVo);
+                }
+            }
+        }
+    }
+}
+
+    private BagVo populateBagVo(TBD tbd, PassengerVo currentPassenger, FlightVo flightVo, boolean isPrimeFlight, TBD_BagTagDetails bagTagSegment) {
+        BagVo bagVo = BagVo.fromTbdBagTagDetails(bagTagSegment);
+        bagVo.setPassengerId(currentPassenger.getPassengerVoUUID());
+        bagVo.getFlightVoId().add(flightVo.getUuid());
+        bagVo.setData_source("PNR");
+        bagVo.setPrimeFlight(isPrimeFlight);
+        if (ProcessingIndicatorCode.HEAD_OF_POOL.toString().equalsIgnoreCase(tbd.getPooledBagIndicator())) {
+            bagVo.setHeadPool(true);
+        } else if (ProcessingIndicatorCode.MEMBER_OF_POOL.toString().equalsIgnoreCase(tbd.getPooledBagIndicator())) {
+            bagVo.setMemberPool(true);
+        }
+        return bagVo;
+    }
+
+    private boolean isPrimeFlightTVL(TVL tvl) {
+        TVL_L0 primeFlight = parsedMessage.getPrimeFlight();
+        Date takeOffDateForTVL = DateUtils.stripTime(tvl.getEtd());
+        Date takeOffDateForPrimeFlight = DateUtils.stripTime(tvl.getEtd());
+
+/*
+        Can't use equality of flight number until code share flights are corrected.
+
+        String primeCarrier = primeFlight.getCarrier();
+        String tvlCarrier = tvl.getCarrier();\
+        String primeFlightNum = primeFlight.getFlightNumber();
+        String tvlFlightNum = tvl.getFlightNumber();
+*/
+
+
+        String primeOrigin = primeFlight.getOrigin();
+        String tvlOrigin = tvl.getOrigin();
+
+        String primeDestination = primeFlight.getDestination();
+        String tvlDestination = tvl.getDestination();
+
+
+        return (takeOffDateForPrimeFlight.equals(takeOffDateForTVL) && primeOrigin.equalsIgnoreCase(tvlOrigin) && primeDestination.equalsIgnoreCase(tvlDestination));
+    }
+
     private void processGroup8_SplitPassenger(EQN eqn) throws ParseException {
         getMandatorySegment(RCI.class);
     }
@@ -785,6 +864,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     private void processPhoneInfo(String text){
     	String number=PnrUtils.getPhoneNumberFromLTS(text);
     	if(StringUtils.isNotBlank(number)){
+
     		PhoneVo pvo=new PhoneVo();
     		pvo.setNumber(number);
     		parsedMessage.getPhoneNumbers().add(pvo);
@@ -836,50 +916,57 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     	}
     }
     private void extractEmailInfo(String txt){
-    	String tmp="";
-    	if(txt.contains(LTS.APE)){
-    		//LTS+0/O/5/APE FIRST.LAST@YAHOO.COM/FIRST/LAST MRS'
-    		tmp=txt.substring(txt.indexOf(LTS.APE)+4, txt.length());
-    		if(tmp.indexOf("/") != -1){
-    			tmp=tmp.substring(0,tmp.indexOf("/"));
-    		}
-    		
-    	}else{
-    		tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
-		
-    	}
-    	//Fix Data | trim email address in back-end #547
-    	String[] extras=tmp.split(" ");
-    	if(extras != null && extras.length >1){
-    		for(String chk:extras){
-    			if(chk.contains("//") || chk.contains("@")){
-    				tmp=chk;
-    				break;
-    			}
-    		}
-    	}
-   	 	if (StringUtils.isNotBlank(tmp)) {
-    		 //implement future parsing here based on incoming email formats
-    		if(tmp.indexOf("//") != -1){
-    			tmp=tmp.replace("//", "@");
-    		}
-    		if(tmp.indexOf("EK ") != -1){
-    			tmp=tmp.replace("EK ", "");
-    		}
-    		if(tmp.indexOf("..") != -1){
-    			tmp=tmp.replace("..", "_");
-    		}
-    		if(tmp.indexOf("/") != -1){
-    			tmp=tmp.replace("/", "");
-    		}
-             EmailVo email = new EmailVo();
-             email.setAddress(tmp);
-             if(tmp.lastIndexOf("@") != -1){
-            	 email.setDomain(tmp.substring(tmp.lastIndexOf("@")+1, tmp.length()));
-             }
-             parsedMessage.getEmails().add(email);
-         }
+        String tmp = getRawEmailString(txt);
+        if (StringUtils.isNotBlank(tmp)) {
+
+            tmp = processSpecialCharacters(tmp);
+            addEmailVoToMessage(tmp);
+        }
     }
+
+    private void addEmailVoToMessage(String tmp) {
+        EmailVo email = new EmailVo();
+        email.setAddress(tmp);
+        if(tmp.contains("@")) {
+            email.setDomain(tmp.substring(tmp.lastIndexOf("@")+1));
+            parsedMessage.getEmails().add(email);
+        }
+    }
+
+    private String processSpecialCharacters(String tmp) {
+        tmp = genericReplacements(tmp);
+        if(tmp.contains("/")){
+            tmp=tmp.replace("/", "");
+        }
+        return tmp;
+    }
+
+    private String getRawEmailString(String txt) {
+        String tmp="";
+        if(txt.contains(LTS.APE)){
+            //LTS+0/O/5/APE FIRST.LAST@YAHOO.COM/FIRST/LAST MRS'
+            tmp=txt.substring(txt.indexOf(LTS.APE)+4);
+            if(tmp.contains("/")){
+                tmp=tmp.substring(0,tmp.indexOf("/"));
+            }
+
+        }else{
+            tmp = getEmailFromtext(IFT.CONTACT_EMAIL, txt);
+
+        }
+        //Fix Data | trim email address in back-end #547
+        String[] extras=tmp.split("[ /]");
+        if(extras.length > 1){
+            for(String chk:extras){
+                if(chk.contains("//") || chk.contains("@")){
+                    tmp = chk.replaceAll("//", "@");
+                    break;
+                }
+            }
+        }
+        return tmp;
+    }
+
     private void extractContactInfo(String txt) {
         if (StringUtils.isBlank(txt)) {
             return;
@@ -894,9 +981,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 addr.setLine1(tmp);
                 parsedMessage.getAddresses().add(addr);
             }
-        } else if (txt.contains(IFT.CONTACT)) {
+        } else if (PhoneCodes.textContainsPhoneNumberString(txt)) {
         	// The remaining contact types are telephone numbers
-            String tmp = ParseUtils.prepTelephoneNumber(txt);
+            String tmp = ParseUtils.prepIFTTelephoneNumber(txt);
             if (StringUtils.isNotBlank(tmp)) {
                 PhoneVo phone = new PhoneVo();
                 phone.setNumber(tmp);
@@ -929,7 +1016,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             }
         }
     }
-    
+
+
     private String[] getAgencyInfo(String text){
     	return text.split(" ");
     }
@@ -973,9 +1061,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             if (p.isValid()) {
                 parsedMessage.getPhoneNumbers().add(p);
             }
-        } 
+        }
         if(StringUtils.isNotBlank(address.getEmail())){
-        	extractEmailInfo(address.getEmail());
+            String tmp = getRawEmailString(address.getEmail());
+            String email = processSpecialCharactersForLTSAndADD(tmp);
+            addEmailVoToMessage(email);
         }
     }
     

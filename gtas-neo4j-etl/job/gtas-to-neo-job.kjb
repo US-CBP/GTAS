@@ -311,7 +311,7 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>848</yloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -329,7 +329,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>768</yloc>
+      <yloc>976</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -341,8 +341,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>400</xloc>
-      <yloc>688</yloc>
+      <xloc>352</xloc>
+      <yloc>880</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -359,7 +359,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>592</yloc>
+      <yloc>768</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -397,7 +397,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>336</yloc>
+      <yloc>544</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -411,8 +411,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1040</xloc>
-      <yloc>560</yloc>
+      <xloc>1392</xloc>
+      <yloc>704</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -449,8 +449,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1040</xloc>
-      <yloc>672</yloc>
+      <xloc>1392</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -461,8 +461,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>512</xloc>
-      <yloc>1072</yloc>
+      <xloc>432</xloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -476,8 +476,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>896</yloc>
+      <xloc>912</xloc>
+      <yloc>960</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -489,8 +489,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>720</xloc>
-      <yloc>832</yloc>
+      <xloc>1152</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -504,8 +504,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1040</xloc>
-      <yloc>816</yloc>
+      <xloc>1392</xloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -517,8 +517,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>784</xloc>
-      <yloc>560</yloc>
+      <xloc>848</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -532,8 +532,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>784</xloc>
-      <yloc>672</yloc>
+      <xloc>1120</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -551,8 +551,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>1072</yloc>
+      <xloc>656</xloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -589,8 +589,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1296</xloc>
-      <yloc>336</yloc>
+      <xloc>1392</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -627,8 +627,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>976</xloc>
-      <yloc>240</yloc>
+      <xloc>880</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -665,7 +665,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1024</xloc>
+      <xloc>1392</xloc>
       <yloc>432</yloc>
       <attributes_kjc/>
     </entry>
@@ -703,8 +703,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>416</xloc>
-      <yloc>240</yloc>
+      <xloc>384</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -741,8 +741,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1296</xloc>
-      <yloc>560</yloc>
+      <xloc>1392</xloc>
+      <yloc>608</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -779,8 +779,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1040</xloc>
-      <yloc>960</yloc>
+      <xloc>1136</xloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -818,7 +818,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>688</yloc>
+      <yloc>880</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -855,8 +855,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1312</xloc>
-      <yloc>816</yloc>
+      <xloc>1392</xloc>
+      <yloc>992</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -882,7 +882,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>464</yloc>
+      <yloc>656</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -897,7 +897,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>112</xloc>
-      <yloc>240</yloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -911,8 +911,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>704</xloc>
-      <yloc>240</yloc>
+      <xloc>640</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -926,8 +926,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1024</xloc>
-      <yloc>336</yloc>
+      <xloc>1392</xloc>
+      <yloc>352</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -941,8 +941,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1296</xloc>
-      <yloc>240</yloc>
+      <xloc>1120</xloc>
+      <yloc>256</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -956,8 +956,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1296</xloc>
-      <yloc>432</yloc>
+      <xloc>1392</xloc>
+      <yloc>512</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -971,8 +971,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1312</xloc>
-      <yloc>672</yloc>
+      <xloc>1392</xloc>
+      <yloc>896</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -991,8 +991,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>912</xloc>
-      <yloc>1072</yloc>
+      <xloc>864</xloc>
+      <yloc>1088</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1006,8 +1006,61 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>320</xloc>
-      <yloc>336</yloc>
+      <xloc>336</xloc>
+      <yloc>544</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation-passenger-flight</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-create-passenger-flight.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>112</xloc>
+      <yloc>352</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log - passenger-flight</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage/>
+      <loglevel>Basic</loglevel>
+      <logsubject/>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>112</xloc>
+      <yloc>448</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
@@ -1229,15 +1282,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Transformation-gtas-to-neo</from>
-      <to>Write to log -psngr-doc-rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>Trans-create passenger-address rship</from>
       <to>Write to log - psngr-hit-rship</to>
       <from_nr>0</from_nr>
@@ -1280,6 +1324,33 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-gtas-to-neo</from>
+      <to>Write to log - passenger-flight</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - passenger-flight</from>
+      <to>Transformation-passenger-flight</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-passenger-flight</from>
+      <to>Write to log -psngr-doc-rship</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
       <unconditional>N</unconditional>
     </hop>
   </hops>

@@ -14,9 +14,6 @@ import org.redisson.api.*;
 import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import redis.embedded.RedisServer;
 import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -32,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 public class RedissonFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(RedissonFilter.class);
-    private static RedisServer redisServer;
     private RedissonClient client;
     private static String[] randomStrings;
 
@@ -149,7 +145,7 @@ public class RedissonFilter {
                 ledger.setProcessedTimeStamp(new Date());
                 ledger.setName(getMessageHash(payload));
                 map.put(messageHashKey, messageHashKey, REDIS_KEY_TTL_MINUTES, TimeUnit.MINUTES);
-                logger.info("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
+                logger.debug("++++++++++++++++++ REDIS Key Indexed +++++++++++++++++++++++++++++++++++");
 				if (!publishToDownstreamQueues(messagePayload, sender, outboundLoaderQueue, filename, tvlLineText)) {
 					throw new Exception("Error publishing to parsing queue");
 				}

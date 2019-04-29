@@ -5,7 +5,6 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.InvalidObjectInfo;
 import gov.gtas.model.lookup.Airport;
 
 import java.util.List;

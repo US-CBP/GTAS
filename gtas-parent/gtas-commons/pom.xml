@@ -19,7 +19,6 @@
         
         <hibernate.connection.driver_class>org.mariadb.jdbc.Driver</hibernate.connection.driver_class>
   		<hibernate.dialect>org.hibernate.dialect.MySQL5InnoDBDialect</hibernate.dialect>
-  		<hibernate.connection.url><![CDATA[jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true]]></hibernate.connection.url>
   		<hibernate.connection.username>root</hibernate.connection.username>
   		<hibernate.connection.password>admin</hibernate.connection.password>
   		
@@ -203,13 +202,11 @@
 		          <artifactId>hazelcast-hibernate5</artifactId>
 		        </exclusion>
 	        </exclusions>
-         </dependency> 
- 
-       
+         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.5.2</version>
+            <version>0.9.5.4</version>
         </dependency>
 
         <!-- aws -->
@@ -337,7 +334,7 @@
                 </dependencies>
                 <configuration>
                     <force>true</force>
-                    <url><![CDATA[jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true]]></url>
+                    <url><![CDATA[jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8]]></url>
                 </configuration>
             </plugin>
         </plugins>

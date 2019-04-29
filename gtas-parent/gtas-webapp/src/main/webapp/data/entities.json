@@ -1018,7 +1018,7 @@
           "NOT_ENDS_WITH"
   	  	]
   	  }, {
-  	  	"id":"Bag.destination",
+  	  	"id":"Bag.country",
   	  	"label":"Destination Country",
   	  	"type":"string",
   	  	"operators": [
@@ -1053,7 +1053,60 @@
         "multiple": true,
         "plugin": "selectize",
         "dataSource": "airports"
-  	  }	  
+  	  },
+      {
+        "id": "Bag.primeFlight",
+        "label": "Is Prime Flight",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      } ,
+      {
+        "id": "Bag.bagMeasurements.weight",
+        "label": "Bag Weight Measurement (kg)",
+        "type": "double",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      } ,
+      {
+        "id": "Bag.bagMeasurements.bagCount",
+        "label": "Bag Measurement Count",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      },
+      {
+        "id": "Bag.headPool",
+        "label": "Is Head Of a Baggage Pool",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      }
+
   	]
   },
   "Pnr": {

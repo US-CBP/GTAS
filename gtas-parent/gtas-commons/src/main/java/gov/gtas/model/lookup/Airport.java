@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +19,7 @@ import gov.gtas.model.BaseEntity;
 
 @Cacheable
 @Entity
-@Table(name = "airport")
+@Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index") })
 public class Airport extends BaseEntity {
     public Airport() { }
     

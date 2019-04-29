@@ -30,6 +30,8 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String BIG_PNR = "/pnr-messages/pnrWithBags.txt";
     private static final String PNR_WITH_BAGS = "/pnr-messages/bigMessagePnr.txt";
     private static final String PNR_EXAMPLE = "/pnr-messages/pnrMessageExample.txt";
+    private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
+
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -89,15 +91,22 @@ public class PnrGovParserTest implements ParserTestHelper {
     public void pnrWithBgs() throws IOException, URISyntaxException, ParseException {
         String pnrWithBags = getMessageText(PNR_WITH_BAGS);
         PnrVo vo = this.parser.parse(pnrWithBags);
-        assertTrue(!vo.getBags().isEmpty());
+        assertTrue(!vo.getBagVos().isEmpty());
     }
 
     @Test
     public void pnrExampleTest() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(PNR_EXAMPLE);
         PnrVo vo = this.parser.parse(pnrExample);
-        int bagsInPNRExample = 18;
-        assertEquals(bagsInPNRExample, vo.getBags().size());
+        Integer bagsInPNRExample = 18;
+        assertEquals(bagsInPNRExample, vo.getTotal_bag_count());
     }
+
+    /*    @Test
+    public void failingMessage1() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(failingMessage1);
+        PnrVo dob = this.parser.parse(pnrExample);
+        System.out.println("test");
+    }*/
 
 }
