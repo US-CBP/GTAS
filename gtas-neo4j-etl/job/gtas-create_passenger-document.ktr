@@ -514,7 +514,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
     </hop>
     <hop>
       <from>Select values-convert etd dates</from>
-      <to>Neo4J Output</to>
+      <to>Neo4J Output - Airport</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -1838,7 +1838,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
     </GUI>
   </step>
   <step>
-    <name>Neo4J Output</name>
+    <name>Neo4J Output - Airport</name>
     <type>Neo4JOutput</type>
     <description/>
     <distribute>Y</distribute>

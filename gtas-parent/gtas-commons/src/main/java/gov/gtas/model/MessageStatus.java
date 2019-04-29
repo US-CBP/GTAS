@@ -6,6 +6,7 @@
 package gov.gtas.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "message_status")
@@ -24,6 +25,8 @@ public class MessageStatus {
     @Column(name="ms_status")
     private MessageStatusEnum messageStatusEnum;
 
+    @Column(name = "ms_analyzed_timestamp")
+    private Date analyzedTimestamp;
 
     public boolean isSuccess() {
         return success;
@@ -42,6 +45,15 @@ public class MessageStatus {
         this.messageId = message;
         this.messageStatusEnum = status;
     }
+
+    public Date getAnalyzedTimestamp() {
+        return analyzedTimestamp;
+    }
+
+    public void setAnalyzedTimestamp(Date analyzedTimestamp) {
+        this.analyzedTimestamp = analyzedTimestamp;
+    }
+
 
     public Message getMessage() {
         return message;

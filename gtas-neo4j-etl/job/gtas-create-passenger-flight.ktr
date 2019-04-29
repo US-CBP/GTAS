@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-merge-email</name>
+    <name>gtas-create-passenger-flight</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
-    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -422,217 +421,49 @@
     <dependencies>
     </dependencies>
     <partitionschemas>
-      <partitionschema>
-        <name>relPartition</name>
-        <partition>
-          <id>partition-1</id>
-        </partition>
-        <partition>
-          <id>partition-2</id>
-        </partition>
-        <partition>
-          <id>partition-3</id>
-        </partition>
-        <partition>
-          <id>partition-4</id>
-        </partition>
-        <dynamic>N</dynamic>
-        <partitions_per_slave/>
-      </partitionschema>
     </partitionschemas>
     <slaveservers>
     </slaveservers>
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2019/03/06 11:23:43.316</created_date>
+    <created_date>2019/04/24 09:32:34.289</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2019/03/06 11:23:43.316</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <modified_date>2019/04/24 09:32:34.289</modified_date>
+    <key_for_session_key/>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
-    <notepad>
-      <note>All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP). Please see LICENSE.txt for details.</note>
-      <xloc>112</xloc>
-      <yloc>48</yloc>
-      <width>1213</width>
-      <heigth>29</heigth>
-      <fontname>Arial</fontname>
-      <fontsize>10</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>Y</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>231</backgroundcolorred>
-      <backgroundcolorgreen>231</backgroundcolorgreen>
-      <backgroundcolorblue>231</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
-      <drawshadow>Y</drawshadow>
-    </notepad>
   </notepads>
   <order>
     <hop>
-      <from>is Email Available</from>
+      <from>CSV file input-credit card</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>isPassengerAvailable</from>
       <to>Dummy (do nothing)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Sort rows-passenger-email</from>
-      <to>Neo4J Output - passenger-email rship</to>
+      <from>Select values</from>
+      <to>isPassengerAvailable</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>is Email Available</from>
-      <to>Add constants</to>
+      <from>isPassengerAvailable</from>
+      <to>Unique rows</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Sort rows-passenger-email</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values - passenger-email</from>
-      <to>is Email Available</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>CSV file input-email</from>
-      <to>Dummy (do nothing) 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing) 2</from>
-      <to>Select values - passenger-email</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Dummy (do nothing) 2</from>
-      <to>Filter rows 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows 2</from>
-      <to>Sort rows - flight-destination</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows - flight-destination</from>
-      <to>Add constants - airport labels</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Add constants - airport labels</from>
-      <to>Select values-convert etd dates</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values-convert etd dates</from>
-      <to>Neo4J Output - create flight-destination-relship</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows 2</from>
-      <to>Dummy (do nothing) 3</to>
+      <from>Unique rows</from>
+      <to>Neo4J Output -passenger-flight</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Add constants</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>PASSENGER-EMAIL_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>used_email</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>896</xloc>
-      <yloc>352</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Add constants - airport labels</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>AIRPORT_LABLE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>Airport</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-      <field>
-        <name>FLIGHT_DESTINATION_LABEL</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif>has_destination</nullif>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>960</xloc>
-      <yloc>624</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>CSV file input-email</name>
+    <name>CSV file input-credit card</name>
     <type>CsvInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1589,7 +1420,7 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>both</trim_type>
+        <trim_type>none</trim_type>
       </field>
       <field>
         <name>full_etd_dtm</name>
@@ -1600,7 +1431,29 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>both</trim_type>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>gtas_message_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>gtas_passenger_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
       </field>
     </fields>
     <attributes/>
@@ -1612,8 +1465,121 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>160</xloc>
-      <yloc>496</yloc>
+      <xloc>192</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>IS_PASSENGER_AVAILABLE</name>
+        <rename>IS_PASSENGER_AVAILABLE</rename>
+        <type>Boolean</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>gtas_passenger_id</name>
+        <rename>gtas_passenger_id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>dob</name>
+        <rename>dob</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>eta_date</name>
+        <rename>eta_date</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>etd_date</name>
+        <rename>etd_date</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>480</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1638,62 +1604,12 @@
     </remotesteps>
     <GUI>
       <xloc>736</xloc>
-      <yloc>432</yloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Dummy (do nothing) 2</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>496</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Dummy (do nothing) 3</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>496</xloc>
-      <yloc>752</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Filter rows 2</name>
+    <name>isPassengerAvailable</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -1703,54 +1619,23 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Sort rows - flight-destination</send_true_to>
-    <send_false_to>Dummy (do nothing) 3</send_false_to>
+    <send_true_to>Unique rows</send_true_to>
+    <send_false_to>Dummy (do nothing)</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
-        <conditions>
-          <condition>
-            <negated>N</negated>
-            <leftvalue>gtas_flight_id</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>etd_date</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>origin</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>destination</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>flight_number</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>carrier</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-        </conditions>
+        <leftvalue>IS_PASSENGER_AVAILABLE</leftvalue>
+        <function>=</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Boolean</type>
+          <text>Y</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask/>
+        </value>
       </condition>
     </compare>
     <attributes/>
@@ -1762,13 +1647,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>496</xloc>
-      <yloc>624</yloc>
+      <xloc>736</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4J Output - create flight-destination-relship</name>
+    <name>Neo4J Output -passenger-flight</name>
     <type>Neo4JOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1779,7 +1664,7 @@
       <schema_name/>
     </partitioning>
     <connection>neo4j-db</connection>
-    <batch_size>5000</batch_size>
+    <batch_size>${EXT_VAR_PASSENGER_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>
     <use_create>N</use_create>
@@ -1787,7 +1672,64 @@
     <returning_graph>N</returning_graph>
     <return_graph_field>graph</return_graph_field>
     <from>
-      <read_only_from_node>Y</read_only_from_node>
+      <read_only_from_node>N</read_only_from_node>
+      <labels>
+        <label>PASSENGER_LABEL</label>
+        <value/>
+      </labels>
+      <properties>
+        <property>
+          <name>id_tag</name>
+          <value>idTag</value>
+          <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
+          <name>first_name</name>
+          <value>first_name</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>middle_name</name>
+          <value>middle_name</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>last_name</name>
+          <value>last_name</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>citizenship_country</name>
+          <value>citizenship_country</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>gender</name>
+          <value>gender</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>dob</name>
+          <value>dob</value>
+          <type>Date</type>
+          <primary>N</primary>
+        </property>
+        <property>
+          <name>gtas_passenger_id</name>
+          <value>gtas_passenger_id</value>
+          <type>Integer</type>
+          <primary>N</primary>
+        </property>
+      </properties>
+    </from>
+    <to>
+      <read_only_to_node>Y</read_only_to_node>
       <labels>
         <label>FLIGHT_LABEL</label>
         <value/>
@@ -1824,40 +1766,14 @@
           <primary>Y</primary>
         </property>
       </properties>
-    </from>
-    <to>
-      <read_only_to_node>N</read_only_to_node>
-      <labels>
-        <label>AIRPORT_LABLE</label>
-        <value/>
-      </labels>
-      <properties>
-        <property>
-          <name>airport_code</name>
-          <value>destination</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>country_code</name>
-          <value>destination_country</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-      </properties>
     </to>
-    <relationship>FLIGHT_DESTINATION_LABEL</relationship>
+    <relationship>PASSENGER_FLIGHT_LABEL</relationship>
     <relationship_value/>
     <relprops>
       <relprop>
-        <name>eta_date</name>
-        <value>eta_date</value>
-        <type>Date</type>
-      </relprop>
-      <relprop>
-        <name>full_eta_dtm</name>
-        <value>full_eta_dtm</value>
-        <type>LocalDateTime</type>
+        <name>pnr_record_locator</name>
+        <value>pnr_record_locator</value>
+        <type>String</type>
       </relprop>
     </relprops>
     <attributes/>
@@ -1869,80 +1785,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1520</xloc>
-      <yloc>624</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Neo4J Output - passenger-email rship</name>
-    <type>Neo4JOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>neo4j-db</connection>
-    <batch_size>${EXT_VAR_EMAIL_BATCH_SIZE}</batch_size>
-    <key/>
-    <create_indexes>Y</create_indexes>
-    <use_create>N</use_create>
-    <only_create_relationships>N</only_create_relationships>
-    <returning_graph>N</returning_graph>
-    <return_graph_field>graph</return_graph_field>
-    <from>
-      <read_only_from_node>Y</read_only_from_node>
-      <labels>
-        <label>PASSENGER_LABEL</label>
-        <value/>
-      </labels>
-      <properties>
-        <property>
-          <name>id_tag</name>
-          <value>idTag</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-      </properties>
-    </from>
-    <to>
-      <read_only_to_node>N</read_only_to_node>
-      <labels>
-        <label>EMAIL_LABEL</label>
-        <value/>
-      </labels>
-      <properties>
-        <property>
-          <name>address</name>
-          <value>address</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-      </properties>
-    </to>
-    <relationship>PASSENGER-EMAIL_LABEL</relationship>
-    <relationship_value/>
-    <relprops/>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
       <xloc>1312</xloc>
-      <yloc>352</yloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Select values - passenger-email</name>
-    <type>SelectValues</type>
+    <name>Unique rows</name>
+    <type>Unique</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1951,170 +1801,14 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>IS_EMAIL_AVAILABLE</name>
-        <rename>IS_EMAIL_AVAILABLE</rename>
-        <type>Boolean</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>gtas_email_id</name>
-        <rename>gtas_email_id</rename>
-        <type>Integer</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>528</xloc>
-      <yloc>352</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values-convert etd dates</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>etd_date</name>
-        <rename>etd_date</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>full_eta_dtm</name>
-        <rename>full_eta_dtm</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>eta_date</name>
-        <rename>eta_date</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1200</xloc>
-      <yloc>624</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Sort rows - flight-destination</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>1000000</sort_size>
-    <free_memory/>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>Y</unique_rows>
+    <count_rows>N</count_rows>
+    <count_field/>
+    <reject_duplicate_row>N</reject_duplicate_row>
+    <error_description/>
     <fields>
       <field>
-        <name>gtas_flight_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-      <field>
-        <name>destination</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
+        <name>gtas_passenger_id</name>
+        <case_insensitive>N</case_insensitive>
       </field>
     </fields>
     <attributes/>
@@ -2126,102 +1820,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
-      <yloc>624</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Sort rows-passenger-email</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>100000</sort_size>
-    <free_memory>50</free_memory>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>Y</unique_rows>
-    <fields>
-      <field>
-        <name>idTag</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-      <field>
-        <name>gtas_email_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1072</xloc>
-      <yloc>352</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>is Email Available</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>Add constants</send_true_to>
-    <send_false_to>Dummy (do nothing)</send_false_to>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <leftvalue>IS_EMAIL_AVAILABLE</leftvalue>
-        <function>=</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>String</type>
-          <text>Y</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask/>
-        </value>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>736</xloc>
-      <yloc>352</yloc>
+      <xloc>1008</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
