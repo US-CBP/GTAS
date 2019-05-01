@@ -62,13 +62,6 @@ insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BA
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
--- ----------------------------
--- Records of dashboard_message_stats
--- ----------------------------
-
-INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour_1`, `hour_2`, `hour_3`, `hour_4`, `hour_5`, `hour_6`, `hour_7`, `hour_8`, `hour_9`, `hour_10`, `hour_11`, `hour_12`, `hour_13`, `hour_14`, `hour_15`, `hour_16`, `hour_17`, `hour_18`, `hour_19`, `hour_20`, `hour_21`, `hour_22`, `hour_23`, `hour_24`) VALUES (1, CURRENT_TIMESTAMP, 'API', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour_1`, `hour_2`, `hour_3`, `hour_4`, `hour_5`, `hour_6`, `hour_7`, `hour_8`, `hour_9`, `hour_10`, `hour_11`, `hour_12`, `hour_13`, `hour_14`, `hour_15`, `hour_16`, `hour_17`, `hour_18`, `hour_19`, `hour_20`, `hour_21`, `hour_22`, `hour_23`, `hour_24`) VALUES (2, CURRENT_TIMESTAMP, 'PNR', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
