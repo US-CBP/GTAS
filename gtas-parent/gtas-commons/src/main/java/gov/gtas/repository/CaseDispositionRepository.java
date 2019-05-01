@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsDisposition;
@@ -83,6 +84,11 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
    @Transactional
    @Query("update Case set oneDayLookoutFlag = :flag where id = :caseId")
    public Integer updateOneDayLookoutFlag(@Param("caseId")Long caseId, @Param("flag") Boolean flag);
+   
+   @Modifying
+   @Transactional
+   @Query("update Case set encounteredStatus = :encStatus where id = :caseId")
+   public void updateEncounteredStatus(@Param("caseId")Long caseId, @Param("encStatus")EncounteredStatusEnum encStatus);
    
 
 	

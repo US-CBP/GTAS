@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.constants.Constants;
+import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.model.Case;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
@@ -172,6 +173,17 @@ public class OneDayLookoutController {
 		}
 
 		return result;
+	}
+	
+	@RequestMapping(value = "/encounteredstatus", method = RequestMethod.POST)
+	public @ResponseBody void updateEncounteredStatus(@RequestParam(value = "caseId", required = true) Long caseId,
+			@RequestParam(value = "newStatus", required = true) String newStatus) {
+
+		if (caseId != null) {
+			EncounteredStatusEnum newEncounteredStatus = EncounteredStatusEnum.getEnum(newStatus);
+			caseDispositionService.updateEncounteredStatus(caseId, newEncounteredStatus);
+
+		}
 	}
 
 }
