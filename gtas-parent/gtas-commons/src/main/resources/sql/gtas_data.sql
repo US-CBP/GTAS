@@ -98,4 +98,3 @@ insert into rule_category(catId, category, description, priority) values(2, 'Ter
 insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
 insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
 insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
-

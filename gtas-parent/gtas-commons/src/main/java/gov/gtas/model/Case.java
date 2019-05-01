@@ -6,6 +6,9 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import gov.gtas.enumtype.EncounteredStatusEnum;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -101,16 +104,17 @@ public class Case extends BaseEntityAudit {
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "encountered_status", nullable=false)
-    private String encounteredStatus = "Not Encountered Yet";//The default value for encountered status
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
 
  
-	public String getEncounteredStatus() {
+	public EncounteredStatusEnum getEncounteredStatus() {
 		return encounteredStatus;
 	}
 
 
-	public void setEncounteredStatus(String encounteredStatus) {
+	public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
 		this.encounteredStatus = encounteredStatus;
 	}
 

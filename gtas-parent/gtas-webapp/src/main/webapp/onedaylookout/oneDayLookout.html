@@ -1,4 +1,4 @@
-s<!-- <div ng-include="'views/sidepanel.html'"></div> -->
+<!-- <div ng-include="'views/sidepanel.html'"></div> -->
 
 <div style="width: 100%;margin-top:10px" align="center">
   <md-button ng-click="getPreviousDayData()" ng-disabled="isBackButtonDisabled"
@@ -31,5 +31,5 @@ s<!-- <div ng-include="'views/sidepanel.html'"></div> -->
   
  <div id="oneDayLookoutGrid" ui-grid="oneDayLookoutGrid" ui-grid-pagination
      ui-grid-auto-resize ui-grid-move-columns ng-style="getTableHeight()"
-     class="upper-cnt grid">
+     class="upper-cnt grid" ui-grid-edit>
 </div>  

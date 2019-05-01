@@ -79,13 +79,14 @@
                {
             	   field: 'disposition',
             	   name: 'disposition',
+            	   enableCellEdit: false,
             	   displayName: 'Disposition', headerCellFilter: 'translate'
                },
                {
             	   field: 'encounteredStatus',
             	   name: 'encounteredStatus',
 				   displayName: 'Encountered',
-				   width: '25%',
+				   width: '20%',
 				   enableCellEdit: true,
 				   editableCellTemplate: 'ui-grid/dropdownEditor',
 				   enableCellEditOnFocus: true,
