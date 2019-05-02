@@ -464,7 +464,7 @@
              {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
              {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
               cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-             {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate'}
+             {name: 'nationality', displayName:'add.Country', headerCellFilter: 'translate'}
          ];
 
         $scope.queryPassengersOnSelectedFlight = function (row_entity) {

@@ -220,7 +220,7 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passengerToUpdate = this.findById(passenger.getId());
         if (passengerToUpdate != null) {
             passengerToUpdate.getPassengerDetails().setAge(passenger.getPassengerDetails().getAge());
-            passengerToUpdate.getPassengerDetails().setCitizenshipCountry(passenger.getPassengerDetails().getCitizenshipCountry());
+            passengerToUpdate.getPassengerDetails().setNationality(passenger.getPassengerDetails().getNationality());
             passengerToUpdate.getPassengerTripDetails().setDebarkation(passenger.getPassengerTripDetails().getDebarkation());
             passengerToUpdate.getPassengerTripDetails().setDebarkCountry(passenger.getPassengerTripDetails().getDebarkCountry());
             passengerToUpdate.getPassengerDetails().setDob(passenger.getPassengerDetails().getDob());
@@ -303,7 +303,7 @@ public class PassengerServiceImpl implements PassengerService {
             AuditActionTarget target = new AuditActionTarget(passenger);
             AuditActionData actionData = new AuditActionData();
 
-            actionData.addProperty("CitizenshipCountry", passenger.getPassengerDetails().getCitizenshipCountry());
+            actionData.addProperty("Nationality", passenger.getPassengerDetails().getNationality());
             actionData.addProperty("PassengerType", passenger.getPassengerDetails().getPassengerType());
             //
             String message = "Disposition Status Change run on " + passenger.getCreatedAt();

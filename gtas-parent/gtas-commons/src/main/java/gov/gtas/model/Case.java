@@ -45,8 +45,8 @@ public class Case extends BaseEntityAudit {
     @Column(name = "dob", nullable = true)
     private Date dob;
 
-    @Column(name = "citizenshipCountry", nullable = true)
-    private String citizenshipCountry;
+    @Column(name = "nationality", nullable = true)
+    private String nationality;
 
     @Column(name = "passengerType", nullable = true)
     private String paxType;
@@ -156,12 +156,12 @@ public class Case extends BaseEntityAudit {
         this.dob = dob;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public Long getFlightId() {

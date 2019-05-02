@@ -26,7 +26,7 @@ public class RuleTemplateConstants {
     	put("PASSENGERDETAILS.LASTNAME","lastName");
     	put("PASSENGERDETAILS.MIDDLENAME","middleName");
     	put("PASSENGERDETAILS.RESIDENCYCOUNTRY","residencyCountry");
-    	put("PASSENGERDETAILS.CITIZENSHIPCOUNTRY","citizenshipCountry");
+    	put("PASSENGERDETAILS.NATIONALITY","nationality");
     	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
     }});
 
@@ -38,7 +38,7 @@ public class RuleTemplateConstants {
         add("LASTNAME");
         add("MIDDLENAME");
         add("RESIDENCYCOUNTRY");
-        add("CITIZENSHIPCOUNTRY");
+        add("NATIONALITY");
         add("PASSENGERTYPE");
     }});
 

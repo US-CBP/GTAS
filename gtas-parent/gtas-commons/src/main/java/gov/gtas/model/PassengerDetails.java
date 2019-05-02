@@ -66,8 +66,8 @@ public class PassengerDetails extends BaseEntityAudit {
     @Column(name = "pd_gender", length = 2)
     private String gender;
 
-    @Column(name = "pd_citizenship_country")
-    private String citizenshipCountry;
+    @Column(name = "pd_nationality")
+    private String nationality;
 
     @Column(name = "pd_residency_country")
     private String residencyCountry;
@@ -158,12 +158,12 @@ public class PassengerDetails extends BaseEntityAudit {
         this.age = age;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public String getResidencyCountry() {

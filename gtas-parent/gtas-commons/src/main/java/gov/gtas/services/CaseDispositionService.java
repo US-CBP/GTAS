@@ -46,12 +46,12 @@ public interface CaseDispositionService {
 //
 //    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
 
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, 
+    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document, String hitDesc, 
                        List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
     public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
 
-    public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids, String username, MultipartFile fileToAttach);
+    public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document, String hitDesc, List<Long> hit_ids, String username, MultipartFile fileToAttach);
 
     public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
@@ -67,11 +67,11 @@ public interface CaseDispositionService {
 //
 //    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
+    public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document,
                                                    String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
                                                    Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
-    public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String citizenshipCountry, Date dob, String document,
+    public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document,
                                                  String hitDesc, Long hit_id, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
                                                  Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 

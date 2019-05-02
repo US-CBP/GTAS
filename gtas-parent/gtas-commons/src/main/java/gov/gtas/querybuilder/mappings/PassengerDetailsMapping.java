@@ -5,7 +5,7 @@ import gov.gtas.enumtype.TypeEnum;
 public enum PassengerDetailsMapping implements IEntityMapping {
 
     AGE("age","Age",TypeEnum.INTEGER.getType()),
-    CITIZENSHIP_COUNTRY("citizenshipCountry","Citizenship Country",TypeEnum.STRING.getType()),
+    NATIONALITY("nationality","Nationality",TypeEnum.STRING.getType()),
     DEBARKATION("debarkation","Debarkation",TypeEnum.STRING.getType()),
     DEBARKATION_COUNTRY("debarkCountry","Debarkation Country",TypeEnum.STRING.getType()),
     DOB("dob","DOB",TypeEnum.DATE.getType()),
