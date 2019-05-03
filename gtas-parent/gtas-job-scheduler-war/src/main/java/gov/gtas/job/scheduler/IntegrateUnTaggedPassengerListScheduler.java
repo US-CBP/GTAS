@@ -68,7 +68,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
                     if ((_tempPaxWithIdTag.getPassengerDetails().getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getFirstName()))
                             && (_tempPaxWithIdTag.getPassengerDetails().getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getLastName()))
                             && (_tempPaxWithIdTag.getPassengerDetails().getDob().equals(_tempPaxWithNoIdTag.getPassengerDetails().getDob()))
-//                            && (_tempPaxWithIdTag.getCitizenshipCountry().equalsIgnoreCase(_tempPaxWithNoIdTag.getCitizenshipCountry()))
+//                            && (_tempPaxWithIdTag.getNationality().equalsIgnoreCase(_tempPaxWithNoIdTag.getNationality()))
                             && (_tempPaxWithIdTag.getPassengerDetails().getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getGender()))
                             ) {
                         // match found
@@ -148,7 +148,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
 //     */
 //    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 //        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-//                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
+//                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getNationality().toUpperCase())));
 //    }
 
     /**

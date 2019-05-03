@@ -76,7 +76,7 @@ public class ApisDataGenerator {
                     new String[]{args[0]}, new String[]{args[1]}));
             passenger.getPassengerDetails().setFirstName(args[2]);
             passenger.getPassengerDetails().setLastName(args[3]);
-            passenger.getPassengerDetails().setCitizenshipCountry(args[4]);
+            passenger.getPassengerDetails().setNationality(args[4]);
             passenger.getPassengerTripDetails().setEmbarkation(args[5]);
             if(args.length > 7){
                 passenger.getSeatAssignments().add(createSeat(passenger, flight, args[7]));

@@ -14,7 +14,7 @@ SELECT c.*,
        
        p.`id` "passenger.paxid",
        pd.`pd_age` "passenger.age",
-       pd.`pd_citizenship_country` "passenger.citizenship_country",
+       pd.`pd_nationality` "passenger.nationality",
        td.`debark_country` "passenger.debark_country",
        td.`debarkation` "passenger.debarkation",
        debark_ar.longitude "passenger.debarkation.lon",

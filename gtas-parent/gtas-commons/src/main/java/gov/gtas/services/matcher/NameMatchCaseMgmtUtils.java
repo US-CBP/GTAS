@@ -67,7 +67,7 @@ public class NameMatchCaseMgmtUtils {
                            passenger.getId(),
                            _tempPax.getPassengerDetails().getFirstName()+" "+_tempPax.getPassengerDetails().getLastName(),
                            _tempPax.getPassengerDetails().getPassengerType(),
-                           _tempPax.getPassengerDetails().getCitizenshipCountry(),
+                           _tempPax.getPassengerDetails().getNationality(),
                            _tempPax.getPassengerDetails().getDob(),
                            document,
                            description,

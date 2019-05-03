@@ -127,7 +127,7 @@ public class PassengerDetailsController {
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
 		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
-		vo.setCitizenshipCountry(t.getPassengerDetails().getCitizenshipCountry());
+		vo.setNationality(t.getPassengerDetails().getNationality());
 		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
 		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
 		vo.setDob(t.getPassengerDetails().getDob());

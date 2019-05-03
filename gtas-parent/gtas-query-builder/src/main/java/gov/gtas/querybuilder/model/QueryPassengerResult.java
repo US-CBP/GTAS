@@ -12,7 +12,7 @@ public class QueryPassengerResult extends BaseQueryResult {
     private String passengerType;
     private String gender;
     private String dob;
-    private String citizenship;
+    private String nationality;
     private String documentNumber;
     private String documentType;
     private String documentIssuanceCountry;
@@ -60,12 +60,12 @@ public class QueryPassengerResult extends BaseQueryResult {
         this.dob = dob;
     }
     
-    public String getCitizenship() {
-        return citizenship;
+    public String getNationality() {
+        return nationality;
     }
     
-    public void setCitizenship(String citizenship) {
-        this.citizenship = citizenship;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
     
     public String getDocumentNumber() {
@@ -121,7 +121,7 @@ public class QueryPassengerResult extends BaseQueryResult {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result
-                + ((citizenship == null) ? 0 : citizenship.hashCode());
+                + ((nationality == null) ? 0 : nationality.hashCode());
         result = prime * result + ((dob == null) ? 0 : dob.hashCode());
         result = prime
                 * result
@@ -153,10 +153,10 @@ public class QueryPassengerResult extends BaseQueryResult {
         if (getClass() != obj.getClass())
             return false;
         QueryPassengerResult other = (QueryPassengerResult) obj;
-        if (citizenship == null) {
-            if (other.citizenship != null)
+        if (nationality == null) {
+            if (other.nationality != null)
                 return false;
-        } else if (!citizenship.equals(other.citizenship))
+        } else if (!nationality.equals(other.nationality))
             return false;
         if (dob == null) {
             if (other.dob != null)

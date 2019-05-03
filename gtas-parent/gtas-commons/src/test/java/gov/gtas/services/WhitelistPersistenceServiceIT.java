@@ -94,7 +94,7 @@ public class WhitelistPersistenceServiceIT {
 		wlv.setLastName("Palazio");
 		wlv.setDob(new Date());
 		wlv.setGender("M");
-		wlv.setCitizenshipCountry("USA");
+		wlv.setNationality("USA");
 		wlv.setDocumentNumber("111");
 		wlv.setDocumentType("P");
 		wlv.setExpirationDate(new Date());

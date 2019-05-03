@@ -200,7 +200,7 @@
                         }
                     }
                 },
-                "citizenshipCountry": {
+                "nationality": {
                     "type": "text",
                     "fields": {
                         "keyword": {

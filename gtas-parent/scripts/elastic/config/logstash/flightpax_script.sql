@@ -14,7 +14,7 @@ select * from (select
 	f.`direction` "flight.direction",
 		
 	p.`id` "p_id",
-	pd.`pd_citizenship_country` "p_citizenship_country", 
+	pd.`pd_nationality` "p_nationality", 
 	td.`debarkation` "p_debarkation", 
 	td.`embarkation` "p_embarkation", 
 	pd.`pd_gender` "p_gender", 

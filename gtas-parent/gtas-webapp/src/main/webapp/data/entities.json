@@ -673,8 +673,8 @@
         ]                   
       },
       {
-        "id": "Passenger.passengerDetails.citizenshipCountry",
-        "label": "Citizenship Country",
+        "id": "Passenger.passengerDetails.nationality",
+        "label": "Nationality",
         "type": "string",
         "operators": [
           "EQUAL",
