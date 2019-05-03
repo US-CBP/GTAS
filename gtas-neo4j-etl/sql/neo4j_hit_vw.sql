@@ -1,5 +1,6 @@
+
 CREATE VIEW neo4j_hit_vw AS
-SELECT 
+SELECT
 	hs.id as gtas_hit_summary_id,
 	hs.created_date as hit_summary_create_date,
 	hs.hit_type,
@@ -12,23 +13,30 @@ SELECT
 	hd.rule_id,
 	hd.created_date as hit_detail_create_date,
 	pit.idTag,
-	fl.id as flight_id,
-	fl.origin,
-	fl.destination,
-	fl.carrier,
-	fl.direction,
-	fl.origin_country,
-	fl.destination_country,
+	f.id as flight_id,
+	f.origin,
+	f.destination,
+	f.carrier,
+	f.direction,
+	f.origin_country,
+	f.destination_country,
 	mfd.eta_date,
-	fl.etd_date,
-	fl.flight_number,
-	fl.full_flight_number
+	f.etd_date,
+	f.flight_number,
+	f.full_flight_number
 
-
-FROM gtas.hits_summary hs
+FROM gtas.message msg
+INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
+INNER JOIN gtas.pnr pnr ON msg.id = pnr.id
+INNER JOIN gtas.pnr_flight pfl ON pnr.id = pfl.pnr_id
+INNER JOIN gtas.pnr_passenger ppr ON pnr.id = ppr.pnr_id
+INNER JOIN gtas.passenger p ON ppr.passenger_id = p.id
+INNER JOIN gtas.passenger_id_tag pit ON pit.pax_id = p.id
+INNER JOIN gtas.flight f ON pfl.flight_id = f.id
+INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id
+INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
-INNER JOIN gtas.passenger_id_tag pit ON pit.pax_id = hs.passenger_id 
-INNER JOIN gtas.flight fl ON hs.flight_id = fl.id
-INNER JOIN gtas.mutable_flight_details mfd ON fl.id = mfd.flight_id
-WHERE hs.created_date > (SELECT last_hit_summary_crt_dtm from gtas.neo4j_parameters  WHERE id=1) 
-ORDER BY pit.idTag,hd.id,fl.id 
+WHERE mst.ms_status = 'ANALYZED'
+AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
+AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
+ORDER BY msg.id,f.id,p.id, hd.id

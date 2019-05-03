@@ -101,11 +101,20 @@ public class Case extends BaseEntityAudit {
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
 
+    @Transient
+    private Boolean saveCase = false;
+
+    public Boolean getSaveCase() {
+        return saveCase;
+    }
+
+    public void setSaveCase(Boolean saveCase) {
+        this.saveCase = saveCase;
+    }
+
     public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
-
-
 
     public String getCaseOfficerStatus() {
         return caseOfficerStatus;

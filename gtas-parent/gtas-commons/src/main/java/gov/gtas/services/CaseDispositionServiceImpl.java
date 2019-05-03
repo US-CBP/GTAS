@@ -233,6 +233,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		for (HitsDisposition _tempHit : hitsDispSet) {
 			if (!aCase.getHitsDispositions().contains(_tempHit)) {
 				aCase.addHitsDisposition(_tempHit);
+				aCase.setSaveCase(true);
 			}
 		}
 

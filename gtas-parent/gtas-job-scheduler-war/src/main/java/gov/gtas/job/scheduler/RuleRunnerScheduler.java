@@ -5,29 +5,22 @@
  */
 package gov.gtas.job.scheduler;
 
-import gov.gtas.model.Case;
-import gov.gtas.model.HitsSummary;
+import gov.gtas.model.Message;
+import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.MessageStatusRepository;
 import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.matcher.MatchingService;
-import gov.gtas.svc.TargetingServiceResults;
-import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import gov.gtas.constant.RuleServiceConstants;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.svc.TargetingService;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Rule Runner Scheduler class. Using Spring's Scheduled annotation for
@@ -39,32 +32,33 @@ public class RuleRunnerScheduler {
 
 	/** The Constant logger. */
 	private static final Logger logger = LoggerFactory.getLogger(RuleRunnerScheduler.class);
-
-	/** The targeting service. */
-	private TargetingService targetingService;
-
-	/** The error persistence service. */
-	private ErrorPersistenceService errorPersistenceService;
-
-	@Autowired
-	private AppConfigurationService appConfigurationService;
+    private final ApplicationContext ctx;
+    private ExecutorService exec;
+    private static final int DEFAULT_THREADS_ON_RULES = 5;
+    private MessageStatusRepository messageStatusRepository;
+    private final AppConfigurationService appConfigurationService;
 
 
-	@Autowired
-	private MatchingService matchingService;
-
+    /* The targeting service. */
 	/**
 	 * Instantiates a new rule runner scheduler.
-	 *
-	 * @param targetingService
 	 *            the targeting service
-	 * @param errorPersistenceService
-	 *            the error persistence service
 	 */
 	@Autowired
-	public RuleRunnerScheduler(TargetingService targetingService, ErrorPersistenceService errorPersistenceService) {
-		this.targetingService = targetingService;
-		this.errorPersistenceService = errorPersistenceService;
+    public RuleRunnerScheduler(ApplicationContext ctx, MessageStatusRepository messageStatusRepository, AppConfigurationService appConfigurationService) {
+        this.messageStatusRepository = messageStatusRepository;
+        this.appConfigurationService = appConfigurationService;
+        int maxNumOfThreads = DEFAULT_THREADS_ON_RULES;
+        try {
+            maxNumOfThreads = Integer.parseInt(
+                    appConfigurationService.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+        } catch (Exception e) {
+            logger.error(String.format(
+                    "Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",
+                    AppConfigurationRepository.THREADS_ON_RULES, DEFAULT_THREADS_ON_RULES));
+        }
+        this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
+        this.ctx = ctx;
 	}
 
 	/**
@@ -73,81 +67,57 @@ public class RuleRunnerScheduler {
 	//This is commented out as a scheduled task in order to remove concurrency issues in the DB involving loader and rule runner. This may not be the final solution to the problem
 	//but it suffices for now. The rule running portion of the scheduler is now tacked into the loader portion at the bottom to insure sequential operation.
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
-	public void jobScheduling() {
-		logger.debug("Starting rule running scheduled task");
-		long start = System.nanoTime();
-		try {
-			RuleResultsWithMessageStatus ruleResults = targetingService.runningRuleEngine();
-			List<TargetingServiceResults> targetingServiceResultsList = targetingService.createHitsAndCases(ruleResults.getRuleResults());
-			logger.debug("About to batch");
-			List<TargetingServiceResults> batchedTargetingServiceResults = batchResults(targetingServiceResultsList);
-			logger.debug("done batching");
-			int count = 1;
-			if (ruleResults.getMessageStatusList() != null) {
-				ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.ANALYZED));
-				for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
-					try {
-						logger.info("Saving rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + "...");
-						targetingService.saveEverything(targetingServiceResults);
-					} catch (Exception ignored) {
-						ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
-						logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
-					}
-					count++;
-				}
-				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
-				logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
-			}
-			logger.debug("entering matching service portion of jobScheduling");
-			long fuzzyStart = System.nanoTime();
-			int passengersProcessed = matchingService.findMatchesBasedOnTimeThreshold();
-			logger.debug("exiting matching service portion of jobScheduling");
-			if (passengersProcessed > 0) {
-				logger.info("Fuzzy Matching Run in  " + (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
-			}
-			logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
-		} catch (Exception exception) {
-			String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage(): "Error in rule runner";
-			logger.error(errorMessage);
-			ErrorDetailInfo errInfo = ErrorHandlerFactory
-					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
-			errorPersistenceService.create(errInfo);
-		}
-		logger.debug("exiting jobScheduling()");
-	}
+    public void jobScheduling() throws InterruptedException {
 
-    private List<TargetingServiceResults> batchResults(List<TargetingServiceResults> targetingServiceResultsList) {
-
-	    int BATCH_SIZE = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
-        List<TargetingServiceResults> batchedResults = new ArrayList<>();
-        TargetingServiceResults conglomerateResults = new TargetingServiceResults();
-        int counter = 0;
-        while(!targetingServiceResultsList.isEmpty()) {
-            TargetingServiceResults targetingServiceResults = targetingServiceResultsList.get(0);
-            Set<Case> casesSet = conglomerateResults.getCaseSet();
-            List<HitsSummary> hitsSummaries = conglomerateResults.getHitsSummaryList();
-            if (casesSet == null) {
-                conglomerateResults.setCaseSet(targetingServiceResults.getCaseSet());
+        int messageLimit = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
+        List<MessageStatus> source =
+                messageStatusRepository
+                        .getMessagesFromStatus(
+                                MessageStatusEnum.LOADED.getName(), messageLimit);
+        if (source.isEmpty()) {
+            return;
+        }
+        Map<Long, List<MessageStatus>> messageFlightMap = new HashMap<>();
+        for (MessageStatus messageStatus : source) {
+            Long flightId = messageStatus.getFlightId();
+            if (messageFlightMap.containsKey(flightId)) {
+                messageFlightMap.get(flightId).add(messageStatus);
             } else {
-                conglomerateResults.getCaseSet().addAll(targetingServiceResults.getCaseSet());
+                List<MessageStatus> messageStatuses = new ArrayList<>();
+                messageStatuses.add(messageStatus);
+                messageFlightMap.put(flightId, messageStatuses);
             }
-            if (hitsSummaries == null) {
-                conglomerateResults.setHitsSummaryList(targetingServiceResults.getHitsSummaryList());
-            } else {
-                conglomerateResults.getHitsSummaryList().addAll(targetingServiceResults.getHitsSummaryList());
-            }
-            counter ++;
-            if (targetingServiceResultsList.size() == 1) {
-                batchedResults.add(conglomerateResults);
-            } else {
-                if (counter >= BATCH_SIZE) {
-                    batchedResults.add(conglomerateResults);
-                    conglomerateResults = new TargetingServiceResults();
-                    counter = 1;
+        }
+        int maxPassengers = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_PASSENGERS_PER_RULE_RUN).getValue());
+        int runningTotal = 0;
+        List<MessageStatus> ruleThread = new ArrayList<>();
+        List<RuleRunnerThread> list = new ArrayList<>();
+        for (List<MessageStatus> messageStatuses : messageFlightMap.values()) {
+            for (MessageStatus ms : messageStatuses) {
+                ruleThread.add(ms);
+                Message message = ms.getMessage();
+                if (message.getPassengerCount() != null) {
+                    runningTotal += message.getPassengerCount();
                 }
             }
-            targetingServiceResultsList.remove(0);
+            if (runningTotal >= maxPassengers) {
+                RuleRunnerThread worker = ctx.getBean(RuleRunnerThread.class);
+                worker.setMessageStatuses(ruleThread);
+                list.add(worker);
+                ruleThread = new ArrayList<>();
+                runningTotal = 0;
+
+            }
+            if (list.size() >= 9) {
+                break;
+            }
         }
-        return batchedResults;
+        if (runningTotal != 0) {
+            RuleRunnerThread worker = ctx.getBean(RuleRunnerThread.class);
+            worker.setMessageStatuses(ruleThread);
+            list.add(worker);
+        }
+        exec.invokeAll(list);
     }
+
 }

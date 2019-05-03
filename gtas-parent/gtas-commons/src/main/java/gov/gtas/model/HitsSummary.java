@@ -50,6 +50,17 @@ public class HitsSummary extends BaseEntity {
     @Column(name = "wl_hit_count")
     private Integer watchListHitCount;
 
+    @Transient
+    private Boolean saveHits = false;
+
+    public Boolean getSaveHits() {
+        return saveHits;
+    }
+
+    public void setSaveHits(Boolean saveHits) {
+        this.saveHits = saveHits;
+    }
+
     public Date getCreatedDate() {
         return createdDate;
     }

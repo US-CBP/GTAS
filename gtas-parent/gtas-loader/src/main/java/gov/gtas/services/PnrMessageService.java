@@ -157,6 +157,8 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.createFormPfPayments(vo, pnr);
             setCodeShareFlights(pnr);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+            msgDto.getMessageStatus().setFlightId(primeFlight.getId());
+            msgDto.getMessageStatus().setFlight(primeFlight);
             pnr.setPassengerCount(pnr.getPassengers().size());
 
             TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());

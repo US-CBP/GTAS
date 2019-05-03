@@ -550,17 +550,22 @@
     </hop>
     <hop>
       <from>Get Variables-before update</from>
-      <to>Filter rows</to>
+      <to>Filter rows - check for view control parameters</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows</from>
-      <to>Write to log 2</to>
+      <from>Filter rows - check for view control parameters</from>
+      <to>Select values - cast control parameters</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows</from>
+      <from>Filter rows - check for view control parameters</from>
       <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values - cast control parameters</from>
+      <to>Write to log 2</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -584,83 +589,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
-      <yloc>368</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Filter rows</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <send_true_to>Write to log 2</send_true_to>
-    <send_false_to>Dummy (do nothing)</send_false_to>
-    <compare>
-      <condition>
-        <negated>N</negated>
-        <conditions>
-          <condition>
-            <negated>N</negated>
-            <leftvalue>LAST_REC_CRT_DTM</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>LAST_PSNGR_UPDATE_DATE</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>LAST_ADDR_UPDATE_DATE</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>LAST_EMAIL_UPDATE_DATE</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>LAST_HIT_SUMMARY_CREATE_DATE</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>NEO4J_PARAMETER_ID</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-        </conditions>
-      </condition>
-    </compare>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>352</xloc>
-      <yloc>240</yloc>
+      <xloc>384</xloc>
+      <yloc>400</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -677,76 +607,40 @@
     </partitioning>
     <fields>
       <field>
-        <name>LAST_REC_CRT_DTM</name>
-        <variable>${VAR_LAST_REC_CRT_DTM_OUT}</variable>
-        <type>Date</type>
-        <format>yyyy-MM-dd HH:mm:ss</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>LAST_PSNGR_UPDATE_DATE</name>
-        <variable>${VAR_LAST_PSNGR_UPDATE_DTM_OUT}</variable>
-        <type>Date</type>
-        <format>yyyy-MM-dd HH:mm:ss</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>LAST_ADDR_UPDATE_DATE</name>
-        <variable>${VAR_LAST_ADDR_UPDATE_DTM_OUT}</variable>
-        <type>Date</type>
-        <format>yyyy-MM-dd HH:mm:ss</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>LAST_EMAIL_UPDATE_DATE</name>
-        <variable>${VAR_EMAIL_UPDATE_DTM_OUT}</variable>
-        <type>Date</type>
-        <format>yyyy-MM-dd HH:mm:ss</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>LAST_HIT_SUMMARY_CREATE_DATE</name>
-        <variable>${LAST_HIT_SUMMARY_CREATE_DATE}</variable>
-        <type>Date</type>
-        <format>yyyy-MM-dd HH:mm:ss</format>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-      </field>
-      <field>
-        <name>NEO4J_PARAMETER_ID</name>
-        <variable>${VAR_NEO4J_PARAMETER_ID_OUT}</variable>
-        <type>Integer</type>
+        <name>LAST__MSG_CREATE_DTM</name>
+        <variable>${VAR_LAST_MSG_CREATE_DATE_OUT}</variable>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>LAST_MSG_ID</name>
+        <variable>${VAR_LAST_MSG_ID_OUT}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>NEO4J_PARAMETER_ID</name>
+        <variable>${VAR_NEO4J_PARAMETER_ID_OUT}</variable>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
       </field>
     </fields>
     <attributes/>
@@ -790,24 +684,12 @@
         <name2/>
       </key>
       <value>
-        <name>last_proc_pid_tag_dtm</name>
-        <rename>LAST_REC_CRT_DTM</rename>
+        <name>last_proc_msg_crt_dtm</name>
+        <rename>LAST__MSG_CREATE_DTM</rename>
       </value>
       <value>
-        <name>last_passenger_upd_dtm</name>
-        <rename>LAST_PSNGR_UPDATE_DATE</rename>
-      </value>
-      <value>
-        <name>last_address_upd_dtm</name>
-        <rename>LAST_ADDR_UPDATE_DATE</rename>
-      </value>
-      <value>
-        <name>last_email_upd_dtm</name>
-        <rename>LAST_EMAIL_UPDATE_DATE</rename>
-      </value>
-      <value>
-        <name>last_hit_summary_crt_dtm</name>
-        <rename>LAST_HIT_SUMMARY_CREATE_DATE</rename>
+        <name>last_proc_msg_id</name>
+        <rename>LAST_MSG_ID</rename>
       </value>
     </lookup>
     <attributes/>
@@ -819,8 +701,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>784</xloc>
-      <yloc>240</yloc>
+      <xloc>1088</xloc>
+      <yloc>400</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -851,8 +733,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1040</xloc>
-      <yloc>240</yloc>
+      <xloc>1088</xloc>
+      <yloc>560</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -874,16 +756,10 @@
     <logmessage>AN ERROR HAS OCCURRED WHEN UPDATING THE neo4j_parameters TABLE.</logmessage>
     <fields>
       <field>
-        <name>LAST_ADDR_UPDATE_DATE</name>
+        <name>LAST__MSG_CREATE_DTM</name>
       </field>
       <field>
-        <name>LAST_EMAIL_UPDATE_DATE</name>
-      </field>
-      <field>
-        <name>LAST_PSNGR_UPDATE_DATE</name>
-      </field>
-      <field>
-        <name>NEO4J_PARAMETER_ID</name>
+        <name>LAST_MSG_ID</name>
       </field>
       <field>
         <name>NEO4J_PARAMETER_ID</name>
@@ -898,8 +774,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>784</xloc>
-      <yloc>368</yloc>
+      <xloc>832</xloc>
+      <yloc>400</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -921,22 +797,13 @@
     <logmessage>### PARAMETERS TO BE USED IN THE UPDATE OPERATION:</logmessage>
     <fields>
       <field>
-        <name>LAST_ADDR_UPDATE_DATE</name>
+        <name>LAST__MSG_CREATE_DTM</name>
       </field>
       <field>
-        <name>LAST_EMAIL_UPDATE_DATE</name>
-      </field>
-      <field>
-        <name>LAST_PSNGR_UPDATE_DATE</name>
-      </field>
-      <field>
-        <name>LAST_REC_CRT_DTM</name>
+        <name>LAST_MSG_ID</name>
       </field>
       <field>
         <name>NEO4J_PARAMETER_ID</name>
-      </field>
-      <field>
-        <name>LAST_HIT_SUMMARY_CREATE_DATE</name>
       </field>
     </fields>
     <attributes/>
@@ -948,7 +815,140 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>592</xloc>
+      <xloc>1088</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values - cast control parameters</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>LAST_MSG_ID</name>
+        <rename>LAST_MSG_ID</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>LAST__MSG_CREATE_DTM</name>
+        <rename>LAST__MSG_CREATE_DTM</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>NEO4J_PARAMETER_ID</name>
+        <rename>NEO4J_PARAMETER_ID</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows - check for view control parameters</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Select values - cast control parameters</send_true_to>
+    <send_false_to>Dummy (do nothing)</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>LAST__MSG_CREATE_DTM</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>LAST_MSG_ID</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>NEO4J_PARAMETER_ID</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+        </conditions>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>

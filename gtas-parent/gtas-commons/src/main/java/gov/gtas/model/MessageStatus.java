@@ -6,6 +6,7 @@
 package gov.gtas.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "message_status")
@@ -24,6 +25,15 @@ public class MessageStatus {
     @Column(name="ms_status")
     private MessageStatusEnum messageStatusEnum;
 
+    @Column(name = "ms_analyzed_timestamp")
+    private Date analyzedTimestamp;
+
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne()
+    @JoinColumn(name = "flight_id", insertable = false, updatable = false)
+    private Flight flight;
 
     public boolean isSuccess() {
         return success;
@@ -43,6 +53,22 @@ public class MessageStatus {
         this.messageStatusEnum = status;
     }
 
+    public Date getAnalyzedTimestamp() {
+        return analyzedTimestamp;
+    }
+
+    public void setAnalyzedTimestamp(Date analyzedTimestamp) {
+        this.analyzedTimestamp = analyzedTimestamp;
+    }
+
+
+    public Long getFlightId() {
+        return flightId;
+    }
+
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
     public Message getMessage() {
         return message;
     }
@@ -68,4 +94,11 @@ public class MessageStatus {
     }
 
 
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
 }
