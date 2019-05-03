@@ -18,6 +18,10 @@ import gov.gtas.model.Passenger;
 @Scope("prototype")
 public class QuickMatcherImpl implements QuickMatcher {
 
+
+	/*
+	 *  Do not make this a bean without taking multithreading into account.
+	 * */
 	private final MatchingContext cxt;
 
 	public QuickMatcherImpl() {
