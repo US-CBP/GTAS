@@ -15,7 +15,6 @@ import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.util.Bench;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TargetingResultCaseMgmtUtils {
 
@@ -94,9 +94,10 @@ public class TargetingResultCaseMgmtUtils {
             }
             rhd.setPassenger(null);
         }
-
+        Set<Case> filteredCasesSet = casesSet.stream().filter(Case::getSaveCase).collect(Collectors.toSet());
+        logger.debug("total cases created : " + casesSet.size() + " filtered old ");
         logger.debug("Exiting ruleResultPostProcesssing().");
-        return casesSet;
+        return filteredCasesSet;
     }
 
     /**

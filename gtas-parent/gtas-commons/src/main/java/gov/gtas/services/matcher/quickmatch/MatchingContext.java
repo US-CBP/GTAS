@@ -18,15 +18,12 @@ import org.apache.commons.codec.language.DoubleMetaphone;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import gov.gtas.services.matcher.quickmatch.QuickMatcherConfig.AccuracyMode;
 
-@Component
 public class MatchingContext {
 
 	private final Logger logger = LoggerFactory.getLogger(MatchingContext.class);
@@ -36,7 +33,6 @@ public class MatchingContext {
 	private final String[] stringAttributes = { "first_name", "middle_name", "last_name", "GNDR_CD", "CTZNSHP_CTRY_CD",
 			"DOC_CTRY_CD", "DOC_TYP_NM", "DOC_ID" };
 
-	@Autowired
 	private QuickMatcherConfig config;
 
 	public QuickMatcherConfig getConfig() {
@@ -82,6 +78,7 @@ public class MatchingContext {
 	private Map<String, Map<String, Set<String>>> clauseValuesToDerogIds;
 
 	public MatchingContext() {
+		this.config = new QuickMatcherConfig();
 		// this(AccuracyMode.GTAS_DEFAULT.toString(), watchListItems);
 	}
 

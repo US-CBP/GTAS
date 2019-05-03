@@ -6,6 +6,7 @@
 package gov.gtas.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -83,6 +84,17 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     {
         return findById(passengerId).orElse(null);
     }
+
+
+    @Query("SELECT p FROM Passenger p " +
+            " LEFT JOIN FETCH p.paxWatchlistLinks " +
+            " LEFT JOIN FETCH p.passengerWLTimestamp " +
+            " LEFT JOIN FETCH p.documents " +
+            " LEFT JOIN FETCH p.flight " +
+            " LEFT JOIN p.apisMessage am " +
+            " LEFT JOIN p.pnrs pnr " +
+            " WHERE am.id IN :messageIds OR pnr.id IN :messageIds")
+    Set<Passenger> getPassengersByMessageId(@Param("messageIds") Set<Long> messageIds);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

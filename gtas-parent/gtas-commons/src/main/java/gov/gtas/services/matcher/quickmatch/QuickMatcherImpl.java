@@ -6,25 +6,24 @@
 package gov.gtas.services.matcher.quickmatch;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import gov.gtas.model.Passenger;
 
 @Component
+@Scope("prototype")
 public class QuickMatcherImpl implements QuickMatcher {
 
-	@Autowired
-	private MatchingContext cxt;
+	private final MatchingContext cxt;
 
 	public QuickMatcherImpl() {
-
+		this.cxt = new MatchingContext();
 	}
-	
+
 	public MatchingContext getCxt() {
 		return cxt;
 	}
@@ -36,11 +35,8 @@ public class QuickMatcherImpl implements QuickMatcher {
 
 	@Override
 	public MatchingResult match(Passenger passenger, List<HashMap<String, String>> watchListItems, float threshold) {
-		//
-		if (this.cxt == null)
-			return new MatchingResult(0, Collections.emptyMap());
 
-		List<HashMap<String, String>> passengers = new ArrayList<HashMap<String, String>>();
+		List<HashMap<String, String>> passengers = new ArrayList<>();
 		HashMap<String, String> p = new HashMap<>();
 		p.put("firstName", passenger.getPassengerDetails().getFirstName());
 		p.put("lastName", passenger.getPassengerDetails().getLastName());
@@ -51,10 +47,11 @@ public class QuickMatcherImpl implements QuickMatcher {
 		//
 
 		this.cxt.initialize(watchListItems);
-		
+
 		this.cxt.setJARO_WINKLER_THRESHOLD(threshold);
 
 		return this.cxt.match(passengers);
 	}
 
 }
+

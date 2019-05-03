@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class QuickMatcherConfig {
 
 	enum AccuracyMode {
