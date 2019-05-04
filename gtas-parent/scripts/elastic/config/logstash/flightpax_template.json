@@ -21,6 +21,76 @@
                       }
                     }
                   },
+                  "flight_legs" : {
+                    "properties" : {
+                      "destination" : {
+                        "type" : "text",
+                        "fields" : {
+                          "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                          }
+                        }
+                      },
+                      "destination_coordination" : {
+                        "type" : "geo_point"
+                      },
+                      "destination_country" : {
+                        "type" : "text",
+                        "fields" : {
+                          "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                          }
+                        }
+                      },
+                      "eta" : {
+                        "type" : "date"
+                      },
+                      "etd" : {
+                        "type" : "date"
+                      },
+                      "flight_number" : {
+                        "type" : "text",
+                        "fields" : {
+                          "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                          }
+                        }
+                      },
+                      "id" : {
+                        "type" : "long"
+                      },
+                      "leg_number" : {
+                        "type" : "long"
+                      },
+                      "message_id" : {
+                        "type" : "long"
+                      },
+                      "origin" : {
+                        "type" : "text",
+                        "fields" : {
+                          "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                          }
+                        }
+                      },
+                      "origin_coordination" : {
+                        "type" : "geo_point"
+                      },
+                      "origin_country" : {
+                        "type" : "text",
+                        "fields" : {
+                          "keyword" : {
+                            "type" : "keyword",
+                            "ignore_above" : 256
+                          }
+                        }
+                      }
+                    }
+                  },
                 "addresses": {
                     "properties": {
                         "city": {
@@ -254,6 +324,50 @@
                         "keyword": {
                             "type": "keyword",
                             "ignore_above": 256
+                        }
+                    }
+                },
+                "flight_edges": {
+                    "properties": {
+                        "from": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "to": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "leg_number": {
+                            "type": "long"
+                        }
+                    }
+                },
+                "flight_nodes": {
+                    "properties": {
+                        "id": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "lon": {
+                            "type": "float"
+                        },
+                        "lat": {
+                            "type": "float"
                         }
                     }
                 },

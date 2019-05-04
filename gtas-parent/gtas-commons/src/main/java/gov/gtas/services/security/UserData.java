@@ -14,8 +14,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import gov.gtas.services.Filter.FilterData;
-
 public class UserData implements Serializable {
 
     /**
@@ -28,19 +26,16 @@ public class UserData implements Serializable {
     private final String lastName;
     private final int active;
     private Set<RoleData> roles = new HashSet<RoleData>();
-    private FilterData filter;
     
     public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
             @JsonProperty("firstName") String firstName, @JsonProperty("lasatName") String lastName,
-            @JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles,
-            @JsonProperty("filter") FilterData filterData) {
+            @JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.active = active;
         this.password = password;
         this.roles = roles;
-        this.filter=filterData;
     }
 
     @JsonProperty("userId")
@@ -71,10 +66,6 @@ public class UserData implements Serializable {
     public final Set<RoleData> getRoles() {
         return roles;
     }
-    
-    public final FilterData getFilter() {
-        return this.filter;
-    }
 
     @Override
     public int hashCode() {
@@ -97,14 +88,13 @@ public class UserData implements Serializable {
         return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
                 .append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
                 .append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
-                .append(this.roles, dataTarget.getRoles())
-                .append(this.filter, dataTarget.getFilter()).isEquals();
+                .append(this.roles, dataTarget.getRoles()).isEquals();
     }
 
     @Override
     public String toString() {
         return "UserData [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
-                + lastName + ", active=" + active + ", roles=" + roles +", Filter=" + filter +"]";
+                + lastName + ", active=" + active + ", roles=" + roles +"]";
     }
 
 }

@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import gov.gtas.constant.OneDayLookoutContants;
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
+import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.DispositionStatusCode;
@@ -1146,6 +1147,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			oneDayLookoutVo.setLastName(oneDayLookoutCase.getLastName());
 			oneDayLookoutVo.setDisposition(oneDayLookoutCase.getDisposition());
 			oneDayLookoutVo.setName(oneDayLookoutCase.getLastName() + ", " + oneDayLookoutCase.getFirstName());
+			oneDayLookoutVo.setEncounteredStatus(oneDayLookoutCase.getEncounteredStatus().getType());
 
 			// set flight information
 			if (oneDayLookoutCase.getFlight() != null) {
@@ -1245,6 +1247,12 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			return IteratorUtils.toList(i.iterator());
 		}
 		return new ArrayList<>();
+	}
+	
+	public void updateEncounteredStatus(Long caseId, EncounteredStatusEnum encStatus) {
+
+	  caseDispositionRepository.updateEncounteredStatus(caseId, encStatus);
+
 	}
 
 }

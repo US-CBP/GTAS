@@ -6,6 +6,9 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import gov.gtas.enumtype.EncounteredStatusEnum;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -101,8 +104,28 @@ public class Case extends BaseEntityAudit {
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
 
+	public Set<HitsDisposition> getHitsDispositions() {
+        return hitsDispositions;
+    }
+
     @Transient
     private Boolean saveCase = false;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "encountered_status", nullable=false)
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
+
+
+    public EncounteredStatusEnum getEncounteredStatus() {
+        return encounteredStatus;
+    }
+
+
+    public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+        this.encounteredStatus = encounteredStatus;
+    }
+
 
     public Boolean getSaveCase() {
         return saveCase;
@@ -110,10 +133,6 @@ public class Case extends BaseEntityAudit {
 
     public void setSaveCase(Boolean saveCase) {
         this.saveCase = saveCase;
-    }
-
-    public Set<HitsDisposition> getHitsDispositions() {
-        return hitsDispositions;
     }
 
     public String getCaseOfficerStatus() {

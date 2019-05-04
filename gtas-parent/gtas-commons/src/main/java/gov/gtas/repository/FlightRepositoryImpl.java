@@ -190,8 +190,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
 		}
-		countQuery.select(cb.count(countQuery.from(Flight.class))).where(
-				countPredicates.toArray(new Predicate[] {})).groupBy(countRoot);
+		countQuery.select(cb.count(countRoot)).where(
+				countPredicates.toArray(new Predicate[]{}));
 		TypedQuery countQuert = em.createQuery(countQuery);
 		Optional countResult = countQuert.getResultList().stream().findFirst();
 		return countResult.isPresent() ? (Long)countResult.get() : 0L;

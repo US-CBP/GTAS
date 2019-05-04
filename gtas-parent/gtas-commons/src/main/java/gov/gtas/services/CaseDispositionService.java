@@ -5,6 +5,7 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
@@ -89,5 +90,7 @@ public interface CaseDispositionService {
     public Date getCurrentServerTime();
     
     public Iterable<RuleCat> findAllRuleCat();
+
+	public void updateEncounteredStatus(Long caseIdAsLong, EncounteredStatusEnum newEncounteredStatus);
 
 }
