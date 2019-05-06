@@ -18,7 +18,7 @@
         <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
         <elasticsearch.version>6.5.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
-        <jackson.version>2.9.7</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
         <hibernate.version>5.3.7.Final</hibernate.version>
     </properties>
     
@@ -191,7 +191,7 @@
 					</executions>
 					<configuration>
 						<executable>bash</executable>	
-						<workingDirectory>${project.basedir}/scripts/elastic/config/</workingDirectory>			
+						<workingDirectory>${project.basedir}/scripts/elastic/config/kibana/</workingDirectory>			
 					</configuration>
 				</plugin>
 			</plugins>

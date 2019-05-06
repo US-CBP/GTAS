@@ -36,6 +36,15 @@
         	});
         };
         
+        //Service call for tooltip data
+          $scope.getCodeTooltipData = function(field, type){
+          	return codeTooltipService.getCodeTooltipData(field,type);
+          }
+          
+          $scope.resetTooltip = function(){
+          	$('md-tooltip').remove();
+          };
+        
         $scope.watchlistCategoryId;
         
         watchListService.getWatchlistCategories().then(function(res){
@@ -91,18 +100,89 @@
 
         	return orderedTvlData
         };
+        
+        function setId (coll) {
+            var result = [];
+            for(var rec of coll) {
+            var res = rec;
+              var id = (res.bookingDetailId == null) ? "P" + res.flightId : "D" + res.bookingDetailId;
+            res.id = id;
+              result.push(res);
+            }
+          return result;
+        }
+        
+        var getPassengerBags = function(legs) {
+            var passengers = $scope.passenger.pnrVo.passengers;
+            var bags = $scope.passenger.pnrVo.bagSummaryVo.bagsByFlightLeg;
+            var newbags = setId(bags);
+            
+            newbags.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+            newbags.sort((a,b) => (a.passengerId > b.passengerId) ? 1 : ((b.passengerId > a.passengerId) ? -1 : 0));
+
+            // merge bag records by pax/flight
+            var prevId;
+            var prevPax;
+            var prevBag;
+            var acc = undefined;
+            var result = [];
+            for(var bag of newbags) {
+                if(bag.id != prevId || bag.passengerId != prevPax){
+                    if (acc!= undefined) {
+                        result.push(acc);
+                    }
+                    acc = bag;
+                    acc.bagList = bag.bagId;
+                    var pax = passengers.find((p) => {
+                        return p.paxId == bag.passengerId;
+                    });
+
+                    if (pax) {
+                        acc.passLastName = pax.lastName;
+                        acc.passFirstName = pax.firstName;
+                    }
+                }
+                else {
+                    if (bag.bagId != prevBag)
+                        acc.bagList = acc.bagList + ", " + bag.bagId;
+                }
+                prevId = bag.id;
+                prevPax = bag.passengerId;
+                prevBag = bag.bagId
+            }
+            
+            result.push(acc);
+            return result;
+        };
 
         if(angular.isDefined($scope.passenger.pnrVo) && $scope.passenger.pnrVo != null){
-        	$scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
+            $scope.passenger.pnrVo.seatAssignments = parseOutExtraSeats($scope.passenger.pnrVo.seatAssignments, $scope.passenger.pnrVo.flightLegs);
         	$scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
-    	}
+            $scope.orderedFlightLegs = setId($scope.passenger.pnrVo.flightLegs);
+            $scope.orderedBags = getPassengerBags($scope.orderedFlightLegs);
+        }
 
         //Removes extraneous characters from rule hit descriptions
         if($scope.ruleHits != typeof 'undefined' && $scope.ruleHits != null && $scope.ruleHits.length > 0){
         	$.each($scope.ruleHits, function(index,value){
         		value.ruleConditions = value.ruleConditions.replace(/[.*+?^${}()|[\]\\]/g, '');
         	});
-    	}
+        }
+
+        $scope.getTotalOf = function(coll, id, fieldToTotal) {
+            var filtered = coll.filter(item => (item || {}).id == id);
+
+            var total = filtered.reduce(function(accum, current){
+                return current[fieldToTotal] + accum;
+            }, 0);
+
+            //refac - set the bag count header to the greatest bag count per leg.
+            if ( fieldToTotal === "bag_count" && ($scope.passenger.pnrVo.totalbagCount || 0) < total) {
+                $scope.passenger.pnrVo.totalbagCount = total;
+            }
+
+            return total;
+        }
 
         $scope.getCodeTooltipData = function(field,type){
         	return codeTooltipService.getCodeTooltipData(field,type);
@@ -175,8 +255,6 @@
         		}
         	});
         }
-
-
 
      var getMostRecentCase = function(dispHistory){
     	var mostRecentCase = null;
@@ -268,73 +346,45 @@
         };
 
         //Adds user from pax detail page to watchlist.
-        $scope.addEntityToWatchlist = function () {
+        $scope.addEntityToWatchlist = function(){
             spinnerService.show('html5spinner');
-            let passengerInformation = [];
+            var terms = [];
             //Add passenger firstName, lastName, dob to wlservice call
-            passengerInformation.push({
-                entity: "PASSENGER",
-                field: "firstName",
-                type: "string",
-                value: $scope.passenger.firstName
-            });
-            passengerInformation.push({
-                entity: "PASSENGER",
-                field: "lastName",
-                type: "string",
-                value: $scope.passenger.lastName
-            });
-            passengerInformation.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
-            passengerInformation.push({
-                entity: "PASSENGER",
-                field: "categoryId",
-                type: "integer",
-                value: $scope.watchlistCategoryId
-            });
-            watchListService.addItem("Passenger", "PASSENGER", null, passengerInformation)
-                .then(function () {
-                    let catId = $scope.watchlistCategoryId;
-                    //Add documentType and documentNumber to wlservice call
-                    $.each($scope.passenger.documents, function (index, value) {
-                        if (value.documentType === "P" || value.documentType === "V") {
-                            let documentVariables = [];
-                            documentVariables.push({
-                                entity: "DOCUMENT",
-                                field: "documentType",
-                                type: "string",
-                                value: value.documentType
-                            });
-                            documentVariables.push({
-                                entity: "DOCUMENT",
-                                field: "documentNumber",
-                                type: "string",
-                                value: value.documentNumber
-                            });
-                            documentVariables.push({
-                                entity: "DOCUMENT",
-                                field: "categoryId",
-                                type: "integer",
-                                value: catId
-                            });
-                            watchListService.addItem("Document", "DOCUMENT", null, documentVariables).then(function (response) {
-                                if (response.data.status === 'FAILURE') {
-                                    console.log(JSON.stringify(response));
-                                } else {
-                                    spinnerService.hide('html5spinner');
-                                    $mdSidenav('addWatchlist').close();
-                                    watchListService.compile();
-                                }
-                            });
-                        }
-                    });
+            terms.push({entity: "PASSENGER", field: "firstName", type: "string", value: $scope.passenger.firstName});
+            terms.push({entity: "PASSENGER", field: "lastName", type: "string", value: $scope.passenger.lastName});
+            terms.push({entity: "PASSENGER", field: "dob", type: "date", value: $scope.passenger.dob});
+            terms.push({entity: "PASSENGER", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
+            watchListService.addItem("Passenger", "PASSENGER", null, terms).then(function(){
+                terms = [];
+                //Add documentType and documentNumber to wlservice call
+                $.each($scope.passenger.documents, function(index,value){
+                    if(value.documentType === "P" || value.documentType === "V"){
+                        terms.push({entity: "DOCUMENT", field: "documentType", type: "string", value: value.documentType});
+                        terms.push({entity: "DOCUMENT", field: "documentNumber", type: "string", value: value.documentNumber});
+                        terms.push({entity: "DOCUMENT", field: "categoryId", type: "integer", value: $scope.watchlistCategoryId});
+                        watchListService.addItem("Document", "DOCUMENT", null, terms).then(function(response){
+
+                            if(response.data.status=='FAILURE'){
+                                console.log(JSON.stringify(response));
+                            }else{
+                                //Compiles after each document add.
+                                watchListService.compile();
+                                //clear out terms list
+                                terms = [];
+                                spinnerService.hide('html5spinner');
+                                $mdSidenav('addWatchlist').close();
+                            }
+                        });
+                    }
                 });
+            });
         };
 
-    $scope.addToWatchlist = function(){
-    	$timeout(function () {
-        	$mdSidenav('addWatchlist').open();
-        });
-    };
+        $scope.addToWatchlist = function(){
+            $timeout(function () {
+                $mdSidenav('addWatchlist').open();
+            });
+        }
     //dialog function for watchlist addition dialog
     $scope.showConfirm = function () {
         var confirm = $mdDialog.confirm()
@@ -761,8 +811,8 @@
                     cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'
                 },
                 {
-                    name: 'citizenshipCountry',
-                    displayName:'pass.citizenship', headerCellFilter: 'translate',
+                    name: 'nationality',
+                    displayName:'pass.nationality', headerCellFilter: 'translate',
                     width: 75,
                     cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                     	+'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
@@ -819,7 +869,7 @@
                 {name: 'gender', displayName:'G', width:50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
                   cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width:120,
+                {name: 'nationality', displayName:'Nationality', headerCellFilter: 'translate', width:120,
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}
@@ -916,4 +966,5 @@
         getPage();
         mapAirports();
     });
+    
 }());

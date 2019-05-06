@@ -12,8 +12,7 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class FlightPaxConditionBuilder extends EntityConditionBuilder {
 
-    public FlightPaxConditionBuilder(final String drlVariableName,
-    		final String passengerVariableName) {
+    public FlightPaxConditionBuilder(final String drlVariableName) {
         super(drlVariableName, EntityEnum.FLIGHT_PAX.getEntityName());
     }
 

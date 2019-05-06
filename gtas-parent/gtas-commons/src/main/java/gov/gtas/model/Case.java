@@ -6,6 +6,9 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import gov.gtas.enumtype.EncounteredStatusEnum;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -42,8 +45,8 @@ public class Case extends BaseEntityAudit {
     @Column(name = "dob", nullable = true)
     private Date dob;
 
-    @Column(name = "citizenshipCountry", nullable = true)
-    private String citizenshipCountry;
+    @Column(name = "nationality", nullable = true)
+    private String nationality;
 
     @Column(name = "passengerType", nullable = true)
     private String paxType;
@@ -100,8 +103,24 @@ public class Case extends BaseEntityAudit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "encountered_status", nullable=false)
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
 
-    public Set<HitsDisposition> getHitsDispositions() {
+ 
+	public EncounteredStatusEnum getEncounteredStatus() {
+		return encounteredStatus;
+	}
+
+
+	public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+		this.encounteredStatus = encounteredStatus;
+	}
+
+
+
+	public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
 
@@ -137,12 +156,12 @@ public class Case extends BaseEntityAudit {
         this.dob = dob;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public Long getFlightId() {

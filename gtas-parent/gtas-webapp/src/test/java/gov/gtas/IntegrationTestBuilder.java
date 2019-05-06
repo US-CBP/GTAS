@@ -309,9 +309,9 @@ public class IntegrationTestBuilder {
 
     private Passenger defaultPassenger() {
         passenger = new Passenger();
-        passenger.setPassengerType("P");
-        passenger.setFirstName(FIRST_NAME);
-        passenger.setLastName(LAST_NAME);
+        passenger.getPassengerDetails().setPassengerType("P");
+        passenger.getPassengerDetails().setFirstName(FIRST_NAME);
+        passenger.getPassengerDetails().setLastName(LAST_NAME);
         return passenger;
     }
 
@@ -319,7 +319,6 @@ public class IntegrationTestBuilder {
         flight = new Flight();
         flight.setCarrier("DL");
         flight.setDirection("O");
-        flight.setFlightDate(new Date());
         flight.setFlightNumber("0012");
         flight.setOrigin("LAX");
         flight.setDestination("IAD");

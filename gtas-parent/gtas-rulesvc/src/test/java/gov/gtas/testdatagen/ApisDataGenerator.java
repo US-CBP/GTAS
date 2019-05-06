@@ -70,14 +70,14 @@ public class ApisDataGenerator {
         for(String[] args:param){
             Passenger passenger = new Passenger();
             passenger.setId(ids[passengerCount]);
-            passenger.setPassengerType(PassengerTypeCode.P.name());
+            passenger.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
             passenger.setId(new Long(args[6]));
             passenger.setDocuments(createDocuments(new long[]{ids[passengerCount]},
                     new String[]{args[0]}, new String[]{args[1]}));
-            passenger.setFirstName(args[2]);
-            passenger.setLastName(args[3]);
-            passenger.setCitizenshipCountry(args[4]);
-            passenger.setEmbarkation(args[5]);
+            passenger.getPassengerDetails().setFirstName(args[2]);
+            passenger.getPassengerDetails().setLastName(args[3]);
+            passenger.getPassengerDetails().setNationality(args[4]);
+            passenger.getPassengerTripDetails().setEmbarkation(args[5]);
             if(args.length > 7){
                 passenger.getSeatAssignments().add(createSeat(passenger, flight, args[7]));
             }
@@ -112,7 +112,6 @@ public class ApisDataGenerator {
         }
         flight.setCarrier("V7");//Continental
         flight.setDestination("BOB");
-        flight.setFlightDate(new Date());
         flight.setFlightNumber("0012");
         flight.setOrigin("YHZ");
         flight.setOriginCountry("CA");
@@ -139,7 +138,6 @@ public class ApisDataGenerator {
         try{
             flDate = DateCalendarUtils.parseJsonDate("2015-07-20");
             flDate = new Date(flDate.getTime()+36000000L);//add 10 hours
-            flight.setFlightDate(flDate);
         }catch(ParseException pe){
             logger.error("error parsing flight information!", pe);
         }

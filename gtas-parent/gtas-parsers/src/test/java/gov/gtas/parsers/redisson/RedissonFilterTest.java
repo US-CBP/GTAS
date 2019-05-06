@@ -19,7 +19,6 @@ import org.redisson.client.protocol.RedisCommands;
 import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import redis.embedded.RedisServer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +39,6 @@ public class RedissonFilterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RedissonFilterTest.class);
 
-    private static RedisServer redisServer;
     private static RedissonClient client;
     private static String[] randomStrings;
 

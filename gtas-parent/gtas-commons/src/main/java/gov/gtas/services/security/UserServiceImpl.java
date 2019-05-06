@@ -22,12 +22,9 @@ import org.springframework.stereotype.Service;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.Filter;
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
-import gov.gtas.repository.FilterRepository;
 import gov.gtas.repository.UserRepository;
-import gov.gtas.services.Filter.FilterServiceUtil;
 
 /**
  * The Class UserServiceImpl.
@@ -40,11 +37,6 @@ public class UserServiceImpl implements UserService {
 
 	@Resource
 	private UserRepository userRepository;
-
-	@Resource
-	private FilterRepository filterRepository;
-	@Autowired
-	private FilterServiceUtil filterServiceUtil;
 
 	@Autowired
 	private UserServiceUtil userServiceUtil;
@@ -64,11 +56,6 @@ public class UserServiceImpl implements UserService {
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
 		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity
 				.getPassword()));
-		if (userData.getFilter() != null) {
-			Filter filterEntity = filterServiceUtil
-					.mapFilterEntityFromFilterData(userData.getFilter());
-			userEntity.setFilter(filterEntity);
-		}
 		if (userData.getRoles() != null) {
 			Set<Role> roleCollection = roleServiceUtil
 					.mapEntityCollectionFromRoleDataSet(userData.getRoles());
@@ -120,11 +107,6 @@ public class UserServiceImpl implements UserService {
 				entity.setRoles(oRoles);
 			}
 
-			if (data.getFilter() != null) {
-				Filter filterEntity = filterServiceUtil
-						.mapFilterEntityFromFilterData(data.getFilter());
-				entity.setFilter(filterEntity);
-			}
 			User savedEntity = userRepository.save(entity);
 			return userServiceUtil.mapUserDataFromEntity(savedEntity);
 		}
@@ -226,11 +208,6 @@ public class UserServiceImpl implements UserService {
 				entity.setRoles(oRoles);
 			}
 
-			if (data.getFilter() != null) {
-				Filter filterEntity = filterServiceUtil
-						.mapFilterEntityFromFilterData(data.getFilter());
-				entity.setFilter(filterEntity);
-			}
 			User savedEntity = userRepository.save(entity);
 			logger.debug("Updated by Admin successfully in " + this.getClass().getName());
 			

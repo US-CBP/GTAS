@@ -22,6 +22,22 @@
                  }));
                  return dfd.promise;
              }
+
+             function updateEncounteredStatus(caseIdParam, newStatus){
+                
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    url: "/gtas/encounteredstatus",
+                    params: {
+                        caseId:caseIdParam,
+                        newStatus:newStatus
+                    }
+                }));
+                
+                            
+                return dfd.promise;
+             }
         	 
         	   
      
@@ -29,7 +45,8 @@
         	
             return ({
                
-                getOneDayLookout: getOneDayLookout
+                getOneDayLookout: getOneDayLookout,
+                updateEncounteredStatus: updateEncounteredStatus
             });
         })
 }());

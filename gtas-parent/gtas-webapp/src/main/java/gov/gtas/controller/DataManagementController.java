@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.gtas.enumtype.DataManagementTruncation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import gov.gtas.model.Role;
 import gov.gtas.model.User;
-import gov.gtas.repository.DataManagementRepositoryImpl.DataTruncationType;
 import gov.gtas.services.DataManagementService;
 import gov.gtas.services.security.UserService;
 
@@ -66,7 +66,7 @@ public class DataManagementController
   @RequestMapping(method = RequestMethod.POST, value = "/dmcapabilities/process")
   public ModelAndView processDataTruncation(@RequestParam(value = "date", required = true) String date, @RequestParam(value = "truncationType", required = true) String truncationType)
   {
-      String message = "Successfully truncated all message related data before the selected date.View logs to get info on number of rows deleted.";
+      String message = "Successfully truncated all flight related data before the selected date.View logs to get info on number of rows deleted.";
       
       User currentUser = fetchCurrentUser();
       
@@ -81,19 +81,19 @@ public class DataManagementController
 	  
 		  URLEncoder.encode(message, StandardCharsets.UTF_8.toString());
                   
-                  DataTruncationType type = null;
+                  DataManagementTruncation type = null;
                   
                   if (truncationType.equals("ALL"))
                   {
-                    type = DataTruncationType.ALL;  
+                    type = DataManagementTruncation.ALL;
                   }
                   else if (truncationType.equals("APIS"))
                   {
-                      type = DataTruncationType.APIS_ONLY;
+                      type = DataManagementTruncation.APIS_ONLY;
                   }
                   else if (truncationType.equals("PNR"))
                   {
-                      type = DataTruncationType.PNR_ONLY;
+                      type = DataManagementTruncation.PNR_ONLY;
                   }
 		  
 	      dataManagementService.truncateAllMessageDataByDate(localDate, currentUser, type);

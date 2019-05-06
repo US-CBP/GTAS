@@ -94,7 +94,7 @@ public class JPQLGenerator {
             } else if (queryType == EntityEnum.PASSENGER) {
 
                 queryPrefix = Constants.SELECT_DISTINCT + " " + EntityEnum.PASSENGER.getAlias() + Constants.ID + ", " + EntityEnum.PASSENGER.getAlias() + ", p.flight " +
-                        Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias();
+                        Constants.FROM + " " + EntityEnum.PASSENGER.getEntityName() + " " + EntityEnum.PASSENGER.getAlias() + " left join p.flight f ";
 
 //					if (paymentFormCondition.isTrue()) {
 //						// joinEntities.remove(EntityEnum.PNR);
@@ -164,13 +164,8 @@ public class JPQLGenerator {
             queryObject = (QueryObject) queryEntity;
             condition = queryObject.getCondition();
             level.increment();
-
             List<QueryEntity> rules = queryObject.getRules();
-
-            if (level.intValue() > 1) {
-                where.append("(");
-            }
-
+            where.append("(");
             int index = 0;
             for (QueryEntity rule : rules) {
 
@@ -181,10 +176,7 @@ public class JPQLGenerator {
                         paymentFormCondition);
                 index++;
             }
-
-            if (level.intValue() > 1) {
-                where.append(")");
-            }
+            where.append(")");
         } else if (queryEntity instanceof QueryTerm) {
             queryTerm = (QueryTerm) queryEntity;
 
@@ -339,11 +331,11 @@ public class JPQLGenerator {
                         } else if (entityEnum == EntityEnum.PNR) {
                             where.append("(s.apis = false");
                         }
-                        where.append(" and f.id = s.flight.id and s.number ").append(opEnum.getOperator()).append(" (?").append(positionalParameter).append("))");
+                        where.append(" and p.flight.id = s.flight.id and s.number ").append(opEnum.getOperator()).append(" (?").append(positionalParameter).append("))");
                     } else if (field.equalsIgnoreCase(Constants.PAYMENTFORMS)) {
                         where.append("(pnr.id = pf.pnr.id and pf.paymentType ").append(opEnum.getOperator()).append(" ?").append(positionalParameter).append(")");
                     } else if (field.equalsIgnoreCase(Constants.FORM_OF_PAYMENT)) {
-                        where.append(" f.id in pnfl.id  and ").append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" ?").append(positionalParameter);
+                        where.append(" p.flight.id in pnfl.id  and ").append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" ?").append(positionalParameter);
                     } else {
                         where.append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" (?").append(positionalParameter).append(")");
                     }
@@ -356,11 +348,11 @@ public class JPQLGenerator {
                         } else if (entityEnum == EntityEnum.PNR) {
                             where.append("(s.apis = false");
                         }
-                        where.append(" and f.id = s.flight.id and s.number ").append(opEnum.getOperator()).append(" ?").append(positionalParameter).append(")");
+                        where.append(" and p.flight.id = s.flight.id and s.number ").append(opEnum.getOperator()).append(" ?").append(positionalParameter).append(")");
                     } else if (field.equalsIgnoreCase(Constants.PAYMENTFORMS)) {
                         where.append("(pnr.id = pf.pnr.id and pf.paymentType ").append(opEnum.getOperator()).append(" ?").append(positionalParameter).append(")");
                     } else if (field.equalsIgnoreCase(Constants.FORM_OF_PAYMENT)) {
-                        where.append(" f.id in pnfl.id  and ").append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" ?").append(positionalParameter);
+                        where.append(" p.flight.id in pnfl.id  and ").append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" ?").append(positionalParameter);
                     } else {
                         where.append(entityEnum.getAlias()).append(".").append(field).append(" ").append(opEnum.getOperator()).append(" ?").append(positionalParameter);
                     }

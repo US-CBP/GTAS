@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ApisControllerServiceImpl implements ApisControllerService {
@@ -21,13 +22,13 @@ public class ApisControllerServiceImpl implements ApisControllerService {
 
     @Transactional
     public List<FlightPassengerVo> generateFlightPaxVoByApisRef(String ref) {
-        List<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref);
+        Set<FlightPax> fpList = apisMessageRepository.findFlightPaxByApisRef(ref);
         List<FlightPassengerVo> flightPassengerVos = new ArrayList<>();
         for (FlightPax fp : fpList) {
             FlightPassengerVo fpVo = new FlightPassengerVo();
-            fpVo.setFirstName(fp.getPassenger().getFirstName());
-            fpVo.setLastName(fp.getPassenger().getLastName());
-            fpVo.setMiddleName(fp.getPassenger().getMiddleName());
+            fpVo.setFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
+            fpVo.setLastName(fp.getPassenger().getPassengerDetails().getLastName());
+            fpVo.setMiddleName(fp.getPassenger().getPassengerDetails().getMiddleName());
             fpVo.setEmbarkation(fp.getEmbarkation());
             fpVo.setDebarkation(fp.getDebarkation());
             if (fp.getInstallationAddress() != null) {
@@ -45,7 +46,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
             fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
             fpVo.setResidencyCountry(fp.getResidenceCountry());
             fpVo.setPassengerType(fp.getTravelerType());
-            fpVo.setCitizenshipCountry(fp.getPassenger().getCitizenshipCountry());
+            fpVo.setNationality(fp.getPassenger().getPassengerDetails().getNationality());
             fpVo.setResRefNumber(fp.getReservationReferenceNumber());
             fpVo.setFlightId(fp.getFlight().getId());
             fpVo.setPassengerId(fp.getPassenger().getId());

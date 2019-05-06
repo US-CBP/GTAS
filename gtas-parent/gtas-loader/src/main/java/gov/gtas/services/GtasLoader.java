@@ -7,6 +7,7 @@ import gov.gtas.parsers.vo.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public interface GtasLoader {
     void checkHashCode(String hash) throws LoaderException;
@@ -17,15 +18,15 @@ public interface GtasLoader {
                                            List<FlightLeg> flightLegs,
                                            String[] primeFlightKey,
                                            Set<BookingDetail> bookingDetails) throws ParseException;
-    CreatedAndOldPassengerInformation makeNewPassengerObjects(Flight primeFlight,
-                                           List<PassengerVo> passengers,
-                                           Set<Passenger> messagePassengers,
-                                           Set<BookingDetail> bookingDetails,
-                                           Message message) throws ParseException;
-    void createBagsFromPnrVo(PnrVo pvo,Pnr pnr);
-    void createFormPfPayments(PnrVo vo,Pnr pnr);
+    PassengerInformationDTO makeNewPassengerObjects(Flight primeFlight,
+                                                    List<PassengerVo> passengers,
+                                                    Set<Passenger> messagePassengers,
+                                                    Set<BookingDetail> bookingDetails,
+                                                    Message message) throws ParseException;
+    Map<UUID, BagMeasurements> saveBagMeasurements(Set<BagMeasurementsVo> bagMeasurementsToSave);
+    void createFormPfPayments(PnrVo vo, Pnr pnr);
     void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException;
-    int createPassengers(Set<Passenger> newPassengers, Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);
+    int createPassengers(Set<Passenger> newPassengers, Set<Passenger> oldPassengers,
+                         Set<Passenger> messagePassengers, Flight primeFlight, Set<BookingDetail> bookingDetails);
     void updateFlightPassengerCount(Flight primeFlight, int createdPassengers);
-    void createBookingDetails(Pnr pnr, Map<Long, Set<BookingDetail>> passBookDetails);
 }

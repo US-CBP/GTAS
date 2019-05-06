@@ -8,8 +8,7 @@ package gov.gtas.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.services.Filter.FilterData;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.RoleService;
 import gov.gtas.services.security.RoleServiceUtil;
@@ -36,7 +35,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @Rollback(true)
 public class UserServiceIT {
@@ -88,7 +87,7 @@ public class UserServiceIT {
 
 		logger.info(authRoles.toString());
 		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles, null);
+				"99", 1, authRoles);
 
 		UserData actualUser = null;
 		// Act
@@ -123,11 +122,8 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		FilterData filter = new FilterData("iTest99", "I", originAirports,
-				destinationAirports, etaStart, etaEnd);
-
 		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles, filter);
+				"99", 1, authRoles);
 
 		UserData actualUser = null;
 		// Act
@@ -139,7 +135,6 @@ public class UserServiceIT {
 
 		// Assert
 		assertEquals(expectedUser.getUserId(), actualUser.getUserId());
-		assertEquals(expectedUser.getFilter(), actualUser.getFilter());
 	}
 
 	@Test
@@ -153,7 +148,7 @@ public class UserServiceIT {
 
 		logger.info(authRoles.toString());
 		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles, null);
+				"99", 1, authRoles);
 
 		try {
 			userService.create(expectedUser);
@@ -162,7 +157,7 @@ public class UserServiceIT {
 		}
 		// update lastname
 		UserData expectedUserU = new UserData("iTest99", "password", "test",
-				"100", 1, authRoles, null);
+				"100", 1, authRoles);
 
 		UserData actualUserU = null;
 		// Act
@@ -195,11 +190,8 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		FilterData filter = new FilterData("iTest99", "I", originAirports,
-				destinationAirports, etaStart, etaEnd);
-
 		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles, filter);
+				"99", 1, authRoles);
 
 		// Act
 		try {
@@ -217,12 +209,9 @@ public class UserServiceIT {
 		etaStart = -3;
 		etaEnd = 3;
 
-		FilterData filterU = new FilterData("iTest99", "O", originAirports,
-				destinationAirports, etaStart, etaEnd);
-
 		logger.info(authRoles.toString());
 		UserData expectedUserU = new UserData("iTest99", "password", "test",
-				"99", 1, authRolesU, filterU);
+				"99", 1, authRolesU);
 
 		UserData actualUserU = null;
 		// Act
@@ -233,7 +222,6 @@ public class UserServiceIT {
 		}
 
 		// Assert
-		assertEquals(expectedUserU.getFilter(), actualUserU.getFilter());
 		assertEquals(expectedUserU.getRoles(), actualUserU.getRoles());
 	}
 

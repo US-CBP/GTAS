@@ -73,6 +73,8 @@ public class FlightServiceImpl implements FlightService {
 			FlightVo vo = new FlightVo();
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
+			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
+
 			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
 
 			if (f.getFlightHitsWatchlist() != null) {
@@ -125,9 +127,6 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setChangeDate();
 			flightToUpdate.setDestination(flight.getDestination());
 			flightToUpdate.setDestinationCountry(flight.getDestinationCountry());
-			flightToUpdate.setEta(flight.getEta());
-			flightToUpdate.setEtd(flight.getEtd());
-			flightToUpdate.setFlightDate(flight.getFlightDate());
 			flightToUpdate.setFlightNumber(flight.getFlightNumber());
 			flightToUpdate.setOrigin(flight.getOrigin());
 			flightToUpdate.setOriginCountry(flight.getOriginCountry());
@@ -220,10 +219,13 @@ public class FlightServiceImpl implements FlightService {
 		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
 				"FROM pax_watchlist_link pwl " +
 				"WHERE pwl.passenger_id not in (SELECT hitSumm.passenger_id " +
-				"FROM hits_summary hitSumm where wl_hit_count > 0)";
+				"FROM hits_summary hitSumm where wl_hit_count > 0) " +
+				"and pwl.passenger_id in " +
+				"(select passenger_id from gtas.flight_passenger where flight_id = " + flightId + " )";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}
+
 
 	@Override
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
@@ -265,13 +267,13 @@ public class FlightServiceImpl implements FlightService {
 				vo.setNumber(seat.getNumber());
 				vo.setFlightId(flight.getId());
 				vo.setPaxId(passenger.getId());
-				vo.setFirstName(passenger.getFirstName());
-				vo.setLastName(passenger.getLastName());
-				vo.setMiddleInitial(passenger.getMiddleName());
+				vo.setFirstName(passenger.getPassengerDetails().getFirstName());
+				vo.setLastName(passenger.getPassengerDetails().getLastName());
+				vo.setMiddleInitial(passenger.getPassengerDetails().getMiddleName());
 				vo.setFlightNumber(flight.getFlightNumber());
-				vo.setRefNumber(passenger.getReservationReferenceNumber());
-				vo.setHasHits(passenger.getHits().size() > 0);
-				seatVos.add(vo);
+				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
+                vo.setHasHits(passenger.getHits().size() > 0);
+                seatVos.add(vo);
 			}
 		}
 

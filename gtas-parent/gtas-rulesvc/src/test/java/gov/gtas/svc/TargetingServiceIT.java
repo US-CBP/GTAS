@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.config.RuleServiceConfig;
 import gov.gtas.model.ApisMessage;
 import gov.gtas.model.Document;
@@ -47,7 +47,7 @@ import org.springframework.test.annotation.Rollback;
  * tests for date-effective and date-expires properties of rules.)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {RuleServiceConfig.class, CommonServicesConfig.class })
+@ContextConfiguration(classes = {RuleServiceConfig.class, TestCommonServicesConfig.class })
 @Rollback(true)
 public class TargetingServiceIT {
 	private static final Logger logger = LoggerFactory.getLogger(TargetingServiceIT.class);
@@ -69,7 +69,7 @@ public class TargetingServiceIT {
 		Flight flight = msg.getFlights().iterator().next();
 		assertEquals(3, flight.getPassengers().size());
 		Passenger pax = flight.getPassengers().iterator().next();
-		assertTrue(pax.getPassengerType().equals(PassengerTypeCode.P.name()));
+		assertTrue(pax.getPassengerDetails().getPassengerType().equals(PassengerTypeCode.P.name()));
 		assertNotNull("Pax ID is null", pax.getId());
 		assertEquals(1, pax.getDocuments().size());
 		Document doc = pax.getDocuments().iterator().next();

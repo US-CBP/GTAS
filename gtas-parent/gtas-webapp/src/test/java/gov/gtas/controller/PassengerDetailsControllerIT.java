@@ -72,8 +72,8 @@ public class PassengerDetailsControllerIT {
         BAG_COUNT_PNR = integrationTestData.getFlightPaxPnr().getBagCount();
         BAG_WEIGHT_PNR = integrationTestData.getFlightPaxPnr().getBagWeight();
         BAG_AVERAGE_WEIGHT_PNR = integrationTestData.getFlightPaxPnr().getAverageBagWeight();
-        FIRST_NAME = integrationTestData.getPassenger().getFirstName();
-        LAST_NAME = integrationTestData.getPassenger().getLastName();
+        FIRST_NAME = integrationTestData.getPassenger().getPassengerDetails().getFirstName();
+        LAST_NAME = integrationTestData.getPassenger().getPassengerDetails().getLastName();
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(passengerDetailsController)

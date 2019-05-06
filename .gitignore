@@ -54,3 +54,13 @@ gradle/
 .gradle/
 *.gradle
 gradle*
+
+.apt_generated
+.vscode
+
+*.raw
+*.raw.tar.gz
+*.vdi
+
+**/bower_components
+*yarn.lock

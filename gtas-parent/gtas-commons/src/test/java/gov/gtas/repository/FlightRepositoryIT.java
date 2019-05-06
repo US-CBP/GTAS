@@ -1,13 +1,7 @@
 package gov.gtas.repository;
 
 import static org.junit.Assert.assertTrue;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.services.dto.FlightsRequestDto;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,13 +11,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
+
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.model.Flight;
+import gov.gtas.model.Passenger;
+import gov.gtas.services.dto.FlightsRequestDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
 @Rollback(true)
 public class FlightRepositoryIT extends
@@ -41,7 +41,6 @@ public class FlightRepositoryIT extends
 		Flight f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0012");
 		f.setFullFlightNumber("XX0012");
 		f.setOrigin("LAX");
@@ -49,9 +48,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("USA");
 		Passenger p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("john");
-		p.setLastName("doe");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("john");
+		p.getPassengerDetails().setLastName("doe");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -59,7 +58,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("XX");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0010");
 		f.setFullFlightNumber("XX0010");
 		f.setOrigin("LAS");
@@ -67,9 +65,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("johnny");
-		p.setLastName("dal");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("johnny");
+		p.getPassengerDetails().setLastName("dal");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -77,7 +75,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("O");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0013");
 		f.setFullFlightNumber("YY0013");
 		f.setOrigin("LAS");
@@ -85,9 +82,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("USA");
 		f.setDestinationCountry("MEX");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("ted");
-		p.setLastName("bart");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("ted");
+		p.getPassengerDetails().setLastName("bart");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -95,7 +92,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0014");
 		f.setFullFlightNumber("YY0014");
 		f.setOrigin("BTE");
@@ -103,9 +99,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("SLE");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("mike");
-		p.setLastName("great");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("mike");
+		p.getPassengerDetails().setLastName("great");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 
@@ -113,7 +109,6 @@ public class FlightRepositoryIT extends
 		f = new Flight();
 		f.setCarrier("YY");
 		f.setDirection("I");
-		f.setFlightDate(new Date());
 		f.setFlightNumber("0016");
 		f.setFullFlightNumber("YY0016");
 		f.setOrigin("MLW");
@@ -121,9 +116,9 @@ public class FlightRepositoryIT extends
 		f.setOriginCountry("LBR");
 		f.setDestinationCountry("USA");
 		p = new Passenger();
-		p.setPassengerType("P");
-		p.setFirstName("lora");
-		p.setLastName("speedier");
+		p.getPassengerDetails().setPassengerType("P");
+		p.getPassengerDetails().setFirstName("lora");
+		p.getPassengerDetails().setLastName("speedier");
 		f.getPassengers().add(p);
 		flightDao.save(f);
 	}

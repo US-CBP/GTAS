@@ -13,10 +13,16 @@ public enum BagMapping implements IEntityMapping {
     BAG_IDENTIFICATION("bagId", "Bag ID", TypeEnum.STRING.getType()),
     DATA_SOURCE("data_source","Data Source", TypeEnum.STRING.getType()),
     DESTINATION("destination","Destination", TypeEnum.STRING.getType()),
+    DESTINATION_COUNTRY("country","Destination Country", TypeEnum.STRING.getType()),
     DESTINATION_AIRPORT("destinationAirport","Destination - Airport",TypeEnum.STRING.getType()),
 	BAG_PAX_OWNER_ID("passenger.id", "Passenger Owner Id",TypeEnum.STRING.getType(),false),
-	BAG_FLIGHT_OWNER_ID("flight.id", "Flight Owner Id", TypeEnum.STRING.getType(),false);
-    
+	BAG_FLIGHT_OWNER_ID("flight.id", "Flight Owner Id", TypeEnum.STRING.getType(),false),
+	BAG_PRIME_FLIGHT("primeFlight", "Bag on Prime Flight", TypeEnum.BOOLEAN.getType()),
+	BAG_WEIGHT("bagMeasurements.weight", "Bag measurements weight", TypeEnum.DOUBLE.getType()),
+	BAG_COUNT("bagMeasurements.bagCount", "Bag Count", TypeEnum.INTEGER.getType()),
+	BAG_HEAD_OF_POOL("headPool", "Bag Head Pool", TypeEnum.BOOLEAN.getType());
+
+
     private String fieldName;
     private String friendlyName;
     private String fieldType;

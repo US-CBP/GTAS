@@ -20,6 +20,6 @@ public interface MessageStatusRepository  extends CrudRepository<MessageStatus, 
             "left join message m on ms.ms_message_id = m.id " +
             "where ms.ms_status = :msStatus " +
             "order by m.create_date asc  limit :theLimit")
-    List<MessageStatus> getMessagesFromStatus(@Param("msStatus") String msStatus, @Param("theLimit") Long theLimit);
+    List<MessageStatus> getMessagesFromStatus(@Param("msStatus") String msStatus, @Param("theLimit") Integer theLimit);
 
-}
+   }

@@ -65,11 +65,11 @@ public class IntegrateUnTaggedPassengerListScheduler {
                 boolean paxFoundFlag = false;
                 Passenger _tempPaxWithIdTagThatMatched = new Passenger();
                 for (Passenger _tempPaxWithNoIdTag : paxListWithNullIdTags) {
-                    if ((_tempPaxWithIdTag.getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getFirstName()))
-                            && (_tempPaxWithIdTag.getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getLastName()))
-                            && (_tempPaxWithIdTag.getDob().equals(_tempPaxWithNoIdTag.getDob()))
-//                            && (_tempPaxWithIdTag.getCitizenshipCountry().equalsIgnoreCase(_tempPaxWithNoIdTag.getCitizenshipCountry()))
-                            && (_tempPaxWithIdTag.getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getGender()))
+                    if ((_tempPaxWithIdTag.getPassengerDetails().getFirstName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getFirstName()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getLastName().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getLastName()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getDob().equals(_tempPaxWithNoIdTag.getPassengerDetails().getDob()))
+//                            && (_tempPaxWithIdTag.getNationality().equalsIgnoreCase(_tempPaxWithNoIdTag.getNationality()))
+                            && (_tempPaxWithIdTag.getPassengerDetails().getGender().equalsIgnoreCase(_tempPaxWithNoIdTag.getPassengerDetails().getGender()))
                             ) {
                         // match found
                         //_tempPaxWithNoIdTag.setPaxIdTag(_tempPaxWithIdTag.getPaxIdTag());
@@ -148,7 +148,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
 //     */
 //    private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
 //        return makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-//                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getCitizenshipCountry().toUpperCase())));
+//                pax.getGender().toUpperCase(), pax.getDob().toString(), pax.getNationality().toUpperCase())));
 //    }
 
     /**

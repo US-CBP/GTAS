@@ -11,9 +11,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import gov.gtas.validators.Validatable;
 
+import java.util.UUID;
+
 public class SeatVo implements Validatable {
     private String number;
     private Boolean apis = Boolean.valueOf(false);
+    private UUID uuid = UUID.randomUUID();
     
     /** unique id to reference back to a passenger */
     private String travelerReferenceNumber;
@@ -66,5 +69,9 @@ public class SeatVo implements Validatable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE); 
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 }

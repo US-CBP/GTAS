@@ -121,10 +121,10 @@ public class RuleServiceImpl implements RuleService {
 		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession,
 				listeners);
 
-		logger.debug("Retrieved Rule input objects and executed the rules.");
+		logger.debug("About to run rules.");
 		Collection<?> requestObjects = req.getRequestObjects();
 		ksession.execute(requestObjects);
-
+		logger.debug("ran rules against kie (knowledge is everything)");
 		Globals globals = ksession.getGlobals();
 		Collection<String> keys = globals.getGlobalKeys();
 
@@ -161,10 +161,10 @@ public class RuleServiceImpl implements RuleService {
 					List<Rule> rules = rulePersistenceService
 							.findRulesByKnowledgeBaseId(kbRecord.getId());
 					if (!CollectionUtils.isEmpty(rules)) {
-						udrService.recompileRules(
+						/*udrService.recompileRules(
 								RuleConstants.UDR_KNOWLEDGE_BASE_NAME, null);
 						kbRecord = rulePersistenceService
-								.findUdrKnowledgeBase();
+								.findUdrKnowledgeBase();*/
 					}
 				}
 			}

@@ -37,6 +37,13 @@ public class Address extends BaseEntityAudit {
 
     @Column(name = "postal_code")
     private String postalCode;
+    
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+    private Flight flight;
 
  	@ManyToMany(mappedBy = "addresses", targetEntity = Pnr.class)
     private Set<Pnr> pnrs = new HashSet<>();
@@ -117,7 +124,23 @@ public class Address extends BaseEntityAudit {
         this.pnrs = pnrs;
     }
 
-    @Override
+    public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	@Override
     public int hashCode() {
        return Objects.hash(this.line1, this.line2, this.line3, this.city, this.state, this.country, this.postalCode);
     }

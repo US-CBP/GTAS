@@ -17,7 +17,7 @@ public class FlightLeg extends BaseEntity {
     private Flight flight;
     
     @ManyToOne
-    private Pnr pnr;
+    private Message message;
     
     @ManyToOne
     private BookingDetail bookingDetail;
@@ -28,17 +28,18 @@ public class FlightLeg extends BaseEntity {
     public Flight getFlight() {
         return flight;
     }
+    
+    public Message getMessage() {
+		return message;
+	}
 
-    public void setFlight(Flight flight) {
+	public void setMessage(Message message) {
+		this.message = message;
+	}
+
+
+	public void setFlight(Flight flight) {
         this.flight = flight;
-    }
-
-    public Pnr getPnr() {
-        return pnr;
-    }
-
-    public void setPnr(Pnr pnr) {
-        this.pnr = pnr;
     }
 
     public Integer getLegNumber() {

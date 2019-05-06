@@ -17,8 +17,15 @@ public class OneDayLookoutVo extends BaseVo{
 	    private String etaEtdTime;
 	    private String fullFlightNumber;
 	    private String name;
-            private String origDestAirportsStr;
+        private String origDestAirportsStr;
+        private String encounteredStatus;
 	    
+		public String getEncounteredStatus() {
+			return encounteredStatus;
+		}
+		public void setEncounteredStatus(String encounteredStatus) {
+			this.encounteredStatus = encounteredStatus;
+		}
 		public String getDocument() {
 			return document;
 		}

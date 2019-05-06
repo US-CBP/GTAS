@@ -6,6 +6,7 @@
 package gov.gtas.svc.request.builder;
 
 import gov.gtas.model.Flight;
+import gov.gtas.model.MutableFlightDetails;
 import gov.gtas.model.Passenger;
 
 import java.util.Objects;
@@ -16,29 +17,31 @@ import java.util.Objects;
 public class PassengerFlightTuple {
 	private Passenger passenger;
 	private Flight flight;
+	private MutableFlightDetails mutableFlightDetails;
 
 	public PassengerFlightTuple(Passenger passenger, Flight flight) {
 		this.passenger = passenger;
 		this.flight = flight;
+		this.mutableFlightDetails = flight.getMutableFlightDetails();
 	}
 
-	/**
-	 * @return the passenger
-	 */
+
+	public MutableFlightDetails getMutableFlightDetails() {
+		return mutableFlightDetails;
+	}
+
 	public Passenger getPassenger() {
 		return passenger;
 	}
 
-	/**
-	 * @return the flight
-	 */
+
 	public Flight getFlight() {
 		return flight;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.passenger.getId(), this.flight.getId());
+		return Objects.hash(this.passenger.getId(), this.flight.getId(), this.mutableFlightDetails.getFlightId());
 	}
 
 	@Override
@@ -49,7 +52,8 @@ public class PassengerFlightTuple {
 			return false;
 		final PassengerFlightTuple other = (PassengerFlightTuple) obj;
 		return Objects.equals(this.passenger.getId(), other.passenger.getId())
-				&& Objects.equals(this.flight.getId(), other.flight.getId());
+				&& Objects.equals(this.flight.getId(), other.flight.getId())
+				&& Objects.equals(this.mutableFlightDetails.getFlightId(), other.mutableFlightDetails.getFlightId());
 	}
 
 }

@@ -8,6 +8,8 @@ package gov.gtas.job.scheduler;
 import gov.gtas.model.Case;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.MessageStatusEnum;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingServiceResults;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
@@ -24,6 +26,7 @@ import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.svc.TargetingService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +46,9 @@ public class RuleRunnerScheduler {
 
 	/** The error persistence service. */
 	private ErrorPersistenceService errorPersistenceService;
+
+	@Autowired
+	private AppConfigurationService appConfigurationService;
 
 
 	@Autowired
@@ -69,35 +75,50 @@ public class RuleRunnerScheduler {
 	//but it suffices for now. The rule running portion of the scheduler is now tacked into the loader portion at the bottom to insure sequential operation.
 	@Scheduled(fixedDelayString = "${ruleRunner.fixedDelay.in.milliseconds}", initialDelayString = "${ruleRunner.initialDelay.in.milliseconds}")
 	public void jobScheduling() {
-		logger.info("Starting rule running scheduled task");
+		logger.debug("Starting rule running scheduled task");
 		long start = System.nanoTime();
+		RuleResultsWithMessageStatus ruleResults = null;
 		try {
-			RuleResultsWithMessageStatus ruleResults = targetingService.runningRuleEngine();
+			ruleResults = targetingService.runningRuleEngine();
 			List<TargetingServiceResults> targetingServiceResultsList = targetingService.createHitsAndCases(ruleResults.getRuleResults());
+			logger.debug("About to batch");
 			List<TargetingServiceResults> batchedTargetingServiceResults = batchResults(targetingServiceResultsList);
+			logger.debug("done batching");
 			int count = 1;
-			ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.ANALYZED));
-			for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
-				try {
-					targetingService.saveEverything(targetingServiceResults);
-					logger.info("Saved rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + ".");
-				} catch (Exception ignored) {
-					ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
-					logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
+			if (ruleResults.getMessageStatusList() != null) {
+				Date analyzedAt = new Date();
+				ruleResults.getMessageStatusList().forEach(m -> {
+					m.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
+					m.setAnalyzedTimestamp(analyzedAt);
+				});
+				for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
+					try {
+						logger.info("Saving rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + "...");
+						targetingService.saveEverything(targetingServiceResults);
+					} catch (Exception ignored) {
+						ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
+						logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
+					}
+					count++;
 				}
-                count++;
-            }
-			targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
-			logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
+				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+				logger.info("Rules and Watchlist ran in "+(System.nanoTime()-start)/1000000 + "m/s.");
+			}
 			logger.debug("entering matching service portion of jobScheduling");
 			long fuzzyStart = System.nanoTime();
-			matchingService.findMatchesBasedOnTimeThreshold();
+			int passengersProcessed = matchingService.findMatchesBasedOnTimeThreshold();
 			logger.debug("exiting matching service portion of jobScheduling");
-			logger.info("Fuzzy Matching Run in  "+(System.nanoTime()-fuzzyStart)/1000000 + "m/s.");
-			logger.info("Total rule running scheduled task took  "+(System.nanoTime()-start)/1000000 + "m/s.");
+			if (passengersProcessed > 0) {
+				logger.info("Fuzzy Matching Run in  " + (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
+			}
+			logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
 		} catch (Exception exception) {
 			String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage(): "Error in rule runner";
 			logger.error(errorMessage);
+			if (ruleResults != null) {
+				ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING));
+				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+			}
 			ErrorDetailInfo errInfo = ErrorHandlerFactory
 					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
 			errorPersistenceService.create(errInfo);
@@ -107,7 +128,7 @@ public class RuleRunnerScheduler {
 
     private List<TargetingServiceResults> batchResults(List<TargetingServiceResults> targetingServiceResultsList) {
 
-	    int BATCH_SIZE = 50;
+	    int BATCH_SIZE = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
         List<TargetingServiceResults> batchedResults = new ArrayList<>();
         TargetingServiceResults conglomerateResults = new TargetingServiceResults();
         int counter = 0;

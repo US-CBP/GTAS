@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
@@ -34,7 +34,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HitsSummaryRepositoryIT {
@@ -106,11 +106,10 @@ public class HitsSummaryRepositoryIT {
     private Object[] createPassengerFlight() {
         Passenger p = new Passenger();
         p.setDeleted(false);
-        p.setPassengerType("P");
+        p.getPassengerDetails().setPassengerType("P");
         passengerRepository.save(p);
 
         Flight f = new Flight();
-        f.setFlightDate(new Date());
         f.setFlightNumber("899");
         f.setOrigin("IAD");
         f.setCarrier("DL");

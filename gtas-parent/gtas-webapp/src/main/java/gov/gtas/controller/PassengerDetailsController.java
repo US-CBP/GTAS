@@ -77,9 +77,6 @@ public class PassengerDetailsController {
 	@Autowired
 	private MatchingService matchingService;
 
-	@Autowired
-	private BookingDetailService bookingDetailService;
-	
 	@Resource
 	private BagRepository bagRepository;
 	
@@ -109,10 +106,10 @@ public class PassengerDetailsController {
 			vo.setCarrier(flight.getCarrier());
 			vo.setFlightOrigin(flight.getOrigin());
 			vo.setFlightDestination(flight.getDestination());
-			vo.setFlightETA((flight.getEta() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getEta()) : EMPTY_STRING);
-			vo.setFlightETD((flight.getEtd() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getEtd()) : EMPTY_STRING);
+			vo.setFlightETA((flight.getMutableFlightDetails().getEta() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getMutableFlightDetails().getEta()) : EMPTY_STRING);
+			vo.setFlightETD((flight.getMutableFlightDetails().getEtd() != null) ? DateCalendarUtils
+					.formatJsonDateTime(flight.getMutableFlightDetails().getEtd()) : EMPTY_STRING);
 			vo.setFlightId(flight.getId().toString());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
@@ -126,20 +123,21 @@ public class PassengerDetailsController {
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
-		vo.setPassengerType(t.getPassengerType());
-		vo.setLastName(t.getLastName());
-		vo.setFirstName(t.getFirstName());
-		vo.setMiddleName(t.getMiddleName());
-		vo.setCitizenshipCountry(t.getCitizenshipCountry());
-		vo.setDebarkation(t.getDebarkation());
-		vo.setDebarkCountry(t.getDebarkCountry());
-		vo.setDob(t.getDob());
-		vo.setEmbarkation(t.getEmbarkation());
-		vo.setEmbarkCountry(t.getEmbarkCountry());
-		vo.setGender(t.getGender() != null ? t.getGender() : "");
-		vo.setResidencyCountry(t.getResidencyCountry());
-		vo.setSuffix(t.getSuffix());
-		vo.setTitle(t.getTitle());
+		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
+		vo.setLastName(t.getPassengerDetails().getLastName());
+		vo.setFirstName(t.getPassengerDetails().getFirstName());
+		vo.setMiddleName(t.getPassengerDetails().getMiddleName());
+		vo.setNationality(t.getPassengerDetails().getNationality());
+		vo.setDebarkation(t.getPassengerTripDetails().getDebarkation());
+		vo.setDebarkCountry(t.getPassengerTripDetails().getDebarkCountry());
+		vo.setDob(t.getPassengerDetails().getDob());
+		vo.setAge(t.getPassengerDetails().getAge());
+		vo.setEmbarkation(t.getPassengerTripDetails().getEmbarkation());
+		vo.setEmbarkCountry(t.getPassengerTripDetails().getEmbarkCountry());
+		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
+		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
+		vo.setSuffix(t.getPassengerDetails().getSuffix());
+		vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {
@@ -175,10 +173,15 @@ public class PassengerDetailsController {
 				t.getId(), new Long(flightId));
 		
 		if (!pnrList.isEmpty()) {
+			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
+			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
+
 			Pnr source=getLatestPnrFromList(pnrList);
 			vo.setPnrVo(mapPnrToPnrVo(source));			
 			PnrVo tempVo = vo.getPnrVo();
-			
+			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromFlightAndBookingDetails(pnrBag);
+			tempVo.setBagSummaryVo(bagSummaryVo);
+
 			//Assign seat for every passenger on pnr
 			for(Passenger p: pnrList.get(0).getPassengers()) {
 				FlightPax flightPax = getPnrFlightPax(p, flight);
@@ -186,8 +189,8 @@ public class PassengerDetailsController {
 				bagVoOptional.ifPresent(tempVo::addBag);
 				for (Seat s : p.getSeatAssignments()) {
 					SeatVo seatVo = new SeatVo();
-					seatVo.setFirstName(p.getFirstName());
-					seatVo.setLastName(p.getLastName());
+					seatVo.setFirstName(p.getPassengerDetails().getFirstName());
+					seatVo.setLastName(p.getPassengerDetails().getLastName());
 					seatVo.setNumber(s.getNumber());
 					seatVo.setFlightNumber(flight.getFullFlightNumber());
 					tempVo.addSeat(seatVo);
@@ -275,8 +278,8 @@ public class PassengerDetailsController {
 			bagVo.setAverage_bag_weight(fp.getAverageBagWeight());
 			bagVo.setBag_weight(fp.getBagWeight());
 			bagVo.setData_source(fp.getMessageSource());
-			bagVo.setPassFirstName(fp.getPassenger().getFirstName());
-			bagVo.setPassLastName(fp.getPassenger().getLastName());
+			bagVo.setPassFirstName(fp.getPassenger().getPassengerDetails().getFirstName());
+			bagVo.setPassLastName(fp.getPassenger().getPassengerDetails().getLastName());
 			bagVo.setData_source(fp.getMessageSource());
 			bagVoOptional = Optional.of(bagVo);
 		} else {
@@ -467,8 +470,10 @@ public class PassengerDetailsController {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
-		target.setTotalbagCount(source.getTotal_bag_count());
+		target.setTotal_bag_count(source.getTotal_bag_count());
 		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
+                
+                target.setTripType(source.getTripType());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
@@ -546,9 +551,8 @@ public class PassengerDetailsController {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setFlightDate(fl.getFlight().getFlightDate().toString());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getEta()));
+					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
+					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
 				} else{
@@ -568,19 +572,19 @@ public class PassengerDetailsController {
 			while (it4.hasNext()) {
 				Passenger p = (Passenger) it4.next();
 				PassengerVo pVo = new PassengerVo();
-				pVo.setLastName(p.getLastName());
-				pVo.setFirstName(p.getFirstName());
-				pVo.setMiddleName(p.getMiddleName());
-				pVo.setAge(p.getAge());
-				pVo.setGender(p.getGender());
+				pVo.setLastName(p.getPassengerDetails().getLastName());
+				pVo.setFirstName(p.getPassengerDetails().getFirstName());
+				pVo.setMiddleName(p.getPassengerDetails().getMiddleName());
+				pVo.setAge(p.getPassengerDetails().getAge());
+				pVo.setGender(p.getPassengerDetails().getGender());
 				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
 				
 				Set<Document> documents = p.getDocuments();
 				for (Document d: documents) {
 					DocumentVo documentVo = new DocumentVo();
-					documentVo.setFirstName(d.getPassenger().getFirstName());
-					documentVo.setLastName(d.getPassenger().getLastName());
+					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
+					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
 					documentVo.setDocumentType(d.getDocumentType());
 					documentVo.setIssuanceCountry(d.getIssuanceCountry());
 					documentVo.setDocumentNumber(d.getDocumentNumber());
@@ -897,15 +901,14 @@ public class PassengerDetailsController {
 
 			target.setFlightNumber(source.getFlightNumber());
 			target.setCarrier(source.getCarrier());
-			target.setEtaDate(source.getEtaDate());
+			target.setEtaDate(source.getMutableFlightDetails().getEtaDate());
 			target.setEtdDate(source.getEtdDate());
 			target.setOriginCountry(source.getOriginCountry());
 			target.setOrigin(source.getOrigin());
 			target.setDestinationCountry(source.getDestinationCountry());
 			target.setDestination(source.getDestination());
-			target.setFlightDate(source.getFlightDate());
-			target.setEtd(source.getEtd());
-			target.setEta(source.getEta());
+			target.setEtd(source.getMutableFlightDetails().getEtd());
+			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
                         target.setFlightId(source.getId().toString());
 
@@ -1068,10 +1071,10 @@ public class PassengerDetailsController {
 				+ " and breaks expected conventions");
 
 	}
-	
+
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
     public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
-        
+
     	return fService.getSeatsByFlightId(flightId);
     }
 

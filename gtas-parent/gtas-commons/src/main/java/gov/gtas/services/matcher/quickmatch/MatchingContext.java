@@ -33,7 +33,7 @@ public class MatchingContext {
 
 	// Set the parts of names that we should combine for full_name and metaphones
 	private final String[] NAME_PARTS = { "first_name", "middle_name", "last_name" };
-	private final String[] stringAttributes = { "first_name", "middle_name", "last_name", "GNDR_CD", "CTZNSHP_CTRY_CD",
+	private final String[] stringAttributes = { "first_name", "middle_name", "last_name", "GNDR_CD", "NATIONALITY_CD",
 			"DOC_CTRY_CD", "DOC_TYP_NM", "DOC_ID" };
 
 	@Autowired
@@ -322,10 +322,10 @@ public class MatchingContext {
 								traveler.get("full_name"), derogRecord.get("full_name"));
 						clauseHits.add(derogRecord.get("derogId"));
 
-					} else if (traveler.get("CTZNSHP_CTRY_CD").equals(derogRecord.get("CTZNSHP_CTRY_CD"))
+					} else if (traveler.get("NATIONALITY_CD").equals(derogRecord.get("NATIONALITY_CD"))
 							&& this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
 
-						logger.info("Text distance hit for traveler={}, derog={}, and CTZNSHP_CTRY_CD.",
+						logger.info("Text distance hit for traveler={}, derog={}, and NATIONALITY_CD.",
 								traveler.get("full_name"), derogRecord.get("full_name"));
 						clauseHits.add(derogRecord.get("derogId"));
 					}
@@ -333,7 +333,7 @@ public class MatchingContext {
 			}
 
 			// Dedup the hits again
-			clauseAsString = "[full_name text distance, DOB_Date OR CTZNSHP_CTRY_CD]";
+			clauseAsString = "[full_name text distance, DOB_Date OR NATIONALITY_CD]";
 			for (String thisDerogId : clauseHits) {
 				if (!foundDerogIds.contains(thisDerogId)) {
 					derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1,

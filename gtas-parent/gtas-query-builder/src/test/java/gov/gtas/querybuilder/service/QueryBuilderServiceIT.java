@@ -7,8 +7,24 @@ package gov.gtas.querybuilder.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.transaction.Transactional;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.OperatorEnum;
 import gov.gtas.enumtype.TypeEnum;
@@ -30,29 +46,13 @@ import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.transaction.Transactional;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
-
 
 /**
  * Query Builder Service Integration Test
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class, QueryBuilderAppConfig.class })
 @Rollback(true)
 public class QueryBuilderServiceIT {
@@ -280,7 +280,6 @@ public class QueryBuilderServiceIT {
 		flight.setCarrier("AB");
 		flight.setDestination("USA");
 		flight.setDirection("O");
-		flight.setFlightDate(new Date());
 		flight.setFlightNumber("123");
 		flight.setOrigin("CAN");
 
@@ -289,9 +288,9 @@ public class QueryBuilderServiceIT {
 
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
-		passenger.setPassengerType("P");
-		passenger.setFirstName("TEST");
-		passenger.setLastName("USER");
+		passenger.getPassengerDetails().setPassengerType("P");
+		passenger.getPassengerDetails().setFirstName("TEST");
+		passenger.getPassengerDetails().setLastName("USER");
 
 		passengerService.setAllFlights(flights, passenger.getId());
 
@@ -336,7 +335,6 @@ public class QueryBuilderServiceIT {
 		flight.setCarrier("AB1");
 		flight.setDestination("USA");
 		flight.setDirection("O");
-		flight.setFlightDate(new Date());
 		flight.setFlightNumber("1234");
 		flight.setOrigin("CAN");
 
@@ -345,9 +343,9 @@ public class QueryBuilderServiceIT {
 
 		Passenger passenger = new Passenger();
 		passenger.setDeleted(false);
-		passenger.setPassengerType("P1");
-		passenger.setFirstName("TEST1");
-		passenger.setLastName("USER1");
+		passenger.getPassengerDetails().setPassengerType("P1");
+		passenger.getPassengerDetails().setFirstName("TEST1");
+		passenger.getPassengerDetails().setLastName("USER1");
 
 		passengerService.setAllFlights(flights, passenger.getId());
 

@@ -64,7 +64,7 @@ public class RuleRepositoryIT {
     @Transactional
     public void testBasicApisRequest() {
         integrationTestData = integrationTestBuilder.messageType(APIS).build();
-        integrationTestData.getPassenger().setEmbarkation("Timbuktu");
+        integrationTestData.getPassenger().getPassengerTripDetails().setEmbarkation("Timbuktu");
         integrationTestData.getFlight().setFlightNumber("testFlightNum");
         integrationTestData.getFlightPaxApis().setBagWeight(0);
 

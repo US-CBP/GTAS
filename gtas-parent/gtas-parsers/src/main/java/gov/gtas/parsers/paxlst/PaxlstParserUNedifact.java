@@ -1,15 +1,15 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.parsers.paxlst;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.StringJoiner;
 
+import gov.gtas.parsers.pnrgov.enums.MeasurementQualifier;
+import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,13 +40,6 @@ import gov.gtas.parsers.paxlst.segment.unedifact.TDT;
 import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
-import gov.gtas.parsers.vo.AddressVo;
-import gov.gtas.parsers.vo.ApisMessageVo;
-import gov.gtas.parsers.vo.DocumentVo;
-import gov.gtas.parsers.vo.FlightVo;
-import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.parsers.vo.ReportingPartyVo;
-import gov.gtas.parsers.vo.SeatVo;
 import gov.gtas.util.MathUtils;
 
 public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
@@ -65,14 +58,14 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
         getConditionalSegment(RFF.class);
 
-        for (;;) {
+        for (; ; ) {
             DTM dtm = getConditionalSegment(DTM.class);
             if (dtm == null) {
                 break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             NAD nad = getConditionalSegment(NAD.class);
             if (nad == null) {
                 break;
@@ -83,7 +76,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         // at least one TDT is mandatory
         TDT tdt = getMandatorySegment(TDT.class);
         processFlight(tdt);
-        for (;;) {
+        for (; ; ) {
             tdt = getConditionalSegment(TDT.class);
             if (tdt == null) {
                 break;
@@ -91,7 +84,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             processFlight(tdt);
         }
 
-        for (;;) {
+        for (; ; ) {
             NAD nad = getConditionalSegment(NAD.class);
             if (nad == null) {
                 break;
@@ -116,7 +109,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
         getConditionalSegment(CTA.class);
 
-        for (;;) {
+        for (; ; ) {
             COM com = getConditionalSegment(COM.class);
             if (com == null) {
                 break;
@@ -143,7 +136,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         Date etd = null;
         boolean loc92Seen = false;
 
-        for (;;) {
+        for (; ; ) {
             DTM dtm = getConditionalSegment(DTM.class);
             if (dtm == null) {
                 break;
@@ -151,7 +144,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         }
 
         // Segment group 3: loc-dtm loop
-        for (;;) {
+        for (; ; ) {
             LOC loc = getConditionalSegment(LOC.class);
             if (loc == null) {
                 break;
@@ -161,30 +154,30 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             String airport = loc.getLocationNameCode();
 
             switch (locCode) {
-            case DEPARTURE_AIRPORT:
-                origin = airport;
-                break;
-            case ARRIVAL_AIRPORT:
-                dest = airport;
-                break;
-            case BOTH_DEPARTURE_AND_ARRIVAL_AIRPORT:
-                if (loc92Seen) {
-                    dest = airport;
-                    loc92Seen = false;
-                } else {
+                case DEPARTURE_AIRPORT:
                     origin = airport;
-                    loc92Seen = true;
-                }
-                break;
-            case FINAL_DESTINATION:
-                if (loc92Seen) {
+                    break;
+                case ARRIVAL_AIRPORT:
                     dest = airport;
-                    loc92Seen = false;
-                } else {
-                    throw new ParseException("LOC+" + LocCode.FINAL_DESTINATION + " found but no corresponding LOC+"
-                            + LocCode.BOTH_DEPARTURE_AND_ARRIVAL_AIRPORT);
-                }
-                break;
+                    break;
+                case BOTH_DEPARTURE_AND_ARRIVAL_AIRPORT:
+                    if (loc92Seen) {
+                        dest = airport;
+                        loc92Seen = false;
+                    } else {
+                        origin = airport;
+                        loc92Seen = true;
+                    }
+                    break;
+                case FINAL_DESTINATION:
+                    if (loc92Seen) {
+                        dest = airport;
+                        loc92Seen = false;
+                    } else {
+                        throw new ParseException("LOC+" + LocCode.FINAL_DESTINATION + " found but no corresponding LOC+"
+                                + LocCode.BOTH_DEPARTURE_AND_ARRIVAL_AIRPORT);
+                    }
+                    break;
             }
 
             // get corresponding DTM, if it exists
@@ -207,7 +200,6 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 f.setDestination(dest);
                 f.setEta(eta);
                 f.setEtd(etd);
-                f.setFlightDate(FlightUtils.determineFlightDate(etd, eta, parsedMessage.getTransmissionDate()));
 
                 if (f.isValid()) {
                     parsedMessage.addFlight(f);
@@ -241,16 +233,16 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             paxType = "P";
         } else {
             switch (nad.getNadCode()) {
-            case CREW_MEMBER:
-            case INTRANSIT_CREW_MEMBER:
-                paxType = "C";
-                break;
-            case INTRANSIT_PASSENGER:
-                paxType = "I";
-                break;
-            default:
-                paxType = "P";
-                break;
+                case CREW_MEMBER:
+                case INTRANSIT_CREW_MEMBER:
+                    paxType = "C";
+                    break;
+                case INTRANSIT_PASSENGER:
+                    paxType = "I";
+                    break;
+                default:
+                    paxType = "P";
+                    break;
             }
         }
         p.setPassengerType(paxType);
@@ -261,19 +253,19 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             throw new ParseException("Invalid passenger: " + nad);
         }
 
-        for (;;) {
+        for (; ; ) {
             ATT att = getConditionalSegment(ATT.class);
             if (att == null) {
                 break;
             }
             switch (att.getFunctionCode()) {
-            case GENDER:
-                p.setGender(att.getAttributeDescriptionCode());
-                break;
+                case GENDER:
+                    p.setGender(att.getAttributeDescriptionCode());
+                    break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             DTM dtm = getConditionalSegment(DTM.class);
             if (dtm == null) {
                 break;
@@ -287,97 +279,105 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 }
             }
         }
-        
-        /**
-         * APIS 16B | Parsing and Loading New bag information #815
-         * 
-         * FTX segment below ignores bag information if bagsCountedFromMEA is true, meaning ... it was already parsed from MEA segment and avoids overriding the information from FTX segment.
-         *  
-         */
-        boolean bagsCountedFromMEA =false;
-
-        for (;;) {
+        // bags counted and weighed from measurement take priority over bag count from ID.
+        // Keep a flag to see if we got measurement information.
+        boolean bagsCountedFromMEA = false;
+        BagMeasurementsVo bagMeasurementsVo = new BagMeasurementsVo();
+        for (; ; ) {
             MEA mea = getConditionalSegment(MEA.class);
             if (mea == null) {
                 break;
             }
-            
-            /**
-             * APIS 16B | Parsing and Loading New bag information #815
-             */
-	            if(mea.isSegmentIncludedInAPISMessage()) {
-	            	bagsCountedFromMEA=true;
-	            }
-	            
-	            if(MeasurementCodeQualifier.CT.equals(mea.getCode())) {
-	            	p.setBagNum(mea.getNumBags());
-	            }
-	            if(MeasurementCodeQualifier.WT.equals(mea.getCode())) {
-	            	
-	            	if(mea.getWeightUnit().equals(MeasurementUnitCode.LBR)) {
-	            		// Convert pounds to kilograms
-	            		double kilograms = MathUtils.poundsToKilos(Double.parseDouble(mea.getBagWeight()));
-	            		p.setTotalBagWeight(String.valueOf(kilograms));
-	            }else
-	            		p.setTotalBagWeight(mea.getBagWeight());
-	            }
-            
-            /**
-             * ENDS #815
-             */
+            if (mea.isSegmentIncludedInAPISMessage()) {
+                bagsCountedFromMEA = true;
+            }
+
+            if (MeasurementCodeQualifier.CT.equals(mea.getCode())) {
+                String numBagsAsString = mea.getNumBags();
+                p.setBagNum(numBagsAsString);
+                Integer bagCount = bagMeasurementsVo.getBagCountFromString(numBagsAsString);
+                bagMeasurementsVo.setQuantity(bagCount);
+            }
+            if (MeasurementCodeQualifier.WT.equals(mea.getCode())) {
+                String bagWeight = mea.getBagWeight();
+                Double weight = bagMeasurementsVo.getBagWeightFromString(bagWeight);
+                bagMeasurementsVo.setRawWeight(weight);
+
+                if (mea.getWeightUnit().equals(MeasurementUnitCode.LBR)) {
+                    // Convert pounds to kilograms
+                    bagMeasurementsVo.setMeasurementType(MeasurementQualifier.LBS.getEnglishName());
+                    if (weight != null) {
+                        double kilograms = MathUtils.poundsToKilos(weight);
+                        p.setTotalBagWeight(String.valueOf(kilograms));
+                        bagMeasurementsVo.setWeightInKilos(kilograms);
+                    }
+                } else {
+                    p.setTotalBagWeight(mea.getBagWeight());
+                    bagMeasurementsVo.setWeightInKilos(weight);
+                    bagMeasurementsVo.setMeasurementType(MeasurementQualifier.KILOS.getEnglishName());
+                }
+            }
         }
 
-        for (;;) {
+        for (; ; ) {
             GEI gei = getConditionalSegment(GEI.class);
             if (gei == null) {
                 break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             FTX ftx = getConditionalSegment(FTX.class);
             if (ftx == null) {
                 break;
             }
             String bagId = ftx.getBagId();
             if (StringUtils.isNotBlank(bagId)) {
-            	if(!bagsCountedFromMEA) // APIS 16B | Ignore bag weight if already parsed from MEA segment #815. 
-            	p.setTotalBagWeight(ftx.getBagWeight());
-            	p.setBagId(bagId);
-                List<String> bags = new ArrayList<>();
-                
-                if (ftx.getNumBags() != null ) {
-                	if(!bagsCountedFromMEA) // APIS 16B | Ignore bag count if already parsed from MEA segment #815. 
-                    p.setBagNum(ftx.getNumBags());
-                    int numBags = Integer.parseInt(ftx.getNumBags());
-                    String airlineCode = bagId.substring(0, Math.min(bagId.length(), 2));
-                    if(StringUtils.isNumeric(airlineCode) && StringUtils.isNumeric(bagId)){
-                        for (int i = 0; i < numBags - 1; i++) {
-                        	int j=1+i;
-                            String temp = bagId+":"+j;
-                            bags.add(temp);
-                        }                   	
-                    }else{
-                    int startNum = getNum(bagId);
-                    StringBuffer sb = new StringBuffer();
-                    for (int i = 0; i < numBags - 1; i++) {
-                        sb.setLength(0);
-                        String temp = sb.append(airlineCode).append(++startNum).toString();
-                        bags.add(temp);
+                p.setBagId(bagId);
+                if (!bagsCountedFromMEA) {
+                    Integer bagCountFromString = bagMeasurementsVo.getBagCountFromString(ftx.getNumBags());
+                    bagMeasurementsVo.setQuantity(bagCountFromString);
+                    Double weight = bagMeasurementsVo.getBagWeightFromString(ftx.getBagWeight());
+                    bagMeasurementsVo.setWeightInKilos(weight);
+                    bagMeasurementsVo.setRawWeight(weight);
+                    bagMeasurementsVo.setMeasurementType(MeasurementQualifier.UNKNOWN.getEnglishName());
+                    p.setTotalBagWeight(ftx.getBagWeight());
+                    String bagNum = ftx.getNumBags() == null ? "1" : ftx.getNumBags();
+                    p.setBagNum(bagNum);
+                } else {
+                    Double bagWeight = bagMeasurementsVo.getWeightInKilos();
+                    if (bagWeight != null) {
+                        int newWeight = bagWeight.intValue();
+                        p.setTotalBagWeight(Integer.toString(newWeight));
+                    }
+                    Integer bagCount = bagMeasurementsVo.getQuantity();
+                    if (bagCount != null) {
+                        p.setBagNum(Integer.toString(bagCount));
                     }
                 }
+                int repeatedBagIdentification = getNumberOfBagVosToMake(ftx);
+                String airlineCodePartOfBagId = bagId.substring(0, Math.min(bagId.length(), 2));
+                String numberPartOfBagIdAsString = getNumericPartOfBagId(bagId);
+                int numericPartOfBagId;
+                try {
+                    // first bag ID is always what is given. we infer the rest as they are sequential.
+                    numericPartOfBagId = Integer.parseInt(numberPartOfBagIdAsString);
+                    for (int i = 0; i < repeatedBagIdentification; i++) {
+                        String inferredBagId = addZerosToGetFour(Integer.toString(numericPartOfBagId));
+                        BagVo bagVo = getBagVo(p, bagMeasurementsVo, airlineCodePartOfBagId, inferredBagId);
+                        parsedMessage.addBagVo(bagVo);
+                        numericPartOfBagId++;
+                    }
+                } catch (Exception ignored) {
+                    // Not expected to happen but if ID can not be generated use the given bag Id to create a bagvo.
+                    BagVo bagVo = getBagVo(p, bagMeasurementsVo, airlineCodePartOfBagId, bagId);
+                    parsedMessage.addBagVo(bagVo);
                 }
-                else{
-                   	bags.add(bagId);
-                	if(!bagsCountedFromMEA)
-                   	p.setBagNum("1");
-                }
-                p.setBags(bags);
             }
         }
 
         String birthCountry = null;
-        for (;;) {
+        for (; ; ) {
             LOC loc = getConditionalSegment(LOC.class);
             if (loc == null) {
                 break;
@@ -385,75 +385,75 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
             String val = loc.getLocationNameCode();
             switch (loc.getFunctionCode()) {
-            case PORT_OF_DEBARKATION:
-                p.setDebarkation(val);
-                break;
-            case PORT_OF_EMBARKATION:
-                p.setEmbarkation(val);
-                break;
-            case COUNTRY_OF_RESIDENCE:
-                p.setResidencyCountry(val);
-                break;
-            case PLACE_OF_BIRTH:
-                birthCountry = val;
-                break;
+                case PORT_OF_DEBARKATION:
+                    p.setDebarkation(val);
+                    break;
+                case PORT_OF_EMBARKATION:
+                    p.setEmbarkation(val);
+                    break;
+                case COUNTRY_OF_RESIDENCE:
+                    p.setResidencyCountry(val);
+                    break;
+                case PLACE_OF_BIRTH:
+                    birthCountry = val;
+                    break;
             }
         }
 
         getConditionalSegment(COM.class);
 
-        for (;;) {
+        for (; ; ) {
             EMP emp = getConditionalSegment(EMP.class);
             if (emp == null) {
                 break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             NAT nat = getConditionalSegment(NAT.class);
             if (nat == null) {
-                if (p.getCitizenshipCountry() == null && birthCountry != null) {
-                    p.setCitizenshipCountry(birthCountry);
+                if (p.getNationality() == null && birthCountry != null) {
+                    p.setNationality(birthCountry);
                 }
                 break;
             }
-            p.setCitizenshipCountry(nat.getNationalityCode());
+            p.setNationality(nat.getNationalityCode());
         }
 
-        for (;;) {
+        for (; ; ) {
             RFF rff = getConditionalSegment(RFF.class);
             if (rff == null) {
                 break;
             }
             switch (rff.getReferenceCodeQualifier()) {
-            case ASSIGNED_SEAT:
-                if (CollectionUtils.isEmpty(parsedMessage.getFlights())) {
+                case ASSIGNED_SEAT:
+                    if (CollectionUtils.isEmpty(parsedMessage.getFlights())) {
+                        break;
+                    }
+                    SeatVo seat = new SeatVo();
+                    seat.setApis(Boolean.valueOf(true));
+                    seat.setNumber(rff.getReferenceIdentifier());
+                    FlightVo firstFlight = parsedMessage.getFlights().get(0);
+                    seat.setOrigin(firstFlight.getOrigin());
+                    seat.setDestination(firstFlight.getDestination());
+                    if (seat.isValid()) {
+                        p.getSeatAssignments().add(seat);
+                    }
+
                     break;
-                }
-                SeatVo seat = new SeatVo();
-                seat.setApis(Boolean.valueOf(true));
-                seat.setNumber(rff.getReferenceIdentifier());
-                FlightVo firstFlight = parsedMessage.getFlights().get(0);
-                seat.setOrigin(firstFlight.getOrigin());
-                seat.setDestination(firstFlight.getDestination());
-                if (seat.isValid()) {
-                    p.getSeatAssignments().add(seat);
-                }
 
-                break;
+                case CUSTOMER_REF_NUMBER:
+                    // possibly freq flyer #
+                    break;
 
-            case CUSTOMER_REF_NUMBER:
-                // possibly freq flyer #
-                break;
-                
-            case RESERVATION_REF_NUMBER:
-            	p.setReservationReferenceNumber(rff.getReferenceIdentifier());
-            	break;
+                case RESERVATION_REF_NUMBER:
+                    p.setReservationReferenceNumber(rff.getReferenceIdentifier());
+                    break;
             }
-            
+
         }
 
-        for (;;) {
+        for (; ; ) {
             DOC doc = getConditionalSegment(DOC.class);
             if (doc == null) {
                 break;
@@ -462,48 +462,73 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         }
     }
 
+    private String addZerosToGetFour(String bagId) {
+        StringBuilder bagIdNumberBuilder = new StringBuilder(bagId);
+        while (bagIdNumberBuilder.length() < 4) {
+            bagIdNumberBuilder.insert(0, "0");
+        }
+        return bagIdNumberBuilder.toString();
+    }
+
+    private String getNumericPartOfBagId(String bagId) {
+        String numberPartOfBagId = "";
+        if (bagId.length() > 2) {
+            numberPartOfBagId = bagId.substring(2);
+        }
+        return numberPartOfBagId;
+    }
+
+    private int getNumberOfBagVosToMake(FTX ftx) {
+        int repeatedBagIdentification;
+        if (ftx.getNumBags() == null) {
+            repeatedBagIdentification = 1;
+        } else {
+            try {
+                repeatedBagIdentification = Integer.parseInt(ftx.getNumBags());
+            } catch (Exception ignored) {
+                repeatedBagIdentification = 1;
+            }
+        }
+        return repeatedBagIdentification;
+    }
+
+    private BagVo getBagVo(PassengerVo p, BagMeasurementsVo bagMeasurementsVo, String airlineCode, String bagId) {
+        BagVo bagVo = new BagVo();
+        bagVo.setData_source("APIS");
+        bagVo.setPrimeFlight(true); // apis bags always are prime flight.
+        bagVo.setAirline(airlineCode);
+        bagVo.setBagId(bagId);
+        bagVo.setBagMeasurementsVo(bagMeasurementsVo);
+        bagVo.setBagMeasurementUUID(bagMeasurementsVo.getUuid());
+        bagVo.setPassengerId(p.getPassengerVoUUID());
+        return bagVo;
+    }
+
     private void createPassengerAddress(NAD nad, PassengerVo p) {
-    	//TODO passenger address is stored in Address table.modify in future to store separately
-    	AddressVo avo=new AddressVo();
+        //TODO passenger address is stored in Address table.modify in future to store separately
+        AddressVo avo = new AddressVo();
         StringJoiner sj = new StringJoiner(" ");
         if (nad.getNumberAndStreetIdentifier() != null) {
-        	avo.setLine1(nad.getNumberAndStreetIdentifier());
+            avo.setLine1(nad.getNumberAndStreetIdentifier());
             sj.add(nad.getNumberAndStreetIdentifier());
         }
         if (nad.getCity() != null) {
-        	avo.setCity(nad.getCity());
+            avo.setCity(nad.getCity());
             sj.add(nad.getCity());
         }
         if (nad.getCountrySubCode() != null) {
-        	avo.setState(nad.getCountrySubCode());
-        	sj.add(nad.getCountrySubCode());
+            avo.setState(nad.getCountrySubCode());
+            sj.add(nad.getCountrySubCode());
         }
         if (nad.getPostalCode() != null) {
-        	avo.setPostalCode(nad.getPostalCode());
+            avo.setPostalCode(nad.getPostalCode());
             sj.add(nad.getPostalCode());
         }
         if (nad.getCountryCode() != null) {
-        	avo.setCountry(nad.getCountryCode());
+            avo.setCountry(nad.getCountryCode());
             sj.add(nad.getCountryCode());
         }
         p.setAddress(sj.toString());
-    }
-
-    private int getNum(String s) {
-        int res = 0;
-        int p = 1;
-        int i = s.length() - 1;
-        while (i >= 0) {
-            int d = s.charAt(i) - '0';
-            if (d >= 0 && d <= 9)
-                res += d * p;
-            else
-                break;
-            i--;
-            p *= 10;
-        }
-
-        return res;
     }
 
     /**
@@ -515,7 +540,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         d.setDocumentType(doc.getDocCode());
         d.setDocumentNumber(doc.getDocumentIdentifier());
 
-        for (;;) {
+        for (; ; ) {
             DTM dtm = getConditionalSegment(DTM.class);
             if (dtm == null) {
                 break;
@@ -526,21 +551,21 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             GEI gei = getConditionalSegment(GEI.class);
             if (gei == null) {
                 break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             RFF rff = getConditionalSegment(RFF.class);
             if (rff == null) {
                 break;
             }
         }
 
-        for (;;) {
+        for (; ; ) {
             LOC loc = getConditionalSegment(LOC.class);
             if (loc == null) {
                 break;
@@ -549,11 +574,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (locCode == LocCode.PLACE_OF_DOCUMENT_ISSUE) {
                 d.setIssuanceCountry(loc.getLocationNameCode());
 
-                if (p.getCitizenshipCountry() == null) {
+                if (p.getNationality() == null) {
                     // wasn't set by NAD:LOC, so derive it here from issuance
                     // country
                     if ("P".equals(d.getDocumentType())) {
-                        p.setCitizenshipCountry(d.getIssuanceCountry());
+                        p.setNationality(d.getIssuanceCountry());
                     }
                 }
             }
@@ -561,7 +586,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
 
         getConditionalSegment(CPI.class);
 
-        for (;;) {
+        for (; ; ) {
             QTY qty = getConditionalSegment(QTY.class);
             if (qty == null) {
                 break;

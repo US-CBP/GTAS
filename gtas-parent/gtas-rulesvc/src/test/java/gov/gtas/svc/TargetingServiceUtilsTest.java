@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
-
+//TODO: move to an integration test class.
 public class TargetingServiceUtilsTest {
 
 	/**
@@ -60,7 +60,7 @@ public class TargetingServiceUtilsTest {
 											// passenger has a seat
 	}
 
-	//@Test
+/*	//@Test
 	public void testApisPnrRuleRequestCreation() {
 		ApisMessage apis = ApisDataGenerator.createSimpleTestApisMesssage();
 		Pnr pnr = PnrDataGenerator.createTestPnr(1L);
@@ -70,13 +70,13 @@ public class TargetingServiceUtilsTest {
 		Collection<?> reqObjects = request.getRequestObjects();
 		assertNotNull(reqObjects);
 		assertEquals(47, reqObjects.size());// 32 PNR + 15 APIS
-	}
+	}*/
 
-	//@Test
+/*	//@Test
 	public void testApisPnrRuleRequestCreation2() {
-		/*
+		*//*
 		 * PNR and APIS has 2 common flights and 3 passengers
-		 */
+		 *//*
 		ApisMessage apisMsg = ApisDataGenerator.createSimpleTestApisMesssage();
 		Pnr pnr = PnrDataGenerator.createTestPnr(1L);
 
@@ -100,5 +100,5 @@ public class TargetingServiceUtilsTest {
 		assertNotNull(reqObjects);
 		assertEquals(50, reqObjects.size());// 32 PNR + 15 APIS + 3 common
 											// passenger links
-	}
+	}*/
 }

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -45,7 +45,7 @@ import org.springframework.test.annotation.Rollback;
  * KnowledgeBase.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @Rollback(true)
 public class RulePersistenceServiceIT {

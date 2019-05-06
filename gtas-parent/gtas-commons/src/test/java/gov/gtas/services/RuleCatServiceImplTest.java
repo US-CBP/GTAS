@@ -6,7 +6,7 @@
 package gov.gtas.services;
 
 
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.lookup.RuleCat;
 import org.junit.After;
 import org.junit.Before;
@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static junit.framework.TestCase.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {CommonServicesConfig.class})
+@ContextConfiguration(classes = {TestCommonServicesConfig.class})
 public class RuleCatServiceImplTest {
 
     private static final Logger logger = LoggerFactory

@@ -1,31 +1,19 @@
 #!/bin/bash
 
-cp ../../elastic_stack_yum_repos.repo /etc/yum.repos.d/elastic_stack.repo
+CURRENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
-sudo yum install elasticsearch -y
+cd $CURRENT_DIR
 
-systemctl daemon-reload
+../set_env.sh
 
-systemctl enable elasticsearch
+# Install kabana
 
-systemctl start elasticsearch
-
-# Install and start kabana
-
-sudo yum install kibana -y
+sudo yum install kibana-6.5.0-1 -y
 
 systemctl daemon-reload
 
 systemctl enable kibana
 
-systemctl start kibana
+# Import gtas default dashboard
 
-# Install and start logstash
-
-sudo yum install logstash -y
-
-systemctl daemon-reload
-
-systemctl enable logstashipt
-
-systemctl start logstash
+../../../config/kibana/kibana.import-dashboard.sh

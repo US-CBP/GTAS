@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.model.Case;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsDisposition;
@@ -72,17 +73,22 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
 //    public Integer updateDispCommentsForHitsDisposition(Long id, Set<HitsDisposition> hitsDispositionSet);
 
    @Query("SELECT c " +
-			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I') OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' ))" )
+			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.mutableFlightDetails.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I') OR (flt.mutableFlightDetails.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' ))" )
 	public List<Case> findOneDayLookoutByDate(@Param("startDate") Date startDate, @Param("endDate")Date endDate);
 
    @Query("SELECT c " +
-			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I' AND flt.destination = :airport) OR (flt.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' AND flt.origin=:airport ))" )
+			"FROM Case c JOIN c.flight flt  WHERE c.oneDayLookoutFlag = true AND ((flt.mutableFlightDetails.eta BETWEEN :startDate AND :endDate AND UPPER(flt.direction)='I' AND flt.destination = :airport) OR (flt.mutableFlightDetails.etd BETWEEN :startDate AND :endDate AND UPPER(flt.direction) = 'O' AND flt.origin=:airport ))" )
 	public List<Case> findOneDayLookoutByDateAndAirport(@Param("startDate") Date startDate, @Param("endDate")Date endDate, @Param("airport")String airport);
 
    @Modifying
    @Transactional
    @Query("update Case set oneDayLookoutFlag = :flag where id = :caseId")
    public Integer updateOneDayLookoutFlag(@Param("caseId")Long caseId, @Param("flag") Boolean flag);
+   
+   @Modifying
+   @Transactional
+   @Query("update Case set encounteredStatus = :encStatus where id = :caseId")
+   public void updateEncounteredStatus(@Param("caseId")Long caseId, @Param("encStatus")EncounteredStatusEnum encStatus);
    
 
 	
