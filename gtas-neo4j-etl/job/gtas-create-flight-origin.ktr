@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-create-passenger-flight</name>
+    <name>gtas-create-flight-origin</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -427,43 +428,94 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2019/04/24 09:32:34.289</created_date>
+    <created_date>2019/05/03 02:42:44.149</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2019/04/24 09:32:34.289</modified_date>
-    <key_for_session_key/>
+    <modified_date>2019/05/03 02:42:44.149</modified_date>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
   <order>
     <hop>
-      <from>CSV file input-credit card</from>
-      <to>Select values</to>
+      <from>Add constants - airport labels</from>
+      <to>Select values-convert etd dates</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>isPassengerAvailable</from>
-      <to>Dummy (do nothing)</to>
+      <from>Select values-convert etd dates</from>
+      <to>Neo4J Output - Airport</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values</from>
-      <to>isPassengerAvailable</to>
+      <from>CSV file input-document</from>
+      <to>Filter rows 2</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>isPassengerAvailable</from>
-      <to>Unique rows</to>
+      <from>Filter rows 2</from>
+      <to>Unique rows - flight-origin_airport</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Unique rows</from>
-      <to>Neo4J Output -passenger-flight</to>
+      <from>Unique rows - flight-origin_airport</from>
+      <to>Add constants - airport labels</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>CSV file input-credit card</name>
+    <name>Add constants - airport labels</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>AIRPORT_LABLE</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>Airport</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>FLIGHT_ORIGIN_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>origin_of</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>752</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>CSV file input-document</name>
     <type>CsvInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -473,7 +525,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_PASSENGER_FULL_FILE_NAME}</filename>
+    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_ALL_FLIGHT_FILE}</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
@@ -1420,7 +1472,7 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>full_etd_dtm</name>
@@ -1431,7 +1483,7 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>gtas_message_id</name>
@@ -1442,7 +1494,7 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>gtas_passenger_id</name>
@@ -1453,7 +1505,29 @@
         <group/>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>gtas_message_create_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>message_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
       </field>
     </fields>
     <attributes/>
@@ -1465,151 +1539,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>256</yloc>
+      <xloc>154</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Select values</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>IS_PASSENGER_AVAILABLE</name>
-        <rename>IS_PASSENGER_AVAILABLE</rename>
-        <type>Boolean</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>gtas_passenger_id</name>
-        <rename>gtas_passenger_id</rename>
-        <type>Integer</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>dob</name>
-        <rename>dob</rename>
-        <type>String</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>eta_date</name>
-        <rename>eta_date</rename>
-        <type>String</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>etd_date</name>
-        <rename>etd_date</rename>
-        <type>String</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask>yyyy-MM-dd</conversion_mask>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>480</xloc>
-      <yloc>256</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>736</xloc>
-      <yloc>416</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>isPassengerAvailable</name>
+    <name>Filter rows 2</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -1619,23 +1555,54 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Unique rows</send_true_to>
-    <send_false_to>Dummy (do nothing)</send_false_to>
+    <send_true_to>Unique rows - flight-origin_airport</send_true_to>
+    <send_false_to>Dummy (do nothing) - on false</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue>IS_PASSENGER_AVAILABLE</leftvalue>
-        <function>=</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>Boolean</type>
-          <text>Y</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask/>
-        </value>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>gtas_flight_id</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>etd_date</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>origin</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>destination</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>flight_number</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>carrier</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+        </conditions>
       </condition>
     </compare>
     <attributes/>
@@ -1647,13 +1614,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>736</xloc>
-      <yloc>256</yloc>
+      <xloc>336</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4J Output -passenger-flight</name>
+    <name>Neo4J Output - Airport</name>
     <type>Neo4JOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1664,7 +1631,7 @@
       <schema_name/>
     </partitioning>
     <connection>neo4j-db</connection>
-    <batch_size>${EXT_VAR_PASSENGER_BATCH_SIZE}</batch_size>
+    <batch_size>${EXT_VAR_FLIGHT_ORIGIN_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>
     <use_create>N</use_create>
@@ -1674,56 +1641,20 @@
     <from>
       <read_only_from_node>N</read_only_from_node>
       <labels>
-        <label>PASSENGER_LABEL</label>
+        <label>AIRPORT_LABLE</label>
         <value/>
       </labels>
       <properties>
         <property>
-          <name>id_tag</name>
-          <value>idTag</value>
+          <name>airport_code</name>
+          <value>origin</value>
           <type>String</type>
           <primary>Y</primary>
         </property>
         <property>
-          <name>first_name</name>
-          <value>first_name</value>
+          <name>country_code</name>
+          <value>origin_country</value>
           <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>middle_name</name>
-          <value>middle_name</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>last_name</name>
-          <value>last_name</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>citizenship_country</name>
-          <value>citizenship_country</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>gender</name>
-          <value>gender</value>
-          <type>String</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>dob</name>
-          <value>dob</value>
-          <type>Date</type>
-          <primary>N</primary>
-        </property>
-        <property>
-          <name>gtas_passenger_id</name>
-          <value>gtas_passenger_id</value>
-          <type>Integer</type>
           <primary>N</primary>
         </property>
       </properties>
@@ -1767,13 +1698,18 @@
         </property>
       </properties>
     </to>
-    <relationship>PASSENGER_FLIGHT_LABEL</relationship>
+    <relationship>FLIGHT_ORIGIN_LABEL</relationship>
     <relationship_value/>
     <relprops>
       <relprop>
-        <name>pnr_record_locator</name>
-        <value>pnr_record_locator</value>
-        <type>String</type>
+        <name>full_etd_dtm</name>
+        <value>full_etd_dtm</value>
+        <type>LocalDateTime</type>
+      </relprop>
+      <relprop>
+        <name>etd_date</name>
+        <value>etd_date</value>
+        <type>Date</type>
       </relprop>
     </relprops>
     <attributes/>
@@ -1786,12 +1722,74 @@
     </remotesteps>
     <GUI>
       <xloc>1312</xloc>
-      <yloc>256</yloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Unique rows</name>
+    <name>Select values-convert etd dates</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>etd_date</name>
+        <rename>etd_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>full_etd_dtm</name>
+        <rename>full_etd_dtm</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1024</xloc>
+      <yloc>320</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Unique rows - flight-origin_airport</name>
     <type>Unique</type>
     <description/>
     <distribute>Y</distribute>
@@ -1807,8 +1805,12 @@
     <error_description/>
     <fields>
       <field>
-        <name>gtas_passenger_id</name>
+        <name>gtas_flight_id</name>
         <case_insensitive>N</case_insensitive>
+      </field>
+      <field>
+        <name>origin</name>
+        <case_insensitive>Y</case_insensitive>
       </field>
     </fields>
     <attributes/>
@@ -1820,8 +1822,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1008</xloc>
-      <yloc>256</yloc>
+      <xloc>544</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

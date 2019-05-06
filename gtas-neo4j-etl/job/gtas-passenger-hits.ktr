@@ -480,7 +480,7 @@
       </attribute>
       <attribute>
         <code>INITIAL_POOL_SIZE</code>
-        <attribute>3</attribute>
+        <attribute>5</attribute>
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
@@ -488,7 +488,7 @@
       </attribute>
       <attribute>
         <code>MAXIMUM_POOL_SIZE</code>
-        <attribute>5</attribute>
+        <attribute>8</attribute>
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
@@ -518,16 +518,6 @@
   </connection>
   <order>
     <hop>
-      <from>Add constants</from>
-      <to>Identify last row in a stream</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Neo4J Output - merge passenger-hit</from>
-      <to>Dummy-after merging hit</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Sort rows--passenger-hit detail</from>
       <to>Neo4J Output - merge passenger-hit</to>
       <enabled>Y</enabled>
@@ -538,33 +528,8 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Identify last row in a stream</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Set variables</from>
       <to>Dummy - branch</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows</from>
-      <to>Dummy - branch</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values</from>
-      <to>Filter rows - check hit id</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows - check hit id</from>
-      <to>Filter rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows - check hit id</from>
-      <to>Write to log</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -573,18 +538,13 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Filter rows</from>
+      <to>Dummy - branch</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Dummy (do nothing)</from>
       <to>Sort rows--passenger-hit detail</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Table input - read hits</from>
-      <to>Add constants</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Table input - read hits</from>
-      <to>Detect empty stream</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -598,23 +558,38 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Write to log</from>
+      <from>Table input - read hits</from>
+      <to>Filter rows - check hit id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Set field value to a constant</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows - check hit id</from>
+      <to>Add constants</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values</from>
+      <to>Set field value to a constant</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows - check hit id</from>
+      <to>Write to log - No hit data....</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Write to log - No hit data....</from>
       <to>Abort</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Detect empty stream</from>
-      <to>Add constants 2</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Add constants 2</from>
-      <to>Set variables- to null</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Set variables- to null</from>
-      <to>Abort- NO PASSENGER HIT DATA</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -642,37 +617,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>496</xloc>
-      <yloc>752</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Abort- NO PASSENGER HIT DATA</name>
-    <type>Abort</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <row_threshold>0</row_threshold>
-    <message>###################################### ++++++++ NO PASSENGER HIT DATA IN THE STREAM +++++++++ ##############################################</message>
-    <always_log_rows>Y</always_log_rows>
-    <abort_option>ABORT</abort_option>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>1184</xloc>
-      <yloc>848</yloc>
+      <xloc>480</xloc>
+      <yloc>784</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -695,7 +641,7 @@
         <currency/>
         <decimal/>
         <group/>
-        <nullif>false</nullif>
+        <nullif>true</nullif>
         <length>-1</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
@@ -758,72 +704,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>976</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Add constants 2</name>
-    <type>Constant</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>LAST_HIT_SUMMARY_CREATE_DATE</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <length>-1</length>
-        <precision>-1</precision>
-        <set_empty_string>N</set_empty_string>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>800</xloc>
-      <yloc>848</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Detect empty stream</name>
-    <type>DetectEmptyStream</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>624</xloc>
-      <yloc>848</yloc>
+      <xloc>112</xloc>
+      <yloc>912</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -848,7 +730,7 @@
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>432</yloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -873,32 +755,7 @@
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>528</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Dummy-after merging hit</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>672</xloc>
-      <yloc>272</yloc>
+      <yloc>496</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -913,7 +770,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Set variables</send_true_to>
+    <send_true_to>Set variables - is last hit row</send_true_to>
     <send_false_to>Dummy - branch</send_false_to>
     <compare>
       <condition>
@@ -957,8 +814,8 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Filter rows</send_true_to>
-    <send_false_to>Write to log</send_false_to>
+    <send_true_to>Add constants</send_true_to>
+    <send_false_to>Write to log - No hit data....</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
@@ -977,33 +834,7 @@
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>752</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Identify last row in a stream</name>
-    <type>DetectLastRow</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <resultfieldname>isLastRow</resultfieldname>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>112</xloc>
-      <yloc>976</yloc>
+      <yloc>1008</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1104,8 +935,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>400</xloc>
-      <yloc>272</yloc>
+      <xloc>688</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1235,7 +1066,7 @@
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>864</yloc>
+      <yloc>832</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1364,8 +1195,42 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>416</xloc>
-      <yloc>432</yloc>
+      <xloc>352</xloc>
+      <yloc>416</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Set field value to a constant</name>
+    <type>SetValueConstant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <usevar>N</usevar>
+    <fields>
+      <field>
+        <name>IS_HIT_AVAILABLE</name>
+        <value>true</value>
+        <mask/>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>752</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1382,14 +1247,8 @@
     </partitioning>
     <fields>
       <field>
-        <field_name>hit_summary_create_date</field_name>
-        <variable_name>LAST_HIT_SUMMARY_CREATE_DATE</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-      <field>
-        <field_name>NEO4J_PARAMETER_ID</field_name>
-        <variable_name>NEO4J_PARAMETER_ID</variable_name>
+        <field_name>IS_HIT_AVAILABLE</field_name>
+        <variable_name>VAR_IS_HIT_AVAILABLE_OUT</variable_name>
         <variable_type>ROOT_JOB</variable_type>
         <default_value/>
       </field>
@@ -1404,42 +1263,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>352</xloc>
+      <xloc>320</xloc>
       <yloc>640</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Set variables- to null</name>
-    <type>SetVariable</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <field_name>LAST_HIT_SUMMARY_CREATE_DATE</field_name>
-        <variable_name>LAST_HIT_SUMMARY_CREATE_DATE</variable_name>
-        <variable_type>ROOT_JOB</variable_type>
-        <default_value/>
-      </field>
-    </fields>
-    <use_formatting>Y</use_formatting>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>960</xloc>
-      <yloc>848</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1488,8 +1313,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>112</xloc>
-      <yloc>272</yloc>
+      <xloc>416</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1497,7 +1322,7 @@
     <name>Table input - read hits</name>
     <type>TableInput</type>
     <description/>
-    <distribute>N</distribute>
+    <distribute>Y</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -1520,8 +1345,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>752</xloc>
-      <yloc>976</yloc>
+      <xloc>432</xloc>
+      <yloc>1008</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1937,13 +1762,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>688</xloc>
-      <yloc>432</yloc>
+      <xloc>576</xloc>
+      <yloc>480</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Write to log</name>
+    <name>Write to log - No hit data....</name>
     <type>WriteToLog</type>
     <description/>
     <distribute>Y</distribute>
@@ -1957,21 +1782,10 @@
     <displayHeader>Y</displayHeader>
     <limitRows>N</limitRows>
     <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>### NO HIT RECORD FOUND ######</logmessage>
+    <logmessage>######## NO HIT DATA IN THE STREAM. ########
+Aborting...gtas-passenger-hits....</logmessage>
     <fields>
-      <field>
-        <name>gtas_hit_summary_id</name>
-      </field>
-      <field>
-        <name>hit_summary_create_date</name>
-      </field>
-      <field>
-        <name>gtas_hit_detail_id</name>
-      </field>
-      <field>
-        <name>hit_type</name>
-      </field>
-    </fields>
+      </fields>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1981,8 +1795,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>320</xloc>
-      <yloc>752</yloc>
+      <xloc>336</xloc>
+      <yloc>864</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
