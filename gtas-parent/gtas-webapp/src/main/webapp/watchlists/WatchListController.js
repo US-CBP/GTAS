@@ -120,7 +120,12 @@
 
         $scope.documentTypes = [
             {id: "P", label: "PASSPORT"},
-            {id: "V", label: "VISA"}
+            {id: "V", label: "VISA"},
+            {id: "IP", label:"PASSPORT CARD"},
+            {id: "A", label:"IDENTITY CARD - A"},
+            {id: "C", label:"IDENTITY CARD - C"},
+            {id: "I", label:"IDENTITY CARD - I"},
+            {id: "F", label:"APPROVED NON-STANDARD IDENTITY DOCUMENTS USED FOR TRAVEL"}
         ];
 
         $scope.categories = {};
