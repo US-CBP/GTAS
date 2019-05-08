@@ -23,7 +23,9 @@ public enum PNRMapping implements IEntityMapping {
     PASSENGER_COUNT ("passengerCount", "Passenger Count", TypeEnum.INTEGER.getType()),
     RECORD_LOCATOR ("recordLocator", "Record Locator", TypeEnum.STRING.getType()),
     SEAT ("seat", "Seat", TypeEnum.STRING.getType()),
-    TRIP_TYPE("tripType", "Trip Type", TypeEnum.STRING.getType());
+    TRIP_TYPE("tripType", "Trip Type", TypeEnum.STRING.getType()),
+    PAYMENT_FORMS("paymentForms", "Payment Form", TypeEnum.STRING.getType());
+	
     
     private String fieldName;
     private String friendlyName;

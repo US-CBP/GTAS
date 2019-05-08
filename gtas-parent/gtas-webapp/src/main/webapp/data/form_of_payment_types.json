@@ -18,5 +18,18 @@
   {
     "id": "VOC",
     "name": "Voucher"
+  },
+  {
+  	"id": "DP",
+    "name": "Airline Reporting Corporation direct form of payment"
+  },
+  {
+   	"id": "GR",
+	"name": "Government Transportation Request"
+  },
+  {
+ 	"id": "AGT",
+	"name": "On behalf of/in exchange for a document previously issued by a Sales Agent"
   }
+  
 ]
