@@ -97,7 +97,7 @@
         	});
 
         	orderedTvlData = flightLegs;
-
+            
         	return orderedTvlData
         };
         
@@ -188,6 +188,11 @@
         	return codeTooltipService.getCodeTooltipData(field,type);
         };
         $scope.highlightClass = function(className) {
+
+            //remove existing highlights
+          var existing = document.querySelectorAll('#pnrtable .ng-scope td')
+          existing.forEach( elem => elem.classList.remove("highlight"));
+
           var elems = document.getElementsByClassName(className);
           for (var i=0; i<elems.length; i++) {
             if(elems[i].classList.contains("highlight")){
@@ -195,7 +200,7 @@
             }
             else {
               elems[i].classList.add("highlight");
-              elems[i].scrollIntoView(false, {behavior:"smooth"});
+              elems[i].scrollIntoView(true, {behavior:"smooth"});
             }
           }
         };
@@ -688,7 +693,7 @@
         };
 
         $scope.getCodeTooltipData = function(field, type){
-        	return codeTooltipService.getCodeTooltipData(field,type);
+            return codeTooltipService.getCodeTooltipData(field,type);
         }
 
       	$scope.hitTooltipData = ['Loading...'];
