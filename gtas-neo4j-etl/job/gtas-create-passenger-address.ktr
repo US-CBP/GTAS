@@ -556,7 +556,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_PASSENGER_FULL_FILE_NAME}</filename>
+    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_PNR_FLIGHT_FILE}</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>

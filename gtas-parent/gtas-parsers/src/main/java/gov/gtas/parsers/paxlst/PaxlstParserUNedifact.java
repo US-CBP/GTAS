@@ -412,12 +412,12 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
         for (; ; ) {
             NAT nat = getConditionalSegment(NAT.class);
             if (nat == null) {
-                if (p.getCitizenshipCountry() == null && birthCountry != null) {
-                    p.setCitizenshipCountry(birthCountry);
+                if (p.getNationality() == null && birthCountry != null) {
+                    p.setNationality(birthCountry);
                 }
                 break;
             }
-            p.setCitizenshipCountry(nat.getNationalityCode());
+            p.setNationality(nat.getNationalityCode());
         }
 
         for (; ; ) {
@@ -574,11 +574,11 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             if (locCode == LocCode.PLACE_OF_DOCUMENT_ISSUE) {
                 d.setIssuanceCountry(loc.getLocationNameCode());
 
-                if (p.getCitizenshipCountry() == null) {
+                if (p.getNationality() == null) {
                     // wasn't set by NAD:LOC, so derive it here from issuance
                     // country
                     if ("P".equals(d.getDocumentType())) {
-                        p.setCitizenshipCountry(d.getIssuanceCountry());
+                        p.setNationality(d.getIssuanceCountry());
                     }
                 }
             }

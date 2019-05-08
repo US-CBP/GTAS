@@ -46,7 +46,7 @@ public class ApisControllerServiceImpl implements ApisControllerService {
             fpVo.setPortOfFirstArrival(fp.getPortOfFirstArrival());
             fpVo.setResidencyCountry(fp.getResidenceCountry());
             fpVo.setPassengerType(fp.getTravelerType());
-            fpVo.setCitizenshipCountry(fp.getPassenger().getPassengerDetails().getCitizenshipCountry());
+            fpVo.setNationality(fp.getPassenger().getPassengerDetails().getNationality());
             fpVo.setResRefNumber(fp.getReservationReferenceNumber());
             fpVo.setFlightId(fp.getFlight().getId());
             fpVo.setPassengerId(fp.getPassenger().getId());

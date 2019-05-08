@@ -811,8 +811,8 @@
                     cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'
                 },
                 {
-                    name: 'citizenshipCountry',
-                    displayName:'pass.citizenship', headerCellFilter: 'translate',
+                    name: 'nationality',
+                    displayName:'pass.nationality', headerCellFilter: 'translate',
                     width: 75,
                     cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                     	+'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
@@ -869,7 +869,7 @@
                 {name: 'gender', displayName:'G', width:50},
                 {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
                   cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-                {name: 'citizenshipCountry', displayName:'pass.citizenship', headerCellFilter: 'translate', width:120,
+                {name: 'nationality', displayName:'Nationality', headerCellFilter: 'translate', width:120,
                 	cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                 	+'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                 	+'</md-button>'}

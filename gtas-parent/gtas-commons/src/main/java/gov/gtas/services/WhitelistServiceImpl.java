@@ -64,7 +64,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 		wlv.setLastName(wl.getLastName());
 		wlv.setGender(wl.getGender());
 		wlv.setDob(wl.getDob());
-		wlv.setCitizenshipCountry(wl.getCitizenshipCountry());
+		wlv.setNationality(wl.getNationality());
 		wlv.setResidencyCountry(wl.getResidencyCountry());
 		wlv.setDocumentType(wl.getDocumentType());
 		wlv.setDocumentNumber(wl.getDocumentNumber());
@@ -115,7 +115,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 		newWl.setLastName(wlv.getLastName());
 		newWl.setGender(wlv.getGender());
 		newWl.setDob(wlv.getDob());
-		newWl.setCitizenshipCountry(wlv.getCitizenshipCountry());
+		newWl.setNationality(wlv.getNationality());
 		newWl.setResidencyCountry(wlv.getResidencyCountry());
 		newWl.setDocumentType(wlv.getDocumentType());
 		newWl.setDocumentNumber(wlv.getDocumentNumber());
@@ -142,8 +142,8 @@ public class WhitelistServiceImpl implements WhitelistService {
 					"the id of a existing whitelist object is null.");
 		}
 		if (existing != null) {
-			if (wlv.getCitizenshipCountry() != null)
-				existing.setCitizenshipCountry(wlv.getCitizenshipCountry());
+			if (wlv.getNationality() != null)
+				existing.setNationality(wlv.getNationality());
 			if (wlv.getDob() != null)
 				existing.setDob(wlv.getDob());
 			if (wlv.getDocumentNumber() != null)
@@ -158,7 +158,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 				existing.setGender(wlv.getGender());
 			if (wlv.getIssuanceCountry() != null)
 				existing.setIssuanceCountry(wlv.getIssuanceCountry());
-			if (wlv.getCitizenshipCountry() != null)
+			if (wlv.getNationality() != null)
 				existing.setIssuanceDate(wlv.getIssuanceDate());
 			if (wlv.getIssuanceDate() != null)
 				existing.setLastName(wlv.getLastName());

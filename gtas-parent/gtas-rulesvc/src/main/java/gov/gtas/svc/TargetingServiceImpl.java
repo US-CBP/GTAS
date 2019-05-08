@@ -561,7 +561,7 @@ public class TargetingServiceImpl implements TargetingService {
 			pwl.setLastName(passenger.getPassengerDetails().getLastName());
 			pwl.setGender(passenger.getPassengerDetails().getGender());
 			pwl.setDob(passenger.getPassengerDetails().getDob());
-			pwl.setCitizenshipCountry(passenger.getPassengerDetails().getCitizenshipCountry());
+			pwl.setNationality(passenger.getPassengerDetails().getNationality());
 			pwl.setResidencyCountry(passenger.getPassengerDetails().getResidencyCountry());
 			pwl.setDocumentType(doc.getDocumentType());
 			pwl.setDocumentNumber(doc.getDocumentNumber());
@@ -988,8 +988,8 @@ public class TargetingServiceImpl implements TargetingService {
 			AuditActionTarget target = new AuditActionTarget(passenger);
 			AuditActionData actionData = new AuditActionData();
 
-			actionData.addProperty("CitizenshipCountry",
-					passenger.getPassengerDetails().getCitizenshipCountry());
+			actionData.addProperty("Nationality",
+					passenger.getPassengerDetails().getNationality());
 			actionData.addProperty("PassengerType",
 					passenger.getPassengerDetails().getPassengerType());
 

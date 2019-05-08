@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>gtas-merge-phone</name>
+    <name>gtas-create-flight-destination</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
-    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -422,92 +421,54 @@
     <dependencies>
     </dependencies>
     <partitionschemas>
-      <partitionschema>
-        <name>relPartition</name>
-        <partition>
-          <id>partition-1</id>
-        </partition>
-        <partition>
-          <id>partition-2</id>
-        </partition>
-        <partition>
-          <id>partition-3</id>
-        </partition>
-        <partition>
-          <id>partition-4</id>
-        </partition>
-        <dynamic>N</dynamic>
-        <partitions_per_slave/>
-      </partitionschema>
     </partitionschemas>
     <slaveservers>
     </slaveservers>
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2019/03/06 12:46:39.949</created_date>
+    <created_date>2019/05/03 02:53:17.014</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2019/03/06 12:46:39.949</modified_date>
+    <modified_date>2019/05/03 02:53:17.014</modified_date>
     <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
-    <notepad>
-      <note>All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP). Please see LICENSE.txt for details.</note>
-      <xloc>144</xloc>
-      <yloc>48</yloc>
-      <width>1213</width>
-      <heigth>29</heigth>
-      <fontname>Arial</fontname>
-      <fontsize>10</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>Y</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>231</backgroundcolorred>
-      <backgroundcolorgreen>231</backgroundcolorgreen>
-      <backgroundcolorblue>231</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
-      <drawshadow>Y</drawshadow>
-    </notepad>
   </notepads>
   <order>
     <hop>
-      <from>Is Phone Available</from>
-      <to>Dummy (do nothing)</to>
+      <from>Add constants - airport labels</from>
+      <to>Select values-convert etd dates</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Sort rows-passenger-phone</from>
-      <to>Neo4J Output -passenger-phone relationship</to>
+      <from>Filter rows 2</from>
+      <to>Dummy (do nothing) 3</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Is Phone Available</from>
-      <to>Add constants</to>
+      <from>Select values-convert etd dates</from>
+      <to>Neo4J Output - create flight-destination-relship</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Sort rows-passenger-phone</to>
+      <from>CSV file input-email</from>
+      <to>Filter rows 2</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values - passenger-phone</from>
-      <to>Is Phone Available</to>
+      <from>Filter rows 2</from>
+      <to>Unique rows - flight-destination_airport</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>CSV file input-phone</from>
-      <to>Select values - passenger-phone</to>
+      <from>Unique rows - flight-destination_airport</from>
+      <to>Add constants - airport labels</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Add constants</name>
+    <name>Add constants - airport labels</name>
     <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
@@ -519,13 +480,25 @@
     </partitioning>
     <fields>
       <field>
-        <name>PASSENGER_PHONE_LABEL</name>
+        <name>AIRPORT_LABLE</name>
         <type>String</type>
         <format/>
         <currency/>
         <decimal/>
         <group/>
-        <nullif>used_phone</nullif>
+        <nullif>Airport</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>FLIGHT_DESTINATION_LABEL</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>has_destination</nullif>
         <length>-1</length>
         <precision>-1</precision>
         <set_empty_string>N</set_empty_string>
@@ -540,13 +513,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>928</xloc>
-      <yloc>224</yloc>
+      <xloc>752</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>CSV file input-phone</name>
+    <name>CSV file input-email</name>
     <type>CsvInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -556,7 +529,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_PNR_FLIGHT_FILE}</filename>
+    <filename>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_ALL_FLIGHT_FILE}</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
@@ -1415,7 +1388,7 @@
         <group>,</group>
         <length>20</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>postal_code</name>
@@ -1494,6 +1467,28 @@
         <precision>0</precision>
         <trim_type>both</trim_type>
       </field>
+      <field>
+        <name>full_eta_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>full_etd_dtm</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1504,13 +1499,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>144</xloc>
-      <yloc>224</yloc>
+      <xloc>128</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Dummy (do nothing)</name>
+    <name>Dummy (do nothing) 3</name>
     <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
@@ -1529,13 +1524,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>672</xloc>
-      <yloc>368</yloc>
+      <xloc>288</xloc>
+      <yloc>400</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Is Phone Available</name>
+    <name>Filter rows 2</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -1545,23 +1540,54 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Add constants</send_true_to>
-    <send_false_to>Dummy (do nothing)</send_false_to>
+    <send_true_to>Unique rows - flight-destination_airport</send_true_to>
+    <send_false_to>Dummy (do nothing) 3</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue>IS_PHONE_AVAILABLE</leftvalue>
-        <function>=</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>Boolean</type>
-          <text>Y</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask/>
-        </value>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>gtas_flight_id</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>etd_date</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>origin</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>destination</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>flight_number</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>carrier</leftvalue>
+            <function>IS NOT NULL</function>
+            <rightvalue/>
+          </condition>
+        </conditions>
       </condition>
     </compare>
     <attributes/>
@@ -1573,13 +1599,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>672</xloc>
-      <yloc>224</yloc>
+      <xloc>288</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Neo4J Output -passenger-phone relationship</name>
+    <name>Neo4J Output - create flight-destination-relship</name>
     <type>Neo4JOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1590,7 +1616,7 @@
       <schema_name/>
     </partitioning>
     <connection>neo4j-db</connection>
-    <batch_size>${EXT_VAR_PHONE_BATCH_SIZE}</batch_size>
+    <batch_size>${EXT_VAR_FLIGHT_DESTINATION_BATCH_SIZE}</batch_size>
     <key/>
     <create_indexes>Y</create_indexes>
     <use_create>N</use_create>
@@ -1600,14 +1626,38 @@
     <from>
       <read_only_from_node>Y</read_only_from_node>
       <labels>
-        <label>PASSENGER_LABEL</label>
+        <label>FLIGHT_LABEL</label>
         <value/>
       </labels>
       <properties>
         <property>
-          <name>id_tag</name>
-          <value>idTag</value>
+          <name>carrier</name>
+          <value>carrier</value>
           <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
+          <name>flight_number</name>
+          <value>flight_number</value>
+          <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
+          <name>origin</name>
+          <value>origin</value>
+          <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
+          <name>destination</name>
+          <value>destination</value>
+          <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
+          <name>etd_date</name>
+          <value>etd_date</value>
+          <type>Date</type>
           <primary>Y</primary>
         </property>
       </properties>
@@ -1615,21 +1665,38 @@
     <to>
       <read_only_to_node>N</read_only_to_node>
       <labels>
-        <label>PHONE_LABEL</label>
+        <label>AIRPORT_LABLE</label>
         <value/>
       </labels>
       <properties>
         <property>
-          <name>number</name>
-          <value>phone_number</value>
+          <name>airport_code</name>
+          <value>destination</value>
           <type>String</type>
           <primary>Y</primary>
         </property>
+        <property>
+          <name>country_code</name>
+          <value>destination_country</value>
+          <type>String</type>
+          <primary>N</primary>
+        </property>
       </properties>
     </to>
-    <relationship>PASSENGER_PHONE_LABEL</relationship>
+    <relationship>FLIGHT_DESTINATION_LABEL</relationship>
     <relationship_value/>
-    <relprops/>
+    <relprops>
+      <relprop>
+        <name>eta_date</name>
+        <value>eta_date</value>
+        <type>Date</type>
+      </relprop>
+      <relprop>
+        <name>full_eta_dtm</name>
+        <value>full_eta_dtm</value>
+        <type>LocalDateTime</type>
+      </relprop>
+    </relprops>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1639,13 +1706,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1152</xloc>
-      <yloc>352</yloc>
+      <xloc>1312</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Select values - passenger-phone</name>
+    <name>Select values-convert etd dates</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1658,12 +1725,12 @@
     <fields>
       <select_unspecified>N</select_unspecified>
       <meta>
-        <name>IS_PHONE_AVAILABLE</name>
-        <rename>IS_PHONE_AVAILABLE</rename>
-        <type>Boolean</type>
+        <name>etd_date</name>
+        <rename>etd_date</rename>
+        <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask/>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1675,12 +1742,29 @@
         <storage_type/>
       </meta>
       <meta>
-        <name>gtas_phone_id</name>
-        <rename>gtas_phone_id</rename>
-        <type>Integer</type>
+        <name>full_eta_dtm</name>
+        <rename>full_eta_dtm</rename>
+        <type>Date</type>
         <length>-2</length>
         <precision>-2</precision>
-        <conversion_mask/>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>eta_date</name>
+        <rename>eta_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
         <date_format_lenient>false</date_format_lenient>
         <date_format_locale/>
         <date_format_timezone/>
@@ -1701,14 +1785,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>416</xloc>
-      <yloc>224</yloc>
+      <xloc>992</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Sort rows-passenger-phone</name>
-    <type>SortRows</type>
+    <name>Unique rows - flight-destination_airport</name>
+    <type>Unique</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1717,29 +1801,18 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <directory>%%java.io.tmpdir%%</directory>
-    <prefix>out</prefix>
-    <sort_size>100000</sort_size>
-    <free_memory>50</free_memory>
-    <compress>N</compress>
-    <compress_variable/>
-    <unique_rows>Y</unique_rows>
+    <count_rows>N</count_rows>
+    <count_field/>
+    <reject_duplicate_row>N</reject_duplicate_row>
+    <error_description/>
     <fields>
       <field>
-        <name>gtas_phone_id</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
+        <name>gtas_flight_id</name>
+        <case_insensitive>N</case_insensitive>
       </field>
       <field>
-        <name>idTag</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
-        <collator_enabled>N</collator_enabled>
-        <collator_strength>0</collator_strength>
-        <presorted>N</presorted>
+        <name>destination</name>
+        <case_insensitive>Y</case_insensitive>
       </field>
     </fields>
     <attributes/>
@@ -1751,8 +1824,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1152</xloc>
-      <yloc>224</yloc>
+      <xloc>544</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

@@ -165,7 +165,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 			Long pax_id,
 			String paxName,
 			String paxType,
-			String citizenshipCountry,
+			String nationality,
 			Date dob,
 			String document,
 			String hitDesc,
@@ -198,7 +198,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				aCase.setPaxId(pax_id);
 				aCase.setPaxName(paxName);
 				aCase.setPaxType(paxType);
-				aCase.setCitizenshipCountry(citizenshipCountry);
+				aCase.setNationality(nationality);
 				aCase.setDocument(document);
 				aCase.setDob(dob);
 				aCase.setStatus(DispositionStatusCode.NEW.toString());
@@ -274,7 +274,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setPaxName(pax.getPassengerDetails().getFirstName() + " " + pax.getPassengerDetails().getLastName());
 		populatePassengerDetailsInCase(aCase, flight_id, pax_id);
 		aCase.setPaxType(pax.getPassengerDetails().getPassengerType());
-		aCase.setCitizenshipCountry(pax.getPassengerDetails().getCitizenshipCountry());
+		aCase.setNationality(pax.getPassengerDetails().getNationality());
 		aCase.setDocument(((Document) pax.getDocuments().parallelStream().findFirst().orElse(new Document("xxxxxxxxx")))
 				.getDocumentNumber());
 		aCase.setDob(pax.getPassengerDetails().getDob());
@@ -341,7 +341,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType,
-			String citizenshipCountry, Date dob, String document, String hitDesc, List<Long> hit_ids, String username,
+			String nationality, Date dob, String document, String hitDesc, List<Long> hit_ids, String username,
 			MultipartFile fileToAttach) {
 
 		Case aCase = new Case();
@@ -358,7 +358,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 		aCase.setPaxName(paxName);
 		populatePassengerDetailsInCase(aCase, flight_id, pax_id);
 		aCase.setPaxType(paxType);
-		aCase.setCitizenshipCountry(citizenshipCountry);
+		aCase.setNationality(nationality);
 		aCase.setDocument(document);
 		aCase.setDob(dob);
 		aCase.setStatus(DispositionStatusCode.NEW.toString());
@@ -655,7 +655,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType,
-			String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
+			String nationality, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
 			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Case> _tempCaseList = new ArrayList<>();
 
@@ -668,7 +668,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				pax_id,
 				paxName,
 				paxType,
-				citizenshipCountry,
+				nationality,
 				dob,
 				document,
 				hitDesc,
@@ -686,7 +686,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	@Override
 	public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
-												 String citizenshipCountry, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
+												 String nationality, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
 												 Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap) {
 		List<Long> _tempHitIds = new ArrayList<>();
 		_tempHitIds.add(hit_id);
@@ -695,7 +695,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 				pax_id,
 				paxName,
 				paxType,
-				citizenshipCountry,
+				nationality,
 				dob,
 				document,
 				hitDesc,

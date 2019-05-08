@@ -88,7 +88,7 @@ public class PnrUtils {
         p.setGender(gender);
         processNames(p, bestDocument.getSurname(), bestDocument.getFirstGivenName(), bestDocument.getSecondGivenName());
         setPassengerDob(p, bestDocument.getDob());
-        p.setCitizenshipCountry(bestDocument.getNationality());
+        p.setNationality(bestDocument.getNationality());
         processEachSSRDoc(ssrDocs, p);
         updateNameToTIFName(tif, p);
         return p;
@@ -120,9 +120,9 @@ public class PnrUtils {
                     p.setGender(ssrDoc.getGender().toString());
                 }
             }
-            if (p.getCitizenshipCountry() == null) {
+            if (p.getNationality() == null) {
                 if (ssrDoc.getNationality() != null) {
-                    p.setCitizenshipCountry(ssrDoc.getNationality());
+                    p.setNationality(ssrDoc.getNationality());
                 }
             }
             if (p.getDob() == null) {
@@ -131,8 +131,8 @@ public class PnrUtils {
                 }
             }
             DocumentVo documentVo = ssrDoc.toDocumentVo();
-            if (StringUtils.isNotBlank(documentVo.getDocumentNumber()) && StringUtils.isBlank(p.getCitizenshipCountry())) {
-                p.setCitizenshipCountry(documentVo.getIssuanceCountry());
+            if (StringUtils.isNotBlank(documentVo.getDocumentNumber()) && StringUtils.isBlank(p.getNationality())) {
+                p.setNationality(documentVo.getIssuanceCountry());
             }
             if (StringUtils.isNotBlank(documentVo.getDocumentNumber())) {
                 p.addDocument(documentVo);

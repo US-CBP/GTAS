@@ -154,7 +154,7 @@ public class PnrServiceIT {
 		passengerToUpdate.getPassengerDetails().setAge(30);
 		String c = "US";
 		String b = "JFK";
-		passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
+		passengerToUpdate.getPassengerDetails().setNationality(c);
 		passengerToUpdate.getPassengerTripDetails().setDebarkation(b);
 		passengerToUpdate.getPassengerTripDetails().setDebarkCountry(c);
 		passengerToUpdate.getPassengerDetails().setDob(new Date("04/06/1966"));

@@ -114,7 +114,7 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +
 //            "AND UPPER(p.lastName) = UPPER(:lastName)" +
 //            "AND UPPER(p.gender) = UPPER(:gender)" +
-//            "AND UPPER(p.citizenshipCountry) = UPPER(:ctz_country) " +
+//            "AND UPPER(p.nationality) = UPPER(:ctz_country) " +
 //            "AND p.dob = (:dob)" +
 //            "AND p.idTag IS NOT NULL")
 //	public List<Passenger> getNotNullIdTaggedPassenger(@Param("firstName") String firstName, @Param("lastName") String lastName,

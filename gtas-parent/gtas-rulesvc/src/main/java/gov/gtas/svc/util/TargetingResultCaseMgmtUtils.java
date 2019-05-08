@@ -137,7 +137,7 @@ public class TargetingResultCaseMgmtUtils {
                         rhd.getPassengerId(),
                         rhd.getPassengerName(),
                         rhd.getPassengerType().getPassengerTypeName(),
-                        _tempPax.getPassengerDetails().getCitizenshipCountry(),
+                        _tempPax.getPassengerDetails().getNationality(),
                         _tempPax.getPassengerDetails().getDob(),
                         document,
                         description,

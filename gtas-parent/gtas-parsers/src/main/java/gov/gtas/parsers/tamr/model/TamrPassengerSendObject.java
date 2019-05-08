@@ -43,8 +43,8 @@ public class TamrPassengerSendObject {
 	@JsonProperty("APIS_ARVL_APRT_CD")
 	private String APIS_ARVL_APRT_CD;
 
-	@JsonProperty("CTZNSHP_CTRY_CD")
-	private List<String> CTZNSHP_CTRY_CD;
+	@JsonProperty("NATIONALITY_CD")
+	private List<String> NATIONALITY_CD;
 	
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date DOB_Date;
@@ -124,12 +124,12 @@ public class TamrPassengerSendObject {
 	public void setAPIS_ARVL_APRT_CD(String aPIS_ARVL_APRT_CD) {
 		APIS_ARVL_APRT_CD = aPIS_ARVL_APRT_CD;
 	}
-	@JsonProperty("CTZNSHP_CTRY_CD")
-	public List<String> getCTZNSHP_CTRY_CD() {
-		return CTZNSHP_CTRY_CD;
+	@JsonProperty("NATIONALITY_CD")
+	public List<String> getNATIONALITY_CD() {
+		return NATIONALITY_CD;
 	}
-	public void setCTZNSHP_CTRY_CD(List<String> cTZNSHP_CTRY_CD) {
-		CTZNSHP_CTRY_CD = cTZNSHP_CTRY_CD;
+	public void setNATIONALITY_CD(List<String> NATIONALITY_CD) {
+		this.NATIONALITY_CD = NATIONALITY_CD;
 	}
 	@JsonProperty("DOB_Date")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

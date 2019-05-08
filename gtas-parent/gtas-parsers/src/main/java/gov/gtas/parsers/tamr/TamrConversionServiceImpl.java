@@ -97,9 +97,9 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			tamrPax.setFLIT_NBR(flight.getFullFlightNumber());
 			
 			//pax related
-			List<String> citizenshipCountries = new ArrayList<String>();
-			citizenshipCountries.add(passenger.getPassengerDetails().getCitizenshipCountry());
-			tamrPax.setCTZNSHP_CTRY_CD(citizenshipCountries);
+			List<String> nationalities = new ArrayList<String>();
+			nationalities.add(passenger.getPassengerDetails().getNationality());
+			tamrPax.setNATIONALITY_CD(nationalities);
 			tamrPax.setDOB_Date(passenger.getPassengerDetails().getDob());
 			tamrPax.setFirst_name(passenger.getPassengerDetails().getFirstName());		
 			tamrPax.setGNDR_CD(passenger.getPassengerDetails().getGender());

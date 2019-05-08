@@ -30,7 +30,7 @@
                 }
             }
         },
-          "citizenshipcountry" : {
+          "nationality" : {
             "type" : "text",
             "fields" : {
               "keyword" : {
@@ -370,7 +370,7 @@
               "age" : {
                 "type" : "long"
               },
-              "citizenship_country" : {
+              "nationality" : {
                 "type" : "text",
                 "fields" : {
                   "keyword" : {
@@ -484,7 +484,7 @@
                   }
                 }
               },
-              "p_citizenship_country" : {
+              "p_nationality" : {
                 "type" : "text",
                 "fields" : {
                   "keyword" : {

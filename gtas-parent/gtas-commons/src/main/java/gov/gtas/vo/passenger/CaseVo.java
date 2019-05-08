@@ -24,7 +24,7 @@ public class CaseVo {
 	private String lastName;
     private String firstName;
     private String middleName;
-    private String citizenshipCountry;
+    private String nationality;
     private Date dob;
     private String document;
     private Long highPriorityRuleCatId;
@@ -59,12 +59,12 @@ public class CaseVo {
         this.id = id;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public Date getDob() {

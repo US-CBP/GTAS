@@ -107,8 +107,8 @@ public class LoaderUtils {
             }
         }
 
-        if (vo.getCitizenshipCountry() != null) {
-            p.getPassengerDetails().setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
+        if (vo.getNationality() != null) {
+            p.getPassengerDetails().setNationality(normalizeCountryCode(vo.getNationality()));
         }
 
         if (vo.getResidencyCountry() != null) {

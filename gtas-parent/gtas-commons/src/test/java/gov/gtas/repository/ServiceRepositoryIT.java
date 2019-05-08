@@ -95,7 +95,7 @@ public class ServiceRepositoryIT {
         Passenger passengerToUpdate = new Passenger();
         passengerToUpdate.getPassengerDetails().setPassengerType(PassengerTypeCode.P.name());
         passengerToUpdate.getPassengerDetails().setAge(30);
-        passengerToUpdate.getPassengerDetails().setCitizenshipCountry(c);
+        passengerToUpdate.getPassengerDetails().setNationality(c);
         passengerToUpdate.getPassengerTripDetails().setDebarkation(b);
         passengerToUpdate.getPassengerTripDetails().setDebarkCountry(c);
         passengerToUpdate.getPassengerDetails().setDob(new Date("04/06/1980"));
