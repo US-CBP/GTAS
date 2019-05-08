@@ -461,8 +461,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>656</xloc>
-      <yloc>576</yloc>
+      <xloc>400</xloc>
+      <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -476,8 +476,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
-      <yloc>976</yloc>
+      <xloc>576</xloc>
+      <yloc>1168</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -489,8 +489,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>960</xloc>
-      <yloc>896</yloc>
+      <xloc>352</xloc>
+      <yloc>1168</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -504,8 +504,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>928</xloc>
-      <yloc>1072</yloc>
+      <xloc>832</xloc>
+      <yloc>1360</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -538,8 +538,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>656</xloc>
-      <yloc>816</yloc>
+      <xloc>832</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -766,8 +766,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>656</xloc>
-      <yloc>1072</yloc>
+      <xloc>832</xloc>
+      <yloc>1168</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -842,8 +842,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1152</xloc>
-      <yloc>1072</yloc>
+      <xloc>1392</xloc>
+      <yloc>1152</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -944,7 +944,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>1392</xloc>
-      <yloc>1072</yloc>
+      <yloc>1040</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -963,8 +963,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>656</xloc>
-      <yloc>928</yloc>
+      <xloc>832</xloc>
+      <yloc>1056</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1138,7 +1138,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>368</xloc>
+      <xloc>400</xloc>
       <yloc>496</yloc>
       <attributes_kjc/>
     </entry>
@@ -1177,8 +1177,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1008</xloc>
-      <yloc>800</yloc>
+      <xloc>1152</xloc>
+      <yloc>928</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1215,8 +1215,83 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>656</xloc>
-      <yloc>688</yloc>
+      <xloc>832</xloc>
+      <yloc>800</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Transformation-gtas_message_staus_update</name>
+      <description/>
+      <type>TRANS</type>
+      <attributes/>
+      <specification_method>filename</specification_method>
+      <trans_object_id/>
+      <filename>${Internal.Entry.Current.Directory}/gtas-update-message-status.ktr</filename>
+      <transname/>
+      <arg_from_previous>N</arg_from_previous>
+      <params_from_previous>N</params_from_previous>
+      <exec_per_row>N</exec_per_row>
+      <clear_rows>N</clear_rows>
+      <clear_files>N</clear_files>
+      <set_logfile>N</set_logfile>
+      <logfile/>
+      <logext/>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <loglevel>Basic</loglevel>
+      <cluster>N</cluster>
+      <slave_server_name/>
+      <set_append_logfile>N</set_append_logfile>
+      <wait_until_finished>Y</wait_until_finished>
+      <follow_abort_remote>N</follow_abort_remote>
+      <create_parent_folder>N</create_parent_folder>
+      <logging_remote_work>N</logging_remote_work>
+      <run_configuration>Pentaho local</run_configuration>
+      <parameters>
+        <pass_all_parameters>Y</pass_all_parameters>
+      </parameters>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1152</xloc>
+      <yloc>1360</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Write to log</name>
+      <description/>
+      <type>WRITE_TO_LOG</type>
+      <attributes/>
+      <logmessage>...... Starting GTAS Message Status Update..........</logmessage>
+      <loglevel>Minimal</loglevel>
+      <logsubject>Starting GTAS Message Id update</logsubject>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1152</xloc>
+      <yloc>1248</yloc>
+      <attributes_kjc/>
+    </entry>
+    <entry>
+      <name>Dummy - after hits</name>
+      <description/>
+      <type>SPECIAL</type>
+      <attributes/>
+      <start>N</start>
+      <dummy>Y</dummy>
+      <repeat>N</repeat>
+      <schedulerType>0</schedulerType>
+      <intervalSeconds>0</intervalSeconds>
+      <intervalMinutes>60</intervalMinutes>
+      <hour>12</hour>
+      <minutes>0</minutes>
+      <weekDay>1</weekDay>
+      <DayOfMonth>1</DayOfMonth>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>1152</xloc>
+      <yloc>1152</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
@@ -1274,15 +1349,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
       <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation - flight-hits</from>
-      <to>Write to log - update parameters</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
     </hop>
     <hop>
       <from>Transformation-update parameters</from>
@@ -1564,8 +1630,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Write to log - No hit data.</from>
-      <to>Transformation - clear results</to>
+      <from>Transformation - clear results</from>
+      <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1573,12 +1639,48 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation - clear results</from>
-      <to>Success</to>
+      <from>Write to log</from>
+      <to>Transformation-gtas_message_staus_update</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation-gtas_message_staus_update</from>
+      <to>Write to log - update parameters</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Transformation - flight-hits</from>
+      <to>Dummy - after hits</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - No hit data.</from>
+      <to>Dummy - after hits</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Dummy - after hits</from>
+      <to>Write to log</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
     </hop>
   </hops>

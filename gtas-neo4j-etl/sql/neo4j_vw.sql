@@ -96,7 +96,6 @@ AND pit.idTag IS NOT NULL
 AND pd.pd_first_name IS NOT NULL 
 AND pd.pd_last_name IS NOT NULL
 AND pd.pd_gender IS NOT NULL 
-AND pd.pd_citizenship_country IS NOT NULL 
 AND pd.dob IS NOT NULL 
 AND f.origin IS NOT NULL 
 AND f.destination IS NOT NULL 
@@ -198,7 +197,6 @@ WHERE mst.ms_status = 'ANALYZED'
 AND pd.pd_first_name IS NOT NULL 
 AND pd.pd_last_name IS NOT NULL
  AND pd.pd_gender IS NOT NULL 
- AND pd.pd_citizenship_country IS NOT NULL 
  AND pd.dob IS NOT NULL 
  AND f.origin IS NOT NULL 
  AND f.destination IS NOT NULL 

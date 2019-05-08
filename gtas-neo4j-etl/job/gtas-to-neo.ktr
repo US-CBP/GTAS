@@ -455,7 +455,7 @@
     <notepad>
       <note>All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP). Please see LICENSE.txt for details.</note>
       <xloc>256</xloc>
-      <yloc>128</yloc>
+      <yloc>112</yloc>
       <width>1154</width>
       <heigth>33</heigth>
       <fontname>Segoe UI</fontname>
@@ -751,11 +751,6 @@ for logging purposes</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values - id-to-string</from>
-      <to>Dummy (do nothing) 4</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Dummy (do nothing) 4</from>
       <to>Filter rows 2</to>
       <enabled>Y</enabled>
@@ -833,6 +828,21 @@ for logging purposes</note>
     <hop>
       <from>Write to log - NO MESSAGE</from>
       <to>Abort- NO DATA IN STREAM</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values - id-to-string</from>
+      <to>Dummy (do nothing) 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Text file output - any flight</from>
+      <to>Unique rows - gtas_message_id</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Unique rows - gtas_message_id</from>
+      <to>Text file output - write gtas_message_id</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -1326,7 +1336,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>640</xloc>
-      <yloc>608</yloc>
+      <yloc>592</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1350,8 +1360,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>864</xloc>
-      <yloc>896</yloc>
+      <xloc>800</xloc>
+      <yloc>720</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1714,7 +1724,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>640</xloc>
-      <yloc>736</yloc>
+      <yloc>720</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1875,7 +1885,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1312</xloc>
+      <xloc>1072</xloc>
       <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
@@ -2136,7 +2146,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>1312</xloc>
-      <yloc>544</yloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2723,8 +2733,8 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>544</xloc>
-      <yloc>544</yloc>
+      <xloc>640</xloc>
+      <yloc>448</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2769,7 +2779,7 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>1312</xloc>
-      <yloc>432</yloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -3145,7 +3155,7 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>944</xloc>
+      <xloc>848</xloc>
       <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
@@ -4314,8 +4324,77 @@ for logging purposes</note>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>896</xloc>
-      <yloc>608</yloc>
+      <xloc>880</xloc>
+      <yloc>592</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Text file output - write gtas_message_id</name>
+    <type>TextFileOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <separator>|</separator>
+    <enclosure/>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding/>
+    <endedLine/>
+    <fileNameInField>N</fileNameInField>
+    <fileNameField/>
+    <create_parent_folder>Y</create_parent_folder>
+    <file>
+      <name>${Internal.Entry.Current.Directory}/temp/${EXT_VAR_TEMP_GTAS_MESSAGE_ID_FILE}</name>
+      <servlet_output>N</servlet_output>
+      <do_not_open_new_file_init>N</do_not_open_new_file_init>
+      <extention/>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <date_time_format/>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery/>
+    </file>
+    <fields>
+      <field>
+        <name>gtas_message_id</name>
+        <type>Number</type>
+        <format>#</format>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1104</xloc>
+      <yloc>736</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -5452,7 +5531,42 @@ for logging purposes</note>
     </remotesteps>
     <GUI>
       <xloc>640</xloc>
-      <yloc>896</yloc>
+      <yloc>864</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Unique rows - gtas_message_id</name>
+    <type>Unique</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <count_rows>N</count_rows>
+    <count_field/>
+    <reject_duplicate_row>N</reject_duplicate_row>
+    <error_description/>
+    <fields>
+      <field>
+        <name>gtas_message_id</name>
+        <case_insensitive>N</case_insensitive>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1104</xloc>
+      <yloc>592</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -5504,6 +5618,38 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
+    <name>Write to log - NO MESSAGE</name>
+    <type>WriteToLog</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <loglevel>log_level_minimal</loglevel>
+    <displayHeader>Y</displayHeader>
+    <limitRows>N</limitRows>
+    <limitRowsNumber>0</limitRowsNumber>
+    <logmessage>&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; DATA IS NOT AVAILABLE IN GTAS (neo4j_vw). ABORTING gtas-to-neo TRANSFORMATION >>>>>>>>>>>>>>></logmessage>
+    <fields>
+      </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>368</xloc>
+      <yloc>1824</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
     <name>Write to log-MESSAGE ID PRESENT</name>
     <type>WriteToLog</type>
     <description/>
@@ -5535,38 +5681,6 @@ for logging purposes</note>
     <GUI>
       <xloc>496</xloc>
       <yloc>1584</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Write to log - NO MESSAGE</name>
-    <type>WriteToLog</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <loglevel>log_level_minimal</loglevel>
-    <displayHeader>Y</displayHeader>
-    <limitRows>N</limitRows>
-    <limitRowsNumber>0</limitRowsNumber>
-    <logmessage>&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; DATA IS NOT AVAILABLE IN GTAS (neo4j_vw). ABORTING gtas-to-neo TRANSFORMATION >>>>>>>>>>>>>>></logmessage>
-    <fields>
-      </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>368</xloc>
-      <yloc>1824</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
