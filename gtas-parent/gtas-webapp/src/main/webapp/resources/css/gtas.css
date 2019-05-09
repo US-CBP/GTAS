@@ -63,6 +63,13 @@ span.right-header{
   font-weight: normal;
 }
 
+.nav-dots>li>a {
+  box-shadow: 0 0 0 3px #aaa;
+  background-color: white !important;
+}
+.nav-dots>li.active>a {
+  background-color: #1460aa !important;
+}
 
 /*Sizing Styles */
 .fnt-small {
