@@ -2,6 +2,7 @@
 
 .md-tab {
   border-bottom: 2px solid #00416a;
+  border-top: 2px solid #fff;
 }
 
 md-tabs-canvas {
@@ -18,6 +19,23 @@ md-tabs.md-default-theme .md-ink-bar, md-tabs md-ink-bar {
   border-bottom-color: #fff;
 }
 
+md-tabs .md-tab:active .md-ripple-container {
+  background-color: rgba(16, 182, 223, 0.185) !important;
+}
+
+md-tabs .md-tab .md-ripple-container .md-ripple {
+  background: #23b0f1 !important;
+  /* border-color: #38fc42 !important; */
+}
+md-switch.md-default-theme.md-checked .md-bar, md-switch.md-checked .md-bar {
+  background-color: rgba(35, 176, 241, 0.5);
+}
+md-switch.md-default-theme.md-checked .md-ink-ripple, md-switch.md-checked .md-ink-ripple {
+  color: rgb(35, 176, 241);
+}
+md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb {
+  background-color: rgb(35,176,241);
+}
 @media (min-width: 1200px) {
   .sidebar {
     bottom: auto !important;
@@ -70,6 +88,8 @@ span.right-header{
 .nav-dots>li.active>a {
   background-color: #1460aa !important;
 }
+
+
 
 /*Sizing Styles */
 .fnt-small {
