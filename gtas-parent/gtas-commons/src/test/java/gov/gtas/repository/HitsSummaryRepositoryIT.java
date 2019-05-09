@@ -17,9 +17,7 @@ import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.HitsSummaryService;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
@@ -138,7 +136,7 @@ public class HitsSummaryRepositoryIT {
         ret.setRuleHitCount(1);
         ret.setWatchListHitCount(0);
 
-        List<HitDetail> detList = new LinkedList<HitDetail>();
+        Set<HitDetail> detList = new HashSet<HitDetail>();
         HitDetail det = new HitDetail();
         det.setCreatedDate(new Date());
         det.setDescription("jkkjhg");

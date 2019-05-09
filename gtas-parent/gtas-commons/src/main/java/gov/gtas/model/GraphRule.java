@@ -8,14 +8,17 @@ import java.util.*;
 @Table(name = "graph_rules")
 public class GraphRule extends BaseEntityAudit {
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "cipherQuery")
     private String cipherQuery;
 
     @OneToMany(mappedBy = "graphRule")
     private Set<GraphRuleParameter> graphParameter = new HashSet<>();
-
-    @OneToMany(mappedBy = "graphRule")
-    private Set<GraphHitDetail> graphHits = new HashSet<>();
 
     public String getCipherQuery() {
         return cipherQuery;
@@ -25,12 +28,28 @@ public class GraphRule extends BaseEntityAudit {
         this.cipherQuery = cipherQuery;
     }
 
-    public Set<GraphRuleParameter> getGraphParameter() {
+    private Set<GraphRuleParameter> getGraphParameter() {
         return graphParameter;
     }
 
     public void setGraphParameter(Set<GraphRuleParameter> graphParameter) {
         this.graphParameter = graphParameter;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @SuppressWarnings("unchecked") // unchecked cast  - Object to List<String>

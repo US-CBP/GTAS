@@ -5,10 +5,7 @@
  */
 package gov.gtas.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -25,7 +22,7 @@ public class HitsSummary extends BaseEntity {
     private Date createdDate;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HitDetail> hitdetails = new ArrayList<HitDetail>();
+    private Set<HitDetail> hitdetails = new HashSet<>();
 
     @Column(name = "flight_id", columnDefinition = "bigint unsigned")
     private Long flightId;
@@ -42,13 +39,16 @@ public class HitsSummary extends BaseEntity {
     private Passenger passenger;
 
     @Column(name = "rule_hit_count")
-    private Integer ruleHitCount;
+    private Integer ruleHitCount = 0;
 
     @Column(name = "hit_type")
     private String hitType;
 
     @Column(name = "wl_hit_count")
-    private Integer watchListHitCount;
+    private Integer watchListHitCount = 0;
+
+    @Column(name = "graph_hit_count")
+    private Integer graphHitCount = 0;
 
     @Transient
     private Boolean saveHits = false;
@@ -69,11 +69,11 @@ public class HitsSummary extends BaseEntity {
         this.createdDate = createdDate;
     }
 
-    public List<HitDetail> getHitdetails() {
+    public Set<HitDetail> getHitdetails() {
         return hitdetails;
     }
 
-    public void setHitdetails(List<HitDetail> hitdetails) {
+    public void setHitdetails(Set<HitDetail> hitdetails) {
         this.hitdetails = hitdetails;
     }
 
@@ -131,6 +131,14 @@ public class HitsSummary extends BaseEntity {
 
     public void setFlight(Flight flight) {
         this.flight = flight;
+    }
+
+    public Integer getGraphHitCount() {
+        return graphHitCount;
+    }
+
+    public void setGraphHitCount(Integer graphHitCount) {
+        this.graphHitCount = graphHitCount;
     }
 
     @Override

@@ -41,9 +41,10 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
 
     @Query("SELECT p from Passenger p " +
-            "left join fetch p.graphHitDetails " +
+            "left join fetch p.hits " +
+            "left join fetch p.flight " +
             "where p.id in :id")
-    Set<Passenger> getPassengerWithGraphHit(@Param("id") Set<Long> id);
+    Set<Passenger> getPassengerWithHits(@Param("id") Set<Long> id);
 /*
 
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
@@ -93,12 +94,13 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
     @Query("Select p " +
             "from Passenger p " +
-            "left join fetch p.passengerIDTag " +
+            "join fetch p.passengerIDTag " +
             "left join p.apisMessage apis " +
             "left join p.pnrs pnrs " +
+            "left join fetch p.flight f " +
             "where apis.id in :messageId " +
             "or pnrs.id in :messageId")
-    Set<Passenger> getPassengerByMessageId(@Param("messageId") Set<Long> messageId);
+    Set<Passenger> getPassengerWithIdInformation(@Param("messageId") Set<Long> messageId);
 
     @Query("SELECT p FROM Passenger p " +
             " LEFT JOIN FETCH p.paxWatchlistLinks " +
@@ -108,7 +110,7 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
             " LEFT JOIN p.apisMessage am " +
             " LEFT JOIN p.pnrs pnr " +
             " WHERE am.id IN :messageIds OR pnr.id IN :messageIds")
-    Set<Passenger> getPassengersByMessageId2(@Param("messageIds") Set<Long> messageIds);
+    Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

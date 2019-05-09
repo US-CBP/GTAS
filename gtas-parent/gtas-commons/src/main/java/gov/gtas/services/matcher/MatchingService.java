@@ -13,7 +13,7 @@ public interface MatchingService {
 
 	void performFuzzyMatching(Long id);
 
-	void performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters);
+    boolean performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters);
 
     int findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses);
 }

@@ -23,6 +23,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String MAX_PASSENGER_QUERY_RESULT = "MAX_PASSENGER_QUERY_RESULT";
     String MAX_FLIGHT_QUERY_RESULT = "MAX_FLIGHT_QUERY_RESULT";
     String THREADS_ON_LOADER = "THREADS_ON_LOADER";
+    String THREADS_ON_RULES = "THREADS_ON_RULES";
     String FLIGHT_RANGE = "FLIGHT_RANGE";
     String REDIS_KEYS_TTL = "REDIS_KEYS_TTL";
     String REDIS_KEYS_TTL_TIME_UNIT = "REDIS_KEYS_TTL_TIME_UNIT";
@@ -38,6 +39,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String DATA_MANAGEMENT_CUT_OFF_TIME_SPAN = "DATA_MANAGEMENT_CUT_OFF_TIME_SPAN";
     String GRAPH_DB_URL = "GRAPH_DB_URL";
     String GRAPH_DB_TOGGLE = "GRAPH_DB_TOGGLE";
+    String FUZZY_MATCHING = "FUZZY_MATCHING";
 
     AppConfiguration findByOption(String option);
 

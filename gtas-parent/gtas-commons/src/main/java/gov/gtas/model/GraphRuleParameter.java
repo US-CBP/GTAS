@@ -18,9 +18,20 @@ public class GraphRuleParameter extends BaseEntity {
     private String ruleParameter;
 
     @Column
-    private String keyValue;
+    private String keyValue; //value in string form of neo parameter
 
 
+    @Column
+    private String parameterType;
+
+
+    public String getParameterType() {
+        return parameterType;
+    }
+
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
+    }
     public GraphRule getGraphRule() {
         return graphRule;
     }
@@ -29,7 +40,7 @@ public class GraphRuleParameter extends BaseEntity {
         this.graphRule = graphRule;
     }
 
-    public String getRuleParameter() {
+    String getRuleParameter() {
         return ruleParameter;
     }
 

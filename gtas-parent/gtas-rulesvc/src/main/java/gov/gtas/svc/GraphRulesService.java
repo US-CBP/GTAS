@@ -1,13 +1,20 @@
 package gov.gtas.svc;
 
-import gov.gtas.model.GraphHitDetail;
+import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.Case;
+import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Set;
 
 public interface GraphRulesService {
-    Set<GraphHitDetail> graphResults(Set<Passenger> passengers) throws URISyntaxException;
+    Set<RuleHitDetail> graphResults(Set<Passenger> passengers) throws URISyntaxException;
 
-    void saveResults(Set<GraphHitDetail> graphHitDetailSet);
+    void saveResults(Set<HitsSummary> hitsSummaries, Set<Case> newCases);
+
+    Set<Case> graphCases(Set<RuleHitDetail> graphHitDetailSet);
+
+    List<HitsSummary> getHitsSummariesFromRuleDetails(List<RuleHitDetail> filteredList);
 }

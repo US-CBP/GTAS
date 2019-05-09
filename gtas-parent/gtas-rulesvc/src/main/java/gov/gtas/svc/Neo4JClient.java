@@ -10,8 +10,8 @@ class Neo4JClient implements AutoCloseable {
 
     private Driver driver;
 
-    Neo4JClient(String url) {
-        driver = GraphDatabase.driver(url, AuthTokens.basic("username", "password"));
+    Neo4JClient(String url, String username, String password) {
+        driver = GraphDatabase.driver(url, AuthTokens.basic(username, password));
     }
 
     @Override

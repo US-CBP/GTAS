@@ -45,17 +45,13 @@ public class TargetingResultCaseMgmtUtils {
     /**
      * Eliminates duplicates and adds flight id, if missing.
      *
-     * @param result
      * @return
      */
     public static Set<Case> ruleResultPostProcesssing(
-            RuleServiceResult result, CaseDispositionService dispositionService, PassengerService passengerService) {
+            List<RuleHitDetail> resultList, CaseDispositionService dispositionService, PassengerService passengerService) {
         logger.debug("Entering ruleResultPostProcesssing().");
         // get the list of RuleHitDetail objects returned by the Rule Engine
-        List<RuleHitDetail> resultList = result.getResultList();
 
-        // create a Map to eliminate duplicates
-        Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Number of hits --> " + resultList.size());
@@ -119,6 +115,7 @@ public class TargetingResultCaseMgmtUtils {
         Passenger _tempPax = null;
         String description = rhd.getDescription();
         String watchlistItemFlag = "wl_item";
+        String graphDatabaseTag = "graph_hit";
         Case newCase = null;
         try {
             _tempPaxId = rhd.getPassengerId();
@@ -126,6 +123,8 @@ public class TargetingResultCaseMgmtUtils {
 
             if(rhd.getUdrRuleId() == null){
                 description = watchlistItemFlag + description;
+            } else if (rhd.getUdrRuleId().equals(-1L)) {
+                description = graphDatabaseTag + description;
             }
             if (_tempPax != null) {
                 String document = null;

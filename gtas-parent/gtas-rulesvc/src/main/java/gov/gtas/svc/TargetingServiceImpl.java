@@ -159,7 +159,7 @@ public class TargetingServiceImpl implements TargetingService {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
 
 		logger.info("Exiting analyzeApisMessage().");
 		return res;
@@ -180,7 +180,7 @@ public class TargetingServiceImpl implements TargetingService {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
 
 		return res;
 	}
@@ -204,7 +204,7 @@ public class TargetingServiceImpl implements TargetingService {
 
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
 
 		return res;
 	}
@@ -238,7 +238,7 @@ public class TargetingServiceImpl implements TargetingService {
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
 		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res, caseDispositionService, passengerService);
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
 		ret = res.getResultList();
 		return ret;
 	}
@@ -450,7 +450,7 @@ public class TargetingServiceImpl implements TargetingService {
 			RuleServiceResult udrResult = ruleResults.getUdrResult();
 			udrResult = TargetingResultUtils
 					.ruleResultPostProcesssing(udrResult, targetingResultServices);
-			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService));
+			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult.getResultList(), caseDispositionService, passengerService));
 			mergeSets(casesSet, resultCases);
 			ruleResults.setUdrResult(udrResult);
 		}
@@ -458,7 +458,7 @@ public class TargetingServiceImpl implements TargetingService {
 			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
 			//make a call to Case Mgmt.
-			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult, caseDispositionService, passengerService);
+			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult.getResultList(), caseDispositionService, passengerService);
 			mergeSets(casesSet, resultCases);
 			ruleResults.setWatchListResult(watchlistResult);
 		}
@@ -650,54 +650,21 @@ public class TargetingServiceImpl implements TargetingService {
 		messageStatusRepository.saveAll(messageStatuses);
 	}
 
-	@SuppressWarnings("Duplicates")
     public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult) {
 		logger.debug("in create hits and cases");
-		List<TargetingServiceResults> targetingServiceResultsList = new ArrayList<>();
+		List<TargetingServiceResults> targetingServiceResults = new ArrayList<>();
 		if (ruleRunningResult != null && ruleRunningResult.hasResults()) {
-            Set<Case> casesSet = processResultAndMakeCases(ruleRunningResult);
+			Set<Case> casesSet = processResultAndMakeCases(ruleRunningResult);
 			logger.debug("about to go to hits summary list");
 
-            Map<Long, Set<Case>> caseToFlightIdMap = new HashMap<>();
-			for (Case caze : casesSet) {
-				Long flightId = caze.getFlightId();
-                if (caseToFlightIdMap.containsKey(flightId)) {
-                    caseToFlightIdMap.get(flightId).add(caze);
-                } else {
-                    Set<Case> objectHashSet = new HashSet<>();
-                    objectHashSet.add(caze);
-                    caseToFlightIdMap.put(flightId, objectHashSet);
-                }
-            }
-
-            List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult.getTargetingResult());
-            Map<Long, List<HitsSummary>> hitSummaryToFlightIdMap = new HashMap<>();
-            for (HitsSummary hitsSummary : hitsSummaryList) {
-                Long flightId = hitsSummary.getFlightId();
-                if (hitSummaryToFlightIdMap.containsKey(flightId)) {
-                    hitSummaryToFlightIdMap.get(flightId).add(hitsSummary);
-                } else {
-                    List<HitsSummary> hitsSummaries = new ArrayList<>();
-                    hitsSummaries.add(hitsSummary);
-                    hitSummaryToFlightIdMap.put(flightId, hitsSummaries);
-                }
-            }
-            Set<Long> flightIdsToProcess = new HashSet<>();
-            flightIdsToProcess.addAll(caseToFlightIdMap.keySet());
-            flightIdsToProcess.addAll(hitSummaryToFlightIdMap.keySet());
-            for (Long flightId : flightIdsToProcess) {
-                Set<Case> cases = caseToFlightIdMap.get(flightId);
-                List<HitsSummary> hitsSummaries = hitSummaryToFlightIdMap.get(flightId);
-                TargetingServiceResults targetingServiceResults = new TargetingServiceResults();
-                targetingServiceResults.setCaseSet(cases);
-                targetingServiceResults.setHitsSummaryList(hitsSummaries);
-                targetingServiceResultsList.add(targetingServiceResults);
-            }
+			List<HitsSummary> hitsSummaryList = storeHitsInfo(ruleRunningResult.getTargetingResult());
+			targetingServiceResults = TargetingResultUtils.getTargetingResults(casesSet, hitsSummaryList);
 		}
 		logger.debug("done making maps");
 
-		return targetingServiceResultsList;
+		return targetingServiceResults;
 	}
+
 
 	@Transactional
 	public void saveEverything(TargetingServiceResults targetingServiceResults) {
@@ -967,7 +934,7 @@ public class TargetingServiceImpl implements TargetingService {
 		hitsSummary.setHitType(hitSummmaryVo.getHitType().toString());
 		hitsSummary.setRuleHitCount(hitSummmaryVo.getRuleHitCount());
 		hitsSummary.setWatchListHitCount(hitSummmaryVo.getWatchlistHitCount());
-		List<HitDetail> detailList = new ArrayList<>();
+		Set<HitDetail> detailList = new HashSet<>();
 		for (TargetDetailVo hdv : hitSummmaryVo.getHitDetails()) {
 			detailList.add(createHitDetail(hitsSummary, hdv));
 		}
