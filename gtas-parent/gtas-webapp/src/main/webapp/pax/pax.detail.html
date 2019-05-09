@@ -56,13 +56,18 @@
           </tr>
           <tr>
             <td class="half-width txt-right"><strong>Nationality</strong></td>
-            <td class="half-width">{{passenger.citizenshipCountry}}</td>
-          </tr>
+            <td class="half-width">
+            <span ng-mouseleave="resetTooltip()"><strong>{{passenger.nationality}}</strong>
+              <md-tooltip class="multi-tooltip" md-direction="right">
+                <div>{{getCodeTooltipData(passenger.nationality,"country")}}</div>
+              </md-tooltip>
+            </span></td>
+        </tr>
           <tr>
   
             <td class="half-width txt-right"><strong>Residence</strong></td>
             <td class="half-width">
-              <span ng-mouseleave="resetTooltip()"><strong> {{ passenger.residencyCountry }}</strong>
+              <span ng-mouseleave="resetTooltip()"><strong> {{passenger.residencyCountry}}</strong>
                 <md-tooltip class="multi-tooltip" md-direction="right">
                   <div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
                 </md-tooltip>
