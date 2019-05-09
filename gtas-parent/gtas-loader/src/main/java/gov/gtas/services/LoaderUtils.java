@@ -6,12 +6,7 @@
 package gov.gtas.services;
 
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -19,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import gov.gtas.model.*;
+import gov.gtas.parsers.pnrgov.enums.SSRDocsType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import gov.gtas.model.Address;
-import gov.gtas.model.Agency;
-import gov.gtas.model.BookingDetail;
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.CreditCard;
-import gov.gtas.model.Document;
-import gov.gtas.model.DwellTime;
-import gov.gtas.model.Email;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FrequentFlyer;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerIDTag;
-import gov.gtas.model.PaymentForm;
-import gov.gtas.model.Phone;
-import gov.gtas.model.Pnr;
-import gov.gtas.model.ReportingParty;
-import gov.gtas.model.TicketFare;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.FlightDirectionCode;
@@ -86,6 +66,10 @@ public class LoaderUtils {
 
     public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
         Passenger p = new Passenger();
+        PassengerTripDetails passengerTripDetails = new PassengerTripDetails(p);
+        PassengerDetails passengerDetails = new PassengerDetails(p);
+        p.setPassengerDetails(passengerDetails);
+        p.setPassengerTripDetails(passengerTripDetails);
         p.setCreatedBy(LOADER_USER);
         updatePassenger(vo, p);
         return p;
@@ -93,33 +77,44 @@ public class LoaderUtils {
 
     public void updatePassenger(PassengerVo vo, Passenger p) throws ParseException {
         BeanUtils.copyProperties(vo, p, getNullPropertyNames(vo));
-        p.setUpdatedBy(LOADER_USER);
+        BeanUtils.copyProperties(vo, p.getPassengerDetails(), getNullPropertyNames(vo));
+        BeanUtils.copyProperties(vo, p.getPassengerTripDetails(), getNullPropertyNames(vo));
+
+
+
+        if (p.getPassengerDetails().getFirstName() != null && p.getPassengerDetails().getFirstName().length() > 254) {
+            p.getPassengerDetails().setFirstName(p.getPassengerDetails().getFirstName().substring(0,254));
+        }
+        if (p.getPassengerDetails().getLastName() != null && p.getPassengerDetails().getLastName().length() > 254) {
+            p.getPassengerDetails().setLastName(p.getPassengerDetails().getLastName().substring(0,254));
+        }
+
         if (vo.getDebarkation() != null) {
             String airportCode = vo.getDebarkation();
-            p.setDebarkation(airportCode);
+            p.getPassengerTripDetails().setDebarkation(airportCode);
             Airport debark = getAirport(airportCode);
             if (debark != null) {
-                p.setDebarkCountry(debark.getCountry());
+                p.getPassengerTripDetails().setDebarkCountry(debark.getCountry());
             }
         }
 
         if (vo.getEmbarkation() != null) {
             String airportCode = vo.getEmbarkation();
-            p.setEmbarkation(airportCode);
+            p.getPassengerTripDetails().setEmbarkation(airportCode);
             Airport embark = getAirport(airportCode);
             if (embark != null) {
-                p.setEmbarkCountry(embark.getCountry());
+                p.getPassengerTripDetails().setEmbarkCountry(embark.getCountry());
             }
         }
 
-        if (vo.getCitizenshipCountry() != null) {
-            p.setCitizenshipCountry(normalizeCountryCode(vo.getCitizenshipCountry()));
+        if (vo.getNationality() != null) {
+            p.getPassengerDetails().setNationality(normalizeCountryCode(vo.getNationality()));
         }
 
         if (vo.getResidencyCountry() != null) {
-            p.setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
+            p.getPassengerDetails().setResidencyCountry(normalizeCountryCode(vo.getResidencyCountry()));
         }
-        p.setBagNum(vo.getBagNum());
+        p.getPassengerTripDetails().setBagNum(vo.getBagNum());
         if(vo.getTickets() != null && vo.getTickets().size() >0){
         	updateTicketDetails(vo,p);
         }
@@ -148,8 +143,14 @@ public class LoaderUtils {
         return d;
     }
 
-    public void updateDocument(DocumentVo vo, Document d) throws ParseException {
-        BeanUtils.copyProperties(vo, d, getNullPropertyNames(vo));
+    public void updateDocument(DocumentVo vo, Document d) {
+        String docType = d.getDocumentType();
+        if (docType == null || SSRDocsType.NOT_PROVIDED.toString().equalsIgnoreCase(d.getDocumentType())) {
+            BeanUtils.copyProperties(vo, d, getNullPropertyNames(vo));
+        } else {
+            BeanUtils.copyProperties(vo, d, getNullPropertyNames(vo));
+            d.setDocumentType(docType);
+        }
     }
 
     public ReportingParty createNewReportingParty(ReportingPartyVo vo) {
@@ -162,10 +163,21 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, rp);
     }
 
-    public Flight createNewFlight(FlightVo vo) throws ParseException {
+    public Flight createNewFlight(FlightVo vo, String [] primeFlightKey) throws ParseException {
         Flight f = new Flight();
         f.setCreatedBy(LOADER_USER);
         updateFlight(vo, f);
+        /*
+        Flights created MUST be created to the border crossing flight information
+        found in the primeFlightKey array.
+        Override any data that does not match the prime flight key.
+        This can happen in the case of a code share flight.
+         * */
+        f.setDestination(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_DESTINATION]);
+        f.setOrigin(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN]);
+        f.setEtdDate(new Date(Long.parseLong(primeFlightKey[GtasLoaderImpl.ETD_DATE_NO_TIMESTAMP_AS_LONG])));
+        f.setCarrier(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_CARRIER]);
+        f.setFlightNumber(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_NUMBER_STRING]);
         return f;
     }
 
@@ -178,7 +190,7 @@ public class LoaderUtils {
     			docExpDate=d.getExpirationDate();
          		validdays=DateUtils.calculateValidVisaPeriod(etd, docExpDate);
          		if(d.getExpirationDate().after(etd)){
-         			p.setNumberOfDaysVisaValid(validdays);
+         			p.getPassengerTripDetails().setNumberOfDaysVisaValid(validdays);
          		}
          		d.setNumberOfDaysValid(validdays);
     		}
@@ -187,22 +199,12 @@ public class LoaderUtils {
  
     
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
-        f.setUpdatedBy(LOADER_USER);
         String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);
 
         BeanUtils.copyProperties(vo, f, getNullPropertyNames(vo));
 
         f.setFullFlightNumber(String.format("%s%s", vo.getCarrier(), vo.getFlightNumber()));
-        if (vo.getEta() != null) {
-            f.setEtaDate(DateUtils.stripTime(vo.getEta()));
-        }
-        if (vo.getEtd() != null) {
-            f.setEtdDate(DateUtils.stripTime(vo.getEtd()));
-        }
-        f.setMarketingFlight(vo.isMarketingFlight());
-        if(vo.isCodeShareFlight()){
-        	f.setOperatingFlight(true);
-        }
+
         Airport dest = getAirport(f.getDestination());
         String destCountry = null;
         if (dest != null) {
@@ -229,7 +231,6 @@ public class LoaderUtils {
     }
 
     public void convertPnrVo(Pnr pnr, PnrVo vo) throws ParseException {
-
         BeanUtils.copyProperties(vo, pnr);
         Airport origin = getAirport(vo.getOrigin());
         String originCountry = null;
@@ -320,7 +321,7 @@ public class LoaderUtils {
         return a;
     }
 
-    public Airport getAirport(String code) throws ParseException {
+    public Airport getAirport(String code) {
         if (StringUtils.isBlank(code)) {
             return null;
         }
@@ -335,30 +336,18 @@ public class LoaderUtils {
         return null;
     }
     
-    public boolean isPrimeFlight(FlightVo fvo, String[] primeFlightCriteria){
-    	//The regex splits on alphanumeric detection. Flightnumber can sometimes be < 4 digits, this converts to 4 and adds preceding 0's if necessary.
-    	String regex = "((?<=[a-zA-Z])(?=[0-9]))|((?<=[0-9])(?=[a-zA-Z]))";
-    	String[] tmpArry = primeFlightCriteria[2].split(regex);
-    	if(tmpArry.length == 2){
-    		if(tmpArry[1].length() < 4){
-    		   tmpArry[1] = String.format("%4s",tmpArry[1]);
-    		   tmpArry[1] = tmpArry[1].replace(" ", "0");
-        	}
-    		primeFlightCriteria[2] = tmpArry[0]+tmpArry[1];
-    	}
-    	/*if(primeFlightCriteria[3].length() < 4){
-    		primeFlightCriteria[3] = String.format("%4s",primeFlightCriteria[3]);
-	   		primeFlightCriteria[3] = primeFlightCriteria[3].replace(" ", "0");
-    	}*/
-	    	
-    	if(	fvo.getOrigin().toString().equals(primeFlightCriteria[0]) &&
-    		fvo.getDestination().toString().equals(primeFlightCriteria[1]) &&
-    		primeFlightCriteria[2].equals(fvo.getCarrier().toString() + fvo.getFlightNumber().toString())){
-    		logger.debug("Prime Flight Found!");
-    		return true;
-	   	} else return false;
+    public boolean isPrimeFlight(FlightVo fvo, String[] primeFlightKey) {
+        String primeFlightOrigin = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN];
+        String primeFlightDestination = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_DESTINATION];
+        return (fvo.getOrigin().equals(primeFlightOrigin) &&
+                fvo.getDestination().equals(primeFlightDestination))
+                ||  isTestData(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN]);
     }
-    
+
+    private boolean isTestData(String s) {
+        return s.equalsIgnoreCase("placeholder");
+    }
+
     public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
     	BookingDetail bD = new BookingDetail();
     	BeanUtils.copyProperties(fvo, bD);
@@ -387,12 +376,11 @@ public class LoaderUtils {
     
     //These 4 overloaded methods represent the 4 combinations that legs can be compared together
     public void setDwellTime(Flight firstFlight,Flight secondFlight, Pnr pnr){
-    	if(firstFlight != null && secondFlight != null 
+    	if(firstFlight != null && secondFlight != null
     			&& firstFlight.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstFlight.getOrigin()))
-    			&& (firstFlight.getEta()!=null && secondFlight.getEtd() != null)){
-    		
-    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    			&& (firstFlight.getMutableFlightDetails().getEta()!=null && secondFlight.getMutableFlightDetails().getEtd() != null)){
+
+    	   	DwellTime d =new DwellTime(firstFlight.getMutableFlightDetails().getEta(),secondFlight.getMutableFlightDetails().getEtd(),secondFlight.getOrigin(),pnr);
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondFlight.getDestination());
     		pnr.addDwellTime(d);
@@ -401,7 +389,6 @@ public class LoaderUtils {
     public void setDwellTime(BookingDetail firstBooking, BookingDetail secondBooking, Pnr pnr){
     	if(firstBooking != null && secondBooking != null 
     			&& firstBooking.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
-    			&& !(secondBooking.getDestination().equals( firstBooking.getOrigin()))
     			&& (firstBooking.getEta()!=null && secondBooking.getEtd() != null)){
     		
     	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
@@ -411,12 +398,11 @@ public class LoaderUtils {
     	}
     }
     public void setDwellTime(Flight firstFlight, BookingDetail secondBooking, Pnr pnr){
-    	if(firstFlight != null && secondBooking != null 
+    	if(firstFlight != null && secondBooking != null
     			&& firstFlight.getDestination().equalsIgnoreCase(secondBooking.getOrigin())
-    			&& !(secondBooking.getDestination().equals( firstFlight.getOrigin()))
-    			&& (firstFlight.getEta()!=null && secondBooking.getEtd() != null)){
-    		
-    	   	DwellTime d =new DwellTime(firstFlight.getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
+    			&& (firstFlight.getMutableFlightDetails().getEta()!=null && secondBooking.getEtd() != null)){
+
+    	   	DwellTime d =new DwellTime(firstFlight.getMutableFlightDetails().getEta(),secondBooking.getEtd(),secondBooking.getOrigin(),pnr);
     		d.setFlyingFrom(firstFlight.getOrigin());
     		d.setFlyingTo(secondBooking.getDestination());
     		pnr.addDwellTime(d);
@@ -425,22 +411,17 @@ public class LoaderUtils {
     public void setDwellTime(BookingDetail firstBooking, Flight secondFlight, Pnr pnr){
     	if(firstBooking != null && secondFlight != null 
     			&& firstBooking.getDestination().equalsIgnoreCase(secondFlight.getOrigin())
-    			&& !(secondFlight.getDestination().equals( firstBooking.getOrigin()))
-    			&& (firstBooking.getEta()!=null && secondFlight.getEtd() != null)){
+    			&& (firstBooking.getEta()!=null && secondFlight.getMutableFlightDetails().getEtd() != null)){
     		
-    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondFlight.getEtd(),secondFlight.getOrigin(),pnr);
+    	   	DwellTime d =new DwellTime(firstBooking.getEta(),secondFlight.getMutableFlightDetails().getEtd(),secondFlight.getOrigin(),pnr);
     		d.setFlyingFrom(firstBooking.getOrigin());
     		d.setFlyingTo(secondFlight.getDestination());
     		pnr.addDwellTime(d);
     	}
     }
     //The parsed message did not have the flights in proper order for flight leg generation (needed for dwell time and appropriate display)
-    public void sortFlightsByDate(List<FlightVo> flights){
-    	Collections.sort(flights, new Comparator<FlightVo>(){
-    		public int compare(FlightVo f1, FlightVo f2){
-    			return f1.getEtd().compareTo(f2.getEtd());
-    		}
-    	});
+    void sortFlightsByDate(List<FlightVo> flights){
+    	flights.sort(Comparator.comparing(FlightVo::getEtd));
     }
 
     /**
@@ -456,7 +437,13 @@ public class LoaderUtils {
 //            	
 //           return hash;
     	return EntityResolverUtils.makeHashForPassenger(pax);
-    } 
+    }
+    
+    private String getDocIdHashForPassenger(Passenger passenger)  throws NoSuchAlgorithmException, UnsupportedEncodingException
+    {
+        String hashString = EntityResolverUtils.makeDocIdHashForPassenger(passenger);
+        return hashString;
+    }
 
     /**
      * Util method to hash passenger attributes
@@ -506,7 +493,7 @@ public class LoaderUtils {
         return code;
     }
 
-    private static String[] getNullPropertyNames(Object source) {
+    static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);
         java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
@@ -527,6 +514,8 @@ public class LoaderUtils {
     	paxIdTag.setCreatedBy(LOADER_USER);
     	try {
 			paxIdTag.setIdTag(getHashForPassenger(p));
+			paxIdTag.setDocHashId(getDocIdHashForPassenger(p));
+                        
 		} catch (NoSuchAlgorithmException e) {
 			logger.error("error creating passenger id tag:", e);
 		} catch (UnsupportedEncodingException e) {

@@ -43,7 +43,7 @@ public class QueryObjectTest {
     public void testOneTerm() {
         UdrSpecificationBuilder builder = new UdrSpecificationBuilder(null,
                 QueryConditionEnum.AND);
-        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.CITIZENSHIP_COUNTRY.getFieldName(), 
+        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.NATIONALITY.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.EQUAL, new String[]{"Jones"});
         builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.DOB.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.LESS, new String[]{"1978-12-24"});
@@ -65,7 +65,7 @@ public class QueryObjectTest {
         builder.addNestedQueryObject(QueryConditionEnum.OR);
         builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.EMBARKATION.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.EQUAL, new String[]{"DBY"});
-        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.CITIZENSHIP_COUNTRY.getFieldName(), 
+        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.NATIONALITY.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"});
         
         QueryObject qobj = builder.build().getDetails();
@@ -82,7 +82,7 @@ public class QueryObjectTest {
         assertEquals(3,mintermList.size());
         verifyTerm(mintermList.get(0), EntityEnum.PASSENGER, PassengerMapping.LAST_NAME.getFieldName(), CriteriaOperatorEnum.EQUAL, new String[]{"Jones"} );
         verifyTerm(mintermList.get(1), EntityEnum.PASSENGER, PassengerMapping.DOB.getFieldName(), CriteriaOperatorEnum.LESS, new String[]{"1978-12-24"} );
-        verifyTerm(mintermList.get(2), EntityEnum.PASSENGER, PassengerMapping.CITIZENSHIP_COUNTRY.getFieldName(), CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"} );
+        verifyTerm(mintermList.get(2), EntityEnum.PASSENGER, PassengerMapping.NATIONALITY.getFieldName(), CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"} );
     }
     private void verifyTerm(QueryTerm trm, EntityEnum entity, String attr, CriteriaOperatorEnum op, String[] val){
         assertEquals(entity.getEntityName(), trm.getEntity());
@@ -103,7 +103,7 @@ public class QueryObjectTest {
         builder.addNestedQueryObject(QueryConditionEnum.OR);
         builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.EMBARKATION.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.EQUAL, new String[]{"DBY"});
-        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.CITIZENSHIP_COUNTRY.getFieldName(), 
+        builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.NATIONALITY.getFieldName(), 
                 TypeEnum.STRING, CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"});
         builder.addNestedQueryObject(QueryConditionEnum.AND);
         builder.addTerm(EntityEnum.PASSENGER, PassengerMapping.MIDDLE_NAME.getFieldName(), 
@@ -130,7 +130,7 @@ public class QueryObjectTest {
         assertEquals(3,mintermList.size());
         verifyTerm(mintermList.get(0), EntityEnum.PASSENGER, PassengerMapping.LAST_NAME.getFieldName(), CriteriaOperatorEnum.EQUAL, new String[]{"Jones"} );
         verifyTerm(mintermList.get(1), EntityEnum.PASSENGER, PassengerMapping.DOB.getFieldName(), CriteriaOperatorEnum.LESS, new String[]{"1978-12-24"} );
-        verifyTerm(mintermList.get(2), EntityEnum.PASSENGER, PassengerMapping.CITIZENSHIP_COUNTRY.getFieldName(), CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"} );
+        verifyTerm(mintermList.get(2), EntityEnum.PASSENGER, PassengerMapping.NATIONALITY.getFieldName(), CriteriaOperatorEnum.NOT_EQUAL, new String[]{"USA"} );
 
         mintermList = flatList.get(2);
         assertEquals(5,mintermList.size());

@@ -5,6 +5,7 @@
  */
 package gov.gtas.repository.watchlist;
 
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.watchlist.WatchlistItem;
 
 import java.util.List;
@@ -21,5 +22,11 @@ public interface WatchlistItemRepository extends CrudRepository<WatchlistItem, L
     public List<WatchlistItem> getItemsByWatchlistName(@Param("watchlistName") String watchlistName);   
 
     @Query("DELETE FROM WatchlistItem wli WHERE wli.watchlist.watchlistName = :watchlistName")
-    public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);   
+    public void deleteItemsByWatchlistName(@Param("watchlistName") String watchlistName);
+    
+    
+    default WatchlistItem findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

@@ -5,19 +5,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "flight_pax")
@@ -26,6 +14,10 @@ public class FlightPax implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public FlightPax(){}
+
+	public FlightPax(Long passengerId) {
+		this.passengerId = passengerId;
+	}
 	
     @Id  
     @GeneratedValue(strategy = GenerationType.AUTO)  
@@ -42,7 +34,7 @@ public class FlightPax implements Serializable {
     @ManyToOne
     @JoinColumn(name="install_address_id",nullable = true,referencedColumnName = "id")
     private Address installationAddress;
-    
+
     @Column(name="embarkation")
     private String embarkation;
     
@@ -79,13 +71,37 @@ public class FlightPax implements Serializable {
 	@Column(name = "head_of_pool", nullable = false)
 	private boolean headOfPool=false;
 
-	@ManyToOne
-    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
-    private Flight flight;
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id", nullable = false)
-    private Passenger passenger;
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+	private
+	Long flightId;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
+
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	@Column(name = "passenger_id", columnDefinition = "bigint unsigned")
+	private
+	Long passengerId;
+
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Passenger passenger;
 
 	public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
@@ -233,12 +249,11 @@ public class FlightPax implements Serializable {
 
 	@Override
     public int hashCode() {
-        return Objects.hash(this.debarkation,this.embarkation,this.portOfFirstArrival);
+        return Objects.hash(this.getFlightId(), this.getPassengerId(), this.getMessageSource());
     }
 
     @Override
     public boolean equals(Object target) {
-
         if (this == target) {
             return true;
         }
@@ -249,8 +264,8 @@ public class FlightPax implements Serializable {
 
         FlightPax dataTarget = ((FlightPax) target);
 
-        return ((this.getFlight().getId().equals(dataTarget.getFlight().getId()) && 
-        		(this.getPassenger().getId().equals(dataTarget.getPassenger().getId()))) &&
+        return ((this.getFlightId().equals(dataTarget.getFlightId()) &&
+        		(this.getPassengerId().equals(dataTarget.getPassengerId()))) &&
 				((this.getMessageSource() == null && dataTarget.getMessageSource() == null)
 						|| ((this.getMessageSource() != null
 						&& dataTarget.getMessageSource() != null) &&

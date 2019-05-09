@@ -215,6 +215,7 @@
         .service('userService', function ($http, $q) {
             var USER_ROLES_URL = "/gtas/roles/",
                 USERS_URL = "/gtas/users/",
+                MANAGE_USER_URL = "/gtas/manageuser/",
                 USER_URL = "/gtas/user/";
 
             function handleError(response) {
@@ -254,6 +255,15 @@
                 });
                 return (request.then(handleSuccess, handleError));
             }
+            
+            function manageUser(user) {
+                var request = $http({
+                    method: "put",
+                    url: MANAGE_USER_URL + user.userId,
+                    data: user
+                });
+                return (request.then(handleSuccess, handleError));
+            }
 
             function createUser(user) {
                 var request = $http({
@@ -278,6 +288,7 @@
                 getRoles: getRoles,
                 createUser: createUser,
                 updateUser: updateUser,
+                manageUser:manageUser,
                 getUserData: getUserData,
                 getAllUsers: function () {
                     var request = $http({
@@ -665,6 +676,13 @@
                             displayName: 'user.status.enabled', headerCellFilter: 'translate',
                             field: "enabled",
                             cellTemplate: '<md-button aria-label="enabled" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
+                            enableCellEdit: false,
+                            enableColumnMenu: false
+                        }, {
+                            name: "overMaxHits",
+                            displayName: 'Over Max Hits', headerCellFilter: 'translate',
+                            field: "overMaxHits",
+                            cellTemplate: '<md-button aria-label="overMaxHits" ng-click="grid.api.selection.selectRow(row.entity)">{{COL_FIELD}}</md-button>',
                             enableCellEdit: false,
                             enableColumnMenu: false
                         },
@@ -1199,6 +1217,15 @@
             		else if(type === 'carrier'){
             			return getFullNameByCodeAndCodeList(field, $rootScope.carriersList);
             		}
+            		else if (type === 'passenger'){
+            			return getFullNameByCodeAndCodeList(field, $rootScope.passengerTypes);
+            		}
+            		else if (type === 'document'){
+            			return getFullNameByCodeAndCodeList(field,$rootScope.documentTypes)
+            		}
+            		else if (type === 'gender') {
+            			return getFullNameByCodeAndCodeList(field,$rootScope.genders)
+            		}
             	}
             };
 
@@ -1215,6 +1242,30 @@
             };
         	return({
         		getCodeTooltipData:getCodeTooltipData
+        	});
+        })
+        .service('configService', function($rootScope, $http,$q){
+        	/*
+        	 * Read Kibana settings from ./config/kibana_settings.json
+        	 * 
+        	 * By default kibana-dashboard is disabled. The landing page after successful login is flights page for now
+        	 */
+        	function defaultHomePage(){
+        		
+        		var dfd = $q.defer();
+        		
+                dfd.resolve($http({
+                     method: 'get',
+                     url: './config/kibana_settings.json'
+                 }));
+                 
+               
+                return dfd.promise;
+                
+        	};
+        	
+        	return ({
+        		defaultHomePage : defaultHomePage
         	});
         });
 }());

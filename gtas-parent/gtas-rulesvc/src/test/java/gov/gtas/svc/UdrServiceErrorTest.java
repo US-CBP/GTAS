@@ -219,8 +219,7 @@ public class UdrServiceErrorTest {
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		String authorId = spec.getSummary().getAuthor();
 
-		UserData authorData = new UserData(authorId, null, null, null, 0, null,
-				null);
+		UserData authorData = new UserData(authorId, null, null, null, 0, null);
 		User author = new User();
 		author.setUserId(authorId);
 		try {
@@ -264,7 +263,7 @@ public class UdrServiceErrorTest {
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
 			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null, null);
+					null);
 			User author = new User();
 			author.setUserId(authorId);
 			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
@@ -305,7 +304,7 @@ public class UdrServiceErrorTest {
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
 			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null, null);
+					null);
 			User author = new User();
 			author.setUserId(authorId);
 			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
@@ -344,7 +343,7 @@ public class UdrServiceErrorTest {
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
 			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null, null);
+					null);
 
 			User author = new User();
 			author.setUserId(authorId);

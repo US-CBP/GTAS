@@ -11,7 +11,11 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -24,6 +28,13 @@ public class Phone extends BaseEntityAudit {
     @Column(nullable = false)
     private String number;
 
+	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+    private Flight flight;
+    
 	@ManyToMany(
         mappedBy = "phones",
         targetEntity = Pnr.class
@@ -61,7 +72,23 @@ public class Phone extends BaseEntityAudit {
         this.pnrs = pnrs;
     }
 
-    @Override
+    public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+	
+    public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
+	@Override
     public int hashCode() {
         return Objects.hash(this.number);
     }

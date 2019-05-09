@@ -147,7 +147,7 @@ public class UploadController {
     		return new JsonServiceResponse(Status.FAILURE, "Invalid attachment id");
     	}
     	//Attempt removal
-    	attRepo.delete(Long.parseLong(attachmentId));
+    	attRepo.deleteById(Long.parseLong(attachmentId));
     		
 		return new JsonServiceResponse(Status.SUCCESS, "Successfully deleted attachment with id: " + attachmentId);
     }

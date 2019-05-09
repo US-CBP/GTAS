@@ -9,6 +9,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.Agency;
 
+import java.util.List;
+
 public interface AgencyRepository extends CrudRepository<Agency, Long> {
-    public Agency findByNameAndLocation(String name, String location);
+    List<Agency> findByNameAndLocation(String name, String location);
 }

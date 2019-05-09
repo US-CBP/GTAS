@@ -15,11 +15,11 @@ attributeRenames:
     gtasId: gtasId
     derogId: derogId
     first_name: firstName
-    middle_name: middle_name
+    middle_name: middleName
     last_name: lastName
     DOB_Date: DOB_Date
     GNDR_CD: GNDR_CD
-    CTZNSHP_CTRY_CD: CTZNSHP__CTRY_CD
+    NATIONALITY_CD: NATIONALITY_CD
     documents: documents
     DOC_CTRY_CD: DOC_CTRY_CD
     DOC_TYP_NM: DOC_TYP_NM
@@ -44,7 +44,7 @@ highRecall:
         - DOB_Date
     -
         - metaphones
-        - CTZNSHP_CTRY_CD
+        - NATIONALITY_CD
     -
         - metaphones
         - DOC_CTRY_CD
@@ -57,14 +57,14 @@ highRecall:
     -
         - first_name
         - DOB_Date
-        - CTZNSHP_CTRY_CD
+        - NATIONALITY_CD
 
 highPrecision:
     -
         - last_name
         - DOB_Date
         - GNDR_CD
-        - CTZNSHP_CTRY_CD
+        - NATIONALITY_CD
     -
         - metaphones
         - DOB_Date
@@ -80,7 +80,7 @@ balanced:
         - last_name
         - DOB_Date
         - GNDR_CD
-        - CTZNSHP_CTRY_CD
+        - NATIONALITY_CD
     -
         - metaphones
         - DOB_Date
@@ -91,7 +91,7 @@ balanced:
     -
         - first_name
         - DOB_Date
-        - CTZNSHP_CTRY_CD
+        - NATIONALITY_CD
         
 gtasDefault:
     -

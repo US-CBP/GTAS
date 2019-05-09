@@ -152,8 +152,8 @@ public class WatchListLoaderService {
 	                        .getFieldName(), DocumentMapping.DOCUMENT_TYPE.getFieldType(), record.get("documenttype"), termList_D);
 				}					
 				if(StringUtils.isNotBlank(record.get("coc"))){
-					termList=createWatchListTermList(PassengerMapping.CITIZENSHIP_COUNTRY
-	                        .getFieldName(), PassengerMapping.CITIZENSHIP_COUNTRY.getFieldType(), record.get("coc"), termList);
+					termList=createWatchListTermList(PassengerMapping.NATIONALITY
+	                        .getFieldName(), PassengerMapping.NATIONALITY.getFieldType(), record.get("coc"), termList);
 				}					
 
 				//logger.info("%s\t%s\t%s\n", record.get("dob"), record.get("firstname"), record.get("doc"));

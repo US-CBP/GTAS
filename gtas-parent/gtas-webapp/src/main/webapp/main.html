@@ -31,10 +31,11 @@
 </head>
 
 <body ng-cloak>
+
   <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#/dashboard">
+        <a class="navbar-brand" ng-href="#/{{homePage}}">
           <div class="gtas-brand"></div>
           <div class="dhs-brand"></div>
         </a>
@@ -116,6 +117,13 @@
                 <a title="Settings" href="#/userSettings">Change Password</a>
               </li>
               <li class="divider"></li>
+              <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
+                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}]">
+                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">Office Location </span>   </a>
+              </li>
+              <li class="divider"></li>
               <li>
                 <a href ng-click="logout()" title="Logout">Logout</a>
               </li>
@@ -183,9 +191,10 @@
       </div>
     </div>
   </div>
+    
   <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
-  <div class="content" ui-view=""></div>
+  <div class="content" ui-view=""  style="height: 100%;"></div>
   <div ui-view="footer"></div>
 
   <script src="resources/bower_components/angular/angular.js"></script>
@@ -236,7 +245,9 @@
   <script src="resources/bower_components/angular-summernote/dist/angular-summernote.min.js"></script>
   <script src="resources/bower_components/trix/dist/trix.js"></script>
   <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
-
+  <script src='seatsMap/jquery.seat-charts.min.js'></script>
+  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
+<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>
@@ -262,6 +273,8 @@
 <script src='admin/UploadController.js'></script>
 <script src='userSettings/UserSettingsController.js'></script>
 <script src='userSettings/FilterCtrl.js'></script>
+<script src='userlocation/UserLocationController.js'></script>
+<script src='userlocation/UserLocationService.js'></script>
 <script src='common/languagecontroller.js'></script>
 <script src='cases/CasesController.js'></script>
 <script src='cases/CaseDispositionController.js'></script>
@@ -272,6 +285,8 @@
 <script src='onedaylookout/OneDayLookoutService.js'></script>
 <script src='adhocquery/AdhocQueryController.js'></script>
 <script src='adhocquery/AdhocQueryService.js'></script>
+<script src='seatsMap/SeatsMapController.js'></script>
+<script src='seatsMap/SeatService.js'></script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>

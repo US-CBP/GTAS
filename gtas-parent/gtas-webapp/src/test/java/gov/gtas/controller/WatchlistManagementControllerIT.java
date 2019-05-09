@@ -35,7 +35,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,7 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class,
         WebAppConfig.class })
 @WebAppConfiguration
-@TransactionConfiguration(defaultRollback = true)
+@Rollback(true)
 public class WatchlistManagementControllerIT {
     private static final String TEST_USER = "test";
     private static final String WL_NAME = "TestWL123";

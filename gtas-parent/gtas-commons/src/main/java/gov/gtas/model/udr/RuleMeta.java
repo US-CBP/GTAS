@@ -73,6 +73,9 @@ public class RuleMeta implements Serializable {
     private Set<RuleCat> ruleCategories = new HashSet<RuleCat>();
 
 
+    @Column(name = "RM_OVER_MAX_HITS_FLAG")
+    private Boolean overMaxHits;
+
     /**
      * Constructor for JPA.
      */
@@ -273,5 +276,17 @@ public class RuleMeta implements Serializable {
 
     public void setRuleCategories(Set<RuleCat> ruleCategories) {
         this.ruleCategories = ruleCategories;
+    }
+
+    public Boolean getOverMaxHits() {
+        //handle cast to primitive boolean
+        if (overMaxHits == null) {
+            return false;
+        }
+        return overMaxHits;
+    }
+
+    public void setOverMaxHits(Boolean overMaxHits) {
+        this.overMaxHits = overMaxHits;
     }
 }

@@ -5,21 +5,6 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.DashboardMessageStats;
-import gov.gtas.model.Flight;
-import gov.gtas.model.lookup.Airport;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.YTDAirportStatistics;
-import gov.gtas.model.YTDRules;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.AirportService;
-import gov.gtas.services.HitsSummaryService;
-import gov.gtas.services.MessageService;
-import gov.gtas.services.MessageStatisticsService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrService;
-import gov.gtas.services.YTDStatisticsService;
-
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,41 +16,67 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.gtas.constants.Constants;
+import gov.gtas.model.Flight;
+import gov.gtas.model.HitsSummary;
+import gov.gtas.model.lookup.Airport;
+import gov.gtas.model.lookup.AppConfiguration;
+import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.AirportService;
+import gov.gtas.services.AppConfigurationService;
+import gov.gtas.services.FlightService;
+import gov.gtas.services.HitsSummaryService;
+import gov.gtas.services.MessageService;
+import gov.gtas.services.PassengerService;
+import gov.gtas.services.PnrService;
+import gov.gtas.services.UserLocationService;
+import gov.gtas.services.security.RoleData;
+import gov.gtas.services.security.UserService;
+import gov.gtas.vo.passenger.UserLocationVo;
+
 @RestController
 public class DashboardController {
-    @Autowired
-    private FlightService flightService;
+	@Autowired
+	private FlightService flightService;
 
-    @Autowired
-    private PassengerService paxService;
+	@Autowired
+	private PassengerService paxService;
 
-    @Autowired
-    private AirportService airportService;
+	@Autowired
+	private AirportService airportService;
 
-    @Autowired
-    private HitsSummaryService hitsSummaryService;
+	@Autowired
+	private HitsSummaryService hitsSummaryService;
 
-    @Autowired
-    private MessageService apisMessageService;
+	@Autowired
+	private MessageService apisMessageService;
 
-    @Autowired
-    private MessageStatisticsService messageStatsService;
+	@Autowired
+	private PnrService pnrService;
 
+	@Autowired
+	private UserLocationService userLocationService;
 
-    @Autowired
-    private YTDStatisticsService ytdStatsService;
+	@Autowired
+	private AppConfigurationService appConfigurationService;
 
-    @Autowired
-    private PnrService pnrService;
+	@Autowired
+	private UserService userService;
 
-    private static final String commaStringToAppend = ", ";
-    private static final String EMPTY_STRING="";
+	private static final String commaStringToAppend = ", ";
+	private static final String EMPTY_STRING = "";
+
+	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
 	/**
 	 * Gets the flights, passengers and hits count.
@@ -79,306 +90,307 @@ public class DashboardController {
 	 *             the parse exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountInbound")
-	public Map<String, Object> getFlightsAndPassengersAndHitsCountInbound(
+	public Map<String, Object> getFlightsAndPassengersAndHitsCountInbound(HttpServletRequest httpServletRequest,
 			@RequestParam(value = "startDate", required = false) String startDate,
 			@RequestParam(value = "endDate", required = false) String endDate) {
 		// passed in arguments not used currently.
 
 		List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
 
-		Integer paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
+		int paxCount = flightList.stream().mapToInt(f -> f.getFlightPassengerCount().getPassengerCount()).sum();
 
-        HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
-        int ruleHits = hitAndAirportExtractor.getRuleHits();
-        long watchListHits = hitAndAirportExtractor.getWatchListHits();
+		HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
+		int ruleHits = hitAndAirportExtractor.getRuleHits();
+		long watchListHits = hitAndAirportExtractor.getWatchListHits();
 
-        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
-        flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
-				flightList.size()));
-		flightsAndPassengersAndHitsCount.put("ruleHitsCount",
-                new AtomicInteger(ruleHits));
-		flightsAndPassengersAndHitsCount.put("watchListCount",
-                new AtomicLong(watchListHits));
-		flightsAndPassengersAndHitsCount.put("passengersCount",
-                new AtomicInteger(paxCount));
-        flightsAndPassengersAndHitsCount.put("flightsList",
-                hitAndAirportExtractor.getAirportList());
+		HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
+		flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(flightList.size()));
+		flightsAndPassengersAndHitsCount.put("ruleHitsCount", new AtomicInteger(ruleHits));
+		flightsAndPassengersAndHitsCount.put("watchListCount", new AtomicLong(watchListHits));
+		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
+		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
+
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
+
+		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
+			this.setUserPrimaryLocation(httpServletRequest, userId);
 
 		return flightsAndPassengersAndHitsCount;
 	}
 
-    /**
-     * Gets the flights, passengers and hits count.
-     *
-     * @param startDate
-     *            the start date
-     * @param endDate
-     *            the end date
-     * @return the flights, passengers and hits count
-     * @throws ParseException
-     *             the parse exception
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountOutbound")
-    public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) {
-        // passed in arguments not used currently.
+	private void setUserPrimaryLocation(HttpServletRequest httpServletRequest, String userId) {
+		List<UserLocationVo> userLocationVoList = null;
 
-        List<Flight> flightList = flightService.getFlightsThreeDaysForwardOutbound();
+		try {
+			userLocationVoList = userLocationService.getUserLocation(userId);
+		} catch (Exception e) {
+			logger.error("An Error occurrend when reading user location in " + this.getClass().getName());
+		}
 
-        int paxCount = flightList.stream().mapToInt(Flight::getPassengerCount).sum();
-        HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
-        int ruleHits = hitAndAirportExtractor.getRuleHits();
-        long watchListHits = hitAndAirportExtractor.getWatchListHits();
+		finally {
 
-        HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
-        flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(
-                flightList.size()));
-        flightsAndPassengersAndHitsCount.put("ruleHitsCount",
-                new AtomicInteger(ruleHits));
-        flightsAndPassengersAndHitsCount.put("watchListCount",
-                new AtomicLong(watchListHits));
-        flightsAndPassengersAndHitsCount.put("passengersCount",
-                new AtomicInteger(paxCount));
-        flightsAndPassengersAndHitsCount.put("flightsList",
-                hitAndAirportExtractor.getAirportList());
+			boolean hasPrimaryLocation = false;
 
-        return flightsAndPassengersAndHitsCount;
-    }
+			if (userLocationVoList != null && !userLocationVoList.isEmpty()) {
 
-    class MessageCount implements Serializable {
-        String STATE = EMPTY_STRING;
-        String API = EMPTY_STRING;
-        String PNR = EMPTY_STRING;
+				for (UserLocationVo userLocationVo : userLocationVoList) {
 
-        public MessageCount(String STATE, String API, String PNR) {
-            this.STATE = STATE;
-            this.API = API;
-            this.PNR = PNR;
-        }
+					if (userLocationVo.isPrimaryLocation()) {
+						httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
+						hasPrimaryLocation = true;
+						logger.info("User Primary Location is set to " + userLocationVo.getAirport()  + " in session. " + this.getClass().getName());
+						break;
+					}
 
-        public String getSTATE() {
-            return STATE;
-        }
+				}
 
-        public void setSTATE(String STATE) {
-            this.STATE = STATE;
-        }
+				// if the user has a location but does not have a primary location, then set the
+				// first one as a primary location
+				if (!hasPrimaryLocation) {
 
-        public String getAPI() {
-            return API;
-        }
+					for (int i = 0; i < userLocationVoList.size(); i++) {
+						if (userLocationVoList.get(i).getAirport() != null
+								&& !userLocationVoList.get(i).getAirport().isEmpty()) {
+							userLocationVoList.get(i).setPrimaryLocation(true);
+							httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
+									userLocationVoList.get(i).getAirport());
+							logger.info("User Primary Location is set to " + userLocationVoList.get(i).getAirport()  + " in session. " + this.getClass().getName());
+							try {
+								userLocationService.updateUserPrimaryLocation(userId,
+										userLocationVoList.get(i).getAirport(), true);
+							} catch (Exception e) {
+								logger.error("An error has occurred when updating user location in the database.");
+							}
 
-        public void setAPI(String API) {
-            this.API = API;
-        }
+						}
+					}
+				}
 
-        public String getPNR() {
-            return PNR;
-        }
+			} else {
 
-        public void setPNR(String PNR) {
-            this.PNR = PNR;
-        }
-    }
+				// if the user does not have a location, then use the default from app config
+				// table and make it the primary location.
+				AppConfiguration appConfiguration = appConfigurationService.findByOption("DASHBOARD_AIRPORT");
+				try {
+					
+					userLocationService.createUserPrimaryLocation(userId, appConfiguration.getValue(), true);
+					httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,appConfiguration.getValue());
+					logger.info("User Primary Location is set to the default airport from App Config " + appConfiguration.getValue()  + " in session. " + this.getClass().getName());
+					
+					
+				} catch (Exception e) {
+					logger.error("An error has occurred when creating new user location in the database.");
+				}
+			}
+
+		}
+
+	}
 
 
-    class AirportVO implements Serializable {
-	    Double longitude = 0.0;
-	    Double latitude = 0.0;
-	    String airportCodeStr = EMPTY_STRING;
-	    String airportName = EMPTY_STRING;
-	    boolean hits = false;
 
-        public AirportVO(Double longitude, Double latitude, String airportCodeStr, String airportName, boolean hits) {
-            this.longitude = longitude;
-            this.latitude = latitude;
-            this.airportCodeStr = airportCodeStr;
-            this.airportName = airportName;
-            this.hits = hits;
-        }
+	/**
+	 * Gets the flights, passengers and hits count.
+	 *
+	 * @param startDate
+	 *            the start date
+	 * @param endDate
+	 *            the end date
+	 * @return the flights, passengers and hits count
+	 * @throws ParseException
+	 *             the parse exception
+	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountOutbound")
+	public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(
+			@RequestParam(value = "startDate", required = false) String startDate,
+			@RequestParam(value = "endDate", required = false) String endDate) {
+		// passed in arguments not used currently.
 
-        public Double getLongitude() {
-            return longitude;
-        }
+		List<Flight> flightList = flightService.getFlightsThreeDaysForwardOutbound();
 
-        public void setLongitude(Double longitude) {
-            this.longitude = longitude;
-        }
+		int paxCount = flightList.stream().mapToInt(f -> f.getFlightPassengerCount().getPassengerCount()).sum();
+		HitAndAirportExtractor hitAndAirportExtractor = new HitAndAirportExtractor(flightList).invoke();
+		int ruleHits = hitAndAirportExtractor.getRuleHits();
+		long watchListHits = hitAndAirportExtractor.getWatchListHits();
 
-        public Double getLatitude() {
-            return latitude;
-        }
+		HashMap<String, Object> flightsAndPassengersAndHitsCount = new HashMap<>();
+		flightsAndPassengersAndHitsCount.put("flightsCount", new AtomicInteger(flightList.size()));
+		flightsAndPassengersAndHitsCount.put("ruleHitsCount", new AtomicInteger(ruleHits));
+		flightsAndPassengersAndHitsCount.put("watchListCount", new AtomicLong(watchListHits));
+		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
+		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
 
-        public void setLatitude(Double latitude) {
-            this.latitude = latitude;
-        }
+		return flightsAndPassengersAndHitsCount;
+	}
 
-        public String getAirportCodeStr() {
-            return airportCodeStr;
-        }
+	class MessageCount implements Serializable {
+		String STATE = EMPTY_STRING;
+		String API = EMPTY_STRING;
+		String PNR = EMPTY_STRING;
 
-        public void setAirportCodeStr(String airportCodeStr) {
-            this.airportCodeStr = airportCodeStr;
-        }
+		public MessageCount(String STATE, String API, String PNR) {
+			this.STATE = STATE;
+			this.API = API;
+			this.PNR = PNR;
+		}
 
-        public String getAirportName() {
-            return airportName;
-        }
+		public String getSTATE() {
+			return STATE;
+		}
 
-        public void setAirportName(String airportName) {
-            this.airportName = airportName;
-        }
+		public void setSTATE(String STATE) {
+			this.STATE = STATE;
+		}
 
-        public boolean isHits() {
-            return hits;
-        }
+		public String getAPI() {
+			return API;
+		}
 
-        public void setHits(boolean hits) {
-            this.hits = hits;
-        }
-    }
+		public void setAPI(String API) {
+			this.API = API;
+		}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getMessagesCount")
-    public ArrayList<MessageCount> getMessagesCount(
-            @RequestParam(value="startDate", required=false) String startDate,
-            @RequestParam(value="endDate", required=false) String endDate) throws ParseException{
+		public String getPNR() {
+			return PNR;
+		}
 
-        ArrayList<MessageCount> _apisAndPnrCount = new ArrayList<MessageCount>();
-        String stateLabel = "State";
-        String ApiMessages = "API 148";
-        String PnrMessages = "PNR 252";
-        String[] displayTokens = new String[]   {"12 - 1 AM","1 - 2 AM","2 - 3 AM","3 - 4 AM","4 - 5 AM","5 - 6 AM","6 - 7 AM",
-                                                    "7 - 8 AM","8 - 9 AM","9 - 10 AM","10 - 11 AM","11 - 12 PM","12 - 1 PM",
-                                                    "1 - 2 PM","2 - 3 PM","3 - 4 PM","4 - 5 PM","5 - 6 PM","6 - 7 PM",
-                                                    "7 - 8 PM","8 - 9 PM","9 - 10 PM","10 - 11 PM","11 - 12 AM"};
+		public void setPNR(String PNR) {
+			this.PNR = PNR;
+		}
+	}
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        int apisMessageCount=0, pnrMessageCount=0;
-        int clockTicks = 24;
+	class AirportVO implements Serializable {
+		Double longitude = 0.0;
+		Double latitude = 0.0;
+		String airportCodeStr = EMPTY_STRING;
+		String airportName = EMPTY_STRING;
+		boolean hits = false;
 
-//        List<Message> _tempApisList = apisMessageService.getAPIsByDates(sdf.parse(startDate), sdf.parse(endDate));
-//        List<Pnr> _tempPnrList = pnrService.getPNRsByDates(sdf.parse(startDate), sdf.parse(endDate));
+		public AirportVO(Double longitude, Double latitude, String airportCodeStr, String airportName, boolean hits) {
+			this.longitude = longitude;
+			this.latitude = latitude;
+			this.airportCodeStr = airportCodeStr;
+			this.airportName = airportName;
+			this.hits = hits;
+		}
 
-        DashboardMessageStats apisStatistics = messageStatsService.getDashboardAPIMessageStats();
-        DashboardMessageStats pnrStatistics = messageStatsService.getDashboardPNRMessageStats();
+		public Double getLongitude() {
+			return longitude;
+		}
 
-//        apisMessageCount = _tempApisList.size();
-//        pnrMessageCount = _tempPnrList.size();
+		public void setLongitude(Double longitude) {
+			this.longitude = longitude;
+		}
 
-        MessageCount mc = new MessageCount(stateLabel,EMPTY_STRING,EMPTY_STRING);
-        for(int i=0; i<clockTicks; i++){
+		public Double getLatitude() {
+			return latitude;
+		}
 
-            mc = new MessageCount(displayTokens[i]+EMPTY_STRING, Arrays.asList(getApiPnrCountPerRow(apisStatistics, pnrStatistics, i).split(",")).get(0),
-                    Arrays.asList(getApiPnrCountPerRow(apisStatistics, pnrStatistics, i).split(",")).get(1));
-            _apisAndPnrCount.add(mc);
-        }
+		public void setLatitude(Double latitude) {
+			this.latitude = latitude;
+		}
 
-        return _apisAndPnrCount;
-    }
+		public String getAirportCodeStr() {
+			return airportCodeStr;
+		}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getYtdRulesCount")
-    public List<YTDRules> getYtdRulesCount(){
-      List<YTDRules> ruleList = new ArrayList<YTDRules>();
+		public void setAirportCodeStr(String airportCodeStr) {
+			this.airportCodeStr = airportCodeStr;
+		}
 
-        ruleList = ytdStatsService.getYTDRules();
+		public String getAirportName() {
+			return airportName;
+		}
 
-        return ruleList;
-    }
+		public void setAirportName(String airportName) {
+			this.airportName = airportName;
+		}
 
+		public boolean isHits() {
+			return hits;
+		}
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getYtdAirportStats")
-    public List<YTDAirportStatistics> getYtdAirportStats(){
-        List<YTDAirportStatistics> ruleList = new ArrayList<YTDAirportStatistics>();
+		public void setHits(boolean hits) {
+			this.hits = hits;
+		}
+	}
 
-        ruleList = ytdStatsService.getYTDAirportStats();
+	@RequestMapping(method = RequestMethod.GET, value = "/getMessagesCount")
+	public ArrayList<MessageCount> getMessagesCount(
+			@RequestParam(value = "startDate", required = false) String startDate,
+			@RequestParam(value = "endDate", required = false) String endDate) throws ParseException {
 
-        return ruleList;
-    }
+		ArrayList<MessageCount> _apisAndPnrCount = new ArrayList<MessageCount>();
+		String stateLabel = "State";
+		String ApiMessages = "API 148";
+		String PnrMessages = "PNR 252";
+		String[] displayTokens = new String[] { "12 - 1 AM", "1 - 2 AM", "2 - 3 AM", "3 - 4 AM", "4 - 5 AM", "5 - 6 AM",
+				"6 - 7 AM", "7 - 8 AM", "8 - 9 AM", "9 - 10 AM", "10 - 11 AM", "11 - 12 PM", "12 - 1 PM", "1 - 2 PM",
+				"2 - 3 PM", "3 - 4 PM", "4 - 5 PM", "5 - 6 PM", "6 - 7 PM", "7 - 8 PM", "8 - 9 PM", "9 - 10 PM",
+				"10 - 11 PM", "11 - 12 AM" };
 
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		int apisMessageCount = 0, pnrMessageCount = 0;
+		int clockTicks = 24;
 
-    private String getApiPnrCountPerRow(DashboardMessageStats apisStatistics,DashboardMessageStats pnrStatistics, int position ){
+		// List<Message> _tempApisList =
+		// apisMessageService.getAPIsByDates(sdf.parse(startDate), sdf.parse(endDate));
+		// List<Pnr> _tempPnrList = pnrService.getPNRsByDates(sdf.parse(startDate),
+		// sdf.parse(endDate));
 
-        String returnString = "";
+		// apisMessageCount = _tempApisList.size();
+		// pnrMessageCount = _tempPnrList.size();
 
-        switch (position){
+		return _apisAndPnrCount;
+	}
 
-            case 0: returnString = apisStatistics.getZero()+ commaStringToAppend + pnrStatistics.getZero(); break;
-            case 1: returnString = apisStatistics.getOne()+ commaStringToAppend + pnrStatistics.getOne(); break;
-            case 2: returnString = apisStatistics.getTwo()+ commaStringToAppend + pnrStatistics.getTwo(); break;
-            case 3: returnString = apisStatistics.getThree()+ commaStringToAppend + pnrStatistics.getThree(); break;
-            case 4: returnString = apisStatistics.getFour()+ commaStringToAppend + pnrStatistics.getFour(); break;
-            case 5: returnString = apisStatistics.getFive()+ commaStringToAppend + pnrStatistics.getFive(); break;
-            case 6: returnString = apisStatistics.getSix()+ commaStringToAppend + pnrStatistics.getSix(); break;
-            case 7: returnString = apisStatistics.getSeven()+ commaStringToAppend + pnrStatistics.getSeven(); break;
-            case 8: returnString = apisStatistics.getEight()+ commaStringToAppend + pnrStatistics.getEight(); break;
-            case 9: returnString = apisStatistics.getNine()+ commaStringToAppend + pnrStatistics.getNine(); break;
-            case 10: returnString = apisStatistics.getTen()+ commaStringToAppend + pnrStatistics.getTen(); break;
-            case 11: returnString = apisStatistics.getEleven()+ commaStringToAppend + pnrStatistics.getEleven(); break;
-            case 12: returnString = apisStatistics.getTwelve()+ commaStringToAppend + pnrStatistics.getTwelve(); break;
-            case 13: returnString = apisStatistics.getThirteen()+ commaStringToAppend + pnrStatistics.getThirteen(); break;
-            case 14: returnString = apisStatistics.getFourteen()+ commaStringToAppend + pnrStatistics.getFourteen(); break;
-            case 15: returnString = apisStatistics.getFifteen()+ commaStringToAppend + pnrStatistics.getFifteen(); break;
-            case 16: returnString = apisStatistics.getSixteen()+ commaStringToAppend + pnrStatistics.getSixteen(); break;
-            case 17: returnString = apisStatistics.getSeventeen()+ commaStringToAppend + pnrStatistics.getSeventeen(); break;
-            case 18: returnString = apisStatistics.getEighteen()+ commaStringToAppend + pnrStatistics.getEighteen(); break;
-            case 19: returnString = apisStatistics.getNineteen()+ commaStringToAppend + pnrStatistics.getNineteen(); break;
-            case 20: returnString = apisStatistics.getTwenty()+ commaStringToAppend + pnrStatistics.getTwenty(); break;
-            case 21: returnString = apisStatistics.getTwentyOne()+ commaStringToAppend + pnrStatistics.getTwentyOne(); break;
-            case 22: returnString = apisStatistics.getTwentyTwo()+ commaStringToAppend + pnrStatistics.getTwentyTwo(); break;
-            case 23: returnString = apisStatistics.getTwentyThree()+ commaStringToAppend + pnrStatistics.getTwentyThree(); break;
+	private class HitAndAirportExtractor {
+		private List<Flight> flightList;
+		private int ruleHits = 0;
+		private long watchListHits = 0L;
+		private List<AirportVO> tempAirportList;
 
-        }
+		public HitAndAirportExtractor(List<Flight> flightList) {
+			this.flightList = flightList;
+			tempAirportList = new ArrayList<>();
+		}
 
-        return returnString;
-    }
+		public int getRuleHits() {
+			return ruleHits;
+		}
 
-    private class HitAndAirportExtractor {
-        private List<Flight> flightList;
-        private int ruleHits = 0;
-        private long watchListHits = 0L;
-        private List<AirportVO> tempAirportList;
+		public List<AirportVO> getAirportList() {
+			return tempAirportList;
+		}
 
-        public HitAndAirportExtractor(List<Flight> flightList) {
-            this.flightList = flightList;
-            tempAirportList = new ArrayList<>();
-        }
+		public long getWatchListHits() {
+			return watchListHits;
+		}
 
-        public int getRuleHits() {
-            return ruleHits;
-        }
+		public HitAndAirportExtractor invoke() {
+			Airport _tempAirport;
+			AirportVO _tempAirportVO;
+			for (Flight flight : flightList) {
+				List<HitsSummary> hitsSummaryList = hitsSummaryService.findHitsByFlightId(flight.getId());
+				_tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
+				_tempAirportVO = new AirportVO(0.0, 0.0, EMPTY_STRING, EMPTY_STRING, false);
+				_tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
+				_tempAirportVO.setAirportName(_tempAirport.getCity());
+				_tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
+				_tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
+				if (!hitsSummaryList.isEmpty()) {
+					_tempAirportVO.setHits(true);
+				}
+				tempAirportList.add(_tempAirportVO);
+				for (HitsSummary summ : hitsSummaryList) {
+					ruleHits = summ.getRuleHitCount() + ruleHits;
+					watchListHits = summ.getWatchListHitCount() + watchListHits;
+				}
+				watchListHits = watchListHits + flightService.getFlightFuzzyMatchesOnly(flight.getId());
+			}
 
-        public List<AirportVO> getAirportList() {
-            return tempAirportList;
-        }
-
-        public long getWatchListHits() {
-            return watchListHits;
-        }
-
-        public HitAndAirportExtractor invoke() {
-            Airport _tempAirport;
-            AirportVO _tempAirportVO;
-            for (Flight flight : flightList) {
-                List<HitsSummary> hitsSummaryList = hitsSummaryService
-                        .findHitsByFlightId(flight.getId());
-                _tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
-                _tempAirportVO = new AirportVO(0.0,0.0,EMPTY_STRING,EMPTY_STRING,false);
-                _tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
-                _tempAirportVO.setAirportName(_tempAirport.getCity());
-                _tempAirportVO.setLatitude(_tempAirport.getLatitude().doubleValue());
-                _tempAirportVO.setLongitude(_tempAirport.getLongitude().doubleValue());
-                if(flight.getRuleHitCount()>0 || flight.getListHitCount()>0){
-                    _tempAirportVO.setHits(true);
-                }
-                tempAirportList.add(_tempAirportVO);
-                for (HitsSummary summ : hitsSummaryList) {
-                    ruleHits = summ.getRuleHitCount() + ruleHits;
-                }
-                watchListHits = watchListHits + flight.getListHitCount() + flightService.getFlightFuzzyMatchesOnly(flight.getId());
-            }
-
-            return this;
-        }
-    }
+			return this;
+		}
+	}
 }

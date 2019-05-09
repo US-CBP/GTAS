@@ -5,42 +5,26 @@
  */
 package gov.gtas.model;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 @Cacheable
 @Entity
 @Table(name = "flight",
-uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "flight_date", "origin", "destination"})})
+uniqueConstraints={@UniqueConstraint(columnNames={"carrier", "flight_number", "etd_date", "origin", "destination"})})
 public class Flight extends BaseEntityAudit {
     private static final long serialVersionUID = 1L; 
     public Flight() { }
     
     @Column(nullable = false)
     private String carrier;
-    
+
     @Size(min = 4, max = 4)
     @Column(name = "flight_number", length = 4, nullable = false)
     private String flightNumber;
-    
-    @Column(name = "marketing_flight")
-    private boolean isMarketingFlight=false;
-    
-    @Column(name = "operating_flight")
-    private boolean isOperatingFlight=false;
-
-	public boolean isOperatingFlight() {
-		return isOperatingFlight;
-	}
-
-	public void setOperatingFlight(boolean isOperatingFlight) {
-		this.isOperatingFlight = isOperatingFlight;
-	}
 
 	/** combination of carrier and flight number used for reporting */
     @Column(name = "full_flight_number")
@@ -58,86 +42,102 @@ public class Flight extends BaseEntityAudit {
     @Column(name = "destination_country", length = 3)
     private String destinationCountry;
 
-    /** calculated field */
-    @Column(name = "flight_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date flightDate;
-    
-    /** calculated field */
+
+    /** Application will strip the timestamp off and use this when making a flight.
+     *  This is the date (**not** the time) that the flight will take place.
+     *  */
     @Column(name = "etd_date")
     @Temporal(TemporalType.DATE)
     private Date etdDate;
-    
-    /** calculated field */
-    @Column(name = "eta_date")
-    @Temporal(TemporalType.DATE)
-    private Date etaDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date etd;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date eta;
-    
-    @Column(name = "utc_etd")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar utcEtd;
- 
-    @Column(name = "utc_eta")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar utcEta;
-    
     @Column(length = 1, nullable = false)
     private String direction;
     
-    /*@ManyToMany(
-        targetEntity=Passenger.class,
-        cascade={CascadeType.ALL}
-    )
-    	@JoinTable(
-        name="flight_passenger",
-        joinColumns=@JoinColumn(name="flight_id"),
-        inverseJoinColumns=@JoinColumn(name="passenger_id")
-    )    
-    private Set<Passenger> passengers = new HashSet<>();*/
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
-    private Set<HitsSummary> hits = new HashSet<>();
- 
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "flight", fetch = FetchType.EAGER)
-//    private Set<FlightPax> flightPaxDetails = new HashSet<>();
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Phone> phone;
     
-    @Column(name = "passenger_count", nullable = false)
-    private Integer passengerCount = Integer.valueOf(0);
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Address> address;
+    
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<CreditCard> creditCard;
+    
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<HitsSummary> hits = new HashSet<>();
 
-    @Column(name = "rule_hit_count", nullable = false)
-    private Integer ruleHitCount = Integer.valueOf(0);
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Bag> bags = new HashSet<>();
 
-    @Column(name = "list_hit_count", nullable = false)
-    private Integer listHitCount = Integer.valueOf(0);
-   
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhr_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsRule flightHitsRule;
+
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsWatchlist flightHitsWatchlist;
+
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fp_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightPassengerCount flightPassengerCount;
+
+    @OneToOne(mappedBy = "flight") // Mutable flight details are separated as a concurrency concern and therefore are EAGER fetched.
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private MutableFlightDetails mutableFlightDetails;
+
     @ManyToMany(
         mappedBy = "flights",
         targetEntity = Pnr.class
-    ) 
+    )
     private Set<Pnr> pnrs = new HashSet<>();
-   
-   /* public void addPassenger(Passenger passenger) {
-    	logger.info(flightService);
-    	logger.info(passenger);
-    	logger.info(this);
-        flightService.setSinglePassenger(passenger.id, this.id);
-    }*/
+
+    @ManyToMany(
+        mappedBy = "flights",
+        targetEntity = ApisMessage.class
+    )
+    private Set<ApisMessage> apis = new HashSet<>();
+
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<BookingDetail> bookingDetails = new HashSet<>();
+
+
+    // This is a convenience method to see the passengers associated with the flight.
+    // Managing passengers this way is recommended against as flight passenger is manually made in the
+    // loader.
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="flight_passenger",
+            joinColumns={@JoinColumn(name="flight_id")},
+            inverseJoinColumns={@JoinColumn(name="passenger_id")})
+    @JsonIgnore
+    private Set<Passenger> passengers;
+
+    /*
+     * Used to keep a referenced to FlightVO from parser.
+     * Only used in loader to help establish relationships.
+     * */
+    @Transient
+    private UUID parserUUID;
+
+    public UUID getParserUUID() {
+        return parserUUID;
+    }
+
+    public void setParserUUID(UUID parserUUID) {
+        this.parserUUID = parserUUID;
+    }
 
     public Set<Passenger> getPassengers() {
-        return null;
-    }
-    
-    public void setPassengers(Set<Passenger> passengers) {
-       
+        return passengers;
     }
 
-	public String getFlightNumber() {
+    public void setPassengers(Set<Passenger> passengers) {
+        this.passengers = passengers;
+    }
+
+    public String getFlightNumber() {
         return flightNumber;
     }
     public void setFlightNumber(String flightNumber) {
@@ -148,24 +148,6 @@ public class Flight extends BaseEntityAudit {
     }
     public void setFullFlightNumber(String fullFlightNumber) {
         this.fullFlightNumber = fullFlightNumber;
-    }
-    public Date getFlightDate() {
-        return flightDate;
-    }
-    public void setFlightDate(Date flightDate) {
-        this.flightDate = flightDate;
-    }
-    public Date getEtd() {
-        return etd;
-    }
-    public void setEtd(Date etd) {
-        this.etd = etd;
-    }
-    public Date getEta() {
-        return eta;
-    }
-    public void setEta(Date eta) {
-        this.eta = eta;
     }
     public String getDirection() {
         return direction;
@@ -209,79 +191,31 @@ public class Flight extends BaseEntityAudit {
     public void setPnrs(Set<Pnr> pnrs) {
         this.pnrs = pnrs;
     }
-    public Integer getPassengerCount() {
-        return passengerCount;
-    }
-    public void setPassengerCount(Integer passengerCount) {
-        this.passengerCount = passengerCount;
-    }
-    public Integer getRuleHitCount() {
-        return ruleHitCount;
-    }
-    public void setRuleHitCount(Integer ruleHitCount) {
-        this.ruleHitCount = ruleHitCount;
-    }
-    public Integer getListHitCount() {
-        return listHitCount;
-    }
-    public void setListHitCount(Integer listHitCount) {
-        this.listHitCount = listHitCount;
+    public Set<ApisMessage> getApis() {
+        return apis;
     }
 
-    /**
-     * @return the etdDate
-     */
-    public Date getEtdDate() {
-        return etdDate;
+    public void setApis(Set<ApisMessage> apis) {
+        this.apis = apis;
     }
-
-    /**
-     * @param etdDate the etdDate to set
-     */
-    public void setEtdDate(Date etdDate) {
-        this.etdDate = etdDate;
-    }
-
-    /**
-     * @return the etaDate
-     */
-    public Date getEtaDate() {
-        return etaDate;
-    }
-
-    /**
-     * @param etaDate the etaDate to set
-     */
-    public void setEtaDate(Date etaDate) {
-        this.etaDate = etaDate;
-    }
-
     
-	public boolean isMarketingFlight() {
-		return isMarketingFlight;
-	}
 
-	public void setMarketingFlight(boolean isMarketingFlight) {
-		this.isMarketingFlight = isMarketingFlight;
-	}
+    public Set<BookingDetail> getBookingDetails() {
+        return bookingDetails;
+    }
+
+    public void setBookingDetails(Set<BookingDetail> bookingDetails) {
+        this.bookingDetails = bookingDetails;
+    }
+
 
         public Long getId() {
             return id;
         }
-        
-        
-
-//	public Set<FlightPax> getFlightPaxDetails() {
-//		return flightPaxDetails;
-//	}
-//
-//	public void setFlightPaxDetails(Set<FlightPax> flightPaxDetails) {
-//		this.flightPaxDetails = flightPaxDetails;
-//	}
 
 	@Override
     public int hashCode() {
-       return Objects.hash(this.carrier, this.flightNumber, this.flightDate, this.origin, this.destination);
+       return Objects.hash(this.carrier, this.flightNumber, this.etdDate, this.origin, this.destination);
     }
     
     @Override
@@ -293,8 +227,80 @@ public class Flight extends BaseEntityAudit {
         final Flight other = (Flight)obj;
         return Objects.equals(this.carrier, other.carrier)
                 && Objects.equals(this.flightNumber, other.flightNumber)
-                && Objects.equals(this.flightDate, other.flightDate)
+                && Objects.equals(this.etdDate, other.etdDate)
                 && Objects.equals(this.origin, other.origin)
                 && Objects.equals(this.destination, other.destination);
+    }
+
+    public FlightHitsRule getFlightHitsRule() {
+        return flightHitsRule;
+    }
+
+    public FlightHitsWatchlist getFlightHitsWatchlist() {
+        return flightHitsWatchlist;
+    }
+
+    public void setFlightHitsRule(FlightHitsRule flightHitsRule) {
+        this.flightHitsRule = flightHitsRule;
+    }
+
+    public void setFlightHitsWatchlist(FlightHitsWatchlist flightHitsWatchlist) {
+        this.flightHitsWatchlist = flightHitsWatchlist;
+    }
+
+    public FlightPassengerCount getFlightPassengerCount() {
+        return flightPassengerCount;
+    }
+
+    public void setFlightPassengerCount(FlightPassengerCount flightPassengerCount) {
+        this.flightPassengerCount = flightPassengerCount;
+    }
+
+    public MutableFlightDetails getMutableFlightDetails() {
+        return mutableFlightDetails;
+    }
+
+    public void setMutableFlightDetails(MutableFlightDetails mutableFlightDetails) {
+        this.mutableFlightDetails = mutableFlightDetails;
+    }
+
+    public Date getEtdDate() {
+        return etdDate;
+    }
+
+    public void setEtdDate(Date etdDate) {
+        this.etdDate = etdDate;
+    }
+
+	public Set<Phone> getPhone() {
+		return phone;
+	}
+
+	public void setPhone(Set<Phone> phone) {
+		this.phone = phone;
+	}
+
+	public Set<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(Set<Address> address) {
+		this.address = address;
+	}
+
+	public Set<CreditCard> getCreditCard() {
+		return creditCard;
+	}
+
+	public void setCreditCard(Set<CreditCard> creditCard) {
+		this.creditCard = creditCard;
+	}
+
+    public Set<Bag> getBags() {
+        return bags;
+    }
+
+    public void setBags(Set<Bag> bags) {
+        this.bags = bags;
     }
 }

@@ -8,12 +8,6 @@ package gov.gtas.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.error.CommonServiceException;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorUtils;
-import gov.gtas.services.ErrorPersistenceService;
 
 import java.util.Date;
 import java.util.List;
@@ -27,15 +21,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+
+import gov.gtas.config.CachingConfig;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.error.CommonServiceException;
+import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.error.ErrorUtils;
+import gov.gtas.services.ErrorPersistenceService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class ErrorPersistenceServiceIT {
 
     @Autowired
@@ -51,6 +52,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void createErrorTest() {
         ErrorDetailInfo err = ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error"));
@@ -62,6 +64,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findErrorTest() {
         ErrorDetailInfo err = ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error"));
@@ -74,6 +77,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findByCodeTest() {
         testTarget.create(ErrorUtils
                 .createErrorDetails(new NullPointerException("Test Error1")));
@@ -99,6 +103,7 @@ public class ErrorPersistenceServiceIT {
 
     @Test
     @Transactional
+    @Rollback(true)
     public void findByDateRangeTest() throws Exception {
         Date start = new Date();
         Thread.sleep(1000L);

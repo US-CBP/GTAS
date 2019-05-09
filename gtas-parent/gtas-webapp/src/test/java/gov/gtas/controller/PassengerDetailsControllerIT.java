@@ -26,7 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TestMvcRestServiceWebConfig.class,
         WebAppConfig.class})
 @WebAppConfiguration
-@TransactionConfiguration()
+@Rollback(true)
 public class PassengerDetailsControllerIT {
 
     @Autowired
@@ -72,8 +72,8 @@ public class PassengerDetailsControllerIT {
         BAG_COUNT_PNR = integrationTestData.getFlightPaxPnr().getBagCount();
         BAG_WEIGHT_PNR = integrationTestData.getFlightPaxPnr().getBagWeight();
         BAG_AVERAGE_WEIGHT_PNR = integrationTestData.getFlightPaxPnr().getAverageBagWeight();
-        FIRST_NAME = integrationTestData.getPassenger().getFirstName();
-        LAST_NAME = integrationTestData.getPassenger().getLastName();
+        FIRST_NAME = integrationTestData.getPassenger().getPassengerDetails().getFirstName();
+        LAST_NAME = integrationTestData.getPassenger().getPassengerDetails().getLastName();
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(passengerDetailsController)

@@ -6,33 +6,23 @@ INSERT INTO `role` VALUES ('2', 'Manage Queries');
 INSERT INTO `role` VALUES ('3', 'View Flight And Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
+INSERT INTO `role` VALUES ('6', 'SysAdmin');
+INSERT INTO `role` VALUES ('7', 'One Day Lookout');
 
 
 -- ----------------------------
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO `user` VALUES ('nsamha', 1,'Nael', 'Samha', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jmclaughlin', 1,'Jim', 'McLaughlin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('svempati', 1,'Srinivas', 'Vempati', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jtang', 1,'Jeen', 'Tang', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('jtaylor',1, 'Jon', 'Taylor', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('mcopenhafer',1, 'Mike', 'Copenhafer', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('gtas',1, 'GTAS', 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 INSERT INTO `user` VALUES ('admin',1, 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('test',1, 'test', 'test', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
 -- ----------------------------
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('nsamha', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jmclaughlin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('svempati', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtang', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('jtaylor', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('mcopenhafer', 1);
+
 INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('admin', 1);
-INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('test', 5);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES ('gtas', 5);
 
 -- ----------------------------
 -- Records of flight_direction
@@ -55,7 +45,7 @@ insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
-insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.70','Threshold which to determine name match');
+insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.85','Threshold which to determine name match');
 insert into app_configuration (opt, val, description) values('MAX_PASSENGER_QUERY_RESULT','1000','Maximum amount of passenger results from query allowed');
 insert into app_configuration (opt, val, description) values('MAX_FLIGHT_QUERY_RESULT','1000','Maximum amount of flight results from query allowed');
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
@@ -63,14 +53,15 @@ insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL','5
 insert into app_configuration (opt, val, description) values('REDIS_KEYS_TTL_TIME_UNIT','DAYS','REDIS keys expiration time units - DAYS or MINUTES ');
 insert into app_configuration (opt, val, description) values('APIS_ONLY_FLAG','FALSE','Is APIS the only message source in use.');
 insert into app_configuration (opt, val, description) values('APIS_VERSION','16B','Latest APIS version being used.');
-
--- ----------------------------
--- Records of dashboard_message_stats
--- ----------------------------
-
-INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour_1`, `hour_2`, `hour_3`, `hour_4`, `hour_5`, `hour_6`, `hour_7`, `hour_8`, `hour_9`, `hour_10`, `hour_11`, `hour_12`, `hour_13`, `hour_14`, `hour_15`, `hour_16`, `hour_17`, `hour_18`, `hour_19`, `hour_20`, `hour_21`, `hour_22`, `hour_23`, `hour_24`) VALUES (1, CURRENT_TIMESTAMP, 'API', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
-INSERT INTO `dashboard_message_stats` (`id`, `dt_modified`,`message_type`, `hour_1`, `hour_2`, `hour_3`, `hour_4`, `hour_5`, `hour_6`, `hour_7`, `hour_8`, `hour_9`, `hour_10`, `hour_11`, `hour_12`, `hour_13`, `hour_14`, `hour_15`, `hour_16`, `hour_17`, `hour_18`, `hour_19`, `hour_20`, `hour_21`, `hour_22`, `hour_23`, `hour_24`) VALUES (2, CURRENT_TIMESTAMP, 'PNR', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+insert into app_configuration (opt, val, description) values('MAX_RULE_HITS','300','Number of rule hits allowed per rule');
+insert into app_configuration (opt, val, description) values('BOOKING_COMPRESSION_AMOUNT','50','Maximum number of messages processed by compression job at each run');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_RULE_RUN','3000','Maximum number of passengers processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_FUZZY_MATCH','2','Maximum number of passengers processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
+insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
+insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
+insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
+insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
@@ -100,4 +91,3 @@ insert into rule_category(catId, category, description, priority) values(2, 'Ter
 insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
 insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
 insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
-

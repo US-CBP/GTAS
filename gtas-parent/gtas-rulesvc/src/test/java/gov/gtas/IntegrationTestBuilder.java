@@ -263,7 +263,6 @@ public class IntegrationTestBuilder {
         ApisMessage apisMessage = new ApisMessage();
         apisMessage.setCreateDate(new Date());
         apisMessage.setFilePath("Test");
-        apisMessage.setStatus(MessageStatus.PARSED);
         EdifactMessage edifactMessage = new EdifactMessage();
         edifactMessage.setTransmissionDate(new Date());
         apisMessage.setEdifactMessage(edifactMessage);
@@ -303,7 +302,6 @@ public class IntegrationTestBuilder {
         Pnr pnrMessage = new Pnr();
         pnrMessage.setCreateDate(new Date());
         pnrMessage.setFilePath("Test");
-        pnrMessage.setStatus(MessageStatus.PARSED);
         pnrMessage.setBagCount(BAG_COUNT_PNR);
         return pnrMessage;
 
@@ -311,9 +309,9 @@ public class IntegrationTestBuilder {
 
     private Passenger defaultPassenger() {
         passenger = new Passenger();
-        passenger.setPassengerType("P");
-        passenger.setFirstName(FIRST_NAME);
-        passenger.setLastName(LAST_NAME);
+        passenger.getPassengerDetails().setPassengerType("P");
+        passenger.getPassengerDetails().setFirstName(FIRST_NAME);
+        passenger.getPassengerDetails().setLastName(LAST_NAME);
         return passenger;
     }
 
@@ -321,7 +319,6 @@ public class IntegrationTestBuilder {
         flight = new Flight();
         flight.setCarrier("DL");
         flight.setDirection("O");
-        flight.setFlightDate(new Date());
         flight.setFlightNumber("0012");
         flight.setOrigin("LAX");
         flight.setDestination("IAD");

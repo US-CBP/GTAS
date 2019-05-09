@@ -9,17 +9,13 @@
         .service('caseDispositionService', function ($http, $q, Upload) {
 
             function getAllCases(){
-                
-                var startDate = new Date();
-                var endDate = new Date();
-                endDate.setDate(endDate.getDate() + 30);
-                startDate.setDate(startDate.getDate() - 30);                
-        
+
                 var pageRequest = {
                     pageSize: "10",
                     pageNumber: "1",
-                    etaStart: startDate,
-                    etaEnd: endDate
+                    displayStatusCheckBoxes: getDefaultDispCheckboxes(),
+                    etaStart: getDefaultStartDate(),
+                    etaEnd: getDefaultEndDate()
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -28,6 +24,32 @@
                     data: pageRequest
                 }));
                 return dfd.promise;
+            }
+
+            function getDefaultEndDate() {
+                const DEFAULT_DAYS_FORWARD = 30;
+                return getTargetDate(DEFAULT_DAYS_FORWARD);
+            }
+
+            function getDefaultStartDate() {
+                const DEFAULT_DAYS_BACK = -30;
+                return getTargetDate(DEFAULT_DAYS_BACK);
+            }
+
+            function getTargetDate(days) {
+                let targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + days);
+                return targetDate;
+            }
+
+            function getDefaultDispCheckboxes() {
+                return {
+                    NEW: true,
+                    OPEN: true,
+                    CLOSED: false,
+                    REOPEN: true,
+                    PENDINGCLOSURE: true
+                };
             }
 
             function getPagedCases(params){
@@ -40,7 +62,8 @@
                     status: params.model.status,
                     ruleCatId: params.model.ruleCat,
                     etaStart: params.model.etaStart,
-                    etaEnd: params.model.etaEnd
+                    etaEnd: params.model.etaEnd,
+                    displayStatusCheckBoxes : params.model.displayStatusCheckBoxes
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -51,12 +74,13 @@
                 return dfd.promise;
             }
 
-            function getOneHitsDisposition(paramFlight, paramPax){
+            function getOneHitsDisposition(paramCaseId, paramFlight, paramPax){
                 var param = {
                     pageSize: "10",
                     pageNumber: "1",
                     flightId: paramFlight,
-                    paxId: paramPax
+                    paxId: paramPax,
+                    caseId: paramCaseId
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -72,6 +96,7 @@
                     pageSize: "10",
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
+                    displayStatusCheckBoxes: model.displayStatusCheckBoxes,
                     lastName: model.name,
                     status: model.status,
                     ruleCatId: model.ruleCat,
@@ -90,7 +115,7 @@
                 return dfd.promise;
             }
 
-            function updateHitsDisposition(paramFlight, paramPax, paramHit, paramComments, paramStatus, 
+            function updateHitsDisposition(paramCaseId, paramFlight, paramPax, paramHit, paramComments, paramStatus, 
                                            paramValidHit, file, paramCaseDisposition){
                 var requestDto = {
                     pageSize: "10",
@@ -101,7 +126,8 @@
                     caseComments: paramComments,
                     status: paramStatus,
                     caseDisposition: paramCaseDisposition,
-                    validHit: paramValidHit
+                    validHit: paramValidHit,
+                    caseId : paramCaseId
                     // ,
                     // multipartFile: file
                 };
@@ -120,18 +146,14 @@
                             caseComments: paramComments,
                             status: paramStatus,
                             validHit: paramValidHit,
-                            file: file
+                            file: file,
+                            caseDisposition: paramCaseDisposition,
+                            caseId : paramCaseId
                         }
                     }))
                     ;
                 }else{
-
                     dfd.resolve(
-                        //
-                        // $http.post("/gtas/updateHistDisp/", requestDto, {
-                        //     transformRequest: angular.identity,
-                        //     headers: {'Content-Type': undefined}
-                        // })
                             $http({
                             method: 'post',
                             url: "/gtas/updateHistDisp/",
@@ -139,10 +161,28 @@
                             })
                     );
                 }
-
                 return dfd.promise;
             }
 
+            function updateGeneralComments(caseId, comment,
+                                           caseStatus) {
+                const requestDto = {
+                    comment: comment,
+                    caseId : caseId,
+                    caseStatus: caseStatus
+                };
+                const deferredQuery = $q.defer();
+                deferredQuery.resolve(
+                    $http({
+                        method: 'post',
+                        url: "/gtas/addCaseComment/",
+                        data: requestDto
+                    })
+                );
+
+                return deferredQuery.promise;
+
+            }
             function addToOneDayLookout(caseIdParam){
                 
                  var dfd = $q.defer();
@@ -156,7 +196,7 @@
         		 
         	        		 
                  return dfd.promise;
-             }  
+             }
      
                     
             function removeFromOneDayLookoutList(caseIdParam){
@@ -268,22 +308,26 @@
                 });
                 
                 return currentServerTimeMillis;
-             } 
+             }
 
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
-                getCaseDisposition:getCaseDisposition,
-                getAllCases:getAllCases,
-                getOneHitsDisposition:getOneHitsDisposition,
-                getRuleCats:getRuleCats,
-                updateHitsDisposition:updateHitsDisposition,
-                addToOneDayLookout:addToOneDayLookout,
-                removeFromOneDayLookoutList:removeFromOneDayLookoutList,
+                getCaseDisposition: getCaseDisposition,
+                getAllCases: getAllCases,
+                getOneHitsDisposition: getOneHitsDisposition,
+                getRuleCats: getRuleCats,
+                updateHitsDisposition: updateHitsDisposition,
+                addToOneDayLookout: addToOneDayLookout,
+                removeFromOneDayLookoutList: removeFromOneDayLookoutList,
                 getPagedCases: getPagedCases,
                 postManualCase: postManualCase,
                 getByQueryParams: getByQueryParams,
-                getCurrentServerTime: getCurrentServerTime
+                getCurrentServerTime: getCurrentServerTime,
+                getDefaultStartDate: getDefaultStartDate,
+                getDefaultEndDate: getDefaultEndDate,
+                getDefaultDispCheckboxes: getDefaultDispCheckboxes,
+                updateGeneralComments : updateGeneralComments
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })

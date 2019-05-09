@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('FlightsController', function ($scope, $http, $state, $interval, $stateParams, $mdToast, passengersBasedOnUserFilter,
-            flightService, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
+            flightService,flightSearchOptions, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
         $scope.errorToast = function(error){
             $mdToast.show($mdToast.simple()
              .content(error)
@@ -37,6 +37,39 @@
 
         $scope.resetCountryTooltip = function(){
         	$('md-tooltip').remove();
+        };
+        
+        $scope.updateOnDirectionChange = function(){
+        	
+        	
+        	var isAdminUser = flightSearchOptions.data.adminUser;
+            
+            if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
+            {
+               	
+            	if($scope.model.direction == "I")
+            	{
+            	
+           	 		var destinationAirports = new Array();
+           	 		destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
+           	 		$scope.model.dest = destinationAirports;
+           	 		
+           	 		var originAirports = new Array();
+           	 		$scope.model.origin = originAirports;
+            	}
+            	else if($scope.model.direction == "O")
+            	{
+            		var originAirports = new Array();
+            		originAirports.push({id: flightSearchOptions.data.userLocation}); 
+           	 		$scope.model.origin = originAirports;
+           	 		
+           	 		var destinationAirports = new Array();
+           	 		$scope.model.dest = destinationAirports;
+            	}
+           	 
+            }
+        	
+     
         };
 
         /* Search for airports. */
@@ -120,15 +153,39 @@
             $scope.model.originAirports = originAirports;
             $scope.model.destinationAirports = destinationAirports;
         };
+        
+        var loadFlightDirection = function() {
+        	
+        	$scope.flightDirectionList = [];
+             angular.forEach(flightSearchOptions.data.flightDirectionList, function(item){
+            	 
+                         $scope.flightDirectionList.push(item);
+                       
+                    });
+             
+             var isAdminUser = flightSearchOptions.data.adminUser;
+             
+             if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
+             {
+            	 var destinationAirports = new Array();
+            	 destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
+            	 $scope.model.dest = destinationAirports;
+             }
+             
+             
+                     
+        	};  
 
         var mapAirports = function () {
             var originAirports = new Array();
             var destinationAirports = new Array();
             var airport = {id: ""};
 
-            angular.forEach(flightsModel.origins, function (value, index) {
+          angular.forEach(flightsModel.origins, function (value, index) {
                 originAirports.push({id: value});
             });
+            
+
 
             angular.forEach(flightsModel.destinations, function (value, index) {
                 destinationAirports.push({id: value});
@@ -139,6 +196,7 @@
 
 
         self.querySearch = querySearch;
+        
         $http.get('data/airports.json')
             .then(function (allAirports) {
                 airports = allAirports.data;
@@ -149,6 +207,8 @@
                 });
                 self.filterSelected = true;
             });
+
+        
         $scope.selectedFlight = $stateParams.flight;
         $scope.flightDirections = flightDirections;
         $scope.stateName = stateName;
@@ -404,7 +464,7 @@
              {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
              {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
               cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-             {name: 'citizenshipCountry', displayName:'add.Country', headerCellFilter: 'translate'}
+             {name: 'nationality', displayName:'add.Country', headerCellFilter: 'translate'}
          ];
 
         $scope.queryPassengersOnSelectedFlight = function (row_entity) {
@@ -455,5 +515,6 @@
         }
         resolvePage();
         mapAirports();
+        loadFlightDirection();
     });
 }());

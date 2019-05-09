@@ -46,14 +46,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
+
 
 /**
  * Integration tests for the UDR management service.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RuleServiceConfig.class)
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 public class WatchlistServiceIT {
 	private static final String WL_NAME1 = "Hello WL 1";
 	private static final String WL_KB_NAME = "Test WL KB";
@@ -222,7 +223,7 @@ public class WatchlistServiceIT {
 		roles.add(new RoleData(1, "ADMIN"));
 
 		UserData usr = new UserData(USER_ID, "password", USER_FNAME,
-				USER_LASTNAME, 1, roles, null);
+				USER_LASTNAME, 1, roles);
 		Role role = new Role();
 		role.setRoleDescription(ROLE_NAME);
 

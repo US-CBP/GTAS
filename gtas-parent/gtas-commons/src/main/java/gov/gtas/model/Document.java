@@ -8,12 +8,7 @@ package gov.gtas.model;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
@@ -27,10 +22,10 @@ public class Document extends BaseEntity {
 		this.documentNumber = documentNumber;
 	}
 
-	@Column(name = "document_type", length = 3, nullable = false)
+	@Column(name = "document_type", length = 3)
 	private String documentType;
 
-	@Column(name = "document_number", nullable = false)
+	@Column(name = "document_number")
 	private String documentNumber;
 
 	@Column(name = "expiration_date")
@@ -44,7 +39,7 @@ public class Document extends BaseEntity {
 	@Column(name = "issuance_country")
 	private String issuanceCountry;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
     /** calculated field */
@@ -110,8 +105,7 @@ public class Document extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( this.documentNumber
-				);
+		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType);
 	}
 
 	@Override
@@ -121,6 +115,8 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentNumber, other.documentNumber);
+		return Objects.equals(this.documentNumber, other.documentNumber)
+				&& Objects.equals(this.issuanceCountry, other.issuanceCountry)
+				&& Objects.equals(this.documentType, other.documentType);
 	}
 }

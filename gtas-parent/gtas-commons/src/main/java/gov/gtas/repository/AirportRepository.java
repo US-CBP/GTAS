@@ -20,5 +20,10 @@ public interface AirportRepository extends CrudRepository<Airport, Long>{
     
     @Query("SELECT a FROM Airport a WHERE UPPER(a.icao) = UPPER(:airportCode)")
     public List<Airport> getAirportByFourLetterCode(@Param("airportCode") String airportCode);
+    
+    default Airport findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 
 }

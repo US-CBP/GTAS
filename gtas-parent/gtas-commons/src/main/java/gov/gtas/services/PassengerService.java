@@ -26,33 +26,43 @@ import java.util.Set;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface PassengerService {
-	public Passenger create(Passenger passenger);
 
-	public Passenger update(Passenger passenger);
+	Passenger create(Passenger passenger);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public Passenger findById(Long id);
-
-	public List<Passenger> getPassengersByLastName(String lastName);
+	Passenger update(Passenger passenger);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Disposition> getPassengerDispositionHistory(Long passengerId,
+	Passenger findById(Long id);
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
+
+/*
+
+	List<Passenger> getPassengersByLastName(String lastName);
+*/
+
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	List<Disposition> getPassengerDispositionHistory(Long passengerId,
 			Long flightId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public void createDisposition(DispositionData disposition, User user);
+	void createDisposition(DispositionData disposition, User user);
 
-	public void createDisposition(HitsSummary hit);
+	void createDisposition(HitsSummary hit);
+
+	void createDisposition(List<HitsSummary> hit);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
-	public List<DispositionStatus> getDispositionStatuses();
+	List<DispositionStatus> getDispositionStatuses();
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
-	public List<CaseVo> getAllDispositions();
+	List<CaseVo> getAllDispositions();
 
-	public void createOrEditDispositionStatus(DispositionStatus ds);
+	void createOrEditDispositionStatus(DispositionStatus ds);
 
-	public void deleteDispositionStatus(DispositionStatus ds);
+	void deleteDispositionStatus(DispositionStatus ds);
 
 	/**
 	 * Gets the passengers by criteria.
@@ -62,10 +72,10 @@ public interface PassengerService {
 	 * @return the passengers by criteria
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public PassengersPageDto getPassengersByCriteria(Long flightId,
+	PassengersPageDto getPassengersByCriteria(Long flightId,
 			PassengersRequestDto request);
 
-	public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
+	void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
 	
 	/**
 	 * Gets the travel history.
@@ -77,26 +87,27 @@ public interface PassengerService {
 	 * @return the travel history
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
+	List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
 	
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);	
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
+	List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
-	public List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
+	List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
 
-	public Set<Flight> getAllFlights(Long id);
-        
-        public List<FlightPax> getFlightPaxByPassengerIdList(List<Long> passengerIdList);
-        
-        public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
 
-	public void setAllFlights(Set<Flight> flights, Long id);	
+	Set<Flight> getAllFlights(Long id);
+        
+    Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
+        
+    List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
+
+	void setAllFlights(Set<Flight> flights, Long id);
 	
-	public void SetSingleFlight(Flight f, Long id);
+	void SetSingleFlight(Flight f, Long id);
         
-        public List<Flight> getFlightsByIdList(List<Long> flightIdList);
+	List<Flight> getFlightsByIdList(List<Long> flightIdList);
 	
 }

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Whitelist;
 import gov.gtas.vo.WhitelistVo;
 
@@ -24,12 +24,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+
 public class WhitelistPersistenceServiceIT {
 
 	@Autowired
@@ -44,6 +44,7 @@ public class WhitelistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Rollback(true)
 	public void testGetAllWhitelists() {
 		whitelistService.create(testwlv, "test");
 		List<WhitelistVo> wlvs = whitelistService.getAllWhitelists();
@@ -52,6 +53,7 @@ public class WhitelistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Rollback(true)
 	public void testCreateWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		assertNotNull(wl);
@@ -59,6 +61,7 @@ public class WhitelistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Rollback(true)
 	public void testDeleteWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		List<WhitelistVo> uWlvs = whitelistService.getAllWhitelists();
@@ -70,6 +73,7 @@ public class WhitelistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Rollback(true)
 	public void testUpdateWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		List<WhitelistVo> wlvs = whitelistService.getAllWhitelists();
@@ -90,7 +94,7 @@ public class WhitelistPersistenceServiceIT {
 		wlv.setLastName("Palazio");
 		wlv.setDob(new Date());
 		wlv.setGender("M");
-		wlv.setCitizenshipCountry("USA");
+		wlv.setNationality("USA");
 		wlv.setDocumentNumber("111");
 		wlv.setDocumentType("P");
 		wlv.setExpirationDate(new Date());

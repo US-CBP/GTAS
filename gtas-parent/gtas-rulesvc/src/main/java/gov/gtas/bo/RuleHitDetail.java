@@ -81,9 +81,9 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = ruleTitle + "(" + udrId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger
-				.getPassengerType());
-		this.passengerName = passenger.getFirstName() + " "
-				+ passenger.getLastName();
+				.getPassengerDetails().getPassengerType());
+		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
+				+ passenger.getPassengerDetails().getLastName();
 		this.hitReasons = cause.split(HIT_REASON_SEPARATOR);
 		if (flight != null) {
 			this.flightId = flight.getId();
@@ -133,9 +133,9 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = this.title + "(" + watchlistItemId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger
-				.getPassengerType());
-		this.passengerName = passenger.getFirstName() + " "
-				+ passenger.getLastName();
+				.getPassengerDetails().getPassengerType());
+		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
+				+ passenger.getPassengerDetails().getLastName();
 		this.hitReasons = cause.split(HIT_REASON_SEPARATOR);
 		this.passenger = passenger;
 		this.hitCount = 1;

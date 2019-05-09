@@ -20,17 +20,22 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
+	
+	<profiles>
+		<profile>
+			<id>gtas-pdi-parser-with-dependencies</id>
+			<activation><activeByDefault>false</activeByDefault></activation>
+			
+			<build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>build-gtas-pdi-parser</id>
                         <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
+                            <appendAssemblyId>true</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass></mainClass>
@@ -50,5 +55,8 @@
             </plugin>
         </plugins>
     </build>
+		</profile>
+	</profiles>
+    
 </project>
 

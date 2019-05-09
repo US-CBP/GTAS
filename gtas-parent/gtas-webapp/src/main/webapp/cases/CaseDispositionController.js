@@ -20,20 +20,15 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
-            
-            var startDate = new Date();
-            var endDate = new Date();
-            endDate.setDate(endDate.getDate() + 30);
-            startDate.setDate(startDate.getDate() - 30);
-
-            $scope.model={
+            $scope.model = {
                 name: $scope.emptyString,
                 flightNumber: $scope.emptyString,
-                status : $scope.emptyString,
+                displayStatusCheckBoxes: caseDispositionService.getDefaultDispCheckboxes(),
+                status: $scope.emptyString,
                 priority: $scope.emptyString,
                 ruleCat: $scope.emptyString,
-                etaStart: startDate,
-                etaEnd: endDate,
+                etaStart: caseDispositionService.getDefaultStartDate(),
+                etaEnd: caseDispositionService.getDefaultEndDate(),
             };
 
             $scope.model.reset = function(){
@@ -121,17 +116,17 @@
                         spinnerService.hide('html5spinner');
                     });
             };
-            
+
             $scope.refreshCountDown = function () {
-                
+
                 var currentTimeMillis = caseDispositionService.getCurrentServerTime();
- 
+
                 if (!currentTimeMillis)
                 {
-                   currentTimeMillis = (new Date()).getTime(); 
+                   currentTimeMillis = (new Date()).getTime();
                    console.log("Using client side time for cases countdown.");
                 }
-                
+
                 for (var i = 0; i < $scope.casesList.length; i++)
                 {
                     var etdEtaTimeMillis = 0;
@@ -141,7 +136,7 @@
                     }
                     else
                     {
-                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;  
+                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;
                     }
 
                     var countDownMillis = etdEtaTimeMillis - currentTimeMillis;
@@ -155,19 +150,19 @@
 
                     var daysString = (countDownSeconds < 0 && daysLong === 0) ? "-" + daysLong.toString() : daysLong.toString();
 
-                    var countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";                   
+                    var countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
 
-                    $scope.casesList[i].countDownTimeDisplay = countDownString;    
+                    $scope.casesList[i].countDownTimeDisplay = countDownString;
                 }
-                
+
                 $scope.casesDispGrid.data = $scope.casesList;
 
             };
-            
+
             $timeout(function () {
                 $interval(function () {$scope.refreshCountDown();}, 20000);
             },10000);
-             
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -185,7 +180,7 @@
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
-                    
+
                     gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
                     if (sortColumns.length === 0) {
                         $scope.model.sort = null;
@@ -214,7 +209,7 @@
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName: 'Flight', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
@@ -286,19 +281,13 @@
             };
 
             $scope.reset = function () {
-                // this function does not work.
-                //$scope.model.reset();
                 $scope.model.name = $scope.emptyString;
                 $scope.model.flightNumber = $scope.emptyString;
                 $scope.model.status = $scope.emptyString;
                 $scope.model.ruleCat = $scope.emptyString;
-                
-                var startDate = new Date();
-                var endDate = new Date();
-                endDate.setDate(endDate.getDate() + 30);
-                startDate.setDate(startDate.getDate() - 30);
-                $scope.model.etaStart = startDate;
-                $scope.model.etaEnd = endDate;
+                $scope.model.etaStart = caseDispositionService.getDefaultStartDate();
+                $scope.model.etaEnd = caseDispositionService.getDefaultEndDate();
+                $scope.model.displayStatusCheckBoxes = caseDispositionService.getDefaultDispCheckboxes();
                 $scope.resolvePage();
             };
 

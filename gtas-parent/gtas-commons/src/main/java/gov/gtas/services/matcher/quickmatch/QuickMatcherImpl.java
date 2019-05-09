@@ -42,8 +42,9 @@ public class QuickMatcherImpl implements QuickMatcher {
 
 		List<HashMap<String, String>> passengers = new ArrayList<HashMap<String, String>>();
 		HashMap<String, String> p = new HashMap<>();
-		p.put("firstName", passenger.getFirstName());
-		p.put("lastName", passenger.getLastName());
+		p.put("firstName", passenger.getPassengerDetails().getFirstName());
+		p.put("lastName", passenger.getPassengerDetails().getLastName());
+		p.put("middleName",passenger.getPassengerDetails().getMiddleName());
 		p.put("gtasId", passenger.getId().toString());
 		passengers.add(p);
 

@@ -120,23 +120,23 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		List<Predicate> predicates = new ArrayList<>();
 		// passenger-related
 		predicates.add(cb.notEqual(root.<Long> get("id"), pax.getId()));
-		if (StringUtils.isNotBlank(pax.getFirstName())) {
-			String likeString = String.format("%%%s%%", pax.getFirstName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getFirstName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getFirstName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("firstName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getLastName())) {
-			String likeString = String.format("%%%s%%", pax.getLastName()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getLastName())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getLastName()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("lastName"), likeString));
 		}
-		if (StringUtils.isNotBlank(pax.getGender())) {
-			String likeString = String.format("%%%s%%", pax.getGender()
+		if (StringUtils.isNotBlank(pax.getPassengerDetails().getGender())) {
+			String likeString = String.format("%%%s%%", pax.getPassengerDetails().getGender()
 					.toUpperCase());
 			predicates.add(cb.like(root.<String> get("gender"), likeString));
 		}
-		if (pax.getDob() != null) {
-			predicates.add(cb.equal(root.<String> get("dob"), pax.getDob()));
+		if (pax.getPassengerDetails().getDob() != null) {
+			predicates.add(cb.equal(root.<String> get("dob"), pax.getPassengerDetails().getDob()));
 		}
 		// document-related
 		if (StringUtils.isNotBlank(docNum)) {
@@ -171,102 +171,85 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
      */
     @Override    
     public Pair<Long, List<Object[]>> findByCriteria(Long flightId, PassengersRequestDto dto) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Object[]> q = cb.createQuery(Object[].class);
-        Root<Passenger> pax = q.from(Passenger.class);
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> q = cb.createQuery(Object[].class);
+		Root<Passenger> pax = q.from(Passenger.class);
 
-        //<NEW STUFF
-        Root<Flight> flightRoot = q.from(Flight.class);
-        Root<FlightPassenger> fp = q.from(FlightPassenger.class); 
-        Predicate fpPaxEquals = cb.equal(pax.get("id"), fp.get("passengerId"));
-        Predicate fpFlightEquals = cb.equal(fp.get("flightId"), flightId);
-        //NEW STUFF>
-        //Join<Passenger, Flight> flight = pax.join("flights"); 
-
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(fpFlightEquals); //NEW
-        predicates.add(fpPaxEquals); //NEW
-
-        if (StringUtils.isNotBlank(dto.getLastName())) {
-            String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
-            predicates.add(cb.like(pax.get("lastName"), likeString));
-        }
-        
+		//joins
+		Join<Passenger, Flight> flight = pax.join("flight");
 		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
-		Join<Passenger, PaxWatchlistLink> link = pax.join("paxWatchlistLinks", JoinType.LEFT);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails", JoinType.LEFT);
+		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.LEFT);
 
-        if (flightId == null) {
-            predicates.addAll(createPredicates(cb, dto, pax, flightRoot));
-        } else {
-            hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
-            predicates.add(cb.equal(flightRoot.<Long>get("id"), flightId));
-        }
+		List<Predicate> predicates = new ArrayList<>();
+		if (StringUtils.isNotBlank(dto.getLastName())) {
+			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
+			predicates.add(cb.like(paxDetailsJoin.get("lastName"), likeString));
+		}
 
-        // sorting
+		if (flightId == null) {
+			predicates.addAll(createPredicates(cb, dto, flight));
+		} else {
+			hits.on(cb.equal(hits.get("flight").get("id"), cb.parameter(Long.class, "flightId")));
+			predicates.add(cb.equal(flight.<Long>get("id"), flightId));
+		}
+
 		if (dto.getSort() != null) {
 			List<Order> orderList = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
-                List<Expression<?>> orderByItem = new ArrayList<>();
-                String column = sort.getColumn();
-                if (isFlightColumn(column)) {
-					orderByItem.add(flightRoot.get(column));
-                } else if (column.equals("onRuleHitList")) {
+				List<Expression<?>> orderByItem = new ArrayList<>();
+				String column = sort.getColumn();
+				if (isFlightColumn(column)) {
+					orderByItem.add(flight.get(column));
+				} else if (column.equals("onRuleHitList")) {
 					orderByItem.add(hits.get("ruleHitCount"));
-                } else if (column.equals("onWatchList")) {
+				} else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
-					orderByItem.add(link.get("percentMatch"));
-                } else {
-					orderByItem.add(pax.get(column));
-                }
-                if (sort.getDir().equals("desc")) {
-                	for (Expression<?> e : orderByItem){
+				//	orderByItem.add(link.get("percentMatch")); //add fuzzy watchlist here.
+				} else if ("eta".equalsIgnoreCase(column)) {
+					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
+					//!!!!! THIS COVERS THE ELSE STATEMENT !!!!!
+				} else if (!"documentNumber".equalsIgnoreCase(column)){
+					orderByItem.add(paxDetailsJoin.get(column));
+				}
+				if (sort.getDir().equals("desc")) {
+					for (Expression<?> e : orderByItem){
 						orderList.add(cb.desc(e));
 					}
-                } else {
-                	for (Expression<?> e : orderByItem) {
+				} else {
+					for (Expression<?> e : orderByItem) {
 						orderList.add(cb.asc(e));
 					}
-                }
-            }
-            q.orderBy(orderList);
-        }
+				}
+			}
+			q.orderBy(orderList);
+		}
 
-        q.multiselect(pax, flightRoot, hits, link).where(predicates.toArray(new Predicate[]{}));
+		q.multiselect(pax, flight, hits).where(predicates.toArray(new Predicate[]{}));
+		TypedQuery<Object[]> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
 
-		q.groupBy(pax.get("id")); //makes query distinct to passengers.
-        TypedQuery<Object[]> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
-        
-        // total count: does not require joining on hitssummary
-        CriteriaQuery<Long> cnt = cb.createQuery(Long.class);
-        Root<Passenger> cntPax = cnt.from(Passenger.class);
-        //<NEW STUFF
-        Root<Flight> cntFlightRoot = cnt.from(Flight.class);
-        Root<FlightPassenger> cntFlightPaxRoot = cnt.from(FlightPassenger.class);
-        Predicate cntFpPaxEquals = cb.equal(cntPax.get("id"), cntFlightPaxRoot.get("passengerId"));
-        Predicate cntFpFlightEquals = cb.equal(cntFlightRoot.get("id"), cntFlightPaxRoot.get("flightId"));
-        //NEW STUFF>
-        //Join<Passenger, Flight> cntFlight = cntPax.join("flights");
-        List<Predicate> cntPred = new ArrayList<>();
-        cntPred.add(cntFpPaxEquals); // NEW
-        cntPred.add(cntFpFlightEquals); // NEW
-        if (flightId == null) {
-            cntPred.addAll(createPredicates(cb, dto, cntPax, cntFlightRoot));
-        } else {
-            cntPred.add(cb.equal(cntFlightRoot.<Long>get("id"), flightId));            
-        }
-        cnt.select(cb.count(cntFlightRoot)).where(cntPred.toArray(new Predicate[]{}));
-        Long count = em.createQuery(cnt).getSingleResult();
-        
-        if (flightId != null) {
-            typedQuery.setParameter("flightId", flightId);
-        }
-        
-        logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
-//        logger.info(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
+		// total count: does not require joining on hitssummary
+		CriteriaQuery<Long> cnt = cb.createQuery(Long.class);
+		Root<Passenger> cntPax = cnt.from(Passenger.class);
+		Join<Passenger, Flight> cntFlight = cntPax.join("flight");
+		List<Predicate> cntPred = new ArrayList<>();
+		if (flightId == null) {
+			cntPred.addAll(createPredicates(cb, dto, cntFlight));
+		} else {
+			cntPred.add(cb.equal(cntFlight.<Long>get("id"), flightId));
+		}
+		cnt.select(cb.count(cntFlight)).where(cntPred.toArray(new Predicate[]{}));
+		Long count = em.createQuery(cnt).getSingleResult();
 
+		if (flightId != null) {
+			typedQuery.setParameter("flightId", flightId);
+		}
+
+		logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
+//        System.out.println(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
 		List<Object[]> results = typedQuery.getResultList();
-        
-        return new ImmutablePair<>(count, results);
+
+		return new ImmutablePair<>(count, results);
     }
     
     /**
@@ -299,38 +282,12 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         
         return results;
     }
-        
-    private List<Predicate> createPredicates(CriteriaBuilder cb, PassengersRequestDto dto, Root<Passenger> pax, Root<Flight> flight) {
-        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        // dates
-        Predicate etaCondition = null;
-        if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
-            Path<Date> eta = flight.<Date>get("eta");
-            Predicate startPredicate = cb.or(cb.isNull(eta), cb.greaterThanOrEqualTo(flight.<Date>get("eta"), dto.getEtaStart()));
-            Predicate endPredicate = cb.or(cb.isNull(eta), cb.lessThanOrEqualTo(eta, dto.getEtaEnd())); 
-            etaCondition = cb.and(startPredicate, endPredicate);
-            predicates.add(etaCondition);
-        }
+	private List<Predicate> createPredicates(CriteriaBuilder cb, PassengersRequestDto dto, Join<Passenger, Flight> flight) {
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		FlightRepositoryImpl.generateFilters(dto, cb, predicates, flight.get("origin"), flight.get("destination"));
 
-
-        // filters
-        if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
-            Expression<String> originExp = flight.<String> get("origin");
-            Predicate originPredicate = originExp.in(dto.getOriginAirports());
-            Predicate originAirportsPredicate = cb.and(originPredicate);
-            predicates.add(originAirportsPredicate);
-        }
-
-        if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
-            Expression<String> destExp = flight.<String> get("destination");
-            Predicate destPredicate = destExp.in(dto.getDestinationAirports());
-            Predicate destAirportsPredicate = cb.and(destPredicate);
-            predicates.add(destAirportsPredicate);
-        }
-
-
-        if (StringUtils.isNotBlank(dto.getFlightNumber())) {
+		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
             String likeString = String.format("%%%s%%", dto.getFlightNumber().toUpperCase());
             predicates.add(cb.like(flight.<String>get("fullFlightNumber"), likeString));
         }
@@ -341,7 +298,6 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         if (StringUtils.isNotBlank(dto.getDirection()) && !"A".equals(dto.getDirection())) {
             predicates.add(cb.equal(flight.<String>get("direction"), dto.getDirection()));
         }
-        
         return predicates;
     }
     
@@ -361,7 +317,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
         return typedQuery;
     }
     
-    private Set<String> flightColumns = new HashSet<String>(Arrays.asList("fullFlightNumber", "eta", "etd"));
+    private Set<String> flightColumns = new HashSet<>(Arrays.asList("fullFlightNumber", "etd"));
     private boolean isFlightColumn(String c) {
         return flightColumns.contains(c);
     }
@@ -411,6 +367,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	@Transactional(Transactional.TxType.MANDATORY)
 	public List<Passenger> getPassengersByFlightIdAndName(Long flightId, String firstName, String lastName) {
 		String nativeQuery = "SELECT p.* FROM flight_passenger fp join passenger p ON (fp.passenger_id = p.id) where "
 				+ "fp.flight_id = (\""+flightId+"\") "

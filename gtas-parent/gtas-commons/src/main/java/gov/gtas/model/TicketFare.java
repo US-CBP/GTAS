@@ -1,16 +1,9 @@
 package gov.gtas.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ticket_fare")
@@ -46,7 +39,7 @@ public class TicketFare implements Serializable{
     @Column(name= "ticketless")
     private boolean ticketless;
     
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(nullable = false)
 	private Passenger passenger;
     
@@ -114,28 +107,21 @@ public class TicketFare implements Serializable{
 		this.passenger = passenger;
 	}
 
-	@Override  
-    public int hashCode() {  
-        int hash = 0;  
-        hash += (this.getId() != null ? this.getId().hashCode() : 0);  
-  
-        return hash;  
-    }  
-  
-    @Override  
-    public boolean equals(Object object) {  
-    if (this == object)  
-            return true;  
-        if (object == null)  
-            return false;  
-        if (getClass() != object.getClass())  
-            return false;  
-  
-        TicketFare other = (TicketFare) object;  
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof TicketFare)) return false;
+		TicketFare that = (TicketFare) o;
+		return isTicketless() == that.isTicketless() &&
+				Objects.equals(getPaymentAmount(), that.getPaymentAmount()) &&
+				Objects.equals(getCurrencyCode(), that.getCurrencyCode()) &&
+				Objects.equals(getTicketNumber(), that.getTicketNumber()) &&
+				Objects.equals(getTicketType(), that.getTicketType()) &&
+				Objects.equals(getNumberOfBooklets(), that.getNumberOfBooklets());
+	}
 
-        if(this.getTicketNumber().equals(other.getTicketNumber())){
-        	return true;
-        }
-        return false;  
-    }  
+	@Override
+	public int hashCode() {
+		return Objects.hash(getPaymentAmount(), getCurrencyCode(), getTicketNumber(), getTicketType(), getNumberOfBooklets(), isTicketless());
+	}
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.xml.soap.Text;
 
-import org.elasticsearch.search.highlight.HighlightField;
+//import org.elasticsearch.search.highlight.HighlightField;
 
 import gov.gtas.services.search.FlightPassengerVo;
 

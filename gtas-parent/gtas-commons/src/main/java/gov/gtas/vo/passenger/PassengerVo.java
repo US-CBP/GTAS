@@ -26,11 +26,11 @@ public class PassengerVo extends BaseVo {
     private String lastName;
     private String suffix;
     private String gender;
-    private String citizenshipCountry;
+    private String nationality;
     private String residencyCountry;
     private String passengerType;
     private Integer age;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
     private Date dob;
     private String embarkation;
     private String debarkation;
@@ -208,11 +208,11 @@ public class PassengerVo extends BaseVo {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
     public String getResidencyCountry() {
         return residencyCountry;

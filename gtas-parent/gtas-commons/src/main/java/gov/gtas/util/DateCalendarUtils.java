@@ -70,7 +70,6 @@ public class DateCalendarUtils {
     /**
      * Calculates a date time offset from GMT.
      * 
-     * @param gmtDate
      *            the input GMT date.
      * @return the local date.
      */
@@ -129,6 +128,9 @@ public class DateCalendarUtils {
 
 	public static String formatJsonDateTime(final Date date) {
 		// Display current time in 12 hour format with AM/PM
+        if (date == null) {
+            return null;
+        }
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		return format.format(date);
 	}

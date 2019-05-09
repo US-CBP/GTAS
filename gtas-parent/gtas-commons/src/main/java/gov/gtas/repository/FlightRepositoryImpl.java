@@ -10,26 +10,19 @@ import static gov.gtas.constant.FlightCategoryConstants.DOMESTIC_FLIGHTS;
 import static gov.gtas.constant.FlightCategoryConstants.INTERNATIONAL_FLIGHTS;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
-import gov.gtas.model.CodeShareFlight;
-import gov.gtas.model.Flight;
+import gov.gtas.model.*;
 import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -69,25 +62,28 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Root<Flight> root = q.from(Flight.class);
 		List<Predicate> predicates = new ArrayList<>();
 
-		// dates
-		Predicate etaCondition;
-		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
-			Path<Date> eta = root.<Date> get("eta");
-			Predicate startPredicate = cb.or(
-					cb.isNull(eta),
-					cb.greaterThanOrEqualTo(root.<Date> get("eta"),
-							dto.getEtaStart()));
-			Predicate endPredicate = cb.or(cb.isNull(eta),
-					cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
-			etaCondition = cb.and(startPredicate, endPredicate);
-			predicates.add(etaCondition);
-		}
+		Join<Flight, FlightHitsRule> ruleHits = root.join("flightHitsRule", JoinType.LEFT);
+		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
+		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
+		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
 
 		// sorting
 		if (dto.getSort() != null) {
 			List<Order> orders = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
-				Expression<?> e = root.get(sort.getColumn());
+				Expression<?> e;
+				if (sort.getColumn().equalsIgnoreCase("ruleHitCount")) {
+					e = ruleHits.get("hitCount");
+				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
+					e = watchlistHits.get("hitCount");
+				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
+					e = passengerCountJoin.get("passengerCount");
+				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
+					e = mutableFlightDetailsJoin.get(sort.getColumn());
+				} else {
+					e = root.get(sort.getColumn());
+				}
 				Order order;
 				if ("desc".equalsIgnoreCase(sort.getDir())) {
 					order = cb.desc(e);
@@ -100,19 +96,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		}
 
 		// filters
-		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
-			Expression<String> originExp = root.<String> get("origin");
-			Predicate originPredicate = originExp.in(dto.getOriginAirports());
-			Predicate originAirportsPredicate = cb.and(originPredicate);
-			predicates.add(originAirportsPredicate);
-		}
-
-		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
-			Expression<String> destExp = root.<String> get("destination");
-			Predicate destPredicate = destExp.in(dto.getDestinationAirports());
-			Predicate destAirportsPredicate = cb.and(destPredicate);
-			predicates.add(destAirportsPredicate);
-		}
+		generateFilters(dto, cb, predicates, root.get("origin"), root.get("destination"));
 
 		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
 			String likeString = String.format("%%%s%%", dto.getFlightNumber());
@@ -160,14 +144,12 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			}
 		}
 
+		List<Predicate> countPredicates = new ArrayList<>(predicates);
+		if (etaCondition != null) {
+			predicates.add(etaCondition);
+		}
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Flight> typedQuery = em.createQuery(q);
-
-		// total count
-		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-		countQuery.select(cb.count(countQuery.from(Flight.class))).where(
-				predicates.toArray(new Predicate[] {}));
-		Long count = em.createQuery(countQuery).getSingleResult();
 
 		// pagination
 		int pageNumber = dto.getPageNumber();
@@ -176,18 +158,69 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		typedQuery.setFirstResult(firstResultIndex);
 		typedQuery.setMaxResults(dto.getPageSize());
 
+		// Runs exact query above without limits to get a count.
+		long count = getCountOfQuery(dto, cb, countPredicates);
+
 		logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
 				.getQueryString());
 		List<Flight> results = typedQuery.getResultList();
 
 		return new ImmutablePair<>(count, results);
 	}
-	
+
+	static void generateFilters(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> predicates, Path<String> origin, Path<String> destination) {
+		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
+			Predicate originPredicate = origin.in(dto.getOriginAirports());
+			Predicate originAirportsPredicate = cb.and(originPredicate);
+			predicates.add(originAirportsPredicate);
+		}
+
+		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
+			Predicate destPredicate = destination.in(dto.getDestinationAirports());
+			Predicate destAirportsPredicate = cb.and(destPredicate);
+			predicates.add(destAirportsPredicate);
+		}
+	}
+
+	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates) {
+		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+		Root<Flight> countRoot = countQuery.from(Flight.class);
+		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
+		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
+		if (countEtaCondition != null) {
+			countPredicates.add(countEtaCondition);
+		}
+		countQuery.select(cb.count(countRoot)).where(
+				countPredicates.toArray(new Predicate[]{}));
+		TypedQuery countQuert = em.createQuery(countQuery);
+		Optional countResult = countQuert.getResultList().stream().findFirst();
+		return countResult.isPresent() ? (Long)countResult.get() : 0L;
+	}
+
+	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
+		Predicate etaCondition = null;
+		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
+			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
+			Predicate startPredicate = cb.or(
+					cb.isNull(eta),
+					cb.greaterThanOrEqualTo(mutableFlightDetailsJoin.get("eta"),
+							dto.getEtaStart()));
+			Predicate endPredicate = cb.or(cb.isNull(eta),
+					cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
+			etaCondition = cb.and(startPredicate, endPredicate);
+		}
+		return etaCondition;
+	}
+
 	@Override
 	@Transactional
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteAllMessages() throws Exception {
 		String[] sqlScript = { 
+                                "delete from hits_disposition_comments_attachment",
+				"delete from hits_disposition_comments",
+                                "delete from hits_disposition",
+                                "delete from cases",
 				"delete from ticket_fare",
 				"delete from bag",
 				"delete from disposition",	
@@ -205,6 +238,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from apis_message",			
 				"delete from pnr_passenger",
 				"delete from pnr_flight", "delete from pnr_codeshares","delete from code_share_flight",
+                                "delete from flight_hit_rule",
+                                "delete from flight_hit_watchlist",
 				"delete from flight",
 				"delete from pnr_agency", "delete from agency",
 				"delete from pnr_credit_card", "delete from credit_card",
@@ -219,17 +254,13 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				"delete from address", "delete from dwell_time",
 				"delete from  pnr",
 				"delete from  message",
+                                "delete from attachment",
 				"delete from passenger_id_tag",
 				"delete from  passenger",				
 				"delete from loader_audit_logs",
 				"delete from error_detail",
 				"delete from audit_log",
 				"delete from dashboard_message_stats",
-				"delete from case_hit_disp_comments",
-				"delete from case_hit_disp",
-				"delete from cases",
-				"delete from hits_disposition",
-				"delete from hits_disposition_comments"
 				};
 
 		Session session = em.unwrap(Session.class);

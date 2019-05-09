@@ -24,7 +24,7 @@ public class CaseVo {
 	private String lastName;
     private String firstName;
     private String middleName;
-    private String citizenshipCountry;
+    private String nationality;
     private Date dob;
     private String document;
     private Long highPriorityRuleCatId;
@@ -34,11 +34,22 @@ public class CaseVo {
     private String description;
     private Set<HitsDisposition> hitsDispositions;
     private Set<HitsDispositionVo> hitsDispositionVos;
+    private Set<GeneralCaseCommentVo> generalCaseCommentVos;
+    private String caseOfficerStatus;
     private Boolean oneDayLookoutFlag;
     private Date currentTime;
     private String countDownTimeDisplay;
     private Long countdownTime;
     private String disposition;
+
+
+    public String getCaseOfficerStatus() {
+        return caseOfficerStatus;
+    }
+
+    public void setCaseOfficerStatus(String caseOfficerStatus) {
+        this.caseOfficerStatus = caseOfficerStatus;
+    }
 
     public Long getId() {
         return id;
@@ -48,12 +59,12 @@ public class CaseVo {
         this.id = id;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public Date getDob() {
@@ -248,6 +259,14 @@ public class CaseVo {
 	public void setDisposition(String disposition) {
 		this.disposition = disposition;
 	}
-    
-    
+
+
+    public Set<GeneralCaseCommentVo> getGeneralCaseCommentVos() {
+        return generalCaseCommentVos;
+    }
+
+    public void setGeneralCaseCommentVos(Set<GeneralCaseCommentVo> generalCaseCommentVos) {
+        this.generalCaseCommentVos = generalCaseCommentVos;
+    }
+
 }

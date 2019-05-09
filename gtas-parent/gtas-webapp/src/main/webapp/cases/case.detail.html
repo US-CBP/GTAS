@@ -18,19 +18,19 @@
                   <span name="dob">
                     <strong>DOB:</strong> {{ caseItem.dob | date }}
                   </span>
-                  <span name="citizen">
-                    <strong>Citizenship:</strong> {{ caseItem.citizenshipCountry }}
+                  <span name="nationality">
+                    <strong>Nationality:</strong> {{ caseItem.nationality }}
                   </span>
-                  <span name="citizen">
+                  <span name="nationality">
                     <strong>Passport:</strong> {{ caseItem.document }}
                   </span>
-                  <md-button aria-label="type" href="#/paxdetail/{{ caseItem.paxId }}/{{ caseItem.flightId }}" target="pax.detail.{{ caseItem.paxId }}.{{ caseItem.flightId }}" class="md-primary md-button md-default-theme"> Link to Passenger Detail </md-button>
+                  <md-button aria-label="type" ng-show="dispStatus.caseStatusAdminView" href="#/paxdetail/{{ caseItem.paxId }}/{{ caseItem.flightId }}" target="pax.detail.{{ caseItem.paxId }}.{{ caseItem.flightId }}" class="md-primary md-button md-default-theme"> Link to Passenger Detail </md-button>
                 </div>
               </div>
             </div>
           </div>
           <div class="panel-body flex flex-vert ie-fix-md three-table switch-width-sm-half" style="overflow: auto;">
-            <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
+            <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header"  ng-show="dispStatus.oneDay" >
               <thead align="left">
                 <tr>
                   <th align="text-right">Rule Category</th>
@@ -51,6 +51,24 @@
                 </tbody>
               </table>
             </div>
+
+              <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
+                  <thead align="left">
+                  <tr>
+                      <th align="text-right">Case Comments</th>
+                  </tr>
+                  </thead>
+              </table>
+              <div class="floating-table-body">
+                  <table class="cbp-table-selectable mdl-js-data-table">
+                      <tbody >
+                      <tr ng-click="sideNavGeneralComments()">
+                        <td style="padding-left: 50px; padding-right: 1px;">General Comments</td>
+                      </tr>
+
+                      </tbody>
+                  </table>
+              </div>
             
             <div ng-show="dispStatus.caseStatusAdminView">
               <form name="caseForm" ng-submit="caseConfirm()"
@@ -113,9 +131,10 @@
     <md-toolbar class="md-theme-light">
       <h2 class="md-toolbar-tools">Status ({{hitDispStatus}})    --    {{caseItemHitComments.description}}</h2>
     </md-toolbar>
+    <div id="hitForm">
     <form name="hitForm" ng-submit="commentConfirm()">
       <md-content layout-padding>
-        <div class="static-label"> Leave a Comment </div>
+       <h4 class="md-toolbar-tools">  Leave a Comment <div class="small"> (Drag or paste a file into the editor to include an attachment)</div> </h4>
         <trix-editor angular-trix ng-model="commentText" placeholder="Write something.."
             trix-attachment-add="trixAttachmentAdd(e, editor);" trix-attachment-remove="trixAttachmentRemove(e, editor);">
         </trix-editor>
@@ -152,20 +171,21 @@
         </button>
       </div>
     </form>
+    </div>
     <h4 class="md-toolbar-tools">Past Comments</h4>
     <div class="flex flex-vert align-items-center">
       <div class="cbp-text-field switch-width-sm-half">
         <div class="cbp-card cbp-card-shadow" >
           <div ng-repeat="comment in caseItemHitComments.dispCommentsVo | orderBy : updatedAt" class="no-pad-top panel-body flex flex-vert ie-fix-md">
             <span class="sm-pad">
-              Created By: {{ comment.createdBy }}
+              <strong>Created By:</strong> {{ comment.createdBy }}
             </span>
             <span class="sm-pad">
-              Updated On: {{ comment.updatedAt | date }}
+             <strong> Updated On: </strong> {{ comment.updatedAt | date }}
             </span>
 
             <div id="links" ng-repeat="att in comment.attachmentSet">
-            <a href="" ng-click="packageAttachments(att)">
+            <a ng-href="/gtas/getdownload/{{ att.id }}" ng-click="packageAttachments(att)" >
               <span class="sm-pad">
                 Attachment: {{ att.filename }}
                 </span>
@@ -180,3 +200,56 @@
       </div>
     </div>
 </div>
+<md-sidenav class="right-sidebar md-sidenav-right md-whiteframe-z2" md-component-id="generalComments"
+            style="width: 95%; max-width: 650px !important;">
+  <md-toolbar class="md-theme-light">
+    <h2 class="md-toolbar-tools">General Case Comments</h2>
+  </md-toolbar>
+  <div id="generalComment">
+    <form name="commentForm" ng-submit="commentGeneralConfirm()">
+      <md-content layout-padding>
+        <h4 class="md-toolbar-tools">  Leave a Comment</h4>
+        <trix-editor angular-trix ng-model="generalComment" placeholder="Write something..">
+
+        </trix-editor>
+        <div class="flex justify-around flex-wrap">
+          <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
+            <span ng-show="!dispStatus.hitStatusShow">{{hitDetailTrueHitFlag}}</span>
+            <select ng-show="dispStatus.hitStatusShow"
+                    class="mdl-selectfield__select" id="caseStatus"
+                    ng-model="caseOfficerStatus">
+              <option ng-repeat="item in caseValidityStatuses"
+                      value="{{item.name}}">{{item.name}}</option>
+            </select>
+            <label class="mdl-textfield__label static-label" for="validity">Case Status</label>
+          </div>
+        </div>
+      </md-content>
+
+      <div class="flex justify-around">
+        <button type="button" ng-click="closeGeneralComments()" class="btn btn-default">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" ng-show="dispStatus.hitStatusShow">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+  <h4 class="md-toolbar-tools">Past Comments</h4>
+  <div class="flex flex-vert align-items-center">
+    <div class="cbp-text-field switch-width-sm-half">
+      <div class="cbp-card cbp-card-shadow" >
+        <div ng-repeat="comment in caseComments | orderBy : comment.createdAt" class="no-pad-top panel-body flex flex-vert ie-fix-md">
+            <span class="sm-pad">
+              <strong>Created By:</strong> {{ comment.createdBy }}
+            </span>
+            <span class="sm-pad">
+             <strong> Created On: </strong> {{ comment.createdAt | date }}
+            </span>
+          <trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled ng-model="comment.comment"> </trix-editor>
+
+        </div>
+      </div>
+    </div>
+  </div>

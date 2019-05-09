@@ -78,7 +78,7 @@ public class DashboardUpdateScheduler {
     //@Scheduled(fixedDelayString = "${dashboard.fixedDelay.in.milliseconds}")
     @Transactional
     public void jobScheduling() {
-        logger.info("entering jobScheduling()");
+        logger.debug("entering jobScheduling()");
 
         try {
             entityManager.createNativeQuery(apiDashboardUpdateSql)
@@ -95,7 +95,7 @@ public class DashboardUpdateScheduler {
             errorPersistenceService.create(errInfo);
         }
 
-        logger.info("exiting jobScheduling()");
+        logger.debug("exiting jobScheduling()");
 
     }
 

@@ -6,7 +6,10 @@
 package gov.gtas.parsers.vo;
 
 import java.util.Date;
+import java.util.UUID;
 
+import gov.gtas.model.BookingDetail;
+import gov.gtas.parsers.util.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,18 +17,28 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import gov.gtas.validators.Validatable;
 
 public class FlightVo implements Validatable {
+
+    private UUID uuid = UUID.randomUUID();
     private String carrier;
     private String flightNumber;
     private String origin;
     private String destination;
-    private Date flightDate;
+    /*
+    Etd is a field with a timestamp in the parser.
+    Importantly the label made on the bucket/thread used in the loader will not be with a timestamp.
+    It will be only the date.
+    ETD date with a timestamp exist within mutable flight object.
+    * */
     private Date etd;
     private Date eta;
     private String marketingFlightNumber;
     private boolean isCodeShareFlight=false;
     private boolean isMarketingFlight=false;
-    
-    
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     public boolean isMarketingFlight() {
 		return isMarketingFlight;
 	}
@@ -68,12 +81,7 @@ public class FlightVo implements Validatable {
     public void setDestination(String destination) {
         this.destination = destination;
     }
-    public Date getFlightDate() {
-        return flightDate;
-    }
-    public void setFlightDate(Date flightDate) {
-        this.flightDate = flightDate;
-    }
+
     public Date getEtd() {
         return etd;
     }
@@ -97,7 +105,19 @@ public class FlightVo implements Validatable {
          return StringUtils.isNotBlank(this.destination) 
                 && StringUtils.isNotBlank(this.origin) 
                 && StringUtils.isNotBlank(this.flightNumber)
-                && this.flightDate != null 
-                && StringUtils.isNotBlank(this.carrier);
-    }  
+                && StringUtils.isNotBlank(this.carrier)
+                && this.etd != null;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public boolean equalsThisBD(BookingDetail bookingDetail) {
+   return
+        flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber()) &&
+        etd != null && DateUtils.stripTime(etd).equals(bookingDetail.getEtdDate()) &&
+        origin != null && origin.equals(bookingDetail.getOrigin()) &&
+        destination != null && destination.equals(bookingDetail.getDestination());
+    }
 }

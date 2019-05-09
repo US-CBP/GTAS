@@ -81,12 +81,12 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>build-gtas-watchlist-loader</id>
                         <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
+                            <appendAssemblyId>true</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass>gov.gtas.services.WatchListLoaderService</mainClass>

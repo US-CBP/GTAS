@@ -24,7 +24,7 @@ public class UdrRuleGenerator {
         {
             {"Passenger", "firstName", "string", "BEGINS_WITH", "Jona"},
             {"Passenger", "lastName", "string", "ENDS_WITH", "Smith"},
-            {"Passenger", "citizenshipCountry", "string", "NOT_EQUAL", "USA"},
+            {"Passenger", "nationality", "string", "NOT_EQUAL", "USA"},
             {"Flight", "carrier", "string", "EQUAL", "DL"},
             {"Flight", "destination", "string", "EQUAL", "JFK"}
         },

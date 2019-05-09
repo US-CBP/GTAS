@@ -7,8 +7,8 @@
     'use strict';
     app.controller('LoginController',
         function($state, $scope, $rootScope, $q, $stateParams, userService, $mdToast, AuthService,
-                 Session, sessionFactory, APP_CONSTANTS, $sessionStorage, $location, $interval,
-                 $window, $translate, $cookies, $mdDialog, Idle) {
+                 Session, sessionFactory, APP_CONSTANTS, USER_ROLES, $sessionStorage, $location, $interval,
+                 $window, $translate, $cookies, $mdDialog, Idle, configService) {
             //Insure Idle is not watching pre-login
             if(Idle.running()){
                 Idle.unwatch();
@@ -113,15 +113,34 @@ $scope.login = function (credentials) {
             }; // END of LOGIN Function
 
             $scope.$watch('currentUser.data', function (user) {
-                
-                if (angular.isDefined(user)) {
+
+            	if (angular.isDefined(user)) {
                     console.log("$scope.currentUser has data");
                     Session.create(user.firstName, user.lastName, user.userId,
                         user.roles);
                     $sessionStorage.put(APP_CONSTANTS.CURRENT_USER, user);
                     //window.location.href = APP_CONSTANTS.HOME_PAGE;
-                    $window.location.href = APP_CONSTANTS.MAIN_PAGE;
-
+                    let oneDayLookoutUser = false;
+                    user.roles.forEach(function (role) {
+                        if (role.roleDescription === USER_ROLES.ONE_DAY_LOOKOUT) {
+                            oneDayLookoutUser = true;
+                        }
+                    });
+                    if (oneDayLookoutUser) {
+                        $window.location.href = APP_CONSTANTS.ONE_DAY_LOOKOUT;
+                        $scope.homePage = "onedaylookout";
+                    } else {
+                    	$scope.homePage="flights";
+                    	 configService.defaultHomePage().then(function success(response){
+                    		
+                    		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';    
+                    		 $window.location.href = 'main.html#/'+$scope.homePage;
+                    		 
+                        }, function errorMessage(error){
+                        	
+                        	$window.location.href = 'main.html#/'+$scope.homePage;
+                        });                   	
+                    }
                 }
             });
 

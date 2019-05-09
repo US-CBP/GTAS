@@ -10,18 +10,25 @@ import gov.gtas.model.Message;
 import gov.gtas.model.Pnr;
 import gov.gtas.svc.request.builder.RuleEngineRequestBuilder;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class TargetingServiceUtils {
     
     private static final Logger logger = LoggerFactory
             .getLogger(TargetingServiceUtils.class);
-    
+    @Autowired
+    private RuleEngineRequestBuilder bldr;
+
+    public TargetingServiceUtils() {
+    }
+
     /**
      * Creates a request from a API message.
      * 
@@ -32,7 +39,7 @@ public class TargetingServiceUtils {
     public static RuleExecutionContext createApisRequest(final ApisMessage req) {
         Collection<ApisMessage> apisMessages = new LinkedList<ApisMessage>();
         apisMessages.add(req);
-        return createPnrApisRequestContext(apisMessages, null);
+        return null;// createPnrApisRequestContext(apisMessages, null);
     }
 
     /**
@@ -45,7 +52,7 @@ public class TargetingServiceUtils {
     public static RuleExecutionContext createPnrRequestContext(final Pnr req) {
         Collection<Pnr> pnrs = new LinkedList<Pnr>();
         pnrs.add(req);
-        return createPnrApisRequestContext(null, pnrs);
+        return null;// createPnrApisRequestContext(null, pnrs);
     }
 
     /**
@@ -59,7 +66,7 @@ public class TargetingServiceUtils {
      */
     public static RuleExecutionContext createApisRequestContext(
             final List<ApisMessage> reqList) {
-        return createPnrApisRequestContext(reqList, null);
+        return null; //createPnrApisRequestContext(reqList, null);
     }
 
     /**
@@ -73,7 +80,7 @@ public class TargetingServiceUtils {
      */
     public static RuleExecutionContext createPnrRequestContext(
             final List<Pnr> reqList) {
-        return createPnrApisRequestContext(null, reqList);
+        return null;// createPnrApisRequestContext(null, reqList);
     }
 
     /**
@@ -84,18 +91,17 @@ public class TargetingServiceUtils {
      * @param pnrs
      * @return the rule engine request object.
      */
-    public static RuleExecutionContext createPnrApisRequestContext(
+    public  RuleExecutionContext createPnrApisRequestContext(
             final Collection<ApisMessage> apisMessages,
             final Collection<Pnr> pnrs) {
-        RuleEngineRequestBuilder bldr = new RuleEngineRequestBuilder();
         if (pnrs != null) {
             for (Pnr msg : pnrs) {
-                bldr.addPnr(msg);
+                bldr.addPnr(new ArrayList<>());
             }
         }
         if (apisMessages != null) {
             for (ApisMessage msg : apisMessages) {
-                bldr.addApisMessage(msg);
+                bldr.addApisMessage(new ArrayList<>());
             }
         }
         RuleExecutionContext context = new RuleExecutionContext();
@@ -111,23 +117,36 @@ public class TargetingServiceUtils {
      *            List of Messages
      * @return the rule engine request object.
      */
-    public static RuleExecutionContext createPnrApisRequestContext(
-            final List<Message> loadedMessages) {
-        logger.info("Entering createPnrApisRequestContext().");
-        RuleEngineRequestBuilder bldr = new RuleEngineRequestBuilder();
 
+
+
+    public RuleExecutionContext createPnrApisRequestContext(
+            final List<Message> loadedMessages) {
+        logger.debug("Entering createPnrApisRequestContext().");
+        List<Pnr> pnrList = new ArrayList<>();
+        List<ApisMessage> apisMessages = new ArrayList<>();
         if (loadedMessages != null) {
             for (Message message : loadedMessages) {
                 if (message instanceof ApisMessage) {
-                    bldr.addApisMessage((ApisMessage) message);
+                    apisMessages.add((ApisMessage) message);
                 } else if (message instanceof Pnr) {
-                    bldr.addPnr((Pnr) message);
+                    pnrList.add((Pnr) message);
                 }
             }
         }
+
+        if (!pnrList.isEmpty()) {
+            bldr.addPnr(pnrList);
+        }
+        if (!apisMessages.isEmpty()) {
+            bldr.addApisMessage(apisMessages);
+        }
+
         RuleExecutionContext context = new RuleExecutionContext();
         context.setPaxFlightTuples(bldr.getPassengerFlightSet());
+
         context.setRuleServiceRequest(bldr.build());
+        logger.debug("Exiting createPnrApisRequestContext().");
         return context;
     }
 }

@@ -28,7 +28,7 @@ public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHa
     private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationSuccessHandler.class);
 
     private AuthenticationSuccessHandler defaultHandler;
-
+    
     public AjaxAuthenticationSuccessHandler(AuthenticationSuccessHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
     }
@@ -40,6 +40,7 @@ public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHa
         if ("true".equals(request.getHeader("X-Login-Ajax-call"))) {
             response.getWriter().print("ok");
             response.getWriter().flush();
+
         } else {
             defaultHandler.onAuthenticationSuccess(request, response, authentication);
         }

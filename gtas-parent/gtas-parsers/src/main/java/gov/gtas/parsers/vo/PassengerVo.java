@@ -8,6 +8,7 @@ package gov.gtas.parsers.vo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,13 +24,14 @@ public class PassengerVo implements Validatable {
      */
     private String travelerReferenceNumber;
 
+    private UUID passengerVoUUID = UUID.randomUUID();
     private String title;
     private String firstName;
     private String middleName;
     private String lastName;
     private String suffix;
     private String gender;
-    private String citizenshipCountry;
+    private String nationality;
     private String residencyCountry;
     private String passengerType;
     private Integer age;
@@ -40,6 +42,7 @@ public class PassengerVo implements Validatable {
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
     private List<TicketFareVo> tickets = new ArrayList<>();
+    private List<BagVo> bagVos = new ArrayList<>();
     private String address;
     private String bagId;
     private String bagNum;
@@ -168,12 +171,12 @@ public class PassengerVo implements Validatable {
         this.gender = gender;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public String getResidencyCountry() {
@@ -307,5 +310,21 @@ public class PassengerVo implements Validatable {
         } else if (!passengerType.equals(other.passengerType))
             return false;
         return true;
+    }
+
+    public List<BagVo> getBagVos() {
+        return bagVos;
+    }
+
+    public void setBagVos(List<BagVo> bagVos) {
+        this.bagVos = bagVos;
+    }
+
+    public UUID getPassengerVoUUID() {
+        return passengerVoUUID;
+    }
+
+    public void setPassengerVoUUID(UUID passengerVoUUID) {
+        this.passengerVoUUID = passengerVoUUID;
     }
 }

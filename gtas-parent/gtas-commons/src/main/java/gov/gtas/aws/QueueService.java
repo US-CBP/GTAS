@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import com.amazonaws.regions.Region;
+import com.amazonaws.regions.RegionUtils;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -23,30 +24,23 @@ public class QueueService {
     private static AmazonSQS sqs;
     static {
         sqs = new AmazonSQSClient();
-        sqs.setRegion(Region.getRegion(Regions.GovCloud));    	
     }
-    private String queueName;
+
     private String queueUrl;
     
-    public QueueService() { }
-    
-    public QueueService(String queueName) {
-        configure(queueName);
+    public QueueService(String queueUrl, String region) {
+        configure(queueUrl, region);
     }
     
-    public void configure(String queueName) {
-        this.queueName = queueName;
-        for (String queueUrl : listQueues()) {
-            if (queueUrl.endsWith(this.queueName)) {
-                this.queueUrl = queueUrl;
-                break;
-            }
-        }
+    public void configure(String queueUrl, String region) {
+    	if(queueUrl == null || region == null)
+    		return;
+    	
+        this.queueUrl = queueUrl.trim();
         
-        if (StringUtils.isBlank(this.queueUrl)) {
-            CreateQueueRequest createQueueRequest = new CreateQueueRequest(this.queueName);
-            this.queueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
-        }
+        // override the default region
+        sqs.setRegion(RegionUtils.getRegion(region.trim()));
+
     }
     
     public void sendMessage(String msg) {
@@ -65,4 +59,5 @@ public class QueueService {
     public List<String> listQueues() {
         return sqs.listQueues().getQueueUrls();
     }
+    
 }

@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService, $timeout,
                   spinnerService, caseDispositionService, caseService, $state, $mdSidenav, AuthService,
-                  passenger, ruleCats) {
+                  passenger, ruleCats, codeTooltipService) {
 
             $scope.passenger = passenger.data;
             $scope.caseItem;
@@ -29,14 +29,21 @@
                 hitStatusShow:true,
                 caseStatusShow:true,
                 allHitsClosed:true,
-                caseStatusAdminView:false
+                caseStatusAdminView:false,
+                oneDay: false
             };
+            $scope.caseGeneralComment = [];
             $scope.dispStatus.constants={
                 CLOSED: 'CLOSED',
                 NEW: 'NEW',
                 PENDINGCLOSURE: 'PENDING CLOSURE'
             };
             $scope.hitValidityStatuses=[
+                {id: 1, name: 'Yes'},
+                {id: 1, name: 'No'},
+                {id: 1, name: 'N/A'}
+            ];
+            $scope.caseValidityStatuses=[
                 {id: 1, name: 'Yes'},
                 {id: 1, name: 'No'},
                 {id: 1, name: 'N/A'}
@@ -129,7 +136,7 @@
                 if($scope.dispStatus.allHitsClosed){
                     spinnerService.show('html5spinner');
                     $scope.caseDispStatus = "Case" + $scope.caseDispStatus;
-                    caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                    caseDispositionService.updateHitsDisposition($scope.caseItem.id, $scope.caseItem.flightId, $scope.caseItem.paxId,
                         $scope.caseItemHitId, $scope.commentText,
                         $scope.caseDispStatus,
                         $scope.hitDetailTrueHitFlag,null, null)
@@ -161,7 +168,7 @@
                         var toastPosition = angular.element(document.getElementById('hitForm'));
                         $scope.successToast("Case Created");
                         //$timeout($state.transitionTo('caseDisposition'),5000);
-                        $timeout($state.transitionTo('casedetail', { flightId: aCase.data.flightId, paxId: aCase.data.paxId }),5000);
+                        $timeout($state.transitionTo('casedetail', { caseId: aCase.data.id }),5000);
                     });
             };
 
@@ -184,6 +191,9 @@
             };
 
 
+            $scope.sideNavGeneralComments = function() {
+                $mdSidenav("generalComments").toggle();
+            };
             //Angular Trix related event handlers
             $scope.trixInitialize = function(e, editor) {
                 angular.element(editor.element).prop('contenteditable', false);
@@ -241,6 +251,15 @@
                 day = date.toISOString().slice(0, 10);
                 time = date.getTime();
                 return "tmp/" + day + "/" + time + "-" + file.name;
+            };
+            
+          //Service call for tooltip data
+            $scope.getCodeTooltipData = function(field, type){
+            	return codeTooltipService.getCodeTooltipData(field,type);
+            }
+            
+            $scope.resetTooltip = function(){
+            	$('md-tooltip').remove();
             };
 
 

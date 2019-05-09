@@ -114,6 +114,7 @@ public class QueryBuilderService {
 			logger.debug("List query by " + userId);
 			result = mapToResultList(queryRepository.listQueryByUser(userId));
 		} catch (InvalidUserRepositoryException | InvalidQueryException e) {
+			logger.error("invalid query", e);
 			throw new InvalidQueryException(e.getMessage(), null);
 		}
 
@@ -154,13 +155,10 @@ public class QueryBuilderService {
 		try {
 			FlightQueryVo flights = queryRepository.getFlightsByDynamicQuery(queryRequest);
 			queryLimitReached = flights.isQueryLimitReached();
-			if (flights == null) {
-				return new FlightsPageDto(flightList, totalCount);
-			}
 
 			totalCount = flights.getTotalFlights();
 
-			for (Flight flight : flights.getFlights()) {
+			for (FlightVo flight : flights.getFlights()) {
 				if (flight != null && flight.getId() > 0) {
 					FlightVo flightVo = new FlightVo();
 
@@ -210,6 +208,9 @@ public class QueryBuilderService {
 
 					// passenger information
 					BeanUtils.copyProperties(passenger, vo);
+					BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
+					BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+					vo.setId(passenger.getId());
 					passengerList.add(vo);
 
 					// populate with hits information
@@ -221,8 +222,8 @@ public class QueryBuilderService {
 					vo.setCarrier(flight.getCarrier());
 					vo.setFlightOrigin(flight.getOrigin());
 					vo.setFlightDestination(flight.getDestination());
-					vo.setEtd(flight.getEtd());
-					vo.setEta(flight.getEta());
+					vo.setEtd(flight.getMutableFlightDetails().getEtd());
+					vo.setEta(flight.getMutableFlightDetails().getEta());
 		
 			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {

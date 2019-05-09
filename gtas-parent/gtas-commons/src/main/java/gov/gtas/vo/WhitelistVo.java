@@ -26,7 +26,7 @@ public class WhitelistVo {
 
 	private Date dob;
 
-	private String citizenshipCountry;
+	private String nationality;
 
 	private String residencyCountry;
 
@@ -88,12 +88,12 @@ public class WhitelistVo {
 		this.dob = dob;
 	}
 
-	public String getCitizenshipCountry() {
-		return citizenshipCountry;
+	public String getNationality() {
+		return nationality;
 	}
 
-	public void setCitizenshipCountry(String citizenshipCountry) {
-		this.citizenshipCountry = citizenshipCountry;
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
 	}
 
 	public String getResidencyCountry() {
@@ -150,7 +150,7 @@ public class WhitelistVo {
 		int result = 1;
 		result = prime
 				* result
-				+ ((citizenshipCountry == null) ? 0 : citizenshipCountry
+				+ ((nationality == null) ? 0 : nationality
 						.hashCode());
 		result = prime * result + ((dob == null) ? 0 : dob.hashCode());
 		result = prime * result
@@ -185,10 +185,10 @@ public class WhitelistVo {
 		if (getClass() != obj.getClass())
 			return false;
 		WhitelistVo other = (WhitelistVo) obj;
-		if (citizenshipCountry == null) {
-			if (other.citizenshipCountry != null)
+		if (nationality == null) {
+			if (other.nationality != null)
 				return false;
-		} else if (!citizenshipCountry.equals(other.citizenshipCountry))
+		} else if (!nationality.equals(other.nationality))
 			return false;
 		if (dob == null) {
 			if (other.dob != null)

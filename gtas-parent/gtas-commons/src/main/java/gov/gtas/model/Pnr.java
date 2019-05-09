@@ -61,9 +61,6 @@ public class Pnr extends Message {
     @Column(name = "days_booked_before_travel")
     private Integer daysBookedBeforeTravel;
 
-    @Column(name = "passenger_count")
-    private Integer passengerCount;
-
     @Column(name = "bag_count")
     private Integer bagCount;
     
@@ -77,13 +74,16 @@ public class Pnr extends Message {
     private Integer total_bag_count;
 
 	@Column(name = "total_bag_weight")
-    private float total_bag_weight;
+    private double total_bag_weight;
+        
+    @Column(name = "trip_type", length = 50)
+    private String tripType;
 
-    public float getTotal_bag_weight() {
+    public double getTotal_bag_weight() {
 		return total_bag_weight;
 	}
 
-	public void setTotal_bag_weight(float total_bag_weight) {
+	public void setTotal_bag_weight(double total_bag_weight) {
 		this.total_bag_weight = total_bag_weight;
 	}
 
@@ -106,17 +106,14 @@ public class Pnr extends Message {
 	@Column(name = "form_of_payment")
     private String formOfPayment;
     
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Flight.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Flight.class)
     @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
     private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(fetch=FetchType.EAGER, mappedBy = "pnrs",targetEntity = BookingDetail.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
-    private Set<BookingDetail> bookingDetails = new HashSet<>();
-    
-    @ManyToMany(fetch=FetchType.EAGER, targetEntity = Passenger.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Passenger.class)
     @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers = new HashSet<>();
-
+    
     @ManyToMany(targetEntity = CreditCard.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_credit_card", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "credit_card_id"))
     private Set<CreditCard> creditCards = new HashSet<>();
@@ -144,9 +141,7 @@ public class Pnr extends Message {
     @ManyToMany(targetEntity = CodeShareFlight.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "pnr_codeshares", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "codeshare_id"))
     private Set<CodeShareFlight> codeshares = new HashSet<>();
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
-    private List<FlightLeg> flightLegs = new ArrayList<>();
+
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
     private List<PaymentForm> paymentForms = new ArrayList<>();
@@ -155,14 +150,6 @@ public class Pnr extends Message {
     @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
     private Set<DwellTime> dwellTimes = new HashSet<>();
 
-    
-    public Set<BookingDetail> getBookingDetails() {
-		return bookingDetails;
-	}
-
-	public void setBookingDetails(Set<BookingDetail> bookingDetails) {
-		this.bookingDetails = bookingDetails;
-	}
 
 	@Column(name = "resrvation_create_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -217,21 +204,10 @@ public class Pnr extends Message {
 		this.dwellTimes = dwellTimes;
 	}
 
-
-	public void addFlightLeg(FlightLeg leg) {
-        flightLegs.add(leg);
-    }
-
 	public void addPaymentForm(PaymentForm payment) {
         paymentForms.add(payment);
     }
 	
-    public void addPassenger(Passenger p) {
-        if (this.passengers == null) {
-            this.passengers = new HashSet<>();
-        }
-        this.passengers.add(p);
-    }
 
     public void addFlight(Flight f) {
         if (this.flights == null) {
@@ -285,14 +261,6 @@ public class Pnr extends Message {
 
     public void setEdifactMessage(EdifactMessage edifactMessage) {
         this.edifactMessage = edifactMessage;
-    }
-
-    public Set<Passenger> getPassengers() {
-        return passengers;
-    }
-
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
     }
 
     public Set<CreditCard> getCreditCards() {
@@ -399,14 +367,6 @@ public class Pnr extends Message {
         this.daysBookedBeforeTravel = daysBookedBeforeTravel;
     }
 
-    public Integer getPassengerCount() {
-        return passengerCount;
-    }
-
-    public void setPassengerCount(Integer passengerCount) {
-        this.passengerCount = passengerCount;
-    }
-
     public String getFormOfPayment() {
         return formOfPayment;
     }
@@ -431,14 +391,6 @@ public class Pnr extends Message {
         this.agencies = agencies;
     }
 
-    public List<FlightLeg> getFlightLegs() {
-        return flightLegs;
-    }
-
-    public void setFlightLegs(List<FlightLeg> flightLegs) {
-        this.flightLegs = flightLegs;
-    }
-
     public Double getBaggageWeight() {
 		return baggageWeight;
 	}
@@ -453,6 +405,29 @@ public class Pnr extends Message {
 
 	public void setBaggageUnit(String baggageUnit) {
 		this.baggageUnit = baggageUnit;
+	}
+
+    public String getTripType() {
+        return tripType;
+    }
+
+    public void setTripType(String tripType) {
+        this.tripType = tripType;
+    }
+        
+    public void addPassenger(Passenger p) {
+        if (this.passengers == null) {
+            this.passengers = new HashSet<>();
+        }
+        this.passengers.add(p);
+    }
+
+	public Set<Passenger> getPassengers() {
+		return passengers;
+	}
+
+	public void setPassengers(Set<Passenger> passengers) {
+		this.passengers = passengers;
 	}
 
 	@Override
