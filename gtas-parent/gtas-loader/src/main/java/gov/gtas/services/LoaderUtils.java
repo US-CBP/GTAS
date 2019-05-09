@@ -335,12 +335,15 @@ public class LoaderUtils {
         logger.warn("Unknown airport code: " + code);
         return null;
     }
-    
-    public boolean isPrimeFlight(FlightVo fvo, String[] primeFlightKey) {
+
+    boolean isPrimeFlight(FlightVo fvo, String[] primeFlightKey) {
         String primeFlightOrigin = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN];
         String primeFlightDestination = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_DESTINATION];
+        String primeFlightDate = primeFlightKey[GtasLoaderImpl.ETD_DATE_NO_TIMESTAMP_AS_LONG];
+        String otherDate = Long.toString(DateUtils.stripTime(fvo.getEtd()).getTime());
         return (fvo.getOrigin().equals(primeFlightOrigin) &&
-                fvo.getDestination().equals(primeFlightDestination))
+                fvo.getDestination().equals(primeFlightDestination) &&
+                primeFlightDate.equals(otherDate))
                 ||  isTestData(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN]);
     }
 

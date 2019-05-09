@@ -14,7 +14,7 @@ public class TargetingResultServices {
         return passengerService;
     }
 
-    void setPassengerService(PassengerService passengerService) {
+    public void setPassengerService(PassengerService passengerService) {
         this.passengerService = passengerService;
     }
 
@@ -22,7 +22,7 @@ public class TargetingResultServices {
         return appConfigurationService;
     }
 
-    void setAppConfigurationService(AppConfigurationService appConfigurationService) {
+    public void setAppConfigurationService(AppConfigurationService appConfigurationService) {
         this.appConfigurationService = appConfigurationService;
     }
 
@@ -30,7 +30,7 @@ public class TargetingResultServices {
         return ruleMetaRepository;
     }
 
-    void setRuleMetaRepository(RuleMetaRepository ruleMetaRepository) {
+    public void setRuleMetaRepository(RuleMetaRepository ruleMetaRepository) {
         this.ruleMetaRepository = ruleMetaRepository;
     }
 }

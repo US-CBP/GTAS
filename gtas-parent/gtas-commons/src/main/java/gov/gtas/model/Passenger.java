@@ -38,6 +38,9 @@ public class Passenger extends BaseEntityAudit {
     @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
     private PassengerWLTimestamp passengerWLTimestamp;
 
+    @OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
+    private PassengerIDTag passengerIDTag;
+
     @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
     private Set<ApisMessage> apisMessage = new HashSet<>();
 
@@ -78,7 +81,6 @@ public class Passenger extends BaseEntityAudit {
 
     @Column(nullable = false)
     private Boolean deleted = Boolean.FALSE;
-
 
     /*
      * Used to keep a referenced to passengerVO from parser.
@@ -249,6 +251,14 @@ public class Passenger extends BaseEntityAudit {
         if (!(o instanceof Passenger)) return false;
         Passenger passenger = (Passenger) o;
         return uuid.equals(passenger.getUuid());
+    }
+
+    public PassengerIDTag getPassengerIDTag() {
+        return passengerIDTag;
+    }
+
+    public void setPassengerIDTag(PassengerIDTag passengerIDTag) {
+        this.passengerIDTag = passengerIDTag;
     }
 
 }

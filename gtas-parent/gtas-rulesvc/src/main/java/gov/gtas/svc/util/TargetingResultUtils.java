@@ -11,14 +11,12 @@ import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.bo.TargetDetailVo;
 import gov.gtas.bo.TargetSummaryVo;
 import gov.gtas.enumtype.HitTypeEnum;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.svc.TargetingResultServices;
-import gov.gtas.util.Bench;
+import gov.gtas.svc.TargetingServiceResults;
 
 import java.util.*;
 
@@ -30,9 +28,9 @@ public class TargetingResultUtils {
     private static final Logger logger = LoggerFactory
             .getLogger(TargetingResultUtils.class);
 
-    public static Map<Long, Flight> createFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
+    static Map<Long, Flight> createFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
         List<Long> flightIdList = new ArrayList<>();
-        List<Flight> flightResultList = null;
+        List<Flight> flightResultList;
         Map<Long, Flight> flightMap = new HashMap<>();
 
         for (RuleHitDetail rhd : ruleHitDetailList) {
@@ -51,9 +49,10 @@ public class TargetingResultUtils {
         return flightMap;
     }
 
-    public static Map<Long, Passenger> createPassengerMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
+
+    static Map<Long, Passenger> createPassengerMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
         List<Long> passengerIdList = new ArrayList<>();
-        List<Passenger> passengerResultList = null;
+        List<Passenger> passengerResultList;
         Map<Long, Passenger> passengerMap = new HashMap<>();
 
         for (RuleHitDetail rhd : ruleHitDetailList) {
@@ -76,7 +75,7 @@ public class TargetingResultUtils {
     }
 
 
-    public static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
+    static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
         List<Long> ruleHitDetailPassengerIdList = new ArrayList<>();
         Map<Long, List<Long>> passengerFlightMap = new HashMap<>();
 
@@ -108,9 +107,6 @@ public class TargetingResultUtils {
     /**
      * Eliminates duplicates and adds flight id, if missing.
      *
-     * @param result
-     * @param targetingResultServices
-     * @return
      */
     public static RuleServiceResult ruleResultPostProcesssing(
             RuleServiceResult result, TargetingResultServices targetingResultServices) {
@@ -167,7 +163,80 @@ public class TargetingResultUtils {
                 result.getExecutionStatistics());
     }
 
-    private static List<RuleHitDetail> filterRuleHitDetails(List<RuleHitDetail> resultList, TargetingResultServices targetingResultServices) {
+    public static List<TargetingServiceResults> batchResults(List<TargetingServiceResults> targetingServiceResultsList, int BATCH_SIZE) {
+
+        List<TargetingServiceResults> batchedResults = new ArrayList<>();
+        TargetingServiceResults conglomerateResults = new TargetingServiceResults();
+        int counter = 0;
+        while (!targetingServiceResultsList.isEmpty()) {
+            TargetingServiceResults targetingServiceResults = targetingServiceResultsList.get(0);
+            Set<Case> casesSet = conglomerateResults.getCaseSet();
+            List<HitsSummary> hitsSummaries = conglomerateResults.getHitsSummaryList();
+            if (casesSet == null) {
+                conglomerateResults.setCaseSet(targetingServiceResults.getCaseSet());
+            } else {
+                conglomerateResults.getCaseSet().addAll(targetingServiceResults.getCaseSet());
+            }
+            if (hitsSummaries == null) {
+                conglomerateResults.setHitsSummaryList(targetingServiceResults.getHitsSummaryList());
+            } else {
+                conglomerateResults.getHitsSummaryList().addAll(targetingServiceResults.getHitsSummaryList());
+            }
+            counter++;
+            if (targetingServiceResultsList.size() == 1) {
+                batchedResults.add(conglomerateResults);
+            } else {
+                if (counter >= BATCH_SIZE) {
+                    batchedResults.add(conglomerateResults);
+                    conglomerateResults = new TargetingServiceResults();
+                    counter = 1;
+                }
+            }
+            targetingServiceResultsList.remove(0);
+        }
+        return batchedResults;
+    }
+
+    public static List<TargetingServiceResults> getTargetingResults(Set<Case> casesSet, List<HitsSummary> hitsSummaryList) {
+        Map<Long, Set<Case>> caseToFlightIdMap = new HashMap<>();
+        List<TargetingServiceResults> targetingServiceResultsList = new ArrayList<>();
+        for (Case caze : casesSet) {
+            Long flightId = caze.getFlightId();
+            if (caseToFlightIdMap.containsKey(flightId)) {
+                caseToFlightIdMap.get(flightId).add(caze);
+            } else {
+                Set<Case> objectHashSet = new HashSet<>();
+                objectHashSet.add(caze);
+                caseToFlightIdMap.put(flightId, objectHashSet);
+            }
+        }
+
+        Map<Long, List<HitsSummary>> hitSummaryToFlightIdMap = new HashMap<>();
+        for (HitsSummary hitsSummary : hitsSummaryList) {
+            Long flightId = hitsSummary.getFlightId();
+            if (hitSummaryToFlightIdMap.containsKey(flightId)) {
+                hitSummaryToFlightIdMap.get(flightId).add(hitsSummary);
+            } else {
+                List<HitsSummary> hitsSummaries = new ArrayList<>();
+                hitsSummaries.add(hitsSummary);
+                hitSummaryToFlightIdMap.put(flightId, hitsSummaries);
+            }
+        }
+        Set<Long> flightIdsToProcess = new HashSet<>();
+        flightIdsToProcess.addAll(caseToFlightIdMap.keySet());
+        flightIdsToProcess.addAll(hitSummaryToFlightIdMap.keySet());
+        for (Long flightId : flightIdsToProcess) {
+            Set<Case> cases = caseToFlightIdMap.get(flightId);
+            List<HitsSummary> hitsSummaries = hitSummaryToFlightIdMap.get(flightId);
+            TargetingServiceResults targetingServiceResults = new TargetingServiceResults();
+            targetingServiceResults.setCaseSet(cases);
+            targetingServiceResults.setHitsSummaryList(hitsSummaries);
+            targetingServiceResultsList.add(targetingServiceResults);
+        }
+        return targetingServiceResultsList;
+    }
+
+    public static List<RuleHitDetail> filterRuleHitDetails(List<RuleHitDetail> resultList, TargetingResultServices targetingResultServices) {
         /*
          * Take care of run away rules by not creating hits/cases on them as well as flagging them in the database.
          * */

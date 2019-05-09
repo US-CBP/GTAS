@@ -1,3 +1,11 @@
+/*
+ *
+ *  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ *  *
+ *  * Please see LICENSE.txt for details.
+ *
+ */
+
 package gov.gtas.job.scheduler;
 
 import gov.gtas.parsers.redisson.RedisLoader;
@@ -146,15 +154,15 @@ public class RedisLoaderScheduler {
     private void pushToInboundQueue(File f) throws LoaderException, IOException{
         String filePath = f.getAbsolutePath();
 
-            if (exceedsMaxSize(f)) {
-                throw new LoaderException("exceeds max file size");
-            }
-
-            byte[] raw = FileUtils.readSmallFile(filePath);
-            String tmp = new String(raw, StandardCharsets.US_ASCII);
-
-            sender.sendFileContent(inboundLoaderQueue, tmp, f.getName());
+        if (exceedsMaxSize(f)) {
+            throw new LoaderException("exceeds max file size");
         }
+
+        byte[] raw = FileUtils.readSmallFile(filePath);
+        String tmp = new String(raw, StandardCharsets.US_ASCII);
+
+        sender.sendFileContent(inboundLoaderQueue, tmp, f.getName());
+    }
 
 
     private boolean exceedsMaxSize(File f) {

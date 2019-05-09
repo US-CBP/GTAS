@@ -103,28 +103,37 @@ public class Case extends BaseEntityAudit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "encountered_status", nullable=false)
-    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
-
- 
-	public EncounteredStatusEnum getEncounteredStatus() {
-		return encounteredStatus;
-	}
-
-
-	public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
-		this.encounteredStatus = encounteredStatus;
-	}
-
-
 
 	public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
 
+    @Transient
+    private Boolean saveCase = false;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "encountered_status", nullable=false)
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
+
+
+    public EncounteredStatusEnum getEncounteredStatus() {
+        return encounteredStatus;
+    }
+
+
+    public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+        this.encounteredStatus = encounteredStatus;
+    }
+
+
+    public Boolean getSaveCase() {
+        return saveCase;
+    }
+
+    public void setSaveCase(Boolean saveCase) {
+        this.saveCase = saveCase;
+    }
 
     public String getCaseOfficerStatus() {
         return caseOfficerStatus;

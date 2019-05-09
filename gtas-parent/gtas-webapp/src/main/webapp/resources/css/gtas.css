@@ -1,3 +1,83 @@
+
+
+.md-tab {
+  border-bottom: 2px solid #00416a;
+}
+
+md-tabs-canvas {
+  position: static !important;
+  border-bottom: 2px solid #00416a !important;
+}
+
+md-tabs.md-default-theme .md-ink-bar, md-tabs md-ink-bar {
+  display: none;
+  background: #fff;
+}
+.md-tab.md-active{
+  border: 2px solid #00416a;
+  border-bottom-color: #fff;
+}
+
+@media (min-width: 1200px) {
+  .sidebar {
+    bottom: auto !important;
+}
+.table-wrap {
+  word-break: break-all;
+  min-width: 30vh;
+}
+.card-sticky {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+}
+.nowrap {
+  word-break: keep-all;
+}
+.cbp-card-container .cbp-card {
+  min-height: inherit !important;
+}
+.fixed-content.top {
+  top: 53;
+  z-index: 1030;
+}
+.scroll-card {
+  max-height: calc(100vh - 270px);
+   overflow-y: scroll;
+}
+.scroll-container {
+  max-height: calc(100vh - 210px);
+   overflow-y: scroll;
+}
+.scroll-container-outer {
+  max-height: calc(100vh - 182px);
+   overflow-y: scroll;
+}
+.action-buttons {
+  position: absolute;
+  top: 118px;
+  right: 22px;
+  min-width: 400px;
+  z-index: 50;
+}
+
+/* ::-webkit-scrollbar {
+  width: 8px;
+  background: #f1f1f1;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #a9a9a9;
+  }
+ */
+
+
+
+
+
+/* end apb */
+
 /*Sizing Styles */
 .fnt-small {
   font-size: 12px;
@@ -40,6 +120,18 @@
 }
 .half-width {
   width: 49% !important;
+}
+.seventy-width {
+  width: 70% !important;
+}
+.sixty-width {
+  width: 60% !important;
+}
+.thirty-width {
+  width: 30% !important;
+}
+.forty-width {
+  width: 40% !important;
 }
 .sev-five-width {
   width: 75% !important;
@@ -142,7 +234,7 @@
   }
 }
 
-.gtas-card-container .cbp-card  {
+.gtas-card-container .cbp-card {
     min-height: inherit;
     max-height: 800px;
 }
@@ -397,7 +489,7 @@
   transform: translateX(0px);
 }
 .sidebar {
-  z-index: 1;
+  z-index: 1 !important;
   position: absolute;
   height: 85vh;
   padding: 10px;

@@ -61,7 +61,16 @@ insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_R
 insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
-insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
+insert into app_configuration (opt, val, description)
+values ('THREADS_ON_RULES', '5', 'Number of threads on loader.');
+insert into app_configuration (opt, val, description)
+values ('FUZZY_MATCHING', 'true', 'Fuzzy matching toggle');
+insert into app_configuration (opt, val, description)
+values ('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
+insert into app_configuration (opt, val, description)
+values ('GRAPH_DB_URL', 'bolt://localhost:7687', 'Neo4J Address');
+insert into app_configuration (opt, val, description)
+values ('GRAPH_DB_TOGGLE', 'true', 'Neo4J Toggle');
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
@@ -91,3 +100,4 @@ insert into rule_category(catId, category, description, priority) values(2, 'Ter
 insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
 insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
 insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
+
