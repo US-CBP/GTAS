@@ -78,6 +78,7 @@ public class GraphRulesThread implements Callable<Boolean> {
             Set<Long> messageId = processedMessages.stream()
                     .map(MessageStatus::getMessageId)
                     .collect(Collectors.toSet());
+            processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
             Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
             Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
             TargetingResultServices targetingResultServices = getTargetingResultOptions();
@@ -95,7 +96,6 @@ public class GraphRulesThread implements Callable<Boolean> {
                 try {
                     logger.info("Saving graph results " + count + " of " + batchedTargetingServiceResults.size() + "...");
                     graphRulesService.saveResults(new HashSet<>(targetingServiceResults.getHitsSummaryList()), targetingServiceResults.getCaseSet());
-                    processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
                 } catch (Exception ignored) {
                     logger.warn("Exception saving hits summaries count " + count + " and/or hit details! ", ignored);
                     processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
