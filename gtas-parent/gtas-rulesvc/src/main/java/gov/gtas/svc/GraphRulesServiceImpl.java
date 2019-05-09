@@ -112,7 +112,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                 totalHits++;
             }
         }
-        logger.info("Processing " + newHitSummary + " new hits with a total of  " + totalHits + " hits.");
+        logger.debug("Processing " + newHitSummary + " new hits with a total of  " + totalHits + " hits.");
         return paxHitSummary.values()
                 .stream()
                 .filter(HitsSummary::getSaveHits)
@@ -128,12 +128,12 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 
         if (!hitsSummaries.isEmpty()) {
             hitsSummaryRepository.saveAll(hitsSummaries);
-            logger.info("Created or modified(including adding hit details) " + hitsSummaries.size() + " hits summarie(s).");
+            logger.debug("Created or modified(including adding hit details) " + hitsSummaries.size() + " hits summarie(s).");
         }
 
         if (newCases != null && !newCases.isEmpty()) {
             caseDispositionRepository.saveAll(newCases);
-            logger.info("Created or modified " + newCases.size() + " case(s).");
+            logger.debug("Created or modified " + newCases.size() + " case(s).");
         }
     }
 
