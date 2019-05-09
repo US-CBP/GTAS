@@ -104,7 +104,7 @@
             </tr>
           <tr>
             <td class="half-width txt-right"><strong>Last Airline Update</strong></td>
-            <td class="half-width">??</td>
+            <td class="half-width"></td>
           </tr>
         </table>
   
@@ -187,7 +187,7 @@
             <i class="fa fa-download" aria-hidden="true"></i> &nbsp;Pax Detail
           </a>
           <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-            <i class="fa fa-download" aria-hidden="true"></i> &nbsp;Create Case
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Create Case
           </a>
           </div>
   
@@ -201,7 +201,7 @@
             <!-- SUMMARY TAB  -->
             <md-tab label="Summary">
   
-                <div class="flex flex-center sm-pad">
+                <div class="flex flex-center sm-pad scroll-container-outer">
                   <div class="flex flex-vert ie-fix-md half-width align-items-center">
   
                     <!------  CASE HISTORY   ------>
@@ -350,7 +350,7 @@
                     <div class="cbp-card cbp-card-shadow">
                       <h4 class="h-label no-margin-top" >
                         Total Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
-                        <span class="right fnt-small">
+                        <span class="right-header">
                         Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
                       </span>
                       </h4>
@@ -458,7 +458,7 @@
   
   
             <!-- PNR Tab -->
-            <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists">
+            <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists" md-ink-ripple="{{ 'teal' }}">
                 <div class="flex flex-center sm-pad">
                   <div class="flex flex-40 flex-vert ie-fix-md align-items-center">
                     <!--RawPNR!-->
@@ -482,7 +482,7 @@
                       <!--Itinerary!-->
                       <div class="cbp-card-container full-width">
                           <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top">Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span style="font-size:18px;"> Trip Type: {{passenger.pnrVo.tripType}}</span></h4>
+                            <h4 class="h-label no-margin-top">Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span class="right-header"> Trip Type: {{passenger.pnrVo.tripType}}</span></h4>
                             <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                               <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                 <thead class="floating-table-header flex-center">
@@ -789,7 +789,7 @@
                       <div class="cbp-card cbp-card-shadow">
                         <h4 class="h-label no-margin-top">
                           Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
-                          <span style="font-size:18px;">PNR Total Baggage Weight In Kilograms ({{passenger.pnrVo.baggageWeight}})</span>
+                          <span class="right-header">Baggage Weight ({{passenger.pnrVo.baggageWeight}} Kg)</span>
                         </h4>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                           <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
