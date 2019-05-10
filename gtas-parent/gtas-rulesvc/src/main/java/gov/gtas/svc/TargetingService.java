@@ -86,6 +86,8 @@ public interface TargetingService {
 	 */
 	public RuleResultsWithMessageStatus runningRuleEngine();
 
+    public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses);
+
 	public void saveMessageStatuses(List<MessageStatus> setMessagesToAnalyzed);
 
 	public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult);

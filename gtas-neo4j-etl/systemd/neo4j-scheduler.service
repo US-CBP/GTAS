@@ -1,16 +1,15 @@
 [Unit]
 Description=Neo4j Scheduler
-After=syslog.target network.target
+After=syslog.target 
 
 
 [Service]
-Type=forking
 
 Environment=JAVA_HOME=/usr/java/jre1.8.0_192-amd64
 WorkingDirectory= /gtas-neo4j-etl
 
-ExecStart=/usr/java/jre1.8.0_192-amd64/bin/java -jar /gtas-neo4j-etl/gtas-neo4j-job-scheduler-1.jar
-
+ExecStart=/gtas-neo4j-etl/gtas-neo4j-job-scheduler-1.jar
+SuccessExitStatus=143
 User=ec2-user
 Restart=always
 

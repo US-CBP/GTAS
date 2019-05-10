@@ -51,7 +51,7 @@
       </child>
       <child>
          <id>maxConnectionPoolSize</id>
-         <value></value>
+         <value>${EXT_VAR_NEO4J_MAX_POOL_SIZE}</value>
          <type>String</type>
       </child>
       <child>

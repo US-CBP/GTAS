@@ -15,7 +15,6 @@ import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
-import gov.gtas.util.Bench;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -23,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TargetingResultCaseMgmtUtils {
 
@@ -45,17 +45,13 @@ public class TargetingResultCaseMgmtUtils {
     /**
      * Eliminates duplicates and adds flight id, if missing.
      *
-     * @param result
      * @return
      */
     public static Set<Case> ruleResultPostProcesssing(
-            RuleServiceResult result, CaseDispositionService dispositionService, PassengerService passengerService) {
+            List<RuleHitDetail> resultList, CaseDispositionService dispositionService, PassengerService passengerService) {
         logger.debug("Entering ruleResultPostProcesssing().");
         // get the list of RuleHitDetail objects returned by the Rule Engine
-        List<RuleHitDetail> resultList = result.getResultList();
 
-        // create a Map to eliminate duplicates
-        Map<RuleHitDetail, RuleHitDetail> resultMap = new HashMap<>();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Number of hits --> " + resultList.size());
@@ -94,9 +90,10 @@ public class TargetingResultCaseMgmtUtils {
             }
             rhd.setPassenger(null);
         }
-
+        Set<Case> filteredCasesSet = casesSet.stream().filter(Case::getSaveCase).collect(Collectors.toSet());
+        logger.debug("total cases created : " + casesSet.size() + " filtered old ");
         logger.debug("Exiting ruleResultPostProcesssing().");
-        return casesSet;
+        return filteredCasesSet;
     }
 
     /**
@@ -118,6 +115,7 @@ public class TargetingResultCaseMgmtUtils {
         Passenger _tempPax = null;
         String description = rhd.getDescription();
         String watchlistItemFlag = "wl_item";
+        String graphDatabaseTag = "graph_hit";
         Case newCase = null;
         try {
             _tempPaxId = rhd.getPassengerId();
@@ -125,6 +123,8 @@ public class TargetingResultCaseMgmtUtils {
 
             if(rhd.getUdrRuleId() == null){
                 description = watchlistItemFlag + description;
+            } else if (rhd.getUdrRuleId().equals(-1L)) {
+                description = graphDatabaseTag + description;
             }
             if (_tempPax != null) {
                 String document = null;

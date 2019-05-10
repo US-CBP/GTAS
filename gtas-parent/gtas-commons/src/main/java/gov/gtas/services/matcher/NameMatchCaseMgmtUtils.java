@@ -53,10 +53,10 @@ public class NameMatchCaseMgmtUtils {
                 for (Document documentItem : _tempPax.getDocuments()) {
                     document = documentItem.getDocumentNumber();
                 }
-                
-                Map<Long, Passenger> passengerMap = new HashMap<Long, Passenger>();
-                Map<Long, Flight> flightMap = new HashMap<Long, Flight>();
-                Map<Long, Case> passengerFlightCaseMap = new HashMap<Long, Case>(); 
+
+            Map<Long, Passenger> passengerMap = new HashMap<>();
+            Map<Long, Flight> flightMap = new HashMap<>();
+            Map<Long, Case> passengerFlightCaseMap = new HashMap<>();
                 passengerMap.put(passenger.getId(), passenger);
                 flightMap.put(flightId, flight);
                 if(existingCase != null)

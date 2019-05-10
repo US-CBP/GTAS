@@ -31,6 +31,6 @@ CREATE TABLE `neo4j_parameters`  (
 -- ----------------------------
 -- Records of neo4j_parameters
 -- ----------------------------
-INSERT INTO `neo4j_parameters` VALUES (1, '2019-01-01 00:00:00', 1);
+INSERT INTO `neo4j_parameters` VALUES (1, '2019-01-01 00:00:00', 0);
 
 SET FOREIGN_KEY_CHECKS = 1;

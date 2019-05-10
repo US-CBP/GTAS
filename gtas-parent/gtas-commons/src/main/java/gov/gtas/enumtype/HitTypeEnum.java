@@ -12,8 +12,9 @@ public enum HitTypeEnum {
     PD,  // Watchlist Passenger and Document Hit
     RPD,  // UDR rule, Watchlist Passenger and Document Hit
     RP,  // UDR rule, Watchlist Passenger Hit
-    RD; // UDR rule, Watchlist Document Hit
-    
+    RD, // UDR rule, Watchlist Document Hit
+    GH; // Graph Database rule
+
     public HitTypeEnum addHitType(HitTypeEnum hitTypeToAdd){
         HitTypeEnum ret = this;
         switch(hitTypeToAdd){
