@@ -563,7 +563,7 @@ for logging purposes</note>
       </attribute>
       <attribute>
         <code>INITIAL_POOL_SIZE</code>
-        <attribute>5</attribute>
+        <attribute>6</attribute>
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
@@ -571,7 +571,7 @@ for logging purposes</note>
       </attribute>
       <attribute>
         <code>MAXIMUM_POOL_SIZE</code>
-        <attribute>8</attribute>
+        <attribute>10</attribute>
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
@@ -1563,13 +1563,6 @@ for logging purposes</note>
           <condition>
             <negated>N</negated>
             <operator>AND</operator>
-            <leftvalue>citizenship_country</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
             <leftvalue>dob</leftvalue>
             <function>IS NOT NULL</function>
             <rightvalue/>
@@ -1967,8 +1960,8 @@ for logging purposes</note>
           <primary>N</primary>
         </property>
         <property>
-          <name>citizenship_country</name>
-          <value>citizenship_country</value>
+          <name>nationality</name>
+          <value>nationality</value>
           <type>String</type>
           <primary>N</primary>
         </property>
@@ -3559,7 +3552,7 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>citizenship_country</name>
+        <name>nationality</name>
         <type>String</type>
         <format/>
         <currency/>
@@ -4765,7 +4758,7 @@ for logging purposes</note>
         <precision>-1</precision>
       </field>
       <field>
-        <name>citizenship_country</name>
+        <name>nationality</name>
         <type>String</type>
         <format/>
         <currency/>

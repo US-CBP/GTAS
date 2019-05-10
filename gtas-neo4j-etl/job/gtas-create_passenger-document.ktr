@@ -882,7 +882,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
         <trim_type>both</trim_type>
       </field>
       <field>
-        <name>citizenship_country</name>
+        <name>nationality</name>
         <type>String</type>
         <format/>
         <currency>$</currency>
