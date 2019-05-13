@@ -26,7 +26,7 @@ select
 	left join flight_leg bd 
 		on (bd.message_id = leg.message_id and bd.flight_id is not null)
 	
-	left join bookingdetail booking_detail
+	left join booking_detail booking_detail
 		on(leg.`bookingDetail_id` = booking_detail.id)
 	
 	left join `flight_passenger` flight_p

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "BookingDetail")
+@Table(name = "booking_detail")
 public class BookingDetail extends BaseEntityAudit {
 
 
