@@ -578,11 +578,11 @@ span.right-header{
 
 .md-sidenav-right {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 .md-sidenav-backdrop {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 
 /*Override query builder */
