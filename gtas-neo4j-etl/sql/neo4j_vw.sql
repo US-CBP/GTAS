@@ -105,7 +105,6 @@ AND f.etd_date IS NOT NULL
 AND f.full_flight_number IS NOT NULL 
 AND f.etd_date IS NOT NULL
 
-
 UNION ALL
 
 SELECT 

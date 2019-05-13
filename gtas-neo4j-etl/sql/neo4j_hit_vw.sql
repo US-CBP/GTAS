@@ -40,7 +40,6 @@ INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
 
-
 UNION
 
 SELECT
