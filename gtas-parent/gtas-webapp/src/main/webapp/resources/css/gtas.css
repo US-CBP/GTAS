@@ -22,7 +22,9 @@ md-tabs.md-default-theme .md-ink-bar, md-tabs md-ink-bar {
 md-tabs .md-tab:active .md-ripple-container {
   background-color: rgba(16, 182, 223, 0.185) !important;
 }
-
+md-tabs.md-default-theme .md-tab .md-ripple-container, md-tabs .md-tab .md-ripple-container {
+  color: #23b0f1;
+}
 md-tabs .md-tab .md-ripple-container .md-ripple {
   background: #23b0f1 !important;
   /* border-color: #38fc42 !important; */
@@ -541,7 +543,8 @@ span.right-header{
 }
 .ui-grid {
   width: 99%;
-  height: 85vh !important;
+  height: -webkit-fill-available;
+  /* height: 85vh !important; */
   margin: auto;
 }
 .ui-grid-top-panel {

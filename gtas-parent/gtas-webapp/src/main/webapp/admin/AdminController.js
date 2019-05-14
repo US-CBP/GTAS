@@ -155,7 +155,6 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, gridOptionsLookupServic
     	caseService.createOrEditDispositionStatus($scope.createDispStatusVo())
     	.then(function(response){
     		//produce success message
-    		console.log(response);
     		if(response.status === 200){
     			$scope.errorToast(response.data.message);
     			$scope.loadDispStatuses();
