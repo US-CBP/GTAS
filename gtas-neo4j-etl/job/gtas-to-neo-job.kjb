@@ -466,45 +466,17 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Write To Log - Update Error</name>
+      <name>Write to log - delete temp files</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <attributes/>
-      <logmessage>The gtas-update-neo4j-parameters Transformation stopped executing due to an error. </logmessage>
-      <loglevel>Error</loglevel>
-      <logsubject>ERROR-update neo4j parameter </logsubject>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>576</xloc>
-      <yloc>1168</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Abort job - gtas-to-neo 2</name>
-      <description/>
-      <type>ABORT</type>
-      <attributes/>
-      <message>Aborting the gtas-to-neo job due to errors in the Update Neo4J Parameters Transformation</message>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>1168</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Write to log - update parameters</name>
-      <description/>
-      <type>WRITE_TO_LOG</type>
-      <attributes/>
-      <logmessage>**STARTING TO UPDATE NEO4J PARAMETERS IN THE neo4j_parameters TABLE OF THE gtas DATABASE</logmessage>
+      <logmessage>** ....... DELETING TEMP FILES .......................</logmessage>
       <loglevel>Minimal</loglevel>
       <logsubject>log-update-neo4j-parameters</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
+      <xloc>848</xloc>
       <yloc>1360</yloc>
       <attributes_kjc/>
     </entry>
@@ -538,8 +510,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
-      <yloc>928</yloc>
+      <xloc>848</xloc>
+      <yloc>1008</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -730,44 +702,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <nr>0</nr>
       <xloc>1392</xloc>
       <yloc>608</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Transformation-update parameters</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>${Internal.Entry.Current.Directory}/gtas-update-neo4j-parameters.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>832</xloc>
-      <yloc>1168</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -963,8 +897,8 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
-      <yloc>1056</yloc>
+      <xloc>848</xloc>
+      <yloc>1184</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -1215,7 +1149,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>832</xloc>
+      <xloc>848</xloc>
       <yloc>800</yloc>
       <attributes_kjc/>
     </entry>
@@ -1351,24 +1285,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Transformation-update parameters</from>
-      <to>Write To Log - Update Error</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Write To Log - Update Error</from>
-      <to>Abort job - gtas-to-neo 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
       <from>Write to log - start-gtas-to-neo-trans</from>
       <to>Transformation-gtas-to-neo</to>
       <from_nr>0</from_nr>
@@ -1470,24 +1386,6 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
     <hop>
       <from>Trans-create passenger-address rship</from>
       <to>Write to log - psngr-hit-rship</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Write to log - update parameters</from>
-      <to>Transformation-update parameters</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>N</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Transformation-update parameters</from>
-      <to>Delete Temp Files</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1649,7 +1547,7 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
     </hop>
     <hop>
       <from>Transformation-gtas_message_staus_update</from>
-      <to>Write to log - update parameters</to>
+      <to>Write to log - delete temp files</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -1681,6 +1579,15 @@ Location of CONFIG FILE: ${EXT_ETL_CONFIG_FILE}</logmessage>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
+      <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>Write to log - delete temp files</from>
+      <to>Delete Temp Files</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>N</evaluation>
       <unconditional>Y</unconditional>
     </hop>
   </hops>
