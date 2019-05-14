@@ -88,7 +88,10 @@ span.right-header{
 .nav-dots>li.active>a {
   background-color: #1460aa !important;
 }
-
+ td a {
+  color: #3F51B5;
+  font-weight: bold;
+}
 
 
 /*Sizing Styles */
@@ -575,11 +578,11 @@ span.right-header{
 
 .md-sidenav-right {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 .md-sidenav-backdrop {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 
 /*Override query builder */
