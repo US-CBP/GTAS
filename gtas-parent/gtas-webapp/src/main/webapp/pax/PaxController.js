@@ -817,7 +817,7 @@
                 },
                 {
                     name: 'nationality',
-                    displayName:'pass.nationality', headerCellFilter: 'translate',
+                    displayName:'Nationality', headerCellFilter: 'translate',
                     width: 75,
                     cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">'
                     	+'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
