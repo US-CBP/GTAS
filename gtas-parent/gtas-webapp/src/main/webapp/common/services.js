@@ -1228,13 +1228,19 @@
             		}
             	}
             };
+            
+            //untidy name format "fullName(code)"
+            //removes "(code)"
+            function getTidyName(name) {
+            	return name.split("(")[0];
+            }
 
             //Used for countries/airports/carriers, pass in code + code list, return full name
             function getFullNameByCodeAndCodeList(code, codeList){
             	var fullName = '';
             	$.each(codeList, function(index,value){
             		if(value.id === code){
-            			fullName = value.name;
+            			fullName = getTidyName(value.name);
             			return;
             		}
             	});
