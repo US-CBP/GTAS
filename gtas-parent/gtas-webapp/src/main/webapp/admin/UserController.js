@@ -66,7 +66,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
             ok:"OK",
             template    : '<md-toast style="height:100%;margin-top:160px;position:fixed;z-index: 10000;"><div class="md-toast-content" style="height:100%">Password Criteria:'+
     			'<ul><li>10 to 20 characters</li>'+
-    			'<li>At least one special character (!@#$^?*)</li>'+
+    			'<li>At least one special character (!@#$%^&*)</li>'+
     			'<li>At least one number</li>'+
     			'<li>At least one letter</li>'+
     			'<li>At least one upper case character</li>'+
@@ -111,7 +111,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
         if($scope.updatedPassword)
         	{
         		var enteredPassword = $scope.updatedPassword;
-        		var passwordRegEx = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@\^!*#?])[A-Za-z\d$@!*#?\^]{10,20}$/;
+        		var passwordRegEx = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*^#?&])[A-Za-z\d$@$!%*^#?&]{10,20}$/;
         		var regExResult = passwordRegEx.test(enteredPassword);
 		  
         		if(!regExResult)
