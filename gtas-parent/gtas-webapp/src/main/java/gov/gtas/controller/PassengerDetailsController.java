@@ -188,12 +188,16 @@ public class PassengerDetailsController {
 				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
 				bagVoOptional.ifPresent(tempVo::addBag);
 				for (Seat s : p.getSeatAssignments()) {
-					SeatVo seatVo = new SeatVo();
-					seatVo.setFirstName(p.getPassengerDetails().getFirstName());
-					seatVo.setLastName(p.getPassengerDetails().getLastName());
-					seatVo.setNumber(s.getNumber());
-					seatVo.setFlightNumber(flight.getFullFlightNumber());
-					tempVo.addSeat(seatVo);
+          // exclude APIS seat data
+          if (!s.getApis()) {
+            SeatVo seatVo = new SeatVo();
+            seatVo.setFirstName(p.getPassengerDetails().getFirstName());
+            seatVo.setLastName(p.getPassengerDetails().getLastName());
+            seatVo.setNumber(s.getNumber());
+            seatVo.setApis(s.getApis());
+            seatVo.setFlightNumber(flight.getFullFlightNumber());
+            tempVo.addSeat(seatVo);
+          }
 				}
 			}
 
