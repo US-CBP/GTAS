@@ -5,6 +5,7 @@
  */
 package gov.gtas.services.security;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -199,13 +200,18 @@ public class UserServiceImpl implements UserService {
 			}
 
 			entity.setActive(mappedEnity.getActive());
-			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
-				Set<Role> oRoles = entity.getRoles();
-				oRoles.clear();
-				Set<Role> roleCollection = roleServiceUtil
-						.mapEntityCollectionFromRoleDataSet(data.getRoles());
-				oRoles.addAll(roleCollection);
-				entity.setRoles(oRoles);
+			if (data.getRoles() != null) {// && !data.getRoles().isEmpty()) {
+				if(!data.getRoles().isEmpty()) {
+					Set<Role> oRoles = entity.getRoles();
+					oRoles.clear();
+					Set<Role> roleCollection = roleServiceUtil
+							.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					oRoles.addAll(roleCollection);
+					entity.setRoles(oRoles);
+				}
+				else {
+					entity.setRoles(new HashSet<Role>());
+				}
 			}
 
 			User savedEntity = userRepository.save(entity);
