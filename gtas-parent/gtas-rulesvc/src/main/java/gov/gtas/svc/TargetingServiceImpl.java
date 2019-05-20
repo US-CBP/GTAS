@@ -671,13 +671,17 @@ public class TargetingServiceImpl implements TargetingService {
 		try {
 			if (targetingServiceResults != null) {
 				Set<Long> uniqueFlights = new HashSet<>();
-				caseDispositionRepository.saveAll(targetingServiceResults.getCaseSet());
-				hitsSummaryRepository.saveAll(targetingServiceResults.getHitsSummaryList());
-				passengerService.createDisposition(targetingServiceResults.getHitsSummaryList());
-				for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
-					uniqueFlights.add(s.getFlightId());
+				//The hits summary and the cases can be null or empty due to filtering date - checks required before save.
+				if (targetingServiceResults.getCaseSet() != null && !(targetingServiceResults.getCaseSet().isEmpty())) {
+					caseDispositionRepository.saveAll(targetingServiceResults.getCaseSet());
 				}
-		//		writeAuditLogForTargetingRun(targetingServiceResults);
+				if (targetingServiceResults.getHitsSummaryList() != null && !(targetingServiceResults.getHitsSummaryList().isEmpty())) {
+					hitsSummaryRepository.saveAll(targetingServiceResults.getHitsSummaryList());
+					for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
+						uniqueFlights.add(s.getFlightId());
+					}
+				}
+				passengerService.createDisposition(targetingServiceResults.getHitsSummaryList());
 				updateFlightHitCounts(uniqueFlights);
 			}
 		} catch (Exception e) {
