@@ -41,8 +41,13 @@ import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.util.FlightUtils;
 import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.util.MathUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
+
+    private Logger logger = LoggerFactory.getLogger(PaxlstParserUNedifact.class);
+
     public PaxlstParserUNedifact() {
         this.parsedMessage = new ApisMessageVo();
     }
@@ -174,8 +179,8 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                         dest = airport;
                         loc92Seen = false;
                     } else {
-                        throw new ParseException("LOC+" + LocCode.FINAL_DESTINATION + " found but no corresponding LOC+"
-                                + LocCode.BOTH_DEPARTURE_AND_ARRIVAL_AIRPORT);
+                        logger.error("Final destination error. No LOC 92 seen before LOC 130 " +
+                                "Arrival country booking details are likely incomplete for flight!");
                     }
                     break;
             }
