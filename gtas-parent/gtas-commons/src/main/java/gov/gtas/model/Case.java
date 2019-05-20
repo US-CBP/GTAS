@@ -57,9 +57,6 @@ public class Case extends BaseEntityAudit {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "description", nullable = true)
-    private String description;
-
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
 
@@ -212,14 +209,6 @@ public class Case extends BaseEntityAudit {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getPaxName() {
