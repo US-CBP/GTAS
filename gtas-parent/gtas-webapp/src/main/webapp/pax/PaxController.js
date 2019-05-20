@@ -16,7 +16,7 @@
       $scope.ruleCats=ruleCats.data;
       $scope.slides = [];
       $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
-
+      
       $scope.getAttachment = function(paxId){
         //TO-DO add specific pax-id here to grab from current passenger
         paxDetailService.getPaxAttachments(paxId).then(function(data){
