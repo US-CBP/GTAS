@@ -162,6 +162,9 @@
         $scope.passenger.pnrVo.flightLegs = reorderTVLdata($scope.passenger.pnrVo.flightLegs);
           $scope.orderedFlightLegs = setId($scope.passenger.pnrVo.flightLegs);
           $scope.orderedBags = getPassengerBags($scope.orderedFlightLegs);
+
+          var raw = $scope.passenger.pnrVo.raw;
+          $scope.passenger.pnrVo.documents = $scope.passenger.pnrVo.documents.filter(doc => raw.includes(doc.documentNumber));
       }
 
       //Removes extraneous characters from rule hit descriptions
