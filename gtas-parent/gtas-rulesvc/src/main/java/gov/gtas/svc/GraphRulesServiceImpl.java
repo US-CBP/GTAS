@@ -198,7 +198,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setHitType(HitTypeEnum.GH);
                     rhd.setPassenger(passenger);
                     rhd.setTitle(graphRule.getTitle());
-                    rhd.setDescription(graphRule.getCipherQuery());
+                    rhd.setDescription(graphRule.getDescription());
                     rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
                     rhd.setHitCount(1);
                     rhd.setRuleId(graphRule.getId());
