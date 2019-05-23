@@ -271,14 +271,14 @@ public class MatchingContext {
 
                             clauseHits.add(derogRecord.get("derogId"));
 
-                        }else if (traveler.get("partial_metaphones").equals(derogRecord.get("partial_metaphones"))) {
+                        }/*else if (traveler.get("partial_metaphones").equals(derogRecord.get("partial_metaphones"))) {
 
                             logger.info("Partial hit for traveler={}, derog={}.", traveler.get("full_name"),
                                     derogRecord.get("full_name"));
                             partiallyMatched=true;
                             clauseHits.add(derogRecord.get("derogId"));
 
-                        }else if(this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
+                        }*/else if(this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
                             logger.info("Jaro Winkler Distance hit for traveler={}, derog={}.", traveler.get("full_name"),
                                     derogRecord.get("full_name"));
                             jaroWinklerDistanceMatched=true;
