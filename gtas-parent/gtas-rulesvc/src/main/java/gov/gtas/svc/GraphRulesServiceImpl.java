@@ -100,13 +100,22 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                 HitsSummary existingHitsSummary = paxHitSummary.get(ruleHitDetail.getPassengerId());
                 HitDetail hitDetail = getHitDetail(ruleHitDetail, existingHitsSummary);
                 if (existingHitsSummary.getHitdetails().add(hitDetail)) {
+                    int graphHitCounts = 0;
+                    for (HitDetail hd : existingHitsSummary.getHitdetails()) {
+                        if (hd.getHitType() != null && HitTypeEnum.GH.name().equalsIgnoreCase(hd.getHitType())) {
+                            graphHitCounts++;
+                        }
+                    }
+                    existingHitsSummary.setGraphHitCount(graphHitCounts);
                     existingHitsSummary.setSaveHits(true);
                     totalHits++;
                 }
+
             } else {  // new hits.
                 HitsSummary hitsSummary = getHitsSummary(ruleHitDetail);
                 HitDetail hitDetail = getHitDetail(ruleHitDetail, hitsSummary);
                 hitsSummary.getHitdetails().add(hitDetail);
+                hitsSummary.setGraphHitCount(1);
                 paxHitSummary.put(ruleHitDetail.getPassengerId(), hitsSummary);
                 newHitSummary++;
                 totalHits++;
