@@ -256,7 +256,7 @@ public class TargetingServiceImpl implements TargetingService {
     @Transactional
     public RuleResultsWithMessageStatus analyzeLoadedMessages(
             List<MessageStatus> source) {
-        logger.info("Entering analyzeLoadedMessages()");
+        logger.debug("Entering analyzeLoadedMessages()");
 
         RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
         if (source.isEmpty()) {
@@ -273,7 +273,7 @@ public class TargetingServiceImpl implements TargetingService {
 
         RuleResults ruleResults = null;
         try {
-            logger.info("About to execute rules");
+            logger.debug("About to execute rules");
             ruleResults = executeRules(target);
             logger.info("updating messages status from loaded to analyzed.");
             for (MessageStatus ms : procssedMessages) {
@@ -380,7 +380,7 @@ public class TargetingServiceImpl implements TargetingService {
 
     public RuleExecutionContext createPnrApisRequestContext(
             final List<Message> loadedMessages) {
-        logger.info("Entering createPnrApisRequestContext().");
+        logger.debug("Entering createPnrApisRequestContext().");
         List<Pnr> pnrList = new ArrayList<>();
         List<ApisMessage> apisMessages = new ArrayList<>();
         if (loadedMessages != null) {
