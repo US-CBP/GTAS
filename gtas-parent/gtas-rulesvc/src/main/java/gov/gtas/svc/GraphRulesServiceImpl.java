@@ -158,7 +158,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
         hitDetail.setHitType(ruleHitDetail.getHitType().toString());
         hitDetail.setRuleId(ruleHitDetail.getRuleId());
         hitDetail.setTitle(ruleHitDetail.getTitle());
-        hitDetail.setRuleConditions(ruleHitDetail.getDescription());
+        hitDetail.setRuleConditions(ruleHitDetail.getCipherQuery());
         return hitDetail;
     }
 
@@ -206,6 +206,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setPassengerType(PassengerTypeCode.P);
                     rhd.setFlightId(passenger.getFlight().getId());
                     rhd.setUdrRuleId(GRAPH_DATABASE_INDICATOR);
+                    rhd.setCipherQuery(graphRule.getCipherQuery());
                     ruleHitDetails.add(rhd);
                 }
             }
