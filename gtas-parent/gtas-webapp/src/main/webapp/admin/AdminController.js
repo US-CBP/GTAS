@@ -82,15 +82,12 @@ var setCountryCodeData = function (data) {
 var setCodeData = function (data) {
   if ($scope.activeCodeTab === 'airport'){
     $scope.airportGrid.data = data;
-    // console.log($scope.airportGrid.columnDefs);
   }
   else if ($scope.activeCodeTab === 'country') {
     $scope.countryGrid.data = data;
-    // console.log($scope.countryGrid.columnDefs);
   }
   else {
     $scope.carrierGrid.data = data;
-    // console.log($scope.carrierGrid.columnDefs);
   }
 };
 
@@ -187,7 +184,6 @@ $scope.refreshActiveCodeGrid = function(){
     $scope.rowSelected = {};
     $scope.codeAction = 'Add';
 
-    console.log($scope.rowSelected);
     $mdSidenav('codeSidebar').open();
   };
 
@@ -195,8 +191,6 @@ $scope.refreshActiveCodeGrid = function(){
     $scope.toastParent = $document[0].getElementById($scope.activeCodeTab+'Grid');
     var action = $scope.codeAction;
     var isEqual = true;
-
-    console.log($scope.rowSelected);
 
     // am deliberately using != instead of !== to allow type coersion in the comparison below
     // until we add logic to enforce types in the inputs for any non-string fields.
@@ -209,16 +203,15 @@ $scope.refreshActiveCodeGrid = function(){
     delete $scope.rowSelected.$$hashKey;
 
     if (!isEqual){
-      console.log('UPDATED, will save');
       var result;
 
       if (action === 'Edit')
-        result = codeService.updateCode($scope.activeCodeTab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+        result = codeService.updateCode($scope.activeCodeTab, $scope.rowSelected)
+        .then($scope.refreshActiveCodeGrid, $scope.errorToast);
       else
         result = codeService.createCode($scope.activeCodeTab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
     }
     else {
-      console.log('NOT UPDATED');
       $mdSidenav('codeSidebar').close();
       $scope.errorToast('No changes to the record were detected');
     }
@@ -226,11 +219,6 @@ $scope.refreshActiveCodeGrid = function(){
 
   $scope.deleteCode = function () {
     $scope.toastParent = $document[0].getElementById($scope.activeCodeTab+'Grid');
-    // (codeAction === Add) => error
-    // (rowSelected.id === undef) => error
-
-    console.log('DELETE for: ', $scope.codeAction, $scope.activeCodeTab);
-    console.log($scope.rowSelected);
 
     codeService.deleteCode($scope.activeCodeTab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
   };
@@ -256,7 +244,6 @@ $scope.refreshActiveCodeGrid = function(){
       errorService.getErrorData(model.code, model.timestampStart, model.timestampEnd).then(setErrorData, $scope.errorToast);
   };
   $scope.errorToast = function(error){
-    console.log('toast');
       $mdToast.show($mdToast.simple()
         .content(error)
         .action('OK')
