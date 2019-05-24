@@ -57,7 +57,7 @@
           <tr>
             <td class="half-width txt-right"><strong>Nationality</strong></td>
             <td class="half-width">
-            <span ng-mouseleave="resetTooltip()"><strong>{{passenger.nationality}}</strong>
+            <span ng-mouseleave="resetTooltip()">{{passenger.nationality}}
               <md-tooltip class="multi-tooltip" md-direction="right">
                 <div>{{getCodeTooltipData(passenger.nationality,"country")}}</div>
               </md-tooltip>
@@ -67,7 +67,7 @@
   
             <td class="half-width txt-right"><strong>Residence</strong></td>
             <td class="half-width">
-              <span ng-mouseleave="resetTooltip()"><strong> {{passenger.residencyCountry}}</strong>
+              <span ng-mouseleave="resetTooltip()">{{passenger.residencyCountry}}
                 <md-tooltip class="multi-tooltip" md-direction="right">
                   <div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
                 </md-tooltip>
@@ -81,7 +81,9 @@
       <table class="table table-responsive table-condensed table-borderless">
           <tr>
             <td class="half-width txt-right"><strong>Seat</strong></td>
-            <td class="half-width"><strong><a ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a></strong></td>
+            <td class="half-width">
+              <a class="primary-link" title="Show seat map" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
+            </td>
           </tr>
           <tr>
             <td class="half-width txt-right"><strong>Passenger Type</strong></td>
@@ -90,7 +92,7 @@
           <tr>
             <td class="half-width txt-right"><strong>Embarkation</strong></td>
             <td class="half-width"><div>
-              <span ng-mouseleave="resetTooltip()"> <strong>{{ passenger.flightOrigin }}</strong>
+              <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
                 <md-tooltip class="multi-tooltip" md-direction="right">
                   <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
                   </md-tooltip>
@@ -100,10 +102,10 @@
           <tr>
             <td class="half-width txt-right"><strong>Debarkation</strong></td>
             <td class="half-width"><div>
-                <span ng-mouseleave="resetTooltip()"> <strong>{{ passenger.flightDestination }}</strong>
+                <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
                   <md-tooltip class="multi-tooltip" md-direction="right">
                     <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
-                    </md-tooltip>
+                  </md-tooltip>
                 </span></div>
               </td>
             </tr>
@@ -120,9 +122,20 @@
               <div>
                 <ol class="nav-steps">
                   <li ng-repeat="leg in passenger.pnrVo.flightLegs" ng-class="{active : leg.flightId !== null}">
-                    <span class="small">{{leg.originAirport}}</span>
+                    <span ng-mouseleave="resetTooltip()"> <strong>{{ leg.originAirport }}</strong>
+                      <md-tooltip class="multi-tooltip" md-direction="bottom">
+                        <div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div>
+                      </md-tooltip>
+                    </span>
                   </li>
-                  <li><span class="small">{{passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport}}</span></li>
+                  <li>
+                    <span ng-mouseleave="resetTooltip()" class="small">
+                      <strong>{{passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport}}</strong>
+                      <md-tooltip class="multi-tooltip" md-direction="bottom">
+                        <div>{{getCodeTooltipData(passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport,"airport")}}</div>
+                      </md-tooltip>
+                    </span>
+                  </li>
                 </ol>
               </div>
             </td>
@@ -180,8 +193,6 @@
     <div>
   
   
-  
-  
       <section>
       <!--  ACTION BUTTONS  -->
       <div class="flex justify-around action-buttons">
@@ -222,7 +233,6 @@
                               <th>Doc #</th>
                               <th>Status</th>
                               <th>Top Rule Category </th>
-                              <th>Description</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -232,7 +242,6 @@
                               <td>{{case.document}}</td>
                               <td>{{case.status}}</td>
                               <td>{{casesListWithCats[case.highPriorityRuleCatId]}}</td>
-                              <td>{{case.description}}</td>
                             </tr>
                             </tbody>
                           </table>
@@ -314,15 +323,12 @@
                       </div>
                     </div>
   
-                    <div class="flex justify-around flex-wrap" ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
-                      <div class="full-width cbp-card-container gtas-card-container">
+                      <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                         <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top" >Hits Summary</h4>
-                          <div class="panel-body flex flex-vert ie-fix-md">
-  
-  
-                            <table class="cbp-table-selectable mdl-js-data-table">
-                              <thead>
+                            <h4 class="h-label no-margin-top" >Hits Summary</h4>
+                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                <thead>
                               <tr>
                                 <th>Category</th>
                                 <th>Title</th>
@@ -333,14 +339,14 @@
                               <tr ng-repeat="j in ruleHits track by $index">
                                 <td>{{j.category}}</td>
                                 <td>{{j.title}}</td>
-                                <td width="100px">{{j.ruleConditions}}</td>
+                                <td>{{j.ruleConditions}}</td>
                               </tr>
                               </tbody>
                             </table>
                           </div>
                         </div>
-                      </div>
                     </div>
+
                   </div>
                 </div>
             </md-tab>
@@ -354,7 +360,7 @@
                   <div class="cbp-card-container full-width">
                     <div class="cbp-card cbp-card-shadow">
                       <h4 class="h-label no-margin-top" >
-                        Total Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
+                        Total APIS Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
                         <span class="right-header">
                         Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
                       </span>
@@ -428,7 +434,7 @@
                         <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                           <td>{{flightpax.firstName}}</td>
                           <td>{{flightpax.middleName}}</td>
-                          <td><a class="md-primary md-default-theme" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail" style="text-decoration: none; font-weight: bold;" >{{flightpax.lastName}}</a></td>
+                          <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail">{{flightpax.lastName}}</a></td>
                           <td>
                               <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
                         <md-tooltip class="multi-tooltip" md-direction="left">
@@ -502,7 +508,8 @@
                                 <tbody>
                                 <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                   <td style="align-items: center;">{{leg.legNumber }}</td>
-                                  <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;"><a href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                  <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
+                                    <a class="primary-link" title="Show flight details" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
                                   <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                   <td>
                                     <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -540,7 +547,7 @@
                                 <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
                                   <td>{{ pass.firstName }}</td>
                                   <td>{{ pass.middleName }}</td>
-                                  <td><a href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
+                                  <td><a title="Show passenger detail" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                   <td>
                                     <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
                                       <md-tooltip class="multi-tooltip" md-direction="left">
@@ -793,7 +800,7 @@
                     <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
                         <h4 class="h-label no-margin-top">
-                          Total PNR Baggage Count ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
+                          Total PNR Baggage ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
                           <span class="right-header">Baggage Weight ({{passenger.pnrVo.baggageWeight}} Kg)</span>
                         </h4>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
@@ -911,11 +918,8 @@
                         <tbody>
                         <tr ng-repeat="k in flight | orderBy:'-etd'">
                           <td ng-if="!k.bookingDetail">
-                            <a class="md-primary md-default-theme"
-                               href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
-                               target="pax.detail" title="Show passenger detail"
-                               style="text-decoration: none;
-                                font-weight: bold;" >
+                            <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                               target="pax.detail" title="Show passenger detail">
                               {{k.fullFlightNumber}}</a>
                           </td>
                           <td class="md-primary md-default-theme"

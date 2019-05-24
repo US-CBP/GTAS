@@ -100,9 +100,9 @@ FROM   cases c
        left join `hit_detail` h_detail
        		  on (h_summary.`id` = h_detail.`hits_summary_id`)
        left join `airport` debark_ar
-       		  on (debark_ar.iata=td.debarkation and debark_ar.country=td.debark_country)
+       		  on (td.debarkation is not null and td.debarkation != '' and debark_ar.iata=td.debarkation)
         left join `airport` embark_ar
-       		  on (embark_ar.iata=td.embarkation and embark_ar.country=td.embark_country)
+       		  on (td.embarkation is not null and td.embarkation != '' and embark_ar.iata=td.embarkation)
        left join `pax_watchlist_link` pax_watchlist
 		on (pax_watchlist.passenger_id=p.id)
        left join `seat` seat 

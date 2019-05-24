@@ -144,7 +144,7 @@ public class MatchingServiceImpl implements MatchingService {
         MatcherParameters matcherParameters = new MatcherParameters();
         matcherParameters.setCaseMap(createCaseMap(passengers, this.caseDispositionService));
         matcherParameters.setRuleCatMap(createRuleCatMap(caseDispositionService));
-        matcherParameters.set_watchlists(watchlistRepository.getWatchlistByNames(Arrays.asList("Passenger", "Document")));
+        matcherParameters.set_watchlists(watchlistRepository.getWatchlistByNames(Collections.singletonList("Passenger")));
         Map<Long, List<WatchlistItem>> watchlistListMap = new HashMap<>();
         for (Watchlist watchlist : matcherParameters.get_watchlists()) {
             List<WatchlistItem> watchlistsItemList = watchlistItemRepository

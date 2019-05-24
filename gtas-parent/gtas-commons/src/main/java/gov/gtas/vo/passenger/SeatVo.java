@@ -34,7 +34,7 @@ public class SeatVo {
 	 * @param coTravellers
 	 */
 	public SeatVo(String seatNumber, Long flightId, Long paxId, String firstName, String lastName, String middleInitial,
-			boolean hasHits, String[] coTravellers, String refNumber) {
+			boolean hasHits, String[] coTravellers, String refNumber, Boolean apis) {
 		super();
 		this.number = seatNumber;
 		this.flightId = flightId;
@@ -45,6 +45,7 @@ public class SeatVo {
 		this.hasHits = hasHits;
 		this.coTravellers = coTravellers;
 		this.refNumber = refNumber;
+		this.apis = apis;
 	}
 	
 	

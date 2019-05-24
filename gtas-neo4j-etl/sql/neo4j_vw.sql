@@ -104,8 +104,6 @@ AND f.flight_number IS NOT NULL
 AND f.etd_date IS NOT NULL
 AND f.full_flight_number IS NOT NULL 
 AND f.etd_date IS NOT NULL
-AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
-AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
 
 UNION ALL
 
@@ -205,6 +203,4 @@ AND pd.pd_last_name IS NOT NULL
  AND f.etd_date IS NOT NULL
  AND f.full_flight_number IS NOT NULL 
  AND f.etd_date IS NOT NULL
- AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
- AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
  ORDER BY gtas_message_id,flight_id,gtas_passenger_id 

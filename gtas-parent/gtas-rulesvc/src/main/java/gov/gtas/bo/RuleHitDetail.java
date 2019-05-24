@@ -54,6 +54,8 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	@JsonIgnore
 	private Passenger passenger;
 
+	private String cipherQuery;
+
 
 	public RuleHitDetail() {
 	}
@@ -332,6 +334,14 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		return (RuleHitDetail) super.clone();
 	}
 
+	public String getCipherQuery() {
+		return cipherQuery;
+	}
+
+	public void setCipherQuery(String cipherQuery) {
+		this.cipherQuery = cipherQuery;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.ruleId, this.passengerId, this.flightId, this.hitType);
@@ -349,4 +359,5 @@ public class RuleHitDetail implements Serializable, Cloneable {
 				&& Objects.equals(this.flightId, other.flightId)
 				&& Objects.equals(this.hitType, other.getHitType());
 	}
+
 }

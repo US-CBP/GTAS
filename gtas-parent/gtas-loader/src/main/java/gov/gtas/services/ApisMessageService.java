@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 import gov.gtas.model.*;
@@ -267,6 +268,26 @@ public class ApisMessageService extends MessageLoaderService {
                         .filter(flightPax -> "APIS".equalsIgnoreCase(flightPax.getMessageSource()))
                         .findFirst()
                         .orElse( new FlightPax(p.getId()));
+
+                Set<Bag> apisBags = p.getBags()
+                        .stream()
+                        .filter(b -> "APIS".equalsIgnoreCase(b.getData_source()))
+                        .filter(Bag::isPrimeFlight)
+                        .collect(Collectors.toSet());
+
+                WeightCountDto weightCountDto = getBagStatistics(apisBags);
+                fp.setAverageBagWeight(weightCountDto.average());
+                if (weightCountDto.getWeight() == null) {
+                    fp.setBagWeight(0D);
+                } else {
+                    fp.setBagWeight(weightCountDto.getWeight());
+                }
+                if (weightCountDto.getCount() == null) {
+                    fp.setBagCount(0);
+                } else {
+                    fp.setBagCount(weightCountDto.getCount());
+                }
+
                 fp.getApisMessage().add(apisMessage);
                 fp.setDebarkation(p.getPassengerTripDetails().getDebarkation());
                 fp.setDebarkationCountry(p.getPassengerTripDetails().getDebarkCountry());
@@ -279,24 +300,6 @@ public class ApisMessageService extends MessageLoaderService {
                 fp.setResidenceCountry(p.getPassengerDetails().getResidencyCountry());
                 fp.setTravelerType(p.getPassengerDetails().getPassengerType());
                 fp.setReservationReferenceNumber(p.getPassengerTripDetails().getReservationReferenceNumber());
-                int bCount = 0;
-                if (StringUtils.isNotBlank(p.getPassengerTripDetails().getBagNum())) {
-                    try {
-                        bCount = Integer.parseInt(p.getPassengerTripDetails().getBagNum());
-                    } catch (NumberFormatException e) {
-                        bCount = 0;
-                    }
-                }
-                fp.setBagCount(bCount);
-                try {
-                    double weight = p.getPassengerTripDetails().getTotalBagWeight() == null ? 0 : Double.parseDouble(p.getPassengerTripDetails().getTotalBagWeight());
-                    fp.setBagWeight(weight);
-                    if (weight > 0 && bCount > 0) {
-                        fp.setAverageBagWeight(Math.round(weight / bCount));
-                    }
-                } catch (NumberFormatException e) {
-
-                }
                 if (StringUtils.isNotBlank(fp.getDebarkation()) && StringUtils.isNotBlank(fp.getEmbarkation())) {
                     if (homeAirport.equalsIgnoreCase(fp.getDebarkation()) || homeAirport.equalsIgnoreCase(fp.getEmbarkation())) {
                         p.getPassengerTripDetails().setTravelFrequency(p.getPassengerTripDetails().getTravelFrequency() + 1);

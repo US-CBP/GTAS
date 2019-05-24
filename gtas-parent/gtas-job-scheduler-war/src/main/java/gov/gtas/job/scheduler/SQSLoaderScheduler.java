@@ -64,7 +64,7 @@ public class SQSLoaderScheduler {
 		}
 		try {
 
-			logger.info("Scheduler pulling for messages ..... ");
+			logger.debug("Scheduler pulling for messages ..... ");
 			
 			if(this.queueService == null) {
 				this.queueService = new QueueService(this.queue, this.region);

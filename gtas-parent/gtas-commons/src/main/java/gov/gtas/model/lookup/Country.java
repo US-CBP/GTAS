@@ -35,14 +35,26 @@ public class Country extends BaseEntity {
     public String getIso2() {
         return iso2;
     }
+    public void setIso2(String data) {
+      this.iso2 = data;
+    }
     public String getIso3() {
         return iso3;
+    }
+    public void setIso3(String data) {
+      this.iso3 = data;
     }
     public String getName() {
         return name;
     }
+    public void setName(String data) {
+      this.name = data;
+    }
     public String getIsoNumeric() {
         return isoNumeric;
+    }
+    public void setIsoNumeric(String data) {
+      this.isoNumeric = data;
     }
     
     @Override

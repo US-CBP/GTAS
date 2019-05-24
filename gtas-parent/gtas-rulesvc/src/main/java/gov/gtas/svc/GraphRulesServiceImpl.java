@@ -67,7 +67,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
         Boolean neo4J = Boolean.valueOf(
                 appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue()
         );
-        if (neo4J) {
+        if (neo4J && neo4JConfig.enabled()) {
             this.neo4JClient = new Neo4JClient(url, neo4JConfig.neoUserName(), neo4JConfig.neoPassword());
         } else {
             this.neo4JClient = null;
@@ -100,13 +100,22 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                 HitsSummary existingHitsSummary = paxHitSummary.get(ruleHitDetail.getPassengerId());
                 HitDetail hitDetail = getHitDetail(ruleHitDetail, existingHitsSummary);
                 if (existingHitsSummary.getHitdetails().add(hitDetail)) {
+                    int graphHitCounts = 0;
+                    for (HitDetail hd : existingHitsSummary.getHitdetails()) {
+                        if (hd.getHitType() != null && HitTypeEnum.GH.name().equalsIgnoreCase(hd.getHitType())) {
+                            graphHitCounts++;
+                        }
+                    }
+                    existingHitsSummary.setGraphHitCount(graphHitCounts);
                     existingHitsSummary.setSaveHits(true);
                     totalHits++;
                 }
+
             } else {  // new hits.
                 HitsSummary hitsSummary = getHitsSummary(ruleHitDetail);
                 HitDetail hitDetail = getHitDetail(ruleHitDetail, hitsSummary);
                 hitsSummary.getHitdetails().add(hitDetail);
+                hitsSummary.setGraphHitCount(1);
                 paxHitSummary.put(ruleHitDetail.getPassengerId(), hitsSummary);
                 newHitSummary++;
                 totalHits++;
@@ -158,7 +167,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
         hitDetail.setHitType(ruleHitDetail.getHitType().toString());
         hitDetail.setRuleId(ruleHitDetail.getRuleId());
         hitDetail.setTitle(ruleHitDetail.getTitle());
-        hitDetail.setRuleConditions(ruleHitDetail.getDescription());
+        hitDetail.setRuleConditions(ruleHitDetail.getCipherQuery());
         return hitDetail;
     }
 
@@ -198,7 +207,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setHitType(HitTypeEnum.GH);
                     rhd.setPassenger(passenger);
                     rhd.setTitle(graphRule.getTitle());
-                    rhd.setDescription(graphRule.getCipherQuery());
+                    rhd.setDescription(graphRule.getDescription());
                     rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());
                     rhd.setHitCount(1);
                     rhd.setRuleId(graphRule.getId());
@@ -206,6 +215,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setPassengerType(PassengerTypeCode.P);
                     rhd.setFlightId(passenger.getFlight().getId());
                     rhd.setUdrRuleId(GRAPH_DATABASE_INDICATOR);
+                    rhd.setCipherQuery(graphRule.getCipherQuery());
                     ruleHitDetails.add(rhd);
                 }
             }

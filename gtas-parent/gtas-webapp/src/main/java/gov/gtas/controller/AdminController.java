@@ -10,11 +10,17 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.ApiAccess;
 import gov.gtas.model.AuditRecord;
+import gov.gtas.model.lookup.Carrier;
+import gov.gtas.model.lookup.Country;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ApiAccessService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.CarrierService;
+import gov.gtas.services.AirportService;
+import gov.gtas.services.CountryService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
@@ -63,8 +69,8 @@ public class AdminController {
         public static final String APIS_VERSION = "APIS_VERSION";
         public static final String MAX_RULE_HITS = "MAX_RULE_HITS";
 
-        @Autowired
-        AppConfigurationService appConfigurationService;
+  @Autowired
+  AppConfigurationService appConfigurationService;
 
 	@Autowired
 	private AuditLogPersistenceService auditService;
@@ -73,7 +79,70 @@ public class AdminController {
 	private ErrorPersistenceService errorService;
 
 	@Autowired
-	private ApiAccessService apiAccessService;
+  private ApiAccessService apiAccessService;
+  
+	@Autowired
+  private CarrierService carrierService;
+  
+	@Autowired
+  private CountryService countryService;
+  
+	@Autowired
+  private AirportService airportService;
+
+  //carrier
+	@RequestMapping(method = RequestMethod.GET, value = "/carrier")
+	public List<Carrier> getAllCarrier(){
+		return carrierService.findAll();
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Carrier createCarrier(@RequestBody @Valid Carrier carrier) {
+		return carrierService.create(carrier);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Carrier updateCarrier(@RequestBody @Valid Carrier carrier) {
+		return carrierService.update(carrier);
+	}
+	@RequestMapping(method = RequestMethod.DELETE, value = "/carrier/{id}")
+	public Carrier deleteCarrier(@PathVariable Long id) {
+		return carrierService.delete(id);
+	}
+
+  //country
+	@RequestMapping(method = RequestMethod.GET, value = "/country")
+	public List<Country> getAllCountry(){
+		return countryService.findAll();
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Country createCountry(@RequestBody @Valid Country country) {
+		return countryService.create(country);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Country updateCountry(@RequestBody @Valid Country country) {
+		return countryService.update(country);
+	}
+	@RequestMapping(method = RequestMethod.DELETE, value = "/country/{id}")
+	public Country deleteCountry(@PathVariable Long id) {
+		return countryService.delete(id);
+	}
+
+  //airport
+	@RequestMapping(method = RequestMethod.GET, value = "/airport")
+	public List<Airport> getAllAirport(){
+		return airportService.findAll();
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Airport createAirport(@RequestBody @Valid Airport airport) {
+		return airportService.create(airport);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Airport updateAirport(@RequestBody @Valid Airport airport) {
+		return airportService.update(airport);
+	}
+	@RequestMapping(method = RequestMethod.DELETE, value = "/airport/{id}")
+	public Airport deleteAirport(@PathVariable Long id) {
+		return airportService.delete(id);
+	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/auditlog")
 	public List<AuditRecordVo> getAuditlog(
