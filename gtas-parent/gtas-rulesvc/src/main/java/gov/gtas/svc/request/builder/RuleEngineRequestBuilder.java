@@ -507,7 +507,7 @@ public class RuleEngineRequestBuilder {
             }
             PnrCreditCardLink pnrCreditCardLink = new PnrCreditCardLink(pnrId, cc
                     .getId());
-            if (this.creditCardLinks.contains(pnrCreditCardLink)) {
+            if (!this.creditCardLinks.contains(pnrCreditCardLink)) {
                 this.requestObjectList.add(pnrCreditCardLink);
                 this.creditCardLinks.add(pnrCreditCardLink);
             }

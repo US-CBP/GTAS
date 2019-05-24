@@ -59,7 +59,7 @@ public class RuleRunnerScheduler {
         }
         try {
             maxNumOfThreads = Integer.parseInt(
-                    appConfigurationService.findByOption(AppConfigurationRepository.THREADS_ON_LOADER).getValue());
+                    appConfigurationService.findByOption(AppConfigurationRepository.THREADS_ON_RULES).getValue());
         } catch (Exception e) {
             logger.error(String.format(
                     "Failed to load application configuration: '%1$s' from the database... Number of threads set to use %2$s",

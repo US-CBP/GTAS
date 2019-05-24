@@ -109,7 +109,9 @@ public class RuleRunnerThread implements Callable<Boolean> {
                     logger.info("Fuzzy Matching had " + fuzzyHits + " hits and Ran in  " + (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
                 }
             }
-            targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+            if (ruleResults.getMessageStatusList() != null) {
+                targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
+            }
             logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
         } catch (Exception exception) {
             String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage() : "Error in rule runner";
