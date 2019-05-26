@@ -52,7 +52,18 @@ public class CommonServicesConfig {
 		return pspc;
 	}
     
-    @Bean
+	/****
+	 * 
+	 * Redeploying the application on tomcat sometimes throws the exception "java.sql.SQLException: Data source is closed".
+	 * 
+	 * This is a standard Spring behavior and can be disabled following the suggestions on spring documentation linked below 
+	 * 
+	 * http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Bean.html#destroyMethod
+	 * 
+	 * To disable destroy method inference for a particular @Bean, specify an empty string as the value, e.g. @Bean(destroyMethod="")
+	 * 
+	 */
+    @Bean(destroyMethod = "")
     public DataSource dataSource() {
     	
     	DataSource dataSource = null;
