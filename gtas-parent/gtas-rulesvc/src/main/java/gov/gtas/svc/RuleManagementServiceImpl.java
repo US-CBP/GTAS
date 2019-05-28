@@ -71,7 +71,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 			}
 			kb = rulePersistenceService.saveKnowledgeBase(kb);
 			return kb;
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			logger.error(ioe.getMessage());
 			throw ErrorHandlerFactory.getErrorHandler().createException(
 					CommonErrorConstants.SYSTEM_ERROR_CODE,

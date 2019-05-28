@@ -10,9 +10,7 @@ package gov.gtas.job.scheduler;
 
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.model.*;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.MessageStatusRepository;
-import gov.gtas.repository.PassengerRepository;
+import gov.gtas.repository.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.PassengerService;
@@ -80,6 +78,7 @@ public class GraphRulesThread implements Callable<Boolean> {
                     .collect(Collectors.toSet());
             processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
             Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
+            Set<Flight> passengerFlights = passengers.stream().map(Passenger::getFlight).collect(Collectors.toSet());
             Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
             TargetingResultServices targetingResultServices = getTargetingResultOptions();
 
@@ -105,6 +104,7 @@ public class GraphRulesThread implements Callable<Boolean> {
             if (!batchedTargetingServiceResults.isEmpty()) {
                 logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
             }
+            graphRulesService.updateFlightGraphHitCount(passengerFlights);
         } catch (Exception e) {
             logger.warn("Exception running graph rules! ", e);
             processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));

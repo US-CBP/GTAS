@@ -74,11 +74,17 @@ public class FlightServiceImpl implements FlightService {
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
 			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
+			Integer fuzzyHits = 0;
 
-			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
-
+			if (f.getFlightHitsFuzzy() != null) {
+				fuzzyHits = f.getFlightHitsFuzzy().getHitCount();
+				vo.setFuzzyHitCount(fuzzyHits);
+			}
+			if (f.getFlightHitsGraph() != null) {
+				vo.setGraphHitCount(f.getFlightHitsGraph().getHitCount());
+			}
 			if (f.getFlightHitsWatchlist() != null) {
-				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount() + fuzzyHits);
+				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount());// + fuzzyHits);
 			}
 			if (f.getFlightHitsRule() != null) {
 				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());

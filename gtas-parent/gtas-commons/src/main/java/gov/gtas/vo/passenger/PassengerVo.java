@@ -58,6 +58,7 @@ public class PassengerVo extends BaseVo {
 
     // hits info
     private Boolean onRuleHitList = Boolean.FALSE;
+    private Boolean onGraphHitList = Boolean.FALSE;
     private Boolean onWatchList = Boolean.FALSE;
     private Boolean onWatchListDoc = Boolean.FALSE;
     private Boolean onWatchListLink = Boolean.FALSE;
@@ -386,5 +387,13 @@ public class PassengerVo extends BaseVo {
 
     public void setOnWatchListLink(Boolean onWatchListLink) {
         this.onWatchListLink = onWatchListLink;
+    }
+
+    public Boolean getOnGraphHitList() {
+        return onGraphHitList;
+    }
+
+    public void setOnGraphHitList(Boolean onGraphHitList) {
+        this.onGraphHitList = onGraphHitList;
     }
 }
