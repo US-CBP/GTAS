@@ -316,6 +316,9 @@ public class MatchingServiceImpl implements MatchingService {
                         passengerWLTimestamp.setWatchlistCheckTimestamp(new Date());
                     }
                     passengerWLTimestamp.setHitCount(fuzzyHitCounts);
+                    if (fuzzyHitCounts > 0) {
+                        totalMatchCount++;
+                    }
                     savingPassengerSet.add(passengerWLTimestamp);
                 } catch (Exception e) {
                     logger.error("failed to run watchlist check on passenger. " +
