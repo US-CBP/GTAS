@@ -35,6 +35,9 @@ public class PassengerWLTimestamp {
     @Column(name = "pwlt_watchlist_check_timestamp")
     private Date watchlistCheckTimestamp;
 
+	@Column(name = "pwlt_hit_count")
+	private Integer hitCount = 0;
+
 	public Date getWatchlistCheckTimestamp() {
 		return watchlistCheckTimestamp;
 	}
@@ -42,6 +45,14 @@ public class PassengerWLTimestamp {
 	@SuppressWarnings("unused")
 	public void setWatchlistCheckTimestamp(Date watchlistCheckTimestamp) {
 		this.watchlistCheckTimestamp = watchlistCheckTimestamp;
+	}
+
+	public Integer getHitCount() {
+		return hitCount;
+	}
+
+	public void setHitCount(Integer hitCount) {
+		this.hitCount = hitCount;
 	}
 
 	@Override

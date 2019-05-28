@@ -242,6 +242,7 @@ public class MatchingContext {
         boolean partiallyMatched=false;
         boolean jaroWinklerDistanceMatched=false;
         Set<String> clauseHits = new HashSet<>();
+        Map<String, String> clauseNameMap = new HashMap<>();
         for (List<String> clause : matchClauses) {
 
             // Find derog hits on this clause
@@ -255,6 +256,9 @@ public class MatchingContext {
                 logger.info("gtasId " + traveler.get("gtasId") + " matches derogIds " + clauseHits.toString()
                         + " on clause " + clause.toString());
                 logger.debug("Matched string: {}", concatenated);
+                for (String derogId : clauseHits) {
+                    clauseNameMap.put(derogId, "an exact name match");
+                }
             } else {
                 clauseHits = new HashSet<>();
             }
@@ -268,22 +272,17 @@ public class MatchingContext {
 
                             logger.info("Text distance hit for traveler={}, derog={}.", traveler.get("full_name"),
                                     derogRecord.get("full_name"));
+                            String derogId = derogRecord.get("derogId");
+                            clauseHits.add(derogId);
+                            clauseNameMap.put(derogId, derogRecord.get("full_name"));
 
-                            clauseHits.add(derogRecord.get("derogId"));
-
-                        }/*else if (traveler.get("partial_metaphones").equals(derogRecord.get("partial_metaphones"))) {
-
-                            logger.info("Partial hit for traveler={}, derog={}.", traveler.get("full_name"),
-                                    derogRecord.get("full_name"));
-                            partiallyMatched=true;
-                            clauseHits.add(derogRecord.get("derogId"));
-
-                        }*/else if(this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
+                        } else if(this.goodTextDistance(traveler.get("full_name"), derogRecord.get("full_name"))) {
                             logger.info("Jaro Winkler Distance hit for traveler={}, derog={}.", traveler.get("full_name"),
                                     derogRecord.get("full_name"));
                             jaroWinklerDistanceMatched=true;
-                            clauseHits.add(derogRecord.get("derogId"));
-
+                            String derogId = derogRecord.get("derogId");
+                            clauseHits.add(derogId);
+                            clauseNameMap.put(derogId, derogRecord.get("full_name"));
                         }
                     }
                 }
@@ -292,18 +291,19 @@ public class MatchingContext {
             // Build DerogHits only for new derogIds for this traveler
             for (String thisDerogId : clauseHits) {
                 if (!foundDerogIds.contains(thisDerogId)) {
+                    String ruleDescription = "Partial hit on " + clauseNameMap.get(thisDerogId)  ;
                     if (clause.size() == 1 && clause.get(0).equals("metaphones") ) {
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.9f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     } else if (partiallyMatched) {
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.8f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     } else if(jaroWinklerDistanceMatched)
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.80f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     else
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     foundDerogIds.add(thisDerogId);
                 }
             }
