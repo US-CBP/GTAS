@@ -47,18 +47,13 @@ public class CountryServiceImpl implements CountryService {
     @Override
     @Transactional
     public Country update(Country country) {
-        // not implemented
-        return null;
+      return countryRespository.save(country);
     }
 
     @Override
     @Transactional
     public Country findById(Long id) {
-        Country country = null;
-        List<Country> countries = (List<Country>)countryRespository.findOne(id);
-        if(countries != null && countries.size() >0)
-            country=countries.get(0);
-        return country;
+      return countryRespository.findById(id).orElse(null);
     }
 
     @Override

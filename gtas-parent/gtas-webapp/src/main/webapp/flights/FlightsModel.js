@@ -8,6 +8,8 @@ app.service("flightsModel", [function () {
     var defaultSort = [
             {column: 'listHitCount', dir: 'desc'},
             {column: 'ruleHitCount', dir: 'desc'},
+            {column: 'graphHitCount', dir: 'desc'},
+            {column: 'fuzzyHitCount', dir: 'desc'},
             {column: 'eta', dir: 'desc'}
         ],
         startDate = new Date(),

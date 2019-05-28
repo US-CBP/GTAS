@@ -31,8 +31,14 @@ public class Carrier extends BaseEntity {
     public String getName() {
         return name;
     }
+    public void setName(String data) {
+      this.name = data;
+    }
     public String getIata() {
         return iata;
+    }
+    public void setIata(String data) {
+      this.iata = data;
     }
     @Override
     public int hashCode() {

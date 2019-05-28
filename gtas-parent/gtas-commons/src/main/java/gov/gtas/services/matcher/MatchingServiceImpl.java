@@ -12,7 +12,6 @@ import static gov.gtas.repository.AppConfigurationRepository.QUICKMATCH_DOB_YEAR
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,6 +59,7 @@ public class MatchingServiceImpl implements MatchingService {
     private final PassengerRepository passengerRepository;
     private final WatchlistRepository watchlistRepository;
     private final CaseDispositionService caseDispositionService;
+    private final FlightFuzzyHitsRepository flightFuzzyHitsRepository;
 
     private final PassengerWatchlistRepository passengerWatchlistRepository;
 
@@ -72,12 +72,22 @@ public class MatchingServiceImpl implements MatchingService {
     private ObjectMapper mapper = new ObjectMapper();
     private static Logger logger = LoggerFactory.getLogger(MatchingService.class);
 
-    public MatchingServiceImpl(PaxWatchlistLinkRepository paxWatchlistLinkRepository, WatchlistItemRepository watchlistItemRepository, PassengerRepository passengerRepository, WatchlistRepository watchlistRepository, FlightRepository flightRepository, CaseDispositionService caseDispositionService, PassengerWatchlistRepository passengerWatchlistRepository, AppConfigurationRepository appConfigRepository, ApplicationContext ctx, NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
+    public MatchingServiceImpl(
+            PaxWatchlistLinkRepository paxWatchlistLinkRepository,
+            WatchlistItemRepository watchlistItemRepository,
+            PassengerRepository passengerRepository,
+            WatchlistRepository watchlistRepository,
+            CaseDispositionService caseDispositionService,
+            FlightFuzzyHitsRepository flightFuzzyHitsRepository, PassengerWatchlistRepository passengerWatchlistRepository,
+            AppConfigurationRepository appConfigRepository,
+            ApplicationContext ctx,
+            NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
         this.paxWatchlistLinkRepository = paxWatchlistLinkRepository;
         this.watchlistItemRepository = watchlistItemRepository;
         this.passengerRepository = passengerRepository;
         this.watchlistRepository = watchlistRepository;
         this.caseDispositionService = caseDispositionService;
+        this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
         this.passengerWatchlistRepository = passengerWatchlistRepository;
         this.appConfigRepository = appConfigRepository;
         this.ctx = ctx;
@@ -144,11 +154,14 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     private MatcherParameters getMatcherParameters(List<Long> passengers) {
+        logger.debug("getting matcher parameters");
         MatcherParameters matcherParameters = new MatcherParameters();
         matcherParameters.setCaseMap(createCaseMap(passengers, this.caseDispositionService));
         matcherParameters.setRuleCatMap(createRuleCatMap(caseDispositionService));
         matcherParameters.set_watchlists(watchlistRepository.getWatchlistByNames(Collections.singletonList("Passenger")));
         Map<Long, List<WatchlistItem>> watchlistListMap = new HashMap<>();
+        logger.debug("getting items");
+
         for (Watchlist watchlist : matcherParameters.get_watchlists()) {
             List<WatchlistItem> watchlistsItemList = watchlistItemRepository
                     .getItemsByWatchlistName(watchlist.getWatchlistName());
@@ -157,19 +170,22 @@ public class MatchingServiceImpl implements MatchingService {
         matcherParameters.setWatchlistListMap(watchlistListMap);
         matcherParameters.setThreshold(Float
                 .parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue())));
+        logger.debug("got matcher parameters");
         return matcherParameters;
     }
 
-    public boolean performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
-        logger.debug("Starting perform fuzzy matching");
-        boolean isHit = false;
+    public int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
         QuickMatcher qm = ctx.getBean(QuickMatcher.class);
+        logger.debug("Starting fuzzy matching");
+
         List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
+        int hitCounter = 0;
         for (Watchlist watchlist : watchlistsList) {
             if (passengerNeedsWatchlistCheck(passenger, watchlist)) {
                 Set<Long> wlItemIds = new HashSet<>();
                 for (PaxWatchlistLink paxWatchlistLink : passenger.getPaxWatchlistLinks()) {
                     wlItemIds.add(paxWatchlistLink.getWatchlistItem().getId());
+                    hitCounter++;
                 }
                 List<HashMap<String, String>> derogList = new ArrayList<>();
                 Map<Long, List<WatchlistItem>> watchlistMap = matcherParameters.getWatchlistListMap();
@@ -208,25 +224,27 @@ public class MatchingServiceImpl implements MatchingService {
                     for (String key : _responses.keySet()) {
                         List<DerogHit> derogs = _responses.get(key).getDerogIds();
                         for (DerogHit hit : derogs) {
+                            hitCounter++;
                             paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
                                     passenger.getId(), Long.parseLong(hit.getDerogId()));
                             Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
                             // make a call to open case here
                             nameMatchCaseMgmtUtils
                                     .processPassengerFlight(
-                                            hit.getWatchlistName(),
+                                            hit.getRuleDescription(),
                                             passenger,
                                             Long.parseLong(hit.getDerogId()),
                                             flight,
                                             existingCase,
                                             matcherParameters.getRuleCatMap());
-                            isHit = true;
                         }
                     }
                 }
             }
         }
-        return isHit;
+        logger.debug("ended fuzzy matching");
+
+        return hitCounter;
     }
 
 	private int getDobYearOffset(int dobYearOffset) {
@@ -302,28 +320,40 @@ public class MatchingServiceImpl implements MatchingService {
         long startTime = System.nanoTime();
         // get flights that are arriving between timeOffset and "now".
         long endTime = System.nanoTime();
-        logger.debug("Execution time for getFlightsWithinTimeRange() = " + (endTime - startTime) / 1000000 + "ms");
+        logger.debug("Execution to get initial matching data is = " + (endTime - startTime) / 1000000 + "ms");
         // Begin matching for all passengers on all flights retrieved within time frame.
         if (passengers != null && passengers.size() > 0) { // Don't try and match if no flights
             startTime = System.nanoTime();
             List<Long> passengerIds = new ArrayList<>();
-
+            Set<Flight> flights = new HashSet<>();
             Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
             MatcherParameters matcherParameters = getMatcherParameters(passengerIds);
             for (Passenger passenger : passengers) {
                 try {
-                    boolean isHit = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
-                    PassengerWLTimestamp passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
-                    savingPassengerSet.add(passengerWLTimestamp);
-                    if (isHit) {
-                        totalMatchCount++;
+                    flights.add(passenger.getFlight());
+                    int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
+                    PassengerWLTimestamp passengerWLTimestamp;
+                    if (passenger.getPassengerWLTimestamp() == null) {
+                        passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
+                    } else {
+                        passengerWLTimestamp = passenger.getPassengerWLTimestamp();
+                        passengerWLTimestamp.setWatchlistCheckTimestamp(new Date());
                     }
+                    passengerWLTimestamp.setHitCount(fuzzyHitCounts);
+                    savingPassengerSet.add(passengerWLTimestamp);
                 } catch (Exception e) {
                     logger.error("failed to run watchlist check on passenger. " +
                             "Will attempt a run on next pass.", e);
                 }
             }
             passengerWatchlistRepository.saveAll(savingPassengerSet);
+            for (Flight flight : flights) {
+                FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy();
+                Integer hits = flightFuzzyHitsRepository.fuzzyCount(flight.getId());
+                flightHitsFuzzy.setHitCount(hits);
+                flightHitsFuzzy.setFlightId(flight.getId());
+                flightFuzzyHitsRepository.save(flightHitsFuzzy);
+            }
         }
         endTime = System.nanoTime();
         int paxTotal = passengers == null ? 0 : passengers.size();

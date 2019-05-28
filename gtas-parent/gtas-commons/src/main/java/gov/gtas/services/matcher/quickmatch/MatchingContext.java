@@ -267,6 +267,7 @@ public class MatchingContext {
         boolean partiallyMatched=false;
         boolean jaroWinklerDistanceMatched=false;
         Set<String> clauseHits = new HashSet<>();
+        Map<String, String> clauseNameMap = new HashMap<>();
         for (List<String> clause : matchClauses) {
 
             // Find derog hits on this clause
@@ -280,6 +281,9 @@ public class MatchingContext {
                 clauseHits = derogForClause.get(concatenated);
                 logger.info("gtasId {} matches derogIds {} on clause {}",traveler.get("gtasId"), clauseHits, clause);
                 logger.debug("Matched string: {}", concatenated);
+                for (String derogId : clauseHits) {
+                    clauseNameMap.put(derogId, "an exact name match");
+                }
             } else {
                 clauseHits = new HashSet<>();
             }
@@ -302,6 +306,7 @@ public class MatchingContext {
 							
 							if (distance >= jaroWinklerThreshold) {
 
+
 								logger.debug(
 										"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
 										distance, traveler.get("full_name"), derogRecord.get("full_name"));
@@ -315,7 +320,9 @@ public class MatchingContext {
 											offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
 
 				
-									clauseHits.add(derogRecord.get("derogId"));
+									 String derogId = derogRecord.get("derogId");
+                           			 clauseHits.add(derogId);
+                            		 clauseNameMap.put(derogId, derogRecord.get("full_name"));
 
 								}
 
@@ -329,7 +336,9 @@ public class MatchingContext {
 							if (isSameDOBYearMonthDay(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"))) {
 
 								// It is a hit
-								clauseHits.add(derogRecord.get("derogId"));
+								String derogId = derogRecord.get("derogId");
+                            	clauseHits.add(derogId);
+                            	clauseNameMap.put(derogId, derogRecord.get("full_name"));
 
 							}
 						}
@@ -340,18 +349,19 @@ public class MatchingContext {
             // Build DerogHits only for new derogIds for this traveler
             for (String thisDerogId : clauseHits) {
                 if (!foundDerogIds.contains(thisDerogId)) {
+                    String ruleDescription = "Partial hit on " + clauseNameMap.get(thisDerogId)  ;
                     if (clause.size() == 1 && clause.get(0).equals("metaphones") ) {
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.9f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     } else if (partiallyMatched) {
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.8f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     } else if(jaroWinklerDistanceMatched)
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.80f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     else
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1f,
-                                this.derogList.get(0).get(DerogHit.WATCH_LIST_NAME)));
+                                ruleDescription));
                     foundDerogIds.add(thisDerogId);
                 }
             }
@@ -541,21 +551,4 @@ public class MatchingContext {
         }
         return builder.toString().trim();
     }
-    
-    class MatchingDetail{
-    	private List<MatchingHit> hits;
-    	
-    	public MatchingDetail addHit(MatchingHit hit) {
-    		this.hits.add(hit);
-    		return this;
-    	}
-    }
-    
-    class MatchingHit {
-    	String type;
-    	float threshold;
-    	String clausesHited;
-    }
-    
-    
 }

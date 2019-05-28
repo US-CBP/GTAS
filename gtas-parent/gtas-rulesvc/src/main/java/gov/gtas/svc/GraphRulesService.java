@@ -2,6 +2,7 @@ package gov.gtas.svc;
 
 import gov.gtas.bo.RuleHitDetail;
 import gov.gtas.model.Case;
+import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 
@@ -17,4 +18,6 @@ public interface GraphRulesService {
     Set<Case> graphCases(Set<RuleHitDetail> graphHitDetailSet);
 
     List<HitsSummary> getHitsSummariesFromRuleDetails(List<RuleHitDetail> filteredList);
+
+    void updateFlightGraphHitCount(Set<Flight> passengerFlights);
 }

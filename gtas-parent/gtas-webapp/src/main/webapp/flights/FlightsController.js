@@ -102,7 +102,7 @@
                 {label: 'Any', value: 'A'}
             ],
             getPage = function () {
-                if(stateName === 'queryFlights'){
+                    if(stateName === 'queryFlights'){
                     setFlightsGrid($scope.flightsQueryGrid, flights || {flights: [], totalFlights: 0});
                     $scope.queryLimitReached = flights.data.result.queryLimitReached;
                 }
@@ -361,6 +361,17 @@
                 cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, destination: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
             },
             {
+                name: 'listHitCount',
+                displayName: 'Watchlist Hits',
+                enableFiltering: false,
+                cellClass: "gridService.colorHits",
+                sort: {
+                    direction: uiGridConstants.DESC,
+                    priority: 0
+                },
+                cellTemplate:'<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
+            },
+            {
                 name: 'ruleHitCount',
                 displayName: 'Rule Hits',
                 enableFiltering: false,
@@ -372,15 +383,26 @@
                 cellTemplate:'<span ng-if="row.entity.ruleHitCount" class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
             },
             {
-                name: 'listHitCount',
-                displayName: 'Watchlist Hits',
+                name: 'graphHitCount',
+                displayName: 'Graph Hits',
                 enableFiltering: false,
                 cellClass: "gridService.colorHits",
                 sort: {
                     direction: uiGridConstants.DESC,
                     priority: 0
                 },
-                cellTemplate:'<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
+                cellTemplate:'<span ng-if="row.entity.graphHitCount" class="badge warning-back warning-border-th">{{row.entity.graphHitCount}}</span>'
+            },
+            {
+                name: 'fuzzyHitCount',
+                displayName: 'Partial Hits',
+                enableFiltering: false,
+                cellClass: "gridService.colorHits",
+                sort: {
+                    direction: uiGridConstants.DESC,
+                    priority: 0
+                },
+                cellTemplate:'<span ng-if="row.entity.fuzzyHitCount" class="badge info-back info-border-th">{{row.entity.fuzzyHitCount}}</span>'
             },
             {
                 name: 'flightNumber',

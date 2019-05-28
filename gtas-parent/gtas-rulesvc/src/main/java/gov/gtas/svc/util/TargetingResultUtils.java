@@ -170,29 +170,35 @@ public class TargetingResultUtils {
         int counter = 0;
         while (!targetingServiceResultsList.isEmpty()) {
             TargetingServiceResults targetingServiceResults = targetingServiceResultsList.get(0);
-            Set<Case> casesSet = conglomerateResults.getCaseSet();
-            List<HitsSummary> hitsSummaries = conglomerateResults.getHitsSummaryList();
-            if (casesSet == null) {
-                conglomerateResults.setCaseSet(targetingServiceResults.getCaseSet());
-            } else {
-                conglomerateResults.getCaseSet().addAll(targetingServiceResults.getCaseSet());
-            }
-            if (hitsSummaries == null) {
-                conglomerateResults.setHitsSummaryList(targetingServiceResults.getHitsSummaryList());
-            } else {
-                conglomerateResults.getHitsSummaryList().addAll(targetingServiceResults.getHitsSummaryList());
-            }
-            counter++;
-            if (targetingServiceResultsList.size() == 1) {
-                batchedResults.add(conglomerateResults);
-            } else {
-                if (counter >= BATCH_SIZE) {
-                    batchedResults.add(conglomerateResults);
-                    conglomerateResults = new TargetingServiceResults();
-                    counter = 1;
+            if (targetingServiceResults != null) {
+                Set<Case> casesSet = conglomerateResults.getCaseSet();
+                List<HitsSummary> hitsSummaries = conglomerateResults.getHitsSummaryList();
+                if (casesSet == null) {
+                    conglomerateResults.setCaseSet(targetingServiceResults.getCaseSet());
+                } else {
+                    if (targetingServiceResults.getCaseSet() != null) {
+                        conglomerateResults.getCaseSet().addAll(targetingServiceResults.getCaseSet());
+                    }
                 }
+                if (hitsSummaries == null) {
+                    conglomerateResults.setHitsSummaryList(targetingServiceResults.getHitsSummaryList());
+                } else {
+                    if (targetingServiceResults.getHitsSummaryList() != null) {
+                        conglomerateResults.getHitsSummaryList().addAll(targetingServiceResults.getHitsSummaryList());
+                    }
+                }
+                counter++;
+                if (targetingServiceResultsList.size() == 1) {
+                    batchedResults.add(conglomerateResults);
+                } else {
+                    if (counter >= BATCH_SIZE) {
+                        batchedResults.add(conglomerateResults);
+                        conglomerateResults = new TargetingServiceResults();
+                        counter = 1;
+                    }
+                }
+                targetingServiceResultsList.remove(0);
             }
-            targetingServiceResultsList.remove(0);
         }
         return batchedResults;
     }

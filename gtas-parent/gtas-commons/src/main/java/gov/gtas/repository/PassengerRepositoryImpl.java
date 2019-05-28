@@ -178,6 +178,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		//joins
 		Join<Passenger, Flight> flight = pax.join("flight");
 		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.LEFT);
+		Join<Passenger, PassengerWLTimestamp> fuzzyHits = pax.join("passengerWLTimestamp", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails", JoinType.LEFT);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.LEFT);
 
@@ -203,9 +204,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(flight.get(column));
 				} else if (column.equals("onRuleHitList")) {
 					orderByItem.add(hits.get("ruleHitCount"));
+					orderByItem.add(hits.get("graphHitCount"));
 				} else if (column.equals("onWatchList")) {
 					orderByItem.add(hits.get("watchListHitCount"));
-				//	orderByItem.add(link.get("percentMatch")); //add fuzzy watchlist here.
+					orderByItem.add(fuzzyHits.get("hitCount"));
 				} else if ("eta".equalsIgnoreCase(column)) {
 					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
 					//!!!!! THIS COVERS THE ELSE STATEMENT !!!!!
@@ -214,18 +216,28 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 				}
 				if (sort.getDir().equals("desc")) {
 					for (Expression<?> e : orderByItem){
-						orderList.add(cb.desc(e));
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column) ) {
+							// The fuzzy matching can occure when the hits summary is null. Coalesce these values to a 0
+							// in order to have fuzzy matching show up in ordered form.
+							orderList.add(cb.desc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.desc(e));
+						}
 					}
 				} else {
 					for (Expression<?> e : orderByItem) {
-						orderList.add(cb.asc(e));
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column) ) {
+							orderList.add(cb.asc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.asc(e));
+						}
 					}
 				}
 			}
 			q.orderBy(orderList);
 		}
 
-		q.multiselect(pax, flight, hits).where(predicates.toArray(new Predicate[]{}));
+		q.multiselect(pax, flight, hits, fuzzyHits).where(predicates.toArray(new Predicate[]{}));
 		TypedQuery<Object[]> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
 
 		// total count: does not require joining on hitssummary

@@ -47,8 +47,8 @@ public class CarrierServiceImpl implements CarrierService {
     @Override
     @Transactional
     public Carrier update(Carrier carrier) {
-        // NO IMPLEMENTATION
-        return null;
+      // validate no duplicate codes
+      return carrierRespository.save(carrier);
     }
 
     @Override
