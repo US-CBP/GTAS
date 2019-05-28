@@ -147,6 +147,9 @@ public class PassengerServiceImpl implements PassengerService {
             if (hit != null) {
                 for (HitDetail hd : hit.getHitdetails()) {
 
+                    if ("GH".equalsIgnoreCase(hd.getHitType())) {
+                        vo.setOnRuleHitList(true);
+                    }
                     if ("R".equalsIgnoreCase(hd.getHitType())) {
                         vo.setOnRuleHitList(true);
                     }
@@ -158,7 +161,7 @@ public class PassengerServiceImpl implements PassengerService {
                     }
                 }
             }
-            if (!p.getPaxWatchlistLinks().isEmpty()) {
+            if (p.getPassengerWLTimestamp() != null && p.getPassengerWLTimestamp().getHitCount() > 0) {
                 vo.setOnWatchListLink(true);
             }
 
@@ -320,15 +323,17 @@ public class PassengerServiceImpl implements PassengerService {
 
         List<Disposition> dispositionsList = new ArrayList<>();
         Set<Long> hitsIds = hitsList.stream().map(HitsSummary::getPaxId).collect(toSet());
-        Set<Long> passengerIdsWithDisposition = dispositionRepo.getExisitngPaxIds(hitsIds);
-        for (HitsSummary hit : hitsList) {
-            if (!passengerIdsWithDisposition.contains(hit.getPaxId())) {
-                Disposition d = createDispositionFromHitsSummary(hit);
-                dispositionsList.add(d);
+        if (!hitsIds.isEmpty()) {
+            Set<Long> passengerIdsWithDisposition = dispositionRepo.getExisitngPaxIds(hitsIds);
+            for (HitsSummary hit : hitsList) {
+                if (!passengerIdsWithDisposition.contains(hit.getPaxId())) {
+                    Disposition d = createDispositionFromHitsSummary(hit);
+                    dispositionsList.add(d);
+                }
             }
-        }
-        if (!dispositionsList.isEmpty()) {
-            dispositionRepo.saveAll(dispositionsList);
+            if (!dispositionsList.isEmpty()) {
+                dispositionRepo.saveAll(dispositionsList);
+            }
         }
     }
 
