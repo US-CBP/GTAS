@@ -8,6 +8,8 @@
 
 package gov.gtas.services.matcher;
 
+import static gov.gtas.repository.AppConfigurationRepository.QUICKMATCH_DOB_YEAR_OFFSET;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +46,7 @@ import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.DerogResponse;
+import gov.gtas.services.matcher.quickmatch.MatchingContext;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
@@ -193,7 +196,11 @@ public class MatchingServiceImpl implements MatchingService {
                         }
                     }
                 }
-                MatchingResult result = qm.match(passenger, derogList, matcherParameters.getThreshold());
+                
+                int dobYearOffset = getDobYearOffset(MatchingContext.DOB_YEAR_OFFSET);
+
+                MatchingResult result = qm.match(passenger, derogList, matcherParameters.getThreshold(), dobYearOffset);
+                
                 // These will make calls to the database to save a watchlist link and make a case.
                 // This will cause performance issues IF every passenger hits on a watchlist.
                 if (result.getTotalHits() >= 0) {
@@ -221,6 +228,23 @@ public class MatchingServiceImpl implements MatchingService {
         }
         return isHit;
     }
+
+	private int getDobYearOffset(int dobYearOffset) {
+		try {
+
+			dobYearOffset = Integer
+					.parseInt(appConfigRepository.findByOption(QUICKMATCH_DOB_YEAR_OFFSET).getValue());
+
+		} catch (Exception e) {
+
+			logger.warn(
+					"QUICKMATCH_DOB_YEAR_OFFSET is not configured properly - DEFAULT offset value of {} will be used instead. "
+							+ "Set QUICKMATCH_DOB_YEAR_OFFSET in application config",
+					dobYearOffset);
+
+		}
+		return dobYearOffset;
+	}
 
     private boolean passengerNeedsWatchlistCheck(Passenger passenger, Watchlist watchlist) {
         return passenger.getPassengerWLTimestamp() == null ||

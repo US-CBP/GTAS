@@ -17,7 +17,8 @@ attributeRenames:
     first_name: firstName
     middle_name: middleName
     last_name: lastName
-    DOB_Date: DOB_Date
+    DOB_Date: dob
+    DOB_Year: dobYear
     GNDR_CD: GNDR_CD
     NATIONALITY_CD: NATIONALITY_CD
     documents: documents
@@ -97,5 +98,6 @@ gtasDefault:
     -
         - last_name
         - first_name
+        - DOB_Year
     -
         - metaphones

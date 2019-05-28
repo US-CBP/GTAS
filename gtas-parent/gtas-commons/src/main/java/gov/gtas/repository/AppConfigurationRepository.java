@@ -40,6 +40,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String GRAPH_DB_URL = "GRAPH_DB_URL";
     String GRAPH_DB_TOGGLE = "GRAPH_DB_TOGGLE";
     String FUZZY_MATCHING = "FUZZY_MATCHING";
+    String QUICKMATCH_DOB_YEAR_OFFSET ="QUICKMATCH_DOB_YEAR_OFFSET";
 
     AppConfiguration findByOption(String option);
 
