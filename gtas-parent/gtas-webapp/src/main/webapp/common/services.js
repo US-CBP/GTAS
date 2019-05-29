@@ -184,6 +184,12 @@
     function handleSuccess(response) {
       return response.data;
     }
+
+    //untidy name format "fullName(code)"
+    //removes "(code)"
+    function getTidyName(name) {
+      return name.split("(")[0];
+    }
     
     return {
       getAllCodes: function(type) {
@@ -222,7 +228,32 @@
 
       restoreCodes: function(type) {
         return handleErrorGeneric('Method "restoreCodes" is not implemented');
+      },
+
+      getCountryTooltips: function() {
+        return this.getAllCodes('country').then(function(response){
+
+          return response.map(x => ({id: x.iso3, name: getTidyName(x.name)}));
+
+        }, handleError);
+      },
+
+      getCarrierTooltips: function() {
+        return this.getAllCodes('carrier').then(function(response){
+
+          return response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
+
+        }, handleError);
+      },
+
+      getAirportTooltips: function() {
+        return this.getAllCodes('airport').then(function(response){
+
+          return response.map(x => ({id: x.iata, name: getTidyName(x.name) + ', ' + x.city + ', ' + x.country}));
+
+        }, handleError);
       }
+
       };    // return codeService
     })
     .service('userService', function ($http, $q) {
@@ -1427,23 +1458,15 @@
               }
             }
           };
-          
-          //untidy name format "fullName(code)"
-          //removes "(code)"
-          function getTidyName(name) {
-            return name.split("(")[0];
-          }
 
           //Used for countries/airports/carriers, pass in code + code list, return full name
+          //APB - REFAC. Angular ng-repeat is causing this method to called repeatedly for all 
+          //grid cells on each digest cycle, which can be dozens of repeat calls on every 
+          //mouseover/out even for small datasets. Probably not a huge perf hit, but it's messy.
           function getFullNameByCodeAndCodeList(code, codeList){
-            var fullName = '';
-            $.each(codeList, function(index,value){
-              if(value.id === code){
-                fullName = getTidyName(value.name);
-                return;
-              }
-            });
-            return fullName;
+            if (!codeList) return '';
+
+            return codeList.find(x => x.id == code).name;   // allowing type coersion for now.
           };
         return({
           getCodeTooltipData:getCodeTooltipData

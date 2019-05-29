@@ -5,6 +5,7 @@
  */
 (function () {
   'use strict';
+  ////     PAX DETAIL CONTROLLER     //////////////
   app.controller('PassengerDetailCtrl', function ($scope, $mdDialog,$mdSidenav,$timeout, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
       $scope.passenger = passenger.data;
       $scope.watchlistLinks = watchlistLinks.data;
@@ -38,7 +39,7 @@
       
       //Service call for tooltip data
         $scope.getCodeTooltipData = function(field, type){
-          return codeTooltipService.getCodeTooltipData(field,type);
+           return codeTooltipService.getCodeTooltipData(field,type);
         }
         
         $scope.resetTooltip = function(){
@@ -189,9 +190,6 @@
           return total;
       }
 
-      $scope.getCodeTooltipData = function(field,type){
-        return codeTooltipService.getCodeTooltipData(field,type);
-      };
       $scope.highlightClass = function(className) {
 
           //remove existing highlights
@@ -336,10 +334,9 @@
 
       paxDetailService.getPaxFlightHistory($scope.passenger.paxId, $scope.passenger.flightId)
       .then(function(response){
-        //$scope.getPaxFullTravelHistory($scope.passenger);
-          $scope.getPaxBookingDetailHistory($scope.passenger);
+        $scope.getPaxBookingDetailHistory($scope.passenger);
         $scope.passenger.flightHistoryVo = response.data;
-      });
+  });
 
       $scope.getPaxFullTravelHistory= function(passenger){
         paxDetailService.getPaxFullTravelHistory(passenger.paxId, passenger.flightId).then(function(response){
@@ -350,9 +347,9 @@
 
       $scope.getPaxBookingDetailHistory= function(passenger){
           paxDetailService.getPaxBookingDetailHistory(passenger.paxId, passenger.flightId).then(function(response){
-              $scope.passenger.fullFlightHistoryVo ={'map': response.data};
-              $scope.isLoadingFlightHistory = false;
-          });
+          $scope.passenger.fullFlightHistoryVo ={'map': response.data};
+          $scope.isLoadingFlightHistory = false;        
+        });
       };
 
       //Adds user from pax detail page to watchlist.
@@ -425,9 +422,16 @@
     };
 
   });
+
+
+
+
+
+
+  ////     PAX CONTROLLER     //////////////
   app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                             jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
-                                            $timeout, paxModel, $http, codeTooltipService, spinnerService) {
+                                            $timeout, paxModel, $http, codeService, spinnerService) {
       $scope.errorToast = function(error){
           $mdToast.show($mdToast.simple()
            .content(error)
@@ -571,11 +575,11 @@
               {label: 'Any', value: 'A'}
           ];
 
-      self.querySearch = querySearch;
-      $http.get('data/airports.json')
+        self.querySearch = querySearch;
+      // $http.get('data/airports.json')
+      codeService.getAirportTooltips()
           .then(function (allAirports) {
-              airports = allAirports.data;
-              self.allAirports = allAirports.data.map(function (contact) {
+              self.allAirports = allAirports.map(function (contact) {
                   //contact.lowerCasedName = contact.name.toLowerCase();
                   contact.lowerCasedName = contact.id.toLowerCase();
                   return contact;
@@ -698,14 +702,15 @@
       };
 
       $scope.getCodeTooltipData = function(field, type){
-          return codeTooltipService.getCodeTooltipData(field,type);
+          // return codeTooltipService.getCodeTooltipData(field,type);
+          return '';
       }
 
       $scope.hitTooltipData = ['Loading...'];
 
       $scope.resetTooltip = function(){
         $scope.hitTooltipData = ['Loading...'];
-        $('md-tooltip').remove();
+        // $('md-tooltip').remove();
       };
 
     $scope.getHitTooltipData = function(row){

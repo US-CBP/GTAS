@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService, errorService, $location, $mdToast, $document, $http) {
+app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService, errorService, $location, $mdToast, $document, $http, $rootScope) {
   'use strict';
   $scope.activeCodeTab = 'carrier'; //sub-tab list under 'Code Editor' tab
   $scope.codeColList = {};
@@ -70,15 +70,6 @@ var setupCodeGrids = function(){
   $scope.airportGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('airport');
 }
 
-var setCarrierCodeData = function (data) {
-  $scope.carrierGrid.data = data;
-};
-var setAirportCodeData = function (data) {
-  $scope.airportGrid.data = data;
-};
-var setCountryCodeData = function (data) {
-  $scope.countryGrid.data = data;
-};
 var setCodeData = function (data) {
   if ($scope.activeCodeTab === 'airport'){
     $scope.airportGrid.data = data;
@@ -203,13 +194,16 @@ $scope.refreshActiveCodeGrid = function(){
     delete $scope.rowSelected.$$hashKey;
 
     if (!isEqual){
-      var result;
+      var tab = $scope.activeCodeTab;
 
       if (action === 'Edit')
-        result = codeService.updateCode($scope.activeCodeTab, $scope.rowSelected)
+        result = codeService.updateCode(tab, $scope.rowSelected)
         .then($scope.refreshActiveCodeGrid, $scope.errorToast);
       else
-        result = codeService.createCode($scope.activeCodeTab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+        result = codeService.createCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+
+      //sync the tooltip collections in memory
+      refreshTooltips();
     }
     else {
       $mdSidenav('codeSidebar').close();
@@ -217,12 +211,29 @@ $scope.refreshActiveCodeGrid = function(){
     }
   };
 
+
+  function refreshTooltips() {
+    switch ($scope.activeCodeTab) {
+      case 'carrier':
+        $rootScope.refreshCarrierTooltips();
+        break;
+      case 'country':
+        $rootScope.refreshCountryTooltips();
+        break;
+      case 'airport':
+        $rootScope.refreshAirportTooltips();
+        break;
+    }
+  }
+
   $scope.deleteCode = function () {
-    $scope.toastParent = $document[0].getElementById($scope.activeCodeTab+'Grid');
+    var tab = $scope.activeCodeTab;
 
-    codeService.deleteCode($scope.activeCodeTab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+    $scope.toastParent = $document[0].getElementById(tab+'Grid');
+
+    codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+    refreshTooltips();
   };
-
 
   $scope.createUser = function () { $location.path('/user/new'); };
   $scope.lastSelectedUser = function (user) { localStorage['lastSelectedUser'] = JSON.stringify(user); };
