@@ -1350,6 +1350,21 @@
   		  	"EQUAL",
   		  	"NOT_EQUAL"	  	
   		 ]
+      },
+      {
+        "id": "Pnr.tripDuration",
+        "label": "Trip Duration",
+        "type": "double",
+       	"operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]                           
       }
     ]
   },

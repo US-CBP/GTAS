@@ -24,7 +24,7 @@ public class Constants {
 	public final static String LINUX_PARAM = "param";
 	public final static String LINUX_PARAM_DELIMITER = ":";
 	
-	public final static String LOG_REDIRECTOR = ">";
+	public final static String LOG_REDIRECTOR = ">>";
 	public final static String FILE_IND = "file";
 	public final static String LEVEL = "level";
 	public final static String LOG_FILE_EXT = ".log";

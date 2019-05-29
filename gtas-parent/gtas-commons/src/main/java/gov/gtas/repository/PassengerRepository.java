@@ -6,6 +6,7 @@
 package gov.gtas.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -38,6 +39,12 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
             "left join fetch p.documents " +
             "where p.id in :id")
     List<Passenger> getPassengersById(@Param("id") List<Long> id);
+
+    @Query("SELECT p from Passenger p " +
+            "left join fetch p.hits " +
+            "left join fetch p.flight " +
+            "where p.id in :id")
+    Set<Passenger> getPassengerWithHits(@Param("id") Set<Long> id);
 /*
 
     @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)")
@@ -83,6 +90,27 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
     {
         return findById(passengerId).orElse(null);
     }
+
+
+    @Query("Select p " +
+            "from Passenger p " +
+            "join fetch p.passengerIDTag " +
+            "left join p.apisMessage apis " +
+            "left join p.pnrs pnrs " +
+            "left join fetch p.flight f " +
+            "where apis.id in :messageId " +
+            "or pnrs.id in :messageId")
+    Set<Passenger> getPassengerWithIdInformation(@Param("messageId") Set<Long> messageId);
+
+    @Query("SELECT p FROM Passenger p " +
+            " LEFT JOIN FETCH p.paxWatchlistLinks " +
+            " LEFT JOIN FETCH p.passengerWLTimestamp " +
+            " LEFT JOIN FETCH p.documents " +
+            " LEFT JOIN FETCH p.flight " +
+            " LEFT JOIN p.apisMessage am " +
+            " LEFT JOIN p.pnrs pnr " +
+            " WHERE am.id IN :messageIds OR pnr.id IN :messageIds")
+    Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

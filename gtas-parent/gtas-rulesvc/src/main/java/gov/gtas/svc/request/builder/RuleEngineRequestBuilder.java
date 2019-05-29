@@ -26,6 +26,7 @@ import gov.gtas.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -38,6 +39,7 @@ import org.springframework.util.CollectionUtils;
 
 
 @Component
+@Scope("prototype")
 public class RuleEngineRequestBuilder {
     private static final Logger logger = LoggerFactory
             .getLogger(RuleEngineRequestBuilder.class);
@@ -97,7 +99,7 @@ public class RuleEngineRequestBuilder {
                                     FlightPaxRepository flightPaxRepository,
                                     DocumentRepository documentRepository,
                                     ApisMessageRepository apisMessageRepository) {
-        this.requestObjectList = new ArrayList<>(30000);
+        this.requestObjectList = new ArrayList<>(300000);
         this.addressIdSet = new HashSet<>();
         this.creditCardIdSet = new HashSet<>();
         this.bookingDetailIdSet = new HashSet<>();
@@ -505,7 +507,7 @@ public class RuleEngineRequestBuilder {
             }
             PnrCreditCardLink pnrCreditCardLink = new PnrCreditCardLink(pnrId, cc
                     .getId());
-            if (this.creditCardLinks.contains(pnrCreditCardLink)) {
+            if (!this.creditCardLinks.contains(pnrCreditCardLink)) {
                 this.requestObjectList.add(pnrCreditCardLink);
                 this.creditCardLinks.add(pnrCreditCardLink);
             }

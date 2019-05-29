@@ -480,7 +480,7 @@
       </attribute>
       <attribute>
         <code>INITIAL_POOL_SIZE</code>
-        <attribute>5</attribute>
+        <attribute>6</attribute>
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
@@ -488,7 +488,7 @@
       </attribute>
       <attribute>
         <code>MAXIMUM_POOL_SIZE</code>
-        <attribute>8</attribute>
+        <attribute>10</attribute>
       </attribute>
       <attribute>
         <code>PORT_NUMBER</code>
@@ -573,12 +573,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Select values</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Select values</from>
+      <from>Select values - format dates-ids</from>
       <to>Set field value to a constant</to>
       <enabled>Y</enabled>
     </hop>
@@ -590,6 +585,16 @@
     <hop>
       <from>Write to log - No hit data....</from>
       <to>Abort</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Identify last row in a stream</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Identify last row in a stream</from>
+      <to>Select values - format dates-ids</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -618,7 +623,7 @@
     </remotesteps>
     <GUI>
       <xloc>480</xloc>
-      <yloc>784</yloc>
+      <yloc>752</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -705,7 +710,7 @@
     </remotesteps>
     <GUI>
       <xloc>112</xloc>
-      <yloc>912</yloc>
+      <yloc>1008</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -833,8 +838,34 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>112</xloc>
+      <xloc>480</xloc>
       <yloc>1008</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Identify last row in a stream</name>
+    <type>DetectLastRow</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <resultfieldname>isLastRow</resultfieldname>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>112</xloc>
+      <yloc>912</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -941,7 +972,7 @@
     </GUI>
   </step>
   <step>
-    <name>Select values</name>
+    <name>Select values - format dates-ids</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -1345,7 +1376,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
+      <xloc>688</xloc>
       <yloc>1008</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1795,8 +1826,8 @@ Aborting...gtas-passenger-hits....</logmessage>
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
-      <yloc>864</yloc>
+      <xloc>480</xloc>
+      <yloc>880</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

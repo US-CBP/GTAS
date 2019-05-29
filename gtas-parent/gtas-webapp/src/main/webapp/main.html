@@ -21,17 +21,18 @@
   <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link href="resources/css/misc_fonts.css" rel="stylesheet">
+  <link href="resources/css/misc_italian.css" rel="stylesheet">
   <script src="resources/bower_components/jquery/dist/jquery.js"></script>
   <!--<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
   <script src="resources/bower_components/summernote/dist/summernote.js"></script>
   <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
   <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
-
 </head>
 
 <body ng-cloak>
 
+  <!-- CBP and APP HEADER  -->
   <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -191,10 +192,11 @@
       </div>
     </div>
   </div>
-    
-  <div ui-view="nav"></div>
+
+  
+<div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
-  <div class="content" ui-view=""  style="height: 100%;"></div>
+  <div class="content" ui-view=""  ></div>
   <div ui-view="footer"></div>
 
   <script src="resources/bower_components/angular/angular.js"></script>
@@ -209,8 +211,8 @@
   <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
   <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
+  <!-- <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
+  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script> -->
   <script src="resources/node_modules/csv-js/csv.js"></script>
   <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
   <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
@@ -226,8 +228,6 @@
   <script src="resources/bower_components/jspdf/dist/jspdf.min.js"></script>
   <script src='resources/js/html2canvas.js'></script>
   <script src='resources/js/html2pdf.js'></script>
-  <script src="resources/bower_components/d3/d3.min.js"></script>
-  <script src="resources/bower_components/angular-translate/angular-translate.js"></script>
   <script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
   <script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
   <script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
@@ -240,7 +240,6 @@
   <link rel="stylesheet" href="resources/bower_components/ammap/dist/ammap/plugins/export/export.css" type="text/css" media="all" />
   <script src="resources/bower_components/ammap/dist/ammap/themes/light.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
-  <!--<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>-->
   <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
   <script src="resources/bower_components/angular-summernote/dist/angular-summernote.min.js"></script>
   <script src="resources/bower_components/trix/dist/trix.js"></script>

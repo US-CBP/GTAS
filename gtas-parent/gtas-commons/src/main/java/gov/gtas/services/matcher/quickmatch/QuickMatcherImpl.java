@@ -5,54 +5,65 @@
  */
 package gov.gtas.services.matcher.quickmatch;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import gov.gtas.model.Passenger;
+import gov.gtas.services.AppConfigurationService;
 
 @Component
+@Scope("prototype")
 public class QuickMatcherImpl implements QuickMatcher {
 
-	@Autowired
-	private MatchingContext cxt;
+	private final Logger logger = LoggerFactory.getLogger(QuickMatcherImpl.class);
 
-	public QuickMatcherImpl() {
+	/*
+	 * Do not make this a bean without taking multithreading into account.
+	 */
+	private final MatchingContext cxt;
+	private final AppConfigurationService appConfigurationService;
 
+	public QuickMatcherImpl(AppConfigurationService appConfigurationService) {
+		this.appConfigurationService = appConfigurationService;
+		this.cxt = new MatchingContext();
 	}
-	
+
 	public MatchingContext getCxt() {
 		return cxt;
 	}
 
 	@Override
 	public MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems) {
-		return this.match(passenger, watchListItems);
+		return this.match(passenger, watchListItems, cxt.getJaroWinklerThreshold(), cxt.getDobYearOffset());
 	}
 
 	@Override
-	public MatchingResult match(Passenger passenger, List<HashMap<String, String>> watchListItems, float threshold) {
-		//
-		if (this.cxt == null)
-			return new MatchingResult(0, Collections.emptyMap());
+	public MatchingResult match(Passenger passenger, List<HashMap<String, String>> watchListItems, float threshold, int dobYearOffset) {
 
-		List<HashMap<String, String>> passengers = new ArrayList<HashMap<String, String>>();
+		List<HashMap<String, String>> passengers = new ArrayList<>();
 		HashMap<String, String> p = new HashMap<>();
 		p.put("firstName", passenger.getPassengerDetails().getFirstName());
 		p.put("lastName", passenger.getPassengerDetails().getLastName());
-		p.put("middleName",passenger.getPassengerDetails().getMiddleName());
+		p.put("middleName", passenger.getPassengerDetails().getMiddleName());
+		p.put("dob", new SimpleDateFormat("yyyy-MM-dd").format(passenger.getPassengerDetails().getDob()));
 		p.put("gtasId", passenger.getId().toString());
 		passengers.add(p);
 
 		//
 
 		this.cxt.initialize(watchListItems);
-		
-		this.cxt.setJARO_WINKLER_THRESHOLD(threshold);
+
+		this.cxt.setJaroWinklerThreshold(threshold);
+
+	
+		this.cxt.setDobYearOffset(dobYearOffset);
 
 		return this.cxt.match(passengers);
 	}

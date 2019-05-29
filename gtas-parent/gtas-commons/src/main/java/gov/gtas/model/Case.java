@@ -57,9 +57,6 @@ public class Case extends BaseEntityAudit {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "description", nullable = true)
-    private String description;
-
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
 
@@ -103,28 +100,37 @@ public class Case extends BaseEntityAudit {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "encountered_status", nullable=false)
-    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
-
- 
-	public EncounteredStatusEnum getEncounteredStatus() {
-		return encounteredStatus;
-	}
-
-
-	public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
-		this.encounteredStatus = encounteredStatus;
-	}
-
-
 
 	public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
     }
 
+    @Transient
+    private Boolean saveCase = false;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "encountered_status", nullable=false)
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
+
+
+    public EncounteredStatusEnum getEncounteredStatus() {
+        return encounteredStatus;
+    }
+
+
+    public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+        this.encounteredStatus = encounteredStatus;
+    }
+
+
+    public Boolean getSaveCase() {
+        return saveCase;
+    }
+
+    public void setSaveCase(Boolean saveCase) {
+        this.saveCase = saveCase;
+    }
 
     public String getCaseOfficerStatus() {
         return caseOfficerStatus;
@@ -203,14 +209,6 @@ public class Case extends BaseEntityAudit {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getPaxName() {

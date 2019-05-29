@@ -4,7 +4,7 @@ SELECT
 	pd.pd_first_name as first_name,
 	pd.pd_middle_name as middle_name,
 	pd.pd_last_name as last_name,
-	pd.pd_citizenship_country as citizenship_country,
+	pd.pd_nationality as nationality,
 	pd.dob,
 	pd.pd_gender as gender,
 	pd.pd_title title,
@@ -66,7 +66,7 @@ SELECT
 	msg.id as gtas_message_id,
 	p.id as gtas_passenger_id,
 	msg.create_date as gtas_message_create_dtm,
-	"PNR" as "message_type"
+	'PNR' as 'message_type'
 	
 FROM gtas.message msg
 INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
@@ -104,8 +104,6 @@ AND f.flight_number IS NOT NULL
 AND f.etd_date IS NOT NULL
 AND f.full_flight_number IS NOT NULL 
 AND f.etd_date IS NOT NULL
-AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
-AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
 
 UNION ALL
 
@@ -114,7 +112,7 @@ SELECT
 	pd.pd_first_name as first_name,
 	pd.pd_middle_name as middle_name,
 	pd.pd_last_name as last_name,
-	pd.pd_citizenship_country as citizenship_country,
+	pd.pd_nationality as nationality,
 	pd.dob,
 	pd.pd_gender as gender,
 	pd.pd_title title,
@@ -176,7 +174,7 @@ SELECT
 	msg.id as gtas_message_id,
 	p.id as gtas_passenger_id,
 	msg.create_date as gtas_message_create_dtm,
-	"APIS" as "message_type"
+	'APIS' as 'message_type'
 FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
  INNER JOIN gtas.apis_message apm ON msg.id = apm.id
@@ -205,6 +203,4 @@ AND pd.pd_last_name IS NOT NULL
  AND f.etd_date IS NOT NULL
  AND f.full_flight_number IS NOT NULL 
  AND f.etd_date IS NOT NULL
- AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
- AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
  ORDER BY gtas_message_id,flight_id,gtas_passenger_id 

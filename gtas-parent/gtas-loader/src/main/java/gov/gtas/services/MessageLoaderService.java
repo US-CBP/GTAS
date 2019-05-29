@@ -6,7 +6,12 @@
 package gov.gtas.services;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import gov.gtas.model.Bag;
+import gov.gtas.model.BagMeasurements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,4 +52,26 @@ public abstract class MessageLoaderService {
     public abstract MessageDto parse(MessageDto msgDto);
 
     public abstract MessageStatus load(MessageDto msgDto);
+
+    WeightCountDto getBagStatistics(Set<Bag> bagSet) {
+        Set<BagMeasurements> bagMeasurementsSet = bagSet
+                .stream()
+                .map(Bag::getBagMeasurements)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Integer bagCount = 0;
+        Double bagWeight = 0D;
+        for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
+            if (bagMeasurements.getBagCount() != null) {
+                bagCount += bagMeasurements.getBagCount();
+            }
+            if (bagMeasurements.getWeight() != null) {
+                bagWeight += bagMeasurements.getWeight();
+            }
+        }
+        WeightCountDto weightCountDto = new WeightCountDto();
+        weightCountDto.setCount(bagCount);
+        weightCountDto.setWeight(bagWeight);
+        return weightCountDto;
+    }
 }

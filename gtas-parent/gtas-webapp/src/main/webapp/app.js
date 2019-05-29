@@ -80,7 +80,7 @@ var app;
                 return moment(date).format('YYYY-MM-DD');
             };
         },
-        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService) {
+        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
             $rootScope.$on('$stateChangeStart',
 
@@ -103,21 +103,29 @@ var app;
            $rootScope.searchBarContent = {
         		   content : ""
            };
-           //For tooltips
-           $.getJSON('./data/countries.json', function(data){
-        	   $rootScope.countriesList = data;
-           });
 
-           //For tooltips
-           $.getJSON('./data/airports.json', function(data){
-        	   $rootScope.airportsList = data;
-           });
 
-           //For tooltips
-           $.getJSON('./data/carriers.json', function(data){
-        	  $rootScope.carriersList = data;
-           });
-           
+           //  //For tooltips
+           $rootScope.refreshCountryTooltips = function() {
+              codeService.getCountryTooltips().then(function(result) {
+                $rootScope.countriesList = result;
+              });
+            }
+            $rootScope.refreshAirportTooltips = function() {
+              codeService.getAirportTooltips().then(function(result) {
+              $rootScope.airportsList = result;
+             });
+            }
+          $rootScope.refreshCarrierTooltips = function() {
+            codeService.getCarrierTooltips().then(function(result) {
+              $rootScope.carriersList = result;
+            });
+          }
+
+          $rootScope.refreshAirportTooltips();
+          $rootScope.refreshCarrierTooltips();
+          $rootScope.refreshCountryTooltips();
+
            //For tooltips
            $.getJSON('./data/passenger_types.json', function(data){
          	  $rootScope.passengerTypes = data;
@@ -132,9 +140,6 @@ var app;
            $.getJSON('./data/genders.json', function(data){
          	  $rootScope.genders = data;
             });
-
-          
-          // $rootScope.airportsList =
 
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();

@@ -1,5 +1,5 @@
 
- CREATE VIEW neo4j_hit_vw AS
+CREATE VIEW neo4j_hit_vw AS
 SELECT
 	hs.id as gtas_hit_summary_id,
 	hs.created_date as hit_summary_create_date,
@@ -25,7 +25,7 @@ SELECT
 	f.flight_number,
 	f.full_flight_number,
 	msg.id as gtas_message_id,
-	P.id as gtas_passenger_id
+	p.id as gtas_passenger_id
 
 FROM gtas.message msg
 INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
@@ -39,8 +39,6 @@ INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id
 INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
-AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
-AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
 
 UNION
 
@@ -69,7 +67,7 @@ SELECT
 	f.flight_number,
 	f.full_flight_number,
 	msg.id as gtas_message_id,
-	P.id as gtas_passenger_id
+	p.id as gtas_passenger_id
 	
 	FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
@@ -83,6 +81,4 @@ SELECT
  INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
-AND (mst.ms_analyzed_timestamp >= (SELECT last_proc_msg_crt_dtm FROM neo4j_parameters njp WHERE njp.id =1))
-AND (mst.ms_message_id > (SELECT last_proc_msg_id FROM neo4j_parameters njp WHERE njp.id =1))
 ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id

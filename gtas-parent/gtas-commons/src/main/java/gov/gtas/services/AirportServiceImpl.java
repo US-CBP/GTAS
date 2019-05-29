@@ -25,7 +25,6 @@ public class AirportServiceImpl implements AirportService{
     @Override
     @Transactional
     public Airport create(Airport port) {
-        
         return airportRespository.save(port);
     }
 
@@ -49,12 +48,7 @@ public class AirportServiceImpl implements AirportService{
     @Override
     @Transactional
     public Airport update(Airport port) {
-        Airport airportToUpdate = this.findById(port.getId());
-        if(airportToUpdate != null){
-            //airportToUpdate not available.make airport mutable to update
-        }
-        return null;
-        
+      return airportRespository.save(port);
     }
 
     @Override

@@ -54,9 +54,16 @@ public class PnrVo extends MessageVo {
     private List<DocumentVo> documents = new ArrayList<>();
     private List<SeatVo> seatAssignments = new ArrayList<>();
     private String tripType;
+    private double tripDuration;
     
     
-    public Long getId() {
+    public double getTripDuration() {
+		return tripDuration;
+	}
+	public void setTripDuration(double tripDuration) {
+		this.tripDuration = tripDuration;
+	}
+	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {

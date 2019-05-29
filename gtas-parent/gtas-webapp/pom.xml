@@ -209,10 +209,10 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
+<!--         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sqs</artifactId>
-        </dependency>
+        </dependency> -->
     </dependencies>
     <build>
         <finalName>gtas</finalName>

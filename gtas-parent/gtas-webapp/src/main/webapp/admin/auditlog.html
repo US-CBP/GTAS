@@ -41,8 +41,8 @@
   }
 </style>
 
-<form id="AuditFilterPanel" layout="row" layout-padding layout-margin layout-align="space-around center" ng-submit="refreshAudit()">
-  <md-input-container style="min-width: 5em">
+<form id="AuditFilterPanel" class="filter" layout="row" layout-padding layout-margin layout-align="space-around center" ng-submit="refreshAudit()">
+  <md-input-container style="min-width: 6em" md-no-float>
     <label>action</label>
     <md-select ng-model="auditModel.action">
       <md-option ng-repeat="action in auditActions" value="{{action}}">
@@ -50,9 +50,8 @@
       </md-option>
     </md-select>
   </md-input-container>
-  <md-input-container style="min-width: 6em">
-    <label>user</label>
-    <input ng-model="auditModel.user">
+  <md-input-container style="min-width: 6em" md-no-float>
+    <input ng-model="auditModel.user" placeholder="user">
   </md-input-container>
   <md-datepicker ng-model="auditModel.timestampStart" md-placeholder="Start Date"></md-datepicker>
   <md-datepicker ng-model="auditModel.timestampEnd" md-placeholder="End Date"></md-datepicker>
@@ -214,6 +213,6 @@
     </div>
 
 <md-content class="md-padding">
-    <div ui-grid="auditGrid" ui-grid-pagination ui-grid-selection ui-grid-auto-resize class="grid" />
+    <div ui-grid="auditGrid" ui-grid-pagination ui-grid-selection class="grid admin-grid" />
 </md-content>
 

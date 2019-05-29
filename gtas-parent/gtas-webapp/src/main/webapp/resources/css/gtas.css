@@ -1,3 +1,110 @@
+
+
+.md-tab {
+  border-bottom: 2px solid #00416a;
+  border-top: 2px solid #fff;
+}
+
+md-tabs-canvas {
+  position: static !important;
+  border-bottom: 2px solid #00416a !important;
+}
+
+md-tabs.md-default-theme .md-ink-bar, md-tabs md-ink-bar {
+  display: none;
+  background: #fff;
+}
+.md-tab.md-active{
+  border: 2px solid #00416a;
+  border-bottom-color: #fff;
+}
+
+md-tabs .md-tab:active .md-ripple-container {
+  background-color: rgba(16, 182, 223, 0.185) !important;
+}
+md-tabs.md-default-theme .md-tab .md-ripple-container, md-tabs .md-tab .md-ripple-container {
+  color: #23b0f1;
+}
+md-tabs .md-tab .md-ripple-container .md-ripple {
+  background: #23b0f1 !important;
+  /* border-color: #38fc42 !important; */
+}
+md-switch.md-default-theme.md-checked .md-bar, md-switch.md-checked .md-bar {
+  background-color: rgba(35, 176, 241, 0.5);
+}
+md-switch.md-default-theme.md-checked .md-ink-ripple, md-switch.md-checked .md-ink-ripple {
+  color: rgb(35, 176, 241);
+}
+md-switch.md-default-theme.md-checked .md-thumb, md-switch.md-checked .md-thumb {
+  background-color: rgb(35,176,241);
+}
+@media (min-width: 1200px) {
+  .sidebar {
+    bottom: auto !important;
+  }
+}
+.table-wrap {
+  word-break: break-all;
+  min-width: 30vh;
+}
+.nowrap {
+  word-break: keep-all;
+}
+.cbp-card-container .cbp-card {
+  min-height: inherit !important;
+}
+.fixed-content.top {
+  top: 53;
+  z-index: 1030;
+}
+.scroll-card {
+  max-height: calc(100vh - 270px);
+   overflow-y: scroll;
+}
+.scroll-container {
+  max-height: calc(100vh - 210px);
+   overflow-y: scroll;
+}
+.scroll-container-outer {
+  max-height: calc(100vh - 182px);
+   overflow-y: scroll;
+}
+.action-buttons {
+  position: absolute;
+  top: 118px;
+  right: 22px;
+  min-width: 400px;
+  z-index: 50;
+}
+span.right-header{
+  float: right;
+  margin: 0px 9px;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.nav-dots>li>a {
+  box-shadow: 0 0 0 3px #aaa;
+  background-color: white !important;
+}
+.nav-dots>li.active>a {
+  background-color: #1460aa !important;
+}
+ td a {
+  color: #3F51B5;
+  font-weight: bold;
+}
+.flight-grid.ui-grid {
+  height: calc(100vh - 120px);
+  min-height: 240px;
+}
+.case-grid.ui-grid {
+  height: calc(100vh - 140px);
+  min-height: 240px;
+}
+
+
+
 /*Sizing Styles */
 .fnt-small {
   font-size: 12px;
@@ -40,6 +147,18 @@
 }
 .half-width {
   width: 49% !important;
+}
+.seventy-width {
+  width: 70% !important;
+}
+.sixty-width {
+  width: 60% !important;
+}
+.thirty-width {
+  width: 30% !important;
+}
+.forty-width {
+  width: 40% !important;
 }
 .sev-five-width {
   width: 75% !important;
@@ -142,7 +261,7 @@
   }
 }
 
-.gtas-card-container .cbp-card  {
+.gtas-card-container .cbp-card {
     min-height: inherit;
     max-height: 800px;
 }
@@ -397,7 +516,7 @@
   transform: translateX(0px);
 }
 .sidebar {
-  z-index: 1;
+  z-index: 1 !important;
   position: absolute;
   height: 85vh;
   padding: 10px;
@@ -433,7 +552,7 @@
 }
 .ui-grid {
   width: 99%;
-  height: 85vh !important;
+  height: -webkit-fill-available;
   margin: auto;
 }
 .ui-grid-top-panel {
@@ -470,11 +589,11 @@
 
 .md-sidenav-right {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 .md-sidenav-backdrop {
   margin-top: 100px !important;
-  height: 100vh !important;
+  /* height: 100vh !important; */
 }
 
 /*Override query builder */

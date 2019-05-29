@@ -43,7 +43,8 @@ public class HitsSummaryController {
 
     @RequestMapping(value = "/hit/passenger", method = RequestMethod.GET)
     @Transactional
-    public @ResponseBody List<HitDetailVo> getRules(
+    public @ResponseBody
+    Set<HitDetailVo> getRules(
             @RequestParam(value = "passengerId", required = false) String id) {
 
         return getHitDetailsMapped(hitsSummaryService.findByPassengerId(Long
@@ -52,12 +53,13 @@ public class HitsSummaryController {
     
     @RequestMapping(value = "/hit/flightpassenger", method = RequestMethod.GET)
 	@Transactional
-	public @ResponseBody List<HitDetailVo> getRulesByPassengerAndFlight(
+    public @ResponseBody
+    Set<HitDetailVo> getRulesByPassengerAndFlight(
 			@RequestParam(value = "passengerId") String passengerId,
 			@RequestParam(value = "flightId") String flightId){
     	
     	List<HitsSummary> tempSumList = hitsSummaryService.findByFlightIdAndPassengerId(Long.parseLong(flightId), Long.parseLong(passengerId));
-    	List<HitDetail> tempDetList = new ArrayList<HitDetail>();
+        Set<HitDetail> tempDetList = new HashSet<>();
     	
     	//Multiple summaries can exist for the same flight/pax combination. We will break open the summaries to get the hit details,
     	//then combine those lists into a singular list in order to convert it into our dto list
@@ -70,10 +72,10 @@ public class HitsSummaryController {
 	};
 
     @Transactional
-    public List<HitDetailVo> getHitDetailsMapped(
-            List<HitDetail> tempHitDetailList) {
+    public Set<HitDetailVo> getHitDetailsMapped(
+            Set<HitDetail> tempHitDetailList) {
 
-        List<HitDetailVo> hitDetailVoList = new ArrayList<>();
+        Set<HitDetailVo> hitDetailVoList = new HashSet<>();
         for (HitDetail htd : tempHitDetailList) {
             HitDetailVo hitDetailVo = new HitDetailVo();
             hitDetailVo.setRuleId(htd.getRuleId());

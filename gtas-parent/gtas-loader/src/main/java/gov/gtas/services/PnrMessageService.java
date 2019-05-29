@@ -157,6 +157,8 @@ public class PnrMessageService extends MessageLoaderService {
             loaderRepo.createFormPfPayments(vo, pnr);
             setCodeShareFlights(pnr);
             msgDto.getMessageStatus().setMessageStatusEnum(MessageStatusEnum.LOADED);
+            msgDto.getMessageStatus().setFlightId(primeFlight.getId());
+            msgDto.getMessageStatus().setFlight(primeFlight);
             pnr.setPassengerCount(pnr.getPassengers().size());
 
             TripTypeEnum tripType = calculateTripType(pnr.getFlightLegs(), pnr.getDwellTimes());
@@ -174,29 +176,6 @@ public class PnrMessageService extends MessageLoaderService {
         }
         return msgDto.getMessageStatus();
     }
-
-    private WeightCountDto getBagStatistics(Set<Bag> bagSet) {
-        Set<BagMeasurements> bagMeasurementsSet = bagSet
-                .stream()
-                .map(Bag::getBagMeasurements)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        Integer bagCount = 0;
-        Double bagWeight = 0D;
-        for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
-            if (bagMeasurements.getBagCount() != null) {
-                bagCount += bagMeasurements.getBagCount();
-            }
-            if (bagMeasurements.getWeight() != null) {
-                bagWeight += bagMeasurements.getWeight();
-            }
-        }
-        WeightCountDto weightCountDto = new WeightCountDto();
-        weightCountDto.setCount(bagCount);
-        weightCountDto.setWeight(bagWeight);
-        return weightCountDto;
-    }
-
 
     @Transactional
     protected void updatePaxEmbarkDebark(Pnr pnr) {
@@ -456,6 +435,7 @@ public class PnrMessageService extends MessageLoaderService {
                 Set<Bag> pnrBags = p.getBags()
                         .stream()
                         .filter(b -> "PNR".equalsIgnoreCase(b.getData_source()))
+                        .filter(Bag::isPrimeFlight)
                         .collect(Collectors.toSet());
 
                 boolean headPool = pnrBags.stream().anyMatch(Bag::isHeadPool);
@@ -463,8 +443,16 @@ public class PnrMessageService extends MessageLoaderService {
 
                 WeightCountDto weightCountDto = getBagStatistics(pnrBags);
                 fp.setAverageBagWeight(weightCountDto.average());
-                fp.setBagWeight(weightCountDto.getWeight());
-                fp.setBagCount(weightCountDto.getCount());
+                if (weightCountDto.getWeight() == null) {
+                    fp.setBagWeight(0D);
+                } else {
+                    fp.setBagWeight(weightCountDto.getWeight());
+                }
+                if (weightCountDto.getCount() == null) {
+                    fp.setBagCount(0);
+                } else {
+                    fp.setBagCount(weightCountDto.getCount());
+                }
 
                 fp.setDebarkation(f.getDestination());
                 fp.setDebarkationCountry(f.getDestinationCountry());

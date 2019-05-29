@@ -12,8 +12,8 @@ import gov.gtas.model.Passenger;
 
 public interface QuickMatcher {
 
-	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems, float threshold);
-	
-	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems);
+	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems, float threshold,
+			int dobYearOffset);
 
+	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems);
 }

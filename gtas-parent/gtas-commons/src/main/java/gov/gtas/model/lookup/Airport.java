@@ -47,17 +47,32 @@ public class Airport extends BaseEntity {
     public String getName() {
         return name;
     }
+    public void setName(String data) {
+      this.name = data;
+    }
     public String getIata() {
         return iata;
+    }
+    public void setIata(String data) {
+      this.iata = data;
     }
     public String getIcao() {
         return icao;
     }
+    public void setIcao(String data) {
+      this.icao = data;
+    }
     public String getCountry() {
         return country;
     }
+    public void setCountry(String data) {
+      this.country = data;
+    }
     public String getCity() {
         return city;
+    }
+    public void setCity(String data) {
+      this.city = data;
     }
     public BigDecimal getLatitude() {
         return latitude;

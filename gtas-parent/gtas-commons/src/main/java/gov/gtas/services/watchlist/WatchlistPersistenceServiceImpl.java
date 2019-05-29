@@ -30,14 +30,7 @@ import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -181,6 +174,7 @@ public class WatchlistPersistenceServiceImpl implements
 	private void doDeleteWithLogging(Watchlist watchlist, User editUser,
 			Collection<WatchlistItem> deleteItems) {
 		if (!CollectionUtils.isEmpty(deleteItems)) {
+			List<WatchlistItem> hydratedDeleteItems = new ArrayList<>();
 			List<AuditRecord> logRecords = new LinkedList<>();
 			Map<Long, WatchlistItem> updateDeleteItemMap = validateItemsPresentInDb(deleteItems);
 			for (WatchlistItem item : deleteItems) {
@@ -189,8 +183,9 @@ public class WatchlistPersistenceServiceImpl implements
 				logRecords.add(createAuditLogRecord(AuditActionType.DELETE_WL,
 						watchlist, itemToDelete, WATCHLIST_LOG_DELETE_MESSAGE,
 						editUser));
+				hydratedDeleteItems.add(itemToDelete);
 			}
-			watchlistItemRepository.deleteAll(deleteItems);
+			watchlistItemRepository.deleteAll(hydratedDeleteItems);
 			auditRecordRepository.saveAll(logRecords);
 		}
 	}

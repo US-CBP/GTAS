@@ -88,10 +88,11 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
     
     $scope.setNonAdminRoles = function (roleToggled) {
         if (roleToggled.roleDescription === ADMIN) {
+        	let selectedRoles = getSelectedRoles().map(function (role) { return role.roleDescription; });
             $scope.roles.forEach(function (role) {
-                if (role.roleDescription !== ADMIN) {
+                if (role.roleDescription !== ADMIN) {                	
                     role.disabled = roleToggled.selected;
-                    role.selected = false;
+                    role.selected = selectedRoles.indexOf(role.roleDescription) >= 0 && !role.disabled;                  
                 }
             });
         }
@@ -111,7 +112,7 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
         if($scope.updatedPassword)
         	{
         		var enteredPassword = $scope.updatedPassword;
-        		var passwordRegEx = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{10,20}$/;
+        		var passwordRegEx = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[$@$!%*^#?&])[A-Za-z\d$@$!%*^#?&]{10,20}$/;
         		var regExResult = passwordRegEx.test(enteredPassword);
 		  
         		if(!regExResult)
