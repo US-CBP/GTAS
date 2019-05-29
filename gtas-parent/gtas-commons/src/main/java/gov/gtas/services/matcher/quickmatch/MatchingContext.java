@@ -274,6 +274,7 @@ public class MatchingContext {
             clauseAsString = clause.toString();
             Map<String, Set<String>> derogForClause = this.clauseValuesToDerogIds.get(clauseAsString);
 
+            
             concatenated = concatClauseValues(traveler, clause);
             
             if ((!concatenated.equals("")) && derogForClause.containsKey(concatenated)) {
@@ -300,12 +301,7 @@ public class MatchingContext {
 
 						if (traveler.get("metaphones").equals(derogRecord.get("metaphones"))) {
 							
-							/*
-							 * Add the double metaphone match result to the potential hits list
-							 */							
-							
 							if (distance >= jaroWinklerThreshold) {
-
 
 								logger.debug(
 										"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
@@ -318,12 +314,10 @@ public class MatchingContext {
 									logger.debug(
 											"There was a match on date of birth (YEAR only) with an offset of {}, traveler={}, derog={}",
 											offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
-
 				
 									 String derogId = derogRecord.get("derogId");
                            			 clauseHits.add(derogId);
                             		 clauseNameMap.put(derogId, derogRecord.get("full_name"));
-
 								}
 
 							}
