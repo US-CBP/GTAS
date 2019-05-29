@@ -66,6 +66,7 @@ insert into app_configuration (opt, val, description)values ('FUZZY_MATCHING', '
 insert into app_configuration (opt, val, description)values ('DATA_MANAGEMENT_CUT_OFF_TIME_SPAN', '6', 'Time in months past which we can truncate data from our database');
 insert into app_configuration (opt, val, description)values ('GRAPH_DB_URL', 'bolt://localhost:7687', 'Neo4J Address');
 insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
+insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');

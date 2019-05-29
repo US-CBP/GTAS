@@ -9,6 +9,8 @@ import gov.gtas.constant.RuleConstants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -148,5 +150,16 @@ public class DateCalendarUtils {
     public static String formatRuleEngineDateTime(final Date date) {
         SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATETIME_FORMAT);
         return format.format(date);
+    }
+    
+    /**
+     * Gets the year value of the { @date } passed in
+     * 
+     * @param date
+     * @return
+     */
+    public static int getYearOfDate(Date date) {
+    	LocalDate local = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    	return local.getYear();
     }
 }
