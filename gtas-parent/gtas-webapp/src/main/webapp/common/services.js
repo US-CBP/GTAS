@@ -247,12 +247,19 @@
       },
 
       getAirportTooltips: function() {
-        return this.getAllCodes('airport').then(function(response){
+        return this.getAllCodes('airport').then(function(response) {
 
-          return response.map(x => ({id: x.iata, name: getTidyName(x.name) + ', ' + x.city + ', ' + x.country}));
+          return response.map(x => ({id: x.iata, name: x.name + ', ' + x.city + ', ' + x.country}));
+        }, handleError);
+      },
 
+      getAirportsWithCode: function() {
+        return this.getAllCodes('airport').then(function(response) {
+
+          return response.map(x => ({id: x.iata, name: x.name + '  (' + x.iata + ')'}));
         }, handleError);
       }
+
 
       };    // return codeService
     })

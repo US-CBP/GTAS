@@ -43,7 +43,7 @@
         }
         
         $scope.resetTooltip = function(){
-          $('md-tooltip').remove();
+           $('md-tooltip').remove();
         };
       
       $scope.watchlistCategoryId;
@@ -576,17 +576,15 @@
           ];
 
         self.querySearch = querySearch;
-      // $http.get('data/airports.json')
       codeService.getAirportTooltips()
-          .then(function (allAirports) {
-              self.allAirports = allAirports.map(function (contact) {
-                  //contact.lowerCasedName = contact.name.toLowerCase();
-                  contact.lowerCasedName = contact.id.toLowerCase();
-                  return contact;
-              });
-              self.filterSelected = true;
-              $scope.filterSelected = true;
-          });
+        .then(function (allAirports) {
+            self.allAirports = allAirports.map(function (contact) {
+                contact.lowerCasedName = contact.id.toLowerCase();
+                return contact;
+            });
+            self.filterSelected = true;
+            $scope.filterSelected = true;
+        });
       $scope.flightDirections = flightDirections;
 
       $injector.invoke(jqueryQueryBuilderWidget, this, {$scope: $scope});
