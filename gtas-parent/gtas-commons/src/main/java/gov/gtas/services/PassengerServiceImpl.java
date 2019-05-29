@@ -161,8 +161,10 @@ public class PassengerServiceImpl implements PassengerService {
                     }
                 }
             }
-            if (p.getPassengerWLTimestamp() != null && p.getPassengerWLTimestamp().getHitCount() > 0) {
-                vo.setOnWatchListLink(true);
+            if (p.getPassengerWLTimestamp() != null
+                    && p.getPassengerWLTimestamp().getHitCount() != null
+                    && p.getPassengerWLTimestamp().getHitCount() > 0) {
+                    vo.setOnWatchListLink(true);
             }
 
             // grab flight info
