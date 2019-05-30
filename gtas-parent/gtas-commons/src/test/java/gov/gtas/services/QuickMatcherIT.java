@@ -127,6 +127,19 @@ public class QuickMatcherIT {
 		assertEquals(0, result.getTotalHits());
 	}
 	
+	@Test
+	public void doubleMetaphoneAndjaroWinklerMatchWithDOBOffTheThresholdShouldNotHit() throws IOException {
+
+		Passenger p = getTestPassenger(22322, "David", "Josph", null, "1988-03-15");
+
+		List<HashMap<String, String>> derogList = getTestWL(312, "David", "Josph", "1980-03-16");
+
+		MatchingResult result = qm.match(p, derogList, .96F, DOB_YEAR_OFFSET);
+		result.getResponses();
+
+		assertEquals(0, result.getTotalHits());
+	}
+	
 	private List<HashMap<String, String>> getTestWL(int id, String firstName, String lastName, String dob)
 			throws IOException {
 
