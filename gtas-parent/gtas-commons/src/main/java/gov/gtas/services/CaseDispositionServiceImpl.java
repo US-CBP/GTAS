@@ -786,7 +786,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             vo.setGeneralCaseCommentVos(null);
             vo.setCurrentTime(new Date());
             vo.setFlightDirection(f.getFlight().getDirection());
-            vo.setCountdownTime(f.getCountdown().getTime());
+            vo.setCountdownTime(f.getCountdown());
             vo = calculateCountDownDisplayString(vo);
             vos.add(vo);
         }
@@ -797,10 +797,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     private CaseVo calculateCountDownDisplayString(CaseVo caseVo) {
-        Long etdEtaDateTime = caseVo.getCountdownTime();
-        Long currentTimeMillis = caseVo.getCurrentTime().getTime();
 
-        Long countDownMillis = etdEtaDateTime - currentTimeMillis;
+        Date etdEtaDateTime = caseVo.getCountdownTime();
+        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
+            caseVo.setCurrentTime(new Date());
+        } else {
+            caseVo.setCurrentTime(offSetTimeZone(new Date()));
+        }
+        Long currentTimeMillis = caseVo.getCurrentTime().getTime();
+        Long countDownMillis = etdEtaDateTime.getTime() - currentTimeMillis;
         Long countDownSeconds = countDownMillis / 1000;
 
         Long daysLong = countDownSeconds / 86400;
@@ -818,10 +823,22 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return caseVo;
     }
 
+    private Date offSetTimeZone(Date caseDate) {
+        int hour_offset = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.HOURLY_ADJ).getValue());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(caseDate);
+        calendar.add(Calendar.HOUR_OF_DAY, hour_offset);
+        return calendar.getTime();
+    }
+
     @Override
     public Date getCurrentServerTime() {
-        Date currentTime = new Date();
-        return currentTime;
+        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
+            return new Date();
+        } else {
+            return offSetTimeZone(new Date());
+        }
+
     }
 
     /**
