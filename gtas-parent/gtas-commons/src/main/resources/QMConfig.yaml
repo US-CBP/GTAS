@@ -98,5 +98,5 @@ gtasDefault:
         - last_name
         - first_name
         - DOB_Date
-    -
         - metaphones
+        

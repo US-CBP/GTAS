@@ -264,16 +264,18 @@ public class MatchingContext {
         // that clause
         String clauseAsString = "";
         String concatenated;
-        boolean partiallyMatched=false;
-        boolean jaroWinklerDistanceMatched=false;
+        
         Set<String> clauseHits = new HashSet<>();
         Map<String, String> clauseNameMap = new HashMap<>();
         for (List<String> clause : matchClauses) {
 
             // Find derog hits on this clause
             clauseAsString = clause.toString();
-/*            Map<String, Set<String>> derogForClause = this.clauseValuesToDerogIds.get(clauseAsString);
+            Map<String, Set<String>> derogForClause = this.clauseValuesToDerogIds.get(clauseAsString);
 
+            boolean exactlyMatched = false;
+            boolean partiallyMatched=false;
+            boolean jaroWinklerDistanceMatched=false;
 
             concatenated = concatClauseValues(traveler, clause);
 
@@ -282,12 +284,13 @@ public class MatchingContext {
                 clauseHits = derogForClause.get(concatenated);
                 logger.info("gtasId {} matches derogIds {} on clause {}",traveler.get("gtasId"), clauseHits, clause);
                 logger.debug("Matched string: {}", concatenated);
+                exactlyMatched = true;
                 for (String derogId : clauseHits) {
                     clauseNameMap.put(derogId, "an exact name match");
                 }
             } else {
                 clauseHits = new HashSet<>();
-            }*/
+            }
             
 
 			if (this.accuracyMode.equals(AccuracyMode.GTAS_DEFAULT.toString())) {
@@ -318,6 +321,7 @@ public class MatchingContext {
 									 String derogId = derogRecord.get("derogId");
                            			 clauseHits.add(derogId);
                             		 clauseNameMap.put(derogId, derogRecord.get("full_name"));
+                            		 partiallyMatched=true;
 								}
 
 							}
@@ -333,7 +337,7 @@ public class MatchingContext {
 								String derogId = derogRecord.get("derogId");
                             	clauseHits.add(derogId);
                             	clauseNameMap.put(derogId, derogRecord.get("full_name"));
-
+                            	jaroWinklerDistanceMatched=true;
 							}
 						}
 					}
@@ -344,17 +348,17 @@ public class MatchingContext {
             for (String thisDerogId : clauseHits) {
                 if (!foundDerogIds.contains(thisDerogId)) {
                     String ruleDescription = "Partial hit on " + clauseNameMap.get(thisDerogId)  ;
-                    if (clause.size() == 1 && clause.get(0).equals("metaphones") ) {
-                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.9f,
+                    if (exactlyMatched ) {
+                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1f,
                                 ruleDescription));
                     } else if (partiallyMatched) {
-                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.8f,
+                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.9f,
                                 ruleDescription));
                     } else if(jaroWinklerDistanceMatched)
                         derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.80f,
                                 ruleDescription));
                     else
-                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 1f,
+                        derogHits.add(new DerogHit(thisDerogId, clauseAsString, 0.7f,
                                 ruleDescription));
                     foundDerogIds.add(thisDerogId);
                 }

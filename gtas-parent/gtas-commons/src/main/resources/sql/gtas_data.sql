@@ -45,7 +45,7 @@ insert into app_configuration (opt, val, description) values('UPLOAD_DIR', 'C:\\
 insert into app_configuration (opt, val, description) values('HOURLY_ADJ','-5','Dashboard Time Adjustment');
 insert into app_configuration (opt, val, description) values('DASHBOARD_AIRPORT','IAD','Dashboard Airport');
 insert into app_configuration (opt, val, description) values('SMS_TOPIC_ARN','','The ARN of the topic used by SmsService');
-insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.85','Threshold which to determine name match');
+insert into app_configuration (opt, val, description) values('MATCHING_THRESHOLD','.95','Threshold which to determine name match');
 insert into app_configuration (opt, val, description) values('MAX_PASSENGER_QUERY_RESULT','1000','Maximum amount of passenger results from query allowed');
 insert into app_configuration (opt, val, description) values('MAX_FLIGHT_QUERY_RESULT','1000','Maximum amount of flight results from query allowed');
 insert into app_configuration (opt, val, description) values('FLIGHT_RANGE','3','Time range for adding flights to name matching queue');
@@ -67,6 +67,7 @@ insert into app_configuration (opt, val, description)values ('DATA_MANAGEMENT_CU
 insert into app_configuration (opt, val, description)values ('GRAPH_DB_URL', 'bolt://localhost:7687', 'Neo4J Address');
 insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
 insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
+INSERT INTO app_configuration (description, opt, val) VALUES ('UTC Server Time', 'UTC_SERVER', 'true');
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
