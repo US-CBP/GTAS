@@ -49,15 +49,16 @@ public class QuickMatcherIT {
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@SuppressWarnings("Duplicates")
-	// @Test
-	public void testingStart() throws IOException {
-		String data = "{\"id\":1,\"action\":null,\"terms\":[{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FOO\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"BAR\"},{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1988-09-14\"}]}";
+	@Test
+	public void testingStart() throws IOException, ParseException {
+		String data = "{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1992-07-15\"},{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FOO\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"BAR\"}]}";
 		Passenger p = new Passenger();
 		PassengerDetails pd = new PassengerDetails();
 		List<HashMap<String, String>> derogList = new ArrayList<>();
 
 		pd.setFirstName("FOO");
 		pd.setLastName("BAR");
+		pd.setDob((new SimpleDateFormat("yyyy-mm-dd").parse("1990-07-15")));
 		pd.setMiddleName(null);
 		p.setId(90909L);
 		p.setPassengerDetails(pd);
@@ -70,7 +71,7 @@ public class QuickMatcherIT {
 			}
 		}
 		derogList.add(derogItem);
-		MatchingResult result = qm.match(p, derogList, .85F, DOB_YEAR_OFFSET);
+		MatchingResult result = qm.match(p, derogList, .99F, DOB_YEAR_OFFSET);
 		result.getResponses();
 	}
 
