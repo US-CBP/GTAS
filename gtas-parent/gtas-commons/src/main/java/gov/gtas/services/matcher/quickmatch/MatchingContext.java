@@ -272,11 +272,11 @@ public class MatchingContext {
 
             // Find derog hits on this clause
             clauseAsString = clause.toString();
-            Map<String, Set<String>> derogForClause = this.clauseValuesToDerogIds.get(clauseAsString);
+/*            Map<String, Set<String>> derogForClause = this.clauseValuesToDerogIds.get(clauseAsString);
 
-            
+
             concatenated = concatClauseValues(traveler, clause);
-            
+
             if ((!concatenated.equals("")) && derogForClause.containsKey(concatenated)) {
                 // Get derogIds with same concatenated values for the clause
                 clauseHits = derogForClause.get(concatenated);
@@ -287,7 +287,7 @@ public class MatchingContext {
                 }
             } else {
                 clauseHits = new HashSet<>();
-            }
+            }*/
             
 
 			if (this.accuracyMode.equals(AccuracyMode.GTAS_DEFAULT.toString())) {
