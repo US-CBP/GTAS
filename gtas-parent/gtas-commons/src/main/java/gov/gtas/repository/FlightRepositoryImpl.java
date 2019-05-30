@@ -80,9 +80,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
 					orderByItem.add(watchlistHits.get("hitCount"));
 				} else if ("graphHitCount".equalsIgnoreCase(sort.getColumn())) {
-					orderByItem.add(fuzzyHits.get("hitCount"));
-				} else if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())) {
 					orderByItem.add(graphHits.get("hitCount"));
+				} else if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())) {
+					orderByItem.add(fuzzyHits.get("hitCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
 					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
