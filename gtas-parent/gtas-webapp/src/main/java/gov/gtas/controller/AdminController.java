@@ -91,21 +91,25 @@ public class AdminController {
   private AirportService airportService;
 
   //carrier
-	@RequestMapping(method = RequestMethod.GET, value = "/carrier")
+	@RequestMapping(method = RequestMethod.GET, value = "/api/carrier")
 	public List<Carrier> getAllCarrier(){
 		return carrierService.findAll();
 	}
-	@RequestMapping(method = RequestMethod.POST, value = "/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.POST, value = "/api/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Carrier createCarrier(@RequestBody @Valid Carrier carrier) {
 		return carrierService.create(carrier);
 	}
-	@RequestMapping(method = RequestMethod.PUT, value = "/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/carrier", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Carrier updateCarrier(@RequestBody @Valid Carrier carrier) {
 		return carrierService.update(carrier);
 	}
-	@RequestMapping(method = RequestMethod.DELETE, value = "/carrier/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/api/carrier/{id}")
 	public Carrier deleteCarrier(@PathVariable Long id) {
 		return carrierService.delete(id);
+	}
+	@RequestMapping(method = RequestMethod.POST, value = "/api/carrier/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public Carrier restoreCarrier(@PathVariable Long id) {
+		return carrierService.restore(id);
 	}
 
   //country

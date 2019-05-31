@@ -173,9 +173,12 @@ public class PassengerDetailsController {
 				t.getId(), new Long(flightId));
 		
 		if (!pnrList.isEmpty()) {
+      //APB - why are we not getting the passengerIds from the latest PNR??
 			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
 			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
 
+      // APB - Here we are using "getLatestPnrFromList" to choose which element from pnrList to use,
+      // so why use pnrList.get(0) for the pax data ???
 			Pnr source=getLatestPnrFromList(pnrList);
 			vo.setPnrVo(mapPnrToPnrVo(source));			
 			PnrVo tempVo = vo.getPnrVo();

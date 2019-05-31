@@ -15,6 +15,8 @@ public interface CarrierService {
     public Carrier create(Carrier carrier);
     @PreAuthorize(PRIVILEGE_ADMIN)
     public Carrier delete(Long id);
+    @PreAuthorize(PRIVILEGE_ADMIN)
+    public Carrier restore(Long id);
     public List<Carrier> findAll();
     @PreAuthorize(PRIVILEGE_ADMIN)
     public Carrier update(Carrier carrier) ;

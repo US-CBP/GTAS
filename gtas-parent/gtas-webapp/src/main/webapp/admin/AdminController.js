@@ -197,10 +197,10 @@ $scope.refreshActiveCodeGrid = function(){
       var tab = $scope.activeCodeTab;
 
       if (action === 'Edit')
-        result = codeService.updateCode(tab, $scope.rowSelected)
+        codeService.updateCode(tab, $scope.rowSelected)
         .then($scope.refreshActiveCodeGrid, $scope.errorToast);
       else
-        result = codeService.createCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+        codeService.createCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
 
       //sync the tooltip collections in memory
       refreshTooltips();

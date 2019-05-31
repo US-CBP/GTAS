@@ -54,7 +54,13 @@ public class CarrierServiceImpl implements CarrierService {
     @Override
     @Transactional
     public Carrier findById(Long id) {
-        
+        return carrierRespository.findById(id).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public Carrier restore(Long id) {
+      CarrierRestore cr = 
         return carrierRespository.findById(id).orElse(null);
     }
 
