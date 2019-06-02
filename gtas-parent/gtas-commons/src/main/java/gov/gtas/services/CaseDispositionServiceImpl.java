@@ -84,6 +84,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private PassengerResolverService passengerResolverService;
     @Resource
     private AppConfigurationRepository appConfigurationRepository;
+    @Autowired
+    private AppConfigurationService appConfigurationService;
 
     public CaseDispositionServiceImpl() {
     }
@@ -802,7 +804,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
             caseVo.setCurrentTime(new Date());
         } else {
-            caseVo.setCurrentTime(offSetTimeZone(new Date()));
+            caseVo.setCurrentTime(appConfigurationService.offSetTimeZone(new Date()));
         }
         Long currentTimeMillis = caseVo.getCurrentTime().getTime();
         Long countDownMillis = etdEtaDateTime.getTime() - currentTimeMillis;
@@ -823,20 +825,14 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return caseVo;
     }
 
-    private Date offSetTimeZone(Date caseDate) {
-        int hour_offset = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.HOURLY_ADJ).getValue());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(caseDate);
-        calendar.add(Calendar.HOUR_OF_DAY, hour_offset);
-        return calendar.getTime();
-    }
+
 
     @Override
     public Date getCurrentServerTime() {
         if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
             return new Date();
         } else {
-            return offSetTimeZone(new Date());
+            return appConfigurationService.offSetTimeZone(new Date());
         }
 
     }

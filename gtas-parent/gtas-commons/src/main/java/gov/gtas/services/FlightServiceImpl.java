@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -49,6 +50,10 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private SeatRepository seatRespository;
 
+	@Resource
+	private AppConfigurationService appConfigurationService;
+
+
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
@@ -74,6 +79,9 @@ public class FlightServiceImpl implements FlightService {
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
 			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
+			vo.setEtd(appConfigurationService.offSetTimeZone(f.getMutableFlightDetails().getEtd()));
+			vo.setEta(appConfigurationService.offSetTimeZone(f.getMutableFlightDetails().getEta()));
+
 			Integer fuzzyHits = 0;
 
 			if (f.getFlightHitsFuzzy() != null) {
