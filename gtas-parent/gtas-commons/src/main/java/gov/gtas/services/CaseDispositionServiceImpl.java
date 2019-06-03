@@ -477,7 +477,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
     private Long getRuleCatId(Long ruleId) {
         try {
-            return ruleCatService.fetchRuleCatIdFromRuleId(ruleId);
+            return ruleCatService.fetchRuleCatIdFromNonUdrRuleId(ruleId);
         } catch (Exception ex) {
             logger.error("error in get rule cat id", ex);
         }
