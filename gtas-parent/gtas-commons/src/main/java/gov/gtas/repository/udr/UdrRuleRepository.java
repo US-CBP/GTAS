@@ -62,6 +62,9 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>,
             @Param("deleted") YesNoEnum deleted,
             @Param("enabled") YesNoEnum enabled);
     
+    @Query("SELECT udr FROM Rule r, UdrRule udr WHERE r.id =:ruleId AND udr.id = r.parent")
+    public UdrRule findUdrRuleByRuleId (
+    		@Param("ruleId") Long ruleId);
     
     default UdrRule findOne(Long id)
     {

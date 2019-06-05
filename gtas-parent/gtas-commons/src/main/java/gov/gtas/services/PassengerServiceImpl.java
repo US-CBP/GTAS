@@ -89,6 +89,9 @@ public class PassengerServiceImpl implements PassengerService {
     @Autowired
     FlightPaxRepository flightPaxRepository;
 
+    @Autowired
+    AppConfigurationService appConfigurationService;
+
     @Override
     @Transactional
     public Passenger create(Passenger passenger) {

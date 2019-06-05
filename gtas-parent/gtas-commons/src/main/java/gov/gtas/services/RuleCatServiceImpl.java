@@ -98,4 +98,29 @@ public class RuleCatServiceImpl implements RuleCatService {
         }
 
     }
+    
+    @Override
+    @Cacheable("ruleCategoryCache")
+    public Long fetchRuleCatIdFromNonUdrRuleId(Long ruleId) {
+    	
+    	UdrRule _tempRule = udrRuleRepository.findUdrRuleByRuleId(ruleId);
+    	
+        RuleCat _tempRuleCat = null;
+        if(_tempRule!=null){
+            Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
+
+            _tempRuleCat = _tempRuleCatSet.stream()
+                    .findFirst()
+                    .orElse(null);
+            if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
+            else return _tempRuleCat.getCatId();
+
+        }else {
+            // bracket orphans to 'General' rule category
+            return 1L;
+        }
+
+    }
+    
+    
 }

@@ -335,11 +335,16 @@ public class MatchingServiceImpl implements MatchingService {
                     PassengerWLTimestamp passengerWLTimestamp;
                     if (passenger.getPassengerWLTimestamp() == null) {
                         passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
+                        passengerWLTimestamp.setHitCount(fuzzyHitCounts);
                     } else {
                         passengerWLTimestamp = passenger.getPassengerWLTimestamp();
                         passengerWLTimestamp.setWatchlistCheckTimestamp(new Date());
+                        if (passengerWLTimestamp.getHitCount() != null) {
+                            passengerWLTimestamp.setHitCount(passengerWLTimestamp.getHitCount() + fuzzyHitCounts);
+                        } else {
+                            passengerWLTimestamp.setHitCount(fuzzyHitCounts);
+                        }
                     }
-                    passengerWLTimestamp.setHitCount(fuzzyHitCounts);
                     if (fuzzyHitCounts > 0) {
                         totalMatchCount++;
                     }
@@ -361,7 +366,7 @@ public class MatchingServiceImpl implements MatchingService {
         endTime = System.nanoTime();
         int paxTotal = passengers == null ? 0 : passengers.size();
         logger.debug("Passenger hit count and total run: " + totalMatchCount + " " + paxTotal);
-        logger.debug("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
+        logger.info("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
                 + "ms");
         return totalMatchCount;
     }

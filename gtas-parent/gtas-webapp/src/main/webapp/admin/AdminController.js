@@ -5,15 +5,21 @@
  */
 app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService, errorService, $location, $mdToast, $document, $http, $rootScope) {
   'use strict';
-  $scope.activeCodeTab = 'carrier'; //sub-tab list under 'Code Editor' tab
+  var CARRIER = 'carrier';
+  var COUNTRY = 'country';
+  var AIRPORT = 'airport';
+  var CODESIDEBAR = 'codeSidebar';
+
+  $scope.activeCodeTab = CARRIER; //sub-tab list under 'Code Editor' tab
   $scope.codeColList = {};
   $scope.isEdited = false;
 
+  // CODE fields so we can generate the sidebar dynamically for each type.
   // could also pull these from the coldefs:
   // airportGrid.coldefs.map((col) => col.field), and filter the fields to exclude the "Edit" and "Id" fields?
-  $scope.codeColList.carrier = ['iata', 'name'];
-  $scope.codeColList.airport = ['iata', 'icao', 'name', 'city', 'country'];
-  $scope.codeColList.country = ['iso2', 'iso3', 'name', 'isoNumeric'];
+  $scope.codeColList.carrier = [{name: 'iata', len: 2}, {name: 'name', len: 255}];
+  $scope.codeColList.airport = [{name: 'iata', len: 3}, {name: 'icao', len: 4}, {name: 'name', len: 255}, {name: 'city', len: 255}, {name: 'country', len: 3}];
+  $scope.codeColList.country = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
 
   $scope.settingsInfo = settingsInfo.data;
   var that = this;
@@ -25,17 +31,17 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
                 .parent($scope.toastParent));
   }
   var setUserData = function (data) {
-      $scope.userGrid.data = data;
-      };
+    $scope.userGrid.data = data;
+  };
 
   var setAuditData = function (data) {
-      $scope.auditGrid.data = data;
-      if(data && data.length > 0){
-          that.successToast('Audit Log Data Loaded.');
-      } else {
-          that.successToast('Filter conditions did not return any Audit Log Data.');
-      }
-      };
+    $scope.auditGrid.data = data;
+    if(data && data.length > 0){
+        that.successToast('Audit Log Data Loaded.');
+    } else {
+        that.successToast('Filter conditions did not return any Audit Log Data.');
+    }
+  };
   var setErrorData = function (data) {
           $scope.errorGrid.data = data;
           if(data && data.length > 0){
@@ -61,30 +67,31 @@ var setupCodeGrids = function(){
   var gridTemplate = gridOptionsLookupService.getGridOptions('code');
 
   $scope.carrierGrid = Object.assign({}, gridTemplate);
-  $scope.carrierGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('carrier');
+  $scope.carrierGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs(CARRIER);
 
   $scope.countryGrid = Object.assign({}, gridTemplate);
-  $scope.countryGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('country');
+  $scope.countryGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs(COUNTRY);
 
   $scope.airportGrid = Object.assign({}, gridTemplate);
-  $scope.airportGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('airport');
+  $scope.airportGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs(AIRPORT);
 }
 
 var setCodeData = function (data) {
-  if ($scope.activeCodeTab === 'airport'){
+  var tab = $scope.activeCodeTab;
+  if (tab === AIRPORT){
     $scope.airportGrid.data = data;
   }
-  else if ($scope.activeCodeTab === 'country') {
+  else if (tab === COUNTRY) {
     $scope.countryGrid.data = data;
   }
-  else {
+  else if (tab === CARRIER) {
     $scope.carrierGrid.data = data;
   }
 };
 
 $scope.refreshActiveCodeGrid = function(){
-  $mdSidenav('codeSidebar').close();
-  $scope.activeCodeTab = $scope.activeCodeTab || 'carrier';
+  $mdSidenav(CODESIDEBAR).close();
+  $scope.activeCodeTab = $scope.activeCodeTab || CARRIER;
 
   codeService.getAllCodes($scope.activeCodeTab).then(setCodeData, $scope.errorToast);
 };
@@ -166,7 +173,7 @@ $scope.refreshActiveCodeGrid = function(){
     $scope.rowSelectedRaw = row;
     $scope.rowSelected = Object.assign({}, row);  //new copy for mutations
 
-    $mdSidenav('codeSidebar').open();
+    $mdSidenav(CODESIDEBAR).open();
   };
 
   $scope.openSidebarAdd = function () {
@@ -175,7 +182,7 @@ $scope.refreshActiveCodeGrid = function(){
     $scope.rowSelected = {};
     $scope.codeAction = 'Add';
 
-    $mdSidenav('codeSidebar').open();
+    $mdSidenav(CODESIDEBAR).open();
   };
 
   $scope.saveCode = function () {
@@ -186,7 +193,7 @@ $scope.refreshActiveCodeGrid = function(){
     // am deliberately using != instead of !== to allow type coersion in the comparison below
     // until we add logic to enforce types in the inputs for any non-string fields.
     for (var field of $scope.codeColList[$scope.activeCodeTab]) {
-      if ($scope.rowSelected[field] != $scope.rowSelectedRaw[field]) {
+      if ($scope.rowSelected[field.name] != $scope.rowSelectedRaw[field.name]) {
         isEqual = false;
       }
     }
@@ -196,17 +203,26 @@ $scope.refreshActiveCodeGrid = function(){
     if (!isEqual){
       var tab = $scope.activeCodeTab;
 
-      if (action === 'Edit')
-        result = codeService.updateCode(tab, $scope.rowSelected)
-        .then($scope.refreshActiveCodeGrid, $scope.errorToast);
+      if (action === 'Edit') {
+        codeService.updateCode(tab, $scope.rowSelected)
+        .then(function(response) {
+          if (response.status === 'FAILURE') {
+            $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
+            $scope.errorToast('The record cannot be saved with this data');
+          }
+          else {
+            $scope.refreshActiveCodeGrid();
+          }
+        });
+      }
       else
-        result = codeService.createCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+        codeService.createCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
 
       //sync the tooltip collections in memory
       refreshTooltips();
     }
     else {
-      $mdSidenav('codeSidebar').close();
+      $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
       $scope.errorToast('No changes to the record were detected');
     }
   };
@@ -214,13 +230,13 @@ $scope.refreshActiveCodeGrid = function(){
 
   function refreshTooltips() {
     switch ($scope.activeCodeTab) {
-      case 'carrier':
+      case CARRIER:
         $rootScope.refreshCarrierTooltips();
         break;
-      case 'country':
+      case COUNTRY:
         $rootScope.refreshCountryTooltips();
         break;
-      case 'airport':
+      case AIRPORT:
         $rootScope.refreshAirportTooltips();
         break;
     }
