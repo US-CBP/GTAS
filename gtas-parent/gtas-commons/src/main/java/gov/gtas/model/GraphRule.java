@@ -14,7 +14,7 @@ public class GraphRule extends BaseEntityAudit {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "cipherQuery")
+    @Column(name = "cipherQuery", length = 10000)
     private String cipherQuery;
 
     @OneToMany(mappedBy = "graphRule")
