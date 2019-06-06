@@ -78,7 +78,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
         DAT_G1 dat = getConditionalSegment(DAT_G1.class, "DAT");
         if (dat != null) {
-            parsedMessage.setDateBooked(dat.getTicketIssueDate());
+        	if (parsedMessage.getDateBooked() == null) {
+                parsedMessage.setDateBooked(dat.getTicketIssueDate());
+            }
             parsedMessage.setDateReceived(dat.getPnrTransactionDate());
         }
 
@@ -164,6 +166,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             parsedMessage.setRecordLocator(controlInfo.getReservationControlNumber());
             if(controlInfo.getTimeCreated() != null){
                 parsedMessage.setReservationCreateDate(controlInfo.getTimeCreated());
+                parsedMessage.setDateBooked(controlInfo.getTimeCreated());
             }
         }
     }
