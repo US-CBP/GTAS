@@ -18,19 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.FixMethodOrder;
+import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
@@ -38,14 +30,10 @@ import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Rollback(true)
-public class QuickMatcherIT {
 
-	@Autowired
-	private QuickMatcher qm;
+public class QuickMatcherTest {
+
+	private QuickMatcher qm = new QuickMatcherImpl();
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@SuppressWarnings("Duplicates")

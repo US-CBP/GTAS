@@ -12,14 +12,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import gov.gtas.model.Passenger;
-import gov.gtas.services.AppConfigurationService;
 
-@Component
-@Scope("prototype")
 public class QuickMatcherImpl implements QuickMatcher {
 
 	private final Logger logger = LoggerFactory.getLogger(QuickMatcherImpl.class);
@@ -28,10 +22,8 @@ public class QuickMatcherImpl implements QuickMatcher {
 	 * Do not make this a bean without taking multithreading into account.
 	 */
 	private final MatchingContext cxt;
-	private final AppConfigurationService appConfigurationService;
 
-	public QuickMatcherImpl(AppConfigurationService appConfigurationService) {
-		this.appConfigurationService = appConfigurationService;
+	public QuickMatcherImpl() {
 		this.cxt = new MatchingContext();
 	}
 

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.services.matcher.quickmatch.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,11 +44,6 @@ import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.matcher.quickmatch.DerogHit;
-import gov.gtas.services.matcher.quickmatch.DerogResponse;
-import gov.gtas.services.matcher.quickmatch.MatchingContext;
-import gov.gtas.services.matcher.quickmatch.MatchingResult;
-import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -175,7 +171,7 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     public int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
-        QuickMatcher qm = ctx.getBean(QuickMatcher.class);
+        QuickMatcher qm = new QuickMatcherImpl();
         logger.debug("Starting fuzzy matching");
 
         List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
