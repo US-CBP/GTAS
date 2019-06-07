@@ -21,7 +21,6 @@ import org.springframework.cache.annotation.Cacheable;
 @Table(name = "countryRestore", indexes = { @Index(columnList = "iso3", name = "countryRestore_iso3_index") })
 public class CountryRestore extends BaseEntity {
     public CountryRestore() { }
-    
     @Column(length = 2)
     private String iso2;
 
@@ -32,7 +31,7 @@ public class CountryRestore extends BaseEntity {
     
     @Column(name = "iso_numeric", length = 3)
     private String isoNumeric;
-    
+
     public String getIso2() {
         return iso2;
     }

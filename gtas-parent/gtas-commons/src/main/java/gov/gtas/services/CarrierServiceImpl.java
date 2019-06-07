@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import gov.gtas.model.lookup.Carrier;
 import gov.gtas.repository.CarrierRepository;
+import gov.gtas.repository.CarrierRepositoryCustom;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class CarrierServiceImpl implements CarrierService {
 
     @Resource
     private CarrierRepository carrierRespository;
+    @Resource
+    private CarrierRepositoryCustom carrierRepoCust;
     
     @Override
     @Transactional
@@ -59,9 +62,14 @@ public class CarrierServiceImpl implements CarrierService {
 
     @Override
     @Transactional
-    public Carrier restore(Long id) {
-      CarrierRestore cr = 
-        return carrierRespository.findById(id).orElse(null);
+    public Carrier restore(Carrier carrier) {
+      return carrierRepoCust.restore(carrier);
+    }
+
+    @Override
+    @Transactional
+    public int restoreAll() {
+      return carrierRepoCust.restoreAll();
     }
 
     @Override

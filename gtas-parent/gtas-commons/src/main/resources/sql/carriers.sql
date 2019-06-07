@@ -1179,3 +1179,10 @@ insert into carrier(iata, icao, name) values ("ZU","","Ethiopian Mozambique Airl
 insert into carrier(iata, icao, name) values ("ZW","AWI","Air Wisconsin Airlines Corporation (AWAC)");
 insert into carrier(iata, icao, name) values ("ZX","GGN","Air Georgian Ltd. d/b/a Air Alliance");
 insert into carrier(iata, icao, name) values ("ZY","CHY","China Air Cargo Co., Ltd.");
+
+
+-- POPULATE CARRIERRESTORE TABLE AS EXACT DUPLICATE --
+insert into carrierRestore (id, iata, icao, name) select id, iata, icao, name from carrier;
+
+-- SET ORIGINID ON THE INITIAL RECORDS IN CARRIER ONLY
+update carrier set originId = id;

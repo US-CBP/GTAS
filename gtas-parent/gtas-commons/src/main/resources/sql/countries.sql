@@ -245,3 +245,12 @@ insert into country(name, iso2, iso3, iso_numeric) values ('Western Sahara', 'EH
 insert into country(name, iso2, iso3, iso_numeric) values ('Yemen', 'YE', 'YEM', '887');
 insert into country(name, iso2, iso3, iso_numeric) values ('Zambia', 'ZM', 'ZMB', '894');
 insert into country(name, iso2, iso3, iso_numeric) values ('Zimbabwe', 'ZW', 'ZWE', '716');
+
+ -- POPULATE COUNTRYRESTORE TABLE AS EXACT DUPLICATE --
+insert into countryRestore (id, name, iso2, iso3, iso_numeric)
+select id, name, iso2, iso3, iso_numeric from country;
+
+
+-- SET ORIGINID ON THE INITIAL RECORDS IN THE COUNTRY TABLE ONLY
+update country set originId = id;
+

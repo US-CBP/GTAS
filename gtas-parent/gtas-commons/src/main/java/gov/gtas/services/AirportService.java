@@ -18,6 +18,10 @@ public interface AirportService {
   public List<Airport> findAll();
   @PreAuthorize(PRIVILEGE_ADMIN)
   public Airport update(Airport port) ;
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public Airport restore(Airport airport);
+  @PreAuthorize(PRIVILEGE_ADMIN)
+  public int restoreAll();
   public Airport findById(Long id);
   public Airport getAirportByThreeLetterCode(String airportCode);
   public Airport getAirportByFourLetterCode(String airportCode);

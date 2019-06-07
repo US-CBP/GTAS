@@ -5,9 +5,7 @@
  */
 package gov.gtas.repository;
 
-import gov.gtas.model.User;
 import gov.gtas.model.lookup.Carrier;
-import gov.gtas.model.lookup.CarrierRestore;
 
 import java.util.List;
 
@@ -17,8 +15,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface CarrierRepository extends CrudRepository<Carrier, Long>{
 
-    @Query("SELECT c FROM Carrier c WHERE UPPER(c.iata) = UPPER(:carrierCode)")
-    public List<Carrier> getCarrierByTwoLetterCode(@Param("carrierCode") String carrierCode);
+  @Query("SELECT c FROM Carrier c WHERE UPPER(c.iata) = UPPER(:carrierCode)")
+  public List<Carrier> getCarrierByTwoLetterCode(@Param("carrierCode") String carrierCode);
     
     @Query("SELECT c FROM Carrier c WHERE UPPER(c.icao) = UPPER(:carrierCode)")
     public List<Carrier> getCarrierByThreeLetterCode(@Param("carrierCode") String carrierCode);
@@ -26,24 +24,5 @@ public interface CarrierRepository extends CrudRepository<Carrier, Long>{
     default Carrier findOne(Long carrierId) {
     	return findById(carrierId).orElse(null);
     }
-
-    public default Carrier restore(Long id) {
-    String sqlString = " SELECT c FROM CarrierRestore WHERE id = :id";
-    Query query = em.createNativeQuery(sqlString);
-    query.setParameter("id", id.toString());
-    CarrierRestore cr = query.executeUpdate();
-
-    if (cr != null) {
-
-      Carrier carrier = new Carrier();
-      carrier.setId(id);
-      carrier.setIata(cr.getIata());
-      carrier.setName(cr.getName());
-      carrier.setIcao(cr.getIcao());
-
-      return update(carrier);
-    }
-    return cr;
-  }
 
 }

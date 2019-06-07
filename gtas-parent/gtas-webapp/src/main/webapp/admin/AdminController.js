@@ -17,9 +17,9 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   // CODE fields so we can generate the sidebar dynamically for each type.
   // could also pull these from the coldefs:
   // airportGrid.coldefs.map((col) => col.field), and filter the fields to exclude the "Edit" and "Id" fields?
-  $scope.codeColList.carrier = [{name: 'iata', len: 2}, {name: 'name', len: 255}];
-  $scope.codeColList.airport = [{name: 'iata', len: 3}, {name: 'icao', len: 4}, {name: 'name', len: 255}, {name: 'city', len: 255}, {name: 'country', len: 3}];
-  $scope.codeColList.country = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
+  $scope.codeColList[CARRIER] = [{name: 'iata', len: 2}, {name: 'name', len: 255}];
+  $scope.codeColList[AIRPORT] = [{name: 'iata', len: 3}, {name: 'icao', len: 4}, {name: 'name', len: 255}, {name: 'city', len: 255}, {name: 'country', len: 3}];
+  $scope.codeColList[COUNTRY] = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
 
   $scope.settingsInfo = settingsInfo.data;
   var that = this;
@@ -78,15 +78,11 @@ var setupCodeGrids = function(){
 
 var setCodeData = function (data) {
   var tab = $scope.activeCodeTab;
-  if (tab === AIRPORT){
-    $scope.airportGrid.data = data;
-  }
-  else if (tab === COUNTRY) {
-    $scope.countryGrid.data = data;
-  }
-  else if (tab === CARRIER) {
-    $scope.carrierGrid.data = data;
-  }
+  if (tab === AIRPORT) $scope.airportGrid.data = data;
+  
+  if (tab === COUNTRY) $scope.countryGrid.data = data;
+  
+  if (tab === CARRIER) $scope.carrierGrid.data = data;
 };
 
 $scope.refreshActiveCodeGrid = function(){
@@ -248,6 +244,24 @@ $scope.refreshActiveCodeGrid = function(){
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
     codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+    refreshTooltips();
+  };
+
+  $scope.restoreCode = function () {
+    var tab = $scope.activeCodeTab;
+
+    $scope.toastParent = $document[0].getElementById(tab+'Grid');
+
+    codeService.restoreCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+    refreshTooltips();
+  };
+
+  $scope.restoreAllCodes = function () {
+    var tab = $scope.activeCodeTab;
+
+    $scope.toastParent = $document[0].getElementById(tab+'Grid');
+
+    codeService.restoreAllCodes(tab).then($scope.refreshActiveCodeGrid, $scope.errorToast);
     refreshTooltips();
   };
 

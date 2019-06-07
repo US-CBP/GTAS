@@ -19,7 +19,7 @@ import org.springframework.cache.annotation.Cacheable;
 @Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index") })
 public class Carrier extends BaseEntity {
     public Carrier() { }
-    
+    private Long originId;
     private String name;
     
     @Column(length=2)
@@ -27,7 +27,13 @@ public class Carrier extends BaseEntity {
     
     @Column(length=3)
     private String icao;
-    
+
+    public Long getOriginId() {
+        return originId;
+    }
+    public void setOriginId(Long data) {
+        this.originId = data;
+    }
     public String getName() {
         return name;
     }

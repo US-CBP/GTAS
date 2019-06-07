@@ -107,45 +107,63 @@ public class AdminController {
 	public Carrier deleteCarrier(@PathVariable Long id) {
 		return carrierService.delete(id);
 	}
-	@RequestMapping(method = RequestMethod.POST, value = "/api/carrier/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Carrier restoreCarrier(@PathVariable Long id) {
-		return carrierService.restore(id);
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/carrier/restore")
+	public Carrier restoreCarrier(@RequestBody @Valid Carrier carrier) {
+		return carrierService.restore(carrier);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/carrier/restoreAll")
+	public int restoreAllCarrier() {
+		return carrierService.restoreAll();
 	}
 
   //country
-	@RequestMapping(method = RequestMethod.GET, value = "/country")
+	@RequestMapping(method = RequestMethod.GET, value = "/api/country")
 	public List<Country> getAllCountry(){
 		return countryService.findAll();
 	}
-	@RequestMapping(method = RequestMethod.POST, value = "/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.POST, value = "/api/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Country createCountry(@RequestBody @Valid Country country) {
 		return countryService.create(country);
 	}
-	@RequestMapping(method = RequestMethod.PUT, value = "/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/country", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Country updateCountry(@RequestBody @Valid Country country) {
 		return countryService.update(country);
 	}
-	@RequestMapping(method = RequestMethod.DELETE, value = "/country/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/api/country/{id}")
 	public Country deleteCountry(@PathVariable Long id) {
 		return countryService.delete(id);
 	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/country/restore")
+	public Country restoreCountry(@RequestBody @Valid Country country) { return countryService.restore(country); }
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/country/restoreAll")
+	public int restoreAllCountry() {
+		return countryService.restoreAll();
+	}
 
   //airport
-	@RequestMapping(method = RequestMethod.GET, value = "/airport")
+	@RequestMapping(method = RequestMethod.GET, value = "/api/airport")
 	public List<Airport> getAllAirport(){
 		return airportService.findAll();
 	}
-	@RequestMapping(method = RequestMethod.POST, value = "/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.POST, value = "/api/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Airport createAirport(@RequestBody @Valid Airport airport) {
 		return airportService.create(airport);
 	}
-	@RequestMapping(method = RequestMethod.PUT, value = "/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/airport", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public Airport updateAirport(@RequestBody @Valid Airport airport) {
 		return airportService.update(airport);
 	}
-	@RequestMapping(method = RequestMethod.DELETE, value = "/airport/{id}")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/api/airport/{id}")
 	public Airport deleteAirport(@PathVariable Long id) {
 		return airportService.delete(id);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/airport/restore")
+	public Airport restoreAirport(@RequestBody @Valid Airport airport) {
+		return airportService.restore(airport);
+	}
+	@RequestMapping(method = RequestMethod.PUT, value = "/api/airport/restoreAll")
+	public int restoreAllAirport() {
+		return airportService.restoreAll();
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/auditlog")

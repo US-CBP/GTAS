@@ -22,7 +22,6 @@ import gov.gtas.model.BaseEntity;
 @Table(name = "airportRestore", indexes = { @Index(columnList = "iata", name = "airportRestore_iata_index") })
 public class AirportRestore extends BaseEntity {
     public AirportRestore() { }
-    
     private String name;
     
     @Column(length=3)

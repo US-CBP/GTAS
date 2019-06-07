@@ -5,34 +5,32 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.lookup.CarrierRestore;
-import gov.gtas.repository.CarrierRestoreRepository;
-
-import java.util.List;
+import gov.gtas.model.lookup.AirportRestore;
+import gov.gtas.repository.AirportRestoreRepository;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
-public class CarrierRestoreServiceImpl implements CarrierRestoreService {
+public class AirportRestoreServiceImpl implements AirportRestoreService {
 
     @Resource
-    private CarrierRestoreRepository repo;
+    private AirportRestoreRepository repo;
     
 
     @Override
     @Transactional
-    public List<CarrierRestore> findAll() {
+    public List<AirportRestore> findAll() {
         
-        return (List<CarrierRestore>)repo.findAll();
+        return (List<AirportRestore>)repo.findAll();
     }
 
 
     @Override
     @Transactional
-    public CarrierRestore findById(Long id) {
+    public AirportRestore findById(Long id) {
         
         return repo.findById(id).orElse(null);
     }
