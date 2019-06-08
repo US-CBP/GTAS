@@ -48,6 +48,7 @@ import gov.gtas.services.matcher.quickmatch.DerogResponse;
 import gov.gtas.services.matcher.quickmatch.MatchingContext;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
+import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,6 +148,7 @@ public class MatchingServiceImpl implements MatchingService {
         List<Long> passengers = Collections.singletonList(passenger.getId());
         Flight flight = passenger.getFlight();
         MatcherParameters matcherParameters = getMatcherParameters(passengers);
+        
         performFuzzyMatching(flight, passenger, matcherParameters);
         logger.debug("ending fuzzy matching");
 
@@ -170,32 +172,35 @@ public class MatchingServiceImpl implements MatchingService {
         matcherParameters.setWatchlistListMap(watchlistListMap);
         matcherParameters.setThreshold(Float
                 .parseFloat((appConfigRepository.findByOption(appConfigRepository.MATCHING_THRESHOLD).getValue())));
+     
         logger.debug("got matcher parameters");
         return matcherParameters;
     }
 
     public int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
-        QuickMatcher qm = ctx.getBean(QuickMatcher.class);
+        
         logger.debug("Starting fuzzy matching");
-
+       
         List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
         int hitCounter = 0;
         for (Watchlist watchlist : watchlistsList) {
             if (passengerNeedsWatchlistCheck(passenger, watchlist)) {
-                Set<Long> wlItemIds = new HashSet<>();
+               
+            	Set<Long> wlItemIds = new HashSet<>();
                 for (PaxWatchlistLink paxWatchlistLink : passenger.getPaxWatchlistLinks()) {
                     wlItemIds.add(paxWatchlistLink.getWatchlistItem().getId());
                     hitCounter++;
                 }
                 List<HashMap<String, String>> derogList = new ArrayList<>();
                 Map<Long, List<WatchlistItem>> watchlistMap = matcherParameters.getWatchlistListMap();
+                
                 for (WatchlistItem item : watchlistMap.get(watchlist.getId())) {
                     // If watchlist-pax connection doesn't exist (Prevents Duplicate Inserts)
                     if (!wlItemIds.contains(item.getId())) {
                         try {
                             WatchlistItemSpec itemSpec = mapper.readValue(item.getItemData(), WatchlistItemSpec.class);
                             HashMap<String, String> derogItem = new HashMap<>();
-                            derogItem.put("gtasId", passenger.getId().toString());
+                           // derogItem.put("gtasId", passenger.getId().toString());
                             derogItem.put("derogId", item.getId().toString());
                             derogItem.put(DerogHit.WATCH_LIST_NAME, item.getWatchlist().getWatchlistName());
                             if (itemSpec != null && itemSpec.getTerms() != null) {
@@ -215,7 +220,7 @@ public class MatchingServiceImpl implements MatchingService {
                 
                 int dobYearOffset = getDobYearOffset(MatchingContext.DOB_YEAR_OFFSET);
 
-                MatchingResult result = qm.match(passenger, derogList, matcherParameters.getThreshold(), dobYearOffset);
+                MatchingResult result = matcherParameters.getQm().match(passenger, matcherParameters.getThreshold(), dobYearOffset);
                 
                 // These will make calls to the database to save a watchlist link and make a case.
                 // This will cause performance issues IF every passenger hits on a watchlist.
@@ -331,7 +336,11 @@ public class MatchingServiceImpl implements MatchingService {
             for (Passenger passenger : passengers) {
                 try {
                     flights.add(passenger.getFlight());
-                    int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
+                    long fuzzyStartTime = System.nanoTime();
+                    	int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
+                    long fuzzyEndTime = System.nanoTime();
+                    logger.info("Execution time for performFuzzyMatching()  = " + (fuzzyStartTime - fuzzyEndTime) / 1000000
+                            + "ms");
                     PassengerWLTimestamp passengerWLTimestamp;
                     if (passenger.getPassengerWLTimestamp() == null) {
                         passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());

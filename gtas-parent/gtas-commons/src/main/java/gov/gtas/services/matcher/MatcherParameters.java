@@ -4,6 +4,7 @@ import gov.gtas.model.Case;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,17 @@ public class MatcherParameters {
     private List<Watchlist> _watchlists;
     private Map<Long, List<WatchlistItem>> watchlistListMap;
     private float threshold;
+    private QuickMatcher qm;
 
-    Map<Long, Case> getCaseMap() {
+    public QuickMatcher getQm() {
+		return qm;
+	}
+
+	public void setQm(QuickMatcher qm) {
+		this.qm = qm;
+	}
+
+	Map<Long, Case> getCaseMap() {
         return caseMap;
     }
 
