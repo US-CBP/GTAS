@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.services.matcher.quickmatch.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,12 +44,6 @@ import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.matcher.quickmatch.DerogHit;
-import gov.gtas.services.matcher.quickmatch.DerogResponse;
-import gov.gtas.services.matcher.quickmatch.MatchingContext;
-import gov.gtas.services.matcher.quickmatch.MatchingResult;
-import gov.gtas.services.matcher.quickmatch.QuickMatcher;
-import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -336,19 +331,20 @@ public class MatchingServiceImpl implements MatchingService {
             for (Passenger passenger : passengers) {
                 try {
                     flights.add(passenger.getFlight());
-                    long fuzzyStartTime = System.nanoTime();
-                    	int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
-                    long fuzzyEndTime = System.nanoTime();
-                    logger.info("Execution time for performFuzzyMatching()  = " + (fuzzyStartTime - fuzzyEndTime) / 1000000
-                            + "ms");
+                    int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
                     PassengerWLTimestamp passengerWLTimestamp;
                     if (passenger.getPassengerWLTimestamp() == null) {
                         passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
+                        passengerWLTimestamp.setHitCount(fuzzyHitCounts);
                     } else {
                         passengerWLTimestamp = passenger.getPassengerWLTimestamp();
                         passengerWLTimestamp.setWatchlistCheckTimestamp(new Date());
+                        if (passengerWLTimestamp.getHitCount() != null) {
+                            passengerWLTimestamp.setHitCount(passengerWLTimestamp.getHitCount() + fuzzyHitCounts);
+                        } else {
+                            passengerWLTimestamp.setHitCount(fuzzyHitCounts);
+                        }
                     }
-                    passengerWLTimestamp.setHitCount(fuzzyHitCounts);
                     if (fuzzyHitCounts > 0) {
                         totalMatchCount++;
                     }
@@ -370,7 +366,7 @@ public class MatchingServiceImpl implements MatchingService {
         endTime = System.nanoTime();
         int paxTotal = passengers == null ? 0 : passengers.size();
         logger.debug("Passenger hit count and total run: " + totalMatchCount + " " + paxTotal);
-        logger.debug("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
+        logger.info("Execution time for performFuzzyMatching() for loop = " + (endTime - startTime) / 1000000
                 + "ms");
         return totalMatchCount;
     }

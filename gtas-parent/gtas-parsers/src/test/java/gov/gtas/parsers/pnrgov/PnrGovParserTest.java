@@ -61,7 +61,7 @@ public class PnrGovParserTest implements ParserTestHelper {
         String message77 = getMessageText(PNR_MESSAGE_PG_77);
         PnrVo vo = this.parser.parse(message77);
         LocalDateTime dateBooked = getLocalDateTime(vo.getDateBooked());
-        LocalDateTime May23rd2013At212400 = LocalDateTime.of(2013, 5, 23, 21, 24);
+        LocalDateTime May23rd2013At212400 = LocalDateTime.of(2013, 5, 23, 18, 13, 48);
         assertTrue(May23rd2013At212400.isEqual(dateBooked));
     }
 
@@ -70,7 +70,7 @@ public class PnrGovParserTest implements ParserTestHelper {
         String message76 = getMessageText(PNR_MESSAGE_PG_76);
         PnrVo vo = this.parser.parse(message76);
         LocalDate dateBooked = getLocalDate(vo.getDateBooked());
-        LocalDate Feb142013 = LocalDate.of(2013, 2, 14);
+        LocalDate Feb142013 = LocalDate.of(2013, 2, 15);
         assertTrue(Feb142013.isEqual(dateBooked));
     }
 

@@ -16,45 +16,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.codec.language.DoubleMetaphone;
-import org.apache.commons.text.similarity.JaroWinklerDistance;
-import org.junit.FixMethodOrder;
+import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import ch.qos.logback.classic.Logger;
-import gov.gtas.config.CachingConfig;
-import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
-import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
-import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
-import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Rollback(true)
-public class QuickMatcherIT {
 
-	private final org.slf4j.Logger logger = LoggerFactory.getLogger(QuickMatcherIT.class);
-	
-	private QuickMatcher qm;
+public class QuickMatcherTest {
+
+	private QuickMatcher qm = new QuickMatcherImpl();
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@SuppressWarnings("Duplicates")
@@ -80,8 +59,7 @@ public class QuickMatcherIT {
 			}
 		}
 		derogList.add(derogItem);
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .99F, DOB_YEAR_OFFSET);
+		MatchingResult result = qm.match(p, derogList, .99F, DOB_YEAR_OFFSET);
 		result.getResponses();
 	}
 
@@ -91,9 +69,8 @@ public class QuickMatcherIT {
 		Passenger p = getTestPassenger(1, "John", "Doe", null, "1988-03-15");
 
 		List<HashMap<String, String>> derogList = getTestWL(11, "John", "Doe", "1988-03-15");
-		
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .80F, DOB_YEAR_OFFSET);
+
+		MatchingResult result = qm.match(p, derogList, .80F, DOB_YEAR_OFFSET);
 		result.getResponses();
 
 		assertEquals(1, result.getTotalHits());
@@ -107,8 +84,7 @@ public class QuickMatcherIT {
 
 		List<HashMap<String, String>> derogList = getTestWL(12, "John", "Doe", "1984-03-15");
 
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .80F, DOB_YEAR_OFFSET);
+		MatchingResult result = qm.match(p, derogList, .80F, DOB_YEAR_OFFSET);
 		result.getResponses();
 
 		assertEquals(0, result.getTotalHits());
@@ -121,8 +97,7 @@ public class QuickMatcherIT {
 
 		List<HashMap<String, String>> derogList = getTestWL(12, "David", "Jospp", "1988-03-15");
 
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .96F, DOB_YEAR_OFFSET);
+		MatchingResult result = qm.match(p, derogList, .96F, DOB_YEAR_OFFSET);
 		result.getResponses();
 
 		assertEquals(1, result.getTotalHits());
@@ -135,8 +110,7 @@ public class QuickMatcherIT {
 
 		List<HashMap<String, String>> derogList = getTestWL(12, "David", "Jospp", "1988-03-16");
 
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .96F, DOB_YEAR_OFFSET);
+		MatchingResult result = qm.match(p, derogList, .96F, DOB_YEAR_OFFSET);
 		result.getResponses();
 
 		assertEquals(0, result.getTotalHits());
@@ -148,37 +122,11 @@ public class QuickMatcherIT {
 		Passenger p = getTestPassenger(22322, "David", "Josph", null, "1988-03-15");
 
 		List<HashMap<String, String>> derogList = getTestWL(312, "David", "Josph", "1980-03-16");
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .96F, DOB_YEAR_OFFSET);
+
+		MatchingResult result = qm.match(p, derogList, .96F, DOB_YEAR_OFFSET);
 		result.getResponses();
 
 		assertEquals(0, result.getTotalHits());
-	}
-	
-	@Test
-	public void doubleMetaphoneMissAndjaroWinklerMatchWithDOBInTheThresholdShouldHit() throws IOException {
-
-		Passenger p = getTestPassenger(22322, "Adve", "John", null, "1988-03-16");
-
-		List<HashMap<String, String>> derogList = getTestWL(312, "dave", "John", "1988-03-16");
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .96F, DOB_YEAR_OFFSET);
-		result.getResponses();
-
-		assertEquals(1, result.getTotalHits());
-	}
-	
-	@Test
-	public void doubleMetaphoneMissAndjaroWinklerMatchWithDOBInTheThresholdShouldHit() throws IOException {
-
-		Passenger p = getTestPassenger(22322, "Adve", "John", null, "1988-03-16");
-
-		List<HashMap<String, String>> derogList = getTestWL(312, "dave", "John", "1988-03-16");
-		this.qm = new QuickMatcherImpl(derogList);
-		MatchingResult result = qm.match(p, .96F, DOB_YEAR_OFFSET);
-		result.getResponses();
-
-		assertEquals(1, result.getTotalHits());
 	}
 	
 	private List<HashMap<String, String>> getTestWL(int id, String firstName, String lastName, String dob)
@@ -222,5 +170,4 @@ public class QuickMatcherIT {
 
 		return p;
 	}
-	
 }

@@ -92,11 +92,21 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				}
 				if ("desc".equalsIgnoreCase(sort.getDir())) {
 					for (Expression<?> e : orderByItem) {
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
+						|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+							orderList.add(cb.desc(cb.coalesce(e, 0)));
+						} else {
 						orderList.add(cb.desc(e));
+					}
 					}
 				} else {
 					for (Expression<?> e : orderByItem) {
-						orderList.add(cb.asc(e));
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+							orderList.add(cb.asc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.asc(e));
+						}
 					}
 				}
 			}
