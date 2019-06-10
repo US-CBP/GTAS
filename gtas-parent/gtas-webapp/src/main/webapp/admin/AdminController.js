@@ -13,6 +13,7 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   $scope.activeCodeTab = CARRIER; //sub-tab list under 'Code Editor' tab
   $scope.codeColList = {};
   $scope.isEdited = false;
+  $scope.OK = false;
 
   // CODE fields so we can generate the sidebar dynamically for each type.
   // could also pull these from the coldefs:
@@ -83,6 +84,8 @@ var setCodeData = function (data) {
   if (tab === COUNTRY) $scope.countryGrid.data = data;
   
   if (tab === CARRIER) $scope.carrierGrid.data = data;
+
+  $scope.OK = true;
 };
 
 $scope.refreshActiveCodeGrid = function(){
@@ -208,6 +211,8 @@ $scope.refreshActiveCodeGrid = function(){
           }
           else {
             $scope.refreshActiveCodeGrid();
+            that.successToast("Code successfully saved.");
+            $scope.OK = false;
           }
         });
       }
@@ -243,8 +248,16 @@ $scope.refreshActiveCodeGrid = function(){
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
-    refreshTooltips();
+    var r = confirm("Are you sure you want to delete this code?");
+    if (r == true) {
+      codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+      refreshTooltips();
+
+      if($scope.OK) {
+        that.successToast("Code successfully deleted.");
+        $scope.OK = false;
+      }
+    }
   };
 
   $scope.restoreCode = function () {
@@ -252,8 +265,16 @@ $scope.refreshActiveCodeGrid = function(){
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    codeService.restoreCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
-    refreshTooltips();
+    var r = confirm("Are you sure you want to restore this code to its original value?");
+    if (r == true) {
+      codeService.restoreCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+      refreshTooltips();
+
+      if($scope.OK) {
+        that.successToast("Code successfully restored.");
+        $scope.OK = false;
+      }
+    }
   };
 
   $scope.restoreAllCodes = function () {
@@ -261,8 +282,16 @@ $scope.refreshActiveCodeGrid = function(){
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    codeService.restoreAllCodes(tab).then($scope.refreshActiveCodeGrid, $scope.errorToast);
-    refreshTooltips();
+    var r = confirm(`Are you sure you want to restore all ${tab.toUpperCase()} codes to their original values?`);
+    if (r == true) {
+      codeService.restoreAllCodes(tab).then($scope.refreshActiveCodeGrid, $scope.errorToast);
+      refreshTooltips();
+
+      if($scope.OK) {
+        that.successToast(`All ${tab} codes successfully restored.`);
+        $scope.OK = false;
+      }
+    }
   };
 
   $scope.createUser = function () { $location.path('/user/new'); };
