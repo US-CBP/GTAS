@@ -657,6 +657,7 @@ var app;
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
+            $scope.hitCount = 0;
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -690,6 +691,15 @@ var app;
             }, function(reason){
               alert("Error Loading Notifications: " + reason);
             });
+
+            notificationService.getWatchlistCount().then(function(value) {
+               $scope.hitCount = value;
+            });
+
+            $scope.getHitCount = function() {
+                    return $scope.hitCount;
+            };
+
             let oneDayLookoutUser = false;
             let user = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
             user.roles.forEach(function (role) {
@@ -714,6 +724,9 @@ var app;
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
+                notificationService.getWatchlistCount().then(function(value) {
+                    $scope.hitCount = value;
+                });
             });
 
             $rootScope.$on('unauthorizedEvent', function () {
