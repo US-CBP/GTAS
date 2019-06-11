@@ -1288,8 +1288,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
     protected Set<Case> getCasesWithTimeLeft(Set<Case> caseSet) {
         Set<Case> caseBeforeTakeoff = new HashSet<>();
-        Date now = new Date();
-
+        Date now = appConfigurationService.offSetTimeZone(new Date());
         for (Case caze : caseSet) {
             Flight caseFlight = caze.getFlight();
             if (caseFlight != null) {
