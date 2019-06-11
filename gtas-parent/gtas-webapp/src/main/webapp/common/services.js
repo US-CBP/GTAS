@@ -8,6 +8,7 @@
   app
       .service('notificationService', function($http,$q) {
         var GET_MESSAGE_ERRORS_URL ="/gtas/errorMessage";
+        var GET_NOTIFICATION_HITS ="/gtas/hitCount";
         function handleError(response) {
             if (response.data.message === undefined) {
                 return $q.reject("An unknown error occurred.");
@@ -19,13 +20,20 @@
             return response.data;
         }
         return {
-          getErrorData:function() {
-            var request = $http({
-                method: "get",
-                url: GET_MESSAGE_ERRORS_URL
-            });
-            return (request.then(handleSuccess, handleError));
-          }
+            getErrorData: function () {
+                var request = $http({
+                    method: "get",
+                    url: GET_MESSAGE_ERRORS_URL
+                });
+                return (request.then(handleSuccess, handleError));
+            },
+            getWatchlistCount: function () {
+                var request = $http({
+                    method: "get",
+                    url: GET_NOTIFICATION_HITS
+                });
+                return (request.then(handleSuccess, handleError));
+            }
         }
       })
       .service('errorService', function ($http, $q) {

@@ -87,6 +87,9 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     @Autowired
     private AppConfigurationService appConfigurationService;
 
+    @Autowired
+    private FlightService flightService;
+
     public CaseDispositionServiceImpl() {
     }
 
@@ -1270,5 +1273,39 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         caseDispositionRepository.updateEncounteredStatus(caseId, encStatus);
 
     }
+
+
+    public Set<Case> getOpenCasesWithTimeLeft() {
+        List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
+        flightList.addAll(flightService.getFlightsThreeDaysForwardOutbound());
+        Set<Long> flightIds =  flightList.stream().map(Flight::getId).collect(Collectors.toSet());
+        Set<Case> casesBeforeTakeOff = new HashSet<>();
+        if (!flightIds.isEmpty()) {
+            casesBeforeTakeOff = getCasesWithTimeLeft(caseDispositionRepository.getCasesByFlightIds(flightIds));
+        }
+        return casesBeforeTakeOff;
+    }
+
+    protected Set<Case> getCasesWithTimeLeft(Set<Case> caseSet) {
+        Set<Case> caseBeforeTakeoff = new HashSet<>();
+        Date now = new Date();
+
+        for (Case caze : caseSet) {
+            Flight caseFlight = caze.getFlight();
+            if (caseFlight != null) {
+                Date flightDate;
+                if ("I".equalsIgnoreCase(caze.getFlight().getDirection())) {
+                    flightDate = caseFlight.getMutableFlightDetails().getEta();
+                } else {
+                    flightDate = caseFlight.getMutableFlightDetails().getEtd();
+                }
+                if (now.before(flightDate) && "NEW".equalsIgnoreCase(caze.getStatus())) {
+                    caseBeforeTakeoff.add(caze);
+                }
+            }
+        }
+        return caseBeforeTakeoff;
+    }
+
 
 }
