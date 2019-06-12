@@ -5951,3 +5951,12 @@ INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Paloich Airport, Heliport', 'HGI', 'HSFA', 'Higleig', 10.529167, 32.500556, (select iso3 from country where upper(name) like upper('%South Sudan%') limit 1) );
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Kishangarh Airport', 'KQH', 'VIKG', 'Ajmer', 26.601473, 74.814147, (select iso3 from country where upper(name) like upper('%India%') limit 1) );
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Kannur International Airport', 'CNN', 'VOKN', 'Kannur', 11.918614, 75.547211, (select iso3 from country where upper(name) like upper('%India%') limit 1) );
+
+
+
+-- POPULATE AIRPORTRESTORE TABLE AS EXACT DUPLICATE --
+insert into airportRestore (id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone)
+select id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone from airport;
+
+-- SET ORIGINID ON THE INITIAL RECORDS (IN AIRPORT ONLY)
+update airport set originId = id;

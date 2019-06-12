@@ -82,19 +82,10 @@
             </ul>
           </li>
           <li class="dropdown notification mobile-hide">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#/casedisposition">
               <i class="fa fa-inverse fa-bell notif-icon" aria-hidden="true"></i>
-              <span class="notif-icon-cnt">{{errorList.length}}</span>
+              <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li data-has-role="[{{ ROLES.ADMIN }}]" ng-repeat="value in errorList">
-                <a>
-                  {{value.createDate | date:'HH:mm '}} {{value.status}}
-                </a>
-                <md-tooltip class="multi-tooltip" md-z-index=999999>{{value.error}}</md-tooltip>
-              </li>
-            </ul>
-
           </li>
         </ul>
 

@@ -226,6 +226,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setFlightId(passenger.getFlight().getId());
                     rhd.setHitType(HitTypeEnum.GH);
                     rhd.setPassenger(passenger);
+                    rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " " + passenger.getPassengerDetails().getLastName());
                     rhd.setTitle(graphRule.getTitle());
                     rhd.setDescription(graphRule.getDescription());
                     rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());

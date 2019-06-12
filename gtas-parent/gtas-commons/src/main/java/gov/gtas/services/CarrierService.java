@@ -15,9 +15,13 @@ public interface CarrierService {
     public Carrier create(Carrier carrier);
     @PreAuthorize(PRIVILEGE_ADMIN)
     public Carrier delete(Long id);
+    @PreAuthorize(PRIVILEGE_ADMIN)
+    public Carrier restore(Carrier carrier);
+    @PreAuthorize(PRIVILEGE_ADMIN)
+    public int restoreAll();
     public List<Carrier> findAll();
     @PreAuthorize(PRIVILEGE_ADMIN)
-    public Carrier update(Carrier carrier) ;
+    public Carrier update(Carrier carrier);
     public Carrier findById(Long id);
     public Carrier getCarrierByTwoLetterCode(String carrierCode);
     public Carrier getCarrierByThreeLetterCode(String carrierCode);

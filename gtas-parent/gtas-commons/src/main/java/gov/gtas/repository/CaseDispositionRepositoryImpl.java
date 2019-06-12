@@ -6,6 +6,7 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.Case;
+import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -32,6 +34,9 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
 
     @PersistenceContext
     private EntityManager em;
+
+    @Autowired
+    AppConfigurationService appConfigurationService;
 
     @Override
     public Pair<Long, List<Case>> findByCriteria(CaseRequestDto dto) {
@@ -138,11 +143,14 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
         if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
             criteria.add(" (c.flightETADate BETWEEN :etaStart AND :etaEnd OR  c.flightETDDate BETWEEN :etaStart AND :etaEnd) ");
         }
-        
-        if(dto.getUserLocation()!=null && !dto.getUserLocation().isEmpty() )
-        {
-        	 criteria.add("( ( UPPER(c.flight.direction)='I' AND c.flight.destination = :userLocation) OR ( UPPER(c.flight.direction)='O' AND c.flight.origin = :userLocation) )");
-        	 
+
+        if (dto.getUserLocation() != null && !dto.getUserLocation().isEmpty()) {
+            criteria.add("( ( UPPER(c.flight.direction)='I' AND c.flight.destination = :userLocation) OR ( UPPER(c.flight.direction)='O' AND c.flight.origin = :userLocation) )");
+
+        }
+
+        if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
+            criteria.add(" ( (c.flightETADate > :now and c.flight.direction = 'I') OR (c.flightETDDate > :now and c.flight.direction = 'O') ) ");
         }
 
         return criteria;
@@ -191,6 +199,13 @@ public class CaseDispositionRepositoryImpl implements CaseDispositionRepositoryC
             countQuery.setParameter("etaStart", startDate);
             countQuery.setParameter("etaEnd", endDate);
         }
+
+        if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
+            Date now = appConfigurationService.offSetTimeZone(new Date());
+            query.setParameter("now", now);
+            countQuery.setParameter("now", now);
+        }
+
     }
 
     private void handleSortOptions(StringBuilder querySB, CaseRequestDto dto) {

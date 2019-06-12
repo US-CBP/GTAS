@@ -1,6 +1,7 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +55,9 @@ public class  CaseRequestDto implements Serializable {
     private String caseDisposition;
     
     private String userLocation;
+
+    @JsonProperty("withTimeLeft")
+    private Boolean withTimeLeft;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -244,7 +248,13 @@ public class  CaseRequestDto implements Serializable {
 	public void setUserLocation(String userLocation) {
 		this.userLocation = userLocation;
 	}
-	
-	
- 
+
+
+    public Boolean getWithTimeLeft() {
+        return withTimeLeft;
+    }
+
+    public void setWithTimeLeft(Boolean withTimeLeft) {
+        this.withTimeLeft = withTimeLeft;
+    }
 }

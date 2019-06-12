@@ -16,42 +16,27 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index") })
-public class Carrier extends BaseEntity {
-    public Carrier() { }
-    private Long originId;
-    private String name;
-    
-    @Column(length=2)
-    private String iata;
-    
-    @Column(length=3)
-    private String icao;
+@Table(name = "carrierRestore", indexes = { @Index(columnList = "iata", name = "carrierRestore_iata_index") })
+public class CarrierRestore extends BaseEntity {
+  public CarrierRestore() { }
+  private String name;
+  
+  @Column(length=2)
+  private String iata;
+  
+  @Column(length=3)
+  private String icao;
 
-    public Long getOriginId() {
-        return originId;
-    }
-    public void setOriginId(Long data) {
-        this.originId = data;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String data) {
-      this.name = data;
-    }
-    public String getIata() {
-        return iata;
-    }
-    public void setIata(String data) {
-      this.iata = data;
-    }
-    public String getIcao() {
-      return icao;
-    }
-    public void setIcao(String data) {
-      this.icao = data;
-    }
+  public String getName() {
+      return name;
+  }
+  public String getIata() {
+      return iata;
+  }
+  public String getIcao() {
+    return icao;
+  }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -67,7 +52,7 @@ public class Carrier extends BaseEntity {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Carrier other = (Carrier) obj;
+        CarrierRestore other = (CarrierRestore) obj;
         if (iata == null) {
             if (other.iata != null)
                 return false;
