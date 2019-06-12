@@ -40,8 +40,7 @@ public class MatchingContext {
             "DOC_CTRY_CD", "DOC_TYP_NM", "DOC_ID" };
 	
 	public static final int DOB_YEAR_OFFSET = 3;
-
-    private QuickMatcherConfig config;
+	private QuickMatcherConfig config;
 
     public QuickMatcherConfig getConfig() {
         return config;
@@ -112,25 +111,23 @@ public class MatchingContext {
 
 	public void initialize(final List<HashMap<String, String>> watchListItems) {
 
-        initializeConfig();
+		initializeConfig();
 
-        this.accuracyMode = this.config.getAccuracyMode(); 
-        this.matchClauses = config.getClausesForAccuracyMode(accuracyMode);
+		this.accuracyMode = this.config.getAccuracyMode();
+		this.matchClauses = config.getClausesForAccuracyMode(accuracyMode);
 
-        this.derogList = watchListItems; 
-        this.derogList = this.renameAttributes(this.derogList);
-        
-        /**
-         *  Split the list into sets where each matchClause applies;
-         *  Then, for each query, we need only apply a clause to derog records where it
-         *  is valid.
-         */
-      
-        this.derogListByClause = splitBatchByClause(this.derogList, this.matchClauses);
-        this.clauseValuesToDerogIds = mapClauseValuesToDerogIds(this.derogList, this.matchClauses);
+		this.derogList = watchListItems;
+		this.derogList = this.renameAttributes(this.derogList);
 
-    }
+		/**
+		 * Split the list into sets where each matchClause applies; Then, for each
+		 * query, we need only apply a clause to derog records where it is valid.
+		 */
 
+		this.derogListByClause = splitBatchByClause(this.derogList, this.matchClauses);
+		this.clauseValuesToDerogIds = mapClauseValuesToDerogIds(this.derogList, this.matchClauses);
+	}
+	
     private void initializeConfig() {
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -208,7 +205,7 @@ public class MatchingContext {
         return clauseValuesToDerogIds;
     }
 
-    public MatchingResult match(List<HashMap<String, String>> travelers) {
+    public MatchingResult match(List<HashMap<String, String>> travelers, Set<String> foundDerogIds) {
 
         // Rename attributes
         this.renameAttributes(travelers);
@@ -225,7 +222,7 @@ public class MatchingContext {
         String gtasId;
         DerogResponse thisResponse;
         for (HashMap<String, String> trav : travelers) {
-            thisResponse = matchTraveler(trav);
+            thisResponse = matchTraveler(trav, foundDerogIds);
             gtasId = thisResponse.getGtasId();
             if (responses.containsKey(gtasId)) {
                 // Add any new hits to the existing response object
@@ -253,12 +250,12 @@ public class MatchingContext {
 
     }
 
-    private DerogResponse matchTraveler(HashMap<String, String> traveler) {
+    private DerogResponse matchTraveler(HashMap<String, String> traveler, Set<String> foundDerogIds) {
 
         // DerogHits to add to returned DerogResponse
         ArrayList<DerogHit> derogHits = new ArrayList<>();
         // Use set to dedup derogIds
-        Set<String> foundDerogIds = new HashSet<>();
+        
 
         // For each match clause, compare the input traveler to each derog record with
         // that clause
@@ -286,7 +283,9 @@ public class MatchingContext {
                 logger.debug("Matched string: {}", concatenated);
                 exactlyMatched = true;
                 for (String derogId : clauseHits) {
-                    clauseNameMap.put(derogId, "an exact name match");
+                	if (!foundDerogIds.contains(derogId)) {
+                		clauseNameMap.put(derogId, "an exact name match");
+                	}
                 }
             } else {
                 clauseHits = new HashSet<>();
@@ -298,46 +297,48 @@ public class MatchingContext {
 				for (HashMap<String, String> derogRecord : this.derogList) {
 					if (!foundDerogIds.contains(derogRecord.get("derogId"))) {
 
-						// calculate Jaro Winkler distance
-						Double distance = this.goodTextDistance(traveler.get("full_name"),
-								derogRecord.get("full_name"));
+						int offset = calculateYearOffset(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
 
-						if (traveler.get("metaphones").equals(derogRecord.get("metaphones"))) {
-							
-							if (distance >= jaroWinklerThreshold) {
+						if (offset <= dobYearOffset) {
+							// calculate Jaro Winkler distance
+							Double distance = this.goodTextDistance(traveler.get("full_name"),
+									derogRecord.get("full_name"));
 
-								logger.debug(
-										"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
-										distance, traveler.get("full_name"), derogRecord.get("full_name"));
+							if (traveler.get("metaphones").equals(derogRecord.get("metaphones"))) {
 
-								int offset = calculateYearOffset(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
-
-								if (offset <= dobYearOffset) {
+								if (distance >= jaroWinklerThreshold) {
 
 									logger.debug(
-											"There was a match on date of birth (YEAR only) with an offset of {}, traveler={}, derog={}",
-											offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
-				
-									 String derogId = derogRecord.get("derogId");
-                           			 clauseHits.add(derogId);
-                            		 clauseNameMap.put(derogId, derogRecord.get("full_name"));
-                            		 partiallyMatched=true;
+											"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
+											distance, traveler.get("full_name"), derogRecord.get("full_name"));
+
+									if (offset <= dobYearOffset) {
+
+										logger.debug(
+												"There was a match on date of birth (YEAR only) with an offset of {}, traveler={}, derog={}",
+												offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
+
+										String derogId = derogRecord.get("derogId");
+										clauseHits.add(derogId);
+										clauseNameMap.put(derogId, derogRecord.get("full_name"));
+										partiallyMatched = true;
+									}
+
 								}
+							} else if (distance >= jaroWinklerThreshold) {
 
-							}
-						} else if (distance >= jaroWinklerThreshold) {
+								logger.debug("Jaro Winkler distance hit of {} for traveler={}, derog={}.", distance,
+										traveler.get("full_name"), derogRecord.get("full_name"));
 
-							logger.debug("Jaro Winkler distance hit of {} for traveler={}, derog={}.", distance,
-									traveler.get("full_name"), derogRecord.get("full_name"));
+								// Compare date of birth
+								if (isSameDOBYearMonthDay(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"))) {
 
-							// Compare date of birth
-							if (isSameDOBYearMonthDay(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"))) {
-
-								// It is a hit
-								String derogId = derogRecord.get("derogId");
-                            	clauseHits.add(derogId);
-                            	clauseNameMap.put(derogId, derogRecord.get("full_name"));
-                            	jaroWinklerDistanceMatched=true;
+									// It is a hit
+									String derogId = derogRecord.get("derogId");
+									clauseHits.add(derogId);
+									clauseNameMap.put(derogId, derogRecord.get("full_name"));
+									jaroWinklerDistanceMatched = true;
+								}
 							}
 						}
 					}
@@ -406,29 +407,24 @@ public class MatchingContext {
         return new DerogResponse(traveler.get("gtasId"), derogHits);
     }
 
-    /**
-     * 
-     * @param travelerDate
-     * @param deragDate
-     * @return
-     * @throws ParseException
-     */
+	/**
+	 * 
+	 * @param travelerDate
+	 * @param deragDate
+	 * @return
+	 * @throws ParseException
+	 */
 	private int calculateYearOffset(String travelerDate, String deragDate) {
 
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-		
 		try {
-
-			return Math.abs(DateCalendarUtils.getYearOfDate(formatter.parse(travelerDate)) - DateCalendarUtils.getYearOfDate(formatter.parse(deragDate)));
+			return Math.abs(DateCalendarUtils.getYearOfDate(formatter.parse(travelerDate))
+					- DateCalendarUtils.getYearOfDate(formatter.parse(deragDate)));
 
 		} catch (ParseException e) {
-			logger.error(
-					"There was a problem parsing birth dates while running quickmatch.  {}",
-					e.getMessage());
+			logger.error("There was a problem parsing birth dates while running quickmatch.  {}", e.getMessage());
 		}
-		
 		return -1;
-				
 	}
 	
 	/**
@@ -524,9 +520,15 @@ public class MatchingContext {
                     name = rec.get(namePart);
                 if (name != null && !name.equals("")) {
                     full_name += name + " ";
-                    if(namePart.equals("first_name") || namePart.equals("last_name"))
-                        partial_name_metaphones+=computeMetaphones(dmeta, name.split("\\s+")[0]);
-                    metaphones += computeMetaphones(dmeta, name);
+                    
+                    String metaphone = computeMetaphones(dmeta, name);
+                    metaphones += metaphone;
+                    if(namePart.equals("first_name") || namePart.equals("last_name")) {
+                    	if(name.split("\\s+")[0].equals(name))
+                    		partial_name_metaphones += metaphone;
+                    	else
+                    		partial_name_metaphones+=computeMetaphones(dmeta, name.split("\\s+")[0]);
+                    }
                 } else {
                     rec.put(namePart, "");
                 }
