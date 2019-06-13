@@ -5,21 +5,24 @@
  */
 package gov.gtas.util;
 
-import gov.gtas.constant.RuleConstants;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import gov.gtas.constant.RuleConstants;
+
 /**
  * Basic adaptation of commons DateUtils.
  */
-public class DateCalendarUtils {
+public final class DateCalendarUtils {
+	
+	private DateCalendarUtils() {}
+	
     private static final long MILLIS_IN_ONE_DAY = 86400000L;
 
     public static String addOneDayToJsondateString(String jsonDateString) throws ParseException {
@@ -153,13 +156,17 @@ public class DateCalendarUtils {
     }
     
     /**
-     * Gets the year value of the { @date } passed in
+     * Get the year value of the { @date } passed in
      * 
      * @param date
      * @return
      */
-    public static int getYearOfDate(Date date) {
-    	LocalDate local = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    	return local.getYear();
+    public static int getYearOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+    	return travLocalDate.getYear();
+    }
+    
+    public static LocalDate parseLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
+    	return LocalDate.parse(date, dateTimeFormatter);
     }
 }
