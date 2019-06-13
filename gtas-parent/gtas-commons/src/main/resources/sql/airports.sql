@@ -5955,8 +5955,7 @@ INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES
 
 
 -- POPULATE AIRPORTRESTORE TABLE AS EXACT DUPLICATE --
-insert into airportRestore (id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone)
-select id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone from airport;
+insert into airportRestore (id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone) select id, city, country, iata, icao, latitude, longitude, name, utc_offset, timezone from airport;
 
 -- SET ORIGINID ON THE INITIAL RECORDS (IN AIRPORT ONLY)
 update airport set originId = id;
