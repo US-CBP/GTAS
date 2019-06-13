@@ -39,7 +39,7 @@ public class CaseVo {
     private Boolean oneDayLookoutFlag;
     private Date currentTime;
     private String countDownTimeDisplay;
-    private Long countdownTime;
+    private Date countdownTime;
     private String disposition;
 
 
@@ -244,11 +244,11 @@ public class CaseVo {
         this.countDownTimeDisplay = countDownTimeDisplay;
     }
 
-    public Long getCountdownTime() {
+    public Date getCountdownTime() {
         return countdownTime;
     }
 
-    public void setCountdownTime(Long countdownTime) {
+    public void setCountdownTime(Date countdownTime) {
         this.countdownTime = countdownTime;
     }
 

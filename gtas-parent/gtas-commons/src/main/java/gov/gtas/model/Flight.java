@@ -74,6 +74,16 @@ public class Flight extends BaseEntityAudit {
     private FlightHitsRule flightHitsRule;
 
     @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhf_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsFuzzy flightHitsFuzzy;
+
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fhg_flight_id", updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightHitsGraph flightHitsGraph;
+
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
     @JoinColumn(name = "id", unique = true, referencedColumnName = "fhw_flight_id", updatable = false, insertable = false)
     @JsonIgnore
     private FlightHitsWatchlist flightHitsWatchlist;
@@ -302,5 +312,21 @@ public class Flight extends BaseEntityAudit {
 
     public void setBags(Set<Bag> bags) {
         this.bags = bags;
+    }
+
+    public FlightHitsFuzzy getFlightHitsFuzzy() {
+        return flightHitsFuzzy;
+    }
+
+    public void setFlightHitsFuzzy(FlightHitsFuzzy flightHitsFuzzy) {
+        this.flightHitsFuzzy = flightHitsFuzzy;
+    }
+
+    public FlightHitsGraph getFlightHitsGraph() {
+        return flightHitsGraph;
+    }
+
+    public void setFlightHitsGraph(FlightHitsGraph flightHitsGraph) {
+        this.flightHitsGraph = flightHitsGraph;
     }
 }

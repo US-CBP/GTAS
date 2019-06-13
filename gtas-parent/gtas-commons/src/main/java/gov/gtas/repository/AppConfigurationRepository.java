@@ -15,6 +15,8 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String QUEUE_OUT = "QUEUE_OUT";
     String QUEUE_IN = "QUEUE_IN";
     String ELASTIC_HOSTNAME = "ELASTIC_HOSTNAME";
+    String HOURLY_ADJ = "HOURLY_ADJ";
+    String UTC_SERVER = "UTC_SERVER";
     String ELASTIC_PORT = "ELASTIC_PORT";
     String UPLOAD_DIR = "UPLOAD_DIR";
     String DASHBOARD_AIRPORT = "DASHBOARD_AIRPORT";
@@ -40,6 +42,7 @@ public interface AppConfigurationRepository extends CrudRepository<AppConfigurat
     String GRAPH_DB_URL = "GRAPH_DB_URL";
     String GRAPH_DB_TOGGLE = "GRAPH_DB_TOGGLE";
     String FUZZY_MATCHING = "FUZZY_MATCHING";
+    String QUICKMATCH_DOB_YEAR_OFFSET ="QUICKMATCH_DOB_YEAR_OFFSET";
 
     AppConfiguration findByOption(String option);
 

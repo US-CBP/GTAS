@@ -5,15 +5,15 @@
  */
 package gov.gtas.services.matcher.quickmatch;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 import gov.gtas.model.Passenger;
 
 public interface QuickMatcher {
 
-	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems, float threshold);
-	
-	MatchingResult match(Passenger passenger, final List<HashMap<String, String>> watchListItems);
+	MatchingResult match(Passenger passenger, float threshold, int dobYearOffset);
 
+	MatchingResult match(Passenger passenger, float threshold, int dobYearOffset, Set<Long> foundDerogIds);
+
+	MatchingResult match(Passenger passenger);
 }

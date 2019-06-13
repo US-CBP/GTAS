@@ -48,6 +48,10 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 
     private final CaseDispositionRepository caseDispositionRepository;
 
+
+    private final FlightGraphHitsRepository flightGraphHitsRepository;
+
+
     @Autowired
     public GraphRulesServiceImpl(
             GraphRuleRepository graphRuleRepository,
@@ -57,12 +61,13 @@ public class GraphRulesServiceImpl implements GraphRulesService {
             CaseDispositionService caseDispositionService,
             PassengerService passengerService,
             CaseDispositionRepository caseDispositionRepository,
-            Neo4JConfig neo4JConfig) {
+            Neo4JConfig neo4JConfig, FlightGraphHitsRepository flightGraphHitsRepository) {
         this.graphRuleRepository = graphRuleRepository;
         this.hitsSummaryRepository = hitsSummaryRepository;
         this.caseDispositionService = caseDispositionService;
         this.passengerService = passengerService;
         this.caseDispositionRepository = caseDispositionRepository;
+        this.flightGraphHitsRepository = flightGraphHitsRepository;
         String url = appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_URL).getValue();
         Boolean neo4J = Boolean.valueOf(
                 appConfigurationRepository.findByOption(AppConfigurationRepository.GRAPH_DB_TOGGLE).getValue()
@@ -75,6 +80,21 @@ public class GraphRulesServiceImpl implements GraphRulesService {
         this.passengerRepository = passengerRepository;
     }
 
+    @Override
+    @Transactional
+    public void updateFlightGraphHitCount(Set<Flight> flightSet) {
+        if (flightSet != null) {
+            Set<FlightHitsGraph> flightHitsGraphs = new HashSet<>();
+            for (Flight flight : flightSet) {
+                Integer flightGraphCount = hitsSummaryRepository.graphHitCount(flight.getId());
+                FlightHitsGraph fhg = new FlightHitsGraph();
+                fhg.setFlightId(flight.getId());
+                fhg.setHitCount(flightGraphCount);
+                flightHitsGraphs.add(fhg);
+            }
+            flightGraphHitsRepository.saveAll(flightHitsGraphs);
+        }
+    }
 
     @Override
     @Transactional
@@ -206,6 +226,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
                     rhd.setFlightId(passenger.getFlight().getId());
                     rhd.setHitType(HitTypeEnum.GH);
                     rhd.setPassenger(passenger);
+                    rhd.setPassengerName(passenger.getPassengerDetails().getFirstName() + " " + passenger.getPassengerDetails().getLastName());
                     rhd.setTitle(graphRule.getTitle());
                     rhd.setDescription(graphRule.getDescription());
                     rhd.setHitRule(graphRule.getDescription() + ":" + graphRule.getId());

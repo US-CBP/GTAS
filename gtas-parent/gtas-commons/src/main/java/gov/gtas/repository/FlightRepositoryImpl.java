@@ -64,35 +64,53 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 		Join<Flight, FlightHitsRule> ruleHits = root.join("flightHitsRule", JoinType.LEFT);
 		Join<Flight, FlightHitsWatchlist> watchlistHits = root.join("flightHitsWatchlist", JoinType.LEFT);
+		Join<Flight, FlightHitsWatchlist> fuzzyHits = root.join("flightHitsFuzzy", JoinType.LEFT);
+		Join<Flight, FlightHitsWatchlist> graphHits = root.join("flightHitsGraph", JoinType.LEFT);
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
 
 		// sorting
 		if (dto.getSort() != null) {
-			List<Order> orders = new ArrayList<>();
+			List<Order> orderList = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
-				Expression<?> e;
+				List<Expression<?>> orderByItem = new ArrayList<>();
 				if (sort.getColumn().equalsIgnoreCase("ruleHitCount")) {
-					e = ruleHits.get("hitCount");
+					orderByItem.add(ruleHits.get("hitCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
-					e = watchlistHits.get("hitCount");
+					orderByItem.add(watchlistHits.get("hitCount"));
+				} else if ("graphHitCount".equalsIgnoreCase(sort.getColumn())) {
+					orderByItem.add(graphHits.get("hitCount"));
+				} else if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())) {
+					orderByItem.add(fuzzyHits.get("hitCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("passengerCount")) {
-					e = passengerCountJoin.get("passengerCount");
+					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
-					e = mutableFlightDetailsJoin.get(sort.getColumn());
+					orderByItem.add(mutableFlightDetailsJoin.get(sort.getColumn()));
 				} else {
-					e = root.get(sort.getColumn());
+					orderByItem.add(root.get(sort.getColumn()));
 				}
-				Order order;
 				if ("desc".equalsIgnoreCase(sort.getDir())) {
-					order = cb.desc(e);
+					for (Expression<?> e : orderByItem) {
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
+						|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+							orderList.add(cb.desc(cb.coalesce(e, 0)));
+						} else {
+						orderList.add(cb.desc(e));
+					}
+					}
 				} else {
-					order = cb.asc(e);
+					for (Expression<?> e : orderByItem) {
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+							orderList.add(cb.asc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.asc(e));
+						}
+					}
 				}
-				orders.add(order);
 			}
-			q.orderBy(orders);
+			q.orderBy(orderList);
 		}
 
 		// filters

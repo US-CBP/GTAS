@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -49,6 +50,9 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private SeatRepository seatRespository;
 
+	@Autowired
+	private AppConfigurationService appConfigurationService;
+
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
@@ -75,10 +79,17 @@ public class FlightServiceImpl implements FlightService {
 			BeanUtils.copyProperties(f, vo);
 			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
 
-			Integer fuzzyHits = getFlightFuzzyMatchesOnly(f.getId()).intValue();
+			Integer fuzzyHits = 0;
 
+			if (f.getFlightHitsFuzzy() != null) {
+				fuzzyHits = f.getFlightHitsFuzzy().getHitCount();
+				vo.setFuzzyHitCount(fuzzyHits);
+			}
+			if (f.getFlightHitsGraph() != null) {
+				vo.setGraphHitCount(f.getFlightHitsGraph().getHitCount());
+			}
 			if (f.getFlightHitsWatchlist() != null) {
-				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount() + fuzzyHits);
+				vo.setListHitCount(f.getFlightHitsWatchlist().getHitCount());// + fuzzyHits);
 			}
 			if (f.getFlightHitsRule() != null) {
 				vo.setRuleHitCount(f.getFlightHitsRule().getHitCount());
@@ -181,7 +192,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		Date now = new Date();
+		Date now = appConfigurationService.offSetTimeZone(new Date());
 		Date threeDays = getThreeDaysForward();
 		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "I");
 	}
@@ -189,7 +200,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
-		Date now = new Date();
+		Date now = appConfigurationService.offSetTimeZone(new Date());
 		Date threeDays = getThreeDaysForward();
 		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "O");
 	}

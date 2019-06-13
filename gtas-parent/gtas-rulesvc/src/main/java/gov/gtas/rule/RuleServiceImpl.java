@@ -27,22 +27,27 @@ import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.UdrService;
 import gov.gtas.util.Bench;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.Globals;
 import org.kie.api.runtime.StatelessKieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -106,7 +111,7 @@ public class RuleServiceImpl implements RuleService {
 	 */
 	private RuleServiceResult createSessionAndExecuteRules(KieBase kbase,
 			RuleServiceRequest req) {
-		logger.debug("Entering createSessionAndExecuteRules() and creating Stateless session.");
+		logger.info("Entering createSessionAndExecuteRules() and creating Stateless session.");
 
 		StatelessKieSession ksession = kbase.newStatelessKieSession();
 		ksession.setGlobal(RuleServiceConstants.RULE_RESULT_LIST_NAME,
@@ -170,14 +175,7 @@ public class RuleServiceImpl implements RuleService {
 			}
 		} else {
 			logger.debug("Custom knowledge base is loaded.");
-			Iterable<WatchlistItem> all = watchlistItemRepository.findAll();
-			List<WatchlistItem> target = new ArrayList<>();
-			all.forEach(target::add);
-			if (CollectionUtils.isEmpty(target)) {
-				kbRecord = null;
-			} else {
-				kbRecord = rulePersistenceService.findUdrKnowledgeBase(kbName);
-			}
+			kbRecord = rulePersistenceService.findUdrKnowledgeBase(kbName);
 		}
 		if (kbRecord == null) {
 			logger.debug("Knowledge based is null.");
@@ -185,8 +183,10 @@ public class RuleServiceImpl implements RuleService {
 		}
 		try {
 			// create KieBase object from compressed binary data read from db
+			logger.info("Loading KieBase");
 			KieBase kb = RuleUtils
 					.convertKieBasefromBytes(kbRecord.getKbBlob());
+			logger.info("LoadedKieBase");
 			return createSessionAndExecuteRules(kb, req);
 		} catch (IOException | ClassNotFoundException ex) {
 			throw ErrorHandlerFactory.getErrorHandler().createException(

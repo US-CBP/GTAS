@@ -1,0 +1,72 @@
+<style>
+  
+  .code-grid.ui-grid {
+    height: calc(100vh - 270px);
+    min-height: 240px;
+  }
+
+  .ui-grid-canvas {
+    /* max-height: calc(100vh - 390px); */
+  }
+
+  .subtabs {
+    border-bottom: 1px solid #ddd !important;
+  }
+  .subtabs>li>a {
+    color: rgba(0,0,0,0.54);
+    font-weight: 500;
+  }
+
+  .subtabs>li>a:hover {
+    border-bottom: 2px solid #00416a !important;
+  }
+  .subtabs>li.active>a {
+    color: rgb(63,81,181) !important;
+    outline: 0 !important;
+  }
+  .editLink {
+    color: rgb(63,81,181) !important;
+    font-size: 1.3em;
+  }
+  .editLink:hover, .editLink:active {
+    color: rgb(63,81,181) !important;
+    cursor: pointer;
+  }
+</style>
+
+<md-content class="md-padding padding-top-0">
+  <ul class="nav nav-tabs nav-tabs-light subtabs" role="tablist">
+    <li ng-class="{active : activeCodeTab === 'carrier'}">
+      <a href="#admin" ng-click="viewCodes('carrier')" role="tab">Carrier Codes</a>
+  </li>
+  <li ng-class="{active : activeCodeTab === 'country'}">
+    <a href="#admin" ng-click="viewCodes('country')" role="tab"> Country Codes</a>
+  </li>
+  <li ng-class="{active : activeCodeTab === 'airport'}">
+    <a href="#admin" ng-click="viewCodes('airport')" role="tab"> Airport Codes</a>
+  </li>
+</ul>
+<div layout="column">
+  <md-content>
+    <div>
+      <md-button ng-click="openSidebarAdd()" class="md-raised pull-left md-primary">
+        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
+        Add {{activeCodeTab}}
+      </md-button>
+      <md-button ng-click="restoreAllCodes()" class="md-raised pull-right md-primary warning-back">
+        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
+        Restore All {{activeCodeTab}} Codes
+      </md-button>
+    </div>
+  </md-content>
+  <md-content ng-if="activeCodeTab === 'carrier'">
+    <div id="carrierGrid" ui-grid="carrierGrid" ui-grid-pagination ui-grid-exporter ui-grid-selection class="grid code-grid" ></div>
+  </md-content>
+  <md-content ng-if="activeCodeTab === 'country'">
+    <div id="countryGrid" ui-grid="countryGrid" ui-grid-pagination ui-grid-exporter ui-grid-selection class="grid code-grid" ></div>
+  </md-content>
+  <div ng-if="activeCodeTab === 'airport'" >
+    <div id="airportGrid" ui-grid="airportGrid" ui-grid-pagination ui-grid-exporter ui-grid-selection class="grid code-grid" ></div>
+  </div>
+  </div>
+</md-content>

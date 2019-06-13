@@ -84,6 +84,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     private PassengerResolverService passengerResolverService;
     @Resource
     private AppConfigurationRepository appConfigurationRepository;
+    @Autowired
+    private AppConfigurationService appConfigurationService;
+
+    @Autowired
+    private FlightService flightService;
 
     public CaseDispositionServiceImpl() {
     }
@@ -475,7 +480,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
     private Long getRuleCatId(Long ruleId) {
         try {
-            return ruleCatService.fetchRuleCatIdFromRuleId(ruleId);
+            return ruleCatService.fetchRuleCatIdFromNonUdrRuleId(ruleId);
         } catch (Exception ex) {
             logger.error("error in get rule cat id", ex);
         }
@@ -786,7 +791,7 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
             vo.setGeneralCaseCommentVos(null);
             vo.setCurrentTime(new Date());
             vo.setFlightDirection(f.getFlight().getDirection());
-            vo.setCountdownTime(f.getCountdown().getTime());
+            vo.setCountdownTime(f.getCountdown());
             vo = calculateCountDownDisplayString(vo);
             vos.add(vo);
         }
@@ -797,10 +802,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     private CaseVo calculateCountDownDisplayString(CaseVo caseVo) {
-        Long etdEtaDateTime = caseVo.getCountdownTime();
-        Long currentTimeMillis = caseVo.getCurrentTime().getTime();
 
-        Long countDownMillis = etdEtaDateTime - currentTimeMillis;
+        Date etdEtaDateTime = caseVo.getCountdownTime();
+        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
+            caseVo.setCurrentTime(new Date());
+        } else {
+            caseVo.setCurrentTime(appConfigurationService.offSetTimeZone(new Date()));
+        }
+        Long currentTimeMillis = caseVo.getCurrentTime().getTime();
+        Long countDownMillis = etdEtaDateTime.getTime() - currentTimeMillis;
         Long countDownSeconds = countDownMillis / 1000;
 
         Long daysLong = countDownSeconds / 86400;
@@ -818,10 +828,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return caseVo;
     }
 
+
+
     @Override
     public Date getCurrentServerTime() {
-        Date currentTime = new Date();
-        return currentTime;
+        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
+            return new Date();
+        } else {
+            return appConfigurationService.offSetTimeZone(new Date());
+        }
+
     }
 
     /**
@@ -1257,5 +1273,38 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         caseDispositionRepository.updateEncounteredStatus(caseId, encStatus);
 
     }
+
+
+    public Set<Case> getOpenCasesWithTimeLeft() {
+        List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
+        flightList.addAll(flightService.getFlightsThreeDaysForwardOutbound());
+        Set<Long> flightIds =  flightList.stream().map(Flight::getId).collect(Collectors.toSet());
+        Set<Case> casesBeforeTakeOff = new HashSet<>();
+        if (!flightIds.isEmpty()) {
+            casesBeforeTakeOff = getCasesWithTimeLeft(caseDispositionRepository.getCasesByFlightIds(flightIds));
+        }
+        return casesBeforeTakeOff;
+    }
+
+    protected Set<Case> getCasesWithTimeLeft(Set<Case> caseSet) {
+        Set<Case> caseBeforeTakeoff = new HashSet<>();
+        Date now = appConfigurationService.offSetTimeZone(new Date());
+        for (Case caze : caseSet) {
+            Flight caseFlight = caze.getFlight();
+            if (caseFlight != null) {
+                Date flightDate;
+                if ("I".equalsIgnoreCase(caze.getFlight().getDirection())) {
+                    flightDate = caseFlight.getMutableFlightDetails().getEta();
+                } else {
+                    flightDate = caseFlight.getMutableFlightDetails().getEtd();
+                }
+                if (now.before(flightDate) && "NEW".equalsIgnoreCase(caze.getStatus())) {
+                    caseBeforeTakeoff.add(caze);
+                }
+            }
+        }
+        return caseBeforeTakeoff;
+    }
+
 
 }

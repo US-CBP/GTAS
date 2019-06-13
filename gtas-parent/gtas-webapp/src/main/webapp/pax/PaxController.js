@@ -5,6 +5,7 @@
  */
 (function () {
   'use strict';
+  ////     PAX DETAIL CONTROLLER     //////////////
   app.controller('PassengerDetailCtrl', function ($scope, $mdDialog,$mdSidenav,$timeout, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
       $scope.passenger = passenger.data;
       $scope.watchlistLinks = watchlistLinks.data;
@@ -38,11 +39,11 @@
       
       //Service call for tooltip data
         $scope.getCodeTooltipData = function(field, type){
-          return codeTooltipService.getCodeTooltipData(field,type);
+           return codeTooltipService.getCodeTooltipData(field,type);
         }
         
         $scope.resetTooltip = function(){
-          $('md-tooltip').remove();
+           $('md-tooltip').remove();
         };
       
       $scope.watchlistCategoryId;
@@ -189,9 +190,6 @@
           return total;
       }
 
-      $scope.getCodeTooltipData = function(field,type){
-        return codeTooltipService.getCodeTooltipData(field,type);
-      };
       $scope.highlightClass = function(className) {
 
           //remove existing highlights
@@ -336,10 +334,9 @@
 
       paxDetailService.getPaxFlightHistory($scope.passenger.paxId, $scope.passenger.flightId)
       .then(function(response){
-        //$scope.getPaxFullTravelHistory($scope.passenger);
-          $scope.getPaxBookingDetailHistory($scope.passenger);
+        $scope.getPaxBookingDetailHistory($scope.passenger);
         $scope.passenger.flightHistoryVo = response.data;
-      });
+  });
 
       $scope.getPaxFullTravelHistory= function(passenger){
         paxDetailService.getPaxFullTravelHistory(passenger.paxId, passenger.flightId).then(function(response){
@@ -350,9 +347,9 @@
 
       $scope.getPaxBookingDetailHistory= function(passenger){
           paxDetailService.getPaxBookingDetailHistory(passenger.paxId, passenger.flightId).then(function(response){
-              $scope.passenger.fullFlightHistoryVo ={'map': response.data};
-              $scope.isLoadingFlightHistory = false;
-          });
+          $scope.passenger.fullFlightHistoryVo ={'map': response.data};
+          $scope.isLoadingFlightHistory = false;        
+        });
       };
 
       //Adds user from pax detail page to watchlist.
@@ -425,9 +422,16 @@
     };
 
   });
+
+
+
+
+
+
+  ////     PAX CONTROLLER     //////////////
   app.controller('PaxController', function ($scope, $injector, $stateParams, $state, $mdToast, paxService, sharedPaxData, uiGridConstants, gridService,
                                             jqueryQueryBuilderService, jqueryQueryBuilderWidget, executeQueryService, passengers,
-                                            $timeout, paxModel, $http, codeTooltipService, spinnerService) {
+                                            $timeout, paxModel, $http, codeTooltipService, codeService, spinnerService) {
       $scope.errorToast = function(error){
           $mdToast.show($mdToast.simple()
            .content(error)
@@ -516,7 +520,6 @@
             $scope.pax = pax;
           },
           setPassengersGrid = function (grid, response) {
-              //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
               var data = stateName === 'queryPassengers' ? response.data.result : response.data;
               setSubGridOptions(data, $scope);
               grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
@@ -571,18 +574,16 @@
               {label: 'Any', value: 'A'}
           ];
 
-      self.querySearch = querySearch;
-      $http.get('data/airports.json')
-          .then(function (allAirports) {
-              airports = allAirports.data;
-              self.allAirports = allAirports.data.map(function (contact) {
-                  //contact.lowerCasedName = contact.name.toLowerCase();
-                  contact.lowerCasedName = contact.id.toLowerCase();
-                  return contact;
-              });
-              self.filterSelected = true;
-              $scope.filterSelected = true;
-          });
+        self.querySearch = querySearch;
+      codeService.getAirportTooltips()
+        .then(function (allAirports) {
+            self.allAirports = allAirports.map(function (contact) {
+                contact.lowerCasedName = contact.id.toLowerCase();
+                return contact;
+            });
+            self.filterSelected = true;
+            $scope.filterSelected = true;
+        });
       $scope.flightDirections = flightDirections;
 
       $injector.invoke(jqueryQueryBuilderWidget, this, {$scope: $scope});
@@ -698,14 +699,14 @@
       };
 
       $scope.getCodeTooltipData = function(field, type){
-          return codeTooltipService.getCodeTooltipData(field,type);
+         return codeTooltipService.getCodeTooltipData(field,type);
       }
 
       $scope.hitTooltipData = ['Loading...'];
 
       $scope.resetTooltip = function(){
         $scope.hitTooltipData = ['Loading...'];
-        $('md-tooltip').remove();
+        // $('md-tooltip').remove();
       };
 
     $scope.getHitTooltipData = function(row){
@@ -854,10 +855,14 @@
                       'ng-class="(row.entity.onWatchListDoc || row.entity.onWatchList) ? \'danger-color\' : \'alert-color\'" >' +
                       '<i class="fa fa-flag" aria-hidden="true"></i></span></div>'
               },
-              {name: 'passengerType', displayName:'T', width: 50},
+              {name: 'passengerType', displayName:'T', width: 50, headerCellFilter: 'translate',
+                cellTemplate: '<md-button>'
+                +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"passenger")}}</div></md-tooltip>{{COL_FIELD}}'
+                +'</md-button>'
+              },
               {
                   name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
-                  cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
+                  cellTemplate: '<md-button aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
               },
               {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
               {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},
@@ -876,7 +881,11 @@
                   visible: (stateName === 'paxAll')
               },
               {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
-              {name: 'gender', displayName:'G', width:50},
+              {name: 'gender', displayName:'G', width:50, headerCellFilter: 'translate',
+              cellTemplate: '<md-button>'
+              +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"gender")}}</div></md-tooltip>{{COL_FIELD}}'
+              +'</md-button>'
+              },
               {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
                 cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
               {name: 'nationality', displayName:'Nationality', headerCellFilter: 'translate', width:120,

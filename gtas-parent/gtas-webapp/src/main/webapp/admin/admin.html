@@ -12,15 +12,79 @@
     
     .ui-grid-viewport {
       overflow-y: scroll !important;
+      max-height: calc(100vh - 360px);
     }
+
+  .ui-grid-grid-footer {
+    display: none;
+  }
+  .admin-grid.ui-grid {
+    height: calc(100vh - 255px);
+    min-height: 240px;
+  }
+  .user-grid.ui-grid {
+    height: calc(100vh - 227px);
+    min-height: 240px;
+  }
+  .settings-form {
+    height: calc(100vh - 175px);
+    overflow-y: scroll;
+  }
+
+  .nav-tabs.nav-tabs-light>li.active>a {
+    color: #00416a;
+  }
+
+  .no-margin {
+    margin: 0px !important;
+  }
+
+  .fieldFont {
+    font-weight: 700 !important;
+    color: #00416a !important;
+  }
 
   </style>
   
+<md-sidenav id="codeSidebar" class="md-sidenav-right md-whiteframe-z2" md-component-id="codeSidebar">
+  <h3 class="block-label no-margin-top">{{codeAction + ' ' + activeCodeTab | capitalize}}</h3>
+  <form name="codeEditorForm" class="filters" _lpchecked="1" >
+    <div class="filter-list" role="tablist" ng-repeat="col in codeColList[activeCodeTab]">
+
+      <h5 role="tab" aria-controls="filterGroup5" class="fieldFont filter-group-title no-margin">{{ col.name | uppercase }}
+      </h5>
+      <div  id="filterGroup5">
+        <div class="filter-group-content">
+          <div class="mdl-js-selectfield mdl-selectfield--full-width is-upgraded padding-0 margin-bottom-1" data-upgraded="MaterialSelectfield">
+            <input class="cbp-non-chip-input cbp-input mdl-textfield__input padding-0" type="text"
+              aria-required="true" ng-model="rowSelected[col.name]" required maxlength="{{col.len}}" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="md-pad">
+        <button type="button" class="btn btn-primary pull-left" 
+          ng-click="saveCode()">
+            <i class="fa fa-inverse fa-floppy-o"></i> Save 
+        </button>
+        <button type="button" class="btn btn-warning pull-right margin-left-1"
+          ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
+          ng-click="deleteCode()"><i class="fa fa-trash"></i> Delete 
+      </button>
+      <button type="button" class="btn btn-warning pull-right margin-left-1"
+      ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
+      ng-click="restoreCode()"><i class="fa fa-undo"></i> Restore 
+  </button>
+</div>
+  </form>
+</md-sidenav>
+
   <div class="margin-top-1">
   <md-content class="upper-cnt-nav">
       <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
           <md-tab label="Manage Users" layout="column">
               <div layout="column">
+                <md-content class="md-padding padding-top-0 padding-bottom-0">
                   <div>
                       <md-button ng-click="createUser()" class="md-raised pull-left md-primary md-raised]">
                           <md-tooltip>Add User</md-tooltip>
@@ -28,8 +92,9 @@
                           Add User
                       </md-button>
                   </div>
-                      <md-content class="md-padding">
-                          <div ui-grid="userGrid" ui-grid-pagination ui-grid-exporter ui-grid-move-columns class="grid" ></div>
+                </md-content>
+                    <md-content class="md-padding padding-top-0">
+                          <div ui-grid="userGrid" ui-grid-pagination ui-grid-exporter ui-grid-move-columns class="grid user-grid" ></div>
                       </md-content>
               </div>
           </md-tab>
@@ -39,11 +104,8 @@
           <md-tab label = "Error Log View">
               <ng-include src="'admin/errorlog.html'"/>
           </md-tab>
-          <!--<md-tab label = "Disposition Status Management">-->
-              <!--<ng-include src="'admin/dispstatus.html'" />-->
-          <!--</md-tab>-->
-          <md-tab label = "Api Access">
-            <ng-include src="'admin/apiAccess.html'" />
+          <md-tab label = "Code Editor">
+            <ng-include src="'admin/codeEditor.html'" />
           </md-tab>
           <md-tab label = "Settings">
             <ng-include src="'admin/settings.html'" />

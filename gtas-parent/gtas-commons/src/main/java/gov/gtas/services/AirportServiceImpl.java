@@ -7,6 +7,7 @@ package gov.gtas.services;
 
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.repository.AirportRepository;
+import gov.gtas.repository.AirportRepositoryCustom;
 
 import java.util.List;
 
@@ -20,13 +21,14 @@ import org.springframework.stereotype.Service;
 public class AirportServiceImpl implements AirportService{
 
     @Resource
-    private AirportRepository airportRespository;
-    
+    private AirportRepository airportRepo;
+    @Resource
+    private AirportRepositoryCustom airportRepoCust;
+
     @Override
     @Transactional
     public Airport create(Airport port) {
-        
-        return airportRespository.save(port);
+        return airportRepo.save(port);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class AirportServiceImpl implements AirportService{
     public Airport delete(Long id) {
         Airport port = this.findById(id);
         if(port != null){
-            airportRespository.delete(port);
+            airportRepo.delete(port);
         }
         return port;
     }
@@ -43,25 +45,32 @@ public class AirportServiceImpl implements AirportService{
     @Transactional
     public List<Airport> findAll() {
         // TODO Auto-generated method stub
-        return (List<Airport>)airportRespository.findAll();
+        return (List<Airport>)airportRepo.findAll();
     }
 
     @Override
     @Transactional
     public Airport update(Airport port) {
-        Airport airportToUpdate = this.findById(port.getId());
-        if(airportToUpdate != null){
-            //airportToUpdate not available.make airport mutable to update
-        }
-        return null;
-        
+      return airportRepo.save(port);
     }
 
     @Override
     @Transactional
     public Airport findById(Long id) {
         
-        return airportRespository.findOne(id);
+        return airportRepo.findOne(id);
+    }
+
+    @Override
+    @Transactional
+    public Airport restore(Airport airport) {
+        return airportRepoCust.restore(airport);
+    }
+
+    @Override
+    @Transactional
+    public int restoreAll() {
+        return airportRepoCust.restoreAll();
     }
 
     @Override
@@ -69,7 +78,7 @@ public class AirportServiceImpl implements AirportService{
     @Cacheable(value = "airportCache", key = "#airportCode")
     public Airport getAirportByThreeLetterCode(String airportCode) {
         Airport airport = null;
-        List<Airport> airports =airportRespository.getAirportByThreeLetterCode(airportCode);
+        List<Airport> airports =airportRepo.getAirportByThreeLetterCode(airportCode);
         if(airports != null && airports.size() >0)
         airport = airports.get(0);
         return airport;
@@ -80,7 +89,7 @@ public class AirportServiceImpl implements AirportService{
     @Cacheable(value = "airportCache", key = "#airportCode")
     public Airport getAirportByFourLetterCode(String airportCode) {
         Airport airport = null;
-        List<Airport> airports =airportRespository.getAirportByFourLetterCode(airportCode);
+        List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);
         if(airports != null && airports.size() >0)
         airport = airports.get(0);
         return airport;

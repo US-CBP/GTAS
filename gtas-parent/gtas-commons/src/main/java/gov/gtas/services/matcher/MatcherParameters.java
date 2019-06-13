@@ -1,12 +1,17 @@
 package gov.gtas.services.matcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
-
-import java.util.List;
-import java.util.Map;
+import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
 public class MatcherParameters {
     private Map<Long, Case> caseMap;
@@ -14,8 +19,55 @@ public class MatcherParameters {
     private List<Watchlist> _watchlists;
     private Map<Long, List<WatchlistItem>> watchlistListMap;
     private float threshold;
+    private int dobYearOffset; 
+   	private QuickMatcher qm;
+    
+    /*
+     * Map<Passenger.id, Set<WatchlistItem.id>>
+     */
+	private Map<Long, Set<Long>> paxWatchlistLinks;
 
-    Map<Long, Case> getCaseMap() {
+	private List<HashMap<String, String>> derogList = new ArrayList<>();
+
+	public int getDobYearOffset() {
+		return dobYearOffset;
+	}
+
+	public void setDobYearOffset(int dobYearOffset) {
+		this.dobYearOffset = dobYearOffset;
+	}
+
+	public List<HashMap<String, String>> getDerogList() {
+		return derogList;
+	}
+
+	public void addDerogList(List<HashMap<String, String>> derogList) {
+		if(this.derogList == null)
+			this.derogList = new ArrayList<>();
+		this.derogList.addAll(derogList);
+	}
+
+	public Set<Long> getPaxWatchlistLinks(Long passengerId) {
+		Set<Long> wlItemIds = paxWatchlistLinks.get(passengerId);
+		if (wlItemIds == null) {
+			wlItemIds = new HashSet<>();
+		}
+		return wlItemIds;
+	}
+
+	public void setPaxWatchlistLinks(Map<Long, Set<Long>> paxWatchlistLinks) {
+		this.paxWatchlistLinks = paxWatchlistLinks;
+	}
+
+	public QuickMatcher getQm() {
+		return qm;
+	}
+
+	public void setQm(QuickMatcher qm) {
+		this.qm = qm;
+	}
+
+	Map<Long, Case> getCaseMap() {
         return caseMap;
     }
 

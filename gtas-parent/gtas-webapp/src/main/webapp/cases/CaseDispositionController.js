@@ -20,16 +20,7 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
-            $scope.model = {
-                name: $scope.emptyString,
-                flightNumber: $scope.emptyString,
-                displayStatusCheckBoxes: caseDispositionService.getDefaultDispCheckboxes(),
-                status: $scope.emptyString,
-                priority: $scope.emptyString,
-                ruleCat: $scope.emptyString,
-                etaStart: caseDispositionService.getDefaultStartDate(),
-                etaEnd: caseDispositionService.getDefaultEndDate(),
-            };
+            $scope.model = caseDispositionService.getDefaultModel();
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -102,10 +93,10 @@
 
             $scope.resolvePage = function () {
                 var postData = {
-                    pageNumber: $scope.pageNumber,
-                    pageSize: $scope.pageSize,
+                    pageNumber:   $scope.pageNumber,
+                    pageSize:     $scope.pageSize,
                     sort:     $scope.model.sort,
-                    model:    $scope.model
+                    model:        $scope.model
                 };
                 spinnerService.show('html5spinner');
                 caseDispositionService.getPagedCases(postData).then(
@@ -180,7 +171,6 @@
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
-
                     gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
                     if (sortColumns.length === 0) {
                         $scope.model.sort = null;
@@ -194,7 +184,7 @@
                         }
                     }
                     $scope.resolvePage();
-                })
+                });
 
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                         $scope.pageNumber = newPage;
@@ -255,7 +245,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','etaetdfilter', 'dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
@@ -288,6 +278,8 @@
                 $scope.model.etaStart = caseDispositionService.getDefaultStartDate();
                 $scope.model.etaEnd = caseDispositionService.getDefaultEndDate();
                 $scope.model.displayStatusCheckBoxes = caseDispositionService.getDefaultDispCheckboxes();
+                $scope.model.sort = caseDispositionService.getDefaultSort();
+                $scope.model.withTimeLeft = caseDispositionService.getDefaultTimeLeft();
                 $scope.resolvePage();
             };
 

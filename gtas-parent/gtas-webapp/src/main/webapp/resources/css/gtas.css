@@ -94,6 +94,15 @@ span.right-header{
   color: #3F51B5;
   font-weight: bold;
 }
+.flight-grid.ui-grid {
+  height: calc(100vh - 120px);
+  min-height: 240px;
+}
+.case-grid.ui-grid {
+  height: calc(100vh - 140px);
+  min-height: 240px;
+}
+
 
 
 /*Sizing Styles */
@@ -544,7 +553,6 @@ span.right-header{
 .ui-grid {
   width: 99%;
   height: -webkit-fill-available;
-  /* height: 85vh !important; */
   margin: auto;
 }
 .ui-grid-top-panel {

@@ -1,40 +1,39 @@
-<form role="form" ng-submit="saveSettings()">
-    <div class="flex flex-vert upper-cnt margin-bottom-2 switch-width-sm-half center">
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="pass1" ng-model="settingsInfo.matchingThreshold" />
-        <label class="mdl-textfield__label static-label" for="pass1">Matching Threshold</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="pmax1" ng-model="settingsInfo.maxPassengerQueryResult" />
-        <label class="mdl-textfield__label static-label" for="pmax1">Maximum Passenger Query Results</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="fmax1" ng-model="settingsInfo.maxFlightQueryResult" />
-        <label class="mdl-textfield__label static-label" for="fmax1">Maximum Flight Query Results</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="watch1" ng-model="settingsInfo.flightRange" />
-        <label class="mdl-textfield__label static-label" for="watch1">Watchlist Matching Flight Range</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="rule1" ng-model="settingsInfo.maxRuleHit" />
-        <label class="mdl-textfield__label static-label" for="rule1">Maximum Rule Hits Allowed Per Run on Rule</label>
-      </div>
-      <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
-          
-       <select class="mdl-selectfield__select" id="apisOnlyFlag"
-                      ng-model="settingsInfo.apisOnlyFlag">
-                      <option value="">----</option>
-                      <option value="FALSE">FALSE</option>
-                      <option value="TRUE">TRUE</option>
-      </select>
-        <label class="mdl-textfield__label static-label" for="apisOnlyFlag">APIS Only Flag</label>
-      </div>
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
-        <input class="mdl-textfield__input" type="text" id="apisVersion" ng-model="settingsInfo.apisVersion" />
-        <label class="mdl-textfield__label static-label" for="apisVersion">APIS Version</label>
-      </div>
-      <button type="submit" class="btn btn-primary">Save</button>
+<form role="form" ng-submit="saveSettings()" class="settings-form">
+  <div class="flex flex-vert upper-cnt margin-bottom-2 switch-width-sm-half center">
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="pass1" ng-model="settingsInfo.matchingThreshold" />
+      <label class="mdl-textfield__label static-label" for="pass1">Matching Threshold</label>
     </div>
-  </form>
-  
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="pmax1" ng-model="settingsInfo.maxPassengerQueryResult" />
+      <label class="mdl-textfield__label static-label" for="pmax1">Maximum Passenger Query Results</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="fmax1" ng-model="settingsInfo.maxFlightQueryResult" />
+      <label class="mdl-textfield__label static-label" for="fmax1">Maximum Flight Query Results</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="watch1" ng-model="settingsInfo.flightRange" />
+      <label class="mdl-textfield__label static-label" for="watch1">Watchlist Matching Flight Range</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="rule1" ng-model="settingsInfo.maxRuleHit" />
+      <label class="mdl-textfield__label static-label" for="rule1">Maximum Rule Hits Allowed Per Run on Rule</label>
+    </div>
+    <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
+        
+     <select class="mdl-selectfield__select" id="apisOnlyFlag"
+                    ng-model="settingsInfo.apisOnlyFlag">
+                    <option value="">----</option>
+                    <option value="FALSE">FALSE</option>
+                    <option value="TRUE">TRUE</option>
+    </select>
+      <label class="mdl-textfield__label static-label" for="apisOnlyFlag">APIS Only Flag</label>
+    </div>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width">
+      <input class="mdl-textfield__input" type="text" id="apisVersion" ng-model="settingsInfo.apisVersion" />
+      <label class="mdl-textfield__label static-label" for="apisVersion">APIS Version</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </div>
+</form>

@@ -80,7 +80,7 @@ var app;
                 return moment(date).format('YYYY-MM-DD');
             };
         },
-        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService) {
+        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
             $rootScope.$on('$stateChangeStart',
 
@@ -103,21 +103,29 @@ var app;
            $rootScope.searchBarContent = {
         		   content : ""
            };
-           //For tooltips
-           $.getJSON('./data/countries.json', function(data){
-        	   $rootScope.countriesList = data;
-           });
 
-           //For tooltips
-           $.getJSON('./data/airports.json', function(data){
-        	   $rootScope.airportsList = data;
-           });
 
-           //For tooltips
-           $.getJSON('./data/carriers.json', function(data){
-        	  $rootScope.carriersList = data;
-           });
-           
+           //  //For tooltips
+           $rootScope.refreshCountryTooltips = function() {
+              codeService.getCountryTooltips().then(function(result) {
+                $rootScope.countriesList = result;
+              });
+            }
+            $rootScope.refreshAirportTooltips = function() {
+              codeService.getAirportTooltips().then(function(result) {
+              $rootScope.airportsList = result;
+             });
+            }
+          $rootScope.refreshCarrierTooltips = function() {
+            codeService.getCarrierTooltips().then(function(result) {
+              $rootScope.carriersList = result;
+            });
+          }
+
+          $rootScope.refreshAirportTooltips();
+          $rootScope.refreshCarrierTooltips();
+          $rootScope.refreshCountryTooltips();
+
            //For tooltips
            $.getJSON('./data/passenger_types.json', function(data){
          	  $rootScope.passengerTypes = data;
@@ -132,9 +140,6 @@ var app;
            $.getJSON('./data/genders.json', function(data){
          	  $rootScope.genders = data;
             });
-
-          
-          // $rootScope.airportsList =
 
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
@@ -306,7 +311,6 @@ var app;
                 })
                 .state('flights', {
                     url: '/flights',
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     authenticate: true,
                     views: {
                         '@': {
@@ -363,7 +367,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -652,6 +656,7 @@ var app;
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
+            $scope.hitCount = 0;
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -685,6 +690,15 @@ var app;
             }, function(reason){
               alert("Error Loading Notifications: " + reason);
             });
+
+            notificationService.getWatchlistCount().then(function(value) {
+               $scope.hitCount = value;
+            });
+
+            $scope.getHitCount = function() {
+                    return $scope.hitCount;
+            };
+
             let oneDayLookoutUser = false;
             let user = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
             user.roles.forEach(function (role) {
@@ -709,6 +723,9 @@ var app;
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
+                notificationService.getWatchlistCount().then(function(value) {
+                    $scope.hitCount = value;
+                });
             });
 
             $rootScope.$on('unauthorizedEvent', function () {
@@ -749,7 +766,7 @@ var app;
         .config(idleWatchConfig)
         .constant('USER_ROLES', {
             ADMIN: 'Admin',
-            VIEW_FLIGHT_PASSENGERS: 'View Flight And Passenger',
+            VIEW_FLIGHT_PASSENGERS: 'View Passenger',
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',

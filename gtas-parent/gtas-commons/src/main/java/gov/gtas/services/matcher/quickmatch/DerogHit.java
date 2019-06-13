@@ -8,15 +8,15 @@ package gov.gtas.services.matcher.quickmatch;
 public class DerogHit {
 	public static final String WATCH_LIST_NAME ="WatchlistName";
 	private String derogId;
-	private String watchlistName;
 	private String clause;
+	private String ruleDescription;
 	private float percent;
 
-	public DerogHit(String derogId, String clause, float percent, String watchlistName) {
+	public DerogHit(String derogId, String clause, float percent, String ruleDescription) {
 		this.derogId = derogId;
 		this.clause = clause;
 		this.percent = percent;
-		this.watchlistName = watchlistName;
+		this.ruleDescription = ruleDescription;
 	}
 
 	public float getPercent() {
@@ -31,13 +31,16 @@ public class DerogHit {
 		return derogId;
 	}
 
-	
-	public String getWatchlistName() {
-		return watchlistName;
-	}
-
 	@Override
 	public String toString() {
 		return "DerogHit [derogId=" + derogId + ", clause=" + clause + ", percent=" + percent + "]";
+	}
+
+	public String getRuleDescription() {
+		return ruleDescription;
+	}
+
+	public void setRuleDescription(String ruleDescription) {
+		this.ruleDescription = ruleDescription;
 	}
 }

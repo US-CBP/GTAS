@@ -45,7 +45,9 @@ public class FlightVo extends BaseVo {
     private String etaLocalTZ;
     private Integer passengerCount = Integer.valueOf(0);
     private Integer ruleHitCount = Integer.valueOf(0);
-    private Integer listHitCount = Integer.valueOf(0);
+    private Integer listHitCount;
+    private Integer graphHitCount;
+    private Integer fuzzyHitCount;
     private Long paxWatchlistLinkHits = 0L;
     private int ruleHits;
     private int listHits;
@@ -234,5 +236,21 @@ public class FlightVo extends BaseVo {
 
     public void setPaxWatchlistLinkHits(Long paxWatchlistLinkHits) {
         this.paxWatchlistLinkHits = paxWatchlistLinkHits;
+    }
+
+    public Integer getGraphHitCount() {
+        return graphHitCount;
+    }
+
+    public void setGraphHitCount(Integer graphHitcount) {
+        this.graphHitCount = graphHitcount;
+    }
+
+    public Integer getFuzzyHitCount() {
+        return fuzzyHitCount;
+    }
+
+    public void setFuzzyHitCount(Integer fuzzyHitcount) {
+        this.fuzzyHitCount = fuzzyHitcount;
     }
 }

@@ -21,16 +21,18 @@
   <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link href="resources/css/misc_fonts.css" rel="stylesheet">
+  <link href="resources/css/misc_italian.css" rel="stylesheet">
   <script src="resources/bower_components/jquery/dist/jquery.js"></script>
   <!--<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
   <script src="resources/bower_components/summernote/dist/summernote.js"></script>
   <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
   <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
-
 </head>
 
 <body ng-cloak>
+
+  <!-- CBP and APP HEADER  -->
   <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -80,19 +82,10 @@
             </ul>
           </li>
           <li class="dropdown notification mobile-hide">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#/casedisposition">
               <i class="fa fa-inverse fa-bell notif-icon" aria-hidden="true"></i>
-              <span class="notif-icon-cnt">{{errorList.length}}</span>
+              <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li data-has-role="[{{ ROLES.ADMIN }}]" ng-repeat="value in errorList">
-                <a>
-                  {{value.createDate | date:'HH:mm '}} {{value.status}}
-                </a>
-                <md-tooltip class="multi-tooltip" md-z-index=999999>{{value.error}}</md-tooltip>
-              </li>
-            </ul>
-
           </li>
         </ul>
 
@@ -146,7 +139,7 @@
       <!-- Flights, Passengers, Cases Tab -->
       <div id="subnav" class="collapse navbar-collapse">
         <div class="nav navbar-nav">
-          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
+          <ul class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
@@ -191,6 +184,7 @@
     </div>
   </div>
 
+  
 <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
   <div class="content" ui-view=""  ></div>
