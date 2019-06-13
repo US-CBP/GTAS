@@ -15,9 +15,11 @@ import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,6 +71,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
+		Predicate updCondition = getUpdatedAfterPredicate(dto, cb, root);
 
 		// sorting
 		if (dto.getSort() != null) {
@@ -166,6 +169,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		if (etaCondition != null) {
 			predicates.add(etaCondition);
 		}
+		if (updCondition != null) {
+			predicates.add(updCondition);
+		}
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Flight> typedQuery = em.createQuery(q);
 
@@ -177,7 +183,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		typedQuery.setMaxResults(dto.getPageSize());
 
 		// Runs exact query above without limits to get a count.
-		long count = getCountOfQuery(dto, cb, countPredicates);
+		long count = getCountOfQuery(dto, cb, countPredicates, root);
 
 		logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
 				.getQueryString());
@@ -200,13 +206,18 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		}
 	}
 
-	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates) {
+	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates, Root<Flight> root) {
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Flight> countRoot = countQuery.from(Flight.class);
 		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
-		if (countEtaCondition != null) {
+		Predicate countUpdCondition = getUpdatedAfterPredicate(dto, cb, root);
+
+    if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
+		}
+		if (countUpdCondition != null) {
+			countPredicates.add(countUpdCondition);
 		}
 		countQuery.select(cb.count(countRoot)).where(
 				countPredicates.toArray(new Predicate[]{}));
@@ -228,6 +239,23 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			etaCondition = cb.and(startPredicate, endPredicate);
 		}
 		return etaCondition;
+	}
+
+	private Predicate getUpdatedAfterPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Root<Flight> root) {
+//    Set<String> foo = new HashSet<>(Arrays.asList("ET"));
+//
+//    Predicate uaCondition = root.get("carrier").in(foo);
+     Predicate uaCondition = null;
+     Date minDate = dto.getUpdatedAfter();
+    
+		  if (minDate != null) {
+       uaCondition = cb.or(
+         cb.greaterThan(root.get("createdAt"), minDate),
+         cb.and(
+           cb.isNotNull(root.get("updatedAt")),
+           cb.greaterThan(root.get("updatedAt"), minDate) ));
+		  }
+		return uaCondition;
 	}
 
 	@Override

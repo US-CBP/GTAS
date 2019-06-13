@@ -87,7 +87,6 @@
       var self = this, airports,
           stateName = $state ? $state.$current.self.name : 'flights',
           setFlightsGrid = function (grid, response) {
-              //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
               var data = stateName === 'queryFlights' ? response.data.result : response.data;
               grid.totalItems = data.totalFlights === -1 ? 0 : data.totalFlights;
               grid.data = data.flights;
@@ -107,35 +106,54 @@
                   $scope.queryLimitReached = flights.data.result.queryLimitReached;
               }
               else{
-                  setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
+                setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
+                $scope.model.updatedAfter = flights.data.lastUpdated || $scope.model.updatedAfter;
               }
-
           },
           update = function (data) {
+            clearRefresh;
               flights = data;
               getPage();
               spinnerService.hide('html5spinner');
+            refresher;
+          },
+          refresh = function (data) {
+            flights = merge(data);
+            getPage();
+            spinnerService.hide('html5spinner');
           },
           fetchMethods = {
-              queryFlights: function () {
-                  var postData, query = JSON.parse(localStorage['query']);
-                  postData = {
-                      pageNumber: $scope.model.pageNumber,
-                      pageSize: $scope.model.pageSize,
-                      query: query
-                  };
-                  spinnerService.show('html5spinner');
-                  executeQueryService.queryFlights(postData).then(update);
-              },
-              flights: function () {
-                  spinnerService.show('html5spinner');
-                  flightService.getFlights($scope.model).then(update);
-              }
+            queryFlights: function () {
+              var postData, query = JSON.parse(localStorage['query']);
+              postData = {
+                  pageNumber: $scope.model.pageNumber,
+                  pageSize: $scope.model.pageSize,
+                  query: query
+              };
+              spinnerService.show('html5spinner');
+              executeQueryService.queryFlights(postData).then(update);
+            },
+            flights: function () {
+              $scope.model.updatedAfter = null;
+                spinnerService.show('html5spinner');
+                flightService.getFlights($scope.model).then(update);
+            },
+            flightsRefresh: function () {
+              spinnerService.show('html5spinner');
+              flightService.getFlights($scope.model).then(refresh);
+            }
           },
           resolvePage = function () {
               populateAirports();
               fetchMethods[stateName]();
           };
+
+      var refresher = setInterval(fetchMethods.flightsRefresh, 30000);
+
+      var clearRefresh = function() {
+        $scope.model.updatedAfter = null;
+        clearInterval(refresher);
+      }
 
       var populateAirports = function () {
 
@@ -192,6 +210,31 @@
           $scope.model.dest = destinationAirports;
       };
 
+      //APB - refac
+      function merge(data) {
+        console.log(`refreshed: ${data.data.flights.length} records`);
+        if (data === undefined || data.data.flights.length < 1) {
+          return flights;
+        }
+        var merged = {};
+
+        if (flights !== undefined && flights.data.flights.length > 0) {
+          flights.data.flights.map(function (flight) {
+            merged[flight.id] = flight;
+          });
+        }
+
+        data.data.flights.map(function (newflight) {
+          merged[newflight.id] = newflight;
+        });
+
+        flights.data.flights = Object.values(merged);
+        flights.data.totalFlights = flights.data.flights.length;
+        $scope.model.updatedAfter = flights.data.lastUpdated = data.data.lastUpdated;
+        flights.data.queryLimitReached = data.data.queryLimitReached;
+
+          return flights;
+      }
 
       self.querySearch = querySearch;
       
@@ -505,6 +548,8 @@
             $scope.gridApi.pagination.seek(1);
         }
     };
+
+
 
     $scope.reset = function () {
         $scope.model.reset();

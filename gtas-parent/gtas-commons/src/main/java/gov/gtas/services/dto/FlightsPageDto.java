@@ -6,6 +6,7 @@
 package gov.gtas.services.dto;
 
 import java.util.List;
+import java.util.Date;
 
 import gov.gtas.vo.passenger.FlightVo;
 
@@ -13,13 +14,19 @@ public class FlightsPageDto {
     private List<FlightVo> flights;
     private boolean queryLimitReached;
     private long totalFlights;
+    private Date lastUpdated;
     public FlightsPageDto(List<FlightVo> flights, long totalFlights) {
-        this(flights, totalFlights, false);
+        this(flights, totalFlights, null, false);
     }
 
     public FlightsPageDto(List<FlightVo> flights, long totalFlights, boolean queryLimitReached) {
+      this(flights, totalFlights, null, queryLimitReached);
+    }
+
+    public FlightsPageDto(List<FlightVo> flights, long totalFlights, Date lastUpdated, boolean queryLimitReached) {
         this.flights = flights;
         this.totalFlights = totalFlights;
+        this.lastUpdated = lastUpdated;
         this.queryLimitReached = queryLimitReached;
     }
 
@@ -32,6 +39,10 @@ public class FlightsPageDto {
 
     public boolean isQueryLimitReached() {
         return queryLimitReached;
+    }
+
+    public Date getLastUpdated() {
+      return lastUpdated;
     }
 
     public void setQueryLimitReached(boolean queryLimitReached) {

@@ -40,6 +40,8 @@ public class FlightsRequestDto implements Serializable {
 	private Date etaStart;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
 	private Date etaEnd;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date updatedAfter;
 
 	private transient List<SortOptionsDto> sort;
 
@@ -81,6 +83,14 @@ public class FlightsRequestDto implements Serializable {
 
 	public void setEtaEnd(Date etaEnd) {
 		this.etaEnd = etaEnd;
+	}
+
+	public Date getUpdatedAfter() {
+		return updatedAfter;
+	}
+
+	public void setUpdatedAfter(Date data) {
+		this.updatedAfter = data;
 	}
 
 	public String getFlightNumber() {
