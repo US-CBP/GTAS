@@ -24,6 +24,7 @@ import java.util.List;
 
 import gov.gtas.model.lookup.RuleCat;
 import java.util.Map;
+import java.util.Set;
 
 import static gov.gtas.constant.GtasSecurityConstants.*;
 
@@ -93,4 +94,5 @@ public interface CaseDispositionService {
 
 	public void updateEncounteredStatus(Long caseIdAsLong, EncounteredStatusEnum newEncounteredStatus);
 
+    Set<Case> getOpenCasesWithTimeLeft();
 }

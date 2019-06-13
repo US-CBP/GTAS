@@ -14,8 +14,10 @@
                     pageSize: "10",
                     pageNumber: "1",
                     displayStatusCheckBoxes: getDefaultDispCheckboxes(),
+                    withTimeLeft: getDefaultTimeLeft(),
                     etaStart: getDefaultStartDate(),
-                    etaEnd: getDefaultEndDate()
+                    etaEnd: getDefaultEndDate(),
+                    sort : getDefaultSort()
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -27,12 +29,12 @@
             }
 
             function getDefaultEndDate() {
-                const DEFAULT_DAYS_FORWARD = 30;
+                const DEFAULT_DAYS_FORWARD = 3;
                 return getTargetDate(DEFAULT_DAYS_FORWARD);
             }
 
             function getDefaultStartDate() {
-                const DEFAULT_DAYS_BACK = -30;
+                const DEFAULT_DAYS_BACK = 0;
                 return getTargetDate(DEFAULT_DAYS_BACK);
             }
 
@@ -45,11 +47,19 @@
             function getDefaultDispCheckboxes() {
                 return {
                     NEW: true,
-                    OPEN: true,
+                    OPEN: false,
                     CLOSED: false,
-                    REOPEN: true,
-                    PENDINGCLOSURE: true
+                    REOPEN: false,
+                    PENDINGCLOSURE: false
                 };
+            }
+            function getDefaultTimeLeft() {
+                return true;
+            }
+            function getDefaultSort() {
+                return [
+                    {column: 'countdown', dir: 'asc'}
+                ];
             }
 
             function getPagedCases(params){
@@ -60,6 +70,7 @@
                     lastName: params.model.name,
                     flightNumber: params.model.flightNumber,
                     status: params.model.status,
+                    withTimeLeft: params.model.withTimeLeft,
                     ruleCatId: params.model.ruleCat,
                     etaStart: params.model.etaStart,
                     etaEnd: params.model.etaEnd,
@@ -97,6 +108,7 @@
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
                     displayStatusCheckBoxes: model.displayStatusCheckBoxes,
+                    withTimeLeft: model.withTimeLeft,
                     lastName: model.name,
                     status: model.status,
                     ruleCatId: model.ruleCat,
@@ -221,6 +233,22 @@
                 return dfd.promise;
             }
 
+            function getDefaultModel() {
+                const emptyString = "";
+                return {
+                    name: emptyString,
+                    flightNumber: emptyString,
+                    displayStatusCheckBoxes: getDefaultDispCheckboxes(),
+                    status: emptyString,
+                    priority: emptyString,
+                    ruleCat: emptyString,
+                    etaStart: getDefaultStartDate(),
+                    etaEnd: getDefaultEndDate(),
+                    withTimeLeft: getDefaultTimeLeft(),
+                    sort : getDefaultSort()
+                };
+            }
+
             function getHitDispositionStatuses() {
                 var dfd = $q.defer();
                 dfd.resolve($http.get("/gtas/hitdispositionstatuses"));
@@ -327,7 +355,10 @@
                 getDefaultStartDate: getDefaultStartDate,
                 getDefaultEndDate: getDefaultEndDate,
                 getDefaultDispCheckboxes: getDefaultDispCheckboxes,
-                updateGeneralComments : updateGeneralComments
+                updateGeneralComments : updateGeneralComments,
+                getDefaultSort: getDefaultSort,
+                getDefaultTimeLeft: getDefaultTimeLeft,
+                getDefaultModel: getDefaultModel
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })

@@ -50,6 +50,9 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private SeatRepository seatRespository;
 
+	@Autowired
+	private AppConfigurationService appConfigurationService;
+
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
@@ -189,7 +192,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		Date now = new Date();
+		Date now = appConfigurationService.offSetTimeZone(new Date());
 		Date threeDays = getThreeDaysForward();
 		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "I");
 	}
@@ -197,7 +200,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
-		Date now = new Date();
+		Date now = appConfigurationService.offSetTimeZone(new Date());
 		Date threeDays = getThreeDaysForward();
 		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "O");
 	}

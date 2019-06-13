@@ -65,13 +65,17 @@
     <div class="md-pad">
         <button type="button" class="btn btn-primary pull-left" 
           ng-click="saveCode()">
-            <i class="fa fa-inverse fa-floppy-o"></i> Save {{activeCodeTab | capitalize}}
+            <i class="fa fa-inverse fa-floppy-o"></i> Save 
         </button>
-        <button type="button" class="btn btn-warning pull-right"
+        <button type="button" class="btn btn-warning pull-right margin-left-1"
           ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
-          ng-click="deleteCode()"><i class="fa fa-trash"></i> Delete {{activeCodeTab | capitalize}}
+          ng-click="deleteCode()"><i class="fa fa-trash"></i> Delete 
       </button>
-    </div>
+      <button type="button" class="btn btn-warning pull-right margin-left-1"
+      ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
+      ng-click="restoreCode()"><i class="fa fa-undo"></i> Restore 
+  </button>
+</div>
   </form>
 </md-sidenav>
 

@@ -104,6 +104,7 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
     @Query("SELECT p FROM Passenger p " +
             " LEFT JOIN FETCH p.paxWatchlistLinks " +
+            " LEFT JOIN FETCH p.passengerDetails " +
             " LEFT JOIN FETCH p.passengerWLTimestamp " +
             " LEFT JOIN FETCH p.documents " +
             " LEFT JOIN FETCH p.flight " +

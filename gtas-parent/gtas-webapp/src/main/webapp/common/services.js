@@ -8,6 +8,7 @@
   app
       .service('notificationService', function($http,$q) {
         var GET_MESSAGE_ERRORS_URL ="/gtas/errorMessage";
+        var GET_NOTIFICATION_HITS ="/gtas/hitCount";
         function handleError(response) {
             if (response.data.message === undefined) {
                 return $q.reject("An unknown error occurred.");
@@ -19,13 +20,20 @@
             return response.data;
         }
         return {
-          getErrorData:function() {
-            var request = $http({
-                method: "get",
-                url: GET_MESSAGE_ERRORS_URL
-            });
-            return (request.then(handleSuccess, handleError));
-          }
+            getErrorData: function () {
+                var request = $http({
+                    method: "get",
+                    url: GET_MESSAGE_ERRORS_URL
+                });
+                return (request.then(handleSuccess, handleError));
+            },
+            getWatchlistCount: function () {
+                var request = $http({
+                    method: "get",
+                    url: GET_NOTIFICATION_HITS
+                });
+                return (request.then(handleSuccess, handleError));
+            }
         }
       })
       .service('errorService', function ($http, $q) {
@@ -168,7 +176,7 @@
         }
       })
   .service('codeService', function ($http, $q) {
-    var CODE_URL = "/gtas/";
+    var CODE_URL = "/gtas/api/";
 
     function handleError(response) {
       if (response.data.message === undefined) {
@@ -226,9 +234,28 @@
         return (request.then(handleSuccess, handleError));
       },
 
-      restoreCodes: function(type) {
-        return handleErrorGeneric('Method "restoreCodes" is not implemented');
+      restoreCode: function(type, code) {
+        console.log(type, code);
+
+        var request = $http({
+          method: "put",
+          url: `${CODE_URL}${type}/restore`,
+          data: code
+        });
+        return (request.then(handleSuccess, handleError));
       },
+
+      restoreAllCodes: function(type) {
+        console.log(type);
+
+        var request = $http({
+          method: "put",
+          url: `${CODE_URL}${type}/restoreAll`
+        });
+        console.log(request);
+        return (request.then(handleSuccess, handleError));
+      },
+
 
       getCountryTooltips: function() {
         return this.getAllCodes('country').then(function(response){
@@ -240,7 +267,6 @@
 
       getCarrierTooltips: function() {
         return this.getAllCodes('carrier').then(function(response){
-
           return response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
 
         }, handleError);
