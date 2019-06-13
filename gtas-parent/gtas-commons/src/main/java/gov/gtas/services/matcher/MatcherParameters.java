@@ -48,9 +48,10 @@ public class MatcherParameters {
 	}
 
 	public Set<Long> getPaxWatchlistLinks(Long passengerId) {
-		Set<Long> wlItemIds =  paxWatchlistLinks.get(passengerId);
-		if(wlItemIds == null)
+		Set<Long> wlItemIds = paxWatchlistLinks.get(passengerId);
+		if (wlItemIds == null) {
 			wlItemIds = new HashSet<>();
+		}
 		return wlItemIds;
 	}
 

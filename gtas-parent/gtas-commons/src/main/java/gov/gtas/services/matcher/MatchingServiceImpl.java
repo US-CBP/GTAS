@@ -9,8 +9,6 @@
 package gov.gtas.services.matcher;
 
 import static gov.gtas.repository.AppConfigurationRepository.QUICKMATCH_DOB_YEAR_OFFSET;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
@@ -22,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +152,7 @@ public class MatchingServiceImpl implements MatchingService {
     public void performFuzzyMatching(Long id) {
         logger.debug("Starting fuzzy matching");
         Passenger passenger = passengerRepository.getFullPassengerById(id);
-        List<Long> passengers = Collections.singletonList(passenger.getId());
+        Set<Passenger> passengers = Collections.singleton(passenger);
         Flight flight = passenger.getFlight();
         MatcherParameters matcherParameters = getMatcherParameters(passengers);
         
@@ -163,10 +162,10 @@ public class MatchingServiceImpl implements MatchingService {
 
     }
 
-    private MatcherParameters getMatcherParameters(List<Long> passengers) {
+    private MatcherParameters getMatcherParameters(Set<Passenger> passengers) {
         logger.debug("getting matcher parameters");
         MatcherParameters matcherParameters = new MatcherParameters();
-        matcherParameters.setCaseMap(createCaseMap(passengers, this.caseDispositionService));
+        matcherParameters.setCaseMap(createCaseMap(passengers.stream().map(Passenger::getId).collect(Collectors.toList()), this.caseDispositionService));
         matcherParameters.setRuleCatMap(createRuleCatMap(caseDispositionService));
         matcherParameters.set_watchlists(watchlistRepository.getWatchlistByNames(Collections.singletonList("Passenger")));
         Map<Long, List<WatchlistItem>> watchlistListMap = new HashMap<>();
@@ -180,11 +179,9 @@ public class MatchingServiceImpl implements MatchingService {
         matcherParameters.setWatchlistListMap(watchlistListMap);
         matcherParameters.setThreshold(Float
                 .parseFloat((appConfigRepository.findByOption(AppConfigurationRepository.MATCHING_THRESHOLD).getValue())));
-        matcherParameters.setDobYearOffset(getDobYearOffset(MatchingContext.DOB_YEAR_OFFSET));
-       
-        //
-		matcherParameters.setPaxWatchlistLinks(this.getAllPaxWatchlistLinks()); 
-        
+        matcherParameters.setDobYearOffset(getDobYearOffset(MatchingContext.DOB_YEAR_OFFSET));  
+		matcherParameters.setPaxWatchlistLinks(this.getPaxWatchlistLinks(passengers)); 
+        		
 		matcherParameters.get_watchlists().forEach(w -> {
 			List<HashMap<String, String>> derogLists  = createWatchlistItems(matcherParameters.getWatchlistListMap().get(w.getId()));
 			matcherParameters.addDerogList(derogLists);
@@ -201,25 +198,18 @@ public class MatchingServiceImpl implements MatchingService {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("unlikely-arg-type")
-	public Map<Long, Set<Long>> getAllPaxWatchlistLinks() {
-
-		// returns a list of maps, may include duplicate entries for same passenger
-		List<Map<Long, Long>> links = this.paxWatchlistLinkRepository.findWatchlistMap();
-		//
-		List<Map<Long, Long>> paxWatchlistLinks = new ArrayList<>();
-
-		// remove  alias names of the map and create a new map of (passenger_id ->
-		// watchlist_item_id)
-		links.forEach(link -> paxWatchlistLinks
-				.add(Collections.singletonMap(link.get("passenger_id"), link.get("watchlist_item_id"))));
-
-		/**
-		 * aggregate paxWatchlistLinks by grouping by passenger_id and convert the list of
-		 * maps into a map of (passenger_id -> Set(watchlist item Ids))
-		 */
-		return paxWatchlistLinks.stream().flatMap(m -> m.entrySet().stream())
-				.collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toSet())));
+	public Map<Long, Set<Long>> getPaxWatchlistLinks(Set<Passenger> passengers) {
+		
+		Map<Long, Set<Long>> watchlistLinks =  new HashMap<>();
+		for (Passenger passenger : passengers) {
+			
+			Set<Long> links = new HashSet<>();	
+			for (PaxWatchlistLink item : passenger.getPaxWatchlistLinks()) {
+				links.add(item.getId());
+			}
+			watchlistLinks.put(passenger.getId(), links);
+		}
+		return watchlistLinks;
 	}
     
 	private List<HashMap<String, String>> createWatchlistItems(List<WatchlistItem> watchlistItems) {
@@ -369,10 +359,9 @@ public class MatchingServiceImpl implements MatchingService {
         // Begin matching for all passengers on all flights retrieved within time frame.
         if (passengers != null && !passengers.isEmpty()) { // Don't try and match if no flights
             startTime = System.nanoTime();
-            List<Long> passengerIds = new ArrayList<>();
             Set<Flight> flights = new HashSet<>();
             Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
-            MatcherParameters matcherParameters = getMatcherParameters(passengerIds);
+            MatcherParameters matcherParameters = getMatcherParameters(passengers);
             
             for (Passenger passenger : passengers) {
                 try {

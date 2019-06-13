@@ -36,7 +36,6 @@ public class QuickMatcherTest {
 	 
 	private ObjectMapper mapper = new ObjectMapper();
 
-	@SuppressWarnings("Duplicates")
 	@Test
 	public void testingStart() throws IOException, ParseException {
 		String data = "{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1992-07-15\"},{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FOO\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"BAR\"}]}";

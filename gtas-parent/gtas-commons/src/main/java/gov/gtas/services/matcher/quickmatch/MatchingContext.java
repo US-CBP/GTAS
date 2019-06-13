@@ -7,12 +7,14 @@ package gov.gtas.services.matcher.quickmatch;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,7 +40,7 @@ public class MatchingContext {
     private final String[] NAME_PARTS = { "first_name", "middle_name", "last_name" };
 	private final String[] stringAttributes = { "first_name", "middle_name", "last_name", "GNDR_CD", "NATIONALITY_CD",
             "DOC_CTRY_CD", "DOC_TYP_NM", "DOC_ID" };
-	
+	static final DateTimeFormatter DATE_FORMATTER_YYYY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT);	
 	public static final int DOB_YEAR_OFFSET = 3;
 	private QuickMatcherConfig config;
 
@@ -194,7 +196,7 @@ public class MatchingContext {
                     if (valuesToDerogIds.containsKey(concatenated)) {
                         valuesToDerogIds.get(concatenated).add(rec.get("derogId"));
                     } else {
-                        Set<String> derogIds = new HashSet();
+                        Set<String> derogIds = new HashSet<>();
                         derogIds.add(rec.get("derogId"));
                         valuesToDerogIds.put(concatenated, derogIds);
                     }
@@ -304,41 +306,38 @@ public class MatchingContext {
 							Double distance = this.goodTextDistance(traveler.get("full_name"),
 									derogRecord.get("full_name"));
 
-							if (traveler.get("metaphones").equals(derogRecord.get("metaphones"))) {
+							if (traveler.get("metaphones").equals(derogRecord.get("metaphones"))
+									&& distance >= jaroWinklerThreshold) {
 
-								if (distance >= jaroWinklerThreshold) {
+								logger.debug(
+										"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
+										distance, traveler.get("full_name"), derogRecord.get("full_name"));
+
+								if (offset <= dobYearOffset) {
 
 									logger.debug(
-											"A Double Metaphone match and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
-											distance, traveler.get("full_name"), derogRecord.get("full_name"));
+											"There was a match on date of birth (YEAR only) with an offset of {}, traveler={}, derog={}",
+											offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
 
-									if (offset <= dobYearOffset) {
-
-										logger.debug(
-												"There was a match on date of birth (YEAR only) with an offset of {}, traveler={}, derog={}",
-												offset, traveler.get("DOB_Date"), derogRecord.get("DOB_Date"));
-
-										String derogId = derogRecord.get("derogId");
-										clauseHits.add(derogId);
-										clauseNameMap.put(derogId, derogRecord.get("full_name"));
-										partiallyMatched = true;
-									}
-
-								}
-							} else if (distance >= jaroWinklerThreshold) {
-
-								logger.debug("Jaro Winkler distance hit of {} for traveler={}, derog={}.", distance,
-										traveler.get("full_name"), derogRecord.get("full_name"));
-
-								// Compare date of birth
-								if (isSameDOBYearMonthDay(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"))) {
-
-									// It is a hit
 									String derogId = derogRecord.get("derogId");
 									clauseHits.add(derogId);
 									clauseNameMap.put(derogId, derogRecord.get("full_name"));
-									jaroWinklerDistanceMatched = true;
+									partiallyMatched = true;
 								}
+
+							} else if (distance >= jaroWinklerThreshold
+									&& isSameDOBYearMonthDay(traveler.get("DOB_Date"), derogRecord.get("DOB_Date"))) {
+
+								logger.debug(
+										"There was a match on exact date of {} and a Jaro Winkler distance hit of {} for traveler={}, derog={}.",
+										traveler.get("DOB_Date"), distance, traveler.get("full_name"),
+										derogRecord.get("full_name"));
+
+								// It is a hit
+								String derogId = derogRecord.get("derogId");
+								clauseHits.add(derogId);
+								clauseNameMap.put(derogId, derogRecord.get("full_name"));
+								jaroWinklerDistanceMatched = true;
 							}
 						}
 					}
@@ -414,17 +413,15 @@ public class MatchingContext {
 	 * @return
 	 * @throws ParseException
 	 */
-	private int calculateYearOffset(String travelerDate, String deragDate) {
-
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	private int calculateYearOffset(String travelerDate, String derogDate) {
 		try {
-			return Math.abs(DateCalendarUtils.getYearOfDate(formatter.parse(travelerDate))
-					- DateCalendarUtils.getYearOfDate(formatter.parse(deragDate)));
-
-		} catch (ParseException e) {
-			logger.error("There was a problem parsing birth dates while running quickmatch.  {}", e.getMessage());
+			int travlerYear = DateCalendarUtils.getYearOfDate(travelerDate, DATE_FORMATTER_YYYY_MM_DD);
+			int derogYear = DateCalendarUtils.getYearOfDate(derogDate, DATE_FORMATTER_YYYY_MM_DD);
+			return Math.abs(travlerYear - derogYear);
+		} catch (Exception e) {
+			logger.error("QuickMatch: failed to parse date of birth {}", e.getMessage());
 		}
-		return -1;
+		return Integer.MAX_VALUE;
 	}
 	
 	/**
@@ -435,21 +432,15 @@ public class MatchingContext {
 	 * @param deragDate
 	 * @return
 	 */
-	private boolean isSameDOBYearMonthDay(String travelerDate, String deragDate)  {
-
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	
+	private boolean isSameDOBYearMonthDay(String travelerDate, String derogDate) {
+		
 		try {
-			
-			return formatter.parse(travelerDate).compareTo(formatter.parse(deragDate)) == 0;
-			
-		} catch (ParseException e) {
-			
-			logger.error(
-					"There was a problem parsing birth dates while running quickmatch.  {}",
-					e.getMessage());
+			LocalDate travelerDob = DateCalendarUtils.parseLocalDate(travelerDate, DATE_FORMATTER_YYYY_MM_DD);
+			LocalDate derogDob = DateCalendarUtils.parseLocalDate(derogDate, DATE_FORMATTER_YYYY_MM_DD);
+			return travelerDob.compareTo(derogDob) == 0;
+		} catch (Exception e) {
+			logger.error("QuickMatch: failed to parse date of birth");
 		}
-			
 		return false;
 	}
 
@@ -523,12 +514,13 @@ public class MatchingContext {
                     
                     String metaphone = computeMetaphones(dmeta, name);
                     metaphones += metaphone;
-                    if(namePart.equals("first_name") || namePart.equals("last_name")) {
-                    	if(name.split("\\s+")[0].equals(name))
-                    		partial_name_metaphones += metaphone;
-                    	else
-                    		partial_name_metaphones+=computeMetaphones(dmeta, name.split("\\s+")[0]);
-                    }
+					if (namePart.equals("first_name") || namePart.equals("last_name")) {
+						if (name.split("\\s+")[0].equals(name)) {
+							partial_name_metaphones += metaphone;
+						} else {
+							partial_name_metaphones += computeMetaphones(dmeta, name.split("\\s+")[0]);
+						}
+					}
                 } else {
                     rec.put(namePart, "");
                 }

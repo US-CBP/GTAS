@@ -5,8 +5,6 @@ import java.util.List;
 import gov.gtas.model.Flight;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.Passenger;
-import gov.gtas.services.matcher.quickmatch.QuickMatcher;
-import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 
 public interface MatchingService {
