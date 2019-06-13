@@ -149,6 +149,20 @@
               </div>
             </div>
           </div>
+          <div ng-show='filterCheck("withTimeLeft")'>
+            <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#withTimeLeft" aria-controls="withTimeLeftGroup" class="filter-group-title">
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Active Flights
+            </h3>
+            <div id="withTimeLeft" class="collapse in" aria-expanded="true">
+              <div class="filter-group-content">
+                <div data-upgraded=",MaterialSelectfield">
+                  <label>TIME LEFT:
+                    <input type="checkbox" ng-model="model.withTimeLeft">
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
           <div ng-show='filterCheck("rulecats")'>
             <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#rulecatsGroup" aria-controls="rulecatsGroup" class="filter-group-title">
               <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Rule Category
