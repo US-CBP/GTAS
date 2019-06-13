@@ -54,7 +54,7 @@ insert into country(name, iso2, iso3, iso_numeric) values ('Congo (Brazzaville)'
 insert into country(name, iso2, iso3, iso_numeric) values ('Congo, Democratic Republic of the', 'CD', 'COD', '180');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cook Islands', 'CK', 'COK', '184');
 insert into country(name, iso2, iso3, iso_numeric) values ('Costa Rica', 'CR', 'CRI', '188');
-insert into country(name, iso2, iso3, iso_numeric) values ('Côte d\'Ivoire', 'CI', 'CIV', '384');
+insert into country(name, iso2, iso3, iso_numeric) values ("Côte d'Ivoire", 'CI', 'CIV', '384');
 insert into country(name, iso2, iso3, iso_numeric) values ('Croatia', 'HR', 'HRV', '191');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cuba', 'CU', 'CUB', '192');
 insert into country(name, iso2, iso3, iso_numeric) values ('Cyprus', 'CY', 'CYP', '196');
@@ -247,8 +247,7 @@ insert into country(name, iso2, iso3, iso_numeric) values ('Zambia', 'ZM', 'ZMB'
 insert into country(name, iso2, iso3, iso_numeric) values ('Zimbabwe', 'ZW', 'ZWE', '716');
 
  -- POPULATE COUNTRYRESTORE TABLE AS EXACT DUPLICATE --
-insert into countryRestore (id, name, iso2, iso3, iso_numeric)
-select id, name, iso2, iso3, iso_numeric from country;
+insert into countryrestore (id, name, iso2, iso3, iso_numeric)  id, name, iso2, iso3, iso_numeric from country; 
 
 
 -- SET ORIGINID ON THE INITIAL RECORDS IN THE COUNTRY TABLE ONLY
