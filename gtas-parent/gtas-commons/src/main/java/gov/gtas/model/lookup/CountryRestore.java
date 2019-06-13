@@ -18,7 +18,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "countryRestore", indexes = { @Index(columnList = "iso3", name = "countryRestore_iso3_index") })
+@Table(name = "country_restore", indexes = { @Index(columnList = "iso3", name = "countryRestore_iso3_index") })
 public class CountryRestore extends BaseEntity {
     public CountryRestore() { }
     @Column(length = 2)

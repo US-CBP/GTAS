@@ -19,7 +19,7 @@ import gov.gtas.model.BaseEntity;
 
 @Cacheable
 @Entity
-@Table(name = "airportRestore", indexes = { @Index(columnList = "iata", name = "airportRestore_iata_index") })
+@Table(name = "airport_restore", indexes = { @Index(columnList = "iata", name = "airportRestore_iata_index") })
 public class AirportRestore extends BaseEntity {
     public AirportRestore() { }
     private String name;
