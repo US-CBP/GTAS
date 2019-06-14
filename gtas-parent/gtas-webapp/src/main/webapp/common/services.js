@@ -235,6 +235,7 @@
       },
 
       restoreCode: function(type, code) {
+
         var request = $http({
           method: "put",
           url: `${CODE_URL}${type}/restore`,

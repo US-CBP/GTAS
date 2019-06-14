@@ -3,7 +3,7 @@
 -- ----------------------------
 INSERT INTO `role` VALUES ('1', 'Admin');
 INSERT INTO `role` VALUES ('2', 'Manage Queries');
-INSERT INTO `role` VALUES ('3', 'View Flight And Passenger');
+INSERT INTO `role` VALUES ('3', 'View Passenger');
 INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'SysAdmin');
