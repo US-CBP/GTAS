@@ -15,6 +15,8 @@
            .parent($scope.toastParent));
       };
 
+      var refresher = null;
+
       var exporter = {
           'csv': function () {
               $scope.gridApi.exporter.csvExport('all', 'all');
@@ -111,11 +113,11 @@
               }
           },
           update = function (data) {
-            clearRefresh;
-              flights = data;
-              getPage();
-              spinnerService.hide('html5spinner');
-            refresher;
+            clearRefresh();
+            flights = data;
+            getPage();
+            spinnerService.hide('html5spinner');
+            startRefresh();
           },
           refresh = function (data) {
             flights = merge(data);
@@ -139,7 +141,10 @@
                 flightService.getFlights($scope.model).then(update);
             },
             flightsRefresh: function () {
-              spinnerService.show('html5spinner');
+              if ($state.$current.self.name !== 'flights') {
+                return clearRefresh();
+              }
+                spinnerService.show('html5spinner');
               flightService.getFlights($scope.model).then(refresh);
             }
           },
@@ -148,13 +153,16 @@
               fetchMethods[stateName]();
           };
 
-      var refresher = setInterval(fetchMethods.flightsRefresh, 30000);
 
       var clearRefresh = function() {
+        console.log('refresh cleared');
         $scope.model.updatedAfter = null;
         clearInterval(refresher);
       }
 
+      var startRefresh = function() {
+        refresher = setInterval(fetchMethods.flightsRefresh, 30000);
+      }
       var populateAirports = function () {
 
           var originAirports = new Array();
@@ -245,7 +253,7 @@
               return contact;
             });
             self.filterSelected = true;
-        });
+      });
 
       
       $scope.selectedFlight = $stateParams.flight;
@@ -579,5 +587,5 @@
     resolvePage();
     mapAirports();
     loadFlightDirection();
-});
+})
 }());
