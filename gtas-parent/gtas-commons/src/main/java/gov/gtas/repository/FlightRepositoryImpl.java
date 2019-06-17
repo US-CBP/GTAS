@@ -71,7 +71,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
-		Predicate updCondition = getUpdatedAfterPredicate(dto, cb, root);
 
 		// sorting
 		if (dto.getSort() != null) {
@@ -169,9 +168,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		if (etaCondition != null) {
 			predicates.add(etaCondition);
 		}
-		if (updCondition != null) {
-			predicates.add(updCondition);
-		}
 		q.select(root).where(predicates.toArray(new Predicate[] {}));
 		TypedQuery<Flight> typedQuery = em.createQuery(q);
 
@@ -211,13 +207,9 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Root<Flight> countRoot = countQuery.from(Flight.class);
 		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
-		Predicate countUpdCondition = getUpdatedAfterPredicate(dto, cb, root);
 
     if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
-		}
-		if (countUpdCondition != null) {
-			countPredicates.add(countUpdCondition);
 		}
 		countQuery.select(cb.count(countRoot)).where(
 				countPredicates.toArray(new Predicate[]{}));
@@ -239,23 +231,6 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			etaCondition = cb.and(startPredicate, endPredicate);
 		}
 		return etaCondition;
-	}
-
-	private Predicate getUpdatedAfterPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Root<Flight> root) {
-//    Set<String> foo = new HashSet<>(Arrays.asList("ET"));
-//
-//    Predicate uaCondition = root.get("carrier").in(foo);
-     Predicate uaCondition = null;
-     Date minDate = dto.getUpdatedAfter();
-    
-		  if (minDate != null) {
-       uaCondition = cb.or(
-         cb.greaterThan(root.get("createdAt"), minDate),
-         cb.and(
-           cb.isNotNull(root.get("updatedAt")),
-           cb.greaterThan(root.get("updatedAt"), minDate) ));
-		  }
-		return uaCondition;
 	}
 
 	@Override

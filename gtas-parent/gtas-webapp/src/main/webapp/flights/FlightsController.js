@@ -131,8 +131,7 @@
               clearRefresh();
               if ($state.$current.self.name !== 'flights') return;
               spinnerService.show('html5spinner');
-              flightService.getFlights($scope.model).then(update);
-              startRefresh();
+              flightService.getFlights($scope.model).then(update).then(startRefresh);
             }
           },
           resolvePage = function () {
@@ -145,7 +144,7 @@
       }
 
       var startRefresh = function() {
-        refresher = setTimeout(fetchMethods.flights, 10000);
+        refresher = setTimeout(fetchMethods.flights, 30000);
       }
       var populateAirports = function () {
 

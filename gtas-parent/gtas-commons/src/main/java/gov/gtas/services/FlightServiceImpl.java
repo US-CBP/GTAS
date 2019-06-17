@@ -20,12 +20,10 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.lucene.queries.payloads.MaxPayloadFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -68,23 +66,7 @@ public class FlightServiceImpl implements FlightService {
 		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
 		List<Flight> flights = tuple2.getRight();
     List<FlightVo> vos = convertFlightToFlightVo(flights);
-    Date lastUpdated = getLastUpdated(flights);
-		return new FlightsPageDto(vos, tuple.getLeft(), lastUpdated, false);
-    }
-
-    private Date getLastUpdated(List<Flight> flights) {
-      if (flights.isEmpty()) return null;
-
-      // Date maxcreated = flights.stream().max(Comparator.comparing(v -> v.getCreatedAt())).getCreatedAt();
-      // Date maxupdated = flights.stream().max(Comparator.comparing(v -> v.getUpdatedAt())).getUpdatedAt();
-
-      Date latest = flights.get(0).getCreatedAt();
-      for (Flight flight : flights) {
-        if (flight.getCreatedAt().after(latest)) latest = flight.getCreatedAt();
-        if (flight.getUpdatedAt() != null && flight.getUpdatedAt().after(latest)) latest = flight.getUpdatedAt();
-      }
-      return latest;
-      // return maxupdated == null ? maxcreated : maxupdated.after(maxcreated) ? maxupdated : maxcreated;
+		return new FlightsPageDto(vos, tuple.getLeft(), false);
     }
 
     @Override
