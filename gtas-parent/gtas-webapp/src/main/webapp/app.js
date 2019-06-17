@@ -311,7 +311,6 @@ var app;
                 })
                 .state('flights', {
                     url: '/flights',
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     authenticate: true,
                     views: {
                         '@': {
@@ -368,7 +367,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -767,7 +766,7 @@ var app;
         .config(idleWatchConfig)
         .constant('USER_ROLES', {
             ADMIN: 'Admin',
-            VIEW_FLIGHT_PASSENGERS: 'View Flight And Passenger',
+            VIEW_FLIGHT_PASSENGERS: 'View Passenger',
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',

@@ -1182,7 +1182,7 @@ insert into carrier(iata, icao, name) values ("ZY","CHY","China Air Cargo Co., L
 
 
 -- POPULATE CARRIERRESTORE TABLE AS EXACT DUPLICATE --
-insert into carrierRestore (id, iata, icao, name) select id, iata, icao, name from carrier;
+insert into carrier_restore (id, iata, icao, name) select id, iata, icao, name from carrier;
 
 -- SET ORIGINID ON THE INITIAL RECORDS IN CARRIER ONLY
 update carrier set originId = id;
