@@ -109,18 +109,10 @@
               }
               else{
                 setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
-                $scope.model.updatedAfter = flights.data.lastUpdated || $scope.model.updatedAfter;
               }
           },
           update = function (data) {
-            clearRefresh();
             flights = data;
-            getPage();
-            spinnerService.hide('html5spinner');
-            startRefresh();
-          },
-          refresh = function (data) {
-            flights = merge(data);
             getPage();
             spinnerService.hide('html5spinner');
           },
@@ -136,32 +128,24 @@
               executeQueryService.queryFlights(postData).then(update);
             },
             flights: function () {
-              $scope.model.updatedAfter = null;
-                spinnerService.show('html5spinner');
-                flightService.getFlights($scope.model).then(update);
-            },
-            flightsRefresh: function () {
-              if ($state.$current.self.name !== 'flights') {
-                return clearRefresh();
-              }
-                spinnerService.show('html5spinner');
-              flightService.getFlights($scope.model).then(refresh);
+              clearRefresh();
+              if ($state.$current.self.name !== 'flights') return;
+              spinnerService.show('html5spinner');
+              flightService.getFlights($scope.model).then(update);
+              startRefresh();
             }
           },
           resolvePage = function () {
-              populateAirports();
-              fetchMethods[stateName]();
+            populateAirports();
+            fetchMethods[stateName]();
           };
 
-
       var clearRefresh = function() {
-        console.log('refresh cleared');
-        $scope.model.updatedAfter = null;
-        clearInterval(refresher);
+        clearTimeout(refresher);
       }
 
       var startRefresh = function() {
-        refresher = setInterval(fetchMethods.flightsRefresh, 30000);
+        refresher = setTimeout(fetchMethods.flights, 10000);
       }
       var populateAirports = function () {
 
@@ -208,8 +192,6 @@
         angular.forEach(flightsModel.origins, function (value, index) {
               originAirports.push({id: value});
           });
-          
-
 
           angular.forEach(flightsModel.destinations, function (value, index) {
               destinationAirports.push({id: value});
@@ -217,32 +199,6 @@
           $scope.model.origin = originAirports;
           $scope.model.dest = destinationAirports;
       };
-
-      //APB - refac
-      function merge(data) {
-        console.log(`refreshed: ${data.data.flights.length} records`);
-        if (data === undefined || data.data.flights.length < 1) {
-          return flights;
-        }
-        var merged = {};
-
-        if (flights !== undefined && flights.data.flights.length > 0) {
-          flights.data.flights.map(function (flight) {
-            merged[flight.id] = flight;
-          });
-        }
-
-        data.data.flights.map(function (newflight) {
-          merged[newflight.id] = newflight;
-        });
-
-        flights.data.flights = Object.values(merged);
-        flights.data.totalFlights = flights.data.flights.length;
-        $scope.model.updatedAfter = flights.data.lastUpdated = data.data.lastUpdated;
-        flights.data.queryLimitReached = data.data.queryLimitReached;
-
-          return flights;
-      }
 
       self.querySearch = querySearch;
       
