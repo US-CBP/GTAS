@@ -14,7 +14,8 @@ import java.util.concurrent.Executors;
 @Configuration
 @EnableScheduling
 @ComponentScan("gov.gtas.parsers.redisson")
-@PropertySource({ "classpath:redisloader.properties" })
+@PropertySource("classpath:redisloader.properties")
+@PropertySource("file:${catalina.home}/conf/application.properties")
 public class RedisLoaderConfig implements SchedulingConfigurer {
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {

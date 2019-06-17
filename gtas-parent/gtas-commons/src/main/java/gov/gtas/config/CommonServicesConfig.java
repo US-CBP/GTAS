@@ -32,7 +32,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource({ "classpath:commonservices.properties" })
+@PropertySource("classpath:commonservices.properties")
+@PropertySource("file:${catalina.home}/conf/application.properties")
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import(AsyncConfig.class)
@@ -51,12 +52,12 @@ public class CommonServicesConfig {
 		pspc.setIgnoreUnresolvablePlaceholders(true);
 		return pspc;
 	}
-    
+
     @Bean
     public DataSource dataSource() {
-    	
+
     	DataSource dataSource = null;
-    	
+
     	JndiTemplate jndi = new JndiTemplate();
     	
     	try {
@@ -64,7 +65,7 @@ public class CommonServicesConfig {
     	} catch(NamingException e) {
     		logger.error("NamingException for java:comp/env/jdbc/gtasDataSource", e);
     	}
-    	
+
     	return dataSource;
     }
 
