@@ -25,7 +25,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @PropertySource("classpath:jobScheduler.properties")
 @PropertySource("classpath:dashboardJobScheduler.properties")
 @PropertySource("classpath:singleNodeConfig.json")
-@PropertySource("file:${catalina.home}/conf/application.properties")
+@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 public class JobSchedulerConfig implements SchedulingConfigurer {
 
 	/*
