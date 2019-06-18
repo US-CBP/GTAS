@@ -37,7 +37,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @ComponentScan("gov.gtas")
 @PropertySource("classpath:commonservices.properties")
 @PropertySource("classpath:hibernate.properties")
-@PropertySource("file:${catalina.home}/conf/application.properties")
+@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import(AsyncConfig.class)
