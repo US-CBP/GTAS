@@ -22,9 +22,8 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 @ComponentScan("gov.gtas.job.scheduler")
-@PropertySource("classpath:jobScheduler.properties")
+@PropertySource("classpath:commonservices.properties")
 @PropertySource("classpath:dashboardJobScheduler.properties")
-@PropertySource("classpath:singleNodeConfig.json")
 @PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 public class JobSchedulerConfig implements SchedulingConfigurer {
 
