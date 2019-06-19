@@ -19,6 +19,6 @@ yes | cp -rf ../../../config/logstash/*.sql $LOGSTASH_WORKING_DIR
 
 yes | cp -rf ../../../config/logstash/*.json $LOGSTASH_WORKING_DIR
 
-yes | cp -rf ../../../config/logstash/pipeline.yml $ES_INSTALL_LOCATION/
+#  yes | cp -rf ../../../config/logstash/*.yml $ES_INSTALL_LOCATION/
 
 wget https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar -P $LOGSTASH_WORKING_DIR
