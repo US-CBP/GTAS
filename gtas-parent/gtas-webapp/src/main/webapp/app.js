@@ -707,19 +707,21 @@ var app;
                 }
             });
            
-            if (oneDayLookoutUser) {
-                $scope.homePage = "onedaylookout";
-            } else {
-            	//reads kibana configuration from ./config/kibana_settings.json
-            	configService.defaultHomePage().then(function success(response){
-            		
-           		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';   
-               }, function errorMessage(error){
-            	   $scope.homePage = 'flights';
-               });  
-            	
-            }
-            
+            //reads kibana configuration from ./config/kibana_settings.json
+        	configService.getKibanaSettings().then(function success(response){
+        		// kibanaSettings is a global variable and visible in all templates and controllers   
+        		$rootScope.kibanaSettings = response.data;
+        		//
+        		 if (oneDayLookoutUser) {
+                     $scope.homePage = "onedaylookout";
+                 }else {
+                 	$scope.homePage = $rootScope.kibanaSettings.dashboardDisabled ? 'flights' : 'dashboard';  
+                 }
+        		 
+           }, function errorMessage(error){
+        	   $scope.homePage = 'flights';
+           });  
+        	 
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;

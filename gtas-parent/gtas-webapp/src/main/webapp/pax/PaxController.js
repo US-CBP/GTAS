@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   ////     PAX DETAIL CONTROLLER     //////////////
-  app.controller('PassengerDetailCtrl', function ($scope, $mdDialog,$mdSidenav,$timeout, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService) {
+  app.controller('PassengerDetailCtrl', function ($scope, $mdDialog,$mdSidenav,$timeout, passenger, $mdToast, spinnerService, user,caseHistory,ruleCats, ruleHits, watchlistLinks, paxDetailService, caseService, watchListService, codeTooltipService, $sce) {
       $scope.passenger = passenger.data;
       $scope.watchlistLinks = watchlistLinks.data;
       $scope.isLoadingFlightHistory = true;
@@ -17,7 +17,8 @@
       $scope.ruleCats=ruleCats.data;
       $scope.slides = [];
       $scope.jsonData = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify($scope.passenger));
-      
+      $scope.paxDetailKibanaUrl = $sce.trustAsResourceUrl($scope.kibanaSettings.host+ "/app/kibana#/visualize/edit/29ac1380-66a9-11e9-9ffd-9d63a89be4bb?embed=true&_g=()&_a=(query:(query_string:(analyze_wildcard:!t,query:'flightId:"+ $scope.passenger.flightId +" AND passengerId:"+ $scope.passenger.paxId +"')))");
+
       $scope.getAttachment = function(paxId){
         //TO-DO add specific pax-id here to grab from current passenger
         paxDetailService.getPaxAttachments(paxId).then(function(data){

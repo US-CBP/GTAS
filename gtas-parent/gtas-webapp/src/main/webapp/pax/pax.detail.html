@@ -75,7 +75,11 @@
             </td>
           </tr>
         </table>
-  
+       
+  		 <div class="map-wrapper" ng-if="kibanaSettings.dashboardDisabled == false">
+	  		<iframe id="kibana-map" ng-src="{{paxDetailKibanaUrl}}" height="300" width="340" style="border: none;" ></iframe>  		
+	  	</div>
+
   <!-- kibana pic here -->
   
       <table class="table table-responsive table-condensed table-borderless">

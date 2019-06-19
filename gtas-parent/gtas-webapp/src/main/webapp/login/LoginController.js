@@ -131,11 +131,10 @@ $scope.login = function (credentials) {
                         $scope.homePage = "onedaylookout";
                     } else {
                     	$scope.homePage="flights";
-                    	 configService.defaultHomePage().then(function success(response){
-                    		
-                    		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';    
-                    		 $window.location.href = 'main.html#/'+$scope.homePage;
-                    		 
+                    	 configService.getKibanaSettings().then(function success(response){
+                    		 $rootScope.kibanaSettings = response.data;
+                    		 $window.location.href = 'main.html#/'+$scope.homePage;    
+                    		 $scope.homePage = JSON.parse($rootScope.kibanaSettings.dashboardDisabled) ? 'flights' : 'dashboard';    
                         }, function errorMessage(error){
                         	
                         	$window.location.href = 'main.html#/'+$scope.homePage;

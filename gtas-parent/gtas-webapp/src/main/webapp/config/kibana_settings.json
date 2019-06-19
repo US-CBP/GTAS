@@ -1,3 +1,4 @@
 {
-	"dashboardDisabled" : true
+	"dashboardDisabled" : false,
+	"host": "http://localhost:5601"
 }
