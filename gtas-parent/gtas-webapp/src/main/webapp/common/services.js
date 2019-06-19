@@ -235,7 +235,6 @@
       },
 
       restoreCode: function(type, code) {
-        console.log(type, code);
 
         var request = $http({
           method: "put",
@@ -246,13 +245,11 @@
       },
 
       restoreAllCodes: function(type) {
-        console.log(type);
 
         var request = $http({
           method: "put",
           url: `${CODE_URL}${type}/restoreAll`
         });
-        console.log(request);
         return (request.then(handleSuccess, handleError));
       },
 

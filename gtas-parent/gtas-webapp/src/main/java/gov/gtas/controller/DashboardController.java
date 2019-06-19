@@ -58,22 +58,7 @@ public class DashboardController {
 	@Autowired
 	private HitsSummaryService hitsSummaryService;
 
-	@Autowired
-	private MessageService apisMessageService;
-
-	@Autowired
-	private PnrService pnrService;
-
-	@Autowired
-	private UserLocationService userLocationService;
-
-	@Autowired
-	private AppConfigurationService appConfigurationService;
-
-	@Autowired
-	private UserService userService;
-
-	private static final String commaStringToAppend = ", ";
+	
 	private static final String EMPTY_STRING = "";
 
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
@@ -110,83 +95,12 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
 
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = userService.isAdminUser(userId);
-
-		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
-			this.setUserPrimaryLocation(httpServletRequest, userId);
+			
 
 		return flightsAndPassengersAndHitsCount;
 	}
 
-	private void setUserPrimaryLocation(HttpServletRequest httpServletRequest, String userId) {
-		List<UserLocationVo> userLocationVoList = null;
 
-		try {
-			userLocationVoList = userLocationService.getUserLocation(userId);
-		} catch (Exception e) {
-			logger.error("An Error occurrend when reading user location in " + this.getClass().getName());
-		}
-
-		finally {
-
-			boolean hasPrimaryLocation = false;
-
-			if (userLocationVoList != null && !userLocationVoList.isEmpty()) {
-
-				for (UserLocationVo userLocationVo : userLocationVoList) {
-
-					if (userLocationVo.isPrimaryLocation()) {
-						httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocationVo.getAirport());
-						hasPrimaryLocation = true;
-						logger.info("User Primary Location is set to " + userLocationVo.getAirport()  + " in session. " + this.getClass().getName());
-						break;
-					}
-
-				}
-
-				// if the user has a location but does not have a primary location, then set the
-				// first one as a primary location
-				if (!hasPrimaryLocation) {
-
-					for (int i = 0; i < userLocationVoList.size(); i++) {
-						if (userLocationVoList.get(i).getAirport() != null
-								&& !userLocationVoList.get(i).getAirport().isEmpty()) {
-							userLocationVoList.get(i).setPrimaryLocation(true);
-							httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
-									userLocationVoList.get(i).getAirport());
-							logger.info("User Primary Location is set to " + userLocationVoList.get(i).getAirport()  + " in session. " + this.getClass().getName());
-							try {
-								userLocationService.updateUserPrimaryLocation(userId,
-										userLocationVoList.get(i).getAirport(), true);
-							} catch (Exception e) {
-								logger.error("An error has occurred when updating user location in the database.");
-							}
-
-						}
-					}
-				}
-
-			} else {
-
-				// if the user does not have a location, then use the default from app config
-				// table and make it the primary location.
-				AppConfiguration appConfiguration = appConfigurationService.findByOption("DASHBOARD_AIRPORT");
-				try {
-					
-					userLocationService.createUserPrimaryLocation(userId, appConfiguration.getValue(), true);
-					httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,appConfiguration.getValue());
-					logger.info("User Primary Location is set to the default airport from App Config " + appConfiguration.getValue()  + " in session. " + this.getClass().getName());
-					
-					
-				} catch (Exception e) {
-					logger.error("An error has occurred when creating new user location in the database.");
-				}
-			}
-
-		}
-
-	}
 
 
 
