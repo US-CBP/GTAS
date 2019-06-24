@@ -179,7 +179,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		typedQuery.setMaxResults(dto.getPageSize());
 
 		// Runs exact query above without limits to get a count.
-		long count = getCountOfQuery(dto, cb, countPredicates, root);
+		long count = getCountOfQuery(dto, cb, countPredicates);
 
 		logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
 				.getQueryString());
@@ -202,7 +202,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		}
 	}
 
-	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates, Root<Flight> root) {
+	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates) {
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Flight> countRoot = countQuery.from(Flight.class);
 		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);

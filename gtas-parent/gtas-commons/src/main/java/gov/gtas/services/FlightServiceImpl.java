@@ -66,7 +66,7 @@ public class FlightServiceImpl implements FlightService {
 		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
 		List<Flight> flights = tuple2.getRight();
     List<FlightVo> vos = convertFlightToFlightVo(flights);
-		return new FlightsPageDto(vos, tuple.getLeft(), false);
+		return new FlightsPageDto(vos, tuple.getLeft());
     }
 
     @Override

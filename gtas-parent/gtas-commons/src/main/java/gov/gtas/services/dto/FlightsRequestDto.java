@@ -40,7 +40,6 @@ public class FlightsRequestDto implements Serializable {
 	private Date etaStart;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
 	private Date etaEnd;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
 
 	private transient List<SortOptionsDto> sort;
 
