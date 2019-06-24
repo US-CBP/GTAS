@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -66,7 +65,7 @@ public class FlightServiceImpl implements FlightService {
 		flightRespository.flush();
 		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
 		List<Flight> flights = tuple2.getRight();
-		List<FlightVo> vos = convertFlightToFlightVo(flights);
+    List<FlightVo> vos = convertFlightToFlightVo(flights);
 		return new FlightsPageDto(vos, tuple.getLeft());
     }
 
