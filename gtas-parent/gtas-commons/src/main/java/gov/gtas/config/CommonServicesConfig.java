@@ -64,6 +64,7 @@ public class CommonServicesConfig {
     private static final String PROPERTY_NAME_HIBERNATE_ORDER_INSERTS = "hibernate.order_inserts";
     private static final String PROPERTY_NAME_HIBERNATE_ORDER_UPDATES = "hibernate.order_updates";
     private static final String PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA = "hibernate.jdbc.batch_versioned_data";
+    private static final String HIBERNATE_TIMEOUT = "hibernate.timeout";
 
     private static final String PROPERTY_NAME_C3P0_MIN_SIZE = "c3p0.min_size";
     private static final String PROPERTY_NAME_C3P0_MAX_SIZE = "c3p0.max_size";
@@ -73,23 +74,28 @@ public class CommonServicesConfig {
 
     private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
 
+    @SuppressWarnings("Duplicates")
     private Properties hibProperties() {
         Properties properties = new Properties();
         properties.put(PROPERTY_NAME_HIBERNATE_DIALECT,
-                env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_DIALECT));/*
+                env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_DIALECT));
         properties.put(PROPERTY_NAME_HIBERNATE_QUERY_CACHE,
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_QUERY_CACHE));
         properties.put(PROPERTY_NAME_SECOND_LEVEL_CACHE,
-                env.getRequiredProperty(PROPERTY_NAME_SECOND_LEVEL_CACHE));*/
+                env.getRequiredProperty(PROPERTY_NAME_SECOND_LEVEL_CACHE));
         properties.put(PROPERTY_NAME_HIBERNATE_FORMAT_SQL,
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_FORMAT_SQL));
         properties.put(PROPERTY_NAME_HIBERNATE_SHOW_SQL,
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_SHOW_SQL));
-/*
+        properties.put(PROPERTY_NAME_HIBERNATE_CACHE_FACTORY,
+                env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CACHE_FACTORY));
+        properties
+                .put(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH,
+                        env.getRequiredProperty(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH));
         properties.put(PROPERTY_NAME_SHAREDCACHE_MODE,
                 env.getRequiredProperty(PROPERTY_NAME_SHAREDCACHE_MODE));
         properties.put(PROPERTY_NAME_HIBERNATE_USE_MINIMAL_PUTS, env
-                .getRequiredProperty(PROPERTY_NAME_HIBERNATE_USE_MINIMAL_PUTS));*/
+                .getRequiredProperty(PROPERTY_NAME_HIBERNATE_USE_MINIMAL_PUTS));
         properties.put(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_SIZE, env
                 .getRequiredProperty(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_SIZE));
         properties.put(PROPERTY_NAME_HIBERNATE_USE_SQL_COMMENTS, env
@@ -101,7 +107,6 @@ public class CommonServicesConfig {
         properties
                 .put(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA,
                         env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA));
-
         properties
                 .put(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET,
                         env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET));
@@ -123,7 +128,6 @@ public class CommonServicesConfig {
     public DataSource dataSource() {
         // DriverManagerDataSource dataSource mvcn= new DriverManagerDataSource();
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
-    	
     	try {
             dataSource.setDriverClass(env
                     .getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
@@ -136,7 +140,6 @@ public class CommonServicesConfig {
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
         dataSource.setPassword(env
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
-
         dataSource.setMinPoolSize(Integer.parseInt(env
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MIN_SIZE)));
         dataSource.setMaxPoolSize(Integer.parseInt(env
@@ -147,7 +150,8 @@ public class CommonServicesConfig {
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_STATEMENTS)));
         dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_CONNECT)));
-
+        dataSource.setCheckoutTimeout(Integer.parseInt(env.
+                getRequiredProperty(HIBERNATE_TIMEOUT)));
     	return dataSource;
     }
 
