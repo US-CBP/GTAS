@@ -27,7 +27,7 @@ echo 'importing  ....'
 
 curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "$URL/api/kibana/dashboards/import?force=true" -d @kibana.default-dashboard.json
 
-curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "$URL/api/saved_objects/visualization/29ac1380-66a9-11e9-9ffd-9d63a89be4bb?force=true" -d $CURRENT_DIR/kibana.flight-itinerary-visualization.json
+curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: true" "$URL/api/saved_objects/visualization/29ac1380-66a9-11e9-9ffd-9d63a89be4bb?force=true" -d @kibana.flight-itinerary-visualization.json
 
 echo ' imported!!'
 
