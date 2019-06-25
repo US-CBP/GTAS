@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import gov.gtas.config.CommonServicesConfig;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.gtas.config.AsyncConfig;
-import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.CreditCard;
@@ -41,7 +41,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.PassengerTypeCode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AsyncConfig.class , TestCommonServicesConfig.class})
+@ContextConfiguration(classes = { AsyncConfig.class , CommonServicesConfig.class})
 @Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
