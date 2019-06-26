@@ -54,6 +54,12 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	@JsonIgnore
 	private Passenger passenger;
 
+	private String cipherQuery;
+
+
+	public RuleHitDetail() {
+	}
+
 	/**
 	 * This constructor is used when creating a hit detail object as a result of
 	 * a UDR rule hit.
@@ -81,9 +87,9 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = ruleTitle + "(" + udrId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger
-				.getPassengerType());
-		this.passengerName = passenger.getFirstName() + " "
-				+ passenger.getLastName();
+				.getPassengerDetails().getPassengerType());
+		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
+				+ passenger.getPassengerDetails().getLastName();
 		this.hitReasons = cause.split(HIT_REASON_SEPARATOR);
 		if (flight != null) {
 			this.flightId = flight.getId();
@@ -133,9 +139,9 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = this.title + "(" + watchlistItemId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger
-				.getPassengerType());
-		this.passengerName = passenger.getFirstName() + " "
-				+ passenger.getLastName();
+				.getPassengerDetails().getPassengerType());
+		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
+				+ passenger.getPassengerDetails().getLastName();
 		this.hitReasons = cause.split(HIT_REASON_SEPARATOR);
 		this.passenger = passenger;
 		this.hitCount = 1;
@@ -279,14 +285,66 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.passenger = passenger;
 	}
 
+	public void setHitRule(String hitRule) {
+		this.hitRule = hitRule;
+	}
+
+	public void setUdrRuleId(Long udrRuleId) {
+		this.udrRuleId = udrRuleId;
+	}
+
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	public void setPassengerType(PassengerTypeCode passengerType) {
+		this.passengerType = passengerType;
+	}
+
+	public void setPassengerName(String passengerName) {
+		this.passengerName = passengerName;
+	}
+
+	public void setHitCount(int hitCount) {
+		this.hitCount = hitCount;
+	}
+
+	public void setRuleHitCount(int ruleHitCount) {
+		this.ruleHitCount = ruleHitCount;
+	}
+
+	public void setHitReasons(String[] hitReasons) {
+		this.hitReasons = hitReasons;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public RuleHitDetail clone() throws CloneNotSupportedException {
 		return (RuleHitDetail) super.clone();
 	}
 
+	public String getCipherQuery() {
+		return cipherQuery;
+	}
+
+	public void setCipherQuery(String cipherQuery) {
+		this.cipherQuery = cipherQuery;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.ruleId, this.passengerId, this.flightId);
+		return Objects.hash(this.ruleId, this.passengerId, this.flightId, this.hitType);
 	}
 
 	@Override
@@ -298,6 +356,8 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		final RuleHitDetail other = (RuleHitDetail) obj;
 		return Objects.equals(this.ruleId, other.ruleId)
 				&& Objects.equals(this.passengerId, other.passengerId)
-				&& Objects.equals(this.flightId, other.flightId);
+				&& Objects.equals(this.flightId, other.flightId)
+				&& Objects.equals(this.hitType, other.getHitType());
 	}
+
 }

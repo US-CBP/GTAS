@@ -20,21 +20,7 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
-            
-            var startDate = new Date();
-            var endDate = new Date();
-            endDate.setDate(endDate.getDate() + 30);
-            startDate.setDate(startDate.getDate() - 30);
-
-            $scope.model={
-                name: $scope.emptyString,
-                flightNumber: $scope.emptyString,
-                status : $scope.emptyString,
-                priority: $scope.emptyString,
-                ruleCat: $scope.emptyString,
-                etaStart: startDate,
-                etaEnd: endDate,
-            };
+            $scope.model = caseDispositionService.getDefaultModel();
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -107,10 +93,10 @@
 
             $scope.resolvePage = function () {
                 var postData = {
-                    pageNumber: $scope.pageNumber,
-                    pageSize: $scope.pageSize,
+                    pageNumber:   $scope.pageNumber,
+                    pageSize:     $scope.pageSize,
                     sort:     $scope.model.sort,
-                    model:    $scope.model
+                    model:        $scope.model
                 };
                 spinnerService.show('html5spinner');
                 caseDispositionService.getPagedCases(postData).then(
@@ -121,17 +107,17 @@
                         spinnerService.hide('html5spinner');
                     });
             };
-            
+
             $scope.refreshCountDown = function () {
-                
+
                 var currentTimeMillis = caseDispositionService.getCurrentServerTime();
- 
+
                 if (!currentTimeMillis)
                 {
-                   currentTimeMillis = (new Date()).getTime(); 
+                   currentTimeMillis = (new Date()).getTime();
                    console.log("Using client side time for cases countdown.");
                 }
-                
+
                 for (var i = 0; i < $scope.casesList.length; i++)
                 {
                     var etdEtaTimeMillis = 0;
@@ -141,7 +127,7 @@
                     }
                     else
                     {
-                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;  
+                      etdEtaTimeMillis = $scope.casesList[i].flightETADate;
                     }
 
                     var countDownMillis = etdEtaTimeMillis - currentTimeMillis;
@@ -155,19 +141,19 @@
 
                     var daysString = (countDownSeconds < 0 && daysLong === 0) ? "-" + daysLong.toString() : daysLong.toString();
 
-                    var countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";                   
+                    var countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
 
-                    $scope.casesList[i].countDownTimeDisplay = countDownString;    
+                    $scope.casesList[i].countDownTimeDisplay = countDownString;
                 }
-                
+
                 $scope.casesDispGrid.data = $scope.casesList;
 
             };
-            
+
             $timeout(function () {
                 $interval(function () {$scope.refreshCountDown();}, 20000);
             },10000);
-             
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -185,7 +171,6 @@
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
-                    
                     gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
                     if (sortColumns.length === 0) {
                         $scope.model.sort = null;
@@ -199,7 +184,7 @@
                         }
                     }
                     $scope.resolvePage();
-                })
+                });
 
                     gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
                         $scope.pageNumber = newPage;
@@ -214,7 +199,7 @@
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName: 'Flight', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.flightId}}/{{row.entity.paxId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
@@ -260,7 +245,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','etaetdfilter', 'dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'casesDate']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
@@ -286,19 +271,15 @@
             };
 
             $scope.reset = function () {
-                // this function does not work.
-                //$scope.model.reset();
                 $scope.model.name = $scope.emptyString;
                 $scope.model.flightNumber = $scope.emptyString;
                 $scope.model.status = $scope.emptyString;
                 $scope.model.ruleCat = $scope.emptyString;
-                
-                var startDate = new Date();
-                var endDate = new Date();
-                endDate.setDate(endDate.getDate() + 30);
-                startDate.setDate(startDate.getDate() - 30);
-                $scope.model.etaStart = startDate;
-                $scope.model.etaEnd = endDate;
+                $scope.model.etaStart = caseDispositionService.getDefaultStartDate();
+                $scope.model.etaEnd = caseDispositionService.getDefaultEndDate();
+                $scope.model.displayStatusCheckBoxes = caseDispositionService.getDefaultDispCheckboxes();
+                $scope.model.sort = caseDispositionService.getDefaultSort();
+                $scope.model.withTimeLeft = caseDispositionService.getDefaultTimeLeft();
                 $scope.resolvePage();
             };
 

@@ -13,8 +13,8 @@ import org.junit.Test;
 public class ParseUtilsTest {   
     @Test
     public void testPrepTelephoneNumber() {
-        String num = ParseUtils.prepTelephoneNumber("+1-019-324- 1234");
-        assertEquals("+1-019-324-1234", num);
+        String num = ParseUtils.prepTelephoneNumber("+1-019-324-1234");
+        assertEquals("10193241234", num);
     }
     
     @Test

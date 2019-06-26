@@ -80,7 +80,7 @@ var app;
                 return moment(date).format('YYYY-MM-DD');
             };
         },
-        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog) {
+        initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
             $rootScope.$on('$stateChangeStart',
 
@@ -103,23 +103,43 @@ var app;
            $rootScope.searchBarContent = {
         		   content : ""
            };
-           //For tooltips
-           $.getJSON('./data/countries.json', function(data){
-        	   $rootScope.countriesList = data;
-           });
+
+
+           //  //For tooltips
+           $rootScope.refreshCountryTooltips = function() {
+              codeService.getCountryTooltips().then(function(result) {
+                $rootScope.countriesList = result;
+              });
+            }
+            $rootScope.refreshAirportTooltips = function() {
+              codeService.getAirportTooltips().then(function(result) {
+              $rootScope.airportsList = result;
+             });
+            }
+          $rootScope.refreshCarrierTooltips = function() {
+            codeService.getCarrierTooltips().then(function(result) {
+              $rootScope.carriersList = result;
+            });
+          }
+
+          $rootScope.refreshAirportTooltips();
+          $rootScope.refreshCarrierTooltips();
+          $rootScope.refreshCountryTooltips();
 
            //For tooltips
-           $.getJSON('./data/airports.json', function(data){
-        	   $rootScope.airportsList = data;
-           });
-
+           $.getJSON('./data/passenger_types.json', function(data){
+         	  $rootScope.passengerTypes = data;
+            });
+           
            //For tooltips
-           $.getJSON('./data/carriers.json', function(data){
-        	  $rootScope.carriersList = data;
-           });
-
-
-           $rootScope.airportsList =
+           $.getJSON('./data/doc_types.json', function(data){
+         	  $rootScope.documentTypes = data;
+            });
+           
+           //For tooltips
+           $.getJSON('./data/genders.json', function(data){
+         	  $rootScope.genders = data;
+            });
 
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
@@ -291,7 +311,7 @@ var app;
                 })
                 .state('flights', {
                     url: '/flights',
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     authenticate: true,
                     views: {
                         '@': {
@@ -303,6 +323,9 @@ var app;
                         //TODO research why this resolve doesn't stick...
                         flights: function (passengersBasedOnUserFilter, flightsModel) {
                             return passengersBasedOnUserFilter.load();
+                        },
+                        flightSearchOptions: function(flightService){
+                            return flightService.getFlightDirectionList();
                         }
                     }
                 })
@@ -343,9 +366,9 @@ var app;
                     }
                 })
                 .state('casedetail', {
-                    url: '/casedetail/:flightId/:paxId',
+                    url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -355,7 +378,7 @@ var app;
                     ,
                     resolve: {
                         newCases: function(caseDispositionService, $stateParams){
-                            return caseDispositionService.getOneHitsDisposition($stateParams.flightId, $stateParams.paxId);
+                            return caseDispositionService.getOneHitsDisposition($stateParams.caseId);
                         }
                     }
                 })
@@ -393,7 +416,7 @@ var app;
                 .state('onedaylookout', {
                     url: '/onedaylookout',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'OneDayLookoutCtrl',
@@ -447,6 +470,9 @@ var app;
                         flights: function (executeQueryService) {
                            //removed return due to it being an empty call to the service, returning an erroneous 400 Bad Request.
                            //Kept resolve rather than restructuring flights.html to not use flights entity as it was.
+                        },
+                        flightSearchOptions: function(flightService){
+                            return flightService.getFlightDirectionList();
                         }
                     }
                 })
@@ -522,7 +548,7 @@ var app;
                 .state('detail', {
                     url: '/paxdetail/{paxId}/{flightId}',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'PassengerDetailCtrl',
@@ -573,10 +599,26 @@ var app;
                         }
                     }
                 })
+                .state('userlocation', {
+                    url: '/userlocation',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                        '@': {
+                            controller: 'UserLocationController',
+                            templateUrl: 'userlocation/userlocation.html'
+                        }
+                    },
+                    resolve: {
+                        userLocationData: function (userLocationService) {
+                            return userLocationService.getAllUserLocations();
+                        }
+                    }
+                })
                 .state('userSettings', {
                     url: '/userSettings',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
                     views: {
                         '@': {
                             controller: 'UserSettingsController',
@@ -588,15 +630,34 @@ var app;
                             return userService.getUserData();
                         }
                     }
-                });
+                })
+                .state('seatsMap', {
+                	url: '/seatsMap/{paxId}/{flightId}/{seat}',
+                	authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    views: {
+                    	'@' : {
+                    		controller: 'SeatsMapController',
+                    		templateUrl: 'seatsMap/seats.html'
+                    	}
+                    },
+                    resolve: {
+                    	seatData : function($stateParams, seatService){
+                    		var data = seatService.getSeatsByFlightId($stateParams.flightId);
+                    		return data;
+                    	}
+                    }
+                });               
+
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
             $httpProvider.defaults.withCredentials = false;
         },
 
-        NavCtrl = function ($scope, $http, APP_CONSTANTS, $sessionStorage, $rootScope, $cookies, notificationService) {
+        NavCtrl = function ($scope, $http, APP_CONSTANTS,USER_ROLES, $sessionStorage, $rootScope, $cookies, notificationService, configService) {
             $http.defaults.xsrfHeaderName = 'X-CSRF-TOKEN';
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
+            $scope.hitCount = 0;
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -614,6 +675,7 @@ var app;
                 risks: {mode: ['rule']},
                 watchlists: {name: ['watchlists']},
                 userSettings: {name: ['userSettings', 'setFilter']},
+                userlocation: {name: ['userlocation']},
                 upload: {name: ['upload']},
                 cases: {name: ['cases']},
                 onedaylookout: {name: ['onedaylookout']}
@@ -628,10 +690,43 @@ var app;
               $scope.errorList = value;
             }, function(reason){
               alert("Error Loading Notifications: " + reason);
-            })
+            });
+
+            notificationService.getWatchlistCount().then(function(value) {
+               $scope.hitCount = value;
+            });
+
+            $scope.getHitCount = function() {
+                    return $scope.hitCount;
+            };
+
+            let oneDayLookoutUser = false;
+            let user = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
+            user.roles.forEach(function (role) {
+                if (role.roleDescription === USER_ROLES.ONE_DAY_LOOKOUT) {
+                    oneDayLookoutUser = true;
+                }
+            });
+           
+            if (oneDayLookoutUser) {
+                $scope.homePage = "onedaylookout";
+            } else {
+            	//reads kibana configuration from ./config/kibana_settings.json
+            	configService.defaultHomePage().then(function success(response){
+            		
+           		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';   
+               }, function errorMessage(error){
+            	   $scope.homePage = 'flights';
+               });  
+            	
+            }
+            
             $scope.$on('stateChanged', function (e, state, toParams) {
                 $scope.stateName = state.name;
                 $scope.mode = toParams.mode;
+                notificationService.getWatchlistCount().then(function(value) {
+                    $scope.hitCount = value;
+                });
             });
 
             $rootScope.$on('unauthorizedEvent', function () {
@@ -648,7 +743,7 @@ var app;
 
                 $http({
                     method: 'POST',
-                    url: 'logout'
+                    url: '/gtas/logout'
                 }).then(function (response) {
                     if (response.status === 200 || response.status === 403 || response.status === 405) {
                         var cookies = $cookies.getAll();
@@ -663,7 +758,7 @@ var app;
                 });
             };
         };
-
+    const web_root = 'gtas';
     app = angular
         .module('myApp', appDependencies)
         .config(router)
@@ -672,15 +767,17 @@ var app;
         .config(idleWatchConfig)
         .constant('USER_ROLES', {
             ADMIN: 'Admin',
-            VIEW_FLIGHT_PASSENGERS: 'View Flight And Passenger',
+            VIEW_FLIGHT_PASSENGERS: 'View Passenger',
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
-            MANAGE_WATCHLIST: 'Manage Watch List'
+            MANAGE_WATCHLIST: 'Manage Watch List',
+            ONE_DAY_LOOKOUT: 'One Day Lookout'
         })
         .constant('APP_CONSTANTS', {
-            LOGIN_PAGE: '/gtas/login.html',
-            HOME_PAGE: '/gtas/main.html',
-            MAIN_PAGE: 'main.html#/dashboard',
+            LOGIN_PAGE: '/' + web_root + '/login.html',
+            HOME_PAGE: '/' + web_root + '/main.html',
+            MAIN_PAGE: 'main.html#/'+ 'flights',
+            ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
             LOCALE_COOKIE_KEY: 'myLocaleCookie',
             LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '

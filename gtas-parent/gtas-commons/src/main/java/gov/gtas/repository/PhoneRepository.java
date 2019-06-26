@@ -9,6 +9,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.Phone;
 
+import java.util.List;
+
 public interface PhoneRepository extends CrudRepository<Phone, Long>{
-    public Phone findByNumber(String number);
+    List<Phone> findByNumber(String number);
+
+	List<Phone> findByNumberAndFlightId(String number, Long flightId);
 }

@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 @Entity
 @Table(name = "flight_direction")
@@ -43,9 +43,6 @@ public class FlightDirection extends BaseEntity {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    @OneToMany(mappedBy="flightDirection",cascade = { CascadeType.ALL })
-    Set<Filter> filter= new HashSet<Filter>();
 
     @Override
     public int hashCode() {

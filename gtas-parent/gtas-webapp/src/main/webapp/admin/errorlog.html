@@ -24,10 +24,9 @@
   }
 </style>
 
-<form id = "ErrorFilterPanel" layout="row" layout-padding layout-margin layout-align="space-around center" ng-submit="refreshError()">
-  <md-input-container style="min-width: 6em">
-    <label>Error Code</label>
-    <input ng-model="errorModel.code">
+<form id = "ErrorFilterPanel" class="filter" layout="row" layout-padding layout-margin layout-align="space-around center" ng-submit="refreshError()">
+  <md-input-container style="min-width: 6em" md-no-float>
+    <input ng-model="errorModel.code" placeholder="Error Code">
   </md-input-container>
   <md-datepicker ng-model="errorModel.timestampStart" md-placeholder="Start Date"></md-datepicker>
   <md-datepicker ng-model="errorModel.timestampEnd" md-placeholder="End Date"></md-datepicker>
@@ -47,5 +46,5 @@
 </md-content>
 
 <md-content class="md-padding">
-    <div ui-grid="errorGrid" ui-grid-pagination ui-grid-selection ui-grid-auto-resize class="grid" />
+    <div ui-grid="errorGrid" ui-grid-pagination ui-grid-selection ui-grid-auto-resize class="grid admin-grid" />
 </md-content>

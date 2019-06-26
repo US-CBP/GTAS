@@ -6,8 +6,11 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+
+import gov.gtas.enumtype.EncounteredStatusEnum;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 
@@ -42,8 +45,8 @@ public class Case extends BaseEntityAudit {
     @Column(name = "dob", nullable = true)
     private Date dob;
 
-    @Column(name = "citizenshipCountry", nullable = true)
-    private String citizenshipCountry;
+    @Column(name = "nationality", nullable = true)
+    private String nationality;
 
     @Column(name = "passengerType", nullable = true)
     private String paxType;
@@ -54,15 +57,21 @@ public class Case extends BaseEntityAudit {
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "description", nullable = true)
-    private String description;
-
     @Column(name = "highPriorityRuleCatId", nullable = false)
     private Long highPriorityRuleCatId = new Long(1L);
 
-    @OneToMany(targetEntity = HitsDisposition.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(name = "case_hit_disp", joinColumns = @JoinColumn(name = "case_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_id"))
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name="case_id", nullable = false)
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
+
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "cc_id")
+    private Set<CaseComment> caseComments = new HashSet<>();
+
+    @Column(name = "case_officer_status")
+    private String caseOfficerStatus;
+
 
     @Transient
     @Temporal(TemporalType.TIMESTAMP)
@@ -84,12 +93,61 @@ public class Case extends BaseEntityAudit {
     
     @Column(name = "one_day_lookout_flag")
     private Boolean oneDayLookoutFlag;
+    
+    @Column(name = "disposition", nullable = true)
+    private String disposition;
 
-    @ManyToOne(optional=true, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
     private Flight flight;
-    public Set<HitsDisposition> getHitsDispositions() {
+
+	public Set<HitsDisposition> getHitsDispositions() {
         return hitsDispositions;
+    }
+
+    @Transient
+    private Boolean saveCase = false;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "encountered_status", nullable=false)
+    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
+
+
+    public EncounteredStatusEnum getEncounteredStatus() {
+        return encounteredStatus;
+    }
+
+
+    public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+        this.encounteredStatus = encounteredStatus;
+    }
+
+
+    public Boolean getSaveCase() {
+        return saveCase;
+    }
+
+    public void setSaveCase(Boolean saveCase) {
+        this.saveCase = saveCase;
+    }
+
+    public String getCaseOfficerStatus() {
+        return caseOfficerStatus;
+    }
+
+    public void setCaseOfficerStatus(String caseOfficerStatus) {
+        this.caseOfficerStatus = caseOfficerStatus;
+    }
+
+
+
+    public Set<CaseComment> getCaseComments() {
+        return caseComments;
+    }
+
+    public void setCaseComments(Set<CaseComment> caseComments) {
+        this.caseComments = caseComments;
     }
 
     public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
@@ -104,12 +162,12 @@ public class Case extends BaseEntityAudit {
         this.dob = dob;
     }
 
-    public String getCitizenshipCountry() {
-        return citizenshipCountry;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setCitizenshipCountry(String citizenshipCountry) {
-        this.citizenshipCountry = citizenshipCountry;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
     public Long getFlightId() {
@@ -151,14 +209,6 @@ public class Case extends BaseEntityAudit {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getPaxName() {
@@ -245,6 +295,16 @@ public class Case extends BaseEntityAudit {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
+	
+	
+	public String getDisposition() {
+		return disposition;
+	}
+
+	public void setDisposition(String disposition) {
+		this.disposition = disposition;
+	}
+
 	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -254,28 +314,19 @@ public class Case extends BaseEntityAudit {
         Case aCase = (Case) o;
 
         return new EqualsBuilder()
-                .appendSuper(super.equals(o))
                 .append(flightId, aCase.flightId)
                 .append(paxId, aCase.paxId)
+                .append(status, aCase.status)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
                 .append(flightId)
                 .append(paxId)
+                .append(status)
                 .toHashCode();
     }
 
-//    public String toString() {
-//        return "Case{" +
-//                "flightId=" + flightId +
-//                ", paxId=" + paxId +
-//                ", status='" + status + '\'' +
-//                ", description='" + description + '\'' +
-//                ", hitsDispositions=" + hitsDispositions +
-//                '}';
-//    }
 }

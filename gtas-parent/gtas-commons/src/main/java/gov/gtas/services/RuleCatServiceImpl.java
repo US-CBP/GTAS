@@ -11,6 +11,7 @@ import gov.gtas.repository.RuleCatRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,6 +55,7 @@ public class RuleCatServiceImpl implements RuleCatService {
     }
 
     @Override
+    @Cacheable(value = "ruleCatCache")
     public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception{
 
         UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
@@ -76,7 +78,8 @@ public class RuleCatServiceImpl implements RuleCatService {
 
 
     @Override
-    public Long fetchRuleCatIdFromRuleId(Long ruleId) throws Exception{
+    @Cacheable("ruleCategoryCache")
+    public Long fetchRuleCatIdFromRuleId(Long ruleId) {
 
         UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
         RuleCat _tempRuleCat = null;
@@ -95,4 +98,29 @@ public class RuleCatServiceImpl implements RuleCatService {
         }
 
     }
+    
+    @Override
+    @Cacheable("ruleCategoryCache")
+    public Long fetchRuleCatIdFromNonUdrRuleId(Long ruleId) {
+    	
+    	UdrRule _tempRule = udrRuleRepository.findUdrRuleByRuleId(ruleId);
+    	
+        RuleCat _tempRuleCat = null;
+        if(_tempRule!=null){
+            Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
+
+            _tempRuleCat = _tempRuleCatSet.stream()
+                    .findFirst()
+                    .orElse(null);
+            if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
+            else return _tempRuleCat.getCatId();
+
+        }else {
+            // bracket orphans to 'General' rule category
+            return 1L;
+        }
+
+    }
+    
+    
 }

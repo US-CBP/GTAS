@@ -1,6 +1,5 @@
 package gov.gtas.parsers.redisson;
 
-import gov.gtas.jms.services.MessageSender;
 import gov.gtas.parsers.edifact.EdifactLexer;
 import gov.gtas.parsers.util.FileUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
@@ -8,8 +7,6 @@ import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +28,6 @@ public class RedisLoader {
     private static String messagePayload;
     private static Date transDate;
     private static EdifactLexer lexer;
-    private MessageSender messageSender;
 
 //    public static void main(String[] args) {
 //

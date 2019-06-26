@@ -6,16 +6,26 @@
 package gov.gtas.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Bag;
-import gov.gtas.model.Seat;
+
+import javax.transaction.Transactional;
 
 public interface BagRepository extends CrudRepository<Bag, Long> {
-	@Query("SELECT b FROM Bag b WHERE b.flight.id = :flightId AND b.passenger.id = :passengerId")
-	List<Bag> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
-			@Param("passengerId") Long passengerId);
+
+	@Query("SELECT bags FROM Bag bags WHERE bags.flight.id = :flightId AND bags.passenger.id = :passengerId")
+	List<Bag> findFromFlightAndPassenger(@Param("flightId") Long flightId,
+										 @Param("passengerId") Long passengerId);
+	@Transactional
+	@Query("SELECT bags from Bag bags where bags.passenger.id in :paxIds")
+    Set<Bag> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
+
+	@Transactional
+	@Query(" SELECT bags from Bag bags left join fetch bags.bookingDetail where bags.passenger.id in :passengerIds ")
+	Set<Bag> getBagsByPassengerIds(@Param("passengerIds") List<Long> passengerIds);
 }

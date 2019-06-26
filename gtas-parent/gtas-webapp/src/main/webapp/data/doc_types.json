@@ -6,5 +6,27 @@
   {
     "id": "V",
     "name": "Visa"
+  }, 
+  {
+  	"id":"IP",
+  	"name":"Passport Card"
+  },
+  {
+  	"id":"A",
+  	"name":"Identity Card"
+  }, 
+  {
+  	"id":"C",
+  	"name":"Identity Card"
+  },
+  {
+  	"id":"I",
+  	"name":"Identity Card"
+  },
+  {
+  	"id":"F",
+  	"name":"Approved non-standard identity documents used for travel"
   }
+  
+  
 ]

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
@@ -33,15 +33,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 /**
  * Persistence layer tests for Audit Logging.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 public class AuditLogPersistenceServiceIT {
 
 	@Autowired
@@ -275,9 +275,9 @@ public class AuditLogPersistenceServiceIT {
 
 		Passenger testPassenger = new Passenger();
 		testPassenger.setId(99990L);
-		testPassenger.setFirstName("JJ");
-		testPassenger.setMiddleName("Marc");
-		testPassenger.setLastName("Strong");
+		testPassenger.getPassengerDetails().setFirstName("JJ");
+		testPassenger.getPassengerDetails().setMiddleName("Marc");
+		testPassenger.getPassengerDetails().setLastName("Strong");
 		AuditActionTarget target = new AuditActionTarget(testPassenger);
 		AuditActionData actionData = new AuditActionData();
 		actionData.addProperty("testProperty",

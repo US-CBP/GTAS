@@ -6,6 +6,7 @@
 package gov.gtas.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -30,7 +31,7 @@ public class HitDetail extends BaseEntity {
     }
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hits_summary_id", nullable = false, referencedColumnName = "id")
     private HitsSummary parent;
 
@@ -114,4 +115,17 @@ public class HitDetail extends BaseEntity {
         this.hitType = hitType;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HitDetail)) return false;
+        HitDetail hitDetail = (HitDetail) o;
+        return getHitType().equals(hitDetail.getHitType()) &&
+                getRuleId().equals(hitDetail.getRuleId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getHitType(), getRuleId());
+    }
 }

@@ -5,6 +5,7 @@
  */
 package gov.gtas.util;
 
+import gov.gtas.model.Document;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,6 +15,8 @@ import java.util.Arrays;
 import org.springframework.stereotype.Service;
 
 import gov.gtas.model.Passenger;
+import gov.gtas.model.lookup.DocumentTypeCode;
+import java.util.Date;
 
 @Service
 public class EntityResolverUtils {
@@ -44,9 +47,42 @@ public class EntityResolverUtils {
 		String hash = "";
 
 		hash = makeSHA1Hash(
-				String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-						pax.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getDob()))));
+				String.join("", Arrays.asList(pax.getPassengerDetails().getFirstName().toUpperCase(), pax.getPassengerDetails().getLastName().toUpperCase(),
+						pax.getPassengerDetails().getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getPassengerDetails().getDob()))));
 
 		return hash;
 	}
+        
+        public static String makeDocIdHashForPassenger(Passenger passenger) throws NoSuchAlgorithmException, UnsupportedEncodingException 
+        {
+            String hashString = null;
+            
+            String passportNumber = "";
+            String issuanceCountry = "";
+            Date expirationDate = null;
+            Date now = new Date();
+            
+            // make sure that we have a passport and that it is not expired. 
+            // People with dual citizenship and two passports will be considered two people.
+            for (Document doc : passenger.getDocuments())
+            {
+                if (doc.getDocumentType().equals(DocumentTypeCode.P.toString()))
+                {
+                    if (doc.getExpirationDate().compareTo(now) > 0)
+                    {
+                      passportNumber = doc.getDocumentNumber();
+                      issuanceCountry = doc.getIssuanceCountry();
+                      expirationDate = doc.getExpirationDate();
+                    }
+                }
+            }
+            
+            if (!passportNumber.isEmpty())
+            {
+               hashString =  makeSHA1Hash(String.join("", passportNumber,issuanceCountry,expirationDate.toString()));
+            }
+            
+                    
+            return hashString;
+        }
 }

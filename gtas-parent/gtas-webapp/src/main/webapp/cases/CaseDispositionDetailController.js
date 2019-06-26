@@ -9,35 +9,49 @@
         function ($scope, $http, $mdToast,
                   gridService, $mdDialog,
                   spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
-    	
+
             $scope.caseItem;
             $scope.caseItemHits;
             $scope.caseItemHitComments;
             $scope.commentText;
             $scope.hitDispStatus;
             $scope.caseDispStatus;
+            $scope.caseDisposition;
+            $scope.saveConfirmation=null;
             $scope.caseItemHitsVo;
             $scope.ruleCatSet;
             $scope.ruleCat;
             $scope.caseCommentAttachment = null;
             $scope.caseDispositionStatuses = [];
+            $scope.caseDispositionList = [];
             $scope.hitDispositionStatuses = [];
             $scope.dispStatus={
                 hitStatusShow:true,
                 caseStatusShow:true,
                 allHitsClosed:true,
-                caseStatusAdminView:false
+                caseStatusAdminView:false,
+                oneDay: true
+
             };
+            $scope.generalComment = null;
+            $scope.caseGeneralComment = [];
             $scope.dispStatus.constants={
                 CLOSED: 'CLOSED',
                 NEW: 'NEW',
                 PENDINGCLOSURE: 'PENDING CLOSURE',
                 REOPEN: 'RE-OPEN'
             };
+            $scope.caseOfficerStatus;;
             $scope.hitValidityStatuses=[
             {id: 1, name: 'Yes'},
             {id: 2, name: 'No'},
             {id: 3, name: 'N/A'}
+            ];
+
+            $scope.caseValidityStatuses=[
+                {id: 1, name: 'Released'},
+                {id: 2, name: 'Referred'},
+                {id: 3, name: 'Missed'}
             ];
             $scope.options = {
                 height: 150,
@@ -54,18 +68,29 @@
 
             AuthService.getCurrentUser().then(function (user) {
                 $scope.currentUser = user;
-                $scope.dispStatus.caseStatusAdminView = ($scope.currentUser.roles[0].roleDescription.toUpperCase()===$scope.ROLES.ADMIN.toUpperCase())? true: false;
+                $scope.dispStatus.caseStatusAdminView = ($scope.ROLES.ADMIN.toUpperCase() === $scope.currentUser.roles[0].roleDescription.toUpperCase());
+                let oneDayLookoutUser = false;
+                $scope.currentUser.roles.forEach(function (role) {
+                    if (role.roleDescription === $scope.ROLES.ONE_DAY_LOOKOUT) {
+                        oneDayLookoutUser = true;
+                    }
+                });
+                $scope.dispStatus.oneDay = !oneDayLookoutUser;
             });
 
             $scope.changeState = function(){
-                $scope.hitDetailTrueHitFlag = hitDetailTrueHitFlag;
+                        $scope.hitDetailTrueHitFlag = hitDetailTrueHitFlag;
             };
 
             if(typeof newCases.data !== undefined && newCases.data !== null) {
                 $scope.caseItem = newCases.data.cases[0];
                 $scope.caseItemHits = $scope.caseItem.hitsDispositions;
                 $scope.caseItemHitsVo = $scope.caseItem.hitsDispositionVos;
+                $scope.caseComments = $scope.caseItem.generalCaseCommentVos;
                 $scope.caseDispStatus = $scope.caseItem.status;
+                $scope.caseDisposition = $scope.caseItem.disposition;
+                $scope.caseGeneralComment = $scope.caseItem.generalComment;
+                $scope.caseOfficerStatus = $scope.caseItem.caseOfficerStatus;
                 //$scope.dispStatus.caseStatusShow = ($scope.caseItem.status === $scope.dispStatus.constants.CLOSED)? false: true;
                 $scope.dispStatus.caseStatusShow = true; // put in this flow thru' to allow switching between CLOSED and other states
                 if($scope.caseItem.oneDayLookoutFlag == true)
@@ -137,9 +162,26 @@
             };
 
             $scope.populateHitDispStatuses();
+            
+            //populates the true Case Statues (Admit, Deny Boarding, Refuse Entry...etc
+            $scope.populateCaseDispositionList = function(){
+                caseDispositionService.getCaseDisposition().then(function (response) {
+                    $scope.caseDispositionList = [];
+                    angular.forEach(response.data, function(item){
+                        $scope.caseDispositionList.push(item);
+                        
+                    });
+                });
+            };
+            
+            $scope.populateCaseDispositionList();
+            
+            
+            
 
             $scope.caseConfirm = function() {
                 $scope.dispStatus.allHitsClosed = true;
+                $scope.saveConfirmation = "";
                 //check whether all the hits are CLOSED or not
                 angular.forEach($scope.caseItemHits, function (item) {
                     if ( ($scope.caseDispStatus === $scope.dispStatus.constants.CLOSED) &&
@@ -153,18 +195,28 @@
                 });
                 if($scope.dispStatus.allHitsClosed){
                 spinnerService.show('html5spinner');
-                $scope.caseDispStatus = "Case" + $scope.caseDispStatus;
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+                //$scope.caseDispStatus = "Case" + $scope.caseDispStatus;
+                var tempCaseDispStatus = "Case" +$scope.caseDispStatus;
+                caseDispositionService.updateHitsDisposition($scope.caseItem.id, $scope.caseItem.flightId, $scope.caseItem.paxId,
                     $scope.caseItemHitId, $scope.commentText,
-                    $scope.caseDispStatus,
-                    $scope.hitDetailTrueHitFlag,null)
-                    .then(function (aCase) {
-                        $scope.caseItem = aCase.data;
-                        $scope.caseItemHits = $scope.caseItem.hitsDispositions;
-                        $scope.caseDispStatus = $scope.caseItem.status;
+                    tempCaseDispStatus, 
+                    $scope.hitDetailTrueHitFlag,null, $scope.caseDisposition)
+                    .then(function (result) {
+                       // $scope.caseItem = aCase.data;
+                        //$scope.caseItemHits = $scope.caseItem.hitsDispositions;
+                       // $scope.caseDispStatus = $scope.caseItem.status;
                         //$scope.dispStatus.caseStatusShow = false;
                         spinnerService.hide('html5spinner');
-                        $mdSidenav('comments').close();
+                        //$mdSidenav('comments').close();
+                        if(result.data == true)
+                        {
+                        	 $scope.saveConfirmation = "Saved successfully";
+                        }
+                        else
+                        {
+                        	$scope.saveConfirmation = "Not saved due to errors";
+                        }
+                        
                     });// END of caseDispositionService call
             }else{
                     var toastPosition = angular.element(document.getElementById('caseForm'));
@@ -179,11 +231,21 @@
 
             $scope.commentConfirm = function(){
                 spinnerService.show('html5spinner');
-                caseDispositionService.updateHitsDisposition($scope.caseItem.flightId, $scope.caseItem.paxId,
+               
+                if($scope.hitDispStatus === $scope.dispStatus.constants.CLOSED && ( ($scope.hitDetailTrueHitFlag === null)  ||
+                        (typeof($scope.hitDetailTrueHitFlag) === "undefined"))){
+                	var toastPosition = angular.element(document.getElementById('hitForm'));
+                    $mdToast.show($mdToast.simple()
+                        .content("Be sure to validate and mark 'Closed' below to close this hit disposition")
+                        .position('top right')
+                        .hideDelay(4000)
+                        .parent(toastPosition));
+                } else {
+                caseDispositionService.updateHitsDisposition($scope.caseItem.id,$scope.caseItem.flightId, $scope.caseItem.paxId,
                                                              $scope.caseItemHitId, $scope.commentText,
                                                              $scope.hitDispStatus,
                                                              $scope.hitDetailTrueHitFlag,
-                                                             $scope.caseCommentAttachment)
+                                                             $scope.caseCommentAttachment, $scope.caseDisposition)
                     .then(function (aCase) {
                     $scope.caseItem = aCase.data;
                     $scope.caseItemHits = $scope.caseItem.hitsDispositions;
@@ -193,6 +255,47 @@
                     $mdSidenav('comments').close();
                     $state.reload();
                 });
+                }
+            };
+
+            $scope.commentGeneralConfirm = function(){
+                spinnerService.show('html5spinner');
+                if($scope.caseOfficerStatus === "Missed" &&
+                    ((($scope.generalComment === null)  ||
+                    (typeof($scope.generalComment) === "undefined"))
+                        || ($scope.generalComment === ""))){
+                    var toastPosition = angular.element(document.getElementById('generalComment'));
+                    $mdToast.show($mdToast.simple()
+                        .content("To update the case to missed you *must* make a comment.")
+                        .position('top right')
+                        .hideDelay(4000)
+                        .parent(toastPosition));
+                    spinnerService.hide('html5spinner');
+                } else {
+                    caseDispositionService.updateGeneralComments(
+                        $scope.caseItem.id,
+                        $scope.generalComment,
+                        $scope.caseOfficerStatus).then(function (aCase) {
+                        $scope.caseItem = aCase.data;
+                        $scope.caseGeneralComment = aCase.caseGeneralComment;
+                        $scope.generalComment = null;
+                        $scope.caseOfficerStatus = $scope.caseItem.caseOfficerStatus;
+                        $state.reload();
+                        spinnerService.hide('html5spinner');
+                        $mdSidenav("generalComments").close();
+                        $state.reload();
+                    });
+                }
+            };
+            
+            $scope.updateOnStatusChange = function(){
+            	
+            	$scope.saveConfirmation = "";
+            };
+            
+            $scope.updateOnDispositionChange = function(){
+            	
+            	$scope.saveConfirmation = "";
             };
             
             $scope.addToOneDayLookoutList = function(caseId){
@@ -219,9 +322,9 @@
                             {
                             	$scope.isRemoveOLKButtonDisabled = true;
                             	$scope.isAddOLKButtonDisabled = false;
-                            	 
+
                             }
-                           
+
                         });;
             };
             
@@ -230,6 +333,10 @@
 
             $scope.closeSideNav = function(){
                 $mdSidenav('comments').close();
+            };
+
+            $scope.closeGeneralComments = function() {
+                $mdSidenav('generalComments').close();
             };
 
             $scope.sideNav = function(id, position) {
@@ -249,6 +356,11 @@
                 $mdSidenav(id).toggle();
             };
 
+            $scope.sideNavGeneralComments = function() {
+                $mdSidenav("generalComments").toggle();
+            };
+
+            
             //dialog function for image display dialog
             $scope.showAttachments = function(attachmentList) {
                 $mdDialog.show({
@@ -263,11 +375,14 @@
             };
 
             $scope.packageAttachments = function(value){
-                var attList = '';
-                var slideString = '';
-                slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
-                attList += slideString;
-                $scope.showAttachments(attList);
+                if(value.contentType.startsWith("image")) {
+                
+                    var attList = '';
+                    var slideString = '';
+                    slideString += '<img ng-src="data:'+value.contentType+';base64,'+value.content+'"></slide>';
+                    attList += slideString;
+                    $scope.showAttachments(attList);
+                }
             };
 
             //Angular Trix related event handlers
@@ -276,6 +391,8 @@
                 angular.element(editor.element.toolbarElement).remove();
             };
 
+           
+            
             // Trix attachment logic
 
             var createStorageKey, host, uploadAttachment;

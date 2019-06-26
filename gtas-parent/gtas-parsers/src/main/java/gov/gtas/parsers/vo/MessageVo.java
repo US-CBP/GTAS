@@ -5,7 +5,9 @@
  */
 package gov.gtas.parsers.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,7 +19,9 @@ public class MessageVo {
     private Date transmissionDate;
     private String messageType;
     private String version;
-    
+    protected List<FlightVo> flights = new ArrayList<>();
+    List<BagVo> bagVos = new ArrayList<>();
+
     public String getRaw() {
         return raw;
     }
@@ -55,8 +59,24 @@ public class MessageVo {
         this.version = version;
     }
 
+    public List<FlightVo> getFlights() {
+        return flights;
+    }
+
+    public void setFlights(List<FlightVo> flights) {
+        this.flights = flights;
+    }
+
+    public List<BagVo> getBagVos() {
+        return bagVos;
+    }
+
+    public void setBagVos(List<BagVo> bagVos) {
+        this.bagVos = bagVos;
+    }
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
     }
+
 }

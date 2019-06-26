@@ -5,18 +5,20 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.SeatVo;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.vo.passenger.FlightVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface FlightService {
@@ -26,7 +28,7 @@ public interface FlightService {
 
 	public Flight findById(Long id);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	//@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	public FlightsPageDto findAll(FlightsRequestDto dto);
 
 	public Flight getUniqueFlightByCriteria(String carrier,
@@ -37,7 +39,7 @@ public interface FlightService {
 
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	//@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(
 			String firstName, String lastName, Set<Document> documents);
 
@@ -54,4 +56,14 @@ public interface FlightService {
 	public void setSinglePassenger(Long passengerId, Long flightId);
 
 	public int getPassengerCount(Flight f);
+
+	/*
+	* Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist matches.
+	* */
+	public Long getFlightFuzzyMatchesOnly(Long flightId);
+	
+	public List<SeatVo> getSeatsByFlightId(Long flightId);
+
+	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights);
+
 }

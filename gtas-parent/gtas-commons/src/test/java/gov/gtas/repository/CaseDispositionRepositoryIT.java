@@ -1,15 +1,7 @@
 package gov.gtas.repository;
 
-import gov.gtas.config.CommonServicesConfig;
-import gov.gtas.model.Case;
-import gov.gtas.model.HitsDisposition;
-import gov.gtas.model.HitsDispositionComments;
-import gov.gtas.model.lookup.DispositionStatusCode;
-import gov.gtas.services.CaseDispositionService;
-import gov.gtas.repository.CaseDispositionRepository;
-import gov.gtas.services.dto.CasePageDto;
-import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
-import java.util.*;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import gov.gtas.config.TestCommonServicesConfig;
+import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.dto.CaseRequestDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class })
 public class CaseDispositionRepositoryIT {
 
     @Before
@@ -90,7 +80,7 @@ public class CaseDispositionRepositoryIT {
             }
 
             @Override
-            public int getOffset() {
+            public long getOffset() {
                 return 0;
             }
 

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.constant.RuleConstants;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.model.udr.KnowledgeBase;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.annotation.Rollback;
 
 /**
  * Persistence layer tests for UDR and the Rule Engine. The parent domain object
@@ -45,9 +45,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
  * KnowledgeBase.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
+@Rollback(true)
 public class RulePersistenceServiceIT {
 
     private static final Logger logger = LoggerFactory.getLogger(RulePersistenceServiceIT.class);
@@ -136,7 +136,7 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "3", RULE_DESCRIPTION,
                 YesNoEnum.Y, testDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         List<UdrRule> udrList = testTarget.findValidUdrOnDate(testDate);
@@ -169,7 +169,7 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "4", RULE_DESCRIPTION,
                 YesNoEnum.N, startDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         List<UdrRule> udrList = testTarget.findValidUdrOnDate(testDate);
@@ -202,20 +202,20 @@ public class RulePersistenceServiceIT {
         r = testGenUtils.createUdrRule(testRuleTitle + "4", RULE_DESCRIPTION,
                 YesNoEnum.N, startDate, testDate);
         testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
-        List<Object[]> udrSummaryList = testTarget
+        List<UdrRule> udrSummaryList = testTarget
                 .findAllUdrSummary(RuleServiceDataGenUtils.TEST_USER1_ID);
         assertTrue(udrSummaryList.size() >= 3);
         int count = 0;
-        for (Object[] data : udrSummaryList) {
-            assertNotNull(data[0]);// id
-            String editedBy = (String) data[1];
+        for (UdrRule udrRule : udrSummaryList) {
+            assertNotNull(udrRule.getId());// id
+            String editedBy = udrRule.getEditedBy().getUserId();
             assertNotNull(editedBy);
             if (editedBy.equals(RuleServiceDataGenUtils.TEST_USER1_ID)
-                    && RULE_DESCRIPTION.equals(data[4])) {
-                Date udrStartDate = (Date) data[5];
+                    && RULE_DESCRIPTION.equals(udrRule.getMetaData().getDescription())) {
+                Date udrStartDate = udrRule.getMetaData().getStartDt();
                 assertNotNull(startDate);
                 assertEquals(startDate, udrStartDate);
-                assertEquals(RuleServiceDataGenUtils.TEST_USER1_ID, data[8]);
+                assertEquals(RuleServiceDataGenUtils.TEST_USER1_ID, udrRule.getAuthor().getUserId());
                 count++;
             }
         }

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.DocumentVo;
 
 public final class ParseUtils {
@@ -31,7 +32,7 @@ public final class ParseUtils {
      * characters STX and ETX. This method removes the header and trailer from
      * the message. See https://en.wikipedia.org/wiki/Control_characters
      * 
-     * @param text
+     * @param text header
      * @return message text without header or footer
      */
     public static String stripStxEtxHeaderAndFooter(String text) {
@@ -50,13 +51,29 @@ public final class ParseUtils {
         
         return rv;
     }
-    
+    public static Date parseBirthday(String dt, String format) {
+        try {
+            DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+            Date parsedDate = timeFormat.parse(dt);
+            if (parsedDate.after(new Date())) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(parsedDate);
+                cal.add(Calendar.YEAR, -100);
+                parsedDate = cal.getTime();
+            }
+            return parsedDate;
+        } catch (java.text.ParseException pe) {
+            logger.warn(String.format("Could not make a birthday from %s using format %s. Birthday needs a day month and year to be created.", dt, format));
+        }
+
+        return null;
+    }
     public static Date parseDateTime(String dt, String format) {
         try {
             DateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
             return timeFormat.parse(dt);
         } catch (java.text.ParseException pe) {
-            logger.warn(String.format("Could not parse date %s using format %s", dt, format));
+            logger.warn(String.format("Could not parse date %s using format : %s", dt, format));
         }
         
         return null;
@@ -72,7 +89,7 @@ public final class ParseUtils {
             c.add(Calendar.DATE, daysInMonth-1);
             return c.getTime();
         } catch (java.text.ParseException pe) {
-            logger.warn(String.format("Could not parse date %s using format %s", dt, format));
+            logger.warn(String.format("Could not parse date %s using format: %s", dt, format));
         }
         
         return null;
@@ -81,25 +98,41 @@ public final class ParseUtils {
     public static String prepTelephoneNumber(String number) {
         if (StringUtils.isBlank(number)) {
             return null;
+        } else {
+            return number.replaceAll("[^0-9]", "");
         }
-        number=number.replace(" ", "");
-        if(number.indexOf("H") >-1){
-        	number=number.replaceAll("H", " H-");
-        }
-        if(number.indexOf("W") >-1){
-        	number=number.replaceAll("W", " W-");
-        }
-        if(number.indexOf("O") >-1){
-        	number=number.replaceAll("O", " O-");
-        }
-        if(number.indexOf("M") >-1){
-        	number=number.replaceAll("M", " M-");
-        }
-        
-        return number;
-        //return number.replaceAll("[^0-9]", "");
     }
-       
+
+    public static String prepIFTTelephoneNumber(String textContainingTelephoneNumber) {
+        StringBuilder formatedPhoneNumber = new StringBuilder();
+        if (StringUtils.isBlank(textContainingTelephoneNumber)) {
+            return null;
+        } else {
+           String [] tokenizedSegments =  textContainingTelephoneNumber.split("[^A-Z0-9]+|(?<=[A-Z])(?=[0-9])|(?<=[0-9])(?=[A-Z])");
+           boolean startedProcessingNumber = false;
+           for (String token : tokenizedSegments) {
+               if (token.matches("[a-zA-Z]") && startedProcessingNumber) {
+                   break;
+               } else if (token.matches("[0-9]+")){
+                   startedProcessingNumber = true;
+                   formatedPhoneNumber.append(token);
+               }
+           }
+        }
+
+        return formatedPhoneNumber.toString();
+    }
+
+/*    private static String validateOrScrubPhoneNumber(String phoneNumber) {
+        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+        //ZZ is unknown region.
+        boolean canBeAPhoneNumber = phoneNumberUtil.isPossibleNumber(phoneNumber, "ZZ");
+        if (!canBeAPhoneNumber) {
+            phoneNumber = ""; //We are ignoring impossible phone numbers
+        }
+        return phoneNumber;
+    }*/
+
     public static Integer returnNumberOrNull(String s) {
         if (StringUtils.isBlank(s)) {
             return null;
@@ -116,4 +149,31 @@ public final class ParseUtils {
     	return (StringUtils.isNotEmpty(d.getDocumentNumber()) && StringUtils.isNotEmpty(d.getDocumentType()));
     }
     
+    /**
+	 * Parses a APIS date in yyMMdd format and adjusts the year to be the current or
+	 * previous century
+	 * 
+	 * This overrides the SimpleDateFormat two-digit year parsing using
+	 * set2DigitYearStart()
+	 * 
+	 * resolves issue #948
+	 * 
+	 * @param dt date
+	 * @param format
+	 *            (formatted -> yyMMdd)
+	 */
+	public static Date parseAPISDOB(String dt, String format) {
+		
+		SimpleDateFormat timeFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+		try {
+		if (!"yyMMdd".equalsIgnoreCase(format)) {
+			return timeFormat.parse(dt);
+		} else {
+			return ParseUtils.parseBirthday(dt, format);
+		}
+		} catch (java.text.ParseException e) {
+			logger.error("Failed to parse DOB (APIS)");
+		}
+		return null;
+	}
 }

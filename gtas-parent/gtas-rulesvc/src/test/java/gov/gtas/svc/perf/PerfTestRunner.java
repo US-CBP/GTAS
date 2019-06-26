@@ -6,7 +6,7 @@
 package gov.gtas.svc.perf;
 
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.config.RuleServiceConfig;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.perf.test.FetchUdrTest;
@@ -40,7 +40,7 @@ public class PerfTestRunner {
         ConfigurableApplicationContext ctx = null;
         try {
             ctx = new AnnotationConfigApplicationContext(
-                    CommonServicesConfig.class, CachingConfig.class, RuleServiceConfig.class);
+                    TestCommonServicesConfig.class, CachingConfig.class, RuleServiceConfig.class);
             if (args.length < 1) {
                 logger.info("The test or command name must be provided! [udrtest,perf, perfall, cleanperf, clean]");
                 System.exit(0);

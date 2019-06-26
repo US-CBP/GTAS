@@ -18,5 +18,7 @@ public interface RuleCatService {
     Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception;
 
     Long fetchRuleCatIdFromRuleId(Long ruleId) throws Exception;
+    
+    Long fetchRuleCatIdFromNonUdrRuleId(Long ruleId) throws Exception;
 
 }

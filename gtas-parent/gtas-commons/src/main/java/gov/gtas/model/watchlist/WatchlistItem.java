@@ -5,11 +5,13 @@
  */
 package gov.gtas.model.watchlist;
 
-import gov.gtas.constant.DomainModelConstants;
 import gov.gtas.model.BaseEntity;
+import gov.gtas.model.PaxWatchlistLink;
 import gov.gtas.model.lookup.WatchlistCategory;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,6 +44,9 @@ public class WatchlistItem extends BaseEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "Wl_CATEGORY_REF", referencedColumnName = "ID", nullable = true, foreignKey=@ForeignKey(name="FK_Wl_CATEGORY_ID"))
 	private WatchlistCategory watchlistCategory;
+
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "watchlistItem")
+	private Set<PaxWatchlistLink> paxWatchlistLink = new HashSet<>();
 
 	/**
 	 * @return the watch list
@@ -87,19 +92,11 @@ public class WatchlistItem extends BaseEntity {
 	public void setItemRuleData(String itemRuleData) {
 		this.itemRuleData = itemRuleData;
 	}
-	
-	/**
-	 * 
-	 * @return
-	 */
+
 	public WatchlistCategory getWatchlistCategory() {
 		return watchlistCategory;
 	}
 
-	/**
-	 * 
-	 * @param watchlistCategory
-	 */
 	public void setWatchlistCategory(WatchlistCategory watchlistCategory) {
 		this.watchlistCategory = watchlistCategory;
 	}
@@ -119,5 +116,13 @@ public class WatchlistItem extends BaseEntity {
 			return false;
 		final WatchlistItem other = (WatchlistItem) obj;
 		return Objects.equals(this.itemData, other.itemData);
+	}
+
+	public Set<PaxWatchlistLink> getPaxWatchlistLink() {
+		return paxWatchlistLink;
+	}
+
+	public void setPaxWatchlistLink(Set<PaxWatchlistLink> paxWatchlistLink) {
+		this.paxWatchlistLink = paxWatchlistLink;
 	}
 }

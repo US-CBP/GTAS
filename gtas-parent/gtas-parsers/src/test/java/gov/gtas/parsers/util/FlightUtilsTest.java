@@ -40,20 +40,6 @@ public class FlightUtilsTest {
             i++;
         }
     }
-
-    @Test
-    public void testDetermineFlightDate() {
-        Date d = FlightUtils.determineFlightDate(null, null, null);
-        assertNull(d);
-        
-        Date notNull = DateUtils.stripTime(new Date());
-        d = FlightUtils.determineFlightDate(notNull, null, null);
-        assertEquals(notNull, d);
-        d = FlightUtils.determineFlightDate(null, notNull, null);
-        assertEquals(notNull, d);
-        d = FlightUtils.determineFlightDate(null, null, notNull);
-        assertEquals(notNull, d);
-    }
     
     @Test
     public void testpadFlightNumberWithZeroes() {

@@ -21,6 +21,21 @@
     </properties>
 
     <dependencies>
+    <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-core</artifactId>
+             <version>1.11.535</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sqs</artifactId>
+             <version>1.11.535</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-sns</artifactId>
+             <version>1.11.535</version>
+        </dependency> 
         <dependency>
             <groupId>gov.gtas</groupId>
             <artifactId>gtas-rulesvc</artifactId>
@@ -67,7 +82,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.10</version>
                 <configuration>
                     <additionalProjectnatures>
                         <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>

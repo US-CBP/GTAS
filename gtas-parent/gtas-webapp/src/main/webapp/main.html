@@ -21,20 +21,22 @@
   <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link href="resources/css/misc_fonts.css" rel="stylesheet">
+  <link href="resources/css/misc_italian.css" rel="stylesheet">
   <script src="resources/bower_components/jquery/dist/jquery.js"></script>
   <!--<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
   <script src="resources/bower_components/summernote/dist/summernote.js"></script>
   <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
   <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
-
 </head>
 
 <body ng-cloak>
+
+  <!-- CBP and APP HEADER  -->
   <div data-ng-controller="NavCtrl" role="navigation" class="cbp-header">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#/dashboard">
+        <a class="navbar-brand" ng-href="#/{{homePage}}">
           <div class="gtas-brand"></div>
           <div class="dhs-brand"></div>
         </a>
@@ -80,19 +82,10 @@
             </ul>
           </li>
           <li class="dropdown notification mobile-hide">
-            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#/casedisposition">
               <i class="fa fa-inverse fa-bell notif-icon" aria-hidden="true"></i>
-              <span class="notif-icon-cnt">{{errorList.length}}</span>
+              <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
-            <ul class="dropdown-menu" role="menu">
-              <li data-has-role="[{{ ROLES.ADMIN }}]" ng-repeat="value in errorList">
-                <a>
-                  {{value.createDate | date:'HH:mm '}} {{value.status}}
-                </a>
-                <md-tooltip class="multi-tooltip" md-z-index=999999>{{value.error}}</md-tooltip>
-              </li>
-            </ul>
-
           </li>
         </ul>
 
@@ -114,6 +107,13 @@
             <ul rel="right-menu-links" role="menu" class="dropdown-menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
                 <a title="Settings" href="#/userSettings">Change Password</a>
+              </li>
+              <li class="divider"></li>
+              <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
+                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
+              </li>
+              <li data-has-role="[{{ ROLES.ADMIN }}]">
+                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">Office Location </span>   </a>
               </li>
               <li class="divider"></li>
               <li>
@@ -139,7 +139,7 @@
       <!-- Flights, Passengers, Cases Tab -->
       <div id="subnav" class="collapse navbar-collapse">
         <div class="nav navbar-nav">
-          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
+          <ul class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
@@ -183,9 +183,11 @@
       </div>
     </div>
   </div>
-  <div ui-view="nav"></div>
+
+  
+<div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
-  <div class="content" ui-view=""></div>
+  <div class="content" ui-view=""  ></div>
   <div ui-view="footer"></div>
 
   <script src="resources/bower_components/angular/angular.js"></script>
@@ -200,8 +202,8 @@
   <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
   <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script>
+  <!-- <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
+  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script> -->
   <script src="resources/node_modules/csv-js/csv.js"></script>
   <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
   <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
@@ -217,8 +219,6 @@
   <script src="resources/bower_components/jspdf/dist/jspdf.min.js"></script>
   <script src='resources/js/html2canvas.js'></script>
   <script src='resources/js/html2pdf.js'></script>
-  <script src="resources/bower_components/d3/d3.min.js"></script>
-  <script src="resources/bower_components/angular-translate/angular-translate.js"></script>
   <script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
   <script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
   <script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
@@ -231,12 +231,13 @@
   <link rel="stylesheet" href="resources/bower_components/ammap/dist/ammap/plugins/export/export.css" type="text/css" media="all" />
   <script src="resources/bower_components/ammap/dist/ammap/themes/light.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
-  <!--<script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>-->
   <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
   <script src="resources/bower_components/angular-summernote/dist/angular-summernote.min.js"></script>
   <script src="resources/bower_components/trix/dist/trix.js"></script>
   <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
-
+  <script src='seatsMap/jquery.seat-charts.min.js'></script>
+  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
+<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>
@@ -262,6 +263,8 @@
 <script src='admin/UploadController.js'></script>
 <script src='userSettings/UserSettingsController.js'></script>
 <script src='userSettings/FilterCtrl.js'></script>
+<script src='userlocation/UserLocationController.js'></script>
+<script src='userlocation/UserLocationService.js'></script>
 <script src='common/languagecontroller.js'></script>
 <script src='cases/CasesController.js'></script>
 <script src='cases/CaseDispositionController.js'></script>
@@ -272,6 +275,8 @@
 <script src='onedaylookout/OneDayLookoutService.js'></script>
 <script src='adhocquery/AdhocQueryController.js'></script>
 <script src='adhocquery/AdhocQueryService.js'></script>
+<script src='seatsMap/SeatsMapController.js'></script>
+<script src='seatsMap/SeatService.js'></script>
 <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>

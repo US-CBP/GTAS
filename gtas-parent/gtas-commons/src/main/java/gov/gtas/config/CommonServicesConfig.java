@@ -35,8 +35,9 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
  */
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource({ "classpath:commonservices.properties",
-        "classpath:hibernate.properties" })
+@PropertySource("classpath:commonservices.properties")
+@PropertySource("classpath:hibernate.properties")
+@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import(AsyncConfig.class)
@@ -44,11 +45,11 @@ public class CommonServicesConfig {
 
     private static Logger logger = LoggerFactory.getLogger(CommonServicesConfig.class);
 
+    private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
     private static final String PROPERTY_NAME_DATABASE_DRIVER = "hibernate.connection.driver_class";
     private static final String PROPERTY_NAME_DATABASE_PASSWORD = "hibernate.connection.password";
     private static final String PROPERTY_NAME_DATABASE_URL = "hibernate.connection.url";
     private static final String PROPERTY_NAME_DATABASE_USERNAME = "hibernate.connection.username";
-    private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
     private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
     private static final String PROPERTY_NAME_HIBERNATE_FORMAT_SQL = "hibernate.format_sql";
     private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
@@ -63,14 +64,17 @@ public class CommonServicesConfig {
     private static final String PROPERTY_NAME_HIBERNATE_ORDER_INSERTS = "hibernate.order_inserts";
     private static final String PROPERTY_NAME_HIBERNATE_ORDER_UPDATES = "hibernate.order_updates";
     private static final String PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA = "hibernate.jdbc.batch_versioned_data";
+    private static final String HIBERNATE_TIMEOUT = "hibernate.timeout";
 
     private static final String PROPERTY_NAME_C3P0_MIN_SIZE = "c3p0.min_size";
     private static final String PROPERTY_NAME_C3P0_MAX_SIZE = "c3p0.max_size";
     private static final String PROPERTY_NAME_C3P0_MAX_IDLETIME = "c3p0.max_idletime";
     private static final String PROPERTY_NAME_C3P0_MAX_STATEMENTS = "c3p0.max_statements";
+    private static final String PROPERTY_NAME_C3P0_MAX_CONNECT = "c3p0.idleConnectionTestPeriod";
 
     private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
 
+    @SuppressWarnings("Duplicates")
     private Properties hibProperties() {
         Properties properties = new Properties();
         properties.put(PROPERTY_NAME_HIBERNATE_DIALECT,
@@ -103,7 +107,6 @@ public class CommonServicesConfig {
         properties
                 .put(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA,
                         env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA));
-
         properties
                 .put(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET,
                         env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET));
@@ -123,22 +126,20 @@ public class CommonServicesConfig {
 
     @Bean
     public DataSource dataSource() {
-        // DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        // DriverManagerDataSource dataSource mvcn= new DriverManagerDataSource();
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
-
-        try {
+    	try {
             dataSource.setDriverClass(env
                     .getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
         } catch (PropertyVetoException pve) {
             logger.error("Unable to get required property!", pve);
-        }
+    	}
         dataSource.setJdbcUrl(env
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
         dataSource.setUser(env
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
         dataSource.setPassword(env
                 .getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
-
         dataSource.setMinPoolSize(Integer.parseInt(env
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MIN_SIZE)));
         dataSource.setMaxPoolSize(Integer.parseInt(env
@@ -147,8 +148,11 @@ public class CommonServicesConfig {
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_IDLETIME)));
         dataSource.setMaxStatements(Integer.parseInt(env
                 .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_STATEMENTS)));
-
-        return dataSource;
+        dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env
+                .getRequiredProperty(PROPERTY_NAME_C3P0_MAX_CONNECT)));
+        dataSource.setCheckoutTimeout(Integer.parseInt(env.
+                getRequiredProperty(HIBERNATE_TIMEOUT)));
+    	return dataSource;
     }
 
     @Bean

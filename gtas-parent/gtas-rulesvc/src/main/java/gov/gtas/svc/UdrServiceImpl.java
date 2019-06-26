@@ -142,21 +142,20 @@ public class UdrServiceImpl implements UdrService {
 	 * @return summary list.
 	 */
 	private List<JsonUdrListElement> convertSummaryList(
-			List<Object[]> fetchedRuleList) {
+			List<UdrRule> fetchedRuleList) {
 		Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
-		List<JsonUdrListElement> ret = new LinkedList<JsonUdrListElement>();
+		List<JsonUdrListElement> ret = new LinkedList<>();
 		if (fetchedRuleList != null && !fetchedRuleList.isEmpty()) {
-			for (Object[] data : fetchedRuleList) {
-				String editedBy = (String) data[1];
-				Date editedOn = (Date) data[2];
-				String authorUserId = (String) data[8];
-				final MetaData meta = new MetaData((String) data[3],
-						(String) data[4], (Date) data[5], authorUserId);
-
-				meta.setEnabled((YesNoEnum) data[6] == YesNoEnum.Y ? true
-						: false);
-				meta.setEndDate((Date) data[7]);
-				Long udrId = (Long) data[0];
+			for (UdrRule udrRule : fetchedRuleList) {
+				String editedBy = udrRule.getEditedBy().getUserId();
+				Date editedOn = udrRule.getEditDt();
+				String authorUserId = udrRule.getAuthor().getUserId();
+				final MetaData meta = new MetaData(udrRule.getMetaData().getTitle(),
+						udrRule.getMetaData().getDescription(), udrRule.getMetaData().getStartDt(), authorUserId);
+				meta.setEnabled(udrRule.getMetaData().getEnabled() == YesNoEnum.Y);
+				meta.setEndDate(udrRule.getMetaData().getEndDt());
+				meta.setOverMaxHits(udrRule.getMetaData().getOverMaxHits());
+				Long udrId = udrRule.getId();
 				JsonUdrListElement item = new JsonUdrListElement(udrId,
 						editedBy, editedOn, meta);
 				Long hitCount = udrHitCountMap.get(udrId);
@@ -164,7 +163,9 @@ public class UdrServiceImpl implements UdrService {
 					item.setHitCount(hitCount.intValue());
 				}
 				ret.add(item);
+
 			}
+
 		}
 		return ret;
 	}
@@ -354,6 +355,7 @@ public class UdrServiceImpl implements UdrService {
 					CommonErrorConstants.UPDATE_RECORD_MISSING_ERROR_CODE,
 					udrToUpdate.getSummary().getTitle(), userId, id);
 		}
+		ruleToUpdate.getMetaData().setOverMaxHits(false); // reset over max hits flag.
 		/*
 		 * check if the user has permission to update the UDR
 		 */

@@ -455,7 +455,7 @@
         }
       },
       {
-        "id": "Flight.etaDate",
+        "id": "Flight.mutableFlightDetails.etaDate",
         "label": "ETA",
         "type": "date",
         "operators": [
@@ -658,7 +658,7 @@
     "label": "PASSENGER",
     "columns": [
       {
-        "id": "Passenger.age",
+        "id": "Passenger.passengerDetails.age",
         "label": "Age",
         "type": "integer",
         "operators": [
@@ -673,8 +673,8 @@
         ]                   
       },
       {
-        "id": "Passenger.citizenshipCountry",
-        "label": "Citizenship Country",
+        "id": "Passenger.passengerDetails.nationality",
+        "label": "Nationality",
         "type": "string",
         "operators": [
           "EQUAL",
@@ -696,7 +696,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.debarkation",
+        "id": "Passenger.passengerTripDetails.debarkation",
         "label": "Debarkation Airport",
         "type": "string",
         "operators": [
@@ -719,7 +719,7 @@
         "dataSource": "airports"
       },
       {
-        "id": "Passenger.debarkCountry",
+        "id": "Passenger.passengerTripDetails.debarkCountry",
         "label": "Debarkation Country",
         "type": "string",
         "operators": [
@@ -740,7 +740,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.dob",
+        "id": "Passenger.passengerDetails.dob",
         "label": "DOB",
         "type": "date",
         "operators": [
@@ -758,7 +758,7 @@
         "plugin": "datepicker"
       },
       {
-        "id": "Passenger.embarkation",
+        "id": "Passenger.passengerTripDetails.embarkation",
         "label": "Embarkation Airport",
         "type": "string",
         "operators": [
@@ -781,7 +781,7 @@
         "dataSource": "airports"
       },
       {
-        "id": "Passenger.embarkCountry",
+        "id": "Passenger.passengerTripDetails.embarkCountry",
         "label": "Embarkation Country",
         "type": "string",
         "operators": [
@@ -802,7 +802,7 @@
         "dataSource": "countries"
       },
       {
-        "id": "Passenger.gender",
+        "id": "Passenger.passengerDetails.gender",
         "label": "Gender",
         "type": "string",
         "operators": [
@@ -823,7 +823,7 @@
         "dataSource": "genders"
       },
       {
-        "id": "Passenger.firstName",
+        "id": "Passenger.passengerDetails.firstName",
         "label": "Name - First",
         "type": "string",
         "operators": [
@@ -842,7 +842,7 @@
         ]                       
       },
       {
-        "id": "Passenger.lastName",
+        "id": "Passenger.passengerDetails.lastName",
         "label": "Name - Last",
         "type": "string",
         "operators": [
@@ -861,7 +861,7 @@
         ]                      
       },
       {
-        "id": "Passenger.middleName",
+        "id": "Passenger.passengerDetails.middleName",
         "label": "Name - Middle",
         "type": "string",
         "operators": [
@@ -880,7 +880,7 @@
         ]                        
       },
       {
-        "id": "Passenger.residencyCountry",
+        "id": "Passenger.passengerDetails.residencyCountry",
         "label": "Residency Country",
         "type": "string",
         "operators": [
@@ -918,7 +918,7 @@
         ]               
       },
       {
-        "id": "Passenger.passengerType",
+        "id": "Passenger.passengerDetails.passengerType",
         "label": "Type",
         "type": "string",
         "operators": [
@@ -933,7 +933,7 @@
         "dataSource": "passenger_types"
       },
       {
-        "id": "Passenger.travelFrequency",
+        "id": "Passenger.passengerTripDetails.travelFrequency",
         "label": "Travel Frequency",
         "type": "integer",
         "operators": [
@@ -1018,7 +1018,7 @@
           "NOT_ENDS_WITH"
   	  	]
   	  }, {
-  	  	"id":"Bag.destination",
+  	  	"id":"Bag.country",
   	  	"label":"Destination Country",
   	  	"type":"string",
   	  	"operators": [
@@ -1053,7 +1053,60 @@
         "multiple": true,
         "plugin": "selectize",
         "dataSource": "airports"
-  	  }	  
+  	  },
+      {
+        "id": "Bag.primeFlight",
+        "label": "Is Prime Flight",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      } ,
+      {
+        "id": "Bag.bagMeasurements.weight",
+        "label": "Bag Weight Measurement (kg)",
+        "type": "double",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      } ,
+      {
+        "id": "Bag.bagMeasurements.bagCount",
+        "label": "Bag Measurement Count",
+        "type": "integer",
+        "operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]
+      },
+      {
+        "id": "Bag.headPool",
+        "label": "Is Head Of a Baggage Pool",
+        "type": "boolean",
+        "operators": "EQUALS",
+        "input": "radio",
+        "values": {
+          "1": "Yes",
+          "0": "No"
+        }
+      }
+
   	]
   },
   "Pnr": {
@@ -1280,6 +1333,38 @@
           "ENDS_WITH",
           "NOT_ENDS_WITH"
         ]             
+      },     
+      {
+      	"id": "Pnr.tripType",
+      	"label": "Trip Type",
+      	"type" : "string",
+      	"input": "select",
+  		  "multiple": false,		 
+  		  "values": {
+  		   	"ONE-WAY": "ONE-WAY",
+  		   	"ROUND-TRIP":"ROUND-TRIP",
+  		   	"MULTI-CITY":"MULTI-CITY",
+  		   	"OPEN JAW": "OPEN JAW"
+  		  },
+  		  "operators": [
+  		  	"EQUAL",
+  		  	"NOT_EQUAL"	  	
+  		 ]
+      },
+      {
+        "id": "Pnr.tripDuration",
+        "label": "Trip Duration",
+        "type": "double",
+       	"operators": [
+          "EQUAL",
+          "NOT_EQUAL",
+          "LESS",
+          "LESS_OR_EQUAL",
+          "GREATER",
+          "GREATER_OR_EQUAL",
+          "BETWEEN",
+          "NOT_BETWEEN"
+        ]                           
       }
     ]
   },

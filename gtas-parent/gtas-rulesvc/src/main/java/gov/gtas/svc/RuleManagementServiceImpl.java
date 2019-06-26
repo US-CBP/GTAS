@@ -25,8 +25,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kie.api.KieBase;
@@ -34,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -56,7 +56,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 		try {
 			KieBase kieBase = RuleUtils.createKieBaseFromDrlString(drlString);
 			byte[] kbBlob = RuleUtils.convertKieBaseToBytes(kieBase);
-			logger.info("Size of the compiled Knowledge Base = "
+			logger.debug("Size of the compiled Knowledge Base = "
 					+ kbBlob.length);
 			KnowledgeBase kb = rulePersistenceService
 					.findUdrKnowledgeBase(kbName);
@@ -71,7 +71,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 			}
 			kb = rulePersistenceService.saveKnowledgeBase(kb);
 			return kb;
-		} catch (IOException ioe) {
+		} catch (Exception ioe) {
 			logger.error(ioe.getMessage());
 			throw ErrorHandlerFactory.getErrorHandler().createException(
 					CommonErrorConstants.SYSTEM_ERROR_CODE,
@@ -105,7 +105,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	}
 
 	@Override
-	@Transactional(value = TxType.MANDATORY)
+	@Transactional()
 	public KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName,
 			Collection<UdrRule> rules, String userId) {
 		if (!CollectionUtils.isEmpty(rules)) {
@@ -124,7 +124,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	}
 
 	@Override
-	@Transactional(value = TxType.MANDATORY)
+	@Transactional(propagation = Propagation.MANDATORY)
 	public KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName,
 			Iterable<WatchlistItem> rules) {
 		if (rules != null) {
@@ -154,7 +154,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	}
 
 	@Override
-	@Transactional(value = TxType.MANDATORY)
+	@Transactional(propagation = Propagation.MANDATORY)
 	public KnowledgeBase deleteKnowledgeBase(String kbName) {
 		KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 		if (kb != null) {

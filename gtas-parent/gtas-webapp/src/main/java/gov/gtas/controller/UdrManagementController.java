@@ -24,7 +24,9 @@ import gov.gtas.svc.UdrService;
 import gov.gtas.util.DateCalendarUtils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -165,21 +167,19 @@ public class UdrManagementController {
 							CommonErrorConstants.NULL_ARGUMENT_ERROR_MESSAGE,
 							"Create Query For Rule", "inputSpec"));
 		}
-		/*
-		 * The Jackson JSON parser assumes that the time zone is GMT if no
-		 * offset is explicitly indicated. Thus "2015-07-10" is interpreted as
-		 * "2015-07-10T00:00:00" GMT or "2015-07-09T20:00:00" EDT, i.e., the
-		 * previous day. The following 3 lines of code reverses this
-		 * interpretation.
-		 */
+
 		MetaData meta = inputSpec.getSummary();
 		if (meta != null) {
-			meta.setStartDate(fixMetaDataDates(meta.getStartDate()));
-			meta.setEndDate(fixMetaDataDates(meta.getEndDate()));
+                    
+                    meta.setStartDate(adjustHoursMinutesInDate(meta.getStartDate(), true));
+                    if (meta.getEndDate() != null)
+                    {
+                      meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    }
+
 		}
 		return udrService.createUdr(userId, inputSpec);
-
-	}
+        }
 
 	/**
 	 * Copy UDR.
@@ -201,14 +201,42 @@ public class UdrManagementController {
 		}
 		return udrService.copyUdr(userId, id);
 	}
+        
+        private Date adjustHoursMinutesInDate(Date dateToAdjust,boolean isStartDate)
+        {
+            Date adjustedDate = null;
+            Calendar greg = new GregorianCalendar();
+            greg.setTime(dateToAdjust);
+            
+            if (isStartDate)
+            {
+                greg.set(Calendar.HOUR_OF_DAY,0);
+                greg.set(Calendar.MINUTE, 0);
+                greg.set(Calendar.SECOND, 0);               
+            }
+            else
+            {
+                greg.set(Calendar.HOUR_OF_DAY,23);
+                greg.set(Calendar.MINUTE, 59);
+                greg.set(Calendar.SECOND, 59);                
+            }
+            adjustedDate = greg.getTime();
+            return adjustedDate;
+        }
 
 	/**
 	 * Subtracts the offset to reverse the interpretation at GMT time.
-	 * 
 	 * @param inputUdrdate
 	 *            the date to "fix"
 	 * @return the fixed date.
 	 */
+        		/*
+		 * The Jackson JSON parser assumes that the time zone is GMT if no
+		 * offset is explicitly indicated. Thus "2015-07-10" is interpreted as
+		 * "2015-07-10T00:00:00" GMT or "2015-07-09T20:00:00" EDT, i.e., the
+		 * previous day. The following 3 lines of code reverses this
+		 * interpretation.
+		 */
 	private Date fixMetaDataDates(Date inputUdrdate) {
 		if (inputUdrdate != null) {
 			long offset = DateCalendarUtils
@@ -237,17 +265,14 @@ public class UdrManagementController {
 			userId = String.valueOf(id);
 		logger.debug("******** Received UDR Update request by user =" + userId);
 
-		/*
-		 * The Jackson JSON parser assumes that the time zone is GMT if no
-		 * offset is explicitly indicated. Thus "2015-07-10" is interpreted as
-		 * "2015-07-10T00:00:00" GMT or "2015-07-09T20:00:00" EDT, i.e., the
-		 * previous day. The following 3 lines of code reverses this
-		 * interpretation.
-		 */
 		MetaData meta = inputSpec.getSummary();
 		if (meta != null) {
-			meta.setStartDate(fixMetaDataDates(meta.getStartDate()));
-			meta.setEndDate(fixMetaDataDates(meta.getEndDate()));
+
+                    meta.setStartDate(adjustHoursMinutesInDate(meta.getStartDate(), true));
+                    if (meta.getEndDate() != null)
+                    {                  
+                        meta.setEndDate(adjustHoursMinutesInDate(meta.getEndDate(), false));
+                    }
 		}
 		return udrService.updateUdr(userId, inputSpec);
 	}

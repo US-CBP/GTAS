@@ -14,7 +14,7 @@
         var sessionId = '';
 
         authService.getCurrentUser = function() {
-            return $http.get("user").then(function (response) {
+            return $http.get("/gtas/user").then(function (response) {
                 return response.data;
             });
         };
@@ -22,7 +22,7 @@
         var preparePostData = function (credentials) {
             var username = credentials.j_username != undefined ? credentials.j_username : '';
             var password = credentials.j_password != undefined ? credentials.j_password : '';
-            return 'username=' + username + '&password=' + password ;
+            return 'username=' + username + '&password=' + encodeURIComponent(password);
         }
 
         authService.login = function (credentials) {
@@ -31,7 +31,7 @@
 
             return $http({
                 method: 'POST',
-                url: 'authenticate',
+                url: '/gtas/authenticate',
                 data: postData
                 ,
                 headers: {

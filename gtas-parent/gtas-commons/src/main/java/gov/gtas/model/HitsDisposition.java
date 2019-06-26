@@ -7,11 +7,8 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.lookup.RuleCat;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import javax.persistence.*;
-import javax.persistence.criteria.Fetch;
 
 
 import java.util.HashSet;
@@ -22,7 +19,6 @@ import java.util.Set;
 @Table(name = "hits_disposition")
 public class HitsDisposition extends BaseEntityAudit {
     private static final long serialVersionUID = 1L;
-
     public HitsDisposition() {
     }
 
@@ -30,15 +26,15 @@ public class HitsDisposition extends BaseEntityAudit {
         this.hitId = hit;
     }
 
+    @Column(name = "rule_type")
+    private String ruleType;
+
     @Column(name = "hit_id")
     private long hitId;
 
-//    @Column(name = "case_id")
-//    private long caseId;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="case_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name="case_id", insertable=false, updatable=false)
     private Case aCase;
 
     @Column(name = "description")
@@ -50,11 +46,9 @@ public class HitsDisposition extends BaseEntityAudit {
     @Column(name = "valid", nullable = true)
     private String valid;
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "hitDispId", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToMany(targetEntity = HitsDispositionComments.class, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    //@JoinColumn(name = "hit_disp_id", referencedColumnName = "id")
-    @JoinTable(name = "case_hit_disp_comments", joinColumns = @JoinColumn(name = "hit_disp_id"), inverseJoinColumns = @JoinColumn(name = "hit_disp_comments_id"))
+    @JsonIgnore
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "hit_disp_id", nullable = false)
     private Set<HitsDispositionComments> dispComments = new HashSet<>();
 
     @JsonIgnore
@@ -107,14 +101,6 @@ public class HitsDisposition extends BaseEntityAudit {
         this.hitId = hitId;
     }
 
-//    public long getCaseId() {
-//        return caseId;
-//    }
-//
-//    public void setCaseId(long caseId) {
-//        this.caseId = caseId;
-//    }
-
 
     public Case getaCase() {
         return aCase;
@@ -135,28 +121,25 @@ public class HitsDisposition extends BaseEntityAudit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
+        if (!(o instanceof HitsDisposition)) return false;
         HitsDisposition that = (HitsDisposition) o;
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(hitId, that.hitId)
-               // .append(caseId, that.caseId)
-                .append(aCase, that.aCase)
-                .append(id, that.id)
-                .isEquals();
+        return
+                this.getHitId() == that.getHitId()
+                        && ((this.getRuleType() == null ? that.getRuleType() == null : this.getRuleType().equalsIgnoreCase(that.getRuleType())));
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(hitId)
-                //.append(caseId)
-                .append(aCase)
-                .append(id)
-                .toHashCode();
+        return Objects.hash(getHitId(), getRuleType());
+    }
+
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
     }
 }

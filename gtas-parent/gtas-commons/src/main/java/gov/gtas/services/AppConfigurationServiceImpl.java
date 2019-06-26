@@ -10,6 +10,9 @@ import gov.gtas.repository.AppConfigurationRepository;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  *
  * @author gbays
@@ -28,6 +31,17 @@ public class AppConfigurationServiceImpl implements AppConfigurationService
         
         return appConfig;
         
+    }
+
+    public Date offSetTimeZone(Date date) {
+        if (date == null) {
+            return null;
+        }
+        int hour_offset = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.HOURLY_ADJ).getValue());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, hour_offset);
+        return calendar.getTime();
     }
     
     @Override

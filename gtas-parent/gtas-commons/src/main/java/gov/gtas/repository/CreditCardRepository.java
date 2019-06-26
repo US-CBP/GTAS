@@ -6,11 +6,15 @@
 package gov.gtas.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.CreditCard;
 
 public interface CreditCardRepository extends CrudRepository<CreditCard, Long> {
-    CreditCard findByCardTypeAndNumberAndExpiration(String cardType, String number, Date expiration);
+    List<CreditCard> findByCardTypeAndNumberAndExpiration(String cardType, String number, Date expiration);
+
+	List<CreditCard> findByCardTypeAndNumberAndExpirationAndFlightId(String cardType, String number, Date expiration,
+			Long flightId);
 }

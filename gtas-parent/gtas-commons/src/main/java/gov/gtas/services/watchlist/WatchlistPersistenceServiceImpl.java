@@ -30,14 +30,7 @@ import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -149,7 +142,7 @@ public class WatchlistPersistenceServiceImpl implements
 			List<WatchlistItem> childItems = watchlistItemRepository
 					.getItemsByWatchlistName(name);
 			if (!CollectionUtils.isEmpty(childItems) && forceFlag) {
-				watchlistItemRepository.delete(childItems);
+				watchlistItemRepository.deleteAll(childItems);
 				watchlistRepository.delete(wl);
 			} else if (CollectionUtils.isEmpty(childItems)) {
 				watchlistRepository.delete(wl);
@@ -181,6 +174,7 @@ public class WatchlistPersistenceServiceImpl implements
 	private void doDeleteWithLogging(Watchlist watchlist, User editUser,
 			Collection<WatchlistItem> deleteItems) {
 		if (!CollectionUtils.isEmpty(deleteItems)) {
+			List<WatchlistItem> hydratedDeleteItems = new ArrayList<>();
 			List<AuditRecord> logRecords = new LinkedList<>();
 			Map<Long, WatchlistItem> updateDeleteItemMap = validateItemsPresentInDb(deleteItems);
 			for (WatchlistItem item : deleteItems) {
@@ -189,9 +183,10 @@ public class WatchlistPersistenceServiceImpl implements
 				logRecords.add(createAuditLogRecord(AuditActionType.DELETE_WL,
 						watchlist, itemToDelete, WATCHLIST_LOG_DELETE_MESSAGE,
 						editUser));
+				hydratedDeleteItems.add(itemToDelete);
 			}
-			watchlistItemRepository.delete(deleteItems);
-			auditRecordRepository.save(logRecords);
+			watchlistItemRepository.deleteAll(hydratedDeleteItems);
+			auditRecordRepository.saveAll(logRecords);
 		}
 	}
 
@@ -216,8 +211,8 @@ public class WatchlistPersistenceServiceImpl implements
 			}
 			validateItemsPresentInDb(updList);
 			Iterable<WatchlistItem> savedItems = watchlistItemRepository
-					.save(createUpdateItems);
-			auditRecordRepository.save(logRecords);
+					.saveAll(createUpdateItems);
+			auditRecordRepository.saveAll(logRecords);
 			savedItems.forEach(item -> ret.add(item.getId()));
 		}
 		return ret;
@@ -250,8 +245,8 @@ public class WatchlistPersistenceServiceImpl implements
 		if (targetItems != null && !targetItems.isEmpty()) {
 			List<Long> lst = targetItems.stream().map(itm -> itm.getId())
 					.collect(Collectors.toList());
-			Iterable<WatchlistItem> items = watchlistItemRepository
-					.findAll(lst);
+			Iterable<WatchlistItem> items = watchlistItemRepository.findAllById(lst);
+					
 			int itemCount = 0;
 			for (WatchlistItem itm : items) {
 				ret.put(itm.getId(), itm);
@@ -300,7 +295,7 @@ public class WatchlistPersistenceServiceImpl implements
 	@Override
 	public WatchlistItem findWatchlistItemById(Long watchlistItemId) {
 		// 
-		return this.watchlistItemRepository.findOne(watchlistItemId);
+		return this.watchlistItemRepository.findById(watchlistItemId).orElse(null);
 	}
 
 	@Override

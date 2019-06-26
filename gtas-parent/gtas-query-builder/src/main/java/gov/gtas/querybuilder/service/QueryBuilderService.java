@@ -8,7 +8,6 @@ package gov.gtas.querybuilder.service;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 
 import gov.gtas.enumtype.EntityEnum;
-import gov.gtas.model.BookingDetail;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
@@ -115,6 +114,7 @@ public class QueryBuilderService {
 			logger.debug("List query by " + userId);
 			result = mapToResultList(queryRepository.listQueryByUser(userId));
 		} catch (InvalidUserRepositoryException | InvalidQueryException e) {
+			logger.error("invalid query", e);
 			throw new InvalidQueryException(e.getMessage(), null);
 		}
 
@@ -136,8 +136,6 @@ public class QueryBuilderService {
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public FlightsPageDto runFlightQuery(QueryRequest queryRequest) throws InvalidQueryException {
-		List<FlightVo> flightList = new ArrayList<>();
-		long totalCount = 0;
 
 		// validate queryRequest
 		if (queryRequest == null) {
@@ -151,16 +149,16 @@ public class QueryBuilderService {
 			throw new InvalidQueryException(errorMsg, queryRequest.getQuery());
 		}
 
+		List<FlightVo> flightList = new ArrayList<>();
+		long totalCount = 0;
+		boolean queryLimitReached;
 		try {
 			FlightQueryVo flights = queryRepository.getFlightsByDynamicQuery(queryRequest);
-
-			if (flights == null) {
-				return new FlightsPageDto(flightList, totalCount);
-			}
+			queryLimitReached = flights.isQueryLimitReached();
 
 			totalCount = flights.getTotalFlights();
 
-			for (Flight flight : flights.getFlights()) {
+			for (FlightVo flight : flights.getFlights()) {
 				if (flight != null && flight.getId() > 0) {
 					FlightVo flightVo = new FlightVo();
 
@@ -172,13 +170,12 @@ public class QueryBuilderService {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
 
-		return new FlightsPageDto(flightList, totalCount);
+		return new FlightsPageDto(flightList, totalCount, queryLimitReached);
 	}
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest) throws InvalidQueryException {
-		List<PassengerVo> passengerList = new ArrayList<>();
-		long totalCount = 0;
+
 
 		// validate queryRequest
 		if (queryRequest == null) {
@@ -191,9 +188,12 @@ public class QueryBuilderService {
 			logger.info(errorMsg, new InvalidQueryException(errorMsg, queryRequest.getQuery()));
 			throw new InvalidQueryException(errorMsg, queryRequest.getQuery());
 		}
-
+		List<PassengerVo> passengerList = new ArrayList<>();
+		long totalCount = 0;
+		boolean queryLimitReached;
 		try {
 			PassengerQueryVo resultList = queryRepository.getPassengersByDynamicQuery(queryRequest);
+			queryLimitReached = resultList.isQueryLimitReached();
 			if (resultList == null) {
 				return new PassengersPageDto(passengerList, totalCount);
 			}
@@ -208,6 +208,9 @@ public class QueryBuilderService {
 
 					// passenger information
 					BeanUtils.copyProperties(passenger, vo);
+					BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
+					BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+					vo.setId(passenger.getId());
 					passengerList.add(vo);
 
 					// populate with hits information
@@ -219,15 +222,15 @@ public class QueryBuilderService {
 					vo.setCarrier(flight.getCarrier());
 					vo.setFlightOrigin(flight.getOrigin());
 					vo.setFlightDestination(flight.getDestination());
-					vo.setEtd(flight.getEtd());
-					vo.setEta(flight.getEta());
+					vo.setEtd(flight.getMutableFlightDetails().getEtd());
+					vo.setEta(flight.getMutableFlightDetails().getEta());
 		
 			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
 
-		return new PassengersPageDto(passengerList, totalCount);
+		return new PassengersPageDto(passengerList, totalCount, queryLimitReached);
 	}
 
 	private UserQuery createUserQuery(String userId, UserQueryRequest req) throws JsonProcessingException {

@@ -10,9 +10,7 @@ public class MetaDataBuilder {
     private String title;
     private String description;
     private Long ruleCat;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date endDate;
     private String author;
     private boolean enabled;

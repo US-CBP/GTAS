@@ -52,8 +52,8 @@ public class Whitelist extends BaseEntityAudit {
 	@Temporal(value = TemporalType.DATE)
 	private Date dob;
 
-	@Column(name = "citizenship_country")
-	private String citizenshipCountry;
+	@Column(name = "nationality")
+	private String nationality;
 
 	@Column(name = "residency_country")
 	private String residencyCountry;
@@ -127,12 +127,12 @@ public class Whitelist extends BaseEntityAudit {
 		this.dob = dob;
 	}
 
-	public String getCitizenshipCountry() {
-		return citizenshipCountry;
+	public String getNationality() {
+		return nationality;
 	}
 
-	public void setCitizenshipCountry(String citizenshipCountry) {
-		this.citizenshipCountry = citizenshipCountry;
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
 	}
 
 	public String getResidencyCountry() {
@@ -197,7 +197,7 @@ public class Whitelist extends BaseEntityAudit {
 		int result = super.hashCode();
 		result = prime
 				* result
-				+ ((citizenshipCountry == null) ? 0 : citizenshipCountry
+				+ ((nationality == null) ? 0 : nationality
 						.hashCode());
 		result = prime * result + ((dob == null) ? 0 : dob.hashCode());
 		result = prime * result
@@ -234,10 +234,10 @@ public class Whitelist extends BaseEntityAudit {
 		if (getClass() != obj.getClass())
 			return false;
 		Whitelist other = (Whitelist) obj;
-		if (citizenshipCountry == null) {
-			if (other.citizenshipCountry != null)
+		if (nationality == null) {
+			if (other.nationality!= null)
 				return false;
-		} else if (!citizenshipCountry.equals(other.citizenshipCountry))
+		} else if (!nationality.equals(other.nationality))
 			return false;
 		if (dob == null) {
 			if (other.dob != null)

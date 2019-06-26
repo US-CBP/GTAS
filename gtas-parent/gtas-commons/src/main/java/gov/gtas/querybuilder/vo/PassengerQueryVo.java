@@ -10,6 +10,8 @@ import java.util.List;
 public class PassengerQueryVo {
     List<Object[]> result;
     long totalPassengers;
+    private boolean queryLimitReached;
+
     public List<Object[]> getResult() {
         return result;
     }
@@ -22,5 +24,12 @@ public class PassengerQueryVo {
     public void setTotalPassengers(long totalPassengers) {
         this.totalPassengers = totalPassengers;
     }
-    
+
+    public boolean isQueryLimitReached() {
+        return queryLimitReached;
+    }
+
+    public void setQueryLimitReached(boolean queryLimitReached) {
+        this.queryLimitReached = queryLimitReached;
+    }
 }

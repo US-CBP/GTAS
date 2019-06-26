@@ -92,19 +92,19 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			//flight related
 			tamrPax.setAPIS_ARVL_APRT_CD(flight.getDestination());
 			tamrPax.setAPIS_DPRTR_APRT_CD(flight.getOrigin());
-			tamrPax.setETA_DT(flight.getEtaDate());
+			tamrPax.setETA_DT(flight.getMutableFlightDetails().getEtaDate());
 			tamrPax.setIATA_CARR_CD(flight.getCarrier());
 			tamrPax.setFLIT_NBR(flight.getFullFlightNumber());
 			
 			//pax related
-			List<String> citizenshipCountries = new ArrayList<String>();
-			citizenshipCountries.add(passenger.getCitizenshipCountry());
-			tamrPax.setCTZNSHP_CTRY_CD(citizenshipCountries);
-			tamrPax.setDOB_Date(passenger.getDob());
-			tamrPax.setFirst_name(passenger.getFirstName());		
-			tamrPax.setGNDR_CD(passenger.getGender());
+			List<String> nationalities = new ArrayList<String>();
+			nationalities.add(passenger.getPassengerDetails().getNationality());
+			tamrPax.setNATIONALITY_CD(nationalities);
+			tamrPax.setDOB_Date(passenger.getPassengerDetails().getDob());
+			tamrPax.setFirst_name(passenger.getPassengerDetails().getFirstName());		
+			tamrPax.setGNDR_CD(passenger.getPassengerDetails().getGender());
 			tamrPax.setGtasId(passenger.getId().toString());
-			tamrPax.setLast_name(passenger.getLastName());
+			tamrPax.setLast_name(passenger.getPassengerDetails().getLastName());
 			
 			//temp values
 			tamrPax.setUid("");

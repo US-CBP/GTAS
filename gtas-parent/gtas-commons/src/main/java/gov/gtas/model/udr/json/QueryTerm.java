@@ -7,6 +7,7 @@ package gov.gtas.model.udr.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -16,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 /**
  * The base query condition term.
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "type")
 public class QueryTerm implements QueryEntity {
     private static final long serialVersionUID = 6558396573006515297L;
     
@@ -25,6 +26,8 @@ public class QueryTerm implements QueryEntity {
      private String type;
      private String operator;
      private String[] value;
+    private UUID uuid;
+
     // private String[] values;
      
      public QueryTerm(){
@@ -114,6 +117,15 @@ public class QueryTerm implements QueryEntity {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
-    } 
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
 }

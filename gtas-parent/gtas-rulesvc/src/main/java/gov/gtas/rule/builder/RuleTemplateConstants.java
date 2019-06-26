@@ -5,16 +5,66 @@
  */
 package gov.gtas.rule.builder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import gov.gtas.constant.RuleServiceConstants;
 
 public class RuleTemplateConstants {
     public static final String SEAT_ENTITY_NAME = "Seat";
+    public static final String SEAT_ENTITY_NAME_LOWERCASE = "seat";
     public static final String SEAT_ATTRIBUTE_NAME = "number";
-    
+    public static final String DOLLAR_SIGN = "$";
+
+
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERDETAILS.AGE","age");
+    	put("PASSENGERDETAILS.DOB","dob");
+    	put("PASSENGERDETAILS.GENDER","gender");
+    	put("PASSENGERDETAILS.FIRSTNAME","firstName");
+    	put("PASSENGERDETAILS.LASTNAME","lastName");
+    	put("PASSENGERDETAILS.MIDDLENAME","middleName");
+    	put("PASSENGERDETAILS.RESIDENCYCOUNTRY","residencyCountry");
+    	put("PASSENGERDETAILS.NATIONALITY","nationality");
+    	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
+    }});
+
+    public static final Set<String> PASSENGER_DETAILS_SET = Collections.unmodifiableSet(new HashSet<String>(){{
+        add("AGE");
+        add("DOB");
+        add("GENDER");
+        add("FIRSTNAME");
+        add("LASTNAME");
+        add("MIDDLENAME");
+        add("RESIDENCYCOUNTRY");
+        add("NATIONALITY");
+        add("PASSENGERTYPE");
+    }});
+
+    public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    public static final Map<String,String> passTripDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("PASSENGERTRIPDETAILS.EMBARKATION","embarkation");
+    	put("PASSENGERTRIPDETAILS.DEBARKATION","debarkation");
+    	put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY","travelFrequency");
+    	put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY","embarkCountry");
+    	put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY","debarkCountry");
+    }});
+    public static final Set<String> FLIGHT_MUTABLE_DETAILS = Collections.unmodifiableSet(new HashSet<String>(){{
+        add("ETADATE");
+    }});
+    public static final Map<String,String> flightMutableDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
+    	put("MUTABLEFLIGHTDETAILS.ETA","etadate");
+    }});
+
+    public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
+
+
     public static final String PASSENGER_VARIABLE_NAME = "$p";
+    public static final String PASSENGER_DETAILS_VARIABLE_NAME = "$pcb";
+    public static final String PASSENGER_TRIP_VARIABLE_NAME = "$ptcb";
     public static final String DOCUMENT_VARIABLE_NAME = "$d";
     public static final String FLIGHT_VARIABLE_NAME = "$f";
     public static final String ADDRESS_VARIABLE_NAME = "$addr";
@@ -25,6 +75,7 @@ public class RuleTemplateConstants {
     public static final String FREQUENT_FLYER_VARIABLE_NAME = "$ff";
     public static final String PNR_VARIABLE_NAME = "$pnr";
     public static final String SEAT_VARIABLE_NAME = "$seat";
+    public static final String PNR_SEAT = "$pnr_seat";
     public static final String DWELL_TIME_VARIABLE_NAME = "$dwell";
     public static final String FLIGHT_PAX_VARIABLE_NAME = "$fp";
     public static final String BAG_VARIABLE_NAME = "$b";
@@ -36,7 +87,8 @@ public class RuleTemplateConstants {
     public static final String PAYMENT_FORM_ENTITY_NAME = "PaymentForm";
     public static final String PAYMENT_TYPE_ATTRIBUTE_NAME = "paymentType";
     public static final String PAYMENT_FORM_FIELD_ALIAS = "paymentForms";
-    
+    public static final String PAYMENT_FORM_FIELD_ALIAS_LOWERCASE = "paymentforms";
+
     private RuleTemplateConstants() {
         // to prevent instantiation.
     }

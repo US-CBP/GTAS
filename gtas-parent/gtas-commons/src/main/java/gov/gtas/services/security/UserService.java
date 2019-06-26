@@ -48,8 +48,17 @@ public interface UserService {
 	 * @param userData the user data
 	 * @return the updated user data
 	 */
-	@PreAuthorize(PRIVILEGE_ADMIN)
+	
 	public UserData update(UserData user);
+	
+	/**
+	 * Update the user.
+	 *
+	 * @param userData the user data
+	 * @return the updated user data
+	 */
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public UserData updateByAdmin(UserData user);
 
 	/**
 	 * Find by id.
@@ -66,4 +75,8 @@ public interface UserService {
 	 * @return the user
 	 */
 	public User fetchUser(final String userId);
+	
+	public boolean isAdminUser(String userId);
+
+	public boolean treatAsOneDay(String userId);
 }

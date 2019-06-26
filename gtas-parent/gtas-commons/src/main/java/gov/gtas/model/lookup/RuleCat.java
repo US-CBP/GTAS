@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.BaseEntityAudit;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsDisposition;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.persistence.*;
 import java.util.*;
@@ -33,7 +33,7 @@ public class RuleCat extends BaseEntityAudit {
     private Long priority;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
     public Long getCatId() {

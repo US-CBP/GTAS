@@ -1,7 +1,7 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.org.apache.xpath.internal.operations.Mult;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,9 +10,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-public class CaseRequestDto implements Serializable {
+public class  CaseRequestDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,6 +25,10 @@ public class CaseRequestDto implements Serializable {
     private Long flightId;
 
     private String flightNumber;
+    
+    private Long caseId;
+
+    private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
 
     private Long paxId;
 
@@ -48,6 +51,13 @@ public class CaseRequestDto implements Serializable {
     private Boolean oneDayLookoutFlag;
 
     private MultipartFile multipartFile;
+    
+    private String caseDisposition;
+    
+    private String userLocation;
+
+    @JsonProperty("withTimeLeft")
+    private Boolean withTimeLeft;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaStart;
@@ -200,9 +210,51 @@ public class CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-    @Override
+    public String getCaseDisposition() {
+		return caseDisposition;
+	}
+
+	public void setCaseDisposition(String caseDisposition) {
+		this.caseDisposition = caseDisposition;
+	}
+
+	@Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                 ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    public CaseDispositionStatusCheckbox getDisplayStatusCheckBoxes() {
+        return displayStatusCheckBoxes;
+    }
+
+    public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
+        this.displayStatusCheckBoxes = displayStatusCheckBoxes;
+    }
+
+	public Long getCaseId() {
+		return caseId;
+	}
+
+	public void setCaseId(Long caseId) {
+		this.caseId = caseId;
+	}
+
+
+	public String getUserLocation() {
+		return userLocation;
+	}
+
+	public void setUserLocation(String userLocation) {
+		this.userLocation = userLocation;
+	}
+
+
+    public Boolean getWithTimeLeft() {
+        return withTimeLeft;
+    }
+
+    public void setWithTimeLeft(Boolean withTimeLeft) {
+        this.withTimeLeft = withTimeLeft;
     }
 }

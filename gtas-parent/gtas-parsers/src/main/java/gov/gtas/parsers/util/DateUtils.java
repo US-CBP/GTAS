@@ -30,6 +30,9 @@ public final class DateUtils {
      * set the time portion of a Date to all 0's
      */
     public static Date stripTime(Date d) {
+        if (d == null) {
+            return null;
+        }
         Calendar cal = Calendar.getInstance();
         cal.setTime(d);
         cal.set(Calendar.HOUR_OF_DAY, 0);

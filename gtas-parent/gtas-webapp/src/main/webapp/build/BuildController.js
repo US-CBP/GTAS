@@ -22,6 +22,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     this.endDate = obj ? obj.endDate : undefined;
                     this.enabled = obj ? obj.enabled : true;
                     this.ruleCat = obj ? obj.ruleCat : null;
+                    this.overMaxHits = obj ? obj.overMaxHits : null;
                 }
             }
         },
@@ -49,6 +50,18 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     var result = myData.result;
                     var rules = result.details.rules;
                     $scope.ruleId = result.id;
+                    // endDate will not display in calendar widget unless it is a Date object.
+                    var endDateLong = result.summary.endDate;
+                    if (endDateLong != null)
+                    {
+                        var endDateObj = new Date(endDateLong);
+                        result.summary.endDate = endDateObj;
+                    }
+                    // startDate will display , but errors are thrown in the console if not a Date object.
+                    var startDateLong = result.summary.startDate;
+                    var startDateObj = new Date(startDateLong);
+                    result.summary.startDate = startDateObj;                    
+                    
                     $scope.loadSummary('rule', result.summary);
                     $scope.$builder.queryBuilder('loadRules', result.details);
                 });
@@ -125,13 +138,21 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         rule: function (myData) {
             var temp, data = [];
             myData.forEach(function (obj) {
-                temp = $.extend({}, obj.summary, {
-                    id: obj.id,
-                    hitCount: obj.hitCount,
-                    modifiedOn: obj.modifiedOn,
-                    modifiedBy: obj.modifiedBy
-                });
-                data.push(temp);
+
+            var startDateObj = $scope.convertUTCDateToLocalDate(obj.summary.startDate);
+            obj.summary.startDate = startDateObj.toISOString().substring(0,10);
+            if (obj.summary.endDate != null) {
+                var endDateObj = $scope.convertUTCDateToLocalDate(obj.summary.endDate);
+                obj.summary.endDate = endDateObj.toISOString().substring(0, 10);
+            }
+            temp = $.extend({}, obj.summary, {
+                id: obj.id,
+                hitCount: obj.hitCount,
+                modifiedOn: obj.modifiedOn,
+                modifiedBy: obj.modifiedBy,
+                overMaxHits : obj.overMaxHits
+            });
+            data.push(temp);
             });
             $scope.qbGrid.data = data;
         },
@@ -301,6 +322,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     $scope.save = {
         query: {
             confirm: function () {
+                
                 var queryObject = {
                     id: setId(),
                     title: $scope.query.title,
@@ -312,6 +334,11 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                     return;
                 }
 
+                $scope.saving=true;
+                $timeout(function() {
+                    $scope.saving=false;
+                }, 1000);
+               
                 if (queryObject.title && queryObject.title.length) {
                     queryObject.title = queryObject.title.trim();
                 }
@@ -340,6 +367,13 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
                 if ($scope.saving) {
                     return;
                 }
+                
+              
+                $scope.saving=true;
+                $timeout(function() {
+                    $scope.saving=false;
+                }, 1000);
+
 
                 if (ruleObject.summary.title && ruleObject.summary.title.length) {
                     ruleObject.summary.title = ruleObject.summary.title.trim();
@@ -417,7 +451,7 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         }       
         
     }
-
+    
     resetModels($scope);
 
     $scope.buildAfterEntitiesLoaded({deleteEntity: 'HITS'});
@@ -476,4 +510,19 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
             }
         }
     );
+    
+    $scope.convertUTCDateToLocalDate = function (utcDate) {
+        utcDate = new Date(utcDate);
+        var localOffset = utcDate.getTimezoneOffset() * 60000;
+        var localTime = utcDate.getTime();
+
+        utcDate = localTime - localOffset;
+
+        utcDate = new Date(utcDate);
+        //console.log("Converted time: " + utcDate);
+        return utcDate;
+    }
+    
+
+         
 });

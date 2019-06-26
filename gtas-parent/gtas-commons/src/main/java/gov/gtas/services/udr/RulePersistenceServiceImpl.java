@@ -106,7 +106,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	public UdrRule delete(Long id, String userId) {
 		final User user = userService.fetchUser(userId);
 
-		UdrRule ruleToDelete = udrRuleRepository.findOne(id);
+		UdrRule ruleToDelete = udrRuleRepository.findById(id).orElse(null);
 		if (ruleToDelete != null && ruleToDelete.getDeleted() == YesNoEnum.N) {
 			ruleToDelete.setDeleted(YesNoEnum.Y);
 			ruleToDelete.setDeleteId(ruleToDelete.getId());
@@ -138,7 +138,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
-	public List<Object[]> findAllUdrSummary(String userId) {
+	public List<UdrRule> findAllUdrSummary(String userId) {
 		if (StringUtils.isEmpty(userId)) {
 			return udrRuleRepository.findAllUdrRuleSummary();
 		} else {
@@ -203,7 +203,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	@Override
 	@Transactional(TxType.SUPPORTS)
 	public UdrRule findById(Long id) {
-		return udrRuleRepository.findOne(id);
+		return udrRuleRepository.findById(id).orElse(null);
 	}
 
 	@Override
@@ -236,19 +236,16 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
-	@Cacheable(value = "knowledgebase")
 	public KnowledgeBase findUdrKnowledgeBase() {
 		return this.findUdrKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
 	}
 
 	@Override
-	@Cacheable(value = "knowledgebase")
 	public KnowledgeBase findUdrKnowledgeBase(String kbName) {
 		return udrRuleRepository.getKnowledgeBaseByName(kbName);
 	}
 
 	@Override
-	@CacheEvict(value = "knowledgebase", allEntries = true)
 	public KnowledgeBase saveKnowledgeBase(KnowledgeBase kb) {
 		kb.setCreationDt(new Date());
 		if (kb.getId() == null) {
@@ -260,7 +257,6 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
-	@CacheEvict(value = "knowledgebase", allEntries = true)
 	public KnowledgeBase deleteKnowledgeBase(String kbName) {
 		KnowledgeBase kb = findUdrKnowledgeBase(kbName);
 		if (kb != null) {

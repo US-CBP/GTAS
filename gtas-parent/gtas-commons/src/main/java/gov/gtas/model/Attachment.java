@@ -5,18 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.*;
 
 @Entity
 @Table(name="attachment")
@@ -52,8 +43,14 @@ public class Attachment implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)  
 	private Date created;
 
-	@ManyToOne
-    private Passenger passenger;
+	@ManyToOne(fetch = FetchType.LAZY)
+        private Passenger passenger;
+
+        @ManyToMany(
+        mappedBy = "attachmentSet",
+        targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL
+        )
+        private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
     
 	public Integer getId() {
 		return id;
@@ -119,6 +116,16 @@ public class Attachment implements Serializable {
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
+
+    public Set<HitsDispositionComments> getHitsDispositionComments() {
+        return hitsDispositionComments;
+    }
+
+    public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
+        this.hitsDispositionComments = hitsDispositionComments;
+    }
+        
+        
 
 	@Override  
     public int hashCode() {  

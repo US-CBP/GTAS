@@ -6,6 +6,7 @@
 package gov.gtas.repository.udr;
 
 import gov.gtas.enumtype.YesNoEnum;
+import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
@@ -29,15 +30,13 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>,
     public List<UdrRule> findUdrRuleByAuthor(
             @Param("authorUserId") String authorUserId);
 
-    @Query("SELECT udr.id, udr.editedBy.userId, udr.editDt, udr.metaData.title, udr.metaData.description, "
-            + "udr.metaData.startDt, udr.metaData.enabled, udr.metaData.endDt, udr.author.userId FROM UdrRule udr "
+    @Query("SELECT udr FROM UdrRule udr "
             + "WHERE udr.deleted = 'N' and udr.author.userId = :authorUserId")
-    public List<Object[]> findAllUdrRuleSummaryByAuthor(
+    public List<UdrRule> findAllUdrRuleSummaryByAuthor(
             @Param("authorUserId") String authorUserId);
 
-    @Query("SELECT udr.id, udr.editedBy.userId, udr.editDt, udr.metaData.title, udr.metaData.description, "
-            + "udr.metaData.startDt, udr.metaData.enabled, udr.metaData.endDt, udr.author.userId FROM UdrRule udr WHERE udr.deleted = 'N'")
-    public List<Object[]> findAllUdrRuleSummary();
+    @Query("SELECT udr FROM UdrRule udr WHERE udr.deleted = 'N'")
+    public List<UdrRule> findAllUdrRuleSummary();
 
     @Query("SELECT udr FROM UdrRule udr WHERE udr.deleted = 'N' and udr.metaData.title = :title and udr.author.userId = :authorUserId")
     public UdrRule getUdrRuleByTitleAndAuthor(@Param("title") String title,
@@ -62,4 +61,13 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>,
     public List<UdrRule> findByDeletedAndEnabled(
             @Param("deleted") YesNoEnum deleted,
             @Param("enabled") YesNoEnum enabled);
+    
+    @Query("SELECT udr FROM Rule r, UdrRule udr WHERE r.id =:ruleId AND udr.id = r.parent")
+    public UdrRule findUdrRuleByRuleId (
+    		@Param("ruleId") Long ruleId);
+    
+    default UdrRule findOne(Long id)
+    {
+    	return findById(id).orElse(null);
+    }
 }

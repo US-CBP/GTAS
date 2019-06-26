@@ -5,20 +5,9 @@
  */
 package gov.gtas.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "hits_summary")
@@ -33,24 +22,44 @@ public class HitsSummary extends BaseEntity {
     private Date createdDate;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HitDetail> hitdetails = new ArrayList<HitDetail>();
+    private Set<HitDetail> hitdetails = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
+    @Column(name = "flight_id", columnDefinition = "bigint unsigned")
+    private Long flightId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
     private Flight flight;
 
-    @ManyToOne
-    @JoinColumn(name = "passenger_id", nullable = false)
+    @Column(name = "passenger_id", columnDefinition = "bigint unsigned")
+    private Long paxId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
     private Passenger passenger;
 
     @Column(name = "rule_hit_count")
-    private Integer ruleHitCount;
+    private Integer ruleHitCount = 0;
 
     @Column(name = "hit_type")
     private String hitType;
 
     @Column(name = "wl_hit_count")
-    private Integer watchListHitCount;
+    private Integer watchListHitCount = 0;
+
+    @Column(name = "graph_hit_count")
+    private Integer graphHitCount = 0;
+
+    @Transient
+    private Boolean saveHits = false;
+
+    public Boolean getSaveHits() {
+        return saveHits;
+    }
+
+    public void setSaveHits(Boolean saveHits) {
+        this.saveHits = saveHits;
+    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -60,11 +69,11 @@ public class HitsSummary extends BaseEntity {
         this.createdDate = createdDate;
     }
 
-    public List<HitDetail> getHitdetails() {
+    public Set<HitDetail> getHitdetails() {
         return hitdetails;
     }
 
-    public void setHitdetails(List<HitDetail> hitdetails) {
+    public void setHitdetails(Set<HitDetail> hitdetails) {
         this.hitdetails = hitdetails;
     }
 
@@ -92,12 +101,20 @@ public class HitsSummary extends BaseEntity {
         this.watchListHitCount = watchListHitCount;
     }
 
-    public Flight getFlight() {
-        return flight;
+    public Long getFlightId() {
+        return flightId;
     }
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
+    public void setFlightId(Long flightId) {
+        this.flightId = flightId;
+    }
+
+    public Long getPaxId() {
+        return paxId;
+    }
+
+    public void setPaxId(Long paxId) {
+        this.paxId = paxId;
     }
 
     public Passenger getPassenger() {
@@ -106,5 +123,35 @@ public class HitsSummary extends BaseEntity {
 
     public void setPassenger(Passenger passenger) {
         this.passenger = passenger;
+    }
+
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    public Integer getGraphHitCount() {
+        return graphHitCount;
+    }
+
+    public void setGraphHitCount(Integer graphHitCount) {
+        this.graphHitCount = graphHitCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof HitsSummary)) return false;
+        HitsSummary that = (HitsSummary) o;
+        return getFlightId().equals(that.getFlightId()) &&
+                getPaxId().equals(that.getPaxId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFlightId(), getPaxId());
     }
 }

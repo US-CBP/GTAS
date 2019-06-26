@@ -22,14 +22,13 @@ public class MetaData implements Serializable {
 
     private Long ruleCat;
         
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date startDate;
     
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = RuleConstants.UDR_DATE_FORMAT)
     private Date endDate;
     
     private String author;
     private boolean enabled;
+    private boolean overMaxHits;
     public MetaData(){
         
     }
@@ -148,5 +147,12 @@ public class MetaData implements Serializable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
+    public boolean isOverMaxHits() {
+        return overMaxHits;
+    }
+
+    public void setOverMaxHits(boolean overMaxHits) {
+        this.overMaxHits = overMaxHits;
+    }
 }

@@ -10,16 +10,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.services.HitsSummaryService;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
@@ -34,7 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { CommonServicesConfig.class,
+@ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HitsSummaryRepositoryIT {
@@ -106,16 +104,12 @@ public class HitsSummaryRepositoryIT {
     private Object[] createPassengerFlight() {
         Passenger p = new Passenger();
         p.setDeleted(false);
-        p.setPassengerType("P");
+        p.getPassengerDetails().setPassengerType("P");
         passengerRepository.save(p);
 
         Flight f = new Flight();
-        f.setFlightDate(new Date());
         f.setFlightNumber("899");
         f.setOrigin("IAD");
-        f.setListHitCount(21);
-        f.setPassengerCount(234);
-        f.setRuleHitCount(3);
         f.setCarrier("DL");
         f.setDestination("DXB");
         f.setDirection("I");
@@ -142,7 +136,7 @@ public class HitsSummaryRepositoryIT {
         ret.setRuleHitCount(1);
         ret.setWatchListHitCount(0);
 
-        List<HitDetail> detList = new LinkedList<HitDetail>();
+        Set<HitDetail> detList = new HashSet<HitDetail>();
         HitDetail det = new HitDetail();
         det.setCreatedDate(new Date());
         det.setDescription("jkkjhg");

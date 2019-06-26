@@ -1,10 +1,7 @@
 package gov.gtas.parsers.redisson;
 
-import gov.gtas.jms.services.MessageSender;
 import gov.gtas.parsers.edifact.EdifactLexer;
-import gov.gtas.parsers.pnrgov.PnrGovParser;
 import gov.gtas.parsers.util.FileUtils;
-import gov.gtas.parsers.vo.PnrVo;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +10,10 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 @Component
@@ -28,7 +28,6 @@ public class RedisLoaderMain {
     private static String messagePayload;
     private static Date transDate;
     private static EdifactLexer lexer;
-    private MessageSender messageSender;
 
     public static void main(String[] args) {
 

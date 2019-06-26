@@ -7,9 +7,12 @@ package gov.gtas.vo;
 
 public class SettingsVo {
     private double matchingThreshold;
+    private int maxPassengerQueryResult;
+    private int maxFlightQueryResult;
     private double flightRange;
     private String apisOnlyFlag;
     private String apisVersion;
+    private Integer maxRuleHit;
 
     public double getMatchingThreshold() {
             return matchingThreshold;
@@ -39,7 +42,29 @@ public class SettingsVo {
     public void setApisVersion(String apisVersion) {
         this.apisVersion = apisVersion;
     }
-        
-        
-	
+
+
+    public int getMaxPassengerQueryResult() {
+        return maxPassengerQueryResult;
+    }
+
+    public void setMaxPassengerQueryResult(int maxPassengerQueryResult) {
+        this.maxPassengerQueryResult = maxPassengerQueryResult;
+    }
+
+    public int getMaxFlightQueryResult() {
+        return maxFlightQueryResult;
+    }
+
+    public void setMaxFlightQueryResult(int maxFlightQueryResult) {
+        this.maxFlightQueryResult = maxFlightQueryResult;
+    }
+
+    public Integer getMaxRuleHit() {
+        return maxRuleHit;
+    }
+
+    public void setMaxRuleHit(Integer maxRuleHit) {
+        this.maxRuleHit = maxRuleHit;
+    }
 }
