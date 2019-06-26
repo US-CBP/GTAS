@@ -13,7 +13,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import gov.gtas.config.CommonServicesConfig;
+import gov.gtas.config.TestCommonServicesConfig;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.PassengerTypeCode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AsyncConfig.class , CommonServicesConfig.class})
+@ContextConfiguration(classes = { AsyncConfig.class , TestCommonServicesConfig.class})
 @Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
