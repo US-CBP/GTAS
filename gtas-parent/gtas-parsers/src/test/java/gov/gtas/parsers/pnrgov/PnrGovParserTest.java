@@ -14,13 +14,12 @@ import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.vo.PnrVo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import static org.junit.Assert.*;
 
 public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_MESSAGE_PG_77 = "/pnr-messages/pnrMessagePg77.txt";
@@ -30,6 +29,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String BIG_PNR = "/pnr-messages/pnrWithBags.txt";
     private static final String PNR_WITH_BAGS = "/pnr-messages/bigMessagePnr.txt";
     private static final String PNR_EXAMPLE = "/pnr-messages/pnrMessageExample.txt";
+    private static final String PNR_EDGE = "/pnr-messages/pnrEdge.txt";
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
 
     private EdifactParser<PnrVo> parser;
@@ -91,7 +91,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     public void pnrWithBgs() throws IOException, URISyntaxException, ParseException {
         String pnrWithBags = getMessageText(PNR_WITH_BAGS);
         PnrVo vo = this.parser.parse(pnrWithBags);
-        assertTrue(!vo.getBagVos().isEmpty());
+        assertFalse(vo.getBagVos().isEmpty());
     }
 
     @Test
@@ -101,6 +101,14 @@ public class PnrGovParserTest implements ParserTestHelper {
         Integer bagsInPNRExample = 18;
         assertEquals(bagsInPNRExample, vo.getTotal_bag_count());
     }
+
+    @Test
+    public void testingEscapeCharacter() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_EDGE);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getEmails().get(0).getAddress(), " MOLLY_LOUUNT+50BB@GMAIL.COM");
+    }
+
 
     /*    @Test
     public void failingMessage1() throws IOException, URISyntaxException, ParseException {

@@ -15,6 +15,8 @@
            .parent($scope.toastParent));
       };
 
+      var refresher = null;
+
       var exporter = {
           'csv': function () {
               $scope.gridApi.exporter.csvExport('all', 'all');
@@ -87,7 +89,6 @@
       var self = this, airports,
           stateName = $state ? $state.$current.self.name : 'flights',
           setFlightsGrid = function (grid, response) {
-              //NEEDED because java services responses not standardize should have Lola change and Amit revert to what he had;
               var data = stateName === 'queryFlights' ? response.data.result : response.data;
               grid.totalItems = data.totalFlights === -1 ? 0 : data.totalFlights;
               grid.data = data.flights;
@@ -107,36 +108,44 @@
                   $scope.queryLimitReached = flights.data.result.queryLimitReached;
               }
               else{
-                  setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
+                setFlightsGrid($scope.flightsGrid, flights || {flights: [], totalFlights: 0});
               }
-
           },
           update = function (data) {
-              flights = data;
-              getPage();
-              spinnerService.hide('html5spinner');
+            flights = data;
+            getPage();
+            spinnerService.hide('html5spinner');
           },
           fetchMethods = {
-              queryFlights: function () {
-                  var postData, query = JSON.parse(localStorage['query']);
-                  postData = {
-                      pageNumber: $scope.model.pageNumber,
-                      pageSize: $scope.model.pageSize,
-                      query: query
-                  };
-                  spinnerService.show('html5spinner');
-                  executeQueryService.queryFlights(postData).then(update);
-              },
-              flights: function () {
-                  spinnerService.show('html5spinner');
-                  flightService.getFlights($scope.model).then(update);
-              }
+            queryFlights: function () {
+              var postData, query = JSON.parse(localStorage['query']);
+              postData = {
+                  pageNumber: $scope.model.pageNumber,
+                  pageSize: $scope.model.pageSize,
+                  query: query
+              };
+              spinnerService.show('html5spinner');
+              executeQueryService.queryFlights(postData).then(update);
+            },
+            flights: function () {
+              clearRefresh();
+              if ($state.$current.self.name !== 'flights') return;
+              spinnerService.show('html5spinner');
+              flightService.getFlights($scope.model).then(update).then(startRefresh);
+            }
           },
           resolvePage = function () {
-              populateAirports();
-              fetchMethods[stateName]();
+            populateAirports();
+            fetchMethods[stateName]();
           };
 
+      var clearRefresh = function() {
+        clearTimeout(refresher);
+      }
+
+      var startRefresh = function() {
+        refresher = setTimeout(fetchMethods.flights, 30000);
+      }
       var populateAirports = function () {
 
           var originAirports = new Array();
@@ -182,8 +191,6 @@
         angular.forEach(flightsModel.origins, function (value, index) {
               originAirports.push({id: value});
           });
-          
-
 
           angular.forEach(flightsModel.destinations, function (value, index) {
               destinationAirports.push({id: value});
@@ -191,7 +198,6 @@
           $scope.model.origin = originAirports;
           $scope.model.dest = destinationAirports;
       };
-
 
       self.querySearch = querySearch;
       
@@ -202,7 +208,7 @@
               return contact;
             });
             self.filterSelected = true;
-        });
+      });
 
       
       $scope.selectedFlight = $stateParams.flight;
@@ -506,6 +512,8 @@
         }
     };
 
+
+
     $scope.reset = function () {
         $scope.model.reset();
         resolvePage();
@@ -534,5 +542,5 @@
     resolvePage();
     mapAirports();
     loadFlightDirection();
-});
+})
 }());
