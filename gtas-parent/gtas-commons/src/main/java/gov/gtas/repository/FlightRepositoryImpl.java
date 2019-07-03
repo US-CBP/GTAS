@@ -15,9 +15,11 @@ import gov.gtas.services.dto.FlightsRequestDto;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -205,7 +207,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Root<Flight> countRoot = countQuery.from(Flight.class);
 		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
 		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
-		if (countEtaCondition != null) {
+
+    if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
 		}
 		countQuery.select(cb.count(countRoot)).where(
