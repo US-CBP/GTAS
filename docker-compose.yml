@@ -9,7 +9,8 @@ services:
     networks:
       - gtas_default
   kibana:
-    image: kibana:6.5.4
+    # image: kibana:6.5.4
+    image: docker.elastic.co/kibana/kibana:6.5.4 
     container_name: kibana
     ports:
       - 5601:5601
@@ -19,7 +20,10 @@ services:
       - elasticsearch
 
   elasticsearch:
-    image: elasticsearch:6.5.4
+    # image: elasticsearch:6.5.4
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/elasticsearch/Dockerfile
     container_name: elasticsearch
     networks: 
       - gtas_default
@@ -31,19 +35,19 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-  # logstash:
-  #   image: logstash:6.5.4
-  #   container_name: logstash
-  #   command: logstash -f /config/
-  #   environment:
-  #     - JAVA_OPTS=-Xms1g -Xmx1g
-  #   volumes:
-  #     - $PWD/gtas-parent/scripts/elastic/install/docker/logstash/config:/config
-  #   networks:
-  #     - gtas_default
-  #   depends_on:
-  #     - elasticsearch
-  #     - mariahost
+  logstash:
+    # image: logstash:6.5.4
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/logstash/Dockerfile
+    container_name: logstash
+    environment:
+      - JAVA_OPTS=-Xms1g -Xmx1g
+    networks:
+      - gtas_default
+    depends_on:
+      - elasticsearch
+      - mariahost
   activemq:
     image: rmohr/activemq
     container_name: activemq
@@ -73,23 +77,19 @@ services:
       dockerfile: ./docker/tomcat.Dockerfile
     ports:
       - "8080:8080"
+    
     environment:
       LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
       LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}
     volumes:
       - ${LOCAL_DRIVE_MAPPING_INPUT}:/usr/local/input:rw
       - ${LOCAL_DRIVE_MAPPING_OUTPUT}:/usr/local/output:rw
-      # - ./gtas-parent/gtas-webapp/target/gtas.war:/usr/local/tomcat/webapps/gtas.war
-      # - ./gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war:/usr/local/tomcat/webapps/gtas-job-scheduler.war
     networks:
       - gtas_default
 
-volumes:
-  es-data:
-    driver: local
-  redis-data:
-    driver: local
+
   
 networks:
   gtas_default:
+    driver: "bridge"
     

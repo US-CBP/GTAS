@@ -14,7 +14,7 @@ COPY config/logstash/cases_mapping.json /usr/share/logstash/config/cases_mapping
 COPY config/logstash/flightpax_template.json /usr/share/logstash/config/flightpax_template.json
 
 ENV ELASTIC_HOST=elasticsearch
-ENV DATABASE_HOST=192.168.2.28
+ENV DATABASE_HOST=mariahost
 
 RUN curl -o  /usr/share/logstash/config/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
 
