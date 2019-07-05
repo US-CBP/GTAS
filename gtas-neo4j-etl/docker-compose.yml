@@ -1,0 +1,29 @@
+version: "3.4"
+
+services:
+  neo4j:
+    build:
+      context: .
+      dockerfile: ./neo4j.Dockerfile
+    container_name: neo4j
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+      - gtas_default
+    
+  
+  pentaho:
+    build:
+      context: .
+      dockerfile: ./pentaho.Dockerfile
+    container_name: pentaho
+    ports:
+      - 8181:8181
+    networks: 
+      - gtas_default
+
+networks: 
+  gtas_default:
+    driver: "bridge"
+      
