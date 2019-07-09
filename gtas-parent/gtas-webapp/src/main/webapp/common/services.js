@@ -711,24 +711,32 @@
                   name: "fileName",
                   displayName: "File Name",
                   headerCellFilter: "translate",
+                  field: "fileName",
+                  cellTemplate: "<div>{{COL_FIELD | uppercase}}</div>",
                   width: "43%"
                 },
                 {
                   name: "size",
                   displayName: "Size",
                   headerCellFilter: "translate",
+                  field: "size",
+                  cellTemplate: "<div>{{grid.appScope.formatBytes(COL_FIELD)}}</div>",
                   width: "15%"
                 },
                 {
                   name: "creationDate",
                   displayName: "Date Created",
                   headerCellFilter: "translate",
+                  cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
+                  field: "creationDate",
                   width: "20%"
                 },
                 {
                   name: "lastModified",
                   displayName: "Last Modified",
                   headerCellFilter: "translate",
+                  field: "lastModified",
+                  cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
                   width: "20%"
                 }
               ],
