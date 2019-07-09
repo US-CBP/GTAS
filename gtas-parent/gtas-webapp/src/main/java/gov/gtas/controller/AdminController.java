@@ -25,6 +25,7 @@ import gov.gtas.services.CountryService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
+import gov.gtas.vo.LogFileVo;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -112,14 +113,14 @@ public class AdminController {
 
   // GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
   @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}")
-  public String[][] getLogZipList(@PathVariable("type") String logType) throws IOException {
+  public List<LogFileVo> getLogZipList(@PathVariable("type") String logType) throws IOException {
     return fileService.getLogZipList(logType);
   }
 
   //GET ZIP BINARY
   @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}/{file}", produces="application/zip")
     public ResponseEntity<Resource> getLogZip(@PathVariable("type") String logType, @PathVariable("file") String logFile)  throws IOException {
-      File file = fileService.getLogZip2(logType, logFile);
+      File file = fileService.getLogZip(logType, logFile);
       HttpHeaders headers = new HttpHeaders();
 
       headers.setContentType(MediaType.valueOf("application/zip"));

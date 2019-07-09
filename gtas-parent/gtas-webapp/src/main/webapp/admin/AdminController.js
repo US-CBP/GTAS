@@ -129,22 +129,11 @@ var bindZipGrid = function(data) {
   $scope.zipGrid.data = [];
 
   if (!Array.isArray(data) || data.length === 0) {
-    $scope.errorToast('No log files were found');
+    that.successToast('No log files were found.');
     return;
   }
   
-  var result = [];
-
-  data.forEach(item => {
-    var row = {
-      fileName: item[0],
-      size: item[1],
-      creationDate: item[2],
-      lastModified: item[3]
-    };
-    result.push(row);
-  })
-   $scope.zipGrid.data = result;
+   $scope.zipGrid.data = data;
 }
 
 $scope.refreshActiveCodeGrid = function(){

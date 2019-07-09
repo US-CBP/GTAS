@@ -4,6 +4,8 @@
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.services;
+import java.util.List;
+import gov.gtas.vo.LogFileVo;
 import java.io.File;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +16,9 @@ public interface FileService {
   public String[] getLogTypeList();
 
   @PreAuthorize(PRIVILEGE_ADMIN)
-  public String[][] getLogZipList(String logType);
+  public List<LogFileVo> getLogZipList(String logType);
 
   @PreAuthorize(PRIVILEGE_ADMIN)
-  public byte[] getLogZip(String logType, String logFile);
-
-  @PreAuthorize(PRIVILEGE_ADMIN)
-  public File getLogZip2(String logType, String logFile);
+  public File getLogZip(String logType, String logFile);
 
   }
