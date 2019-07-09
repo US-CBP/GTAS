@@ -54,7 +54,7 @@ public class LoaderWorkerThread implements Runnable {
 			}	    	
 	    	if(msg != null){
 	    		MessageHeaders headers =  msg.getHeaders();
-	    		String filename = (String)headers.get("Filename");
+	    		String filename = (String)headers.get("filename");
 	    		if (filename != null) {
 					this.fileName = filename;
 				} else {

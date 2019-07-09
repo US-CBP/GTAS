@@ -8,7 +8,6 @@ package gov.gtas.services;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.redisson.config.RedisLoaderConfig;
 
 import java.io.File;
 
@@ -24,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes =  {TestCommonServicesConfig.class,
-		CachingConfig.class, RedisLoaderConfig.class  })
+		CachingConfig.class})
 @Rollback(true)
 public class ApisMessageServiceIT extends
 		AbstractTransactionalJUnit4SpringContextTests {
