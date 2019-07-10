@@ -7,6 +7,7 @@
     <property name="ROOT_LOG_LEVEL" value="WARN"/>
     <property name="GTAS_LOG_LEVEL" value="WARN"/>
     
+    
     <if condition='isDefined("OVERRIDE_GTAS_LOG_LEVEL")'>
       <then>
          <property name="GTAS_LOG_LEVEL" value="${OVERRIDE_GTAS_LOG_LEVEL}"/>
@@ -20,10 +21,12 @@
     <if condition='isDefined("CATALINA_HOME")'>
       <then>
         <property name="LOG_FILE" value="${CATALINA_HOME}/logs/gtas.log"/>
+        <property name="ROTATED_LOG_NAME" value="${CATALINA_HOME}/logs/gtas"/>
       </then>
       <else>
         <property name="LOG_FILE"
             value="./target/logs/gtas_build.log" />
+        <property name="ROTATED_LOG_NAME"   value="./target/logs/gtas_build"/>
       </else>
     </if>
     
@@ -36,13 +39,13 @@
             <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
         <file>${LOG_FILE}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.%i</fileNamePattern>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ROTATED_LOG_NAME}.%d{yyyy-MM-dd-HH-mm}.%i.log</fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <maxFileSize>10MB</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
-        <triggeringPolicy
-            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>10MB</MaxFileSize>
-        </triggeringPolicy>
+       
     </appender>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"><!-- Note PatternLayoutEncoder is default and could have been omitted -->

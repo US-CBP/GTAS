@@ -29,7 +29,6 @@ import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.redisson.config.RedisLoaderConfig;
 import gov.gtas.parsers.vo.FlightVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.repository.FlightLegRepository;
@@ -37,7 +36,7 @@ import gov.gtas.repository.FlightRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class, RedisLoaderConfig.class })
+		CachingConfig.class, })
 @Rollback(true)
 public class PnrMessageServiceIT extends
 		AbstractTransactionalJUnit4SpringContextTests {
