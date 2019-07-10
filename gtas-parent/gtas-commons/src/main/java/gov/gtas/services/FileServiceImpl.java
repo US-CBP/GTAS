@@ -9,6 +9,8 @@ import java.util.List;
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import gov.gtas.vo.LogFileVo;
@@ -62,10 +64,10 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<LogFileVo> getLogZipList(String logType){
       List<LogFileVo> result = new ArrayList<LogFileVo>();
-      String directory = logPath + "\\" + logType;
-  
+      Path path = Paths.get(logPath, logType);
+
       try {
-        File[] files = new File(directory).listFiles(new FileFilter() {
+        File[] files = new File(path.toString()).listFiles(new FileFilter() {
           @Override
           public boolean accept(File file) {
             return file.isFile() && file.getName().toLowerCase().endsWith(".zip");
@@ -78,8 +80,8 @@ public class FileServiceImpl implements FileService {
     }
 
       catch (Exception ex) {
-        logger.error("FileServiceImpl.getLogZipList - unable to access files in directory '" + logPath
-        + "\\" + logType + "'. Directory must be set in application.properties. Error message: " + ex);
+        logger.error("FileServiceImpl.getLogZipList - unable to access files in directory '" + path.toString()
+         + "'. Directory must be set in application.properties. Error message: " + ex);
       }
   
       return result;
@@ -89,8 +91,8 @@ public class FileServiceImpl implements FileService {
       String filename = logFile.endsWith(".zip") ? logFile : logFile + ".zip";
   
       try {
-        String path = logPath + "\\" + logType + "\\" + filename;
-        File file = new File(path);
+        Path path = Paths.get(logPath, logType, filename);
+        File file = path.toFile();
         return file;
       }
       catch (Exception ex) {
