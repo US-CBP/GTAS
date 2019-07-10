@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sudo rm -rf /pentaho
+sudo rm -rf /opt/pentaho
 rm -rf ~/.pentaho
