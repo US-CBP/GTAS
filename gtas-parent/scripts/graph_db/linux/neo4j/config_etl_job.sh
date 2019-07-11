@@ -2,26 +2,28 @@
 parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_dir"
 
-sudo mkdir -p /gtas-neo4j-etl/{config,job,log,job/temp}
+source ../config.sh
+
+mkdir -p ${NEO4J_ETL_INSTALL_DIR}/{config,job,log,job/temp}
 
 #Assign ownership
-sudo chown -R $USER /gtas-neo4j-etl 
+chown -R $(whoami) ${NEO4J_ETL_INSTALL_DIR} 
 
 #Give the right access to user and group of the user
-sudo chmod -R 755 /gtas-neo4j-etl
+chmod -R 755 ${NEO4J_ETL_INSTALL_DIR}
 
 # Copy the PDI jobs and transformations from the project
-sudo cp ../../../../../gtas-neo4j-etl/job/*.ktr /gtas-neo4j-etl/job 
-sudo cp ../../../../../gtas-neo4j-etl/job/*.kjb /gtas-neo4j-etl/job 
+cp ../../../../../gtas-neo4j-etl/job/*.ktr ${NEO4J_ETL_INSTALL_DIR}/job 
+cp ../../../../../gtas-neo4j-etl/job/*.kjb ${NEO4J_ETL_INSTALL_DIR}/job 
 
 #  Copy the etl cofig folder to gtas-neo4j/config
-sudo cp -r ../../../../../gtas-neo4j-etl/config/. /gtas-neo4j-etl/config
-sudo chown -R $USER /gtas-neo4j-etl
-sudo chmod -R 755 /gtas-neo4j-etl
+cp -r ../../../../../gtas-neo4j-etl/config/. ${NEO4J_ETL_INSTALL_DIR}/config
+# sudo chown -R $USER ${NEO4J_ETL_INSTALL_DIR}
+# sudo chmod -R 755 ${NEO4J_ETL_INSTALL_DIR}
 
 #Edit gtas-neo4j-config.properties
 
-CONFIG_FILE="/gtas-neo4j-etl/config/gtas-neo4j-config.properties"
+CONFIG_FILE=${NEO4J_ETL_INSTALL_DIR}"/config/gtas-neo4j-config.properties"
 # change the user name accordingly 
 GTAS_DB_USER_NAME=root
 NEO4J_USER_NAME=neo4j
@@ -37,4 +39,4 @@ sed -i.bak "/\(EXT_VAR_GTAS_DB_PASSWORD.*=\).*/ s//\1${GTAS_DB_PASSWORD}/" $CONF
 sed -i.bak "/\(EXT_VAR_NEO4J_DB_USER_NAME.*=\).*/ s//\1${NEO4J_USER_NAME}/" $CONFIG_FILE
 sed -i.bak "/\(EXT_VAR_NEO4J_DB_PASSWORD.*=\).*/ s//\1${NEO4J_PASSWORD}/" $CONFIG_FILE
 
-sudo rm /gtas-neo4j-etl/config/*.bak
+rm ${NEO4J_ETL_INSTALL_DIR}/config/*.bak
