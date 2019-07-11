@@ -8,7 +8,7 @@ cd ../../../../gtas-neo4j-scheduler
 mvn clean install 
 
 
-cp ./target/gtas-neo4j-job-scheduler-1.jar /gtas-neo4j-etl
+cp ./target/gtas-neo4j-job-scheduler-1.jar /gtas-neo4j-etl/
 sudo chmod 755 /gtas-neo4j-etl/gtas-neo4j-job-scheduler-1.jar
 
 # echo "***********Starting the scheduler***********"
