@@ -1,8 +1,11 @@
 #!/bin/bash
 PARENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
-NEO4J_VERSION=3.5.3
+
+cd "$PARENT_DIR"
+source ../config.sh
+
 #A directory where neo4j be installed
-NEO4J_INSTALL_DIR=/opt
+
 cd ${NEO4J_INSTALL_DIR}
 
 chmod -R u+rw ${NEO4J_INSTALL_DIR}
