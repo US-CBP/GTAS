@@ -18,18 +18,22 @@ import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ApiAccessService;
 import gov.gtas.services.AuditLogPersistenceService;
 import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.FileService;
 import gov.gtas.services.CarrierService;
 import gov.gtas.services.AirportService;
 import gov.gtas.services.CountryService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
+import gov.gtas.vo.LogFileVo;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
 
 import javax.validation.Valid;
 
@@ -38,6 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,11 +70,11 @@ public class AdminController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdminController.class);
 
-        public static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
-        public static final String FLIGHT_RANGE ="FLIGHT_RANGE";
-        public static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
-        public static final String APIS_VERSION = "APIS_VERSION";
-        public static final String MAX_RULE_HITS = "MAX_RULE_HITS";
+  public static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
+  public static final String FLIGHT_RANGE ="FLIGHT_RANGE";
+  public static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
+  public static final String APIS_VERSION = "APIS_VERSION";
+  public static final String MAX_RULE_HITS = "MAX_RULE_HITS";
 
   @Autowired
   AppConfigurationService appConfigurationService;
@@ -89,6 +96,41 @@ public class AdminController {
   
 	@Autowired
   private AirportService airportService;
+
+  @Autowired
+  private FileService fileService;
+
+  // ------------------------------------------------- //
+  //ADMIN LOG FILE DOWNLOAD
+  // ------------------------------------------------- //
+
+
+  //GET LIST OF AVAILABLE LOG TYPES
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs")
+  public String[] getLogTypeList() throws IOException {
+    return fileService.getLogTypeList();
+  }
+
+  // GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}")
+  public List<LogFileVo> getLogZipList(@PathVariable("type") String logType) throws IOException {
+    return fileService.getLogZipList(logType);
+  }
+
+  //GET ZIP BINARY
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}/{file}", produces="application/zip")
+    public ResponseEntity<Resource> getLogZip(@PathVariable("type") String logType, @PathVariable("file") String logFile)  throws IOException {
+      File file = fileService.getLogZip(logType, logFile);
+      HttpHeaders headers = new HttpHeaders();
+
+      headers.setContentType(MediaType.valueOf("application/zip"));
+      headers.set("content-disposition", "inline; filename=\"" + file.getName() + "\"");
+      headers.set("content-length", String.valueOf(file.length()));
+
+      FileSystemResource fileSystemResource = new FileSystemResource(file);
+
+      return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
+    }
 
   //carrier
 	@RequestMapping(method = RequestMethod.GET, value = "/api/carrier")

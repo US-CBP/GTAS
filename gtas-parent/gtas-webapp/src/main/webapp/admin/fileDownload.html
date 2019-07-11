@@ -1,0 +1,51 @@
+<style>
+  
+  .code-grid.ui-grid {
+    height: calc(100vh - 270px);
+    min-height: 240px;
+  }
+
+  .ui-grid-canvas {
+    /* max-height: calc(100vh - 390px); */
+  }
+
+  .subtabs {
+    border-bottom: 1px solid #ddd !important;
+  }
+  .subtabs>li>a {
+    color: rgba(0,0,0,0.54);
+    font-weight: 500;
+  }
+
+  .subtabs>li>a:hover {
+    border-bottom: 2px solid #00416a !important;
+  }
+  .subtabs>li.active>a {
+    color: rgb(63,81,181) !important;
+    outline: 0 !important;
+  }
+  .editLink {
+    color: rgb(63,81,181) !important;
+    font-size: 1.3em;
+  }
+  .editLink:hover, .editLink:active {
+    color: rgb(63,81,181) !important;
+    cursor: pointer;
+  }
+</style>
+
+<md-content class="md-padding padding-top-0" id="zipContent">
+  <ul class="nav nav-tabs nav-tabs-light subtabs" role="tablist">
+    <li ng-repeat="type in zipTypes" ng-class="{active : activeZipIdx === $index }" >
+      <a href="#admin" role="tab" ng-click="setActiveZipData($index, type)">{{type | uppercase}}</a>
+    </li>
+  </ul>
+  <span id="zipLogTitle" ng-show="hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>{{activeZipType | uppercase}} LOG FILES</h3></span>
+  <span id="noZipsFoundMsg" ng-show="!hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>NO LOG FILES FOUND</h3></span>
+
+  <div layout="column">
+    <md-content>
+      <div id="zipGrid" ui-grid="zipGrid" ui-grid-pagination ui-grid-selection class="grid code-grid" ></div>
+    </md-content>
+  </div>
+</md-content>

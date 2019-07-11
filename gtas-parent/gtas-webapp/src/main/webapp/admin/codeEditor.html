@@ -50,11 +50,9 @@
   <md-content>
     <div>
       <md-button ng-click="openSidebarAdd()" class="md-raised pull-left md-primary">
-        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
         Add {{activeCodeTab}}
       </md-button>
       <md-button ng-click="restoreAllCodes()" class="md-raised pull-right md-primary warning-back">
-        <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
         Restore All {{activeCodeTab}} Codes
       </md-button>
     </div>
@@ -65,8 +63,8 @@
   <md-content ng-if="activeCodeTab === 'country'">
     <div id="countryGrid" ui-grid="countryGrid" ui-grid-pagination ui-grid-exporter ui-grid-selection class="grid code-grid" ></div>
   </md-content>
-  <div ng-if="activeCodeTab === 'airport'" >
+<md-content ng-if="activeCodeTab === 'airport'" >
     <div id="airportGrid" ui-grid="airportGrid" ui-grid-pagination ui-grid-exporter ui-grid-selection class="grid code-grid" ></div>
-  </div>
+  </md-content>
   </div>
 </md-content>
