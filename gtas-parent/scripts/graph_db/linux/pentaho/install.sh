@@ -3,7 +3,7 @@ parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 # Directory where pentaho will be installed
 
 cd "$parent_dir"
-source ../config.sh
+source ../env.sh
 
 # Directory where pentaho will be installed
  mkdir -p ${INSTALL_DIR} &&  chown -R $(whoami) ${INSTALL_DIR} &&  chmod -R 755 ${INSTALL_DIR}

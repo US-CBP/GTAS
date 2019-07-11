@@ -2,7 +2,7 @@
 parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd "$parent_dir"
 
-source ../config.sh
+source ../env.sh
 
 mkdir -p ${NEO4J_ETL_INSTALL_DIR}/{config,job,log,job/temp}
 

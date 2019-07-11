@@ -2,7 +2,7 @@
 PARENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd "$PARENT_DIR"
-source ../config.sh
+source ../env.sh
 
 #A directory where neo4j be installed
 
