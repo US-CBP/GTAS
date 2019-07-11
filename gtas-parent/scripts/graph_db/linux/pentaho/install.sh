@@ -1,8 +1,9 @@
 #!/bin/bash
 parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 # Directory where pentaho will be installed
-INSTALL_DIR=/opt/pentaho
-PDI_VERSION=8.2.0.3-519
+
+cd "$parent_dir"
+source ../config.sh
 
 # Directory where pentaho will be installed
  mkdir -p ${INSTALL_DIR} &&  chown -R $(whoami) ${INSTALL_DIR} &&  chmod -R 755 ${INSTALL_DIR}
