@@ -41,7 +41,7 @@ public class Message extends BaseEntity {
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "ms_message_id", insertable = false, updatable = false)
 	private MessageStatus status;
 	
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy="message")
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private List<FlightLeg> flightLegs = new ArrayList<>();
     
     @ManyToMany(fetch=FetchType.LAZY,targetEntity = BookingDetail.class)

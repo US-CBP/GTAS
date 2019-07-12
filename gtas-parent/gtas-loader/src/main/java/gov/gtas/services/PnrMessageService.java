@@ -382,7 +382,7 @@ public class PnrMessageService extends MessageLoaderService {
         // set all the collections to null so we can save the message itself
         pnr.setFlights(null);
         pnr.setPassengers(null);
-        pnr.setFlightLegs(null);
+        pnr.getFlightLegs().clear();
         pnr.setCreditCards(null);
         pnr.setAddresses(null);
         pnr.setAgencies(null);
