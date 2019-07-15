@@ -230,7 +230,11 @@ public class ApisMessageService extends MessageLoaderService {
     private void handleException(Exception e, ApisMessage apisMessage) {
         String stacktrace = ErrorUtils.getStacktrace(e);
         apisMessage.setError(stacktrace);
-        logger.error(stacktrace);
+        if (e instanceof DuplicateHashCodeException) {
+            logger.info(e.getMessage());
+        } else {
+            logger.error(stacktrace);
+        }
     }
 
     private boolean createMessage(ApisMessage m) {
