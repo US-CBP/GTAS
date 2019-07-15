@@ -1,13 +1,6 @@
 version: "3.4"
 
 services:
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - 6379:6379
-    networks:
-      - gtas_default
   kibana:
     image: kibana:6.5.4
     container_name: kibana
@@ -60,6 +53,8 @@ services:
     ports:
       - "3306:3306"
     container_name: mariahost
+    volumes: 
+      - db-data:/var/lib/mysql
     command: [
             '--wait_timeout=28800',
         ]
@@ -76,6 +71,10 @@ services:
         REDIS_HOST: 'redis'
     ports:
       - "8080:8080"
+    depends_on: 
+      - mariahost
+      - elasticsearch
+      - kibana
     networks:
       - gtas_default
 
@@ -93,11 +92,14 @@ services:
       - data:/root/.m2
     networks:
       - gtas_default
+    depends_on: 
+      - mariahost
+      - activemq
 
 volumes:
   es-data:
     driver: local
-  redis-data:
+  db-data:
     driver: local
   data:
     name: m2-repo
