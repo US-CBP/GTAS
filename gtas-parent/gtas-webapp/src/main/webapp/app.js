@@ -658,6 +658,7 @@ var app;
             $http.defaults.xsrfCookieName = 'CSRF-TOKEN';
             $scope.errorList = [];
             $scope.hitCount = 0;
+            $scope.neo4jUrl = "http://localhost:7474/browser/";
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -700,6 +701,14 @@ var app;
                     return $scope.hitCount;
             };
 
+            configService.neo4j().then(function(value) {
+               $scope.neo4jUrl = value.data;
+            });
+
+            $scope.getNeo4JUrl = function() {
+                return $scope.neo4jUrl;
+            };
+
             let oneDayLookoutUser = false;
             let user = $sessionStorage.get(APP_CONSTANTS.CURRENT_USER);
             user.roles.forEach(function (role) {
@@ -707,18 +716,13 @@ var app;
                     oneDayLookoutUser = true;
                 }
             });
-           
+
             if (oneDayLookoutUser) {
                 $scope.homePage = "onedaylookout";
             } else {
-            	//reads kibana configuration from ./config/kibana_settings.json
-            	configService.defaultHomePage().then(function success(response){
-            		
-           		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';   
-               }, function errorMessage(error){
-            	   $scope.homePage = 'flights';
-               });  
-            	
+                configService.defaultHomePage().then(function success(response) {
+                $scope.homePage = response.data;
+                });
             }
             
             $scope.$on('stateChanged', function (e, state, toParams) {
