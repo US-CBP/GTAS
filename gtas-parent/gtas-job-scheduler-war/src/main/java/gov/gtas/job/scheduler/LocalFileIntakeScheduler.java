@@ -71,7 +71,11 @@ public class LocalFileIntakeScheduler {
             boolean moved = file.renameTo(new File(outgoingDir.toFile()
                     + File.separator + file.getName()));
             if (!moved) {
-                logger.error("Unable to move file to outgoing directory!");
+                logger.error("Unable to move file to outgoing directory! Deleting file so there will be no overflow!");
+                boolean deleted  = file.delete();
+                if (!deleted) {
+                    logger.error("Unable to delete file. File is likely to be parsed indefinitely!");
+                }
             }
         }
     }

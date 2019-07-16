@@ -1,0 +1,101 @@
+#
+# /*
+#  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+#  *
+#  * Please see LICENSE.txt for details.
+#  */
+#
+
+
+entitymanager.packages.to.scan=gov.gtas
+neo4jusername=username
+neo4jpassword=password
+neo4jEnabled=false
+##################### MessageLoader #####################
+
+inputType=two_dirs
+
+message.dir.origin=C:\\MESSAGE
+message.dir.processed=C:\\MESSAGEOLD
+
+loader.fixedDelay.in.milliseconds=5000
+loader.initialDelay.in.milliseconds=2000
+
+sqs.loader.fixedDelay.in.milliseconds=1000
+sqs.loader.initialDelay.in.milliseconds=1000
+sqs.loader.enabled=false
+sqs.loader.region=
+##### uncomment the line below and provide the queue URL .... DO NOT PUSH THE URL TO GITHUB ####
+# sqs.loader.queue=<AWS SQS Queue URL>
+
+loader.isRunning=false
+
+maxNumofFiles=5
+
+###Active MQ JMS###
+inbound.loader.jms.queue=GTAS_INBOUND_Q_REDIS
+outbound.loader.jms.queue=GTAS_LOADER_Q
+activemq.broker.url = tcp://localhost:61616
+#########
+### REDIS ###
+redis.connection.string=redis://0.0.0.0:6379
+#############
+
+
+##### Passenger ID Tag and BookingDetail Scheduler settings ####
+
+cleanup.fixedDelay.in.milliseconds=5000
+cleanup.initialDelay.in.milliseconds=2000
+
+#########
+
+##### Data Management Scheduler settings ####
+
+datamanagement.fixedDelay.in.milliseconds=180
+datamanagement.initialDelay.in.milliseconds=20
+
+#########
+
+##################### RuleRunner #####################
+
+ruleRunner.fixedDelay.in.milliseconds=5000
+ruleRunner.initialDelay.in.milliseconds=2000
+
+ruleRunner.isRunning=false
+hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+
+hibernate.connection.driver_class=org.mariadb.jdbc.Driver
+hibernate.connection.url=jdbc:mariadb://localhost:3306/gtas?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true
+
+hibernate.connection.username=root
+hibernate.connection.password=admin
+
+hibernate.show_sql=false
+hibernate.format_sql=true
+hibernate.use_sql_comments=true
+
+hibernate.jdbc.batch_size=100000000
+hibernate.order_inserts=true
+hibernate.order_updates=true
+hibernate.jdbc.batch_versioned_data=true
+
+hibernate.cache.use_second_level_cache = true
+
+hibernate.cache.use_query_cache=true
+hibernate.cache.use_minimal_puts=true
+hibernate.cache.region.factory_class=com.hazelcast.hibernate.HazelcastCacheRegionFactory
+hibernate.cache.provider_configuration_file_resource_path = classpath:hazelcast.xml
+
+hibernate.id.new_generator_mappings=false
+
+javax.persistence.sharedCache.mode = ENABLE_SELECTIVE
+
+c3p0.min_size=3
+c3p0.max_size=20
+c3p0.max_statements=50
+c3p0.max_idletime=500
+c3p0.idleConnectionTestPeriod=30
+hibernate.timeout=0
+
+hibernate.connection.charSet=UTF-8
+hibernate.hbm2ddl.import_files=sql/gtas_data.sql,sql/countries.sql,sql/carriers.sql,sql/airports.sql,sql/watchlist_categories.sql
