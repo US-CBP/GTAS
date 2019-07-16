@@ -11,8 +11,7 @@ COPY gtas-parent/gtas-job-scheduler-war/pom.xml /app/gtas-job-scheduler-war/pom.
 COPY gtas-parent/gtas-loader/pom.xml /app/gtas-loader/pom.xml
 COPY gtas-parent/gtas-parsers/pom.xml /app/gtas-parsers/pom.xml
 
-RUN mvn install dependency:go-offline '-Dmaven.exec.skip=true' -Dskip.unit.tests=true
-
+RUN mvn dependency:resolve-plugins dependency:resolve install '-Dmaven.exec.skip=true' -Dskip.unit.tests=true --projects gtas-webapp -am
 
 COPY ./gtas-parent/gtas-webapp/src /app/gtas-webapp/src
 COPY ./gtas-parent/gtas-commons/src /app/gtas-commons/src
@@ -21,7 +20,7 @@ COPY ./gtas-parent/gtas-query-builder/src /app/gtas-query-builder/src
 
 ###
 
-RUN mvn clean install '-Dmaven.exec.skip=true' -Dskip.unit.tests=true --projects gtas-webapp -am
+RUN mvn clean package '-Dmaven.exec.skip=true' -Dskip.unit.tests=true --projects gtas-webapp -am
 
 FROM node:12-alpine as node
 WORKDIR /app/gtas-webapp/src/main/webapp/resources
