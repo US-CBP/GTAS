@@ -25,6 +25,15 @@ COPY ./gtas-parent/gtas-parsers/src /app/gtas-parsers/src
 RUN mvn clean install '-Dmaven.exec.skip=true' -Dskip.unit.tests=true --projects gtas-job-scheduler-war -am
 
 FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
+
+ARG DB_HOST=mariahost
+ARG DB_USERNAME=root
+ARG DB_PASSWORD=admin
+
+ENV DB_HOST=$DB_HOST
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
+
 COPY --from=maven /app/gtas-job-scheduler-war/target/gtas-job-scheduler.war /usr/local/tomcat/webapps/gtas-job-scheduler.war
 COPY --from=maven /app/gtas-job-scheduler-war/target/gtas-job-scheduler /usr/local/tomcat/webapps/gtas-job-scheduler 
 COPY ./docker/scheduler.properties /usr/local/tomcat/conf/application.properties

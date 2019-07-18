@@ -10,6 +10,8 @@ services:
       - gtas_default
     depends_on:
       - elasticsearch
+    healthcheck:
+      test: 'curl -f http://kibana:5601 || exit 1'
 
   elasticsearch:
     image: elasticsearch:6.5.4
@@ -20,23 +22,26 @@ services:
       - 9300:9300
       - 9200:9200
     healthcheck:
-      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
-  # logstash:
-  #   image: logstash:6.5.4
-  #   container_name: logstash
-  #   command: logstash -f /config/
-  #   environment:
-  #     - JAVA_OPTS=-Xms1g -Xmx1g
-  #   volumes:
-  #     - $PWD/gtas-parent/scripts/elastic/install/docker/logstash/config:/config
-  #   networks:
-  #     - gtas_default
-  #   depends_on:
-  #     - elasticsearch
-  #     - mariahost
+  logstash:
+    build: 
+      dockerfile: ./install/docker/logstash/Dockerfile
+      context: ./gtas-parent/scripts/elastic
+      args: 
+        DB_HOST: 'mariahost'
+        ELASTIC_HOST: 'elasticsearch'
+    container_name: logstash
+    environment:
+      - JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.ssl.enabled=true
+    networks:
+      - gtas_default
+    depends_on:
+      - elasticsearch
+      - mariahost
   activemq:
     image: rmohr/activemq
     container_name: activemq
@@ -60,6 +65,8 @@ services:
         ]
     networks: 
       - gtas_default
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
 
   webapp:
     container_name: webapp
@@ -67,8 +74,9 @@ services:
       context: .
       dockerfile: ./gtas-parent/gtas-webapp/Dockerfile
       args: 
-        DB_HOST: 'localhost'
-        REDIS_HOST: 'redis'
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'
     ports:
       - "8080:8080"
     depends_on: 
@@ -85,6 +93,10 @@ services:
     build:
       context: .
       dockerfile: ./gtas-parent/gtas-job-scheduler-war/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'      
     environment:
       LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
       LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}

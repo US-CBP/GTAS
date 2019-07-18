@@ -28,6 +28,15 @@ COPY --from=maven  /app/gtas-webapp/src/main/webapp/resources /app/gtas-webapp/s
 RUN yarn install --silent
 
 FROM tomcat:9-jdk8-adoptopenjdk-openj9 as tomcat
+
+ARG DB_HOST=mariahost
+ARG DB_USERNAME=root
+ARG DB_PASSWORD=admin
+
+ENV DB_HOST=$DB_HOST
+ENV DB_USERNAME=$DB_USERNAME
+ENV DB_PASSWORD=$DB_PASSWORD
+
 COPY --from=maven /app/gtas-webapp/target/gtas.war /usr/local/tomcat/webapps/gtas.war
 COPY --from=maven /app/gtas-webapp/target/gtas /usr/local/tomcat/webapps/gtas 
 COPY ./docker/webapp.properties /usr/local/tomcat/conf/application.properties
