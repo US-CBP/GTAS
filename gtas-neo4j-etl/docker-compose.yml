@@ -10,20 +10,33 @@ services:
       - 7474:7474   
       - 7687:7687
     networks: 
-      - gtas_default
-    
-  
-  pentaho:
+    - gtas_default
+  etl-job:
     build:
       context: .
-      dockerfile: ./pentaho.Dockerfile
-    container_name: pentaho
+      dockerfile: ./Dockerfile
+    container_name: etl-job
+    networks: 
+    - gtas_default
+    depends_on: 
+      - neo4j
+      - mariahost
+
+  mariahost:
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     ports:
-      - 8181:8181
+      - "3306:3306"
+    container_name: mariahost
+    command: [
+            '--wait_timeout=28800',
+        ]
     networks: 
       - gtas_default
 
-networks: 
+networks:
   gtas_default:
     driver: "bridge"
-      
+  
+  
