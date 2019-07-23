@@ -2,9 +2,7 @@
 Description=Scheduler for GTAS Log Collector
 After=syslog.target 
 
-
 [Service]
-
 Environment=JAVA_HOME=/usr/java/jre1.8.0_192-amd64
 WorkingDirectory= /gtas-log-etl
 
