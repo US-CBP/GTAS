@@ -113,6 +113,26 @@ services:
     depends_on: 
       - mariahost
       - activemq
+  neo4j:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: neo4j.Dockerfile
+    container_name: neo4j
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+    - gtas_default
+  etl-job:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: ./etl_job.Dockerfile
+    container_name: etl-job
+    networks: 
+    - gtas_default
+    depends_on: 
+      - neo4j
+      - mariahost
 
 volumes:
   es-data:

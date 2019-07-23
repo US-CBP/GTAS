@@ -22,9 +22,9 @@ RUN chown -R pentaho:pentaho $PENTAHO_HOME
 RUN /usr/bin/wget \
     --progress=dot:giga \
     https://s3.amazonaws.com/kettle-neo4j/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip \
-    -O /tmp/pdi-ce-${PDI_VERSION}.zip && \
-    /usr/bin/unzip -q /tmp/pdi-ce-${PDI_VERSION}.zip -d  $PENTAHO_HOME && \
-    rm /tmp/pdi-ce-${PDI_VERSION}.zip
+    -O /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip && \
+    /usr/bin/unzip -q /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip -d  $PENTAHO_HOME && \
+    rm /tmp/kettle-neo4j-remix-${PDI_VERSION}-REMIX.zip
 
  COPY ./drivers/mariadb-java-client-2.2.1.jar $PENTAHO_HOME/data-integration/lib
 
@@ -41,5 +41,5 @@ USER pentaho
 #     PATH=$KETTLE_HOME:$PATH
 
 # Expose Carte Server
-EXPOSE ${CARTE_PORT}
+
 
