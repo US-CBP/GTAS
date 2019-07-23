@@ -215,7 +215,8 @@ public class GtasLoaderImpl implements GtasLoader {
     public Flight processFlightsAndBookingDetails(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
       String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
         long startTime = System.nanoTime();
-        Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
+        String primeFlightDateString = primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG];
+        Date primeFlightDate = new Date(Long.parseLong(primeFlightDateString));
         String primeFlightNumber = primeFlightKey[PRIME_FLIGHT_NUMBER_STRING];
         String primeFlightCarrier = primeFlightKey[PRIME_FLIGHT_CARRIER];
         String primeFlightOrigin = primeFlightKey[PRIME_FLIGHT_ORIGIN];
@@ -236,7 +237,7 @@ public class GtasLoaderImpl implements GtasLoader {
           flightVo.setFlightNumber(primeFlightNumber);
           flightVo.setOrigin(primeFlightOrigin);
           flightVo.setDestination(primeFlightDest);
-          flightVo.setIdTag(utils.getStringHash(primeFlightDest, primeFlightOrigin, primeFlightDate.toString(), primeFlightCarrier, primeFlightNumber));
+          flightVo.setIdTag(utils.getStringHash(primeFlightDest, primeFlightOrigin, primeFlightDateString, primeFlightCarrier, primeFlightNumber));
           flights.add(flightVo);
         }
 
@@ -252,7 +253,7 @@ public class GtasLoaderImpl implements GtasLoader {
              * In short:  The prime flight is the reason the message was received.
              * There is 1 and only 1 prime flight per message.
              * */
-            if (utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDate.toString())) {
+            if (utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDateString)) {
                 Flight currentFlight = flightDao.getFlightByCriteria(primeFlightCarrier,
                         primeFlightNumber, primeFlightOrigin, primeFlightDest, primeFlightDate);
                 if (currentFlight == null) {
@@ -299,7 +300,7 @@ public class GtasLoaderImpl implements GtasLoader {
         // The "booking details" below are all flights received along with the prime flight on a message.
         for (int i = 0; i < flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if (!utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDate.toString())) {
+            if (!utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDateString)) {
                 BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
                 List<BookingDetail> existingBookingDetail =
                         bookingDetailDao.getBookingDetailByCriteria(
