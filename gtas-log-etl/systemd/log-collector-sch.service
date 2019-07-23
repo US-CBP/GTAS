@@ -1,0 +1,17 @@
+[Unit]
+Description=Scheduler for GTAS Log Collector
+After=syslog.target 
+
+
+[Service]
+
+Environment=JAVA_HOME=/usr/java/jre1.8.0_192-amd64
+WorkingDirectory= /gtas-log-etl
+
+ExecStart=/gtas-log-etl/gtas-log-collector-sch-1.jar
+SuccessExitStatus=143
+User=ec2-user
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
