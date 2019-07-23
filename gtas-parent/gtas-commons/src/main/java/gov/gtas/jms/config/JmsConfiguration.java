@@ -3,6 +3,7 @@ package gov.gtas.jms.config;
 import java.util.HashMap;
 
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.connection.CachingConnectionFactory;
@@ -16,8 +17,9 @@ import gov.gtas.model.Passenger;
  
 @Configuration
 public class JmsConfiguration {
- 
-    private static final String DEFAULT_BROKER_URL = "tcp://localhost:61616";
+
+    @Value("${activemq.broker.url}")
+    private String DEFAULT_BROKER_URL;
 
   
     @Bean

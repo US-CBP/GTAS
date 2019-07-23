@@ -123,7 +123,7 @@ public class GtasLoaderImpl implements GtasLoader {
     public void checkHashCode(String hash) throws LoaderException {
         Message m = messageDao.findByHashCode(hash);
         if (m != null) {
-            throw new LoaderException("duplicate message hashcode: " + hash);
+            throw new DuplicateHashCodeException("Duplicate message, message ignored. hashcode is: " + hash);
         }
     }
 

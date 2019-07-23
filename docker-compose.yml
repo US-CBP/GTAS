@@ -1,13 +1,6 @@
 version: "3.4"
 
 services:
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - 6379:6379
-    networks:
-      - gtas_default
   kibana:
     # image: kibana:6.5.4
     image: docker.elastic.co/kibana/kibana:6.5.4 
@@ -18,6 +11,8 @@ services:
       - gtas_default
     depends_on:
       - elasticsearch
+    healthcheck:
+      test: 'curl -f http://kibana:5601 || exit 1'
 
   elasticsearch:
     # image: elasticsearch:6.5.4
@@ -31,18 +26,21 @@ services:
       - 9300:9300
       - 9200:9200
     healthcheck:
-      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
   logstash:
-    # image: logstash:6.5.4
-    build:
+    build: 
+      dockerfile: ./install/docker/logstash/Dockerfile
       context: ./gtas-parent/scripts/elastic
-      dockerfile: install/docker/logstash/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        ELASTIC_HOST: 'elasticsearch'
     container_name: logstash
     environment:
       - JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.ssl.enabled=true
     networks:
       - gtas_default
     depends_on:
@@ -64,32 +62,65 @@ services:
     ports:
       - "3306:3306"
     container_name: mariahost
+    volumes: 
+      - db-data:/var/lib/mysql
     command: [
             '--wait_timeout=28800',
         ]
     networks: 
       - gtas_default
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
 
-  tomcathost:
-    container_name: tomcathost
+  webapp:
+    container_name: webapp
     build:
       context: .
-      dockerfile: ./docker/tomcat.Dockerfile
+      dockerfile: ./gtas-parent/gtas-webapp/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'
     ports:
       - "8080:8080"
-    
+    depends_on: 
+      - mariahost
+      - elasticsearch
+      - kibana
+    volumes: 
+      - data:/root/.m2
+    networks:
+      - gtas_default
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: .
+      dockerfile: ./gtas-parent/gtas-job-scheduler-war/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'      
     environment:
       LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
       LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}
     volumes:
       - ${LOCAL_DRIVE_MAPPING_INPUT}:/usr/local/input:rw
       - ${LOCAL_DRIVE_MAPPING_OUTPUT}:/usr/local/output:rw
+      - data:/root/.m2
     networks:
       - gtas_default
+    depends_on: 
+      - mariahost
+      - activemq
 
-
+volumes:
+  es-data:
+    driver: local
+  db-data:
+    driver: local
+  data:
+    driver: local
   
 networks:
   gtas_default:
-    driver: "bridge"
-    

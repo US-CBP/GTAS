@@ -382,7 +382,6 @@ public class PnrMessageService extends MessageLoaderService {
         // set all the collections to null so we can save the message itself
         pnr.setFlights(null);
         pnr.setPassengers(null);
-        pnr.setFlightLegs(null);
         pnr.setCreditCards(null);
         pnr.setAddresses(null);
         pnr.setAgencies(null);
@@ -393,7 +392,11 @@ public class PnrMessageService extends MessageLoaderService {
         pnr.setPaymentForms(null);
         String stacktrace = ErrorUtils.getStacktrace(e);
         pnr.setError(stacktrace);
-        logger.error(stacktrace);
+        if (e instanceof DuplicateHashCodeException) {
+            logger.info(e.getMessage());
+        } else {
+            logger.error(stacktrace);
+        }
     }
 
     private boolean createMessage(Pnr m) {

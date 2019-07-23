@@ -18,9 +18,9 @@ public class FlightsPageDto {
     }
 
     public FlightsPageDto(List<FlightVo> flights, long totalFlights, boolean queryLimitReached) {
-        this.flights = flights;
-        this.totalFlights = totalFlights;
-        this.queryLimitReached = queryLimitReached;
+      this.flights = flights;
+      this.totalFlights = totalFlights;
+      this.queryLimitReached = queryLimitReached;
     }
 
     public List<FlightVo> getFlights() {
