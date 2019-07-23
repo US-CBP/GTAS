@@ -111,6 +111,7 @@ public class PassengerDetailsController {
 			vo.setFlightETD((flight.getMutableFlightDetails().getEtd() != null) ? DateCalendarUtils
 					.formatJsonDateTime(flight.getMutableFlightDetails().getEtd()) : EMPTY_STRING);
 			vo.setFlightId(flight.getId().toString());
+			vo.setFlightIdTag(flight.getIdTag());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
 			if (CollectionUtils.isNotEmpty(seatList)) {			
@@ -251,7 +252,8 @@ public class PassengerDetailsController {
 				apisVo.addPhoneNumber(pVo);
 			}
 			vo.setApisMessageVo(apisVo);
-		}
+    }
+    
 		return vo;
 	}
 
@@ -917,8 +919,8 @@ public class PassengerDetailsController {
 			target.setEtd(source.getMutableFlightDetails().getEtd());
 			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
-                        target.setFlightId(source.getId().toString());
-
+      target.setFlightId(source.getId().toString());
+      target.setIdTag(source.getIdTag());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}

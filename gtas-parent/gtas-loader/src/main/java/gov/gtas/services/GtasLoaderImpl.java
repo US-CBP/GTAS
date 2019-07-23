@@ -23,8 +23,7 @@ import static gov.gtas.services.CaseDispositionServiceImpl.getNullPropertyNames;
 
 @Service
 public class GtasLoaderImpl implements GtasLoader {
-    private static final Logger logger = LoggerFactory
-            .getLogger(GtasLoaderImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GtasLoaderImpl.class);
     public static final int ETD_DATE_WITH_TIMESTAMP = 5;
     public static final int ETD_DATE_NO_TIMESTAMP_AS_LONG = 4;
     public static final int PRIME_FLIGHT_NUMBER_STRING = 3;
@@ -78,25 +77,25 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Autowired
     public GtasLoaderImpl(
-            PassengerRepository passengerDao,
-            ReportingPartyRepository rpDao,
-            LoaderServices loaderServices,
-            FlightRepository flightDao,
-            DocumentRepository docDao,
-            PhoneRepository phoneDao,
-            PaymentFormRepository paymentFormDao,
-            CreditCardRepository creditDao,
-            FlightPassengerCountRepository flightPassengerCountRepository,
-            AddressRepository addressDao,
-            AgencyRepository agencyDao,
-            MessageRepository<Message> messageDao,
-            PassengerIDTagRepository passengerIdTagDao,
-            FlightPassengerRepository flightPassengerRepository,
-            FrequentFlyerRepository ffdao,
-            LoaderUtils utils,
-            BookingDetailRepository bookingDetailDao,
-            MutableFlightDetailsRepository mutableFlightDetailsRepository,
-            BagMeasurementsRepository bagMeasurementsRepository) {
+      PassengerRepository passengerDao,
+      ReportingPartyRepository rpDao,
+      LoaderServices loaderServices,
+      FlightRepository flightDao,
+      DocumentRepository docDao,
+      PhoneRepository phoneDao,
+      PaymentFormRepository paymentFormDao,
+      CreditCardRepository creditDao,
+      FlightPassengerCountRepository flightPassengerCountRepository,
+      AddressRepository addressDao,
+      AgencyRepository agencyDao,
+      MessageRepository<Message> messageDao,
+      PassengerIDTagRepository passengerIdTagDao,
+      FlightPassengerRepository flightPassengerRepository,
+      FrequentFlyerRepository ffdao,
+      LoaderUtils utils,
+      BookingDetailRepository bookingDetailDao,
+      MutableFlightDetailsRepository mutableFlightDetailsRepository,
+      BagMeasurementsRepository bagMeasurementsRepository) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -214,9 +213,14 @@ public class GtasLoaderImpl implements GtasLoader {
 
     @Override
     public Flight processFlightsAndBookingDetails(List<FlightVo> flights, Set<Flight> messageFlights, List<FlightLeg> flightLegs,
-                                                  String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
-
+      String[] primeFlightKey, Set<BookingDetail> bookingDetails) throws ParseException {
         long startTime = System.nanoTime();
+        Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
+        String primeFlightNumber = primeFlightKey[PRIME_FLIGHT_NUMBER_STRING];
+        String primeFlightCarrier = primeFlightKey[PRIME_FLIGHT_CARRIER];
+        String primeFlightOrigin = primeFlightKey[PRIME_FLIGHT_ORIGIN];
+        String primeFlightDest = primeFlightKey[PRIME_FLIGHT_DESTINATION];
+
         /*
          * A special case exist where a pnrVo
          * has a flight on tvl 0 but not a corresponding
@@ -226,16 +230,15 @@ public class GtasLoaderImpl implements GtasLoader {
          *
          * */
         if (flights.isEmpty()) {
-            FlightVo flightVo = new FlightVo();
-            Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
-            flightVo.setEta(primeFlightDate);
-            flightVo.setCarrier(primeFlightKey[PRIME_FLIGHT_CARRIER]);
-            flightVo.setFlightNumber(primeFlightKey[PRIME_FLIGHT_NUMBER_STRING]);
-            flightVo.setOrigin(primeFlightKey[PRIME_FLIGHT_ORIGIN]);
-            flightVo.setDestination(primeFlightKey[PRIME_FLIGHT_DESTINATION]);
-            flights.add(flightVo);
+          FlightVo flightVo = new FlightVo();
+          flightVo.setEta(primeFlightDate);
+          flightVo.setCarrier(primeFlightCarrier);
+          flightVo.setFlightNumber(primeFlightNumber);
+          flightVo.setOrigin(primeFlightOrigin);
+          flightVo.setDestination(primeFlightDest);
+          flightVo.setIdTag(utils.getStringHash(primeFlightDest, primeFlightOrigin, primeFlightDate.toString(), primeFlightCarrier, primeFlightNumber));
+          flights.add(flightVo);
         }
-
 
         utils.sortFlightsByDate(flights);
         Flight primeFlight = null;
@@ -249,18 +252,13 @@ public class GtasLoaderImpl implements GtasLoader {
              * In short:  The prime flight is the reason the message was received.
              * There is 1 and only 1 prime flight per message.
              * */
-            if (utils.isPrimeFlight(fvo, primeFlightKey)) {
-                Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
-                Flight currentFlight = flightDao.getFlightByCriteria(primeFlightKey[PRIME_FLIGHT_CARRIER],
-                        primeFlightKey[PRIME_FLIGHT_NUMBER_STRING],
-                        primeFlightKey[PRIME_FLIGHT_ORIGIN],
-                        primeFlightKey[PRIME_FLIGHT_DESTINATION],
-                        primeFlightDate);
+            if (utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDate.toString())) {
+                Flight currentFlight = flightDao.getFlightByCriteria(primeFlightCarrier,
+                        primeFlightNumber, primeFlightOrigin, primeFlightDest, primeFlightDate);
                 if (currentFlight == null) {
-                    logger.debug("Flight Not Found: Creating Flight");
-                    currentFlight = utils.createNewFlight(fvo, primeFlightKey);
-                    currentFlight = flightDao.save(currentFlight);
-                    logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId());
+                  currentFlight = utils.createNewFlight(fvo, primeFlightDest, primeFlightOrigin, primeFlightDate, primeFlightCarrier, primeFlightNumber);
+                  currentFlight = flightDao.save(currentFlight);
+                  logger.info("Flight Created: Flight Number:" + fvo.getFlightNumber() + " with ID " + currentFlight.getId() + " and hash " + currentFlight.getIdTag());
                 }
                 /*
                  * Update the information on a prime flight that can change. Always save the most recent one as it will contain the
@@ -270,10 +268,10 @@ public class GtasLoaderImpl implements GtasLoader {
                 BeanUtils.copyProperties(fvo, mfd, getNullPropertyNames(fvo));
                 mfd.setEtaDate(DateUtils.stripTime(mfd.getEta()));
                 if (mfd.getEtd() == null) {
-                    // Special case where prime flight doesnt have a timestamp
+                  Date primeFlightTimeStamp = new Date(Long.parseLong(primeFlightKey[ETD_DATE_WITH_TIMESTAMP]));
+                  // Special case where prime flight doesnt have a timestamp
                     //  we use the prime TDT with the 125 or 87 LOC code \ 189 DTM code for APIS
                     //  or tvl level 0 etd timestamp for PNR if this is the case.
-                    Date primeFlightTimeStamp = new Date(Long.parseLong(primeFlightKey[ETD_DATE_WITH_TIMESTAMP]));
                     mfd.setEtd(primeFlightTimeStamp);
                 }
                 mfd = mutableFlightDetailsRepository.save(mfd);
@@ -301,7 +299,7 @@ public class GtasLoaderImpl implements GtasLoader {
         // The "booking details" below are all flights received along with the prime flight on a message.
         for (int i = 0; i < flights.size(); i++) {
             FlightVo fvo = flights.get(i);
-            if (!utils.isPrimeFlight(fvo, primeFlightKey)) {
+            if (!utils.isPrimeFlight(fvo, primeFlightOrigin, primeFlightDest, primeFlightDate.toString())) {
                 BookingDetail bD = utils.convertFlightVoToBookingDetail(fvo);
                 List<BookingDetail> existingBookingDetail =
                         bookingDetailDao.getBookingDetailByCriteria(

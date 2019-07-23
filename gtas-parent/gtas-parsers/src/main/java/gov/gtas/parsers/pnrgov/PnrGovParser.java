@@ -16,6 +16,7 @@ import gov.gtas.parsers.util.DateUtils;
 import gov.gtas.parsers.vo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import gov.gtas.util.EntityResolverUtils;
 
 import gov.gtas.parsers.edifact.EdifactParser;
 import gov.gtas.parsers.exception.ParseException;
@@ -435,6 +436,8 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         f.setOrigin(tvl.getOrigin());
         f.setEta(tvl.getEta());
         f.setEtd(tvl.getEtd());
+
+
         //PNR data can be received without ETA issue #546 fix.
         if(f.getEta() == null){
         	f.setEta(f.getEtd());
@@ -445,7 +448,22 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         } else {
             throw new ParseException("Invalid flight: " + f);
         }
+
         
+        // //APB
+
+        // try {
+        //   String keys = f.getCarrier().toUpperCase() + f.getDestination().toUpperCase() + f.getOrigin().toUpperCase() +
+        //   f.getFlightNumber().toUpperCase() + f.getEtd().toString();
+
+        //   String hash = EntityResolverUtils.makeSHA1Hash(keys);
+        //   f.setIdTag(hash);
+        // }
+        // catch(Exception ex) {
+        //   // logger.warn("Could not generate flight hash for: " + dest + "/" + origin + "/" + carrier +
+        //   // "/" + etd.toString());
+        // }
+
         processFlightSegments(tvl, f);
         
         if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
@@ -1020,10 +1038,10 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
         }
     }
 
-
     private String[] getAgencyInfo(String text){
     	return text.split(" ");
     }
+
     private String getEmailFromtext(String ctcCode, String text){
     	return text.replace(ctcCode, "");
     }

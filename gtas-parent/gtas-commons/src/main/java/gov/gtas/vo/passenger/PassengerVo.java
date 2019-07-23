@@ -55,6 +55,7 @@ public class PassengerVo extends BaseVo {
     private String flightDestination;
     private String flightETD;
     private String flightETA;
+    private String flightIdTag;
 
     // hits info
     private Boolean onRuleHitList = Boolean.FALSE;
@@ -103,6 +104,12 @@ public class PassengerVo extends BaseVo {
     }
     public void setFlightETA(String flightETA) {
         this.flightETA = flightETA;
+    }
+    public String getFlightIdTag() {
+        return flightIdTag;
+    }
+    public void setFlightIdTag(String data) {
+        this.flightIdTag = data;
     }
     public List<PassengerVo> getPassengers() {
         return passengers;
