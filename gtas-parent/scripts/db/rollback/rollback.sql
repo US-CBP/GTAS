@@ -1,0 +1,4 @@
+-- Restore FLIGHT table
+ALTER TABLE `FLIGHT`
+	DROP COLUMN IF EXISTS `id_tag`;
+  
