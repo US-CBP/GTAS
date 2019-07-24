@@ -757,7 +757,7 @@ for logging purposes</note>
     </hop>
     <hop>
       <from>Dummy (do nothing) 4</from>
-      <to>Text file output - any flight</to>
+      <to>Text file output - ALL MESSAGES</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -767,7 +767,7 @@ for logging purposes</note>
     </hop>
     <hop>
       <from>Filter rows 2</from>
-      <to>Text file output-PNR</to>
+      <to>Text file output-PNR MESSAGE</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -836,7 +836,7 @@ for logging purposes</note>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Text file output - any flight</from>
+      <from>Text file output - ALL MESSAGES</from>
       <to>Unique rows - gtas_message_id</to>
       <enabled>Y</enabled>
     </hop>
@@ -1688,7 +1688,7 @@ for logging purposes</note>
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Text file output-PNR</send_true_to>
+    <send_true_to>Text file output-PNR MESSAGE</send_true_to>
     <send_false_to>Dummy (do nothing) 5</send_false_to>
     <compare>
       <condition>
@@ -2011,34 +2011,40 @@ for logging purposes</note>
       </labels>
       <properties>
         <property>
+          <name>flight_id_tag</name>
+          <value>flight_id_tag</value>
+          <type>String</type>
+          <primary>Y</primary>
+        </property>
+        <property>
           <name>carrier</name>
           <value>carrier</value>
           <type>String</type>
-          <primary>Y</primary>
+          <primary>N</primary>
         </property>
         <property>
           <name>flight_number</name>
           <value>flight_number</value>
           <type>String</type>
-          <primary>Y</primary>
+          <primary>N</primary>
         </property>
         <property>
           <name>origin</name>
           <value>origin</value>
           <type>String</type>
-          <primary>Y</primary>
+          <primary>N</primary>
         </property>
         <property>
           <name>destination</name>
           <value>destination</value>
           <type>String</type>
-          <primary>Y</primary>
+          <primary>N</primary>
         </property>
         <property>
           <name>etd_date</name>
           <value>etd_date</value>
           <type>Date</type>
-          <primary>Y</primary>
+          <primary>N</primary>
         </property>
         <property>
           <name>direction</name>
@@ -3186,7 +3192,7 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
-    <name>Text file output - any flight</name>
+    <name>Text file output - ALL MESSAGES</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -4307,6 +4313,18 @@ for logging purposes</note>
         <length>-1</length>
         <precision>-1</precision>
       </field>
+      <field>
+        <name>flight_id_tag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -4392,7 +4410,7 @@ for logging purposes</note>
     </GUI>
   </step>
   <step>
-    <name>Text file output-PNR</name>
+    <name>Text file output-PNR MESSAGE</name>
     <type>TextFileOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -5503,6 +5521,18 @@ for logging purposes</note>
       </field>
       <field>
         <name>message_type</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
+        <name>flight_id_tag</name>
         <type>String</type>
         <format/>
         <currency/>

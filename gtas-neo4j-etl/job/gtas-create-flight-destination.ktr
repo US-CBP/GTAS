@@ -513,7 +513,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>752</xloc>
+      <xloc>960</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1489,6 +1489,17 @@
         <precision>-1</precision>
         <trim_type>both</trim_type>
       </field>
+      <field>
+        <name>flight_id_tag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -1555,14 +1566,7 @@
           <condition>
             <negated>N</negated>
             <operator>AND</operator>
-            <leftvalue>etd_date</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>origin</leftvalue>
+            <leftvalue>flight_id_tag</leftvalue>
             <function>IS NOT NULL</function>
             <rightvalue/>
           </condition>
@@ -1576,14 +1580,7 @@
           <condition>
             <negated>N</negated>
             <operator>AND</operator>
-            <leftvalue>flight_number</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>carrier</leftvalue>
+            <leftvalue>destination_country</leftvalue>
             <function>IS NOT NULL</function>
             <rightvalue/>
           </condition>
@@ -1631,33 +1628,9 @@
       </labels>
       <properties>
         <property>
-          <name>carrier</name>
-          <value>carrier</value>
+          <name>flight_id_tag</name>
+          <value>flight_id_tag</value>
           <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>flight_number</name>
-          <value>flight_number</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>origin</name>
-          <value>origin</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>destination</name>
-          <value>destination</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>etd_date</name>
-          <value>etd_date</value>
-          <type>Date</type>
           <primary>Y</primary>
         </property>
       </properties>
@@ -1706,8 +1679,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1312</xloc>
-      <yloc>272</yloc>
+      <xloc>1280</xloc>
+      <yloc>432</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1785,7 +1758,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>992</xloc>
+      <xloc>1280</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1824,8 +1797,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>544</xloc>
-      <yloc>208</yloc>
+      <xloc>688</xloc>
+      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
