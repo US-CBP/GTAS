@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import gov.gtas.parsers.paxlst.segment.unedifact.DTM;
 import gov.gtas.parsers.paxlst.segment.unedifact.LOC;
@@ -44,13 +45,13 @@ public class LoaderQueueThreadManager {
 
     private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<>();
 
-    static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
     @Autowired
 	public LoaderQueueThreadManager(ApplicationContext ctx, AppConfigurationRepository appConfigurationRepository) {
 		this.ctx = ctx;
 
-		/**
+		/*
 		 * Fail safe and fall back to 5 number of threads when the database
 		 * configuration is set incorrectly
 		 */
@@ -79,25 +80,26 @@ public class LoaderQueueThreadManager {
         // This solves the problem where-in which we cannot run the risk of trying to save/update the same flight at the same time. This is done
         // by shuffling all identical flights into the same queue in order to be processed sequentially. However, by processing multiple
         // sequential queues at the same time, we in essence multi-thread the process for all non-identical prime flights
-        BlockingQueue<Message<?>> potentialBucket = bucketBucket.get(primeFlightKey);
-        if (potentialBucket == null) {
+        AtomicBoolean firstMessage = new AtomicBoolean(false);
+        BlockingQueue<Message<?>> messagesWithSamePrimeFlightBucket = bucketBucket.computeIfAbsent(primeFlightKey, m -> {
+            logger.info("New Queue Created For Prime Flight: " + primeFlightKey);
+            firstMessage.set(true);
+            return new ArrayBlockingQueue<>(1024);
+        });
+        boolean messageAccepted = messagesWithSamePrimeFlightBucket.offer(message);
+        if (!messageAccepted) {
+            //TODO: Add retry functionality to message offer.
+            logger.error("Message not accepted into prime flight queue! Message lost!!");
+        }
+        if (firstMessage.get()) {
             // Is not existing bucket, make bucket, stuff in bucketBucket,
-            logger.debug("New Queue Created For Prime Flight: " + primeFlightKey);
-            BlockingQueue<Message<?>> queue = new ArrayBlockingQueue<>(1024);
-            queue.offer(message); // TODO: offer returns false if can't enter the queue, need to make sure we don'tlose messages and have it wait for re-attempt when there is space.
-            bucketBucket.putIfAbsent(primeFlightKey, queue);
             // Only generate workers on a per queue basis
             LoaderWorkerThread worker = ctx.getBean(LoaderWorkerThread.class);
-            worker.setQueue(queue);
+            worker.setQueue(messagesWithSamePrimeFlightBucket);
             worker.setMap(bucketBucket); // give map reference and key in order to kill queue later
             worker.setPrimeFlightKeyArray(primeFlightKeyArray);
             worker.setPrimeFlightKey(primeFlightKey);
             exec.execute(worker);
-        } else {
-            // Is existing bucket, place same prime flight message into bucket
-            logger.debug("Existing Queue Found! Placing message inside...");
-            potentialBucket.offer(message);
-            // No need to execute worker here, if queue exists then worker is already on it.
         }
     }
 
