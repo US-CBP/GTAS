@@ -139,7 +139,6 @@ public class LoaderQueueThreadManager {
 
         // If the attempt to parse a PNR doesn't result in a prime flight key attempt to read segments as an APIS message.
         if (apisMessage) {
-            int locCount = 0;
             boolean primeFlightArrivalFound = false;
             boolean primeFlightDepartFound = false;
             boolean primeFlightDepartDateFound = false;
