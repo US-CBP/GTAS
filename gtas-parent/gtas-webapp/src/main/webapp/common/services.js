@@ -1594,7 +1594,23 @@
     
           };    // return codeService
         })
-      .service('configService', function ($rootScope, $http, $q) {
+      .service('statisticService', function ($http, $q) {
+          const STAT_URL = "/gtas/api/statistics";
+
+          function getApplicationStatistics() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: STAT_URL
+              }));
+              return dfd.promise;
+          }
+
+          return ({
+              getApplicationStatistics: getApplicationStatistics
+          });
+      })
+      .service('configService', function ($http, $q) {
 
           const CONFIG_URL = "/gtas/api/config";
 

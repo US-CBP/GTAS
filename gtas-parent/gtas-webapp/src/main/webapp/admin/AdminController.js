@@ -3,7 +3,9 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService, errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService) {
+app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
+                                      errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService
+, statisticService) {
   'use strict';
   var CARRIER = 'carrier';
   var COUNTRY = 'country';
@@ -27,6 +29,15 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   $scope.codeColList[COUNTRY] = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
 
   $scope.settingsInfo = settingsInfo.data;
+
+  statisticService.getApplicationStatistics().then(function(value) {
+    $scope.statistics = value.data;
+  });
+
+  $scope.getStatistics = function() {
+    return $scope.statistics;
+  };
+
   var that = this;
   this.successToast = function(msg){
       $mdToast.show($mdToast.simple()
