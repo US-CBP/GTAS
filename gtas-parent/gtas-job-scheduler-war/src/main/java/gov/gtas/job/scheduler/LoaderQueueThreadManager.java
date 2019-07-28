@@ -75,7 +75,11 @@ public class LoaderQueueThreadManager {
         String[] primeFlightKeyArray = generatePrimeFlightKey(message);
 
         //Construct label for individual buckets out of concatenated array values from prime flight key generation
-        String primeFlightKey = primeFlightKeyArray[0] + primeFlightKeyArray[1] + primeFlightKeyArray[2] + primeFlightKeyArray[3] + primeFlightKeyArray[4];
+        String primeFlightKey = primeFlightKeyArray[PRIME_FLIGHT_ORIGIN] +
+                           primeFlightKeyArray[PRIME_FLIGHT_DESTINATION] +
+                               primeFlightKeyArray[PRIME_FLIGHT_CARRIER] +
+                         primeFlightKeyArray[PRIME_FLIGHT_NUMBER_STRING] +
+                      primeFlightKeyArray[ETD_DATE_NO_TIMESTAMP_AS_LONG] ;
         // bucketBucket is a bucket of buckets. It holds a series of queues that are processed sequentially.
         // This solves the problem where-in which we cannot run the risk of trying to save/update the same flight at the same time. This is done
         // by shuffling all identical flights into the same queue in order to be processed sequentially. However, by processing multiple
@@ -111,6 +115,7 @@ public class LoaderQueueThreadManager {
     primeFlightKeyArray[2] = PRIME FLIGHT CARRIER
     primeFlightKeyArray[3] = PRIME FLIGHT NUMBER
     primeFlightKeyArray[4] = PRIME FLIGHT ETD DATE AS A STRING LONG VALUE
+    primeFlightKeyArray[5] = PRIME FLIGHT ETD TIMESTAMP AS A STRING LONG VALUE
     */
     private String[] generatePrimeFlightKey(Message<?> message) throws ParseException {
         String[] primeFlightKeyArray = new String[6];
