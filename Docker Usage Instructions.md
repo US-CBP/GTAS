@@ -100,7 +100,7 @@ This will spin up containers:
 
 - `kibana` - <http://localhost:5601>
 
-### Run all service expect tomcat
+### Run all services expect tomcat
 
 ``` bash
 docker-compose up -d mariahost elasticsearch activemq  kibana logstash

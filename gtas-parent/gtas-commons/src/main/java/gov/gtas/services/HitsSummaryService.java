@@ -31,4 +31,6 @@ public interface HitsSummaryService {
 
 	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId,
 			Long passengerId);
+
+	public HitsSummary getMostRecentHitsSummary();
 }

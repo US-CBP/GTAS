@@ -1,6 +1,15 @@
 version: "3.4"
 
 services:
+  builder:  
+    build: 
+      context: ./
+      dockerfile: ./docker/maven.Dockerfile
+    depends_on: 
+      - mariahost
+    volumes:
+      - data:/root/.m2/
+      - ./gtas-parent:/project:cached
   kibana:
     # image: kibana:6.5.4
     image: docker.elastic.co/kibana/kibana:6.5.4 

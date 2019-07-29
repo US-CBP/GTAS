@@ -1594,28 +1594,57 @@
     
           };    // return codeService
         })
-      .service('configService', function($rootScope, $http,$q){
-        /*
-         * Read Kibana settings from ./config/kibana_settings.json
-         * 
-         * By default kibana-dashboard is disabled. The landing page after successful login is flights page for now
-         */
-        function defaultHomePage(){
-          
-          var dfd = $q.defer();
-          
+      .service('statisticService', function ($http, $q) {
+          const STAT_URL = "/gtas/api/statistics";
+
+          function getApplicationStatistics() {
+              var dfd = $q.defer();
               dfd.resolve($http({
-                   method: 'get',
-                   url: './config/kibana_settings.json'
-               }));
-               
-             
+                  method: 'get',
+                  url: STAT_URL
+              }));
               return dfd.promise;
-              
-        };
-        
-        return ({
-          defaultHomePage : defaultHomePage
-        });
+          }
+
+          return ({
+              getApplicationStatistics: getApplicationStatistics
+          });
+      })
+      .service('configService', function ($http, $q) {
+
+          const CONFIG_URL = "/gtas/api/config";
+
+          function defaultHomePage() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/dashboard/"
+              }));
+              return dfd.promise;
+          }
+
+          function neo4j() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/neo4j/"
+              }));
+              return dfd.promise;
+          }
+
+          function kibanaUrl() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/kibanaUrl/"
+              }));
+              return dfd.promise;
+          }
+
+          return ({
+              defaultHomePage: defaultHomePage,
+              neo4j: neo4j,
+              kibanaUrl: kibanaUrl
+          });
       });
 }());

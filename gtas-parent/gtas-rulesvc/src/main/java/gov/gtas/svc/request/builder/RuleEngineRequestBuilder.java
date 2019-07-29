@@ -388,7 +388,7 @@ public class RuleEngineRequestBuilder {
         }
     }
 
-    public static <T> void processObject(T type, Map<Long, Set<T>> map, Long pnrId) {
+    private static <T> void processObject(T type, Map<Long, Set<T>> map, Long pnrId) {
         if (map.containsKey(pnrId)) {
             map.get(pnrId).add(type);
         } else {
@@ -429,8 +429,8 @@ public class RuleEngineRequestBuilder {
             }
             PnrAddressLink pnrAddressLink = new PnrAddressLink(pnrId, addr.getId());
             if (!this.addressLinks.contains(pnrAddressLink)) {
-                requestObjectList.add(new PnrAddressLink(pnrId, addr
-                        .getId()));
+                requestObjectList.add(pnrAddressLink);
+                this.addressLinks.add(pnrAddressLink);
             }
         }
     }
