@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import gov.gtas.config.TestCommonServicesConfig;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.gtas.config.AsyncConfig;
-import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.Address;
 import gov.gtas.model.Agency;
 import gov.gtas.model.CreditCard;

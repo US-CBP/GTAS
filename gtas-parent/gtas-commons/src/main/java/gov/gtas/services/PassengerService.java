@@ -5,7 +5,7 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Flight;
@@ -31,10 +31,10 @@ public interface PassengerService {
 
 	Passenger update(Passenger passenger);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findById(Long id);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
 
 /*
@@ -43,11 +43,11 @@ public interface PassengerService {
 */
 
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Disposition> getPassengerDispositionHistory(Long passengerId,
 			Long flightId);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	void createDisposition(DispositionData disposition, User user);
 
 	void createDisposition(HitsSummary hit);
@@ -71,7 +71,7 @@ public interface PassengerService {
 	 * @param request the request
 	 * @return the passengers by criteria
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	PassengersPageDto getPassengersByCriteria(Long flightId,
 			PassengersRequestDto request);
 
@@ -86,16 +86,16 @@ public interface PassengerService {
 	 * @param docExpirationDate the doc expiration date
 	 * @return the travel history
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
 	
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistoryNotByItinerary(Long pId, Long pnrId, String pnrRef);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_FLIGHT_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
 
 	Set<Flight> getAllFlights(Long id);

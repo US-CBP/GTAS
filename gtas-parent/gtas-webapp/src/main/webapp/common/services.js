@@ -235,7 +235,6 @@
       },
 
       restoreCode: function(type, code) {
-        console.log(type, code);
 
         var request = $http({
           method: "put",
@@ -246,13 +245,11 @@
       },
 
       restoreAllCodes: function(type) {
-        console.log(type);
 
         var request = $http({
           method: "put",
           url: `${CODE_URL}${type}/restoreAll`
         });
-        console.log(request);
         return (request.then(handleSuccess, handleError));
       },
 
@@ -534,7 +531,22 @@
               rule: $.extend({}, defaultOptions, {
                 enableVerticalScrollbar: 2
               }),
-              watchlist: defaultOptions
+              watchlist: defaultOptions,
+              zipLogs: {
+                enableRowSelection: true,
+                enableRowHeaderSelection: false,
+                enableFullRowSelection: true,
+                paginationPageSize: 10,
+                paginationPageSizes: [10, 25, 50, 100],
+                enableHorizontalScrollbar: 0,
+                enableVerticalScrollbar: 0,
+                enableFiltering: true,
+                enableCellEditOnFocus: false,
+                showGridFooter: true,
+                multiSelect: false,
+                enableGridMenu: false,
+                enableSelectAll: false
+              }
             },
             columns = {
               audit: [
@@ -686,6 +698,46 @@
                   headerCellFilter: "translate",
                   field: "name",
                   width: "55%"
+                }
+              ],
+              ziplogs: [
+                {
+                  name: " ",
+                  enableFiltering: false,
+                  enableSorting: false,
+                  width: "2%", cellTemplate: '<a class="full-width editLink" ng-click="grid.appScope.downloadZip(row.entity)"><i class="fa fa-download"></a>'
+                },
+                {
+                  name: "fileName",
+                  displayName: "File Name",
+                  headerCellFilter: "translate",
+                  field: "fileName",
+                  cellTemplate: "<div>{{COL_FIELD | uppercase}}</div>",
+                  width: "43%"
+                },
+                {
+                  name: "size",
+                  displayName: "Size",
+                  headerCellFilter: "translate",
+                  field: "size",
+                  cellTemplate: "<div>{{grid.appScope.formatBytes(COL_FIELD)}}</div>",
+                  width: "15%"
+                },
+                {
+                  name: "creationDate",
+                  displayName: "Date Created",
+                  headerCellFilter: "translate",
+                  cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
+                  field: "creationDate",
+                  width: "20%"
+                },
+                {
+                  name: "lastModified",
+                  displayName: "Last Modified",
+                  headerCellFilter: "translate",
+                  field: "lastModified",
+                  cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
+                  width: "20%"
                 }
               ],
               error: [
@@ -1505,28 +1557,94 @@
           getCodeTooltipData:getCodeTooltipData
         });
       })
-      .service('configService', function($rootScope, $http,$q){
-        /*
-         * Read Kibana settings from ./config/kibana_settings.json
-         * 
-         * By default kibana-dashboard is disabled. The landing page after successful login is flights page for now
-         */
-        function defaultHomePage(){
-          
-          var dfd = $q.defer();
-          
+      .service('fileDownloadService', function ($http, $q) {
+        var LOGS_URL = "/gtas/api/logs/";
+    
+        function handleError(response) {
+          if (response.data.message === undefined) {
+            return $q.reject("An unknown error occurred.");
+          }
+          return $q.reject(response.data.message);
+        }
+    
+        function handleSuccess(response) {
+          return response.data;
+        }
+
+        return {
+          getLogTypes: function() {
+            var request = $http({
+              method: "get",
+              url: LOGS_URL,
+              headers: 'Accept:application/json'});
+            return request.then(handleSuccess, handleError);
+          },
+    
+          getLogZipList: function(type) {
+            var request = $http({
+              method: "get",
+              url: LOGS_URL + type,
+              headers: 'Accept:application/json'});
+            return request.then(handleSuccess, handleError);
+          },
+    
+          getLogZip: function(type, file) {
+            window.open(LOGS_URL + type + '/' + file, '_self');
+          }
+    
+          };    // return codeService
+        })
+      .service('statisticService', function ($http, $q) {
+          const STAT_URL = "/gtas/api/statistics";
+
+          function getApplicationStatistics() {
+              var dfd = $q.defer();
               dfd.resolve($http({
-                   method: 'get',
-                   url: './config/kibana_settings.json'
-               }));
-               
-             
+                  method: 'get',
+                  url: STAT_URL
+              }));
               return dfd.promise;
-              
-        };
-        
-        return ({
-          defaultHomePage : defaultHomePage
-        });
+          }
+
+          return ({
+              getApplicationStatistics: getApplicationStatistics
+          });
+      })
+      .service('configService', function ($http, $q) {
+
+          const CONFIG_URL = "/gtas/api/config";
+
+          function defaultHomePage() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/dashboard/"
+              }));
+              return dfd.promise;
+          }
+
+          function neo4j() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/neo4j/"
+              }));
+              return dfd.promise;
+          }
+
+          function kibanaUrl() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: CONFIG_URL + "/kibanaUrl/"
+              }));
+              return dfd.promise;
+          }
+
+          return ({
+              defaultHomePage: defaultHomePage,
+              neo4j: neo4j,
+              kibanaUrl: kibanaUrl
+          });
       });
 }());

@@ -3,17 +3,23 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService, errorService, $location, $mdToast, $document, $http, $rootScope) {
+app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
+                                      errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService
+, statisticService) {
   'use strict';
   var CARRIER = 'carrier';
   var COUNTRY = 'country';
   var AIRPORT = 'airport';
   var CODESIDEBAR = 'codeSidebar';
+  var ZIPLOGS = 'ziplogs';
 
   $scope.activeCodeTab = CARRIER; //sub-tab list under 'Code Editor' tab
   $scope.codeColList = {};
   $scope.isEdited = false;
   $scope.OK = false;
+  $scope.activeZipIdx = 0;
+  $scope.activeZipType;
+  $scope.zipTypes;
 
   // CODE fields so we can generate the sidebar dynamically for each type.
   // could also pull these from the coldefs:
@@ -23,6 +29,15 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   $scope.codeColList[COUNTRY] = [{name: 'iso2', len: 2}, {name: 'iso3', len: 3}, {name: 'name', len: 255}, {name: 'isoNumeric', len: 3}];
 
   $scope.settingsInfo = settingsInfo.data;
+
+  statisticService.getApplicationStatistics().then(function(value) {
+    $scope.statistics = value.data;
+  });
+
+  $scope.getStatistics = function() {
+    return $scope.statistics;
+  };
+
   var that = this;
   this.successToast = function(msg){
       $mdToast.show($mdToast.simple()
@@ -63,6 +78,11 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
       $scope.errorGrid = gridOptionsLookupService.getGridOptions('error');
       $scope.errorGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs('error');
   }
+  var setupZipGrid = function() {
+    var gridTemplate = gridOptionsLookupService.getGridOptions('zipLogs');
+    $scope.zipGrid = Object.assign({}, gridTemplate);
+    $scope.zipGrid.columnDefs = gridOptionsLookupService.getLookupColumnDefs(ZIPLOGS);
+  }
 
 var setupCodeGrids = function(){
   var gridTemplate = gridOptionsLookupService.getGridOptions('code');
@@ -88,12 +108,63 @@ var setCodeData = function (data) {
   $scope.OK = true;
 };
 
+$scope.getZipTypes = function(init){
+  fileDownloadService.getLogTypes().then(function(data) {
+    setZipTypes(data);
+    if (init) $scope.setActiveZipData(0);
+  }, $scope.errorToast);
+};
+
+var setZipTypes = function (data) {
+  $scope.zipTypes = data;
+  if (Array.isArray(data) && data.length > 0) {
+    $scope.hasZipLogs = true;
+    return;
+  }
+
+  $scope.hasZipLogs = false;
+}
+
+$scope.setActiveZipData = function (idx) {
+   $scope.activeZipIdx = idx;
+   $scope.activeZipType = $scope.zipTypes[idx];
+
+   refreshZipData();
+}
+
+var refreshZipData = function() {
+  fileDownloadService.getLogZipList($scope.activeZipType).then(bindZipGrid, $scope.errorToast);
+}
+
+var bindZipGrid = function(data) {
+  $scope.zipGrid.data = [];
+
+  if (!Array.isArray(data) || data.length === 0) {
+    that.successToast('No log files were found.');
+    return;
+  }
+
+   $scope.zipGrid.data = data;
+}
+
 $scope.refreshActiveCodeGrid = function(){
   $mdSidenav(CODESIDEBAR).close();
   $scope.activeCodeTab = $scope.activeCodeTab || CARRIER;
 
   codeService.getAllCodes($scope.activeCodeTab).then(setCodeData, $scope.errorToast);
 };
+
+$scope.formatBytes = function(bytes, decimals = 2) {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 
   var selectRow = function(gridApi) {
       // set gridApi on scope
@@ -135,6 +206,7 @@ $scope.refreshActiveCodeGrid = function(){
   setupAuditGrid();
   setupErrorGrid();
   setupCodeGrids();
+  setupZipGrid();
 
   $scope.auditGrid.onRegisterApi = selectRow;
   $scope.errorGrid.onRegisterApi = selectErrorRow;
@@ -157,6 +229,10 @@ $scope.refreshActiveCodeGrid = function(){
         break;
       case 4:
         break;
+      case 5:
+        $scope.toastParent = $document[0].getElementById('zipContent');
+        $scope.getZipTypes(true);
+        break;
     }
   });
 
@@ -174,7 +250,7 @@ $scope.refreshActiveCodeGrid = function(){
 
     $mdSidenav(CODESIDEBAR).open();
   };
-
+  
   $scope.openSidebarAdd = function () {
     $scope.codeAction = 'Add';
     $scope.rowSelectedRaw = {};
@@ -228,6 +304,9 @@ $scope.refreshActiveCodeGrid = function(){
     }
   };
 
+  $scope.downloadZip = function (row) {
+    if (!!row && !!$scope.activeZipType) fileDownloadService.getLogZip($scope.activeZipType, row.fileName);
+  };
 
   function refreshTooltips() {
     switch ($scope.activeCodeTab) {
@@ -395,7 +474,7 @@ $scope.refreshActiveCodeGrid = function(){
   $scope.saveSettings = function() {
     defaultSettingsService.saveSettings($scope.settingsInfo)
     .then(function success(response) {
-      alert("Success Save Settings");
+      alert("Settings saved successfully");
     },function error(response){
       alert("Error when saving settings");
     });

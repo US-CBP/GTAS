@@ -9,11 +9,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import gov.gtas.services.UserLocationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,15 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.gtas.common.UserLocationSetting;
 import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.EncounteredStatusEnum;
-import gov.gtas.model.Case;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.OneDayLookoutVo;
-
-
 
 @RestController
 public class OneDayLookoutController {
@@ -43,7 +39,7 @@ public class OneDayLookoutController {
 	private UserService userService;
 
 	@Autowired
-	private UserLocationService userLocationService;
+	private UserLocationSetting userLocationSetting;
 
 	@RequestMapping(value = "/onedaylookout", method = RequestMethod.GET)
 	public @ResponseBody List<OneDayLookoutVo> getOneDayLookout(HttpServletRequest httpServletRequest,
@@ -72,16 +68,12 @@ public class OneDayLookoutController {
 
 		} else {
 
-		
-			String userLocation = (String) httpServletRequest.getSession()
-					.getAttribute(Constants.USER_PRIMARY_LOCATION);
-
-			//set user location if it does not exist.
-			if (userLocation == null) {
-				userLocation = getUserLocation(userId);
-				httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION, userLocation);
+			if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null) {
+				userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
 			}
 
+			String userLocation = (String) httpServletRequest.getSession()
+					.getAttribute(Constants.USER_PRIMARY_LOCATION);
 
 			if (userLocation != null && !userLocation.trim().isEmpty()) {
 				try {
@@ -119,15 +111,6 @@ public class OneDayLookoutController {
 	}
 
 
-	public String getUserLocation(String userId) {
-		String loc = null;
-		try {
-			loc = userLocationService.getUserLocation(userId).get(0).getAirport();
-		} catch (Exception e) {
-			logger.info("error getting user location from database!");
-		}
-		return loc;
-	}
 
 	@RequestMapping(value = "/addonedaylookout", method = RequestMethod.GET)
 	public @ResponseBody boolean addToOneDayLookout(@RequestParam(value = "caseId", required = true) String caseId) {
@@ -174,7 +157,7 @@ public class OneDayLookoutController {
 
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/encounteredstatus", method = RequestMethod.POST)
 	public @ResponseBody void updateEncounteredStatus(@RequestParam(value = "caseId", required = true) Long caseId,
 			@RequestParam(value = "newStatus", required = true) String newStatus) {

@@ -71,7 +71,7 @@ mvn hibernate4:export
 Deploy to tomcat and start the server.
 
 ```
-cp gtas-webapp/gtas.war [tomcat home]/webapps
+cp gtas-webapp/target/gtas.war [tomcat home]/webapps
 cp gtas-job-scheduler-war/target/gtas-job-scheduler.war [tomcat home]/webapps
 ```
 

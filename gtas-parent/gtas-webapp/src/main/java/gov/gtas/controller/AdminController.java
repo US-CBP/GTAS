@@ -9,27 +9,25 @@ import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.model.ApiAccess;
+import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.Carrier;
 import gov.gtas.model.lookup.Country;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.AppConfiguration;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.ApiAccessService;
-import gov.gtas.services.AuditLogPersistenceService;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.services.CarrierService;
-import gov.gtas.services.AirportService;
-import gov.gtas.services.CountryService;
+import gov.gtas.services.*;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.SettingsVo;
+import gov.gtas.vo.LogFileVo;
 
 import java.text.ParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
 
 import javax.validation.Valid;
 
@@ -38,6 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,32 +64,79 @@ public class AdminController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdminController.class);
 
-        public static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
-        public static final String FLIGHT_RANGE ="FLIGHT_RANGE";
-        public static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
-        public static final String APIS_VERSION = "APIS_VERSION";
-        public static final String MAX_RULE_HITS = "MAX_RULE_HITS";
+  private static final String MATCHING_THRESHOLD = "MATCHING_THRESHOLD";
+  private static final String FLIGHT_RANGE ="FLIGHT_RANGE";
+  private static final String APIS_ONLY_FLAG = "APIS_ONLY_FLAG";
+  private static final String APIS_VERSION = "APIS_VERSION";
+  private static final String MAX_RULE_HITS = "MAX_RULE_HITS";
 
-  @Autowired
+  private final
   AppConfigurationService appConfigurationService;
 
-	@Autowired
-	private AuditLogPersistenceService auditService;
+	private final AuditLogPersistenceService auditService;
 
-	@Autowired
-	private ErrorPersistenceService errorService;
+	private final ErrorPersistenceService errorService;
 
-	@Autowired
-  private ApiAccessService apiAccessService;
+	private final AdminService adminService;
+
+	private final ApiAccessService apiAccessService;
   
-	@Autowired
-  private CarrierService carrierService;
+	private final CarrierService carrierService;
   
-	@Autowired
-  private CountryService countryService;
+	private final CountryService countryService;
   
-	@Autowired
-  private AirportService airportService;
+	private final AirportService airportService;
+
+  private final FileService fileService;
+
+    @Autowired
+	public AdminController(AppConfigurationService appConfigurationService, AuditLogPersistenceService auditService, ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService, CarrierService carrierService, CountryService countryService, AirportService airportService, FileService fileService) {
+		this.appConfigurationService = appConfigurationService;
+		this.auditService = auditService;
+		this.errorService = errorService;
+		this.adminService = adminService;
+		this.apiAccessService = apiAccessService;
+		this.carrierService = carrierService;
+		this.countryService = countryService;
+		this.airportService = airportService;
+		this.fileService = fileService;
+	}
+
+	// ------------------------------------------------- //
+  //ADMIN LOG FILE DOWNLOAD
+  // ------------------------------------------------- //
+
+	@RequestMapping(method = RequestMethod.GET, value = "/api/statistics")
+	public ApplicationStatisticsDTO getApplicationStatistics() {
+		return adminService.createApplicationStatisticsDto();
+	}
+
+  //GET LIST OF AVAILABLE LOG TYPES
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs")
+  public String[] getLogTypeList() throws IOException {
+    return fileService.getLogTypeList();
+  }
+
+  // GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}")
+  public List<LogFileVo> getLogZipList(@PathVariable("type") String logType) throws IOException {
+    return fileService.getLogZipList(logType);
+  }
+
+  //GET ZIP BINARY
+  @RequestMapping(method = RequestMethod.GET, value = "/api/logs/{type}/{file}", produces="application/zip")
+    public ResponseEntity<Resource> getLogZip(@PathVariable("type") String logType, @PathVariable("file") String logFile)  throws IOException {
+      File file = fileService.getLogZip(logType, logFile);
+      HttpHeaders headers = new HttpHeaders();
+
+      headers.setContentType(MediaType.valueOf("application/zip"));
+      headers.set("content-disposition", "inline; filename=\"" + file.getName() + "\"");
+      headers.set("content-length", String.valueOf(file.length()));
+
+      FileSystemResource fileSystemResource = new FileSystemResource(file);
+
+      return new ResponseEntity<>(fileSystemResource, headers, HttpStatus.OK);
+    }
 
   //carrier
 	@RequestMapping(method = RequestMethod.GET, value = "/api/carrier")

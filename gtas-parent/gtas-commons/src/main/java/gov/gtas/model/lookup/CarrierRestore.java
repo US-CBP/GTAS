@@ -16,7 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Cacheable
 @Entity
-@Table(name = "carrierRestore", indexes = { @Index(columnList = "iata", name = "carrierRestore_iata_index") })
+@Table(name = "carrier_restore", indexes = { @Index(columnList = "iata", name = "carrierRestore_iata_index") })
 public class CarrierRestore extends BaseEntity {
   public CarrierRestore() { }
   private String name;

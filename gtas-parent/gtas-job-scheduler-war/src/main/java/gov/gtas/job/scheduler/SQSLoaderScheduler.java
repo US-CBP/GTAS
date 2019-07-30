@@ -7,6 +7,7 @@ package gov.gtas.job.scheduler;
 
 import java.util.List;
 
+import gov.gtas.job.localFileIntake.InboundQMessageSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.services.sqs.model.Message;
 
 import gov.gtas.aws.QueueService;
-import gov.gtas.parsers.redisson.jms.InboundQMessageSender;
 
 /*
  * A scheduled task to process messages from AWS SQS queue. 

@@ -75,7 +75,7 @@
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 &nbsp;Upload</a></li>
               <!-- Neo4J Browser pop out-->
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="http://localhost:7474/browser/" target="_blank">
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href= {{getNeo4JUrl()}} target="_blank">
                 <i class="fa fa-filter" aria-hidden="true"></i>
                 &nbsp;Neo4J Browser</a>
               </li>
@@ -139,7 +139,7 @@
       <!-- Flights, Passengers, Cases Tab -->
       <div id="subnav" class="collapse navbar-collapse">
         <div class="nav navbar-nav">
-          <ul data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.VIEW_FLIGHT_PASSENGERS }}]" class="nav nav-tabs nav-tabs-light" role="tablist">
+          <ul class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
 	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>

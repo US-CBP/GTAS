@@ -17,7 +17,8 @@ import javax.annotation.Resource;
 
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource({"classpath:commonservices.properties"})
+@PropertySource("classpath:commonservices.properties")
+@PropertySource(value = "file:${catalina.home}/conf/application.properties", ignoreResourceNotFound = true)
 public class Neo4JConfig {
 
     @Resource
