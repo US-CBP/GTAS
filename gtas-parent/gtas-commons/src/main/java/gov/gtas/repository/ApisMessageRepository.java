@@ -17,12 +17,14 @@ public interface ApisMessageRepository extends MessageRepository<ApisMessage> {
 	@Query("SELECT distinct apis " +
 			"FROM ApisMessage apis " +
 			"left join fetch apis.phones " +
-			"left join fetch apis.passengers pax " +
-			"left join fetch apis.flights f " +
-			"where :passengerId in (select p.id from apis.passengers p) " +
-			"and f.id = :flightId")
+			"left join apis.passengers pax " +
+			"left join apis.flights f " +
+			"where f.id = :flightId " +
+			"and :passengerId in (select p.id from apis.passengers p) " +
+			"order by apis.edifactMessage.transmissionDate " +
+			"desc")
 	List<ApisMessage> findByFlightIdAndPassengerId(@Param("flightId") Long flightId,
-			@Param("passengerId") Long passengerId);
+												   @Param("passengerId") Long passengerId);
 	@Query("SELECT fp.reservationReferenceNumber FROM ApisMessage apis join apis.flightPaxList fp where fp.passenger.id = :passengerId and fp.flight.id = :flightId")
 	List<String> findApisRefByFlightIdandPassengerId(@Param("flightId") Long flightId,
 			@Param("passengerId") Long passengerId);
