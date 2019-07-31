@@ -13,7 +13,6 @@ import gov.gtas.model.lookup.WatchlistCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -111,5 +110,6 @@ public interface WatchlistService {
 	public WatchlistCategory  fetchWatchlistCategoryById(Long categoryID);
 	
 	List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName);
-	
+
+    void createWatchlistCategory(WatchlistCategory wlCat);
 }
