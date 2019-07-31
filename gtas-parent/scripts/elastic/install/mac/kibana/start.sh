@@ -8,6 +8,7 @@ source ../set_env.sh
 
 cd $ES_INSTALL_LOCATION
 
-# Start Elstic Search
+export KIBANA_PATH_CONFIG=$ES_INSTALL_LOCATION/kibana/config
+# Start Kibana
 
 ./kibana/bin/kibana & echo $! > ./kibana/pid
