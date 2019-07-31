@@ -143,11 +143,17 @@ services:
       - neo4j
       - mariahost
       - neo4j-scheduler
+    volumes:
+      - target:/root/.m2/
+     
   neo4j-scheduler:
     build:
       context: ./gtas-neo4j-scheduler
     image: neo4j-scheduler
     container_name: neo4j-scheduler 
+    volumes:
+      - target:/root/.m2/
+      - ./gtas-neo4j-scheduler:/etl-project:cached
 
 volumes:
   es-data:
@@ -155,6 +161,8 @@ volumes:
   db-data:
     driver: local
   data:
+    driver: local
+  target:
     driver: local
   
 networks:
