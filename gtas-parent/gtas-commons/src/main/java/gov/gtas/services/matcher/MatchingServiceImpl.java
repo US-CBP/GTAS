@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,11 +69,11 @@ public class MatchingServiceImpl implements MatchingService {
     private final WatchlistRepository watchlistRepository;
     private final CaseDispositionService caseDispositionService;
     private final FlightFuzzyHitsRepository flightFuzzyHitsRepository;
-
     private final PassengerWatchlistRepository passengerWatchlistRepository;
-
     private final AppConfigurationRepository appConfigRepository;
-    private final ApplicationContext ctx;
+
+    @Value("${partial.hits.case.create}")
+    private Boolean hitWillCreateCase;
 
     private final
     NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils;
@@ -89,7 +89,6 @@ public class MatchingServiceImpl implements MatchingService {
             CaseDispositionService caseDispositionService,
             FlightFuzzyHitsRepository flightFuzzyHitsRepository, PassengerWatchlistRepository passengerWatchlistRepository,
             AppConfigurationRepository appConfigRepository,
-            ApplicationContext ctx,
             NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
         this.paxWatchlistLinkRepository = paxWatchlistLinkRepository;
         this.watchlistItemRepository = watchlistItemRepository;
@@ -99,7 +98,6 @@ public class MatchingServiceImpl implements MatchingService {
         this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
         this.passengerWatchlistRepository = passengerWatchlistRepository;
         this.appConfigRepository = appConfigRepository;
-        this.ctx = ctx;
         this.nameMatchCaseMgmtUtils = nameMatchCaseMgmtUtils;
     }
 
@@ -265,14 +263,16 @@ public class MatchingServiceImpl implements MatchingService {
                                     passenger.getId(), Long.parseLong(hit.getDerogId()));
                             Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
                             // make a call to open case here
-                            nameMatchCaseMgmtUtils
-                                    .processPassengerFlight(
-                                            hit.getRuleDescription(),
-                                            passenger,
-                                            Long.parseLong(hit.getDerogId()),
-                                            flight,
-                                            existingCase,
-                                            matcherParameters.getRuleCatMap());
+                            if (hitWillCreateCase) {
+                                nameMatchCaseMgmtUtils
+                                        .processPassengerFlight(
+                                                hit.getRuleDescription(),
+                                                passenger,
+                                                Long.parseLong(hit.getDerogId()),
+                                                flight,
+                                                existingCase,
+                                                matcherParameters.getRuleCatMap());
+                            }
                         }
                     }
                 }
