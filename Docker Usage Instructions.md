@@ -2,136 +2,118 @@
 
 # Docker Instructions
 ----------
- **Installation**
-- Download and Install **Docker Toolbox** for Windows 	
-					[Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/)
-- Check whether you have everything up and running properly 
+
+## Prerequisites
+
+- Install Docker and Docker Compose - [Windows](https://docs.docker.com/docker-for-windows/install/), [Linux (Centos)](https://https://docs.docker.com/install/linux/docker-ce/centos/) and [Mac](https://docs.docker.com/docker-for-mac/install/)
 
 ```sh
+# The command below should display installed docker version
 $ docker version
+Client: Docker Engine - Community
+ Version:           18.09.2
+
+# The command below should display installed docker-compose version
+$ docker-compose version
+docker-compose version 1.23.2, build 1110ad0
 ```
 
-**Dec 2018** update - 
-  _**Option1:**_  Type in individual Docker commands
+- Download the latest source code
 
-Tagged images of GTAS are available on Docker Hub - run these commands to start testing GTAS in your local env.
+```bash
+$ git clone --branch dev --single-branch https://github.com/US-CBP/GTAS.git
 
-```
-$ docker network create gtas_default
-
-$ docker container run -d --name mariahost -p 3306:3306 --network gtas_default sanandreas/gtas_mariadb:v3
-
-$ docker container run -d --name redis -p 6379:6379 --network gtas_default redis
-
-$ docker container run -d --name activemq -p 61616:61616 -p 8161:8161 --network gtas_default rmohr/activemq
-
-
-```
-Update this following command with your local volume mounts (place where you drop files to be parsed) to help the application pick API/PNR files from your local hard drive.
-
-Replace this < your local folder> with your local mappings
-```
-$ docker container run -d --name tomcat -p 8080:8080 --network gtas_default -v //c/db/input: < your local input folder> -v //c/db/output: < your local output folder> sanandreas/gtas_tomcat:v3
+$ cd GTAS # All docker commands below should be executed inside this directory
 ```
 
- _**Option2:**_  Let   __**docker-compose**__    handle the process of building and deploying
-		
-- From under  <**gtas-parent/docker**> folder,  look up this file
- *docker-compose.yml*
- - Run these two following lines to update docker with your local file structure for input and output API/ PNR files - **change the Right Hand Side with your local file system values** 
- - Ex:  LOCAL_DRIVE_MAPPING_INPUT=<your_local_path>
- 
- - Note that for Windows file system - we use two forward slashes //
- and for Linux/Unix/Mac file system - we use single forward slash /
- ```
- echo LOCAL_DRIVE_MAPPING_INPUT=//C/Message > .env
- echo LOCAL_DRIVE_MAPPING_OUTPUT=//C/MessageOld >> .env
- ```
- Then go ahead and issue this command
-```
-	$ docker-compose up
-```
- This will get you up and running with GTAS in your local env.
-Access the application at _**http://localhost:8080/gtas**_
+## Configure Local Folders
 
----
-**Build Instructions**
- 
-There are couple of ways to engage Docker within GTAS
-1.   _**Option1:**_  Type in individual Docker commands
-2.   _**Option2:**_  Let   __**docker-compose**__    handle the process of building and deploying
- 
+By default, GTAS will read messages from `__data/gtas_in` and archive them in `__data/gtas_out` after parsing/leading it. The folders location can be updated in the `.env` file.
 
- **Option 1 - Docker commands**
-    You would need to build two images for GTAS to run , 
-        Image 1: _**gtas_tomcatgtas**_
-        Image 2: _**gtas_mariahost**_
-        
-From under GTAS root folder, issue these commands
-        
-```sh
-        $ docker build -f gtas-parent/docker/tomcat.Dockerfile .
-```
-This would build you a _**gtas_tomcatgtas**_ image, the following command will let you check whether this image has been created or not.
-```sh
-        $ docker images
-```
-This should display something like this
-```sh
-    λ  docker images
-REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
-gtas_tomcatgtas         latest              28c1f48c7838        2 days ago          549MB
+```properties
+LOCAL_DRIVE_MAPPING_INPUT=<INPUT_ABSOLUTE_PATH>
+LOCAL_DRIVE_MAPPING_OUTPUT=<OUTPUT_ABSOLUTE_PATH>
 ```
 
-Repeat similar process to build _**gtas_mariahost**_ image
+## Build and Run GTAS
 
-From under _**gtas-parent/gtas-commons**_ directory
-```sh
-        $ docker build -f db.Dockerfile .
-```
-        
-This would build you a _**gtas_mariahost**_ image, again check it with
-```sh
-        $ docker images
-```
-This should display something like this 
 
-```sh
-gtas_mariahost          latest              85a27e79b2bb        2 days ago          339MB
+### Run WebApp and Scheduler
+
+From under  the top directory, issue the command below.
+
+``` bash
+docker-compose up -d
 ```
 
-Once you are done with these steps, skip to **Run Containers** section
+This will spin up containers:
 
- **Option 2 - docker-compose**
+- `webapp` - <http://localhost:8080/gtas>
 
-An easier option is to kick-off docker-compose YAML file that will build images and run containers for us.
+- `scheduler`
 
-From under the GTAS root directory, issue this command
-```sh
-        $ docker-compose build
-```
-This single command will build you two images, _**gtas_mariahost**_  and _**gtas_tomcatgtas**_.
+- `mariahost` - Connection: (host=localhost, username=root, password=admin)
 
-Now, you can check the images again with 
-```sh
-        $ docker images
-```
-and proceed to **Run Containers** section
+- `activemq` - <http://localhost:8161> Login (Username=admin, Password=admin)
 
+- `elasticsearch` - <http://localhost:9200>
 
-**Run Containers**
+- `logstash`
 
-These following commands help you to start Docker containers
-- Start with mariahost first
-```sh
-        $ docker run -d --rm --name mariahost -p 3306:3306 gtas_mariahost
+- `kibana` - <http://localhost:5601>
+
+### Run web applicaton only
+
+From under the top directory, issue the command below.
+
+``` bash
+docker-compose up -d webapp
 ```
 
-- Then kick off Tomcat
-```sh
-$ docker run -d --rm --name tomcat -p 8080:8080 --link mariahost:mariahost gtas_tomcatgtas
+This will spin up containers:
+
+- `webapp` - <http://localhost:8080/gtas>
+
+- `mariahost` - Connection: (host=localhost, username=root, password=admin)
+
+- `elasticsearch` - <http://localhost:9200>
+
+- `kibana` - <http://localhost:5601>
+
+### Run The Scheduler (Parser/Loader) only
+
+``` bash
+docker-compose up -d scheduler
 ```
 
-Give it a couple mins
+This will spin up containers:
 
-and then open up the login screen going to _**http://localhost:8080/gtas**_
+- `scheduler`
+
+- `mariahost` - Connection: (host=localhost, username=root, password=admin)
+
+- `activemq` - <http://localhost:8161> Login (Username=admin, Password=admin)
+
+- `elasticsearch` - <http://localhost:9200>
+
+- `logstash`
+
+- `kibana` - <http://localhost:5601>
+
+### Run all services expect tomcat
+
+``` bash
+docker-compose up -d mariahost elasticsearch activemq  kibana logstash
+```
+
+This will spin up containers:
+
+- `mariahost` - Connecttion: (host=localhost, username=root, password=admin)
+
+- `activemq` - <http://localhost:8161> Login (Username=admin, Password=admin)
+
+- `elasticsearch` - <http://localhost:9200>
+
+- `logstash`
+
+- `kibana` - <http://localhost:5601>

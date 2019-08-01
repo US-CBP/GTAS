@@ -111,7 +111,6 @@ $scope.login = function (credentials) {
                     }); // END of AuthService Call
 
             }; // END of LOGIN Function
-
             $scope.$watch('currentUser.data', function (user) {
 
             	if (angular.isDefined(user)) {
@@ -130,16 +129,13 @@ $scope.login = function (credentials) {
                         $window.location.href = APP_CONSTANTS.ONE_DAY_LOOKOUT;
                         $scope.homePage = "onedaylookout";
                     } else {
-                    	$scope.homePage="flights";
-                    	 configService.defaultHomePage().then(function success(response){
-                    		
-                    		 $scope.homePage = JSON.parse(response.data.dashboardDisabled) ? 'flights' : 'dashboard';    
+                        configService.defaultHomePage().then(function success(response){
+                    		 $scope.homePage = response.data;
                     		 $window.location.href = 'main.html#/'+$scope.homePage;
-                    		 
                         }, function errorMessage(error){
-                        	
-                        	$window.location.href = 'main.html#/'+$scope.homePage;
-                        });                   	
+                            $scope.homePage="flights";
+                            $window.location.href = 'main.html#/'+$scope.homePage;
+                        });
                     }
                 }
             });

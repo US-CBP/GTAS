@@ -40,7 +40,7 @@
         </encoder>
         <file>${LOG_FILE}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${ROTATED_LOG_NAME}.%d{yyyy-MM-dd-HH-mm}.%i.log</fileNamePattern>
+            <fileNamePattern>${ROTATED_LOG_NAME}.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
         <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
             <maxFileSize>10MB</maxFileSize>
         </timeBasedFileNamingAndTriggeringPolicy>

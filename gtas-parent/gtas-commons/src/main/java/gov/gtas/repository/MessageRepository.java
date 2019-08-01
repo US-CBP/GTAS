@@ -5,15 +5,12 @@
  */
 package gov.gtas.repository;
 
-import java.util.Collection;
 import java.util.List;
 
+import gov.gtas.model.Message;
 import org.springframework.data.repository.CrudRepository;
 
-import gov.gtas.model.Message;
-import gov.gtas.model.MessageStatus;
-
-public interface MessageRepository<T extends Message> extends CrudRepository<T, Long> {
-    List<T> findByStatusIn(Collection<MessageStatus> statuses);
-    T findByHashCode(String hashCode);
+public interface MessageRepository<T extends Message> extends CrudRepository<T , Long> {
+    Message findByHashCode(String hashCode);
+    List<T> findTop500ByOrderByIdDesc();
 }

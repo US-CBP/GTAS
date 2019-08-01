@@ -6,24 +6,22 @@
 package gov.gtas.services;
 
 import gov.gtas.model.Message;
-import gov.gtas.repository.ApisMessageRepository;
+import gov.gtas.repository.MessageRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class MessageServiceImpl implements MessageService {
 
     @Resource
-    ApisMessageRepository apisMessageRepo;
+    MessageRepository messageRepository;
 
-    public List<Message> getAPIsByDates (Date startDate, Date endDate){
-
-        //return apisMessageRepo.getAPIsByDates(startDate, endDate);
-        return apisMessageRepo.getAPIsByDates();
-
+    @SuppressWarnings("unchecked") //findTop500ByOrderByIdDesc will always return a subclass of message.
+    public List<Message> getMostRecent500Messages() {
+        return (List<Message>) messageRepository.findTop500ByOrderByIdDesc();
     }
+
 
 }

@@ -141,7 +141,14 @@ public class WatchlistManagementController {
 				"DRL Rules", lines));
 		return resp;
 	}
+	@RequestMapping(value = Constants.WL_ADD_WL_CAT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void createWatchlistCategory(@RequestBody JsonLookupData wlCategory) {
+		WatchlistCategory wlCat = new WatchlistCategory();
+		wlCat.setDescription(wlCategory.getDescription());
+		wlCat.setName(wlCategory.getLabel());
+		watchlistService.createWatchlistCategory(wlCat);
 
+	}
 	/**
 	 * Creates the watchlist.
 	 *
