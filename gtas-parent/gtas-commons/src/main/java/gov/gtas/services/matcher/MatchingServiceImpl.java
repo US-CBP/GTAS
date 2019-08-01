@@ -87,7 +87,8 @@ public class MatchingServiceImpl implements MatchingService {
             PassengerRepository passengerRepository,
             WatchlistRepository watchlistRepository,
             CaseDispositionService caseDispositionService,
-            FlightFuzzyHitsRepository flightFuzzyHitsRepository, PassengerWatchlistRepository passengerWatchlistRepository,
+            FlightFuzzyHitsRepository flightFuzzyHitsRepository,
+            PassengerWatchlistRepository passengerWatchlistRepository,
             AppConfigurationRepository appConfigRepository,
             NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
         this.paxWatchlistLinkRepository = paxWatchlistLinkRepository;
@@ -253,29 +254,8 @@ public class MatchingServiceImpl implements MatchingService {
 
                 // These will make calls to the database to save a watchlist link and make a case.
                 // This will cause performance issues IF every passenger hits on a watchlist.
-                if (result.getTotalHits() >= 0) {
-                    Map<String, DerogResponse> _responses = result.getResponses();
-                    for (String key : _responses.keySet()) {
-                        List<DerogHit> derogs = _responses.get(key).getDerogIds();
-                        for (DerogHit hit : derogs) {
-                            hitCounter++;
-                            paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
-                                    passenger.getId(), Long.parseLong(hit.getDerogId()));
-                            Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
-                            // make a call to open case here
-                            if (hitWillCreateCase) {
-                                nameMatchCaseMgmtUtils
-                                        .processPassengerFlight(
-                                                hit.getRuleDescription(),
-                                                passenger,
-                                                Long.parseLong(hit.getDerogId()),
-                                                flight,
-                                                existingCase,
-                                                matcherParameters.getRuleCatMap());
-                            }
-                        }
-                    }
-                }
+                ProcessedMatcherResults processedResults = processMatcherResults(flight, passenger, matcherParameters, result);
+                hitCounter += processedResults.getHitCounter();
             }
         }
         logger.debug("ended fuzzy matching");
@@ -283,7 +263,38 @@ public class MatchingServiceImpl implements MatchingService {
         return hitCounter;
     }
 
-	private int getDobYearOffset(int dobYearOffset) {
+    ProcessedMatcherResults processMatcherResults(Flight flight, Passenger passenger, MatcherParameters matcherParameters, MatchingResult result) {
+	    ProcessedMatcherResults processedMatcherResults = new ProcessedMatcherResults();
+        int hitCounter = 0;
+        if (result.getTotalHits() >= 0) {
+            Map<String, DerogResponse> _responses = result.getResponses();
+            for (String key : _responses.keySet()) {
+                List<DerogHit> derogs = _responses.get(key).getDerogIds();
+                for (DerogHit hit : derogs) {
+                    hitCounter++;
+                    paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0,
+                            passenger.getId(), Long.parseLong(hit.getDerogId()));
+                    Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
+                    // make a call to open case here
+                    if (hitWillCreateCase) {
+                      nameMatchCaseMgmtUtils
+                                .processPassengerFlight(
+                                        hit.getRuleDescription(),
+                                        passenger,
+                                        Long.parseLong(hit.getDerogId()),
+                                        flight,
+                                        existingCase,
+                                        matcherParameters.getRuleCatMap());
+                      processedMatcherResults.setCaseCreated(true);
+                    }
+                }
+            }
+        }
+        processedMatcherResults.setHitCounter(hitCounter);
+        return processedMatcherResults;
+    }
+
+    private int getDobYearOffset(int dobYearOffset) {
 		try {
 
 			dobYearOffset = Integer.parseInt(appConfigRepository.findByOption(QUICKMATCH_DOB_YEAR_OFFSET).getValue());
@@ -405,4 +416,12 @@ public class MatchingServiceImpl implements MatchingService {
         return totalMatchCount;
     }
 
+
+    public Boolean getHitWillCreateCase() {
+        return hitWillCreateCase;
+    }
+
+    public void setHitWillCreateCase(Boolean hitWillCreateCase) {
+        this.hitWillCreateCase = hitWillCreateCase;
+    }
 }
