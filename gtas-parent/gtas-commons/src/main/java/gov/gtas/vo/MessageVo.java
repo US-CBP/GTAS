@@ -7,13 +7,17 @@ package gov.gtas.vo;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class MessageVo {
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
+
     private String raw;
     private String hashCode;
     private String transmissionSource;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date transmissionDate;
     private String messageType;
     private String version;  

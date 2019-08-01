@@ -18,6 +18,10 @@ public class JsonLookupData {
 		this.description = description;
 	}
 
+	@SuppressWarnings("unused") //Used to marshal object.
+	public JsonLookupData() {
+	}
+
 	public Long getId() {
 		return id;
 	}

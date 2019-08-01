@@ -1290,6 +1290,16 @@
                   });
 
                   return (request.then(handleSuccess, handleError));
+              },
+              saveCategory: function (WatchlistCategory) {
+                  let url = '/gtas/wlput/wlcat/';
+                  const request = $http({
+                      method: 'post',
+                      url: url,
+                      data: WatchlistCategory
+                  });
+
+                  return (request.then(handleSuccess, handleError));
               }
           };
       })

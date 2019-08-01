@@ -72,18 +72,6 @@ services:
     depends_on: 
       - mariahost
       - activemq
-  builder: 
-    container_name: gtas-builder 
-    build: 
-      context: ../
-      dockerfile: docker/maven.Dockerfile
-    image: gtas-builder
-    depends_on: 
-      - mariahost
-    volumes:
-      - data:/root/.m2/
-      - ../gtas-parent:/project:cached
-
   activemq:
     image: rmohr/activemq
     container_name: activemq

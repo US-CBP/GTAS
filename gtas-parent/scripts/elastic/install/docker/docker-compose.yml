@@ -1,22 +1,16 @@
 version: "2"
 
 services:
-  # brocker
-  redis:
-    image: redis:3.2.6
-    container_name: redis
-    ports:
-      - 6379:6379
-    volumes:
-      - redis-data:/data
-    networks:
-      - logging
   # index, search & agregation
   elasticsearch:
-    image: elasticsearch:5.1.2
-    container_name: elastic
+    build: 
+      dockerfile: ./elasticsearch/Dockerfile
+      context: .
+    container_name: elasticsearch
     environment:
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - discovery.type=single-node
+      # - xpack.security.enabled=true
     ports:
       - 9200:9200
       - 9300:9300
@@ -24,33 +18,37 @@ services:
       - $PWD/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - "es-data:/usr/share/elasticsearch/data"
     networks:
-      - logging
+      - gtas_default
   # UI
   kibana:
-    image: kibana:5.1.2
+    build: 
+      context: .
+      dockerfile: ./kibana/Dockerfile
     container_name: kibana
     ports:
       - 5601:5601
+    environment: 
+      ELASTICSEARCH_PASSWORD: Pa$$word1
+      ELASTICSEARCH_USERNAME: kibana
     volumes:
       - $PWD/kibana/config/kibana.yml:/etc/kibana/kibana.yml
     networks:
-      - logging
+      - gtas_default
     depends_on:
       - elasticsearch
   # indexer
-  logstash:
-    image: logstash:5.1.2
-    container_name: logstash
-    command: logstash -f /config/
-    environment:
-      - JAVA_OPTS=-Xms1g -Xmx1g
-    volumes:
-      - $PWD/logstash/config:/config
-    networks:
-      - logging
-    depends_on:
-      - elasticsearch
-      - redis
+  # logstash:
+  #   image: logstash:5.1.2
+  #   container_name: logstash
+  #   command: logstash -f /config/
+  #   environment:
+  #     - JAVA_OPTS=-Xms1g -Xmx1g
+  #   volumes:
+  #     - $PWD/logstash/config:/config
+  #   networks:
+  #     - gtas_default
+  #   depends_on:
+  #     - elasticsearch
 
 volumes:
   es-data:
@@ -59,5 +57,5 @@ volumes:
     driver: local
 
 networks:
-  logging:
+  gtas_default:
     driver: bridge
