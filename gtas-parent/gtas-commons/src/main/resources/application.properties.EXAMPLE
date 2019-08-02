@@ -100,6 +100,7 @@ hibernate.timeout=0
 hibernate.connection.charSet=UTF-8
 hibernate.hbm2ddl.import_files=sql/gtas_data.sql,sql/countries.sql,sql/carriers.sql,sql/airports.sql,sql/watchlist_categories.sql
 
+partial.hits.case.create=true
 logs.dir.root=C:\\TEST
 default.landing.page=flight
 neo4j.url=http://localhost:7474/browser/
