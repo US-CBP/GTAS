@@ -10,7 +10,7 @@ package gov.gtas.services.matcher;
 
 class ProcessedMatcherResults {
 
-    private boolean caseCreated;
+    private boolean caseCreated = false;
     private int hitCounter;
 
     void setCaseCreated(boolean caseCreated) {
