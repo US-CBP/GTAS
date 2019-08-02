@@ -1,4 +1,4 @@
-# GTAS README
+## GTAS README
 
 <img width="1280" alt="Screen Shot 2019-07-25 at 1 58 09 PM" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png">
 
@@ -32,9 +32,10 @@ GTAS accomplishes these goals through providing all the necessary decision suppo
 (2) provide real-time risk assessment against this data based on your own specific risk criteria and/or watch lists
 (3) view high risk travelers, their associated flight and reservation information, and possible affiliates
 
-## Where is GTAS currenlty Deployed
+## Where is GTAS currenlty Deployed?
 
-* Maldives | Maldives Customs Service http://www.wcoomd.org/en/media/newsroom/2018/march/global-travel-assessment-system-implementation-in-maldives.aspx
+* Maldives | Maldives Customs Service http://www.wcoomd.org/es-es/media/newsroom/2019/july/gtas-go-live-in-maldives.aspx
+* Two other deployments scheduled before the end of 2019
 
 ## About the code
 GTAS is developed in Java and uses open source software components and platforms.
