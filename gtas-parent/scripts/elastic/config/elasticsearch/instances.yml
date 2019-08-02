@@ -1,7 +1,7 @@
 instances:  
   - name: 'gtas-master'
-    dns:  [ 'master.elastic.local', 'localhost' ]
+    dns:  [ 'localhost']
   - name: 'kibana'
-    dns:  [ 'kibana.local', 'localhost']
+    dns:  [ 'localhost']
   - name: 'logstash'
-    dns:  [ 'logstash.local', 'localhost' ]
+    dns:  [ 'localhost']
