@@ -228,7 +228,7 @@ public class GtasLoaderImpl implements GtasLoader {
         if (flights.isEmpty()) {
             FlightVo flightVo = new FlightVo();
             Date primeFlightDate = new Date(Long.parseLong(primeFlightKey[ETD_DATE_NO_TIMESTAMP_AS_LONG]));
-            flightVo.setEta(primeFlightDate);
+            flightVo.setEtd(primeFlightDate);
             flightVo.setCarrier(primeFlightKey[PRIME_FLIGHT_CARRIER]);
             flightVo.setFlightNumber(primeFlightKey[PRIME_FLIGHT_NUMBER_STRING]);
             flightVo.setOrigin(primeFlightKey[PRIME_FLIGHT_ORIGIN]);
