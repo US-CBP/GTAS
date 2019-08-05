@@ -5,19 +5,15 @@
 <center>
   <table>
     <tr>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"><img width="100%" alt="chdemko" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"></a></td>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"><img width="100%" alt="chendaniely" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"><img width="100%" alt="Flights Grid" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"><img width="100%" alt="Seating Chart" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"></a></td>
     </tr>
         <tr>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"><img width="100%" alt="chdemko" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"></a></td>
-      <td><a href="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"><img width="100%" alt="chendaniely" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"><img width="100%" alt="Passenger Details" src="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"><img width="100%" alt="Graph Database" src="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"></a></td>
     </tr>
   </table>
 </center>
-
-<img width="50%" alt="Screen Shot 2019-07-25 at 2 02 00 PM" src="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png">
-
-<img width="1280" alt="Screen Shot 2019-07-25 at 2 03 11 PM" src="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png">
   
 ## About GTAS
 The Global Travel Assessment System (GTAS) is web application for improving border security. It enables government agencies to automate the identification of high-risk air travelers in advance of their intended travel. 
