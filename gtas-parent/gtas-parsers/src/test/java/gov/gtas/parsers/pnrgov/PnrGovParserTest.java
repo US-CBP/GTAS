@@ -30,6 +30,8 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_WITH_BAGS = "/pnr-messages/bigMessagePnr.txt";
     private static final String PNR_EXAMPLE = "/pnr-messages/pnrMessageExample.txt";
     private static final String PNR_EDGE = "/pnr-messages/pnrEdge.txt";
+    private static final String PNR_CTC_M = "/pnr-messages/pnrPhoneCTC_M.txt";
+    private static final String PNR_CTCM = "/pnr-messages/pnrPhoneCTCM.txt";
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
 
     private EdifactParser<PnrVo> parser;
@@ -107,6 +109,19 @@ public class PnrGovParserTest implements ParserTestHelper {
         String pnrExample = getMessageText(PNR_EDGE);
         PnrVo vo = this.parser.parse(pnrExample);
         assertEquals(vo.getEmails().get(0).getAddress(), " MOLLY_LOUUNT+50BB@GMAIL.COM");
+    }
+
+    @Test
+    public void pnrPhoneWithSpaceTest() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_CTC_M);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getPhoneNumbers().get(0).getNumber(), "123456789");
+    }
+    @Test
+    public void pnrPhoneNumberNoSpaceTest() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_CTCM);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getPhoneNumbers().get(0).getNumber(), "123456789");
     }
 
 
