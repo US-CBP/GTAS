@@ -663,7 +663,7 @@ public class PassengerDetailsController {
 				//Addresses
 				if (currString.contains(ADD)) {
 					for(AddressVo a: targetVo.getAddresses()) {
-						if(currString.contains(a.getCity())) {
+						if(a.getCity() != null && currString.contains(a.getCity())) {
 							segment.append(ADD);
 							segment.append(a.getCity());
 							segment.append(" ");
