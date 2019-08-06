@@ -1619,18 +1619,25 @@
             var dfd = $q.defer();
             dfd.resolve($http({
               method: 'get',
-              url: CONFIG_URL + "/cypherUrl/"
+              url: CONFIG_URL + "/cypherUrl"
           }));
           return dfd.promise;
         }
 
         function cypherAuth() {
-          var dfd = $q.defer();
-          dfd.resolve($http({
+          var response = $http({
             method: 'get',
-            url: CONFIG_URL + "/cypherAuth/"
-        }));
-        return dfd.promise;
+            url: CONFIG_URL + "/cypherAuth"
+        });
+        return response.then(handleSuccess, handleError);
+      }
+
+      function handleError(response) {
+        return $q.reject(response.data.message);
+      }
+  
+      function handleSuccess(response) {
+        return response.data;
       }
 
           return ({
