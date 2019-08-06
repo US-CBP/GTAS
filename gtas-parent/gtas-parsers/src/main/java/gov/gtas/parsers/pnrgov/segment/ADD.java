@@ -51,7 +51,7 @@ public class ADD extends Segment {
     private String email;
 
     /*
-    * Taken from section 5.2 (ADD) phone.
+    * Taken from section 5.2 (ADD) phone for PNR 13.1
     * */
     private static final int ADDRESS_PURPOSE_CODE = 0;
     private static final int STREET_AND_NUMBER_PO_BOX = 1;
@@ -63,7 +63,15 @@ public class ADD extends Segment {
     private static final int FREE_TEXT_PHONE_INFORMATION = 7;
  //   private static final int PLACE_LOCATION = 8; unused part of spec
 
-
+    /*The following variables are my BEST GUESS on what the numbers parse.
+    As I do not have a 11.1 spec I am primarily trying to move the magic numbers from the code and
+    into an initialization block. Best guess for PNR 11.1!
+    * */
+    private static final int FIRST_ELEMENT = 0;
+    private static final int POTENTIAL_MAIL_TO_BLOCK = 7;
+    private static final int EMAIL_INFORMATION_COMPOSITE = 2;
+    private static final int STREET_NUMBER_AND_NAME = 14;
+    private static final int CITY_STATE_ZIPCODE = 21;
 
     public ADD(List<Composite> composites) {
         super(ADD.class.getSimpleName(), composites);
@@ -79,7 +87,7 @@ public class ADD extends Segment {
             this.postalCode = c.getElement(POSTCODE_IDENTIFICATION);
             String freeText = c.getElement(FREE_TEXT_PHONE_INFORMATION);
 
-            //special check
+            //special check for PNR 13.1 or PNR 11.1.
             String firstElement = c.getElement(ADDRESS_PURPOSE_CODE);
             if (freeText != null && freeText.contains("CTCE")) {
             	this.email = freeText;
@@ -96,7 +104,7 @@ public class ADD extends Segment {
 
     // This is *NOT* to the PNR 13.1 specification. We suspect this is PNR 11.1 logic and will attempt to parse as such when the first element is E, M, H, or O.
     private void parseSuspectedPnrGov11_1(Composite c, String freeText) {
-        final int FIRST_ELEMENT = 0;
+
         if ((StringUtils.isNotBlank(c.getElement(FIRST_ELEMENT)) && ("E".equalsIgnoreCase(c.getElement(FIRST_ELEMENT))))) {
             this.email = freeText;
         }
@@ -118,20 +126,23 @@ public class ADD extends Segment {
                 this.telephone = lastOne.getElement(FIRST_ELEMENT);
             }
         }
-        if (StringUtils.isBlank(c.getElement(0)) && StringUtils.isNotBlank(c.getElement(7))
-                && c.getElement(7).contains("TBM")) {
+        if (StringUtils.isBlank(c.getElement(FIRST_ELEMENT)) && StringUtils.isNotBlank(c.getElement(POTENTIAL_MAIL_TO_BLOCK))
+                && c.getElement(POTENTIAL_MAIL_TO_BLOCK).contains("TBM")) {
             //ADD++:::::::TBM MAIL TO+:::::::FIRST NAME LAST NAME:::::::99 STREET:::::::CITY STATE LONGZIPCODE'
-            Composite c2 = getComposite(2);
+            Composite c2 = getComposite(EMAIL_INFORMATION_COMPOSITE);
+            int CITY = 0;
+            int STATE = 1;
+            int POST_CODE = 2;
             if (c2 != null) {
                 this.addressType = "MAIL TO";
-                this.streetNumberAndName = c2.getElement(14);
-                String temp = c2.getElement(21);
+                this.streetNumberAndName = c2.getElement(STREET_NUMBER_AND_NAME);
+                String temp = c2.getElement(CITY_STATE_ZIPCODE);
                 if (StringUtils.isNotBlank(temp)) {
                     String[] tokens = temp.split(" ");
                     if (tokens.length >= 3) {
-                        this.city = tokens[0];
-                        this.stateOrProvinceCode = tokens[1];
-                        this.postalCode = tokens[2];
+                        this.city = tokens[CITY];
+                        this.stateOrProvinceCode = tokens[STATE];
+                        this.postalCode = tokens[POST_CODE];
                     }
                 }
             }
