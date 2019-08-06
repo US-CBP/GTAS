@@ -1616,12 +1616,11 @@
           }
 
           function cypherUrl() {
-            var dfd = $q.defer();
-            dfd.resolve($http({
+            var response = $http({
               method: 'get',
               url: CONFIG_URL + "/cypherUrl"
-          }));
-          return dfd.promise;
+          });
+          return response.then(handleSuccess, handleError);
         }
 
         function cypherAuth() {
