@@ -1,17 +1,24 @@
-## GTAS README
+#
+<p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/62487148-1ad6c580-b78f-11e9-9327-816d1590ad7f.png"></p>
 
-<img width="1280" alt="Screen Shot 2019-07-25 at 1 58 09 PM" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png">
-
-<img width="1280" alt="Screen Shot 2019-07-25 at 2 02 00 PM" src="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png">
-
-<img width="1280" alt="Screen Shot 2019-07-25 at 2 03 11 PM" src="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png">
-
-<img width="1280" alt="Screen Shot 2019-07-25 at 2 01 44 PM" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png">
+## Developed by U.S. Customs and Border Protection for The World Customs Organization
+<center>
+  <table>
+    <tr>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"><img width="100%" alt="Flights Grid" src="https://user-images.githubusercontent.com/20464494/62390248-d4376000-b52f-11e9-9fff-6d3471e3e9cc.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"><img width="100%" alt="Seating Chart" src="https://user-images.githubusercontent.com/20464494/62390364-106ac080-b530-11e9-8617-0e48c678ebaf.png"></a></td>
+    </tr>
+        <tr>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"><img width="100%" alt="Passenger Details" src="https://user-images.githubusercontent.com/20464494/62390314-f7faa600-b52f-11e9-9df2-49e1a6f11f19.png"></a></td>
+      <td><a href="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"><img width="100%" alt="Graph Database" src="https://user-images.githubusercontent.com/20464494/62390327-ffba4a80-b52f-11e9-85e2-824fdd349c90.png"></a></td>
+    </tr>
+  </table>
+</center>
   
 ## About GTAS
 The Global Travel Assessment System (GTAS) is web application for improving border security. It enables government agencies to automate the identification of high-risk air travelers in advance of their intended travel. 
 
-The United Nations has called upon members to use Advance Passenger Information (API) and Passenger Name Record (PNR) data for preventing the movement of high-risk travelers, and GTAS was designed to give every country that capability. The World Customs Organization (WCO) has partnered with U.S. Customs and Border Protection (US-CBP) because of the shared belief that every border security agency should have access to the latest tools.
+The United Nations has called upon members to use Advance Passenger Information (API) and Passenger Name Record (PNR) data for preventing the movement of high-risk travelers, and GTAS was designed to give every country that capability. The World Customs Organization (WCO) has partnered with U.S. Customs and Border Protection (US-CBP) because of the shared belief that every border security agency should have access to the latest tools. US-CBP has made this repository avaialble to the WCO to facilite deployment for its member states.
 
 This belief has become a reality with GTAS in production. It is able to handle the load of a high-volume country, and has successfully identified high-risk travelers. The mission GTAS supports goes beyond combating terrorism and includes;
 
