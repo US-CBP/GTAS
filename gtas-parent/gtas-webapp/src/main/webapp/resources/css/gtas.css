@@ -115,9 +115,18 @@
 .ppt-count-box.disabled, .ppt-count-text.disabled {
   display: none !important;
 }
-/* .ppt-count-text.disabled {
-  display: none !important;
-} */
+.ppt-glink:hover {
+  cursor: pointer;
+  stroke: #ee4e10;
+  marker-mid: url(#cross);
+}
+.ppt-textpath {
+  stroke-width: 1px !important;
+}
+.ppt-glink:hover>.ppt-link {
+  stroke: #ee4e10;
+}
+
 .ppt-node__path--choose--disabled {
   fill: #484848 !important;
 }
@@ -129,6 +138,18 @@
 .ppt-svg-graph {
   border: 1px solid #00416a !important;
 }
+
+.ppt-container-graph, .ppt-taxo-nav, .ppt-div-graph {
+  height: 70vh !important;
+}
+.ppt-body {
+  margin: 0px 10px;
+}
+.ppt-glink {
+  stroke-width: 4px;
+}
+
+
 .ppt-label {
   color: #333333 !important;
 }
