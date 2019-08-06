@@ -608,7 +608,7 @@ public class PassengerDetailsController {
 	 * Required for Frontend to highlight segment corresponding to pnr section
 	 * @param targetVo
 	 */
-	private void parseRawMessageToSegmentList(PnrVo targetVo) {
+	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
                     
 			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),"\n");
