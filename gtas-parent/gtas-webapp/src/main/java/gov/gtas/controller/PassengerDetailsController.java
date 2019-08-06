@@ -124,6 +124,7 @@ public class PassengerDetailsController {
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
 		vo.setPaxId(String.valueOf(t.getId()));
+		vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
 		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
@@ -138,7 +139,7 @@ public class PassengerDetailsController {
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
 		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
 		vo.setSuffix(t.getPassengerDetails().getSuffix());
-		vo.setTitle(t.getPassengerDetails().getTitle());
+    vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {

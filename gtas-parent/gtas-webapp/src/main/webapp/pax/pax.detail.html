@@ -75,7 +75,11 @@
             </td>
           </tr>
         </table>
-  
+       
+  		 <div class="map-wrapper" ng-if="kibanaSettings.dashboardDisabled == false">
+	  		<iframe id="kibana-map" ng-src="{{paxDetailKibanaUrl}}" height="300" width="340" style="border: none;" ></iframe>
+	  	</div>
+
   <!-- kibana pic here -->
   
       <table class="table table-responsive table-condensed table-borderless">
@@ -188,12 +192,14 @@
       </form>
     </md-sidenav>
   
-  
+
+<style>
+</style>
+
     <!-- BEGIN CONTENT -->
     <div>
-  
-  
-      <section>
+
+  <section>
       <!--  ACTION BUTTONS  -->
       <div class="flex justify-around action-buttons">
           <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
@@ -961,6 +967,123 @@
             </md-tab-body>
             </md-tab>
   
+            <!-- Link Analysis Tab -->
+            <md-tab label="Link Analysis" ng-click="activateGraph()">
+              <md-tab-body>
+                <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
+                <!-- SEARCH  -->
+                <div class="cbp-card-container full-width">
+                    <div class="cbp-card cbp-card-shadow">
+                      <h4 class="h-label no-margin-top" >Search</h4>
+
+                    <div class="ppt-body">
+
+                      <section class="ppt-section-main">
+                      
+                          <div class="ppt-container-graph">
+                              <nav id="popoto-saves" class="ppt-taxo-nav">
+                                <div id="saves">
+                                  <span class="ppt-header-span">This Passenger:</span>
+                                  <ul class="ppt-saved-ul">
+                                      <li id="Pax" ng-click="onClickSavedGraph('pax')">
+                                        <i class="fa fa-user-circle-o pptpassenger"></i>
+                                        <span class="ppt-label" title="Passenger links">Passenger</span>
+                                    </li>
+                                    <li id="Address" ng-click="onClickSavedGraph('address')">
+                                        <i class="fa fa-home pptaddress"></i>
+                                      <span class="ppt-label" title="Addresses used by this passenger">Address</span>
+                                    </li>
+                                    <li id="CreditCard" ng-click="onClickSavedGraph('creditcard')">
+                                        <i class="fa fa-credit-card-alt pptcreditcard"></i>
+                                      <span class="ppt-label" title="Credit cards used by this passenger">Credit Card</span>
+                                    </li>
+                                    <li id="Phone" ng-click="onClickSavedGraph('phone')">
+                                        <i class="fa fa-phone pptphone"></i>
+                                      <span class="ppt-label" title="Phone numbers used by this passenger">Phone</span>
+                                    </li>
+                                    <li id="Email" ng-click="onClickSavedGraph('email')">
+                                        <i class="fa fa-envelope pptemail"></i>
+                                      <span class="ppt-label" title="Email addresses used by this passenger">Email</span>
+                                    </li>
+                                    <li id="Hit" ng-click="onClickSavedGraph('hit')">
+                                        <i class="fa fa-exclamation-circle ppthit"></i>
+                                      <span class="ppt-label" title="Hits for this passenger">Hit</span>
+                                    </li>
+                                    <li id="Document" ng-click="onClickSavedGraph('document')">
+                                      <img src="resources\img\document.svg" style="height: 15px;" class="pptdocument"></i>
+                                      <span class="ppt-label" title="Documents used by this passenger">Document</span>
+                                    </li>
+                                  </ul>
+                                  <hr>
+                                  <br>
+                                  <span class="ppt-header-span">This Flight:</span>
+                                  <ul class="ppt-saved-ul">
+                                    <li id="Flight" ng-click="onClickSavedGraph('flight')">
+                                      <i class="fa fa-plane pptflight"></i>
+                                    <span class="ppt-label" title="Flight links">Flight</span>
+                                  </li>
+                                  <li id="Address" ng-click="onClickSavedGraph('addressall')">
+                                      <i class="fa fa-home pptaddress"></i>
+                                    <span class="ppt-label" title="All passenger addresses for this flight">All Addresses</span>
+                                  </li>
+                                  <li id="CreditCard" ng-click="onClickSavedGraph('creditcardall')">
+                                      <i class="fa fa-credit-card-alt pptcreditcard"></i>
+                                    <span class="ppt-label" title="All passenger credit cards for this flight">All Credit Cards</span>
+                                  </li>
+                                  <li id="Phone" ng-click="onClickSavedGraph('phoneall')">
+                                      <i class="fa fa-phone pptphone"></i>
+                                    <span class="ppt-label" title="All passenger phone numbers for this flight">All Phones</span>
+                                  </li>
+                                  <li id="Email" ng-click="onClickSavedGraph('emailall')">
+                                      <i class="fa fa-envelope pptemail"></i>
+                                    <span class="ppt-label" title="All passenger email addresses for this flight">All Emails</span>
+                                  </li>
+                                  <li id="Hit" ng-click="onClickSavedGraph('hitall')">
+                                      <i class="fa fa-exclamation-circle ppthit"></i>
+                                    <span class="ppt-label" title="All passenger hits for this flight">All Hits</span>
+                                  </li>
+                                  <li id="Document" ng-click="onClickSavedGraph('documentall')">
+                                    <img src="resources\img\document.svg" style="height: 15px;" class="pptdocument"></i>
+                                    <span class="ppt-label" title="All passenger documents for this flight">All Documents</span>
+                                  </li>
+                                </ul>
+                                <hr>
+                                  <br>
+                              </div>
+                              <!-- <div id="popoto-taxonomy">
+                                  <span class="ppt-header-span">Taxonomies:</span><br><br>
+                              </div> -->
+                              </nav>
+                              <div id="popoto-graph" class="ppt-div-graph">
+                                  <!-- Graph will be generated here-->
+                              </div>
+                          </div>
+                      
+                          <div id="popoto-query" class="ppt-container-query">
+                              <!-- Query viewer will be generated here -->
+                          </div>
+                      
+                          <!-- <div id="popoto-cypher" class="ppt-container-cypher">
+                          </div> -->
+                      
+                          <div class="ppt-section-header">
+                              <!-- The total results count is updated with a listener defined below -->
+                              RESULTS <span id="result-total-count" class="ppt-count-results"></span>
+                          </div>
+                      
+                          <div id="popoto-results" class="ppt-container-results">
+
+                            <!-- Results will be generated here -->
+                          </div>
+                      
+                      </section>
+                    </div>
+                    
+                    </div>
+                  </div>
+              </div>
+            </md-tab-body>
+            </md-tab>
   
           </md-tabs>
           <!-- END - TABS AND CONTENT -->

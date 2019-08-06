@@ -39,6 +39,7 @@ public class PassengerVo extends BaseVo {
     private Boolean deleted = Boolean.FALSE;
     private String seat = "";
     private String paxId;
+    private String paxIdTag;
     
     // flight info
     private String flightId;
@@ -80,6 +81,12 @@ public class PassengerVo extends BaseVo {
     }
     public void setPaxId(String paxId) {
         this.paxId = paxId;
+    }
+    public String getPaxIdTag() {
+        return paxIdTag;
+    }
+    public void setPaxIdTag(String paxIdTag) {
+        this.paxIdTag = paxIdTag;
     }
     public String getFlightOrigin() {
         return flightOrigin;

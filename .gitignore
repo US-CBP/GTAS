@@ -64,3 +64,4 @@ gradle*
 
 **/bower_components
 *yarn.lock
+*.properties

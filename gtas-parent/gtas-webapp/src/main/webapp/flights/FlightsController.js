@@ -203,11 +203,15 @@
       
       codeService.getAirportTooltips()
         .then(function (allAirports) {
+          self.filterSelected = true;
+
+          if (Array.isArray(allAirports)) {
             self.allAirports = allAirports.map(function (contact) {
               contact.lowerCasedName = contact.id.toLowerCase();
               return contact;
             });
-            self.filterSelected = true;
+          }
+          else return;
       });
 
       

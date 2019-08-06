@@ -50,7 +50,10 @@
     "cbp-theme": "1.1.1",
     "csv-js": "^1.0.0",
     "inputmask": "^4.0.0",
-    "npm-font-open-sans": "^1.1.0"
+    "neo4j-driver": "^1.7.5",
+    "neovis.js": "^1.0.0",
+    "npm-font-open-sans": "^1.1.0",
+    "popoto": "^2.0.18"
   },
   "engines": {
     "yarn": ">= 1.0.0"

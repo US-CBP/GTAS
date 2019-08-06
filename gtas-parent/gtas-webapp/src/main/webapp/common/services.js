@@ -257,14 +257,21 @@
       getCountryTooltips: function() {
         return this.getAllCodes('country').then(function(response){
 
-          return response.map(x => ({id: x.iso3, name: getTidyName(x.name)}));
-
+          if (Array.isArray(response)) {
+            return response.map(x => ({id: x.iso3, name: getTidyName(x.name)}));
+          }
+          else {
+            return;
+          }
         }, handleError);
       },
 
       getCarrierTooltips: function() {
-        return this.getAllCodes('carrier').then(function(response){
-          return response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
+          return this.getAllCodes('carrier').then(function(response){
+            if (Array.isArray(response)) {
+              return response.map(x => ({id: x.iata, name: getTidyName(x.name)}));
+            }
+            else return;
 
         }, handleError);
       },
@@ -272,14 +279,22 @@
       getAirportTooltips: function() {
         return this.getAllCodes('airport').then(function(response) {
 
-          return response.map(x => ({id: x.iata, name: x.name + ', ' + x.city + ', ' + x.country}));
+          if (Array.isArray(response)) {
+            return response.map(x => ({id: x.iata, name: x.name + ', ' + x.city + ', ' + x.country}));
+          }
+          else {
+            return;
+          }
         }, handleError);
       },
 
       getAirportsWithCode: function() {
         return this.getAllCodes('airport').then(function(response) {
+          if (Array.isArray(response)) {
+            return response.map(x => ({id: x.iata, name: x.name + '  (' + x.iata + ')'}));
+          }
+          else return;
 
-          return response.map(x => ({id: x.iata, name: x.name + '  (' + x.iata + ')'}));
         }, handleError);
       }
 
@@ -397,45 +412,10 @@
               showGridFooter: true,
               multiSelect: false,
               enableGridMenu: true,
-              enableSelectAll: false
+              enableSelectAll: false,
+              exporterMenuPdf: false
             },
             exporterOptions = {
-              exporterPdfDefaultStyle: { fontSize: 9 },
-              exporterPdfTableStyle: { margin: [10, 10, 10, 10] },
-              exporterPdfTableHeaderStyle: {
-                fontSize: 10,
-                bold: true,
-                italics: true
-              },
-              exporterPdfFooter: function(
-                currentPage,
-                pageCount
-              ) {
-                return {
-                  text: pageOfPages(currentPage, pageCount),
-                  style: "footerStyle"
-                };
-              },
-              exporterPdfCustomFormatter: function(
-                docDefinition
-              ) {
-                docDefinition.pageMargins = [0, 40, 0, 40];
-                docDefinition.styles.headerStyle = {
-                  fontSize: 22,
-                  bold: true,
-                  alignment: "center",
-                  lineHeight: 1.5
-                };
-                docDefinition.styles.footerStyle = {
-                  fontSize: 10,
-                  italic: true,
-                  alignment: "center"
-                };
-                return docDefinition;
-              },
-              exporterPdfOrientation: "landscape",
-              exporterPdfPageSize: "LETTER",
-              exporterPdfMaxGridWidth: 600,
               exporterCsvLinkElement: angular.element(
                 document.querySelectorAll(
                   ".custom-csv-link-location"
@@ -464,7 +444,8 @@
                 showGridFooter: true,
                 multiSelect: false,
                 enableGridMenu: true,
-                enableSelectAll: true
+                enableSelectAll: true,
+                exporterMenuPdf: false
               },
               error: {
                 enableRowSelection: true,
@@ -479,7 +460,9 @@
                 showGridFooter: true,
                 multiSelect: false,
                 enableGridMenu: true,
-                enableSelectAll: true
+                enableSelectAll: true,
+                exporterMenuPdf: false
+
               },
               code: {
                 enableRowSelection: true,
@@ -494,7 +477,9 @@
                 showGridFooter: true,
                 multiSelect: false,
                 enableGridMenu: true,
-                enableSelectAll: false
+                enableSelectAll: false,
+                exporterMenuPdf: false
+
               },
               flights: {
                 enableSorting: false,
@@ -508,7 +493,9 @@
                 paginationPageSize: 10,
                 useExternalPagination: true,
                 useExternalSorting: true,
-                useExternalFiltering: true
+                useExternalFiltering: true,
+                exporterMenuPdf: false
+
               },
               passengers: {
                 enableSorting: false,
@@ -522,6 +509,8 @@
                 useExternalPagination: true,
                 useExternalSorting: true,
                 useExternalFiltering: true,
+                exporterMenuPdf: false,
+
                 expandableRowTemplate:
                   '<div ui-grid="row.entity.subGridOptions"></div>'
               },
@@ -1549,9 +1538,10 @@
           //grid cells on each digest cycle, which can be dozens of repeat calls on every 
           //mouseover/out even for small datasets. Probably not a huge perf hit, but it's messy.
           function getFullNameByCodeAndCodeList(code, codeList){
-            if (!codeList) return '';
+            if (!codeList || Object.keys(codeList).length === 0) return 'unknown';
 
-            return codeList.find(x => x.id == code).name;   // allowing type coersion for now.
+            var code = codeList.find(x => x.id == code) || {name: "unknown"};
+            return code.name;
           };
         return({
           getCodeTooltipData:getCodeTooltipData
@@ -1619,16 +1609,36 @@
           function kibanaUrl() {
               var dfd = $q.defer();
               dfd.resolve($http({
-                  method: 'get',
-                  url: CONFIG_URL + "/kibanaUrl/"
-              }));
-              return dfd.promise;
+                method: 'get',
+                url: CONFIG_URL + "/kibanaUrl/"
+            }));
+            return dfd.promise;
           }
+
+          function cypherUrl() {
+            var dfd = $q.defer();
+            dfd.resolve($http({
+              method: 'get',
+              url: CONFIG_URL + "/cypherUrl/"
+          }));
+          return dfd.promise;
+        }
+
+        function cypherAuth() {
+          var dfd = $q.defer();
+          dfd.resolve($http({
+            method: 'get',
+            url: CONFIG_URL + "/cypherAuth/"
+        }));
+        return dfd.promise;
+      }
 
           return ({
               defaultHomePage: defaultHomePage,
               neo4j: neo4j,
-              kibanaUrl: kibanaUrl
+              kibanaUrl: kibanaUrl,
+              cypherUrl: cypherUrl,
+              cypherAuth: cypherAuth
           });
-      });
-}());
+        });
+  }());
