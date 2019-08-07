@@ -11,7 +11,8 @@ services:
       - data:/root/.m2/
       - ./gtas-parent:/project:cached
   kibana:
-    image: kibana:6.5.4
+    # image: kibana:6.5.4
+    image: docker.elastic.co/kibana/kibana:6.5.4 
     container_name: kibana
     ports:
       - 5601:5601
@@ -23,7 +24,10 @@ services:
       test: 'curl -f http://kibana:5601 || exit 1'
 
   elasticsearch:
-    image: elasticsearch:6.5.4
+    # image: elasticsearch:6.5.4
+    build:
+      context: ./gtas-parent/scripts/elastic
+      dockerfile: install/docker/elasticsearch/Dockerfile
     container_name: elasticsearch
     networks: 
       - gtas_default
@@ -62,8 +66,8 @@ services:
 
   mariahost:
     build:
-      context: ./docker
-      dockerfile: db.Dockerfile
+      context: .
+      dockerfile: ./docker/db.Dockerfile
     ports:
       - "3306:3306"
     container_name: mariahost
@@ -118,6 +122,38 @@ services:
     depends_on: 
       - mariahost
       - activemq
+  neo4j:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: neo4j.Dockerfile
+    container_name: neo4j
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+    - gtas_default
+  etl-job:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: ./etl_job.Dockerfile
+    container_name: etl-job
+    networks: 
+    - gtas_default
+    depends_on: 
+      - neo4j
+      - mariahost
+      - neo4j-scheduler
+    volumes:
+      - target:/root/.m2/
+     
+  neo4j-scheduler:
+    build:
+      context: ./gtas-neo4j-scheduler
+    image: neo4j-scheduler
+    container_name: neo4j-scheduler 
+    volumes:
+      - target:/root/.m2/
+      - ./gtas-neo4j-scheduler:/etl-project:cached
 
 volumes:
   es-data:
@@ -125,6 +161,8 @@ volumes:
   db-data:
     driver: local
   data:
+    driver: local
+  target:
     driver: local
   
 networks:
