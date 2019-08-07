@@ -24,10 +24,10 @@ services:
       test: 'curl -f http://kibana:5601 || exit 1'
 
   elasticsearch:
-    # image: elasticsearch:6.5.4
-    build:
-      context: ./gtas-parent/scripts/elastic
-      dockerfile: install/docker/elasticsearch/Dockerfile
+    image: elasticsearch:6.5.4
+    # build:
+    #   context: ./gtas-parent/scripts/elastic
+    #   dockerfile: install/docker/elasticsearch/Dockerfile
     container_name: elasticsearch
     networks: 
       - gtas_default
