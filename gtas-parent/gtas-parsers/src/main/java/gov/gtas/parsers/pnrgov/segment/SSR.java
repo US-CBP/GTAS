@@ -44,6 +44,7 @@ public class SSR extends Segment {
     public static final String DOCA = "DOCA";
     public static final String DOCO = "DOCO";
     public static final String SEAT = "SEAT";
+    public static final String SEAT_REQUEST = "NSST";
     public static final String CTCE="CTCE";
     public static final String FQTV="FQTV";
     public static final String CTCM="CTCM";
