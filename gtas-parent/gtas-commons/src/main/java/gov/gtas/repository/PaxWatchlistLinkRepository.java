@@ -20,7 +20,10 @@ import gov.gtas.model.PaxWatchlistLink;
 
 public interface PaxWatchlistLinkRepository extends JpaRepository<PaxWatchlistLink, Long> {
 	
-	@Query("SELECT p FROM PaxWatchlistLink p WHERE p.passenger.id =:paxId")
+	@Query("SELECT p FROM PaxWatchlistLink p " +
+			"left join fetch p.watchlistItem wlItem " +
+			"left join fetch wlItem.watchlistCategory " +
+			"WHERE p.passenger.id =:paxId")
 	public List<PaxWatchlistLink> findByPassengerId(@Param("paxId") Long paxId);
 	
 	@Query("SELECT p.watchlistItem.id FROM PaxWatchlistLink p WHERE p.passenger.id =:paxId")

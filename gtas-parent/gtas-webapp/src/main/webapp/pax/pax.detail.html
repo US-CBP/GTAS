@@ -301,7 +301,7 @@
                     <!------  WATCHLIST MATCHES   ------>
                     <div class="full-width cbp-card-container">
                       <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Watchlist Matches
+                        <h4 class="h-label no-margin-top" >Partial Hits
                           <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
                             <i class="fa fa-inverse fa-refresh"></i>
                           </button>
@@ -310,20 +310,20 @@
                           <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                             <thead>
                             <tr>
-                              <th>First Name</th>
+                              <th>Category</th>
                               <th>Last Name</th>
+                              <th>First Name</th>
                               <th>DOB</th>
                               <th>% Match</th>
-                              <th>Verified</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="watch in watchlistLinks | orderBy:'-percentMatch'">
-                              <td>{{watch.watchListFirstName}}</td>
+                              <td>{{watch.watchlistCategory}}</td>
                               <td>{{watch.watchListLastName}}</td>
+                              <td>{{watch.watchListFirstName}}</td>
                               <td>{{watch.watchListDOB}}</td>
                               <td>{{watch.percentMatch | percent}}</td>
-                              <td>{{watch.verifiedStatus?"Yes":"No"}}</td>
                             </tr>
                             </tbody>
                           </table>

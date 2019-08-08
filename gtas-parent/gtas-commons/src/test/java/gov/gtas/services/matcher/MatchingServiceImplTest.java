@@ -10,6 +10,9 @@ package gov.gtas.services.matcher;
 
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PaxWatchlistLink;
+import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.*;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
@@ -17,24 +20,24 @@ import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.DerogResponse;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
+import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MatchingServiceImplTest {
 
+    private static final String TESTWATCHLIST_NAME = "testwatchlist_name";
     @Mock
     PaxWatchlistLinkRepository paxWatchlistLinkRepository;
     @Mock
@@ -56,6 +59,7 @@ public class MatchingServiceImplTest {
 
     private MatchingServiceImpl matchingService;
 
+    private PaxWatchlistLink paxWatchlistLink;
     @Before
     public void before() {
         initMocks(this);
@@ -63,6 +67,32 @@ public class MatchingServiceImplTest {
         matchingService = new MatchingServiceImpl(paxWatchlistLinkRepository, watchlistItemRepository, passengerRepository,
                 watchlistRepository, caseDispositionService, flightFuzzyHitsRepository, passengerWatchlistRepository, appConfigRepository, nameMatchCaseMgmtUtils);
 
+        WatchlistItem watchlistItem = new WatchlistItem();
+        watchlistItem.setItemData("{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FOO\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"BAR\"},{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1964-11-07\"}]}");
+        watchlistItem.setId(-9L);
+        WatchlistCategory watchlistCategory = new WatchlistCategory();
+        watchlistCategory.setName(TESTWATCHLIST_NAME);
+        watchlistItem.setWatchlistCategory(watchlistCategory);
+
+        paxWatchlistLink = new PaxWatchlistLink();
+        paxWatchlistLink.setId(-999L);
+        paxWatchlistLink.setLastRunTimestamp(new Date());
+        paxWatchlistLink.setPercentMatch(9);
+        paxWatchlistLink.setPassenger(new Passenger());
+        paxWatchlistLink.setWatchlistItem(watchlistItem);
+        paxWatchlistLink.setVerifiedStatus(0);
+
+    }
+
+
+    @Test
+    public void caseToVo() {
+        List<PaxWatchlistLink> paxWatchlistLinks = new ArrayList<>();
+        paxWatchlistLinks.add(paxWatchlistLink);
+        Mockito.when(paxWatchlistLinkRepository.findByPassengerId(-999L)).thenReturn(paxWatchlistLinks);
+        List<PaxWatchlistLinkVo> paxWatchlistLinkVos = matchingService.findByPassengerId(-999L);
+        Assert.assertEquals(1, paxWatchlistLinkVos.size());
+        Assert.assertEquals(paxWatchlistLinkVos.get(0).getWatchlistCategory(), TESTWATCHLIST_NAME);
     }
 
     @Test
