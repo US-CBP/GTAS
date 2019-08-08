@@ -122,9 +122,6 @@
         getColor: function(node) {
           return $scope.palette.airport;
         },
-        getImagePath: function(node) {
-          return "~/../../gtas/resources/img/airport-.svg";
-        },
         getIsTextDisplayed: function(node) {
           return true;
         }
@@ -540,6 +537,13 @@
       document.getElementById("result-total-count").innerHTML =
         "(" + count + ")";
     });
+
+    $scope.documentPath = function() {
+      return paxDetailService.getDocumentPath();
+    }
+    $scope.airportPath = function() {
+      return paxDetailService.getAirportPath();
+    }
 
     $scope.activateGraph = function() {
       const template = $scope.saves.pax;

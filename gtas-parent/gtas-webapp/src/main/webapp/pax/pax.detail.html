@@ -4,862 +4,910 @@
 
     <!-- BEGIN SIDEBAR -->
     <div class="cbp-sidebar sidebar margin-0">
-      <div class="flex align-items-center primary-back">
-        <h4 class="block-label margin-0">{{passenger.carrier + passenger.flightNumber | uppercase }}</h4>
-        <h6 class="block-label flex margin-0 ">
-          <table class="table table-condensed table-borderless margin-0">
+        <div class="flex align-items-center primary-back">
+          <h4 class="block-label margin-0">{{passenger.carrier + passenger.flightNumber | uppercase }}</h4>
+          <h6 class="block-label flex margin-0 ">
+            <table class="table table-condensed table-borderless margin-0">
+              <tr>
+                <td class="text-right">
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
+                    </md-tooltip>
+                   </span>
+                </td>
+                <td>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</td>
+              </tr>
+              <tr>
+                <td class="text-right">
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
+                    </md-tooltip>
+                    </span>
+                </td>
+                <td>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</td>
+              </tr>
+            </table>
+          </h6>
+        </div>
+    
+        <div>
+          <table class="table table-responsive table-condensed table-borderless">
             <tr>
-              <td class="text-right">
+              <td class="half-width txt-right"><strong>Last Name</strong></td>
+              <td class="half-width">{{passenger.lastName}}</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>First Name</strong></td>
+              <td class="half-width">{{passenger.firstName}}</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Middle Name</strong></td>
+              <td class="half-width">{{passenger.middleName}}</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Age</strong></td>
+              <td class="half-width">{{passenger.age}} ({{ passenger.dob | date:"yyyy-MM-dd" }})</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Gender</strong></td>
+              <td class="half-width">{{getCodeTooltipData( passenger.gender,"gender")}}</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Nationality</strong></td>
+              <td class="half-width">
+              <span ng-mouseleave="resetTooltip()">{{passenger.nationality}}
+                <md-tooltip class="multi-tooltip" md-direction="right">
+                  <div>{{getCodeTooltipData(passenger.nationality,"country")}}</div>
+                </md-tooltip>
+              </span></td>
+          </tr>
+            <tr>
+    
+              <td class="half-width txt-right"><strong>Residence</strong></td>
+              <td class="half-width">
+                <span ng-mouseleave="resetTooltip()">{{passenger.residencyCountry}}
+                  <md-tooltip class="multi-tooltip" md-direction="right">
+                    <div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
+                  </md-tooltip>
+                </span>
+              </td>
+            </tr>
+          </table>
+         
+         <div class="map-wrapper" ng-if="kibanaSettings.dashboardDisabled == false">
+          <iframe id="kibana-map" ng-src="{{paxDetailKibanaUrl}}" height="300" width="340" style="border: none;" ></iframe>
+        </div>
+  
+    <!-- kibana pic here -->
+    
+        <table class="table table-responsive table-condensed table-borderless">
+            <tr>
+              <td class="half-width txt-right"><strong>Seat</strong></td>
+              <td class="half-width">
+                <a class="primary-link" title="Show seat map" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
+              </td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Passenger Type</strong></td>
+              <td class="half-width">{{getCodeTooltipData( passenger.passengerType,"passenger")}}</td>
+            </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Embarkation</strong></td>
+              <td class="half-width"><div>
                 <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
                   <md-tooltip class="multi-tooltip" md-direction="right">
                     <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
-                  </md-tooltip>
-                 </span>
-              </td>
-              <td>{{ passenger.flightETD | date:'yyyy-MM-dd HH:mm' }}</td>
-            </tr>
-            <tr>
-              <td class="text-right">
-                <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
-                  <md-tooltip class="multi-tooltip" md-direction="right">
-                    <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
-                  </md-tooltip>
-                  </span>
-              </td>
-              <td>{{ passenger.flightETA | date:'yyyy-MM-dd HH:mm' }}</td>
-            </tr>
-          </table>
-        </h6>
-      </div>
-  
-      <div>
-        <table class="table table-responsive table-condensed table-borderless">
-          <tr>
-            <td class="half-width txt-right"><strong>Last Name</strong></td>
-            <td class="half-width">{{passenger.lastName}}</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>First Name</strong></td>
-            <td class="half-width">{{passenger.firstName}}</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Middle Name</strong></td>
-            <td class="half-width">{{passenger.middleName}}</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Age</strong></td>
-            <td class="half-width">{{passenger.age}} ({{ passenger.dob | date:"yyyy-MM-dd" }})</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Gender</strong></td>
-            <td class="half-width">{{getCodeTooltipData( passenger.gender,"gender")}}</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Nationality</strong></td>
-            <td class="half-width">
-            <span ng-mouseleave="resetTooltip()">{{passenger.nationality}}
-              <md-tooltip class="multi-tooltip" md-direction="right">
-                <div>{{getCodeTooltipData(passenger.nationality,"country")}}</div>
-              </md-tooltip>
-            </span></td>
-        </tr>
-          <tr>
-  
-            <td class="half-width txt-right"><strong>Residence</strong></td>
-            <td class="half-width">
-              <span ng-mouseleave="resetTooltip()">{{passenger.residencyCountry}}
-                <md-tooltip class="multi-tooltip" md-direction="right">
-                  <div>{{getCodeTooltipData(passenger.residencyCountry,"country")}}</div>
-                </md-tooltip>
-              </span>
-            </td>
-          </tr>
-        </table>
-       
-  		 <div class="map-wrapper" ng-if="kibanaSettings.dashboardDisabled == false">
-	  		<iframe id="kibana-map" ng-src="{{paxDetailKibanaUrl}}" height="300" width="340" style="border: none;" ></iframe>
-	  	</div>
-
-  <!-- kibana pic here -->
-  
-      <table class="table table-responsive table-condensed table-borderless">
-          <tr>
-            <td class="half-width txt-right"><strong>Seat</strong></td>
-            <td class="half-width">
-              <a class="primary-link" title="Show seat map" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
-            </td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Passenger Type</strong></td>
-            <td class="half-width">{{getCodeTooltipData( passenger.passengerType,"passenger")}}</td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Embarkation</strong></td>
-            <td class="half-width"><div>
-              <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
-                <md-tooltip class="multi-tooltip" md-direction="right">
-                  <div>{{getCodeTooltipData(passenger.flightOrigin,"airport")}}</div>
-                  </md-tooltip>
-              </span></div>
-            </td>
-          </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Debarkation</strong></td>
-            <td class="half-width"><div>
-                <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
-                  <md-tooltip class="multi-tooltip" md-direction="right">
-                    <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
-                  </md-tooltip>
+                    </md-tooltip>
                 </span></div>
               </td>
             </tr>
-          <tr>
-            <td class="half-width txt-right"><strong>Last Airline Update</strong></td>
-            <td class="half-width"></td>
-          </tr>
-        </table>
-  
-        <table class="table table-responsive table-borderless table-condensed margin-0">
-          <tr ng-if="passenger.pnrVo !== null">
-            <td>PNR</td>
-            <td>
-              <div>
-                <ol class="nav-steps">
-                  <li ng-repeat="leg in passenger.pnrVo.flightLegs" ng-class="{active : leg.flightId !== null}">
-                    <span ng-mouseleave="resetTooltip()"> <strong>{{ leg.originAirport }}</strong>
-                      <md-tooltip class="multi-tooltip" md-direction="bottom">
-                        <div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div>
-                      </md-tooltip>
-                    </span>
-                  </li>
-                  <li>
-                    <span ng-mouseleave="resetTooltip()" class="small">
-                      <strong>{{passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport}}</strong>
-                      <md-tooltip class="multi-tooltip" md-direction="bottom">
-                        <div>{{getCodeTooltipData(passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport,"airport")}}</div>
-                      </md-tooltip>
-                    </span>
-                  </li>
-                </ol>
+            <tr>
+              <td class="half-width txt-right"><strong>Debarkation</strong></td>
+              <td class="half-width"><div>
+                  <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
+                    <md-tooltip class="multi-tooltip" md-direction="right">
+                      <div>{{getCodeTooltipData(passenger.flightDestination,"airport")}}</div>
+                    </md-tooltip>
+                  </span></div>
+                </td>
+              </tr>
+            <tr>
+              <td class="half-width txt-right"><strong>Last Airline Update</strong></td>
+              <td class="half-width"></td>
+            </tr>
+          </table>
+    
+          <table class="table table-responsive table-borderless table-condensed margin-0">
+            <tr ng-if="passenger.pnrVo !== null">
+              <td>PNR</td>
+              <td>
+                <div>
+                  <ol class="nav-steps">
+                    <li ng-repeat="leg in passenger.pnrVo.flightLegs" ng-class="{active : leg.flightId !== null}">
+                      <span ng-mouseleave="resetTooltip()"> <strong>{{ leg.originAirport }}</strong>
+                        <md-tooltip class="multi-tooltip" md-direction="bottom">
+                          <div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div>
+                        </md-tooltip>
+                      </span>
+                    </li>
+                    <li>
+                      <span ng-mouseleave="resetTooltip()" class="small">
+                        <strong>{{passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport}}</strong>
+                        <md-tooltip class="multi-tooltip" md-direction="bottom">
+                          <div>{{getCodeTooltipData(passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport,"airport")}}</div>
+                        </md-tooltip>
+                      </span>
+                    </li>
+                  </ol>
+                </div>
+              </td>
+            </tr>
+          </table>
+          <table class="table table-responsive table-borderless table-condensed ">
+            <tr>
+              <td>APIS</td>
+              <td>
+                <div>
+                  <ol class="nav-dots">
+                    <li ng-class="{active : passenger.apisMessageVo !== null}">
+                      <a>apis</a>
+                    </li>
+                  </ol>
+                </div>
+              </td>
+            </tr> 
+          </table>
+        </div>
+      </div>  <!-- END SIDEBAR -->
+    
+    
+    <div class="cbp-sidebar-offset margin-top-1">
+      <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="addWatchlist">
+        <h4 class="block-label no-margin-top">Watch List Category</h4>
+        <form name="watchlist" class="filters" _lpchecked="1" ng-submit="showConfirm()">
+          <h4  aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup7" aria-controls="filterGroup7" class="filter-group-title">
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Category:
+          </h4>
+          <div id="filterGroup7" class="collapse in" aria-expanded="true">
+            <div class="filter-group-content">
+              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded="MaterialSelectfield">
+                <select class="cbp-non-chip-input mdl-selectfield__select" id="direction" aria-required="true"
+                        ng-model="watchlistCategoryId" required>
+                  <option ng-repeat="category in watchlistCategories" value="{{category.id}}" translate>
+                    {{category.label}}
+                  </option>
+                </select>
               </div>
-            </td>
-          </tr>
-        </table>
-        <table class="table table-responsive table-borderless table-condensed ">
-          <tr>
-            <td>APIS</td>
-            <td>
-              <div>
-                <ol class="nav-dots">
-                  <li ng-class="{active : passenger.apisMessageVo !== null}">
-                    <a>apis</a>
-                  </li>
-                </ol>
-              </div>
-            </td>
-          </tr> 
-        </table>
-      </div>
-    </div>  <!-- END SIDEBAR -->
-  
-  
-  <div class="cbp-sidebar-offset margin-top-1">
-    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="addWatchlist">
-      <h4 class="block-label no-margin-top">Watch List Category</h4>
-      <form name="watchlist" class="filters" _lpchecked="1" ng-submit="showConfirm()">
-        <h4  aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup7" aria-controls="filterGroup7" class="filter-group-title">
-          <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Category:
-        </h4>
-        <div id="filterGroup7" class="collapse in" aria-expanded="true">
-          <div class="filter-group-content">
-            <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded="MaterialSelectfield">
-              <select class="cbp-non-chip-input mdl-selectfield__select" id="direction" aria-required="true"
-                      ng-model="watchlistCategoryId" required>
-                <option ng-repeat="category in watchlistCategories" value="{{category.id}}" translate>
-                  {{category.label}}
-                </option>
-              </select>
             </div>
           </div>
-        </div>
-        <div class="md-pad">
-  
-          <button type="submit" class="btn btn-icon-only btn-primary pull-right">
-            <i class="fa fa-inverse fa-floppy-o"></i>
-            <md-tooltip>Save</md-tooltip>
-          </button>
-        </div>
-      </form>
-    </md-sidenav>
-  
-
-<style>
-</style>
-
-    <!-- BEGIN CONTENT -->
-    <div>
-
-  <section>
-      <!--  ACTION BUTTONS  -->
-      <div class="flex justify-around action-buttons">
-          <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
-            <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
-          </button>
-          <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
-            <i class="fa fa-download" aria-hidden="true"></i> &nbsp;Pax Detail
-          </a>
-          <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Create Case
-          </a>
+          <div class="md-pad">
+    
+            <button type="submit" class="btn btn-icon-only btn-primary pull-right">
+              <i class="fa fa-inverse fa-floppy-o"></i>
+              <md-tooltip>Save</md-tooltip>
+            </button>
           </div>
+        </form>
+      </md-sidenav>
+    
   
+  <style>
+  </style>
   
-          <div class="panel panel-default margin-right-1">
+      <!-- BEGIN CONTENT -->
+      <div>
   
-  
-          <!-- MD TABS AND CONTENT -->
-          <md-tabs id="detailSection" md-stretch-tabs="never" md-dynamic-height>
-  
-            <!-- SUMMARY TAB  -->
-            <md-tab label="Summary">
-  
-                <div class="flex flex-center sm-pad scroll-container-outer">
-                  <div class="flex flex-vert ie-fix-md half-width align-items-center">
-  
-                    <!------  CASE HISTORY   ------>
-                    <div class="full-width cbp-card-container">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Case History</h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                            <thead>
-                            <tr>
-                              <th>Case Id</th>
-                              <th>Flight</th>
-                              <th>Doc #</th>
-                              <th>Status</th>
-                              <th>Top Rule Category </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="case in caseHistory">
-                              <td><a ng-href="#/casedetail/{{case.id}}" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
-                              <td>{{case.flightNumber}}</td>
-                              <td>{{case.document}}</td>
-                              <td>{{case.status}}</td>
-                              <td>{{casesListWithCats[case.highPriorityRuleCatId]}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex flex-vert ie-fix-md half-width align-items-center">
-  
-                    <!------  DOCUMENTS   ------>
-                    <div class="full-width cbp-card-container">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Documents</h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                            <thead>
-                            <tr>
-                              <th>Doc #</th>
-                              <th>Type</th>
-                              <th>Iss. Country</th>
-                              <th>Exp. Date</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="doc in passenger.documents">
-                              <td>{{doc.documentNumber}}</td>
-                              <td>
-                              <span ng-mouseleave="resetTooltip()">{{ doc.documentType }}
-                      <md-tooltip class="multi-tooltip" md-direction="bottom">
-                        <div>{{getCodeTooltipData(doc.documentType,"document")}}</div>
-                        </md-tooltip>
-                    </span>
-                              </td>
-                              <td>
-                              <span ng-mouseleave="resetTooltip()"><strong> {{ doc.issuanceCountry }}</strong>
-                      <md-tooltip class="multi-tooltip" md-direction="bottom">
-                        <div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div>
-                        </md-tooltip>
-                    </span>
-                              </td>
-                              <td>{{doc.expirationDate}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-  
-                    <!------  WATCHLIST MATCHES   ------>
-                    <div class="full-width cbp-card-container">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Watchlist Matches
-                          <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
-                            <i class="fa fa-inverse fa-refresh"></i>
-                          </button>
-                        </h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                            <thead>
-                            <tr>
-                              <th>First Name</th>
-                              <th>Last Name</th>
-                              <th>DOB</th>
-                              <th>% Match</th>
-                              <th>Verified</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="watch in watchlistLinks | orderBy:'-percentMatch'">
-                              <td>{{watch.watchListFirstName}}</td>
-                              <td>{{watch.watchListLastName}}</td>
-                              <td>{{watch.watchListDOB}}</td>
-                              <td>{{watch.percentMatch | percent}}</td>
-                              <td>{{watch.verifiedStatus?"Yes":"No"}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-  
-                      <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
+    <section>
+        <!--  ACTION BUTTONS  -->
+        <div class="flex justify-around action-buttons">
+            <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
+              <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+            </button>
+            <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
+              <i class="fa fa-download" aria-hidden="true"></i> &nbsp;Pax Detail
+            </a>
+            <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Create Case
+            </a>
+            </div>
+    
+    
+            <div class="panel panel-default margin-right-1">
+    
+    
+            <!-- MD TABS AND CONTENT -->
+            <md-tabs id="detailSection" md-stretch-tabs="never" md-dynamic-height>
+    
+              <!-- SUMMARY TAB  -->
+              <md-tab label="Summary">
+    
+                  <div class="flex flex-center sm-pad scroll-container-outer">
+                    <div class="flex flex-vert ie-fix-md half-width align-items-center">
+    
+                      <!------  CASE HISTORY   ------>
+                      <div class="full-width cbp-card-container">
                         <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >Hits Summary</h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                <thead>
+                          <h4 class="h-label no-margin-top" >Case History</h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                            <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                              <thead>
                               <tr>
-                                <th>Category</th>
-                                <th>Title</th>
-                                <th>Conditions</th>
+                                <th>Case Id</th>
+                                <th>Flight</th>
+                                <th>Doc #</th>
+                                <th>Status</th>
+                                <th>Top Rule Category </th>
                               </tr>
                               </thead>
                               <tbody>
-                              <tr ng-repeat="j in ruleHits track by $index">
-                                <td>{{j.category}}</td>
-                                <td>{{j.title}}</td>
-                                <td>{{j.ruleConditions}}</td>
+                              <tr ng-repeat="case in caseHistory">
+                                <td><a ng-href="#/casedetail/{{case.id}}" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
+                                <td>{{case.flightNumber}}</td>
+                                <td>{{case.document}}</td>
+                                <td>{{case.status}}</td>
+                                <td>{{casesListWithCats[case.highPriorityRuleCatId]}}</td>
                               </tr>
                               </tbody>
                             </table>
                           </div>
                         </div>
+                      </div>
                     </div>
-
-                  </div>
-                </div>
-            </md-tab>
-  
-  
-            <!-- APIs Tab -->
-            <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
-              <div class="flex flex-center sm-pad">
-                <div class="flex flex-vert ie-fix-md half-width align-items-center">
-                  <!--Total Bags!-->
-                  <div class="cbp-card-container full-width">
-                    <div class="cbp-card cbp-card-shadow">
-                      <h4 class="h-label no-margin-top" >
-                        Total APIS Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
-                        <span class="right-header">
-                        Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
-                      </span>
-                      </h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                            <thead>
+                    <div class="flex flex-vert ie-fix-md half-width align-items-center">
+    
+                      <!------  DOCUMENTS   ------>
+                      <div class="full-width cbp-card-container">
+                        <div class="cbp-card cbp-card-shadow">
+                          <h4 class="h-label no-margin-top" >Documents</h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                            <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                              <thead>
                               <tr>
-                                <th>&nbsp;</th>
-                                <th>BagID</th>
+                                <th>Doc #</th>
+                                <th>Type</th>
+                                <th>Iss. Country</th>
+                                <th>Exp. Date</th>
                               </tr>
                               </thead>
                               <tbody>
-                            <tr ng-repeat="bags in passenger.apisMessageVo.bags">
-                              <td>&nbsp;</td>
-                              <td align="right">{{bags.bagId}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <div class="flex flex-vert ie-fix-md half-width align-items-center">
-                  <!--Phone Numbers!-->
-                  <div class="cbp-card-container full-width">
-                    <div class="cbp-card cbp-card-shadow">
-                      <h4 class="h-label no-margin-top" >
-                        Phone Numbers ({{ passenger.apisMessageVo.phoneNumbers.length }})
-                      </h4>
-                      <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                        <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                          <thead>
-                          <tr>
-                            <th>Phone Number</th>
-                          </tr>
-                          </thead>
-                            <tbody>
-                            <tr ng-repeat="phone in passenger.apisMessageVo.phoneNumbers">
-                              <td>{{phone.number}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-              <div class="flex flex-center sm-pad">
-                  <div class="flex flex-vert ie-fix-md full-width align-items-center">
-                <!--FlightPax!-->
-                <div class="cbp-card-container full-width">
-                  <div class="cbp-card cbp-card-shadow">
-                    <h4 class="h-label no-margin-top" >
-                      Passengers on Reservation ({{ passenger.apisMessageVo.flightpaxs.length }})
-                    </h4>
-                    <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                      <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                      <thead>
-                        <tr>
-                          <th>First Name</th>
-                          <th>Middle Name</th>
-                          <th>Last Name</th>
-                          <th>Pax Type</th>
-                          <th>Residence</th>
-                          <th>Port of Arrival</th>
-                          <th>Ref Num</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
-                          <td>{{flightpax.firstName}}</td>
-                          <td>{{flightpax.middleName}}</td>
-                          <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail">{{flightpax.lastName}}</a></td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
-                        <md-tooltip class="multi-tooltip" md-direction="left">
-                        <div>{{getCodeTooltipData(flightpax.passengerType,"passenger")}}</div>
-                        </md-tooltip>
+                              <tr ng-repeat="doc in passenger.documents">
+                                <td>{{doc.documentNumber}}</td>
+                                <td>
+                                <span ng-mouseleave="resetTooltip()">{{ doc.documentType }}
+                        <md-tooltip class="multi-tooltip" md-direction="bottom">
+                          <div>{{getCodeTooltipData(doc.documentType,"document")}}</div>
+                          </md-tooltip>
                       </span>
-                          </td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{ flightpax.residencyCountry }}
-                        <md-tooltip class="multi-tooltip" md-direction="left">
-                        <div>{{getCodeTooltipData(flightpax.residencyCountry,"country")}}</div>
-                        </md-tooltip>
+                                </td>
+                                <td>
+                                <span ng-mouseleave="resetTooltip()"><strong> {{ doc.issuanceCountry }}</strong>
+                        <md-tooltip class="multi-tooltip" md-direction="bottom">
+                          <div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div>
+                          </md-tooltip>
                       </span>
-                          </td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{ flightpax.portOfFirstArrival }}
-                        <md-tooltip class="multi-tooltip" md-direction="left">
-                        <div>{{getCodeTooltipData(flightpax.portOfFirstArrival,"airport")}}</div>
-                        </md-tooltip>
-                      </span>
-                          </td>
-                          <td>{{flightpax.resRefNumber}}</td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              </div>
-            </md-tab>
-  
-  
-            <!-- PNR Tab -->
-            <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists" md-ink-ripple="{{ 'teal' }}">
-                <div class="flex flex-center sm-pad">
-                  <div class="flex flex-40 flex-vert ie-fix-md align-items-center">
-                    <!--RawPNR!-->
-                    <div class="full-width cbp-card-container gtas-card-container">
-                        <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top">Raw PNR</h4>
-                          <div class="no-pad-top panel-body flex flex-vert ie-fix-lg scroll-card">
-                            <table id="pnrtable" class="table table-condensed table-responsive table-wrap margin-0">
-                              <tr ng-repeat="i in passenger.pnrVo.segmentList track by $index">
-                                <td ng-class="i.key" class="nowrap txt-right">{{ $index+1 }}. </td>
-                                <td ng-class="i.key" >{{ i.value }}</td>
+                                </td>
+                                <td>{{doc.expirationDate}}</td>
                               </tr>
+                              </tbody>
                             </table>
                           </div>
                         </div>
                       </div>
-                  </div>
-  
-                  <div class="flex flex-vert ie-fix-md align-items-center scroll-container">
-  
-                      <!--Itinerary!-->
-                      <div class="cbp-card-container full-width">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top">Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span class="right-header"> Trip Type: {{passenger.pnrVo.tripType}}</span></h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                <thead class="floating-table-header flex-center">
-                                <tr>
-                                  <th>Leg</th>
-                                  <th>Flight#</th>
-                                  <th>Origin / Destination</th>
-                                  <th>ETD</th>
-                                  <th>ETA</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
-                                  <td style="align-items: center;">{{leg.legNumber }}</td>
-                                  <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                    <a class="primary-link" title="Show flight details" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
-                                  <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
-                                  <td>
-                                    <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
-                                      <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div></md-tooltip>
-                                    </span>
-                                    / <span ng-mouseleave="resetTooltip()">{{leg.destinationAirport  }}
-                                      <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.destinationAirport,"airport")}}</div></md-tooltip>
-                                    </span>
-                                  </td>
-                                  <!--<td>{{leg.destinationAirport }}</td>-->
-                                  <td>{{leg.etd }}</td>
-                                  <td>{{leg.eta }}</td>
-                                </tr>
-                                </tbody>
-                              </table>
-                            </div>
+    
+                      <!------  WATCHLIST MATCHES   ------>
+                      <div class="full-width cbp-card-container">
+                        <div class="cbp-card cbp-card-shadow">
+                          <h4 class="h-label no-margin-top" >Watchlist Matches
+                            <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
+                              <i class="fa fa-inverse fa-refresh"></i>
+                            </button>
+                          </h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                            <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                              <thead>
+                              <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>DOB</th>
+                                <th>% Match</th>
+                                <th>Verified</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr ng-repeat="watch in watchlistLinks | orderBy:'-percentMatch'">
+                                <td>{{watch.watchListFirstName}}</td>
+                                <td>{{watch.watchListLastName}}</td>
+                                <td>{{watch.watchListDOB}}</td>
+                                <td>{{watch.percentMatch | percent}}</td>
+                                <td>{{watch.verifiedStatus?"Yes":"No"}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
                           </div>
                         </div>
-                        <!--PNR Names!-->
-                        <div class="cbp-card-container full-width">
+                      </div>
+    
+                        <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                           <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >PNR Names  ({{ passenger.pnrVo.passengers.length }})</h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                <thead>
-                                <tr>
-                                  <th>First Name</th>
-                                  <th>Middle Name</th>
-                                  <th>Last Name</th>
-                                  <th>Gender</th>
-                                  <th>Age</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
-                                  <td>{{ pass.firstName }}</td>
-                                  <td>{{ pass.middleName }}</td>
-                                  <td><a title="Show passenger detail" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
-                                  <td>
-                                    <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
-                                      <md-tooltip class="multi-tooltip" md-direction="left">
-                                        <div>{{getCodeTooltipData(pass.gender,"gender")}}</div>
-                                        </md-tooltip>
-                                    </span>
-                                  </td>
-                                  <td>{{ pass.age }}</td>
-                                </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        </div>
-                        <!--Documents!-->
-                        <div class="cbp-card-container full-width">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Documents ({{ passenger.pnrVo.documents.length}})
-                            </h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                              <h4 class="h-label no-margin-top" >Hits Summary</h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead>
                                 <tr>
-                                  <th>First Name</th>
-                                  <th>Last Name</th>
-                                  <th>Type</th>
-                                  <th>Iss. Country</th>
-                                  <th>Number</th>
-                                  <th>Exp. Date</th>
+                                  <th>Category</th>
+                                  <th>Title</th>
+                                  <th>Conditions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="doc in passenger.pnrVo.documents" ng-click="highlightClass('DOCS'+doc.documentNumber)">
-                                  <td>{{doc.firstName}}</td>
-                                  <td>{{doc.lastName}}</td>
-                                  <td><span ng-mouseleave="resetTooltip()">{{doc.documentType}}
-                                      <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"document")}}</div></md-tooltip>
-                                    </span>
-                                  </td>
-                                  <td><span ng-mouseleave="resetTooltip()">{{doc.issuanceCountry}}
-                                      <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div></md-tooltip>
-                                    </span>
-                                  </td>
-                                  <td>{{doc.documentNumber}}</td>
-                                  <td>{{doc.expirationDate}}</td>
+                                <tr ng-repeat="j in ruleHits track by $index">
+                                  <td>{{j.category}}</td>
+                                  <td>{{j.title}}</td>
+                                  <td>{{j.ruleConditions}}</td>
                                 </tr>
                                 </tbody>
                               </table>
                             </div>
                           </div>
-                        </div>
-                        <!--Addresses!-->
-                        <div class="cbp-card-container full-width">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Addresses({{ passenger.pnrVo.addresses.length }})
-                            </h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
-                                <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                    <thead>
+                      </div>
+  
+                    </div>
+                  </div>
+              </md-tab>
+    
+    
+              <!-- APIs Tab -->
+              <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
+                <div class="flex flex-center sm-pad">
+                  <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                    <!--Total Bags!-->
+                    <div class="cbp-card-container full-width">
+                      <div class="cbp-card cbp-card-shadow">
+                        <h4 class="h-label no-margin-top" >
+                          Total APIS Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
+                          <span class="right-header">
+                          Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
+                        </span>
+                        </h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                            <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                              <thead>
                                 <tr>
-                                  <th>City</th>
-                                  <th>State</th>
-                                  <th>Country</th>
-                                  <th>Street</th>
+                                  <th>&nbsp;</th>
+                                  <th>BagID</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index" ng-click="highlightClass('ADD'+addr.city)">
-                                  <td>{{ addr.city }}</td>
-                                  <td>{{ addr.state }}</td>
-                                  <td>
-                                    <span ng-mouseleave="resetTooltip()">{{ addr.country }}
-                                      <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(addr.country,"country")}}</div></md-tooltip>
-                                    </span>
-                                  </td>
-                                  <td>{{ addr.line1 }}</td>
+                              <tr ng-repeat="bags in passenger.apisMessageVo.bags">
+                                <td>&nbsp;</td>
+                                <td align="right">{{bags.bagId}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="flex flex-vert ie-fix-md half-width align-items-center">
+                    <!--Phone Numbers!-->
+                    <div class="cbp-card-container full-width">
+                      <div class="cbp-card cbp-card-shadow">
+                        <h4 class="h-label no-margin-top" >
+                          Phone Numbers ({{ passenger.apisMessageVo.phoneNumbers.length }})
+                        </h4>
+                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                            <thead>
+                            <tr>
+                              <th>Phone Number</th>
+                            </tr>
+                            </thead>
+                              <tbody>
+                              <tr ng-repeat="phone in passenger.apisMessageVo.phoneNumbers">
+                                <td>{{phone.number}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="flex flex-center sm-pad">
+                    <div class="flex flex-vert ie-fix-md full-width align-items-center">
+                  <!--FlightPax!-->
+                  <div class="cbp-card-container full-width">
+                    <div class="cbp-card cbp-card-shadow">
+                      <h4 class="h-label no-margin-top" >
+                        Passengers on Reservation ({{ passenger.apisMessageVo.flightpaxs.length }})
+                      </h4>
+                      <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                        <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                        <thead>
+                          <tr>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Pax Type</th>
+                            <th>Residence</th>
+                            <th>Port of Arrival</th>
+                            <th>Ref Num</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
+                            <td>{{flightpax.firstName}}</td>
+                            <td>{{flightpax.middleName}}</td>
+                            <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail">{{flightpax.lastName}}</a></td>
+                            <td>
+                                <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
+                          <md-tooltip class="multi-tooltip" md-direction="left">
+                          <div>{{getCodeTooltipData(flightpax.passengerType,"passenger")}}</div>
+                          </md-tooltip>
+                        </span>
+                            </td>
+                            <td>
+                                <span ng-mouseleave="resetTooltip()">{{ flightpax.residencyCountry }}
+                          <md-tooltip class="multi-tooltip" md-direction="left">
+                          <div>{{getCodeTooltipData(flightpax.residencyCountry,"country")}}</div>
+                          </md-tooltip>
+                        </span>
+                            </td>
+                            <td>
+                                <span ng-mouseleave="resetTooltip()">{{ flightpax.portOfFirstArrival }}
+                          <md-tooltip class="multi-tooltip" md-direction="left">
+                          <div>{{getCodeTooltipData(flightpax.portOfFirstArrival,"airport")}}</div>
+                          </md-tooltip>
+                        </span>
+                            </td>
+                            <td>{{flightpax.resRefNumber}}</td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              </md-tab>
+    
+    
+              <!-- PNR Tab -->
+              <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists" md-ink-ripple="{{ 'teal' }}">
+                  <div class="flex flex-center sm-pad">
+                    <div class="flex flex-40 flex-vert ie-fix-md align-items-center">
+                      <!--RawPNR!-->
+                      <div class="full-width cbp-card-container gtas-card-container">
+                          <div class="cbp-card cbp-card-shadow">
+                            <h4 class="h-label no-margin-top">Raw PNR</h4>
+                            <div class="no-pad-top panel-body flex flex-vert ie-fix-lg scroll-card">
+                              <table id="pnrtable" class="table table-condensed table-responsive table-wrap margin-0">
+                                <tr ng-repeat="i in passenger.pnrVo.segmentList track by $index">
+                                  <td ng-class="i.key" class="nowrap txt-right">{{ $index+1 }}. </td>
+                                  <td ng-class="i.key" >{{ i.value }}</td>
                                 </tr>
-                                </tbody>
                               </table>
                             </div>
                           </div>
                         </div>
-                        <!--Phone Numbers!-->
+                    </div>
+    
+                    <div class="flex flex-vert ie-fix-md align-items-center scroll-container">
+    
+                        <!--Itinerary!-->
                         <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Phone Numbers ({{ passenger.pnrVo.phoneNumbers.length }})
-                            </h4>
-                            <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                              <h4 class="h-label no-margin-top">Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span class="right-header"> Trip Type: {{passenger.pnrVo.tripType}}</span></h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                    <thead>
-                                <tr>
-                                  <th>Phone Number</th>
-                                </tr>
-                                </thead>
-                              </table>
-                              <div class="floating-table-body">
-                                <table class="cbp-table-selectable mdl-js-data-table">
+                                  <thead class="floating-table-header flex-center">
+                                  <tr>
+                                    <th>Leg</th>
+                                    <th>Flight#</th>
+                                    <th>Origin / Destination</th>
+                                    <th>ETD</th>
+                                    <th>ETA</th>
+                                  </tr>
+                                  </thead>
                                   <tbody>
-                                  <tr ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index" ng-click="highlightClass('PHONE'+phn.number)">
-                                    <td>{{phn.number}}</td>
+                                  <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
+                                    <td style="align-items: center;">{{leg.legNumber }}</td>
+                                    <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
+                                      <a class="primary-link" title="Show flight details" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                    <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
+                                    <td>
+                                      <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div></md-tooltip>
+                                      </span>
+                                      / <span ng-mouseleave="resetTooltip()">{{leg.destinationAirport  }}
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(leg.destinationAirport,"airport")}}</div></md-tooltip>
+                                      </span>
+                                    </td>
+                                    <!--<td>{{leg.destinationAirport }}</td>-->
+                                    <td>{{leg.etd }}</td>
+                                    <td>{{leg.eta }}</td>
                                   </tr>
                                   </tbody>
                                 </table>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <!--Emails!-->
-                        <div ng-if="passenger.pnrVo.emails.length>0" class="cbp-card-container full-width ">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Email Addresses ({{passenger.pnrVo.emails.length}})
-                            </h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                          <!--PNR Names!-->
+                          <div class="cbp-card-container full-width">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >PNR Names  ({{ passenger.pnrVo.passengers.length }})</h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                    <thead>
-                                <tr>
-                                  <th>Email Address</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="email in passenger.pnrVo.emails track by $index" ng-click="highlightClass('EMAIL'+email.address)">
-                                  <td>{{email.address}}</td>
-                                </tr>
-                                </tbody>
-                              </table>
+                                  <thead>
+                                  <tr>
+                                    <th>First Name</th>
+                                    <th>Middle Name</th>
+                                    <th>Last Name</th>
+                                    <th>Gender</th>
+                                    <th>Age</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
+                                    <td>{{ pass.firstName }}</td>
+                                    <td>{{ pass.middleName }}</td>
+                                    <td><a title="Show passenger detail" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
+                                    <td>
+                                      <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
+                                        <md-tooltip class="multi-tooltip" md-direction="left">
+                                          <div>{{getCodeTooltipData(pass.gender,"gender")}}</div>
+                                          </md-tooltip>
+                                      </span>
+                                    </td>
+                                    <td>{{ pass.age }}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <!--Credit Cards!-->
-                        <div class="cbp-card-container full-width">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Credit Cards ({{passenger.pnrVo.creditCards.length}})
-                            </h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
+                          <!--Documents!-->
+                          <div class="cbp-card-container full-width">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Documents ({{ passenger.pnrVo.documents.length}})
+                              </h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                     <thead>
-                                <tr>
-                                  <th>Holder</th>
-                                  <th>Type</th>
-                                  <th>Number</th>
-                                  <th>Exp. Date</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index" ng-click="highlightClass('FOP'+cc.number)">
-                                  <td>{{cc.accountHolder}}</td>
-                                  <td>{{cc.cardType}}</td>
-                                  <td>{{cc.number}}</td>
-                                  <td>{{cc.expiration | date:'yyyy-MM' }}</td>
-                                </tr>
-                                </tbody>
-                              </table>
+                                  <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Type</th>
+                                    <th>Iss. Country</th>
+                                    <th>Number</th>
+                                    <th>Exp. Date</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="doc in passenger.pnrVo.documents" ng-click="highlightClass('DOCS'+doc.documentNumber)">
+                                    <td>{{doc.firstName}}</td>
+                                    <td>{{doc.lastName}}</td>
+                                    <td><span ng-mouseleave="resetTooltip()">{{doc.documentType}}
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"document")}}</div></md-tooltip>
+                                      </span>
+                                    </td>
+                                    <td><span ng-mouseleave="resetTooltip()">{{doc.issuanceCountry}}
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.issuanceCountry,"country")}}</div></md-tooltip>
+                                      </span>
+                                    </td>
+                                    <td>{{doc.documentNumber}}</td>
+                                    <td>{{doc.expirationDate}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <!--Frequent Flyers!-->
+                          <!--Addresses!-->
+                          <div class="cbp-card-container full-width">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Addresses({{ passenger.pnrVo.addresses.length }})
+                              </h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
+                                  <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                      <thead>
+                                  <tr>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+                                    <th>Street</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index" ng-click="highlightClass('ADD'+addr.city)">
+                                    <td>{{ addr.city }}</td>
+                                    <td>{{ addr.state }}</td>
+                                    <td>
+                                      <span ng-mouseleave="resetTooltip()">{{ addr.country }}
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(addr.country,"country")}}</div></md-tooltip>
+                                      </span>
+                                    </td>
+                                    <td>{{ addr.line1 }}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Phone Numbers!-->
+                          <div class="cbp-card-container full-width">
+                              <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Phone Numbers ({{ passenger.pnrVo.phoneNumbers.length }})
+                              </h4>
+                              <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
+                                  <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                      <thead>
+                                  <tr>
+                                    <th>Phone Number</th>
+                                  </tr>
+                                  </thead>
+                                </table>
+                                <div class="floating-table-body">
+                                  <table class="cbp-table-selectable mdl-js-data-table">
+                                    <tbody>
+                                    <tr ng-repeat="phn in passenger.pnrVo.phoneNumbers track by $index" ng-click="highlightClass('PHONE'+phn.number)">
+                                      <td>{{phn.number}}</td>
+                                    </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Emails!-->
+                          <div ng-if="passenger.pnrVo.emails.length>0" class="cbp-card-container full-width ">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Email Addresses ({{passenger.pnrVo.emails.length}})
+                              </h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                  <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                      <thead>
+                                  <tr>
+                                    <th>Email Address</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="email in passenger.pnrVo.emails track by $index" ng-click="highlightClass('EMAIL'+email.address)">
+                                    <td>{{email.address}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Credit Cards!-->
+                          <div class="cbp-card-container full-width">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Credit Cards ({{passenger.pnrVo.creditCards.length}})
+                              </h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
+                                  <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                      <thead>
+                                  <tr>
+                                    <th>Holder</th>
+                                    <th>Type</th>
+                                    <th>Number</th>
+                                    <th>Exp. Date</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody>
+                                  <tr ng-repeat="cc in passenger.pnrVo.creditCards track by $index" ng-click="highlightClass('FOP'+cc.number)">
+                                    <td>{{cc.accountHolder}}</td>
+                                    <td>{{cc.cardType}}</td>
+                                    <td>{{cc.number}}</td>
+                                    <td>{{cc.expiration | date:'yyyy-MM' }}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                          <!--Frequent Flyers!-->
+                          <div class="cbp-card-container full-width">
+                            <div class="cbp-card cbp-card-shadow">
+                              <h4 class="h-label no-margin-top" >
+                                Frequent Flyer Numbers ({{passenger.pnrVo.frequentFlyerDetails.length}})
+                              </h4>
+                              <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                    <thead aria-hidden="true">
+                                  <tr>
+                                    <th class="txt-right">Airline</th>
+                                    <th class="txt-right">Number</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body">
+                                  <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index" ng-click="highlightClass('FTI'+ff.number)">
+                                    <td><span ng-mouseleave="resetTooltip()">{{ff.carrier}}
+                                      <md-tooltip class="multi-tooltip" md-direction="right"><div>{{getCodeTooltipData(ff.carrier,"carrier")}}</div></md-tooltip></span>
+                                    </td>
+                                    <td>{{ff.number}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                      <!--Seat Information!-->
                         <div class="cbp-card-container full-width">
-                          <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top" >
-                              Frequent Flyer Numbers ({{passenger.pnrVo.frequentFlyerDetails.length}})
-                            </h4>
-                            <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                        <div class="cbp-card cbp-card-shadow">
+                          <h4 class="h-label no-margin-top" >
+                            Seat Information
+                          </h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                               <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                  <thead aria-hidden="true">
-                                <tr>
-                                  <th class="txt-right">Airline</th>
-                                  <th class="txt-right">Number</th>
-                                </tr>
-                                </thead>
-                                <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body">
-                                <tr ng-repeat="ff in passenger.pnrVo.frequentFlyerDetails track by $index" ng-click="highlightClass('FTI'+ff.number)">
-                                  <td><span ng-mouseleave="resetTooltip()">{{ff.carrier}}
-                                    <md-tooltip class="multi-tooltip" md-direction="right"><div>{{getCodeTooltipData(ff.carrier,"carrier")}}</div></md-tooltip></span>
-                                  </td>
-                                  <td>{{ff.number}}</td>
-                                </tr>
-                                </tbody>
-                              </table>
-                            </div>
+                                  <thead>
+                              <tr>
+                                <th>Last Name</th>
+                                <th>First Name</th>
+                                <th>Flight#</th>
+                                <th>Seat#</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr ng-repeat="sa in passenger.pnrVo.seatAssignments" ng-click="highlightClass('SEAT'+sa.number)">
+                                <td>{{ sa.lastName }}</td>
+                                <td>{{ sa.firstName }}</td>
+                                <td>{{ sa.flightNumber }}</td>
+                                <td>{{ sa.number }}</td>
+                              </tr>
+                              </tbody>
+                            </table>
                           </div>
                         </div>
-                    <!--Seat Information!-->
+                      </div>
+                      <!--Travel Agencies!-->
                       <div class="cbp-card-container full-width">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >
-                          Seat Information
-                        </h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                            <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                <thead>
-                            <tr>
-                              <th>Last Name</th>
-                              <th>First Name</th>
-                              <th>Flight#</th>
-                              <th>Seat#</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="sa in passenger.pnrVo.seatAssignments" ng-click="highlightClass('SEAT'+sa.number)">
-                              <td>{{ sa.lastName }}</td>
-                              <td>{{ sa.firstName }}</td>
-                              <td>{{ sa.flightNumber }}</td>
-                              <td>{{ sa.number }}</td>
-                            </tr>
-                            </tbody>
-                          </table>
+                        <div class="cbp-card cbp-card-shadow">
+                          <h4 class="h-label no-margin-top" >
+                            Agencies ({{ passenger.pnrVo.agencies.length}})
+                          </h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md six-table">
+                              <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
+                                  <thead>
+                              <tr>
+                                <th>Type</th>
+                                <th>City</th>
+                                <th>ID</th>
+                                <th>Location</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr ng-repeat="agency in passenger.pnrVo.agencies" ng-click="highlightClass('AGEN'+agency.identifier)">
+                                <td>{{agency.type}}</td>
+                                <td>{{agency.city}}</td>
+                                <td>{{agency.identifier}}</td>
+                                <td><span ng-mouseleave="resetTooltip()">{{agency.location}}
+                                    <md-tooltip class="multi-tooltip" md-direction="top"><div>{{getCodeTooltipData(agency.location,"airport")}}</div></md-tooltip></span>
+                                </td>
+                                <td>{{agency.name}}</td>
+                                <td>{{agency.phone}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <!--Travel Agencies!-->
-                    <div class="cbp-card-container full-width">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >
-                          Agencies ({{ passenger.pnrVo.agencies.length}})
-                        </h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md six-table">
+                      <!--Baggage!-->
+                      <div class="cbp-card-container full-width">
+                        <div class="cbp-card cbp-card-shadow">
+                          <h4 class="h-label no-margin-top">
+                            Total PNR Baggage ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
+                            <span class="right-header">Baggage Weight ({{passenger.pnrVo.baggageWeight}} Kg)</span>
+                          </h4>
+                          <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                                <thead>
-                            <tr>
-                              <th>Type</th>
-                              <th>City</th>
-                              <th>ID</th>
-                              <th>Location</th>
-                              <th>Name</th>
-                              <th>Phone</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="agency in passenger.pnrVo.agencies" ng-click="highlightClass('AGEN'+agency.identifier)">
-                              <td>{{agency.type}}</td>
-                              <td>{{agency.city}}</td>
-                              <td>{{agency.identifier}}</td>
-                              <td><span ng-mouseleave="resetTooltip()">{{agency.location}}
-                                  <md-tooltip class="multi-tooltip" md-direction="top"><div>{{getCodeTooltipData(agency.location,"airport")}}</div></md-tooltip></span>
-                              </td>
-                              <td>{{agency.name}}</td>
-                              <td>{{agency.phone}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                    <!--Baggage!-->
-                    <div class="cbp-card-container full-width">
-                      <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top">
-                          Total PNR Baggage ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
-                          <span class="right-header">Baggage Weight ({{passenger.pnrVo.baggageWeight}} Kg)</span>
-                        </h4>
-                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                          <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
-                            <thead aria-hidden="true">
-                            <tr>
-                              <th>Flight Leg</th>
-                              <th class="txt-right">Passenger Name</th>
-                              <th class="txt-right">Bag Count</th>
-                              <th class="txt-right">Total Bag Weight</th>
-                              <th class="txt-right">Bag Destination</th>
-                              <th class="txt-right">Bag ID(s)</th>
-                            </tr>
-                            </thead>
-                            <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body" ng-repeat="leg in orderedFlightLegs">
-                            <tr style="background-color: #d5e5ef;">
-                              <td>{{leg.flightNumber}}</td>
-                              <td></td>
-                              <td>{{getTotalOf(orderedBags, leg.id, 'bag_count')}}</td>
-                              <td>{{getTotalOf(orderedBags, leg.id, 'bag_weight')}}</td>
-                              <td></td>
-                              <td></td>
-                            </tr>
-  
-                            <tr ng-repeat="bag in orderedBags" ng-if="bag.id == leg.id" ng-click="highlightClass('TBD'+bag.passFirstName+bag.passLastName)"
-                                style="white-space: normal">
-                              <td></td>
-                              <td>{{bag.passFirstName + ' ' + bag.passLastName}}</td>
-                              <td>{{bag.bag_count}}</td>
-                              <td>{{bag.bag_weight}}</td>
-                              <td>{{bag.destination}}</td>
-                              <td>{{bag.bagList}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
+                              <thead aria-hidden="true">
+                              <tr>
+                                <th>Flight Leg</th>
+                                <th class="txt-right">Passenger Name</th>
+                                <th class="txt-right">Bag Count</th>
+                                <th class="txt-right">Total Bag Weight</th>
+                                <th class="txt-right">Bag Destination</th>
+                                <th class="txt-right">Bag ID(s)</th>
+                              </tr>
+                              </thead>
+                              <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body" ng-repeat="leg in orderedFlightLegs">
+                              <tr style="background-color: #d5e5ef;">
+                                <td>{{leg.flightNumber}}</td>
+                                <td></td>
+                                <td>{{getTotalOf(orderedBags, leg.id, 'bag_count')}}</td>
+                                <td>{{getTotalOf(orderedBags, leg.id, 'bag_weight')}}</td>
+                                <td></td>
+                                <td></td>
+                              </tr>
+    
+                              <tr ng-repeat="bag in orderedBags" ng-if="bag.id == leg.id" ng-click="highlightClass('TBD'+bag.passFirstName+bag.passLastName)"
+                                  style="white-space: normal">
+                                <td></td>
+                                <td>{{bag.passFirstName + ' ' + bag.passLastName}}</td>
+                                <td>{{bag.bag_count}}</td>
+                                <td>{{bag.bag_weight}}</td>
+                                <td>{{bag.destination}}</td>
+                                <td>{{bag.bagList}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-            </md-tab>
-  
-  
-            <!-- Flight History Tab -->
-            <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
-            </md-tab>
-            <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
-              <md-tab-body>
-                <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
-                <!--Current Itinerary!-->
-                <div class="cbp-card-container full-width">
-                    <div class="cbp-card cbp-card-shadow">
-                      <h4 class="h-label no-margin-top" >Current Itinerary</h4>
+              </md-tab>
+    
+    
+              <!-- Flight History Tab -->
+              <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
+              </md-tab>
+              <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
+                <md-tab-body>
+                  <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
+                  <!--Current Itinerary!-->
+                  <div class="cbp-card-container full-width">
+                      <div class="cbp-card cbp-card-shadow">
+                        <h4 class="h-label no-margin-top" >Current Itinerary</h4>
+                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                          <table aria-hidden="true" class="table table-condensed table-responsive floating-table-header">
+                            <thead>
+                            <tr>
+                              <th>Carrier/Flight</th>
+                              <th>ETA</th>
+                              <th>ETD</th>
+                              <th>Origin Country</th>
+                              <th>Origin Airport</th>
+                              <th>Destination Country</th>
+                              <th>Destination Airport</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="j in passenger.flightHistoryVo | orderBy:'-etd'">
+                              <td>{{j.fullFlightNumber}}</td>
+                              <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                              <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                              <td>
+                                  <span ng-mouseleave="resetTooltip()">{{j.originCountry}}
+                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.originCountry,"country")}}</div></md-tooltip>
+                                  </span>
+                              </td>
+                              <td>
+                                  <span ng-mouseleave="resetTooltip()">{{j.origin}}
+                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.origin,"airport")}}</div></md-tooltip>
+                                  </span>
+                              </td>
+                              <td>
+                                  <span ng-mouseleave="resetTooltip()">{{j.destinationCountry}}
+                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destinationCountry,"country")}}</div></md-tooltip>
+                                  </span>
+                              </td>
+                              <td>
+                                  <span ng-mouseleave="resetTooltip()">{{j.destination}}
+                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destination,"airport")}}</div></md-tooltip>
+                                  </span>
+                              </td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  <!--Seat Information!-->
+                  <div class="cbp-card-container full-width">
+                    <div class="cbp-card cbp-card-shadow" ng-repeat-start="flight in passenger.fullFlightHistoryVo">
+                      <h4 class="h-label no-margin-top">Total Flight History</h4>
                       <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                         <table aria-hidden="true" class="table table-condensed table-responsive floating-table-header">
                           <thead>
@@ -874,28 +922,38 @@
                           </tr>
                           </thead>
                           <tbody>
-                          <tr ng-repeat="j in passenger.flightHistoryVo | orderBy:'-etd'">
-                            <td>{{j.fullFlightNumber}}</td>
-                            <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
-                            <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                          <tr ng-repeat="k in flight | orderBy:'-etd'">
+                            <td ng-if="!k.bookingDetail">
+                              <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                                 target="pax.detail" title="Show passenger detail">
+                                {{k.fullFlightNumber}}</a>
+                            </td>
+                            <td class="md-primary md-default-theme"
+                                style="text-decoration: none;
+                                  font-weight: bold;"
+                                ng-if="k.bookingDetail">
+                              {{k.fullFlightNumber}}
+                            </td>
+                            <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
+                            <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
                             <td>
-                                <span ng-mouseleave="resetTooltip()">{{j.originCountry}}
-                                  <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.originCountry,"country")}}</div></md-tooltip>
+                                <span ng-mouseleave="resetTooltip()">{{k.originCountry}}
+                                      <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.originCountry,"country")}}</div></md-tooltip>
                                 </span>
                             </td>
                             <td>
-                                <span ng-mouseleave="resetTooltip()">{{j.origin}}
-                                  <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.origin,"airport")}}</div></md-tooltip>
+                                <span ng-mouseleave="resetTooltip()">{{k.origin}}
+                                      <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.origin,"airport")}}</div></md-tooltip>
                                 </span>
                             </td>
                             <td>
-                                <span ng-mouseleave="resetTooltip()">{{j.destinationCountry}}
-                                  <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destinationCountry,"country")}}</div></md-tooltip>
+                                <span ng-mouseleave="resetTooltip()">{{k.destinationCountry}}
+                                      <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destinationCountry,"country")}}</div></md-tooltip>
                                 </span>
                             </td>
                             <td>
-                                <span ng-mouseleave="resetTooltip()">{{j.destination}}
-                                  <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.destination,"airport")}}</div></md-tooltip>
+                                <span ng-mouseleave="resetTooltip()">{{k.destination}}
+                                      <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destination,"airport")}}</div></md-tooltip>
                                 </span>
                             </td>
                           </tr>
@@ -903,194 +961,137 @@
                         </table>
                       </div>
                     </div>
+                    <span ng-repeat-end></span>
                   </div>
-                <!--Seat Information!-->
-                <div class="cbp-card-container full-width">
-                  <div class="cbp-card cbp-card-shadow" ng-repeat-start="flight in passenger.fullFlightHistoryVo">
-                    <h4 class="h-label no-margin-top">Total Flight History</h4>
-                    <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                      <table aria-hidden="true" class="table table-condensed table-responsive floating-table-header">
-                        <thead>
-                        <tr>
-                          <th>Carrier/Flight</th>
-                          <th>ETA</th>
-                          <th>ETD</th>
-                          <th>Origin Country</th>
-                          <th>Origin Airport</th>
-                          <th>Destination Country</th>
-                          <th>Destination Airport</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="k in flight | orderBy:'-etd'">
-                          <td ng-if="!k.bookingDetail">
-                            <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
-                               target="pax.detail" title="Show passenger detail">
-                              {{k.fullFlightNumber}}</a>
-                          </td>
-                          <td class="md-primary md-default-theme"
-                              style="text-decoration: none;
-                                font-weight: bold;"
-                              ng-if="k.bookingDetail">
-                            {{k.fullFlightNumber}}
-                          </td>
-                          <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
-                          <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{k.originCountry}}
-                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.originCountry,"country")}}</div></md-tooltip>
-                              </span>
-                          </td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{k.origin}}
-                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.origin,"airport")}}</div></md-tooltip>
-                              </span>
-                          </td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{k.destinationCountry}}
-                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destinationCountry,"country")}}</div></md-tooltip>
-                              </span>
-                          </td>
-                          <td>
-                              <span ng-mouseleave="resetTooltip()">{{k.destination}}
-                                    <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.destination,"airport")}}</div></md-tooltip>
-                              </span>
-                          </td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <span ng-repeat-end></span>
                 </div>
-              </div>
-            </md-tab-body>
-            </md-tab>
+              </md-tab-body>
+              </md-tab>
+    
+              <!-- Link Analysis Tab -->
+              <md-tab label="Link Analysis" ng-click="activateGraph()">
+                <md-tab-body>
+                  <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
+                  <!-- SEARCH  -->
+                  <div class="cbp-card-container full-width">
+                      <div class="cbp-card cbp-card-shadow">
+                        <h4 class="h-label no-margin-top" >Search</h4>
   
-            <!-- Link Analysis Tab -->
-            <md-tab label="Link Analysis" ng-click="activateGraph()">
-              <md-tab-body>
-                <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
-                <!-- SEARCH  -->
-                <div class="cbp-card-container full-width">
-                    <div class="cbp-card cbp-card-shadow">
-                      <h4 class="h-label no-margin-top" >Search</h4>
-
-                    <div class="ppt-body">
-
-                      <section class="ppt-section-main">
-                      
+                      <div class="ppt-body">
+  
+                        <section class="ppt-section-main">
+  
                           <div class="ppt-container-graph">
-                              <nav id="popoto-saves" class="ppt-taxo-nav">
-                                <div id="saves">
-                                  <span class="ppt-header-span">This Passenger:</span>
-                                  <ul class="ppt-saved-ul">
-                                      <li id="Pax" ng-click="onClickSavedGraph('pax')">
-                                        <i class="fa fa-user-circle-o pptpassenger"></i>
-                                        <span class="ppt-label" title="Passenger links">Passenger</span>
-                                    </li>
-                                    <li id="Address" ng-click="onClickSavedGraph('address')">
-                                        <i class="fa fa-home pptaddress"></i>
-                                      <span class="ppt-label" title="Addresses used by this passenger">Address</span>
-                                    </li>
-                                    <li id="CreditCard" ng-click="onClickSavedGraph('creditcard')">
-                                        <i class="fa fa-credit-card-alt pptcreditcard"></i>
-                                      <span class="ppt-label" title="Credit cards used by this passenger">Credit Card</span>
-                                    </li>
-                                    <li id="Phone" ng-click="onClickSavedGraph('phone')">
-                                        <i class="fa fa-phone pptphone"></i>
-                                      <span class="ppt-label" title="Phone numbers used by this passenger">Phone</span>
-                                    </li>
-                                    <li id="Email" ng-click="onClickSavedGraph('email')">
-                                        <i class="fa fa-envelope pptemail"></i>
-                                      <span class="ppt-label" title="Email addresses used by this passenger">Email</span>
-                                    </li>
-                                    <li id="Hit" ng-click="onClickSavedGraph('hit')">
-                                        <i class="fa fa-exclamation-circle ppthit"></i>
-                                      <span class="ppt-label" title="Hits for this passenger">Hit</span>
-                                    </li>
-                                    <li id="Document" ng-click="onClickSavedGraph('document')">
-                                      <img src="resources\img\document.svg" style="height: 15px;" class="pptdocument"></i>
-                                      <span class="ppt-label" title="Documents used by this passenger">Document</span>
-                                    </li>
-                                  </ul>
-                                  <hr>
-                                  <br>
-                                  <span class="ppt-header-span">This Flight:</span>
-                                  <ul class="ppt-saved-ul">
-                                    <li id="Flight" ng-click="onClickSavedGraph('flight')">
-                                      <i class="fa fa-plane pptflight"></i>
-                                    <span class="ppt-label" title="Flight links">Flight</span>
-                                  </li>
-                                  <li id="Address" ng-click="onClickSavedGraph('addressall')">
-                                      <i class="fa fa-home pptaddress"></i>
-                                    <span class="ppt-label" title="All passenger addresses for this flight">All Addresses</span>
-                                  </li>
-                                  <li id="CreditCard" ng-click="onClickSavedGraph('creditcardall')">
-                                      <i class="fa fa-credit-card-alt pptcreditcard"></i>
-                                    <span class="ppt-label" title="All passenger credit cards for this flight">All Credit Cards</span>
-                                  </li>
-                                  <li id="Phone" ng-click="onClickSavedGraph('phoneall')">
-                                      <i class="fa fa-phone pptphone"></i>
-                                    <span class="ppt-label" title="All passenger phone numbers for this flight">All Phones</span>
-                                  </li>
-                                  <li id="Email" ng-click="onClickSavedGraph('emailall')">
-                                      <i class="fa fa-envelope pptemail"></i>
-                                    <span class="ppt-label" title="All passenger email addresses for this flight">All Emails</span>
-                                  </li>
-                                  <li id="Hit" ng-click="onClickSavedGraph('hitall')">
-                                      <i class="fa fa-exclamation-circle ppthit"></i>
-                                    <span class="ppt-label" title="All passenger hits for this flight">All Hits</span>
-                                  </li>
-                                  <li id="Document" ng-click="onClickSavedGraph('documentall')">
-                                    <img src="resources\img\document.svg" style="height: 15px;" class="pptdocument"></i>
-                                    <span class="ppt-label" title="All passenger documents for this flight">All Documents</span>
-                                  </li>
-                                </ul>
-                                <hr>
-                                  <br>
-                              </div>
-                              <!-- <div id="popoto-taxonomy">
-                                  <span class="ppt-header-span">Taxonomies:</span><br><br>
-                              </div> -->
-                              </nav>
-                              <div id="popoto-graph" class="ppt-div-graph">
-                                  <!-- Graph will be generated here-->
-                              </div>
-                          </div>
+                                <nav id="popoto-saves" class="ppt-taxo-nav">
+                                  <div id="saves">
+                                      <span class="ppt-header-span">This Passenger:</span>
+                                      <table class="ppt-saved-ul">
+                                        <tr id="Pax" ng-click="onClickSavedGraph('pax')">
+                                          <td><i class="fa fa-user-circle-o pptpassenger"></i></td>
+                                          <td><span class="ppt-label" title="Passenger links">Passenger</span></td>
+                                        </tr>
+                                        <tr id="Address" ng-click="onClickSavedGraph('address')">
+                                            <td><i class="fa fa-home pptaddress"></i></td>
+                                          <td><span class="ppt-label" title="Addresses used by this passenger">Address</span></td>
+                                        </tr>
+                                        <tr id="CreditCard" ng-click="onClickSavedGraph('creditcard')">
+                                            <td><i class="fa fa-credit-card-alt pptcreditcard"></i></td>
+                                          <td><span class="ppt-label" title="Credit cards used by this passenger">Credit Card</span></td>
+                                        </tr>
+                                        <tr id="Phone" ng-click="onClickSavedGraph('phone')">
+                                            <td><i class="fa fa-phone pptphone"></i></td>
+                                          <td><span class="ppt-label" title="Phone numbers used by this passenger">Phone</span></td>
+                                        </tr>
+                                        <tr id="Email" ng-click="onClickSavedGraph('email')">
+                                            <td><i class="fa fa-envelope pptemail"></i></td>
+                                          <td><span class="ppt-label" title="Email addresses used by this passenger">Email</span></td>
+                                        </tr>
+                                        <tr id="Hit" ng-click="onClickSavedGraph('hit')">
+                                            <td><i class="fa fa-exclamation-circle ppthit"></i></td>
+                                          <td><span class="ppt-label" title="Hits for this passenger">Hit</span></td>
+                                        </tr>
+                                        <tr id="Document" ng-click="onClickSavedGraph('document')">
+                                            <td><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" role="img" class="pptdocument">
+                                              <path d="{{documentPath()}}"/></svg></td>
+                                          <td><span class="ppt-label" title="Documents used by this passenger">Document</span></td>
+                                            </tr>
+                                          </table>
+                                      <hr>
+                                      <br>
+  
+                                      <span class="ppt-header-span">This Flight:</span>
+                                      <table class="ppt-saved-ul">
+                                        <tr id="Flight" ng-click="onClickSavedGraph('flight')">
+                                          <td><i class="fa fa-plane pptflight"></i></td>
+                                        <td><span class="ppt-label" title="Flight links">Flight</span></td>
+                                      </tr>
+                                      <tr id="Address" ng-click="onClickSavedGraph('addressall')">
+                                          <td><i class="fa fa-home pptaddress"></i></td>
+                                        <td><span class="ppt-label" title="All passenger addresses for this flight">All Addresses</span></td>
+                                      </tr>
+                                      <tr id="CreditCard" ng-click="onClickSavedGraph('creditcardall')">
+                                          <td><i class="fa fa-credit-card-alt pptcreditcard"></i></td>
+                                        <td><span class="ppt-label" title="All passenger credit cards for this flight">All Credit Cards</span></td>
+                                      </tr>
+                                      <tr id="Phone" ng-click="onClickSavedGraph('phoneall')">
+                                          <td><i class="fa fa-phone pptphone"></i></td>
+                                        <td><span class="ppt-label" title="All passenger phone numbers for this flight">All Phones</span></td>
+                                      </tr>
+                                      <tr id="Email" ng-click="onClickSavedGraph('emailall')">
+                                          <td><i class="fa fa-envelope pptemail"></i></td>
+                                        <td><span class="ppt-label" title="All passenger email addresses for this flight">All Emails</span></td>
+                                      </tr>
+                                      <tr id="Hit" ng-click="onClickSavedGraph('hitall')">
+                                          <td><i class="fa fa-exclamation-circle ppthit"></i></td>
+                                        <td><span class="ppt-label" title="All passenger hits for this flight">All Hits</span></td>
+                                      </tr>
+                                      <tr id="Document" ng-click="onClickSavedGraph('documentall')">
+                                          <td><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" role="img" class="pptdocument">
+                                            <path d="{{documentPath()}}"/></svg></td>
+                                      <td><span class="ppt-label" title="All passenger documents for this flight">All Documents</span></td>
+                                          </tr>
+                                        </table>
+                                </div>
+                                <!-- <div id="popoto-taxonomy">
+                                    <span class="ppt-header-span">Taxonomies:</span><br><br>
+                                </div> -->
+                                </nav>
+                                <div id="popoto-graph" class="ppt-div-graph">
+                                    <!-- Graph will be generated here-->
+                                </div>
+                            </div>
+                        
+                            <div id="popoto-query" class="ppt-container-query">
+                                <!-- Query viewer will be generated here -->
+                            </div>
+                        
+                            <!-- <div id="popoto-cypher" class="ppt-container-cypher">
+                            </div> -->
+                        
+                            <div class="ppt-section-header">
+                                <!-- The total results count is updated with a listener defined below -->
+                                RESULTS <span id="result-total-count" class="ppt-count-results"></span>
+                            </div>
+                        
+                            <div id="popoto-results" class="ppt-container-results">
+  
+                              <!-- Results will be generated here -->
+                            </div>
+                        
+                        </section>
+                      </div>
                       
-                          <div id="popoto-query" class="ppt-container-query">
-                              <!-- Query viewer will be generated here -->
-                          </div>
-                      
-                          <!-- <div id="popoto-cypher" class="ppt-container-cypher">
-                          </div> -->
-                      
-                          <div class="ppt-section-header">
-                              <!-- The total results count is updated with a listener defined below -->
-                              RESULTS <span id="result-total-count" class="ppt-count-results"></span>
-                          </div>
-                      
-                          <div id="popoto-results" class="ppt-container-results">
-
-                            <!-- Results will be generated here -->
-                          </div>
-                      
-                      </section>
+                      </div>
                     </div>
-                    
-                    </div>
-                  </div>
-              </div>
-            </md-tab-body>
-            </md-tab>
-  
-          </md-tabs>
-          <!-- END - TABS AND CONTENT -->
-  
-  
-        </div>
-      </section>
+                </div>
+              </md-tab-body>
+              </md-tab>
+    
+            </md-tabs>
+            <!-- END - TABS AND CONTENT -->
+    
+    
+          </div>
+        </section>
+      </div>
     </div>
-  </div>
-  
+    
