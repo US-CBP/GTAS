@@ -1,6 +1,7 @@
 
 .ppt-svg-graph {
   background-color: white;
+  border: 1px solid #00416a !important;
 }
 .ppt-g-node-middleground>g>path.Address {
   transform: scale(.17) translate(-260px, -250px);
@@ -29,11 +30,7 @@
 .ppt-g-node-middleground>g>path.Phone {
   transform: scale(.13) translate(-260px, -250px);
 }
-
-.ppt-g-node-middleground>g>path.Phone {
-  transform: scale(.13) translate(-260px, -250px);
-}
-.ppt-g-node-middleground>g>path {
+.ppt-g-node-middleground>g>path, .ppt-segment {
   fill-opacity: .8;
 }
 .ppt-node__back-text, .ppt-node__back-text--root--value-selected, .ppt-node__back-text--choose,
@@ -42,9 +39,6 @@
 .ppt-node__back-text--choose--value-selected--disabled, .ppt-node__back-text--value {
   fill-opacity: .9 !important;
   fill: #333333 !important;
-}
-.ppt-segment {
-  fill-opacity: .8;
 }
 .ppt-segment.CreditCard:hover {
   fill: #007676;
@@ -115,41 +109,37 @@
 .ppt-count-box.disabled, .ppt-count-text.disabled {
   display: none !important;
 }
-.ppt-glink:hover {
-  cursor: pointer;
-  stroke: #ee4e10;
-  marker-mid: url(#cross);
-}
 .ppt-textpath {
   stroke-width: 1px !important;
 }
-.ppt-glink:hover>.ppt-link {
+.ppt-glink:hover {
+  cursor: pointer;
+}
+.ppt-glink:hover>:not(.ppt-link__path--hover--value) {
   stroke: #ee4e10;
+  stroke-width: 4px !important;
+  marker-mid: url(#cross);
+}
+.ppt-link__path--hover--value {
+  stroke: black !important;
 }
 
-.ppt-node__path--choose--disabled {
+.ppt-node__path--choose--disabled, .ppt-node__path--root--disabled {
   fill: #484848 !important;
 }
-
 .ppt-taxo-nav {
   border: 1px solid #00416a !important;
   background: white !important;
 }
-.ppt-svg-graph {
-  border: 1px solid #00416a !important;
-}
-
 .ppt-container-graph, .ppt-taxo-nav, .ppt-div-graph {
   height: 70vh !important;
 }
 .ppt-body {
-  margin: 0px 10px;
+  margin: 0px 10px !important;
 }
 .ppt-glink {
   stroke-width: 4px;
 }
-
-
 .ppt-label {
   color: #333333 !important;
 }

@@ -69,6 +69,7 @@
     // vaquita.logger.LEVEL = vaquita.logger.LogLevels.INFO;
     vaquita.graph.link.SHOW_MARKER = false;
     vaquita.graph.node.DONUT_WIDTH = 15;
+    vaquita.graph.HORIZONTAL_NODES = 1;
 
     vaquita.graph.setZoom(0.5, 2);
 
@@ -301,14 +302,9 @@
     vaquita.provider.link.Provider = {
       getColor: function(link) {
         return $scope.palette[link.source.label.toLowerCase()];
-      },
-      getCSSClass: function(link, element) {
-        return $scope.palette[link.target.label];
       }
     };
 
-    $scope.pax = "pax";
-    $scope.flight = "flight";
     $scope.thisPaxFlight = {
       label: "Passenger",
       rel: [
@@ -373,10 +369,10 @@
         ]
     };
 
-    $scope.savecount = 2;
     $scope.saves = {
       pax: {  // this pax
         label: "Passenger",
+        horiz: 1,
         value: [
           {
             id_tag: $scope.paxIdTag,
@@ -387,6 +383,7 @@
       },
       flight: { // this flight, all pax, ports
         label: "Flight",
+        horiz: 1,
         value: [
           {
             flight_id_tag: $scope.paxFlightIdTag,
@@ -414,15 +411,17 @@
           }
         ]
       },
-      email: {    //all emails this flight
+      email: {    // all emails this pax
         label: "Email",
+        horiz: 2,
         rel: [{
           label: "used_email",
           target: $scope.thisPax}
         ] // rel
       },
-      address: {    //all addys this flight
+      address: {    //all addys this pax
         label: "Address",
+        horiz: 2,
         rel: [
           {
             label: "lived_at",
@@ -430,8 +429,9 @@
           }
         ] // rel
       },
-      document: {    //all docs this flight
+      document: {    //all docs this pax
         label: "Document",
+        horiz: 2,
         rel: [
           {
             label: "used_document",
@@ -439,8 +439,9 @@
           }
         ] // rel
       },
-      creditcard: {    //all ccards this flight
+      creditcard: {    //all ccards this pax
         label: "CreditCard",
+        horiz: 2,
         rel: [
           {
             label: "used_creditcard",
@@ -448,8 +449,9 @@
           }
         ] // rel
       },
-      phone: {    //all phones this flight
+      phone: {    //all phones this pax
         label: "Phone",
+        horiz: 2,
         rel: [
           {
             label: "used_phone",
@@ -457,8 +459,9 @@
           }
         ] // rel
       },
-      hit: {    // all pax with hits this flight
+      hit: {    //  hits this pax
         label: "Passenger",
+        horiz: 2,
         value: [
           {
             id_tag: $scope.paxIdTag,
@@ -473,6 +476,7 @@
 
       emailall: {    //all emails this flight
         label: "Email",
+        horiz: 3,
         rel: [
           {
             label: "used_email",
@@ -482,6 +486,7 @@
       },
       addressall: {    //all addys this flight
         label: "Address",
+        horiz: 3,
         rel: [
           {
             label: "lived_at",
@@ -491,6 +496,7 @@
       },
       documentall: {    //all docs this flight
         label: "Document",
+        horiz: 3,
         rel: [
           {
             label: "used_document",
@@ -500,6 +506,7 @@
       },
       creditcardall: {    //all ccards this flight
         label: "CreditCard",
+        horiz: 3,
         rel: [
           {
             label: "used_creditcard",
@@ -509,6 +516,7 @@
       },
       phoneall: {    //all phones this flight
         label: "Phone",
+        horiz: 3,
         rel: [
           {
             label: "used_phone",
@@ -518,6 +526,7 @@
       },
       hitall: {    // all pax with hits this flight
         label: "Hit",
+        horiz: 3,
         rel: [
           {
             label: "flagged",
@@ -533,12 +542,13 @@
     });
 
     $scope.activateGraph = function() {
+      const template = $scope.saves.pax;
+      vaquita.graph.HORIZONTAL_NODES = (template.horiz) || 1;
+
       if (vaquita.dataModel.getRootNode() === undefined) {
-        console.log(vaquita.rest.AUTHORIZATION);
-        console.log(vaquita.rest.CYPHER_URL);
-        vaquita.start($scope.saves[$scope.pax]);
+        vaquita.start(template);
       } else {
-        vaquita.refresh($scope.saves[$scope.pax]);
+        vaquita.refresh(template);
       }
     };
 
@@ -555,32 +565,11 @@
       }
 
       vaquita.graph.mainLabel = $scope.saves[id];
+      vaquita.graph.HORIZONTAL_NODES = ($scope.saves[id].horiz) || 1;
       vaquita.tools.reset();
     };
 
     vaquita.graph.onSave(function(graph) {
-      console.log(graph);
-      // generate a unique id
-      // var id = "save-" + $scope.savecount++;
-      // // save it in JavaScript "saves" var
-      // $scope.saves[id] = graph;
-
-      // // Update page with the new saved graph item in list with a on click event to illustrate how it can be used.
-      // var li = d3
-      //   .select("#saves")
-      //   .selectAll("ul")
-      //   .append("li")
-      //   .attr("id", id)
-      //   .on("click", $scope.onClickSavedGraph);
-
-      // li.append("span")
-      //   .attr("class", "ppt-icon ppt-save-tag")
-      //   .html("&nbsp;");
-
-      // li.append("span")
-      //   .attr("class", "ppt-label")
-      //   .attr("title", "Load Graph")
-      //   .text(id);
     });
 
     $scope.getAttachment = function(paxId) {
