@@ -135,7 +135,7 @@ public class MatchingServiceImpl implements MatchingService {
 
 
         return new PaxWatchlistLinkVo(percentMatch, lastRunTimestamp, verifiedStatus, passenger.getId(), item.getId(),
-                firstName, lastName, dob);
+                firstName, lastName, dob, item.getWatchlistCategory().getName());
     }
 
     public List<PaxWatchlistLinkVo> findByPassengerId(Long id) {
