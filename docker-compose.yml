@@ -1,44 +1,169 @@
-version: '3.3'
+version: "3.4"
 
 services:
-  # mavenbuildgtas:
-  #   environment:
-  #     JDBC_URL: jdbc:mariadb://mariahost:3306/gtas?useUnicode=true&characterEncoding=UTF-8
-  #     JDBC_USER: root
-  #     JDBC_PASS: admin
-  #   build:
-  #     context: .
-  #     dockerfile: maven.Dockerfile
-  #   volumes:
-  #     - "./gtas-parent:/project"
-  #   links:
-  #     - mariahost
+  builder:  
+    build: 
+      context: ./
+      dockerfile: ./docker/maven.Dockerfile
+    depends_on: 
+      - mariahost
+    volumes:
+      - data:/root/.m2/
+      - ./gtas-parent:/project:cached
+  kibana:
+    # image: kibana:6.5.4
+    image: docker.elastic.co/kibana/kibana:6.5.4 
+    container_name: kibana
+    ports:
+      - 5601:5601
+    networks: 
+      - gtas_default
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: 'curl -f http://kibana:5601 || exit 1'
+
+  elasticsearch:
+    image: elasticsearch:6.5.4
+    # build:
+    #   context: ./gtas-parent/scripts/elastic
+    #   dockerfile: install/docker/elasticsearch/Dockerfile
+    container_name: elasticsearch
+    networks: 
+      - gtas_default
+    ports: 
+      - 9300:9300
+      - 9200:9200
+    healthcheck:
+      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  logstash:
+    build: 
+      dockerfile: ./install/docker/logstash/Dockerfile
+      context: ./gtas-parent/scripts/elastic
+      args: 
+        DB_HOST: 'mariahost'
+        ELASTIC_HOST: 'elasticsearch'
+    container_name: logstash
+    environment:
+      - JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.ssl.enabled=true
+    networks:
+      - gtas_default
+    depends_on:
+      - elasticsearch
+      - mariahost
+  activemq:
+    image: rmohr/activemq
+    container_name: activemq
+    ports:
+      - 61616:61616
+      - 8161:8161
+    networks: 
+      - gtas_default
 
   mariahost:
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: gtas
     build:
-      context: ./gtas-parent/gtas-commons
-      dockerfile: db.Dockerfile
-    # volumes:
-       #- ./gtas-parent/gtas-commons/db:/var/lib/mysql
-      #  - "./gtas-parent/gtas-commons/target/:/docker-entrypoint-initdb.d"
-      #  - "./gtas-parent/gtas-commons/src/main/resources/sql:/docker-entrypoint-initdb.d"
+      context: .
+      dockerfile: ./docker/db.Dockerfile
     ports:
       - "3306:3306"
     container_name: mariahost
+    volumes: 
+      - db-data:/var/lib/mysql
+    command: [
+            '--wait_timeout=28800',
+        ]
+    networks: 
+      - gtas_default
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
 
-  tomcatgtas:
-    links:
-      - mariahost
+  webapp:
+    container_name: webapp
     build:
       context: .
-      dockerfile: /gtas-parent/docker/tomcat.Dockerfile
-    # volumes:
-    #    #- ./gtas-parent/gtas-commons/db:/var/lib/mysql
-    #    - "./gtas-parent/gtas-webapp/target/gtas.war:/usr/local/tomcat/webapps/"
-    #    - "./gtas-parent/gtas-job-scheduler-war/target/gtas-job-scheduler.war:/usr/local/tomcat/webapps/"
+      dockerfile: ./gtas-parent/gtas-webapp/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'
     ports:
-      - "8091:8080"
-    container_name: tomcat
+      - "8080:8080"
+    depends_on: 
+      - mariahost
+      - elasticsearch
+      - kibana
+    volumes: 
+      - data:/root/.m2
+    networks:
+      - gtas_default
+
+  scheduler:
+    container_name: scheduler
+    build:
+      context: .
+      dockerfile: ./gtas-parent/gtas-job-scheduler-war/Dockerfile
+      args: 
+        DB_HOST: 'mariahost'
+        DB_USERNAME: 'root'
+        DB_PASSWORD:  'admin'      
+    environment:
+      LOCAL_DRIVE_MAPPING_INPUT: ${LOCAL_DRIVE_MAPPING_INPUT}
+      LOCAL_DRIVE_MAPPING_OUTPUT: ${LOCAL_DRIVE_MAPPING_OUTPUT}
+    volumes:
+      - ${LOCAL_DRIVE_MAPPING_INPUT}:/usr/local/input:rw
+      - ${LOCAL_DRIVE_MAPPING_OUTPUT}:/usr/local/output:rw
+      - data:/root/.m2
+    networks:
+      - gtas_default
+    depends_on: 
+      - mariahost
+      - activemq
+  neo4j:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: neo4j.Dockerfile
+    container_name: neo4j
+    ports:
+      - 7474:7474   
+      - 7687:7687
+    networks: 
+    - gtas_default
+  etl-job:
+    build:
+      context: ./gtas-neo4j-etl
+      dockerfile: ./etl_job.Dockerfile
+    container_name: etl-job
+    networks: 
+    - gtas_default
+    depends_on: 
+      - neo4j
+      - mariahost
+      - neo4j-scheduler
+    volumes:
+      - target:/root/.m2/
+     
+  neo4j-scheduler:
+    build:
+      context: ./gtas-neo4j-scheduler
+    image: neo4j-scheduler
+    container_name: neo4j-scheduler 
+    volumes:
+      - target:/root/.m2/
+      - ./gtas-neo4j-scheduler:/etl-project:cached
+
+volumes:
+  es-data:
+    driver: local
+  db-data:
+    driver: local
+  data:
+    driver: local
+  target:
+    driver: local
+  
+networks:
+  gtas_default:

@@ -7,10 +7,7 @@ package gov.gtas.model.lookup;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "watch_list_category")
@@ -20,6 +17,7 @@ public class WatchlistCategory implements Serializable {
 
 	@Column(name = "id", insertable = false, updatable = false, nullable = false, unique = true)
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	@Column(name = "name")

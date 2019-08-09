@@ -608,7 +608,7 @@ public class PassengerDetailsController {
 	 * Required for Frontend to highlight segment corresponding to pnr section
 	 * @param targetVo
 	 */
-	private void parseRawMessageToSegmentList(PnrVo targetVo) {
+	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
                     
 			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),"\n");
@@ -663,7 +663,7 @@ public class PassengerDetailsController {
 				//Addresses
 				if (currString.contains(ADD)) {
 					for(AddressVo a: targetVo.getAddresses()) {
-						if(currString.contains(a.getCity())) {
+						if(a.getCity() != null && currString.contains(a.getCity())) {
 							segment.append(ADD);
 							segment.append(a.getCity());
 							segment.append(" ");
