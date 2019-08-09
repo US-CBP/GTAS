@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource({ "classpath:commonservices.properties" })
+@PropertySource({ "classpath:default.application.properties" })
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import({AsyncConfig.class, CommonServicesConfig.class})
