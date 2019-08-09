@@ -25,5 +25,5 @@ cd "$parent_dir"
 yes | cp -f ../../../config/elasticsearch/elasticsearch.yml $ES_INSTALL_LOCATION/elasticsearch/config
 yes | cp -f ../../../config/elasticsearch/log4j2.properties $ES_INSTALL_LOCATION/elasticsearch/config
 
-./set-users.sh
+# ./setup-elasticsearch.sh
 

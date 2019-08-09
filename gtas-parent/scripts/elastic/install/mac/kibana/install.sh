@@ -23,8 +23,3 @@ rm -f kibana-${ES_INSTALL_VERSION}-darwin-x86_64.tar.gz
 cd "$parent_dir"
 yes | cp -f ../../../config/kibana/kibana.yml $ES_INSTALL_LOCATION/kibana/config
 
-# Copy Certificates
-mkdir -p $ES_INSTALL_LOCATION/kibana/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/docker-cluster/kibana/kibana.crt $ES_INSTALL_LOCATION/kibana/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/docker-cluster/kibana/kibana.key $ES_INSTALL_LOCATION/kibana/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/ca/ca.crt $ES_INSTALL_LOCATION/kibana/config/certs

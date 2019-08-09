@@ -29,11 +29,4 @@ cd $CURRENT_DIR
 
 cd "$parent_dir"
 
-# Copy Certificates
-mkdir -p $ES_INSTALL_LOCATION/logstash/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/docker-cluster/logstash/logstash.crt $ES_INSTALL_LOCATION/logstash/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/docker-cluster/logstash/logstash.key $ES_INSTALL_LOCATION/logstash/config/certs
-yes | cp -f $ES_INSTALL_LOCATION/elasticsearch/config/certs/ssl/ca/ca.crt $ES_INSTALL_LOCATION/logstash/config/certs
-
-
 source ../copy_config.sh
