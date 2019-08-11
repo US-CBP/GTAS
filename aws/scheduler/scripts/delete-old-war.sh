@@ -19,3 +19,12 @@ else
   echo "Warning!: The gtas-job-scheduler expanded war folder could not be found or could not be removed!" 
   exit 0
 fi
+rm -r /opt/apache-tomcat-8.5.34/work/Catalina/localhost/gtas-job-scheduler
+if [ $? -eq 0 ]
+then
+  echo "Success: The gtas-job-scheduler folder was removed successfully from /opt/apache-tomcat-8.5.34/work/Catalina/localhost."
+  exit 0
+else
+  echo "Warning!: The gtas-job-scheduler folder could not be found or could not be removed from /opt/apache-tomcat-8.5.34/work/Catalina/localhost!" 
+  exit 0
+fi
