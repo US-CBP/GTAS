@@ -132,7 +132,8 @@
 
         $scope.categories = {};
         watchListService.getWatchlistCategories().then(function(res){
-        	$scope.watchlistCategories =  res.data;
+            $scope.watchlistCategories =  res.data;
+            $scope.wlCatagoryGrid.data =  res.data;
         	$scope.watchlistCategories.forEach(function(item){
         		
         		$scope.categories[item.id]=item.label;
@@ -195,6 +196,7 @@
             watchListService.saveCategory($scope.wlCategoryModel).then(function () {
                 watchListService.getWatchlistCategories().then(function(res){
                     $scope.watchlistCategories =  res.data;
+                    $scope.wlCatagoryGrid.data =  res.data;
                     $scope.watchlistCategories.forEach(function(item){
                         $scope.categories[item.id]=item.label;
                     });
@@ -437,5 +439,14 @@
             }
             return valid;
         }
+        $scope.wlCatagoryGrid = {
+            paginationPageSizes: [10, 15, 20],
+            paginationPageSize: 10,
+            columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
+        };
+        $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
+            $scope.wlGridApi = gridApi;
+        }
+
     });
 }());

@@ -1071,6 +1071,26 @@
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{grid.appScope.categories[COL_FIELD]}}</md-button>',
                     type: "integer"
                   }
+                ],
+                CATEGORY: [
+                  {
+                    field: "id",
+                    name: "id",
+                    displayName: "ID",
+                    type: "string"
+                  },
+                  {
+                    field: "label",
+                    name: "label",
+                    displayName: "Name",
+                    type: "string"
+                  },
+                  {
+                    field: "description",
+                    name: "description",
+                    displayName: "Description",
+                    type: "string"
+                  }
                 ]
               }
             };
