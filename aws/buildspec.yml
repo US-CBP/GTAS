@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - mvn -f gtas-parent/pom.xml -Dmaven.test.skip=true clean install
+      - mvn -f gtas-parent/pom.xml clean install
   post_build:
     commands:
       - cp aws/web/appspec.yml  gtas-parent/gtas-webapp/target
