@@ -6,6 +6,7 @@
 package gov.gtas.parsers.pnrgov;
 
 import gov.gtas.parsers.ParserTestHelper;
+import gov.gtas.parsers.vo.SeatVo;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,6 +33,8 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_EDGE = "/pnr-messages/pnrEdge.txt";
     private static final String PNR_CTC_M = "/pnr-messages/pnrPhoneCTC_M.txt";
     private static final String PNR_CTCM = "/pnr-messages/pnrPhoneCTCM.txt";
+    private static final String PNR_ADD_CTCM = "/pnr-messages/pnrAddressPhoneCTCM.txt";
+    private static final String PNR_SEAT_NSST = "/pnr-messages/pnrSeatFormats.txt";
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
 
     private EdifactParser<PnrVo> parser;
@@ -115,16 +118,32 @@ public class PnrGovParserTest implements ParserTestHelper {
     public void pnrPhoneWithSpaceTest() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(PNR_CTC_M);
         PnrVo vo = this.parser.parse(pnrExample);
-        assertEquals(vo.getPhoneNumbers().get(0).getNumber(), "123456789");
+        assertEquals(vo.getPhoneNumbers().get(1).getNumber(), "123456789");
     }
     @Test
     public void pnrPhoneNumberNoSpaceTest() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(PNR_CTCM);
         PnrVo vo = this.parser.parse(pnrExample);
-        assertEquals(vo.getPhoneNumbers().get(0).getNumber(), "123456789");
+        assertEquals(vo.getPhoneNumbers().get(1).getNumber(), "123456789");
     }
-
-
+    @Test
+    public void pnrAddressPhoneNumber() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_ADD_CTCM);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getPhoneNumbers().get(1).getNumber(), "5432109876");
+    }
+    @Test
+    public void pnrSeatVo() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_SEAT_NSST);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getPassengers().get(0).getSeatAssignments().size(), 2);
+        SeatVo seat = vo.getPassengers().get(0).getSeatAssignments().get(1);
+        assertEquals(seat.getApis(), false);
+        assertEquals(seat.getDestination(), "IAD");
+        assertEquals(seat.getOrigin(), "SFO");
+        assertEquals(seat.getNumber(), "074E");
+        assertEquals(seat.getTravelerReferenceNumber(), "1");
+    }
     /*    @Test
     public void failingMessage1() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(failingMessage1);

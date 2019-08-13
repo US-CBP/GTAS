@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /gtas.war
+    destination: /opt/apache-tomcat-8.5.34/webapps
+hooks:
+  ApplicationStop:
+    - location: scripts/stop-apache-tomcat.sh
+      timeout: 3600
+      runas: ec2-user
+  BeforeInstall:
+    - location: scripts/delete-old-war.sh
+      timeout: 3600
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/start-apache-tomcat.sh
+      timeout: 3600
+      runas: ec2-user

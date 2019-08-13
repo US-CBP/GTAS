@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: openjdk8
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn -f gtas-parent/pom.xml clean install
+  post_build:
+    commands:
+      - cp aws/web/appspec.yml  gtas-parent/gtas-webapp/target
+      - cp -R aws/web/scripts  gtas-parent/gtas-webapp/target
+      - cd gtas-parent/gtas-webapp/target
+      - zip -r gtas-webapp.zip *.war  *.yml scripts
+      - cd ../../../
+      - cp aws/scheduler/appspec.yml  gtas-parent/gtas-job-scheduler-war/target
+      - cp -R aws/scheduler/scripts  gtas-parent/gtas-job-scheduler-war/target
+      - cd gtas-parent/gtas-job-scheduler-war/target
+      - zip -r gtas-scheduler.zip *.war  *.yml scripts
+      - cd ../../../
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - gtas-parent/gtas-webapp/target/gtas-webapp.zip
+    - gtas-parent/gtas-job-scheduler-war/target/gtas-scheduler.zip
