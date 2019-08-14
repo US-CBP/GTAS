@@ -121,8 +121,6 @@
 </md-sidenav>
 <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="wlCatSave" style="width: 100%">
   <md-content>
-    <h3 class="block-label no-margin-top">Existing Watchlists</h3>
-    <div ui-grid="wlCatagoryGrid" ui-grid-pagination class="grid"></div>
     <form name="wlCategory" class="filters" _lpchecked="1" ng-submit="saveWlCategory(m.WatchlistCategory)">
         <div class="filter-list" role="tablist">
             <h3 class="block-label no-margin-top">Add WL Category
@@ -169,10 +167,14 @@
         <span>&nbsp;{{tab.title}}</span>
       </md-tab-label>
     </md-tab>
+    <md-tab label="Existing Watchlists" md-on-select="showWLTypesGrid=false" md-on-deselect="showWLTypesGrid=true"> </md-tab>
 </md-tabs>
 </div>
 <div class="manage">
-<div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+  <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope" ng-if="showWLTypesGrid"></div>
+</div>
+<div class="manage" ng-if="!showWLTypesGrid">
+    <div ui-grid="wlCatagoryGrid" ui-grid-pagination class="grid"></div>
 </div>
 <div class="actions md-pad">
 <button type="button" class="btn btn-icon-only btn-warning pull-left"
