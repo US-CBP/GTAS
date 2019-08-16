@@ -511,6 +511,11 @@ var app;
                                 model: paxModel.initial($stateParams),
                                 reset: function () {
                                     this.model.lastName = '';
+                                },
+                                alldatamodel: function() {
+                                  var mod = Object.assign({}, paxModel.initial($stateParams));
+                                  mod.pageSize = 1000;
+                                  return mod;
                                 }
                             };
                         },
@@ -519,7 +524,7 @@ var app;
                             $stateParams.dest = $stateParams.destination;
                             $stateParams.etaStart = $stateParams.eta;
                             $stateParams.etaEnd = $stateParams.etd;
-                            return paxService.getPax($stateParams.id, paxModel.model);
+                            return paxService.getPax($stateParams.id, paxModel.alldatamodel());
                         }
                     }
                 })
