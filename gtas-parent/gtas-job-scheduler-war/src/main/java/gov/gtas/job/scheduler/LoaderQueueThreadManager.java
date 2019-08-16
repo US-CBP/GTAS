@@ -7,12 +7,7 @@ package gov.gtas.job.scheduler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import gov.gtas.parsers.paxlst.segment.unedifact.DTM;
@@ -24,6 +19,7 @@ import gov.gtas.repository.AppConfigurationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -43,15 +39,24 @@ public class LoaderQueueThreadManager {
 
     private ExecutorService exec;
 
-    private static ConcurrentMap<String, BlockingQueue<Message<?>>> bucketBucket = new ConcurrentHashMap<>();
+    private static final int DEFAULT_PERMITS = 5000;
+
+    private static ConcurrentMap<String, LoaderWorkerThread> bucketBucket = new ConcurrentHashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(LoaderQueueThreadManager.class);
 
-    @Autowired
-	public LoaderQueueThreadManager(ApplicationContext ctx, AppConfigurationRepository appConfigurationRepository) {
-		this.ctx = ctx;
+    private final Semaphore semaphore;
 
-		/*
+    @Autowired
+	public LoaderQueueThreadManager(ApplicationContext ctx, AppConfigurationRepository appConfigurationRepository, @Value("${loader.permits}") Integer loaderPermits) {
+		this.ctx = ctx;
+		if (loaderPermits == null || loaderPermits.equals(0)) {
+		    logger.warn("no permits set up, using default of " + DEFAULT_PERMITS);
+		    this.semaphore = new Semaphore(DEFAULT_PERMITS);
+        } else {
+            this.semaphore = new Semaphore(loaderPermits);
+        }
+        /*
 		 * Fail safe and fall back to 5 number of threads when the database
 		 * configuration is set incorrectly
 		 */
@@ -71,7 +76,7 @@ public class LoaderQueueThreadManager {
 		this.exec = Executors.newFixedThreadPool(maxNumOfThreads);
 	}
 
-    void receiveMessages(Message<?> message) throws ParseException {
+    void receiveMessages(Message<?> message) throws ParseException, InterruptedException {
         String[] primeFlightKeyArray = generatePrimeFlightKey(message);
 
         //Construct label for individual buckets out of concatenated array values from prime flight key generation
@@ -85,25 +90,29 @@ public class LoaderQueueThreadManager {
         // by shuffling all identical flights into the same queue in order to be processed sequentially. However, by processing multiple
         // sequential queues at the same time, we in essence multi-thread the process for all non-identical prime flights
         AtomicBoolean firstMessage = new AtomicBoolean(false);
-        BlockingQueue<Message<?>> messagesWithSamePrimeFlightBucket = bucketBucket.computeIfAbsent(primeFlightKey, m -> {
-            logger.info("New Queue Created For Prime Flight: " + primeFlightKey);
-            firstMessage.set(true);
-            return new ArrayBlockingQueue<>(1024);
-        });
-        boolean messageAccepted = messagesWithSamePrimeFlightBucket.offer(message);
-        if (!messageAccepted) {
-            //TODO: Add retry functionality to message offer.
-            logger.error("Message not accepted into prime flight queue! Message lost!!");
-        }
-        if (firstMessage.get()) {
-            // Is not existing bucket, make bucket, stuff in bucketBucket,
-            // Only generate workers on a per queue basis
+        logger.debug("Available permits: " + semaphore.availablePermits());
+
+        //Here we will acquire a lock as a new message has come in. The Loader Worker will release the lock when it is done processing the message.
+        semaphore.acquire();
+        LoaderWorkerThread primeFlightWorkerThread = bucketBucket.computeIfAbsent(primeFlightKey, m -> {
             LoaderWorkerThread worker = ctx.getBean(LoaderWorkerThread.class);
-            worker.setQueue(messagesWithSamePrimeFlightBucket);
+            logger.info("New Queue Created For Prime Flight: " + primeFlightKey);
+            worker.setQueue(new ArrayBlockingQueue<>(1024));
             worker.setMap(bucketBucket); // give map reference and key in order to kill queue later
             worker.setPrimeFlightKeyArray(primeFlightKeyArray);
             worker.setPrimeFlightKey(primeFlightKey);
-            exec.execute(worker);
+            worker.setSemaphore(semaphore);
+            firstMessage.set(true);
+            return worker;
+        });
+        boolean addedToQueue = primeFlightWorkerThread.addMessageToQueue(message);
+        if (!addedToQueue) {
+            logger.error("MESSAGE NOT PROCESSED-REPROCESSING");
+            receiveMessages(message);
+            return;
+        }
+        if (firstMessage.get()) {
+            exec.execute(primeFlightWorkerThread);
         }
     }
 

@@ -96,7 +96,7 @@ datamanagement.initialDelay.in.milliseconds=20
 #########
 
 ##################### RuleRunner #####################
-
+loader.permits=5000
 partial.hits.case.create=true
 logs.dir.root=C:\\TEST
 default.landing.page=flight
