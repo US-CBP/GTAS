@@ -779,7 +779,8 @@ var app;
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',
-            ONE_DAY_LOOKOUT: 'One Day Lookout'
+            ONE_DAY_LOOKOUT: 'One Day Lookout',
+            MANAGE_HITS: 'Manage Hits'
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',
