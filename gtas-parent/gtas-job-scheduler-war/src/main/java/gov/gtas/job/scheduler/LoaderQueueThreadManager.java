@@ -105,6 +105,11 @@ public class LoaderQueueThreadManager {
             firstMessage.set(true);
             return worker;
         });
+        // There solves the race condition in which the queue is being torn down/destroyed and then the message is
+        // added to the queue.
+        // addMessageToQueue returns false when the thread has is being destroyed.
+        // If the worker has been destroyed then re-run receiveMessage, which will create a new worker thread
+        // and process correctly.
         boolean addedToQueue = primeFlightWorkerThread.addMessageToQueue(message);
         if (!addedToQueue) {
             logger.error("MESSAGE NOT PROCESSED-REPROCESSING");

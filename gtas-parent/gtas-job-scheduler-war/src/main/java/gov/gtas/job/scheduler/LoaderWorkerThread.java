@@ -68,11 +68,16 @@ public class LoaderWorkerThread implements Runnable {
 					logger.debug(Thread.currentThread().getName() + " FileName = " + fileName);
 					try {
 						processCommand();
-					} catch (Exception e) {
-						logger.error("Catastrophic failure, uncaught exception would cause thread destruction without queue destruction causing memory leak; Rerouting process");
-						logger.error("Catastrophic failure!", e);
+					} catch (Exception ignored) {
+						logger.error("Catastrophic failure, " +
+                                "uncaught exception would cause" +
+                                " thread destruction without queue destruction " +
+                                "causing memory leak. Process Aborted! ", ignored);
 					}
 				} finally {
+            	    // ALWAYS release a lock when finished with a message.
+                    // Loader Queue Thread Manager will ALWAYS acquire a lock for a message
+                    // and relies on the loader worker to release the lock.
             		semaphore.release();
 				}
             } else {
@@ -89,6 +94,8 @@ public class LoaderWorkerThread implements Runnable {
         loader.receiveMessage(text, fileName, primeFlightKeyArray);
     }
 
+    // Prepares the loader thread queue manager to be GC'd, performing a check against the queue to make sure
+    // no elements have been added right before the method was called.
     private synchronized boolean destroyQueue() {
         boolean deleted = false;
         if (this.queue.isEmpty()) {
@@ -96,7 +103,7 @@ public class LoaderWorkerThread implements Runnable {
             logger.debug("Prime key being removed: " + Arrays.toString(this.primeFlightKeyArray));
             logger.debug("Queue inside this thread: " + this.queue.hashCode());
             this.map.remove(this.primeFlightKey);
-            this.semaphore.release(this.queue.size());
+            this.semaphore.release(this.queue.size()); // This should always be 0 and release 0 permits.
             this.queue = null;
             deleted = true;
         }
@@ -105,9 +112,17 @@ public class LoaderWorkerThread implements Runnable {
 
     synchronized boolean addMessageToQueue(Message<?> message) throws InterruptedException {
         if (this.queue == null) {
-            semaphore.release(); //for now just release the permit.
+            // Handling data race condition. Add message to queue called AFTER destroyQueue() which causes
+            // an attempt to add a message to a null queue and the worker being unable to process the message.
+            // Releasing the semaphore is the LoaderWorker's job so we release and return with a false value.
+            // Which lets the queue manager retry receiving the message.
+            semaphore.release();
             return false;
         } else {
+            // This is normal path and should be what usually(99.99%) happens.
+            // Note this is a blocking operation which holds the worker's lock.
+            // This is acceptable as the other contention for the worker's lock only happens when
+            // the queue is empty and destroyQueue is called.
             this.queue.put(message);
         }
         return true;
