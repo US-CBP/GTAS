@@ -2,8 +2,8 @@
 
 <div id='dom-to-print'>
   <div class="upper-cnt flex justify-around flex-wrap">
-    <div class="no-margin cbp-card-container gtas-card-container" id="caseForm">
-      <div class="cbp-card cbp-card-shadow">
+    <div class="no-margin cbp-card-container gtas-card-container" id="caseForm" style="width:100%">
+      <div class="cbp-card cbp-card-shadow" style="margin-left:10%;margin-right:10%;">
         <h3 class="h-label no-margin" align="right">Case#: {{ caseItem.id }} &nbsp;&nbsp;&nbsp;</h3>
         <div class="flex flex-wrap">
 
@@ -30,7 +30,10 @@
             </div>
           </div>
           <div class="panel-body flex flex-vert ie-fix-md three-table switch-width-sm-half" style="overflow: auto;">
-            <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header"  ng-show="dispStatus.oneDay" >
+           
+          <div style="width:100%" ng-show="showHitDisposition">
+         
+            <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
               <thead align="left">
                 <tr>
                   <th align="text-right">Rule Category</th>
@@ -51,7 +54,7 @@
                 </tbody>
               </table>
             </div>
-
+		</div>
               <table aria-hidden="true" class="cbp-table-selectable mdl-js-data-table floating-table-header">
                   <thead align="left">
                   <tr>
