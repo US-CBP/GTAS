@@ -148,14 +148,7 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("watchListCount", new AtomicLong(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
-		//set user location
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = userService.isAdminUser(userId);
 
-		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
-		{
-			userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
-		}
 		return flightsAndPassengersAndHitsCount;
 	}
 
