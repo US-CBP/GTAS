@@ -133,8 +133,8 @@ public class PnrMessageServiceIT extends
 	public void smokeTestGtasLoaderImpl() {
 		this.message = new File(
 				getClass().getClassLoader().getResource("pnr-messages/multiple_flight_leg_pnr.txt").getFile());
-    svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+    ProcessedMessages msgs = svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
 
-    assertNotNull(1);
+    assertNotNull(msgs);
 	}
 }
