@@ -54,7 +54,7 @@ public class Flight extends BaseEntityAudit {
     @Column(length = 1, nullable = false)
     private String direction;
 
-    @Column(name = "id_tag", unique = true)
+    @Column(name = "id_tag")
     private String idTag;
     
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)

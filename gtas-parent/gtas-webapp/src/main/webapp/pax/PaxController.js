@@ -1112,6 +1112,7 @@
       );
     };
 
+
     var exporter = {
       csv: function() {
         $scope.gridApi.exporter.csvExport("all", "all");
@@ -1248,19 +1249,38 @@
               {label: 'Any', value: 'A'}
           ];
 
-    $scope.getRuleObject = function(ruleID) {
-      jqueryQueryBuilderService
-        .loadRuleById("rule", ruleID)
-        .then(function(myData) {
-          $scope.$builder.queryBuilder("readOnlyRules", myData.result.details);
-          $scope.hitDetailDisplay = myData.result.summary.title;
-          document.getElementById("QBModal").style.display = "block";
-
-          $scope.closeDialog = function() {
-            document.getElementById("QBModal").style.display = "none";
+          self.querySearch = querySearch;
+          codeService.getAirportTooltips()
+            .then(function (allAirports) {
+                self.allAirports = allAirports.map(function (contact) {
+                    contact.lowerCasedName = contact.id.toLowerCase();
+                    return contact;
+                });
+                self.filterSelected = true;
+                $scope.filterSelected = true;
+            });
+          $scope.flightDirections = flightDirections;
+    
+          $injector.invoke(jqueryQueryBuilderWidget, this, {$scope: $scope});
+          $scope.stateName = $state.$current.self.name;
+          $scope.ruleIdClick = function (row) {
+              $scope.getRuleObject(row.entity.ruleId);
           };
-        });
-    };
+          
+        $scope.getRuleObject = function(ruleID) {
+          jqueryQueryBuilderService
+            .loadRuleById("rule", ruleID)
+            .then(function(myData) {
+              $scope.$builder.queryBuilder("readOnlyRules", myData.result.details);
+              $scope.hitDetailDisplay = myData.result.summary.title;
+              document.getElementById("QBModal").style.display = "block";
+    
+              $scope.closeDialog = function() {
+                document.getElementById("QBModal").style.display = "none";
+              };
+            });
+        };
+    
 
     $scope.isExpanded = true;
     $scope.paxHitList = [];
