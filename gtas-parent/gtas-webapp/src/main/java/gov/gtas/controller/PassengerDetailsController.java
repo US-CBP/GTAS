@@ -114,7 +114,7 @@ public class PassengerDetailsController {
 			vo.setFlightIdTag(flight.getIdTag());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
-			if (CollectionUtils.isNotEmpty(seatList)) {			
+			if (CollectionUtils.isNotEmpty(seatList)) {
 				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
 						.distinct().collect(Collectors.toList());
 				if (seats.size() == 1) {
@@ -123,8 +123,10 @@ public class PassengerDetailsController {
 			}
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
-		vo.setPaxId(String.valueOf(t.getId()));
-		vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
+    vo.setPaxId(String.valueOf(t.getId()));
+    if (t.getPassengerIDTag() != null) {
+      vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
+    }
 		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
