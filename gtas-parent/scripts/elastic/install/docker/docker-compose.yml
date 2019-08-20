@@ -1,0 +1,61 @@
+version: "2"
+
+services:
+  # index, search & agregation
+  elasticsearch:
+    build: 
+      dockerfile: ./elasticsearch/Dockerfile
+      context: .
+    container_name: elasticsearch
+    environment:
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - discovery.type=single-node
+      # - xpack.security.enabled=true
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - $PWD/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - "es-data:/usr/share/elasticsearch/data"
+    networks:
+      - gtas_default
+  # UI
+  kibana:
+    build: 
+      context: .
+      dockerfile: ./kibana/Dockerfile
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment: 
+      ELASTICSEARCH_PASSWORD: Pa$$word1
+      ELASTICSEARCH_USERNAME: kibana
+    volumes:
+      - $PWD/kibana/config/kibana.yml:/etc/kibana/kibana.yml
+    networks:
+      - gtas_default
+    depends_on:
+      - elasticsearch
+  # indexer
+  # logstash:
+  #   image: logstash:5.1.2
+  #   container_name: logstash
+  #   command: logstash -f /config/
+  #   environment:
+  #     - JAVA_OPTS=-Xms1g -Xmx1g
+  #   volumes:
+  #     - $PWD/logstash/config:/config
+  #   networks:
+  #     - gtas_default
+  #   depends_on:
+  #     - elasticsearch
+
+volumes:
+  es-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  gtas_default:
+    driver: bridge

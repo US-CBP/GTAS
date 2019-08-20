@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast,
                   gridService, $mdDialog,
                   spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
-
+    	    $scope.showHitDisposition = false;
             $scope.caseItem;
             $scope.caseItemHits;
             $scope.caseItemHitComments;
@@ -71,11 +71,14 @@
                 $scope.dispStatus.caseStatusAdminView = ($scope.ROLES.ADMIN.toUpperCase() === $scope.currentUser.roles[0].roleDescription.toUpperCase());
                 let oneDayLookoutUser = false;
                 $scope.currentUser.roles.forEach(function (role) {
-                    if (role.roleDescription === $scope.ROLES.ONE_DAY_LOOKOUT) {
-                        oneDayLookoutUser = true;
+                                     
+                    if (role.roleDescription === $scope.ROLES.ADMIN || role.roleDescription === $scope.ROLES.MANAGE_HITS ) {
+                    	$scope.showHitDisposition = true;
                     }
+                    
+                    
                 });
-                $scope.dispStatus.oneDay = !oneDayLookoutUser;
+               
             });
 
             $scope.changeState = function(){

@@ -122,4 +122,6 @@ public interface WatchlistPersistenceService {
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
 	
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
+
+	void saveWatchlistCategory(WatchlistCategory watchlistCategory);
 }

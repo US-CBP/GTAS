@@ -46,6 +46,7 @@ public final class Constants {
 	public static final String WL_GETALL = "/wl";
 	public static final String WL_GETDRL = "/wl_drl";
 	public static final String WL_CREATE_UPDATE_DELETE_ITEMS = "/wl/{entity}";// POST/PUT
+	public static final String WL_ADD_WL_CAT = "/wlput/wlcat/";// POST/PUT
 	public static final String WL_DELETE = "/wl/{entity}/{name}";
 	public static final String WL_COMPILE = "/wl/compile";// GET
 	public static final String WL_TEST = "/testwl";// GET

@@ -71,4 +71,9 @@ public class HitsSummaryServiceImpl implements HitsSummaryService {
 				passengerId);
 	}
 
+    @Override
+    public HitsSummary getMostRecentHitsSummary() {
+        return hitsSummaryRepository.findFirstByOrderByIdDesc();
+    }
+
 }

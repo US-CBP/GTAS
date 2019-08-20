@@ -113,10 +113,18 @@
                   </span></div>
                 </td>
               </tr>
-            <tr>
-              <td class="half-width txt-right"><strong>Last Airline Update</strong></td>
-              <td class="half-width"></td>
-            </tr>
+              <tr ng-if="passenger.pnrVo">
+                <td class="half-width txt-right"><strong>Last PNR</strong></td>
+                <td class="half-width">
+                  {{passenger.pnrVo.transmissionDate}}
+                </td>
+              </tr>
+              <tr ng-if="passenger.apisMessageVo">
+                <td class="half-width txt-right"><strong>Last APIS</strong></td>
+                <td class="half-width">
+                  {{passenger.apisMessageVo.transmissionDate}}
+                </td>
+              <tr>
           </table>
     
           <table class="table table-responsive table-borderless table-condensed margin-0">
@@ -299,7 +307,7 @@
                       <!------  WATCHLIST MATCHES   ------>
                       <div class="full-width cbp-card-container">
                         <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top" >Watchlist Matches
+                          <h4 class="h-label no-margin-top" >Partial Hits
                             <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
                               <i class="fa fa-inverse fa-refresh"></i>
                             </button>
@@ -308,7 +316,7 @@
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead>
                               <tr>
-                                <th>First Name</th>
+                                <th>Category</th>
                                 <th>Last Name</th>
                                 <th>DOB</th>
                                 <th>% Match</th>
@@ -317,8 +325,9 @@
                               </thead>
                               <tbody>
                               <tr ng-repeat="watch in watchlistLinks | orderBy:'-percentMatch'">
-                                <td>{{watch.watchListFirstName}}</td>
+                                <td>{{watch.watchLisCategory}}</td>
                                 <td>{{watch.watchListLastName}}</td>
+                                <td>{{watch.watchListFirstName}}</td>
                                 <td>{{watch.watchListDOB}}</td>
                                 <td>{{watch.percentMatch | percent}}</td>
                                 <td>{{watch.verifiedStatus?"Yes":"No"}}</td>

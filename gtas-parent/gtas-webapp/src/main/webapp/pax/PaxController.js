@@ -1131,154 +1131,122 @@
         return contact.lowerCasedName.indexOf(lowercaseQuery) >= 0;
       };
     }
-    /* Search for airports. */
-    function querySearch(query) {
-      var results =
-        query && query.length && query.length >= 3
-          ? self.allAirports.filter(createFilterFor(query))
-          : [];
-      return results;
-    }
+      /* Search for airports. */
+      function querySearch(query) {
+          var results = query && (query.length) && (query.length >= 3) ? self.allAirports.filter(createFilterFor(query)) : [];
+          return results;
+      }
 
-    $scope.searchSort = querySearch;
-    $scope.model = paxModel.model;
+      $scope.searchSort = querySearch;
+      $scope.model = paxModel.model;
+      $scope.alldatamodel = Object.assign({}, paxModel.model);
+      $scope.alldatamodel.pageSize = 1000;
 
-    var self = this,
-      airports,
-      stateName = $state.$current.self.name,
-      ruleGridColumns = [
-        {
-          name: "ruleTitle",
-          displayName: "Title",
-          cellTemplate:
-            '<md-button aria-label="title" class="md-primary md-button md-default-theme" ng-click="grid.appScope.ruleIdClick(row)">{{COL_FIELD}}</md-button>'
-        },
-        {
-          name: "ruleConditions",
-          displayName: "Conditions",
-          field: "hitsDetailsList[0]",
-          cellFilter: "hitsConditionDisplayFilter"
-        }
-      ],
-      setSubGridOptions = function(data, appScopeProvider) {
-        data.passengers.forEach(function(entity_row) {
-          if (!entity_row.flightId) {
-            entity_row.flightId = $stateParams.id;
-          }
-          entity_row.subGridOptions = {
-            appScopeProvider: appScopeProvider,
-            columnDefs: ruleGridColumns,
-            data: []
-          };
-        });
-      },
-      //TODO There is probably a better location to put this
-      //Parses Passengers object for front-end in flightpax
-      paxPassParser = function(passengers) {
-        var pax = {};
-        //Obtain aggregate values
-        if (passengers.length > 0) {
-          pax.passCount = 0;
-          pax.crewCount = 0;
-          pax.hitCount = 0;
-          pax.openCaseCount = 0;
-          pax.closedCaseCount = 0;
-          for (var i = 0; i < passengers.length; i++) {
-            if (passengers[i].passengerType === "P") {
-              pax.passCount += 1;
+      var self = this, airports,
+          stateName = $state.$current.self.name,
+          ruleGridColumns = [{
+              name: 'ruleTitle',
+              displayName: 'Title',
+              cellTemplate: '<md-button aria-label="title" class="md-primary md-button md-default-theme" ng-click="grid.appScope.ruleIdClick(row)">{{COL_FIELD}}</md-button>'
+          }, {
+              name: 'ruleConditions',
+              displayName: 'Conditions',
+              field: 'hitsDetailsList[0]',
+              cellFilter: 'hitsConditionDisplayFilter'
+          }],
+          setSubGridOptions = function (data, appScopeProvider) {
+              data.passengers.forEach(function (entity_row) {
+                  if (!entity_row.flightId) {
+                      entity_row.flightId = $stateParams.id;
+                  }
+                  entity_row.subGridOptions = {
+                      appScopeProvider: appScopeProvider,
+                      columnDefs: ruleGridColumns,
+                      data: []
+                  };
+              });
+          },
+          //TODO There is probably a better location to put this
+          //Parses Passengers object for front-end in flightpax
+          paxPassParser = function(passengers){
+            var pax = {};
+            //Obtain aggregate values
+            if (passengers.length>0){
+              pax.passCount=0;
+              pax.crewCount=0;
+              pax.hitCount=0;
+              pax.openCaseCount=0;
+              pax.closedCaseCount=0;
+              for(var i=0; i<passengers.length; i++){
+                if(passengers[i].passengerType==="P"){
+                  pax.passCount+=1;
+                }
+                if(passengers[i].passengerType==="C"){
+                  pax.crewCount+=1;
+                }
+                if(passengers[i].onWatchList || passengers[i].onRuleHitList ||passengers[i].onWatchListDoc){
+                  pax.hitCount+=1;
+                }
+              }
+              pax.eta = Date.parse(passengers[0].eta);
+              pax.etd = Date.parse(passengers[0].etd);
             }
-            if (passengers[i].passengerType === "C") {
-              pax.crewCount += 1;
-            }
-            if (
-              passengers[i].onWatchList ||
-              passengers[i].onRuleHitList ||
-              passengers[i].onWatchListDoc
-            ) {
-              pax.hitCount += 1;
-            }
-          }
-          pax.eta = Date.parse(passengers[0].eta);
-          pax.etd = Date.parse(passengers[0].etd);
-        }
-        $scope.pax = pax;
-      },
-      setPassengersGrid = function(grid, response) {
-        var data =
-          stateName === "queryPassengers"
-            ? response.data.result
-            : response.data;
-        setSubGridOptions(data, $scope);
-        grid.totalItems =
-          data.totalPassengers === -1 ? 0 : data.totalPassengers;
-        grid.data = data.passengers;
-        //Add specific passenger info to scope for paxDetail
-        stateName === "queryPassengers" ? null : paxPassParser(grid.data);
-        if (!grid.data || grid.data.length == 0) {
-          $scope.errorToast("No results found for selected filter criteria");
-        }
-        spinnerService.hide("html5spinner");
-      },
-      getPage = function() {
-        if (stateName === "queryPassengers") {
-          setPassengersGrid($scope.passengerQueryGrid, passengers);
-          $scope.queryLimitReached = passengers.data.result.queryLimitReached;
-        } else {
-          setPassengersGrid($scope.passengerGrid, passengers);
-        }
-      },
-      update = function(data) {
-        passengers = data;
-        getPage();
-        spinnerService.hide("html5spinner");
-      },
-      fetchMethods = {
-        queryPassengers: function() {
-          var postData,
-            query = JSON.parse(localStorage["query"]);
-          postData = {
-            pageNumber: $scope.model.pageNumber,
-            pageSize: $scope.model.pageSize,
-            query: query
-          };
-          spinnerService.show("html5spinner");
-          executeQueryService.queryPassengers(postData).then(update);
-        },
-        flightpax: function() {
-          spinnerService.show("html5spinner");
-          paxService.getPax($stateParams.id, $scope.model).then(update);
-        },
-        paxAll: function() {
-          spinnerService.show("html5spinner");
-          paxService.getAllPax($scope.model).then(update);
-        }
-      },
-      resolvePage = function() {
-        populateAirports();
-        fetchMethods[stateName]();
-      },
-      flightDirections = [
-        { label: "Inbound", value: "I" },
-        { label: "Outbound", value: "O" },
-        { label: "Any", value: "A" }
-      ];
-
-    self.querySearch = querySearch;
-    codeService.getAirportTooltips().then(function(allAirports) {
-      self.allAirports = allAirports.map(function(contact) {
-        contact.lowerCasedName = contact.id.toLowerCase();
-        return contact;
-      });
-      self.filterSelected = true;
-      $scope.filterSelected = true;
-    });
-    $scope.flightDirections = flightDirections;
-
-    $injector.invoke(jqueryQueryBuilderWidget, this, { $scope: $scope });
-    $scope.stateName = $state.$current.self.name;
-    $scope.ruleIdClick = function(row) {
-      $scope.getRuleObject(row.entity.ruleId);
-    };
+            $scope.pax = pax;
+          },
+          setPassengersGrid = function (grid, response) {
+              var data = stateName === 'queryPassengers' ? response.data.result : response.data;
+              setSubGridOptions(data, $scope);
+              grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
+              grid.data = data.passengers;
+              //Add specific passenger info to scope for paxDetail
+              stateName === 'queryPassengers' ? null : paxPassParser(grid.data);
+              if(!grid.data || grid.data.length == 0){
+                  $scope.errorToast('No results found for selected filter criteria');
+              }
+              spinnerService.hide('html5spinner');
+          },
+          getPage = function () {
+              if(stateName === "queryPassengers"){
+                  setPassengersGrid($scope.passengerQueryGrid, passengers);
+                  $scope.queryLimitReached = passengers.data.result.queryLimitReached;
+              }else{
+                  setPassengersGrid($scope.passengerGrid, passengers);
+              }
+          },
+          update = function (data) {
+              passengers = data;
+              getPage();
+              spinnerService.hide('html5spinner');
+          },
+          fetchMethods = {
+              'queryPassengers': function () {
+                  var postData, query = JSON.parse(localStorage['query']);
+                  postData = {
+                      pageNumber: $scope.model.pageNumber,
+                      pageSize: $scope.model.pageSize,
+                      query: query
+                  };
+                  spinnerService.show('html5spinner');
+                  executeQueryService.queryPassengers(postData).then(update);
+              },
+              'flightpax': function () {
+                  spinnerService.show('html5spinner');
+                  paxService.getPax($stateParams.id, $scope.alldatamodel).then(update);
+              },
+              'paxAll': function () {
+                  spinnerService.show('html5spinner');
+                  paxService.getAllPax($scope.model).then(update);
+              }
+          },
+          resolvePage = function () {
+              populateAirports();
+              fetchMethods[stateName]();
+          },
+          flightDirections = [
+              {label: 'Inbound', value: 'I'},
+              {label: 'Outbound', value: 'O'},
+              {label: 'Any', value: 'A'}
+          ];
 
     $scope.getRuleObject = function(ruleID) {
       jqueryQueryBuilderService
@@ -1306,65 +1274,57 @@
 
     $scope.buildAfterEntitiesLoaded();
 
-    $scope.passengerGrid = {
-      paginationPageSizes: [10, 25, 50],
-      paginationPageSize: $scope.model.pageSize,
-      paginationCurrentPage: $scope.model.pageNumber,
-      useExternalPagination: true,
-      useExternalSorting: true,
-      useExternalFiltering: true,
-      enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
-      enableColumnMenus: false,
-      multiSelect: false,
-      enableGridMenu: true,
-      enableExpandableRowHeader: false,
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-      onRegisterApi: function(gridApi) {
-        $scope.gridApi = gridApi;
+      $scope.passengerGrid = {
+              paginationPageSizes: [10, 25, 50],
+              paginationPageSize: 25,
+              paginationCurrentPage: $scope.model.pageNumber,
+              useExternalPagination: false,
+              useExternalSorting: false,
+              useExternalFiltering: false,
+              enableHorizontalScrollbar: 0,
+              enableVerticalScrollbar: 1,
+              enableFiltering: true,
+              enableColumnMenus: false,
+              multiSelect: false,
+              enableGridMenu: true,
+              enableExpandableRowHeader: false,
 
-        gridApi.pagination.on.paginationChanged($scope, function(
-          newPage,
-          pageSize
-        ) {
-          $scope.model.pageNumber = newPage;
-          $scope.model.pageSize = pageSize;
-          resolvePage();
-        });
+              expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+              onRegisterApi: function (gridApi) {
+                  $scope.gridApi = gridApi;
 
-        gridApi.core.on.sortChanged($scope, function(grid, sortColumns) {
-          if (sortColumns.length === 0) {
-            $scope.model.sort = null;
-          } else {
-            $scope.model.sort = [];
-            for (var i = 0; i < sortColumns.length; i++) {
-              $scope.model.sort.push({
-                column: sortColumns[i].name,
-                dir: sortColumns[i].sort.direction
-              });
-            }
-          }
-          resolvePage();
-        });
+                  gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
+                      $scope.model.pageNumber = newPage;
+                      $scope.model.pageSize = pageSize;
+                      resolvePage();
+                  });
 
-        gridApi.core.on.columnVisibilityChanged($scope, function(
-          changedColumn
-        ) {
-          $scope.columnChanged = {
-            name: changedColumn.colDef.name,
-            visible: changedColumn.colDef.visible
+                  gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
+                      if (sortColumns.length === 0) {
+                          $scope.model.sort = null;
+                      } else {
+                          $scope.model.sort = [];
+                          for (var i = 0; i < sortColumns.length; i++) {
+                              $scope.model.sort.push({column: sortColumns[i].name, dir: sortColumns[i].sort.direction});
+                          }
+                      }
+                      resolvePage();
+                  });
+
+                  gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
+                    $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
+                  });
+
+                  gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                      if (row.isExpanded) {
+                          paxService.getRuleHits(row.entity.id).then(function (data) {
+                              row.entity.subGridOptions.data = data;
+                          });
+                      }
+                  });
+              }
           };
-        });
-
-        gridApi.expandable.on.rowExpandedStateChanged($scope, function(row) {
-          if (row.isExpanded) {
-            paxService.getRuleHits(row.entity.id).then(function(data) {
-              row.entity.subGridOptions.data = data;
-            });
-          }
-        });
-      }
-    };
+ 
     //Front-end pagination configuration object for gridUi
     //Should only be active on stateName === 'queryPassengers'
     $scope.passengerQueryGrid = {

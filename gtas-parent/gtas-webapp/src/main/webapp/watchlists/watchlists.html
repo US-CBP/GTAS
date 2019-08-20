@@ -119,6 +119,46 @@
     </div>
   </form>
 </md-sidenav>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="wlCatSave" style="width: 100%">
+  <md-content>
+    <form name="wlCategory" class="filters" _lpchecked="1" ng-submit="saveWlCategory(m.WatchlistCategory)">
+        <div class="filter-list" role="tablist">
+            <h3 class="block-label no-margin-top">Add WL Category
+            </h3>
+            <h3 role="tab" class="filter-group-title">
+                <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+                WL Category Name
+            </h3>
+            <div>
+                <div class="filter-group-content">
+                    <div class="form-group">
+                        <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                               aria-required="true" ng-model="wlCategoryModel.label" required />
+                    </div>
+                </div>
+            </div>
+            <h3 role="tab" class="filter-group-title">
+                <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
+                WL Category Description
+            </h3>
+            <div>
+                <div class="filter-group-content">
+                    <div class="form-group">
+                        <input class="cbp-non-chip-input cbp-input mdl-textfield__input" type="text"
+                               aria-required="true" ng-model="wlCategoryModel.description" required />
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-icon-only btn-primary pull-right">
+                <i class="fa fa-inverse fa-floppy-o"></i>
+                <md-tooltip>Save</md-tooltip>
+            </button>
+        </div>
+      </form>
+    </div>
+  </md-content>
+    
+</md-sidenav>
 <div class="margin-top-1">
 <md-tabs>
     <md-tab ng-repeat="tab in tabs" label="{{tab.icon}}" md-on-select="updateGrid(tab.title)">
@@ -127,10 +167,14 @@
         <span>&nbsp;{{tab.title}}</span>
       </md-tab-label>
     </md-tab>
+    <md-tab label="Existing Watchlists" md-on-select="showWLTypesGrid=false" md-on-deselect="showWLTypesGrid=true"> </md-tab>
 </md-tabs>
 </div>
 <div class="manage">
-<div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+  <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope" ng-if="showWLTypesGrid"></div>
+</div>
+<div class="manage" ng-if="!showWLTypesGrid">
+    <div ui-grid="wlCatagoryGrid" ui-grid-pagination class="grid"></div>
 </div>
 <div class="actions md-pad">
 <button type="button" class="btn btn-icon-only btn-warning pull-left"
@@ -148,6 +192,10 @@
 <button ng-click="Add()" class="btn btn-default pull-right">
     <md-tooltip>Add User {{activeTab}}</md-tooltip>
     <i class="fa fa-plus"></i> {{activeTab}}
+</button>
+<button ng-click="addWlCategory()" class="btn btn-default pull-right">
+    <md-tooltip>Add WL Category</md-tooltip>
+    <i class="fa fa-plus"></i> Add WL Category
 </button>
 <button onclick="angular.element(document.querySelector('.ui-grid-icon-menu'))[0].click();"
     class="btn btn-hover btn-default pull-right" type="button">

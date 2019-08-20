@@ -25,6 +25,7 @@ import gov.gtas.model.lookup.WatchlistCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AuditRecordRepository;
+import gov.gtas.repository.watchlist.WatchlistCatRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.security.UserService;
@@ -62,6 +63,9 @@ public class WatchlistPersistenceServiceImpl implements
 
 	@Resource
 	private WatchlistItemRepository watchlistItemRepository;
+
+	@Resource
+	private WatchlistCatRepository watchlistCategoryRepository;
 
 	@Resource
 	private AuditRecordRepository auditRecordRepository;
@@ -303,5 +307,10 @@ public class WatchlistPersistenceServiceImpl implements
 		// 
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
 	}
-	
+
+	public void saveWatchlistCategory(WatchlistCategory watchlistCategory) {
+		this.watchlistCategoryRepository.save(watchlistCategory);
+	}
+
+
 }

@@ -7,12 +7,18 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toMap;
 
 public enum PhoneCodes {
-    BUSINESS_PHONE("CTCB"),
-    HOME_PHONE("CTCH"),
-    MOBILE_PHONE("CTCM"),
-    TRAVEL_AGENT_PHONE("CTCT"),
-    PHONE_NATURE_NOT_KNOWN("CTCP"),
-    DATA_FAX_PHONE("CTCF"),
+    BUSINESS_PHONE_A("CTCB"),
+    BUSINESS_PHONE_B("CTC B"),
+    HOME_PHONE_A("CTCH"),
+    HOME_PHONE_B("CTC H"),
+    MOBILE_PHONE_A("CTCM"),
+    MOBILE_PHONE_B("CTC M"),
+    TRAVEL_AGENT_PHONE_A("CTCT"),
+    TRAVEL_AGENT_PHONE_B("CTC T"),
+    PHONE_NATURE_NOT_KNOWN_A("CTCP"),
+    PHONE_NATURE_NOT_KNOWN_B("CTC P"),
+    DATA_FAX_PHONE_A("CTCF"),
+    DATA_FAX_PHONE_B("CTC F")
     ;
 
     private String code;
@@ -30,12 +36,18 @@ public enum PhoneCodes {
     }
 
     public static boolean textContainsPhoneNumberString(String txt) {
-        return txt.contains(HOME_PHONE.toString()) ||
-                txt.contains(BUSINESS_PHONE.toString())  ||
-                txt.contains(MOBILE_PHONE.toString())  ||
-                txt.contains(TRAVEL_AGENT_PHONE.toString())  ||
-                txt.contains(PHONE_NATURE_NOT_KNOWN.toString())  ||
-                txt.contains(DATA_FAX_PHONE.toString());
+        return txt.contains(HOME_PHONE_A.toString()) ||
+               txt.contains(HOME_PHONE_B.toString()) ||
+                txt.contains(BUSINESS_PHONE_A.toString())  ||
+                txt.contains(BUSINESS_PHONE_B.toString())  ||
+                txt.contains(MOBILE_PHONE_A.toString())  ||
+                txt.contains(MOBILE_PHONE_B.toString())  ||
+                txt.contains(TRAVEL_AGENT_PHONE_A.toString())  ||
+                txt.contains(TRAVEL_AGENT_PHONE_B.toString())  ||
+                txt.contains(PHONE_NATURE_NOT_KNOWN_A.toString())  ||
+                txt.contains(PHONE_NATURE_NOT_KNOWN_B.toString())  ||
+                txt.contains(DATA_FAX_PHONE_A.toString())  ||
+                txt.contains(DATA_FAX_PHONE_B.toString());
     }
 
     @Override

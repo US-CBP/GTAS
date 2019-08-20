@@ -81,4 +81,6 @@ public interface HitsSummaryRepository extends
 
     @Query("select count(distinct hits.paxId) from HitsSummary hits where hits.flightId = :flightId and graphHitCount > 0")
     Integer graphHitCount(@Param("flightId") Long flightId);
+
+    HitsSummary findFirstByOrderByIdDesc();
 }

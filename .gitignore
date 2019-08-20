@@ -64,4 +64,6 @@ gradle*
 
 **/bower_components
 *yarn.lock
-*.properties
+
+# scheduler messages folder
+**__data**

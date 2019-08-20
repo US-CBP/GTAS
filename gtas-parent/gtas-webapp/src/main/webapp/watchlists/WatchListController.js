@@ -21,12 +21,17 @@
                     this.lastName = entity ? entity.lastName : null;
                     this.dob = entity ? entity.dob : undefined;
                     this.categoryId = entity ? entity.categoryId : null;
+                },
+                WatchlistCategory: function (entity) {
+                    this.label = entity ? entity.name : null;
+                    this.description = entity ? entity.description : null;
                 }
             },
             resetModels = function (m) {
                 //resets all models
                 m.Document = new model.Document();
                 m.Passenger = new model.Passenger();
+                m.wlCategoryModel = new model.WatchlistCategory();
             },
             isItTrashTime = function (rows) {
                 $scope.disableTrash = $scope.gridApi.selection.getSelectedRows(rows).length === 0;
@@ -44,7 +49,9 @@
             exporter[format]();
         };
 
+
         $scope.model = {};
+        $scope.wlCategoryModel = new model.WatchlistCategory();
 
         $scope.watchlistGrid = gridOptionsLookupService.getGridOptions('watchlist');
         $scope.watchlistGrid.importerDataAddCallback = function (grid, newObjects) {
@@ -125,7 +132,8 @@
 
         $scope.categories = {};
         watchListService.getWatchlistCategories().then(function(res){
-        	$scope.watchlistCategories =  res.data;
+            $scope.watchlistCategories =  res.data;
+            $scope.wlCatagoryGrid.data =  res.data;
         	$scope.watchlistCategories.forEach(function(item){
         		
         		$scope.categories[item.id]=item.label;
@@ -184,6 +192,20 @@
             });
         };
 
+        $scope.saveWlCategory = function () {
+            watchListService.saveCategory($scope.wlCategoryModel).then(function () {
+                watchListService.getWatchlistCategories().then(function(res){
+                    $scope.watchlistCategories =  res.data;
+                    $scope.wlCatagoryGrid.data =  res.data;
+                    $scope.watchlistCategories.forEach(function(item){
+                        $scope.categories[item.id]=item.label;
+                    });
+                });
+                resetModels($scope);
+                $mdSidenav('wlCatSave').close();
+            });
+        };
+
         $scope.getSaveStateText = function (activeTab) {
             return 'Save ';
             // todo listen to broadcast, and return save or update
@@ -222,6 +244,12 @@
                 $scope[mode].dob = moment($scope[mode].dob).toDate();
             }
             $mdSidenav('save').open();
+        };
+
+        $scope.addWlCategory = function () {
+            resetModels($scope);
+            $scope.watchlistCategory = new model.WatchlistCategory();
+            $mdSidenav('wlCatSave').open();
         };
 
         $scope.saveRow = function () {
@@ -411,5 +439,15 @@
             }
             return valid;
         }
+        $scope.showWLTypesGrid = true;
+        $scope.wlCatagoryGrid = {
+            paginationPageSizes: [10, 15, 20],
+            paginationPageSize: 10,
+            columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
+        };
+        $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
+            $scope.wlGridApi = gridApi;
+        }
+
     });
 }());

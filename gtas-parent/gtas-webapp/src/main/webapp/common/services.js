@@ -1060,6 +1060,26 @@
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{grid.appScope.categories[COL_FIELD]}}</md-button>',
                     type: "integer"
                   }
+                ],
+                CATEGORY: [
+                  {
+                    field: "id",
+                    name: "id",
+                    displayName: "ID",
+                    type: "string"
+                  },
+                  {
+                    field: "label",
+                    name: "label",
+                    displayName: "Name",
+                    type: "string"
+                  },
+                  {
+                    field: "description",
+                    name: "description",
+                    displayName: "Description",
+                    type: "string"
+                  }
                 ]
               }
             };
@@ -1276,6 +1296,16 @@
                 var request = $http({
                       method: "get",
                       url: baseUrl + 'watchlistCategories'
+                  });
+
+                  return (request.then(handleSuccess, handleError));
+              },
+              saveCategory: function (WatchlistCategory) {
+                  let url = '/gtas/wlput/wlcat/';
+                  const request = $http({
+                      method: 'post',
+                      url: url,
+                      data: WatchlistCategory
                   });
 
                   return (request.then(handleSuccess, handleError));
@@ -1584,7 +1614,23 @@
     
           };    // return codeService
         })
-      .service('configService', function ($rootScope, $http, $q) {
+      .service('statisticService', function ($http, $q) {
+          const STAT_URL = "/gtas/api/statistics";
+
+          function getApplicationStatistics() {
+              var dfd = $q.defer();
+              dfd.resolve($http({
+                  method: 'get',
+                  url: STAT_URL
+              }));
+              return dfd.promise;
+          }
+
+          return ({
+              getApplicationStatistics: getApplicationStatistics
+          });
+      })
+      .service('configService', function ($http, $q) {
 
           const CONFIG_URL = "/gtas/api/config";
 

@@ -511,6 +511,11 @@ var app;
                                 model: paxModel.initial($stateParams),
                                 reset: function () {
                                     this.model.lastName = '';
+                                },
+                                alldatamodel: function() {
+                                  var mod = Object.assign({}, paxModel.initial($stateParams));
+                                  mod.pageSize = 1000;
+                                  return mod;
                                 }
                             };
                         },
@@ -519,7 +524,7 @@ var app;
                             $stateParams.dest = $stateParams.destination;
                             $stateParams.etaStart = $stateParams.eta;
                             $stateParams.etaEnd = $stateParams.etd;
-                            return paxService.getPax($stateParams.id, paxModel.model);
+                            return paxService.getPax($stateParams.id, paxModel.alldatamodel());
                         }
                     }
                 })
@@ -762,7 +767,6 @@ var app;
                 });
             };
         };
-    const web_root = 'gtas';
     app = angular
         .module('myApp', appDependencies)
         .config(router)
@@ -775,11 +779,12 @@ var app;
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',
-            ONE_DAY_LOOKOUT: 'One Day Lookout'
+            ONE_DAY_LOOKOUT: 'One Day Lookout',
+            MANAGE_HITS: 'Manage Hits'
         })
         .constant('APP_CONSTANTS', {
-            LOGIN_PAGE: '/' + web_root + '/login.html',
-            HOME_PAGE: '/' + web_root + '/main.html',
+            LOGIN_PAGE: 'login.html',
+            HOME_PAGE: 'main.html',
             MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
