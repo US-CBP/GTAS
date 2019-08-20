@@ -38,12 +38,6 @@
     $scope.jsonData =
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify($scope.passenger));
-    $scope.paxDetailKibanaUrl = $sce.trustAsResourceUrl(
-      "/app/kibana#/visualize/edit/29ac1380-66a9-11e9-9ffd-9d63a89be4bb?embed=true&_g=()&_a=(query:(query_string:(analyze_wildcard:!t,query:'flightId:" +
-        $scope.passenger.flightId +
-        " AND passengerId:" +
-        $scope.passenger.paxId +
-        "')))"
     );
 
     $scope.paxIdTag = $scope.passenger.paxIdTag;
