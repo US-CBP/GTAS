@@ -26,8 +26,77 @@ public class UserLocationSetting {
 	@Autowired
 	private AppConfigurationService appConfigurationService;
 
-	public void setPrimaryLocation(HttpServletRequest httpServletRequest, String userId) {
+	public UserLocationStatus setPrimaryLocation(HttpServletRequest httpServletRequest, String userId) {
+
+		UserLocationStatus userLocationStatus = getPrimaryLocationStatus(httpServletRequest, userId);
+
+		/*
+		 * The location exists and is also a primary one is enabled in GTAS
+		 * user_location table so just set the http session
+		 */
+		if (userLocationStatus.getPrimaryLocationAirport() != null && userLocationStatus.isPrimaryLocationCreated()
+				&& userLocationStatus.isPrimaryLocationEnabledInDb()) {
+			httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
+					userLocationStatus.getPrimaryLocationAirport());
+			logger.info(
+					"So user primary location exists so the user Location is just set in the HTTP session successfull");
+		}
+
+		else if (userLocationStatus.getPrimaryLocationAirport() != null && userLocationStatus.isPrimaryLocationCreated()
+				&& !userLocationStatus.isPrimaryLocationEnabledInDb()) {
+			/*
+			 * One or more location airports exist but none of them are marked primary in
+			 * GTAS user_location table so mark one of them as primary location and set the
+			 * http session
+			 */
+			try {
+				userLocationService.updateUserPrimaryLocation(userId, userLocationStatus.getPrimaryLocationAirport(),
+						true);
+				logger.info("One of the user's location airports is set as a primary location in user_location table");
+			} catch (Exception e) {
+				logger.error("An error has occurred when updating user location in the database.");
+			}
+
+		} else if (userLocationStatus.getPrimaryLocationAirport() != null
+				&& !userLocationStatus.isPrimaryLocationCreated()
+				&& !userLocationStatus.isPrimaryLocationEnabledInDb()) {
+			/*
+			 * No location airports were found in user_location table so insert the dashboard
+			 * airport in the user_location table, mark it as a primary location, and set
+			 * the http session
+			 */
+			try {
+
+				userLocationService.createUserPrimaryLocation(userId, userLocationStatus.getPrimaryLocationAirport(),
+						true);
+				logger.info("Primary User Location is created " + userLocationStatus.getPrimaryLocationAirport()
+						+ " in GTAS database");
+				httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
+						userLocationStatus.getPrimaryLocationAirport());
+				logger.info("User Primary Location is set to the default airport (from appConfig table): "
+						+ userLocationStatus.getPrimaryLocationAirport() + " in session. " + this.getClass().getName());
+
+			} catch (Exception e) {
+				logger.error("An error has occurred when creating new user location in the database.");
+			}
+
+		} else if (userLocationStatus.getPrimaryLocationAirport() == null)
+		{
+			logger.error("ERROR! The user location could not be set correctly");
+		}
+		
+		return userLocationStatus;
+	}
+
+	/*
+	 * Get the user location and its status related to it existance in GTAS
+	 * user_location table
+	 * 
+	 */
+	public UserLocationStatus getPrimaryLocationStatus(HttpServletRequest httpServletRequest, String userId) {
+
 		List<UserLocationVo> userLocationVoList = null;
+		UserLocationStatus userLocationStatus = new UserLocationStatus();
 
 		try {
 			userLocationVoList = userLocationService.getUserLocation(userId);
@@ -37,72 +106,74 @@ public class UserLocationSetting {
 
 		finally {
 
-			boolean hasPrimaryLocation = false;
-
+			/*
+			 * Case 1: The user has one or more airport locations and one of them is marked
+			 * as primary in GTAS user_location_table
+			 */
 			if (userLocationVoList != null && !userLocationVoList.isEmpty()) {
+
+				/*
+				 * Case 1.1
+				 * The user has a primary location Airport 
+				 * 2. The primary location is enabled in user location table 
+				 * 3. The primary location airport record is
+				 * already created in GTAS user_location table
+				 */
 
 				for (UserLocationVo userLocationVo : userLocationVoList) {
 
 					if (userLocationVo.isPrimaryLocation()) {
-						httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
-								userLocationVo.getAirport());
-						hasPrimaryLocation = true;
-						logger.info("User Primary Location is set to " + userLocationVo.getAirport() + " in session. "
-								+ this.getClass().getName());
+						userLocationStatus.setPrimaryLocationAirport(userLocationVo.getAirport());
+						userLocationStatus.setPrimaryLocationEnabledInDb(true);
+						userLocationStatus.setPrimaryLocationCreated(true);
 						break;
 					}
 
 				}
 
-				// if the user has a location but does not have a primary location, then set the
-				// first one as a primary location
-				if (!hasPrimaryLocation) {
+				/*
+				 * Case 1.2 
+				 *  The user has one or more locations but a primary location is not
+				 * enabled in the user_location table
+				 */
+
+				if (!userLocationStatus.isPrimaryLocationEnabledInDb()) {
 
 					for (int i = 0; i < userLocationVoList.size(); i++) {
 						if (userLocationVoList.get(i).getAirport() != null
 								&& !userLocationVoList.get(i).getAirport().isEmpty()) {
-							userLocationVoList.get(i).setPrimaryLocation(true);
-							httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
-									userLocationVoList.get(i).getAirport());
-							logger.info("User Primary Location is set to " + userLocationVoList.get(i).getAirport()
-									+ " in session. " + this.getClass().getName());
-							try {
-								userLocationService.updateUserPrimaryLocation(userId,
-										userLocationVoList.get(i).getAirport(), true);
-							} catch (Exception e) {
-								logger.error("An error has occurred when updating user location in the database.");
-							}
+
+							userLocationStatus.setPrimaryLocationAirport(userLocationVoList.get(i).getAirport());
+							userLocationStatus.setPrimaryLocationEnabledInDb(false);
+							userLocationStatus.setPrimaryLocationCreated(true);
 
 						}
 					}
 				}
 
 			} else {
+				/*
+				 * Case 2
+				 * 
+				 * The user does not have any location in the GTAS database so the
+				 * DASHBOARD_AIRPORT will be the user's default airport
+				 * 
+				 */
 
-				// if the user does not have a location, then use the default from app config
-				// table and make it the primary location.
-				logger.info("No user location Reading from the AppConfig table...: ");
 				AppConfiguration appConfiguration = appConfigurationService.findByOption("DASHBOARD_AIRPORT");
 				logger.info(
 						"No user location so the DASHBOARD_AIRPORT will be the user default location. DASHBOARD_AIRPORT: "
 								+ appConfiguration.getValue());
 
-				try {
+				userLocationStatus.setPrimaryLocationAirport(appConfiguration.getValue());
+				userLocationStatus.setPrimaryLocationEnabledInDb(false);
+				userLocationStatus.setPrimaryLocationCreated(false);
 
-					userLocationService.createUserPrimaryLocation(userId, appConfiguration.getValue(), true);
-					logger.info("Primary User Location is set successfully to  " + appConfiguration.getValue()
-							+ " in GTAS database");
-					httpServletRequest.getSession().setAttribute(Constants.USER_PRIMARY_LOCATION,
-							appConfiguration.getValue());
-					logger.info("User Primary Location is set to the default airport (from appConfig table): "
-							+ appConfiguration.getValue() + " in session. " + this.getClass().getName());
-
-				} catch (Exception e) {
-					logger.error("An error has occurred when creating new user location in the database.");
-				}
 			}
 
 		}
+
+		return userLocationStatus;
 
 	}
 
