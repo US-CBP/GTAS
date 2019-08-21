@@ -52,6 +52,17 @@ public class PnrGovParserTest implements ParserTestHelper {
      * PNRGOV MESSAGE
      * Version 13.1
      * */
+
+    // PNR origin should equal the TVL5 origin, not the TVL0 origin for
+    // a multi-leg trip
+    @Test
+    public void PnrOriginTest() throws ParseException, IOException, URISyntaxException {
+      String msg = getMessageText(PNR_EXAMPLE);
+      PnrVo vo = this.parser.parse(msg);
+
+      assertEquals(vo.getOrigin(), "WDH");
+    }
+
     @Test
     public void reservationDateMapsToRCITimeCreated() throws ParseException, IOException, URISyntaxException {
         String message77 = getMessageText(PNR_MESSAGE_PG_77);

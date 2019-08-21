@@ -467,6 +467,8 @@
 
       $scope.searchSort = querySearch;
       $scope.model = paxModel.model;
+      $scope.alldatamodel = Object.assign({}, paxModel.model);
+      $scope.alldatamodel.pageSize = 1000;
 
       var self = this, airports,
           stateName = $state.$current.self.name,
@@ -557,7 +559,7 @@
               },
               'flightpax': function () {
                   spinnerService.show('html5spinner');
-                  paxService.getPax($stateParams.id, $scope.model).then(update);
+                  paxService.getPax($stateParams.id, $scope.alldatamodel).then(update);
               },
               'paxAll': function () {
                   spinnerService.show('html5spinner');
@@ -618,17 +620,19 @@
 
       $scope.passengerGrid = {
               paginationPageSizes: [10, 25, 50],
-              paginationPageSize: $scope.model.pageSize,
+              paginationPageSize: 25,
               paginationCurrentPage: $scope.model.pageNumber,
-              useExternalPagination: true,
-              useExternalSorting: true,
-              useExternalFiltering: true,
+              useExternalPagination: false,
+              useExternalSorting: false,
+              useExternalFiltering: false,
               enableHorizontalScrollbar: 0,
-              enableVerticalScrollbar: 0,
+              enableVerticalScrollbar: 1,
+              enableFiltering: true,
               enableColumnMenus: false,
               multiSelect: false,
               enableGridMenu: true,
               enableExpandableRowHeader: false,
+
               expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
               onRegisterApi: function (gridApi) {
                   $scope.gridApi = gridApi;

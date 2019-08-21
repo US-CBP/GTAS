@@ -517,6 +517,11 @@ var app;
                                 model: paxModel.initial($stateParams),
                                 reset: function () {
                                     this.model.lastName = '';
+                                },
+                                alldatamodel: function() {
+                                  var mod = Object.assign({}, paxModel.initial($stateParams));
+                                  mod.pageSize = 1000;
+                                  return mod;
                                 }
                             };
                         },
@@ -525,7 +530,7 @@ var app;
                             $stateParams.dest = $stateParams.destination;
                             $stateParams.etaStart = $stateParams.eta;
                             $stateParams.etaEnd = $stateParams.etd;
-                            return paxService.getPax($stateParams.id, paxModel.model);
+                            return paxService.getPax($stateParams.id, paxModel.alldatamodel());
                         }
                     }
                 })
@@ -608,7 +613,7 @@ var app;
                 .state('userlocation', {
                     url: '/userlocation',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'UserLocationController',
@@ -780,7 +785,8 @@ var app;
             MANAGE_QUERIES: 'Manage Queries',
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',
-            ONE_DAY_LOOKOUT: 'One Day Lookout'
+            ONE_DAY_LOOKOUT: 'One Day Lookout',
+            MANAGE_HITS: 'Manage Hits'
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',

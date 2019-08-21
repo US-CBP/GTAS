@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.gtas.common.UserLocationSetting;
 import gov.gtas.constants.Constants;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitsSummary;
@@ -57,6 +58,12 @@ public class DashboardController {
 
 	@Autowired
 	private HitsSummaryService hitsSummaryService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private UserLocationSetting userLocationSetting;
 
 	
 	private static final String EMPTY_STRING = "";
@@ -94,7 +101,14 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("watchListCount", new AtomicLong(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
+		//set user location
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
 
+		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
+			{
+				userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+			}
 			
 
 		return flightsAndPassengersAndHitsCount;
@@ -116,7 +130,7 @@ public class DashboardController {
 	 *             the parse exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/getFlightsAndPassengersAndHitsCountOutbound")
-	public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(
+	public Map<String, Object> getFlightsAndPassengersAndHitsCountOutbound(HttpServletRequest httpServletRequest,
 			@RequestParam(value = "startDate", required = false) String startDate,
 			@RequestParam(value = "endDate", required = false) String endDate) {
 		// passed in arguments not used currently.

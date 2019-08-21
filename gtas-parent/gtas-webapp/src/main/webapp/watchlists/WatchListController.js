@@ -439,6 +439,7 @@
             }
             return valid;
         }
+        $scope.showWLTypesGrid = true;
         $scope.wlCatagoryGrid = {
             paginationPageSizes: [10, 15, 20],
             paginationPageSize: 10,
