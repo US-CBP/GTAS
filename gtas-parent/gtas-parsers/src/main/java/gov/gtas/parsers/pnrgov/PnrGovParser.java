@@ -449,7 +449,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         } else {
             throw new ParseException("Invalid flight: " + f);
         }
-        
+
         processFlightSegments(tvl, f);
         
         if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
@@ -1026,10 +1026,10 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
         }
     }
 
-
     private String[] getAgencyInfo(String text){
     	return text.split(" ");
     }
+
     private String getEmailFromtext(String ctcCode, String text){
     	return text.replace(ctcCode, "");
     }

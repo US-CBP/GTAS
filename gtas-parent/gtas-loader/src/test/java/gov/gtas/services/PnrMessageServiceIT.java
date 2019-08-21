@@ -115,7 +115,7 @@ public class PnrMessageServiceIT extends
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-		svc.processMessage(this.message, new String[]{"placeholder"});
+    svc.processMessage(this.message, new String[]{"placeholder"});
 	}
 
 	@Test()
@@ -126,12 +126,15 @@ public class PnrMessageServiceIT extends
 				"pnr-messages/pnrMessageExample.txt").getFile());
 		svc.processMessage(this.message, new String[]{"placeholder"});
 	}
-	
+
+  // Runs the createNewFlight method in LoaderUtils, does not crash
 	@Test
 	@Transactional
-	public void testProgressiveFlightWithDomesticContinuance() {
+	public void smokeTestGtasLoaderImpl() {
 		this.message = new File(
 				getClass().getClassLoader().getResource("pnr-messages/multiple_flight_leg_pnr.txt").getFile());
-		svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+    ProcessedMessages msgs = svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+
+    assertNotNull(msgs);
 	}
 }

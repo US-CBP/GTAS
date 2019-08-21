@@ -25,7 +25,8 @@ SELECT
 	f.flight_number,
 	f.full_flight_number,
 	msg.id as gtas_message_id,
-	p.id as gtas_passenger_id
+	p.id as gtas_passenger_id,
+	f.id_tag as flight_id_tag
 
 FROM gtas.message msg
 INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
@@ -67,7 +68,8 @@ SELECT
 	f.flight_number,
 	f.full_flight_number,
 	msg.id as gtas_message_id,
-	p.id as gtas_passenger_id
+	p.id as gtas_passenger_id,
+	f.id_tag as flight_id_tag
 	
 	FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id

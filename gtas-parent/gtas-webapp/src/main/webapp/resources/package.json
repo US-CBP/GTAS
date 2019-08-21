@@ -50,7 +50,8 @@
     "cbp-theme": "1.1.1",
     "csv-js": "^1.0.0",
     "inputmask": "^4.0.0",
-    "npm-font-open-sans": "^1.1.0"
+    "npm-font-open-sans": "^1.1.0",
+    "vaquita": "^1.0.7"
   },
   "engines": {
     "yarn": ">= 1.0.0"

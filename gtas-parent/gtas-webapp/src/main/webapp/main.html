@@ -28,6 +28,9 @@
   <script src="resources/bower_components/summernote/dist/summernote.js"></script>
   <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
   <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
+  <link rel="stylesheet" href='resources/node_modules/vaquita/dist/vaquita.min.css' type="text/css" media="all" />
+  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
+<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
 </head>
 
 <body ng-cloak>
@@ -75,7 +78,7 @@
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 &nbsp;Upload</a></li>
               <!-- Neo4J Browser pop out-->
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href= {{getNeo4JUrl()}} target="_blank">
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="{{getNeo4JUrl()}}" target="_blank">
                 <i class="fa fa-filter" aria-hidden="true"></i>
                 &nbsp;Neo4J Browser</a>
               </li>
@@ -196,8 +199,6 @@
   <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
   <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-  <!-- <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script> -->
   <script src="resources/node_modules/csv-js/csv.js"></script>
   <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
   <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
@@ -230,8 +231,9 @@
   <script src="resources/bower_components/trix/dist/trix.js"></script>
   <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
   <script src='seatsMap/jquery.seat-charts.min.js'></script>
-  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
-<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
+
+  <script src='resources/node_modules/d3/dist/d3.min.js'></script>
+  <script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>

@@ -55,7 +55,7 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
-		return flightRespository.save(flight);
+    return flightRespository.save(flight);
 	}
 
     @Override
