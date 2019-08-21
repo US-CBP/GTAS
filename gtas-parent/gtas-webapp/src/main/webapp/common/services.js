@@ -1560,6 +1560,9 @@
               else if (type === 'gender') {
                 return getFullNameByCodeAndCodeList(field,$rootScope.genders)
               }
+              else if (type === 'dictionary') {
+            	 return getFullNameByCodeAndCodeList(field,$rootScope.dictionary)
+              }
             }
           };
 
@@ -1568,10 +1571,13 @@
           //grid cells on each digest cycle, which can be dozens of repeat calls on every 
           //mouseover/out even for small datasets. Probably not a huge perf hit, but it's messy.
           function getFullNameByCodeAndCodeList(code, codeList){
-            if (!codeList || Object.keys(codeList).length === 0) return 'unknown';
-
-            var code = codeList.find(x => x.id == code) || {name: "unknown"};
-            return code.name;
+            if (!codeList) return '';
+            
+            if(codeList == $rootScope.dictionary) {
+            	let result = codeList.find(x => x.id == code);
+            	return result == undefined ? code:result.definition;
+            }
+            return codeList.find(x => x.id == code).name;   // allowing type coersion for now.
           };
         return({
           getCodeTooltipData:getCodeTooltipData

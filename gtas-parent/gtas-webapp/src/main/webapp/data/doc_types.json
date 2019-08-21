@@ -1,31 +1,31 @@
 [
   {
     "id": "P",
-    "name": "Passport"
+    "name": "P"
   },
   {
     "id": "V",
-    "name": "Visa"
+    "name": "V"
   }, 
   {
   	"id":"IP",
-  	"name":"Passport Card"
+  	"name":"IP"
   },
   {
   	"id":"A",
-  	"name":"Identity Card"
+  	"name":"A"
   }, 
   {
   	"id":"C",
-  	"name":"Identity Card"
+  	"name":"C"
   },
   {
   	"id":"I",
-  	"name":"Identity Card"
+  	"name":"I"
   },
   {
   	"id":"F",
-  	"name":"Approved non-standard identity documents used for travel"
+  	"name":"F"
   }
   
   
