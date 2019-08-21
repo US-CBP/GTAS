@@ -503,6 +503,7 @@
         });
     };
     $scope.filter = function () {
+    	$scope.model.searchSubmitFlag='Y';
         //temporary as flightService doesn't support multiple values yet
         //$scope.model.origin = self.origin.length ? self.origin.map(returnObjectId)[0] : '';
         //$scope.model.dest = self.destination ? self.destination.map(returnObjectId)[0] : '';
