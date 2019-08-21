@@ -245,7 +245,7 @@
 							<goal>yarn</goal>
 						</goals>
 						<configuration>
-							 <arguments>--silent install</arguments>
+							 <arguments>install --force</arguments>
 						</configuration>
 					</execution>
                 </executions>
