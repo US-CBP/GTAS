@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.gtas.common.UserLocationSetting;
+import gov.gtas.common.UserLocationStatus;
 import gov.gtas.constants.Constants;
 import gov.gtas.enumtype.EncounteredStatusEnum;
 import gov.gtas.security.service.GtasSecurityUtils;
@@ -49,7 +50,9 @@ public class OneDayLookoutController {
 
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
-
+		String userLocationAirport;
+		UserLocationStatus  userLocationStatus = null;
+		
 		if (isAdmin) {
 
 			try {
@@ -68,14 +71,18 @@ public class OneDayLookoutController {
 
 		} else {
 
-			if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null) {
-				userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+			Object userLocationObject = httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
+			if(userLocationObject!=null)
+			{
+				userLocationAirport = userLocationObject.toString();
 			}
-
-			String userLocation = (String) httpServletRequest.getSession()
-					.getAttribute(Constants.USER_PRIMARY_LOCATION);
-
-			if (userLocation != null && !userLocation.trim().isEmpty()) {
+			else
+			{
+				userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+				userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
+			}
+			
+			if (userLocationAirport != null && !userLocationAirport.trim().isEmpty()) {
 				try {
 
 					if (flightDate != null) {
@@ -83,12 +90,12 @@ public class OneDayLookoutController {
 						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 						Date etaEtdDate = dateFormat.parse(flightDate);
 						OneDayLookoutVoList = caseDispositionService.getOneDayLookoutByDateAndAirport(etaEtdDate,
-								userLocation);
+								userLocationAirport);
 
 					} else {
 						Date today = Calendar.getInstance().getTime();
 						OneDayLookoutVoList = caseDispositionService.getOneDayLookoutByDateAndAirport(today,
-								userLocation);
+								userLocationAirport);
 					}
 
 				} catch (Exception e) {
