@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilderWidget, gridOptionsLookupService, jqueryQueryBuilderService, spinnerService, $mdSidenav, $stateParams, $interval, $timeout, $mdDialog) {
+app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilderWidget, gridOptionsLookupService, jqueryQueryBuilderService, spinnerService, $mdSidenav, $stateParams, $interval, $timeout, $mdDialog, codeTooltipService) {
     'use strict';
     var todayDate = moment().toDate(),
         queryFlightsLink = document.querySelector('a[href="#/query/flights"]'),
@@ -521,8 +521,32 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
         utcDate = new Date(utcDate);
         //console.log("Converted time: " + utcDate);
         return utcDate;
-    }
-    
+	}
+	
+	// Adds tooltip to elements under rule-entity-container, rule-field-container, rule-filter-container
+	//rule-operator-container
+	$(document).on("mouseenter", "a[id*='bs-select']", function() {
+		 $(this).prop('title', codeTooltipService.getCodeTooltipData($(this).text(), "dictionary"));
+	});
+
+	// Adds tooltip to rule-value-container (for PNR's Trip Type)
+	$(document).on("mouseenter", "select[name='builder_rule_0_value_0']", function() {
+		$(this).find('option').each(function(){
+				$(this).prop('title', codeTooltipService.getCodeTooltipData($(this).text(), "dictionary"));
+		})
+		 
+	});
+
+	// Adds tooltip to rule-value-container (for Document Types and Passender Types)
+	$(document).on("mouseenter", "div[class='selectize-dropdown-content']", function() {
+		$(this).find('div').each(function(){
+				$(this).prop('title', codeTooltipService.getCodeTooltipData($(this).text(), "dictionary"));
+		})
+		 
+	});
+	
+	
+
 
          
 });

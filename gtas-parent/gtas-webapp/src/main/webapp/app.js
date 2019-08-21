@@ -139,7 +139,13 @@ var app;
            //For tooltips
            $.getJSON('./data/genders.json', function(data){
          	  $rootScope.genders = data;
-            });
+			});
+			
+			//For tooltips
+			$.getJSON('./data/dictionary.json', function(data){
+				$rootScope.dictionary = data;
+			});
+	
 
            $rootScope.$on('$locationChangeSuccess', function(event){
         	   $rootScope.currentLocation.val = $location.path();
