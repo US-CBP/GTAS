@@ -220,8 +220,7 @@
         	<plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <!-- NB! Set <version> to the latest released version of frontend-maven-plugin, like in README.md -->
-                <version>1.6</version>
+                <version>1.8.0</version>
                 <configuration>
                 	<workingDirectory>src/main/webapp/resources</workingDirectory>
                     <installDirectory>target/gtas/resources</installDirectory>
@@ -229,23 +228,22 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and yarn</id>
+                        <id>install node and npm</id>
                         <goals>
-                            <goal>install-node-and-yarn</goal>
+                            <goal>install-node-and-npm</goal>
                         </goals>
 						<phase>generate-resources</phase>
 						<configuration>
                             <nodeVersion>v8.11.1</nodeVersion>
-                            <yarnVersion>v1.6.0</yarnVersion>
                         </configuration>
                     </execution>
 					<execution>
-						<id>yarn install</id>
+						<id>npm install</id>
 						<goals>
-							<goal>yarn</goal>
+							<goal>npm</goal>
 						</goals>
 						<configuration>
-							 <arguments>install --force</arguments>
+							 <arguments>install</arguments>
 						</configuration>
 					</execution>
                 </executions>
