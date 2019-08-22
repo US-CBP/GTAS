@@ -38,7 +38,6 @@
     $scope.jsonData =
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify($scope.passenger));
-    );
 
     $scope.paxIdTag = $scope.passenger.paxIdTag;
     $scope.paxLastName = $scope.passenger.lastName;

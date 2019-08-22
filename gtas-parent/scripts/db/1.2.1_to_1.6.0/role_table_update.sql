@@ -1,0 +1,1 @@
+INSERT INTO `role` VALUES ('8', 'Manage Hits');

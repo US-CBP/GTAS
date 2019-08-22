@@ -1,4 +1,4 @@
 -- Restore FLIGHT table
-ALTER TABLE `FLIGHT`
+ALTER TABLE `flight`
 	DROP COLUMN IF EXISTS `id_tag`;
   
