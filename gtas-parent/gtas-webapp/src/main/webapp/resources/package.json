@@ -51,7 +51,7 @@
     "csv-js": "^1.0.0",
     "inputmask": "^4.0.0",
     "npm-font-open-sans": "^1.1.0",
-    "vaquita": "^1.0.7"
+    "vaquita": "^1.0.8"
   },
   "engines": {
     "npm": ">= 5.6.0"
