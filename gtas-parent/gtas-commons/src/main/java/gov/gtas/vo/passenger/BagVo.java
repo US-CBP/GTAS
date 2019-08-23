@@ -39,7 +39,6 @@ public class BagVo {
             } else {
                 bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
             }
-            bagVo.setBag_count(bag.getBagMeasurements().getBagCount());
         }
         bagVo.setPassengerId(bag.getPassengerId());
         bagVo.setData_source(bag.getData_source());
