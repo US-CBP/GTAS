@@ -13,7 +13,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuleRunnerConditionTest {
-	
+
 	@Mock
 	ConditionContext context;
 
@@ -28,18 +28,18 @@ public class RuleRunnerConditionTest {
 	public void testEnabled() {
 		Mockito.when(environment.getProperty("enable.rule.runner")).thenReturn("true");
 		Mockito.when(context.getEnvironment()).thenReturn(environment);
-	    RuleRunnerCondition rrc = new RuleRunnerCondition();
-	    assertTrue(rrc.matches(context, metadata));
-		
+		RuleRunnerCondition rrc = new RuleRunnerCondition();
+		assertTrue(rrc.matches(context, metadata));
+
 	}
-	
+
 	@Test
 	public void testDisabled() {
 		Mockito.when(environment.getProperty("enable.rule.runner")).thenReturn("false");
 		Mockito.when(context.getEnvironment()).thenReturn(environment);
-	    RuleRunnerCondition rrc = new RuleRunnerCondition();
-	    assertFalse(rrc.matches(context, metadata));
-		
+		RuleRunnerCondition rrc = new RuleRunnerCondition();
+		assertFalse(rrc.matches(context, metadata));
+
 	}
 
 }

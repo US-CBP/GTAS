@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 public class RuleRunnerCondition implements Condition {
 	private static final Logger logger = LoggerFactory.getLogger(RuleRunnerCondition.class);
 
-//	@Value("${enable.rule.runner}")
-//	private Boolean enableRuleRunner;
-
 	@Override
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		String prop = context.getEnvironment().getProperty("enable.rule.runner");
