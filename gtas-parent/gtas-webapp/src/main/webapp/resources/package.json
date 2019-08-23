@@ -54,7 +54,7 @@
     "vaquita": "^1.0.8"
   },
   "engines": {
-    "npm": ">= 5.6.0"
+    "npm": "^5.6.0"
   },
   "license": "SEE LICENSE IN License.txt"
 }

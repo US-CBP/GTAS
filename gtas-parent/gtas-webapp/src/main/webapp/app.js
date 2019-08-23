@@ -510,9 +510,6 @@ var app;
                     },
                     resolve: {
                         paxModel: function ($stateParams, paxModel) {
-                        	$stateParams.dest = $stateParams.destination;
-                            $stateParams.etaStart = $stateParams.eta;
-                            $stateParams.etaEnd = $stateParams.etd;
                         	return {
                                 model: paxModel.initial($stateParams),
                                 reset: function () {
@@ -526,11 +523,7 @@ var app;
                             };
                         },
                         passengers: function (paxService, $stateParams, paxModel) {
-                            //because of field/model not standard
-                            $stateParams.dest = $stateParams.destination;
-                            $stateParams.etaStart = $stateParams.eta;
-                            $stateParams.etaEnd = $stateParams.etd;
-                            return paxService.getPax($stateParams.id, paxModel.alldatamodel());
+                          return paxService.getPax($stateParams.id, paxModel.alldatamodel());
                         }
                     }
                 })
