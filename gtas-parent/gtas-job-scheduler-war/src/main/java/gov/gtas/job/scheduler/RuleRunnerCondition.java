@@ -7,7 +7,6 @@ package gov.gtas.job.scheduler;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -17,14 +16,14 @@ import org.springframework.stereotype.Component;
 public class RuleRunnerCondition implements Condition {
 	private static final Logger logger = LoggerFactory.getLogger(RuleRunnerCondition.class);
 
-	@Value("${enable.rule.runner}")
-	private String enableRuleRunner;
+//	@Value("${enable.rule.runner}")
+//	private Boolean enableRuleRunner;
 
 	@Override
 	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-
-		boolean enabled = Boolean.parseBoolean(this.enableRuleRunner);
-		logger.info("{} - Rule runner is {}running ", this.enableRuleRunner, enabled ? "" : "not ");
+		String prop = context.getEnvironment().getProperty("enable.rule.runner");
+		boolean enabled = Boolean.parseBoolean(prop);
+		logger.info("Rule runner is {}running ", enabled ? "" : "not ");
 
 		return enabled;
 	}
