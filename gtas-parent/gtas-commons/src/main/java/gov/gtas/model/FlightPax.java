@@ -8,7 +8,8 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "flight_pax")
+@Table(name = "flight_pax",
+		indexes = @Index(columnList = "ref_number", name = "flight_pax_ref_number_index"))
 public class FlightPax implements Serializable {
 
 	private static final long serialVersionUID = 1L;

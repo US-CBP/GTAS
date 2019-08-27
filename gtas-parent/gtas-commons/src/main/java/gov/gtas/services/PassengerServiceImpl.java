@@ -458,7 +458,14 @@ public class PassengerServiceImpl implements PassengerService {
             return flightList;            
         }
 
-	@Override
+    @Override
+    public Set<Passenger> getPassengersForFuzzyMatching(List<MessageStatus> messageStatuses) {
+        Set<Long> messageIds = messageStatuses.stream().map(MessageStatus::getMessageId).collect(toSet());
+        Set<Long> flightIds = messageStatuses.stream().map(MessageStatus::getFlightId).collect(toSet());
+        return passengerRepository.getPassengerMatchingInformation(messageIds, flightIds);
+    }
+
+    @Override
 	public void setAllFlights(Set<Flight> flights, Long id) {
 		String sqlStr = "";
 		for(Flight f: flights){
