@@ -110,8 +110,10 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
             " LEFT JOIN FETCH p.flight " +
             " LEFT JOIN p.apisMessage am " +
             " LEFT JOIN p.pnrs pnr " +
-            " WHERE am.id IN :messageIds OR pnr.id IN :messageIds")
-    Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds);
+            " WHERE (p.flight.id in :flightIds" +
+            " AND (am.id IN :messageIds " +
+            "       OR pnr.id IN :messageIds)) ")
+    Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds, @Param("flightIds")Set<Long> flightIds);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

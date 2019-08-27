@@ -7,12 +7,8 @@ package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
-import gov.gtas.model.Disposition;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPax;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.User;
+
+import gov.gtas.model.*;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
@@ -45,7 +41,7 @@ public interface PassengerService {
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Disposition> getPassengerDispositionHistory(Long passengerId,
-			Long flightId);
+													 Long flightId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	void createDisposition(DispositionData disposition, User user);
@@ -67,28 +63,28 @@ public interface PassengerService {
 	/**
 	 * Gets the passengers by criteria.
 	 *
-	 * @param flightId            optional
-	 * @param request the request
+	 * @param flightId optional
+	 * @param request  the request
 	 * @return the passengers by criteria
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	PassengersPageDto getPassengersByCriteria(Long flightId,
-			PassengersRequestDto request);
+											  PassengersRequestDto request);
 
 	void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
-	
+
 	/**
 	 * Gets the travel history.
 	 *
-	 * @param pId the id
-	 * @param docNum the doc num
-	 * @param docIssuCountry the doc issu country
+	 * @param pId               the id
+	 * @param docNum            the doc num
+	 * @param docIssuCountry    the doc issu country
 	 * @param docExpirationDate the doc expiration date
 	 * @return the travel history
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate);
-	
+
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
 
@@ -99,15 +95,17 @@ public interface PassengerService {
 	List<Passenger> getBookingDetailHistoryByPaxID(Long pId);
 
 	Set<Flight> getAllFlights(Long id);
-        
-    Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
-        
-    List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
+
+	Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList);
+
+	List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList);
 
 	void setAllFlights(Set<Flight> flights, Long id);
-	
+
 	void SetSingleFlight(Flight f, Long id);
-        
+
 	List<Flight> getFlightsByIdList(List<Long> flightIdList);
-	
+
+	Set<Passenger> getPassengersForFuzzyMatching(List<MessageStatus> messageIds);
+
 }
