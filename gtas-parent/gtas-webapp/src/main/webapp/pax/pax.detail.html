@@ -314,19 +314,18 @@
                               <tr>
                                 <th>Category</th>
                                 <th>Last Name</th>
+                                <th>First Name</th>
                                 <th>DOB</th>
                                 <th>% Match</th>
-                                <th>Verified</th>
                               </tr>
                               </thead>
                               <tbody>
                               <tr ng-repeat="watch in watchlistLinks | orderBy:'-percentMatch'">
-                                <td>{{watch.watchLisCategory}}</td>
+                                <td>{{watch.watchlistCategory}}</td>
                                 <td>{{watch.watchListLastName}}</td>
                                 <td>{{watch.watchListFirstName}}</td>
                                 <td>{{watch.watchListDOB}}</td>
                                 <td>{{watch.percentMatch | percent}}</td>
-                                <td>{{watch.verifiedStatus?"Yes":"No"}}</td>
                               </tr>
                               </tbody>
                             </table>
