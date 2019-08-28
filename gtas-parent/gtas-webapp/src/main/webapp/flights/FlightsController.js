@@ -203,11 +203,15 @@
       
       codeService.getAirportTooltips()
         .then(function (allAirports) {
+          self.filterSelected = true;
+
+          if (Array.isArray(allAirports)) {
             self.allAirports = allAirports.map(function (contact) {
               contact.lowerCasedName = contact.id.toLowerCase();
               return contact;
             });
-            self.filterSelected = true;
+          }
+          else return;
       });
 
       
@@ -499,6 +503,7 @@
         });
     };
     $scope.filter = function () {
+    	$scope.model.searchSubmitFlag='Y';
         //temporary as flightService doesn't support multiple values yet
         //$scope.model.origin = self.origin.length ? self.origin.map(returnObjectId)[0] : '';
         //$scope.model.dest = self.destination ? self.destination.map(returnObjectId)[0] : '';

@@ -119,12 +119,12 @@
     </div>
   </form>
 </md-sidenav>
-<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="wlCatSave">
-    <h3 class="block-label no-margin-top">Add Watchlist Category</h3>
+<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="wlCatSave" style="width: 100%">
+  <md-content>
     <form name="wlCategory" class="filters" _lpchecked="1" ng-submit="saveWlCategory(m.WatchlistCategory)">
         <div class="filter-list" role="tablist">
-            <h1 class="filter-heading">Add WL Category
-            </h1>
+            <h3 class="block-label no-margin-top">Add WL Category
+            </h3>
             <h3 role="tab" class="filter-group-title">
                 <a href="#"><i class="fa fa-angle-right pull-right"></i></a>
                 WL Category Name
@@ -154,7 +154,10 @@
                 <md-tooltip>Save</md-tooltip>
             </button>
         </div>
-    </form>
+      </form>
+    </div>
+  </md-content>
+    
 </md-sidenav>
 <div class="margin-top-1">
 <md-tabs>
@@ -164,10 +167,14 @@
         <span>&nbsp;{{tab.title}}</span>
       </md-tab-label>
     </md-tab>
+    <md-tab label="Existing Watchlists" md-on-select="showWLTypesGrid=false" md-on-deselect="showWLTypesGrid=true"> </md-tab>
 </md-tabs>
 </div>
 <div class="manage">
-<div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope"></div>
+  <div ui-grid="watchlistGrid" ui-grid-pagination ui-grid-selection ui-grid-importer ui-grid-exporter class="grid" external-scopes="$scope" ng-if="showWLTypesGrid"></div>
+</div>
+<div class="manage" ng-if="!showWLTypesGrid">
+    <div ui-grid="wlCatagoryGrid" ui-grid-pagination class="grid"></div>
 </div>
 <div class="actions md-pad">
 <button type="button" class="btn btn-icon-only btn-warning pull-left"

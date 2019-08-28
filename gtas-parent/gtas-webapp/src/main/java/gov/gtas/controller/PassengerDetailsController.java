@@ -111,9 +111,10 @@ public class PassengerDetailsController {
 			vo.setFlightETD((flight.getMutableFlightDetails().getEtd() != null) ? DateCalendarUtils
 					.formatJsonDateTime(flight.getMutableFlightDetails().getEtd()) : EMPTY_STRING);
 			vo.setFlightId(flight.getId().toString());
+			vo.setFlightIdTag(flight.getIdTag());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
 					flight.getId(), t.getId());
-			if (CollectionUtils.isNotEmpty(seatList)) {			
+			if (CollectionUtils.isNotEmpty(seatList)) {
 				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
 						.distinct().collect(Collectors.toList());
 				if (seats.size() == 1) {
@@ -122,7 +123,10 @@ public class PassengerDetailsController {
 			}
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
-		vo.setPaxId(String.valueOf(t.getId()));
+    vo.setPaxId(String.valueOf(t.getId()));
+    if (t.getPassengerIDTag() != null) {
+      vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
+    }
 		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
@@ -137,7 +141,7 @@ public class PassengerDetailsController {
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
 		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
 		vo.setSuffix(t.getPassengerDetails().getSuffix());
-		vo.setTitle(t.getPassengerDetails().getTitle());
+    vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {
@@ -251,7 +255,8 @@ public class PassengerDetailsController {
 				apisVo.addPhoneNumber(pVo);
 			}
 			vo.setApisMessageVo(apisVo);
-		}
+    }
+    
 		return vo;
 	}
 
@@ -608,7 +613,7 @@ public class PassengerDetailsController {
 	 * Required for Frontend to highlight segment corresponding to pnr section
 	 * @param targetVo
 	 */
-	private void parseRawMessageToSegmentList(PnrVo targetVo) {
+	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
                     
 			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),"\n");
@@ -663,7 +668,7 @@ public class PassengerDetailsController {
 				//Addresses
 				if (currString.contains(ADD)) {
 					for(AddressVo a: targetVo.getAddresses()) {
-						if(currString.contains(a.getCity())) {
+						if(a.getCity() != null && currString.contains(a.getCity())) {
 							segment.append(ADD);
 							segment.append(a.getCity());
 							segment.append(" ");
@@ -917,8 +922,8 @@ public class PassengerDetailsController {
 			target.setEtd(source.getMutableFlightDetails().getEtd());
 			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
-                        target.setFlightId(source.getId().toString());
-
+      target.setFlightId(source.getId().toString());
+      target.setIdTag(source.getIdTag());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}

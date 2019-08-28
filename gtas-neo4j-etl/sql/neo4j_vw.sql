@@ -66,7 +66,8 @@ SELECT
 	msg.id as gtas_message_id,
 	p.id as gtas_passenger_id,
 	msg.create_date as gtas_message_create_dtm,
-	'PNR' as 'message_type'
+	'PNR' as 'message_type',
+	f.id_tag as flight_id_tag
 	
 FROM gtas.message msg
 INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
@@ -174,7 +175,8 @@ SELECT
 	msg.id as gtas_message_id,
 	p.id as gtas_passenger_id,
 	msg.create_date as gtas_message_create_dtm,
-	'APIS' as 'message_type'
+	'APIS' as 'message_type',
+	f.id_tag as flight_id_tag
 FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
  INNER JOIN gtas.apis_message apm ON msg.id = apm.id

@@ -31,6 +31,7 @@ public class FlightVo extends BaseVo {
     private String destinationCountry;
     private boolean isOverFlight;
     private String direction;
+    private String idTag;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
     private Date flightDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
@@ -84,6 +85,12 @@ public class FlightVo extends BaseVo {
     }
     public void setFlightId(String flightId) {
         this.flightId = flightId;
+    }
+    public String getIdTag() {
+        return idTag;
+    }
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
     }
     public String getDirection() {
         return direction;

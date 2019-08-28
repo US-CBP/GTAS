@@ -44,6 +44,8 @@ public class FlightsRequestDto implements Serializable {
 	private transient List<SortOptionsDto> sort;
 
 	private String flightCategory;
+	
+	private String searchSubmitFlag;
 
 	/**
 	 * Instantiates a new flights request dto.
@@ -136,4 +138,14 @@ public class FlightsRequestDto implements Serializable {
 	public void setFlightCategory(String flightCategory) {
 		this.flightCategory = flightCategory;
 	}
+
+	public String getSearchSubmitFlag() {
+		return searchSubmitFlag;
+	}
+
+	public void setSearchSubmitFlag(String searchSubmitFlag) {
+		this.searchSubmitFlag = searchSubmitFlag;
+	}
+	
+	
 }

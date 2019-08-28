@@ -163,7 +163,7 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, rp);
     }
 
-    public Flight createNewFlight(FlightVo vo, String [] primeFlightKey) throws ParseException {
+    public Flight createNewFlight(FlightVo vo, String dest, String origin, Date etd, String carrier, String number) throws ParseException {
         Flight f = new Flight();
         f.setCreatedBy(LOADER_USER);
         updateFlight(vo, f);
@@ -173,11 +173,13 @@ public class LoaderUtils {
         Override any data that does not match the prime flight key.
         This can happen in the case of a code share flight.
          * */
-        f.setDestination(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_DESTINATION]);
-        f.setOrigin(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN]);
-        f.setEtdDate(new Date(Long.parseLong(primeFlightKey[GtasLoaderImpl.ETD_DATE_NO_TIMESTAMP_AS_LONG])));
-        f.setCarrier(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_CARRIER]);
-        f.setFlightNumber(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_NUMBER_STRING]);
+
+        f.setDestination(dest);
+        f.setOrigin(origin);
+        f.setEtdDate(etd);
+        f.setCarrier(carrier);
+        f.setFlightNumber(number);
+        f.setIdTag(getStringHash(dest, origin, etd.toString(), carrier, number));
         return f;
     }
 
@@ -196,8 +198,30 @@ public class LoaderUtils {
     		}
     	}
     }
- 
-    
+
+    /**
+     * Generic hash generator for a variable number of string args. May need an entity specific versions later
+     * to better control the fields and field order, etc.
+     * @param values
+     * @return String hash
+     */
+    public String getStringHash(String... values) {
+      String keys = "";
+      String hash = "";
+
+      for (String value: values) {
+        keys += value.toUpperCase();
+      }
+
+      try {
+        hash = makeSHA1Hash(keys);
+      }
+      catch(Exception ex) {
+        logger.warn("Could not generate flight hash for: " + String.join(" ", values));
+      }
+      return hash;
+    }
+
     public void updateFlight(FlightVo vo, Flight f) throws ParseException {
         String homeCountry = lookupRepo.getAppConfigOption(AppConfigurationRepository.HOME_COUNTRY);
 
@@ -336,15 +360,10 @@ public class LoaderUtils {
         return null;
     }
 
-    boolean isPrimeFlight(FlightVo fvo, String[] primeFlightKey) {
-        String primeFlightOrigin = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN];
-        String primeFlightDestination = primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_DESTINATION];
-        String primeFlightDate = primeFlightKey[GtasLoaderImpl.ETD_DATE_NO_TIMESTAMP_AS_LONG];
+    boolean isPrimeFlight(FlightVo fvo, String origin, String dest, String etd) {
         String otherDate = Long.toString(DateUtils.stripTime(fvo.getEtd()).getTime());
-        return (fvo.getOrigin().equals(primeFlightOrigin) &&
-                fvo.getDestination().equals(primeFlightDestination) &&
-                primeFlightDate.equals(otherDate))
-                ||  isTestData(primeFlightKey[GtasLoaderImpl.PRIME_FLIGHT_ORIGIN]);
+        return (fvo.getOrigin().equals(origin) && fvo.getDestination().equals(dest) &&
+                etd.equals(otherDate)) ||  isTestData(origin);
     }
 
     private boolean isTestData(String s) {
@@ -435,10 +454,6 @@ public class LoaderUtils {
      * @throws UnsupportedEncodingException
      */
     private String getHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException{
-//        String hash = makeSHA1Hash(String.join("", Arrays.asList(pax.getFirstName().toUpperCase(), pax.getLastName().toUpperCase(),
-//                pax.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getDob()))));
-//            	
-//           return hash;
     	return EntityResolverUtils.makeHashForPassenger(pax);
     }
     
@@ -455,20 +470,8 @@ public class LoaderUtils {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    private String makeSHA1Hash(String input)
-            throws NoSuchAlgorithmException, UnsupportedEncodingException
+    private String makeSHA1Hash(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException
     {
-//        MessageDigest md = MessageDigest.getInstance("SHA1");
-//        md.reset();
-//        byte[] buffer = input.getBytes("UTF-8");
-//        md.update(buffer);
-//        byte[] digest = md.digest();
-//
-//        String hexStr = "";
-//        for (int i = 0; i < digest.length; i++) {
-//            hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
-//        }
-//        return hexStr;
     	return EntityResolverUtils.makeSHA1Hash(input);
     }
     

@@ -19,6 +19,7 @@ public class PaxWatchlistLinkVo {
 	    private String watchListFirstName;
 	    private String watchListLastName;
 	    private String watchListDOB;
+	    private String watchlistCategory;
 
 		public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus, Long watchlistItemId,
 				Long passengerId) {
@@ -30,7 +31,8 @@ public class PaxWatchlistLinkVo {
 			this.passengerId = passengerId;
 		}
 		public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus,
-				Long passengerId, Long watchlistItemId, String watchListFirstName, String watchListLastName, String watchListDOB) {
+				Long passengerId, Long watchlistItemId, String watchListFirstName, String watchListLastName, String watchListDOB,
+		String watchlistCategory) {
 			super();
 			this.percentMatch = percentMatch;
 			this.lastRunTimestamp = lastRunTimestamp;
@@ -40,6 +42,7 @@ public class PaxWatchlistLinkVo {
 			this.watchListFirstName = watchListFirstName;
 			this.watchListLastName = watchListLastName;
 			this.watchListDOB = watchListDOB;
+			this.watchlistCategory = watchlistCategory;
 		}
 
 		public String getWatchListFirstName() {
@@ -99,4 +102,12 @@ public class PaxWatchlistLinkVo {
 		public void setVerifiedStatus(int verifiedStatus) {
 			this.verifiedStatus = verifiedStatus;
 		}
+
+	public String getWatchlistCategory() {
+		return watchlistCategory;
+	}
+
+	public void setWatchlistCategory(String watchlistCategory) {
+		this.watchlistCategory = watchlistCategory;
+	}
 }

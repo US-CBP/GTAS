@@ -28,6 +28,9 @@
   <script src="resources/bower_components/summernote/dist/summernote.js"></script>
   <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
   <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
+  <link rel="stylesheet" href='resources/node_modules/vaquita/dist/vaquita.min.css' type="text/css" media="all" />
+  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
+<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
 </head>
 
 <body ng-cloak>
@@ -75,7 +78,7 @@
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 &nbsp;Upload</a></li>
               <!-- Neo4J Browser pop out-->
-              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href= {{getNeo4JUrl()}} target="_blank">
+              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="{{getNeo4JUrl()}}" target="_blank">
                 <i class="fa fa-filter" aria-hidden="true"></i>
                 &nbsp;Neo4J Browser</a>
               </li>
@@ -90,12 +93,6 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a target="_blank" href="https://github.com/US-CBP/GTAS/issues">
-		          <span class="fa fa-comment"></span>
-		          <span class="hidden-sm">Feedback</span>
-		        </a>
-          </li>
           <li data-toggle="hover" class="dropdown">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle">
 		          <span class="fa fa-user"></span>
@@ -109,7 +106,7 @@
                 <a title="Settings" href="#/userSettings">Change Password</a>
               </li>
               <li class="divider"></li>
-              <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
+              <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}, {{ROLES.ONE_DAY_LOOKOUT }} ]">
                 <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
@@ -202,8 +199,6 @@
   <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
   <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
-  <!-- <script src="resources/bower_components/pdfmake/build/pdfmake.min.js"></script>
-  <script src="resources/bower_components/pdfmake/build/vfs_fonts.js"></script> -->
   <script src="resources/node_modules/csv-js/csv.js"></script>
   <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
   <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
@@ -236,8 +231,9 @@
   <script src="resources/bower_components/trix/dist/trix.js"></script>
   <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
   <script src='seatsMap/jquery.seat-charts.min.js'></script>
-  <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
-<link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
+
+  <script src='resources/node_modules/d3/dist/d3.min.js'></script>
+  <script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>

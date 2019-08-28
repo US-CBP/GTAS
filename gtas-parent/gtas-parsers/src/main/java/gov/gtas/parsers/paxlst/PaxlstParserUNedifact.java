@@ -129,7 +129,8 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
      */
     @SuppressWarnings("incomplete-switch")
     private void processFlight(TDT tdt) throws ParseException {
-        if (tdt.isMasterCrewList()) {
+
+      if (tdt.isMasterCrewList()) {
             // Master crew lists (MCLs) are part of TSA regulations
             // and not something we handle.
             throw new ParseException("Master crew lists (MCLs) not handled at this time");
@@ -198,7 +199,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
 
             if (origin != null && dest != null) {
-                FlightVo f = new FlightVo();
+              FlightVo f = new FlightVo();
                 f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tdt.getFlightNumber()));
                 f.setCarrier(tdt.getC_carrierIdentifier());
                 f.setOrigin(origin);

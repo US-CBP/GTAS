@@ -59,9 +59,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
      */
     private void processGroup1_PnrStart(TVL_L0 tvl_l0) throws ParseException {
     	parsedMessage.setPrimeFlight(tvl_l0);
-        parsedMessage.setCarrier(tvl_l0.getCarrier());
-        parsedMessage.setOrigin(tvl_l0.getOrigin());
-        parsedMessage.setDepartureDate(tvl_l0.getEtd());
+      parsedMessage.setCarrier(tvl_l0.getCarrier());
+      // parsedMessage.setOrigin(tvl_l0.getOrigin());
+      parsedMessage.setDepartureDate(tvl_l0.getEtd());
         /*
         * RCI is mandatory but commonly not included in PNR. Because of this we have loosened the parser to accept it
         * as a conditional field.
@@ -122,15 +122,19 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             processGroup2_Passenger(tif);
         }
 
+        boolean isFirstLeg = true;
         for (;;) {
             TVL tvl = getConditionalSegment(TVL.class);
             if (tvl == null) {
                 break;
             }
             if(validTvl(tvl)) {
-            	processGroup5_Flight(tvl);
+              if (isFirstLeg) {
+                parsedMessage.setOrigin(tvl.getOrigin());
+                isFirstLeg = false;
+              }
+              processGroup5_Flight(tvl);
             }
-            
         }
 
         for (;;) {
@@ -445,7 +449,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         } else {
             throw new ParseException("Invalid flight: " + f);
         }
-        
+
         processFlightSegments(tvl, f);
         
         if (StringUtils.isNotBlank(tvl.getOperatingCarrier())) {
@@ -494,7 +498,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                 break;
             }
             String code = ssr.getTypeOfRequest();
-            if (SSR.SEAT.equals(code)) {
+            //The parser will treat a PNR seat and Seat request the same.
+            // The APIS messages will have the actual seat the passenger is in.
+            if (SSR.SEAT.equals(code) || SSR.SEAT_REQUEST.equals(code)) {
                 if (!CollectionUtils.isEmpty(ssr.getDetails())) {
                     for (SpecialRequirementDetails details : ssr.getDetails()) {
                         String refNumber = details.getTravelerReferenceNumber();
@@ -1020,10 +1026,10 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
         }
     }
 
-
     private String[] getAgencyInfo(String text){
     	return text.split(" ");
     }
+
     private String getEmailFromtext(String ctcCode, String text){
     	return text.replace(ctcCode, "");
     }

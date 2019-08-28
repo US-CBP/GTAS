@@ -573,7 +573,7 @@
         <group>,</group>
         <length>6</length>
         <precision>1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>hit_summary_create_date</name>
@@ -584,7 +584,7 @@
         <group>,</group>
         <length>26</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>hit_type</name>
@@ -595,7 +595,7 @@
         <group>,</group>
         <length>1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>rule_hit_count</name>
@@ -606,7 +606,7 @@
         <group>,</group>
         <length>15</length>
         <precision>0</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>wl_hit_count</name>
@@ -617,7 +617,7 @@
         <group>,</group>
         <length>15</length>
         <precision>0</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>gtas_hit_detail_id</name>
@@ -628,7 +628,7 @@
         <group>,</group>
         <length>6</length>
         <precision>1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>description</name>
@@ -639,7 +639,7 @@
         <group>,</group>
         <length>62</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>title</name>
@@ -650,7 +650,7 @@
         <group>,</group>
         <length>9</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>cond_text</name>
@@ -661,7 +661,7 @@
         <group>,</group>
         <length>30</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>rule_id</name>
@@ -672,7 +672,7 @@
         <group>,</group>
         <length>15</length>
         <precision>0</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>hit_detail_create_date</name>
@@ -683,7 +683,7 @@
         <group>,</group>
         <length>29</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>idTag</name>
@@ -694,7 +694,7 @@
         <group>,</group>
         <length>40</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>flight_id</name>
@@ -705,7 +705,7 @@
         <group>,</group>
         <length>4</length>
         <precision>1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>origin</name>
@@ -716,7 +716,7 @@
         <group>,</group>
         <length>3</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>destination</name>
@@ -727,7 +727,7 @@
         <group>,</group>
         <length>3</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>carrier</name>
@@ -738,7 +738,7 @@
         <group>,</group>
         <length>2</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>right</trim_type>
       </field>
       <field>
         <name>direction</name>
@@ -749,7 +749,7 @@
         <group>,</group>
         <length>1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>origin_country</name>
@@ -760,7 +760,7 @@
         <group>,</group>
         <length>3</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>destination_country</name>
@@ -771,7 +771,7 @@
         <group>,</group>
         <length>3</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>eta_date</name>
@@ -782,7 +782,7 @@
         <group>,</group>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>etd_date</name>
@@ -793,7 +793,7 @@
         <group>,</group>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>flight_number</name>
@@ -804,7 +804,7 @@
         <group>,</group>
         <length>15</length>
         <precision>0</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>full_flight_number</name>
@@ -815,7 +815,7 @@
         <group>,</group>
         <length>6</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>IS_HIT_AVAILABLE</name>
@@ -826,7 +826,7 @@
         <group>,</group>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>NEO4J_PARAMETER_ID</name>
@@ -837,7 +837,7 @@
         <group>,</group>
         <length>15</length>
         <precision>0</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>HIT_LABEL</name>
@@ -848,7 +848,7 @@
         <group>,</group>
         <length>3</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>PASSENGER-HIT_LABEL</name>
@@ -859,7 +859,7 @@
         <group>,</group>
         <length>7</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>PASSENGER_LABEL</name>
@@ -870,7 +870,18 @@
         <group>,</group>
         <length>9</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
+      </field>
+      <field>
+        <name>flight_id_tag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
       </field>
       <field>
         <name>isLastRow</name>
@@ -881,7 +892,7 @@
         <group>,</group>
         <length>-1</length>
         <precision>-1</precision>
-        <trim_type>none</trim_type>
+        <trim_type>both</trim_type>
       </field>
     </fields>
     <attributes/>
@@ -964,35 +975,7 @@
           <condition>
             <negated>N</negated>
             <operator>AND</operator>
-            <leftvalue>origin</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>destination</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>carrier</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>etd_date</leftvalue>
-            <function>IS NOT NULL</function>
-            <rightvalue/>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>flight_number</leftvalue>
+            <leftvalue>flight_id_tag</leftvalue>
             <function>IS NOT NULL</function>
             <rightvalue/>
           </condition>
@@ -1041,32 +1024,8 @@
       <properties>
         <property>
           <name>carrier</name>
-          <value>carrier</value>
+          <value>flight_id_tag</value>
           <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>flight_number</name>
-          <value>flight_number</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>origin</name>
-          <value>origin</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>destination</name>
-          <value>destination</value>
-          <type>String</type>
-          <primary>Y</primary>
-        </property>
-        <property>
-          <name>etd_date</name>
-          <value>etd_date</value>
-          <type>Date</type>
           <primary>Y</primary>
         </property>
       </properties>
