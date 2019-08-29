@@ -94,17 +94,8 @@ LEFT JOIN gtas.pnr_email pne ON pne.pnr_id = pnr.id
 LEFT JOIN gtas.email em ON pne.email_id = em.id	
 WHERE mst.ms_status = 'ANALYZED'
 AND pit.idTag IS NOT NULL 
-AND pd.pd_first_name IS NOT NULL 
-AND pd.pd_last_name IS NOT NULL
-AND pd.pd_gender IS NOT NULL 
-AND pd.dob IS NOT NULL 
-AND f.origin IS NOT NULL 
-AND f.destination IS NOT NULL 
-AND f.carrier IS NOT NULL 
-AND f.flight_number IS NOT NULL 
-AND f.etd_date IS NOT NULL
-AND f.full_flight_number IS NOT NULL 
-AND f.etd_date IS NOT NULL
+AND f.id_tag IS NOT NULL 
+
 
 UNION ALL
 
@@ -193,16 +184,6 @@ FROM gtas.message msg
  LEFT JOIN gtas.flight_hit_rule fhr ON fhr.fhr_flight_id = f.id
  LEFT JOIN gtas.document d ON p.id = d.passenger_id
 WHERE mst.ms_status = 'ANALYZED'
- AND pit.idTag IS NOT NULL 
-AND pd.pd_first_name IS NOT NULL 
-AND pd.pd_last_name IS NOT NULL
- AND pd.pd_gender IS NOT NULL 
- AND pd.dob IS NOT NULL 
- AND f.origin IS NOT NULL 
- AND f.destination IS NOT NULL 
- AND f.carrier IS NOT NULL 
- AND f.flight_number IS NOT NULL 
- AND f.etd_date IS NOT NULL
- AND f.full_flight_number IS NOT NULL 
- AND f.etd_date IS NOT NULL
- ORDER BY gtas_message_id,flight_id,gtas_passenger_id 
+AND pit.idTag IS NOT NULL 
+AND f.id_tag IS NOT NULL 
+ORDER BY gtas_message_id,flight_id,gtas_passenger_id 
