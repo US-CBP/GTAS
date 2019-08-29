@@ -238,20 +238,38 @@ public class PnrMessageService extends MessageLoaderService {
         logger.debug("updatePaxEmbarkDebark time = " + (System.nanoTime() - startTime) / 1000000);
     }
 
-    private TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
+    public TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
         String firstLegOrigin = "";
         String lastLegDestination = "";
         Integer maxFlightLegNumber = 0;
         TripTypeEnum tripType = null;
         boolean hasLongDwellTime = false;
 
+        Collections.sort(flightLegList);
+
         if (flightLegList.size() > 1) {
-            for (FlightLeg flightLeg : flightLegList) {
+          FlightLeg first = flightLegList.get(0);
+          FlightLeg last = flightLegList.get(flightLegList.size()-1);
+
+          Integer legnum = last.getLegNumber();
+          String ORIG = getFlightLegOrigin(first);
+          String DEST = getFlightLegDest(last);
+          String previousDest = ORIG;
+          boolean noncontig = false;
+
+          for (FlightLeg flightLeg : flightLegList) {
                 Integer flightLegNumber = flightLeg.getLegNumber();
                 if (flightLegNumber > maxFlightLegNumber) {
                     maxFlightLegNumber = flightLegNumber;
                 }
-            }
+
+                if (!getFlightLegOrigin(flightLeg).equals(previousDest)) {
+                  noncontig = true;
+                }
+
+              previousDest = getFlightLegDest(flightLeg);
+          }
+
 
             for (int i = 0; i < flightLegList.size(); i++) {
                 if (flightLegList.get(i).getLegNumber().equals(0)) {
@@ -275,25 +293,43 @@ public class PnrMessageService extends MessageLoaderService {
                 }
             }
 
-            if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
-                tripType = TripTypeEnum.ROUNDTRIP;
-            } else {
-                tripType = TripTypeEnum.ONEWAY;
+            if(legnum != maxFlightLegNumber) {
+              logger.warn("calculateTripType SORT is not working ");
+            }
+            else {
+              logger.info("calculateTripType sort is OK");
+            }
+            if(!ORIG.equals(firstLegOrigin)) {
+              logger.warn("!!!   ORIGINS ARE NOT EQUAL !!!");
+            }
+            else {
+              logger.info("!!! SORTED ORIGINS  MATCHE !!!");
+            }
+            if(!DEST.equals(lastLegDestination)) {
+              logger.warn("!!!   DESTS ARE NOT EQUAL !!!");
+            }
+            else {
+              logger.info("!!! SORTED DESTINATIONS MATCHE !!!");
             }
 
             // check dwell times for ones over 24 hours
             for (DwellTime dwellTime : dwellTimeSet) {
-                if (dwellTime.getDwellTime() != null) {
-                    double dwellTimeHours = dwellTime.getDwellTime();
-                    if (dwellTimeHours > 24.0) {
-                        hasLongDwellTime = true;
-                        break;
-                    }
-                }
+              if (dwellTime.getDwellTime() != null) {
+                  double dwellTimeHours = dwellTime.getDwellTime();
+                  if (dwellTimeHours > 24.0) {
+                      hasLongDwellTime = true;
+                      break;
+                  }
+              }
             }
-
-            if (tripType.equals(TripTypeEnum.ONEWAY) && hasLongDwellTime) {
-                tripType = TripTypeEnum.MULTICITY;
+          
+            if (noncontig) {
+              tripType = TripTypeEnum.NONCONTIGUOUS;
+            }
+            else if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
+                tripType = TripTypeEnum.ROUNDTRIP;
+            } else {
+                tripType = hasLongDwellTime ? TripTypeEnum.MULTICITY : TripTypeEnum.ONEWAY;
             }
 
         } else {
@@ -302,6 +338,22 @@ public class PnrMessageService extends MessageLoaderService {
 
         return tripType;
     }
+
+    //TODO - REFAC as member of FlightLeg?
+    private String getFlightLegOrigin(FlightLeg leg) {
+      if (leg.getBookingDetail() != null) {
+        return leg.getBookingDetail().getOrigin().toUpperCase();
+      }
+      return leg.getFlight().getOrigin().toUpperCase();
+    }
+
+    private String getFlightLegDest(FlightLeg leg) {
+      if (leg.getBookingDetail() != null) {
+        return leg.getBookingDetail().getDestination().toUpperCase();
+      }
+      return leg.getFlight().getDestination().toUpperCase();
+    }
+
 
     private void calculateDwellTimes(Pnr pnr) {
         logger.debug("@ calculateDwellTimes");
