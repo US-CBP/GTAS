@@ -239,101 +239,48 @@ public class PnrMessageService extends MessageLoaderService {
     }
 
     public TripTypeEnum calculateTripType(List<FlightLeg> flightLegList, Set<DwellTime> dwellTimeSet) {
-        String firstLegOrigin = "";
-        String lastLegDestination = "";
-        Integer maxFlightLegNumber = 0;
-        TripTypeEnum tripType = null;
-        boolean hasLongDwellTime = false;
 
-        Collections.sort(flightLegList);
+      if (flightLegList.size() == 1) {
+        return TripTypeEnum.ONEWAY;
+      }
 
-        if (flightLegList.size() > 1) {
-          FlightLeg first = flightLegList.get(0);
-          FlightLeg last = flightLegList.get(flightLegList.size()-1);
+      TripTypeEnum tripType = null;
+      Collections.sort(flightLegList);
 
-          Integer legnum = last.getLegNumber();
-          String ORIG = getFlightLegOrigin(first);
-          String DEST = getFlightLegDest(last);
-          String previousDest = ORIG;
-          boolean noncontig = false;
+      FlightLeg first = flightLegList.get(0);
+      FlightLeg last = flightLegList.get(flightLegList.size()-1);
 
-          for (FlightLeg flightLeg : flightLegList) {
-                Integer flightLegNumber = flightLeg.getLegNumber();
-                if (flightLegNumber > maxFlightLegNumber) {
-                    maxFlightLegNumber = flightLegNumber;
-                }
+      String firstLegOrigin = getFlightLegOrigin(first);
+      String lastLegDestination = getFlightLegDest(last);
+      String previousDest = firstLegOrigin;
+      boolean noncontig = false;
+      boolean hasLongDwellTime = false;
 
-                if (!getFlightLegOrigin(flightLeg).equals(previousDest)) {
-                  noncontig = true;
-                }
+      for (FlightLeg flightLeg : flightLegList) {
+        if (!getFlightLegOrigin(flightLeg).equals(previousDest)) {
+          noncontig = true;
+        }
+        previousDest = getFlightLegDest(flightLeg);
+      }
 
-              previousDest = getFlightLegDest(flightLeg);
-          }
-
-
-            for (int i = 0; i < flightLegList.size(); i++) {
-                if (flightLegList.get(i).getLegNumber().equals(0)) {
-                    FlightLeg firstFlightLeg = flightLegList.get(i);
-                    if (firstFlightLeg.getBookingDetail() != null) {
-                        firstLegOrigin = firstFlightLeg.getBookingDetail().getOrigin();
-                    } else // we have a prime flight
-                    {
-                        firstLegOrigin = firstFlightLeg.getFlight().getOrigin();
-                    }
-                }
-
-                if (flightLegList.get(i).getLegNumber().equals(maxFlightLegNumber)) {
-                    FlightLeg lastFlightLeg = flightLegList.get(i);
-                    if (lastFlightLeg.getBookingDetail() != null) {
-                        lastLegDestination = lastFlightLeg.getBookingDetail().getDestination();
-                    } else // we have a prime flight
-                    {
-                        lastLegDestination = lastFlightLeg.getFlight().getDestination();
-                    }
-                }
-            }
-
-            if(legnum != maxFlightLegNumber) {
-              logger.warn("calculateTripType SORT is not working ");
-            }
-            else {
-              logger.info("calculateTripType sort is OK");
-            }
-            if(!ORIG.equals(firstLegOrigin)) {
-              logger.warn("!!!   ORIGINS ARE NOT EQUAL !!!");
-            }
-            else {
-              logger.info("!!! SORTED ORIGINS  MATCHE !!!");
-            }
-            if(!DEST.equals(lastLegDestination)) {
-              logger.warn("!!!   DESTS ARE NOT EQUAL !!!");
-            }
-            else {
-              logger.info("!!! SORTED DESTINATIONS MATCHE !!!");
-            }
-
-            // check dwell times for ones over 24 hours
-            for (DwellTime dwellTime : dwellTimeSet) {
-              if (dwellTime.getDwellTime() != null) {
-                  double dwellTimeHours = dwellTime.getDwellTime();
-                  if (dwellTimeHours > 24.0) {
-                      hasLongDwellTime = true;
-                      break;
-                  }
+        // check dwell times for ones over 24 hours
+        for (DwellTime dwellTime : dwellTimeSet) {
+          if (dwellTime.getDwellTime() != null) {
+              double dwellTimeHours = dwellTime.getDwellTime();
+              if (dwellTimeHours > 24.0) {
+                  hasLongDwellTime = true;
+                  break;
               }
-            }
-          
-            if (noncontig) {
-              tripType = TripTypeEnum.NONCONTIGUOUS;
-            }
-            else if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
-                tripType = TripTypeEnum.ROUNDTRIP;
-            } else {
-                tripType = hasLongDwellTime ? TripTypeEnum.MULTICITY : TripTypeEnum.ONEWAY;
-            }
-
+          }
+        }
+      
+        if (noncontig) {
+          tripType = TripTypeEnum.NONCONTIGUOUS;
+        }
+        else if (firstLegOrigin.equalsIgnoreCase(lastLegDestination)) {
+            tripType = TripTypeEnum.ROUNDTRIP;
         } else {
-            tripType = TripTypeEnum.ONEWAY;
+            tripType = hasLongDwellTime ? TripTypeEnum.MULTICITY : TripTypeEnum.ONEWAY;
         }
 
         return tripType;
