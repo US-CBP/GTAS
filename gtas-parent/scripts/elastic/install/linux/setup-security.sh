@@ -4,21 +4,19 @@ parent_dir=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd "$parent_dir"
 
-source ./set_env.sh
-
-cd $ES_INSTALL_LOCATION
+ES_INSTALL_LOCATION=/usr/share
 
 # Elasticsearch
 export ES_HOME=$ES_INSTALL_LOCATION/elasticsearch
-export ES_PATH_CONF=$ES_INSTALL_LOCATION/elasticsearch/config
+export ES_PATH_CONF=/etc/elasticsearch
 
 # Kibana
 export KIBANA_HOME=$ES_INSTALL_LOCATION/kibana
-export KIBANA_PATH_CONF=$ES_INSTALL_LOCATION/kibana/config
+export KIBANA_PATH_CONF=/etc/kibana
 
 #Logstash
 export LOGSTASH_HOME=$ES_INSTALL_LOCATION/logstash
-export LOGSTASH_PATH_CONF=$ES_INSTALL_LOCATION/logstash/config
+export LOGSTASH_PATH_CONF=/etc/logstash
 
 # remove existing keystore
 if [[ -f $ES_PATH_CONF/elasticsearch.keystore ]]
@@ -36,6 +34,9 @@ echo $ELASTIC_PASSWORD
 echo "Setting password for elastic user"
 (echo "$ELASTIC_PASSWORD" | $ES_HOME/bin/elasticsearch-keystore add -x 'bootstrap.password')
 
+mkdir $KIBANA_HOME/data/
+chmod -R 777 $KIBANA_HOME/data/
+
 # Kibana settings
 if [[ -f $KIBANA_HOME/data/kibana.keystore ]] 
 then
@@ -44,10 +45,10 @@ then
 fi
 
 echo 'Create new kibana keystore ... '
-($KIBANA_HOME/bin/kibana-keystore create)
+($KIBANA_HOME/bin/kibana-keystore create --allow-root)
 
 # echo "Setting password for kibana user"
-(echo "$ELASTIC_PASSWORD" | $KIBANA_HOME/bin/kibana-keystore add elasticsearch.password --stdin)
+(echo "$ELASTIC_PASSWORD" | $KIBANA_HOME/bin/kibana-keystore add elasticsearch.password --stdin --allow-root)
 ###
 
 # Create keystore if it does not exist
@@ -58,7 +59,7 @@ fi
 ($ES_INSTALL_LOCATION/logstash/bin/logstash-keystore --path.settings $LOGSTASH_PATH_CONF create)
 
 # echo "Setting password for logstash_user user"
-(echo "$ELASTIC_PASSWORD" | $ES_INSTALL_LOCATION/logstash/bin/logstash-keystore add ES_PWD)
+(echo "$ELASTIC_PASSWORD" | $ES_INSTALL_LOCATION/logstash/bin/logstash-keystore --path.settings $LOGSTASH_PATH_CONF add ES_PWD)
 
 # # remove old certificate files
 # if [[ -d $ES_PATH_CONF/certs ]]
@@ -120,10 +121,12 @@ yes | cp -f $ES_PATH_CONF/certs/ssl/ca/ca.crt $LOGSTASH_PATH_CONF/certs
 es_url=https://localhost:9200
 cacert=$ES_PATH_CONF/certs/ssl/ca/ca.crt
 
-$parent_dir/elasticsearch/start.sh
+# $parent_dir/elasticsearch/start.sh
+
+systemctl start elasticsearch
 
 # Wait for Elasticsearch to start up.
-until curl -s --cacert $cacert -u elastic:${ELASTIC_PASSWORD} $es_url -o /dev/null; do
+until curl --cacert $cacert -u elastic:${ELASTIC_PASSWORD} $es_url -o /dev/null; do
     sleep 3
     echo "Waiting for Elasticsearch..."
 done
@@ -175,7 +178,7 @@ do
     echo Failed to set kibana_user password, retrying...
 done
 
-$parent_dir/kibana/start.sh
+systemctl start kibana
 
 
 # Wait for Elasticsearch to start up.
@@ -184,10 +187,10 @@ until curl -f --cacert $cacert -u elastic:${ELASTIC_PASSWORD} https://localhost:
     echo "Waiting for Kibana..."
 done
 
-cd $parent_dir
+cd "$parent_dir"
 
 source ./kibana/import-dashboard.sh
 
-$parent_dir/kibana/stop.sh
+systemctl stop kibana
 
-$parent_dir/elasticsearch/stop.sh
+systemctl stop elasticsearch

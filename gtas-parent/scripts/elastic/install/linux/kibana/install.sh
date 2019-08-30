@@ -8,7 +8,10 @@ cd $CURRENT_DIR
 
 # Install kabana
 
-sudo yum install kibana-6.5.0-1 -y
+sudo yum install kibana-7.2.0-1 -y
+
+yes | cp -f ../../../config/kibana/kibana.yml /etc/kibana
+
 
 systemctl daemon-reload
 
@@ -16,4 +19,4 @@ systemctl enable kibana
 
 # Import gtas default dashboard
 
-../../../config/kibana/kibana.import-dashboard.sh
+# ../../../config/kibana/kibana.import-dashboard.sh

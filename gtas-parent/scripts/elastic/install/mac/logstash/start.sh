@@ -12,6 +12,7 @@ cd "logstash"
 
 export ELASTICSEARCH_HOSTS='https://localhost:9200'
 export SERVER_HOST='localhost'
+export DATABASE_HOST='localhost'
 
 # Start Elstic Search
 
