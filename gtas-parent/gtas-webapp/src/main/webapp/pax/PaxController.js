@@ -46,6 +46,7 @@
     $scope.origin = $scope.passenger.embarkation;
     $scope.destination = $scope.passenger.debarkation;
     $scope.SvgType = 2;
+    $scope.isReloaded = true;
 
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
@@ -65,7 +66,7 @@
     vaquita.graph.HORIZONTAL_NODES = 1;
 
     vaquita.graph.setZoom(0.5, 2);
-
+    
     $scope.palette = {
       address: "#2C17B1",
       airport: "#1144AA",
@@ -542,10 +543,16 @@
       const template = $scope.saves.pax;
       vaquita.graph.HORIZONTAL_NODES = (template.horiz) || 1;
 
+      // call start only when there's no rootnode
+      //TODO vaquita - expose a status field on graph?
       if (vaquita.dataModel.getRootNode() === undefined) {
         vaquita.start(template);
-      } else {
+        $scope.isReloaded = false;
+      }
+      // refresh graph arena if the page reloads with new pax data
+      else if ($scope.isReloaded) {
         vaquita.refresh(template);
+        $scope.isReloaded = false;
       }
     };
 
