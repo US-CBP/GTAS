@@ -129,18 +129,10 @@
               <td>
                 <div>
                   <ol class="nav-steps">
-                    <li ng-repeat="leg in passenger.pnrVo.flightLegs" ng-class="{active : leg.flightId !== null}">
+                    <li ng-repeat="leg in liteLegs" ng-class="{active : leg.flightId !== null, segmentEnd: leg.segmentEnd == true}">
                       <span ng-mouseleave="resetTooltip()"> <strong>{{ leg.originAirport }}</strong>
                         <md-tooltip class="multi-tooltip" md-direction="bottom">
                           <div>{{getCodeTooltipData(leg.originAirport,"airport")}}</div>
-                        </md-tooltip>
-                      </span>
-                    </li>
-                    <li>
-                      <span ng-mouseleave="resetTooltip()" class="small">
-                        <strong>{{passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport}}</strong>
-                        <md-tooltip class="multi-tooltip" md-direction="bottom">
-                          <div>{{getCodeTooltipData(passenger.pnrVo.flightLegs[passenger.pnrVo.flightLegs.length - 1].destinationAirport,"airport")}}</div>
                         </md-tooltip>
                       </span>
                     </li>
