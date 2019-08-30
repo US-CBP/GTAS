@@ -1,4 +1,14 @@
 
+/* creates a break in the step indicator after any step with the class "segmentEnd" */
+.nav-steps .segmentEnd+li>a:after, .nav-steps .segmentEnd+li>span:after {
+  background-color: unset !important;
+  border: unset !important;
+}
+
+.nav-steps {
+  word-wrap: unset !important;
+}
+
 .ppt-svg-graph {
   background-color: white;
   border: 1px solid #00416a !important;

@@ -569,7 +569,6 @@
     });
 
     $scope.getAttachment = function(paxId) {
-      //TO-DO add specific pax-id here to grab from current passenger
       paxDetailService.getPaxAttachments(paxId).then(function(data) {
         var attList = "";
         $.each(data.data, function(index, value) {
@@ -644,22 +643,33 @@
     var reorderTVLdata = function(flightLegs) {
       var orderedTvlData = [];
 
-      //Sorts flightLeg objects based on etd
-      // * 5/8/2018*No longer required to sort but does add +1 to leg number visually still, so will keep that functionality.
-
       flightLegs.sort(function(a, b) {
         if (a.legNumber < b.legNumber) return -1;
         if (a.legNumber > b.legNumber) return 1;
         else return 0;
       });
 
-      //sets each flightLeg# to the newly sorted index value
-      $.each(flightLegs, function(index, value) {
-        value.legNumber = index + 1; //+1 because 0th flight leg doesn't read well to normal humans
+      $scope.liteLegs = [];    //holds discreet start and endpoints for non-contiguous segments
+
+      $.each(flightLegs, function(index, curr) {
+        curr.legNumber = index + 1;
+
+        if ($scope.liteLegs.length === 0) {
+          $scope.liteLegs.push({flightId: curr.flightId, originAirport: curr.originAirport});
+        }
+        else if ($scope.liteLegs[$scope.liteLegs.length-1].originAirport !== curr.originAirport) {
+          $scope.liteLegs[$scope.liteLegs.length-1].segmentEnd = true;
+          $scope.liteLegs.push({flightId: curr.flightId, originAirport: curr.originAirport});
+        }
+        else {
+          $scope.liteLegs[$scope.liteLegs.length-1].flightId = curr.flightId;
+        }
+       
+        $scope.liteLegs.push({flightId: null, originAirport: curr.destinationAirport});
       });
 
       orderedTvlData = flightLegs;
-
+      
       return orderedTvlData;
     };
 
