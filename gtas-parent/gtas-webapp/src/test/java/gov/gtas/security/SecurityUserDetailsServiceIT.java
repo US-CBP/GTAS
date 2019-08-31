@@ -68,7 +68,7 @@ public class SecurityUserDetailsServiceIT {
 	@Test
 	@Transactional
 	public void testMyUser() {
-		UserDetails u = userDetailsService.loadUserByUsername("test");
+		UserDetails u = userDetailsService.loadUserByUsername("admin");
 		assertNotNull(u);
 		logger.info(u.toString());
 	}

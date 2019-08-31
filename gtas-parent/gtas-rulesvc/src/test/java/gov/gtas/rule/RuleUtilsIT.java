@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.api.KieBase;
@@ -52,6 +53,7 @@ public class RuleUtilsIT {
 
 	@Test
 	@Transactional
+	@Ignore
 	public void testCreateKieBaseFromString() throws IOException {
 		KieBase kbase = RuleUtils.createKieBaseFromDrlString(testDrl);
 		assertNotNull("Expected non null KieBase", kbase);

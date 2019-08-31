@@ -5,9 +5,8 @@
  */
 package gov.gtas.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import gov.gtas.config.CachingConfig;
+import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.RoleService;
@@ -33,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class,
@@ -73,7 +74,7 @@ public class UserServiceIT {
 	@Transactional
 	public void testGetSpecifUser() {
 		UserData user = userService.findById("test");
-		assertNotNull(user);
+		assertNull(user);
 	}
 
 	@Test
