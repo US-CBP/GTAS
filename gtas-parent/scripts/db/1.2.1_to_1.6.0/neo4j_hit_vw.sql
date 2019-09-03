@@ -1,4 +1,4 @@
-DROP VIEW IF EXISTS neo4j_vw;
+DROP VIEW IF EXISTS neo4j_hit_vw;
 CREATE VIEW neo4j_hit_vw AS
 SELECT
 	hs.id as gtas_hit_summary_id,
