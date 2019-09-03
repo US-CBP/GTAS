@@ -23,8 +23,7 @@
     caseService,
     watchListService,
     codeTooltipService,
-    configService,
-    $sce
+    configService
   ) {
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
