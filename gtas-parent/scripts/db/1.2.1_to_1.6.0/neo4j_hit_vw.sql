@@ -1,4 +1,4 @@
-
+DROP VIEW IF EXISTS neo4j_hit_vw;
 CREATE VIEW neo4j_hit_vw AS
 SELECT
 	hs.id as gtas_hit_summary_id,
@@ -87,4 +87,4 @@ INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
 AND f.id_tag IS NOT NULL 
 AND pit.idTag IS NOT NULL
-ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id
+ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id;

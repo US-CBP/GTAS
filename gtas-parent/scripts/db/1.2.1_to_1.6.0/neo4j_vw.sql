@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS neo4j_vw;
 CREATE VIEW neo4j_vw AS
 SELECT 
 	pit.idTag,
@@ -186,4 +187,4 @@ FROM gtas.message msg
 WHERE mst.ms_status = 'ANALYZED'
 AND pit.idTag IS NOT NULL 
 AND f.id_tag IS NOT NULL 
-ORDER BY gtas_message_id,flight_id,gtas_passenger_id 
+ORDER BY gtas_message_id,flight_id,gtas_passenger_id; 
