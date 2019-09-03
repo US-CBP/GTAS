@@ -6,7 +6,7 @@
 app.service("flightsModel", [function () {
     'use strict';
     var defaultSort = [
-            {column: 'eta', dir: 'asc'},
+            {column: 'countDownTimer', dir: 'asc'},
             {column: 'listHitCount', dir: 'desc'},
             {column: 'ruleHitCount', dir: 'desc'},
             {column: 'graphHitCount', dir: 'desc'},
@@ -14,8 +14,7 @@ app.service("flightsModel", [function () {
         ],
         startDate = new Date(),
         endDate = new Date();
-    	
-    	endDate.setDate(endDate.getDate() + 3);
+    	endDate.setDate(endDate.getDate() + 1);
 
     this.reset = function () {
         this.pageNumber = 1;
@@ -23,7 +22,7 @@ app.service("flightsModel", [function () {
         this.flightNumber = '';
         this.origin = [];
         this.dest = [];
-        this.direction = 'I';
+        this.direction = 'A';
         this.etaStart = startDate;
         this.etaEnd = endDate;
         this.sort = defaultSort;

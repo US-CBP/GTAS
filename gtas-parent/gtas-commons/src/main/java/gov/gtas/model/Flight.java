@@ -102,6 +102,12 @@ public class Flight extends BaseEntityAudit {
     @JsonIgnore
     private MutableFlightDetails mutableFlightDetails;
 
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fcdv_flight_id",
+            updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightCountDownView flightCountDownView;
+
     @ManyToMany(
         mappedBy = "flights",
         targetEntity = Pnr.class
@@ -134,6 +140,15 @@ public class Flight extends BaseEntityAudit {
      * */
     @Transient
     private UUID parserUUID;
+
+
+    public FlightCountDownView getFlightCountDownView() {
+        return flightCountDownView;
+    }
+
+    public void setFlightCountDownView(FlightCountDownView flightCountDownView) {
+        this.flightCountDownView = flightCountDownView;
+    }
 
     public UUID getParserUUID() {
         return parserUUID;

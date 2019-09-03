@@ -44,8 +44,9 @@ public class FlightVo extends BaseVo {
     private Date etaDate;
     private String etdLocalTZ;
     private String etaLocalTZ;
-    private Integer passengerCount = Integer.valueOf(0);
-    private Integer ruleHitCount = Integer.valueOf(0);
+    private CountDownVo countDown;
+    private Integer passengerCount = 0;
+    private Integer ruleHitCount = 0;
     private Integer listHitCount;
     private Integer graphHitCount;
     private Integer fuzzyHitCount;
@@ -259,5 +260,13 @@ public class FlightVo extends BaseVo {
 
     public void setFuzzyHitCount(Integer fuzzyHitcount) {
         this.fuzzyHitCount = fuzzyHitcount;
+    }
+
+    public CountDownVo getCountDown() {
+        return countDown;
+    }
+
+    public void setCountDown(CountDownVo countDown) {
+        this.countDown = countDown;
     }
 }
