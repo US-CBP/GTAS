@@ -22,7 +22,7 @@ rm -f elasticsearch-${ES_INSTALL_VERSION}-darwin-x86_64.tar.gz
 
 cd "$parent_dir"
 
-yes | cp -f ../../../config/elasticsearch/elasticsearch.yml $ES_INSTALL_LOCATION/elasticsearch/config
+yes | cp -f ../../../config/elasticsearch/mac/elasticsearch.yml $ES_INSTALL_LOCATION/elasticsearch/config
 yes | cp -f ../../../config/elasticsearch/log4j2.properties $ES_INSTALL_LOCATION/elasticsearch/config
 
 # ./setup-elasticsearch.sh

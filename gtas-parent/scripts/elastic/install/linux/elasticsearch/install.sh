@@ -8,7 +8,7 @@ cd $CURRENT_DIR
 
 sudo yum install elasticsearch-7.2.0-1 -y
 
-yes | cp -f ../../../config/elasticsearch/elasticsearch.yml /etc/elasticsearch
+yes | cp -f ../../../config/elasticsearch/linux/elasticsearch.yml /etc/elasticsearch
 yes | cp -f ../../../config/elasticsearch/log4j2.properties /etc/elasticsearch
 
 systemctl daemon-reload

@@ -6,11 +6,10 @@ CURRENT_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 
 cd $CURRENT_DIR
 
-ES_INSTALL_LOCATION=/etc/elasticsearch
 # Default host
 KIBANA_HOST='localhost'
 CONFIG_DIR=../../../config/kibana
-CACERT=$ES_INSTALL_LOCATION/certs/ssl/ca/ca.crt
+CACERT=$ES_INSTALL_LOCATION/kibana/config/certs/ca.crt
 
 # Default port
 KIBANA_PORT=5601

@@ -10,7 +10,7 @@ cd $CURRENT_DIR
 
 sudo yum install kibana-7.2.0-1 -y
 
-yes | cp -f ../../../config/kibana/kibana.yml /etc/kibana
+yes | cp -f ../../../config/kibana/linux/kibana.yml /etc/kibana
 
 
 systemctl daemon-reload
