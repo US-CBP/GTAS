@@ -27,7 +27,11 @@
                  enableVerticalScrollbar: 0,
                  enableColumnMenus: false,
                  multiSelect: false,
-                 enableExpandableRowHeader: false,
+				 enableExpandableRowHeader: false,
+				 enableGridMenu: true,
+                 exporterCsvFilename: 'one-day-lookout.csv',
+                 exporterExcelFilename: 'one-day-lookout.xlsx',
+                 exporterExcelSheetName: 'Data',
 
                  onRegisterApi: function (gridApi) {
                      $scope.gridApi = gridApi;
