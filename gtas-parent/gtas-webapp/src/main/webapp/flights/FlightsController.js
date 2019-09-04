@@ -231,7 +231,9 @@
           enableColumnMenus: false,
           enableGridMenu: true,
           enableExpandableRowHeader: false,
-          exporterCsvFilename: 'Flights.csv',
+          exporterCsvFilename: 'FlightGid.csv',
+          exporterExcelFilename: 'flightGrid.xlsx',
+          exporterExcelSheetName: 'Data',
           expandableRowHeight: 200,
           expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
@@ -313,7 +315,10 @@
               enableVerticalScrollbar: 1,
               enableColumnMenus: false,
               enableExpandableRowHeader: false,
-              exporterCsvFilename: 'Flights.csv',
+              enableGridMenu: true,
+              exporterCsvFilename: 'FlightsQueryGrid.csv',
+              exporterExcelFilename: 'flightsQueryGrid.xlsx',
+              exporterExcelSheetName: 'Data',
               expandableRowHeight: 200,
               expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
