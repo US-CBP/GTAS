@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS flight_countdown_view;
 CREATE OR REPLACE VIEW flight_countdown_view AS
 SELECT id as 'fcdv_flight_id',
        (CASE WHEN flight.direction= 'I'
