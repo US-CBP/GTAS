@@ -168,6 +168,8 @@
             $scope.watchlistGrid.columnDefs = watchlist.types[listName].columns;
             $scope.watchlistGrid.exporterCsvFilename = 'watchlist-' + listName + '.csv';
             $scope.watchlistGrid.data = $scope.data[listName];
+            $scope.watchlistGrid.exporterExcelFilename = 'watchlist-' + listName + '.xlsx';
+            $scope.watchlistGrid.exporterExcelSheetName= 'Data';
         };
 
         $scope.getListItemsFor = function (listName) {
@@ -442,8 +444,13 @@
         $scope.showWLTypesGrid = true;
         $scope.wlCatagoryGrid = {
             paginationPageSizes: [10, 15, 20],
-            paginationPageSize: 10,
+            paginationPageSize: 10,           
             columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
+            enableGridMenu: true,
+            exporterCsvFilename: 'watch-list-types.csv',
+            exporterExcelFilename: 'watch-list-types.xlsx',
+            exporterExcelSheetName: 'Data'
+
         };
         $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
             $scope.wlGridApi = gridApi;
