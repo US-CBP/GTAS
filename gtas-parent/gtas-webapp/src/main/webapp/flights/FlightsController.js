@@ -420,7 +420,7 @@
           },
           {
               name: 'direction',
-              displayName: 'direction', //headerCellFilter: 'translate',
+              displayName: 'Direction', headerCellFilter: 'translate',
               cellTemplate: '<span>{{COL_FIELD}}</span>',
               visible: true
           },
