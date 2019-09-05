@@ -802,29 +802,15 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     private CaseVo calculateCountDownDisplayString(CaseVo caseVo) {
-
-        Date etdEtaDateTime = caseVo.getCountdownTime();
         if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
             caseVo.setCurrentTime(new Date());
         } else {
             caseVo.setCurrentTime(appConfigurationService.offSetTimeZone(new Date()));
         }
-        Long currentTimeMillis = caseVo.getCurrentTime().getTime();
-        Long countDownMillis = etdEtaDateTime.getTime() - currentTimeMillis;
-        Long countDownSeconds = countDownMillis / 1000;
-
-        Long daysLong = countDownSeconds / 86400;
-        Long secondsRemainder1 = countDownSeconds % 86400;
-        Long hoursLong = secondsRemainder1 / 3600;
-        Long secondsRemainder2 = secondsRemainder1 % 3600;
-        Long minutesLong = secondsRemainder2 / 60;
-
-        String daysString = (countDownSeconds < 0 && daysLong.longValue() == 0) ? "-" + daysLong.toString()
-                : daysLong.toString();
-
-        String countDownString = daysString + "d " + Math.abs(hoursLong) + "h " + Math.abs(minutesLong) + "m";
-        caseVo.setCountDownTimeDisplay(countDownString);
-
+        CountDownCalculator countDownCalculator = new CountDownCalculator(caseVo.getCurrentTime());
+        Date countDownTo = caseVo.getCountdownTime();
+        CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo);
+        caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());
         return caseVo;
     }
 
