@@ -160,7 +160,7 @@
 	}
 	
 	function fill(a='a', z='z'){
-		var alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+		var alphabets = "ABCDEFGHJKLMNOPQRSTUVWXYZ".split('');
 		
 		//return the specific letters which are assigned to seats
 		return (alphabets.slice(alphabets.indexOf(a),alphabets.indexOf(z)+1))
