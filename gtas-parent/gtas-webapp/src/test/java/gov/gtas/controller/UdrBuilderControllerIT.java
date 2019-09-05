@@ -49,7 +49,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @WebAppConfiguration
 @Rollback(true)
 public class UdrBuilderControllerIT {
-	private static final String TEST_USER = "test";
+	private static final String TEST_USER = "admin";
 	private static final String TEST_UDR_TITLE = "TEST_TITLE5634";
 	private static final String TEST_UDR_TITLE2 = "TEST_TITLE2231";
 	private static final String TEST_DESCRIPTION = "TREST_DESCRIPTION";
@@ -137,7 +137,7 @@ public class UdrBuilderControllerIT {
 		Long id = udrSpec.getId();
 		mockMvc.perform(delete("/gtas/udr/" + id))
 				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andExpect(jsonPath("$.status", is(Status.SUCCESS.toString())))
 				.andExpect(jsonPath("$.responseDetails", hasSize(2)))
 				.andExpect(

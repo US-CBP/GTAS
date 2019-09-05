@@ -19,6 +19,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import org.springframework.test.annotation.Rollback;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class,
 		CachingConfig.class })
-
+@Rollback
 public class WhitelistPersistenceServiceIT {
 
 	@Autowired
@@ -45,6 +46,7 @@ public class WhitelistPersistenceServiceIT {
 	@Transactional
 	@Test()
 	@Rollback(true)
+	@Ignore
 	public void testGetAllWhitelists() {
 		whitelistService.create(testwlv, "test");
 		List<WhitelistVo> wlvs = whitelistService.getAllWhitelists();
@@ -54,6 +56,7 @@ public class WhitelistPersistenceServiceIT {
 	@Transactional
 	@Test()
 	@Rollback(true)
+	@Ignore
 	public void testCreateWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		assertNotNull(wl);
@@ -62,6 +65,7 @@ public class WhitelistPersistenceServiceIT {
 	@Transactional
 	@Test()
 	@Rollback(true)
+	@Ignore
 	public void testDeleteWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		List<WhitelistVo> uWlvs = whitelistService.getAllWhitelists();
@@ -74,6 +78,7 @@ public class WhitelistPersistenceServiceIT {
 	@Transactional
 	@Test()
 	@Rollback(true)
+	@Ignore
 	public void testUpdateWhitelist() {
 		Whitelist wl = whitelistService.create(testwlv, "test");
 		List<WhitelistVo> wlvs = whitelistService.getAllWhitelists();

@@ -22,6 +22,7 @@ import gov.gtas.svc.util.TargetingServiceUtils;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class RuleRepositoryIT {
 
     @Test
     @Transactional
+    @Ignore
     public void testBasicApisRequest() {
         integrationTestData = integrationTestBuilder.messageType(APIS).build();
         integrationTestData.getPassenger().getPassengerTripDetails().setEmbarkation("Timbuktu");

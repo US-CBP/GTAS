@@ -11,10 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.model.Flight;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitsSummary;
-import gov.gtas.model.Passenger;
+import gov.gtas.model.*;
 import gov.gtas.services.HitsSummaryService;
 
 import java.util.*;
@@ -28,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -35,6 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = { TestCommonServicesConfig.class,
         CachingConfig.class })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Rollback
 public class HitsSummaryRepositoryIT {
 
     @Autowired
@@ -101,11 +100,17 @@ public class HitsSummaryRepositoryIT {
         assertEquals(1, count2);
     }
 
-    private Object[] createPassengerFlight() {
+    protected Object[] createPassengerFlight() {
         Passenger p = new Passenger();
         p.setDeleted(false);
-        p.getPassengerDetails().setPassengerType("P");
+        PassengerDetails passengerDetails = new PassengerDetails(p);
+        passengerDetails.setDeleted(false);
+        passengerDetails.setPassengerType("P");
+        PassengerTripDetails passengerTripDetails = new PassengerTripDetails(p);
+        p.setPassengerDetails(passengerDetails);
+        p.setPassengerTripDetails(passengerTripDetails);
         passengerRepository.save(p);
+
 
         Flight f = new Flight();
         f.setFlightNumber("899");
