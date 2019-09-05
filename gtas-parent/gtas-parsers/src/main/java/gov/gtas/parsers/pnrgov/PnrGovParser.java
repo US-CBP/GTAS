@@ -42,12 +42,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
     
     @Override
     public void parsePayload() throws ParseException {
-        MSG msg = getMandatorySegment(MSG.class);
+        MSG msg = getConditionalSegment(MSG.class);
         if(msg != null && msg.getMessageTypeCode() != null){
             parsedMessage.setMessageCode(msg.getMessageTypeCode().getCode());
         }
 
-        getMandatorySegment(ORG.class);
+        getConditionalSegment(ORG.class);
         TVL_L0 tvl = getMandatorySegment(TVL_L0.class, "TVL");
         getMandatorySegment(EQN.class);
         getMandatorySegment(SRC.class);       
@@ -794,7 +794,7 @@ private void generateBagVos(TBD tbd, TVL tvl, PassengerVo currentPassenger, Flig
     }
 
     private void processGroup8_SplitPassenger(EQN eqn) throws ParseException {
-        getMandatorySegment(RCI.class);
+        getConditionalSegment(RCI.class);
     }
 
     /**

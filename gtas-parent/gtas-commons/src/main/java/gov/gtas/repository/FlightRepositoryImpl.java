@@ -70,6 +70,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		Join<Flight, FlightHitsWatchlist> graphHits = root.join("flightHitsGraph", JoinType.LEFT);
 		Join<Flight, FlightPassengerCount> passengerCountJoin = root.join("flightPassengerCount", JoinType.LEFT);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = root.join("mutableFlightDetails", JoinType.LEFT);
+		Join<Flight, FlightCountDownView> countDownViewJoin = root.join("flightCountDownView", JoinType.LEFT);
 		Predicate etaCondition = getETAPredicate(dto, cb, mutableFlightDetailsJoin);
 
 		// sorting
@@ -89,6 +90,8 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
 					orderByItem.add(mutableFlightDetailsJoin.get(sort.getColumn()));
+				} else if (sort.getColumn().equalsIgnoreCase("countDownTimer")){
+					orderByItem.add(countDownViewJoin.get(sort.getColumn()));
 				} else {
 					orderByItem.add(root.get(sort.getColumn()));
 				}

@@ -1,0 +1,1 @@
+DROP VIEW IF EXISTS flight_countdown_view;

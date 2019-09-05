@@ -418,6 +418,8 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     $scope.qbGrid.enableSelectAll = false;
     $scope.qbGrid.multiSelect = false;
     $scope.qbGrid.exporterCsvFilename = mode + '.csv';
+    $scope.qbGrid.exporterExcelFilename = mode + '.xlsx';
+    $scope.qbGrid.exporterExcelSheetName= 'Data';
     $scope.qbGrid.exporterPdfHeader = {text: mode, style: 'headerStyle'};
     $scope.qbGrid.onRegisterApi = $scope.rowSelection;
 

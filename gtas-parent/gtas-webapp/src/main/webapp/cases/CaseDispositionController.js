@@ -168,6 +168,10 @@
                 enableColumnMenus: false,
                 multiSelect: false,
                 enableExpandableRowHeader: false,
+                enableGridMenu: true,
+                exporterCsvFilename: 'case-disposition.csv',
+                exporterExcelFilename: 'case-disposition.xlsx',
+                exporterExcelSheetName: 'Data',
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
