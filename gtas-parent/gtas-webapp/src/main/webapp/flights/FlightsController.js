@@ -43,7 +43,6 @@
       
       $scope.updateOnDirectionChange = function(){
         
-        
         var isAdminUser = flightSearchOptions.data.adminUser;
           
           if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -51,7 +50,6 @@
                
             if($scope.model.direction == "I")
             {
-            
                 var destinationAirports = new Array();
                 destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
                 $scope.model.dest = destinationAirports;
