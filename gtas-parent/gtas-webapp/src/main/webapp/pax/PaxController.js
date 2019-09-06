@@ -1157,7 +1157,7 @@
           ruleGridColumns = [{
               name: 'ruleTitle',
               displayName: 'Title',
-              cellTemplate: '<md-button aria-label="title" class="md-primary md-button md-default-theme" ng-click="grid.appScope.ruleIdClick(row)">{{COL_FIELD}}</md-button>'
+              cellTemplate: '<md-button aria-label="title" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
           }, {
               name: 'ruleConditions',
               displayName: 'Conditions',
@@ -1271,25 +1271,7 @@
           $scope.flightDirections = flightDirections;
     
           $injector.invoke(jqueryQueryBuilderWidget, this, {$scope: $scope});
-          $scope.stateName = $state.$current.self.name;
-          $scope.ruleIdClick = function (row) {
-              $scope.getRuleObject(row.entity.ruleId);
-          };
-          
-        $scope.getRuleObject = function(ruleID) {
-          jqueryQueryBuilderService
-            .loadRuleById("rule", ruleID)
-            .then(function(myData) {
-              $scope.$builder.queryBuilder("readOnlyRules", myData.result.details);
-              $scope.hitDetailDisplay = myData.result.summary.title;
-              document.getElementById("QBModal").style.display = "block";
-    
-              $scope.closeDialog = function() {
-                document.getElementById("QBModal").style.display = "none";
-              };
-            });
-        };
-    
+          $scope.stateName = $state.$current.self.name;    
 
     $scope.isExpanded = true;
     $scope.paxHitList = [];
@@ -1303,60 +1285,38 @@
 
     $scope.buildAfterEntitiesLoaded();
 
-      $scope.passengerGrid = {
-              paginationPageSizes: [10, 25, 50],
-              paginationPageSize: 25,
-              paginationCurrentPage: $scope.model.pageNumber,
-              useExternalPagination: false,
-              useExternalSorting: false,
-              useExternalFiltering: false,
-              enableHorizontalScrollbar: 0,
-              enableVerticalScrollbar: 1,
-              enableFiltering: true,
-              enableColumnMenus: false,
-              multiSelect: false,
-              enableGridMenu: true,
-              exporterCsvFilename: 'PassengerGrid.csv',
-              exporterExcelFilename: 'PassengerGrid.xlsx',
-              exporterExcelSheetName: 'Data',
-              enableExpandableRowHeader: false,
+    $scope.passengerGrid = {
+      paginationPageSizes: [10, 25, 50],
+      paginationPageSize: 25,
+      paginationCurrentPage: $scope.model.pageNumber,
+      useExternalPagination: false,
+      useExternalSorting: false,
+      useExternalFiltering: false,
+      enableHorizontalScrollbar: 0,
+      enableVerticalScrollbar: 1,
+      enableFiltering: true,
+      enableColumnMenus: false,
+      multiSelect: false,
+      enableGridMenu: true,
+      exporterCsvFilename: 'PassengerGrid.csv',
+      exporterExcelFilename: 'PassengerGrid.xlsx',
+      exporterExcelSheetName: 'Data',
+      enableExpandableRowHeader: false,
 
-              expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-              onRegisterApi: function (gridApi) {
-                  $scope.gridApi = gridApi;
+      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+      onRegisterApi: function (gridApi) {
+          $scope.gridApi = gridApi;
 
-                  gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
-                      $scope.model.pageNumber = newPage;
-                      $scope.model.pageSize = pageSize;
-                      resolvePage();
-                  });
-
-                  gridApi.core.on.sortChanged($scope, function (grid, sortColumns) {
-                      if (sortColumns.length === 0) {
-                          $scope.model.sort = null;
-                      } else {
-                          $scope.model.sort = [];
-                          for (var i = 0; i < sortColumns.length; i++) {
-                              $scope.model.sort.push({column: sortColumns[i].name, dir: sortColumns[i].sort.direction});
-                          }
-                      }
-                      resolvePage();
-                  });
-
-                  gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
-                    $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
-                  });
-
-                  gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                      if (row.isExpanded) {
-                          paxService.getRuleHits(row.entity.id).then(function (data) {
-                              row.entity.subGridOptions.data = data;
-                          });
-                      }
+          gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+              if (row.isExpanded) {
+                  paxService.getRuleHits(row.entity.id).then(function (data) {
+                      row.entity.subGridOptions.data = data;
                   });
               }
-          };
- 
+          });
+      }
+  };
+
     //Front-end pagination configuration object for gridUi
     //Should only be active on stateName === 'queryPassengers'
     $scope.passengerQueryGrid = {
@@ -1367,7 +1327,7 @@
       useExternalSorting: false,
       useExternalFiltering: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       enableColumnMenus: false,
       enableGridMenu: true,
       exporterCsvFilename: 'passengerQueryGrid.csv',
