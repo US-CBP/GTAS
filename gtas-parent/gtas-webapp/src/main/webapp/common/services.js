@@ -1577,7 +1577,7 @@
             	let result = codeList.find(x => x.id == code);
             	return result == undefined ? code:result.definition;
             }
-            return codeList.find(x => x.id == code).name;   // allowing type coersion for now.
+            return (codeList.find(x => x.id == code) || {}).name;   // allowing type coersion for now.
           };
         return({
           getCodeTooltipData:getCodeTooltipData
