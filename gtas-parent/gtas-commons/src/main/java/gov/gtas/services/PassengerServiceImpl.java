@@ -137,15 +137,6 @@ public class PassengerServiceImpl implements PassengerService {
     			docVo.setIssuanceDate(d.getIssuanceDate());
     			vo.addDocument(docVo);
     		}
-            
-            List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(f.getId(), p.getId());
-            if (CollectionUtils.isNotEmpty(seatList)) {
-                List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
-                        .collect(Collectors.toList());
-                if (seats.size() == 1) {
-                    vo.setSeat(seats.get(0));
-                }
-            }
 
             if (hit != null) {
                 for (HitDetail hd : hit.getHitdetails()) {
