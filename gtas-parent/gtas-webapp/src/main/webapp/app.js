@@ -499,7 +499,7 @@ var app;
                     }
                 })
                 .state('flightpax', {
-                    url: '/flightpax/:id/:flightNumber/:origin/:destination/:direction/:eta/:etd',
+                    url: '/flightpax/:id/:flightNumber/:origin/:dest/:direction/:eta/:etd',
                     authenticate: true,
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
