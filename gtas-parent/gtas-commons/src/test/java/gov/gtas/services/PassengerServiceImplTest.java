@@ -50,17 +50,16 @@ public class PassengerServiceImplTest {
         Set<Long> messageId = new HashSet<>(Collections.singletonList(5L));
         Set<Long> flightId = new HashSet<>(Collections.singletonList(1L));
         Set<Seat> paxSeats = new HashSet<>();
-        paxSeats.add(new Seat());
-        Seat unusedSeat = new Seat();
-        unusedSeat.setFlight(f);
-        unusedSeat.setNumber(SEAT_NUMBER);
-        unusedSeat.setPassenger(p);
-        unusedSeat.setPaxId(p.getId());
-        unusedSeat.setApis(false);
+        Seat passengerSeat = new Seat();
+        passengerSeat.setFlight(f);
+        passengerSeat.setNumber(SEAT_NUMBER);
+        passengerSeat.setPassenger(p);
+        passengerSeat.setPaxId(p.getId());
+        passengerSeat.setApis(false);
 
         p.setSeatAssignments(paxSeats);
         p.setDocuments(new HashSet<>());
-        p.getSeatAssignments().add(unusedSeat);
+        p.getSeatAssignments().add(passengerSeat);
         p.setPassengerDetails(new PassengerDetails(p));
         p.setPassengerTripDetails(new PassengerTripDetails(p));
         f.setId(1L);
