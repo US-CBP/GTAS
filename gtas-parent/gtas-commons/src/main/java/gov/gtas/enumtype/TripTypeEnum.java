@@ -13,7 +13,8 @@ public enum TripTypeEnum {
     ONEWAY ("ONE-WAY"),
     ROUNDTRIP ("ROUND-TRIP"),
     MULTICITY ("MULTI-CITY"),
-    OPENJAW ("OPEN JAW");
+    OPENJAW ("OPEN JAW"),
+    NONCONTIGUOUS ("NON-CONTIGUOUS");
     
     private String tripType;
     
@@ -31,29 +32,9 @@ public enum TripTypeEnum {
             }
             return resultType;
        }
-        
-        public String  toString()
-        {
-           String returnString = null;
-           
-           if (this.name().equals("ONEWAY"))
-           {
-               returnString = "ONE-WAY";
-           }
-           else if (this.name().equals("ROUNDTRIP"))
-           {
-              returnString = "ROUND-TRIP"; 
-           }
-           else if (this.name().equals("MULTICITY"))
-           {
-             returnString = "MULTI-CITY";
-           }
-           else if (this.name().equals("OPENJAW"))
-           {
-             returnString = "OPEN JAW";  
-           }
-           
-           return returnString;
-        }
+
+    public String  toString() {
+      return this.tripType;
+    }
 
 }

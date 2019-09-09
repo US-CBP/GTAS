@@ -7,6 +7,8 @@ package gov.gtas.parsers.paxlst;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -331,5 +333,15 @@ public final class PaxlstParserUNedifactTest implements ParserTestHelper {
     	assertNotNull(pvo);
     	assertEquals("",pvo.getTotalBagWeight());
     	assertEquals("2",pvo.getBagNum());
+    }
+    
+    @Test
+    public void testTrimSeatNumber() {
+    	PaxlstParserUNedifact edifact = new PaxlstParserUNedifact();
+    	assertTrue(edifact.trimSeatNumber("12B").equals("12B"));
+    	assertTrue(edifact.trimSeatNumber("012B").equals("12B"));
+    	assertTrue(edifact.trimSeatNumber("00012B").equals("12B"));
+    	assertFalse(edifact.trimSeatNumber("012B").equals("012B"));
+    	
     }
 }

@@ -35,6 +35,7 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_CTCM = "/pnr-messages/pnrPhoneCTCM.txt";
     private static final String PNR_ADD_CTCM = "/pnr-messages/pnrAddressPhoneCTCM.txt";
     private static final String PNR_SEAT_NSST = "/pnr-messages/pnrSeatFormats.txt";
+    private static final String PNR_NO_ORG_MSG = "/pnr-messages/pnrNoOrgMsg.txt";
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
 
     private EdifactParser<PnrVo> parser;
@@ -154,6 +155,16 @@ public class PnrGovParserTest implements ParserTestHelper {
         assertEquals(seat.getOrigin(), "SFO");
         assertEquals(seat.getNumber(), "074E");
         assertEquals(seat.getTravelerReferenceNumber(), "1");
+    }
+    @Test
+    public void pnrNoMSGField() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_NO_ORG_MSG);
+        PnrVo vo = this.parser.parse(pnrExample);
+    }
+    @Test
+    public void pnrNoOrgField() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_NO_ORG_MSG);
+        PnrVo vo = this.parser.parse(pnrExample);
     }
     /*    @Test
     public void failingMessage1() throws IOException, URISyntaxException, ParseException {
