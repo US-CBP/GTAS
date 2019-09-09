@@ -50,21 +50,20 @@ public class FileReader {
 		logger.info("*************************************************************************************");
 		Properties properties = getSchedulerProperties();
 		if (properties != null) {
-			File apisFolder = new File(
-					properties.getProperty("apis.dir.origin"));
-			File apisProcessedFolder = new File(
-					properties.getProperty("apis.dir.processed"));
-			File pnrFolder = new File(properties.getProperty("pnr.dir.origin"));
-			File pnrProcessedFolder = new File(
-					properties.getProperty("pnr.dir.processed"));
-			boolean finished = checkAndMoveApisFiles(apisFolder,
-					apisProcessedFolder);
+			File apisFolder = new File(properties.getProperty("apis.dir.origin"));
+			File apisProcessedFolder = new File(properties.getProperty("apis.dir.processed"));
+			// File apisWorkingFolder = new File(properties.getProperty("apis.dir.working"));
+      File pnrFolder = new File(properties.getProperty("pnr.dir.origin"));
+			File pnrProcessedFolder = new File(properties.getProperty("pnr.dir.processed"));
+      // File pnrWorkingFolder = new File(properties.getProperty("pnr.dir.working"));
+
+      boolean finished = checkAndMoveApisFiles(apisFolder, apisProcessedFolder);
 			if (finished) {
 				checkAndMovePnrFiles(pnrFolder, pnrProcessedFolder);
 			}
 		} else {
-			logger.info("**NO PROPERTY FILE FOUND-SHUTTING DOWN THE PROCESS**");
-			logger.info("**PLEASE DEFINE PROPERTY FILE AND RESTART-EXITIN**");
+			logger.info("**NO PROPERTY FILE FOUND - SHUTTING DOWN THE PROCESS**");
+			logger.info("**PLEASE DEFINE PROPERTY FILE AND RESTART - EXITING**");
 			System.exit(0);
 		}
 		logger.info("*************************************************************************************");
@@ -91,9 +90,6 @@ public class FileReader {
 								+ fileEntry.getName());
 						if (fileEntry.isFile()) {
 							logger.info("Reading file from : " + moveFrom);
-							// MessageLoader.processSingleFile(pnrService,
-							// fileEntry);
-							// pnrService.processMessage(moveFrom.toString());
 							logger.info("Moving file after processing to : "
 									+ moveTo);
 							fileEntry.renameTo(moveTo.toFile());
