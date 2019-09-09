@@ -438,7 +438,7 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                     }
                     SeatVo seat = new SeatVo();
                     seat.setApis(Boolean.valueOf(true));
-                    seat.setNumber(rff.getReferenceIdentifier());
+                    seat.setNumber(trimSeatNumber(rff.getReferenceIdentifier()));
                     FlightVo firstFlight = parsedMessage.getFlights().get(0);
                     seat.setOrigin(firstFlight.getOrigin());
                     seat.setDestination(firstFlight.getDestination());
@@ -466,6 +466,13 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
             }
             processDocument(p, doc);
         }
+    }
+    protected String trimSeatNumber(String seatNumber) {   	
+    	if (!seatNumber.startsWith("0"))
+    		return seatNumber;
+    	
+    	return trimSeatNumber(seatNumber.substring(1));
+    	
     }
 
     private String addZerosToGetFour(String bagId) {
