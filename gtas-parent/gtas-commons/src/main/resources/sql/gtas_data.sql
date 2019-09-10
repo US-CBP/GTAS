@@ -8,6 +8,7 @@ INSERT INTO `role` VALUES ('4', 'Manage Watch List');
 INSERT INTO `role` VALUES ('5', 'Manage Rules');
 INSERT INTO `role` VALUES ('6', 'SysAdmin');
 INSERT INTO `role` VALUES ('7', 'One Day Lookout');
+INSERT INTO `role` VALUES ('8', 'Manage Hits');
 
 
 -- ----------------------------

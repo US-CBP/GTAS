@@ -11,6 +11,7 @@ import java.util.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+
 @Cacheable
 @Entity
 @Table(name = "flight",
@@ -52,6 +53,9 @@ public class Flight extends BaseEntityAudit {
 
     @Column(length = 1, nullable = false)
     private String direction;
+
+    @Column(name = "id_tag")
+    private String idTag;
     
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private Set<Phone> phone;
@@ -98,6 +102,12 @@ public class Flight extends BaseEntityAudit {
     @JsonIgnore
     private MutableFlightDetails mutableFlightDetails;
 
+    @OneToOne(mappedBy = "flight", fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", unique = true, referencedColumnName = "fcdv_flight_id",
+            updatable = false, insertable = false)
+    @JsonIgnore
+    private FlightCountDownView flightCountDownView;
+
     @ManyToMany(
         mappedBy = "flights",
         targetEntity = Pnr.class
@@ -130,6 +140,15 @@ public class Flight extends BaseEntityAudit {
      * */
     @Transient
     private UUID parserUUID;
+
+
+    public FlightCountDownView getFlightCountDownView() {
+        return flightCountDownView;
+    }
+
+    public void setFlightCountDownView(FlightCountDownView flightCountDownView) {
+        this.flightCountDownView = flightCountDownView;
+    }
 
     public UUID getParserUUID() {
         return parserUUID;
@@ -164,6 +183,12 @@ public class Flight extends BaseEntityAudit {
     }
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+    public String getIdTag() {
+      return idTag;
+    }
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
     }
     public String getCarrier() {
         return carrier;
@@ -208,7 +233,6 @@ public class Flight extends BaseEntityAudit {
     public void setApis(Set<ApisMessage> apis) {
         this.apis = apis;
     }
-    
 
     public Set<BookingDetail> getBookingDetails() {
         return bookingDetails;
@@ -218,10 +242,9 @@ public class Flight extends BaseEntityAudit {
         this.bookingDetails = bookingDetails;
     }
 
-
-        public Long getId() {
-            return id;
-        }
+    public Long getId() {
+        return id;
+    }
 
 	@Override
     public int hashCode() {

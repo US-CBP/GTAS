@@ -7,10 +7,12 @@
 package gov.gtas.services;
 
 import gov.gtas.model.*;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.CountDownVo;
 import gov.gtas.vo.passenger.SeatVo;
 import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
@@ -52,28 +54,34 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private AppConfigurationService appConfigurationService;
 
+	@Autowired
+	private AppConfigurationRepository appConfigurationRepository;
+
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
-		return flightRespository.save(flight);
+    return flightRespository.save(flight);
 	}
 
     @Override
     @Transactional
     public FlightsPageDto findAll(FlightsRequestDto dto) {
-        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
-		flightRespository.flush();
-		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
-		List<Flight> flights = tuple2.getRight();
-    List<FlightVo> vos = convertFlightToFlightVo(flights);
+		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+		List<Flight> flights = tuple.getRight();
+    	List<FlightVo> vos = convertFlightToFlightVo(flights);
 		return new FlightsPageDto(vos, tuple.getLeft());
     }
 
     @Override
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights) {
 		List<FlightVo> flightVos = new ArrayList<>();
+		CountDownCalculator countDownCalculator = getCountDownCalculator();
 		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
+			Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
+			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+			vo.setCountDown(countDownVo);
+			vo.setDirection(f.getDirection());
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
 			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
@@ -109,6 +117,16 @@ public class FlightServiceImpl implements FlightService {
 		return flightVos;
 	}
 
+	private CountDownCalculator getCountDownCalculator() {
+		Date currentTime;
+		if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
+			currentTime = new Date();
+		} else {
+			currentTime = appConfigurationService.offSetTimeZone(new Date());
+		}
+		return new CountDownCalculator(currentTime);
+	}
+
 	@Override
 	@Transactional
 	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(String firstName, String lastName,
@@ -125,7 +143,6 @@ public class FlightServiceImpl implements FlightService {
 			logger.warn("The getFlightsByPassengerNameAndDocument error stack trace -  " + ex.getStackTrace());
 		}
 		return _tempMap;
-
 	}
 
 	@Override

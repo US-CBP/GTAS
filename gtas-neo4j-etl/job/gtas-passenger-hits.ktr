@@ -1772,6 +1772,18 @@
         <precision>-1</precision>
       </field>
       <field>
+        <name>flight_id_tag</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <trim_type>both</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+      </field>
+      <field>
         <name>isLastRow</name>
         <type>String</type>
         <format/>

@@ -7,13 +7,16 @@ package gov.gtas.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.gtas.config.CachingConfig;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +37,9 @@ import gov.gtas.parsers.exception.ParseException;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestCommonServicesConfig.class })
-@Transactional
+@ContextConfiguration(classes = {TestCommonServicesConfig.class, CachingConfig.class })
+@Rollback
+@Ignore
 public class MessageGeneratorApp {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageGeneratorApp.class);

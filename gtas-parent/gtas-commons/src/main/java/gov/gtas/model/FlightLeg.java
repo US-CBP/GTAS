@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "flight_leg")
-public class FlightLeg extends BaseEntity {
+public class FlightLeg extends BaseEntity implements Comparable<FlightLeg> {
     private static final long serialVersionUID = 1L;  
     public FlightLeg() { }
     
@@ -56,5 +56,13 @@ public class FlightLeg extends BaseEntity {
 
 	public void setBookingDetail(BookingDetail bookingDetail) {
 		this.bookingDetail = bookingDetail;
-	}
+  }
+  
+  @Override
+  public int compareTo(FlightLeg leg) {
+    if (getLegNumber() == null || leg.getLegNumber() == null) {
+      return 0;
+    }
+    return getLegNumber().compareTo(leg.getLegNumber());
+  }
 }

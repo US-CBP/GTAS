@@ -114,7 +114,7 @@
               <div class="filter-group-content">
                 <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width is-upgraded" data-upgraded=",MaterialSelectfield">
                   <select class="cbp-non-chip-input mdl-selectfield__select" id="direction"
-                    ng-model="model.direction">
+                    ng-model="model.direction" ng-change="updateOnDirectionChange()">
                     <option ng-repeat="item in flightDirections" value="{{item.value}}" translate>
                       {{item.label}}
                     </option>

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
 
 @RestController
@@ -30,6 +32,16 @@ public class ConfigurationController {
 
     @Value("${kibana.url}")
     String kibanaUrl;
+    
+    @Value("${cypher.url}")
+    String cypherUrl;
+    
+    @Value("${neo4jusername}")
+    String neo4jusername;
+    
+    @Value("${neo4jpassword}")
+    String neo4jpassword;
+    
 
     @RequestMapping(method = RequestMethod.GET, value = "/api/config/dashboard",  produces="text/plain")
     public String getDashboard() {
@@ -51,6 +63,20 @@ public class ConfigurationController {
     @RequestMapping(method = RequestMethod.GET, value = "/api/config/neo4j",  produces="text/plain")
     public String getNeo4J() {
         return neo4jUrl;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/api/config/cypherUrl",  produces="text/plain")
+    public String getCypherUrl() {
+        return cypherUrl;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/api/config/cypherAuth",  produces="text/plain")
+    public String getCypherAuth() {
+      Encoder enc = Base64.getEncoder();
+      String authString = neo4jusername + ":" + neo4jpassword;
+      String authEncoded = enc.encodeToString(authString.getBytes());
+
+      return "Basic " + authEncoded;
     }
 
 }

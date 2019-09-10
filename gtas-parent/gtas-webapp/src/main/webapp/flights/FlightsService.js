@@ -11,7 +11,8 @@ app.service("flightService", function ($http, $q) {
     var tmp = jQuery.extend({},pageRequest);
     tmp.etaStart = new Date(Date.UTC(tmp.etaStart.getUTCFullYear(), tmp.etaStart.getMonth(), tmp.etaStart.getDate(),0,0,0));
     tmp.etaEnd = new Date(Date.UTC(tmp.etaEnd.getUTCFullYear(), tmp.etaEnd.getMonth(), tmp.etaEnd.getDate(),23,59,59));
-
+    tmp.searchSubmitFlag=pageRequest.searchSubmitFlag;
+    
       var dfd = $q.defer();
       dfd.resolve($http({
           method: 'post',

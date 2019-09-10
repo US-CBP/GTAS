@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.PassengerTripDetails;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,10 +70,11 @@ public class PnrMessageServiceIT extends
 		f.setOrigin("LAX");
 		f.setDestination("IAD");
 		Passenger p = new Passenger();
+		p.setPassengerDetails(new PassengerDetails(p));
+		p.setPassengerTripDetails(new PassengerTripDetails(p));
 		p.getPassengerDetails().setPassengerType("P");
 		p.getPassengerDetails().setFirstName("john");
 		p.getPassengerDetails().setLastName("doe");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 		assertNotNull(f.getId());
 	}
@@ -115,7 +118,7 @@ public class PnrMessageServiceIT extends
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-		svc.processMessage(this.message, new String[]{"placeholder"});
+    svc.processMessage(this.message, new String[]{"placeholder"});
 	}
 
 	@Test()
@@ -126,12 +129,15 @@ public class PnrMessageServiceIT extends
 				"pnr-messages/pnrMessageExample.txt").getFile());
 		svc.processMessage(this.message, new String[]{"placeholder"});
 	}
-	
+
+  // Runs the createNewFlight method in LoaderUtils, does not crash
 	@Test
 	@Transactional
-	public void testProgressiveFlightWithDomesticContinuance() {
+	public void smokeTestGtasLoaderImpl() {
 		this.message = new File(
 				getClass().getClassLoader().getResource("pnr-messages/multiple_flight_leg_pnr.txt").getFile());
-		svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+    ProcessedMessages msgs = svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+
+    assertNotNull(msgs);
 	}
 }

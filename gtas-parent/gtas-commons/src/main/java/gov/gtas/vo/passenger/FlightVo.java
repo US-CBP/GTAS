@@ -31,6 +31,7 @@ public class FlightVo extends BaseVo {
     private String destinationCountry;
     private boolean isOverFlight;
     private String direction;
+    private String idTag;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
     private Date flightDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
@@ -43,8 +44,9 @@ public class FlightVo extends BaseVo {
     private Date etaDate;
     private String etdLocalTZ;
     private String etaLocalTZ;
-    private Integer passengerCount = Integer.valueOf(0);
-    private Integer ruleHitCount = Integer.valueOf(0);
+    private CountDownVo countDown;
+    private Integer passengerCount = 0;
+    private Integer ruleHitCount = 0;
     private Integer listHitCount;
     private Integer graphHitCount;
     private Integer fuzzyHitCount;
@@ -84,6 +86,12 @@ public class FlightVo extends BaseVo {
     }
     public void setFlightId(String flightId) {
         this.flightId = flightId;
+    }
+    public String getIdTag() {
+        return idTag;
+    }
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
     }
     public String getDirection() {
         return direction;
@@ -252,5 +260,13 @@ public class FlightVo extends BaseVo {
 
     public void setFuzzyHitCount(Integer fuzzyHitcount) {
         this.fuzzyHitCount = fuzzyHitcount;
+    }
+
+    public CountDownVo getCountDown() {
+        return countDown;
+    }
+
+    public void setCountDown(CountDownVo countDown) {
+        this.countDown = countDown;
     }
 }

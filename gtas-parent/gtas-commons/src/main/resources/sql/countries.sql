@@ -1,3 +1,4 @@
+SET NAMES utf8;
 insert into country(name, iso2, iso3, iso_numeric) values ('Afghanistan', 'AF', 'AFG', '004');
 insert into country(name, iso2, iso3, iso_numeric) values ('Åland Islands', 'AX', 'ALA', '248');
 insert into country(name, iso2, iso3, iso_numeric) values ('Albania', 'AL', 'ALB', '008');

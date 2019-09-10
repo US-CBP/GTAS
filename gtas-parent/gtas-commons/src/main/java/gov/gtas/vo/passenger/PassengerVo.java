@@ -39,6 +39,7 @@ public class PassengerVo extends BaseVo {
     private Boolean deleted = Boolean.FALSE;
     private String seat = "";
     private String paxId;
+    private String paxIdTag;
     
     // flight info
     private String flightId;
@@ -55,6 +56,7 @@ public class PassengerVo extends BaseVo {
     private String flightDestination;
     private String flightETD;
     private String flightETA;
+    private String flightIdTag;
 
     // hits info
     private Boolean onRuleHitList = Boolean.FALSE;
@@ -80,6 +82,12 @@ public class PassengerVo extends BaseVo {
     public void setPaxId(String paxId) {
         this.paxId = paxId;
     }
+    public String getPaxIdTag() {
+        return paxIdTag;
+    }
+    public void setPaxIdTag(String paxIdTag) {
+        this.paxIdTag = paxIdTag;
+    }
     public String getFlightOrigin() {
         return flightOrigin;
     }
@@ -103,6 +111,12 @@ public class PassengerVo extends BaseVo {
     }
     public void setFlightETA(String flightETA) {
         this.flightETA = flightETA;
+    }
+    public String getFlightIdTag() {
+        return flightIdTag;
+    }
+    public void setFlightIdTag(String data) {
+        this.flightIdTag = data;
     }
     public List<PassengerVo> getPassengers() {
         return passengers;

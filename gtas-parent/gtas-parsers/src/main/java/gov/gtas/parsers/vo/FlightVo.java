@@ -34,6 +34,7 @@ public class FlightVo implements Validatable {
     private String marketingFlightNumber;
     private boolean isCodeShareFlight=false;
     private boolean isMarketingFlight=false;
+    private String idTag;
 
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
@@ -68,6 +69,12 @@ public class FlightVo implements Validatable {
     }
     public void setFlightNumber(String flightNumber) {
         this.flightNumber = flightNumber;
+    }
+    public String getIdTag() {
+        return idTag;
+    }
+    public void setIdTag(String idTag) {
+        this.idTag = idTag;
     }
     public String getOrigin() {
         return origin;

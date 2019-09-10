@@ -16,6 +16,7 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.Passenger;
+import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.User;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
@@ -275,6 +276,7 @@ public class AuditLogPersistenceServiceIT {
 
 		Passenger testPassenger = new Passenger();
 		testPassenger.setId(99990L);
+		testPassenger.setPassengerDetails(new PassengerDetails(testPassenger));
 		testPassenger.getPassengerDetails().setFirstName("JJ");
 		testPassenger.getPassengerDetails().setMiddleName("Marc");
 		testPassenger.getPassengerDetails().setLastName("Strong");

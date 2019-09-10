@@ -132,7 +132,8 @@
 
         $scope.categories = {};
         watchListService.getWatchlistCategories().then(function(res){
-        	$scope.watchlistCategories =  res.data;
+            $scope.watchlistCategories =  res.data;
+            $scope.wlCatagoryGrid.data =  res.data;
         	$scope.watchlistCategories.forEach(function(item){
         		
         		$scope.categories[item.id]=item.label;
@@ -167,6 +168,8 @@
             $scope.watchlistGrid.columnDefs = watchlist.types[listName].columns;
             $scope.watchlistGrid.exporterCsvFilename = 'watchlist-' + listName + '.csv';
             $scope.watchlistGrid.data = $scope.data[listName];
+            $scope.watchlistGrid.exporterExcelFilename = 'watchlist-' + listName + '.xlsx';
+            $scope.watchlistGrid.exporterExcelSheetName= 'Data';
         };
 
         $scope.getListItemsFor = function (listName) {
@@ -195,6 +198,7 @@
             watchListService.saveCategory($scope.wlCategoryModel).then(function () {
                 watchListService.getWatchlistCategories().then(function(res){
                     $scope.watchlistCategories =  res.data;
+                    $scope.wlCatagoryGrid.data =  res.data;
                     $scope.watchlistCategories.forEach(function(item){
                         $scope.categories[item.id]=item.label;
                     });
@@ -437,5 +441,20 @@
             }
             return valid;
         }
+        $scope.showWLTypesGrid = true;
+        $scope.wlCatagoryGrid = {
+            paginationPageSizes: [10, 15, 20],
+            paginationPageSize: 10,           
+            columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
+            enableGridMenu: true,
+            exporterCsvFilename: 'watch-list-types.csv',
+            exporterExcelFilename: 'watch-list-types.xlsx',
+            exporterExcelSheetName: 'Data'
+
+        };
+        $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
+            $scope.wlGridApi = gridApi;
+        }
+
     });
 }());

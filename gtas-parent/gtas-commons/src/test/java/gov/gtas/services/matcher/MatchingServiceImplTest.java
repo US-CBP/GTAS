@@ -17,6 +17,7 @@ import gov.gtas.repository.*;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.CaseDispositionService;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.DerogResponse;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
@@ -56,6 +57,8 @@ public class MatchingServiceImplTest {
     AppConfigurationRepository appConfigRepository;
     @Mock
     NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils;
+    @Mock
+    PassengerService passengerService;
 
     private MatchingServiceImpl matchingService;
 
@@ -65,7 +68,7 @@ public class MatchingServiceImplTest {
         initMocks(this);
 
         matchingService = new MatchingServiceImpl(paxWatchlistLinkRepository, watchlistItemRepository, passengerRepository,
-                watchlistRepository, caseDispositionService, flightFuzzyHitsRepository, passengerWatchlistRepository, appConfigRepository, nameMatchCaseMgmtUtils);
+                watchlistRepository, caseDispositionService, flightFuzzyHitsRepository, passengerWatchlistRepository, appConfigRepository, passengerService, nameMatchCaseMgmtUtils);
 
         WatchlistItem watchlistItem = new WatchlistItem();
         watchlistItem.setItemData("{\"id\":null,\"action\":null,\"terms\":[{\"field\":\"firstName\",\"type\":\"string\",\"value\":\"FOO\"},{\"field\":\"lastName\",\"type\":\"string\",\"value\":\"BAR\"},{\"field\":\"dob\",\"type\":\"date\",\"value\":\"1964-11-07\"}]}");

@@ -9,7 +9,6 @@
 package gov.gtas.services.matcher;
 
 import static gov.gtas.repository.AppConfigurationRepository.QUICKMATCH_DOB_YEAR_OFFSET;
-import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import gov.gtas.services.PassengerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +71,7 @@ public class MatchingServiceImpl implements MatchingService {
     private final FlightFuzzyHitsRepository flightFuzzyHitsRepository;
     private final PassengerWatchlistRepository passengerWatchlistRepository;
     private final AppConfigurationRepository appConfigRepository;
+    private final PassengerService passengerService;
 
     @Value("${partial.hits.case.create}")
     private Boolean hitWillCreateCase;
@@ -90,7 +91,7 @@ public class MatchingServiceImpl implements MatchingService {
             FlightFuzzyHitsRepository flightFuzzyHitsRepository,
             PassengerWatchlistRepository passengerWatchlistRepository,
             AppConfigurationRepository appConfigRepository,
-            NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
+            PassengerService passengerService, NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
         this.paxWatchlistLinkRepository = paxWatchlistLinkRepository;
         this.watchlistItemRepository = watchlistItemRepository;
         this.passengerRepository = passengerRepository;
@@ -99,6 +100,7 @@ public class MatchingServiceImpl implements MatchingService {
         this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
         this.passengerWatchlistRepository = passengerWatchlistRepository;
         this.appConfigRepository = appConfigRepository;
+        this.passengerService = passengerService;
         this.nameMatchCaseMgmtUtils = nameMatchCaseMgmtUtils;
     }
 
@@ -359,9 +361,7 @@ public class MatchingServiceImpl implements MatchingService {
         if (messageStatuses.isEmpty()) {
             return 0;
         }
-        Set<Long> messageIds = messageStatuses.stream().map(MessageStatus::getMessageId).collect(toSet());
-        Set<Passenger> passengers = passengerRepository.getPassengerMatchingInformation(messageIds);
-
+        Set<Passenger> passengers = passengerService.getPassengersForFuzzyMatching(messageStatuses);
         int totalMatchCount = 0;
         long startTime = System.nanoTime();
         // get flights that are arriving between timeOffset and "now".
