@@ -161,5 +161,12 @@ public class PnrGovParserTest implements ParserTestHelper {
         PnrVo dob = this.parser.parse(pnrExample);
         System.out.println("test");
     }*/
-
+    
+    @Test
+    public void pnrPassengerVo() throws IOException, URISyntaxException, ParseException {
+    	String pnrExample = getMessageText(PNR_MESSAGE_PG_77);
+    	PnrVo vo = this.parser.parse(pnrExample);
+    	assertEquals(vo.getPassengers().get(0).getPnrRecordLocator(), "W9TEND");
+    	assertEquals(vo.getPassengers().get(0).getPnrReservationReferenceNumber(), "43576");
+    }
 }
