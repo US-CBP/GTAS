@@ -28,7 +28,7 @@ $ cd GTAS # All docker commands below should be executed inside this directory
 
 ## Configure Local Folders
 
-By default, GTAS will read messages from `__data/gtas_in` and archive them in `__data/gtas_out` after parsing/leading it. The folders location can be updated in the `.env` file.
+By default, GTAS will read messages from `__data/gtas_in` and archive them in `__data/gtas_out` after parsing/loading it. The folders location can be updated in the `.env` file.
 
 ```properties
 LOCAL_DRIVE_MAPPING_INPUT=<INPUT_ABSOLUTE_PATH>
@@ -100,7 +100,7 @@ This will spin up containers:
 
 - `kibana` - <http://localhost:5601>
 
-### Run all services expect tomcat
+### Run all services except tomcat
 
 ``` bash
 docker-compose up -d mariahost elasticsearch activemq  kibana logstash
