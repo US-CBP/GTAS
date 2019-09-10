@@ -55,9 +55,19 @@ public class ServiceUtil implements LoaderServices {
         if (f.getId() == null) {
             return null;
         }
+        List<FlightPassenger> pax = null;
+        
+        //Query passenger by Flight -> pnr recordLocator# -> pnr REF number       
+        if (pvo.getPnrRecordLocator() != null && pvo.getPnrReservationReferenceNumber() != null) {
+        	 pax = flightPassengerRepository.getPassengerUsingREF(f.getId(),
+                    pvo.getPnrReservationReferenceNumber(), pvo.getPnrRecordLocator());
+        }
+        else {
+        	pax = flightPassengerRepository.returnAPassengerFromParameters(f.getId(),
+                    pvo.getFirstName(), pvo.getLastName());
+        }
 
-        List<FlightPassenger> pax = flightPassengerRepository.returnAPassengerFromParameters(f.getId(),
-                pvo.getFirstName(), pvo.getLastName());
+        
     if (pax != null && pax.size() >= 1) {
             return pax.get(0).getPassenger();
         } else {

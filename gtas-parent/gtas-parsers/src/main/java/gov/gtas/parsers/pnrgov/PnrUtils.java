@@ -78,12 +78,18 @@ public class PnrUtils {
      * </pre>
      */
 
-    public static PassengerVo createPassenger(List<SSRDocs> ssrDocs, TIF tif)  {
+    public static PassengerVo createPassenger(List<SSRDocs> ssrDocs, TIF tif, REF ref, String recordLocator)  {
         //Reversed ORDER to get the best SSR doc - Passport is best, followed by passport card, followed by everything else.
         ssrDocs.sort(Comparator.comparing(SSRDocs::getSsrDocsType).reversed());
         SSRDocs bestDocument = ssrDocs.get(0);
         PassengerVo p = new PassengerVo();
         p.setPassengerType("P");
+        p.setPnrRecordLocator(recordLocator);
+        
+        if(ref != null && !ref.getReferenceIds().isEmpty()) {
+        	p.setPnrReservationReferenceNumber(ref.getReferenceIds().get(0));
+        }
+        
         String gender = bestDocument.getGender() == null ? null : bestDocument.getGender().toString();
         p.setGender(gender);
         processNames(p, bestDocument.getSurname(), bestDocument.getFirstGivenName(), bestDocument.getSecondGivenName());
