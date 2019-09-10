@@ -34,7 +34,7 @@ import gov.gtas.services.security.UserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })
 @WebAppConfiguration
-public class UtilControllerTest {
+public class UtilControllerIT {
 
 	private MockMvc mockMvc;
 
