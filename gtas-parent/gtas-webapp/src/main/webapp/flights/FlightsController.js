@@ -43,7 +43,6 @@
       
       $scope.updateOnDirectionChange = function(){
         
-        
         var isAdminUser = flightSearchOptions.data.adminUser;
           
           if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -51,7 +50,6 @@
                
             if($scope.model.direction == "I")
             {
-            
                 var destinationAirports = new Array();
                 destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
                 $scope.model.dest = destinationAirports;
@@ -165,13 +163,6 @@
       
       var loadFlightDirection = function() {
         
-        $scope.flightDirectionList = [];
-           angular.forEach(flightSearchOptions.data.flightDirectionList, function(item){
-             
-                       $scope.flightDirectionList.push(item);
-                     
-                  });
-           
            var isAdminUser = flightSearchOptions.data.adminUser;
            
            if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -179,6 +170,8 @@
              var destinationAirports = new Array();
              destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
              $scope.model.dest = destinationAirports;
+             flightDirections = flightDirections.splice(2, 1);
+             
            }
 
         };  
