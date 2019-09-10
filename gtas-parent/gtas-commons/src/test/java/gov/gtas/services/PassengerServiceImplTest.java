@@ -12,8 +12,7 @@ import gov.gtas.model.*;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.vo.passenger.PassengerVo;
-import org.apache.commons.lang3.StringUtils;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +59,11 @@ public class PassengerServiceImplTest {
         p.setSeatAssignments(paxSeats);
         p.setDocuments(new HashSet<>());
         p.getSeatAssignments().add(passengerSeat);
-        p.setPassengerDetails(new PassengerDetails(p));
+        PassengerDetails passengerDetails = new PassengerDetails(p);
+        passengerDetails.setFirstName("foo");
+        passengerDetails.setLastName("bar");
+        passengerDetails.setNationality("baz");
+        p.setPassengerDetails(passengerDetails);
         p.setPassengerTripDetails(new PassengerTripDetails(p));
         f.setId(1L);
         MutableFlightDetails mfd = new MutableFlightDetails(1L);
@@ -76,7 +79,7 @@ public class PassengerServiceImplTest {
     }
 
     @Test
-    public void noBagInfoReturned() {
+    public void passengerProcessedToPassengerGridVoHappyPath() {
 
         List<Object[]> queryResultList = new ArrayList<>();
 
@@ -94,9 +97,11 @@ public class PassengerServiceImplTest {
 
         PassengersPageDto passengersByCriteriaTest = passengerService.getPassengersByCriteria(1L, prdto);
 
-        PassengerVo processedPassenger = passengersByCriteriaTest.getPassengers().get(0);
-        Assert.assertTrue(StringUtils.isBlank(processedPassenger.getSeat()));
-        Assert.assertNotEquals(SEAT_NUMBER, processedPassenger.getSeat());
+        PassengerGridItemVo processedPassenger = passengersByCriteriaTest.getPassengers().get(0);
+        Assert.assertEquals(processedPassenger.getFirstName(), "foo");
+        Assert.assertEquals(processedPassenger.getLastName(), "bar");
+        Assert.assertEquals(processedPassenger.getNationality(), "baz");
+        Assert.assertEquals(passengersByCriteriaTest.getTotalPassengers(), 1L);
     }
     @Test
     public void correctlyPassesParameters() {

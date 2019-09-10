@@ -13,10 +13,10 @@ import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.PassengerVo;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,8 +71,6 @@ public interface PassengerService {
 	PassengersPageDto getPassengersByCriteria(Long flightId,
 											  PassengersRequestDto request);
 
-	void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId);
-
 	/**
 	 * Gets the travel history.
 	 *
@@ -108,4 +106,7 @@ public interface PassengerService {
 
 	Set<Passenger> getPassengersForFuzzyMatching(List<MessageStatus> messageIds);
 
+	Map<Long, List<HitsSummary>> getHitsSummaryMappedToPassengerIds(Set<Long> passengerIds);
+
+	Map<Long, Set<Document>> getDocumentMappedToPassengerIds(Set<Long> passengerIds);
 }
