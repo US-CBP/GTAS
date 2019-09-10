@@ -43,7 +43,6 @@
       
       $scope.updateOnDirectionChange = function(){
         
-        
         var isAdminUser = flightSearchOptions.data.adminUser;
           
           if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -51,7 +50,6 @@
                
             if($scope.model.direction == "I")
             {
-            
                 var destinationAirports = new Array();
                 destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
                 $scope.model.dest = destinationAirports;
@@ -165,13 +163,6 @@
       
       var loadFlightDirection = function() {
         
-        $scope.flightDirectionList = [];
-           angular.forEach(flightSearchOptions.data.flightDirectionList, function(item){
-             
-                       $scope.flightDirectionList.push(item);
-                     
-                  });
-           
            var isAdminUser = flightSearchOptions.data.adminUser;
            
            if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -179,6 +170,8 @@
              var destinationAirports = new Array();
              destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
              $scope.model.dest = destinationAirports;
+             flightDirections = flightDirections.splice(2, 1);
+             
            }
 
         };  
@@ -369,7 +362,7 @@
               field: 'passengerCount',
               displayName: 'Passengers',
               enableFiltering: false,
-              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, destination: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
+              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
           },
           {
               name: 'countDownTimer',

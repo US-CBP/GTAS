@@ -53,9 +53,9 @@
      ui-grid-move-columns
 		 ui-grid-auto-resize
 		 ui-grid-resize-columns
-     class="grid"></div>
+     class="grid" style="height: calc(100vh - 200px) !important;"></div>
 <h3 data-ng-if="stateName === 'queryPassengers'"class="block-label upper-cnt">Query Results: Passengers</h3>
-<h3 ng-if="queryLimitReached" class="block-label upper-cnt">Maximum result reached, data may be truncated</h3>
+<h5 ng-if="queryLimitReached" class="block-label upper-cnt">Maximum result reached, data may be truncated</h5>
 <div ng-if="stateName === 'queryPassengers'"
      id="grid1" ui-grid="passengerQueryGrid"
      ui-grid-pagination
@@ -64,4 +64,4 @@
      ui-grid-move-columns
 		 ui-grid-auto-resize
 		 ui-grid-resize-columns
-     class="grid"></div>
+     class="grid" style="height: calc(100vh - 220px) !important;"></div>
