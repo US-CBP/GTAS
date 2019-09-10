@@ -1,4 +1,4 @@
-FROM docker.elastic.co/logstash/logstash:6.5.4
+FROM docker.elastic.co/logstash/logstash:7.2.0
 
 USER root
 RUN mkdir /config && chown -R logstash /config && chmod 0755 -R /config

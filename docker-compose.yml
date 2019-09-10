@@ -1,6 +1,22 @@
 version: "3.4"
 
 services:
+  create_certs:
+    container_name: create_certs
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+    command: >
+      bash -c '
+        yum install -y -q -e 0 unzip;
+        if [[ ! -f /certs/bundle.zip ]]; then
+          bin/elasticsearch-certutil cert --silent --pem --in config/certificates/instances.yml -out /certs/bundle.zip;
+          unzip /certs/bundle.zip -d /certs; 
+        fi;
+        chown -R 1000:0 /certs
+      '
+    user: "0"
+    working_dir: /usr/share/elasticsearch
+    volumes: ['certs:/certs','certs_logstash:/certs/logstash', './gtas-parent/scripts/elastic/config/elasticsearch:/usr/share/elasticsearch/config/certificates']
+  
   builder:  
     build: 
       context: ./
@@ -12,33 +28,65 @@ services:
       - ./gtas-parent:/project:cached
   kibana:
     # image: kibana:6.5.4
-    image: docker.elastic.co/kibana/kibana:6.5.4 
+    image: docker.elastic.co/kibana/kibana:7.2.0 
     container_name: kibana
     ports:
       - 5601:5601
     networks: 
       - gtas_default
+    environment: 
+      - SERVER_SSL_ENABLED=true
+      - SERVER_SSL_KEY=/usr/share/kibana/config/certs/kibana/kibana.key
+      - SERVER_SSL_CERTIFICATE=/usr/share/kibana/config/certs/kibana/kibana.crt
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
+      - ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - ELASTICSEARCH_URL=https://elasticsearch:9200
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=["/usr/share/kibana/config/certs/kibana/kibana.crt"]
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_SECURITY_ENABLED=true
     depends_on:
       - elasticsearch
     healthcheck:
-      test: 'curl -f http://kibana:5601 || exit 1'
+      test: 'curl --cacert /usr/share/kibana/config/certs/ca/ca.crt -f https://kibana:5601 || exit 1'
+    volumes: ['certs:/usr/share/kibana/config/certs','$PWD/gtas-parent/scripts/elastic:/config/kibana']
 
   elasticsearch:
-    image: elasticsearch:6.5.4
+    image: elasticsearch:7.2.0
     # build:
     #   context: ./gtas-parent/scripts/elastic
     #   dockerfile: install/docker/elasticsearch/Dockerfile
     container_name: elasticsearch
     networks: 
       - gtas_default
+    volumes: ['certs:$CERTS_DIR', "es-data:/usr/share/elasticsearch/data"]
     ports: 
       - 9300:9300
       - 9200:9200
+    environment:
+      - node.name=elasticsearch
+      - discovery.seed_hosts=elasticsearch
+      - cluster.initial_master_nodes=elasticsearch
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD 
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.license.self_generated.type=trial 
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=$CERTS_DIR/elasticsearch/elasticsearch.key
+      - xpack.security.http.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.http.ssl.certificate=$CERTS_DIR/elasticsearch/elasticsearch.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=none 
+      - xpack.security.transport.ssl.certificate_authorities=$CERTS_DIR/ca/ca.crt
+      - xpack.security.transport.ssl.certificate=$CERTS_DIR/elasticsearch/elasticsearch.crt
+      - xpack.security.transport.ssl.key=$CERTS_DIR/elasticsearch/elasticsearch.key
     healthcheck:
-      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      test: curl --cacert /certs/ca/ca.crt https://elasticsearch:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
       interval: 30s
       timeout: 10s
       retries: 5
+    # depends_on: 
+    #   - create_certs
   logstash:
     build: 
       dockerfile: ./install/docker/logstash/Dockerfile
@@ -47,9 +95,16 @@ services:
         DB_HOST: 'mariahost'
         ELASTIC_HOST: 'elasticsearch'
     container_name: logstash
+    volumes: ['certs_logstash:/usr/share/logstash/config/certs/']
     environment:
       - JAVA_OPTS=-Xms1g -Xmx1g
-      - xpack.security.ssl.enabled=true
+      - ES_PWD=$ES_PWD
+      - XPACK_MONITORING_ENABLED=true
+      - XPACK_MONITORING_ELASTICSEARCH_USERNAME="elastic"
+      - XPACK_MONITORING_ELASTICSEARCH_PASSWORD=$ELASTIC_PASSWORD
+      - XPACK_MONITORING_ELASTICSEARCH_HOSTS=https://elasticsearch:9200
+      - XPACK_MONITORING_ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITY=/usr/share/logstash/config/certs/logstash.crt
+      - XPACK_MONITORING_ELASTICSEARCH_SSL_VERIFICATION_MODE=none
     networks:
       - gtas_default
     depends_on:
@@ -164,6 +219,9 @@ volumes:
     driver: local
   target:
     driver: local
-  
+  certs:
+    driver: local
+  certs_logstash:
+    driver: local
 networks:
   gtas_default:

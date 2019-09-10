@@ -1,7 +1,9 @@
 instances:  
-  - name: 'gtas-master'
-    dns:  [ 'localhost']
+  - name: 'elasticsearch'
+    dns:  [ 'localhost', 'elasticsearch']
+
   - name: 'kibana'
-    dns:  [ 'localhost']
+    dns:  [ 'localhost', 'kibana']
+
   - name: 'logstash'
-    dns:  [ 'localhost']
+    dns:  [ 'localhost', 'logstash']
