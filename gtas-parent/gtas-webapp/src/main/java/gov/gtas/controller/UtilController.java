@@ -38,49 +38,37 @@ public class UtilController {
 	@RequestMapping(value = "/flightdirectionlist", method = RequestMethod.GET)
 	@Transactional
 	public @ResponseBody FlightSearchVo getFlightDirections(HttpServletRequest httpServletRequest) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		return getFlightSearchVo(httpServletRequest, userId);
+	}
 
+	FlightSearchVo getFlightSearchVo(HttpServletRequest httpServletRequest, String userId) {
 		FlightSearchVo flightSearchVo = new FlightSearchVo();
-		
-	
-
 		try {
-			String userId = GtasSecurityUtils.fetchLoggedInUserId();
-
 			boolean isAdmin = userService.isAdminUser(userId);
-			String userLocationAirport = null;
-			UserLocationStatus userLocationStatus = new UserLocationStatus();
-
 			if (isAdmin) {
-			
 				flightSearchVo.setAdminUser(true);
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("A", "Any"));
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("I", "Inbound"));
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("O", "Outbound"));
-
 			} else {
-				
 				flightSearchVo.setAdminUser(false);
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("I", "Inbound"));
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("O", "Outbound"));
-				
+
+				String userLocationAirport;
 				Object userLocationObject = httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
-				if(userLocationObject!=null)
-				{
+				if (userLocationObject != null) {
 					userLocationAirport = userLocationObject.toString();
-				}
-				else
-				{
-					userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+				} else {
+					UserLocationStatus userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
 					userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
 				}
-				
 				flightSearchVo.setUserLocation(userLocationAirport);
 			}
-		} catch (Exception e) {
-			logger.error("ERROR! An error has occurred when retrieving inbound list. ");
-			e.printStackTrace();
+		} catch (Exception ignored) {
+			logger.error("ERROR! An error has occurred when retrieving inbound list. ", ignored);
 		}
 		return flightSearchVo;
 	}
-
 }
