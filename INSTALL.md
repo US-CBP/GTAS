@@ -1,6 +1,8 @@
 # GTAS Installation
 
-Please refer to the GTAS Technical Guide document for a more detailed set of installation instructions. 
+Please refer to the GTAS Technical Guide document for a more detailed set of installation instructions or, check out our youtube playlist that walks you through the whole process:
+
+https://www.youtube.com/playlist?list=PLrB3ZYSlISMA5aNaOhxhvqjoNHTjZIfkK
 
 ## Environment
 
@@ -77,6 +79,12 @@ Move the .war files to the tomcat server
 ```
 cp gtas-webapp/target/gtas.war [tomcat home]/webapps
 cp gtas-job-scheduler-war/target/gtas-job-scheduler.war [tomcat home]/webapps
+```
+
+Start the server
+
+```
+./usr/local/apache-tomcat-9.0.22/bin/catalina.sh run
 ```
 
 Access site at http://localhost:8080/gtas
