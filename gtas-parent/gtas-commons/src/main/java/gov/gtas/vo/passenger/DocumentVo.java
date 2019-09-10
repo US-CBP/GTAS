@@ -8,6 +8,7 @@ package gov.gtas.vo.passenger;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import gov.gtas.model.Document;
 
 public class DocumentVo {
     private String documentType;
@@ -64,4 +65,14 @@ public class DocumentVo {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
+	public static DocumentVo fromDocument(Document document) {
+        DocumentVo docVo = new DocumentVo();
+        docVo.setDocumentNumber(document.getDocumentNumber());
+        docVo.setDocumentType(document.getDocumentType());
+        docVo.setIssuanceCountry(document.getIssuanceCountry());
+        docVo.setExpirationDate(document.getExpirationDate());
+        docVo.setIssuanceDate(document.getIssuanceDate());
+        return docVo;
+    }
 }

@@ -1475,8 +1475,8 @@
             "</md-button>"
         },
         {
-          field: "etaLocalTZ",
-          name: "etaLocalTZ",
+          field: "eta",
+          name: "eta",
           sort: {
             direction: uiGridConstants.DESC,
             priority: 2
@@ -1485,8 +1485,8 @@
           headerCellFilter: "translate"
         },
         {
-          field: "etdLocalTZ",
-          name: "etdLocalTZ",
+          field: "etd",
+          name: "etd",
           displayName: "pass.etd",
           headerCellFilter: "translate"
         },

@@ -24,6 +24,7 @@ public interface DocumentRepository extends CrudRepository<Document, Long>{
     public Document findByDocumentNumberAndPassenger(String documentNumber, Passenger passenger);
 
     @Transactional
-    @Query("Select d from Document  d where d.passenger.id in :paxIds")
+    @Query("Select d from Document d where d.paxId in :paxIds")
     Set<Document> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
+
 }
