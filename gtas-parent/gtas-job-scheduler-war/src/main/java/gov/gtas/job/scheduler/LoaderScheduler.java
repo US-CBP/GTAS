@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -113,7 +114,7 @@ public class LoaderScheduler {
 
 	private void processSingleFile(File f, LoaderStatistics stats, String[] primeFlightKey) {
 		logger.debug(String.format("Processing %s", f.getAbsolutePath()));
-		ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
+    ProcessedMessages processedMessages = loader.processMessage(f, primeFlightKey);
 		int[] result = processedMessages.getProcessed();
 		List<MessageStatus> messageStatusList = processedMessages.getMessageStatusList();
 		messageStatusRepository.saveAll(messageStatusList);
@@ -131,31 +132,11 @@ public class LoaderScheduler {
 		LoaderStatistics stats = new LoaderStatistics();
     logger.debug("MESSAGE RECEIVED FROM QUEUE: "+ fileName);
     
-    File f = getWorkingFile(fileName, text);
+		File f = new File(messageWorkingDir + File.separator + fileName);
     processSingleFile(f, stats, primeFlightKey);
     saveProcessedFile(f);
   }
 
-  // Saves in-memory message name and content to the working directory as a file,
-  // returns the file.
-  public File getWorkingFile(String fileName, String fileText) {
-		Path workingDir = Paths.get(messageWorkingDir).normalize();
-		File f = new File(workingDir + File.separator + fileName);
-
-    try {
-      FileWriter fw = new FileWriter(f, false);
-			fw.write(fileText);
-			fw.close();
-		} catch (IOException e) {
-      // attempt to write it to an error directory here??
-			logger.error("error receiving message or saving to working directory " + workingDir, e);
-    }
-    
-    //TODO push this to try block, return null on error??
-    return f;
-  }
-
-  //TODO private?
   // Moves the file from the working dir to the processed dir, returns true on success.
   public boolean saveProcessedFile(File file) {
     boolean saved = false;
@@ -163,17 +144,19 @@ public class LoaderScheduler {
     if (file == null || !file.isFile()) return saved;
 
     FileSystem toFileSystem = FileSystems.getDefault();
+    String fileName = file.getName();
 
     try {
-      Path moveTo = toFileSystem.getPath(messageProcessedDir + File.separator + file.getName());
-      logger.info("Moving file after processing to : " + messageProcessedDir);
-      file.renameTo(moveTo.toFile());
-      toFileSystem.close();
+      Path destPath = toFileSystem.getPath(messageProcessedDir + File.separator + fileName);
+      logger.info("Moving file to PROCESSED in LoaderScheduler: " + destPath.toString());
+      Path sourcePath = toFileSystem.getPath(messageWorkingDir + File.separator + fileName);
+
+      Files.move(sourcePath, destPath, StandardCopyOption.ATOMIC_MOVE);
     }
     catch (Exception ex) {
       //file is currently in the working directory where it won't be processed again
       // except on a restart. Leave it there or move it to an error directory??
-      logger.error("Unable to move file " + file.getName() + " to the processed directory: " + messageProcessedDir, ex);
+      logger.error("Unable to move file " + fileName + " to the processed directory: " + messageProcessedDir  + File.separator + fileName, ex);
     }
 
     return saved;

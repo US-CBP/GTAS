@@ -11,6 +11,8 @@ package gov.gtas.job.scheduler;
 import gov.gtas.job.localFileIntake.InboundQMessageSender;
 import gov.gtas.parsers.util.FileUtils;
 import gov.gtas.services.LoaderException;
+import gov.gtas.job.scheduler.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Component
 public class LocalFileIntakeScheduler {
 
@@ -32,6 +35,12 @@ public class LocalFileIntakeScheduler {
 
     @Value("${message.dir.origin}")
     private String messageOriginDir;
+
+    @Value("${message.dir.working}")
+    private String messageWorkingDir;
+
+    @Value("${message.dir.error}")
+    private String messageErrorDir;
 
     @Value("${message.dir.processed}")
     private String messageProcessedDir;
@@ -47,19 +56,18 @@ public class LocalFileIntakeScheduler {
 
     @Scheduled(fixedDelayString = "${loader.fixedDelay.in.milliseconds}", initialDelayString = "${loader.initialDelay.in.milliseconds}")
     public void jobScheduling()  {
-        Path dInputDir = Paths.get(messageOriginDir).normalize();
-        Path dOutputDir = Paths.get(messageProcessedDir).normalize();
-        processAndQFiles(dInputDir, dOutputDir);
+        processAndQFiles();
     }
 
-    private void processAndQFiles(Path incomingDir,
-                                  Path outgoingDir) {
+    private void processAndQFiles() {
+        Path dInputDir = Paths.get(messageOriginDir).normalize();
 
-        File folder = incomingDir.toFile();
+        File folder = dInputDir.toFile();
         File [] files = folder.listFiles();
         if (files == null) {
             return;
         }
+        
         List<File> fileList = new ArrayList<>(Arrays.asList(files));
         fileList = fileList.stream().filter(f -> !f.isHidden() && f.isFile()).collect(Collectors.toList());
         if(fileList.isEmpty()) {
@@ -67,16 +75,24 @@ public class LocalFileIntakeScheduler {
         }
 
         for (File file : fileList) {
-            pushToInboundQueueCatchExceptions(file);
-            boolean moved = file.renameTo(new File(outgoingDir.toFile()
-                    + File.separator + file.getName()));
-            if (!moved) {
-                logger.error("Unable to move file to outgoing directory! Deleting file so there will be no overflow!");
-                boolean deleted  = file.delete();
-                if (!deleted) {
-                    logger.error("Unable to delete file. File is likely to be parsed indefinitely!");
-                }
+          File workingFile = null;
+
+          try {
+            workingFile = Utils.moveToDirectory(messageWorkingDir, file);
+          }
+          catch (Exception ex) {
+            try {
+              logger.error("Could not move file to working dir, attempting move to error dir ", ex);
+              Utils.moveToDirectory(messageErrorDir, file);
             }
+              catch (Exception exErrDir) {
+              logger.error("ERROR - Could not move file to error dir, it may be processed indefinitely!", exErrDir);
+            }
+          }
+
+          if (workingFile != null) {
+            pushToInboundQueueCatchExceptions(workingFile);
+          }
         }
     }
 
@@ -87,6 +103,7 @@ public class LocalFileIntakeScheduler {
             logger.error("Error pushing file to outbound queue", e);
         }
     }
+
 
     private void pushToInboundQueue(File f) throws LoaderException, IOException{
         String filePath = f.getAbsolutePath();
