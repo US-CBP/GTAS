@@ -26,9 +26,29 @@ public class BookingDetail extends BaseEntityAudit {
 	@Temporal(TemporalType.DATE)
 	private Date etaDate;
 
+	// IS NOT UTC TIME. IT WILL BE STORED IN THE DATABASE AS UTC
+	// BUT IS ACTUALLY WHATEVER AIRPORT THE TIME CAME FROM
+	// TO SEE ETD LOOK AT ETD
+	@Column(name = "local_etd")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date localEtdDate;
+
+	// IS NOT UTC TIME. IT WILL BE STORED IN THE DATABASE AS UTC
+	// BUT IS ACTUALLY WHATEVER AIRPORT THE TIME CAME FROM
+	// TO SEE ETA TIME LOOK AT ETA
+	@Column(name = "local_eta")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date localEtaDate;
+
+	@Column(name = "etd")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date etd;
 
+	public void setEta(Date eta) {
+		this.eta = eta;
+	}
+
+	@Column(name = "eta")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date eta;
 
@@ -127,20 +147,20 @@ public class BookingDetail extends BaseEntityAudit {
 		this.etaDate = etaDate;
 	}
 
-	public Date getEtd() {
-		return etd;
+	public Date getLocalEtdDate() {
+		return localEtdDate;
 	}
 
-	public void setEtd(Date etd) {
-		this.etd = etd;
+	public void setLocalEtdDate(Date localEtdDate) {
+		this.localEtdDate = localEtdDate;
 	}
 
-	public Date getEta() {
-		return eta;
+	public Date getLocalEtaDate() {
+		return localEtaDate;
 	}
 
-	public void setEta(Date eta) {
-		this.eta = eta;
+	public void setLocalEtaDate(Date localEtaDate) {
+		this.localEtaDate = localEtaDate;
 	}
 
 	public String getOrigin() {
@@ -215,6 +235,17 @@ public class BookingDetail extends BaseEntityAudit {
         this.bags = bags;
     }
 
+	public Date getEtd() {
+		return etd;
+	}
+
+	public void setEtd(Date etd) {
+		this.etd = etd;
+	}
+
+	public Date getEta() {
+		return eta;
+	}
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -246,8 +277,10 @@ public class BookingDetail extends BaseEntityAudit {
 				"flightNumber='" + flightNumber + '\'' +
 				", etdDate=" + etdDate +
 				", etaDate=" + etaDate +
-				", etd=" + etd +
-				", eta=" + eta +
+				", localEtd=" + localEtdDate +
+				", localEta=" + localEtaDate +
+                ", etd=" + etd +
+                ", eta=" + eta +
 				", origin='" + origin + '\'' +
 				", originCountry='" + originCountry + '\'' +
 				", destination='" + destination + '\'' +

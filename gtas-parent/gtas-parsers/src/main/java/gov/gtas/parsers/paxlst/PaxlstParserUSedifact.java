@@ -128,8 +128,8 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
                 f.setCarrier(tdt.getC_airlineCode());
                 f.setOrigin(origin);
                 f.setDestination(dest);
-                f.setEta(eta);
-                f.setEtd(etd);
+                f.setLocalEtaDate(eta);
+                f.setLocalEtdDate(etd);
 
                 if (f.isValid()) {
                     parsedMessage.addFlight(f);

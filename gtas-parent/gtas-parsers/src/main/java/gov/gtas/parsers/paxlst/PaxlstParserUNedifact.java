@@ -204,8 +204,8 @@ public final class PaxlstParserUNedifact extends EdifactParser<ApisMessageVo> {
                 f.setCarrier(tdt.getC_carrierIdentifier());
                 f.setOrigin(origin);
                 f.setDestination(dest);
-                f.setEta(eta);
-                f.setEtd(etd);
+                f.setLocalEtaDate(eta);
+                f.setLocalEtdDate(etd);
 
                 if (f.isValid()) {
                     parsedMessage.addFlight(f);

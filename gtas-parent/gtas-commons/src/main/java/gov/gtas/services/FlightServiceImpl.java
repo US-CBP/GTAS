@@ -75,7 +75,7 @@ public class FlightServiceImpl implements FlightService {
     @Override
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights) {
 		List<FlightVo> flightVos = new ArrayList<>();
-		CountDownCalculator countDownCalculator = getCountDownCalculator();
+		CountDownCalculator countDownCalculator = new CountDownCalculator(new Date());
 		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
 			Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
@@ -115,16 +115,6 @@ public class FlightServiceImpl implements FlightService {
 			flightVos.add(vo);
 		}
 		return flightVos;
-	}
-
-	private CountDownCalculator getCountDownCalculator() {
-		Date currentTime;
-		if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
-			currentTime = new Date();
-		} else {
-			currentTime = appConfigurationService.offSetTimeZone(new Date());
-		}
-		return new CountDownCalculator(currentTime);
 	}
 
 	@Override
@@ -198,27 +188,19 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Flight> getFlightsThreeDaysForward() {
-		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class).getResultList();
-	}
-
-	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		Date now = appConfigurationService.offSetTimeZone(new Date());
+		Date now = new Date();
 		Date threeDays = getThreeDaysForward();
-		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "I");
+		return flightRespository.getFlightsInboundByDateRange(now, threeDays);
 	}
 
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
-		Date now = appConfigurationService.offSetTimeZone(new Date());
+		Date now = new Date();
 		Date threeDays = getThreeDaysForward();
-		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "O");
+		return flightRespository.getFlightsOutBoundByDateRange(now, threeDays);
 	}
 
 	private Date getThreeDaysForward() {
