@@ -89,7 +89,24 @@
               <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
           </li>
+          
         </ul>
+        
+       
+        	<ul class="nav navbar-nav navbar-right">
+         		 <li class="dropdown mobile-hide">
+            		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+              			Help<span class="caret"></span>
+           			 </a>
+           	 <ul class="dropdown-menu" role="menu">
+              	<li ><a href="#/aboutgtas">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                &nbsp;About GTAS</a>
+              </li>
+              </ul>
+          </ul>
+        
+        
 
         <ul class="nav navbar-nav navbar-right">
           <li data-toggle="hover" class="dropdown">
@@ -277,6 +294,9 @@
 <script src='adhocquery/AdhocQueryService.js'></script>
 <script src='seatsMap/SeatsMapController.js'></script>
 <script src='seatsMap/SeatService.js'></script>
+<script src='help/AboutGtasController.js'></script>
+<script src='help/AboutGtasService.js'></script>
+
 <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>

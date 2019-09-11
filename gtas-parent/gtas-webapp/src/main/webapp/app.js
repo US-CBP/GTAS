@@ -437,6 +437,24 @@ var app;
                         }
                     }
                 })
+                .state('aboutgtas', {
+                    url: '/aboutgtas',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.MANAGE_HITS],
+                    views: {
+                        '@': {
+                            controller: 'AboutGtasCtr',
+                            templateUrl: 'help/aboutgtas.html'
+                         }
+                        },
+                
+                   resolve: {
+                     appVersionNumber: function(aboutGtasService){
+                         return aboutGtasService.getApplicationVersionNumber();
+                     }
+                 }
+
+                })
                 .state('adhocquery', {
                     url: '/adhocquery',
                     authenticate: true,
@@ -683,7 +701,8 @@ var app;
                 userlocation: {name: ['userlocation']},
                 upload: {name: ['upload']},
                 cases: {name: ['cases']},
-                onedaylookout: {name: ['onedaylookout']}
+                onedaylookout: {name: ['onedaylookout']},
+                aboutgtas: {name: ['aboutgtas']}
             };
             $scope.onRoute = function (key) {
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);
