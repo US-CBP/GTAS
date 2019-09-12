@@ -144,7 +144,7 @@ public class LoaderScheduler {
 
     try {
       Path destPath = toFileSystem.getPath(messageProcessedDir + File.separator + fileName);
-      logger.info("Moving file to PROCESSED in LoaderScheduler: " + destPath.toString());
+      logger.info("Moving file to PROCESSED: " + destPath.toString());
       Path sourcePath = toFileSystem.getPath(messageWorkingDir + File.separator + fileName);
 
       Files.move(sourcePath, destPath, StandardCopyOption.ATOMIC_MOVE);
