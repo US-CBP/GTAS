@@ -47,13 +47,11 @@ public class UtilsTest {
 
   private final String TESTFILE = "TESTFILENAME";
 
-    @Before
-    public void before() {
-    }
+  @Before
+  public void before() {}
 
-    @After
-    public void after() {
-    }
+  @After
+  public void after() {}
 
     @Test
     public void testMoveToDir_ERROR() throws LoaderException {
@@ -85,7 +83,7 @@ public class UtilsTest {
       moveToDirWrapper(workingstr, test);
       String pathstr = workingstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Processed dir");
+      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in WORKING dir");
     }
 
 
@@ -103,13 +101,13 @@ public class UtilsTest {
       moveToDirWrapper(workingstr, test);
       String originalpathstr = workingstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in WORKING dir");
 
       //repeat with the same filenames, expect 2 files in the target dir.
       File test2 = getOriginFile(filename, "more text stuff");
 
       File dupeFile = moveToDirWrapper(workingstr, test2);
-      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in WORKING dir");
       assertNotEquals(originalpathstr, dupeFile.toPath().toString());
     }
 
@@ -140,13 +138,13 @@ public class UtilsTest {
       moveToDirWrapper(errorstr, test);
       String originalpathstr = errorstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in ERROR dir");
 
       //repeat with the same filenames, expect 2 files in the target dir.
       File test2 = getOriginFile(filename, "more text stuff");
 
       File dupeFile = moveToDirWrapper(errorstr, test2);
-      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in ERROR dir");
       assertNotEquals(originalpathstr, dupeFile.toPath().toString());
     }
 
@@ -155,9 +153,9 @@ public class UtilsTest {
     // PRIVATE METHODS
     // ---------------------------
     
-    // Wrapper for the method under test - ensures moved files get deleted since
-    // we are actually writing it to disk for integration tests. Calling Utils.moveToDir
-    // directly will require manual cleanup.
+    // Wrapper for the method under test, Utils.moveToDir.
+    // Ensures moved files get deleted on exit since we are actually writing to disk 
+    // for integration tests. Calling Utils.moveToDir directly will require manual cleanup.
     private File moveToDirWrapper(String target, File file) throws LoaderException {
       File movedFile = Utils.moveToDirectory(target, file);
       movedFile.deleteOnExit();
