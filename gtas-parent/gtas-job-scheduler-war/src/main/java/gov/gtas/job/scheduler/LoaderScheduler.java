@@ -96,7 +96,6 @@ public class LoaderScheduler {
 	@Autowired
 	private MessageStatusRepository messageStatusRepository;
 
-
 	@Value("${message.dir.origin}")
 	private String messageOriginDir;
 

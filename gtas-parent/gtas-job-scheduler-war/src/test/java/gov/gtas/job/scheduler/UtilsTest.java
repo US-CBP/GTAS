@@ -11,19 +11,30 @@ package gov.gtas.job.scheduler;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.annotation.Value;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.File;
 import java.io.FileWriter;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import gov.gtas.job.scheduler.Utils;
 import gov.gtas.services.LoaderException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = UtilsTest.class)
+@TestPropertySource("classpath:default.application.properties")
 public class UtilsTest {
+
+	@Value("${message.dir.origin}")
+	private String originstr;
 
 	@Value("${message.dir.processed}")
 	private String processedstr;
@@ -31,9 +42,10 @@ public class UtilsTest {
 	@Value("${message.dir.working}")
 	private String workingstr;
 
-	@Value("${message.dir.working}")
+	@Value("${message.dir.error}")
 	private String errorstr;
 
+  private final String TESTFILE = "TESTFILENAME";
 
     @Before
     public void before() {
@@ -41,15 +53,14 @@ public class UtilsTest {
 
     @After
     public void after() {
-      
     }
 
     @Test
     public void testMoveToDir_ERROR() throws LoaderException {
-      String filename = "TESTFILENAME";
-      File test = getWorkingFile(filename, "THIS IS SOME TEST TEXT");
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "THIS IS SOME TEST TEXT");
 
-      Utils.moveToDirectory(errorstr, test);
+      moveToDirWrapper(errorstr, test);
       String pathstr = errorstr + File.separator + filename;
 
       Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Error dir");
@@ -57,28 +68,117 @@ public class UtilsTest {
 
     @Test
     public void testMoveToDir_PROCESSED() throws LoaderException {
-      String filename = "TESTFILENAME2";
-      File test = getWorkingFile(filename, "more text stuff");
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "more text stuff");
 
-      Utils.moveToDirectory(processedstr, test);
-      String pathstr = errorstr + File.separator + filename;
+      moveToDirWrapper(processedstr, test);
+      String pathstr = processedstr + File.separator + filename;
 
       Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Processed dir");
     }
 
-    private File getWorkingFile(String fileName, String fileText) {
-      File file = new File(Paths.get("").toAbsolutePath().getParent() + File.separator + fileName);
+    @Test
+    public void testMoveToDir_WORKING() throws LoaderException {
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "more text stuff");
 
+      moveToDirWrapper(workingstr, test);
+      String pathstr = workingstr + File.separator + filename;
+
+      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Processed dir");
+    }
+
+
+    /**
+     * TestMoveDuplicates tests - Utils.moveToDirectory should not overwrite
+     * existing files when moving, but should append a timestamp and save as a new
+     * file.
+     * @throws LoaderException
+     */
+    @Test
+    public void testMoveDuplicates_WORKING() throws LoaderException {
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "more text stuff");
+
+      moveToDirWrapper(workingstr, test);
+      String originalpathstr = workingstr + File.separator + filename;
+
+      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+
+      //repeat with the same filenames, expect 2 files in the target dir.
+      File test2 = getOriginFile(filename, "more text stuff");
+
+      File dupeFile = moveToDirWrapper(workingstr, test2);
+      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+    }
+
+    
+    @Test
+    public void testMoveDuplicates_PROCESSED() throws LoaderException {
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "more text stuff");
+
+      moveToDirWrapper(processedstr, test);
+      String originalpathstr = processedstr + File.separator + filename;
+
+      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+
+      //repeat with the same filenames, expect 2 files in the target dir.
+      File test2 = getOriginFile(filename, "more text stuff");
+
+      File dupeFile = moveToDirWrapper(processedstr, test2);
+      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+    }
+    
+    @Test
+    public void testMoveDuplicates_ERROR() throws LoaderException {
+      String filename = TESTFILE;
+      File test = getOriginFile(filename, "more text stuff");
+
+      moveToDirWrapper(errorstr, test);
+      String originalpathstr = errorstr + File.separator + filename;
+
+      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+
+      //repeat with the same filenames, expect 2 files in the target dir.
+      File test2 = getOriginFile(filename, "more text stuff");
+
+      File dupeFile = moveToDirWrapper(errorstr, test2);
+      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+    }
+
+
+    // ---------------------------
+    // PRIVATE METHODS
+    // ---------------------------
+    
+    // Wrapper for the method under test - ensures moved files get deleted since
+    // we are actually writing it to disk for integration tests. Calling Utils.moveToDir
+    // directly will require manual cleanup.
+    private File moveToDirWrapper(String target, File file) throws LoaderException {
+      File movedFile = Utils.moveToDirectory(target, file);
+      movedFile.deleteOnExit();
+      return movedFile;
+    }
+
+    //Creates a new file in the origin directory, deletes it on test completion.
+    private File getOriginFile(String fileName, String fileText) throws LoaderException {
+      File file = new File(Paths.get(originstr) + File.separator + fileName);
+
+      file.deleteOnExit();
       try {
-      FileWriter fw = new FileWriter(file, false);
-      fw.write(fileText);
-      fw.close();
+        FileWriter fw = new FileWriter(file, false);
+        fw.write(fileText);
+        fw.close();
       }
-      catch (Exception ex) {
-
-      }
+      catch (Exception ex) { }
       
       return file;
     }
 
-}
+
+
+} //

@@ -6,11 +6,6 @@
  */
 package gov.gtas.job.scheduler;
 
-/*
- * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
- * Please see LICENSE.txt for details.
- */
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +16,6 @@ import java.util.Date;
 import gov.gtas.services.LoaderException;
 import java.nio.file.*;
 import org.apache.commons.io.FilenameUtils;
-
 
 public class Utils {
   private static final Logger logger = LoggerFactory.getLogger(Utils.class);
