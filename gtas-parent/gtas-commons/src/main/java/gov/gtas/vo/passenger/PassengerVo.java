@@ -46,9 +46,7 @@ public class PassengerVo extends BaseVo {
     private String flightNumber;
     private String fullFlightNumber;
     private String carrier;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)        
     private Date etd;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.DATE_FORMAT)        
     private Date eta;
     private String etdLocalTZ;
     private String etaLocalTZ;

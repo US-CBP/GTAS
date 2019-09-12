@@ -13,7 +13,7 @@ app.service("paxModel", [function () {
       startDate = new Date(),
       endDate = new Date();
   
-    endDate.setDate(endDate.getDate() + 3);
+    endDate.setDate(endDate.getDate() + 1);
 
   this.initial = function (params) {
       return {
@@ -24,8 +24,8 @@ app.service("paxModel", [function () {
           origin: params && params.origin ? params.origin : [],
           dest: params && params.dest ? params.dest : [],
           direction: params && params.direction ? params.direction : 'I',
-          etaStart: params && params.eta ? new Date(params.eta.split('-').join(',')) : startDate,
-          etaEnd: params && params.etd ? new Date(params.etd.split('-').join(',')) : endDate,
+          etaStart: params && params.eta ? params.eta : startDate,
+          etaEnd: params && params.etd ? params.etd : endDate,
           sort: defaultSort
       };
   };

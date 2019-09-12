@@ -43,8 +43,6 @@ public interface FlightService {
 	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(
 			String firstName, String lastName, Set<Document> documents);
 
-	public List<Flight> getFlightsThreeDaysForward();
-
 	public List<Flight> getFlightsThreeDaysForwardInbound();
 
 	public List<Flight> getFlightsThreeDaysForwardOutbound();
@@ -52,7 +50,7 @@ public interface FlightService {
 	public Set<Passenger> getAllPassengers(Long id);
 
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId);
-	
+
 	public void setSinglePassenger(Long passengerId, Long flightId);
 
 	public int getPassengerCount(Flight f);

@@ -802,11 +802,8 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
     }
 
     private CaseVo calculateCountDownDisplayString(CaseVo caseVo) {
-        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
-            caseVo.setCurrentTime(new Date());
-        } else {
-            caseVo.setCurrentTime(appConfigurationService.offSetTimeZone(new Date()));
-        }
+
+        caseVo.setCurrentTime(new Date());
         CountDownCalculator countDownCalculator = new CountDownCalculator(caseVo.getCurrentTime());
         Date countDownTo = caseVo.getCountdownTime();
         CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo);
@@ -814,17 +811,6 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
         return caseVo;
     }
 
-
-
-    @Override
-    public Date getCurrentServerTime() {
-        if (Boolean.parseBoolean(appConfigurationRepository.findByOption(AppConfigurationRepository.UTC_SERVER).getValue())) {
-            return new Date();
-        } else {
-            return appConfigurationService.offSetTimeZone(new Date());
-        }
-
-    }
 
     /**
      * Utility method to fetch model object

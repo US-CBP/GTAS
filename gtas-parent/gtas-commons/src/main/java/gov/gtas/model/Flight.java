@@ -46,6 +46,9 @@ public class Flight extends BaseEntityAudit {
 
     /** Application will strip the timestamp off and use this when making a flight.
      *  This is the date (**not** the time) that the flight will take place.
+     *  THIS VALUE IS DERIVED FROM LOCAL TIME AND IS NOT IN UTC -
+     *  E.G. A FLIGHT LANDING IN TZ UTC + 4 at 12:01AM 1/2 WILL BE
+     *  SET TO 1/2 INSTEAD OF THE UTC DATE OF 1/1.
      *  */
     @Column(name = "etd_date")
     @Temporal(TemporalType.DATE)

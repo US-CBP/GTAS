@@ -42,7 +42,7 @@
       };
       
       $scope.updateOnDirectionChange = function(){
-        
+
         var isAdminUser = flightSearchOptions.data.adminUser;
           
           if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -162,7 +162,7 @@
       };
       
       var loadFlightDirection = function() {
-        
+
            var isAdminUser = flightSearchOptions.data.adminUser;
            
            if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -171,7 +171,7 @@
              destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
              $scope.model.dest = destinationAirports;
              flightDirections = flightDirections.splice(2, 1);
-             
+
            }
 
         };  
@@ -295,6 +295,8 @@
               });
           }
       };
+
+
       //Front-end pagination configuration object for gridUi
       //Should only be active on stateName === 'queryFlights'
       $scope.flightsQueryGrid = {
@@ -362,7 +364,7 @@
               field: 'passengerCount',
               displayName: 'Passengers',
               enableFiltering: false,
-              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
+              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
           },
           {
               name: 'countDownTimer',
@@ -439,9 +441,11 @@
 
           },
           {
-              name: 'eta', displayName: 'pass.eta', headerCellFilter: 'translate'
+              name: 'eta', displayName: 'pass.eta', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
           },
-          {name: 'etd', displayName: 'pass.etd', headerCellFilter: 'translate'},
+          {
+              name: 'etd', displayName: 'pass.etd', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+          },
           {
               name: 'origin', displayName: 'flight.origin', headerCellFilter: 'translate', visible: true,
 
@@ -507,14 +511,21 @@
          {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
          {
              name: 'eta',
+             type: 'date',
              sort: {
                  direction: uiGridConstants.DESC,
                  priority: 2
              },
+             cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
              displayName:'pass.eta', headerCellFilter: 'translate',
              visible: (stateName === 'paxAll')
          },
-         {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
+         {name: 'etd',
+             type: 'date',
+             displayName:'pass.etd',
+             headerCellFilter: 'translate',
+             cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
+             visible: (stateName === 'paxAll')},
          {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
          {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},

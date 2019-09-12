@@ -1,0 +1,57 @@
+<style>
+
+section {
+    border: 1px solid;
+    border-color: LightGray;
+    border-radius: 10px;
+    padding-bottom: 20px;
+}
+.selectize-control {
+    margin-left: 8em;
+}
+.selectize-input input {
+    width: 264px !important;
+}
+
+    .md-contact-suggestion {
+        min-width: 25em;
+    }
+
+    .md-contact-suggestion span.md-contact-email {
+        overflow: visible !important;
+    }
+
+    .md-contact-suggestion .md-contact-name {
+        display: none !important;
+    }
+
+
+     .filter-form {
+        display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+        display: -moz-box; /* OLD - Firefox 19- (doesn't work very well) */
+        display: -ms-flexbox; /* TWEENER - IE 10 */
+        display: -webkit-flex; /* NEW - Chrome */
+        display: flex; /* NEW, Spec - Opera 12.1, Firefox 20+ */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+        overflow-x: hidden;
+        overflow-y: hidden;
+    }
+
+</style>
+
+
+<md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="About GTAS" >
+            <md-content class="md-padding">
+              
+                <section layout="row" layout-padding layout-margin layout-align="left" style="padding-bottom: 2px;">
+
+                        <label><strong>Application Version Number:</strong>&nbsp;{{gtasVersionNumber}}</label> 
+                    
+                </section>
+               
+            </md-content>
+        </md-tab>
+    </md-tabs>
+</md-content>
