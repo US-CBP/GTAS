@@ -42,9 +42,6 @@ public class LocalFileIntakeScheduler {
     @Value("${message.dir.error}")
     private String messageErrorDir;
 
-    @Value("${message.dir.processed}")
-    private String messageProcessedDir;
-
     @Value("${outbound.loader.jms.queue}")
     private String outboundLoaderQueue;
 
