@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -17,6 +16,7 @@ import javax.persistence.PersistenceContext;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,6 +55,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Resource
     private HitsSummaryRepository hitsSummaryRepository;
+
+    @Resource
+    private DocumentRepository documentRepository;
 
     @Resource
     private DispositionStatusRepository dispositionStatusRepo;
@@ -101,7 +104,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     @Transactional
     public PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request) {
-        List<PassengerVo> rv = new ArrayList<>();
+        List<PassengerGridItemVo> rv = new ArrayList<>();
         Pair<Long, List<Object[]>> tuple = passengerRespository.findByCriteria(flightId, request);
         int count = 0;
         for (Object[] objs : tuple.getRight()) {
@@ -118,33 +121,15 @@ public class PassengerServiceImpl implements PassengerService {
                 continue;
             }
 
-            PassengerVo vo = new PassengerVo();
+            PassengerGridItemVo vo = new PassengerGridItemVo();
             BeanUtils.copyProperties(p, vo);
             BeanUtils.copyProperties(p.getPassengerDetails(), vo);
             BeanUtils.copyProperties(p.getPassengerTripDetails(), vo);
             vo.setId(p.getId());
 
-
-            
-            Iterator<Document> docIter = p.getDocuments().iterator();
-    		while (docIter.hasNext()) {
-    			Document d = docIter.next();
-    			DocumentVo docVo = new DocumentVo();
-    			docVo.setDocumentNumber(d.getDocumentNumber());
-    			docVo.setDocumentType(d.getDocumentType());
-    			docVo.setIssuanceCountry(d.getIssuanceCountry());
-    			docVo.setExpirationDate(d.getExpirationDate());
-    			docVo.setIssuanceDate(d.getIssuanceDate());
-    			vo.addDocument(docVo);
-    		}
-            
-            List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(f.getId(), p.getId());
-            if (CollectionUtils.isNotEmpty(seatList)) {
-                List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
-                        .collect(Collectors.toList());
-                if (seats.size() == 1) {
-                    vo.setSeat(seats.get(0));
-                }
+            for (Document d : p.getDocuments()) {
+                DocumentVo docVo = DocumentVo.fromDocument(d);
+                vo.addDocument(docVo);
             }
 
             if (hit != null) {
@@ -375,27 +360,6 @@ public class PassengerServiceImpl implements PassengerService {
         return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
     }
 
- /*   @Override
-    @Transactional
-    public List<Passenger> getPassengersByLastName(String lastName) {
-        return passengerRespository.getPassengersByLastName(lastName);
-    }
-*/
-    @Override
-    public void fillWithHitsInfo(PassengerVo vo, Long flightId, Long passengerId) {
-        List<HitsSummary> hitsSummary = hitsSummaryRepository.findByFlightIdAndPassengerId(flightId, passengerId);
-        if (!CollectionUtils.isEmpty(hitsSummary)) {
-            boolean isRuleHit = false;
-            boolean isWatchlistHit = false;
-            for (HitsSummary hs : hitsSummary) {
-                isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
-                isWatchlistHit =  hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
-            }
-            vo.setOnRuleHitList(isRuleHit);
-            vo.setOnWatchList(isWatchlistHit);
-        }
-    }
-
     @Override
     @Transactional
     public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
@@ -479,4 +443,35 @@ public class PassengerServiceImpl implements PassengerService {
 		String sqlStr = "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES("+f.getId()+","+id+");";
 		em.createNativeQuery(sqlStr).executeUpdate();
 	}
+
+	@Override
+    public Map<Long, List<HitsSummary>> getHitsSummaryMappedToPassengerIds(Set<Long> passengerIds) {
+        List<Long> paxIds = new ArrayList<>(passengerIds);
+        Set<HitsSummary> hitsSummaries = hitsSummaryRepository.findHitsByPassengerIdList(paxIds);
+        Map<Long, List<HitsSummary>> mappedValues = new HashMap<>();
+        for (HitsSummary hs : hitsSummaries) {
+            Long paxId = hs.getPaxId();
+            List<HitsSummary> hsList = new ArrayList<>();
+            hsList.add(hs);
+            mappedValues.put(paxId, hsList);
+        }
+        return mappedValues;
+    }
+
+    @Override
+    public Map<Long, Set<Document>> getDocumentMappedToPassengerIds(Set<Long> passengerIds) {
+        Set<Document> docSet = documentRepository.getAllByPaxId(passengerIds);
+        Map<Long, Set<Document>> mappedValues = new HashMap<>();
+        for (Document document : docSet) {
+            Long paxId = document.getPaxId();
+            if (mappedValues.containsKey(paxId)) {
+                mappedValues.get(paxId).add(document);
+            } else {
+                Set<Document> documentSet = new HashSet<>();
+                documentSet.add(document);
+                mappedValues.put(paxId, documentSet);
+            }
+        }
+        return mappedValues;
+    }
 }
