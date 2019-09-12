@@ -25,21 +25,36 @@ public class MutableFlightDetails {
     private
     Flight flight;
 
-    /**
-     * calculated field
-     */
+    // ETD IS NOT UTC TIME. IT WILL BE STORED IN THE DATABASE AS UTC
+    // BUT IS ACTUALLY WHATEVER AIRPORT THE TIME CAME FROM
+    // TO SEE ETD LOOK AT etd
     @Column(name = "full_etd_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date localEtdDate;
+
+    // ETA IS NOT UTC TIME. IT WILL BE STORED IN THE DATABASE AS UTC
+    // BUT IS ACTUALLY WHATEVER AIRPORT THE TIME CAME FROM
+    // TO SEE ETA TIME LOOK AT eta
+    @Column(name = "full_eta_timestamp")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date localEtaDate;
+
+    @Column(name = "full_utc_etd_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date etd;
 
-    @Column(name = "full_eta_timestamp")
+    @Column(name = "full_utc_eta_timestamp")
     @Temporal(TemporalType.TIMESTAMP)
     private Date eta;
-
+    
+    /**
+     * calculated field
+     *  THIS VALUE IS DERIVED FROM LOCAL TIME AND IS NOT IN UTC - E.G. A FLIGHT TAKING OFF IN TZ + 4 at 12:01AM 1/2 WILL BE
+     *  SET TO 1/2 INSTEAD OF THE UTC DATE OF 1/1.
+     */
     @Column(name = "eta_date")
     @Temporal(TemporalType.DATE)
     private Date etaDate;
-
 
     public Long getFlightId() {
         return flightId;
@@ -57,16 +72,28 @@ public class MutableFlightDetails {
         this.flight = flight;
     }
 
-    public Date getEta() {
-        return eta;
+    public Date getLocalEtaDate() {
+        return localEtaDate;
     }
 
-    public void setEta(Date eta) {
-        this.eta = eta;
+    public void setLocalEtaDate(Date localEtaDate) {
+        this.localEtaDate = localEtaDate;
     }
 
     public Date getEtaDate() {
         return etaDate;
+    }
+
+    public Date getLocalEtdDate() {
+        return localEtdDate;
+    }
+
+    public void setLocalEtdDate(Date localEtdDate) {
+        this.localEtdDate = localEtdDate;
+    }
+
+    public void setEtaDate(Date etaDate) {
+        this.etaDate = etaDate;
     }
 
     public Date getEtd() {
@@ -77,7 +104,11 @@ public class MutableFlightDetails {
         this.etd = etd;
     }
 
-    public void setEtaDate(Date etaDate) {
-        this.etaDate = etaDate;
+    public Date getEta() {
+        return eta;
+    }
+
+    public void setEta(Date eta) {
+        this.eta = eta;
     }
 }

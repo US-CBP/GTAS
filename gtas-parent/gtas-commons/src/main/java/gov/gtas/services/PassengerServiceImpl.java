@@ -160,6 +160,8 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setFlightNumber(f.getFlightNumber());
             vo.setFullFlightNumber(f.getFullFlightNumber());
             vo.setCarrier(f.getCarrier());
+            vo.setFlightOrigin(f.getOrigin());
+            vo.setFlightDestination(f.getDestination());
             vo.setEtd(f.getMutableFlightDetails().getEtd());
             vo.setEta(f.getMutableFlightDetails().getEta());
             rv.add(vo);

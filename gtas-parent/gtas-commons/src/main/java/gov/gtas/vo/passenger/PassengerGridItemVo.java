@@ -35,9 +35,7 @@ public class PassengerGridItemVo extends BaseVo {
     private String flightNumber;
     private String fullFlightNumber;
     private String carrier;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etd;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date eta;
     private String flightOrigin;
     private String flightDestination;

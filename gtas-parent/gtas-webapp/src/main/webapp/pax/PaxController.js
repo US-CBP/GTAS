@@ -1198,8 +1198,12 @@
                   pax.hitCount+=1;
                 }
               }
-              pax.eta = Date.parse(passengers[0].eta);
-              pax.etd = Date.parse(passengers[0].etd);
+              let firstPassenger = passengers[0];
+              pax.eta = firstPassenger.eta;
+              pax.etd = firstPassenger.etd;
+              pax.flightOrigin = firstPassenger.flightOrigin;
+              pax.flightDestination = firstPassenger.flightDestination;
+              pax.flightNumber = firstPassenger.fullFlightNumber;
             }
             $scope.pax = pax;
           },
@@ -1477,6 +1481,8 @@
         {
           field: "eta",
           name: "eta",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           sort: {
             direction: uiGridConstants.DESC,
             priority: 2
@@ -1487,6 +1493,8 @@
         {
           field: "etd",
           name: "etd",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           displayName: "pass.etd",
           headerCellFilter: "translate"
         },
@@ -1581,6 +1589,8 @@
         },
         {
           name: "eta",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           sort: {
             direction: uiGridConstants.DESC,
             priority: 2
@@ -1591,6 +1601,8 @@
         },
         {
           name: "etd",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           displayName: "pass.etd",
           headerCellFilter: "translate",
           visible: stateName === "paxAll"

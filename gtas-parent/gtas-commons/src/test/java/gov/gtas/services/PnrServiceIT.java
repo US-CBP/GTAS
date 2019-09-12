@@ -137,8 +137,8 @@ public class PnrServiceIT {
 		String b = "JFK";
 		f.setDestination(b);
 		MutableFlightDetails mutableFlightDetails = new MutableFlightDetails(f.getId());
-		mutableFlightDetails.setEta(new Date());
-		mutableFlightDetails.setEtd(new Date("7/31/2015"));
+		mutableFlightDetails.setLocalEtaDate(new Date());
+		mutableFlightDetails.setLocalEtdDate(new Date("7/31/2015"));
 		f.setFlightNumber("528");
 		String c = "US";
 		f.setDestinationCountry(c);

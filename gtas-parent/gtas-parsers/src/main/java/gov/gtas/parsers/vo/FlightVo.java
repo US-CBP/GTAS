@@ -24,13 +24,14 @@ public class FlightVo implements Validatable {
     private String origin;
     private String destination;
     /*
-    Etd is a field with a timestamp in the parser.
-    Importantly the label made on the bucket/thread used in the loader will not be with a timestamp.
-    It will be only the date.
-    ETD date with a timestamp exist within mutable flight object.
-    * */
-    private Date etd;
-    private Date eta;
+    THIS IS NOT UTC TIME. LOCAL ETD DATE IS IN WHATEVER LOCAL TIME OF THE AIRPORT WHERE FLIGHT ORIGINATES
+    This field (stripped to just the date instead of a date-time)
+     is used in the loader as part of the unique label of a flight.
+     * */
+    private Date localEtdDate;
+
+    // THIS IS NOT UTC TIME. LOCAL ETA DATE IS IN WHATEVER LOCAL TIME OF THE AIRPORT WHERE FLIGHT IS DESTINED TO
+    private Date localEtaDate;
     private String marketingFlightNumber;
     private boolean isCodeShareFlight=false;
     private boolean isMarketingFlight=false;
@@ -89,17 +90,17 @@ public class FlightVo implements Validatable {
         this.destination = destination;
     }
 
-    public Date getEtd() {
-        return etd;
+    public Date getLocalEtdDate() {
+        return localEtdDate;
     }
-    public void setEtd(Date etd) {
-        this.etd = etd;
+    public void setLocalEtdDate(Date localEtdDate) {
+        this.localEtdDate = localEtdDate;
     }
-    public Date getEta() {
-        return eta;
+    public Date getLocalEtaDate() {
+        return localEtaDate;
     }
-    public void setEta(Date eta) {
-        this.eta = eta;
+    public void setLocalEtaDate(Date localEtaDate) {
+        this.localEtaDate = localEtaDate;
     }
     
     @Override
@@ -113,7 +114,7 @@ public class FlightVo implements Validatable {
                 && StringUtils.isNotBlank(this.origin) 
                 && StringUtils.isNotBlank(this.flightNumber)
                 && StringUtils.isNotBlank(this.carrier)
-                && this.etd != null;
+                && this.localEtdDate != null;
     }
 
     public UUID getUuid() {
@@ -123,7 +124,7 @@ public class FlightVo implements Validatable {
     public boolean equalsThisBD(BookingDetail bookingDetail) {
    return
         flightNumber != null && flightNumber.equals(bookingDetail.getFlightNumber()) &&
-        etd != null && DateUtils.stripTime(etd).equals(bookingDetail.getEtdDate()) &&
+        localEtdDate != null && DateUtils.stripTime(localEtdDate).equals(bookingDetail.getEtdDate()) &&
         origin != null && origin.equals(bookingDetail.getOrigin()) &&
         destination != null && destination.equals(bookingDetail.getDestination());
     }
