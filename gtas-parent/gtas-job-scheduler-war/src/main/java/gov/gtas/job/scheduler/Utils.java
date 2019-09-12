@@ -29,16 +29,16 @@ public class Utils {
    * @throws LoaderException
    */
   public static File moveToDirectory(String target, File file) throws LoaderException {
+    if (target.isEmpty() || file == null) {
+      return file;
+    }
     String fullTarget = target + File.separator + file.getName();
     Path targetPath = Paths.get(fullTarget);
     
     try {
       if(Files.exists(targetPath)) {
-        String fileName = file.getName();
-        String ext = "." + FilenameUtils.getExtension(fileName);
-        String nameOnly = FilenameUtils.getBaseName(fileName);
-
-        targetPath = targetPath.resolveSibling(nameOnly + getTimestamp() + ext);
+        String uniqueFilename = getUniqueFilename(file.getName());
+        targetPath = targetPath.resolveSibling(uniqueFilename);
         logger.warn("Duplicate file in target dir! File has been renamed: " + targetPath.toString());
       }
 
@@ -49,6 +49,13 @@ public class Utils {
     }
 
     return targetPath.toFile();
+  }
+
+  private static String getUniqueFilename(String filename) {
+    String ext = FilenameUtils.getExtension(filename).isEmpty() ? "" : "." + FilenameUtils.getExtension(filename);
+    String nameOnly = FilenameUtils.getBaseName(filename);
+
+    return nameOnly + getTimestamp() + ext;
   }
 
   private static String getTimestamp() {

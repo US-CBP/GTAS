@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.annotation.Value;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.File;
@@ -45,7 +46,8 @@ public class UtilsTest {
 	@Value("${message.dir.error}")
 	private String errorstr;
 
-  private final String TESTFILE = "TESTFILENAME";
+  private final String TESTFILE = "TESTFILENAME.txt";
+  private final String TESTFILE2 = "TESTFILENAME";
 
   @Before
   public void before() {}
@@ -55,7 +57,7 @@ public class UtilsTest {
 
     @Test
     public void testMoveToDir_ERROR() throws LoaderException {
-      String filename = TESTFILE;
+      String filename = TESTFILE2;
       File test = getOriginFile(filename, "THIS IS SOME TEST TEXT");
 
       moveToDirWrapper(errorstr, test);
@@ -86,6 +88,17 @@ public class UtilsTest {
       Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in WORKING dir");
     }
 
+    @Test
+    public void testMoveToDir_NULL() throws LoaderException {
+      String filename = TESTFILE2;
+      File test = getOriginFile(filename, "more text stuff");
+
+      moveToDirWrapper("", test);
+      String pathstr = workingstr + File.separator + filename;
+
+      assertFalse("File should not exist in WORKING", Files.exists(Paths.get(pathstr)));
+    }
+
 
     /**
      * TestMoveDuplicates tests - Utils.moveToDirectory should not overwrite
@@ -95,7 +108,7 @@ public class UtilsTest {
      */
     @Test
     public void testMoveDuplicates_WORKING() throws LoaderException {
-      String filename = TESTFILE;
+      String filename = TESTFILE2;
       File test = getOriginFile(filename, "more text stuff");
 
       moveToDirWrapper(workingstr, test);
