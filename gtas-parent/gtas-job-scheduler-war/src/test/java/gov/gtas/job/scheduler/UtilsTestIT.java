@@ -30,9 +30,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = UtilsTest.class)
+@ContextConfiguration(classes = UtilsTestIT.class)
 @TestPropertySource("classpath:default.application.properties")
-public class UtilsTest {
+public class UtilsTestIT {
 
 	@Value("${message.dir.origin}")
 	private String originstr;
@@ -90,11 +90,14 @@ public class UtilsTest {
 
     @Test
     public void testMoveToDir_NULL() throws LoaderException {
-      String filename = TESTFILE2;
-      File test = getOriginFile(filename, "more text stuff");
-
-      moveToDirWrapper("", test);
+      String filename = TESTFILE;
       String pathstr = workingstr + File.separator + filename;
+
+      File existing = new File(pathstr);
+      existing.delete();
+
+      File test = getOriginFile(filename, "more text stuff");
+      moveToDirWrapper("", test);
 
       assertFalse("File should not exist in WORKING", Files.exists(Paths.get(pathstr)));
     }
