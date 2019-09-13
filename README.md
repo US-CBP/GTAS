@@ -1,3 +1,5 @@
+[![HitCount](http://hits.dwyl.io/US-CBP/GTAS.svg)](http://hits.dwyl.io/US-CBP/GTAS)
+
 #
 <p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/62487148-1ad6c580-b78f-11e9-9327-816d1590ad7f.png"></p>
 
