@@ -12,7 +12,7 @@ import gov.gtas.vo.passenger.CountDownVo;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 class CountDownCalculator {
@@ -52,7 +52,7 @@ class CountDownCalculator {
     }
     private LocalDateTime convertToLocalDateViaMilisecond(Date dateToConvert) {
         return Instant.ofEpochMilli(dateToConvert.getTime())
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneOffset.UTC)
                 .toLocalDateTime();
     }
 }
