@@ -22,15 +22,14 @@ public class SSRDoco {
 	    private String visaApplicableCountry;
 	    private boolean infantIndicator;
 	    private String nameInformation;
+	   
 	    
-	    
-
 	    public SSRDoco(SSR ssr) {
 	        this.ssr = ssr;
 	        if (ssr.getFreeText() != null) {
 	            populateSSRDoco();
 	        } else {
-	            logger.warn("NO SSR FREE TEXT. SSR DOCS NOT POPULATING!!");
+	            logger.warn("NO SSR FREE TEXT. SSR DOCO NOT POPULATING!!");
 	        }
 	    }
 
@@ -63,41 +62,35 @@ public class SSRDoco {
 	                subSegment = freeTextInArrayForm[i + 1];
 	            }
 	            switch (i) {
-	                case 0 :
-	                    /*Always null. For example /P/USA/965155744/USA/24AUG53/F/22OCT24/FLEISHMAN/BOBBY/ALLEEN' will parse to
-	                    an array containing  { "", P, USA, 965155744, USA, 24AUG53, F, 22OCT24, FLEISHMAN, BOBBY, ALLEEN }
-	                    All legal messages are expected to parse the same way.
-	                    */
-	                    break;
-	                case 1:
+	                case 0:
 	                	this.placeOfBirth = subSegment;
 	                    break;
-	                case 2:
+	                case 1:
                         SSRDocoType.fromString(subSegment).ifPresent(ssrDocs -> this.ssrDocoType = ssrDocs);
                         if (this.ssrDocoType == null) {
                             this.ssrDocoType = SSRDocoType.NOT_PROVIDED;
                         }
 	                    break;
-	                case 3:
+	                case 2:
 	                	this.visaDocNumber = subSegment;
 	                    break;
-	                case 4:
+	                case 3:
 	                	this.visaDocPlaceOfIssuance = subSegment;
 	                    break;
-	                case 5:
+	                case 4:
 	                	this.visaDocIssuanceDate = subSegment;
 	                    break;
-	                case 6:
+	                case 5:
 	                	this.visaApplicableCountry = subSegment;
 	                    break;
-	                case 7:
+	                case 6:
 	                	this.infantIndicator = "I".equalsIgnoreCase(subSegment);
 	                    break;
-	                case 8:
+	                case 7:
 	                	this.nameInformation = subSegment;
 	                    break;
 	                default:
-	                    logger.warn("FIELD NOT IMPLEMENTED FOR SSR DOCS. CHECK IMPLEMENTATION FOR ARRAY AT SPOT " + i);
+	                    logger.warn("FIELD NOT IMPLEMENTED FOR SSR DOCO. CHECK IMPLEMENTATION FOR ARRAY AT SPOT " + i);
 	                    break;
 	            }
 	        }

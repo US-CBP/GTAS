@@ -13,7 +13,8 @@ public enum SSRDocoType {
     *
     * */
     //No doc defaults to not provided. VV is not in the spec and is only used by our system.
-    VISA("V"), NOT_PROVIDED("VV");
+    VISA("V"), 
+    NOT_PROVIDED("VV");
 
     private static final Map<String, SSRDocoType> stringToEnum =
             Stream.of(values()).collect(

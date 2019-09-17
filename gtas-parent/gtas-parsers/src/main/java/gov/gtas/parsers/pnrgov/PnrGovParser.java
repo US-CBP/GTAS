@@ -286,7 +286,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (!CollectionUtils.isEmpty(ssrDocs)) {
             PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif);
             if (p != null && p.isValid()) {
-                p.getDocuments().addAll(PnrUtils.convertDocoToDocVo(ssrDocos));
+                p.getDocuments().addAll(PnrUtils.convertDocVoFromDoco(ssrDocos));
                 parsedMessage.getPassengers().add(p);
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
                 currentPassenger=p;

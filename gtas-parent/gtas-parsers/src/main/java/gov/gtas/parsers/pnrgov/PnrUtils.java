@@ -433,16 +433,10 @@ public class PnrUtils {
         }
     }
     
-    public static List<DocumentVo> convertDocoToDocVo(List<SSRDoco> ssrDocos){
-    	DocumentVo doc = new DocumentVo();
+    public static List<DocumentVo> convertDocVoFromDoco(List<SSRDoco> ssrDocos){
     	List<DocumentVo> docList = new ArrayList<DocumentVo>();
     	for(SSRDoco ssrDoco : ssrDocos) {
-        	doc.setDocumentNumber(ssrDoco.getVisaDocNumber());
-        	doc.setDocumentType(ssrDoco.getSsrDocoType().name());
-        	doc.setExpirationDate(null); //SSRDoco does not have an expiration date field
-        	doc.setIssuanceCountry(ssrDoco.getVisaDocPlaceOfIssuance());
-        	doc.setIssuanceDate(ParseUtils.parseDateTime(ssrDoco.getVisaDocIssuanceDate(), DOC_DATE_FORMAT));
-        	docList.add(doc);
+    		docList.add(new DocumentVo(ssrDoco));
     	}	
     	return docList;
     }
