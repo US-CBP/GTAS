@@ -31,9 +31,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = UtilsTestIT.class)
+@ContextConfiguration(classes = UtilsIT.class)
 @TestPropertySource("classpath:default.application.properties")
-public class UtilsTestIT {
+public class UtilsIT {
 
 	@Value("${message.dir.origin}")
 	private String originstr;
