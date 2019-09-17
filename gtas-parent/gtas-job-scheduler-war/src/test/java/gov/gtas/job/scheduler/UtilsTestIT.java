@@ -97,7 +97,7 @@ public class UtilsTestIT {
       existing.delete();
 
       File test = getOriginFile(filename, "more text stuff");
-      moveToDirWrapper("", test);
+      moveToDirWrapper(null, test);
 
       assertFalse("File should not exist in WORKING", Files.exists(Paths.get(pathstr)));
     }

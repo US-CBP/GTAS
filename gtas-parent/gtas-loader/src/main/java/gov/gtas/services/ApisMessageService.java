@@ -26,6 +26,7 @@ import gov.gtas.parsers.paxlst.PaxlstParserUSedifact;
 import gov.gtas.parsers.vo.ApisMessageVo;
 import gov.gtas.parsers.vo.MessageVo;
 import gov.gtas.util.LobUtils;
+import gov.gtas.services.LoaderUtils;
 
 @Service
 public class ApisMessageService extends MessageLoaderService {
@@ -39,6 +40,9 @@ public class ApisMessageService extends MessageLoaderService {
 
     @Autowired
     private BagRepository bagDao;
+
+    @Autowired
+    private LoaderUtils loaderUtils;
 
     @Autowired
     private BookingBagRepository bookingBagRepository;
@@ -239,14 +243,17 @@ public class ApisMessageService extends MessageLoaderService {
 
     private boolean createMessage(ApisMessage m) {
         boolean ret = true;
+
         try {
+            m.setFilePath(loaderUtils.getUpdatedPath(m.getFilePath()));
             m = msgDao.save(m);
         } catch (Exception e) {
             ret = false;
             handleException(e, m);
             try {
-                msgDao.save(m);
-            } catch (Exception ignored) {
+                m.setFilePath(loaderUtils.getUpdatedPath(m.getFilePath()));
+                m = msgDao.save(m);
+              } catch (Exception ignored) {
             }
         }
         return ret;

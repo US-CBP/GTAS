@@ -72,24 +72,7 @@ public class LocalFileIntakeScheduler {
         }
 
         for (File file : fileList) {
-          File workingFile = null;
-
-          try {
-            workingFile = Utils.moveToDirectory(messageWorkingDir, file);
-          }
-          catch (Exception ex) {
-            try {
-              logger.error("Could not move file to working dir, attempting move to error dir ", ex);
-              Utils.moveToDirectory(messageErrorDir, file);
-            }
-              catch (Exception exErrDir) {
-              logger.error("ERROR - Could not move file to error dir, it may be processed indefinitely!", exErrDir);
-            }
-          }
-
-          if (workingFile != null) {
-            pushToInboundQueueCatchExceptions(workingFile);
-          }
+            pushToInboundQueueCatchExceptions(file);
         }
     }
 
@@ -108,8 +91,9 @@ public class LocalFileIntakeScheduler {
             throw new LoaderException("exceeds max file size");
         }
         byte[] raw = FileUtils.readSmallFile(filePath);
-        String tmp = new String(raw, StandardCharsets.US_ASCII);
+        String tmp = new String(raw, StandardCharsets.UTF_8);
         sender.sendFileContent(outboundLoaderQueue, tmp, f.getName());
+        f.delete();
     }
 
 

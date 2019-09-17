@@ -5,7 +5,9 @@
  */
 package gov.gtas.services;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.Date;
@@ -23,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -63,6 +66,15 @@ public class LoaderUtils {
 
     @Autowired
     private LookUpRepository lookupRepo;
+    
+    @Value("${message.dir.processed}")
+    private String processedDir;
+
+    public String getUpdatedPath(String workingPath) {
+      String fileName = Paths.get(workingPath).toFile().getName();
+
+      return (processedDir) + File.separator + fileName;
+    }
 
     public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
         Passenger p = new Passenger();
