@@ -211,7 +211,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             processIft(ift);
         }
 
-        getConditionalSegment(REF.class);
+        REF ref =getConditionalSegment(REF.class);
         getConditionalSegment(EBD.class);
 
         for (;;) {
@@ -284,7 +284,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
 
         if (!CollectionUtils.isEmpty(ssrDocs)) {
-            PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif);
+            PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif, ref, parsedMessage.getRecordLocator());
             if (p != null && p.isValid()) {
                 p.getDocuments().addAll(visas);
                 parsedMessage.getPassengers().add(p);
