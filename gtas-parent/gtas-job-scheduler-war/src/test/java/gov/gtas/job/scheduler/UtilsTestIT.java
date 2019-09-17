@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.annotation.Value;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 
@@ -104,7 +105,7 @@ public class UtilsTestIT {
 
 
     /**
-     * TestMoveDuplicates tests - Utils.moveToDirectory should not overwrite
+     * TestMoveDuplicates tests - Utils.moveToDirectory should  overwrite
      * existing files when moving, but should append a timestamp and save as a new
      * file.
      * @throws LoaderException
@@ -124,7 +125,7 @@ public class UtilsTestIT {
 
       File dupeFile = moveToDirWrapper(workingstr, test2);
       Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in WORKING dir");
-      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+      assertEquals(originalpathstr, dupeFile.toPath().toString());
     }
 
     
@@ -143,7 +144,7 @@ public class UtilsTestIT {
 
       File dupeFile = moveToDirWrapper(processedstr, test2);
       Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
-      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+      assertEquals(originalpathstr, dupeFile.toPath().toString());
     }
     
     @Test
@@ -161,7 +162,7 @@ public class UtilsTestIT {
 
       File dupeFile = moveToDirWrapper(errorstr, test2);
       Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in ERROR dir");
-      assertNotEquals(originalpathstr, dupeFile.toPath().toString());
+      assertEquals(originalpathstr, dupeFile.toPath().toString());
     }
 
 
