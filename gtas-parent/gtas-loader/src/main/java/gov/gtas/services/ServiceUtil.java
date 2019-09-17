@@ -24,8 +24,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -68,13 +66,12 @@ public class ServiceUtil implements LoaderServices {
 	}
 
 	private String createPassengerIdTag(PassengerVo pvo) {
-		String input = String.join("", Arrays.asList(pvo.getFirstName().toUpperCase(), pvo.getLastName().toUpperCase(),
-				pvo.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pvo.getDob())));
 
 		String passengerIdTag = null;
 
 		try {
-			passengerIdTag = EntityResolverUtils.makeSHA1Hash(input);
+			passengerIdTag = EntityResolverUtils.makeHashForPassenger(pvo.getFirstName(), pvo.getLastName(),
+					pvo.getGender(), pvo.getDob());
 		} catch (NoSuchAlgorithmException e) {
 			logger.error("ERROR! An error occured when trying to create passengerIdTag", e);
 		} catch (UnsupportedEncodingException e) {

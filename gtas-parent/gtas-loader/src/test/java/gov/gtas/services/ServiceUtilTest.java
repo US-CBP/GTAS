@@ -9,7 +9,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -71,7 +70,7 @@ public class ServiceUtilTest {
 
 		Mockito.when(
 				flightPassengerRepository.getPassengerUsingREF(flightId, pnrReservationReferenceNumber, recordLocator))
-		.thenReturn(list);
+				.thenReturn(list);
 
 		Passenger passenger = serviceUtil.findPassengerOnFlight(flight, pvo);
 
@@ -81,9 +80,10 @@ public class ServiceUtilTest {
 	}
 
 	@Test
-	public void testsFindPassengerByIdTag() {
+	public void testsFindPassengerByIdTag() throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", createSimpleDate("01/01/2019"), "M");
-		String passengerIdTag = createPassengerIdTag(pvo);
+		String passengerIdTag = EntityResolverUtils.makeHashForPassenger(pvo.getFirstName(), pvo.getLastName(),
+				pvo.getGender(), pvo.getDob());
 		PassengerIDTag idTag = new PassengerIDTag();
 		idTag.setIdTag(passengerIdTag);
 
@@ -313,24 +313,6 @@ public class ServiceUtilTest {
 		list.add(flightPassenger);
 
 		return list;
-	}
-
-	private String createPassengerIdTag(PassengerVo pvo) {
-		String input = String.join("", Arrays.asList(pvo.getFirstName().toUpperCase(), pvo.getLastName().toUpperCase(),
-				pvo.getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pvo.getDob())));
-
-		String passengerIdTag = null;
-
-		try {
-			passengerIdTag = EntityResolverUtils.makeSHA1Hash(input);
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("ERROR! An error occured when trying to create passengerIdTag", e);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("ERROR! An error occured when trying to create passengerIdTag", e);
-		}
-
-		return passengerIdTag;
-
 	}
 
 	private Date createSimpleDate(String input) {
