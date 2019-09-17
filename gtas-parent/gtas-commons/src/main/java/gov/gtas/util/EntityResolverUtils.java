@@ -74,12 +74,14 @@ public class EntityResolverUtils {
 		// make sure that we have a passport and that it is not expired.
 		// People with dual citizenship and two passports will be considered two people.
 		for (Document doc : passenger.getDocuments()) {
-			if (doc.getDocumentType().equals(DocumentTypeCode.P.toString())) {
-				if (doc.getExpirationDate().compareTo(now) > 0) {
-					passportNumber = doc.getDocumentNumber();
-					issuanceCountry = doc.getIssuanceCountry();
-					expirationDate = doc.getExpirationDate();
-				}
+			String docType = doc.getDocumentType();
+			Date docExpirationDate = doc.getExpirationDate();
+			if (docType != null && docExpirationDate != null && docType.equals(DocumentTypeCode.P.toString())
+					&& docExpirationDate.compareTo(now) > 0) {
+				passportNumber = doc.getDocumentNumber();
+				issuanceCountry = doc.getIssuanceCountry();
+				expirationDate = doc.getExpirationDate();
+				break;
 			}
 		}
 
