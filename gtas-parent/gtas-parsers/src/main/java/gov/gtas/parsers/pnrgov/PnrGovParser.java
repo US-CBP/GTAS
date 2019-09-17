@@ -223,7 +223,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
         // SSR’s in GR.2 apply to the specific passenger.
         List<SSRDocs> ssrDocs = new ArrayList<>();
-        List<DocumentVo> visas = new ArrayList<>();
+        List<SSRDoco> ssrDocos = new ArrayList<>();
         for (;;) {
             SSR ssr = getConditionalSegment(SSR.class);
             if (ssr == null) {
@@ -241,9 +241,9 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
                     parsedMessage.getAddresses().add(addr);
                 }
             } else if (SSR.DOCO.equals(code)) {
-                DocumentVo visa = PnrUtils.createVisa(ssr);
-                if (visa != null && visa.isValid()) {
-                    visas.add(visa);
+                SSRDoco ssrDoco = new SSRDoco(ssr);
+                if ( ssrDoco != null ) {
+                    ssrDocos.add(ssrDoco);
                 }
             }
             getEmail(ssr, code);
@@ -286,7 +286,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         if (!CollectionUtils.isEmpty(ssrDocs)) {
             PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif);
             if (p != null && p.isValid()) {
-                p.getDocuments().addAll(visas);
+                p.getDocuments().addAll(PnrUtils.convertDocoToDocVo(ssrDocos));
                 parsedMessage.getPassengers().add(p);
                 parsedMessage.setPassengerCount(parsedMessage.getPassengerCount() + 1);
                 currentPassenger=p;

@@ -1,8 +1,5 @@
 package gov.gtas.parsers.pnrgov.segment;
 
-import java.util.ArrayList;
-
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,10 +7,6 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
 import gov.gtas.parsers.pnrgov.enums.SSRDocoType;
-import gov.gtas.parsers.pnrgov.enums.SSRDocsGender;
-import gov.gtas.parsers.pnrgov.enums.SSRDocsType;
-import gov.gtas.parsers.util.ParseUtils;
-import gov.gtas.parsers.vo.DocumentVo;
 
 public class SSRDoco {
 
@@ -27,7 +20,7 @@ public class SSRDoco {
 	    private String visaDocPlaceOfIssuance;
 	    private String visaDocIssuanceDate;
 	    private String visaApplicableCountry;
-	    private String infantIndicator;
+	    private boolean infantIndicator;
 	    private String nameInformation;
 	    
 	    
@@ -41,11 +34,11 @@ public class SSRDoco {
 	        }
 	    }
 
-
 	    private void populateSSRDoco() {
 	        Splitter splitter = Splitter.on('/').trimResults();
 	        Iterable<String> ssrTokens = splitter.split(ssr.getFreeText());
 	        String[] freeTextInArrayForm = Iterables.toArray(ssrTokens, String.class);
+	        
 	        //Follow the Passenger Travel Documentation Information AIRIMP32 pg 150 grammar. Follows the same path split on the "/".
 	        /*
 	        * Use following order, starting at 1(this is predicated by a /):
@@ -62,9 +55,6 @@ public class SSRDoco {
 	        * 8(ii)	: PNR Associated Name Including number in party       
 	        */
 
-	        // A common issue with SSR DOCS is to have the travel document offset by 1. Flag if this is the case.
-	        // It isn't to spec to parse these documents but we will attempt to permit these by taking advantage
-	        // of the ssr doc type code being different than the country code.
 	        String ssrIsOffsetByOne = freeTextInArrayForm.length >= 3 ? freeTextInArrayForm[2] : "";
 	        boolean offsetByOne = SSRDocoType.fromString(ssrIsOffsetByOne).isPresent();
 	        for (int i = 0; i < freeTextInArrayForm.length; i++) {
@@ -80,32 +70,31 @@ public class SSRDoco {
 	                    */
 	                    break;
 	                case 1:
-	                        SSRDocoType.fromString(subSegment).ifPresent(ssrDocs -> this.ssrDocoType = ssrDocs);
-	                        if (this.ssrDocoType == null) {
-	                            this.ssrDocoType = SSRDocoType.NOT_PROVIDED;
-	                        }
+	                	this.placeOfBirth = subSegment;
 	                    break;
 	                case 2:
+                        SSRDocoType.fromString(subSegment).ifPresent(ssrDocs -> this.ssrDocoType = ssrDocs);
+                        if (this.ssrDocoType == null) {
+                            this.ssrDocoType = SSRDocoType.NOT_PROVIDED;
+                        }
 	                    break;
 	                case 3:
+	                	this.visaDocNumber = subSegment;
 	                    break;
 	                case 4:
+	                	this.visaDocPlaceOfIssuance = subSegment;
 	                    break;
 	                case 5:
+	                	this.visaDocIssuanceDate = subSegment;
 	                    break;
 	                case 6:
+	                	this.visaApplicableCountry = subSegment;
 	                    break;
 	                case 7:
+	                	this.infantIndicator = "I".equalsIgnoreCase(subSegment);
 	                    break;
 	                case 8:
-	                    break;
-	                case 9:
-	                    break;
-	                case 10:
-	                    break;
-	                case 11: 
-	                    break;
-	                case 12: 
+	                	this.nameInformation = subSegment;
 	                    break;
 	                default:
 	                    logger.warn("FIELD NOT IMPLEMENTED FOR SSR DOCS. CHECK IMPLEMENTATION FOR ARRAY AT SPOT " + i);
@@ -185,12 +174,12 @@ public class SSRDoco {
 		}
 
 
-		public String getInfantIndicator() {
+		public boolean getInfantIndicator() {
 			return infantIndicator;
 		}
 
 
-		public void setInfantIndicator(String infantIndicator) {
+		public void setInfantIndicator(boolean infantIndicator) {
 			this.infantIndicator = infantIndicator;
 		}
 
