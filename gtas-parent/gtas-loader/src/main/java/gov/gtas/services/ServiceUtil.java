@@ -135,24 +135,39 @@ public class ServiceUtil implements LoaderServices {
 
 	/**
 	 * Resolve passengers as follows (we assume first name and last name always
-	 * exist) - if 'allowLoosenResolution' set to false, we resolve only by pnr REF
-	 * number and pnr Record Locator number and passengerIdTag. - if the incoming
-	 * passenger has pnr REF number and pnr Record Locator number, resolve by these
-	 * two fields. - if no passenger found and the incoming passenger has
-	 * passengerIdTag, resolve by passengerIdTag. (this is equivalent to resolving
-	 * by first name, last name, dob, and gender)
+	 * exist)
+	 * 
+	 * - if 'allowLoosenResolution' set to false, we resolve only by pnr REF number
+	 * and pnr Record Locator number and passengerIdTag.
+	 * 
+	 * - if the incoming passenger has pnr REF number and pnr Record Locator number,
+	 * resolve by these two fields.
+	 * 
+	 * - if no passenger found and the incoming passenger has passengerIdTag,
+	 * resolve by passengerIdTag. (this is equivalent to resolving by first name,
+	 * last name, dob, and gender)
 	 * 
 	 * - if 'allowLoosenResolution' set to true, continue resolving in the following
-	 * order; we stop when we resolve to a passenger. - if the incoming passenger
-	 * has doc number and dob, resolve by first name, last name, doc number, and
-	 * dob. - if the incoming passenger has doc number and gender, resolve by first
-	 * name, last name, doc number, and gender. - if the incoming passenger has only
-	 * doc number, resolve by first name, last name, and doc number. - if the
-	 * incoming passenger has only dob, resolve by first name, last name, and dob, -
-	 * if the incoming passenger has only gender, resolve by first name, last name,
-	 * and gender - - finally we resolve by first name and last name. (To resolve by
-	 * first name and last name, the existing passenger should have null value for
-	 * dob, gender, and document in order not to overwrite data.)
+	 * order; we stop when we resolve to a passenger.
+	 * 
+	 * - if the incoming passenger has doc number and dob, resolve by first name,
+	 * last name, doc number, and dob.
+	 * 
+	 * - if the incoming passenger has doc number and gender, resolve by first name,
+	 * last name, doc number, and gender.
+	 * 
+	 * - if the incoming passenger has only doc number, resolve by first name, last
+	 * name, and doc number.
+	 * 
+	 * - if the incoming passenger has only dob, resolve by first name, last name,
+	 * and dob,
+	 * 
+	 * - if the incoming passenger has only gender, resolve by first name, last
+	 * name, and gender
+	 * 
+	 * - finally we resolve by first name and last name. (To resolve by first name
+	 * and last name, the existing passenger should have null value for dob, gender,
+	 * and document in order not to overwrite data.)
 	 * 
 	 * 
 	 */
