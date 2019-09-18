@@ -403,15 +403,14 @@ public class PnrMessageService extends MessageLoaderService {
         logger.debug("@createMessage");
         long startTime = System.nanoTime();
         try {
+            m.setFilePath(utils.getUpdatedPath(m.getFilePath()));
             m = msgDao.save(m);
-            ret = true;
-/*			if (useIndexer) {
-				indexer.indexPnr(m);
-			}*/
         } catch (Exception e) {
             handleException(e, m);
             ret = false;
             try {
+              logger.info("ERROR FILE FILEPATH: " + m.getFilePath());
+                m.setFilePath(utils.getUpdatedPath(m.getFilePath()));
                 m = msgDao.save(m);
             } catch (Exception ignored) {
             }

@@ -68,7 +68,7 @@ Deploy to tomcat, update application.properties file, and start the server.
 
 You will need to create two folders for processing messages in a development environment; one for unprocessed messages and one for messages that have been loaded by GTAS. You may name the files as you wish, but the names must correspond with those in the application.properties file. This file can be located in the directory below:
 
-~/GTAS/gtas-parent/gtas-commons/src/main/resources/application.properties.EXAMPLE
+~/GTAS/gtas-parent/gtas-commons/src/main/resources/default.application.properties
 
 This file must be moved to the ~/usr/local/apache-tomcat-9.0.22/conf directory before starting the server to take effect.
 
