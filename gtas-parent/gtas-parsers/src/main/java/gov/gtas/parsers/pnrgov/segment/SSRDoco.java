@@ -54,19 +54,14 @@ public class SSRDoco {
 	        * 8(ii)	: PNR Associated Name Including number in party       
 	        */
 
-	        String ssrIsOffsetByOne = freeTextInArrayForm.length >= 3 ? freeTextInArrayForm[2] : "";
-	        boolean offsetByOne = SSRDocoType.fromString(ssrIsOffsetByOne).isPresent();
 	        for (int i = 0; i < freeTextInArrayForm.length; i++) {
 	            String subSegment = freeTextInArrayForm[i];
-	            if (offsetByOne && i < freeTextInArrayForm.length - 1) {
-	                subSegment = freeTextInArrayForm[i + 1];
-	            }
 	            switch (i) {
 	                case 0:
 	                	this.placeOfBirth = subSegment;
 	                    break;
 	                case 1:
-                        SSRDocoType.fromString(subSegment).ifPresent(ssrDocs -> this.ssrDocoType = ssrDocs);
+                        SSRDocoType.fromString(subSegment).ifPresent(ssrDoco -> this.ssrDocoType = ssrDoco);
                         if (this.ssrDocoType == null) {
                             this.ssrDocoType = SSRDocoType.NOT_PROVIDED;
                         }
@@ -208,7 +203,7 @@ public class SSRDoco {
 	    }
 
 	    public String getSpecialServiceRequirementCode() {
-	        return SSR.DOCS;
+	        return SSR.DOCO;
 	    }
 	
 }
