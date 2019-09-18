@@ -1,3 +1,4 @@
+SET NAMES utf8;
 insert into carrier(iata, icao, name) values ("07","ORG","State Unitary Enterprise Orenburg Region, International Airport Orenburg");
 insert into carrier(iata, icao, name) values ("0B","BMS","Blue Air Aviation S.A.");
 insert into carrier(iata, icao, name) values ("0J","PJZ","Premium Jet AG");

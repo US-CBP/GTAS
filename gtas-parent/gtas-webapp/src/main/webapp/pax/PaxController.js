@@ -23,8 +23,7 @@
     caseService,
     watchListService,
     codeTooltipService,
-    configService,
-    $sce
+    configService
   ) {
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
@@ -46,6 +45,7 @@
     $scope.origin = $scope.passenger.embarkation;
     $scope.destination = $scope.passenger.debarkation;
     $scope.SvgType = 2;
+    $scope.isReloaded = true;
 
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
@@ -65,7 +65,7 @@
     vaquita.graph.HORIZONTAL_NODES = 1;
 
     vaquita.graph.setZoom(0.5, 2);
-
+    
     $scope.palette = {
       address: "#2C17B1",
       airport: "#1144AA",
@@ -542,10 +542,16 @@
       const template = $scope.saves.pax;
       vaquita.graph.HORIZONTAL_NODES = (template.horiz) || 1;
 
+      // call start only when there's no rootnode
+      //TODO vaquita - expose a status field on graph?
       if (vaquita.dataModel.getRootNode() === undefined) {
         vaquita.start(template);
-      } else {
+        $scope.isReloaded = false;
+      }
+      // refresh graph arena if the page reloads with new pax data
+      else if ($scope.isReloaded) {
         vaquita.refresh(template);
+        $scope.isReloaded = false;
       }
     };
 
@@ -644,22 +650,33 @@
     var reorderTVLdata = function(flightLegs) {
       var orderedTvlData = [];
 
-      //Sorts flightLeg objects based on etd
-      // * 5/8/2018*No longer required to sort but does add +1 to leg number visually still, so will keep that functionality.
-
       flightLegs.sort(function(a, b) {
         if (a.legNumber < b.legNumber) return -1;
         if (a.legNumber > b.legNumber) return 1;
         else return 0;
       });
 
-      //sets each flightLeg# to the newly sorted index value
-      $.each(flightLegs, function(index, value) {
-        value.legNumber = index + 1; //+1 because 0th flight leg doesn't read well to normal humans
+      $scope.liteLegs = [];    //holds discreet start and endpoints for non-contiguous segments
+
+      $.each(flightLegs, function(index, curr) {
+        curr.legNumber = index + 1;
+
+        if ($scope.liteLegs.length === 0) {
+          $scope.liteLegs.push({flightId: curr.flightId, originAirport: curr.originAirport});
+        }
+        else if ($scope.liteLegs[$scope.liteLegs.length-1].originAirport !== curr.originAirport) {
+          $scope.liteLegs[$scope.liteLegs.length-1].segmentEnd = true;
+          $scope.liteLegs.push({flightId: curr.flightId, originAirport: curr.originAirport});
+        }
+        else {
+          $scope.liteLegs[$scope.liteLegs.length-1].flightId = curr.flightId;
+        }
+       
+        $scope.liteLegs.push({flightId: null, originAirport: curr.destinationAirport});
       });
 
       orderedTvlData = flightLegs;
-
+      
       return orderedTvlData;
     };
 
@@ -1181,8 +1198,12 @@
                   pax.hitCount+=1;
                 }
               }
-              pax.eta = Date.parse(passengers[0].eta);
-              pax.etd = Date.parse(passengers[0].etd);
+              let firstPassenger = passengers[0];
+              pax.eta = firstPassenger.eta;
+              pax.etd = firstPassenger.etd;
+              pax.flightOrigin = firstPassenger.flightOrigin;
+              pax.flightDestination = firstPassenger.flightDestination;
+              pax.flightNumber = firstPassenger.fullFlightNumber;
             }
             $scope.pax = pax;
           },
@@ -1254,7 +1275,7 @@
           $scope.flightDirections = flightDirections;
     
           $injector.invoke(jqueryQueryBuilderWidget, this, {$scope: $scope});
-          $scope.stateName = $state.$current.self.name;
+          $scope.stateName = $state.$current.self.name;    
 
     $scope.isExpanded = true;
     $scope.paxHitList = [];
@@ -1267,7 +1288,6 @@
     };
 
     $scope.buildAfterEntitiesLoaded();
-
 
     $scope.passengerGrid = {
       paginationPageSizes: [10, 25, 50],
@@ -1282,10 +1302,15 @@
       enableColumnMenus: false,
       multiSelect: false,
       enableGridMenu: true,
+      exporterCsvFilename: 'PassengerGrid.csv',
+      exporterExcelFilename: 'PassengerGrid.xlsx',
+      exporterExcelSheetName: 'Data',
       enableExpandableRowHeader: false,
+
       expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
+
           gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
               if (row.isExpanded) {
                   paxService.getRuleHits(row.entity.id).then(function (data) {
@@ -1306,8 +1331,12 @@
       useExternalSorting: false,
       useExternalFiltering: false,
       enableHorizontalScrollbar: 0,
-      enableVerticalScrollbar: 0,
+      enableVerticalScrollbar: 1,
       enableColumnMenus: false,
+      enableGridMenu: true,
+      exporterCsvFilename: 'passengerQueryGrid.csv',
+      exporterExcelFilename: 'passengerQueryGrid.xlsx',
+      exporterExcelSheetName: 'Data',
       multiSelect: false,
       enableExpandableRowHeader: false,
       minRowsToShow: 10,
@@ -1450,8 +1479,10 @@
             "</md-button>"
         },
         {
-          field: "etaLocalTZ",
-          name: "etaLocalTZ",
+          field: "eta",
+          name: "eta",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           sort: {
             direction: uiGridConstants.DESC,
             priority: 2
@@ -1460,8 +1491,10 @@
           headerCellFilter: "translate"
         },
         {
-          field: "etdLocalTZ",
-          name: "etdLocalTZ",
+          field: "etd",
+          name: "etd",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           displayName: "pass.etd",
           headerCellFilter: "translate"
         },
@@ -1556,6 +1589,8 @@
         },
         {
           name: "eta",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           sort: {
             direction: uiGridConstants.DESC,
             priority: 2
@@ -1566,6 +1601,8 @@
         },
         {
           name: "etd",
+          type: 'date',
+          cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
           displayName: "pass.etd",
           headerCellFilter: "translate",
           visible: stateName === "paxAll"

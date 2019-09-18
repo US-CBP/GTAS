@@ -28,6 +28,7 @@ import gov.gtas.util.SampleDataGenerator;
 import javax.transaction.Transactional;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
         WebAppConfig.class })
 @WebAppConfiguration
 @Rollback(true)
+@Ignore
 public class WatchlistManagementControllerIT {
     private static final String TEST_USER = "test";
     private static final String WL_NAME = "TestWL123";

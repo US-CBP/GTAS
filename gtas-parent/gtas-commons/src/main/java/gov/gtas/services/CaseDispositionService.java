@@ -88,8 +88,6 @@ public interface CaseDispositionService {
 
     public String getAPISOnlyFlagAndVersion();
     
-    public Date getCurrentServerTime();
-    
     public Iterable<RuleCat> findAllRuleCat();
 
 	public void updateEncounteredStatus(Long caseIdAsLong, EncounteredStatusEnum newEncounteredStatus);

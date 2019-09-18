@@ -211,7 +211,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
             processIft(ift);
         }
 
-        getConditionalSegment(REF.class);
+        REF ref =getConditionalSegment(REF.class);
         getConditionalSegment(EBD.class);
 
         for (;;) {
@@ -284,7 +284,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         }
 
         if (!CollectionUtils.isEmpty(ssrDocs)) {
-            PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif);
+            PassengerVo p = PnrUtils.createPassenger(ssrDocs, tif, ref, parsedMessage.getRecordLocator());
             if (p != null && p.isValid()) {
                 p.getDocuments().addAll(visas);
                 parsedMessage.getPassengers().add(p);
@@ -437,11 +437,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
         f.setCarrier(tvl.getCarrier());
         f.setDestination(tvl.getDestination());
         f.setOrigin(tvl.getOrigin());
-        f.setEta(tvl.getEta());
-        f.setEtd(tvl.getEtd());
+        f.setLocalEtaDate(tvl.getEta());
+        f.setLocalEtdDate(tvl.getEtd());
         //PNR data can be received without ETA issue #546 fix.
-        if(f.getEta() == null){
-        	f.setEta(f.getEtd());
+        if(f.getLocalEtaDate() == null){
+        	f.setLocalEtaDate(f.getLocalEtdDate());
         }
         f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
         if (f.isValid()) {
@@ -463,11 +463,11 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
              csFlight.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(cs_tvl.getFlightNumber()));
              csFlight.setDestination(tvl.getDestination());
              csFlight.setOrigin(tvl.getOrigin());
-             csFlight.setEta(tvl.getEta());
-             csFlight.setEtd(tvl.getEtd());
+             csFlight.setLocalEtaDate(tvl.getEta());
+             csFlight.setLocalEtdDate(tvl.getEtd());
              //PNR data can be received without ETA issue #546 fix.
-             if(csFlight.getEta() == null){
-            	 csFlight.setEta(csFlight.getEtd());
+             if(csFlight.getLocalEtaDate() == null){
+            	 csFlight.setLocalEtaDate(csFlight.getLocalEtdDate());
              }
              csFlight.setMarketingFlightNumber(FlightUtils.padFlightNumberWithZeroes(tvl.getFlightNumber()));
              csFlight.setCodeShareFlight(true);

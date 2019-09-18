@@ -5,7 +5,9 @@
  */
 package gov.gtas.services;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.Date;
@@ -23,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -63,6 +66,18 @@ public class LoaderUtils {
 
     @Autowired
     private LookUpRepository lookupRepo;
+    
+    @Value("${message.dir.processed}")
+    private String processedDir;
+
+    public String getUpdatedPath(String workingPath) {
+      String fileName = Paths.get(workingPath).toFile().getName();
+
+      return (processedDir) + File.separator + fileName;
+    }
+
+    @Autowired
+    private GtasLocalToUTCService gtasLocalToUTCService;
 
     public Passenger createNewPassenger(PassengerVo vo) throws ParseException {
         Passenger p = new Passenger();
@@ -361,7 +376,7 @@ public class LoaderUtils {
     }
 
     boolean isPrimeFlight(FlightVo fvo, String origin, String dest, String etd) {
-        String otherDate = Long.toString(DateUtils.stripTime(fvo.getEtd()).getTime());
+        String otherDate = Long.toString(DateUtils.stripTime(fvo.getLocalEtdDate()).getTime());
         return (fvo.getOrigin().equals(origin) && fvo.getDestination().equals(dest) &&
                 etd.equals(otherDate)) ||  isTestData(origin);
     }
@@ -370,11 +385,19 @@ public class LoaderUtils {
         return s.equalsIgnoreCase("placeholder");
     }
 
-    public BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
+    @SuppressWarnings("DuplicatedCode")
+    BookingDetail convertFlightVoToBookingDetail(FlightVo fvo) throws ParseException{
     	BookingDetail bD = new BookingDetail();
     	BeanUtils.copyProperties(fvo, bD);
-    	
-    	 Airport dest = getAirport(fvo.getDestination());
+        String originAirport = bD.getOrigin();
+        String destinationAirport = bD.getDestination();
+        Date utcETDDate = gtasLocalToUTCService.convertFromAirportCode(originAirport, fvo.getLocalEtdDate());
+        Date utcETADate = gtasLocalToUTCService.convertFromAirportCode(destinationAirport, fvo.getLocalEtaDate());
+        bD.setEta(utcETADate);
+        bD.setEtd(utcETDDate);
+
+
+        Airport dest = getAirport(fvo.getDestination());
          String destCountry = null;
          if (dest != null) {
              destCountry = dest.getCountry();
@@ -389,8 +412,8 @@ public class LoaderUtils {
          }
     	
     	bD.setFullFlightNumber(fvo.getCarrier() + fvo.getFlightNumber());
-    	bD.setEtdDate(fvo.getEtd());
-    	bD.setEtaDate(fvo.getEta());
+    	bD.setEtdDate(fvo.getLocalEtdDate());
+    	bD.setEtaDate(fvo.getLocalEtaDate());
     	bD.setCreatedAt(null);
     	bD.setCreatedBy(LOADER_USER);
     	return bD;
@@ -443,7 +466,7 @@ public class LoaderUtils {
     }
     //The parsed message did not have the flights in proper order for flight leg generation (needed for dwell time and appropriate display)
     void sortFlightsByDate(List<FlightVo> flights){
-    	flights.sort(Comparator.comparing(FlightVo::getEtd));
+    	flights.sort(Comparator.comparing(FlightVo::getLocalEtdDate));
     }
 
     /**

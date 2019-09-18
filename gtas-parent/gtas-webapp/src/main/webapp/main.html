@@ -9,25 +9,24 @@
   <link rel="stylesheet" href="resources/node_modules/npm-font-open-sans/open-sans.css" />
   <link rel="stylesheet" href="resources/css/style-icomoon.css" />
    <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-  <link rel="stylesheet" href="resources/bower_components/bootstrap-select/dist/css/bootstrap-select.min.css" />
-  <link rel="stylesheet" href="resources/bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
-  <link rel="stylesheet" href="resources/bower_components/seiyria-bootstrap-slider/dist/css/bootstrap-slider.min.css" />
-  <link rel="stylesheet" href="resources/bower_components/selectize/dist/css/selectize.bootstrap3.css" />
-  <link rel="stylesheet" href="resources/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
-  <link rel="stylesheet" href="resources/bower_components/angular-ui-grid/ui-grid.min.css" />
+  <link rel="stylesheet" href="resources/node_modules/bootstrap-select/dist/css/bootstrap-select.min.css" />
+  <link rel="stylesheet" href="resources/node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" />
+  <link rel="stylesheet" href="resources/node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" />
+  <link rel="stylesheet" href="resources/node_modules/selectize/dist/css/selectize.bootstrap3.css" />
+  <link rel="stylesheet" href="resources/node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" />
+  <link rel="stylesheet" href="resources/node_modules/angular-ui-grid/ui-grid.min.css" />
   <link rel="stylesheet" href="resources/css/query-builder.default.css" />
-  <link rel="stylesheet" href="resources/bower_components/angular-material/angular-material.min.css" />
+  <link rel="stylesheet" href="resources/node_modules/angular-material/angular-material.min.css" />
   <link rel="stylesheet" href="resources/css/sb-admin-2.css">
-  <link rel="stylesheet" href="resources/bower_components/font-awesome/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="resources/node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
   <link href="resources/css/misc_fonts.css" rel="stylesheet">
   <link href="resources/css/misc_italian.css" rel="stylesheet">
-  <script src="resources/bower_components/jquery/dist/jquery.js"></script>
-  <!--<script src="resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
-  <script src="resources/bower_components/summernote/dist/summernote.js"></script>
-  <link rel="stylesheet" href="resources/bower_components/summernote/dist/summernote.css" type="text/css">
-  <link rel="stylesheet" type="text/css" href="resources/bower_components/trix/dist/trix.css">
+  <script src="resources/node_modules/jquery/dist/jquery.js"></script>
+  <script src="resources/node_modules/summernote/dist/summernote.js"></script>
+  <link rel="stylesheet" href="resources/node_modules/summernote/dist/summernote.css" type="text/css">
+  <link rel="stylesheet" type="text/css" href="resources/node_modules/trix/dist/trix.css">
   <link rel="stylesheet" href='resources/node_modules/vaquita/dist/vaquita.min.css' type="text/css" media="all" />
   <link rel="stylesheet" href='seatsMap/jquery.seat-charts.css' type="text/css" media="all" />
 <link rel="stylesheet" href='seatsMap/seats-map.css' type="text/css" media="all" />
@@ -90,7 +89,24 @@
               <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
           </li>
+          
         </ul>
+        
+       
+        	<ul class="nav navbar-nav navbar-right">
+         		 <li class="dropdown mobile-hide">
+            		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
+              			Help<span class="caret"></span>
+           			 </a>
+           	 <ul class="dropdown-menu" role="menu">
+              	<li ><a href="#/aboutgtas">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                &nbsp;About GTAS</a>
+              </li>
+              </ul>
+          </ul>
+        
+        
 
         <ul class="nav navbar-nav navbar-right">
           <li data-toggle="hover" class="dropdown">
@@ -187,49 +203,54 @@
   <div class="content" ui-view=""  ></div>
   <div ui-view="footer"></div>
 
-  <script src="resources/bower_components/angular/angular.js"></script>
-  <script src="resources/bower_components/ng-idle/angular-idle.min.js"></script>
-  <script src="resources/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
-  <script src="resources/bower_components/moment/min/moment.min.js"></script>
-  <script src="resources/bower_components/jquery/dist/jquery.js"></script>
+  <script src="resources/node_modules/angular/angular.js"></script>
+  <script src="resources/node_modules/ng-idle/angular-idle.min.js"></script>
+
+  <script src="resources/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
+
+  <script src="resources/node_modules/moment/min/moment.min.js"></script>
+  <script src="resources/node_modules/jquery/dist/jquery.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
-  <script src="resources/bower_components/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-  <script src="resources/bower_components/bootbox/bootbox.js"></script>
-  <script src="resources/bower_components/seiyria-bootstrap-slider/dist/bootstrap-slider.min.js"></script>
-  <script src="resources/bower_components/selectize/dist/js/standalone/selectize.min.js"></script>
-  <script src="resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-  <script src="resources/bower_components/jquery-extendext/jQuery.extendext.min.js"></script>
+  <script src="resources/node_modules/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+  <script src="resources/node_modules/bootbox/bootbox.js"></script>
+  <script src="resources/node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script>
+  <script src="resources/node_modules/selectize/dist/js/standalone/selectize.min.js"></script>
+  <script src="resources/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+  <script src="resources/node_modules/jquery-extendext/jQuery.extendext.min.js"></script>
   <script src="resources/node_modules/csv-js/csv.js"></script>
-  <script src="resources/bower_components/angular-ui-grid/ui-grid.js"></script>
-  <script src="resources/bower_components/angular-material/angular-material.min.js"></script>
-  <script src="resources/bower_components/angular-aria/angular-aria.min.js"></script>
-  <script src="resources/bower_components/angular-spinners/dist/angular-spinners.min.js"></script>
-  <script src="resources/bower_components/angular-animate/angular-animate.min.js"></script>
-  <script src="resources/bower_components/angular-messages/angular-messages.min.js"></script>
-  <script src="resources/bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script>
-  <script src="resources/bower_components/ng-file-upload/ng-file-upload.min.js"></script>
-  <script src="resources/bower_components/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
-  <script src="resources/bower_components/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
+  <script src="resources/node_modules/lodash/lodash.min.js"></script>
+  <script src="resources/node_modules/jszip/dist/jszip.min.js"></script>
+  <script src="resources/node_modules/excel-builder/dist/excel-builder.dist.min.js"></script>
+  <script src="resources/node_modules/angular-ui-grid/ui-grid.js"></script>
+  <script src="resources/node_modules/angular-material/angular-material.min.js"></script>
+  <script src="resources/node_modules/angular-aria/angular-aria.min.js"></script>
+  <script src="resources/node_modules/angular-spinners/dist/angular-spinners.min.js"></script>
+  <script src="resources/node_modules/angular-animate/angular-animate.min.js"></script>
+  <script src="resources/node_modules/angular-messages/angular-messages.min.js"></script>
+  <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload-shim.min.js"></script>
+  <script src="resources/node_modules/ng-file-upload/dist/ng-file-upload.min.js"></script>
+  <script src="resources/node_modules/spring-security-csrf-token-interceptor/dist/spring-security-csrf-token-interceptor.min.js"></script>
+  <script src="resources/node_modules/angular-swx-session-storage/release/swx-session-storage.min.js"></script>
   <script src='resources/js/query-builder.js'></script>
-  <script src="resources/bower_components/jspdf/dist/jspdf.min.js"></script>
+  <script src="resources/node_modules/jspdf/dist/jspdf.min.js"></script>
   <script src='resources/js/html2canvas.js'></script>
   <script src='resources/js/html2pdf.js'></script>
-  <script src="resources/bower_components/angular-translate/angular-translate.min.js"></script>
-  <script src="resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
-  <script src="resources/bower_components/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
-  <script src="resources/bower_components/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
-  <script src="resources/bower_components/chart.js/dist/Chart.min.js"></script>
-  <script src="resources/bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
-  <script src="resources/bower_components/ammap/dist/ammap/ammap.js"></script>
-  <script src="resources/bower_components/ammap/dist/ammap/maps/js/worldLow.js"></script>
-  <script src="resources/bower_components/ammap/dist/ammap/plugins/export/export.min.js"></script>
-  <link rel="stylesheet" href="resources/bower_components/ammap/dist/ammap/plugins/export/export.css" type="text/css" media="all" />
-  <script src="resources/bower_components/ammap/dist/ammap/themes/light.js"></script>
+  <script src="resources/node_modules/angular-translate/dist/angular-translate.min.js"></script>
+  <script src="resources/node_modules/angular-cookies/angular-cookies.min.js"></script>
+  <script src="resources/node_modules/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
+  <script src="resources/node_modules/angular-translate-loader-url/angular-translate-loader-url.min.js"></script>
+  <script src="resources/node_modules/chart.js/dist/Chart.min.js"></script>
+  <script src="resources/node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+  <script src="resources/node_modules/ammap3/ammap/ammap.js"></script>
+  <script src="resources/node_modules/ammap3/ammap/maps/js/worldLow.js"></script>
+  <script src="resources/node_modules/ammap3/ammap/plugins/export/export.min.js"></script>
+  <link rel="stylesheet" href="resources/node_modules/ammap3/ammap/plugins/export/export.css" type="text/css" media="all" />
+  <script src="resources/node_modules/ammap3/ammap/themes/light.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/inputmask.js"></script>
   <link rel="stylesheet" href="resources/node_modules/cbp-theme/dist/cbp-theme.css" type="text/css" media="all" />
-  <script src="resources/bower_components/angular-summernote/dist/angular-summernote.min.js"></script>
-  <script src="resources/bower_components/trix/dist/trix.js"></script>
-  <script src="resources/bower_components/angular-trix/dist/angular-trix.min.js"></script>
+  <script src="resources/node_modules/angular-summernote/dist/angular-summernote.min.js"></script>
+  <script src="resources/node_modules/trix/dist/trix.js"></script>
+  <script src="resources/node_modules/angular-trix/dist/angular-trix.min.js"></script>
   <script src='seatsMap/jquery.seat-charts.min.js'></script>
 
   <script src='resources/node_modules/d3/dist/d3.min.js'></script>
@@ -240,7 +261,7 @@
 <script src='common/directives.js'></script>
 <script src='common/filters.js'></script>
 <script src='common/services.js'></script>
-<script src='factory/ModalGridFactory.js'></script>
+<script src='factory/ModalGridFactory.js'></script> 
 <script src='factory/JqueryQueryBuilderWidget.js'></script>
 <script src='adhocquery/linkGraph.js'></script>
 <script src='dashboard/DashboardController.js'></script>
@@ -273,6 +294,9 @@
 <script src='adhocquery/AdhocQueryService.js'></script>
 <script src='seatsMap/SeatsMapController.js'></script>
 <script src='seatsMap/SeatService.js'></script>
+<script src='help/AboutGtasController.js'></script>
+<script src='help/AboutGtasService.js'></script>
+
 <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>

@@ -28,6 +28,7 @@ import javax.transaction.Transactional;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ public class WatchlistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Ignore
 	public void testCreateWatchlist() {
 		List<WatchlistItem> createList = testGenUtils
 				.createWatchlistItems(TEST_WL_ITEMS1);
@@ -96,6 +98,7 @@ public class WatchlistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Ignore
 	public void testUpdateDeleteWatchlist() {
 		List<WatchlistItem> createList = testGenUtils
 				.createWatchlistItems(TEST_WL_ITEMS1);
@@ -149,6 +152,7 @@ public class WatchlistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Ignore
 	public void testDeleteWatchlist() {
 		List<WatchlistItem> createList = testGenUtils
 				.createWatchlistItems(TEST_WL_ITEMS1);
@@ -178,6 +182,7 @@ public class WatchlistPersistenceServiceIT {
 
 	@Transactional
 	@Test()
+	@Ignore
 	public void testWatchlistSummary() {
 		List<WatchlistItem> createList = testGenUtils
 				.createWatchlistItems(TEST_WL_ITEMS1);

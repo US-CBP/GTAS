@@ -61,7 +61,7 @@ public class Loader {
             msgDto.setPrimeFlightKey(primeFlightKey);
             
             byte[] raw = FileUtils.readSmallFile(filePath);
-            String tmp = new String(raw, StandardCharsets.US_ASCII);
+            String tmp = new String(raw, StandardCharsets.UTF_8);
             String text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
 
             if (text.contains("PAXLST")) {

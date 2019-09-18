@@ -7,12 +7,10 @@ package gov.gtas.querybuilder.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
+
+import gov.gtas.model.*;
 import gov.gtas.model.udr.json.QueryEntity;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
@@ -29,15 +27,12 @@ import gov.gtas.querybuilder.model.QueryRequest;
 import gov.gtas.querybuilder.model.UserQuery;
 import gov.gtas.querybuilder.model.UserQueryRequest;
 import gov.gtas.querybuilder.repository.QueryBuilderRepository;
-import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import gov.gtas.services.PassengerService;
-import gov.gtas.services.dto.FlightsPageDto;
-import gov.gtas.services.dto.PassengersPageDto;
-import gov.gtas.vo.passenger.PassengerVo;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +47,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class QueryBuilderServiceTest {
 
+    public static final long PAX_ID = -1L;
     @InjectMocks
     private QueryBuilderService queryService;
     @Mock
@@ -207,6 +203,71 @@ public class QueryBuilderServiceTest {
         when(queryRepository.getPassengersByDynamicQuery(queryRequest)).thenThrow(invalidQueryRepoException);
         
         queryService.runPassengerQuery(queryRequest);
+    }
+
+    @Test
+    public void testPassengerVoGeneration() {
+        Passenger passenger = new Passenger();
+        passenger.setId(PAX_ID);
+        PassengerDetails passengerDetails = new PassengerDetails(passenger);
+        PassengerTripDetails passengerTripDetails = new PassengerTripDetails(passenger);
+        passengerDetails.setNationality("foo");
+        passengerDetails.setLastName("bar");
+        passengerDetails.setFirstName("boz");
+        passengerTripDetails.setEmbarkation("fooooo");
+        passengerTripDetails.setEmbarkCountry("baaarr");
+
+        passenger.setPassengerDetails(passengerDetails);
+        passenger.setPassengerTripDetails(passengerTripDetails);
+
+        List<HitsSummary> hits = new ArrayList<>();
+        HitsSummary hitsSummary = new HitsSummary();
+        hitsSummary.setPaxId(PAX_ID);
+        hitsSummary.setRuleHitCount(1);
+        hitsSummary.setWatchListHitCount(1);
+        hitsSummary.setPassenger(passenger);
+        hits.add(hitsSummary);
+
+        Document document = new Document();
+        document.setPaxId(PAX_ID);
+        document.setPassenger(passenger);
+        document.setDocumentType("p");
+        document.setIssuanceCountry("iss");
+        document.setDocumentNumber("ue");
+        Set<Document> docSet = new HashSet<>();
+        docSet.add(document);
+
+        Flight flight = new Flight();
+        flight.setId(2L);
+        flight.setDestination("home");
+        flight.setOrigin("away");
+        flight.setFlightNumber("6786");
+        MutableFlightDetails mfd = new MutableFlightDetails();
+        mfd.setFlightId(2L);
+        mfd.setFlight(flight);
+        Date etd = new Date();
+        Date eta = new Date();
+        mfd.setEtd(eta);
+        mfd.setEtd(etd);
+        flight.setMutableFlightDetails(mfd);
+
+        passenger.setDocuments(docSet);
+        passenger.getHits().add(hitsSummary);
+        passenger.setFlight(flight);
+
+        Map<Long, List<HitsSummary>> hitsSummaryHashMap = new HashMap<>();
+        hitsSummaryHashMap.put(PAX_ID, hits);
+
+        Map<Long, Set<Document>> docMap = new HashMap<>();
+        docMap.put(PAX_ID, docSet);
+
+        PassengerGridItemVo passengerGridItemVo = queryService.createPassengerGridItemVo(hitsSummaryHashMap, docMap, passenger, flight);
+        Assert.assertEquals(passengerGridItemVo.getFirstName(),"boz");
+        Assert.assertEquals(passengerGridItemVo.getNationality(),"foo");
+        Assert.assertEquals(passengerGridItemVo.getLastName(),"bar");
+        Assert.assertEquals(passengerGridItemVo.getDocuments().size(),1);
+        Assert.assertEquals(passengerGridItemVo.getOnWatchList(), true);
+
     }
     
     private static QueryObject buildSimpleBetweenQuery() {

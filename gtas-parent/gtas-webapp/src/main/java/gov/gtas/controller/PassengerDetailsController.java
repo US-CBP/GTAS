@@ -106,10 +106,10 @@ public class PassengerDetailsController {
 			vo.setCarrier(flight.getCarrier());
 			vo.setFlightOrigin(flight.getOrigin());
 			vo.setFlightDestination(flight.getDestination());
-			vo.setFlightETA((flight.getMutableFlightDetails().getEta() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getMutableFlightDetails().getEta()) : EMPTY_STRING);
-			vo.setFlightETD((flight.getMutableFlightDetails().getEtd() != null) ? DateCalendarUtils
-					.formatJsonDateTime(flight.getMutableFlightDetails().getEtd()) : EMPTY_STRING);
+			vo.setEta(flight.getMutableFlightDetails().getEta());
+			vo.setEtd(flight.getMutableFlightDetails().getEtd());
+			vo.setFlightOrigin(flight.getOrigin());
+			vo.setFlightDestination(flight.getDestination());
 			vo.setFlightId(flight.getId().toString());
 			vo.setFlightIdTag(flight.getIdTag());
 			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
@@ -331,6 +331,8 @@ public class PassengerDetailsController {
 					.map(flight -> {
 								FlightVo flightVo = new FlightVo();
 								copyModelToVo(flight, flightVo);
+								copyModelToVo(flight.getMutableFlightDetails(), flightVo);
+								flightVo.setId(flight.getId());
 								return flightVo;
 							}).collect(Collectors.toCollection(LinkedList::new));
 		}
@@ -922,8 +924,8 @@ public class PassengerDetailsController {
 			target.setEtd(source.getMutableFlightDetails().getEtd());
 			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
-      target.setFlightId(source.getId().toString());
-      target.setIdTag(source.getIdTag());
+     		target.setFlightId(source.getId().toString());
+      		target.setIdTag(source.getIdTag());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}
