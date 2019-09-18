@@ -42,7 +42,7 @@ GTAS accomplishes these goals through providing all the necessary decision suppo
 (2) provide real-time risk assessment against this data based on your own specific risk criteria and/or watch lists
 (3) view high risk travelers, their associated flight and reservation information, and possible affiliates
 
-## Where is GTAS currenlty Deployed?
+## Where is GTAS currently Deployed?
 
 * Maldives | Maldives Customs Service http://www.wcoomd.org/es-es/media/newsroom/2019/july/gtas-go-live-in-maldives.aspx
 * Two other deployments scheduled before the end of 2019
