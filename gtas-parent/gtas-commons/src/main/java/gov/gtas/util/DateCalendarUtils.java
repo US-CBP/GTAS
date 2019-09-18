@@ -166,6 +166,30 @@ public final class DateCalendarUtils {
     	return travLocalDate.getYear();
     }
     
+    /**
+     * Gets the month-of-year field
+     * 
+     * @param date
+     * @param dateTimeFormatter
+     * @return
+     */
+    public static int getMonthOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+    	return travLocalDate.getMonth().getValue();
+    }
+    
+    /**
+     * Gets the day-of-month field.
+     * 
+     * @param date
+     * @param dateTimeFormatter
+     * @return
+     */
+    public static int getDayOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+    	return travLocalDate.getDayOfMonth();
+    }
+    
     public static LocalDate parseLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
     	return LocalDate.parse(date, dateTimeFormatter);
     }
