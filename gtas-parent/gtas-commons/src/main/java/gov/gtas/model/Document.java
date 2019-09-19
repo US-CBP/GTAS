@@ -39,8 +39,12 @@ public class Document extends BaseEntity {
 	@Column(name = "issuance_country")
 	private String issuanceCountry;
 
+	@JoinColumn(name = "passenger_id", columnDefinition = "bigint unsigned")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
+
+	@Column(name = "passenger_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
+	private Long paxId;
 
     /** calculated field */
     @Column(name = "days_valid")
@@ -99,13 +103,20 @@ public class Document extends BaseEntity {
 		return passenger;
 	}
 
+	public Long getPaxId() {
+		return paxId;
+	}
+
+	public void setPaxId(Long paxId) {
+		this.paxId = paxId;
+	}
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType);
+		return Objects.hash(this.documentNumber, this.issuanceCountry, this.documentType, this.paxId);
 	}
 
 	@Override
@@ -117,6 +128,7 @@ public class Document extends BaseEntity {
 		final Document other = (Document) obj;
 		return Objects.equals(this.documentNumber, other.documentNumber)
 				&& Objects.equals(this.issuanceCountry, other.issuanceCountry)
-				&& Objects.equals(this.documentType, other.documentType);
+				&& Objects.equals(this.documentType, other.documentType)
+				&& Objects.equals(this.paxId, other.paxId);
 	}
 }

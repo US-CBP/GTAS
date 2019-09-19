@@ -74,28 +74,30 @@ public class GtasLoaderImpl implements GtasLoader {
     private final
     MutableFlightDetailsRepository mutableFlightDetailsRepository;
 
+    private final GtasLocalToUTCService gtasLocalToUTCService;
+
 
     @Autowired
     public GtasLoaderImpl(
-      PassengerRepository passengerDao,
-      ReportingPartyRepository rpDao,
-      LoaderServices loaderServices,
-      FlightRepository flightDao,
-      DocumentRepository docDao,
-      PhoneRepository phoneDao,
-      PaymentFormRepository paymentFormDao,
-      CreditCardRepository creditDao,
-      FlightPassengerCountRepository flightPassengerCountRepository,
-      AddressRepository addressDao,
-      AgencyRepository agencyDao,
-      MessageRepository<Message> messageDao,
-      PassengerIDTagRepository passengerIdTagDao,
-      FlightPassengerRepository flightPassengerRepository,
-      FrequentFlyerRepository ffdao,
-      LoaderUtils utils,
-      BookingDetailRepository bookingDetailDao,
-      MutableFlightDetailsRepository mutableFlightDetailsRepository,
-      BagMeasurementsRepository bagMeasurementsRepository) {
+            PassengerRepository passengerDao,
+            ReportingPartyRepository rpDao,
+            LoaderServices loaderServices,
+            FlightRepository flightDao,
+            DocumentRepository docDao,
+            PhoneRepository phoneDao,
+            PaymentFormRepository paymentFormDao,
+            CreditCardRepository creditDao,
+            FlightPassengerCountRepository flightPassengerCountRepository,
+            AddressRepository addressDao,
+            AgencyRepository agencyDao,
+            MessageRepository<Message> messageDao,
+            PassengerIDTagRepository passengerIdTagDao,
+            FlightPassengerRepository flightPassengerRepository,
+            FrequentFlyerRepository ffdao,
+            LoaderUtils utils,
+            BookingDetailRepository bookingDetailDao,
+            MutableFlightDetailsRepository mutableFlightDetailsRepository,
+            BagMeasurementsRepository bagMeasurementsRepository, GtasLocalToUTCService gtasLocalToUTCService) {
         this.passengerDao = passengerDao;
         this.rpDao = rpDao;
         this.loaderServices = loaderServices;
@@ -115,6 +117,7 @@ public class GtasLoaderImpl implements GtasLoader {
         this.bookingDetailDao = bookingDetailDao;
         this.mutableFlightDetailsRepository = mutableFlightDetailsRepository;
         this.bagMeasurementsRepository = bagMeasurementsRepository;
+        this.gtasLocalToUTCService = gtasLocalToUTCService;
     }
 
 
@@ -232,7 +235,7 @@ public class GtasLoaderImpl implements GtasLoader {
          * */
         if (flights.isEmpty()) {
           FlightVo flightVo = new FlightVo();
-          flightVo.setEta(primeFlightDate);
+          flightVo.setLocalEtaDate(primeFlightDate);
           flightVo.setCarrier(primeFlightCarrier);
           flightVo.setFlightNumber(primeFlightNumber);
           flightVo.setOrigin(primeFlightOrigin);
@@ -267,14 +270,20 @@ public class GtasLoaderImpl implements GtasLoader {
                  * */
                 MutableFlightDetails mfd = mutableFlightDetailsRepository.findById(currentFlight.getId()).orElse(new MutableFlightDetails(currentFlight.getId()));
                 BeanUtils.copyProperties(fvo, mfd, getNullPropertyNames(fvo));
-                mfd.setEtaDate(DateUtils.stripTime(mfd.getEta()));
-                if (mfd.getEtd() == null) {
+                mfd.setEtaDate(DateUtils.stripTime(mfd.getLocalEtaDate()));
+                if (mfd.getLocalEtdDate() == null) {
                   Date primeFlightTimeStamp = new Date(Long.parseLong(primeFlightKey[ETD_DATE_WITH_TIMESTAMP]));
                   // Special case where prime flight doesnt have a timestamp
                     //  we use the prime TDT with the 125 or 87 LOC code \ 189 DTM code for APIS
                     //  or tvl level 0 etd timestamp for PNR if this is the case.
-                    mfd.setEtd(primeFlightTimeStamp);
+                    mfd.setLocalEtdDate(primeFlightTimeStamp);
                 }
+                String originAirport = currentFlight.getOrigin();
+                String destinationAirport = currentFlight.getDestination();
+                Date utcETADate = gtasLocalToUTCService.convertFromAirportCode(destinationAirport, fvo.getLocalEtaDate());
+                Date utcETDDate = gtasLocalToUTCService.convertFromAirportCode(originAirport, fvo.getLocalEtdDate());
+                mfd.setEta(utcETADate);
+                mfd.setEtd(utcETDDate);
                 mfd = mutableFlightDetailsRepository.save(mfd);
                 currentFlight.setMutableFlightDetails(mfd);
                 primeFlight = currentFlight;
@@ -307,7 +316,7 @@ public class GtasLoaderImpl implements GtasLoader {
                                 bD.getFullFlightNumber(),
                                 bD.getDestination(),
                                 bD.getOrigin(),
-                                bD.getEtd(),
+                                bD.getLocalEtdDate(),
                                 primeFlight.getId());
                 if (existingBookingDetail.isEmpty()) {
                     bD.setFlight(primeFlight);

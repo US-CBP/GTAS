@@ -60,8 +60,13 @@
 			<artifactId>mariadb-java-client</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-     
-     	<!--  JMS -->   
+        <dependency>
+            <groupId>com.moodysalem</groupId>
+            <artifactId>LatLongToTimezoneMaven</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!--  JMS -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

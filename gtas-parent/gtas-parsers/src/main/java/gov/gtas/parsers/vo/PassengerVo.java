@@ -48,8 +48,26 @@ public class PassengerVo implements Validatable {
     private String bagNum;
     private String totalBagWeight;
     private String reservationReferenceNumber;
+    private String pnrReservationReferenceNumber;
+    private String pnrRecordLocator;
 
-  	public String getTotalBagWeight() {
+  	public String getPnrRecordLocator() {
+		return pnrRecordLocator;
+	}
+
+	public void setPnrRecordLocator(String pnrRecordLocator) {
+		this.pnrRecordLocator = pnrRecordLocator;
+	}
+
+	public String getPnrReservationReferenceNumber() {
+		return pnrReservationReferenceNumber;
+	}
+
+	public void setPnrReservationReferenceNumber(String pnrReservationReferenceNumber) {
+		this.pnrReservationReferenceNumber = pnrReservationReferenceNumber;
+	}
+
+	public String getTotalBagWeight() {
 		return totalBagWeight;
 	}
 

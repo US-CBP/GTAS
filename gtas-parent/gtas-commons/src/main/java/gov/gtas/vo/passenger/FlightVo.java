@@ -32,20 +32,18 @@ public class FlightVo extends BaseVo {
     private boolean isOverFlight;
     private String direction;
     private String idTag;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SHORT_DATE_FORMAT)
     private Date flightDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
     private Date etd;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
     private Date eta;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etdDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)  
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     private Date etaDate;
-    private String etdLocalTZ;
-    private String etaLocalTZ;
-    private Integer passengerCount = Integer.valueOf(0);
-    private Integer ruleHitCount = Integer.valueOf(0);
+    private CountDownVo countDown;
+    private Integer passengerCount = 0;
+    private Integer ruleHitCount = 0;
     private Integer listHitCount;
     private Integer graphHitCount;
     private Integer fuzzyHitCount;
@@ -55,7 +53,6 @@ public class FlightVo extends BaseVo {
     private int paxListHit;
     private int docListHit;
     private List <CodeShareVo> codeshares;
-    
     public int getRuleHits() {
         return ruleHits;
     }
@@ -146,26 +143,6 @@ public class FlightVo extends BaseVo {
     public void setFlightDate(Date flightDate) {
         this.flightDate = flightDate;
     }
-    public Date getEtd() {
-        return etd;
-    }
-    public void setEtd(Date etd) {
-        this.etd = etd;
-        
-        if(etd != null) {
-            this.etdLocalTZ = dtFormat.format(etd);
-        }
-    }
-    public Date getEta() {
-        return eta;
-    }
-    public void setEta(Date eta) {
-        this.eta = eta;
-        
-        if(eta != null) {
-            this.etaLocalTZ = dtFormat.format(eta);
-        }
-    }
     public boolean isOverFlight() {
         return isOverFlight;
     }
@@ -190,38 +167,21 @@ public class FlightVo extends BaseVo {
     public void setListHitCount(Integer listHitCount) {
         this.listHitCount = listHitCount;
     }
-    
-    /**
-     * @return the etdDate
-     */
-    public Date getEtdDate() {
-        return etdDate;
+
+    public Date getEtd() {
+        return etd;
     }
-    /**
-     * @param etdDate the etdDate to set
-     */
-    public void setEtdDate(Date etdDate) {
-        this.etdDate = etdDate;
+
+    public void setEtd(Date etd) {
+        this.etd = etd;
     }
-    /**
-     * @return the etaDate
-     */
-    public Date getEtaDate() {
-        return etaDate;
+
+    public Date getEta() {
+        return eta;
     }
-    /**
-     * @param etaDate the etaDate to set
-     */
-    public void setEtaDate(Date etaDate) {
-        this.etaDate = etaDate;
-    }
-    
-    public String getEtdLocalTZ() {
-        return etdLocalTZ;
-    }
-    
-    public String getEtaLocalTZ() {
-        return etaLocalTZ;
+
+    public void setEta(Date eta) {
+        this.eta = eta;
     }
     
     public List <CodeShareVo> getCodeshares() {
@@ -259,5 +219,29 @@ public class FlightVo extends BaseVo {
 
     public void setFuzzyHitCount(Integer fuzzyHitcount) {
         this.fuzzyHitCount = fuzzyHitcount;
+    }
+
+    public CountDownVo getCountDown() {
+        return countDown;
+    }
+
+    public void setCountDown(CountDownVo countDown) {
+        this.countDown = countDown;
+    }
+
+    public Date getEtdDate() {
+        return etdDate;
+    }
+
+    public void setEtdDate(Date etdDate) {
+        this.etdDate = etdDate;
+    }
+
+    public Date getEtaDate() {
+        return etaDate;
+    }
+
+    public void setEtaDate(Date etaDate) {
+        this.etaDate = etaDate;
     }
 }

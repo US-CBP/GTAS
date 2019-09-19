@@ -26,6 +26,9 @@ public class IntegrationTestBuilder {
     FlightRepository flightRepository;
 
     @Autowired
+    MutableFlightDetailsRepository mutableFlightDetailsRepository;
+
+    @Autowired
     MessageRepository messageRepository;
 
     @Autowired
@@ -309,6 +312,8 @@ public class IntegrationTestBuilder {
 
     private Passenger defaultPassenger() {
         passenger = new Passenger();
+        passenger.setPassengerDetails(new PassengerDetails(passenger));
+        passenger.setPassengerTripDetails(new PassengerTripDetails(passenger));
         passenger.getPassengerDetails().setPassengerType("P");
         passenger.getPassengerDetails().setFirstName(FIRST_NAME);
         passenger.getPassengerDetails().setLastName(LAST_NAME);

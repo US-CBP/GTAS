@@ -232,11 +232,11 @@ public class RulePersistenceServiceIT {
                 YesNoEnum.Y, startDate, null);
         r = testTarget.create(r, RuleServiceDataGenUtils.TEST_USER1_ID);
 
-        testTarget.update(r, RuleServiceDataGenUtils.TEST_USER3_ID);
+        testTarget.update(r, RuleServiceDataGenUtils.TEST_ROLE1_DESCRIPTION);
         r = testTarget.findByTitleAndAuthor(testRuleTitle,
                 RuleServiceDataGenUtils.TEST_USER1_ID);
         assertNotNull(r);
-        assertEquals(RuleServiceDataGenUtils.TEST_USER3_ID, r.getEditedBy()
+        assertEquals(RuleServiceDataGenUtils.TEST_ROLE1_DESCRIPTION, r.getEditedBy()
                 .getUserId());
     }
 

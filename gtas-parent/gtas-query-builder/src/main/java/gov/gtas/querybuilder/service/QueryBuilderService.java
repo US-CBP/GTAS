@@ -8,9 +8,7 @@ package gov.gtas.querybuilder.service;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_QUERIES;
 
 import gov.gtas.enumtype.EntityEnum;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.User;
+import gov.gtas.model.*;
 import gov.gtas.model.udr.json.QueryEntity;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.QueryTerm;
@@ -33,13 +31,14 @@ import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
+import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.FlightVo;
-import gov.gtas.vo.passenger.PassengerVo;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -188,7 +187,7 @@ public class QueryBuilderService {
 			logger.info(errorMsg, new InvalidQueryException(errorMsg, queryRequest.getQuery()));
 			throw new InvalidQueryException(errorMsg, queryRequest.getQuery());
 		}
-		List<PassengerVo> passengerList = new ArrayList<>();
+		List<PassengerGridItemVo> passengerList = new ArrayList<>();
 		long totalCount = 0;
 		boolean queryLimitReached;
 		try {
@@ -200,37 +199,72 @@ public class QueryBuilderService {
 
 			totalCount = resultList.getTotalPassengers();
 
+			Set<Long> passengerIds = new HashSet<>();
+			for (Object[] result : resultList.getResult()) {
+				Passenger passenger = (Passenger) result[1];
+				passengerIds.add(passenger.getId());
+			}
+
+			Map<Long, List<HitsSummary>> paxHitSummary = passengerService.getHitsSummaryMappedToPassengerIds(passengerIds);
+			Map<Long, Set<Document>> paxDocuments = passengerService.getDocumentMappedToPassengerIds(passengerIds);
 
 				for (Object[] result : resultList.getResult()) {
 					Passenger passenger = (Passenger) result[1];
 					Flight flight = (Flight) result[2];
-					PassengerVo vo = new PassengerVo();
-
-					// passenger information
-					BeanUtils.copyProperties(passenger, vo);
-					BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
-					BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
-					vo.setId(passenger.getId());
+					PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
 					passengerList.add(vo);
-
-					// populate with hits information
-					passengerService.fillWithHitsInfo(vo, flight.getId(), passenger.getId());
-
-					// flight information
-					vo.setFlightId(flight.getId() != null ? String.valueOf(flight.getId()) : "");
-					vo.setFlightNumber(flight.getFlightNumber());
-					vo.setCarrier(flight.getCarrier());
-					vo.setFlightOrigin(flight.getOrigin());
-					vo.setFlightDestination(flight.getDestination());
-					vo.setEtd(flight.getMutableFlightDetails().getEtd());
-					vo.setEta(flight.getMutableFlightDetails().getEta());
-		
-			}
+				}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
 
 		return new PassengersPageDto(passengerList, totalCount, queryLimitReached);
+	}
+
+	PassengerGridItemVo createPassengerGridItemVo(Map<Long, List<HitsSummary>> paxHitSummary,
+												  Map<Long, Set<Document>> paxDocuments,
+												  Passenger passenger,
+												  Flight flight) {
+
+		PassengerGridItemVo vo = new PassengerGridItemVo();
+
+		// passenger information
+		BeanUtils.copyProperties(passenger, vo);
+		BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
+		BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+		vo.setId(passenger.getId());
+
+		// populate with hits information
+		List<HitsSummary> hitsSummaries = paxHitSummary.get(passenger.getId());
+		if (!CollectionUtils.isEmpty(hitsSummaries)) {
+			boolean isRuleHit = false;
+			boolean isWatchlistHit = false;
+			for (HitsSummary hs : hitsSummaries) {
+				isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
+				isWatchlistHit =  hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
+			}
+			vo.setOnRuleHitList(isRuleHit);
+			vo.setOnWatchList(isWatchlistHit);
+		}
+
+		// populate with document information
+		Set<Document> passengerDocuments = paxDocuments.get(passenger.getId());
+		if (!CollectionUtils.isEmpty(passengerDocuments)) {
+			for (Document d : passengerDocuments) {
+				DocumentVo docVo = DocumentVo.fromDocument(d);
+				vo.addDocument(docVo);
+			}
+		}
+
+		// populate with flight information
+		vo.setFlightId(flight.getId() != null ? String.valueOf(flight.getId()) : "");
+		vo.setFlightNumber(flight.getFlightNumber());
+		vo.setCarrier(flight.getCarrier());
+		vo.setFlightOrigin(flight.getOrigin());
+		vo.setFlightDestination(flight.getDestination());
+		vo.setEtd(flight.getMutableFlightDetails().getEtd());
+		vo.setEta(flight.getMutableFlightDetails().getEta());
+		return vo;
 	}
 
 	private UserQuery createUserQuery(String userId, UserQueryRequest req) throws JsonProcessingException {

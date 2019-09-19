@@ -1344,6 +1344,7 @@
   		   	"ONE-WAY": "ONE-WAY",
   		   	"ROUND-TRIP":"ROUND-TRIP",
   		   	"MULTI-CITY":"MULTI-CITY",
+  		   	"NON-CONTIGUOUS":"NON-CONTIGUOUS",
   		   	"OPEN JAW": "OPEN JAW"
   		  },
   		  "operators": [

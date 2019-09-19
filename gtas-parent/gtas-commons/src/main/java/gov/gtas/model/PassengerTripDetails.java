@@ -51,8 +51,11 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
     @Column(name = "ref_number")
     private String reservationReferenceNumber;
+    
+    @Column(name = "pnr_ref_number")
+    private String pnrReservationReferenceNumber;
  
-    @Column(name = "travel_frequency")
+	@Column(name = "travel_frequency")
     private Integer travelFrequency=0;
     
     @Transient
@@ -60,6 +63,14 @@ public class PassengerTripDetails extends BaseEntityAudit {
  
     @Transient
     private String bagNum;
+    
+    public String getPnrReservationReferenceNumber() {
+		return pnrReservationReferenceNumber;
+	}
+
+	public void setPnrReservationReferenceNumber(String pnrReservationReferenceNumber) {
+		this.pnrReservationReferenceNumber = pnrReservationReferenceNumber;
+	}
 
 	public Integer getTravelFrequency() {
 		return travelFrequency;

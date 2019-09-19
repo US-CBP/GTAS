@@ -38,7 +38,8 @@ public class PnrGovParserTest implements ParserTestHelper {
     private static final String PNR_SEAT_NSST = "/pnr-messages/pnrSeatFormats.txt";
     private static final String failingMessage1 = "/pnr-messages/failingMessage1.txt";
     private static final String PNR_DOCO = "/pnr-messages/pnrWithDoco.txt";
-    
+    private static final String PNR_NO_ORG_MSG = "/pnr-messages/pnrNoOrgMsg.txt";
+
     private EdifactParser<PnrVo> parser;
 
     @Before
@@ -157,19 +158,16 @@ public class PnrGovParserTest implements ParserTestHelper {
         assertEquals(seat.getNumber(), "074E");
         assertEquals(seat.getTravelerReferenceNumber(), "1");
     }
-    
     @Test
-    public void pnrDocoTest() throws IOException, URISyntaxException, ParseException{
-    	String pnrExample = getMessageText(PNR_DOCO);
-    	PnrVo vo = this.parser.parse(pnrExample);
-    	DocumentVo docoVo = vo.getPassengers().get(0).getDocuments().get(1); //DOCS is required for passenger to be generated, meaning DOCO will be the second document.
-    	assertEquals(docoVo.getDocumentNumber(), "8675309");
-    	assertEquals(docoVo.getDocumentType(), "V");
-    	assertEquals(docoVo.getIssuanceCountry(), "OTHER PLACE");
-    	assertEquals(docoVo.getIssuanceDate().toString(), "Fri Dec 22 00:00:00 EST 2006");
-    	assertEquals(docoVo.getExpirationDate(), null); //DOCO does not have expiration date per spec.
+    public void pnrNoMSGField() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_NO_ORG_MSG);
+        PnrVo vo = this.parser.parse(pnrExample);
     }
-    
+    @Test
+    public void pnrNoOrgField() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_NO_ORG_MSG);
+        PnrVo vo = this.parser.parse(pnrExample);
+    }
     /*    @Test
     public void failingMessage1() throws IOException, URISyntaxException, ParseException {
         String pnrExample = getMessageText(failingMessage1);
@@ -177,4 +175,24 @@ public class PnrGovParserTest implements ParserTestHelper {
         System.out.println("test");
     }*/
 
+    @Test
+    public void pnrPassengerVo() throws IOException, URISyntaxException, ParseException {
+        String pnrExample = getMessageText(PNR_MESSAGE_PG_77);
+        PnrVo vo = this.parser.parse(pnrExample);
+        assertEquals(vo.getPassengers().get(0).getPnrRecordLocator(), "W9TEND");
+        assertEquals(vo.getPassengers().get(0).getPnrReservationReferenceNumber(), "43576");
+    }
+
+    @Test
+    public void pnrDocoTest() throws IOException, URISyntaxException, ParseException{
+        String pnrExample = getMessageText(PNR_DOCO);
+        PnrVo vo = this.parser.parse(pnrExample);
+        DocumentVo docoVo = vo.getPassengers().get(0).getDocuments().get(1); //DOCS is required for passenger to be generated, meaning DOCO will be the second document.
+        assertEquals(docoVo.getDocumentNumber(), "8675309");
+        assertEquals(docoVo.getDocumentType(), "V");
+        assertEquals(docoVo.getIssuanceCountry(), "OTHER PLACE");
+        assertEquals(docoVo.getIssuanceDate().toString(), "Fri Dec 22 00:00:00 EST 2006");
+        assertEquals(docoVo.getExpirationDate(), null); //DOCO does not have expiration date per spec.
+    }
 }
+

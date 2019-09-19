@@ -125,11 +125,7 @@ public class CaseDispositionController {
     @RequestMapping(method = RequestMethod.GET, value = "/getCurrentServerTime")
     @ResponseBody
     public long getCurrentServerTime() {
-        
-        Date currentServerTime = caseDispositionService.getCurrentServerTime();
-        long currentServerTimeMillis = currentServerTime.getTime();
-        
-        return currentServerTimeMillis;
+        return new Date().getTime();
     }
 
   @RequestMapping(value = "/getdownload/{id}", method = RequestMethod.GET)

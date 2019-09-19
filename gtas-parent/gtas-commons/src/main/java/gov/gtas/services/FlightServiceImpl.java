@@ -7,10 +7,12 @@
 package gov.gtas.services;
 
 import gov.gtas.model.*;
+import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.repository.FlightRepository;
 import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.FlightsRequestDto;
+import gov.gtas.vo.passenger.CountDownVo;
 import gov.gtas.vo.passenger.SeatVo;
 import gov.gtas.vo.passenger.CodeShareVo;
 import gov.gtas.vo.passenger.FlightVo;
@@ -52,6 +54,9 @@ public class FlightServiceImpl implements FlightService {
 	@Autowired
 	private AppConfigurationService appConfigurationService;
 
+	@Autowired
+	private AppConfigurationRepository appConfigurationRepository;
+
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
@@ -61,19 +66,22 @@ public class FlightServiceImpl implements FlightService {
     @Override
     @Transactional
     public FlightsPageDto findAll(FlightsRequestDto dto) {
-        Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
-		flightRespository.flush();
-		Pair<Long, List<Flight>> tuple2 = flightRespository.findByCriteria(dto);
-		List<Flight> flights = tuple2.getRight();
-    List<FlightVo> vos = convertFlightToFlightVo(flights);
+		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
+		List<Flight> flights = tuple.getRight();
+    	List<FlightVo> vos = convertFlightToFlightVo(flights);
 		return new FlightsPageDto(vos, tuple.getLeft());
     }
 
     @Override
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights) {
 		List<FlightVo> flightVos = new ArrayList<>();
+		CountDownCalculator countDownCalculator = new CountDownCalculator(new Date());
 		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
+			Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
+			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+			vo.setCountDown(countDownVo);
+			vo.setDirection(f.getDirection());
 			List<CodeShareVo> codeshareList = new ArrayList<>();
 			BeanUtils.copyProperties(f, vo);
 			BeanUtils.copyProperties(f.getMutableFlightDetails(), vo);
@@ -125,7 +133,6 @@ public class FlightServiceImpl implements FlightService {
 			logger.warn("The getFlightsByPassengerNameAndDocument error stack trace -  " + ex.getStackTrace());
 		}
 		return _tempMap;
-
 	}
 
 	@Override
@@ -181,27 +188,19 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	@Transactional
-	public List<Flight> getFlightsThreeDaysForward() {
-		String sqlStr = "SELECT * FROM flight WHERE eta BETWEEN NOW() AND NOW() + INTERVAL 3 DAY";
-		return (List<Flight>) em.createNativeQuery(sqlStr, Flight.class).getResultList();
-	}
-
-	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardInbound() {
-		Date now = appConfigurationService.offSetTimeZone(new Date());
+		Date now = new Date();
 		Date threeDays = getThreeDaysForward();
-		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "I");
+		return flightRespository.getFlightsInboundByDateRange(now, threeDays);
 	}
 
 	@Override
 	@Transactional
 	public List<Flight> getFlightsThreeDaysForwardOutbound() {
-		Date now = appConfigurationService.offSetTimeZone(new Date());
+		Date now = new Date();
 		Date threeDays = getThreeDaysForward();
-		return flightRespository.getFlightsThreeDaysForwardWithDirection(now, threeDays, "O");
+		return flightRespository.getFlightsOutBoundByDateRange(now, threeDays);
 	}
 
 	private Date getThreeDaysForward() {

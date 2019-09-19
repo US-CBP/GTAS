@@ -7,21 +7,21 @@ package gov.gtas.services.dto;
 
 import java.util.List;
 
-import gov.gtas.vo.passenger.PassengerVo;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 
 public class PassengersPageDto {
-    private List<PassengerVo> passengers;
+    private List<PassengerGridItemVo> passengers;
     private long totalPassengers;
     private boolean queryLimitReached;
-    public PassengersPageDto(List<PassengerVo> passengers, long totalPassengers) {
+    public PassengersPageDto(List<PassengerGridItemVo> passengers, long totalPassengers) {
         this(passengers, totalPassengers, false);
     }
-    public PassengersPageDto(List<PassengerVo> passengers, long totalPassengers, boolean queryLimitReached) {
+    public PassengersPageDto(List<PassengerGridItemVo> passengers, long totalPassengers, boolean queryLimitReached) {
         this.passengers = passengers;
         this.totalPassengers = totalPassengers;
         this.queryLimitReached = queryLimitReached;
     }
-    public List<PassengerVo> getPassengers() {
+    public List<PassengerGridItemVo> getPassengers() {
         return passengers;
     }
     public long getTotalPassengers() {

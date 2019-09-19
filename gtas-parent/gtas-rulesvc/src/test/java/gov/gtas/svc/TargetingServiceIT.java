@@ -33,6 +33,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ import org.springframework.test.annotation.Rollback;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {RuleServiceConfig.class, TestCommonServicesConfig.class })
 @Rollback(true)
+@Ignore
 public class TargetingServiceIT {
 	private static final Logger logger = LoggerFactory.getLogger(TargetingServiceIT.class);
 	public static final String UDR_RULE_AUTHOR = "test";

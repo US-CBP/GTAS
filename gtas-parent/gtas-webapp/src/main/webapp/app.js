@@ -437,6 +437,24 @@ var app;
                         }
                     }
                 })
+                .state('aboutgtas', {
+                    url: '/aboutgtas',
+                    authenticate: true,
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.MANAGE_HITS],
+                    views: {
+                        '@': {
+                            controller: 'AboutGtasCtr',
+                            templateUrl: 'help/aboutgtas.html'
+                         }
+                        },
+                
+                   resolve: {
+                     appVersionNumber: function(aboutGtasService){
+                         return aboutGtasService.getApplicationVersionNumber();
+                     }
+                 }
+
+                })
                 .state('adhocquery', {
                     url: '/adhocquery',
                     authenticate: true,
@@ -499,7 +517,7 @@ var app;
                     }
                 })
                 .state('flightpax', {
-                    url: '/flightpax/:id/:flightNumber/:origin/:destination/:direction/:eta/:etd',
+                    url: '/flightpax/:id/',
                     authenticate: true,
                     roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
@@ -510,9 +528,6 @@ var app;
                     },
                     resolve: {
                         paxModel: function ($stateParams, paxModel) {
-                        	$stateParams.dest = $stateParams.destination;
-                            $stateParams.etaStart = $stateParams.eta;
-                            $stateParams.etaEnd = $stateParams.etd;
                         	return {
                                 model: paxModel.initial($stateParams),
                                 reset: function () {
@@ -526,11 +541,7 @@ var app;
                             };
                         },
                         passengers: function (paxService, $stateParams, paxModel) {
-                            //because of field/model not standard
-                            $stateParams.dest = $stateParams.destination;
-                            $stateParams.etaStart = $stateParams.eta;
-                            $stateParams.etaEnd = $stateParams.etd;
-                            return paxService.getPax($stateParams.id, paxModel.alldatamodel());
+                          return paxService.getPax($stateParams.id, paxModel.alldatamodel());
                         }
                     }
                 })
@@ -690,7 +701,8 @@ var app;
                 userlocation: {name: ['userlocation']},
                 upload: {name: ['upload']},
                 cases: {name: ['cases']},
-                onedaylookout: {name: ['onedaylookout']}
+                onedaylookout: {name: ['onedaylookout']},
+                aboutgtas: {name: ['aboutgtas']}
             };
             $scope.onRoute = function (key) {
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);

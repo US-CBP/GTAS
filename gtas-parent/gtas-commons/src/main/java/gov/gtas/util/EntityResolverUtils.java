@@ -43,46 +43,52 @@ public class EntityResolverUtils {
 		return hexStr;
 	}
 
-	public static String makeHashForPassenger(Passenger pax) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-		String hash = "";
+	public static String makeHashForPassenger(String firstName, String lastName, String gender, Date dob)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String input = String.join("", Arrays.asList(firstName.toUpperCase(), lastName.toUpperCase(),
+				gender.toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(dob)));
 
-		hash = makeSHA1Hash(
-				String.join("", Arrays.asList(pax.getPassengerDetails().getFirstName().toUpperCase(), pax.getPassengerDetails().getLastName().toUpperCase(),
-						pax.getPassengerDetails().getGender().toUpperCase(), new SimpleDateFormat("MM/dd/yyyy").format(pax.getPassengerDetails().getDob()))));
-
-		return hash;
+		return makeSHA1Hash(input);
 	}
-        
-        public static String makeDocIdHashForPassenger(Passenger passenger) throws NoSuchAlgorithmException, UnsupportedEncodingException 
-        {
-            String hashString = null;
-            
-            String passportNumber = "";
-            String issuanceCountry = "";
-            Date expirationDate = null;
-            Date now = new Date();
-            
-            // make sure that we have a passport and that it is not expired. 
-            // People with dual citizenship and two passports will be considered two people.
-            for (Document doc : passenger.getDocuments())
-            {
-                if (doc.getDocumentType().equals(DocumentTypeCode.P.toString()))
-                {
-                    if (doc.getExpirationDate().compareTo(now) > 0)
-                    {
-                      passportNumber = doc.getDocumentNumber();
-                      issuanceCountry = doc.getIssuanceCountry();
-                      expirationDate = doc.getExpirationDate();
-                    }
-                }
-            }
-            
-            if (!passportNumber.isEmpty())
-            {
-               hashString =  makeSHA1Hash(String.join("", passportNumber,issuanceCountry,expirationDate.toString()));
-            }
-            
-                    
-            return hashString;
-        }
+
+	public static String makeHashForPassenger(Passenger pax)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+		String firstName = pax.getPassengerDetails().getFirstName();
+		String lastName = pax.getPassengerDetails().getLastName();
+		String gender = pax.getPassengerDetails().getGender();
+		Date dob = pax.getPassengerDetails().getDob();
+
+		return makeHashForPassenger(firstName, lastName, gender, dob);
+	}
+
+	public static String makeDocIdHashForPassenger(Passenger passenger)
+			throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		String hashString = null;
+
+		String passportNumber = "";
+		String issuanceCountry = "";
+		Date expirationDate = null;
+		Date now = new Date();
+
+		// make sure that we have a passport and that it is not expired.
+		// People with dual citizenship and two passports will be considered two people.
+		for (Document doc : passenger.getDocuments()) {
+			String docType = doc.getDocumentType();
+			Date docExpirationDate = doc.getExpirationDate();
+			if (docType != null && docExpirationDate != null && docType.equals(DocumentTypeCode.P.toString())
+					&& docExpirationDate.compareTo(now) > 0) {
+				passportNumber = doc.getDocumentNumber();
+				issuanceCountry = doc.getIssuanceCountry();
+				expirationDate = doc.getExpirationDate();
+				break;
+			}
+		}
+
+		if (!passportNumber.isEmpty()) {
+			hashString = makeSHA1Hash(String.join("", passportNumber, issuanceCountry, expirationDate.toString()));
+		}
+
+		return hashString;
+	}
 }

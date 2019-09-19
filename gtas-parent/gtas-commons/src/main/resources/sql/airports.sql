@@ -1,3 +1,5 @@
+SET NAMES utf8;
+
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Goroka Airport', 'GKA', 'AYGA', 'Goroka', -6.081690, 145.391998, (select iso3 from country where upper(name) like upper('%Papua New Guinea%') limit 1) );
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Madang Airport', 'MAG', 'AYMD', 'Madang', -5.207080, 145.789001, (select iso3 from country where upper(name) like upper('%Papua New Guinea%') limit 1) );
 INSERT INTO airport(name, iata, icao, city, latitude, longitude, country) VALUES ('Mount Hagen Kagamuga Airport', 'HGU', 'AYMH', 'Mount Hagen', -5.826790, 144.296005, (select iso3 from country where upper(name) like upper('%Papua New Guinea%') limit 1) );

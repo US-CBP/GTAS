@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.PassengerTripDetails;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,10 +70,11 @@ public class PnrMessageServiceIT extends
 		f.setOrigin("LAX");
 		f.setDestination("IAD");
 		Passenger p = new Passenger();
+		p.setPassengerDetails(new PassengerDetails(p));
+		p.setPassengerTripDetails(new PassengerTripDetails(p));
 		p.getPassengerDetails().setPassengerType("P");
 		p.getPassengerDetails().setFirstName("john");
 		p.getPassengerDetails().setLastName("doe");
-		f.getPassengers().add(p);
 		flightDao.save(f);
 		assertNotNull(f.getId());
 	}

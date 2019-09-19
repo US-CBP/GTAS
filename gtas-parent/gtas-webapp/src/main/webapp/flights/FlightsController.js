@@ -42,8 +42,7 @@
       };
       
       $scope.updateOnDirectionChange = function(){
-        
-        
+
         var isAdminUser = flightSearchOptions.data.adminUser;
           
           if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -51,7 +50,6 @@
                
             if($scope.model.direction == "I")
             {
-            
                 var destinationAirports = new Array();
                 destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
                 $scope.model.dest = destinationAirports;
@@ -164,14 +162,7 @@
       };
       
       var loadFlightDirection = function() {
-        
-        $scope.flightDirectionList = [];
-           angular.forEach(flightSearchOptions.data.flightDirectionList, function(item){
-             
-                       $scope.flightDirectionList.push(item);
-                     
-                  });
-           
+
            var isAdminUser = flightSearchOptions.data.adminUser;
            
            if(isAdminUser!=null && isAdminUser!=undefined && isAdminUser===false)
@@ -179,6 +170,8 @@
              var destinationAirports = new Array();
              destinationAirports.push({id: flightSearchOptions.data.userLocation}); 
              $scope.model.dest = destinationAirports;
+             flightDirections = flightDirections.splice(2, 1);
+
            }
 
         };  
@@ -231,7 +224,9 @@
           enableColumnMenus: false,
           enableGridMenu: true,
           enableExpandableRowHeader: false,
-          exporterCsvFilename: 'Flights.csv',
+          exporterCsvFilename: 'FlightGid.csv',
+          exporterExcelFilename: 'flightGrid.xlsx',
+          exporterExcelSheetName: 'Data',
           expandableRowHeight: 200,
           expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
@@ -300,6 +295,8 @@
               });
           }
       };
+
+
       //Front-end pagination configuration object for gridUi
       //Should only be active on stateName === 'queryFlights'
       $scope.flightsQueryGrid = {
@@ -313,7 +310,10 @@
               enableVerticalScrollbar: 1,
               enableColumnMenus: false,
               enableExpandableRowHeader: false,
-              exporterCsvFilename: 'Flights.csv',
+              enableGridMenu: true,
+              exporterCsvFilename: 'FlightsQueryGrid.csv',
+              exporterExcelFilename: 'flightsQueryGrid.xlsx',
+              exporterExcelSheetName: 'Data',
               expandableRowHeight: 200,
               expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
@@ -359,95 +359,125 @@
       }
 
       $scope.flightsGrid.columnDefs = [
-        {
-            name: 'passengerCount',
-            field: 'passengerCount',
-            displayName: 'Passengers',
-            enableFiltering: false,
-            cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, destination: row.entity.destination, direction: row.entity.direction, eta: row.entity.eta.substring(0, 10), etd: row.entity.etd.substring(0, 10)})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/{{row.entity.eta.substring(0, 10)}}/{{row.entity.etd.substring(0, 10);}}" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
-        },
-        {
-            name: 'listHitCount',
-            displayName: 'Watchlist Hits',
-            enableFiltering: false,
-            cellClass: "gridService.colorHits",
-            sort: {
-                direction: uiGridConstants.DESC,
-                priority: 0
-            },
-            cellTemplate:'<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
-        },
-        {
-            name: 'ruleHitCount',
-            displayName: 'Rule Hits',
-            enableFiltering: false,
-            cellClass: gridService.colorHits,
-            sort: {
-                direction: uiGridConstants.DESC,
-                priority: 1
-            },
-            cellTemplate:'<span ng-if="row.entity.ruleHitCount" class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
-        },
-        {
-            name: 'graphHitCount',
-            displayName: 'Graph Hits',
-            enableFiltering: false,
-            cellClass: "gridService.colorHits",
-            sort: {
-                direction: uiGridConstants.DESC,
-                priority: 0
-            },
-            cellTemplate:'<span ng-if="row.entity.graphHitCount" class="badge warning-back warning-border-th">{{row.entity.graphHitCount}}</span>'
-        },
-        {
-            name: 'fuzzyHitCount',
-            displayName: 'Partial Hits',
-            enableFiltering: false,
-            cellClass: "gridService.colorHits",
-            sort: {
-                direction: uiGridConstants.DESC,
-                priority: 0
-            },
-            cellTemplate:'<span ng-if="row.entity.fuzzyHitCount" class="badge info-back info-border-th">{{row.entity.fuzzyHitCount}}</span>'
-        },
-        {
-            name: 'flightNumber',
-            displayName: 'flight.flight', headerCellFilter: 'translate',
-            cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()" ng-disabled="row.entity.codeshares.length === 0">'
-                +'<md-tooltip class="multi-tooltip" md-direction="left"><div ng-repeat="item in row.entity.codeshares">Codeshare Flight #: {{item.marketingFlightNumber}}</div></md-tooltip>{{COL_FIELD}}'
-                +'</md-button>'
-        },
-        {
-          name:'carrier',
-          displayName: 'flight.carrier', headerCellFilter: 'translate',
-          cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-                +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
-                +'</md-button>'},
-        {
-            name: 'eta', displayName:'pass.eta', headerCellFilter: 'translate',
-            sort: {
-                direction: uiGridConstants.DESC,
-                priority: 2
-            }
-        },
-        {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate'},
-        {name: 'origin', displayName:'flight.origin', headerCellFilter: 'translate',
-          cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-            +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
-            +'</md-button>'},
-        {name: 'originCountry', displayName:'doc.country', headerCellFilter: 'translate',
-            cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-          +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
-          +'</md-button>'},
-        {name: 'destination', displayName:'flight.destination', headerCellFilter: 'translate',
-          cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-          +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
-          +'</md-button>'},
-        {name: 'destinationCountry', displayName:'pass.destination', headerCellFilter: 'translate',
-            cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
-          +'<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
-          +'</md-button>'}
-    ];
+          {
+              name: 'passengerCount',
+              field: 'passengerCount',
+              displayName: 'Passengers',
+              enableFiltering: false,
+              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
+          },
+          {
+              name: 'countDownTimer',
+              field: 'countDown.millisecondsFromDate',
+              displayName: 'Count Down',
+              type: 'number',
+              enableFiltering: false,
+              cellTemplate: '<span ng-class="{\'text-success\': row.entity.countDown.closeToCountDown}">{{row.entity.countDown.countDownTimer}}</span>'
+          },
+          {
+              name: 'listHitCount',
+              displayName: 'Watchlist Hits',
+              enableFiltering: false,
+              cellClass: "gridService.colorHits",
+              sort: {
+                  direction: uiGridConstants.DESC,
+                  priority: 0
+              },
+              cellTemplate: '<span ng-if="row.entity.listHitCount" class="badge danger-back danger-border-th">{{row.entity.listHitCount}}</span>'
+          },
+          {
+              name: 'ruleHitCount',
+              displayName: 'Rule Hits',
+              enableFiltering: false,
+              cellClass: gridService.colorHits,
+              sort: {
+                  direction: uiGridConstants.DESC,
+                  priority: 1
+              },
+              cellTemplate: '<span ng-if="row.entity.ruleHitCount" class="badge warning-back warning-border-th">{{row.entity.ruleHitCount}}</span>'
+          },
+          {
+              name: 'graphHitCount',
+              displayName: 'Graph Hits',
+              enableFiltering: false,
+              cellClass: "gridService.colorHits",
+              sort: {
+                  direction: uiGridConstants.DESC,
+                  priority: 0
+              },
+              cellTemplate: '<span ng-if="row.entity.graphHitCount" class="badge warning-back warning-border-th">{{row.entity.graphHitCount}}</span>'
+          },
+          {
+              name: 'fuzzyHitCount',
+              displayName: 'Partial Hits',
+              enableFiltering: false,
+              cellClass: "gridService.colorHits",
+              sort: {
+                  direction: uiGridConstants.DESC,
+                  priority: 0
+              },
+              cellTemplate: '<span ng-if="row.entity.fuzzyHitCount" class="badge info-back info-border-th">{{row.entity.fuzzyHitCount}}</span>'
+          },
+          {
+              name: 'direction',
+              displayName: 'Direction', headerCellFilter: 'translate',
+              cellTemplate: '<span>{{COL_FIELD}}</span>',
+              visible: true
+          },
+          {
+              name: 'flightNumber',
+              displayName: 'flight.flight', headerCellFilter: 'translate',
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()" ng-disabled="row.entity.codeshares.length === 0">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div ng-repeat="item in row.entity.codeshares">Codeshare Flight #: {{item.marketingFlightNumber}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>'
+          },
+          {
+              name: 'carrier',
+              displayName: 'flight.carrier', headerCellFilter: 'translate',
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>',
+              visible: false
+
+          },
+          {
+              name: 'eta', displayName: 'pass.eta', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+          },
+          {
+              name: 'etd', displayName: 'pass.etd', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+          },
+          {
+              name: 'origin', displayName: 'flight.origin', headerCellFilter: 'translate', visible: true,
+
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>',
+
+
+          },
+          {
+              name: 'originCountry', displayName: 'doc.country', headerCellFilter: 'translate', visible: false,
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>'
+          },
+          {
+              name: 'destination', displayName: 'flight.destination', headerCellFilter: 'translate',
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>',
+              visible: true
+
+          },
+          {
+              name: 'destinationCountry', displayName: 'pass.destination', headerCellFilter: 'translate',
+              cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
+                  + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
+                  + '</md-button>',
+              visible: false
+
+          }
+      ];
 
     $scope.flightsQueryGrid.columnDefs = $scope.flightsGrid.columnDefs;
 
@@ -481,14 +511,21 @@
          {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
          {
              name: 'eta',
+             type: 'date',
              sort: {
                  direction: uiGridConstants.DESC,
                  priority: 2
              },
+             cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
              displayName:'pass.eta', headerCellFilter: 'translate',
              visible: (stateName === 'paxAll')
          },
-         {name: 'etd', displayName:'pass.etd', headerCellFilter: 'translate', visible: (stateName === 'paxAll')},
+         {name: 'etd',
+             type: 'date',
+             displayName:'pass.etd',
+             headerCellFilter: 'translate',
+             cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
+             visible: (stateName === 'paxAll')},
          {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
          {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},

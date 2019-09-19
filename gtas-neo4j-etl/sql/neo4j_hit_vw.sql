@@ -40,6 +40,8 @@ INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id
 INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
+AND f.id_tag IS NOT NULL 
+AND pit.idTag IS NOT NULL
 
 UNION
 
@@ -71,7 +73,7 @@ SELECT
 	p.id as gtas_passenger_id,
 	f.id_tag as flight_id_tag
 	
-	FROM gtas.message msg
+ FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
  INNER JOIN gtas.apis_message apm ON msg.id = apm.id
  INNER JOIN gtas.apis_message_flight_pax amfx ON apm.id = amfx.apis_message_id
@@ -83,4 +85,6 @@ SELECT
  INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
 INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
 WHERE mst.ms_status = 'ANALYZED'
+AND f.id_tag IS NOT NULL 
+AND pit.idTag IS NOT NULL
 ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id

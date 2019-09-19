@@ -72,6 +72,8 @@ public class CommonServicesConfig {
     private static final String PROPERTY_NAME_C3P0_MAX_CONNECT = "c3p0.idleConnectionTestPeriod";
 
     private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
+    private static final String PROPERTY_NAME_HIBERNATE_USEUNICODE = "hibernate.connection.useUnicode";
+    private static final String PROPERTY_NAME_HIBERNATE_CHARACTERENCODING = "hibernate.connection.characterEncoding";
 
     @SuppressWarnings("Duplicates")
     private Properties hibProperties() {
@@ -88,9 +90,8 @@ public class CommonServicesConfig {
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_SHOW_SQL));
         properties.put(PROPERTY_NAME_HIBERNATE_CACHE_FACTORY,
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CACHE_FACTORY));
-        properties
-                .put(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH,
-                        env.getRequiredProperty(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH));
+        properties.put(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH,
+                env.getRequiredProperty(PROPERTY_NAME_CONFIGURATION_RESOURCE_PATH));
         properties.put(PROPERTY_NAME_SHAREDCACHE_MODE,
                 env.getRequiredProperty(PROPERTY_NAME_SHAREDCACHE_MODE));
         properties.put(PROPERTY_NAME_HIBERNATE_USE_MINIMAL_PUTS, env
@@ -103,12 +104,12 @@ public class CommonServicesConfig {
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_ORDER_INSERTS));
         properties.put(PROPERTY_NAME_HIBERNATE_ORDER_UPDATES,
                 env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_ORDER_UPDATES));
-        properties
-                .put(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA,
-                        env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA));
-        properties
-                .put(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET,
-                        env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET));
+        properties.put(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA,
+                env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_JDBC_BATCH_VERSION_DATA));
+        properties.put(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET,
+                env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET));
+        properties.put(PROPERTY_NAME_HIBERNATE_USEUNICODE, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_USEUNICODE));
+        properties.put(PROPERTY_NAME_HIBERNATE_CHARACTERENCODING, env.getRequiredProperty(PROPERTY_NAME_HIBERNATE_CHARACTERENCODING));
 
         return properties;
     }
