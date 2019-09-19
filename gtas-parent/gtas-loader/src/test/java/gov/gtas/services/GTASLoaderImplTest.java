@@ -9,8 +9,20 @@
 package gov.gtas.services;
 
 
+import gov.gtas.model.Document;
 import gov.gtas.model.Message;
+import gov.gtas.model.Passenger;
+import gov.gtas.parsers.exception.ParseException;
+import gov.gtas.parsers.vo.DocumentVo;
+import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.repository.*;
+import junit.framework.Assert;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,6 +110,35 @@ public class GTASLoaderImplTest {
         Mockito.when(messageDao.findByHashCode(foo)).thenReturn(new Message());
         gtasLoader.checkHashCode(foo);
     }
-
+    @Test
+    public void documentEquality() throws ParseException {
+    	Passenger p = new Passenger();
+    	p.setId(1L);
+    	PassengerVo pvo = new PassengerVo();
+    	
+    	Document doc = new Document();
+    	Document doc2 = new Document();
+    	doc.setPaxId(1L);
+    	doc2.setPaxId(1L);
+    	doc.setDocumentNumber("1234");
+    	doc2.setDocumentNumber("1234");
+    	
+    	DocumentVo docVo = new DocumentVo();
+    	DocumentVo docVo2 = new DocumentVo();
+    	
+    	docVo.setDocumentNumber("1234");
+    	docVo2.setDocumentNumber("5678");
+  
+    	p.addDocument(doc);
+    	p.addDocument(doc2);
+    	
+    	pvo.addDocument(docVo);
+    	pvo.addDocument(docVo2);
+    	
+    	Mockito.when(docDao.findByDocumentNumberAndPassenger("1234",p)).thenReturn(new ArrayList<>(p.getDocuments()));
+    	gtasLoader.updatePassenger(p, pvo);
+    	
+    	Assert.assertEquals(2, p.getDocuments().size());
+    }
 
 }

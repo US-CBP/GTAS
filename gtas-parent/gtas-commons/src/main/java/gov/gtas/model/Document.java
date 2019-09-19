@@ -127,8 +127,6 @@ public class Document extends BaseEntity {
 			return false;
 		final Document other = (Document) obj;
 		return Objects.equals(this.documentNumber, other.documentNumber)
-				&& Objects.equals(this.issuanceCountry, other.issuanceCountry)
-				&& Objects.equals(this.documentType, other.documentType)
 				&& Objects.equals(this.paxId, other.paxId);
 	}
 }
