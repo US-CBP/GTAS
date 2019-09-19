@@ -377,25 +377,26 @@ public class JPQLGenerator {
         return joinCondition.toString();
     }
 
-    private static String getJoinCondition(EntityEnum entity, EntityEnum queryType)
+    public static String getJoinCondition(EntityEnum entity, EntityEnum queryType)
             throws InvalidQueryRepositoryException {
+    	
         String joinCondition = "";
 
         switch (entity.getEntityName().toUpperCase()) {
             case Constants.ADDRESS:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.ADDRESS.getEntityReference() + " "
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.ADDRESS.getEntityReference() + " "
                         + EntityEnum.ADDRESS.getAlias();
                 break;
             case Constants.AGENCY:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.TRAVEL_AGENCY.getEntityReference()
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.TRAVEL_AGENCY.getEntityReference()
                         + " " + EntityEnum.TRAVEL_AGENCY.getAlias();
                 break;
             case Constants.DWELLTIME:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference()
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.DWELL_TIME.getEntityReference()
                         + " " + EntityEnum.DWELL_TIME.getAlias();
                 break;
             case Constants.CREDITCARD:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.CREDIT_CARD.getEntityReference()
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.CREDIT_CARD.getEntityReference()
                         + " " + EntityEnum.CREDIT_CARD.getAlias();
                 break;
             case Constants.DOCUMENT:
@@ -408,7 +409,7 @@ public class JPQLGenerator {
                 }
                 break;
             case Constants.EMAIL:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.EMAIL.getEntityReference() + " "
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.EMAIL.getEntityReference() + " "
                         + EntityEnum.EMAIL.getAlias();
                 break;
             case Constants.FLIGHT:
@@ -418,13 +419,13 @@ public class JPQLGenerator {
             case Constants.BOOKINGDETAIL:
 
                 if (queryType == EntityEnum.FLIGHT) {
-                    joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
+                    joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
                 } else if (queryType == EntityEnum.PASSENGER) {
-                    joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
+                    joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BOOKING_DETAIL.getEntityReference() + " " + EntityEnum.BOOKING_DETAIL.getAlias();
                 }
                 break;
             case Constants.FREQUENTFLYER:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.FREQUENT_FLYER.getEntityReference()
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.FREQUENT_FLYER.getEntityReference()
                         + " " + EntityEnum.FREQUENT_FLYER.getAlias();
                 break;
             case Constants.HITS:
@@ -435,22 +436,22 @@ public class JPQLGenerator {
                         + " " + EntityEnum.PASSENGER.getAlias();
                 break;
             case Constants.PHONE:
-                joinCondition = Constants.JOIN + EntityEnum.PNR.getAlias() + EntityEnum.PHONE.getEntityReference() + " "
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PNR.getAlias() + EntityEnum.PHONE.getEntityReference() + " "
                         + EntityEnum.PHONE.getAlias();
                 break;
             case Constants.PNR:
                 if (queryType == EntityEnum.FLIGHT) {
-                    joinCondition = Constants.JOIN + EntityEnum.FLIGHT.getAlias() + EntityEnum.PNR.getEntityReference()
+                    joinCondition = Constants.LEFT_JOIN + EntityEnum.FLIGHT.getAlias() + EntityEnum.PNR.getEntityReference()
                             + " " + EntityEnum.PNR.getAlias();
                 } else if (queryType == EntityEnum.PASSENGER) {
-                    joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.PNR.getEntityReference()
+                    joinCondition = Constants.LEFT_JOIN+ EntityEnum.PASSENGER.getAlias() + EntityEnum.PNR.getEntityReference()
                             + " " + EntityEnum.PNR.getAlias();
                 }
                 break;
             case Constants.BAG:
                 // TO-DO: Revisit This For Flight Queries, currently both Bag and Fpax only work
                 // with passenger queries
-                joinCondition = Constants.JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BAG.getEntityReference() + " "
+                joinCondition = Constants.LEFT_JOIN + EntityEnum.PASSENGER.getAlias() + EntityEnum.BAG.getEntityReference() + " "
                         + EntityEnum.BAG.getAlias();
                 break;
             case Constants.FLIGHTPAX:
