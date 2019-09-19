@@ -258,6 +258,24 @@ public class ServiceUtilTest {
 		assertTrue(passenger.getId().equals(1L));
 	}
 
+	@Test
+	public void testNullPassengerIdTag() {
+		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", true);
+		Date dob = new Date();
+		String fname = "gtas";
+		String lname = "awesome";
+		String gender = "M";
+		PassengerVo pvo = createPassengerVo(fname, lname, dob, gender);
+
+		list = createFlightPassengerList(dob, null, null);
+		list.get(0).getPassenger().setPassengerIDTag(null);
+		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
+				pvo.getLastName())).thenReturn(list);
+
+		Passenger passenger = serviceUtil.findPassengerOnFlight(flight, pvo);
+
+	}
+
 	private Set<Document> createSimpleDocumentList() {
 		Set<Document> documents = new HashSet<Document>();
 		Document doc = new Document();
