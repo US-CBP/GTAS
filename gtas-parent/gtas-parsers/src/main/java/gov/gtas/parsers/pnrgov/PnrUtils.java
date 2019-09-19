@@ -158,8 +158,8 @@ public class PnrUtils {
             p.setFirstName(p.getFirstName().substring(0, p.getFirstName().indexOf("-1")));
         }
     }
-
-    public static DocumentVo createVisa(SSR ssr) {
+    //TODO: Potentially remove this code as was replaced by SSRDoco class creation
+    public static DocumentVo createVisa(SSR ssr) { 
         List<String> strs = splitSsrFreeText(ssr);
         if (CollectionUtils.isEmpty(strs)) {
             return null;
@@ -437,5 +437,13 @@ public class PnrUtils {
                 logger.warn("Failed to process DOB");
             }
         }
+    }
+    
+    public static List<DocumentVo> convertDocVoFromDoco(List<SSRDoco> ssrDocos){
+    	List<DocumentVo> docList = new ArrayList<DocumentVo>();
+    	for(SSRDoco ssrDoco : ssrDocos) {
+    		docList.add(new DocumentVo(ssrDoco));
+    	}	
+    	return docList;
     }
 }

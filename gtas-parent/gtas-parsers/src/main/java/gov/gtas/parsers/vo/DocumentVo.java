@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import gov.gtas.parsers.pnrgov.segment.SSRDoco;
+import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.validators.Validatable;
 
 public class DocumentVo implements Validatable {
@@ -19,6 +21,22 @@ public class DocumentVo implements Validatable {
     private Date expirationDate;
     private Date issuanceDate;
     private String issuanceCountry;
+    /**
+     * date format used for passport/visa expiration, issuance date
+     */
+    private static final String DOC_DATE_FORMAT = "ddMMMyy";
+    
+    public DocumentVo() {
+    	
+    }
+    
+    public DocumentVo(SSRDoco ssrDoco) {
+    	this.setDocumentNumber(ssrDoco.getVisaDocNumber());
+    	this.setDocumentType(ssrDoco.getSsrDocoType().toString());
+    	this.setExpirationDate(null); //SSRDoco does not have an expiration date field
+    	this.setIssuanceCountry(ssrDoco.getVisaDocPlaceOfIssuance());
+    	this.setIssuanceDate(ParseUtils.parseDateTime(ssrDoco.getVisaDocIssuanceDate(), DOC_DATE_FORMAT));
+    }
 
     public String getDocumentType() {
         return documentType;
