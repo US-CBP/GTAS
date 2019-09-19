@@ -805,8 +805,16 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
         caseVo.setCurrentTime(new Date());
         CountDownCalculator countDownCalculator = new CountDownCalculator(caseVo.getCurrentTime());
-        Date countDownTo = caseVo.getCountdownTime();
-        CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo);
+        Date relevantEtaOrEtd = caseVo.getCountdownTime();
+
+        CountDownVo countDownVo;
+        if (relevantEtaOrEtd == null) {
+            // This should not happen, but if it somehow does we need to return a vo instead of throwing a null pointer.
+            logger.error("count down is null, returning generic countdown vo!");
+            countDownVo = new CountDownVo("Error, no date provided (it is null)!!", false, Long.MIN_VALUE);
+        } else {
+            countDownVo = countDownCalculator.getCountDownFromDate(relevantEtaOrEtd);
+        }
         caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());
         return caseVo;
     }
