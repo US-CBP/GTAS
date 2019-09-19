@@ -9,11 +9,13 @@
 package gov.gtas.services;
 
 import gov.gtas.vo.passenger.CountDownVo;
+import org.springframework.lang.NonNull;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.Objects;
 
 class CountDownCalculator {
 
@@ -28,7 +30,8 @@ class CountDownCalculator {
     }
 
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
-    CountDownVo getCountDownFromDate(Date countDownTo, int minBefore, int minAfter) {
+    CountDownVo getCountDownFromDate(@NonNull Date countDownTo, int minBefore, int minAfter) {
+        Objects.requireNonNull(countDownTo);
         long currentTimeMillis = currentTime.getTime();
         long countDownToMinusCurrentTimeInMillis = countDownTo.getTime() - currentTimeMillis;
         long countDownSeconds = countDownToMinusCurrentTimeInMillis / 1000;

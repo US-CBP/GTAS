@@ -211,11 +211,13 @@ public class ServiceUtil implements LoaderServices {
 				String passengerIdTag = createPassengerIdTag(pvo);
 				for (FlightPassenger fp : flightPaxList) {
 					Passenger pax = fp.getPassenger();
-					String paxIdTag = pax.getPassengerIDTag().getIdTag();
-					if (paxIdTag.equals(passengerIdTag)) {
-						existingPassenger = pax;
-						foundPassenger = true;
-					}
+					if (pax.getPassengerIDTag() != null) {
+                        String paxIdTag = pax.getPassengerIDTag().getIdTag();
+                        if (paxIdTag.equals(passengerIdTag)) {
+                            existingPassenger = pax;
+                            foundPassenger = true;
+                        }
+                    }
 				}
 			}
 
