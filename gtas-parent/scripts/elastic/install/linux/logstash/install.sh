@@ -8,7 +8,7 @@ cd $CURRENT_DIR
 
 # Install and start logstash
 
-sudo yum install logstash-6.5.0 -y
+sudo yum install logstash-7.2.0 -y
 
 systemctl daemon-reload
 
