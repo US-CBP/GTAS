@@ -159,7 +159,17 @@
                 }
             };
 
-            $scope.commentConfirm = function(){
+            $scope.saveCase = function(){
+                if (!hasData(($scope.rule || {}).ruleCat)) {
+                  $scope.errorToast("The case requires a Rule Category.");
+                  return;
+                }
+
+                if(!hasData($scope.commentText)) {
+                  $scope.errorToast("The case requires a comment.")
+                  return;
+                }
+                
                 spinnerService.show('html5spinner');
                 caseDispositionService.postManualCase($scope.passenger.flightId, $scope.passenger.paxId,
                     $scope.rule.ruleCat, $scope.commentText, null)
@@ -265,7 +275,12 @@
 
             // End Trix attachment logic
 
-
+            function hasData(obj) {
+              if(typeof(obj) === 'object' || typeof(obj) === 'undefined')
+                return Object.keys(obj || {}).length > 0;
+              else
+                return String(obj).trim().length > 0;
+             }
 
         })
 }());
