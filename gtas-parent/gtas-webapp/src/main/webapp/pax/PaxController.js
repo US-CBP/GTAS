@@ -11,6 +11,7 @@
     $mdDialog,
     $mdSidenav,
     $timeout,
+    $translate,
     passenger,
     $mdToast,
     spinnerService,
