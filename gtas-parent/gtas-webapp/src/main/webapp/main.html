@@ -53,33 +53,33 @@
         <ul class="nav navbar-nav navbar-left">
           <li class="dropdown mobile-hide">
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              Tools<span class="caret"></span>
+              {{'tools' | translate}}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;Queries</a>
+                &nbsp;{{'menu.queries' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
                 <i class="fa fa-flag" aria-hidden="true"></i>
-                &nbsp;Rules</a>
+                &nbsp;{{'menu.riskcriteria' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
                 <i class="fa fa-eye" aria-hidden="true"></i>
-                &nbsp;Watch List</a>
+                &nbsp;{{'menu.watchlist' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
                 <a href="#/admin">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                &nbsp;Admin</a>
+                &nbsp;{{'menu.admin' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]"><a href="#/upload">
                 <i class="fa fa-upload" aria-hidden="true"></i>
-                &nbsp;Upload</a></li>
+                &nbsp;{{'menu.upload' | translate}}</a></li>
               <!-- Neo4J Browser pop out-->
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="{{getNeo4JUrl()}}" target="_blank">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;Neo4J Browser</a>
+                &nbsp;{{'menu.neo4j' | translate}}</a>
               </li>
             </ul>
           </li>
@@ -96,12 +96,12 @@
         	<ul class="nav navbar-nav navbar-right">
          		 <li class="dropdown mobile-hide">
             		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              			Help<span class="caret"></span>
+              			{{'help' | translate}}<span class="caret"></span>
            			 </a>
            	 <ul class="dropdown-menu" role="menu">
               	<li ><a href="#/aboutgtas">
                 <i class="fa fa-info-circle" aria-hidden="true"></i>
-                &nbsp;About GTAS</a>
+                &nbsp;{{'gtas.about' | translate}}</a>
               </li>
               </ul>
           </ul>
@@ -119,18 +119,18 @@
 		        </a>
             <ul rel="right-menu-links" role="menu" class="dropdown-menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
-                <a title="Settings" href="#/userSettings">Change Password</a>
+                <a title="Settings" href="#/userSettings">{{'menu.settings' | translate}}</a>
               </li>
               <li class="divider"></li>
               <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}, {{ROLES.ONE_DAY_LOOKOUT }} ]">
-                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
+                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  {{'officelocation' | translate}}  </a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
-                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">Office Location </span>   </a>
+                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">{{'officelocation' | translate}}</span>   </a>
               </li>
               <li class="divider"></li>
               <li>
-                <a href ng-click="logout()" title="Logout">Logout</a>
+                <a href ng-click="logout()" title="Logout">{{'login.logout' | translate}}</a>
               </li>
             </ul>
           </li>
@@ -155,7 +155,7 @@
           <ul class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
-	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
+	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'menu.flights' | translate}}</a></li>
             <!--<li ng-class="{'active': setSelectedTab('/passengers')}">-->
               <!--<a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">-->
 	              	<!--<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers-->
@@ -163,14 +163,14 @@
             <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
               ng-class="{'active': setSelectedTab('/casedisposition')}">
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
-	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
+	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'cases' | translate}}
 	              </a></li>
-	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
+	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}, {{ ROLES.ONE_DAY_LOOKOUT }}]"
               ng-class="{'active': setSelectedTab('/onedaylookout')}">
               <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
-	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;One Day Lookouts
+	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;{{'onedaylookouts' | translate}}
 	              </a>
-	         </li>        
+	         </li>
           </ul>
         </div>
 
@@ -179,7 +179,7 @@
             <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" class="form-group">
               <div class="input-group">
                 <div class="mdl-textfield mdl-js-textfield">
-                  <label for="main-search" class="mdl-textfield__label">Search</label>
+                  <label for="main-search" class="mdl-textfield__label">{{'search' | translate}}</label>
                   <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')" type="text" id="main-search" class="mdl-textfield__input"
                   />
                 </div>
@@ -325,7 +325,7 @@
       <div class="overlay"></div>
       <div class="spinner">
         <button class="btn btn-default" disabled>
-            <i class="fa fa-spinner fa-spin"></i> Please Wait...
+            <i class="fa fa-spinner fa-spin"></i> {{'wl.wait' | translate}}...
         </button>
       </div>
     </spinner>
