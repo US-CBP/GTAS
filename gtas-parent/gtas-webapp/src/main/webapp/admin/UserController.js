@@ -3,7 +3,7 @@
  * 
  * Please see LICENSE.txt for details.
  */
-app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast, $location, $timeout) {
+app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast, $location, $timeout, $rootScope) {
     'use strict';
     var backToAdmin = function () { $location.path('/admin'); },
         newUser = { password: '', userId: '', firstName: '', lastName: '', active: 1},
@@ -19,6 +19,9 @@ app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast
                 $scope.roles.forEach(setRole);
                 $scope.setNonAdminRoles($scope.roles[adminIndex]);
                 $scope.action = 'manageUser';
+                if(selectedUser.userId === $rootScope.currentlyLoggedInUser.userId){
+                    $scope.user.isCurrentlyLoggedInUser = true;
+                };
             } else {
                 $scope.user = newUser;
                 $scope.action = 'createUser';
