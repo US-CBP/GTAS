@@ -5,3 +5,5 @@
 ./kibana/install.sh
 
 ./logstash/install.sh
+
+./setup-security.sh

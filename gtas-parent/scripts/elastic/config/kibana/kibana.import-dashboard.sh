@@ -12,7 +12,7 @@ KIBANA_HOST='localhost'
 #Default port
 KIBANA_PORT=5601
 
-URL="http://$KIBANA_HOST:$KIBANA_PORT"
+URL="https://$KIBANA_HOST:$KIBANA_PORT"
 
 # This will be the default index pattern
 DEFAULT_INDEX_ID="96df0890-2ba8-11e9-a5e4-2bbcf61c6cb1" 
