@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Passenger;
+import org.springframework.lang.NonNull;
 
 
 public interface PassengerRepository extends PagingAndSortingRepository<Passenger, Long>, PassengerRepositoryCustom {
@@ -114,6 +115,43 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
             " AND (am.id IN :messageIds " +
             "       OR pnr.id IN :messageIds)) ")
     Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds, @Param("flightIds")Set<Long> flightIds);
+
+
+
+
+    @Query("SELECT pax FROM Passenger pax " +
+            "LEFT JOIN FETCH pax.documents " +
+            "LEFT JOIN FETCH pax.seatAssignments " +
+            "LEFT JOIN FETCH pax.bags " +
+            "LEFT JOIN FETCH pax.flightPaxList " +
+            "LEFT JOIN FETCH pax.tickets " +
+            "LEFT JOIN FETCH pax.bookingDetails " +
+            "LEFT JOIN FETCH pax.passengerDetails " +
+            "LEFT JOIN FETCH pax.passengerTripDetails " +
+            "WHERE (UPPER(pax.passengerDetails.firstName) = UPPER(:firstName) " +
+            "AND UPPER(pax.passengerDetails.lastName) = UPPER(:lastName)) " +
+            "AND pax.flight.id = :flightId")
+    Set<Passenger> returnAPassengerFromParameters(@Param("flightId") Long flightId, @Param("firstName")String firstName, @Param("lastName")String lastName);
+
+
+
+    @Query("SELECT pax FROM Passenger pax " +
+            "LEFT JOIN FETCH pax.documents " +
+            "LEFT JOIN FETCH pax.seatAssignments " +
+            "LEFT JOIN FETCH pax.bags " +
+            "LEFT JOIN FETCH pax.flightPaxList " +
+            "LEFT JOIN FETCH pax.tickets " +
+            "LEFT JOIN FETCH pax.bookingDetails " +
+            "LEFT JOIN FETCH pax.passengerDetails " +
+            "LEFT JOIN FETCH pax.passengerTripDetails " +
+            "LEFT JOIN FETCH pax.flight paxFlight " +
+            "WHERE paxFlight.id = :flightId " +
+            "AND :recordLocator IN (SELECT pnr.recordLocator FROM paxFlight.pnrs pnr) " +
+            "AND pax.passengerTripDetails.pnrReservationReferenceNumber = :pnrReservationReferenceNumber ")
+    Set<Passenger> getPassengerUsingREF(
+            @NonNull @Param("flightId") Long flightId,
+            @NonNull @Param("pnrReservationReferenceNumber")String pnrReservationReferenceNumber,
+            @NonNull @Param("recordLocator")String recordLocator);
 
 
 //	@Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) " +

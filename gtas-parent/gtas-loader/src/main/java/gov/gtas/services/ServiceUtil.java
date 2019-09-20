@@ -176,7 +176,7 @@ public class ServiceUtil implements LoaderServices {
 			return null;
 		}
 
-		List<FlightPassenger> flightPaxList = null;
+		Set<Passenger> flightPaxList;
 		Passenger existingPassenger = null;
 
 		Long flightId = f.getId();
@@ -198,19 +198,18 @@ public class ServiceUtil implements LoaderServices {
 
 		// Resolve passenger by Flight -> pnr recordLocator# -> pnr REF number
 		if (newPaxHasRecordLocator && newPaxHasRef) {
-			flightPaxList = flightPassengerRepository.getPassengerUsingREF(flightId, ref, recordLocator);
+			flightPaxList = passengerRepository.getPassengerUsingREF(flightId, ref, recordLocator);
 			foundPassenger = !CollectionUtils.isEmpty(flightPaxList);
-			existingPassenger = foundPassenger ? flightPaxList.get(0).getPassenger() : null;
+			existingPassenger = foundPassenger ? flightPaxList.iterator().next() : null;
 		}
 
-		flightPaxList = flightPassengerRepository.returnAPassengerFromParameters(flightId, firstName, lastName);
+		flightPaxList = passengerRepository.returnAPassengerFromParameters(flightId, firstName, lastName);
 		if (!foundPassenger && !CollectionUtils.isEmpty(flightPaxList)) {
 
 			// Resolve passenger by passengerIdTag
 			if (newPaxHasGender && newPaxHasDob) {
 				String passengerIdTag = createPassengerIdTag(pvo);
-				for (FlightPassenger fp : flightPaxList) {
-					Passenger pax = fp.getPassenger();
+				for (Passenger pax : flightPaxList) {
 					if (pax.getPassengerIDTag() != null) {
                         String paxIdTag = pax.getPassengerIDTag().getIdTag();
                         if (paxIdTag.equals(passengerIdTag)) {
@@ -225,9 +224,7 @@ public class ServiceUtil implements LoaderServices {
 			if (!foundPassenger && allowLoosenResolution) {
 				// Find passenger by First Name, Last Name, document# and dob
 				if (newPaxHasDocument && newPaxHasDob) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
-
+					for (Passenger pax : flightPaxList) {
 						if (haveSameDocument(pax, pvo) && haveSameDateOfBirth(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -238,8 +235,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, document# and gender
 				if (!foundPassenger && newPaxHasDocument && newPaxHasGender) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
+					for (Passenger pax : flightPaxList) {
 						if (haveSameDocument(pax, pvo) && haveSameGender(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -250,8 +246,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and document#
 				if (!foundPassenger && newPaxHasDocument) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
+					for (Passenger pax : flightPaxList) {
 						if (haveSameDocument(pax, pvo)) {
 							existingPassenger = pax;
 							foundPassenger = true;
@@ -262,8 +257,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and dob
 				if (!foundPassenger && newPaxHasDob) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
+					for (Passenger pax : flightPaxList) {
 						if (haveSameDateOfBirth(pax, pvo)) {
 							existingPassenger = pax;
 							break;
@@ -273,8 +267,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name, Last Name, and gender
 				if (!foundPassenger && newPaxHasGender) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
+					for (Passenger pax : flightPaxList) {
 						if (haveSameGender(pax, pvo)) {
 							existingPassenger = pax;
 							break;
@@ -284,8 +277,7 @@ public class ServiceUtil implements LoaderServices {
 
 				// Find passenger by First Name and Last Name
 				if (!foundPassenger) {
-					for (FlightPassenger fp : flightPaxList) {
-						Passenger pax = fp.getPassenger();
+					for (Passenger pax : flightPaxList) {
 						if (isNull(pax.getPassengerDetails().getDob()) && isNull(pax.getPassengerDetails().getGender())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
