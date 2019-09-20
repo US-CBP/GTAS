@@ -31,7 +31,7 @@
         <div layout="column">
             <code style="font-weight: bold; font-size: 17px;">Status</code>
             <md-switch ng-model="user.active" ng-true-value="1" ng-false-value="0"
-                       class="md-primary" aria-label="userStatus">
+                       class="md-primary" aria-label="userStatus" ng-disabled="user.isCurrentlyLoggedInUser">
                 	User is
                 <p translate> {{ user.active ? 'user.status.enabled' : 'user.status.disabled' }}</p>
             </md-switch>
@@ -41,7 +41,7 @@
             <span layout="column" layout-wrap class="clearfix" style="min-height: 200px;">
                 <span flex="20" ng-repeat="role in roles | orderBy:'roleDescription'">
                         <md-switch ng-model="role.selected"
-                                   ng-disabled="role.disabled"
+                                   ng-disabled="role.disabled || user.isCurrentlyLoggedInUser"
                                    class="md-primary" aria-label="Roles"
                                    ng-change="setNonAdminRoles(role)">
                             <p translate>{{ role.roleDescription }}</p>
