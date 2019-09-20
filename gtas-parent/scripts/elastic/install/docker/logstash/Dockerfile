@@ -1,4 +1,4 @@
-FROM docker.elastic.co/logstash/logstash:6.5.4
+FROM docker.elastic.co/logstash/logstash:7.2.0
 
 USER root
 RUN mkdir /config && chown -R logstash /config && chmod 0755 -R /config
@@ -27,4 +27,4 @@ ARG ELASTIC_HOST=localhost
 ENV ELASTIC_HOST=$ELASTIC_HOST
 ENV DATABASE_HOST=$DB_HOST
 
-RUN curl -o  /usr/share/logstash/config/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
+RUN curl -o  /usr/share/logstash/logstash-core/lib/jars/mariadb-java-client-2.3.0.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar

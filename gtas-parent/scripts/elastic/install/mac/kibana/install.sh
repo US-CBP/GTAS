@@ -20,3 +20,6 @@ ln -s kibana-${ES_INSTALL_VERSION}-darwin-x86_64 kibana
 
 rm -f kibana-${ES_INSTALL_VERSION}-darwin-x86_64.tar.gz
 
+cd "$parent_dir"
+yes | cp -f ../../../config/kibana/mac/kibana.yml $ES_INSTALL_LOCATION/kibana/config
+
