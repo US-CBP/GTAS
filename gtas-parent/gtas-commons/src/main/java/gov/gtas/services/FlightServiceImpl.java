@@ -79,7 +79,15 @@ public class FlightServiceImpl implements FlightService {
 		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
 			Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
-			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+
+			CountDownVo countDownVo;
+			if (countDownToDate == null) {
+				// This should not happen, but if it somehow does we need to return a vo instead of throwing a null pointer.
+				logger.error("count down is null, returning generic countdown vo!");
+				countDownVo = new CountDownVo("Error, no date provided (it is null)!", false, Long.MIN_VALUE);
+			} else {
+				 countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+			}
 			vo.setCountDown(countDownVo);
 			vo.setDirection(f.getDirection());
 			List<CodeShareVo> codeshareList = new ArrayList<>();

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import gov.gtas.repository.PassengerRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,21 +34,20 @@ import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.PassengerIDTag;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.util.EntityResolverUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceUtilTest {
 	private static final Logger logger = LoggerFactory.getLogger(ServiceUtilTest.class);
 	@Mock
-	FlightPassengerRepository flightPassengerRepository;
+	PassengerRepository flightPassengerRepository;
 
 	@InjectMocks
 	ServiceUtil serviceUtil;
 
 	Flight flight;
 	Long flightId = 1L;
-	List<FlightPassenger> list;
+	Set<Passenger> list;
 
 	@Before
 	public void setUp() {
@@ -66,7 +66,7 @@ public class ServiceUtilTest {
 		pvo.setPnrRecordLocator(recordLocator);
 		pvo.setPnrReservationReferenceNumber(pnrReservationReferenceNumber);
 
-		list = createFlightPassengerList(null, null, null);
+		list = createFlightPassengerSet(null, null, null);
 
 		Mockito.when(
 				flightPassengerRepository.getPassengerUsingREF(flightId, pnrReservationReferenceNumber, recordLocator))
@@ -87,7 +87,7 @@ public class ServiceUtilTest {
 		PassengerIDTag idTag = new PassengerIDTag();
 		idTag.setIdTag(passengerIdTag);
 
-		list = createFlightPassengerList(null, null, idTag);
+		list = createFlightPassengerSet(null, null, idTag);
 
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
@@ -109,7 +109,7 @@ public class ServiceUtilTest {
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", date, null);
 		pvo.setDocuments(docVoList);
 
-		list = createFlightPassengerList(date, documents, null);
+		list = createFlightPassengerSet(date, documents, null);
 
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
@@ -130,7 +130,7 @@ public class ServiceUtilTest {
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, "M");
 		pvo.setDocuments(docVoList);
 
-		list = createFlightPassengerList(null, documents, null);
+		list = createFlightPassengerSet(null, documents, null);
 
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
@@ -150,7 +150,7 @@ public class ServiceUtilTest {
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, null);
 		pvo.setDocuments(docVoList);
 
-		list = createFlightPassengerList(null, documents, null);
+		list = createFlightPassengerSet(null, documents, null);
 
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
@@ -168,7 +168,7 @@ public class ServiceUtilTest {
 		Date date = createSimpleDate("01/01/2019");
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", date, null);
 
-		list = createFlightPassengerList(date, null, null);
+		list = createFlightPassengerSet(date, null, null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -187,7 +187,7 @@ public class ServiceUtilTest {
 		Date date = createSimpleDate("01/01/2019");
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", date, null);
 
-		list = createFlightPassengerList(date, null, null);
+		list = createFlightPassengerSet(date, null, null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -202,7 +202,7 @@ public class ServiceUtilTest {
 		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", true);
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, "M");
 
-		list = createFlightPassengerList(null, null, null);
+		list = createFlightPassengerSet(null, null, null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -218,7 +218,7 @@ public class ServiceUtilTest {
 		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", false);
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, "M");
 
-		list = createFlightPassengerList(null, null, null);
+		list = createFlightPassengerSet(null, null, null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -233,7 +233,7 @@ public class ServiceUtilTest {
 		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", true);
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, "F");
 
-		list = createFlightPassengerList(null, null, null);
+		list = createFlightPassengerSet(null, null, null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -247,8 +247,8 @@ public class ServiceUtilTest {
 		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", true);
 		PassengerVo pvo = createPassengerVo("gtas", "awesome", null, "F");
 
-		list = createFlightPassengerList(null, null, null);
-		list.get(0).getPassenger().getPassengerDetails().setGender(null);
+		list = createFlightPassengerSet(null, null, null);
+		list.iterator().next().getPassengerDetails().setGender(null);
 		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
 				pvo.getLastName())).thenReturn(list);
 
@@ -256,6 +256,24 @@ public class ServiceUtilTest {
 
 		assertNotNull(passenger);
 		assertTrue(passenger.getId().equals(1L));
+	}
+
+	@Test
+	public void testNullPassengerIdTag() {
+		ReflectionTestUtils.setField(serviceUtil, "allowLoosenResolution", true);
+		Date dob = new Date();
+		String fname = "gtas";
+		String lname = "awesome";
+		String gender = "M";
+		PassengerVo pvo = createPassengerVo(fname, lname, dob, gender);
+
+		list = createFlightPassengerSet(dob, null, null);
+		list.iterator().next().setPassengerIDTag(null);
+		Mockito.when(flightPassengerRepository.returnAPassengerFromParameters(flightId, pvo.getFirstName(),
+				pvo.getLastName())).thenReturn(list);
+
+		Passenger passenger = serviceUtil.findPassengerOnFlight(flight, pvo);
+
 	}
 
 	private Set<Document> createSimpleDocumentList() {
@@ -293,7 +311,7 @@ public class ServiceUtilTest {
 		return pvo;
 	}
 
-	private List<FlightPassenger> createFlightPassengerList(Date dob, Set<Document> documents, PassengerIDTag idTag) {
+	private Set<Passenger> createFlightPassengerSet(Date dob, Set<Document> documents, PassengerIDTag idTag) {
 		PassengerDetails pd = new PassengerDetails();
 		pd.setFirstName("gtas");
 		pd.setLastName("awesome");
@@ -306,13 +324,11 @@ public class ServiceUtilTest {
 		passenger.setPassengerIDTag(idTag);
 		passenger.setId(1L);
 
-		FlightPassenger flightPassenger = new FlightPassenger();
-		flightPassenger.setPassenger(passenger);
 
-		List<FlightPassenger> list = new ArrayList<FlightPassenger>();
-		list.add(flightPassenger);
+		Set<Passenger> passengerSet = new HashSet<>();
+		passengerSet.add(passenger);
 
-		return list;
+		return passengerSet;
 	}
 
 	private Date createSimpleDate(String input) {
