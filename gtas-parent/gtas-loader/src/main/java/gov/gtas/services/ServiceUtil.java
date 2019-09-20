@@ -268,7 +268,9 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, and gender
 				if (!foundPassenger && newPaxHasGender) {
 					for (Passenger pax : flightPaxList) {
-						if (haveSameGender(pax, pvo)) {
+						if (haveSameGender(pax, pvo)
+								&& isNull(pax.getPassengerDetails().getDob())
+								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
 							break;
 						}
@@ -278,7 +280,8 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name and Last Name
 				if (!foundPassenger) {
 					for (Passenger pax : flightPaxList) {
-						if (isNull(pax.getPassengerDetails().getDob()) && isNull(pax.getPassengerDetails().getGender())
+						if (isNull(pax.getPassengerDetails().getDob())
+								&& isNull(pax.getPassengerDetails().getGender())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
 
