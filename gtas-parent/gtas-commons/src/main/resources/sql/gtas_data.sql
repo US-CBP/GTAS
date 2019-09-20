@@ -69,6 +69,11 @@ insert into app_configuration (opt, val, description)values ('GRAPH_DB_URL', 'bo
 insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 'false', 'Neo4J Toggle');
 insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
 INSERT INTO app_configuration (description, opt, val) VALUES ('UTC Server Time', 'UTC_SERVER', 'true');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Rule Hit Notification', 'SNS_NOTIFICATION_ARN', '');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Toggle Rule hit notification', 'ENABLE_HIT_NOTIFICATION', 'true');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices ID', 'INTERPOL_RED_NOTICE_ID', '');
+
+
 
 /*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
 insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
