@@ -260,33 +260,43 @@
             </h3>
             <div id="filterGroup6" class="collapse in">
               <div class="filter-group-content">
-                <div class="row">
-                  <div class="form-group col-xs-6">
-                    <div class="cbp-datepicker">
-                      <md-datepicker id="startDate" name="startDate" md-hide-icons="calendar"
-                        ng-model="model.etaStart" required></md-datepicker>
-                      <label class="mdl-textfield__label static-label" for="startDate">
-                        {{'flight.startdate' | translate}}
-                      </label>
-                      <div class="validation-messages" ng-messages="sideForm.startDate.$error">
-                        <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
-                        </div>
+                <div class="row form-group col-xs-12">
+                  <div class="dropdown form-group dropdown-start-parent">
+                    <label for="etaStartInput">Start Date</label>
+                      <div class="input-group date">
+                        <input type="text" datetime="yyyy-MM-dd HH:mm" class="form-control" data-ng-model="model.etaStart" id="etaStartInput" />
+                        <span class="input-group-addon dropdown-toggle"
+                              id="dropdownStart"
+                              role="button"
+                              data-toggle="dropdown"
+                              data-target=".dropdown-start-parent"><i class="glyphicon glyphicon-calendar"></i></span>
                       </div>
-                    </div>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                      <datetimepicker
+                              style="width: 300px;"
+                              data-ng-model="model.etaStart"
+                              data-datetimepicker-config="{ dropdownSelector: '#dropdownStart' }"></datetimepicker>
+                    </ul>
                   </div>
-                  <div class="form-group col-xs-6">
-                    <div class="cbp-datepicker">
-                      <md-datepicker id="endDate" name="endDate" md-hide-icons="calendar" ng-model="model.etaEnd"></md-datepicker>
-                      <label class="mdl-textfield__label static-label" for="endDate">
-                        {{'flight.enddate' | translate}}
-                      </label>
-                      <div class="validation-messages" ng-messages="sideForm.endDate.$error">
-                        <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
-                        </div>
+                  <div class="dropdown form-group dropdown-end-parent">
+                    <label for="etaEndInput">End Date</label>
+                      <div class="input-group date">
+                        <input type="text" datetime="yyyy-MM-dd HH:mm" class="form-control"  data-ng-model="model.etaEnd" id="etaEndInput" />
+                        <span  id="dropdownEnd"
+                               role="button"
+                               data-toggle="dropdown"
+                               data-target=".dropdown-end-parent"
+                               class="input-group-addon">
+                          <i class="glyphicon glyphicon-calendar"></i>
+                        </span>
                       </div>
-                    </div>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" >
+                      <datetimepicker
+                              style="width: 300px;"
+                              data-ng-model="model.etaEnd"
+                              data-datetimepicker-config="{ dropdownSelector: '#dropdownEnd' }"
+                      ></datetimepicker>
+                    </ul>
                   </div>
                 </div>
               </div>
