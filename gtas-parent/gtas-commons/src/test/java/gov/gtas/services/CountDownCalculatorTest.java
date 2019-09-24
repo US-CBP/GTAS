@@ -107,5 +107,11 @@ public class CountDownCalculatorTest {
         Assert.assertFalse(countDownVo.isCloseToCountDown());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testNullPointer() {
+        CountDownCalculator countDownCalculator = new CountDownCalculator(timeCheck);
+        countDownCalculator.getCountDownFromDate(null);
+    }
+
 
 }

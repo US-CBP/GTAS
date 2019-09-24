@@ -8,6 +8,6 @@ source ../set_env.sh
 cd $ES_INSTALL_LOCATION
 
 echo "stopping kibana ...."
-sudo kill -9 `cat ./kibana/pid`
+kill -9 `cat ./kibana/pid`
 echo "kibana stopped!!!!"
 

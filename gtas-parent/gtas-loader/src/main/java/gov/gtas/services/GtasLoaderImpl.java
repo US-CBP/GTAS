@@ -488,14 +488,14 @@ public class GtasLoaderImpl implements GtasLoader {
     public void updatePassenger(Passenger existingPassenger, PassengerVo pvo) throws ParseException {
         utils.updatePassenger(pvo, existingPassenger);
         for (DocumentVo dvo : pvo.getDocuments()) {
-            Document existingDoc = null;
+            List<Document> existingDocs = new ArrayList<>();
             if (dvo.getDocumentNumber() != null) {
-                existingDoc = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
-            }
-            if (existingDoc == null) {
-                existingPassenger.addDocument(utils.createNewDocument(dvo));
-            } else {
-                utils.updateDocument(dvo, existingDoc);
+                existingDocs = docDao.findByDocumentNumberAndPassenger(dvo.getDocumentNumber(), existingPassenger);
+	            if (existingDocs.isEmpty()) {
+	                existingPassenger.addDocument(utils.createNewDocument(dvo));
+	            } else {
+	                utils.updateDocument(dvo, existingDocs.get(0)); //For legacy data, always grab first amongst potential list of docs
+	            }
             }
         }
     }
