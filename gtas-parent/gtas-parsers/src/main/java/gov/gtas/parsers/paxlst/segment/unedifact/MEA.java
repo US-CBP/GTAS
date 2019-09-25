@@ -18,9 +18,9 @@ import gov.gtas.parsers.edifact.Segment;
  * number of Checked Bags.
  */
 public class MEA extends Segment {
-	
+
 	/**
-	 * Measurement Unit Code 
+	 * Measurement Unit Code
 	 */
 	public enum MeasurementUnitCode {
 		KGM, LBR
@@ -36,15 +36,14 @@ public class MEA extends Segment {
 	private String numBags;
 	private String bagWeight;
 	private MeasurementUnitCode weightUnit;
-	
+
 	/**
-	 * Used to indicate at least one segment of MEA exist in the APIS message, applies only to v.16b APIS message
+	 * Used to indicate at least one segment of MEA exist in the APIS message,
+	 * applies only to v.16b APIS message
 	 */
 	private boolean segmentIncludedInAPISMessage;
-	
-	
-	private MeasurementCodeQualifier code;
 
+	private MeasurementCodeQualifier code;
 
 	public MEA(List<Composite> composites) {
 		super(MEA.class.getSimpleName(), composites);
@@ -55,7 +54,7 @@ public class MEA extends Segment {
 			this.setSegmentIncludedInAPISMessage(true);
 
 			Composite c = getComposite(i);
-			
+
 			switch (i) {
 			case 0:
 				// PURPOSE CODE QUALIFIER
@@ -71,13 +70,12 @@ public class MEA extends Segment {
 					this.setNumBags(c.getElement(0)); // number of bags
 					break;
 				case WT:
-					this.setBagWeight(c.getElement(1)); //Total weight
+					this.setBagWeight(c.getElement(1)); // Total weight
 					this.setWeightUnit(MeasurementUnitCode.valueOf(c.getElement(0))); // weight unit
 					break;
 				}
 				break;
 			}
-
 
 		}
 
@@ -122,5 +120,5 @@ public class MEA extends Segment {
 	public void setSegmentIncludedInAPISMessage(boolean segmentIncludedInAPISMessage) {
 		this.segmentIncludedInAPISMessage = segmentIncludedInAPISMessage;
 	}
-	
+
 }

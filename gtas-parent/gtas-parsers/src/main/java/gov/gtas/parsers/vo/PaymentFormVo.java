@@ -1,14 +1,12 @@
 package gov.gtas.parsers.vo;
 
-
 public class PaymentFormVo {
 
-    protected Long id;  
-    private String paymentType;
-    private String paymentAmount;
+	protected Long id;
+	private String paymentType;
+	private String paymentAmount;
 
-
-    public Long getId() {
+	public Long getId() {
 		return id;
 	}
 

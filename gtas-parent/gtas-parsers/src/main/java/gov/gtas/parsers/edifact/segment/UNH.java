@@ -21,41 +21,41 @@ import gov.gtas.parsers.edifact.Segment;
  * Example: UNH+MSG001+PAXLST:D:12B:UN:IATA
  */
 public class UNH extends Segment {
-    private String messageReferenceNumber;
-    private String messageType;
-    private String messageTypeVersion;
-    private String messageTypeReleaseNumber;
+	private String messageReferenceNumber;
+	private String messageType;
+	private String messageTypeVersion;
+	private String messageTypeReleaseNumber;
 
-    public UNH(List<Composite> composites) {
-        super(UNH.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                this.messageReferenceNumber = c.getElement(0);
-                break;
-            case 1:
-                this.messageType = c.getElement(0);
-                this.messageTypeVersion = c.getElement(1);
-                this.messageTypeReleaseNumber = c.getElement(2);
-                break;
-            }
-        }
-    }
+	public UNH(List<Composite> composites) {
+		super(UNH.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				this.messageReferenceNumber = c.getElement(0);
+				break;
+			case 1:
+				this.messageType = c.getElement(0);
+				this.messageTypeVersion = c.getElement(1);
+				this.messageTypeReleaseNumber = c.getElement(2);
+				break;
+			}
+		}
+	}
 
-    public String getMessageReferenceNumber() {
-        return messageReferenceNumber;
-    }
+	public String getMessageReferenceNumber() {
+		return messageReferenceNumber;
+	}
 
-    public String getMessageType() {
-        return messageType;
-    }
+	public String getMessageType() {
+		return messageType;
+	}
 
-    public String getMessageTypeVersion() {
-        return messageTypeVersion;
-    }
+	public String getMessageTypeVersion() {
+		return messageTypeVersion;
+	}
 
-    public String getMessageTypeReleaseNumber() {
-        return messageTypeReleaseNumber;
-    }
+	public String getMessageTypeReleaseNumber() {
+		return messageTypeReleaseNumber;
+	}
 }

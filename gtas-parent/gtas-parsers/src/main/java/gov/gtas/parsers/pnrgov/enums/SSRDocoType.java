@@ -8,31 +8,32 @@ import java.util.stream.Stream;
 
 public enum SSRDocoType {
 
-    /*
-    * According to the specs there is only one SSRDoco type, and that is Visa.
-    *
-    * */
-    //No doc defaults to not provided. VV is not in the spec and is only used by our system.
-    VISA("V"), 
-    NOT_PROVIDED("VV");
+	/*
+	 * According to the specs there is only one SSRDoco type, and that is Visa.
+	 *
+	 */
+	// No doc defaults to not provided. VV is not in the spec and is only used by
+	// our system.
+	VISA("V"),
 
-    private static final Map<String, SSRDocoType> stringToEnum =
-            Stream.of(values()).collect(
-                    toMap(Object::toString, e -> e));
+	NOT_PROVIDED("VV");
 
+	private static final Map<String, SSRDocoType> stringToEnum = Stream.of(values())
+			.collect(toMap(Object::toString, e -> e));
 
-    private String docType;
-    SSRDocoType(String docType){
-        this.docType = docType;
-    }
+	private String docType;
 
-    public static Optional<SSRDocoType> fromString(String docType) {
-        return Optional.ofNullable(stringToEnum.get(docType));
-    }
+	SSRDocoType(String docType) {
+		this.docType = docType;
+	}
 
-    @Override
-    public String toString() {
-        return this.docType;
-    }
+	public static Optional<SSRDocoType> fromString(String docType) {
+		return Optional.ofNullable(stringToEnum.get(docType));
+	}
+
+	@Override
+	public String toString() {
+		return this.docType;
+	}
 
 }

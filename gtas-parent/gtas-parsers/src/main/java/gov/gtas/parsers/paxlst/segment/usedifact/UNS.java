@@ -11,7 +11,7 @@ import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
 public class UNS extends Segment {
-    public UNS(List<Composite> composites) {
-        super(UNS.class.getSimpleName(), composites);
-    }
+	public UNS(List<Composite> composites) {
+		super(UNS.class.getSimpleName(), composites);
+	}
 }

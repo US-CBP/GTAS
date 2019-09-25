@@ -19,66 +19,60 @@ import gov.gtas.parsers.edifact.Segment;
  * Flown segments are to be included in history.
  * <p>
  * Ex:Unstructured PNR history.(LTS+ LAX GS WW D006217 2129Z/09DEC 02961B AS
- * DL1314U 19FEB MCOATL NN/SS1 1130A 105P AS SEAT RS 29F TRAN/TRINH')
- * LTS+SEAT RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR'
- * LTS+SEAT NR/RS 20D LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
+ * DL1314U 19FEB MCOATL NN/SS1 1130A 105P AS SEAT RS 29F TRAN/TRINH') LTS+SEAT
+ * RS 17B LASTNAME/FIRSTNAME DL 123 DDMMMYY JFKLHR' LTS+SEAT NR/RS 20D
+ * LASTNAME/FIRSTNAMEMIDDLENAME DL1234 16AUG17 ATLJFK'
  */
 public class LTS extends Segment {
-	public static final String CTCT="CTCT";
-	public static final String CTCE="CTCE";
-	public static final String APM="/APM";
-	public static final String FP="F/FP";
-	public static final String FQTV="FQTV";
-	public static final String APE="/APE";
-	public static final String SEAT="SEAT";
-    private String theText;
-    private boolean isAgency=false;
-    private boolean isPhone=false;
-    private boolean isEmail=false;
-    private boolean isFormPayment=false;
-    private boolean isCashPayment=false;
-    private boolean isFrequentFlyer=false;
-    private boolean isSeat=false;
-    
-    
-    public LTS(List<Composite> composites) {
-        super(LTS.class.getSimpleName(), composites);
-        Composite c = getComposite(0);
-         if (c != null) {
-            this.theText = c.getElement(0);
-            if(StringUtils.isNotBlank(theText)){
-            	if(theText.contains(CTCT)){
-            		isAgency=true;
-            	}
-            	else if(theText.contains(CTCE) || theText.contains(APE)){
-            		isEmail=true;
-            	}
-            	else if(theText.contains(APM)){
-            		isPhone=true;
-            	}
-            	else if(theText.contains(FQTV)){
-            		isFrequentFlyer=true;
-            	}
-            	else if(theText.contains(SEAT)){
-            		isSeat=true;
-            	}
-               	else if(theText.contains(FP)){
-               		isFormPayment=true;
-               		for (int i=1; i<getComposites().size(); i++) {
-               		 c = getComposite(i);
-               		 	if (c != null) {
-               		 		if(theText.contains("CASH")){
-               		 			isCashPayment=true;
-               		 		    theText=c.getElement(0);
-               		 		}
-               		 	}
-               		}
-            	}
-            }
-        }
-    }
+	public static final String CTCT = "CTCT";
+	public static final String CTCE = "CTCE";
+	public static final String APM = "/APM";
+	public static final String FP = "F/FP";
+	public static final String FQTV = "FQTV";
+	public static final String APE = "/APE";
+	public static final String SEAT = "SEAT";
+	private String theText;
+	private boolean isAgency = false;
+	private boolean isPhone = false;
+	private boolean isEmail = false;
+	private boolean isFormPayment = false;
+	private boolean isCashPayment = false;
+	private boolean isFrequentFlyer = false;
+	private boolean isSeat = false;
 
-    public boolean isAgency() {
+	public LTS(List<Composite> composites) {
+		super(LTS.class.getSimpleName(), composites);
+		Composite c = getComposite(0);
+		if (c != null) {
+			this.theText = c.getElement(0);
+			if (StringUtils.isNotBlank(theText)) {
+				if (theText.contains(CTCT)) {
+					isAgency = true;
+				} else if (theText.contains(CTCE) || theText.contains(APE)) {
+					isEmail = true;
+				} else if (theText.contains(APM)) {
+					isPhone = true;
+				} else if (theText.contains(FQTV)) {
+					isFrequentFlyer = true;
+				} else if (theText.contains(SEAT)) {
+					isSeat = true;
+				} else if (theText.contains(FP)) {
+					isFormPayment = true;
+					for (int i = 1; i < getComposites().size(); i++) {
+						c = getComposite(i);
+						if (c != null) {
+							if (theText.contains("CASH")) {
+								isCashPayment = true;
+								theText = c.getElement(0);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public boolean isAgency() {
 		return isAgency;
 	}
 
@@ -107,8 +101,8 @@ public class LTS extends Segment {
 	}
 
 	public String getTheText() {
-        return theText;
-    }
+		return theText;
+	}
 
 	public boolean isFormPayment() {
 		return isFormPayment;

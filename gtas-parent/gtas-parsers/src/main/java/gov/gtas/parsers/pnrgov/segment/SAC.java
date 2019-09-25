@@ -21,31 +21,30 @@ import gov.gtas.parsers.edifact.Segment;
  * line contains an added item(SAC+++A’)
  */
 public class SAC extends Segment {
-    public enum SacCode {
-        ADDED,
-        CANCELLED
-    }
-    
-    private SacCode action;
+	public enum SacCode {
+		ADDED, CANCELLED
+	}
 
-    public SAC(List<Composite> composites) {
-        super(SAC.class.getSimpleName(), composites);
-        
-        Composite c = getComposite(2);
-        if (c != null) {
-            String code = c.getElement(0);
-            switch (code) {
-            case "A":
-                this.action = SacCode.ADDED;
-                break;
-            case "X":
-                this.action = SacCode.CANCELLED;
-                break;
-            }
-        }
-    }
+	private SacCode action;
 
-    public SacCode getAction() {
-        return action;
-    }
+	public SAC(List<Composite> composites) {
+		super(SAC.class.getSimpleName(), composites);
+
+		Composite c = getComposite(2);
+		if (c != null) {
+			String code = c.getElement(0);
+			switch (code) {
+			case "A":
+				this.action = SacCode.ADDED;
+				break;
+			case "X":
+				this.action = SacCode.CANCELLED;
+				break;
+			}
+		}
+	}
+
+	public SacCode getAction() {
+		return action;
+	}
 }

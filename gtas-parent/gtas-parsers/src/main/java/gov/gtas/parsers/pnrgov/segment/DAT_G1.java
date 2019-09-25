@@ -23,33 +23,33 @@ import gov.gtas.parsers.exception.ParseException;
  * Unless specifically stated otherwise in bilateral agreement, the time is in
  * Universal Time Coordinated (UTC)
  * <p>
- * Examples: Ticket issuance date and time( DAT+710:041159:0730') 
+ * Examples: Ticket issuance date and time( DAT+710:041159:0730')
  */
 public class DAT_G1 extends DAT {
-    private static String LAST_PNR_TRANS = "700";
-    private static String TICKET_ISSUE_DATE = "710";
-   
-    private Date pnrTransactionDate;
-    private Date ticketIssueDate;
-    
-    public DAT_G1(List<Composite> composites) throws ParseException {
-        super(composites);
-        
-        for (DatDetails d : getDateTimes()) {
-            String code = d.getType();
-            if (LAST_PNR_TRANS.equals(code)) {
-                this.pnrTransactionDate = d.getDateTime();
-            } else if (TICKET_ISSUE_DATE.equals(code)) {
-                this.ticketIssueDate = d.getDateTime();
-            }
-        }
-    }
-    
-    public Date getPnrTransactionDate() {
-        return pnrTransactionDate;
-    }
+	private static String LAST_PNR_TRANS = "700";
+	private static String TICKET_ISSUE_DATE = "710";
 
-    public Date getTicketIssueDate() {
-        return ticketIssueDate;
-    }
+	private Date pnrTransactionDate;
+	private Date ticketIssueDate;
+
+	public DAT_G1(List<Composite> composites) throws ParseException {
+		super(composites);
+
+		for (DatDetails d : getDateTimes()) {
+			String code = d.getType();
+			if (LAST_PNR_TRANS.equals(code)) {
+				this.pnrTransactionDate = d.getDateTime();
+			} else if (TICKET_ISSUE_DATE.equals(code)) {
+				this.ticketIssueDate = d.getDateTime();
+			}
+		}
+	}
+
+	public Date getPnrTransactionDate() {
+		return pnrTransactionDate;
+	}
+
+	public Date getTicketIssueDate() {
+		return ticketIssueDate;
+	}
 }

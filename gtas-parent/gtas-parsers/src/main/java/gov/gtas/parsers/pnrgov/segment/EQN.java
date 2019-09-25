@@ -26,17 +26,17 @@ import gov.gtas.parsers.edifact.Segment;
  * Example: Total number of PNRs(EQN+98')
  */
 public class EQN extends Segment {
-    private Integer value;
+	private Integer value;
 
-    public EQN(List<Composite> composites) {
-        super(EQN.class.getSimpleName(), composites);
-        Composite c = getComposite(0);
-        if (c != null) {
-            this.value = Integer.valueOf(c.getElement(0));
-        }
-    }
+	public EQN(List<Composite> composites) {
+		super(EQN.class.getSimpleName(), composites);
+		Composite c = getComposite(0);
+		if (c != null) {
+			this.value = Integer.valueOf(c.getElement(0));
+		}
+	}
 
-    public Integer getValue() {
-        return value;
-    }
+	public Integer getValue() {
+		return value;
+	}
 }

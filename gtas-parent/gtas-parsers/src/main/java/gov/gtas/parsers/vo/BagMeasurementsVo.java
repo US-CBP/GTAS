@@ -6,97 +6,99 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.List;
 import java.util.UUID;
 
 public class BagMeasurementsVo {
-    private Logger logger= LoggerFactory.getLogger(BagMeasurementsVo.class);
-    private UUID uuid = UUID.randomUUID();
-    private String measurementType;
-    private Integer quantity;
-    private Double weightInKilos;
-    private Double weight;
+	private Logger logger = LoggerFactory.getLogger(BagMeasurementsVo.class);
+	private UUID uuid = UUID.randomUUID();
+	private String measurementType;
+	private Integer quantity;
+	private Double weightInKilos;
+	private Double weight;
 
-    public static BagMeasurementsVo fromTbdBD(List<TBD_BD> baggageDetails) {
+	public static BagMeasurementsVo fromTbdBD(List<TBD_BD> baggageDetails) {
 
-        BagMeasurementsVo bagMeasurementsVo = new BagMeasurementsVo();
-        if (baggageDetails.isEmpty()) {
-            return bagMeasurementsVo;
-        }
-        // Always use the first baggageDetails provided.
-        TBD_BD tbd_bd = baggageDetails.get(0);
-        Integer quantity =  tbd_bd.getQuantityAsInteger();
-        Double weightInKilos = tbd_bd.getWeightInKilos();
-        Double rawWeight = tbd_bd.getRawWeight();
-        bagMeasurementsVo.setQuantity(quantity);
-        bagMeasurementsVo.setRawWeight(rawWeight);
-        bagMeasurementsVo.setWeightInKilos(weightInKilos);
-        MeasurementQualifier measurementType = tbd_bd.getMeasurementQualifierEnum();
-        bagMeasurementsVo.setMeasurementType(measurementType.getEnglishName());
-        return bagMeasurementsVo;
-    }
+		BagMeasurementsVo bagMeasurementsVo = new BagMeasurementsVo();
+		if (baggageDetails.isEmpty()) {
+			return bagMeasurementsVo;
+		}
+		// Always use the first baggageDetails provided.
+		TBD_BD tbd_bd = baggageDetails.get(0);
+		Integer quantity = tbd_bd.getQuantityAsInteger();
+		Double weightInKilos = tbd_bd.getWeightInKilos();
+		Double rawWeight = tbd_bd.getRawWeight();
+		bagMeasurementsVo.setQuantity(quantity);
+		bagMeasurementsVo.setRawWeight(rawWeight);
+		bagMeasurementsVo.setWeightInKilos(weightInKilos);
+		MeasurementQualifier measurementType = tbd_bd.getMeasurementQualifierEnum();
+		bagMeasurementsVo.setMeasurementType(measurementType.getEnglishName());
+		return bagMeasurementsVo;
+	}
 
+	public Double getWeightInKilos() {
+		return weightInKilos;
+	}
 
+	public void setWeightInKilos(Double weightInKilos) {
+		this.weightInKilos = weightInKilos;
+	}
 
-    public Double getWeightInKilos() {
-        return weightInKilos;
-    }
+	public String getMeasurementType() {
+		return measurementType;
+	}
 
-    public void setWeightInKilos(Double weightInKilos) {
-        this.weightInKilos = weightInKilos;
-    }
+	public void setMeasurementType(String measurementType) {
+		this.measurementType = measurementType;
+	}
 
-    public String getMeasurementType() {
-        return measurementType;
-    }
+	public Integer getQuantity() {
+		return quantity;
+	}
 
-    public void setMeasurementType(String measurementType) {
-        this.measurementType = measurementType;
-    }
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+	public Double getRawWeight() {
+		return weight;
+	}
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+	public void setRawWeight(Double weight) {
+		this.weight = weight;
+	}
 
-    public Double getRawWeight() {
-        return weight;
-    }
+	public UUID getUuid() {
+		return uuid;
+	}
 
-    public void setRawWeight(Double weight) {
-        this.weight = weight;
-    }
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
 
-    public UUID getUuid() {
-        return uuid;
-    }
+	public Integer getBagCountFromString(String numBagsAsString) {
+		if (StringUtils.isBlank(numBagsAsString)) {
+			return null;
+		}
+		Integer bagCount = null;
+		try {
+			bagCount = Integer.parseInt(numBagsAsString);
+		} catch (Exception e) {
+			logger.warn("failed to parse bag from string " + numBagsAsString);
+		}
+		return bagCount;
+	}
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public Integer getBagCountFromString(String numBagsAsString) {
-        if (StringUtils.isBlank(numBagsAsString)) {return null;}
-        Integer bagCount = null;
-        try {
-            bagCount = Integer.parseInt(numBagsAsString);
-        } catch (Exception e) {
-            logger.warn("failed to parse bag from string " + numBagsAsString);
-        }
-        return bagCount;
-    }
-    public Double getBagWeightFromString(String bagWeight) {
-        if (StringUtils.isBlank(bagWeight)) {return null;}
-        Double weight = null;
-        try {
-            weight = Double.parseDouble(bagWeight);
-        } catch (Exception e) {
-            logger.warn("failed to parse bag weight from string " + bagWeight);
-        }
-        return weight;
-    }
+	public Double getBagWeightFromString(String bagWeight) {
+		if (StringUtils.isBlank(bagWeight)) {
+			return null;
+		}
+		Double weight = null;
+		try {
+			weight = Double.parseDouble(bagWeight);
+		} catch (Exception e) {
+			logger.warn("failed to parse bag weight from string " + bagWeight);
+		}
+		return weight;
+	}
 }
