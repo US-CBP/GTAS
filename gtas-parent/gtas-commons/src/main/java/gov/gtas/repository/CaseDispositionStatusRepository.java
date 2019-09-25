@@ -9,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.lookup.CaseDispositionStatus;
 
-public interface CaseDispositionStatusRepository extends CrudRepository<CaseDispositionStatus, Long>{
+public interface CaseDispositionStatusRepository extends CrudRepository<CaseDispositionStatus, Long> {
 }

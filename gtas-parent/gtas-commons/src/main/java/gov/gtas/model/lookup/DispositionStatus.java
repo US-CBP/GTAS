@@ -18,44 +18,45 @@ import gov.gtas.model.BaseEntity;
 @Entity
 @Table(name = "disposition_status")
 public class DispositionStatus extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public DispositionStatus() { }
-    
-    private String name;
-    
-    private String description;
-    
-    public String getName() {
-        return name;
-    }
+	public DispositionStatus() {
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	private String name;
 
-    public String getDescription() {
-        return description;
-    }
+	private String description;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final DispositionStatus other = (DispositionStatus) obj;
-        return Objects.equals(this.name, other.name);
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final DispositionStatus other = (DispositionStatus) obj;
+		return Objects.equals(this.name, other.name);
+	}
 }

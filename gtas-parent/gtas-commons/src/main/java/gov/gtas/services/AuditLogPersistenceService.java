@@ -20,21 +20,19 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface AuditLogPersistenceService {
 	public AuditRecord create(AuditRecord aRec);
 
-	public AuditRecord create(AuditActionType actionType, String target,
-			Object actionData, String message, User user);
+	public AuditRecord create(AuditActionType actionType, String target, Object actionData, String message, User user);
 
-	public AuditRecord create(AuditActionType actionType, String target,
-			Object actionData, String message, String userId);
+	public AuditRecord create(AuditActionType actionType, String target, Object actionData, String message,
+			String userId);
 
-	public AuditRecord create(AuditActionType actionType,
-			AuditActionTarget target, AuditActionData actionData,
+	public AuditRecord create(AuditActionType actionType, AuditActionTarget target, AuditActionData actionData,
 			String message, String userId);
 
 	public AuditRecord findById(Long id);
 
 	@PreAuthorize(PRIVILEGE_ADMIN)
-	public List<AuditRecord> findByUserActionDateRange(String userId,
-			AuditActionType action, Date dateFrom, Date dateTo);
+	public List<AuditRecord> findByUserActionDateRange(String userId, AuditActionType action, Date dateFrom,
+			Date dateTo);
 
 	public List<AuditRecord> findByDateRange(Date dateFrom, Date dateTo);
 
@@ -44,8 +42,7 @@ public interface AuditLogPersistenceService {
 
 	public List<AuditRecord> findByActionType(AuditActionType type);
 
-	public List<AuditRecord> findByUserAndActionType(AuditActionType type,
-			String user);
+	public List<AuditRecord> findByUserAndActionType(AuditActionType type, String user);
 
 	public List<AuditRecord> findByUserAndTarget(String user, String target);
 

@@ -17,12 +17,12 @@ public class WatchlistCatServiceImpl implements WatchlistCatService {
 
 	@Autowired
 	private WatchlistItemRepository watchlistItemRepository;
-	
+
 	@Override
 	public WatchlistCategory findCatByWatchlistItemId(Long watchlistItemId) {
-		// 
+		//
 		WatchlistItem item = this.watchlistItemRepository.findOne(watchlistItemId);
-		if(item == null) {
+		if (item == null) {
 			return null;
 		}
 		return item.getWatchlistCategory();

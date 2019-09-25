@@ -4,6 +4,6 @@
  * Please see LICENSE.txt for details.
  */
 /**
- * This package contains Common Error constants, Exceptions and error  handlers.
+ * This package contains Common Error constants, Exceptions and error handlers.
  */
 package gov.gtas.error;

@@ -12,159 +12,158 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
-@SuppressWarnings("unused") //Data is returned to the front end and IS used to display.
+@SuppressWarnings("unused") // Data is returned to the front end and IS used to display.
 public class ApplicationStatisticsDTO {
-    private static final String DATE_FORMAT = "yyyy-MM-dd@HH:mm:ss";
+	private static final String DATE_FORMAT = "yyyy-MM-dd@HH:mm:ss";
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-    private
-    Date lastMessageAnalyzedByDrools;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-    private
-    Date lastMessageInSystem;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-    private
-    Date mostRecentRuleHit;
-    private int parsed;
-    private int failedParsingCount;
-    private int failedLoadCount;
-    private int loadedCount;
-    private int loadedInNeo4JCount;
-    private int analyzedCount;
-    private int neoAnalyzedCount;
-    private int runningRules;
-    private int failedAnalyzedCount;
-    private int failedNeo4jCount;
-    private int partialAnalyzedCount;
-    private int potentialFileIssue;
-    private int passengerCount;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date lastMessageAnalyzedByDrools;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date lastMessageInSystem;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date mostRecentRuleHit;
+	private int parsed;
+	private int failedParsingCount;
+	private int failedLoadCount;
+	private int loadedCount;
+	private int loadedInNeo4JCount;
+	private int analyzedCount;
+	private int neoAnalyzedCount;
+	private int runningRules;
+	private int failedAnalyzedCount;
+	private int failedNeo4jCount;
+	private int partialAnalyzedCount;
+	private int potentialFileIssue;
+	private int passengerCount;
 
-    public ApplicationStatisticsDTO(){}
-    public Date getLastMessageAnalyzedByDrools() {
-        return lastMessageAnalyzedByDrools;
-    }
+	public ApplicationStatisticsDTO() {
+	}
 
-    public void setLastMessageAnalyzedByDrools(Date lastMessageAnalyzedByDrools) {
-        this.lastMessageAnalyzedByDrools = lastMessageAnalyzedByDrools;
-    }
+	public Date getLastMessageAnalyzedByDrools() {
+		return lastMessageAnalyzedByDrools;
+	}
 
-    public Date getLastMessageInSystem() {
-        return lastMessageInSystem;
-    }
+	public void setLastMessageAnalyzedByDrools(Date lastMessageAnalyzedByDrools) {
+		this.lastMessageAnalyzedByDrools = lastMessageAnalyzedByDrools;
+	}
 
-    public void setLastMessageInSystem(Date lastMessageInSystem) {
-        this.lastMessageInSystem = lastMessageInSystem;
-    }
+	public Date getLastMessageInSystem() {
+		return lastMessageInSystem;
+	}
 
-    public Date getMostRecentRuleHit() {
-        return mostRecentRuleHit;
-    }
+	public void setLastMessageInSystem(Date lastMessageInSystem) {
+		this.lastMessageInSystem = lastMessageInSystem;
+	}
 
-    public void setMostRecentRuleHit(Date mostRecentRuleHit) {
-        this.mostRecentRuleHit = mostRecentRuleHit;
-    }
+	public Date getMostRecentRuleHit() {
+		return mostRecentRuleHit;
+	}
 
-    public int getParsed() {
-        return parsed;
-    }
+	public void setMostRecentRuleHit(Date mostRecentRuleHit) {
+		this.mostRecentRuleHit = mostRecentRuleHit;
+	}
 
-    public void setParsed(int parsed) {
-        this.parsed = parsed;
-    }
+	public int getParsed() {
+		return parsed;
+	}
 
-    public int getFailedParsingCount() {
-        return failedParsingCount;
-    }
+	public void setParsed(int parsed) {
+		this.parsed = parsed;
+	}
 
-    public void setFailedParsingCount(int failedParsingCount) {
-        this.failedParsingCount = failedParsingCount;
-    }
+	public int getFailedParsingCount() {
+		return failedParsingCount;
+	}
 
-    public int getFailedLoadCount() {
-        return failedLoadCount;
-    }
+	public void setFailedParsingCount(int failedParsingCount) {
+		this.failedParsingCount = failedParsingCount;
+	}
 
-    public void setFailedLoadCount(int failedLoadCount) {
-        this.failedLoadCount = failedLoadCount;
-    }
+	public int getFailedLoadCount() {
+		return failedLoadCount;
+	}
 
-    public int getLoadedCount() {
-        return loadedCount;
-    }
+	public void setFailedLoadCount(int failedLoadCount) {
+		this.failedLoadCount = failedLoadCount;
+	}
 
-    public void setLoadedCount(int loadedCount) {
-        this.loadedCount = loadedCount;
-    }
+	public int getLoadedCount() {
+		return loadedCount;
+	}
 
-    public int getLoadedInNeo4JCount() {
-        return loadedInNeo4JCount;
-    }
+	public void setLoadedCount(int loadedCount) {
+		this.loadedCount = loadedCount;
+	}
 
-    public void setLoadedInNeo4JCount(int loadedInNeo4JCount) {
-        this.loadedInNeo4JCount = loadedInNeo4JCount;
-    }
+	public int getLoadedInNeo4JCount() {
+		return loadedInNeo4JCount;
+	}
 
-    public int getAnalyzedCount() {
-        return analyzedCount;
-    }
+	public void setLoadedInNeo4JCount(int loadedInNeo4JCount) {
+		this.loadedInNeo4JCount = loadedInNeo4JCount;
+	}
 
-    public void setAnalyzedCount(int analyzedCount) {
-        this.analyzedCount = analyzedCount;
-    }
+	public int getAnalyzedCount() {
+		return analyzedCount;
+	}
 
-    public int getNeoAnalyzedCount() {
-        return neoAnalyzedCount;
-    }
+	public void setAnalyzedCount(int analyzedCount) {
+		this.analyzedCount = analyzedCount;
+	}
 
-    public void setNeoAnalyzedCount(int neoAnalyzedCount) {
-        this.neoAnalyzedCount = neoAnalyzedCount;
-    }
+	public int getNeoAnalyzedCount() {
+		return neoAnalyzedCount;
+	}
 
-    public int getRunningRules() {
-        return runningRules;
-    }
+	public void setNeoAnalyzedCount(int neoAnalyzedCount) {
+		this.neoAnalyzedCount = neoAnalyzedCount;
+	}
 
-    public void setRunningRules(int runningRules) {
-        this.runningRules = runningRules;
-    }
+	public int getRunningRules() {
+		return runningRules;
+	}
 
-    public int getFailedAnalyzedCount() {
-        return failedAnalyzedCount;
-    }
+	public void setRunningRules(int runningRules) {
+		this.runningRules = runningRules;
+	}
 
-    public void setFailedAnalyzedCount(int failedAnalyzedCount) {
-        this.failedAnalyzedCount = failedAnalyzedCount;
-    }
+	public int getFailedAnalyzedCount() {
+		return failedAnalyzedCount;
+	}
 
-    public int getFailedNeo4jCount() {
-        return failedNeo4jCount;
-    }
+	public void setFailedAnalyzedCount(int failedAnalyzedCount) {
+		this.failedAnalyzedCount = failedAnalyzedCount;
+	}
 
-    public void setFailedNeo4jCount(int failedNeo4jCount) {
-        this.failedNeo4jCount = failedNeo4jCount;
-    }
+	public int getFailedNeo4jCount() {
+		return failedNeo4jCount;
+	}
 
-    public int getPartialAnalyzedCount() {
-        return partialAnalyzedCount;
-    }
+	public void setFailedNeo4jCount(int failedNeo4jCount) {
+		this.failedNeo4jCount = failedNeo4jCount;
+	}
 
-    public void setPartialAnalyzedCount(int partialAnalyzedCount) {
-        this.partialAnalyzedCount = partialAnalyzedCount;
-    }
+	public int getPartialAnalyzedCount() {
+		return partialAnalyzedCount;
+	}
 
-    public int getPotentialFileIssue() {
-        return potentialFileIssue;
-    }
+	public void setPartialAnalyzedCount(int partialAnalyzedCount) {
+		this.partialAnalyzedCount = partialAnalyzedCount;
+	}
 
-    public void setPotentialFileIssue(int potentialFileIssue) {
-        this.potentialFileIssue = potentialFileIssue;
-    }
+	public int getPotentialFileIssue() {
+		return potentialFileIssue;
+	}
 
-    public int getPassengerCount() {
-        return passengerCount;
-    }
+	public void setPotentialFileIssue(int potentialFileIssue) {
+		this.potentialFileIssue = potentialFileIssue;
+	}
 
-    public void setPassengerCount(int passengerCount) {
-        this.passengerCount = passengerCount;
-    }
+	public int getPassengerCount() {
+		return passengerCount;
+	}
+
+	public void setPassengerCount(int passengerCount) {
+		this.passengerCount = passengerCount;
+	}
 }

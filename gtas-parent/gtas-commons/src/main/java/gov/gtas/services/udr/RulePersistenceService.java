@@ -38,30 +38,28 @@ public interface RulePersistenceService {
 	public UdrRule create(UdrRule rule, String userId);
 
 	/**
-	 * Deletes a UDR rule. The object is not physically deleted, but a
-	 * "delete flag" is set to indicate it is no longer in use.
+	 * Deletes a UDR rule. The object is not physically deleted, but a "delete flag"
+	 * is set to indicate it is no longer in use.
 	 * 
 	 * @param id
 	 *            the Id of the rule to delete.
 	 * @param userId
-	 *            the user Id of the person deleting the rule (usually its
-	 *            author).
+	 *            the user Id of the person deleting the rule (usually its author).
 	 * @return the deleted rule.
 	 */
 	public UdrRule delete(Long id, String userId);
 
 	/**
-	 * Find and return the list of all rules that have the "delete flag" set to
-	 * "N".
+	 * Find and return the list of all rules that have the "delete flag" set to "N".
 	 * 
 	 * @return list of all non-deleted rules.
 	 */
 	public List<UdrRule> findAll();
 
 	/**
-	 * Find and return the list of all UDR that have the "delete flag" set to
-	 * "N". If the userId is not null or empty, then the list is filtered by
-	 * UDRs authored by userId.
+	 * Find and return the list of all UDR that have the "delete flag" set to "N".
+	 * If the userId is not null or empty, then the list is filtered by UDRs
+	 * authored by userId.
 	 * 
 	 * @param userId
 	 *            the user Id of the person who authored the UDR,
@@ -76,8 +74,7 @@ public interface RulePersistenceService {
 	 *            the list of entities to update.
 	 * @return the updated list of entities.
 	 */
-	public Collection<? extends BaseEntity> batchUpdate(
-			final Collection<? extends BaseEntity> entities);
+	public Collection<? extends BaseEntity> batchUpdate(final Collection<? extends BaseEntity> entities);
 
 	/**
 	 * Updates a UDR rule or its children engine rules.
@@ -85,8 +82,7 @@ public interface RulePersistenceService {
 	 * @param rule
 	 *            the UDR rule to update.
 	 * @param userId
-	 *            the user Id of the person updating the rule (usually its
-	 *            author).
+	 *            the user Id of the person updating the rule (usually its author).
 	 * @return the updated rule.
 	 */
 	public UdrRule update(UdrRule rule, String userId);
@@ -123,9 +119,9 @@ public interface RulePersistenceService {
 	public List<UdrRule> findByAuthor(String authorUserId);
 
 	/**
-	 * Fetches a list of rules that are valid on a particular target date.
-	 * (i.e., rule.startDate <= targetDate and rule.endDate >= targetDate) Note:
-	 * the time part of target date will not be used.
+	 * Fetches a list of rules that are valid on a particular target date. (i.e.,
+	 * rule.startDate <= targetDate and rule.endDate >= targetDate) Note: the time
+	 * part of target date will not be used.
 	 * 
 	 * @param targetDate
 	 *            the target date.
@@ -182,8 +178,8 @@ public interface RulePersistenceService {
 	public EntityManager getEntityManager();
 
 	/**
-	 * Updates a UDR rule or its children engine rules. This overloaded method
-	 * helps bypasses an EntityExistsException in certain scenarios.
+	 * Updates a UDR rule or its children engine rules. This overloaded method helps
+	 * bypasses an EntityExistsException in certain scenarios.
 	 * 
 	 * @param rule
 	 *            the UDR rule to update.

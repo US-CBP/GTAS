@@ -13,50 +13,48 @@ import javax.persistence.*;
 @Entity
 @Table(name = "flight_hit_graph")
 public class FlightHitsGraph {
-    @Id
-    @Column(name = "fhg_flight_id", columnDefinition = "bigint unsigned")
-    private
-    Long flightId;
+	@Id
+	@Column(name = "fhg_flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fhg_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    Flight flight;
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "fhg_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	Flight flight;
 
-    @Column(name = "fhg_hit_count")
-    private Integer hitCount;
+	@Column(name = "fhg_hit_count")
+	private Integer hitCount;
 
-    @SuppressWarnings("unused")
-    public FlightHitsGraph() {
-    }
+	@SuppressWarnings("unused")
+	public FlightHitsGraph() {
+	}
 
-    public FlightHitsGraph(Long flightId, Integer hitCount) {
-        this.hitCount = hitCount;
-        this.flightId = flightId;
-    }
+	public FlightHitsGraph(Long flightId, Integer hitCount) {
+		this.hitCount = hitCount;
+		this.flightId = flightId;
+	}
 
-    public Integer getHitCount() {
-        return hitCount;
-    }
+	public Integer getHitCount() {
+		return hitCount;
+	}
 
-    public void setHitCount(Integer hitCount) {
-        this.hitCount = hitCount;
-    }
+	public void setHitCount(Integer hitCount) {
+		this.hitCount = hitCount;
+	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
-
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
 }

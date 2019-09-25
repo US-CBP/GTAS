@@ -5,26 +5,23 @@
  */
 package gov.gtas.model;
 
-
 import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "passenger_id_tag", indexes = {
-        @Index(columnList = "idTag", name = "id_index"),
-        @Index(columnList = "doc_hash_id", name = "doc_hash_id_index")
-})
+@Table(name = "passenger_id_tag", indexes = { @Index(columnList = "idTag", name = "id_index"),
+		@Index(columnList = "doc_hash_id", name = "doc_hash_id_index") })
 public class PassengerIDTag extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "idTag")
-    private String idTag;
-    
-    @Column(name = "tamr_id")
-    private String tamrId;
+	@Column(name = "idTag")
+	private String idTag;
 
-    public String getTamrId() {
+	@Column(name = "tamr_id")
+	private String tamrId;
+
+	public String getTamrId() {
 		return tamrId;
 	}
 
@@ -32,54 +29,53 @@ public class PassengerIDTag extends BaseEntityAudit {
 		this.tamrId = tamrId;
 	}
 
-    @Column(name = "pax_id", columnDefinition = "bigint unsigned")
-    private Long pax_id;
+	@Column(name = "pax_id", columnDefinition = "bigint unsigned")
+	private Long pax_id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pax_id", updatable = false, insertable = false)
-    private Passenger passenger;
-        
-        @Column(name = "doc_hash_id")
-        private String docHashId;
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "pax_id", updatable = false, insertable = false)
+	private Passenger passenger;
 
-    public String getIdTag() {
-        return idTag;
-    }
+	@Column(name = "doc_hash_id")
+	private String docHashId;
 
-    public void setIdTag(String idTag) {
-        this.idTag = idTag;
-    }
+	public String getIdTag() {
+		return idTag;
+	}
 
-//    public Set<Passenger> getPassengers() {
-//        return passengers;
-//    }
-//
-//    public void setPassengers(Set<Passenger> passengers) {
-//        this.passengers = passengers;
-//    }
+	public void setIdTag(String idTag) {
+		this.idTag = idTag;
+	}
 
-    public Long getPax_id() {
-        return pax_id;
-    }
+	// public Set<Passenger> getPassengers() {
+	// return passengers;
+	// }
+	//
+	// public void setPassengers(Set<Passenger> passengers) {
+	// this.passengers = passengers;
+	// }
 
-    public void setPax_id(Long pax_id) {
-        this.pax_id = pax_id;
-    }
+	public Long getPax_id() {
+		return pax_id;
+	}
 
-    public String getDocHashId() {
-        return docHashId;
-    }
+	public void setPax_id(Long pax_id) {
+		this.pax_id = pax_id;
+	}
 
-    public void setDocHashId(String docHashId) {
-        this.docHashId = docHashId;
-    }
+	public String getDocHashId() {
+		return docHashId;
+	}
 
+	public void setDocHashId(String docHashId) {
+		this.docHashId = docHashId;
+	}
 
-    public Passenger getPassenger() {
-        return passenger;
-    }
+	public Passenger getPassenger() {
+		return passenger;
+	}
 
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
-    }
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
 }

@@ -25,28 +25,28 @@ import gov.gtas.model.watchlist.WatchlistItem;
 @Table(name = "pax_watchlist_link")
 public class PaxWatchlistLink {
 
-	@Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-    @Basic(optional = false)  
-    @Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")  
-    private Long id;  
-    
-    @Column(name= "percent_match")
-    private float percentMatch;
-    
-    @Column(name= "last_run_timestamp")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastRunTimestamp;
-    
-    @ManyToOne
-    @JoinColumn(name="watchlist_item_id", nullable = true, referencedColumnName = "id")
-    private WatchlistItem watchlistItem;
-    
-    @ManyToOne
-    @JoinColumn(name="passenger_id")
-    private Passenger passenger;
-    
-    public Long getId() {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Basic(optional = false)
+	@Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")
+	private Long id;
+
+	@Column(name = "percent_match")
+	private float percentMatch;
+
+	@Column(name = "last_run_timestamp")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastRunTimestamp;
+
+	@ManyToOne
+	@JoinColumn(name = "watchlist_item_id", nullable = true, referencedColumnName = "id")
+	private WatchlistItem watchlistItem;
+
+	@ManyToOne
+	@JoinColumn(name = "passenger_id")
+	private Passenger passenger;
+
+	public Long getId() {
 		return id;
 	}
 
@@ -94,7 +94,7 @@ public class PaxWatchlistLink {
 		this.verifiedStatus = verifiedStatus;
 	}
 
-	@Column(name="verified_status")
-    private int verifiedStatus;
-    
+	@Column(name = "verified_status")
+	private int verifiedStatus;
+
 }

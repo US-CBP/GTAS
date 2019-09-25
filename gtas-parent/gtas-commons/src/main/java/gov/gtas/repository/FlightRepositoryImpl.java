@@ -43,8 +43,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Repository
 public class FlightRepositoryImpl implements FlightRepositoryCustom {
-	private static final Logger logger = LoggerFactory
-			.getLogger(FlightRepositoryImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(FlightRepositoryImpl.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -80,7 +79,7 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 				List<Expression<?>> orderByItem = new ArrayList<>();
 				if (sort.getColumn().equalsIgnoreCase("ruleHitCount")) {
 					orderByItem.add(ruleHits.get("hitCount"));
-				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")){
+				} else if (sort.getColumn().equalsIgnoreCase("listHitCount")) {
 					orderByItem.add(watchlistHits.get("hitCount"));
 				} else if ("graphHitCount".equalsIgnoreCase(sort.getColumn())) {
 					orderByItem.add(graphHits.get("hitCount"));
@@ -90,24 +89,28 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 					orderByItem.add(passengerCountJoin.get("passengerCount"));
 				} else if (sort.getColumn().equalsIgnoreCase("eta") || sort.getColumn().equalsIgnoreCase("etd")) {
 					orderByItem.add(mutableFlightDetailsJoin.get(sort.getColumn()));
-				} else if (sort.getColumn().equalsIgnoreCase("countDownTimer")){
+				} else if (sort.getColumn().equalsIgnoreCase("countDownTimer")) {
 					orderByItem.add(countDownViewJoin.get(sort.getColumn()));
 				} else {
 					orderByItem.add(root.get(sort.getColumn()));
 				}
 				if ("desc".equalsIgnoreCase(sort.getDir())) {
 					for (Expression<?> e : orderByItem) {
-						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
-						|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "graphHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "ruleHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "listHitCount".equalsIgnoreCase(sort.getColumn())) {
 							orderList.add(cb.desc(cb.coalesce(e, 0)));
 						} else {
-						orderList.add(cb.desc(e));
-					}
+							orderList.add(cb.desc(e));
+						}
 					}
 				} else {
 					for (Expression<?> e : orderByItem) {
-						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn()) || "graphHitCount".equalsIgnoreCase(sort.getColumn())
-								|| "ruleHitCount".equalsIgnoreCase(sort.getColumn()) || "listHitCount".equalsIgnoreCase(sort.getColumn())) {
+						if ("fuzzyHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "graphHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "ruleHitCount".equalsIgnoreCase(sort.getColumn())
+								|| "listHitCount".equalsIgnoreCase(sort.getColumn())) {
 							orderList.add(cb.asc(cb.coalesce(e, 0)));
 						} else {
 							orderList.add(cb.asc(e));
@@ -123,24 +126,19 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 
 		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
 			String likeString = String.format("%%%s%%", dto.getFlightNumber());
-			predicates.add(cb.like(root.<String> get("fullFlightNumber"),
-					likeString));
+			predicates.add(cb.like(root.<String>get("fullFlightNumber"), likeString));
 		}
 		/*
-		 * hack: javascript sends the empty string represented by the 'all'
-		 * dropdown value as 'A', so we check for that here to mean 'any
-		 * direction'
+		 * hack: javascript sends the empty string represented by the 'all' dropdown
+		 * value as 'A', so we check for that here to mean 'any direction'
 		 */
-		if (StringUtils.isNotBlank(dto.getDirection())
-				&& !"A".equals(dto.getDirection())) {
-			predicates.add(cb.equal(root.<String> get("direction"),
-					dto.getDirection()));
+		if (StringUtils.isNotBlank(dto.getDirection()) && !"A".equals(dto.getDirection())) {
+			predicates.add(cb.equal(root.<String>get("direction"), dto.getDirection()));
 		}
 
 		// filter flights - international, domestic, all
-		Expression<String> origCountryExp = root.<String> get("originCountry");
-		Expression<String> desCountryExp = root
-				.<String> get("destinationCountry");
+		Expression<String> origCountryExp = root.<String>get("originCountry");
+		Expression<String> desCountryExp = root.<String>get("destinationCountry");
 		Predicate origNotEPredicate = cb.notEqual(origCountryExp, "USA");
 		Predicate destNotEPredicate = cb.notEqual(desCountryExp, "USA");
 		Predicate origEPredicate = cb.equal(origCountryExp, "USA");
@@ -148,18 +146,13 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		if (dto.getFlightCategory() != null) {
 			if (dto.getFlightCategory().equalsIgnoreCase(INTERNATIONAL_FLIGHTS)) {
 				logger.info("User selects International Flights.");
-				Predicate interPredicatePart1 = cb.and(origNotEPredicate,
-						destEPredicate);
-				Predicate interPredicatePart2 = cb.and(origEPredicate,
-						destNotEPredicate);
-				Predicate interPredicate = cb.or(interPredicatePart1,
-						interPredicatePart2);
+				Predicate interPredicatePart1 = cb.and(origNotEPredicate, destEPredicate);
+				Predicate interPredicatePart2 = cb.and(origEPredicate, destNotEPredicate);
+				Predicate interPredicate = cb.or(interPredicatePart1, interPredicatePart2);
 				predicates.add(interPredicate);
-			} else if (dto.getFlightCategory().equalsIgnoreCase(
-					DOMESTIC_FLIGHTS)) {
+			} else if (dto.getFlightCategory().equalsIgnoreCase(DOMESTIC_FLIGHTS)) {
 				logger.info("User selects Domestic Flights.");
-				Predicate domesticPredicate = cb.and(origEPredicate,
-						destEPredicate);
+				Predicate domesticPredicate = cb.and(origEPredicate, destEPredicate);
 				predicates.add(domesticPredicate);
 
 			} else if (dto.getFlightCategory().equalsIgnoreCase(ALL_FLIGHTS)) {
@@ -184,14 +177,14 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		// Runs exact query above without limits to get a count.
 		long count = getCountOfQuery(dto, cb, countPredicates);
 
-		logger.debug(typedQuery.unwrap(org.hibernate.Query.class)
-				.getQueryString());
+		logger.debug(typedQuery.unwrap(org.hibernate.Query.class).getQueryString());
 		List<Flight> results = typedQuery.getResultList();
 
 		return new ImmutablePair<>(count, results);
 	}
 
-	static void generateFilters(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> predicates, Path<String> origin, Path<String> destination) {
+	static void generateFilters(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> predicates,
+			Path<String> origin, Path<String> destination) {
 		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
 			Predicate originPredicate = origin.in(dto.getOriginAirports());
 			Predicate originAirportsPredicate = cb.and(originPredicate);
@@ -208,29 +201,27 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	private long getCountOfQuery(FlightsRequestDto dto, CriteriaBuilder cb, List<Predicate> countPredicates) {
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Flight> countRoot = countQuery.from(Flight.class);
-		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails", JoinType.LEFT);
+		Join<Flight, MutableFlightDetails> countMutableFlightsInfoJoin = countRoot.join("mutableFlightDetails",
+				JoinType.LEFT);
 		Predicate countEtaCondition = getETAPredicate(dto, cb, countMutableFlightsInfoJoin);
 
-    if (countEtaCondition != null) {
+		if (countEtaCondition != null) {
 			countPredicates.add(countEtaCondition);
 		}
-		countQuery.select(cb.count(countRoot)).where(
-				countPredicates.toArray(new Predicate[]{}));
+		countQuery.select(cb.count(countRoot)).where(countPredicates.toArray(new Predicate[] {}));
 		TypedQuery countQuert = em.createQuery(countQuery);
 		Optional countResult = countQuert.getResultList().stream().findFirst();
-		return countResult.isPresent() ? (Long)countResult.get() : 0L;
+		return countResult.isPresent() ? (Long) countResult.get() : 0L;
 	}
 
-	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
+	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb,
+			Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
 		Predicate etaCondition = null;
 		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
 			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
-			Predicate startPredicate = cb.or(
-					cb.isNull(eta),
-					cb.greaterThanOrEqualTo(mutableFlightDetailsJoin.get("eta"),
-							dto.getEtaStart()));
-			Predicate endPredicate = cb.or(cb.isNull(eta),
-					cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
+			Predicate startPredicate = cb.or(cb.isNull(eta),
+					cb.greaterThanOrEqualTo(mutableFlightDetailsJoin.get("eta"), dto.getEtaStart()));
+			Predicate endPredicate = cb.or(cb.isNull(eta), cb.lessThanOrEqualTo(eta, dto.getEtaEnd()));
 			etaCondition = cb.and(startPredicate, endPredicate);
 		}
 		return etaCondition;
@@ -240,52 +231,24 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 	@Transactional
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void deleteAllMessages() throws Exception {
-		String[] sqlScript = { 
-                                "delete from hits_disposition_comments_attachment",
-				"delete from hits_disposition_comments",
-                                "delete from hits_disposition",
-                                "delete from cases",
-				"delete from ticket_fare",
-				"delete from bag",
-				"delete from disposition",	
-				"delete from payment_form",
-				"delete from apis_message_flight_pax",
-				"delete from flight_pax",
-				"delete from hit_detail", "delete from hits_summary",
-				"delete from document",
-				"delete from apis_message_passenger",
-				"delete from flight_passenger", 
-				"delete from apis_message_flight", "delete from flight_leg",
-				"delete from seat", 
-				"delete from apis_message_reporting_party",
-				"delete from reporting_party",
-				"delete from apis_message",			
-				"delete from pnr_passenger",
-				"delete from pnr_flight", "delete from pnr_codeshares","delete from code_share_flight",
-                                "delete from flight_hit_rule",
-                                "delete from flight_hit_watchlist",
-				"delete from flight",
-				"delete from pnr_agency", "delete from agency",
-				"delete from pnr_credit_card", "delete from credit_card",
-				"delete from pnr_frequent_flyer", "delete from frequent_flyer",
-				"delete from pnr_phone", "delete from phone",
-				"delete from pnr_email", "delete from email",
-				"delete from pnr_address",				
-				"delete from pnr_dwelltime",
-				"delete from pnr_booking",
-				"delete from pax_booking",
-				"delete from BookingDetail",
-				"delete from address", "delete from dwell_time",
-				"delete from  pnr",
-				"delete from  message",
-                                "delete from attachment",
-				"delete from passenger_id_tag",
-				"delete from  passenger",				
-				"delete from loader_audit_logs",
-				"delete from error_detail",
-				"delete from audit_log",
-				"delete from dashboard_message_stats",
-				};
+		String[] sqlScript = { "delete from hits_disposition_comments_attachment",
+				"delete from hits_disposition_comments", "delete from hits_disposition", "delete from cases",
+				"delete from ticket_fare", "delete from bag", "delete from disposition", "delete from payment_form",
+				"delete from apis_message_flight_pax", "delete from flight_pax", "delete from hit_detail",
+				"delete from hits_summary", "delete from document", "delete from apis_message_passenger",
+				"delete from flight_passenger", "delete from apis_message_flight", "delete from flight_leg",
+				"delete from seat", "delete from apis_message_reporting_party", "delete from reporting_party",
+				"delete from apis_message", "delete from pnr_passenger", "delete from pnr_flight",
+				"delete from pnr_codeshares", "delete from code_share_flight", "delete from flight_hit_rule",
+				"delete from flight_hit_watchlist", "delete from flight", "delete from pnr_agency",
+				"delete from agency", "delete from pnr_credit_card", "delete from credit_card",
+				"delete from pnr_frequent_flyer", "delete from frequent_flyer", "delete from pnr_phone",
+				"delete from phone", "delete from pnr_email", "delete from email", "delete from pnr_address",
+				"delete from pnr_dwelltime", "delete from pnr_booking", "delete from pax_booking",
+				"delete from BookingDetail", "delete from address", "delete from dwell_time", "delete from  pnr",
+				"delete from  message", "delete from attachment", "delete from passenger_id_tag",
+				"delete from  passenger", "delete from loader_audit_logs", "delete from error_detail",
+				"delete from audit_log", "delete from dashboard_message_stats", };
 
 		Session session = em.unwrap(Session.class);
 		for (String sql : sqlScript) {
@@ -293,87 +256,88 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 			q.executeUpdate();
 		}
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Flight> getTravelHistoryByItinerary (Long pnrId, String pnrRef) {
+	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
 		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM ");	
-		if(pnrId!=null && pnrRef!=null) {	
+		sqlStr.append("SELECT DISTINCT f.* FROM ");
+		if (pnrId != null && pnrRef != null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
+			sqlStr.append(
+					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
+			sqlStr.append(
+					"LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id = ");
 			sqlStr.append(pnrId);
-			sqlStr.append(" OR " );
+			sqlStr.append(" OR ");
 			sqlStr.append("fpa.ref_number = '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
-		}
-		else if(pnrId !=null) {
+		} else if (pnrId != null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
+			sqlStr.append(
+					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id = ");
 			sqlStr.append(pnrId);
-		}
-		else if(pnrRef !=null) {
-			sqlStr.append("flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
+		} else if (pnrRef != null) {
+			sqlStr.append(
+					"flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE fpa.ref_number = '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
-		}
-		else {
+		} else {
 			return new ArrayList<Flight>();
 		}
-		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
-				.getResultList();
+		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class).getResultList();
 	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef){
+	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef) {
 		StringBuilder sqlStr = new StringBuilder();
-		sqlStr.append("SELECT DISTINCT f.* FROM ");	
-		if(pnrId !=null && pnrRef !=null) {
+		sqlStr.append("SELECT DISTINCT f.* FROM ");
+		if (pnrId != null && pnrRef != null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
-			sqlStr.append("LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
+			sqlStr.append(
+					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
+			sqlStr.append(
+					"LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id != ");
 			sqlStr.append(pnrId);
-			sqlStr.append(" AND " );
+			sqlStr.append(" AND ");
 			sqlStr.append("fpa.ref_number != '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
 			sqlStr.append(" AND ");
-		}
-		else if(pnrId !=null) {
+		} else if (pnrId != null) {
 			sqlStr.append("pnr_flight pf JOIN pnr_passenger pp ON pf.pnr_id = pp.pnr_id ");
-			sqlStr.append("JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
+			sqlStr.append(
+					"JOIN flight_passenger fp ON fp.flight_id = pf.flight_id and fp.passenger_id = pp.passenger_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE pp.pnr_id != ");
 			sqlStr.append(pnrId);
 			sqlStr.append(" AND ");
-		}
-		else if(pnrRef !=null) {
-			sqlStr.append("flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
+		} else if (pnrRef != null) {
+			sqlStr.append(
+					"flight_passenger fp LEFT OUTER JOIN flight_pax fpa ON fp.passenger_id = fpa.passenger_id AND fp.flight_id = fpa.flight_id ");
 			sqlStr.append("JOIN flight f ON f.id = fp.flight_id ");
 			sqlStr.append("WHERE fpa.ref_number != '");
 			sqlStr.append(pnrRef);
 			sqlStr.append("'");
 			sqlStr.append(" AND ");
-		}
-		else {
+		} else {
 			sqlStr.append("WHERE ");
 		}
 		sqlStr.append(" fp.passenger_id = ");
 		sqlStr.append(paxId);
-		
-		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class)
-				.getResultList();
-	}	
+
+		return (List<Flight>) em.createNativeQuery(sqlStr.toString(), Flight.class).getResultList();
+	}
 }

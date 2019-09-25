@@ -9,10 +9,9 @@ import gov.gtas.model.lookup.CarrierRestore;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface CarrierRestoreRepository extends CrudRepository<CarrierRestore, Long>{
+public interface CarrierRestoreRepository extends CrudRepository<CarrierRestore, Long> {
 
-    default CarrierRestore findOne(Long carrierId)
-    {
-    	return findById(carrierId).orElse(null);
-    }
+	default CarrierRestore findOne(Long carrierId) {
+		return findById(carrierId).orElse(null);
+	}
 }

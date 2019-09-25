@@ -6,7 +6,7 @@
 package gov.gtas.services.matcher.quickmatch;
 
 public class DerogHit {
-	public static final String WATCH_LIST_NAME ="WatchlistName";
+	public static final String WATCH_LIST_NAME = "WatchlistName";
 	private String derogId;
 	private String clause;
 	private String ruleDescription;

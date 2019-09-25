@@ -38,8 +38,7 @@ public class Role implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Role [roleId=" + roleId + ", roleDescription="
-				+ roleDescription + "]";
+		return "Role [roleId=" + roleId + ", roleDescription=" + roleDescription + "]";
 	}
 
 	@Column(name = "role_description")
@@ -72,8 +71,7 @@ public class Role implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((roleDescription == null) ? 0 : roleDescription.hashCode());
+		result = prime * result + ((roleDescription == null) ? 0 : roleDescription.hashCode());
 		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
 		return result;
 	}

@@ -40,16 +40,14 @@ import org.springframework.test.annotation.Rollback;
  * Persistence layer tests for Watch list.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
 @Rollback(true)
 public class WatchlistPersistenceServiceIT {
 	private static final String TEST_WL_NAME = "Foo Knowledge Base";
 	private static final EntityEnum TEST_WL_ENTITY = EntityEnum.PASSENGER;
-	private static final String[] TEST_WL_ITEMS1 = new String[] {
-			"Test Item 1", "Test Item 2", "Test Item 3", "Test Item 4" };
-	private static final String[] TEST_WL_ITEMS2 = new String[] {
-			"Test Item 5", "Test Item 6" };
+	private static final String[] TEST_WL_ITEMS1 = new String[] { "Test Item 1", "Test Item 2", "Test Item 3",
+			"Test Item 4" };
+	private static final String[] TEST_WL_ITEMS2 = new String[] { "Test Item 5", "Test Item 6" };
 
 	@Autowired
 	private WatchlistPersistenceService testTarget;
@@ -72,10 +70,8 @@ public class WatchlistPersistenceServiceIT {
 	@Test()
 	@Ignore
 	public void testCreateWatchlist() {
-		List<WatchlistItem> createList = testGenUtils
-				.createWatchlistItems(TEST_WL_ITEMS1);
-		List<Long> idList = testTarget.createUpdateDelete(TEST_WL_NAME,
-				TEST_WL_ENTITY, createList, null,
+		List<WatchlistItem> createList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS1);
+		List<Long> idList = testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList, null,
 				WatchlistDataGenUtils.TEST_USER1_ID);
 		assertNotNull(idList);
 		assertEquals(5, idList.size());
@@ -84,8 +80,7 @@ public class WatchlistPersistenceServiceIT {
 		assertEquals(TEST_WL_ENTITY, wl.getWatchlistEntity());
 		User editor = wl.getWatchListEditor();
 		assertEquals(WatchlistDataGenUtils.TEST_USER1_ID, editor.getUserId());
-		List<WatchlistItem> items = testTarget.findWatchlistItems(wl
-				.getWatchlistName());
+		List<WatchlistItem> items = testTarget.findWatchlistItems(wl.getWatchlistName());
 		assertNotNull(items);
 		assertEquals(4, items.size());
 		for (WatchlistItem item : items) {
@@ -100,12 +95,9 @@ public class WatchlistPersistenceServiceIT {
 	@Test()
 	@Ignore
 	public void testUpdateDeleteWatchlist() {
-		List<WatchlistItem> createList = testGenUtils
-				.createWatchlistItems(TEST_WL_ITEMS1);
-		List<WatchlistItem> addList = testGenUtils
-				.createWatchlistItems(TEST_WL_ITEMS2);
-		List<Long> idList = testTarget.createUpdateDelete(TEST_WL_NAME,
-				TEST_WL_ENTITY, createList, null,
+		List<WatchlistItem> createList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS1);
+		List<WatchlistItem> addList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS2);
+		List<Long> idList = testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList, null,
 				WatchlistDataGenUtils.TEST_USER1_ID);
 		assertNotNull(idList);
 		assertEquals(5, idList.size());// wl id + 4 inserted item ids
@@ -129,8 +121,8 @@ public class WatchlistPersistenceServiceIT {
 		// insert two more items
 		updateItems.addAll(addList);
 
-		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY,
-				updateItems, deleteItems, WatchlistDataGenUtils.TEST_USER1_ID);
+		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, updateItems, deleteItems,
+				WatchlistDataGenUtils.TEST_USER1_ID);
 		items = testTarget.findWatchlistItems(TEST_WL_NAME);
 		assertNotNull(items);
 		assertEquals(5, items.size());
@@ -154,40 +146,34 @@ public class WatchlistPersistenceServiceIT {
 	@Test()
 	@Ignore
 	public void testDeleteWatchlist() {
-		List<WatchlistItem> createList = testGenUtils
-				.createWatchlistItems(TEST_WL_ITEMS1);
-		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList,
-				null, WatchlistDataGenUtils.TEST_USER1_ID);
+		List<WatchlistItem> createList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS1);
+		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList, null,
+				WatchlistDataGenUtils.TEST_USER1_ID);
 		Watchlist wl = testTarget.findByName(TEST_WL_NAME);
 		assertNotNull(wl);
-		List<WatchlistItem> items = testTarget.findWatchlistItems(wl
-				.getWatchlistName());
+		List<WatchlistItem> items = testTarget.findWatchlistItems(wl.getWatchlistName());
 		assertEquals(4, items.size());
 		List<WatchlistItem> deleteItems = new LinkedList<WatchlistItem>();
 		String deldata1 = addDeleteItem(deleteItems, items.get(0));
 		String deldata2 = addDeleteItem(deleteItems, items.get(3));
-		testTarget.createUpdateDelete(wl.getWatchlistName(),
-				wl.getWatchlistEntity(), null, deleteItems,
+		testTarget.createUpdateDelete(wl.getWatchlistName(), wl.getWatchlistEntity(), null, deleteItems,
 				WatchlistDataGenUtils.TEST_USER1_ID);
 		items = testTarget.findWatchlistItems(wl.getWatchlistName());
 		assertNotNull(items);
 		assertEquals(2, items.size());
 		WatchlistItem item = items.get(0);
-		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1)
-				|| !item.getItemData().equalsIgnoreCase(deldata2));
+		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1) || !item.getItemData().equalsIgnoreCase(deldata2));
 		item = items.get(1);
-		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1)
-				|| !item.getItemData().equalsIgnoreCase(deldata2));
+		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1) || !item.getItemData().equalsIgnoreCase(deldata2));
 	}
 
 	@Transactional
 	@Test()
 	@Ignore
 	public void testWatchlistSummary() {
-		List<WatchlistItem> createList = testGenUtils
-				.createWatchlistItems(TEST_WL_ITEMS1);
-		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList,
-				null, WatchlistDataGenUtils.TEST_USER1_ID);
+		List<WatchlistItem> createList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS1);
+		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList, null,
+				WatchlistDataGenUtils.TEST_USER1_ID);
 		Watchlist wl = testTarget.findByName(TEST_WL_NAME);
 		assertNotNull(wl);
 		List<Watchlist> summaryList = testTarget.findAllSummary();

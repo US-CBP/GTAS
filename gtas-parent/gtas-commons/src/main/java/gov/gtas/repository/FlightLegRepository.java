@@ -9,6 +9,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.FlightLeg;
 
-public interface FlightLegRepository  extends CrudRepository<FlightLeg, Long>{
+public interface FlightLegRepository extends CrudRepository<FlightLeg, Long> {
 
 }

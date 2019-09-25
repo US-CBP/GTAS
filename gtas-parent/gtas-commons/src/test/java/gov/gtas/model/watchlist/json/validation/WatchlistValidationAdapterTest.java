@@ -27,122 +27,127 @@ import org.springframework.validation.FieldError;
 
 public class WatchlistValidationAdapterTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(WatchlistValidationAdapterTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(WatchlistValidationAdapterTest.class);
 
-    private static final String WL_NAME1 = "Hello WL 1";
+	private static final String WL_NAME1 = "Hello WL 1";
 
-    @Before
-    public void setUp() throws Exception {
-    }
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Test
-    public void testValidateWatchlistSpec() {
-        try{
-        WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-        WatchlistValidationAdapter.validateWatchlistSpec(spec);
-        } catch (Exception  ex){
-            logger.error("error!", ex);
-            fail("Not expecting exception");
-        }
-    }
-    @Test
-    public void testMissingName() {
-        try{
-            WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-            spec.setName(StringUtils.EMPTY);
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(1, fieldErrors.size());
-            assertEquals(WatchlistConstants.WL_NAME_FIELD, fieldErrors.get(0).getField());
-        }
-    }
+	@Test
+	public void testValidateWatchlistSpec() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+		} catch (Exception ex) {
+			logger.error("error!", ex);
+			fail("Not expecting exception");
+		}
+	}
 
-    @Test
-    public void testMissingEntity() {
-        try{
-            WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-            spec.setEntity(StringUtils.EMPTY);
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(1, fieldErrors.size());
-            assertEquals(WatchlistConstants.WL_ENTITY_FIELD, fieldErrors.get(0).getField());
-        }
-    }
-    @Test
-    public void testInvalidEntity() {
-        try{
-            WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-            spec.setEntity("foobar");
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(1, fieldErrors.size());
-            assertEquals(WatchlistConstants.WL_ENTITY_FIELD, fieldErrors.get(0).getField());
-        }
-    }
-    @Test
-    public void testEmptyItemList() {
-        try{
-            WatchlistSpec spec = new WatchlistSpec(WL_NAME1, "passenger");
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(1, fieldErrors.size());
-            assertEquals(WatchlistConstants.WL_ITEMS_FIELD, fieldErrors.get(0).getField());
-        }
-    }
-    public void testInvalidAction() {
-        try{
-            WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-            WatchlistItemSpec itm = spec.getWatchlistItems().get(0);
-            itm.setAction("C");
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(1, fieldErrors.size());
-            assertEquals(WatchlistConstants.WL_ITEM_ACTION_FIELD, fieldErrors.get(0).getField());
-        }
-    }
-    public void testInvalidFieldAndType() {
-        try{
-            WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-            WatchlistItemSpec itm = spec.getWatchlistItems().get(0);
-            WatchlistTerm trm = itm.getTerms()[0];
-            trm.setField("foo");
-            trm.setType("bar");
-            WatchlistValidationAdapter.validateWatchlistSpec(spec);
-            fail("Expecting exception");
-        } catch (CommonValidationException  ex){
-            assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
-            List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
-            assertEquals(2, fieldErrors.size());
-            boolean gotFieldError = false;
-            boolean gotTypeError = false;
-            for(FieldError err:fieldErrors){
-                if(WatchlistConstants.WL_ITEM_FIELD_FIELD.equals(err.getField())){
-                    gotFieldError = true;
-                }
-                if(WatchlistConstants.WL_ITEM_TYPE_FIELD.equals(err.getField())){
-                    gotTypeError = true;
-                }
-            }
-            assertTrue(gotFieldError&gotTypeError);
-        }
-    }
+	@Test
+	public void testMissingName() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			spec.setName(StringUtils.EMPTY);
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertEquals(WatchlistConstants.WL_NAME_FIELD, fieldErrors.get(0).getField());
+		}
+	}
+
+	@Test
+	public void testMissingEntity() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			spec.setEntity(StringUtils.EMPTY);
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertEquals(WatchlistConstants.WL_ENTITY_FIELD, fieldErrors.get(0).getField());
+		}
+	}
+
+	@Test
+	public void testInvalidEntity() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			spec.setEntity("foobar");
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertEquals(WatchlistConstants.WL_ENTITY_FIELD, fieldErrors.get(0).getField());
+		}
+	}
+
+	@Test
+	public void testEmptyItemList() {
+		try {
+			WatchlistSpec spec = new WatchlistSpec(WL_NAME1, "passenger");
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertEquals(WatchlistConstants.WL_ITEMS_FIELD, fieldErrors.get(0).getField());
+		}
+	}
+
+	public void testInvalidAction() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			WatchlistItemSpec itm = spec.getWatchlistItems().get(0);
+			itm.setAction("C");
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertEquals(WatchlistConstants.WL_ITEM_ACTION_FIELD, fieldErrors.get(0).getField());
+		}
+	}
+
+	public void testInvalidFieldAndType() {
+		try {
+			WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
+			WatchlistItemSpec itm = spec.getWatchlistItems().get(0);
+			WatchlistTerm trm = itm.getTerms()[0];
+			trm.setField("foo");
+			trm.setType("bar");
+			WatchlistValidationAdapter.validateWatchlistSpec(spec);
+			fail("Expecting exception");
+		} catch (CommonValidationException ex) {
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, ex.getErrorCode());
+			List<FieldError> fieldErrors = ex.getValidationErrors().getFieldErrors();
+			assertEquals(2, fieldErrors.size());
+			boolean gotFieldError = false;
+			boolean gotTypeError = false;
+			for (FieldError err : fieldErrors) {
+				if (WatchlistConstants.WL_ITEM_FIELD_FIELD.equals(err.getField())) {
+					gotFieldError = true;
+				}
+				if (WatchlistConstants.WL_ITEM_TYPE_FIELD.equals(err.getField())) {
+					gotTypeError = true;
+				}
+			}
+			assertTrue(gotFieldError & gotTypeError);
+		}
+	}
 }

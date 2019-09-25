@@ -2,17 +2,18 @@ package gov.gtas.model;
 
 public enum CommentType {
 
-    GENERAL("GENERAL"),
-    TARGET("TARGET");
+	GENERAL("GENERAL"),
 
-    private String type;
-    CommentType(String type) {
-        this.type = type;
-    }
+	TARGET("TARGET");
 
-    public String getType() {
-        return type;
-    }
+	private String type;
 
+	CommentType(String type) {
+		this.type = type;
+	}
+
+	public String getType() {
+		return type;
+	}
 
 }
