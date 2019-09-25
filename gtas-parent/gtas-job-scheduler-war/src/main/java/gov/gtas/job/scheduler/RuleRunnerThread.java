@@ -96,7 +96,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
                     try {
                         logger.info("Saving rules/summary targeting results {} of {} ...", count, batchedTargetingServiceResults.size());
                         targetingService.saveEverything(targetingServiceResults);
-                        // wait until all currently loaded messages are loaded then send hit notifications later
+                        // wait until all currently loading messages are loaded then send hit notifications later
                         waitListForNotification.addAll(targetingServiceResults.getHitsSummaryList());
                     } catch (Exception ignored) {
                         ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
@@ -152,7 +152,4 @@ public class RuleRunnerThread implements Callable<Boolean> {
     void setMessageStatuses(List<MessageStatus> messageStatuses) {
         this.messageStatuses = messageStatuses;
     }
-	void setMessageStatuses(List<MessageStatus> messageStatuses) {
-		this.messageStatuses = messageStatuses;
-	}
 }
