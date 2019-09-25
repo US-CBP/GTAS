@@ -57,10 +57,11 @@ public class NotificatonServiceImpl implements NotificatonService {
 	}
 
 	/**
-	 * Sends email notification for watchlist hits
+	 * Sends email notification for Interpol Red Notices Watchlist hits
 	 * 
-	 * Notifications are sent using AWS SNS topic. All subscribers will receive the
-	 * email. Currently the email include a link to unsubscribe from the topic
+	 * Notifications are sent using AWS SNS topic. All subscribers will receive
+	 * separate email. Currently the email include a link to unsubscribe from the
+	 * topic
 	 * 
 	 * The method is toggled, notification can be disabled by updating the lookup
 	 * table app_configureation (ENABLE_HIT_NOTIFICATION = false)
@@ -75,32 +76,43 @@ public class NotificatonServiceImpl implements NotificatonService {
 	@Override
 	public void sendHitNotifications(List<HitsSummary> hitsSummaryList) {
 
-		boolean hitNotificationEnabled = Boolean.parseBoolean(
-				appConfigurationService.findByOption(AppConfigurationRepository.ENABLE_HIT_NOTIFICATION).getValue());
+		try {
+			boolean hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
+					.findByOption(AppConfigurationRepository.ENABLE_INTERPOL_HIT_NOTIFICATION).getValue());
 
-		if (!hitNotificationEnabled)
-			return;
-		long start = System.nanoTime();
+			if (!hitNotificationEnabled)
+				return;
+			long start = System.nanoTime();
 
-		List<NotificationTextVo> notifications = this.notificationTexts(hitsSummaryList);
+			List<NotificationTextVo> notifications = this.notificationTexts(hitsSummaryList);
 
-		// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
-		long interpolRedNoticesId = Long.parseLong(
-				appConfigurationService.findByOption(AppConfigurationRepository.INTERPOL_RED_NOTICE_ID).getValue());
+			final Long interpolRedNoticesId = Long.parseLong(
+					appConfigurationService.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
+			logger.debug("Interpol Red Notices ID: {}", interpolRedNoticesId);
 
-		// filter out hits on passengers with dob equals January first
-		notifications = notifications.stream().filter(dayMonthEqualsJanuaryFirst()).collect(Collectors.toList());
+			// filter out hits on passengers with dob equals January first
+			notifications = notifications.stream().filter(dayMonthEqualsJanuaryFirst()).collect(Collectors.toList());
 
-		// filter out hits on non Interpol Red Notices
-		notifications = notifications.stream().filter(p -> p.getWlCategoryId().longValue() == interpolRedNoticesId)
-				.collect(Collectors.toList());
+			// filter out hits on non Interpol Red Notices
+			notifications = notifications.stream().filter(p -> p.getWlCategoryId().longValue() == interpolRedNoticesId)
+					.collect(Collectors.toList());
 
-		// for every hit summary send a separate notification
-		notifications.forEach(this::sendHitNotification);
+			// for every hit summary, send a separate notification
+			notifications.forEach(this::sendHitNotification);
 
-		logger.info("Notifications sent in {} m/s", (System.nanoTime() - start) / 1000000);
+			logger.debug("Notifications sent in {} m/s", (System.nanoTime() - start) / 1000000);
+
+		} catch (Exception e) {
+			logger.error("Sending Interpol Red Notices notification failed.", e);
+		}
+
 	}
 
+	/**
+	 * Predicate to check if DOB is January First
+	 * 
+	 * @return
+	 */
 	public static Predicate<NotificationTextVo> dayMonthEqualsJanuaryFirst() {
 
 		return p -> {
@@ -167,7 +179,8 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 		notificationVo.setTimeRemaining(calculator
 				.getCountDownFromDate(o.getFlight().getFlightCountDownView().getCountDownTimer()).getCountDownTimer());
-		logger.info(notificationVo.toString());
+		logger.debug("{}", notificationVo);
+
 		return notificationVo;
 	}
 
