@@ -32,8 +32,7 @@ public class RuleServiceException extends CommonServiceException {
 	 * @param exception
 	 *            the causing exception.
 	 */
-	public RuleServiceException(final String errCode, final String msg,
-			final Throwable exception) {
+	public RuleServiceException(final String errCode, final String msg, final Throwable exception) {
 		super(errCode, msg, exception);
 		this.errorMessages = new LinkedList<>();
 	}

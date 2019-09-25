@@ -46,15 +46,19 @@ public class TargetSummaryVo implements Serializable, Cloneable {
 	/**
 	 * This constructor is used when creating a hit summary object.
 	 *
-	 * @param hitType the hit type
-	 * @param flightId the flight id
-	 * @param passengerType the passenger type
-	 * @param passengerId the passenger id
-	 * @param passengerName the passenger name
+	 * @param hitType
+	 *            the hit type
+	 * @param flightId
+	 *            the flight id
+	 * @param passengerType
+	 *            the passenger type
+	 * @param passengerId
+	 *            the passenger id
+	 * @param passengerName
+	 *            the passenger name
 	 */
-	public TargetSummaryVo(final HitTypeEnum hitType, final Long flightId,
-			final PassengerTypeCode passengerType, final Long passengerId,
-			final String passengerName) {
+	public TargetSummaryVo(final HitTypeEnum hitType, final Long flightId, final PassengerTypeCode passengerType,
+			final Long passengerId, final String passengerName) {
 		this.passengerId = passengerId;
 		this.passengerType = decodePassengerTypeName(passengerType.toString());
 		this.passengerName = passengerName;
@@ -139,7 +143,8 @@ public class TargetSummaryVo implements Serializable, Cloneable {
 	/**
 	 * Adds the hit detail.
 	 *
-	 * @param detail the detail
+	 * @param detail
+	 *            the detail
 	 */
 	public void addHitDetail(TargetDetailVo detail) {
 		if (detail.getHitType() == HitTypeEnum.R) {
@@ -168,7 +173,6 @@ public class TargetSummaryVo implements Serializable, Cloneable {
 		if (!(obj instanceof TargetSummaryVo))
 			return false;
 		final TargetSummaryVo other = (TargetSummaryVo) obj;
-		return Objects.equals(this.passengerId, other.passengerId)
-				&& Objects.equals(this.flightId, other.flightId);
+		return Objects.equals(this.passengerId, other.passengerId) && Objects.equals(this.flightId, other.flightId);
 	}
 }

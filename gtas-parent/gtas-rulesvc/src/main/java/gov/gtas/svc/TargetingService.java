@@ -60,19 +60,19 @@ public interface TargetingService {
 	 * Invokes the Targeting service for all unprocessed PNR and APIS messages.
 	 * 
 	 * @param updateProcesssedMessageStatus
-	 *            it true, then the Targeting Service will update the status of
-	 *            each processed message.
+	 *            it true, then the Targeting Service will update the status of each
+	 *            processed message.
 	 * @return the result of the invocation.
 	 */
 	RuleResultsWithMessageStatus analyzeLoadedMessages(final boolean updateProcesssedMessageStatus);
 
 	/**
-	 * Invokes the Rule Engine on an arbitrary list of objects using the
-	 * specified DRL rules string
+	 * Invokes the Rule Engine on an arbitrary list of objects using the specified
+	 * DRL rules string
 	 * 
 	 * @param request
-	 *            The rule request containing an arbitrary list of request
-	 *            objects to be inserted into the Rule Engine context.
+	 *            The rule request containing an arbitrary list of request objects
+	 *            to be inserted into the Rule Engine context.
 	 * @param drlRules
 	 *            The DROOLS rules to apply on the request objects.
 	 * @return the result of the invocation.
@@ -81,17 +81,17 @@ public interface TargetingService {
 
 	/**
 	 * Running Rule Engine through Scheduler.
-	 * @return 
+	 * 
+	 * @return
 	 * 
 	 */
 	public RuleResultsWithMessageStatus runningRuleEngine();
 
-    public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses);
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> messageStatuses);
 
 	public void saveMessageStatuses(List<MessageStatus> setMessagesToAnalyzed);
 
 	public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult);
-
 
 	public void saveEverything(TargetingServiceResults targetingServiceResults);
 
@@ -99,10 +99,10 @@ public interface TargetingService {
 	 * Update the rule and watchlist hit counts for a set of flight id's.
 	 * 
 	 * Initially I did not want to create a separate method for this and just
-	 * include the logic in the rule runner, but after some testing on large
-	 * amounts of data, it seems that hibernate should flush the hits to the
-	 * hits_summary table prior to computing the updated hit counts; otherwise
-	 * we get inaccurate results.
+	 * include the logic in the rule runner, but after some testing on large amounts
+	 * of data, it seems that hibernate should flush the hits to the hits_summary
+	 * table prior to computing the updated hit counts; otherwise we get inaccurate
+	 * results.
 	 * 
 	 * @param flights
 	 *            set of flight id's to update

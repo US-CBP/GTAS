@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * The Class CompositeRuleServiceResult that combines Udr and watchlist results.
  */
-public class CompositeRuleServiceResult implements RuleServiceResult,
-		Serializable {
+public class CompositeRuleServiceResult implements RuleServiceResult, Serializable {
 	private static final long serialVersionUID = 6373119898883595702L;
 
 	private List<RuleHitDetail> resultList;
@@ -28,8 +27,7 @@ public class CompositeRuleServiceResult implements RuleServiceResult,
 	 * @param watchlistResults
 	 *            the watchlist results
 	 */
-	public CompositeRuleServiceResult(RuleServiceResult udrResults,
-			RuleServiceResult watchlistResults) {
+	public CompositeRuleServiceResult(RuleServiceResult udrResults, RuleServiceResult watchlistResults) {
 		if (udrResults != null) {
 			this.resultList = udrResults.getResultList();
 			this.executionStatistics = udrResults.getExecutionStatistics();
@@ -38,8 +36,7 @@ public class CompositeRuleServiceResult implements RuleServiceResult,
 		}
 		if (watchlistResults != null) {
 			this.resultList.addAll(watchlistResults.getResultList());
-			this.wlExecutionStatistics = watchlistResults
-					.getExecutionStatistics();
+			this.wlExecutionStatistics = watchlistResults.getExecutionStatistics();
 			if (this.executionStatistics == null) {
 				this.executionStatistics = this.wlExecutionStatistics;
 			}

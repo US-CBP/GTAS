@@ -1,18 +1,18 @@
 package gov.gtas.rule.builder;
 
-public class PassengerTripDetailsConditionBuilder extends EntityConditionBuilder{
+public class PassengerTripDetailsConditionBuilder extends EntityConditionBuilder {
 
-    PassengerTripDetailsConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, RuleTemplateConstants.PASSENGER_TRIP_DETAILS_NAME);
-    }
+	PassengerTripDetailsConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, RuleTemplateConstants.PASSENGER_TRIP_DETAILS_NAME);
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
 
-    }
+	}
 
-    String getPassengerIdLinkExpression() {
-        return getDrlVariableName()+".paxId";
-    }
+	String getPassengerIdLinkExpression() {
+		return getDrlVariableName() + ".paxId";
+	}
 
 }

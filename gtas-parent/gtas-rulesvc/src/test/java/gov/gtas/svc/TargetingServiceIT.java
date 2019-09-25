@@ -44,11 +44,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 
 /**
- * Integration tests for the TargetingService using spring support. (Also contains
- * tests for date-effective and date-expires properties of rules.)
+ * Integration tests for the TargetingService using spring support. (Also
+ * contains tests for date-effective and date-expires properties of rules.)
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {RuleServiceConfig.class, TestCommonServicesConfig.class })
+@ContextConfiguration(classes = { RuleServiceConfig.class, TestCommonServicesConfig.class })
 @Rollback(true)
 @Ignore
 public class TargetingServiceIT {
@@ -86,43 +86,36 @@ public class TargetingServiceIT {
 	public void testApisRuleExecution1() throws ParseException {
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX);
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected 1 hit", 1, result.getResultList().size());
 		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
 		assertNotNull("passenger ID in result is null", res.getPassengerId());
-		assertEquals("Expected passenger with id = 11", 11L,
-				res.getPassengerId());
+		assertEquals("Expected passenger with id = 11", 11L, res.getPassengerId());
 	}
 
 	@Test
 	@Transactional
 	public void testApisRuleExecution1FutureDate() throws ParseException {
 		/*
-		 * same test as "testApisRuleExecution1" but with rule start date in the
-		 * future. Hence there should be no hits.
+		 * same test as "testApisRuleExecution1" but with rule start date in the future.
+		 * Hence there should be no hits.
 		 */
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
 
 		// set the start date in the future
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX,
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX,
 				DateCalendarUtils.addOneDayToDate(new Date()), null);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected no hit", 0, result.getResultList().size());
 	}
@@ -131,8 +124,8 @@ public class TargetingServiceIT {
 	@Transactional
 	public void testApisRuleExecution1ValidUptoToday() throws ParseException {
 		/*
-		 * same test as "testApisRuleExecution1" but with rule start date in the
-		 * past and end date today. Hence there should be 1 hit as in
+		 * same test as "testApisRuleExecution1" but with rule start date in the past
+		 * and end date today. Hence there should be 1 hit as in
 		 * "testApisRuleExecution1".
 		 */
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
@@ -141,45 +134,39 @@ public class TargetingServiceIT {
 		// set the start date to yesterday and end date to today
 		Date endDate = new Date();
 		Date startDate = DateCalendarUtils.subtractOneDayFromDate(endDate);
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX, startDate,
-				endDate);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX,
+				startDate, endDate);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected 1 hit", 1, result.getResultList().size());
 		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
 		assertNotNull("passenger ID in result is null", res.getPassengerId());
-		assertEquals("Expected passenger with id = 11", 11L,
-				res.getPassengerId());
+		assertEquals("Expected passenger with id = 11", 11L, res.getPassengerId());
 	}
 
 	@Test
 	@Transactional
 	public void testApisRuleExecution1PastEndDate() throws ParseException {
 		/*
-		 * same test as "testApisRuleExecution1" but with rule start date and
-		 * end date set to yesterday. Hence there should be no hits.
+		 * same test as "testApisRuleExecution1" but with rule start date and end date
+		 * set to yesterday. Hence there should be no hits.
 		 */
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
 
 		// set the start/end date to yesterday
 		Date date = DateCalendarUtils.subtractOneDayFromDate(new Date());
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX, date, date);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, DOC_FLIGHT_CRITERIA_RULE_INDX, date,
+				date);
 
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected no hit", 0, result.getResultList().size());
 	}
@@ -189,23 +176,17 @@ public class TargetingServiceIT {
 	public void testApisRuleExecution2() throws ParseException {
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, 2);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, 2);
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected 2 hits", 2, result.getResultList().size());
 		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
-		assertNotNull("passenger ID in result is not null",
-				res.getPassengerId());
-		assertTrue(
-				"Hit Passenger id mismatch",
-				new Long(44L).equals(res.getPassengerId())
-						|| new Long(66L).equals(res.getPassengerId()));
+		assertNotNull("passenger ID in result is not null", res.getPassengerId());
+		assertTrue("Hit Passenger id mismatch",
+				new Long(44L).equals(res.getPassengerId()) || new Long(66L).equals(res.getPassengerId()));
 	}
 
 	@Test
@@ -214,23 +195,17 @@ public class TargetingServiceIT {
 		// select all passengers in a flight
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, 3);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, 3);
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected 3 hits", 3, result.getResultList().size());
 		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
 		assertNotNull("passenger ID in result is null", res.getPassengerId());
-		assertTrue(
-				"Hit Passenger id mismatch",
-				new Long(44L).equals(res.getPassengerId())
-						|| new Long(55L).equals(res.getPassengerId())
-						|| new Long(66L).equals(res.getPassengerId()));
+		assertTrue("Hit Passenger id mismatch", new Long(44L).equals(res.getPassengerId())
+				|| new Long(55L).equals(res.getPassengerId()) || new Long(66L).equals(res.getPassengerId()));
 	}
 
 	@Test
@@ -239,20 +214,17 @@ public class TargetingServiceIT {
 		// select all passengers in a flight
 		ApisMessage msg = ApisDataGenerator.createSimpleTestApisMesssage();
 		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(
-				UDR_RULE_AUTHOR, RuleBuilderTestUtils.PASSENGER_SEAT_RULE_INDX);
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR,
+				RuleBuilderTestUtils.PASSENGER_SEAT_RULE_INDX);
 		String drlRules = drlBuilder.addRule(udrRule).build();
 		logger.info(drlRules);
-		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(
-				msg).getRuleServiceRequest();
-		RuleServiceResult result = targetingService.applyRules(request,
-				drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createApisRequest(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
 		assertNotNull(result);
 		assertEquals("Expected 1 hit", 1, result.getResultList().size());
 		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
 		assertNotNull("passenger ID in result is null", res.getPassengerId());
-		assertTrue("Hit Passenger id mismatch",
-				new Long(11L).equals(res.getPassengerId()));
+		assertTrue("Hit Passenger id mismatch", new Long(11L).equals(res.getPassengerId()));
 	}
 
 }

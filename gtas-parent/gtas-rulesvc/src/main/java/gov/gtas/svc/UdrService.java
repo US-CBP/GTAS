@@ -45,8 +45,7 @@ public interface UdrService {
 	UdrSpecification fetchUdr(Long id);
 
 	/**
-	 * Retrieves a list of UDR summary JSON objects authored by the specified
-	 * user.
+	 * Retrieves a list of UDR summary JSON objects authored by the specified user.
 	 * 
 	 * @param userId
 	 *            the userId of the author.
