@@ -175,7 +175,6 @@ public class QueryBuilderService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_QUERIES)
 	public PassengersPageDto runPassengerQuery(QueryRequest queryRequest) throws InvalidQueryException {
 
-
 		// validate queryRequest
 		if (queryRequest == null) {
 			throw new InvalidQueryException("Error: query is null", queryRequest);
@@ -205,15 +204,16 @@ public class QueryBuilderService {
 				passengerIds.add(passenger.getId());
 			}
 
-			Map<Long, List<HitsSummary>> paxHitSummary = passengerService.getHitsSummaryMappedToPassengerIds(passengerIds);
+			Map<Long, List<HitsSummary>> paxHitSummary = passengerService
+					.getHitsSummaryMappedToPassengerIds(passengerIds);
 			Map<Long, Set<Document>> paxDocuments = passengerService.getDocumentMappedToPassengerIds(passengerIds);
 
-				for (Object[] result : resultList.getResult()) {
-					Passenger passenger = (Passenger) result[1];
-					Flight flight = (Flight) result[2];
-					PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
-					passengerList.add(vo);
-				}
+			for (Object[] result : resultList.getResult()) {
+				Passenger passenger = (Passenger) result[1];
+				Flight flight = (Flight) result[2];
+				PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
+				passengerList.add(vo);
+			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
 		}
@@ -222,9 +222,7 @@ public class QueryBuilderService {
 	}
 
 	PassengerGridItemVo createPassengerGridItemVo(Map<Long, List<HitsSummary>> paxHitSummary,
-												  Map<Long, Set<Document>> paxDocuments,
-												  Passenger passenger,
-												  Flight flight) {
+			Map<Long, Set<Document>> paxDocuments, Passenger passenger, Flight flight) {
 
 		PassengerGridItemVo vo = new PassengerGridItemVo();
 
@@ -241,7 +239,7 @@ public class QueryBuilderService {
 			boolean isWatchlistHit = false;
 			for (HitsSummary hs : hitsSummaries) {
 				isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
-				isWatchlistHit =  hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
+				isWatchlistHit = hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
 			}
 			vo.setOnRuleHitList(isRuleHit);
 			vo.setOnWatchList(isWatchlistHit);
