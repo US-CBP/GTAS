@@ -25,94 +25,95 @@ import java.nio.file.*;
 import org.apache.commons.io.FilenameUtils;
 
 public class Utils {
-  private static final Logger logger = LoggerFactory.getLogger(Utils.class);
-  
-  /**
-   * Move a file to a new directory, renaming it (appends timestamp) if the filename is
-   * already present in the target path.
-   * @param target
-   * @param file
-   * @return the new File object
-   * @throws LoaderException
-   */
-  public static File moveToDirectory(String target, File file) throws LoaderException {
-    if (!exists(target) || file == null) {
-      return file;
-    }
-    String fullTarget = target + File.separator + file.getName();
-    Path targetPath = Paths.get(fullTarget);
-    
-    try {
-      // if(Files.exists(targetPath)) {
-      //   String uniqueFilename = getUniqueFilename(file.getName());
-      //   targetPath = targetPath.resolveSibling(uniqueFilename);
-      //   logger.warn("Duplicate file in target dir! File has been renamed: " + targetPath.toString());
-      // }
+	private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-      Files.move(file.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
-    }
-    catch (Exception ex) {
-      throw new LoaderException("Could not move file to target dir: " + targetPath.toString());
-    }
+	/**
+	 * Move a file to a new directory, renaming it (appends timestamp) if the
+	 * filename is already present in the target path.
+	 * 
+	 * @param target
+	 * @param file
+	 * @return the new File object
+	 * @throws LoaderException
+	 */
+	public static File moveToDirectory(String target, File file) throws LoaderException {
+		if (!exists(target) || file == null) {
+			return file;
+		}
+		String fullTarget = target + File.separator + file.getName();
+		Path targetPath = Paths.get(fullTarget);
 
-    return targetPath.toFile();
-  }
+		try {
+			// if(Files.exists(targetPath)) {
+			// String uniqueFilename = getUniqueFilename(file.getName());
+			// targetPath = targetPath.resolveSibling(uniqueFilename);
+			// logger.warn("Duplicate file in target dir! File has been renamed: " +
+			// targetPath.toString());
+			// }
 
-  public static File writeToDisk(String fileName, String fileText, String target) {
-    if (!exists(fileName) || !exists(target)) {
-      return null;
-    }
+			Files.move(file.toPath(), targetPath, StandardCopyOption.ATOMIC_MOVE);
+		} catch (Exception ex) {
+			throw new LoaderException("Could not move file to target dir: " + targetPath.toString());
+		}
 
-    Path targetPath = Paths.get(target + File.separator + fileName);
-    File f = null;
+		return targetPath.toFile();
+	}
 
-    try {
-      // if(Files.exists(targetPath)) {
-      //   String uniqueFilename = getUniqueFilename(fileName);
-      //   targetPath = targetPath.resolveSibling(uniqueFilename);
-      // }
+	public static File writeToDisk(String fileName, String fileText, String target) {
+		if (!exists(fileName) || !exists(target)) {
+			return null;
+		}
 
-      f = targetPath.toFile();
+		Path targetPath = Paths.get(target + File.separator + fileName);
+		File f = null;
 
-      FileWriter fw = new FileWriter(f, false);
-      fw.write(fileText);
-      fw.close();
-    } catch (IOException e) {
-      // attempt to write it to an error directory here??
-      logger.error("error writing to directory " + target, e);
-    }
-    
-    return f;
-  }
+		try {
+			// if(Files.exists(targetPath)) {
+			// String uniqueFilename = getUniqueFilename(fileName);
+			// targetPath = targetPath.resolveSibling(uniqueFilename);
+			// }
 
-  private static String getUniqueFilename(String filename) {
-    String ext = FilenameUtils.getExtension(filename).isEmpty() ? "" : "." + FilenameUtils.getExtension(filename);
-    String nameOnly = FilenameUtils.getBaseName(filename);
+			f = targetPath.toFile();
 
-    return nameOnly + getTimestamp() + ext;
-  }
+			FileWriter fw = new FileWriter(f, false);
+			fw.write(fileText);
+			fw.close();
+		} catch (IOException e) {
+			// attempt to write it to an error directory here??
+			logger.error("error writing to directory " + target, e);
+		}
 
-  private static String getTimestamp() {
-    return " ~" + new Date().getTime();
-  }
+		return f;
+	}
 
-  public static String getText(String filePath) {
-    String text = null;
-    if (!exists(filePath)) return text;
+	private static String getUniqueFilename(String filename) {
+		String ext = FilenameUtils.getExtension(filename).isEmpty() ? "" : "." + FilenameUtils.getExtension(filename);
+		String nameOnly = FilenameUtils.getBaseName(filename);
 
-    try {
-      byte[] raw = FileUtils.readSmallFile(filePath);
-      String tmp = new String(raw, StandardCharsets.UTF_8);
-      text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
-      }
-      catch (IOException ex) {
-        //??
-      }
+		return nameOnly + getTimestamp() + ext;
+	}
 
-    return text;
-  }
+	private static String getTimestamp() {
+		return " ~" + new Date().getTime();
+	}
 
-  public static boolean exists(String str) {
-    return str != null && !str.isEmpty();
-  }
+	public static String getText(String filePath) {
+		String text = null;
+		if (!exists(filePath))
+			return text;
+
+		try {
+			byte[] raw = FileUtils.readSmallFile(filePath);
+			String tmp = new String(raw, StandardCharsets.UTF_8);
+			text = ParseUtils.stripStxEtxHeaderAndFooter(tmp);
+		} catch (IOException ex) {
+			// ??
+		}
+
+		return text;
+	}
+
+	public static boolean exists(String str) {
+		return str != null && !str.isEmpty();
+	}
 } //

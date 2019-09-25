@@ -15,13 +15,11 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  * @Configuration annotation
  *
  */
-public class JobSchedulerWebInitializer extends
-		AbstractAnnotationConfigDispatcherServletInitializer {
+public class JobSchedulerWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[] { CommonServicesConfig.class,
-				JobSchedulerConfig.class };
+		return new Class<?>[] { CommonServicesConfig.class, JobSchedulerConfig.class };
 	}
 
 	@Override
