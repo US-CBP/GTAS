@@ -24,42 +24,40 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "credit_card")
 public class CreditCard extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;  
-    public CreditCard() { }
-    
-    @Column(name = "card_type")
-    private String cardType;
-    
-    @Column(nullable = false)
-    private String number;
-    
-    @Temporal(TemporalType.DATE)
-    private Date expiration;
-    
-    @Column(name = "account_holder")
-    private String accountHolder;
-    
-    @Column(name = "account_holder_address")
-    private String accountHolderAddress;
-    
-    @Column(name = "account_holder_phone")
-    private String accountHolderPhone;
+	private static final long serialVersionUID = 1L;
+
+	public CreditCard() {
+	}
+
+	@Column(name = "card_type")
+	private String cardType;
+
+	@Column(nullable = false)
+	private String number;
+
+	@Temporal(TemporalType.DATE)
+	private Date expiration;
+
+	@Column(name = "account_holder")
+	private String accountHolder;
+
+	@Column(name = "account_holder_address")
+	private String accountHolderAddress;
+
+	@Column(name = "account_holder_phone")
+	private String accountHolderPhone;
 
 	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
-    private Long flightId;
+	private Long flightId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    private Flight flight;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
 
-    @ManyToMany(
-        mappedBy = "creditCards",
-        targetEntity = Pnr.class
-    )
-    private Set<Pnr> pnrs = new HashSet<>();
+	@ManyToMany(mappedBy = "creditCards", targetEntity = Pnr.class)
+	private Set<Pnr> pnrs = new HashSet<>();
 
-    
-    public String getAccountHolderAddress() {
+	public String getAccountHolderAddress() {
 		return accountHolderAddress;
 	}
 
@@ -76,46 +74,46 @@ public class CreditCard extends BaseEntityAudit {
 	}
 
 	public String getCardType() {
-        return cardType;
-    }
+		return cardType;
+	}
 
-    public void setCardType(String cardType) {
-        this.cardType = cardType;
-    }
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
 
-    public String getNumber() {
-        return number;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    public Date getExpiration() {
-        return expiration;
-    }
+	public Date getExpiration() {
+		return expiration;
+	}
 
-    public void setExpiration(Date expiration) {
-        this.expiration = expiration;
-    }
+	public void setExpiration(Date expiration) {
+		this.expiration = expiration;
+	}
 
-    public String getAccountHolder() {
-        return accountHolder;
-    }
+	public String getAccountHolder() {
+		return accountHolder;
+	}
 
-    public void setAccountHolder(String accountHolder) {
-        this.accountHolder = accountHolder;
-    }
+	public void setAccountHolder(String accountHolder) {
+		this.accountHolder = accountHolder;
+	}
 
-    public Set<Pnr> getPnrs() {
-        return pnrs;
-    }
+	public Set<Pnr> getPnrs() {
+		return pnrs;
+	}
 
-    public void setPnrs(Set<Pnr> pnrs) {
-        this.pnrs = pnrs;
-    }
-    
-    public Long getFlightId() {
+	public void setPnrs(Set<Pnr> pnrs) {
+		this.pnrs = pnrs;
+	}
+
+	public Long getFlightId() {
 		return flightId;
 	}
 
@@ -131,22 +129,21 @@ public class CreditCard extends BaseEntityAudit {
 		this.flight = flight;
 	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.cardType, this.number, this.expiration);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final CreditCard other = (CreditCard) obj;
-        return Objects.equals(this.cardType, other.cardType)
-                && Objects.equals(this.number, other.number) 
-                && Objects.equals(this.expiration, other.expiration);
-    }           
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.cardType, this.number, this.expiration);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final CreditCard other = (CreditCard) obj;
+		return Objects.equals(this.cardType, other.cardType) && Objects.equals(this.number, other.number)
+				&& Objects.equals(this.expiration, other.expiration);
+	}
 }

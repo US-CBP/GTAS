@@ -14,54 +14,55 @@ import javax.persistence.TemporalType;
 
 @Embeddable
 public class EdifactMessage {
-    public EdifactMessage() { }
-    
-    /** PAXLST, PNRGOV, etc. derived from UNH */
-    @Column(name = "message_type", length = 10)
-    private String messageType;
-    
-    /** from UNB */
-    @Column(name = "transmission_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date transmissionDate;
-    
-    /** the message sender; from UNB */
-    @Column(name = "transmission_source")
-    private String transmissionSource;
+	public EdifactMessage() {
+	}
 
-    /** message version (e.g., D13B) derived from UNH */
-    @Column(length = 10)
-    private String version;
-    
-    public String getMessageType() {
-        return messageType;
-    }
+	/** PAXLST, PNRGOV, etc. derived from UNH */
+	@Column(name = "message_type", length = 10)
+	private String messageType;
 
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
-    }
+	/** from UNB */
+	@Column(name = "transmission_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date transmissionDate;
 
-    public Date getTransmissionDate() {
-        return transmissionDate;
-    }
+	/** the message sender; from UNB */
+	@Column(name = "transmission_source")
+	private String transmissionSource;
 
-    public void setTransmissionDate(Date transmissionDate) {
-        this.transmissionDate = transmissionDate;
-    }
+	/** message version (e.g., D13B) derived from UNH */
+	@Column(length = 10)
+	private String version;
 
-    public String getTransmissionSource() {
-        return transmissionSource;
-    }
+	public String getMessageType() {
+		return messageType;
+	}
 
-    public void setTransmissionSource(String transmissionSource) {
-        this.transmissionSource = transmissionSource;
-    }
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public Date getTransmissionDate() {
+		return transmissionDate;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setTransmissionDate(Date transmissionDate) {
+		this.transmissionDate = transmissionDate;
+	}
+
+	public String getTransmissionSource() {
+		return transmissionSource;
+	}
+
+	public void setTransmissionSource(String transmissionSource) {
+		this.transmissionSource = transmissionSource;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 }

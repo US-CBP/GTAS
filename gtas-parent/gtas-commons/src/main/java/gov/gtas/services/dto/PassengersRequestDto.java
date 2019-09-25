@@ -6,16 +6,15 @@
 package gov.gtas.services.dto;
 
 public class PassengersRequestDto extends FlightsRequestDto {
-    private static final long serialVersionUID = 1L;
-    
-    private String lastName;
+	private static final long serialVersionUID = 1L;
 
-    public String getLastName() {
-        return lastName;
-    }
+	private String lastName;
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 }
-

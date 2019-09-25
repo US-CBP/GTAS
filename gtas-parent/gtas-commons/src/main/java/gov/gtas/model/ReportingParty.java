@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.model;
@@ -77,7 +77,6 @@ public class ReportingParty extends BaseEntity {
 		if (!(obj instanceof ReportingParty))
 			return false;
 		final ReportingParty other = (ReportingParty) obj;
-		return Objects.equals(this.partyName, other.partyName)
-				&& Objects.equals(this.telephone, other.telephone);
+		return Objects.equals(this.partyName, other.partyName) && Objects.equals(this.telephone, other.telephone);
 	}
 }

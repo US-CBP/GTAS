@@ -10,5 +10,5 @@ import gov.gtas.model.lookup.WatchlistCategory;
 public interface WatchlistCatService {
 
 	WatchlistCategory findCatByWatchlistItemId(Long catId);
-	
+
 }

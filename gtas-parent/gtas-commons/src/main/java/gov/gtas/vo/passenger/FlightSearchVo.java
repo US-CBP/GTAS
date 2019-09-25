@@ -63,8 +63,6 @@ public class FlightSearchVo {
 		public void setDescription(String description) {
 			this.description = description;
 		}
-		
-		
 
 	}
 

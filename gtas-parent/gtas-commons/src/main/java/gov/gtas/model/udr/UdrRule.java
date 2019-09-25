@@ -38,239 +38,248 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
-@Table(name = "udr_rule",
-       uniqueConstraints= {@UniqueConstraint(name=UDR_UNIQUE_CONSTRAINT_NAME, columnNames={"AUTHOR","TITLE","DEL_ID"})})
+@Table(name = "udr_rule", uniqueConstraints = {
+		@UniqueConstraint(name = UDR_UNIQUE_CONSTRAINT_NAME, columnNames = { "AUTHOR", "TITLE", "DEL_ID" }) })
 public class UdrRule extends BaseEntity {
 
-    /**
-     * serial version UID
-     */
-    private static final long serialVersionUID = 2089171064855746507L;
-    
-    @Version
-    private Long version;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "DEL_FLAG", nullable = false, length = 1)
-    private YesNoEnum deleted;
-    
-    /**
-     * A transaction Id number in case this object has been deleted.
-     * Otherwise, for non-deleted objects this field is 0L.
-     */
-    @Column(name = "DEL_ID", nullable = false)
-    private Long deleteId;
+	/**
+	 * serial version UID
+	 */
+	private static final long serialVersionUID = 2089171064855746507L;
 
-    @ManyToOne
-    @JoinColumn(name="AUTHOR", referencedColumnName="user_id", nullable = false)     
-    private User author;
-    
-    @Column(name = "TITLE", nullable=false, length = 20)
-    private String title;
+	@Version
+	private Long version;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "EDIT_DT", nullable = false)
-    private Date editDt;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DEL_FLAG", nullable = false, length = 1)
+	private YesNoEnum deleted;
 
-    @OneToOne(cascade=CascadeType.ALL, mappedBy="parent")
-    private RuleMeta metaData;
-    
-    @Lob @Basic(fetch=FetchType.LAZY)
-    @Column(name="UDR_BLOB", columnDefinition="BLOB NULL")
-    private byte[] udrConditionObject;
-    
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.EAGER, mappedBy="parent")
-    @OrderColumn(name="RULE_INDX")
-    private List<Rule> engineRules;
+	/**
+	 * A transaction Id number in case this object has been deleted. Otherwise, for
+	 * non-deleted objects this field is 0L.
+	 */
+	@Column(name = "DEL_ID", nullable = false)
+	private Long deleteId;
 
-    @ManyToOne
-    @JoinColumn(name="EDITED_BY", referencedColumnName="user_id", nullable = false)     
-    private User editedBy;
+	@ManyToOne
+	@JoinColumn(name = "AUTHOR", referencedColumnName = "user_id", nullable = false)
+	private User author;
 
-    /**
-     * Constructor to be used by JPA EntityManager.
-     */
-    public UdrRule() {
-        this.deleteId = 0L;
-    }
+	@Column(name = "TITLE", nullable = false, length = 20)
+	private String title;
 
-    public UdrRule(long id, Date editDt) {
-        this.id = id;
-        this.editDt = editDt;
-    }
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "EDIT_DT", nullable = false)
+	private Date editDt;
 
-    public UdrRule(long id, YesNoEnum deleted, User editedBy,
-            Date editDt) {
-        this.id = id;
-        this.deleted = deleted;
-        this.editedBy = editedBy;
-        this.editDt = editDt;
-    }
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "parent")
+	private RuleMeta metaData;
 
-    /**
-     * @return the author
-     */
-    public User getAuthor() {
-        return author;
-    }
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "UDR_BLOB", columnDefinition = "BLOB NULL")
+	private byte[] udrConditionObject;
 
-    /**
-     * @param author the author to set
-     */
-    public void setAuthor(User author) {
-        this.author = author;
-    }
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "parent")
+	@OrderColumn(name = "RULE_INDX")
+	private List<Rule> engineRules;
 
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
+	@ManyToOne
+	@JoinColumn(name = "EDITED_BY", referencedColumnName = "user_id", nullable = false)
+	private User editedBy;
 
-    /**
-     * @param title the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	/**
+	 * Constructor to be used by JPA EntityManager.
+	 */
+	public UdrRule() {
+		this.deleteId = 0L;
+	}
 
-    /**
-     * @return the metaData
-     */
-    public RuleMeta getMetaData() {
-        return metaData;
-    }
+	public UdrRule(long id, Date editDt) {
+		this.id = id;
+		this.editDt = editDt;
+	}
 
-    /**
-     * @param metaData the metaData to set
-     */
-    public void setMetaData(RuleMeta metaData) {
-        this.metaData = metaData;
-        if(this.id != null){
-           metaData.setId(this.id);
-        }
-    }
-    public void addEngineRule(Rule r){
-        if(this.engineRules == null){
-            this.engineRules = new LinkedList<Rule>();
-        }
-        r.setParent(this);
-        this.engineRules.add(r);
-    }
-    public void clearEngineRules(){
-        if(this.engineRules != null && !this.engineRules.isEmpty()){
-            this.engineRules.clear();
-        }
-    }
-    /**
-     * @return the rules
-     */
-    public List<Rule> getEngineRules() {
-        return engineRules;
-    }
+	public UdrRule(long id, YesNoEnum deleted, User editedBy, Date editDt) {
+		this.id = id;
+		this.deleted = deleted;
+		this.editedBy = editedBy;
+		this.editDt = editDt;
+	}
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "EDIT_DT", nullable = false, length = 19)
-    public Date getEditDt() {
-        return this.editDt;
-    }
+	/**
+	 * @return the author
+	 */
+	public User getAuthor() {
+		return author;
+	}
 
-    public void setEditDt(Date editDt) {
-        this.editDt = editDt;
-    }
+	/**
+	 * @param author
+	 *            the author to set
+	 */
+	public void setAuthor(User author) {
+		this.author = author;
+	}
 
-    
-    /**
-     * @return the editedBy
-     */
-    public User getEditedBy() {
-        return editedBy;
-    }
+	/**
+	 * @return the title
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-    /**
-     * @param editedBy the editedBy to set
-     */
-    public void setEditedBy(User editedBy) {
-        this.editedBy = editedBy;
-    }
+	/**
+	 * @param title
+	 *            the title to set
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    /**
-     * @return the deleted
-     */
-    public YesNoEnum getDeleted() {
-        return deleted;
-    }
+	/**
+	 * @return the metaData
+	 */
+	public RuleMeta getMetaData() {
+		return metaData;
+	}
 
-    /**
-     * @param deleted the deleted to set
-     */
-    public void setDeleted(YesNoEnum deleted) {
-        this.deleted = deleted;
-    }
+	/**
+	 * @param metaData
+	 *            the metaData to set
+	 */
+	public void setMetaData(RuleMeta metaData) {
+		this.metaData = metaData;
+		if (this.id != null) {
+			metaData.setId(this.id);
+		}
+	}
 
-    /**
-     * @return the deleteId
-     */
-    public Long getDeleteId() {
-        return deleteId;
-    }
+	public void addEngineRule(Rule r) {
+		if (this.engineRules == null) {
+			this.engineRules = new LinkedList<Rule>();
+		}
+		r.setParent(this);
+		this.engineRules.add(r);
+	}
 
-    /**
-     * @param deleteId the deleteId to set
-     */
-    public void setDeleteId(Long deleteId) {
-        this.deleteId = deleteId;
-    }
+	public void clearEngineRules() {
+		if (this.engineRules != null && !this.engineRules.isEmpty()) {
+			this.engineRules.clear();
+		}
+	}
 
-    /**
-     * @return the udrConditionObject
-     */
-    public byte[] getUdrConditionObject() {
-        return udrConditionObject;
-    }
+	/**
+	 * @return the rules
+	 */
+	public List<Rule> getEngineRules() {
+		return engineRules;
+	}
 
-    /**
-     * @param udrConditionObject the udrConditionObject to set
-     */
-    public void setUdrConditionObject(byte[] udrConditionObject) {
-        this.udrConditionObject = udrConditionObject;
-    }
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "EDIT_DT", nullable = false, length = 19)
+	public Date getEditDt() {
+		return this.editDt;
+	}
 
-    @Override
-    public int hashCode() {
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-        hashCodeBuilder.append(id);
-        return hashCodeBuilder.toHashCode();
-    }
+	public void setEditDt(Date editDt) {
+		this.editDt = editDt;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof UdrRule)) {
-            return false;
-        }
-        UdrRule other = (UdrRule) obj;
-        EqualsBuilder equalsBuilder = new EqualsBuilder();
-        equalsBuilder.append(id, other.id);
-        equalsBuilder.append(getVersion(), other.getVersion());
-        equalsBuilder.append(deleted, other.deleted);
-        equalsBuilder.append(editedBy, other.editedBy);
-        
-        //date equality up to seconds
-        if(!DateCalendarUtils.dateRoundedEquals(editDt,  other.editDt)){
-                        return false;
-        }
-        
-        return equalsBuilder.isEquals();
-    }
+	/**
+	 * @return the editedBy
+	 */
+	public User getEditedBy() {
+		return editedBy;
+	}
 
-    public Long getVersion() {
-        return version;
-    }
+	/**
+	 * @param editedBy
+	 *            the editedBy to set
+	 */
+	public void setEditedBy(User editedBy) {
+		this.editedBy = editedBy;
+	}
+
+	/**
+	 * @return the deleted
+	 */
+	public YesNoEnum getDeleted() {
+		return deleted;
+	}
+
+	/**
+	 * @param deleted
+	 *            the deleted to set
+	 */
+	public void setDeleted(YesNoEnum deleted) {
+		this.deleted = deleted;
+	}
+
+	/**
+	 * @return the deleteId
+	 */
+	public Long getDeleteId() {
+		return deleteId;
+	}
+
+	/**
+	 * @param deleteId
+	 *            the deleteId to set
+	 */
+	public void setDeleteId(Long deleteId) {
+		this.deleteId = deleteId;
+	}
+
+	/**
+	 * @return the udrConditionObject
+	 */
+	public byte[] getUdrConditionObject() {
+		return udrConditionObject;
+	}
+
+	/**
+	 * @param udrConditionObject
+	 *            the udrConditionObject to set
+	 */
+	public void setUdrConditionObject(byte[] udrConditionObject) {
+		this.udrConditionObject = udrConditionObject;
+	}
+
+	@Override
+	public int hashCode() {
+		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
+		hashCodeBuilder.append(id);
+		return hashCodeBuilder.toHashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UdrRule)) {
+			return false;
+		}
+		UdrRule other = (UdrRule) obj;
+		EqualsBuilder equalsBuilder = new EqualsBuilder();
+		equalsBuilder.append(id, other.id);
+		equalsBuilder.append(getVersion(), other.getVersion());
+		equalsBuilder.append(deleted, other.deleted);
+		equalsBuilder.append(editedBy, other.editedBy);
+
+		// date equality up to seconds
+		if (!DateCalendarUtils.dateRoundedEquals(editDt, other.editDt)) {
+			return false;
+		}
+
+		return equalsBuilder.isEquals();
+	}
+
+	public Long getVersion() {
+		return version;
+	}
 }

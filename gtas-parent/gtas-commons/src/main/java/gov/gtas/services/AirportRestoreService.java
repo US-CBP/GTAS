@@ -10,6 +10,7 @@ import gov.gtas.model.lookup.AirportRestore;
 import java.util.List;
 
 public interface AirportRestoreService {
-    public List<AirportRestore> findAll();
-    public AirportRestore findById(Long id);
+	public List<AirportRestore> findAll();
+
+	public AirportRestore findById(Long id);
 }

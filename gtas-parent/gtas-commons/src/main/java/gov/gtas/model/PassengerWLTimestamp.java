@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Objects;
 import javax.persistence.*;
 
-
 @Entity
 @Table(name = "passenger_wl_timestamp")
 public class PassengerWLTimestamp {
@@ -25,15 +24,14 @@ public class PassengerWLTimestamp {
 
 	@Id
 	@Column(name = "pwlt_id", columnDefinition = "bigint unsigned")
-	private
-	Long paxId;
+	private Long paxId;
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "pwlt_id", referencedColumnName = "id", updatable = false, insertable = false)
 	Passenger passenger;
 
-    @Column(name = "pwlt_watchlist_check_timestamp")
-    private Date watchlistCheckTimestamp;
+	@Column(name = "pwlt_watchlist_check_timestamp")
+	private Date watchlistCheckTimestamp;
 
 	@Column(name = "pwlt_hit_count")
 	private Integer hitCount = 0;
@@ -57,8 +55,10 @@ public class PassengerWLTimestamp {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof PassengerWLTimestamp)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof PassengerWLTimestamp))
+			return false;
 		PassengerWLTimestamp that = (PassengerWLTimestamp) o;
 		return paxId.equals(that.paxId);
 	}

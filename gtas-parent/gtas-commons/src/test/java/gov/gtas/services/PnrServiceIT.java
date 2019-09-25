@@ -41,7 +41,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.model.lookup.PassengerTypeCode;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AsyncConfig.class , TestCommonServicesConfig.class})
+@ContextConfiguration(classes = { AsyncConfig.class, TestCommonServicesConfig.class })
 @Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PnrServiceIT {
@@ -62,13 +62,13 @@ public class PnrServiceIT {
 		Pnr pnr = new Pnr();
 		preparePnr(pnr);
 		passengerToUpdate.getPnrs().add(pnr);
-		//passengerToUpdate.getFlights().add(f);
+		// passengerToUpdate.getFlights().add(f);
 		pnr.getPassengers().add(passengerToUpdate);
-		//f.getPassengers().add(passengerToUpdate);
+		// f.getPassengers().add(passengerToUpdate);
 		pnr.getFlights().add(f);
 		pnrService.create(pnr);
 		assertNotNull(pnr.getId());
-		//pnrService.delete(pnr.getId());
+		// pnrService.delete(pnr.getId());
 	}
 
 	private void preparePnr(Pnr pnr) {

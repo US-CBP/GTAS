@@ -26,13 +26,13 @@ public class QuickMatcherImpl implements QuickMatcher {
 	 * Do not make this a bean without taking multithreading into account.
 	 */
 	private final MatchingContext cxt;
-	private static final Set<Long> EMPTY_DEROGLIST =  new HashSet<>();
+	private static final Set<Long> EMPTY_DEROGLIST = new HashSet<>();
 
 	public QuickMatcherImpl(final List<HashMap<String, String>> watchListItems) {
 		this.cxt = new MatchingContext();
-		
+
 		// sanity check
-		if(watchListItems == null)
+		if (watchListItems == null)
 			this.cxt.initialize(new ArrayList<>());
 		else
 			this.cxt.initialize(watchListItems);
@@ -43,13 +43,13 @@ public class QuickMatcherImpl implements QuickMatcher {
 	}
 
 	@Override
-	public MatchingResult match(Passenger passenger ) {
+	public MatchingResult match(Passenger passenger) {
 		return this.match(passenger, cxt.getJaroWinklerThreshold(), cxt.getDobYearOffset());
 	}
 
 	@Override
-	public MatchingResult match(Passenger passenger,  float threshold, int dobYearOffset, Set<Long> foundDerogIds) {
-		
+	public MatchingResult match(Passenger passenger, float threshold, int dobYearOffset, Set<Long> foundDerogIds) {
+
 		List<HashMap<String, String>> passengers = new ArrayList<>();
 		HashMap<String, String> p = new HashMap<>();
 		p.put("firstName", passenger.getPassengerDetails().getFirstName());
@@ -59,14 +59,15 @@ public class QuickMatcherImpl implements QuickMatcher {
 		passengers.add(p);
 
 		this.cxt.setJaroWinklerThreshold(threshold);
-	
+
 		this.cxt.setDobYearOffset(dobYearOffset);
-				
+
 		return this.cxt.match(passengers, foundDerogIds.stream().map(String::valueOf).collect(Collectors.toSet()));
-		
+
 	}
+
 	@Override
-	public MatchingResult match(Passenger passenger,  float threshold, int dobYearOffset) {
-		return this.match(passenger,threshold, dobYearOffset, EMPTY_DEROGLIST);		
+	public MatchingResult match(Passenger passenger, float threshold, int dobYearOffset) {
+		return this.match(passenger, threshold, dobYearOffset, EMPTY_DEROGLIST);
 	}
 }

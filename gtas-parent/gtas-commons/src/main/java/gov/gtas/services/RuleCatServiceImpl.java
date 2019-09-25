@@ -22,105 +22,103 @@ import java.util.Set;
 @Service
 public class RuleCatServiceImpl implements RuleCatService {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(RuleCatServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleCatServiceImpl.class);
 
-    @Resource
-    private RuleCatRepository ruleCatRepository;
+	@Resource
+	private RuleCatRepository ruleCatRepository;
 
-    @Resource
-    private UdrRuleRepository udrRuleRepository;
+	@Resource
+	private UdrRuleRepository udrRuleRepository;
 
-    @Override
-    public RuleCat findRuleCatByID(Long id) {
-        return ruleCatRepository.findOne(id);
-    }
+	@Override
+	public RuleCat findRuleCatByID(Long id) {
+		return ruleCatRepository.findOne(id);
+	}
 
-    @Override
-    public RuleCat findRuleCatByCatId(Long id) {
-        List<RuleCat> ruleCatList = ruleCatRepository.findRuleCatByCatId(id);
-        RuleCat ruleCat;
-        if (ruleCatList.isEmpty()) {
-            ruleCat = null;
-            logger.error("Unable to find rule category of " + id + " catId");
-        } else {
-            ruleCat = ruleCatList.get(0);
-        }
-        return ruleCat;
-    }
+	@Override
+	public RuleCat findRuleCatByCatId(Long id) {
+		List<RuleCat> ruleCatList = ruleCatRepository.findRuleCatByCatId(id);
+		RuleCat ruleCat;
+		if (ruleCatList.isEmpty()) {
+			ruleCat = null;
+			logger.error("Unable to find rule category of " + id + " catId");
+		} else {
+			ruleCat = ruleCatList.get(0);
+		}
+		return ruleCat;
+	}
 
-    @Override
-    public Iterable<RuleCat> findAll() {
-        return (List<RuleCat>) ruleCatRepository.findAll();
-    }
+	@Override
+	public Iterable<RuleCat> findAll() {
+		return (List<RuleCat>) ruleCatRepository.findAll();
+	}
 
-    @Override
-    @Cacheable(value = "ruleCatCache")
-    public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception{
+	@Override
+	@Cacheable(value = "ruleCatCache")
+	public Long fetchRuleCatPriorityIdFromRuleId(Long ruleId) throws Exception {
 
-        UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
-        RuleCat _tempRuleCat = null;
-        if(_tempRule!=null){
-            Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
+		UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
+		RuleCat _tempRuleCat = null;
+		if (_tempRule != null) {
+			Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
 
-            _tempRuleCat = _tempRuleCatSet.stream().sorted(Comparator.comparing(RuleCat::getPriority))
-                    .findFirst()
-                    .orElse(null);
-            if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
-            else return _tempRuleCat.getCatId();
+			_tempRuleCat = _tempRuleCatSet.stream().sorted(Comparator.comparing(RuleCat::getPriority)).findFirst()
+					.orElse(null);
+			if (_tempRuleCat == null)
+				return 1L; // bracket orphans to 'General' rule category
+			else
+				return _tempRuleCat.getCatId();
 
-        }else {
-            // bracket orphans to 'General' rule category
-            return 1L;
-        }
+		} else {
+			// bracket orphans to 'General' rule category
+			return 1L;
+		}
 
-    }
+	}
 
+	@Override
+	@Cacheable("ruleCategoryCache")
+	public Long fetchRuleCatIdFromRuleId(Long ruleId) {
 
-    @Override
-    @Cacheable("ruleCategoryCache")
-    public Long fetchRuleCatIdFromRuleId(Long ruleId) {
+		UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
+		RuleCat _tempRuleCat = null;
+		if (_tempRule != null) {
+			Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
 
-        UdrRule _tempRule = udrRuleRepository.findOne(ruleId);
-        RuleCat _tempRuleCat = null;
-        if(_tempRule!=null){
-            Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
+			_tempRuleCat = _tempRuleCatSet.stream().findFirst().orElse(null);
+			if (_tempRuleCat == null)
+				return 1L; // bracket orphans to 'General' rule category
+			else
+				return _tempRuleCat.getCatId();
 
-            _tempRuleCat = _tempRuleCatSet.stream()
-                    .findFirst()
-                    .orElse(null);
-            if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
-            else return _tempRuleCat.getCatId();
+		} else {
+			// bracket orphans to 'General' rule category
+			return 1L;
+		}
 
-        }else {
-            // bracket orphans to 'General' rule category
-            return 1L;
-        }
+	}
 
-    }
-    
-    @Override
-    @Cacheable("ruleCategoryCache")
-    public Long fetchRuleCatIdFromNonUdrRuleId(Long ruleId) {
-    	
-    	UdrRule _tempRule = udrRuleRepository.findUdrRuleByRuleId(ruleId);
-    	
-        RuleCat _tempRuleCat = null;
-        if(_tempRule!=null){
-            Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
+	@Override
+	@Cacheable("ruleCategoryCache")
+	public Long fetchRuleCatIdFromNonUdrRuleId(Long ruleId) {
 
-            _tempRuleCat = _tempRuleCatSet.stream()
-                    .findFirst()
-                    .orElse(null);
-            if(_tempRuleCat==null)return 1L; // bracket orphans to 'General' rule category
-            else return _tempRuleCat.getCatId();
+		UdrRule _tempRule = udrRuleRepository.findUdrRuleByRuleId(ruleId);
 
-        }else {
-            // bracket orphans to 'General' rule category
-            return 1L;
-        }
+		RuleCat _tempRuleCat = null;
+		if (_tempRule != null) {
+			Set<RuleCat> _tempRuleCatSet = _tempRule.getMetaData().getRuleCategories();
 
-    }
-    
-    
+			_tempRuleCat = _tempRuleCatSet.stream().findFirst().orElse(null);
+			if (_tempRuleCat == null)
+				return 1L; // bracket orphans to 'General' rule category
+			else
+				return _tempRuleCat.getCatId();
+
+		} else {
+			// bracket orphans to 'General' rule category
+			return 1L;
+		}
+
+	}
+
 }

@@ -19,77 +19,55 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UdrSpecificationMappingTest {
-    private static final Logger logger = LoggerFactory.getLogger(UdrSpecificationMappingTest.class);
-    private static final String TEST_JSON =
-            "{ \"details\": {"
-              +"  \"@class\": \"gov.gtas.model.udr.json.QueryObject\","
-               +" \"condition\": \"OR\","
-               +" \"rules\": ["
-                 +  " {"
-                   +"   \"@class\": \"QueryTerm\","
-                        + " \"entity\": \"Pax\","
-                        + " \"field\": \"firstName\","
-                        + " \"operator\": \"EQUAL\","
-                        + " \"value\": [\"John\"]"
-//                        + " \"values\": null "
-                   +" },"
-                   + " {"
-                        + " \"@class\": \"QueryTerm\","
-                        + " \"entity\": \"Pax\","
-                        + " \"field\": \"lastName\","
-                        + " \"operator\": \"EQUAL\","
-                        + " \"value\": [\"Jones\"]"
-//                        + " \"values\": null "
-                    +"}"
-                +"]"
-            +"},"
-            + " \"summary\": {"
-                + " \"title\": \"Hello Rule 1\","
-                + " \"description\": \"This is a test\","
-                + " \"startDate\": \"2015-06-24\","
-                + " \"endDate\": null,"
-                +" \"author\": \"jpjones\","
-                + " \"enabled\": false"
-            + "}"
-        +"}";
-        
+	private static final Logger logger = LoggerFactory.getLogger(UdrSpecificationMappingTest.class);
+	private static final String TEST_JSON = "{ \"details\": {"
+			+ "  \"@class\": \"gov.gtas.model.udr.json.QueryObject\"," + " \"condition\": \"OR\"," + " \"rules\": ["
+			+ " {" + "   \"@class\": \"QueryTerm\"," + " \"entity\": \"Pax\"," + " \"field\": \"firstName\","
+			+ " \"operator\": \"EQUAL\"," + " \"value\": [\"John\"]"
+			// + " \"values\": null "
+			+ " }," + " {" + " \"@class\": \"QueryTerm\"," + " \"entity\": \"Pax\"," + " \"field\": \"lastName\","
+			+ " \"operator\": \"EQUAL\"," + " \"value\": [\"Jones\"]"
+			// + " \"values\": null "
+			+ "}" + "]" + "}," + " \"summary\": {" + " \"title\": \"Hello Rule 1\","
+			+ " \"description\": \"This is a test\"," + " \"startDate\": \"2015-06-24\"," + " \"endDate\": null,"
+			+ " \"author\": \"jpjones\"," + " \"enabled\": false" + "}" + "}";
 
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @Before
-    public void setUp() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@Test
+	public void testUdrSpecToJson() {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			UdrSpecification testObj = UdrSpecificationBuilder.createSampleSpec();
 
-    @Test
-    public void testUdrSpecToJson() {
-        try{
-        ObjectMapper mapper = new ObjectMapper();
-        UdrSpecification testObj = UdrSpecificationBuilder.createSampleSpec();
-        
-        //serialize
-        String json=mapper.writeValueAsString(testObj);
-        //de-serialize
-        mapper.readValue(json, UdrSpecification.class);
-        
-        } catch(Exception ex){
-            logger.error("error!", ex);
-            fail("Got exception");
-        }
-    }
-    @Test
-    public void testJsonToUdrSpec() {
-        try{
-            ObjectMapper mapper = new ObjectMapper();
-            //de-serialize
-            UdrSpecification testObj = mapper.readValue(TEST_JSON, UdrSpecification.class); 
-            assertNotNull(testObj);
-            assertEquals("Hello Rule 1", testObj.getSummary().getTitle());
-        } catch(Exception ex){
-            logger.error("error!", ex);
-            fail("Got exception");
-        }
-    }
+			// serialize
+			String json = mapper.writeValueAsString(testObj);
+			// de-serialize
+			mapper.readValue(json, UdrSpecification.class);
+
+		} catch (Exception ex) {
+			logger.error("error!", ex);
+			fail("Got exception");
+		}
+	}
+
+	@Test
+	public void testJsonToUdrSpec() {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			// de-serialize
+			UdrSpecification testObj = mapper.readValue(TEST_JSON, UdrSpecification.class);
+			assertNotNull(testObj);
+			assertEquals("Hello Rule 1", testObj.getSummary().getTitle());
+		} catch (Exception ex) {
+			logger.error("error!", ex);
+			fail("Got exception");
+		}
+	}
 }

@@ -11,102 +11,101 @@ import org.hibernate.annotations.Type;
 import java.util.*;
 import javax.persistence.*;
 
-
 @Entity
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;
-    
-    public Passenger() {
-    }
+	private static final long serialVersionUID = 1L;
 
-    // This is a convenience method to see the flight associated with the passenger.
-    // This relationship is manually made in the loader.
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name="flight_passenger",
-            joinColumns={@JoinColumn(name="passenger_id")},
-            inverseJoinColumns={@JoinColumn(name="flight_id")})
-    @JsonIgnore
-    private Flight flight;
+	public Passenger() {
+	}
 
-    @OneToOne(cascade = {CascadeType.PERSIST}, targetEntity = PassengerDetails.class, fetch=FetchType.LAZY, mappedBy = "passenger", optional = false)
-    private PassengerDetails passengerDetails;
+	// This is a convenience method to see the flight associated with the passenger.
+	// This relationship is manually made in the loader.
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name = "flight_passenger", joinColumns = { @JoinColumn(name = "passenger_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "flight_id") })
+	@JsonIgnore
+	private Flight flight;
 
-    @OneToOne(cascade =  {CascadeType.PERSIST}, targetEntity = PassengerTripDetails.class, fetch=FetchType.LAZY, mappedBy = "passenger", optional = false)
-    private PassengerTripDetails passengerTripDetails;
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, targetEntity = PassengerDetails.class, fetch = FetchType.LAZY, mappedBy = "passenger", optional = false)
+	private PassengerDetails passengerDetails;
 
-    @OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch=FetchType.LAZY)
-    private PassengerWLTimestamp passengerWLTimestamp;
+	@OneToOne(cascade = {
+			CascadeType.PERSIST }, targetEntity = PassengerTripDetails.class, fetch = FetchType.LAZY, mappedBy = "passenger", optional = false)
+	private PassengerTripDetails passengerTripDetails;
 
-    @OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
-    private PassengerIDTag passengerIDTag;
+	@OneToOne(mappedBy = "passenger", targetEntity = PassengerWLTimestamp.class, fetch = FetchType.LAZY)
+	private PassengerWLTimestamp passengerWLTimestamp;
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
-    private Set<ApisMessage> apisMessage = new HashSet<>();
+	@OneToOne(mappedBy = "passenger", targetEntity = PassengerIDTag.class, fetch = FetchType.LAZY)
+	private PassengerIDTag passengerIDTag;
 
-    @ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
-    private Set<Pnr> pnrs = new HashSet<>();
+	@ManyToMany(mappedBy = "passengers", targetEntity = ApisMessage.class)
+	private Set<ApisMessage> apisMessage = new HashSet<>();
 
-    @ManyToMany(targetEntity = BookingDetail.class)
-    @JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
-    private Set<BookingDetail> bookingDetails = new HashSet<>();
+	@ManyToMany(mappedBy = "passengers", targetEntity = Pnr.class)
+	private Set<Pnr> pnrs = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<Document> documents = new HashSet<>();
+	@ManyToMany(targetEntity = BookingDetail.class)
+	@JoinTable(name = "pax_booking", joinColumns = @JoinColumn(name = "pax_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
+	private Set<BookingDetail> bookingDetails = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<Attachment> attachments = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Document> documents = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<Seat> seatAssignments = new HashSet<>();
+	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Attachment> attachments = new HashSet<>();
 
-    @OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<HitsSummary> hits = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Seat> seatAssignments = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<HitsSummary> hits = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<Bag> bags = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY, mappedBy="passenger")
-    private Set<FlightPax> flightPaxList = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Bag> bags = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-    private Set<TicketFare> tickets = new HashSet<>();
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "passenger")
+	private Set<FlightPax> flightPaxList = new HashSet<>();
 
-    @Type(type = "uuid-char")
-    @Column(name = "uuid", updatable = false)
-    private UUID uuid = UUID.randomUUID();
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<TicketFare> tickets = new HashSet<>();
 
-    @Column(nullable = false)
-    private Boolean deleted = Boolean.FALSE;
+	@Type(type = "uuid-char")
+	@Column(name = "uuid", updatable = false)
+	private UUID uuid = UUID.randomUUID();
 
-    /*
-     * Used to keep a referenced to passengerVO from parser.
-     * Only used in loader to help establish relationships.
-     * This is *not* used
-     * */
-    @Transient
-    private UUID parserUUID;
+	@Column(nullable = false)
+	private Boolean deleted = Boolean.FALSE;
 
-    public UUID getParserUUID() {
-        return parserUUID;
-    }
+	/*
+	 * Used to keep a referenced to passengerVO from parser. Only used in loader to
+	 * help establish relationships. This is *not* used
+	 */
+	@Transient
+	private UUID parserUUID;
 
-    public void setParserUUID(UUID parserUUID) {
-        this.parserUUID = parserUUID;
-    }
+	public UUID getParserUUID() {
+		return parserUUID;
+	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public void setParserUUID(UUID parserUUID) {
+		this.parserUUID = parserUUID;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public Set<BookingDetail> getBookingDetails() {
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	public Set<BookingDetail> getBookingDetails() {
 		return bookingDetails;
 	}
 
@@ -129,34 +128,33 @@ public class Passenger extends BaseEntityAudit {
 	public void setFlightPaxList(Set<FlightPax> flightPaxList) {
 		this.flightPaxList = flightPaxList;
 	}
-	
-    public Set<ApisMessage> getApisMessage() {
+
+	public Set<ApisMessage> getApisMessage() {
 		return apisMessage;
 	}
 
 	public void setApisMessage(Set<ApisMessage> apisMessage) {
 		this.apisMessage = apisMessage;
 	}
-	
 
 	public void addDocument(Document d) {
-        this.documents.add(d);
-        d.setPassenger(this);
-    }
+		this.documents.add(d);
+		d.setPassenger(this);
+	}
 
-    public UUID getUuid() {
-        return uuid;
-    }
+	public UUID getUuid() {
+		return uuid;
+	}
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
 
-    public Set<Document> getDocuments() {
-        return documents;
-    }
+	public Set<Document> getDocuments() {
+		return documents;
+	}
 
-    public Set<Bag> getBags() {
+	public Set<Bag> getBags() {
 		return bags;
 	}
 
@@ -165,34 +163,34 @@ public class Passenger extends BaseEntityAudit {
 	}
 
 	public void setDocuments(Set<Document> documents) {
-        this.documents = documents;
-    }
-	
-    public Set<Pnr> getPnrs() {
-        return pnrs;
-    }
+		this.documents = documents;
+	}
 
-    public void setPnrs(Set<Pnr> pnrs) {
-        this.pnrs = pnrs;
-    }
+	public Set<Pnr> getPnrs() {
+		return pnrs;
+	}
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
+	public void setPnrs(Set<Pnr> pnrs) {
+		this.pnrs = pnrs;
+	}
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
+	public Boolean getDeleted() {
+		return deleted;
+	}
 
-    public Set<Seat> getSeatAssignments() {
-        return seatAssignments;
-    }
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    public void setSeatAssignments(Set<Seat> seatAssignments) {
-        this.seatAssignments = seatAssignments;
-    }
+	public Set<Seat> getSeatAssignments() {
+		return seatAssignments;
+	}
 
-    public Set<Attachment> getAttachments() {
+	public void setSeatAssignments(Set<Seat> seatAssignments) {
+		this.seatAssignments = seatAssignments;
+	}
+
+	public Set<Attachment> getAttachments() {
 		return attachments;
 	}
 
@@ -200,7 +198,7 @@ public class Passenger extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
-    public PassengerDetails getPassengerDetails() {
+	public PassengerDetails getPassengerDetails() {
 		return passengerDetails;
 	}
 
@@ -224,41 +222,43 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
 
-    public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
-        return paxWatchlistLinks;
-    }
+	public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
+		return paxWatchlistLinks;
+	}
 
-    public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
-        this.paxWatchlistLinks = paxWatchlistLinks;
-    }
+	public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
+		this.paxWatchlistLinks = paxWatchlistLinks;
+	}
 
-    public Set<HitsSummary> getHits() {
-        return hits;
-    }
+	public Set<HitsSummary> getHits() {
+		return hits;
+	}
 
-    public void setHits(Set<HitsSummary> hits) {
-        this.hits = hits;
-    }
+	public void setHits(Set<HitsSummary> hits) {
+		this.hits = hits;
+	}
 
 	@Override
-    public int hashCode() {
-        return Objects.hash(getUuid());
-    }
+	public int hashCode() {
+		return Objects.hash(getUuid());
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Passenger)) return false;
-        Passenger passenger = (Passenger) o;
-        return uuid.equals(passenger.getUuid());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof Passenger))
+			return false;
+		Passenger passenger = (Passenger) o;
+		return uuid.equals(passenger.getUuid());
+	}
 
-    public PassengerIDTag getPassengerIDTag() {
-        return passengerIDTag;
-    }
+	public PassengerIDTag getPassengerIDTag() {
+		return passengerIDTag;
+	}
 
-    public void setPassengerIDTag(PassengerIDTag passengerIDTag) {
-        this.passengerIDTag = passengerIDTag;
-    }
+	public void setPassengerIDTag(PassengerIDTag passengerIDTag) {
+		this.passengerIDTag = passengerIDTag;
+	}
 
 }

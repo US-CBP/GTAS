@@ -20,55 +20,55 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 @Entity
 @Table(name = "flight_direction")
 public class FlightDirection extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "code", length = 1, nullable = false)
-    private String code;
+	@Column(name = "code", length = 1, nullable = false)
+	private String code;
 
-    @Column(name = "description")
-    private String description;
+	@Column(name = "description")
+	private String description;
 
-    public String getcode() {
-        return code;
-    }
+	public String getcode() {
+		return code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id, this.code,this.description);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.id, this.code, this.description);
+	}
 
-    @Override
-    public boolean equals(Object target) {
+	@Override
+	public boolean equals(Object target) {
 
-        if (this == target) {
-            return true;
-        }
+		if (this == target) {
+			return true;
+		}
 
-        if (!(target instanceof FlightDirection)) {
-            return false;
-        }
+		if (!(target instanceof FlightDirection)) {
+			return false;
+		}
 
-        FlightDirection dataTarget = ((FlightDirection) target);
+		FlightDirection dataTarget = ((FlightDirection) target);
 
-        return new EqualsBuilder().append(this.id, dataTarget.getId()).append(this.code ,dataTarget.getcode())
-                .append(this.description, dataTarget.getDescription()).isEquals();
-    }
+		return new EqualsBuilder().append(this.id, dataTarget.getId()).append(this.code, dataTarget.getcode())
+				.append(this.description, dataTarget.getDescription()).isEquals();
+	}
 
-    @Override
-    public String toString() {
-        return "Direction [id=" + id + ", code=" + code + ", description=" + description + "]";
-    }
+	@Override
+	public String toString() {
+		return "Direction [id=" + id + ", code=" + code + ", description=" + description + "]";
+	}
 
 }

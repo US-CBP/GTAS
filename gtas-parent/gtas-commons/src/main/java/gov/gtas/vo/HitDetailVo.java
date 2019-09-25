@@ -13,103 +13,101 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class HitDetailVo {
-    
-    private HitsSummary parent;
 
-    private String ruleConditions;
+	private HitsSummary parent;
 
-    private Date createDate;
+	private String ruleConditions;
 
-    private Long ruleId;
-    
-    private String ruleTitle;
-    
-    private String ruleDesc;
-    
-    private String ruleType;
-    
-    private String category;
-    
-    private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
+	private Date createDate;
 
-    private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
-    
-    public HitsSummary getParent() {
-        return parent;
-    }
+	private Long ruleId;
 
-    public void setParent(HitsSummary parent) {
-        this.parent = parent;
-    }
+	private String ruleTitle;
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+	private String ruleDesc;
 
-    public String getRuleTitle() {
-        return ruleTitle;
-    }
+	private String ruleType;
 
-    public void setRuleTitle(String ruleTitle) {
-        this.ruleTitle = ruleTitle;
-    }
+	private String category;
 
-    public String getRuleDesc() {
-        return ruleDesc;
-    }
+	private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
 
-    public void setRuleDesc(String ruleDesc) {
-        this.ruleDesc = ruleDesc;
-    }
+	private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+	public HitsSummary getParent() {
+		return parent;
+	}
 
-    public String getRuleConditions() {
-        return ruleConditions;
-    }
+	public void setParent(HitsSummary parent) {
+		this.parent = parent;
+	}
 
-    public void setRuleConditions(String ruleConditions) {
-        this.ruleConditions = ruleConditions;
-    }
+	public Date getCreateDate() {
+		return createDate;
+	}
 
-    public Long getRuleId() {
-        return ruleId;
-    }
+	public String getRuleTitle() {
+		return ruleTitle;
+	}
 
-    public void setRuleId(Long ruleId) {
-        this.ruleId = ruleId;
-    }
+	public void setRuleTitle(String ruleTitle) {
+		this.ruleTitle = ruleTitle;
+	}
 
-    public String getRuleType() {
-        return ruleType;
-    }
+	public String getRuleDesc() {
+		return ruleDesc;
+	}
 
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
-    }
+	public void setRuleDesc(String ruleDesc) {
+		this.ruleDesc = ruleDesc;
+	}
 
-    public List<HitDetail> getHitsDetailsList() {
-        return hitsDetailsList;
-    }
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 
-    public void setHitsDetailsList(List<HitDetail> hitsDetailsList) {
-        this.hitsDetailsList = hitsDetailsList;
-    }
+	public String getRuleConditions() {
+		return ruleConditions;
+	}
 
-    public HashMap<Integer, List<HitDetail>> getHitsRulesAndDetails() {
-        return HitsRulesAndDetails;
-    }
+	public void setRuleConditions(String ruleConditions) {
+		this.ruleConditions = ruleConditions;
+	}
 
-    public void setHitsRulesAndDetails(
-            HashMap<Integer, List<HitDetail>> hitsRulesAndDetails) {
-        HitsRulesAndDetails = hitsRulesAndDetails;
-    }
+	public Long getRuleId() {
+		return ruleId;
+	}
 
-    public String getCategory() {
+	public void setRuleId(Long ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public String getRuleType() {
+		return ruleType;
+	}
+
+	public void setRuleType(String ruleType) {
+		this.ruleType = ruleType;
+	}
+
+	public List<HitDetail> getHitsDetailsList() {
+		return hitsDetailsList;
+	}
+
+	public void setHitsDetailsList(List<HitDetail> hitsDetailsList) {
+		this.hitsDetailsList = hitsDetailsList;
+	}
+
+	public HashMap<Integer, List<HitDetail>> getHitsRulesAndDetails() {
+		return HitsRulesAndDetails;
+	}
+
+	public void setHitsRulesAndDetails(HashMap<Integer, List<HitDetail>> hitsRulesAndDetails) {
+		HitsRulesAndDetails = hitsRulesAndDetails;
+	}
+
+	public String getCategory() {
 		return category;
 	}
 
@@ -118,51 +116,46 @@ public class HitDetailVo {
 	}
 
 	@Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result
-                + ((ruleConditions == null) ? 0 : ruleConditions.hashCode());
-        result = prime * result
-                + ((ruleDesc == null) ? 0 : ruleDesc.hashCode());
-        result = prime * result + ((ruleId == null) ? 0 : ruleId.hashCode());
-        result = prime * result
-                + ((ruleTitle == null) ? 0 : ruleTitle.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ruleConditions == null) ? 0 : ruleConditions.hashCode());
+		result = prime * result + ((ruleDesc == null) ? 0 : ruleDesc.hashCode());
+		result = prime * result + ((ruleId == null) ? 0 : ruleId.hashCode());
+		result = prime * result + ((ruleTitle == null) ? 0 : ruleTitle.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof HitDetailVo))
-            return false;
-        HitDetailVo other = (HitDetailVo) obj;
-        if (ruleConditions == null) {
-            if (other.ruleConditions != null)
-                return false;
-        } else if (!ruleConditions.equals(other.ruleConditions))
-            return false;
-        if (ruleDesc == null) {
-            if (other.ruleDesc != null)
-                return false;
-        } else if (!ruleDesc.equals(other.ruleDesc))
-            return false;
-        if (ruleId == null) {
-            if (other.ruleId != null)
-                return false;
-        } else if (!ruleId.equals(other.ruleId))
-            return false;
-        if (ruleTitle == null) {
-            if (other.ruleTitle != null)
-                return false;
-        } else if (!ruleTitle.equals(other.ruleTitle))
-            return false;
-        return true;
-    }
-    
-    
-    
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof HitDetailVo))
+			return false;
+		HitDetailVo other = (HitDetailVo) obj;
+		if (ruleConditions == null) {
+			if (other.ruleConditions != null)
+				return false;
+		} else if (!ruleConditions.equals(other.ruleConditions))
+			return false;
+		if (ruleDesc == null) {
+			if (other.ruleDesc != null)
+				return false;
+		} else if (!ruleDesc.equals(other.ruleDesc))
+			return false;
+		if (ruleId == null) {
+			if (other.ruleId != null)
+				return false;
+		} else if (!ruleId.equals(other.ruleId))
+			return false;
+		if (ruleTitle == null) {
+			if (other.ruleTitle != null)
+				return false;
+		} else if (!ruleTitle.equals(other.ruleTitle))
+			return false;
+		return true;
+	}
+
 }

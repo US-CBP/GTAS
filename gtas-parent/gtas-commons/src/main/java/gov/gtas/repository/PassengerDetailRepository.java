@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 import java.util.Set;
 
-public interface PassengerDetailRepository extends CrudRepository <PassengerDetails, Long> {
+public interface PassengerDetailRepository extends CrudRepository<PassengerDetails, Long> {
 
-    @Transactional
-    @Query("Select pd from PassengerDetails pd where pd.passengerId in :paxIds " )
-    Set<PassengerDetails> getDetailsofPaxId(@Param("paxIds") Set<Long> paxIds);
+	@Transactional
+	@Query("Select pd from PassengerDetails pd where pd.passengerId in :paxIds ")
+	Set<PassengerDetails> getDetailsofPaxId(@Param("paxIds") Set<Long> paxIds);
 }
