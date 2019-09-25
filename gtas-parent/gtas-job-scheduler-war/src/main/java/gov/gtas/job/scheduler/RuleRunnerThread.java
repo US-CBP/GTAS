@@ -152,4 +152,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
     void setMessageStatuses(List<MessageStatus> messageStatuses) {
         this.messageStatuses = messageStatuses;
     }
+	void setMessageStatuses(List<MessageStatus> messageStatuses) {
+		this.messageStatuses = messageStatuses;
+	}
 }

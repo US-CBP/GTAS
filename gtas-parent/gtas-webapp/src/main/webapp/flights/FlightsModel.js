@@ -15,6 +15,7 @@ app.service("flightsModel", [function () {
         startDate = new Date(),
         endDate = new Date();
     	endDate.setDate(endDate.getDate() + 1);
+    	startDate.setHours(startDate.getHours()-1);
 
     this.reset = function () {
         this.pageNumber = 1;
