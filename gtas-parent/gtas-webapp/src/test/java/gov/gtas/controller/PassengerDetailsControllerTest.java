@@ -18,14 +18,13 @@ public class PassengerDetailsControllerTest {
 		addresses.add(addressVo);
 		pnrVo.setRaw("ADD++702:4327 LEGGETT AVENUE::::PT::904151599751'");
 		pnrVo.setAddresses(addresses);
-		
+
 		try {
 			assertNull(addressVo.getCity());
 			passengerDetailsController.parseRawMessageToSegmentList(pnrVo);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			fail("This method should not throw an exception when City is null!!!");
 		}
-
 
 	}
 }

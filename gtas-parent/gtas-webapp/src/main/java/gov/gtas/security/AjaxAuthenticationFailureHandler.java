@@ -17,12 +17,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 public class AjaxAuthenticationFailureHandler implements AuthenticationFailureHandler {
-    private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationFailureHandler.class);
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest arg0,
-            HttpServletResponse arg1, AuthenticationException arg2)
-            throws IOException, ServletException {
-            logger.info("MAC: failed auth");
-        
-    }
+	private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationFailureHandler.class);
+
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest arg0, HttpServletResponse arg1, AuthenticationException arg2)
+			throws IOException, ServletException {
+		logger.info("MAC: failed auth");
+
+	}
 }

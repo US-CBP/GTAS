@@ -51,8 +51,8 @@ public class OneDayLookoutController {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
 		String userLocationAirport;
-		UserLocationStatus  userLocationStatus = null;
-		
+		UserLocationStatus userLocationStatus = null;
+
 		if (isAdmin) {
 
 			try {
@@ -72,16 +72,13 @@ public class OneDayLookoutController {
 		} else {
 
 			Object userLocationObject = httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
-			if(userLocationObject!=null)
-			{
+			if (userLocationObject != null) {
 				userLocationAirport = userLocationObject.toString();
-			}
-			else
-			{
+			} else {
 				userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
 				userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
 			}
-			
+
 			if (userLocationAirport != null && !userLocationAirport.trim().isEmpty()) {
 				try {
 
@@ -116,8 +113,6 @@ public class OneDayLookoutController {
 
 		return OneDayLookoutVoList;
 	}
-
-
 
 	@RequestMapping(value = "/addonedaylookout", method = RequestMethod.GET)
 	public @ResponseBody boolean addToOneDayLookout(@RequestParam(value = "caseId", required = true) String caseId) {
