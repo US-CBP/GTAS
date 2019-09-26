@@ -16,8 +16,18 @@
     	 $scope.stateName = stateName;
     	 $scope.pageSize = 25;
     	 $scope.lookoutDate = $filter('date')(new Date(), 'yyyy-MM-dd'); //current date
-    	 $scope.isTodayButtonDisabled = true;
-      
+		 $scope.isTodayButtonDisabled = true;
+		 
+		 var fixGridData = function(grid, row, col, value) {
+			if (col.name === 'countDownTimer') {
+				value = row.entity.countDown.countDownTimer;
+			}
+			if (col.name === 'eta' || col.name === 'etd') {
+			   value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+			}
+			return value;
+		  }
+					
     	 $scope.oneDayLookoutGrid = {
                  data:  lookoutData.data,
                  paginationPageSizes: [10, 25, 50],
@@ -29,10 +39,19 @@
                  multiSelect: false,
 				 enableExpandableRowHeader: false,
 				 enableGridMenu: true,
+				 exporterPdfDefaultStyle: {fontSize: 9},
+              	 exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+              	 exporterPdfFooter: function ( currentPage, pageCount ) {
+                	return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+              	 },
+              	 exporterPdfPageSize: 'LETTER',
+              	 exporterPdfMaxGridWidth: 500,
                  exporterCsvFilename: 'one-day-lookout.csv',
                  exporterExcelFilename: 'one-day-lookout.xlsx',
                  exporterExcelSheetName: 'Data',
-
+				 exporterFieldCallback: function ( grid, row, col, value ){
+					return fixGridData (grid, row, col, value);
+				  },
                  onRegisterApi: function (gridApi) {
                      $scope.gridApi = gridApi;
 
