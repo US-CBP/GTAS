@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionCtrl',
-        function ($scope, $http, $mdToast,
+        function ($scope, $http, $mdToast, $filter,
                   gridService,
                   spinnerService, caseDispositionService, newCases,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval) {
@@ -154,6 +154,19 @@
                 $interval(function () {$scope.refreshCountDown();}, 20000);
             },10000);
 
+            var fixGridData = function(grid, row, col, value) {
+                if (col.name === 'countdown') {
+                    value = row.entity.countDownTimeDisplay;
+                }
+                if (col.name === 'eta' || col.name === 'etd') {
+                   value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+                }
+                if (col.name === 'highPriorityRuleCatId') {
+                    value = grid.appScope.casesListWithCats[row.entity.highPriorityRuleCatId];
+                }
+                return value;
+              }
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -169,9 +182,19 @@
                 multiSelect: false,
                 enableExpandableRowHeader: false,
                 enableGridMenu: true,
+                exporterPdfDefaultStyle: {fontSize: 9},
+                exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+                exporterPdfFooter: function ( currentPage, pageCount ) {
+                    return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+                },
+                exporterPdfPageSize: 'LETTER',
+                exporterPdfMaxGridWidth: 500,
                 exporterCsvFilename: 'case-disposition.csv',
                 exporterExcelFilename: 'case-disposition.xlsx',
                 exporterExcelSheetName: 'Data',
+                exporterFieldCallback: function ( grid, row, col, value ){
+					return fixGridData (grid, row, col, value);
+				},
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;

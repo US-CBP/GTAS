@@ -1094,6 +1094,7 @@
     $injector,
     $stateParams,
     $state,
+    $filter,
     $mdToast,
     paxService,
     sharedPaxData,
@@ -1287,6 +1288,16 @@
       return $scope.list(index);
     };
 
+    var fixGridData = function(grid, row, col, value) {
+      if (col.name === 'countDownTimer') {
+          value = row.entity.countDown.countDownTimer;
+      }
+      if (col.name === 'eta' || col.name === 'etd') {
+         value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+      }
+      return value;
+    }
+
     $scope.buildAfterEntitiesLoaded();
 
     $scope.passengerGrid = {
@@ -1302,12 +1313,22 @@
       enableColumnMenus: false,
       multiSelect: false,
       enableGridMenu: true,
+      exporterPdfDefaultStyle: {fontSize: 9},
+      exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+      exporterPdfFooter: function ( currentPage, pageCount ) {
+        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+      },
+      exporterPdfPageSize: 'LETTER',
+      exporterPdfMaxGridWidth: 500,
       exporterCsvFilename: 'PassengerGrid.csv',
       exporterExcelFilename: 'PassengerGrid.xlsx',
       exporterExcelSheetName: 'Data',
       enableExpandableRowHeader: false,
 
       expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+      exporterFieldCallback: function ( grid, row, col, value ){
+        return fixGridData (grid, row, col, value);
+      },
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
 
@@ -1334,6 +1355,13 @@
       enableVerticalScrollbar: 1,
       enableColumnMenus: false,
       enableGridMenu: true,
+      exporterPdfDefaultStyle: {fontSize: 9},
+      exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+      exporterPdfFooter: function ( currentPage, pageCount ) {
+        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+      },
+      exporterPdfPageSize: 'LETTER',
+      exporterPdfMaxGridWidth: 500,
       exporterCsvFilename: 'passengerQueryGrid.csv',
       exporterExcelFilename: 'passengerQueryGrid.xlsx',
       exporterExcelSheetName: 'Data',
@@ -1341,6 +1369,9 @@
       enableExpandableRowHeader: false,
       minRowsToShow: 10,
       expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+      exporterFieldCallback: function ( grid, row, col, value ){
+        return fixGridData (grid, row, col, value);
+      },
 
       onRegisterApi: function(gridApi) {
         $scope.gridApi = gridApi;
