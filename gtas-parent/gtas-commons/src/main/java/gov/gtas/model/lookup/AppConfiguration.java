@@ -21,7 +21,7 @@ public class AppConfiguration extends BaseEntity {
     public AppConfiguration() { }
     
     // mysql (not mariadb) reserves the word 'option'
-    @Column(name = "opt")
+    @Column(name = "opt", unique = true)
     private String option;
     @Column(name = "val")
     private String value;
