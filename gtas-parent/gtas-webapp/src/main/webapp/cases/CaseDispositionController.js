@@ -7,7 +7,7 @@
     'use strict';
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast,
-                  gridService,
+                  gridService, $translate,
                   spinnerService, caseDispositionService, newCases,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval) {
 
@@ -202,35 +202,35 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
-                    displayName: 'Flight', headerCellFilter: 'translate',
+                    displayName: $translate.instant('flight.flight'),
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
                     name: 'countdown',
-                    displayName: 'Countdown Timer', headerCellFilter: 'translate',
+                    displayName: $translate.instant('flight.countdown'),
                     cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
-                    displayName: 'Top Rule Category',
+                    displayName: $translate.instant('case.toprulecategory'),
                     cellTemplate: '<span>{{grid.appScope.casesListWithCats[COL_FIELD]}}</span>'
                 },
                 {
                     field: 'lastName',
                     name: 'lastName',
-                    displayName: 'Last Name', headerCellFilter: 'translate'
+                    displayName: $translate.instant('pass.lastname')
                 },
                 {
                     field: 'firstName',
                     name: 'firstName',
-                    displayName: 'First Name', headerCellFilter: 'translate'
+                    displayName: $translate.instant('pass.firstname'),
                 },
                 {
                     field: 'status',
                     name: 'status',
-                    displayName: 'Status'
+                    displayName: $translate.instant('case.status')
                 }
 
             ];

@@ -15,10 +15,6 @@
            .parent($scope.toastParent));
       };
 
-      // $translate.onReady( () => {
-      //   $translate.use($cookies.get(APP_CONSTANTS.LOCALE_COOKIE_KEY));
-      // })
-      // $translate.refresh();
       var refresher = null;
 
       var exporter = {
@@ -373,14 +369,14 @@
           {
               name: 'countDownTimer',
               field: 'countDown.millisecondsFromDate',
-              displayName: $translate.instant('grid.countdown'),
+              displayName: $translate.instant('flight.countdown'),
               type: 'number',
               enableFiltering: false,
               cellTemplate: '<span ng-class="{\'text-success\': row.entity.countDown.closeToCountDown}">{{row.entity.countDown.countDownTimer}}</span>'
           },
           {
               name: 'listHitCount',
-              displayName: $translate.instant('grid.watchlisthits'),
+              displayName: $translate.instant('hit.watchlisthits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -391,7 +387,7 @@
           },
           {
               name: 'ruleHitCount',
-              displayName: $translate.instant('grid.rulehits'),
+              displayName: $translate.instant('hit.rulehits'),
               enableFiltering: false,
               cellClass: gridService.colorHits,
               sort: {
@@ -402,7 +398,7 @@
           },
           {
               name: 'graphHitCount',
-              displayName: $translate.instant('grid.graphhits'),
+              displayName: $translate.instant('hit.graphhits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -413,7 +409,7 @@
           },
           {
               name: 'fuzzyHitCount',
-              displayName: $translate.instant('grid.partialhits'),
+              displayName: $translate.instant('hit.partialhits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -445,10 +441,10 @@
 
           },
           {
-              name: 'eta', displayName: $translate.instant('schedarrival'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+              name: 'eta', displayName: $translate.instant('flight.arrival'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
           },
           {
-              name: 'etd', displayName: $translate.instant('scheddeparture'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+              name: 'etd', displayName: $translate.instant('flight.departure'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
           },
           {
               name: 'origin', displayName: $translate.instant('flight.origin'), visible: true,
@@ -486,7 +482,8 @@
     $scope.passengerSubGridColumnDefs =
       [
          {
-             name: 'onRuleHitList', displayName: 'Rule Hits',
+             name: 'onRuleHitList',
+             displayName: $translate.instant('hit.rulehits'),
              cellClass: "rule-hit",
              sort: {
                  direction: uiGridConstants.DESC,
@@ -495,7 +492,8 @@
              cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
          },
          {
-             name: 'onWatchList', displayName: 'Watchlist Hits',
+             name: 'onWatchList',
+             displayName: $translate.instant('hit.watchlisthits'),
              cellClass: gridService.anyWatchlistHit,
              sort: {
                  direction: uiGridConstants.DESC,
@@ -503,14 +501,26 @@
              },
              cellTemplate: '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
          },
-         {name: 'passengerType', displayName:'T', headerCellFilter: 'translate'},
-         {
-             name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
+         {name: 'passengerType',
+         displayName: $translate.instant('pass.type')
+        },
+        {
+             name: 'lastName',
+             displayName: $translate.instant('pass.lastname'),
              cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-         },
-         {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
-         {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},
-         {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
+        },
+        {
+           name: 'firstName',
+           displayName: $translate.instant('pass.firstname')
+        },
+        {
+          name: 'middleName',
+          displayName: $translate.instant('pass.middlename')
+        },
+        {
+          name: 'fullFlightNumber',
+          displayName: $translate.instant('flight.flightnum')
+        },
          {
              name: 'eta',
              type: 'date',
@@ -519,19 +529,27 @@
                  priority: 2
              },
              cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
-             displayName:'pass.eta', headerCellFilter: 'translate',
+             displayName: $translate.instant('flight.arrival'),
              visible: (stateName === 'paxAll')
          },
          {name: 'etd',
              type: 'date',
-             displayName:'pass.etd',
-             headerCellFilter: 'translate',
+             displayName: $translate.instant('flight.departure'),
              cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
              visible: (stateName === 'paxAll')},
-         {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
-         {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
+         {
+           name: 'gender',
+           displayName: $translate.instant('pass.gender')
+          },
+         {
+           name: 'dob',
+           displayName: $translate.instant('pass.dob'),
+           cellFilter: 'date',
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-         {name: 'nationality', displayName:'add.Country', headerCellFilter: 'translate'}
+         {
+           name: 'nationality',
+           displayName: $translate.instant('pass.nationality'),
+          }
      ];
 
     $scope.queryPassengersOnSelectedFlight = function (row_entity) {

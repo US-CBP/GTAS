@@ -48,6 +48,7 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 		    </button>
+        
       </div>
       <div id="navbar-user-info" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
@@ -163,7 +164,7 @@
             <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
               ng-class="{'active': setSelectedTab('/casedisposition')}">
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
-	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'cases' | translate}}
+	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'case.cases' | translate}}
 	              </a></li>
 	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}, {{ ROLES.ONE_DAY_LOOKOUT }}]"
               ng-class="{'active': setSelectedTab('/onedaylookout')}">
