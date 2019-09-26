@@ -11,198 +11,198 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class  CaseRequestDto implements Serializable {
+public class CaseRequestDto implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    // e.g. 2015-10-02T18:33:03.412Z
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	// e.g. 2015-10-02T18:33:03.412Z
+	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
-    private int pageNumber;
+	private int pageNumber;
 
-    private int pageSize;
+	private int pageSize;
 
-    private Long flightId;
+	private Long flightId;
 
-    private String flightNumber;
-    
-    private Long caseId;
+	private String flightNumber;
 
-    private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
+	private Long caseId;
 
-    private Long paxId;
+	private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
 
-    private Long hitId;
+	private Long paxId;
 
-    private String caseComments;
+	private Long hitId;
 
-    private String status;
+	private String caseComments;
 
-    private String validHit;
+	private String status;
 
-    private File file;
+	private String validHit;
 
-    private String paxName;
+	private File file;
 
-    private String lastName;
+	private String paxName;
 
-    private Long ruleCatId;
-    
-    private Boolean oneDayLookoutFlag;
+	private String lastName;
 
-    private MultipartFile multipartFile;
-    
-    private String caseDisposition;
-    
-    private String userLocation;
+	private Long ruleCatId;
 
-    @JsonProperty("withTimeLeft")
-    private Boolean withTimeLeft;
+	private Boolean oneDayLookoutFlag;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-    private Date etaStart;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
-    private Date etaEnd;
+	private MultipartFile multipartFile;
 
-    private transient List<SortOptionsDto> sort;
+	private String caseDisposition;
 
-    public int getPageNumber() {
-        return pageNumber;
-    }
+	private String userLocation;
 
-    public void setPageNumber(int pageNumber) {
-        this.pageNumber = pageNumber;
-    }
+	@JsonProperty("withTimeLeft")
+	private Boolean withTimeLeft;
 
-    public int getPageSize() {
-        return pageSize;
-    }
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date etaStart;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
+	private Date etaEnd;
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
+	private transient List<SortOptionsDto> sort;
 
-    public Long getHitId() {
-        return hitId;
-    }
+	public int getPageNumber() {
+		return pageNumber;
+	}
 
-    public void setHitId(Long hitId) {
-        this.hitId = hitId;
-    }
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
 
-    public String getCaseComments() {
-        return caseComments;
-    }
+	public int getPageSize() {
+		return pageSize;
+	}
 
-    public void setCaseComments(String caseComments) {
-        this.caseComments = caseComments;
-    }
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public Long getHitId() {
+		return hitId;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setHitId(Long hitId) {
+		this.hitId = hitId;
+	}
 
-    public Long getPaxId() {
-        return paxId;
-    }
+	public String getCaseComments() {
+		return caseComments;
+	}
 
-    public void setPaxId(Long paxId) {
-        this.paxId = paxId;
-    }
+	public void setCaseComments(String caseComments) {
+		this.caseComments = caseComments;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Date getEtaStart() {
-        return etaStart;
-    }
+	public Long getPaxId() {
+		return paxId;
+	}
 
-    public void setEtaStart(Date etaStart) {
-        this.etaStart = etaStart;
-    }
+	public void setPaxId(Long paxId) {
+		this.paxId = paxId;
+	}
 
-    public Date getEtaEnd() {
-        return etaEnd;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setEtaEnd(Date etaEnd) {
-        this.etaEnd = etaEnd;
-    }
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
-    public List<SortOptionsDto> getSort() {
-        return sort;
-    }
+	public Date getEtaStart() {
+		return etaStart;
+	}
 
-    public void setSort(List<SortOptionsDto> sort) {
-        this.sort = sort;
-    }
+	public void setEtaStart(Date etaStart) {
+		this.etaStart = etaStart;
+	}
 
-    public String getValidHit() {
-        return validHit;
-    }
+	public Date getEtaEnd() {
+		return etaEnd;
+	}
 
-    public void setValidHit(String validHit) {
-        this.validHit = validHit;
-    }
+	public void setEtaEnd(Date etaEnd) {
+		this.etaEnd = etaEnd;
+	}
 
-    public File getFile() {
-        return file;
-    }
+	public List<SortOptionsDto> getSort() {
+		return sort;
+	}
 
-    public void setFile(File file) {
-        this.file = file;
-    }
+	public void setSort(List<SortOptionsDto> sort) {
+		this.sort = sort;
+	}
 
-    public MultipartFile getMultipartFile() {
-        return multipartFile;
-    }
+	public String getValidHit() {
+		return validHit;
+	}
 
-    public void setMultipartFile(MultipartFile multipartFile) {
-        this.multipartFile = multipartFile;
-    }
+	public void setValidHit(String validHit) {
+		this.validHit = validHit;
+	}
 
-    public Long getRuleCatId() {
-        return ruleCatId;
-    }
+	public File getFile() {
+		return file;
+	}
 
-    public void setRuleCatId(Long ruleCatId) {
-        this.ruleCatId = ruleCatId;
-    }
+	public void setFile(File file) {
+		this.file = file;
+	}
 
-    public String getPaxName() {
-        return paxName;
-    }
+	public MultipartFile getMultipartFile() {
+		return multipartFile;
+	}
 
-    public void setPaxName(String paxName) {
-        this.paxName = paxName;
-    }
+	public void setMultipartFile(MultipartFile multipartFile) {
+		this.multipartFile = multipartFile;
+	}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+	public Long getRuleCatId() {
+		return ruleCatId;
+	}
 
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
+	public void setRuleCatId(Long ruleCatId) {
+		this.ruleCatId = ruleCatId;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getPaxName() {
+		return paxName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setPaxName(String paxName) {
+		this.paxName = paxName;
+	}
 
-    public Boolean getOneDayLookoutFlag() {
+	public String getFlightNumber() {
+		return flightNumber;
+	}
+
+	public void setFlightNumber(String flightNumber) {
+		this.flightNumber = flightNumber;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Boolean getOneDayLookoutFlag() {
 		return oneDayLookoutFlag;
 	}
 
@@ -210,7 +210,7 @@ public class  CaseRequestDto implements Serializable {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-    public String getCaseDisposition() {
+	public String getCaseDisposition() {
 		return caseDisposition;
 	}
 
@@ -219,18 +219,17 @@ public class  CaseRequestDto implements Serializable {
 	}
 
 	@Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this,
-                ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
-    public CaseDispositionStatusCheckbox getDisplayStatusCheckBoxes() {
-        return displayStatusCheckBoxes;
-    }
+	public CaseDispositionStatusCheckbox getDisplayStatusCheckBoxes() {
+		return displayStatusCheckBoxes;
+	}
 
-    public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
-        this.displayStatusCheckBoxes = displayStatusCheckBoxes;
-    }
+	public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
+		this.displayStatusCheckBoxes = displayStatusCheckBoxes;
+	}
 
 	public Long getCaseId() {
 		return caseId;
@@ -240,7 +239,6 @@ public class  CaseRequestDto implements Serializable {
 		this.caseId = caseId;
 	}
 
-
 	public String getUserLocation() {
 		return userLocation;
 	}
@@ -249,12 +247,11 @@ public class  CaseRequestDto implements Serializable {
 		this.userLocation = userLocation;
 	}
 
+	public Boolean getWithTimeLeft() {
+		return withTimeLeft;
+	}
 
-    public Boolean getWithTimeLeft() {
-        return withTimeLeft;
-    }
-
-    public void setWithTimeLeft(Boolean withTimeLeft) {
-        this.withTimeLeft = withTimeLeft;
-    }
+	public void setWithTimeLeft(Boolean withTimeLeft) {
+		this.withTimeLeft = withTimeLeft;
+	}
 }

@@ -22,20 +22,20 @@ public class MON extends Segment {
 	public static final String TOTAL = "T";
 	private String paymentAmount;
 	private String currencyCode;
-	
-    public MON(List<Composite> composites) {
-        super(MON.class.getSimpleName(), composites);
-        for (int i=1; i<getComposites().size(); i++) {
-        	Composite c  = getComposite(i);
-        	if (c != null && c.numElements() == 2 && TOTAL.equals(c.getElement(0))) {
-        		paymentAmount="0";
-        	}
-        	if (c != null && c.numElements() == 3 && TOTAL.equals(c.getElement(0))) {
-        		paymentAmount=c.getElement(1);
-        		currencyCode=c.getElement(2);
-        	}
-        }
-    }
+
+	public MON(List<Composite> composites) {
+		super(MON.class.getSimpleName(), composites);
+		for (int i = 1; i < getComposites().size(); i++) {
+			Composite c = getComposite(i);
+			if (c != null && c.numElements() == 2 && TOTAL.equals(c.getElement(0))) {
+				paymentAmount = "0";
+			}
+			if (c != null && c.numElements() == 3 && TOTAL.equals(c.getElement(0))) {
+				paymentAmount = c.getElement(1);
+				currencyCode = c.getElement(2);
+			}
+		}
+	}
 
 	public String getPaymentAmount() {
 		return paymentAmount;
@@ -52,6 +52,5 @@ public class MON extends Segment {
 	public void setCurrencyCode(String currencyCode) {
 		this.currencyCode = currencyCode;
 	}
-    
-    
+
 }

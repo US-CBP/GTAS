@@ -5,7 +5,6 @@
  */
 package gov.gtas.services;
 
-
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.model.lookup.RuleCat;
 import org.junit.After;
@@ -22,44 +21,41 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {TestCommonServicesConfig.class})
+@ContextConfiguration(classes = { TestCommonServicesConfig.class })
 public class RuleCatServiceImpIT {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(RuleCatServiceImpIT.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleCatServiceImpIT.class);
 
-    @Before
-    public void setUp() throws Exception {
-    }
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Autowired
-    private RuleCatService ruleCatService;
+	@Autowired
+	private RuleCatService ruleCatService;
 
+	@Test
+	public void testRuleCatRetrievalTerroism() {
+		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(2L);
+		assertEquals(ruleCat.getCatId(), new Long(2L));
+		assertEquals(ruleCat.getCategory(), "Terrorism");
+	}
 
-    @Test
-    public void testRuleCatRetrievalTerroism() {
-        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(2L);
-        assertEquals(ruleCat.getCatId(), new Long(2L));
-        assertEquals(ruleCat.getCategory(), "Terrorism");
-    }
+	@Test
+	public void testRuleCatRetrievalGeneral() {
+		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(1L);
+		assertEquals(ruleCat.getCatId(), new Long(1L));
+		assertEquals(ruleCat.getCategory(), "General");
+	}
 
-
-    @Test
-    public void testRuleCatRetrievalGeneral() {
-        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(1L);
-        assertEquals(ruleCat.getCatId(), new Long(1L));
-        assertEquals(ruleCat.getCategory(), "General");
-    }
-
-    @Test
-    public void testRuleCatDoesntExist() {
-        long notAValidRuleCategory = -1999L;
-        RuleCat ruleCat = ruleCatService.findRuleCatByCatId(notAValidRuleCategory);
-        assertNull(ruleCat);
-    }
+	@Test
+	public void testRuleCatDoesntExist() {
+		long notAValidRuleCategory = -1999L;
+		RuleCat ruleCat = ruleCatService.findRuleCatByCatId(notAValidRuleCategory);
+		assertNull(ruleCat);
+	}
 
 }

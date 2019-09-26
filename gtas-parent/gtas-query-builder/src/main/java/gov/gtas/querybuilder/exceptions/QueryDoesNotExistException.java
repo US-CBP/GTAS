@@ -9,20 +9,20 @@ import gov.gtas.querybuilder.model.UserQueryRequest;
 
 public class QueryDoesNotExistException extends QueryBuilderException {
 
-    private static final long serialVersionUID = 1L;
-    private UserQueryRequest queryRequest;
-    
-    public QueryDoesNotExistException(String message, UserQueryRequest queryRequest) {
-        super(message, queryRequest);
-        this.queryRequest = queryRequest;
-    }
+	private static final long serialVersionUID = 1L;
+	private UserQueryRequest queryRequest;
 
-    public UserQueryRequest getQueryRequest() {
-        return queryRequest;
-    }
+	public QueryDoesNotExistException(String message, UserQueryRequest queryRequest) {
+		super(message, queryRequest);
+		this.queryRequest = queryRequest;
+	}
 
-    public void setQueryRequest(UserQueryRequest queryRequest) {
-        this.queryRequest = queryRequest;
-    }
-    
+	public UserQueryRequest getQueryRequest() {
+		return queryRequest;
+	}
+
+	public void setQueryRequest(UserQueryRequest queryRequest) {
+		this.queryRequest = queryRequest;
+	}
+
 }

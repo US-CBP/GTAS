@@ -29,83 +29,84 @@ import org.slf4j.LoggerFactory;
  */
 public class RuleServiceDataGenUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(RuleServiceDataGenUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleServiceDataGenUtils.class);
 
-    public static final String TEST_RULE_TITLE_PREFIX = "TestRule";
+	public static final String TEST_RULE_TITLE_PREFIX = "TestRule";
 
-    public static final int TEST_ROLE1_ID = 1;
-    public static final String TEST_ROLE1_DESCRIPTION = "admin";
-    public static final String TEST_USER1_ID = "gtas";
-    public static final String TEST_USER3_ID = "jtang";
+	public static final int TEST_ROLE1_ID = 1;
+	public static final String TEST_ROLE1_DESCRIPTION = "admin";
+	public static final String TEST_USER1_ID = "gtas";
+	public static final String TEST_USER3_ID = "jtang";
 
-    public static final int TEST_ROLE2_ID = 99;
-    public static final String TEST_ROLE2_DESCRIPTION = "readonly";
-    public static final String TEST_USER2_ID = "svempati";
+	public static final int TEST_ROLE2_ID = 99;
+	public static final String TEST_ROLE2_DESCRIPTION = "readonly";
+	public static final String TEST_USER2_ID = "svempati";
 
-    private UserService userService;
+	private UserService userService;
 
-    public RuleServiceDataGenUtils(UserService usrSvc) {
-        this.userService = usrSvc;
-    }
+	public RuleServiceDataGenUtils(UserService usrSvc) {
+		this.userService = usrSvc;
+	}
 
-    public void initUserData() {
-        try {
-            Set<RoleData> roles = new HashSet<RoleData>();
-            roles.add(new RoleData(1, "ADMIN"));
-            UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles);
+	public void initUserData() {
+		try {
+			Set<RoleData> roles = new HashSet<RoleData>();
+			roles.add(new RoleData(1, "ADMIN"));
+			UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles);
 
-            userService.create(userData);
-        } catch (Exception e) {
-            logger.error("error!", e);
-        }
-    }
+			userService.create(userData);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+	}
 
-    public UdrRule createUdrRule(String title, String descr, YesNoEnum enabled) {
-        return createUdrRule(title, descr, enabled, new Date(), null);
-    }
-    public UdrRule createUdrRule(String title, String descr, YesNoEnum enabled, Date startDate, Date endDate) {
-        UdrRule rule = new UdrRule();
-        if(enabled == YesNoEnum.Y){
-          rule.setDeleted(YesNoEnum.N);
-        } else {
-            rule.setDeleted(YesNoEnum.Y);
-        }
-        rule.setEditDt(new Date());
-        rule.setTitle(title);
-        RuleMeta meta =  null;
-        try{
-            if(endDate != null){
-               meta = createRuleMeta(title, descr, enabled, formatJsonDate(startDate),  formatJsonDate(endDate));
-            } else {
-                   meta = createRuleMeta(title, descr, enabled, formatJsonDate(startDate), null);               
-            }
-        } catch(Exception ex){
-            logger.error("error!", ex);
-        }
-        rule.setMetaData(meta);
-        return rule;
-    }
+	public UdrRule createUdrRule(String title, String descr, YesNoEnum enabled) {
+		return createUdrRule(title, descr, enabled, new Date(), null);
+	}
 
-    public String generateTestRuleTitle(int ruleIndx) {
-        StringBuilder bldr = new StringBuilder(TEST_RULE_TITLE_PREFIX);
-        bldr.append(ruleIndx).append('.');
-        bldr.append(ThreadLocalRandom.current().nextInt(1, 10));
+	public UdrRule createUdrRule(String title, String descr, YesNoEnum enabled, Date startDate, Date endDate) {
+		UdrRule rule = new UdrRule();
+		if (enabled == YesNoEnum.Y) {
+			rule.setDeleted(YesNoEnum.N);
+		} else {
+			rule.setDeleted(YesNoEnum.Y);
+		}
+		rule.setEditDt(new Date());
+		rule.setTitle(title);
+		RuleMeta meta = null;
+		try {
+			if (endDate != null) {
+				meta = createRuleMeta(title, descr, enabled, formatJsonDate(startDate), formatJsonDate(endDate));
+			} else {
+				meta = createRuleMeta(title, descr, enabled, formatJsonDate(startDate), null);
+			}
+		} catch (Exception ex) {
+			logger.error("error!", ex);
+		}
+		rule.setMetaData(meta);
+		return rule;
+	}
 
-        return bldr.toString();
-    }
+	public String generateTestRuleTitle(int ruleIndx) {
+		StringBuilder bldr = new StringBuilder(TEST_RULE_TITLE_PREFIX);
+		bldr.append(ruleIndx).append('.');
+		bldr.append(ThreadLocalRandom.current().nextInt(1, 10));
 
-    private RuleMeta createRuleMeta(String title, String descr,
-            YesNoEnum enabled, String jsonStartDate, String jsonEndDate) throws ParseException{
-        RuleMeta meta = new RuleMeta();
-        meta.setDescription(descr);
-        meta.setEnabled(enabled);
-        meta.setHitSharing(YesNoEnum.N);
-        meta.setPriorityHigh(YesNoEnum.N);
-        meta.setStartDt(DateCalendarUtils.parseJsonDate(jsonStartDate));
-        if(!StringUtils.isEmpty(jsonEndDate)){
-            meta.setEndDt(DateCalendarUtils.parseJsonDate(jsonEndDate));            
-        }
-        meta.setTitle(title);
-        return meta;
-    }
+		return bldr.toString();
+	}
+
+	private RuleMeta createRuleMeta(String title, String descr, YesNoEnum enabled, String jsonStartDate,
+			String jsonEndDate) throws ParseException {
+		RuleMeta meta = new RuleMeta();
+		meta.setDescription(descr);
+		meta.setEnabled(enabled);
+		meta.setHitSharing(YesNoEnum.N);
+		meta.setPriorityHigh(YesNoEnum.N);
+		meta.setStartDt(DateCalendarUtils.parseJsonDate(jsonStartDate));
+		if (!StringUtils.isEmpty(jsonEndDate)) {
+			meta.setEndDt(DateCalendarUtils.parseJsonDate(jsonEndDate));
+		}
+		meta.setTitle(title);
+		return meta;
+	}
 }

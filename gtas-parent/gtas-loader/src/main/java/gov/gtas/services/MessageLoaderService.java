@@ -21,57 +21,54 @@ import gov.gtas.parsers.vo.MessageVo;
 @Service
 public abstract class MessageLoaderService {
 
-    @Autowired
-    protected GtasLoader loaderRepo;
+	@Autowired
+	protected GtasLoader loaderRepo;
 
-    @Autowired
-    protected LoaderUtils utils;
+	@Autowired
+	protected LoaderUtils utils;
 
-    public abstract List<String> preprocess(String message);
+	public abstract List<String> preprocess(String message);
 
-    public abstract MessageVo parse(String message);
+	public abstract MessageVo parse(String message);
 
-    public abstract boolean load(MessageVo parsedMessage);
+	public abstract boolean load(MessageVo parsedMessage);
 
-    protected String filePath = null;
+	protected String filePath = null;
 
-    public String getFilePath() {
-        return filePath;
-    }
+	public String getFilePath() {
+		return filePath;
+	}
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
 
-    protected boolean useIndexer;
+	protected boolean useIndexer;
 
-    public void setUseIndexer(boolean useIndexer) {
-        this.useIndexer = useIndexer;
-    }
+	public void setUseIndexer(boolean useIndexer) {
+		this.useIndexer = useIndexer;
+	}
 
-    public abstract MessageDto parse(MessageDto msgDto);
+	public abstract MessageDto parse(MessageDto msgDto);
 
-    public abstract MessageStatus load(MessageDto msgDto);
+	public abstract MessageStatus load(MessageDto msgDto);
 
-    WeightCountDto getBagStatistics(Set<Bag> bagSet) {
-        Set<BagMeasurements> bagMeasurementsSet = bagSet
-                .stream()
-                .map(Bag::getBagMeasurements)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        Integer bagCount = 0;
-        Double bagWeight = 0D;
-        for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
-            if (bagMeasurements.getBagCount() != null) {
-                bagCount += bagMeasurements.getBagCount();
-            }
-            if (bagMeasurements.getWeight() != null) {
-                bagWeight += bagMeasurements.getWeight();
-            }
-        }
-        WeightCountDto weightCountDto = new WeightCountDto();
-        weightCountDto.setCount(bagCount);
-        weightCountDto.setWeight(bagWeight);
-        return weightCountDto;
-    }
+	WeightCountDto getBagStatistics(Set<Bag> bagSet) {
+		Set<BagMeasurements> bagMeasurementsSet = bagSet.stream().map(Bag::getBagMeasurements).filter(Objects::nonNull)
+				.collect(Collectors.toSet());
+		Integer bagCount = 0;
+		Double bagWeight = 0D;
+		for (BagMeasurements bagMeasurements : bagMeasurementsSet) {
+			if (bagMeasurements.getBagCount() != null) {
+				bagCount += bagMeasurements.getBagCount();
+			}
+			if (bagMeasurements.getWeight() != null) {
+				bagWeight += bagMeasurements.getWeight();
+			}
+		}
+		WeightCountDto weightCountDto = new WeightCountDto();
+		weightCountDto.setCount(bagCount);
+		weightCountDto.setWeight(bagWeight);
+		return weightCountDto;
+	}
 }

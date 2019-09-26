@@ -23,27 +23,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class HomeController {
-    
-    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-    
 
-    public String home(Locale locale, Model model) {
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-        Date date = new Date();
-        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-        String formattedDate = dateFormat.format(date);
-        model.addAttribute("serverTime", formattedDate );
-        return "common/main.html";
-    }
-    
-    @PreDestroy
-    public void destroy() {
-        logger.info("GTAS Home Controller Shutting Down!");
+	public String home(Locale locale, Model model) {
 
-        try {
-            com.hazelcast.core.Hazelcast.shutdownAll();
-        } catch (Exception ex) {
-            logger.error("error shutting down GTAS Home Controller.", ex);
-        }
-    }   
+		Date date = new Date();
+		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
+		String formattedDate = dateFormat.format(date);
+		model.addAttribute("serverTime", formattedDate);
+		return "common/main.html";
+	}
+
+	@PreDestroy
+	public void destroy() {
+		logger.info("GTAS Home Controller Shutting Down!");
+
+		try {
+			com.hazelcast.core.Hazelcast.shutdownAll();
+		} catch (Exception ex) {
+			logger.error("error shutting down GTAS Home Controller.", ex);
+		}
+	}
 }

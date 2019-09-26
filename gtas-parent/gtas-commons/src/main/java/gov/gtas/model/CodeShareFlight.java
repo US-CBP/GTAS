@@ -17,42 +17,40 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "code_share_flight")
 public class CodeShareFlight implements Serializable {
-	
-	private static final long serialVersionUID = 1L; 
-	
-    public CodeShareFlight() { 
-    	
-    }
 
-    @Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-    @Basic(optional = false)  
-    @Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")  
-    private Long id;  
+	private static final long serialVersionUID = 1L;
 
-    @Column(name="operating_flight_id")
-    private Long operatingFlightId;
+	public CodeShareFlight() {
 
-    
-    @Column(name = "marketing_flight_number")  
-    private String marketingFlightNumber;
-    
-    @Column(name = "operating_flight_number")  
-    private String operatingFlightNumber;
-    
-    public Long getId() {  
-        return id;  
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
-	@ManyToMany(mappedBy = "codeshares",targetEntity = Pnr.class)
+	}
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Basic(optional = false)
+	@Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")
+	private Long id;
+
+	@Column(name = "operating_flight_id")
+	private Long operatingFlightId;
+
+	@Column(name = "marketing_flight_number")
+	private String marketingFlightNumber;
+
+	@Column(name = "operating_flight_number")
+	private String operatingFlightNumber;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	@ManyToMany(mappedBy = "codeshares", targetEntity = Pnr.class)
 	private Set<Pnr> pnrs = new HashSet<>();
-	
-	
-    public String getOperatingFlightNumber() {
+
+	public String getOperatingFlightNumber() {
 		return operatingFlightNumber;
 	}
 
@@ -76,7 +74,6 @@ public class CodeShareFlight implements Serializable {
 		this.marketingFlightNumber = flightNumber;
 	}
 
-	
 	public Long getOperatingFlightId() {
 		return operatingFlightId;
 	}
@@ -85,25 +82,24 @@ public class CodeShareFlight implements Serializable {
 		this.operatingFlightId = fid;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getMarketingFlightNumber());
+	}
 
 	@Override
-    public int hashCode() {
-        return Objects.hash(this.getMarketingFlightNumber());
-    }
+	public boolean equals(Object target) {
 
-    @Override
-    public boolean equals(Object target) {
+		if (this == target) {
+			return true;
+		}
 
-        if (this == target) {
-            return true;
-        }
+		if (!(target instanceof CodeShareFlight)) {
+			return false;
+		}
 
-        if (!(target instanceof CodeShareFlight)) {
-            return false;
-        }
+		CodeShareFlight dataTarget = ((CodeShareFlight) target);
 
-        CodeShareFlight dataTarget = ((CodeShareFlight) target);
-
-        return (this.getMarketingFlightNumber().equals(dataTarget.getMarketingFlightNumber()));
-    }
+		return (this.getMarketingFlightNumber().equals(dataTarget.getMarketingFlightNumber()));
+	}
 }

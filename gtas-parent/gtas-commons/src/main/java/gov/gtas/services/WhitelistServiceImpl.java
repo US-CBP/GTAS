@@ -28,8 +28,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class WhitelistServiceImpl implements WhitelistService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(WhitelistServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(WhitelistServiceImpl.class);
 
 	@Autowired
 	private WhitelistRepository whitelistRepository;
@@ -45,8 +44,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 	@Override
 	@Transactional
 	public List<WhitelistVo> getAllWhitelists() {
-		List<Whitelist> whitelists = whitelistRepository
-				.findBydeleted(YesNoEnum.N);
+		List<Whitelist> whitelists = whitelistRepository.findBydeleted(YesNoEnum.N);
 		List<WhitelistVo> wlvList = new ArrayList<>();
 		if (whitelists != null) {
 			whitelists.forEach(wl -> {
@@ -87,8 +85,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 		if (wl != null) {
 			wl.setDeleted(YesNoEnum.Y);
 		} else {
-			logger.warn("The id = " + id
-					+ " of whitelist object does not exist.");
+			logger.warn("The id = " + id + " of whitelist object does not exist.");
 		}
 	}
 
@@ -138,8 +135,7 @@ public class WhitelistServiceImpl implements WhitelistService {
 		if (wlv.getId() != null)
 			existing = whitelistRepository.findById(wlv.getId()).orElse(null);
 		else {
-			throw new RuntimeException(
-					"the id of a existing whitelist object is null.");
+			throw new RuntimeException("the id of a existing whitelist object is null.");
 		}
 		if (existing != null) {
 			if (wlv.getNationality() != null)

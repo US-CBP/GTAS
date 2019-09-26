@@ -15,6 +15,6 @@ import java.util.Set;
 
 public interface DispositionRepository extends CrudRepository<Disposition, Long> {
 
-    @Query("SELECT d.paxId from Disposition d where d.paxId in :existingPaxId")
-    Set<Long> getExisitngPaxIds(@Param("existingPaxId") Set<Long> existingPaxID);
+	@Query("SELECT d.paxId from Disposition d where d.paxId in :existingPaxId")
+	Set<Long> getExisitngPaxIds(@Param("existingPaxId") Set<Long> existingPaxID);
 }

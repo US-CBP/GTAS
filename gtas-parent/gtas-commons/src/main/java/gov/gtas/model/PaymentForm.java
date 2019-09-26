@@ -22,26 +22,27 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "payment_form")
 public class PaymentForm implements Serializable {
-    private static final long serialVersionUID = 1L;  
-    public PaymentForm() { }
-   
-    @Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-    @Basic(optional = false)  
-    @Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")  
-    private Long id;  
-    
-    @ManyToOne
-    private Pnr pnr;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "payment_type")
-    private String paymentType;
-    
-    @Column(name = "payment_amount")
-    private String paymentAmount;
+	public PaymentForm() {
+	}
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Basic(optional = false)
+	@Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")
+	private Long id;
 
-    public Long getId() {
+	@ManyToOne
+	private Pnr pnr;
+
+	@Column(name = "payment_type")
+	private String paymentType;
+
+	@Column(name = "payment_amount")
+	private String paymentAmount;
+
+	public Long getId() {
 		return id;
 	}
 
@@ -66,43 +67,44 @@ public class PaymentForm implements Serializable {
 	}
 
 	public Pnr getPnr() {
-        return pnr;
-    }
+		return pnr;
+	}
 
-    public void setPnr(Pnr pnr) {
-        this.pnr = pnr;
-    }
+	public void setPnr(Pnr pnr) {
+		this.pnr = pnr;
+	}
 
-    @Override  
-    public int hashCode() {  
-        int hash = 0;  
-        hash += (this.getId() != null ? this.getId().hashCode() : 0);  
-  
-        return hash;  
-    }  
-  
-    @Override  
-    public boolean equals(Object object) {  
-    if (this == object)  
-            return true;  
-        if (object == null)  
-            return false;  
-        if (getClass() != object.getClass())  
-            return false;  
-  
-        PaymentForm other = (PaymentForm) object;  
-        //if (this.getId() != other.getId() && (this.getId() == null || !this.id.equals(other.id))) {  
-           // return false;  
-        //} 
-        if(this.getPaymentType().equals(other.getPaymentType()) && this.getPnr().equals(other.getPnr())){
-        	return true;
-        }
-        return false;  
-    }  
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (this.getId() != null ? this.getId().hashCode() : 0);
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE); 
-    }        
- 
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object)
+			return true;
+		if (object == null)
+			return false;
+		if (getClass() != object.getClass())
+			return false;
+
+		PaymentForm other = (PaymentForm) object;
+		// if (this.getId() != other.getId() && (this.getId() == null ||
+		// !this.id.equals(other.id))) {
+		// return false;
+		// }
+		if (this.getPaymentType().equals(other.getPaymentType()) && this.getPnr().equals(other.getPnr())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
+
 }

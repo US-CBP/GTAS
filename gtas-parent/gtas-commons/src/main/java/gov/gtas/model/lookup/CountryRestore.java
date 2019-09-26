@@ -20,51 +20,55 @@ import org.springframework.cache.annotation.Cacheable;
 @Entity
 @Table(name = "country_restore", indexes = { @Index(columnList = "iso3", name = "countryRestore_iso3_index") })
 public class CountryRestore extends BaseEntity {
-    public CountryRestore() { }
-    @Column(length = 2)
-    private String iso2;
+	public CountryRestore() {
+	}
 
-    @Column(length = 3)
-    private String iso3;
-    
-    private String name;
-    
-    @Column(name = "iso_numeric", length = 3)
-    private String isoNumeric;
+	@Column(length = 2)
+	private String iso2;
 
-    public String getIso2() {
-        return iso2;
-    }
-    public String getIso3() {
-        return iso3;
-    }
-    public String getName() {
-        return name;
-    }
-    public String getIsoNumeric() {
-        return isoNumeric;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.iso2, this.iso3);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final CountryRestore other = (CountryRestore) obj;
-        return Objects.equals(this.iso2, other.iso2)
-                && Objects.equals(this.iso3, other.iso3);
-    }
-    
-    @Override
-    public String toString() {
-        return this.iso2;
-    }
+	@Column(length = 3)
+	private String iso3;
+
+	private String name;
+
+	@Column(name = "iso_numeric", length = 3)
+	private String isoNumeric;
+
+	public String getIso2() {
+		return iso2;
+	}
+
+	public String getIso3() {
+		return iso3;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getIsoNumeric() {
+		return isoNumeric;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.iso2, this.iso3);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final CountryRestore other = (CountryRestore) obj;
+		return Objects.equals(this.iso2, other.iso2) && Objects.equals(this.iso3, other.iso3);
+	}
+
+	@Override
+	public String toString() {
+		return this.iso2;
+	}
 }

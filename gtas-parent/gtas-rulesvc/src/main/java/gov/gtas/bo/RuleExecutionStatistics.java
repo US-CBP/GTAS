@@ -22,8 +22,8 @@ public class RuleExecutionStatistics implements Serializable {
 	/* A count of all the rules that fired for this execution. */
 	private int totalRulesFired;
 	/*
-	 * The sum of the number of objects in the working memory that were
-	 * inserted, deleted or modified.
+	 * The sum of the number of objects in the working memory that were inserted,
+	 * deleted or modified.
 	 */
 	private int totalObjectsModified;
 	/*

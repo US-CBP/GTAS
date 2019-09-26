@@ -10,5 +10,5 @@ import org.springframework.data.repository.CrudRepository;
 
 import gov.gtas.model.lookup.DispositionStatus;
 
-public interface HitDispositionStatusRepository extends CrudRepository<HitDispositionStatus, Long>{
+public interface HitDispositionStatusRepository extends CrudRepository<HitDispositionStatus, Long> {
 }

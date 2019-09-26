@@ -55,19 +55,14 @@ public class UdrServiceErrorTest {
 	private static final Logger logger = LoggerFactory.getLogger(UdrServiceErrorTest.class);
 
 	private static final String TEST_JSON = "{ \"details\": {"
-			+ "  \"@class\": \"gov.gtas.model.udr.json.QueryObject\","
-			+ " \"condition\": \"OR\"," + " \"rules\": [" + " {"
-			+ "   \"@class\": \"QueryTerm\"," + " \"entity\": \"%s\","
-			+ " \"field\": \"%s\"," + " \"operator\": \"%s\","
-			+ " \"type\": \"string\"," + " \"value\": [\"John\"]" + " },"
-			+ " {" + " \"@class\": \"QueryTerm\","
-			+ " \"entity\": \"Passenger\"," + " \"field\": \"lastName\","
-			+ " \"operator\": \"EQUAL\"," + " \"type\": \"string\","
-			+ " \"value\": [\"Jones\"]" + "}" + "]" + "}," + " \"summary\": {"
-			+ " \"title\": \"Hello Rule 1\","
-			+ " \"description\": \"This is a test\","
-			+ " \"startDate\": \"%s\"," + " \"endDate\": null,"
-			+ " \"author\": \"jpjones\"," + " \"enabled\": false" + "}" + "}";
+			+ "  \"@class\": \"gov.gtas.model.udr.json.QueryObject\"," + " \"condition\": \"OR\"," + " \"rules\": ["
+			+ " {" + "   \"@class\": \"QueryTerm\"," + " \"entity\": \"%s\"," + " \"field\": \"%s\","
+			+ " \"operator\": \"%s\"," + " \"type\": \"string\"," + " \"value\": [\"John\"]" + " }," + " {"
+			+ " \"@class\": \"QueryTerm\"," + " \"entity\": \"Passenger\"," + " \"field\": \"lastName\","
+			+ " \"operator\": \"EQUAL\"," + " \"type\": \"string\"," + " \"value\": [\"Jones\"]" + "}" + "]" + "},"
+			+ " \"summary\": {" + " \"title\": \"Hello Rule 1\"," + " \"description\": \"This is a test\","
+			+ " \"startDate\": \"%s\"," + " \"endDate\": null," + " \"author\": \"jpjones\"," + " \"enabled\": false"
+			+ "}" + "}";
 	private UdrService udrService;
 
 	@Mock
@@ -92,18 +87,13 @@ public class UdrServiceErrorTest {
 	public void setUp() throws Exception {
 		udrService = new UdrServiceImpl();
 		MockitoAnnotations.initMocks(this);
-		ReflectionTestUtils.setField(udrService, "rulePersistenceService",
-				mockRulePersistenceSvc);
+		ReflectionTestUtils.setField(udrService, "rulePersistenceService", mockRulePersistenceSvc);
 		RuleCat mockRuleCat = getMockRuleCat();
 		Mockito.when(mockRuleCatService.findRuleCatByCatId(1L)).thenReturn(mockRuleCat);
-		ReflectionTestUtils
-				.setField(udrService, "userService", mockUserService);
-		ReflectionTestUtils.setField(udrService, "ruleManagementService",
-				mockRuleManagementService);
-		ReflectionTestUtils.setField(udrService, "auditLogPersistenceService",
-				mockAuditLogPersistenceService);
-		ReflectionTestUtils.setField(udrService, "ruleCatService",
-				mockRuleCatService);
+		ReflectionTestUtils.setField(udrService, "userService", mockUserService);
+		ReflectionTestUtils.setField(udrService, "ruleManagementService", mockRuleManagementService);
+		ReflectionTestUtils.setField(udrService, "auditLogPersistenceService", mockAuditLogPersistenceService);
+		ReflectionTestUtils.setField(udrService, "ruleCatService", mockRuleCatService);
 	}
 
 	private RuleCat getMockRuleCat() {
@@ -125,8 +115,7 @@ public class UdrServiceErrorTest {
 		when(mockUserService.findById(testUser)).thenReturn(null);
 		UdrSpecification spec = UdrSpecificationBuilder.createSampleSpec();
 		spec.getSummary().setAuthor(testUser);
-		when(mockUserService.fetchUser(testUser)).thenThrow(
-				CommonServiceException.class);
+		when(mockUserService.fetchUser(testUser)).thenThrow(CommonServiceException.class);
 		udrService.createUdr(testUser, spec);
 		verify(mockUserService, times(1)).fetchUser(testUser);
 	}
@@ -187,15 +176,11 @@ public class UdrServiceErrorTest {
 			when(mockUserService.fetchUser(authorId)).thenReturn(author);
 			String today = DateCalendarUtils.formatJsonDate(new Date());
 			logger.info(today);
-			spec.getSummary().setStartDate(
-					DateCalendarUtils.parseJsonDate(today));
-			spec.getSummary()
-					.setEndDate(DateCalendarUtils.parseJsonDate(today));
-			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
-					spec, author);
+			spec.getSummary().setStartDate(DateCalendarUtils.parseJsonDate(today));
+			spec.getSummary().setEndDate(DateCalendarUtils.parseJsonDate(today));
+			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(spec, author);
 			rule.setId(1L);
-			when(mockRulePersistenceSvc.create(any(UdrRule.class), any()))
-					.thenReturn(rule);
+			when(mockRulePersistenceSvc.create(any(UdrRule.class), any())).thenReturn(rule);
 			List<UdrRule> rlList = new LinkedList<UdrRule>();
 			rlList.add(rule);
 			when(mockRulePersistenceSvc.findAll()).thenReturn(rlList);
@@ -208,8 +193,7 @@ public class UdrServiceErrorTest {
 		// verify(mockUserService, times(1)).findById(authorId);
 		verify(mockRulePersistenceSvc).create(any(), any());
 		verify(mockRulePersistenceSvc).findAll();
-		verify(mockRuleManagementService).createKnowledgeBaseFromUdrRules(
-				any(), any(), any());
+		verify(mockRuleManagementService).createKnowledgeBaseFromUdrRules(any(), any(), any());
 
 	}
 
@@ -223,23 +207,17 @@ public class UdrServiceErrorTest {
 		User author = new User();
 		author.setUserId(authorId);
 		try {
-			String yesterday = DateCalendarUtils.formatJsonDate(new Date(System
-					.currentTimeMillis() - 86400000L));
-			spec.getSummary().setStartDate(
-					DateCalendarUtils.parseJsonDate(yesterday));
-			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
-					spec, author);
+			String yesterday = DateCalendarUtils.formatJsonDate(new Date(System.currentTimeMillis() - 86400000L));
+			spec.getSummary().setStartDate(DateCalendarUtils.parseJsonDate(yesterday));
+			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(spec, author);
 			rule.setId(1L);
-			when(mockRulePersistenceSvc.create(any(UdrRule.class), any()))
-					.thenReturn(rule);
+			when(mockRulePersistenceSvc.create(any(UdrRule.class), any())).thenReturn(rule);
 			when(mockUserService.findById(authorId)).thenReturn(authorData);
-			when(mockUserServiceUtil.mapUserEntityFromUserData(authorData))
-					.thenReturn(author);
+			when(mockUserServiceUtil.mapUserEntityFromUserData(authorData)).thenReturn(author);
 			udrService.createUdr(authorId, spec);
 			fail("Expecting exception");
 		} catch (CommonServiceException cse) {
-			assertEquals(RuleErrorConstants.PAST_START_DATE_ERROR_CODE,
-					cse.getErrorCode());
+			assertEquals(RuleErrorConstants.PAST_START_DATE_ERROR_CODE, cse.getErrorCode());
 		} catch (Exception ex) {
 			logger.error("error!", ex);
 			fail("Not Expecting Exception");
@@ -254,32 +232,25 @@ public class UdrServiceErrorTest {
 			ObjectMapper mapper = new ObjectMapper();
 			// de-serialize
 			// add arbitrary offset to counteract Jackson GMT interpretation
-			String startDate = DateCalendarUtils.formatJsonDate(new Date(System
-					.currentTimeMillis() + 864000000L));
+			String startDate = DateCalendarUtils.formatJsonDate(new Date(System.currentTimeMillis() + 864000000L));
 
-			UdrSpecification testObj = mapper.readValue(
-					String.format(TEST_JSON, "foo", "bar", "equal", startDate),
+			UdrSpecification testObj = mapper.readValue(String.format(TEST_JSON, "foo", "bar", "equal", startDate),
 					UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null);
 			User author = new User();
 			author.setUserId(authorId);
-			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
-					testObj, author);
+			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(testObj, author);
 			UdrServiceHelper.addEngineRulesToUdrRule(rule, testObj);
 			rule.setId(1L);
-			when(mockRulePersistenceSvc.create(any(UdrRule.class), any()))
-					.thenReturn(rule);
+			when(mockRulePersistenceSvc.create(any(UdrRule.class), any())).thenReturn(rule);
 			when(mockUserService.findById(authorId)).thenReturn(authorData);
-			when(mockUserServiceUtil.mapUserEntityFromUserData(authorData))
-					.thenReturn(author);
+			when(mockUserServiceUtil.mapUserEntityFromUserData(authorData)).thenReturn(author);
 			udrService.createUdr(authorId, testObj);
 			fail("Expecting exception");
 		} catch (CommonValidationException cve) {
-			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE,
-					cve.getErrorCode());
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, cve.getErrorCode());
 		} catch (Exception ex) {
 			logger.error("error!", ex);
 			fail("Not Expecting Exception");
@@ -295,30 +266,24 @@ public class UdrServiceErrorTest {
 			// de-serialize
 
 			// add arbitrary offset to counteract Jackson GMT interpretation
-			String startDate = DateCalendarUtils.formatJsonDate(new Date(System
-					.currentTimeMillis() + 864000000L));
+			String startDate = DateCalendarUtils.formatJsonDate(new Date(System.currentTimeMillis() + 864000000L));
 
-			UdrSpecification testObj = mapper.readValue(
-					String.format(TEST_JSON, "Pax", "bar", "equal", startDate),
+			UdrSpecification testObj = mapper.readValue(String.format(TEST_JSON, "Pax", "bar", "equal", startDate),
 					UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null);
 			User author = new User();
 			author.setUserId(authorId);
-			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
-					testObj, author);
+			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(testObj, author);
 			UdrServiceHelper.addEngineRulesToUdrRule(rule, testObj);
 			rule.setId(1L);
-			when(mockRulePersistenceSvc.create(any(UdrRule.class), any()))
-					.thenReturn(rule);
+			when(mockRulePersistenceSvc.create(any(UdrRule.class), any())).thenReturn(rule);
 			when(mockUserService.fetchUser(authorId)).thenReturn(author);
 			udrService.createUdr(authorId, testObj);
 			fail("Expecting exception");
 		} catch (CommonValidationException cve) {
-			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE,
-					cve.getErrorCode());
+			assertEquals(CommonErrorConstants.JSON_INPUT_VALIDATION_ERROR_CODE, cve.getErrorCode());
 		} catch (Exception ex) {
 			logger.error("error!", ex);
 			fail("Not Expecting Exception");
@@ -333,25 +298,19 @@ public class UdrServiceErrorTest {
 			ObjectMapper mapper = new ObjectMapper();
 			// de-serialize
 			// add arbitrary offset to counteract Jackson GMT interpretation
-			String startDate = DateCalendarUtils.formatJsonDate(new Date(System
-					.currentTimeMillis() + 864000000L));
+			String startDate = DateCalendarUtils.formatJsonDate(new Date(System.currentTimeMillis() + 864000000L));
 
-			UdrSpecification testObj = mapper.readValue(String.format(
-					TEST_JSON, EntityEnum.PASSENGER.getEntityName(),
-					PassengerMapping.DEBARKATION.getFieldName(), "equal",
-					startDate), UdrSpecification.class);
+			UdrSpecification testObj = mapper.readValue(String.format(TEST_JSON, EntityEnum.PASSENGER.getEntityName(),
+					PassengerMapping.DEBARKATION.getFieldName(), "equal", startDate), UdrSpecification.class);
 			assertNotNull(testObj);
 			authorId = testObj.getSummary().getAuthor();
-			UserData authorData = new UserData(authorId, null, null, null, 0,
-					null);
+			UserData authorData = new UserData(authorId, null, null, null, 0, null);
 
 			User author = new User();
 			author.setUserId(authorId);
-			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(
-					testObj, author);
+			UdrRule rule = JsonToDomainObjectConverter.createUdrRuleFromJson(testObj, author);
 			rule.setId(1L);
-			when(mockRulePersistenceSvc.create(any(UdrRule.class), any()))
-					.thenReturn(rule);
+			when(mockRulePersistenceSvc.create(any(UdrRule.class), any())).thenReturn(rule);
 			List<UdrRule> rlList = new LinkedList<UdrRule>();
 			rlList.add(rule);
 			when(mockRulePersistenceSvc.findAll()).thenReturn(rlList);
@@ -362,10 +321,8 @@ public class UdrServiceErrorTest {
 			fail("Not Expecting Exception");
 		}
 		verify(mockUserService, times(1)).fetchUser(authorId);
-		verify(mockRulePersistenceSvc, times(1)).create(any(UdrRule.class),
-				any());
+		verify(mockRulePersistenceSvc, times(1)).create(any(UdrRule.class), any());
 		verify(mockRulePersistenceSvc).findAll();
-		verify(mockRuleManagementService).createKnowledgeBaseFromUdrRules(
-				any(), any(), any());
+		verify(mockRuleManagementService).createKnowledgeBaseFromUdrRules(any(), any(), any());
 	}
 }

@@ -24,10 +24,8 @@ import org.slf4j.LoggerFactory;
  * 
  *
  */
-public class GtasRuleRuntimeEventListener extends
-		DefaultRuleRuntimeEventListener {
-	private static final Logger logger = LoggerFactory
-			.getLogger(GtasRuleRuntimeEventListener.class);
+public class GtasRuleRuntimeEventListener extends DefaultRuleRuntimeEventListener {
+	private static final Logger logger = LoggerFactory.getLogger(GtasRuleRuntimeEventListener.class);
 	private static final List<ObjectInsertedEvent> insertEvents = new ArrayList<>();
 	private static final List<ObjectUpdatedEvent> updateEvents = new ArrayList<>();
 	private static final List<ObjectDeletedEvent> retractEvents = new ArrayList<>();
@@ -47,8 +45,7 @@ public class GtasRuleRuntimeEventListener extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectInserted
+	 * @see org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectInserted
 	 * (org.kie.api.event.rule.ObjectInsertedEvent)
 	 */
 	@Override
@@ -60,8 +57,7 @@ public class GtasRuleRuntimeEventListener extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectUpdated(
+	 * @see org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectUpdated(
 	 * org.kie.api.event.rule.ObjectUpdatedEvent)
 	 */
 	@Override
@@ -73,8 +69,7 @@ public class GtasRuleRuntimeEventListener extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectDeleted(
+	 * @see org.kie.api.event.rule.DefaultRuleRuntimeEventListener#objectDeleted(
 	 * org.kie.api.event.rule.ObjectDeletedEvent)
 	 */
 	@Override

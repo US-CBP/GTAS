@@ -28,17 +28,17 @@ import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.parsers.vo.ReportingPartyVo;
 
 public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
-    public PaxlstParserUSedifact() { 
-        this.parsedMessage = new ApisMessageVo();
-    }
+	public PaxlstParserUSedifact() {
+		this.parsedMessage = new ApisMessageVo();
+	}
 
-    @Override
-    protected String getPayloadText() throws ParseException {
-        return lexer.getMessagePayload("CTA", "UNT");
-    }
+	@Override
+	protected String getPayloadText() throws ParseException {
+		return lexer.getMessagePayload("CTA", "UNT");
+	}
 
-    @Override
-    public void parsePayload() throws ParseException {
+	@Override
+	public void parsePayload() throws ParseException {
 		CTA cta = getMandatorySegment(CTA.class);
 		processReportingParty(cta);
 		for (;;) {
@@ -72,121 +72,121 @@ public final class PaxlstParserUSedifact extends EdifactParser<ApisMessageVo> {
 		}
 	}
 
-    private void processFlight(TDT tdt) throws ParseException {
-        String dest = null;
-        String origin = null;
-        Date eta = null;
-        Date etd = null;
-        boolean ptFound = false;
-        
-        for (;;) {
-            LOC loc = getConditionalSegment(LOC.class);
-            if (loc == null) {
-                break;
-            }
+	private void processFlight(TDT tdt) throws ParseException {
+		String dest = null;
+		String origin = null;
+		Date eta = null;
+		Date etd = null;
+		boolean ptFound = false;
 
-            LocCode locCode = loc.getLocationCode();
-            String airport = loc.getIataAirportCode();
-            
-            if (dest != null && ptFound) {
-            	// new flight's origin is last flight's dest
-            	origin = dest;
-                dest = airport;
-            } else {
-	            if (locCode == LocCode.DEPARTURE) {
-	                origin = airport;
-	            } else if (locCode == LocCode.ARRIVAL) {
-	                dest = airport;
-	            } else if (locCode == LocCode.PLACE_OF_TRANSIT) {
-	            	ptFound = true;
-	            	dest = airport;
-	            }
-            }
+		for (;;) {
+			LOC loc = getConditionalSegment(LOC.class);
+			if (loc == null) {
+				break;
+			}
 
-            DTM dtm = getConditionalSegment(DTM.class);
-            if (dtm != null) {
-	            DtmCode dtmCode = dtm.getDtmCode();
-	            Date dateTime = dtm.getC_dateTime();
+			LocCode locCode = loc.getLocationCode();
+			String airport = loc.getIataAirportCode();
 
-	            if (eta != null && ptFound) {
-	            	// new flight's etd is last flight's eta
-	            	etd = eta;
-	            	eta = dateTime;
-	            } else {
-		            if (dtmCode == DtmCode.DEPARTURE_DATETIME) {
-		                etd = dateTime;
-		            } else if (dtmCode == DtmCode.ARRIVAL_DATETIME) {
-		            	eta = dateTime;
-		            }
-	            }
-            }
-            
-            if (origin != null && dest != null) {
-                FlightVo f = new FlightVo();
+			if (dest != null && ptFound) {
+				// new flight's origin is last flight's dest
+				origin = dest;
+				dest = airport;
+			} else {
+				if (locCode == LocCode.DEPARTURE) {
+					origin = airport;
+				} else if (locCode == LocCode.ARRIVAL) {
+					dest = airport;
+				} else if (locCode == LocCode.PLACE_OF_TRANSIT) {
+					ptFound = true;
+					dest = airport;
+				}
+			}
 
-                f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tdt.getC_flightNumber()));
-                f.setCarrier(tdt.getC_airlineCode());
-                f.setOrigin(origin);
-                f.setDestination(dest);
-                f.setLocalEtaDate(eta);
-                f.setLocalEtdDate(etd);
+			DTM dtm = getConditionalSegment(DTM.class);
+			if (dtm != null) {
+				DtmCode dtmCode = dtm.getDtmCode();
+				Date dateTime = dtm.getC_dateTime();
 
-                if (f.isValid()) {
-                    parsedMessage.addFlight(f);
-                } else {
-                    throw new ParseException("Invalid flight: " + f);
-                }
-            }
-        }
-    }
+				if (eta != null && ptFound) {
+					// new flight's etd is last flight's eta
+					etd = eta;
+					eta = dateTime;
+				} else {
+					if (dtmCode == DtmCode.DEPARTURE_DATETIME) {
+						etd = dateTime;
+					} else if (dtmCode == DtmCode.ARRIVAL_DATETIME) {
+						eta = dateTime;
+					}
+				}
+			}
 
-    private void processPax(PDT pdt) throws ParseException {
-        PassengerVo p = new PassengerVo();
-        parsedMessage.addPax(p);
+			if (origin != null && dest != null) {
+				FlightVo f = new FlightVo();
 
-        p.setFirstName(pdt.getFirstName());
-        p.setLastName(pdt.getLastName());
-        p.setMiddleName(pdt.getC_middleNameOrInitial());
-        if (pdt.getDob() != null) {
-	        p.setDob(pdt.getDob());
-	        p.setAge(DateUtils.calculateAge(pdt.getDob()));
-        }
-        p.setGender(pdt.getGender());
-        p.setEmbarkation(pdt.getIataEmbarkationAirport());
-        p.setDebarkation(pdt.getIataDebarkationAirport());
+				f.setFlightNumber(FlightUtils.padFlightNumberWithZeroes(tdt.getC_flightNumber()));
+				f.setCarrier(tdt.getC_airlineCode());
+				f.setOrigin(origin);
+				f.setDestination(dest);
+				f.setLocalEtaDate(eta);
+				f.setLocalEtdDate(etd);
 
-        PersonStatus status = pdt.getPersonStatus();
-        if (status == null) {
-		p.setPassengerType("P");
-        } else {
-	        p.setPassengerType(status.toString());
-	        if (status == PersonStatus.CREW) {
-	            p.setPassengerType("C");
-	        } else if (status == PersonStatus.IN_TRANSIT){
-	            p.setPassengerType("I");
-	        } else {
-	            p.setPassengerType("P");
-	        }
-        }
+				if (f.isValid()) {
+					parsedMessage.addFlight(f);
+				} else {
+					throw new ParseException("Invalid flight: " + f);
+				}
+			}
+		}
+	}
 
-        DocumentVo d = new DocumentVo();
-        p.addDocument(d);
-        d.setDocumentNumber(pdt.getDocumentNumber());
-        d.setExpirationDate(pdt.getC_dateOfExpiration());
-        DocType docType = pdt.getDocumentType();
-        d.setDocumentType(docType.toString());
-        if (docType == DocType.PASSPORT) {
-            d.setDocumentType("P");
-        } else if (docType == DocType.VISA) {
-        	d.setDocumentType("V");
-        }
-    }
+	private void processPax(PDT pdt) throws ParseException {
+		PassengerVo p = new PassengerVo();
+		parsedMessage.addPax(p);
 
-    private void processReportingParty(CTA cta) {
-        ReportingPartyVo rp = new ReportingPartyVo();
-        parsedMessage.addReportingParty(rp);
-        rp.setPartyName(cta.getName());
-        rp.setTelephone(cta.getTelephoneNumber());
-        rp.setFax(cta.getFaxNumber());
-    }
+		p.setFirstName(pdt.getFirstName());
+		p.setLastName(pdt.getLastName());
+		p.setMiddleName(pdt.getC_middleNameOrInitial());
+		if (pdt.getDob() != null) {
+			p.setDob(pdt.getDob());
+			p.setAge(DateUtils.calculateAge(pdt.getDob()));
+		}
+		p.setGender(pdt.getGender());
+		p.setEmbarkation(pdt.getIataEmbarkationAirport());
+		p.setDebarkation(pdt.getIataDebarkationAirport());
+
+		PersonStatus status = pdt.getPersonStatus();
+		if (status == null) {
+			p.setPassengerType("P");
+		} else {
+			p.setPassengerType(status.toString());
+			if (status == PersonStatus.CREW) {
+				p.setPassengerType("C");
+			} else if (status == PersonStatus.IN_TRANSIT) {
+				p.setPassengerType("I");
+			} else {
+				p.setPassengerType("P");
+			}
+		}
+
+		DocumentVo d = new DocumentVo();
+		p.addDocument(d);
+		d.setDocumentNumber(pdt.getDocumentNumber());
+		d.setExpirationDate(pdt.getC_dateOfExpiration());
+		DocType docType = pdt.getDocumentType();
+		d.setDocumentType(docType.toString());
+		if (docType == DocType.PASSPORT) {
+			d.setDocumentType("P");
+		} else if (docType == DocType.VISA) {
+			d.setDocumentType("V");
+		}
+	}
+
+	private void processReportingParty(CTA cta) {
+		ReportingPartyVo rp = new ReportingPartyVo();
+		parsedMessage.addReportingParty(rp);
+		rp.setPartyName(cta.getName());
+		rp.setTelephone(cta.getTelephoneNumber());
+		rp.setFax(cta.getFaxNumber());
+	}
 }

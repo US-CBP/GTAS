@@ -20,29 +20,29 @@ import gov.gtas.parsers.edifact.Segment;
  * ex:UNT+2578+MSG001'UNT+2578+1'
  */
 public class UNT extends Segment {
-    private Integer numberOfSegments;
-    private String messageRefNumber;
+	private Integer numberOfSegments;
+	private String messageRefNumber;
 
-    public UNT(List<Composite> composites) {
-        super(UNT.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                this.numberOfSegments = Integer.valueOf(c.getElement(0));
-                break;
-            case 1:
-                this.messageRefNumber = c.getElement(0);
-                break;
-            }
-        }
-    }
+	public UNT(List<Composite> composites) {
+		super(UNT.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				this.numberOfSegments = Integer.valueOf(c.getElement(0));
+				break;
+			case 1:
+				this.messageRefNumber = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public int getNumberOfSegments() {
-        return numberOfSegments;
-    }
+	public int getNumberOfSegments() {
+		return numberOfSegments;
+	}
 
-    public String getMessageRefNumber() {
-        return messageRefNumber;
-    }
+	public String getMessageRefNumber() {
+		return messageRefNumber;
+	}
 }

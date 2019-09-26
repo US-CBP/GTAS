@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.kie.api.KieBase;
 import org.slf4j.Logger;
@@ -41,8 +40,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 public class RuleManagementServiceImpl implements RuleManagementService {
-	private static final Logger logger = LoggerFactory
-			.getLogger(RuleManagementServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleManagementServiceImpl.class);
 
 	@Autowired
 	private RulePersistenceService rulePersistenceService;
@@ -51,20 +49,16 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	UserService userService;
 
 	@Override
-	public KnowledgeBase createKnowledgeBaseFromDRLString(String kbName,
-			String drlString) {
+	public KnowledgeBase createKnowledgeBaseFromDRLString(String kbName, String drlString) {
 		try {
 			KieBase kieBase = RuleUtils.createKieBaseFromDrlString(drlString);
 			byte[] kbBlob = RuleUtils.convertKieBaseToBytes(kieBase);
-			logger.debug("Size of the compiled Knowledge Base = "
-					+ kbBlob.length);
-			KnowledgeBase kb = rulePersistenceService
-					.findUdrKnowledgeBase(kbName);
+			logger.debug("Size of the compiled Knowledge Base = " + kbBlob.length);
+			KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 			if (kb == null) {
 				kb = new KnowledgeBase(kbName);
 			}
-			kb.setRulesBlob(drlString
-					.getBytes(RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING));
+			kb.setRulesBlob(drlString.getBytes(RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING));
 			kb.setKbBlob(kbBlob);
 			if (StringUtils.isEmpty(kbName)) {
 				kb.setKbName(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
@@ -73,8 +67,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 			return kb;
 		} catch (Exception ioe) {
 			logger.error(ioe.getMessage());
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					CommonErrorConstants.SYSTEM_ERROR_CODE,
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.SYSTEM_ERROR_CODE,
 					System.currentTimeMillis(), ioe);
 		}
 	}
@@ -83,16 +76,14 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	public String fetchDrlRulesFromKnowledgeBase(String kbName) {
 		KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 		if (kb == null) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE, kbName);
+			throw ErrorHandlerFactory.getErrorHandler().createException(RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE,
+					kbName);
 		}
 		String drlRules = null;
 		try {
-			drlRules = new String(kb.getRulesBlob(),
-					RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING);
+			drlRules = new String(kb.getRulesBlob(), RuleConstants.UDR_EXTERNAL_CHARACTER_ENCODING);
 		} catch (UnsupportedEncodingException uee) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.KB_INVALID_ERROR_CODE,
+			throw ErrorHandlerFactory.getErrorHandler().createException(RuleServiceConstants.KB_INVALID_ERROR_CODE,
 					RuleConstants.UDR_KNOWLEDGE_BASE_NAME, uee);
 		}
 		return drlRules;
@@ -100,22 +91,19 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 
 	@Override
 	public String fetchDefaultDrlRulesFromKnowledgeBase() {
-		return this
-				.fetchDrlRulesFromKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
+		return this.fetchDrlRulesFromKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
 	}
 
 	@Override
 	@Transactional()
-	public KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName,
-			Collection<UdrRule> rules, String userId) {
+	public KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName, Collection<UdrRule> rules, String userId) {
 		if (!CollectionUtils.isEmpty(rules)) {
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
 			for (UdrRule rule : rules) {
 				ruleFileBuilder.addRule(rule);
 			}
 			String drlRules = ruleFileBuilder.build();
-			KnowledgeBase kb = createKnowledgeBaseFromDRLString(kbName,
-					drlRules);
+			KnowledgeBase kb = createKnowledgeBaseFromDRLString(kbName, drlRules);
 			linkRulesToKnowledgeBase(kb, rules);
 			return kb;
 		} else {
@@ -125,8 +113,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 
 	@Override
 	@Transactional(propagation = Propagation.MANDATORY)
-	public KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName,
-			Iterable<WatchlistItem> rules) {
+	public KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName, Iterable<WatchlistItem> rules) {
 		if (rules != null) {
 			DrlRuleFileBuilder ruleFileBuilder = new DrlRuleFileBuilder();
 			for (WatchlistItem rule : rules) {
@@ -139,8 +126,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 		}
 	}
 
-	private void linkRulesToKnowledgeBase(KnowledgeBase kb,
-			Collection<UdrRule> rules) {
+	private void linkRulesToKnowledgeBase(KnowledgeBase kb, Collection<UdrRule> rules) {
 		if (kb != null && kb.getId() != null) {
 			List<Rule> ruleList = new LinkedList<>();
 			for (UdrRule rule : rules) {
@@ -158,8 +144,7 @@ public class RuleManagementServiceImpl implements RuleManagementService {
 	public KnowledgeBase deleteKnowledgeBase(String kbName) {
 		KnowledgeBase kb = rulePersistenceService.findUdrKnowledgeBase(kbName);
 		if (kb != null) {
-			List<Rule> ruleList = rulePersistenceService
-					.findRulesByKnowledgeBaseId(kb.getId());
+			List<Rule> ruleList = rulePersistenceService.findRulesByKnowledgeBaseId(kb.getId());
 			List<Rule> saveRuleList = new ArrayList<>();
 			for (Rule rule : ruleList) {
 				rule.setKnowledgeBase(null);

@@ -7,39 +7,37 @@ import java.util.Collection;
 
 public class RuleResults {
 
-    private RuleServiceResult udrResult;
+	private RuleServiceResult udrResult;
 
-    private RuleServiceResult watchListResult;
+	private RuleServiceResult watchListResult;
 
+	private Collection<TargetSummaryVo> targetingResult;
 
-    private Collection<TargetSummaryVo> targetingResult;
+	public RuleServiceResult getUdrResult() {
+		return udrResult;
+	}
 
+	public void setUdrResult(RuleServiceResult udrResult) {
+		this.udrResult = udrResult;
+	}
 
-    public RuleServiceResult getUdrResult() {
-        return udrResult;
-    }
+	public RuleServiceResult getWatchListResult() {
+		return watchListResult;
+	}
 
-    public void setUdrResult(RuleServiceResult udrResult) {
-        this.udrResult = udrResult;
-    }
+	public void setWatchListResult(RuleServiceResult watchListResult) {
+		this.watchListResult = watchListResult;
+	}
 
-    public RuleServiceResult getWatchListResult() {
-        return watchListResult;
-    }
+	public boolean hasResults() {
+		return (this.watchListResult != null || this.udrResult != null);
+	}
 
-    public void setWatchListResult(RuleServiceResult watchListResult) {
-        this.watchListResult = watchListResult;
-    }
+	public Collection<TargetSummaryVo> getTargetingResult() {
+		return targetingResult;
+	}
 
-    public boolean hasResults() {
-        return (this.watchListResult != null || this.udrResult != null);
-    }
-
-    public Collection<TargetSummaryVo> getTargetingResult() {
-        return targetingResult;
-    }
-
-    public void setTargetingResult(Collection<TargetSummaryVo> targetingResult) {
-        this.targetingResult = targetingResult;
-    }
+	public void setTargetingResult(Collection<TargetSummaryVo> targetingResult) {
+		this.targetingResult = targetingResult;
+	}
 }

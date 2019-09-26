@@ -12,23 +12,23 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class BagConditionBuilder extends EntityConditionBuilder {
 
-    public BagConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.BAG.getEntityName());
-    }
+	public BagConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.BAG.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
-    
-    public String getPassengerIdLinkExpression(){
-        return getDrlVariableName()+"."+BagMapping.BAG_PAX_OWNER_ID.getFieldName();
-    }
-    
-    public String getFlightIdLinkExpression(){
-		return getDrlVariableName()+"."+BagMapping.BAG_FLIGHT_OWNER_ID.getFieldName();
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
+
+	public String getPassengerIdLinkExpression() {
+		return getDrlVariableName() + "." + BagMapping.BAG_PAX_OWNER_ID.getFieldName();
+	}
+
+	public String getFlightIdLinkExpression() {
+		return getDrlVariableName() + "." + BagMapping.BAG_FLIGHT_OWNER_ID.getFieldName();
 	}
 }

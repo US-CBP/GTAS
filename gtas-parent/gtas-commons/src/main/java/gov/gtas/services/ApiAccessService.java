@@ -15,17 +15,17 @@ import gov.gtas.model.ApiAccess;
 
 public interface ApiAccessService {
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public List<ApiAccess> findAll();
-	
+	public List<ApiAccess> findAll();
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccess create(ApiAccess externalUser);
-	
+	public ApiAccess create(ApiAccess externalUser);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccess update(ApiAccess externalUser);
-	
+	public ApiAccess update(ApiAccess externalUser);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccess delete(Long id);
-	
+	public ApiAccess delete(Long id);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccess findById(Long id);
+	public ApiAccess findById(Long id);
 }

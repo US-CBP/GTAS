@@ -60,8 +60,7 @@ import org.springframework.util.CollectionUtils;
 @Scope("prototype")
 public class TargetingServiceImpl implements TargetingService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TargetingServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(TargetingServiceImpl.class);
 
 	/* The rule engine to be used. */
 	private final RuleService ruleService;
@@ -86,16 +85,14 @@ public class TargetingServiceImpl implements TargetingService {
 
 	private final UserRepository userRepository;
 
-    private final FlightHitsRuleRepository flightHitsRuleRepository;
+	private final FlightHitsRuleRepository flightHitsRuleRepository;
 
-    private final FlightHitsWatchlistRepository flightHitsWatchlistRepository;
+	private final FlightHitsWatchlistRepository flightHitsWatchlistRepository;
 
 	private final MessageStatusRepository messageStatusRepository;
 
-	private final
-	CaseDispositionRepository caseDispositionRepository;
-    private final ApplicationContext applicationContext;
-
+	private final CaseDispositionRepository caseDispositionRepository;
+	private final ApplicationContext applicationContext;
 
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
@@ -104,20 +101,14 @@ public class TargetingServiceImpl implements TargetingService {
 	 *            the auto-wired rule engine instance.
 	 */
 	@Autowired
-	public TargetingServiceImpl(final RuleService rulesvc,
-                                AppConfigurationService appConfigurationService,
-                                ApisMessageRepository apisMsgRepository,
-                                FlightHitsRuleRepository flightHitsRuleRepository,
-                                PassengerService passengerService,
-                                HitsSummaryRepository hitsSummaryRepository,
-                                CaseDispositionRepository caseDispositionRepository,
-                                AuditRecordRepository auditLogRepository,
-                                UserRepository userRepository,
-                                FlightHitsWatchlistRepository flightHitsWatchlistRepository,
-                                MessageStatusRepository messageStatusRepository,
-                                CaseDispositionService caseDispositionService,
-                                RuleMetaRepository ruleMetaRepository,
-                                AuditLogPersistenceService auditLogPersistenceService, ApplicationContext applicationContext) {
+	public TargetingServiceImpl(final RuleService rulesvc, AppConfigurationService appConfigurationService,
+			ApisMessageRepository apisMsgRepository, FlightHitsRuleRepository flightHitsRuleRepository,
+			PassengerService passengerService, HitsSummaryRepository hitsSummaryRepository,
+			CaseDispositionRepository caseDispositionRepository, AuditRecordRepository auditLogRepository,
+			UserRepository userRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
+			MessageStatusRepository messageStatusRepository, CaseDispositionService caseDispositionService,
+			RuleMetaRepository ruleMetaRepository, AuditLogPersistenceService auditLogPersistenceService,
+			ApplicationContext applicationContext) {
 		ruleService = rulesvc;
 		this.appConfigurationService = appConfigurationService;
 		this.apisMsgRepository = apisMsgRepository;
@@ -132,14 +123,14 @@ public class TargetingServiceImpl implements TargetingService {
 		this.caseDispositionService = caseDispositionService;
 		this.ruleMetaRepository = ruleMetaRepository;
 		this.auditLogPersistenceService = auditLogPersistenceService;
-        this.applicationContext = applicationContext;
+		this.applicationContext = applicationContext;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * gov.gtas.svc.TargetingService#analyzeApisMessage(gov.gtas.model.ApisMessage
-	 * )
+	 * gov.gtas.svc.TargetingService#analyzeApisMessage(gov.gtas.model.ApisMessage )
 	 */
 	@Override
 	@Transactional
@@ -148,18 +139,17 @@ public class TargetingServiceImpl implements TargetingService {
 
 		if (null == message) {
 			logger.error("message is null.");
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
 					"ApisMessage", "TargetingServiceImpl.analyzeApisMessage()");
 		}
 
-		RuleServiceRequest req = TargetingServiceUtils.createApisRequest(
-				message).getRuleServiceRequest();
+		RuleServiceRequest req = TargetingServiceUtils.createApisRequest(message).getRuleServiceRequest();
 		RuleServiceResult res = ruleService.invokeRuleEngine(req);
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
-		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
+		// make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService,
+				passengerService);
 
 		logger.info("Exiting analyzeApisMessage().");
 		return res;
@@ -168,19 +158,17 @@ public class TargetingServiceImpl implements TargetingService {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * gov.gtas.svc.TargetingService#applyRules(gov.gtas.bo.RuleServiceRequest,
+	 * @see gov.gtas.svc.TargetingService#applyRules(gov.gtas.bo.RuleServiceRequest,
 	 * java.lang.String)
 	 */
 	@Override
-	public RuleServiceResult applyRules(RuleServiceRequest request,
-			String drlRules) {
-		RuleServiceResult res = ruleService.invokeAdhocRulesFromString(
-				drlRules, request);
+	public RuleServiceResult applyRules(RuleServiceRequest request, String drlRules) {
+		RuleServiceResult res = ruleService.invokeAdhocRulesFromString(drlRules, request);
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
-		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
+		// make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService,
+				passengerService);
 
 		return res;
 	}
@@ -195,16 +183,16 @@ public class TargetingServiceImpl implements TargetingService {
 	public RuleServiceResult analyzeApisMessage(long messageId) {
 		ApisMessage msg = apisMsgRepository.findOne(messageId);
 		if (msg == null) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.MESSAGE_NOT_FOUND_ERROR_CODE,
-					messageId);
+			throw ErrorHandlerFactory.getErrorHandler()
+					.createException(RuleServiceConstants.MESSAGE_NOT_FOUND_ERROR_CODE, messageId);
 		}
 		RuleServiceResult res = this.analyzeApisMessage(msg);
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
-		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
+		// make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService,
+				passengerService);
 
 		return res;
 	}
@@ -233,12 +221,12 @@ public class TargetingServiceImpl implements TargetingService {
 
 	private List<RuleHitDetail> runRules(RuleExecutionContext ctx) {
 		List<RuleHitDetail> ret;
-		RuleServiceResult res = ruleService.invokeRuleEngine(ctx
-				.getRuleServiceRequest());
+		RuleServiceResult res = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest());
 		TargetingResultServices targetingResultServices = getTargetingResultOptions();
 		res = TargetingResultUtils.ruleResultPostProcesssing(res, targetingResultServices);
-		//make a call to Case Mgmt.
-		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService, passengerService);
+		// make a call to Case Mgmt.
+		TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(res.getResultList(), caseDispositionService,
+				passengerService);
 		ret = res.getResultList();
 		return ret;
 	}
@@ -251,76 +239,11 @@ public class TargetingServiceImpl implements TargetingService {
 		return targetingResultServices;
 	}
 
-
-    @Override
-    @Transactional
-    public RuleResultsWithMessageStatus analyzeLoadedMessages(
-            List<MessageStatus> source) {
-        logger.info("Entering analyzeLoadedMessages()");
-
-        RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
-        if (source.isEmpty()) {
-            return ruleResultsWithMessageStatus;
-        }
-        List<Message> target = new ArrayList<>();
-        List<MessageStatus> procssedMessages = new ArrayList<>();
-        for (MessageStatus ms : source) {
-            Message message = ms.getMessage();
-            target.add(message);
-            procssedMessages.add(ms);
-        }
-        ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
-
-        RuleResults ruleResults = null;
-        try {
-            logger.info("About to execute rules");
-            ruleResults = executeRules(target);
-            logger.info("updating messages status from loaded to analyzed.");
-            for (MessageStatus ms : procssedMessages) {
-                ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
-            }
-            messageStatusRepository.saveAll(procssedMessages);
-            ruleResultsWithMessageStatus.setRuleResults(ruleResults);
-            ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
-            logger.info("Exiting analyzeLoadedMessages()");
-            return ruleResultsWithMessageStatus;
-        } catch (CommonServiceException cse) {
-            if (cse.getErrorCode().equals(
-                    RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
-                    || cse.getErrorCode().equals(
-                    RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE)) {
-                logger.info("************************");
-                logger.info(cse.getMessage());
-                logger.info("************************");
-                for (MessageStatus ms : procssedMessages) {
-                    ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
-                    messageStatusRepository.saveAll(procssedMessages);
-                }
-            } else {
-                for (MessageStatus ms : procssedMessages) {
-                    ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
-                    messageStatusRepository.saveAll(procssedMessages);
-                }
-                throw cse;
-            }
-        }
-        ruleResultsWithMessageStatus.setRuleResults(ruleResults);
-        return ruleResultsWithMessageStatus;
-    }
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see gov.gtas.svc.TargetingService#analyzeLoadedMessages(boolean)
-	 */
 	@Override
-	public RuleResultsWithMessageStatus analyzeLoadedMessages(
-			final boolean updateProcesssedMessageStat) {
-		logger.debug("Entering analyzeLoadedMessages()");
-		int messageLimit = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
-		List<MessageStatus> source =
-				messageStatusRepository
-				.getMessagesFromStatus(
-				MessageStatusEnum.LOADED.getName(), messageLimit);
+	@Transactional
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(List<MessageStatus> source) {
+		logger.info("Entering analyzeLoadedMessages()");
+
 		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
 		if (source.isEmpty()) {
 			return ruleResultsWithMessageStatus;
@@ -329,7 +252,67 @@ public class TargetingServiceImpl implements TargetingService {
 		List<MessageStatus> procssedMessages = new ArrayList<>();
 		for (MessageStatus ms : source) {
 			Message message = ms.getMessage();
-		    target.add(message);
+			target.add(message);
+			procssedMessages.add(ms);
+		}
+		ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
+
+		RuleResults ruleResults = null;
+		try {
+			logger.info("About to execute rules");
+			ruleResults = executeRules(target);
+			logger.info("updating messages status from loaded to analyzed.");
+			for (MessageStatus ms : procssedMessages) {
+				ms.setMessageStatusEnum(MessageStatusEnum.RUNNING_RULES);
+			}
+			messageStatusRepository.saveAll(procssedMessages);
+			ruleResultsWithMessageStatus.setRuleResults(ruleResults);
+			ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
+			logger.info("Exiting analyzeLoadedMessages()");
+			return ruleResultsWithMessageStatus;
+		} catch (CommonServiceException cse) {
+			if (cse.getErrorCode().equals(RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
+					|| cse.getErrorCode().equals(RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE)) {
+				logger.info("************************");
+				logger.info(cse.getMessage());
+				logger.info("************************");
+				for (MessageStatus ms : procssedMessages) {
+					ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
+					messageStatusRepository.saveAll(procssedMessages);
+				}
+			} else {
+				for (MessageStatus ms : procssedMessages) {
+					ms.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING);
+					messageStatusRepository.saveAll(procssedMessages);
+				}
+				throw cse;
+			}
+		}
+		ruleResultsWithMessageStatus.setRuleResults(ruleResults);
+		return ruleResultsWithMessageStatus;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see gov.gtas.svc.TargetingService#analyzeLoadedMessages(boolean)
+	 */
+	@Override
+	public RuleResultsWithMessageStatus analyzeLoadedMessages(final boolean updateProcesssedMessageStat) {
+		logger.debug("Entering analyzeLoadedMessages()");
+		int messageLimit = Integer.parseInt(
+				appConfigurationService.findByOption(AppConfigurationRepository.MAX_MESSAGES_PER_RULE_RUN).getValue());
+		List<MessageStatus> source = messageStatusRepository.getMessagesFromStatus(MessageStatusEnum.LOADED.getName(),
+				messageLimit);
+		RuleResultsWithMessageStatus ruleResultsWithMessageStatus = new RuleResultsWithMessageStatus();
+		if (source.isEmpty()) {
+			return ruleResultsWithMessageStatus;
+		}
+		List<Message> target = new ArrayList<>();
+		List<MessageStatus> procssedMessages = new ArrayList<>();
+		for (MessageStatus ms : source) {
+			Message message = ms.getMessage();
+			target.add(message);
 			procssedMessages.add(ms);
 		}
 		ruleResultsWithMessageStatus.setMessageStatusList(procssedMessages);
@@ -350,10 +333,8 @@ public class TargetingServiceImpl implements TargetingService {
 			logger.debug("Exiting analyzeLoadedMessages()");
 			return ruleResultsWithMessageStatus;
 		} catch (CommonServiceException cse) {
-			if (cse.getErrorCode().equals(
-					RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
-					|| cse.getErrorCode().equals(
-							RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE)) {
+			if (cse.getErrorCode().equals(RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE)
+					|| cse.getErrorCode().equals(RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE)) {
 				logger.info("************************");
 				logger.info(cse.getMessage());
 				logger.info("************************");
@@ -377,63 +358,57 @@ public class TargetingServiceImpl implements TargetingService {
 		return ruleResultsWithMessageStatus;
 	}
 
+	public RuleExecutionContext createPnrApisRequestContext(final List<Message> loadedMessages) {
+		logger.info("Entering createPnrApisRequestContext().");
+		List<Pnr> pnrList = new ArrayList<>();
+		List<ApisMessage> apisMessages = new ArrayList<>();
+		if (loadedMessages != null) {
+			for (Message message : loadedMessages) {
+				if (message instanceof ApisMessage) {
+					apisMessages.add((ApisMessage) message);
+				} else if (message instanceof Pnr) {
+					pnrList.add((Pnr) message);
+				}
+			}
+		}
+		RuleEngineRequestBuilder bldr = applicationContext.getBean(RuleEngineRequestBuilder.class);
 
-    public RuleExecutionContext createPnrApisRequestContext(
-            final List<Message> loadedMessages) {
-        logger.info("Entering createPnrApisRequestContext().");
-        List<Pnr> pnrList = new ArrayList<>();
-        List<ApisMessage> apisMessages = new ArrayList<>();
-        if (loadedMessages != null) {
-            for (Message message : loadedMessages) {
-                if (message instanceof ApisMessage) {
-                    apisMessages.add((ApisMessage) message);
-                } else if (message instanceof Pnr) {
-                    pnrList.add((Pnr) message);
-                }
-            }
-        }
-        RuleEngineRequestBuilder bldr = applicationContext.getBean(RuleEngineRequestBuilder.class);
+		if (!pnrList.isEmpty()) {
+			bldr.addPnr(pnrList);
+		}
+		if (!apisMessages.isEmpty()) {
+			bldr.addApisMessage(apisMessages);
+		}
 
-        if (!pnrList.isEmpty()) {
-            bldr.addPnr(pnrList);
-        }
-        if (!apisMessages.isEmpty()) {
-            bldr.addApisMessage(apisMessages);
-        }
+		RuleExecutionContext context = new RuleExecutionContext();
+		context.setPaxFlightTuples(bldr.getPassengerFlightSet());
 
-        RuleExecutionContext context = new RuleExecutionContext();
-        context.setPaxFlightTuples(bldr.getPassengerFlightSet());
-
-        context.setRuleServiceRequest(bldr.build());
-        logger.info("Exiting createPnrApisRequestContext().");
-        return context;
-    }
+		context.setRuleServiceRequest(bldr.build());
+		logger.info("Exiting createPnrApisRequestContext().");
+		return context;
+	}
 
 	private RuleResults executeRules(List<Message> target) {
 		logger.debug("Entering executeRules().");
-        RuleExecutionContext ctx = createPnrApisRequestContext(target);
+		RuleExecutionContext ctx = createPnrApisRequestContext(target);
 		logger.debug("Running Rule set.");
 		// default knowledge Base is the UDR KB
-		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx
-				.getRuleServiceRequest());
+		RuleServiceResult udrResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest());
 		logger.debug("Ran Rule set.");
 
-		if (udrResult != null)
-                {
-                    RuleExecutionStatistics res = udrResult.getExecutionStatistics();
-                    int totalRulesFired = res.getTotalRulesFired();
-                    List<String> ruleFireSequence = res.getRuleFiringSequence();
-                    logger.debug("Total UDR rules fired: " + totalRulesFired);
-                    logger.debug("\n****************UDR Rule firing sequence***************************\n");
-                    for (String str : ruleFireSequence)
-                    {
-                       logger.debug("UDR Rule fired: " + str);
-                    }
-                    logger.debug("\n\n**********************************************************************");
-                }
+		if (udrResult != null) {
+			RuleExecutionStatistics res = udrResult.getExecutionStatistics();
+			int totalRulesFired = res.getTotalRulesFired();
+			List<String> ruleFireSequence = res.getRuleFiringSequence();
+			logger.debug("Total UDR rules fired: " + totalRulesFired);
+			logger.debug("\n****************UDR Rule firing sequence***************************\n");
+			for (String str : ruleFireSequence) {
+				logger.debug("UDR Rule fired: " + str);
+			}
+			logger.debug("\n\n**********************************************************************");
+		}
 
-		RuleServiceResult wlResult = ruleService.invokeRuleEngine(
-				ctx.getRuleServiceRequest(),
+		RuleServiceResult wlResult = ruleService.invokeRuleEngine(ctx.getRuleServiceRequest(),
 				WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
 		RuleResults ruleResults = new RuleResults();
 		ruleResults.setUdrResult(udrResult);
@@ -448,22 +423,24 @@ public class TargetingServiceImpl implements TargetingService {
 		Set<Case> casesSet = new HashSet<>();
 		if (ruleResults.getUdrResult() != null) {
 			RuleServiceResult udrResult = ruleResults.getUdrResult();
-			udrResult = TargetingResultUtils
-					.ruleResultPostProcesssing(udrResult, targetingResultServices);
-			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult.getResultList(), caseDispositionService, passengerService));
+			udrResult = TargetingResultUtils.ruleResultPostProcesssing(udrResult, targetingResultServices);
+			Set<Case> resultCases = (TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult.getResultList(),
+					caseDispositionService, passengerService));
 			mergeSets(casesSet, resultCases);
 			ruleResults.setUdrResult(udrResult);
 		}
 		if (ruleResults.getWatchListResult() != null) {
 			RuleServiceResult watchlistResult = ruleResults.getWatchListResult();
 			watchlistResult = TargetingResultUtils.ruleResultPostProcesssing(watchlistResult, targetingResultServices);
-			//make a call to Case Mgmt.
-			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(watchlistResult.getResultList(), caseDispositionService, passengerService);
+			// make a call to Case Mgmt.
+			Set<Case> resultCases = TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(
+					watchlistResult.getResultList(), caseDispositionService, passengerService);
 			mergeSets(casesSet, resultCases);
 			ruleResults.setWatchListResult(watchlistResult);
 		}
 
-		RuleServiceResult ruleServiceResult = new CompositeRuleServiceResult(ruleResults.getWatchListResult(), ruleResults.getUdrResult());
+		RuleServiceResult ruleServiceResult = new CompositeRuleServiceResult(ruleResults.getWatchListResult(),
+				ruleResults.getUdrResult());
 		TargetingResultUtils.updateRuleExecutionContext(ruleServiceResult, ruleResults);
 		return casesSet;
 	}
@@ -480,6 +457,7 @@ public class TargetingServiceImpl implements TargetingService {
 			}
 		}
 	}
+
 	/**
 	 * Filtering whitelist.
 	 *
@@ -487,69 +465,62 @@ public class TargetingServiceImpl implements TargetingService {
 	 *            the w vos
 	 * @param passenger
 	 *            the passenger
-	 * @return true, if successful
-	if (udrResult == null && wlResult == null) {
-	// currently only two knowledgebases: udr and Watchlist
-	KnowledgeBase udrKb = rulePersistenceService
-	.findUdrKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME);
-	if (udrKb == null) {
-	KnowledgeBase wlKb = rulePersistenceService
-	.findUdrKnowledgeBase(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
-	if (wlKb == null) {
-	throw ErrorHandlerFactory
-	.getErrorHandler()
-	.createException(
-	RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE,
-	RuleConstants.UDR_KNOWLEDGE_BASE_NAME
-	+ "/"
-	+ WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
-	} else { // No enabled but disabled wl rule exists
-	throw ErrorHandlerFactory
-	.getErrorHandler()
-	.createException(
-	RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
-	RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE);
-	}
-	} else { // No enabled but disabled udr rule exists
-	throw ErrorHandlerFactory.getErrorHandler().createException(
-	RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
-	RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE);
-	}
-	}
-	Bench.end("fourth", "executeRules invokeRuleEngine second end");
-	// eliminate duplicates
-	TargetingResultServices targetingResultServices = getTargetingResultOptions();
-	if (udrResult != null) {
-
-	logger.debug("Eliminate duplicates from UDR rule running.");
-	Bench.start("fifth", "executeRules TargetingResultUtils ruleResultPostProcesssing udrResult start");
-	udrResult = TargetingResultUtils
-	.ruleResultPostProcesssing(udrResult, targetingResultServices);
-	Bench.end("fifth", "executeRules TargetingResultUtils ruleResultPostProcesssing udrResult end");
-	//make a call to Case Mgmt.
-	Bench.start("sixth", "executeRules TargetingResultCaseMgmtUtils ruleResultPostProcesssing udrResult start");
-	TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult, caseDispositionService, passengerService);
-	Bench.end("sixth", "executeRules TargetingResultCaseMgmtUtils ruleResultPostProcesssing udrResult end");
-
-	}
-	if (wlResult != null) {
-	logger.debug("Eliminate duplicates from watchlist rule running.");
-	Bench.start("seventh", "executeRules TargetingResultUtils ruleResultPostProcesssing wlResult start");
-	wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult, targetingResultServices);
-	Bench.end("seventh", "executeRules TargetingResultUtils ruleResultPostProcesssing wlResult end");
-	//make a call to Case Mgmt.
-	Bench.start("eighth", "executeRules TargetingResultUtils TargetingResultCaseMgmtUtils wlResult start");
-	TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult, caseDispositionService, passengerService);
-	Bench.end("eighth", "executeRules TargetingResultUtils TargetingResultCaseMgmtUtils wlResult end");
-
-	}
-
-	TargetingResultUtils.updateRuleExecutionContext(ctx,
-	new CompositeRuleServiceResult(udrResult, wlResult));
-
+	 * @return true, if successful if (udrResult == null && wlResult == null) { //
+	 *         currently only two knowledgebases: udr and Watchlist KnowledgeBase
+	 *         udrKb = rulePersistenceService
+	 *         .findUdrKnowledgeBase(RuleConstants.UDR_KNOWLEDGE_BASE_NAME); if
+	 *         (udrKb == null) { KnowledgeBase wlKb = rulePersistenceService
+	 *         .findUdrKnowledgeBase(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME); if
+	 *         (wlKb == null) { throw ErrorHandlerFactory .getErrorHandler()
+	 *         .createException( RuleServiceConstants.KB_NOT_FOUND_ERROR_CODE,
+	 *         RuleConstants.UDR_KNOWLEDGE_BASE_NAME + "/" +
+	 *         WatchlistConstants.WL_KNOWLEDGE_BASE_NAME); } else { // No enabled
+	 *         but disabled wl rule exists throw ErrorHandlerFactory
+	 *         .getErrorHandler() .createException(
+	 *         RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
+	 *         RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE); } } else { // No
+	 *         enabled but disabled udr rule exists throw
+	 *         ErrorHandlerFactory.getErrorHandler().createException(
+	 *         RuleServiceConstants.NO_ENABLED_RULE_ERROR_CODE,
+	 *         RuleServiceConstants.NO_ENABLED_RULE_ERROR_MESSAGE); } }
+	 *         Bench.end("fourth", "executeRules invokeRuleEngine second end"); //
+	 *         eliminate duplicates TargetingResultServices targetingResultServices
+	 *         = getTargetingResultOptions(); if (udrResult != null) {
+	 * 
+	 *         logger.debug("Eliminate duplicates from UDR rule running.");
+	 *         Bench.start("fifth", "executeRules TargetingResultUtils
+	 *         ruleResultPostProcesssing udrResult start"); udrResult =
+	 *         TargetingResultUtils .ruleResultPostProcesssing(udrResult,
+	 *         targetingResultServices); Bench.end("fifth", "executeRules
+	 *         TargetingResultUtils ruleResultPostProcesssing udrResult end");
+	 *         //make a call to Case Mgmt. Bench.start("sixth", "executeRules
+	 *         TargetingResultCaseMgmtUtils ruleResultPostProcesssing udrResult
+	 *         start");
+	 *         TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(udrResult,
+	 *         caseDispositionService, passengerService); Bench.end("sixth",
+	 *         "executeRules TargetingResultCaseMgmtUtils ruleResultPostProcesssing
+	 *         udrResult end");
+	 * 
+	 *         } if (wlResult != null) { logger.debug("Eliminate duplicates from
+	 *         watchlist rule running."); Bench.start("seventh", "executeRules
+	 *         TargetingResultUtils ruleResultPostProcesssing wlResult start");
+	 *         wlResult = TargetingResultUtils.ruleResultPostProcesssing(wlResult,
+	 *         targetingResultServices); Bench.end("seventh", "executeRules
+	 *         TargetingResultUtils ruleResultPostProcesssing wlResult end"); //make
+	 *         a call to Case Mgmt. Bench.start("eighth", "executeRules
+	 *         TargetingResultUtils TargetingResultCaseMgmtUtils wlResult start");
+	 *         TargetingResultCaseMgmtUtils.ruleResultPostProcesssing(wlResult,
+	 *         caseDispositionService, passengerService); Bench.end("eighth",
+	 *         "executeRules TargetingResultUtils TargetingResultCaseMgmtUtils
+	 *         wlResult end");
+	 * 
+	 *         }
+	 * 
+	 *         TargetingResultUtils.updateRuleExecutionContext(ctx, new
+	 *         CompositeRuleServiceResult(udrResult, wlResult));
+	 * 
 	 */
-	private boolean filteringWhitelist(List<WhitelistVo> wVos,
-			Passenger passenger) {
+	private boolean filteringWhitelist(List<WhitelistVo> wVos, Passenger passenger) {
 		if (wVos.isEmpty())
 			return false;
 		Set<Document> docs = passenger.getDocuments();
@@ -595,8 +566,7 @@ public class TargetingServiceImpl implements TargetingService {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * gov.gtas.svc.TargetingService#retrievePnr(gov.gtas.model.MessageStatus)
+	 * @see gov.gtas.svc.TargetingService#retrievePnr(gov.gtas.model.MessageStatus)
 	 */
 	@Override
 	@Transactional
@@ -608,13 +578,12 @@ public class TargetingServiceImpl implements TargetingService {
 	 * (non-Javadoc)
 	 *
 	 * @see
-	 * gov.gtas.svc.TargetingService#updateApisMessage(gov.gtas.model.ApisMessage
-	 * , gov.gtas.model.MessageStatus)
+	 * gov.gtas.svc.TargetingService#updateApisMessage(gov.gtas.model.ApisMessage ,
+	 * gov.gtas.model.MessageStatus)
 	 */
 	@Override
 	@Transactional
-	public void updateApisMessage(ApisMessage message,
-			MessageStatus messageStatus) {
+	public void updateApisMessage(ApisMessage message, MessageStatus messageStatus) {
 		ApisMessage apisMessage = apisMsgRepository.findOne(message.getId());
 		if (apisMessage != null) {
 			apisMessage.setStatus(messageStatus);
@@ -641,7 +610,7 @@ public class TargetingServiceImpl implements TargetingService {
 	@Override
 	public RuleResultsWithMessageStatus runningRuleEngine() {
 		logger.debug("Entering runningRuleEngine().");
-	  	return analyzeLoadedMessages(true);
+		return analyzeLoadedMessages(true);
 	}
 
 	@Transactional
@@ -650,7 +619,7 @@ public class TargetingServiceImpl implements TargetingService {
 		messageStatusRepository.saveAll(messageStatuses);
 	}
 
-    public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult) {
+	public List<TargetingServiceResults> createHitsAndCases(RuleResults ruleRunningResult) {
 		logger.debug("in create hits and cases");
 		List<TargetingServiceResults> targetingServiceResults = new ArrayList<>();
 		if (ruleRunningResult != null && ruleRunningResult.hasResults()) {
@@ -665,17 +634,18 @@ public class TargetingServiceImpl implements TargetingService {
 		return targetingServiceResults;
 	}
 
-
 	@Transactional
 	public void saveEverything(TargetingServiceResults targetingServiceResults) {
 		try {
 			if (targetingServiceResults != null) {
 				Set<Long> uniqueFlights = new HashSet<>();
-				//The hits summary and the cases can be null or empty due to filtering date - checks required before save.
+				// The hits summary and the cases can be null or empty due to filtering date -
+				// checks required before save.
 				if (targetingServiceResults.getCaseSet() != null && !(targetingServiceResults.getCaseSet().isEmpty())) {
 					caseDispositionRepository.saveAll(targetingServiceResults.getCaseSet());
 				}
-				if (targetingServiceResults.getHitsSummaryList() != null && !(targetingServiceResults.getHitsSummaryList().isEmpty())) {
+				if (targetingServiceResults.getHitsSummaryList() != null
+						&& !(targetingServiceResults.getHitsSummaryList().isEmpty())) {
 					hitsSummaryRepository.saveAll(targetingServiceResults.getHitsSummaryList());
 					for (HitsSummary s : targetingServiceResults.getHitsSummaryList()) {
 						uniqueFlights.add(s.getFlightId());
@@ -689,15 +659,13 @@ public class TargetingServiceImpl implements TargetingService {
 		}
 	}
 
-
 	/**
 	 * Write audit log for targeting run.
 	 *
 	 * @param targetingResult
 	 *            the targeting result
 	 */
-	private void writeAuditLogForTargetingRun(
-			TargetingServiceResults targetingResult) {
+	private void writeAuditLogForTargetingRun(TargetingServiceResults targetingResult) {
 		try {
 			Set<Long> passengerHits = new HashSet<>();
 			int ruleHits = 0;
@@ -707,18 +675,15 @@ public class TargetingServiceImpl implements TargetingService {
 				wlHits += hit.getWatchListHitCount();
 				passengerHits.add(hit.getPaxId());
 			}
-			//IF IMPLEMENTING WHITELIST CHECK SOURCE CONTROL(i.e. git) HISTORY.
-			AuditActionTarget target = new AuditActionTarget(
-					AuditActionType.TARGETING_RUN, "GTAS Rule Engine", null);
+			// IF IMPLEMENTING WHITELIST CHECK SOURCE CONTROL(i.e. git) HISTORY.
+			AuditActionTarget target = new AuditActionTarget(AuditActionType.TARGETING_RUN, "GTAS Rule Engine", null);
 			AuditActionData actionData = new AuditActionData();
 			actionData.addProperty("totalRuleHits", String.valueOf(ruleHits));
 			actionData.addProperty("watchlistHits", String.valueOf(wlHits));
-			actionData.addProperty("totalPassengerHits",
-					String.valueOf(passengerHits.size()));
+			actionData.addProperty("totalPassengerHits", String.valueOf(passengerHits.size()));
 			String message = "Targeting run on " + new Date();
-			auditLogPersistenceService.create(AuditActionType.TARGETING_RUN,
-					target.toString(), actionData.toString(), message,
-					GTAS_APPLICATION_USERID);
+			auditLogPersistenceService.create(AuditActionType.TARGETING_RUN, target.toString(), actionData.toString(),
+					message, GTAS_APPLICATION_USERID);
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
@@ -737,82 +702,74 @@ public class TargetingServiceImpl implements TargetingService {
 			return;
 		}
 		logger.debug("update rule hit count on flights.");
-        Set<FlightHitsRule> flightHitsRules = new HashSet<>();
-        Set<FlightHitsWatchlist> flightHitsWatchlists = new HashSet<>();
-		for (Long flightId : flights){
+		Set<FlightHitsRule> flightHitsRules = new HashSet<>();
+		Set<FlightHitsWatchlist> flightHitsWatchlists = new HashSet<>();
+		for (Long flightId : flights) {
 			Integer ruleHits = hitsSummaryRepository.ruleHitCount(flightId);
 			FlightHitsRule ruleFlightHits = new FlightHitsRule(flightId, ruleHits);
-            flightHitsRules.add(ruleFlightHits);
+			flightHitsRules.add(ruleFlightHits);
 
 			Integer watchlistHit = hitsSummaryRepository.watchlistHitCount(flightId);
 			FlightHitsWatchlist watchlistHitCount = new FlightHitsWatchlist(flightId, watchlistHit);
-            flightHitsWatchlists.add(watchlistHitCount);
-        }
-        flightHitsRuleRepository.saveAll(flightHitsRules);
-        flightHitsWatchlistRepository.saveAll(flightHitsWatchlists);
+			flightHitsWatchlists.add(watchlistHitCount);
+		}
+		flightHitsRuleRepository.saveAll(flightHitsRules);
+		flightHitsWatchlistRepository.saveAll(flightHitsWatchlists);
 	}
 
-	private Map<Long, Passenger> makePassengerMap(Collection<TargetSummaryVo> targetSummaryVoList)
-        {
-            List<Long> passengerIdList = new ArrayList<>();
-            List<Passenger> passengerResultList = null;
-            Map<Long, Passenger> passengerMap = new HashMap<>();
+	private Map<Long, Passenger> makePassengerMap(Collection<TargetSummaryVo> targetSummaryVoList) {
+		List<Long> passengerIdList = new ArrayList<>();
+		List<Passenger> passengerResultList = null;
+		Map<Long, Passenger> passengerMap = new HashMap<>();
 
-            for (TargetSummaryVo tsvo : targetSummaryVoList)
-            {
-               Long passengerId = tsvo.getPassengerId();
-               passengerIdList.add(passengerId);
+		for (TargetSummaryVo tsvo : targetSummaryVoList) {
+			Long passengerId = tsvo.getPassengerId();
+			passengerIdList.add(passengerId);
 
-            }
+		}
 
-            if (!passengerIdList.isEmpty())
-            {
-                passengerResultList = passengerService.getPaxByPaxIdList(passengerIdList);
+		if (!passengerIdList.isEmpty()) {
+			passengerResultList = passengerService.getPaxByPaxIdList(passengerIdList);
 
-                for (Passenger passenger :  passengerResultList)
-                {
-                   passengerMap.put(passenger.getId(), passenger);
+			for (Passenger passenger : passengerResultList) {
+				passengerMap.put(passenger.getId(), passenger);
 
-                }
-            }
-            return passengerMap;
+			}
+		}
+		return passengerMap;
 
-        }
+	}
 
-	private Map<Long, Flight> makeFlightMap(Collection<TargetSummaryVo> targetSummaryVoList)
-        {
-            List<Long> flightIdList = new ArrayList<>();
-            List<Flight> flightResultList = null;
-            Map<Long, Flight> flightMap = new HashMap<>();
+	private Map<Long, Flight> makeFlightMap(Collection<TargetSummaryVo> targetSummaryVoList) {
+		List<Long> flightIdList = new ArrayList<>();
+		List<Flight> flightResultList = null;
+		Map<Long, Flight> flightMap = new HashMap<>();
 
-            for (TargetSummaryVo tsvo : targetSummaryVoList)
-            {
-               Long flightId = tsvo.getFlightId();
-               flightIdList.add(flightId);
-            }
+		for (TargetSummaryVo tsvo : targetSummaryVoList) {
+			Long flightId = tsvo.getFlightId();
+			flightIdList.add(flightId);
+		}
 
-            if (!flightIdList.isEmpty())
-            {
-                flightResultList = passengerService.getFlightsByIdList(flightIdList);
+		if (!flightIdList.isEmpty()) {
+			flightResultList = passengerService.getFlightsByIdList(flightIdList);
 
-                for (Flight flight : flightResultList)
-                {
-                    flightMap.put(flight.getId(), flight);
-                }
-            }
+			for (Flight flight : flightResultList) {
+				flightMap.put(flight.getId(), flight);
+			}
+		}
 
-            return flightMap;
+		return flightMap;
 
-        }
+	}
 
 	/**
 	 * Store hits info.
 	 *
-	 *            the rule running result
+	 * the rule running result
+	 * 
 	 * @return the list
 	 */
-	private List<HitsSummary> storeHitsInfo(
-			Collection<TargetSummaryVo> results) {
+	private List<HitsSummary> storeHitsInfo(Collection<TargetSummaryVo> results) {
 
 		List<HitsSummary> hitsSummaryList = new ArrayList<>();
 
@@ -854,24 +811,26 @@ public class TargetingServiceImpl implements TargetingService {
 			if (existingHits.contains(hSummary)) {
 				HitsSummary existingHitsSummary = existingHitsMap.get(hSummary.getPaxId());
 				for (HitDetail hitDetail : hSummary.getHitdetails()) {
-					//Recalculate rules and watchlist hits by counting each hit detail.
+					// Recalculate rules and watchlist hits by counting each hit detail.
 					if (isRuleHitDetail(hitDetail)) {
 						ruleHitCount++;
 					} else {
 						watchlistCount++;
 					}
 					if (!existingHitsSummary.getHitdetails().contains(hitDetail)) {
-						hitDetail.setParent(existingHitsSummary);  // set new HitDetail with new rule to existing HitSummary.
+						hitDetail.setParent(existingHitsSummary); // set new HitDetail with new rule to existing
+																	// HitSummary.
 						existingHitsSummary.getHitdetails().add(hitDetail);
 						updated++;
-                        existingHitsSummary.setSaveHits(true);
+						existingHitsSummary.setSaveHits(true);
 					}
 				}
-				//Existing hit will override the hit so update it instead of the hit summary passed in to the method.
+				// Existing hit will override the hit so update it instead of the hit summary
+				// passed in to the method.
 				existingHitsSummary.setRuleHitCount(ruleHitCount);
 				existingHitsSummary.setWatchListHitCount(watchlistCount);
 			} else {
-				//Calculate rules and watchlist hits by counting each hit detail.
+				// Calculate rules and watchlist hits by counting each hit detail.
 				for (HitDetail hitDetail : hSummary.getHitdetails()) {
 					newDetails++;
 					if (isRuleHitDetail(hitDetail)) {
@@ -880,13 +839,13 @@ public class TargetingServiceImpl implements TargetingService {
 						watchlistCount++;
 					}
 				}
-                hSummary.setSaveHits(true);
+				hSummary.setSaveHits(true);
 				hSummary.setWatchListHitCount(watchlistCount);
 				hSummary.setRuleHitCount(ruleHitCount);
 			}
 		}
 
-		//Replace existing hit summaries
+		// Replace existing hit summaries
 		for (HitsSummary updatedExistingHits : existingHits) {
 			if (hitsSummaryList.contains(updatedExistingHits)) {
 				hitsSummaryList.remove(updatedExistingHits);
@@ -894,14 +853,15 @@ public class TargetingServiceImpl implements TargetingService {
 			}
 		}
 
-        List<HitsSummary> filteredHitsSummaryList = hitsSummaryList.stream().filter(HitsSummary::getSaveHits).collect(Collectors.toList());
-        existingHits = existingHits.stream().filter(HitsSummary::getSaveHits).collect(Collectors.toSet());
-        int totalNewRecords = filteredHitsSummaryList.size() - existingHits.size();
+		List<HitsSummary> filteredHitsSummaryList = hitsSummaryList.stream().filter(HitsSummary::getSaveHits)
+				.collect(Collectors.toList());
+		existingHits = existingHits.stream().filter(HitsSummary::getSaveHits).collect(Collectors.toSet());
+		int totalNewRecords = filteredHitsSummaryList.size() - existingHits.size();
 		if (updated > 0 || newDetails > 0) {
-			logger.info("Added " + updated + " hit details to existing hit summaries. " +
-					"Created " + totalNewRecords + " new hit summaries with " + newDetails + " new details.");
+			logger.info("Added " + updated + " hit details to existing hit summaries. " + "Created " + totalNewRecords
+					+ " new hit summaries with " + newDetails + " new details.");
 		}
-        return filteredHitsSummaryList;
+		return filteredHitsSummaryList;
 	}
 
 	private boolean isRuleHitDetail(HitDetail hitDetail) {
@@ -909,18 +869,21 @@ public class TargetingServiceImpl implements TargetingService {
 	}
 
 	/**
-	 * @param hitSummmaryVo hits summary value object
+	 * @param hitSummmaryVo
+	 *            hits summary value object
 	 * @return HitsSummary
 	 */
-	private HitsSummary constructHitsInfo(TargetSummaryVo hitSummmaryVo, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, User gtasUser) {
-		//logger.info("Entering constructHitsInfo().");
+	private HitsSummary constructHitsInfo(TargetSummaryVo hitSummmaryVo, Map<Long, Flight> flightMap,
+			Map<Long, Passenger> passengerMap, User gtasUser) {
+		// logger.info("Entering constructHitsInfo().");
 		HitsSummary hitsSummary = new HitsSummary();
-                Passenger foundPassenger = passengerMap.get(hitSummmaryVo.getPassengerId());
+		Passenger foundPassenger = passengerMap.get(hitSummmaryVo.getPassengerId());
 
 		if (foundPassenger != null) {
 			logger.debug("Found passenger.");
-				hitsSummary.setPaxId(foundPassenger.getId());
-		//		writeAuditLogForTargetingPassenger(foundPassenger, hitSummmaryVo.getHitType().toString(), gtasUser);
+			hitsSummary.setPaxId(foundPassenger.getId());
+			// writeAuditLogForTargetingPassenger(foundPassenger,
+			// hitSummmaryVo.getHitType().toString(), gtasUser);
 
 		} else {
 			logger.debug("No passenger found. --> ");
@@ -943,7 +906,7 @@ public class TargetingServiceImpl implements TargetingService {
 			detailList.add(createHitDetail(hitsSummary, hdv));
 		}
 		hitsSummary.setHitdetails(detailList);
-		//logger.info("Exiting constructHitsInfo().");
+		// logger.info("Exiting constructHitsInfo().");
 		return hitsSummary;
 	}
 
@@ -953,31 +916,23 @@ public class TargetingServiceImpl implements TargetingService {
 	 * @param passenger
 	 *            the passenger
 	 */
-	private void writeAuditLogForTargetingPassenger(Passenger passenger,
-			String hitType, User gtasUser) {
+	private void writeAuditLogForTargetingPassenger(Passenger passenger, String hitType, User gtasUser) {
 		try {
 			AuditActionTarget target = new AuditActionTarget(passenger);
 			AuditActionData actionData = new AuditActionData();
 
-			actionData.addProperty("Nationality",
-					passenger.getPassengerDetails().getNationality());
-			actionData.addProperty("PassengerType",
-					passenger.getPassengerDetails().getPassengerType());
+			actionData.addProperty("Nationality", passenger.getPassengerDetails().getNationality());
+			actionData.addProperty("PassengerType", passenger.getPassengerDetails().getPassengerType());
 
-			String message = "API/PNR MESSAGE Ingest and Parsing  "
-					+ passenger.getCreatedAt();
-			auditLogRepository.save(new AuditRecord(
-					AuditActionType.MESSAGE_INGEST_PARSING, target.toString(),
+			String message = "API/PNR MESSAGE Ingest and Parsing  " + passenger.getCreatedAt();
+			auditLogRepository.save(new AuditRecord(AuditActionType.MESSAGE_INGEST_PARSING, target.toString(),
 					Status.SUCCESS, message, actionData.toString(), gtasUser, passenger.getCreatedAt()));
 
-			String message2 = new StringBuffer("Passenger Rule Hit with ")
-					.append(hitType).append(" HitType and Case Open run on ")
-					.append(Calendar.getInstance().getTime()).toString();
+			String message2 = new StringBuffer("Passenger Rule Hit with ").append(hitType)
+					.append(" HitType and Case Open run on ").append(Calendar.getInstance().getTime()).toString();
 
-			auditLogRepository
-					.save(new AuditRecord(AuditActionType.RULE_HIT_CASE_OPEN,
-							target.toString(), Status.SUCCESS, message2,
-							actionData.toString(), gtasUser, new Date()));
+			auditLogRepository.save(new AuditRecord(AuditActionType.RULE_HIT_CASE_OPEN, target.toString(),
+					Status.SUCCESS, message2, actionData.toString(), gtasUser, new Date()));
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
@@ -992,9 +947,8 @@ public class TargetingServiceImpl implements TargetingService {
 	 *            the hit detail vo
 	 * @return the hit detail
 	 */
-	private HitDetail createHitDetail(HitsSummary hitsSummary,
-			TargetDetailVo hitDetailVo) {
-		//logger.info("Entering createHitDetail().");
+	private HitDetail createHitDetail(HitsSummary hitsSummary, TargetDetailVo hitDetailVo) {
+		// logger.info("Entering createHitDetail().");
 		HitDetail hitDetail = new HitDetail();
 		if (hitDetailVo.getUdrRuleId() != null) {
 			logger.debug("Set UDR Rule Id.");
@@ -1020,17 +974,17 @@ public class TargetingServiceImpl implements TargetingService {
 		hitDetail.setHitType(hitDetailVo.getHitType().toString());
 
 		hitDetail.setParent(hitsSummary);
-		//logger.info("Exiting createHitDetail().");
+		// logger.info("Exiting createHitDetail().");
 		return hitDetail;
 	}
 
-	private Map<Long, Set<Flight>> getPaxIdFlightMap(RuleServiceResult res){
-		Map<Long,Set<Flight>> map = new HashMap<Long, Set<Flight>>();
+	private Map<Long, Set<Flight>> getPaxIdFlightMap(RuleServiceResult res) {
+		Map<Long, Set<Flight>> map = new HashMap<Long, Set<Flight>>();
 		Set<Flight> flights;
 
-		for(RuleHitDetail rhd : res.getResultList()){
+		for (RuleHitDetail rhd : res.getResultList()) {
 			flights = passengerService.getAllFlights(rhd.getPassengerId());
-			if(flights != null && flights.size() > 0){
+			if (flights != null && flights.size() > 0) {
 				map.put(rhd.getPassengerId(), flights);
 			}
 		}

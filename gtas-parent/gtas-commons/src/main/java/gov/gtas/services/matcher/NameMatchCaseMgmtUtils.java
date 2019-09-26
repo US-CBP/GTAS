@@ -17,69 +17,59 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 @Component
 public class NameMatchCaseMgmtUtils {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(NameMatchCaseMgmtUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(NameMatchCaseMgmtUtils.class);
 
-    @Autowired
-    CaseDispositionService caseDispositionService;
+	@Autowired
+	CaseDispositionService caseDispositionService;
 
-    /**
-     *
-     * @param ruleDescription
-     * @param pax_id
-     * @param wl_id
-     * @param flightId
-     * @param dispositionService
-     */
-    public boolean processPassengerFlight(String ruleDescription, Passenger passenger, Long wl_id,
-                                               Flight flight, Case existingCase,Map<Long, RuleCat> ruleCatMap) {
+	/**
+	 *
+	 * @param ruleDescription
+	 * @param pax_id
+	 * @param wl_id
+	 * @param flightId
+	 * @param dispositionService
+	 */
+	public boolean processPassengerFlight(String ruleDescription, Passenger passenger, Long wl_id, Flight flight,
+			Case existingCase, Map<Long, RuleCat> ruleCatMap) {
 
-        // Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
-        Long _tempPaxId = passenger.getId(); //pax_id;
-        Long flightId = flight.getId();
-        Passenger _tempPax = null;
-        String watchlistItemFlag = "wl_item";
-        String description = watchlistItemFlag + ruleDescription;
+		// Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
+		Long _tempPaxId = passenger.getId(); // pax_id;
+		Long flightId = flight.getId();
+		Passenger _tempPax = null;
+		String watchlistItemFlag = "wl_item";
+		String description = watchlistItemFlag + ruleDescription;
 
-        try {
-            _tempPax = passenger; //dispositionService.findPaxByID(_tempPaxId);
+		try {
+			_tempPax = passenger; // dispositionService.findPaxByID(_tempPaxId);
 
-            //if (_tempPax != null) {
-                String document = null;
-                for (Document documentItem : _tempPax.getDocuments()) {
-                    document = documentItem.getDocumentNumber();
-                }
+			// if (_tempPax != null) {
+			String document = null;
+			for (Document documentItem : _tempPax.getDocuments()) {
+				document = documentItem.getDocumentNumber();
+			}
 
-            Map<Long, Passenger> passengerMap = new HashMap<>();
-            Map<Long, Flight> flightMap = new HashMap<>();
-            Map<Long, Case> passengerFlightCaseMap = new HashMap<>();
-                passengerMap.put(passenger.getId(), passenger);
-                flightMap.put(flightId, flight);
-                if(existingCase != null)
-                	passengerFlightCaseMap.put(passenger.getId(), existingCase);
+			Map<Long, Passenger> passengerMap = new HashMap<>();
+			Map<Long, Flight> flightMap = new HashMap<>();
+			Map<Long, Case> passengerFlightCaseMap = new HashMap<>();
+			passengerMap.put(passenger.getId(), passenger);
+			flightMap.put(flightId, flight);
+			if (existingCase != null)
+				passengerFlightCaseMap.put(passenger.getId(), existingCase);
 
-           caseDispositionService
-                   .registerAndSaveNewCaseFromFuzzyMatching(flightId,
-                           passenger.getId(),
-                           _tempPax.getPassengerDetails().getFirstName()+" "+_tempPax.getPassengerDetails().getLastName(),
-                           _tempPax.getPassengerDetails().getPassengerType(),
-                           _tempPax.getPassengerDetails().getNationality(),
-                           _tempPax.getPassengerDetails().getDob(),
-                           document,
-                           description,
-                           wl_id,
-                           passengerFlightCaseMap,
-                           flightMap,
-                           passengerMap,
-                           ruleCatMap);
-          //  }
-        } catch (Exception ex) {
-            logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:" + wl_id + " set", ex);
-          }
-        return true;
-    }
+			caseDispositionService.registerAndSaveNewCaseFromFuzzyMatching(flightId, passenger.getId(),
+					_tempPax.getPassengerDetails().getFirstName() + " " + _tempPax.getPassengerDetails().getLastName(),
+					_tempPax.getPassengerDetails().getPassengerType(), _tempPax.getPassengerDetails().getNationality(),
+					_tempPax.getPassengerDetails().getDob(), document, description, wl_id, passengerFlightCaseMap,
+					flightMap, passengerMap, ruleCatMap);
+			// }
+		} catch (Exception ex) {
+			logger.error("Could not initiate a case for Flight:" + flightId + "  Pax:" + _tempPaxId + "  WatchList:"
+					+ wl_id + " set", ex);
+		}
+		return true;
+	}
 }

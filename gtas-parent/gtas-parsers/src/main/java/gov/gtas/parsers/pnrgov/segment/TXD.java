@@ -18,7 +18,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Tax information related to the given fare.(TXD++6.27::USD')
  */
 public class TXD extends Segment {
-    public TXD(List<Composite> composites) {
-        super(TXD.class.getSimpleName(), composites);
-    }
+	public TXD(List<Composite> composites) {
+		super(TXD.class.getSimpleName(), composites);
+	}
 }

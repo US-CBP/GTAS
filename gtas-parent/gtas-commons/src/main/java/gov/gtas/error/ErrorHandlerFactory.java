@@ -13,36 +13,32 @@ import org.apache.commons.lang3.StringUtils;
 public class ErrorHandlerFactory {
 	/*
 	 * This is the first element in the error handler chain. It is expected that
-	 * different modules will create their own specialized error handler and
-	 * attach it to the chain by calling registerErrorHandler.
+	 * different modules will create their own specialized error handler and attach
+	 * it to the chain by calling registerErrorHandler.
 	 */
 	private static ErrorHandler errorHandler = new BasicErrorHandler();
 	private static ErrorHandler errorHandlerDelegateChain;
 
 	/**
 	 * Creates the error handler chain.<br>
-	 * Note: It is expected that different modules will create their own
-	 * specialized error handler by deriving from the BasicErrorHandler class
-	 * and adding error codes and exception processors. This method is expected
-	 * to be called in the @PostConstruct method of a spring bean. Otherwise
-	 * this method should be called from the static initializer of the calling
-	 * class.
+	 * Note: It is expected that different modules will create their own specialized
+	 * error handler by deriving from the BasicErrorHandler class and adding error
+	 * codes and exception processors. This method is expected to be called in
+	 * the @PostConstruct method of a spring bean. Otherwise this method should be
+	 * called from the static initializer of the calling class.
 	 * 
 	 * @see gov.gtas.controller.UdrManagementController#addErrorHandlerDelegate(gov.gtas.error.GtasErrorHandler)
 	 * @param errorHandler
 	 *            the handler to register.
 	 */
-	public static synchronized void registerErrorHandler(
-			ErrorHandler errorHandler) {
+	public static synchronized void registerErrorHandler(ErrorHandler errorHandler) {
 		if (ErrorHandlerFactory.errorHandlerDelegateChain == null) {
 			ErrorHandlerFactory.errorHandlerDelegateChain = errorHandler;
 		} else {
-			ErrorHandlerFactory.errorHandlerDelegateChain
-					.addErrorHandlerDelegate(errorHandler);
+			ErrorHandlerFactory.errorHandlerDelegateChain.addErrorHandlerDelegate(errorHandler);
 		}
 		ErrorHandler newErrorHandler = new BasicErrorHandler();
-		newErrorHandler
-				.addErrorHandlerDelegate(ErrorHandlerFactory.errorHandlerDelegateChain);
+		newErrorHandler.addErrorHandlerDelegate(ErrorHandlerFactory.errorHandlerDelegateChain);
 
 		// reference assignment is atomic.
 		ErrorHandlerFactory.errorHandler = newErrorHandler;
@@ -65,13 +61,11 @@ public class ErrorHandlerFactory {
 	 *            exception.
 	 * @return the error details.
 	 */
-	public static ErrorDetailInfo createErrorDetails(String errorCode,
-			Exception cause, Object... args) {
+	public static ErrorDetailInfo createErrorDetails(String errorCode, Exception cause, Object... args) {
 		if (StringUtils.isEmpty(errorCode)) {
 			return ErrorHandlerFactory.errorHandler.processError(cause);
 		} else {
-			Exception ex = ErrorHandlerFactory.errorHandler.createException(
-					errorCode, cause, args);
+			Exception ex = ErrorHandlerFactory.errorHandler.createException(errorCode, cause, args);
 			return ErrorHandlerFactory.createErrorDetails(ex);
 		}
 	}
@@ -88,8 +82,7 @@ public class ErrorHandlerFactory {
 		return ErrorHandlerFactory.errorHandler.processError(exception);
 	}
 
-	public static void createAndThrowException(final String errorCode,
-			final Object... args) {
+	public static void createAndThrowException(final String errorCode, final Object... args) {
 		throw ErrorHandlerFactory.errorHandler.createException(errorCode, args);
 	}
 }

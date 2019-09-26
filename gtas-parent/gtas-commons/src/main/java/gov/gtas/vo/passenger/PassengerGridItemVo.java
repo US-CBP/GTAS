@@ -16,223 +16,225 @@ import java.util.Date;
 import java.util.List;
 
 public class PassengerGridItemVo extends BaseVo {
-    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
-    private static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
+	private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
+	private static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
 
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String suffix;
-    private String gender;
-    private String nationality;
-    private String passengerType;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SHORT_DATE_FORMAT)
-    private Date dob;
-    private String paxId;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String suffix;
+	private String gender;
+	private String nationality;
+	private String passengerType;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SHORT_DATE_FORMAT)
+	private Date dob;
+	private String paxId;
 
-    // flight info
-    private String flightId;
-    private String flightNumber;
-    private String fullFlightNumber;
-    private String carrier;
-    private Date etd;
-    private Date eta;
-    private String flightOrigin;
-    private String flightDestination;
+	// flight info
+	private String flightId;
+	private String flightNumber;
+	private String fullFlightNumber;
+	private String carrier;
+	private Date etd;
+	private Date eta;
+	private String flightOrigin;
+	private String flightDestination;
 
-    // hits info
-    private Boolean onRuleHitList = Boolean.FALSE;
-    private Boolean onGraphHitList = Boolean.FALSE;
-    private Boolean onWatchList = Boolean.FALSE;
-    private Boolean onWatchListDoc = Boolean.FALSE;
-    private Boolean onWatchListLink = Boolean.FALSE;
+	// hits info
+	private Boolean onRuleHitList = Boolean.FALSE;
+	private Boolean onGraphHitList = Boolean.FALSE;
+	private Boolean onWatchList = Boolean.FALSE;
+	private Boolean onWatchListDoc = Boolean.FALSE;
+	private Boolean onWatchListLink = Boolean.FALSE;
 
-    private List<DocumentVo> documents = new ArrayList<>();
+	private List<DocumentVo> documents = new ArrayList<>();
 
-    public void addDocument(DocumentVo d) {
-        documents.add(d);
-    }
+	public void addDocument(DocumentVo d) {
+		documents.add(d);
+	}
 
-    public List<DocumentVo> getDocuments() {
-        return documents;
-    }
+	public List<DocumentVo> getDocuments() {
+		return documents;
+	}
 
-    public String getMiddleName() {
-        return middleName;
-    }
+	public String getMiddleName() {
+		return middleName;
+	}
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-    public String getFlightOrigin() {
-        return flightOrigin;
-    }
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
 
-    public void setFlightOrigin(String flightOrigin) {
-        this.flightOrigin = flightOrigin;
-    }
+	public String getFlightOrigin() {
+		return flightOrigin;
+	}
 
-    public String getFlightDestination() {
-        return flightDestination;
-    }
+	public void setFlightOrigin(String flightOrigin) {
+		this.flightOrigin = flightOrigin;
+	}
 
-    public void setFlightDestination(String flightDestination) {
-        this.flightDestination = flightDestination;
-    }
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFlightDestination() {
+		return flightDestination;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFlightDestination(String flightDestination) {
+		this.flightDestination = flightDestination;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getSuffix() {
-        return suffix;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public String getSuffix() {
+		return suffix;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
-    public String getNationality() {
-        return nationality;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-    public String getPassengerType() {
-        return passengerType;
-    }
+	public String getNationality() {
+		return nationality;
+	}
 
-    public void setPassengerType(String passengerType) {
-        this.passengerType = passengerType;
-    }
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
 
-    public Date getDob() {
-        return dob;
-    }
+	public String getPassengerType() {
+		return passengerType;
+	}
 
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
+	public void setPassengerType(String passengerType) {
+		this.passengerType = passengerType;
+	}
 
-    public String getPaxId() {
-        return paxId;
-    }
+	public Date getDob() {
+		return dob;
+	}
 
-    public void setPaxId(String paxId) {
-        this.paxId = paxId;
-    }
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
 
-    public String getFlightId() {
-        return flightId;
-    }
+	public String getPaxId() {
+		return paxId;
+	}
 
-    public void setFlightId(String flightId) {
-        this.flightId = flightId;
-    }
+	public void setPaxId(String paxId) {
+		this.paxId = paxId;
+	}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+	public String getFlightId() {
+		return flightId;
+	}
 
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
+	public void setFlightId(String flightId) {
+		this.flightId = flightId;
+	}
 
-    public String getFullFlightNumber() {
-        return fullFlightNumber;
-    }
+	public String getFlightNumber() {
+		return flightNumber;
+	}
 
-    public void setFullFlightNumber(String fullFlightNumber) {
-        this.fullFlightNumber = fullFlightNumber;
-    }
+	public void setFlightNumber(String flightNumber) {
+		this.flightNumber = flightNumber;
+	}
 
-    public String getCarrier() {
-        return carrier;
-    }
+	public String getFullFlightNumber() {
+		return fullFlightNumber;
+	}
 
-    public void setCarrier(String carrier) {
-        this.carrier = carrier;
-    }
+	public void setFullFlightNumber(String fullFlightNumber) {
+		this.fullFlightNumber = fullFlightNumber;
+	}
 
-    public Date getEtd() {
-        return etd;
-    }
+	public String getCarrier() {
+		return carrier;
+	}
 
-    public void setEtd(Date etd) {
-        this.etd = etd;
-    }
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
 
-    public Date getEta() {
-        return eta;
-    }
+	public Date getEtd() {
+		return etd;
+	}
 
-    public void setEta(Date eta) {
-        this.eta = eta;
-    }
+	public void setEtd(Date etd) {
+		this.etd = etd;
+	}
 
-    public Boolean getOnRuleHitList() {
-        return onRuleHitList;
-    }
+	public Date getEta() {
+		return eta;
+	}
 
-    public void setOnRuleHitList(Boolean onRuleHitList) {
-        this.onRuleHitList = onRuleHitList;
-    }
+	public void setEta(Date eta) {
+		this.eta = eta;
+	}
 
-    public Boolean getOnGraphHitList() {
-        return onGraphHitList;
-    }
+	public Boolean getOnRuleHitList() {
+		return onRuleHitList;
+	}
 
-    public void setOnGraphHitList(Boolean onGraphHitList) {
-        this.onGraphHitList = onGraphHitList;
-    }
+	public void setOnRuleHitList(Boolean onRuleHitList) {
+		this.onRuleHitList = onRuleHitList;
+	}
 
-    public Boolean getOnWatchList() {
-        return onWatchList;
-    }
+	public Boolean getOnGraphHitList() {
+		return onGraphHitList;
+	}
 
-    public void setOnWatchList(Boolean onWatchList) {
-        this.onWatchList = onWatchList;
-    }
+	public void setOnGraphHitList(Boolean onGraphHitList) {
+		this.onGraphHitList = onGraphHitList;
+	}
 
-    public Boolean getOnWatchListDoc() {
-        return onWatchListDoc;
-    }
+	public Boolean getOnWatchList() {
+		return onWatchList;
+	}
 
-    public void setOnWatchListDoc(Boolean onWatchListDoc) {
-        this.onWatchListDoc = onWatchListDoc;
-    }
+	public void setOnWatchList(Boolean onWatchList) {
+		this.onWatchList = onWatchList;
+	}
 
-    public Boolean getOnWatchListLink() {
-        return onWatchListLink;
-    }
+	public Boolean getOnWatchListDoc() {
+		return onWatchListDoc;
+	}
 
-    public void setOnWatchListLink(Boolean onWatchListLink) {
-        this.onWatchListLink = onWatchListLink;
-    }
+	public void setOnWatchListDoc(Boolean onWatchListDoc) {
+		this.onWatchListDoc = onWatchListDoc;
+	}
 
-    public void setDocuments(List<DocumentVo> documents) {
-        this.documents = documents;
-    }
+	public Boolean getOnWatchListLink() {
+		return onWatchListLink;
+	}
+
+	public void setOnWatchListLink(Boolean onWatchListLink) {
+		this.onWatchListLink = onWatchListLink;
+	}
+
+	public void setDocuments(List<DocumentVo> documents) {
+		this.documents = documents;
+	}
 
 }

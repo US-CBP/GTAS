@@ -20,8 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public interface WhitelistService {
 
 	/**
-	 * Find and return the list of all Whitelist that have the "delete flag" set
-	 * to * "N".
+	 * Find and return the list of all Whitelist that have the "delete flag" set to
+	 * * "N".
 	 *
 	 * @return list of all whitelists.
 	 */
@@ -34,8 +34,8 @@ public interface WhitelistService {
 	 * @param id
 	 *            the Id of the whitelist to delete.
 	 * @param userId
-	 *            the user Id of the person deleting the whitelist (usually also
-	 *            the whitelist editor.).
+	 *            the user Id of the person deleting the whitelist (usually also the
+	 *            whitelist editor.).
 	 */
 	public void delete(Long id, String userId);
 
@@ -45,8 +45,8 @@ public interface WhitelistService {
 	 * @param wlv
 	 *            the WhitelistVo to create a new whitelist.
 	 * @param userId
-	 *            the user Id of the person persisting the whitelist (usually
-	 *            also the whitelist editor.)
+	 *            the user Id of the person persisting the whitelist (usually also
+	 *            the whitelist editor.)
 	 */
 	public Whitelist create(WhitelistVo wlv, String userId);
 
@@ -56,8 +56,8 @@ public interface WhitelistService {
 	 * @param wlv
 	 *            the WhitelistVo to update the existing whitelist.
 	 * @param userId
-	 *            the editor Id of the person updating the whitelist (usually
-	 *            also the whitelist editor).
+	 *            the editor Id of the person updating the whitelist (usually also
+	 *            the whitelist editor).
 	 */
 	public void update(WhitelistVo wlv, String userId);
 

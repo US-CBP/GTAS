@@ -11,13 +11,15 @@ import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
 /**
- * <p>ERC: APPLICATION ERROR INFORMATION
+ * <p>
+ * ERC: APPLICATION ERROR INFORMATION
  * 
- * <p>Ex:Application Error - Invalid Departure Time(ERC+103')
- * Ex:Invalid flight number(ERC+114')
+ * <p>
+ * Ex:Application Error - Invalid Departure Time(ERC+103') Ex:Invalid flight
+ * number(ERC+114')
  */
-public class ERC extends Segment{
-    public ERC(String name, List<Composite> composites) {
-        super(name, composites);
-    }
+public class ERC extends Segment {
+	public ERC(String name, List<Composite> composites) {
+		super(name, composites);
+	}
 }

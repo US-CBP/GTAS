@@ -12,23 +12,23 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class FlightPaxConditionBuilder extends EntityConditionBuilder {
 
-    public FlightPaxConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.FLIGHT_PAX.getEntityName());
-    }
+	public FlightPaxConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.FLIGHT_PAX.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
 
 	public String getPassengerIdLinkExpression() {
-		return getDrlVariableName()+"."+FlightPaxMapping.FLIGHT_PAX_PAX_OWNER_ID.getFieldName();
+		return getDrlVariableName() + "." + FlightPaxMapping.FLIGHT_PAX_PAX_OWNER_ID.getFieldName();
 	}
-	
-	public String getFlightIdLinkExpression(){
-		return getDrlVariableName()+"."+FlightPaxMapping.FLIGHT_PAX_FLIGHT_OWNER_ID.getFieldName();
+
+	public String getFlightIdLinkExpression() {
+		return getDrlVariableName() + "." + FlightPaxMapping.FLIGHT_PAX_FLIGHT_OWNER_ID.getFieldName();
 	}
 }

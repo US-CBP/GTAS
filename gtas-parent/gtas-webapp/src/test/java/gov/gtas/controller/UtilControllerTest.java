@@ -33,53 +33,55 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(MockitoJUnitRunner.class)
 public class UtilControllerTest {
 
-    private static final String EXPECTED_AIRPORT = "foo";
-    @Mock
-    HttpServletRequest httpServletRequest;
+	private static final String EXPECTED_AIRPORT = "foo";
+	@Mock
+	HttpServletRequest httpServletRequest;
 
-    @Mock
-    HttpSession httpSession;
+	@Mock
+	HttpSession httpSession;
 
-    @Mock
-    UserService userService;
+	@Mock
+	UserService userService;
 
-    @InjectMocks
-    UtilController utilController;
+	@InjectMocks
+	UtilController utilController;
 
-    @Before
-    public void before(){
-        initMocks(this);
-        Mockito.when(userService.isAdminUser("admin")).thenReturn(true);
-        Mockito.when(userService.isAdminUser("notAdmin")).thenReturn(false);
-        Mockito.when(httpServletRequest.getSession()).thenReturn(httpSession);
-        Mockito.when(httpSession.getAttribute(Constants.USER_PRIMARY_LOCATION)).thenReturn(EXPECTED_AIRPORT);
-    }
+	@Before
+	public void before() {
+		initMocks(this);
+		Mockito.when(userService.isAdminUser("admin")).thenReturn(true);
+		Mockito.when(userService.isAdminUser("notAdmin")).thenReturn(false);
+		Mockito.when(httpServletRequest.getSession()).thenReturn(httpSession);
+		Mockito.when(httpSession.getAttribute(Constants.USER_PRIMARY_LOCATION)).thenReturn(EXPECTED_AIRPORT);
+	}
 
-    @Test
-    public void adminPath() {
-        FlightSearchVo flightSearchVo = utilController.getFlightSearchVo(httpServletRequest, "admin");
-        List<FlightSearchVo.FlightDirectionVo> flightDirectionVos = flightSearchVo.getFlightDirectionList();
-        Set<String> actual = flightDirectionVos.stream().map(FlightSearchVo.FlightDirectionVo::getCode).collect(Collectors.toCollection(HashSet::new));
-        Set<String> expected = new HashSet<>();
-        expected.add("A");
-        expected.add("I");
-        expected.add("O");
-        Assert.assertTrue(flightSearchVo.isAdminUser());
-        Assert.assertEquals(actual, expected);
-        Assert.assertNull(flightSearchVo.getUserLocation());
-    }
+	@Test
+	public void adminPath() {
+		FlightSearchVo flightSearchVo = utilController.getFlightSearchVo(httpServletRequest, "admin");
+		List<FlightSearchVo.FlightDirectionVo> flightDirectionVos = flightSearchVo.getFlightDirectionList();
+		Set<String> actual = flightDirectionVos.stream().map(FlightSearchVo.FlightDirectionVo::getCode)
+				.collect(Collectors.toCollection(HashSet::new));
+		Set<String> expected = new HashSet<>();
+		expected.add("A");
+		expected.add("I");
+		expected.add("O");
+		Assert.assertTrue(flightSearchVo.isAdminUser());
+		Assert.assertEquals(actual, expected);
+		Assert.assertNull(flightSearchVo.getUserLocation());
+	}
 
-    @Test
-    public void nonAdminPath() {
-        FlightSearchVo flightSearchVo = utilController.getFlightSearchVo(httpServletRequest, "notAdmin");
-        List<FlightSearchVo.FlightDirectionVo> flightDirectionVos = flightSearchVo.getFlightDirectionList();
-        Set<String> actual = flightDirectionVos.stream().map(FlightSearchVo.FlightDirectionVo::getCode).collect(Collectors.toCollection(HashSet::new));
-        Set<String> expected = new HashSet<>();
-        expected.add("I");
-        expected.add("O");
-        Assert.assertFalse(flightSearchVo.isAdminUser());
-        Assert.assertEquals(actual, expected);
-        Assert.assertEquals(EXPECTED_AIRPORT, flightSearchVo.getUserLocation());
-    }
+	@Test
+	public void nonAdminPath() {
+		FlightSearchVo flightSearchVo = utilController.getFlightSearchVo(httpServletRequest, "notAdmin");
+		List<FlightSearchVo.FlightDirectionVo> flightDirectionVos = flightSearchVo.getFlightDirectionList();
+		Set<String> actual = flightDirectionVos.stream().map(FlightSearchVo.FlightDirectionVo::getCode)
+				.collect(Collectors.toCollection(HashSet::new));
+		Set<String> expected = new HashSet<>();
+		expected.add("I");
+		expected.add("O");
+		Assert.assertFalse(flightSearchVo.isAdminUser());
+		Assert.assertEquals(actual, expected);
+		Assert.assertEquals(EXPECTED_AIRPORT, flightSearchVo.getUserLocation());
+	}
 
 }

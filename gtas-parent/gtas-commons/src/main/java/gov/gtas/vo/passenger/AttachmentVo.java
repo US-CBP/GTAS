@@ -11,7 +11,7 @@ public class AttachmentVo {
 	private byte[] content;
 	private String contentType;
 	private Date created;
-    
+
 	public Integer getId() {
 		return id;
 	}
@@ -67,5 +67,5 @@ public class AttachmentVo {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-	
+
 }

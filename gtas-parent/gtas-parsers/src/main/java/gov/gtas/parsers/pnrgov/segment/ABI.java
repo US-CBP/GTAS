@@ -18,7 +18,7 @@ import gov.gtas.parsers.edifact.Segment;
  * (ABI+4+05FD28:GS+ATL++DL’)
  */
 public class ABI extends Segment {
-    public ABI(List<Composite> composites) {
-        super(ABI.class.getSimpleName(), composites);
-    }
+	public ABI(List<Composite> composites) {
+		super(ABI.class.getSimpleName(), composites);
+	}
 }

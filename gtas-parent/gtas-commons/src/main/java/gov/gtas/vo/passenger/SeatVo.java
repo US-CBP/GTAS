@@ -17,7 +17,7 @@ public class SeatVo {
 	private String middleInitial;
 
 	private boolean hasHits;
-	
+
 	private String refNumber;
 
 	private String[] coTravellers;
@@ -47,14 +47,10 @@ public class SeatVo {
 		this.refNumber = refNumber;
 		this.apis = apis;
 	}
-	
-	
 
 	public SeatVo() {
-	
+
 	}
-
-
 
 	public Long getFlightId() {
 		return flightId;
@@ -136,17 +132,12 @@ public class SeatVo {
 		this.lastName = lastName;
 	}
 
-
-
 	public String getRefNumber() {
 		return refNumber;
 	}
 
-
-
 	public void setRefNumber(String refNumber) {
 		this.refNumber = refNumber;
 	}
-	
-	
+
 }

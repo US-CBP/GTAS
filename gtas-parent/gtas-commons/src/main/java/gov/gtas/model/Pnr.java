@@ -28,58 +28,58 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "pnr")
 public class Pnr extends Message {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public Pnr() {
-    }
+	public Pnr() {
+	}
 
-    @Embedded
-    private EdifactMessage edifactMessage;
+	@Embedded
+	private EdifactMessage edifactMessage;
 
-    @Column(name = "record_locator", length = 20)
-    private String recordLocator;
+	@Column(name = "record_locator", length = 20)
+	private String recordLocator;
 
-    private String carrier;
+	private String carrier;
 
-    private String origin;
+	private String origin;
 
-    @Column(name = "origin_country", length = 3)
-    private String originCountry;
+	@Column(name = "origin_country", length = 3)
+	private String originCountry;
 
-    @Column(name = "date_booked")
-    @Temporal(TemporalType.DATE)
-    private Date dateBooked;
+	@Column(name = "date_booked")
+	@Temporal(TemporalType.DATE)
+	private Date dateBooked;
 
-    @Column(name = "date_received")
-    @Temporal(TemporalType.DATE)
-    private Date dateReceived;
+	@Column(name = "date_received")
+	@Temporal(TemporalType.DATE)
+	private Date dateReceived;
 
-    @Column(name = "departure_date")
-    @Temporal(TemporalType.DATE)
-    private Date departureDate;
+	@Column(name = "departure_date")
+	@Temporal(TemporalType.DATE)
+	private Date departureDate;
 
-    @Column(name = "days_booked_before_travel")
-    private Integer daysBookedBeforeTravel;
+	@Column(name = "days_booked_before_travel")
+	private Integer daysBookedBeforeTravel;
 
-    @Column(name = "bag_count")
-    private Integer bagCount;
-    
-    @Column(name = "baggage_weight")
-    private Double baggageWeight;
-    
-    @Column(name = "baggage_unit")
-    private String baggageUnit;
-    
-    @Column(name = "total_bag_count")
-    private Integer total_bag_count;
+	@Column(name = "bag_count")
+	private Integer bagCount;
+
+	@Column(name = "baggage_weight")
+	private Double baggageWeight;
+
+	@Column(name = "baggage_unit")
+	private String baggageUnit;
+
+	@Column(name = "total_bag_count")
+	private Integer total_bag_count;
 
 	@Column(name = "total_bag_weight")
-    private double total_bag_weight;
-        
-    @Column(name = "trip_type", length = 50)
-    private String tripType;
+	private double total_bag_weight;
 
-    public double getTotal_bag_weight() {
+	@Column(name = "trip_type", length = 50)
+	private String tripType;
+
+	public double getTotal_bag_weight() {
 		return total_bag_weight;
 	}
 
@@ -104,62 +104,59 @@ public class Pnr extends Message {
 	}
 
 	@Column(name = "form_of_payment")
-    private String formOfPayment;
-    
-    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Flight.class)
-    @JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
-    private Set<Flight> flights = new HashSet<>();
+	private String formOfPayment;
 
-    @ManyToMany(fetch=FetchType.LAZY, targetEntity = Passenger.class)
-    @JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
-    private Set<Passenger> passengers = new HashSet<>();
-    
-    @ManyToMany(targetEntity = CreditCard.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_credit_card", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "credit_card_id"))
-    private Set<CreditCard> creditCards = new HashSet<>();
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = Flight.class)
+	@JoinTable(name = "pnr_flight", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "flight_id"))
+	private Set<Flight> flights = new HashSet<>();
 
-    @ManyToMany(targetEntity = FrequentFlyer.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_frequent_flyer", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "ff_id"))
-    private Set<FrequentFlyer> frequentFlyers = new HashSet<>();
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = Passenger.class)
+	@JoinTable(name = "pnr_passenger", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "passenger_id"))
+	private Set<Passenger> passengers = new HashSet<>();
 
-    @ManyToMany(targetEntity = Address.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_address", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private Set<Address> addresses = new HashSet<>();
+	@ManyToMany(targetEntity = CreditCard.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_credit_card", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "credit_card_id"))
+	private Set<CreditCard> creditCards = new HashSet<>();
 
-    @ManyToMany(targetEntity = Phone.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_phone", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
-    private Set<Phone> phones = new HashSet<>();
+	@ManyToMany(targetEntity = FrequentFlyer.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_frequent_flyer", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "ff_id"))
+	private Set<FrequentFlyer> frequentFlyers = new HashSet<>();
 
-    @ManyToMany(targetEntity = Email.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_email", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
-    private Set<Email> emails = new HashSet<>();
+	@ManyToMany(targetEntity = Address.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_address", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "address_id"))
+	private Set<Address> addresses = new HashSet<>();
 
-    @ManyToMany(targetEntity = Agency.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_agency", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "agency_id"))
-    private Set<Agency> agencies = new HashSet<>();
+	@ManyToMany(targetEntity = Phone.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_phone", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "phone_id"))
+	private Set<Phone> phones = new HashSet<>();
 
-    @ManyToMany(targetEntity = CodeShareFlight.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_codeshares", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "codeshare_id"))
-    private Set<CodeShareFlight> codeshares = new HashSet<>();
+	@ManyToMany(targetEntity = Email.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_email", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "email_id"))
+	private Set<Email> emails = new HashSet<>();
 
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
-    private List<PaymentForm> paymentForms = new ArrayList<>();
-    
-    @ManyToMany(targetEntity = DwellTime.class, cascade = { CascadeType.ALL })
-    @JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
-    private Set<DwellTime> dwellTimes = new HashSet<>();
+	@ManyToMany(targetEntity = Agency.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_agency", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "agency_id"))
+	private Set<Agency> agencies = new HashSet<>();
 
+	@ManyToMany(targetEntity = CodeShareFlight.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_codeshares", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "codeshare_id"))
+	private Set<CodeShareFlight> codeshares = new HashSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pnr")
+	private List<PaymentForm> paymentForms = new ArrayList<>();
+
+	@ManyToMany(targetEntity = DwellTime.class, cascade = { CascadeType.ALL })
+	@JoinTable(name = "pnr_dwelltime", joinColumns = @JoinColumn(name = "pnr_id"), inverseJoinColumns = @JoinColumn(name = "dwell_id"))
+	private Set<DwellTime> dwellTimes = new HashSet<>();
 
 	@Column(name = "resrvation_create_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date reservationCreateDate;
-    
-    @Column(name = "trip_duration")
-    private Double tripDuration;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date reservationCreateDate;
 
-    
-    public List<PaymentForm> getPaymentForms() {
+	@Column(name = "trip_duration")
+	private Double tripDuration;
+
+	public List<PaymentForm> getPaymentForms() {
 		return paymentForms;
 	}
 
@@ -191,207 +188,205 @@ public class Pnr extends Message {
 		this.reservationCreateDate = reservationCreateDate;
 	}
 
-	public void addDwellTime(DwellTime dwellTime){
-    	dwellTimes.add(dwellTime);
-    }
-    
-    public Set<DwellTime> getDwellTimes() {
-		return dwellTimes;
+	public void addDwellTime(DwellTime dwellTime) {
+		dwellTimes.add(dwellTime);
 	}
 
+	public Set<DwellTime> getDwellTimes() {
+		return dwellTimes;
+	}
 
 	public void setDwellTimes(Set<DwellTime> dwellTimes) {
 		this.dwellTimes = dwellTimes;
 	}
 
 	public void addPaymentForm(PaymentForm payment) {
-        paymentForms.add(payment);
-    }
-	
+		paymentForms.add(payment);
+	}
 
-    public void addFlight(Flight f) {
-        if (this.flights == null) {
-            this.flights = new HashSet<>();
-        }
-        this.flights.add(f);
-    }
+	public void addFlight(Flight f) {
+		if (this.flights == null) {
+			this.flights = new HashSet<>();
+		}
+		this.flights.add(f);
+	}
 
-    public void addCreditCard(CreditCard cc) {
-        if (this.creditCards == null) {
-            this.creditCards = new HashSet<>();
-        }
-        this.creditCards.add(cc);
-    }
+	public void addCreditCard(CreditCard cc) {
+		if (this.creditCards == null) {
+			this.creditCards = new HashSet<>();
+		}
+		this.creditCards.add(cc);
+	}
 
-    public void addFrequentFlyer(FrequentFlyer ff) {
-        if (this.frequentFlyers == null) {
-            this.frequentFlyers = new HashSet<>();
-        }
-        this.frequentFlyers.add(ff);
-    }
+	public void addFrequentFlyer(FrequentFlyer ff) {
+		if (this.frequentFlyers == null) {
+			this.frequentFlyers = new HashSet<>();
+		}
+		this.frequentFlyers.add(ff);
+	}
 
-    public void addAddress(Address address) {
-        if (this.addresses == null) {
-            this.addresses = new HashSet<>();
-        }
-        this.addresses.add(address);
-    }
+	public void addAddress(Address address) {
+		if (this.addresses == null) {
+			this.addresses = new HashSet<>();
+		}
+		this.addresses.add(address);
+	}
 
-    public void addPhone(Phone phone) {
-        if (this.phones == null) {
-            this.phones = new HashSet<>();
-        }
-        this.phones.add(phone);
-    }
+	public void addPhone(Phone phone) {
+		if (this.phones == null) {
+			this.phones = new HashSet<>();
+		}
+		this.phones.add(phone);
+	}
 
-    public void addEmail(Email email) {
-        if (this.emails == null) {
-            this.emails = new HashSet<>();
-        }
-        this.emails.add(email);
-    }
+	public void addEmail(Email email) {
+		if (this.emails == null) {
+			this.emails = new HashSet<>();
+		}
+		this.emails.add(email);
+	}
 
-    public void addAgency(Agency agency) {
-        this.agencies.add(agency);
-    }
+	public void addAgency(Agency agency) {
+		this.agencies.add(agency);
+	}
 
-    public EdifactMessage getEdifactMessage() {
-        return edifactMessage;
-    }
+	public EdifactMessage getEdifactMessage() {
+		return edifactMessage;
+	}
 
-    public void setEdifactMessage(EdifactMessage edifactMessage) {
-        this.edifactMessage = edifactMessage;
-    }
+	public void setEdifactMessage(EdifactMessage edifactMessage) {
+		this.edifactMessage = edifactMessage;
+	}
 
-    public Set<CreditCard> getCreditCards() {
-        return creditCards;
-    }
+	public Set<CreditCard> getCreditCards() {
+		return creditCards;
+	}
 
-    public void setCreditCards(Set<CreditCard> creditCards) {
-        this.creditCards = creditCards;
-    }
+	public void setCreditCards(Set<CreditCard> creditCards) {
+		this.creditCards = creditCards;
+	}
 
-    public Set<FrequentFlyer> getFrequentFlyers() {
-        return frequentFlyers;
-    }
+	public Set<FrequentFlyer> getFrequentFlyers() {
+		return frequentFlyers;
+	}
 
-    public void setFrequentFlyers(Set<FrequentFlyer> frequentFlyers) {
-        this.frequentFlyers = frequentFlyers;
-    }
+	public void setFrequentFlyers(Set<FrequentFlyer> frequentFlyers) {
+		this.frequentFlyers = frequentFlyers;
+	}
 
-    public Set<Address> getAddresses() {
-        return addresses;
-    }
+	public Set<Address> getAddresses() {
+		return addresses;
+	}
 
-    public void setAddresses(Set<Address> addresses) {
-        this.addresses = addresses;
-    }
+	public void setAddresses(Set<Address> addresses) {
+		this.addresses = addresses;
+	}
 
-    public Set<Phone> getPhones() {
-        return phones;
-    }
+	public Set<Phone> getPhones() {
+		return phones;
+	}
 
-    public void setPhones(Set<Phone> phones) {
-        this.phones = phones;
-    }
+	public void setPhones(Set<Phone> phones) {
+		this.phones = phones;
+	}
 
-    public Set<Email> getEmails() {
-        return emails;
-    }
+	public Set<Email> getEmails() {
+		return emails;
+	}
 
-    public void setEmails(Set<Email> emails) {
-        this.emails = emails;
-    }
+	public void setEmails(Set<Email> emails) {
+		this.emails = emails;
+	}
 
-    public String getRecordLocator() {
-        return recordLocator;
-    }
+	public String getRecordLocator() {
+		return recordLocator;
+	}
 
-    public void setRecordLocator(String recordLocator) {
-        this.recordLocator = recordLocator;
-    }
+	public void setRecordLocator(String recordLocator) {
+		this.recordLocator = recordLocator;
+	}
 
-    public String getCarrier() {
-        return carrier;
-    }
+	public String getCarrier() {
+		return carrier;
+	}
 
-    public void setCarrier(String carrier) {
-        this.carrier = carrier;
-    }
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
 
-    public String getOrigin() {
-        return origin;
-    }
+	public String getOrigin() {
+		return origin;
+	}
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
 
-    public String getOriginCountry() {
-        return originCountry;
-    }
+	public String getOriginCountry() {
+		return originCountry;
+	}
 
-    public void setOriginCountry(String originCountry) {
-        this.originCountry = originCountry;
-    }
+	public void setOriginCountry(String originCountry) {
+		this.originCountry = originCountry;
+	}
 
-    public Date getDateBooked() {
-        return dateBooked;
-    }
+	public Date getDateBooked() {
+		return dateBooked;
+	}
 
-    public void setDateBooked(Date dateBooked) {
-        this.dateBooked = dateBooked;
-    }
+	public void setDateBooked(Date dateBooked) {
+		this.dateBooked = dateBooked;
+	}
 
-    public Date getDateReceived() {
-        return dateReceived;
-    }
+	public Date getDateReceived() {
+		return dateReceived;
+	}
 
-    public void setDateReceived(Date dateReceived) {
-        this.dateReceived = dateReceived;
-    }
+	public void setDateReceived(Date dateReceived) {
+		this.dateReceived = dateReceived;
+	}
 
-    public Date getDepartureDate() {
-        return departureDate;
-    }
+	public Date getDepartureDate() {
+		return departureDate;
+	}
 
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
+	public void setDepartureDate(Date departureDate) {
+		this.departureDate = departureDate;
+	}
 
-    public Integer getDaysBookedBeforeTravel() {
-        return daysBookedBeforeTravel;
-    }
+	public Integer getDaysBookedBeforeTravel() {
+		return daysBookedBeforeTravel;
+	}
 
-    public void setDaysBookedBeforeTravel(Integer daysBookedBeforeTravel) {
-        this.daysBookedBeforeTravel = daysBookedBeforeTravel;
-    }
+	public void setDaysBookedBeforeTravel(Integer daysBookedBeforeTravel) {
+		this.daysBookedBeforeTravel = daysBookedBeforeTravel;
+	}
 
-    public String getFormOfPayment() {
-        return formOfPayment;
-    }
+	public String getFormOfPayment() {
+		return formOfPayment;
+	}
 
-    public void setFormOfPayment(String formOfPayment) {
-        this.formOfPayment = formOfPayment;
-    }
+	public void setFormOfPayment(String formOfPayment) {
+		this.formOfPayment = formOfPayment;
+	}
 
-    public Set<Flight> getFlights() {
-        return flights;
-    }
+	public Set<Flight> getFlights() {
+		return flights;
+	}
 
-    public void setFlights(Set<Flight> flights) {
-        this.flights = flights;
-    }
+	public void setFlights(Set<Flight> flights) {
+		this.flights = flights;
+	}
 
-    public Set<Agency> getAgencies() {
-        return agencies;
-    }
+	public Set<Agency> getAgencies() {
+		return agencies;
+	}
 
-    public void setAgencies(Set<Agency> agencies) {
-        this.agencies = agencies;
-    }
+	public void setAgencies(Set<Agency> agencies) {
+		this.agencies = agencies;
+	}
 
-    public Double getBaggageWeight() {
+	public Double getBaggageWeight() {
 		return baggageWeight;
 	}
 
@@ -407,20 +402,20 @@ public class Pnr extends Message {
 		this.baggageUnit = baggageUnit;
 	}
 
-    public String getTripType() {
-        return tripType;
-    }
+	public String getTripType() {
+		return tripType;
+	}
 
-    public void setTripType(String tripType) {
-        this.tripType = tripType;
-    }
-        
-    public void addPassenger(Passenger p) {
-        if (this.passengers == null) {
-            this.passengers = new HashSet<>();
-        }
-        this.passengers.add(p);
-    }
+	public void setTripType(String tripType) {
+		this.tripType = tripType;
+	}
+
+	public void addPassenger(Passenger p) {
+		if (this.passengers == null) {
+			this.passengers = new HashSet<>();
+		}
+		this.passengers.add(p);
+	}
 
 	public Set<Passenger> getPassengers() {
 		return passengers;
@@ -431,21 +426,20 @@ public class Pnr extends Message {
 	}
 
 	@Override
-    public int hashCode() {
-        return Objects.hash(this.recordLocator, this.carrier);
-    }
+	public int hashCode() {
+		return Objects.hash(this.recordLocator, this.carrier);
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Pnr other = (Pnr) obj;
-        return Objects.equals(this.recordLocator, other.recordLocator)
-                && Objects.equals(this.carrier, other.carrier);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Pnr other = (Pnr) obj;
+		return Objects.equals(this.recordLocator, other.recordLocator) && Objects.equals(this.carrier, other.carrier);
+	}
 
 }

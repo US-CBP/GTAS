@@ -11,68 +11,79 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import gov.gtas.model.Document;
 
 public class DocumentVo {
-    private String documentType;
-    private String documentNumber;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
-    private Date expirationDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
-    private Date issuanceDate;
-    private String issuanceCountry;
-    private String firstName;
-    private String lastName;
+	private String documentType;
+	private String documentNumber;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
+	private Date expirationDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
+	private Date issuanceDate;
+	private String issuanceCountry;
+	private String firstName;
+	private String lastName;
 
-    public String getDocumentType() {
-        return documentType;
-    }
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
-    }
-    public String getDocumentNumber() {
-        return documentNumber;
-    }
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
-    }
+	public String getDocumentType() {
+		return documentType;
+	}
 
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
 
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
+
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
+
 	public Date getIssuanceDate() {
 		return issuanceDate;
 	}
+
 	public void setIssuanceDate(Date issuanceDate) {
 		this.issuanceDate = issuanceDate;
 	}
+
 	public String getIssuanceCountry() {
-        return issuanceCountry;
-    }
-    public void setIssuanceCountry(String issuanceCountry) {
-        this.issuanceCountry = issuanceCountry;
-    }
+		return issuanceCountry;
+	}
+
+	public void setIssuanceCountry(String issuanceCountry) {
+		this.issuanceCountry = issuanceCountry;
+	}
+
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
 	public static DocumentVo fromDocument(Document document) {
-        DocumentVo docVo = new DocumentVo();
-        docVo.setDocumentNumber(document.getDocumentNumber());
-        docVo.setDocumentType(document.getDocumentType());
-        docVo.setIssuanceCountry(document.getIssuanceCountry());
-        docVo.setExpirationDate(document.getExpirationDate());
-        docVo.setIssuanceDate(document.getIssuanceDate());
-        return docVo;
-    }
+		DocumentVo docVo = new DocumentVo();
+		docVo.setDocumentNumber(document.getDocumentNumber());
+		docVo.setDocumentType(document.getDocumentType());
+		docVo.setIssuanceCountry(document.getIssuanceCountry());
+		docVo.setExpirationDate(document.getExpirationDate());
+		docVo.setIssuanceDate(document.getIssuanceDate());
+		return docVo;
+	}
 }

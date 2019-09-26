@@ -20,16 +20,16 @@ import org.junit.rules.ExpectedException;
 import gov.gtas.parsers.exception.ParseException;
 
 public class DateUtilsTest {
-    
-    @Test
-    public void testCalculateAge() throws ParseException {
-        int year = 1980;
-        Date d = ParseUtils.parseDateTime("0101" + year, "MMddyyyy");
-        int age = DateUtils.calculateAge(d);
-        int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        assertEquals(thisYear - year, age);
-    }
-    
+
+	@Test
+	public void testCalculateAge() throws ParseException {
+		int year = 1980;
+		Date d = ParseUtils.parseDateTime("0101" + year, "MMddyyyy");
+		int age = DateUtils.calculateAge(d);
+		int thisYear = Calendar.getInstance().get(Calendar.YEAR);
+		assertEquals(thisYear - year, age);
+	}
+
 	@Test
 	public void testDOBDateFormatYYMMDD() throws ParseException {
 		Map<Integer, String> dates = new HashMap<Integer, String>();
@@ -49,8 +49,8 @@ public class DateUtilsTest {
 		SimpleDateFormat yyyy_fmt = new SimpleDateFormat("yyyy");
 
 		dates.keySet().forEach(key -> {
-				Date parsedDate = ParseUtils.parseAPISDOB(dates.get(key), DATE_FORMAT);
-				assertEquals(key.intValue(), Integer.parseInt(yyyy_fmt.format(parsedDate)));
+			Date parsedDate = ParseUtils.parseAPISDOB(dates.get(key), DATE_FORMAT);
+			assertEquals(key.intValue(), Integer.parseInt(yyyy_fmt.format(parsedDate)));
 		});
 
 	}

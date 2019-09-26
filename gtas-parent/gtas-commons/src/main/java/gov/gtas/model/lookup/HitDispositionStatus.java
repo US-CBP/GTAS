@@ -17,53 +17,48 @@ import java.util.Objects;
 @Cacheable
 @Entity
 @Table(name = "hit_disposition_status")
-
 public class HitDispositionStatus extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public HitDispositionStatus() { }
+	public HitDispositionStatus() {
+	}
 
-    private String name;
+	private String name;
 
-    private String description;
+	private String description;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        HitDispositionStatus that = (HitDispositionStatus) o;
+		HitDispositionStatus that = (HitDispositionStatus) o;
 
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(name, that.name)
-                .append(description, that.description)
-                .isEquals();
-    }
+		return new EqualsBuilder().appendSuper(super.equals(o)).append(name, that.name)
+				.append(description, that.description).isEquals();
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(name)
-                .append(description)
-                .toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(description).toHashCode();
+	}
 }

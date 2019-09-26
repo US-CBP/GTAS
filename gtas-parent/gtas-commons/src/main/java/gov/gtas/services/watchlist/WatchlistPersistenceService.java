@@ -38,8 +38,7 @@ public interface WatchlistPersistenceService {
 	 * @return the id's of the watch list and the updated items.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
-	public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
-			List<WatchlistItem> createUpdateList,
+	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
 			List<WatchlistItem> deleteList, String userId);
 
 	/**
@@ -69,8 +68,8 @@ public interface WatchlistPersistenceService {
 	public Iterable<WatchlistItem> findAllWatchlistItems();
 
 	/**
-	 * Find and return the list of all non-compiled watch lists. (Either the
-	 * compile time stamp is null, or it is before the edit time stamp.)
+	 * Find and return the list of all non-compiled watch lists. (Either the compile
+	 * time stamp is null, or it is before the edit time stamp.)
 	 * 
 	 * @return list of all non-compiled watch lists.
 	 */
@@ -92,17 +91,15 @@ public interface WatchlistPersistenceService {
 	 * @param name
 	 *            the name of the watch list to delete.
 	 * @param forceFlag
-	 *            If forceFlag is true then the watch list with its items will
-	 *            be deleted whether it is empty or not. Otherwise the watch
-	 *            list will only be deleted if it is empty.
+	 *            If forceFlag is true then the watch list with its items will be
+	 *            deleted whether it is empty or not. Otherwise the watch list will
+	 *            only be deleted if it is empty.
 	 * @param userId
 	 *            the id of the user requesting the delete.
-	 * @return the deleted watch list or null, if the watchlist could not be
-	 *         found.
+	 * @return the deleted watch list or null, if the watchlist could not be found.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
-	public Watchlist deleteWatchlist(String name, boolean forceFlag,
-			String userId);
+	public Watchlist deleteWatchlist(String name, boolean forceFlag, String userId);
 
 	/**
 	 * Fetches all log entries for a Watch list by its name.
@@ -112,15 +109,15 @@ public interface WatchlistPersistenceService {
 	 * @return the fetched watch list log entries.
 	 */
 	public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName);
-	
+
 	public List<WatchlistCategory> findWatchlistCategories();
-	
+
 	WatchlistItem updateWatchlistItemCategory(WatchlistItem watchlistItem);
-	
+
 	WatchlistCategory fetchWatchlistCategoryById(Long categoryID);
-	
+
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
-	
+
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
 
 	void saveWatchlistCategory(WatchlistCategory watchlistCategory);

@@ -1,6 +1,5 @@
 package gov.gtas.services.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gov.gtas.enumtype.CaseDispositionStatusEnum;
 
@@ -9,77 +8,75 @@ import java.util.List;
 
 public class CaseDispositionStatusCheckbox {
 
+	@JsonProperty("NEW")
+	private Boolean newCases;
+	@JsonProperty("OPEN")
+	private Boolean openCases;
+	@JsonProperty("CLOSED")
+	private Boolean closedCases;
+	@JsonProperty("REOPEN")
+	private Boolean reopenedCases;
+	@JsonProperty("PENDINGCLOSURE")
+	private Boolean pendingClosure;
 
-    @JsonProperty("NEW")
-    private Boolean newCases;
-    @JsonProperty("OPEN")
-    private Boolean openCases;
-    @JsonProperty("CLOSED")
-    private Boolean closedCases;
-    @JsonProperty("REOPEN")
-    private Boolean reopenedCases;
-    @JsonProperty("PENDINGCLOSURE")
-    private Boolean pendingClosure;
+	public Boolean getNewCases() {
+		return newCases;
+	}
 
+	public void setNewCases(Boolean newCases) {
+		this.newCases = newCases;
+	}
 
-    public Boolean getNewCases() {
-        return newCases;
-    }
+	public Boolean getOpenCases() {
+		return openCases;
+	}
 
-    public void setNewCases(Boolean newCases) {
-        this.newCases = newCases;
-    }
+	public void setOpenCases(Boolean openCases) {
+		this.openCases = openCases;
+	}
 
-    public Boolean getOpenCases() {
-        return openCases;
-    }
+	public Boolean getClosedCases() {
+		return closedCases;
+	}
 
-    public void setOpenCases(Boolean openCases) {
-        this.openCases = openCases;
-    }
+	public void setClosedCases(Boolean closedCases) {
+		this.closedCases = closedCases;
+	}
 
-    public Boolean getClosedCases() {
-        return closedCases;
-    }
+	public Boolean getReopenedCases() {
+		return reopenedCases;
+	}
 
-    public void setClosedCases(Boolean closedCases) {
-        this.closedCases = closedCases;
-    }
+	public void setReopenedCases(Boolean reopenedCases) {
+		this.reopenedCases = reopenedCases;
+	}
 
-    public Boolean getReopenedCases() {
-        return reopenedCases;
-    }
+	public Boolean getPendingClosure() {
+		return pendingClosure;
+	}
 
-    public void setReopenedCases(Boolean reopenedCases) {
-        this.reopenedCases = reopenedCases;
-    }
+	public void setPendingClosure(Boolean pendingClosure) {
+		this.pendingClosure = pendingClosure;
+	}
 
-    public Boolean getPendingClosure() {
-        return pendingClosure;
-    }
-
-    public void setPendingClosure(Boolean pendingClosure) {
-        this.pendingClosure = pendingClosure;
-    }
-
-    public List<String> namesOfCheckedBoxes() {
-        List<String> checkedBoxes = new ArrayList<>();
-        if (newCases) {
-            checkedBoxes.add(CaseDispositionStatusEnum.NEW.getType());
-        }
-        if (openCases) {
-            checkedBoxes.add(CaseDispositionStatusEnum.OPEN.getType());
-        }
-        if (closedCases) {
-            checkedBoxes.add(CaseDispositionStatusEnum.CLOSED.getType());
-        }
-        if (reopenedCases) {
-            checkedBoxes.add(CaseDispositionStatusEnum.REOPEN.getType());
-        }
-        if (pendingClosure) {
-            checkedBoxes.add(CaseDispositionStatusEnum.PENDINGCLOSURE.getType());
-        }
-        return checkedBoxes;
-    }
+	public List<String> namesOfCheckedBoxes() {
+		List<String> checkedBoxes = new ArrayList<>();
+		if (newCases) {
+			checkedBoxes.add(CaseDispositionStatusEnum.NEW.getType());
+		}
+		if (openCases) {
+			checkedBoxes.add(CaseDispositionStatusEnum.OPEN.getType());
+		}
+		if (closedCases) {
+			checkedBoxes.add(CaseDispositionStatusEnum.CLOSED.getType());
+		}
+		if (reopenedCases) {
+			checkedBoxes.add(CaseDispositionStatusEnum.REOPEN.getType());
+		}
+		if (pendingClosure) {
+			checkedBoxes.add(CaseDispositionStatusEnum.PENDINGCLOSURE.getType());
+		}
+		return checkedBoxes;
+	}
 
 }

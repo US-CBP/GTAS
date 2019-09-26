@@ -10,18 +10,17 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * This class implements general purpose string manipulation methods which are used to
- * assist parsing input data.
+ * This class implements general purpose string manipulation methods which are
+ * used to assist parsing input data.
  *
  */
 public class ApisStringParser {
 
 	/**
 	 * @param txt
-	 *          Input string
-	 *            
-	 * @return 
- 				An md5 hash of the input string
+	 *            Input string
+	 * 
+	 * @return An md5 hash of the input string
 	 */
 	public static String getMd5Hash(String txt) throws NoSuchAlgorithmException {
 
@@ -45,12 +44,12 @@ public class ApisStringParser {
 
 	/**
 	 * @param dateValue
-	 *           	Date value as a String
+	 *            Date value as a String
 	 * @param format
-	 *            	The format of the date string
-	 * @return java.util.Date
-	 * 				 A date object formatted specified by the format parameter
-	 *			
+	 *            The format of the date string
+	 * @return java.util.Date A date object formatted specified by the format
+	 *         parameter
+	 * 
 	 *
 	 */
 	public static Date parseDateTime(String dateValue, String format) throws ParseException {
@@ -74,13 +73,12 @@ public class ApisStringParser {
 
 	/**
 	 * @param dateValue
-	 *            	Date value as a String
+	 *            Date value as a String
 	 * @param currentFormat
-	 *           	 The format of the input date string
-	 * @Param targetFormat 
-	 * 				The format of the desired output string
-	 * @return java.lang.String
-	 *				A date value of string type which has a format specified by targetFormat.
+	 *            The format of the input date string
+	 * @Param targetFormat The format of the desired output string
+	 * @return java.lang.String A date value of string type which has a format
+	 *         specified by targetFormat.
 	 */
 
 	public static String parseDateTimeAsStr(String dateValue, String currentFormat, String targetFormat)
@@ -108,11 +106,11 @@ public class ApisStringParser {
 
 	/**
 	 * @param str
-	 *        	The input string
+	 *            The input string
 	 * @param delimiter
-	 *       	The delimiter to be used
-	 * @return java.lang.String
-	 *      	The substring extracted from the first index up to the delimiter
+	 *            The delimiter to be used
+	 * @return java.lang.String The substring extracted from the first index up to
+	 *         the delimiter
 	 *
 	 */
 
@@ -132,9 +130,9 @@ public class ApisStringParser {
 
 	/**
 	 * @param str
-	 *      	The input string
-	 * @return boolean
-	 *         	True if the string can be converted to a number, otherwise false
+	 *            The input string
+	 * @return boolean True if the string can be converted to a number, otherwise
+	 *         false
 	 *
 	 */
 	public static boolean isNumber(String str) {
@@ -149,9 +147,7 @@ public class ApisStringParser {
 
 			}
 
-		}
-		else
-		{
+		} else {
 			digitString = false;
 		}
 

@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 
 public class GtasResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
 
-    public Properties getAllProperties(Locale locale) {
-        clearCacheIncludingAncestors();
-        PropertiesHolder propertiesHolder = getMergedProperties(locale);
-        Properties properties = propertiesHolder.getProperties();
+	public Properties getAllProperties(Locale locale) {
+		clearCacheIncludingAncestors();
+		PropertiesHolder propertiesHolder = getMergedProperties(locale);
+		Properties properties = propertiesHolder.getProperties();
 
-        return properties;
-    }
+		return properties;
+	}
 }

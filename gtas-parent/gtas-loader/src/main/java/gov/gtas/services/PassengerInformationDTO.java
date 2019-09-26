@@ -10,34 +10,32 @@ import java.util.Set;
 
 public class PassengerInformationDTO {
 
+	private Set<Passenger> newPax = new HashSet<>();
 
-    private Set<Passenger> newPax = new HashSet<>();
+	public Set<Passenger> getOldPax() {
+		return oldPax;
+	}
 
-    public Set<Passenger> getOldPax() {
-        return oldPax;
-    }
+	public void setOldPax(Set<Passenger> oldPax) {
+		this.oldPax = oldPax;
+	}
 
-    public void setOldPax(Set<Passenger> oldPax) {
-        this.oldPax = oldPax;
-    }
+	private Set<Passenger> oldPax = new HashSet<>();
+	private Map<Long, Set<BookingDetail>> bdSet = new HashMap<>();
 
-    private Set<Passenger> oldPax = new HashSet<>();
-    private Map<Long, Set<BookingDetail>> bdSet = new HashMap<>();
+	public Set<Passenger> getNewPax() {
+		return newPax;
+	}
 
-    public Set<Passenger> getNewPax() {
-        return newPax;
-    }
+	public void setNewPax(Set<Passenger> newPax) {
+		this.newPax = newPax;
+	}
 
-    public void setNewPax(Set<Passenger> newPax) {
-        this.newPax = newPax;
-    }
+	public Map<Long, Set<BookingDetail>> getBdSet() {
+		return bdSet;
+	}
 
-
-    public Map<Long, Set<BookingDetail>> getBdSet() {
-        return bdSet;
-    }
-
-    public void setBdSet(Map<Long, Set<BookingDetail>> bdSet) {
-        this.bdSet = bdSet;
-    }
+	public void setBdSet(Map<Long, Set<BookingDetail>> bdSet) {
+		this.bdSet = bdSet;
+	}
 }

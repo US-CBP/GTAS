@@ -29,25 +29,25 @@ import gov.gtas.services.security.UserService;
  */
 @Service("userDetailsService")
 public class SecurityUserDetailsService implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(SecurityUserDetailsService.class);
+	private static final Logger logger = LoggerFactory.getLogger(SecurityUserDetailsService.class);
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserData user = userService.findById(username);
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserData user = userService.findById(username);
 
-        if (user == null || user.getActive()==0) {
-            String message = "Username not found: " + username;
-            logger.info(message);
-            throw new UsernameNotFoundException(message);
-        }
+		if (user == null || user.getActive() == 0) {
+			String message = "Username not found: " + username;
+			logger.info(message);
+			throw new UsernameNotFoundException(message);
+		}
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleDescription())));
-        logger.info("Found user in database: " + username);
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		user.getRoles().forEach(r -> authorities.add(new SimpleGrantedAuthority(r.getRoleDescription())));
+		logger.info("Found user in database: " + username);
 
-        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
-    }
+		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
+	}
 }

@@ -34,112 +34,111 @@ import gov.gtas.parsers.exception.ParseException;
  * </ul>
  */
 public class BGM extends Segment {
-    public enum DocumentNameCode {
-        PASSENGER_LIST("745"),
-        CREW_LIST("250"),
-        FLIGHT_STATUS_UPDATE("266"),
-        MASTER_CREW_LIST("336"),
-        GATE_PASS_REQUEST("655");
-        
-        private final String code;
-        private DocumentNameCode(String code) { this.code = code; }        
-        public String getCode() { return code; }
-        
-        private static final Map<String, DocumentNameCode> BY_CODE_MAP = new LinkedHashMap<>();
-        static {
-            for (DocumentNameCode rae : DocumentNameCode.values()) {
-                BY_CODE_MAP.put(rae.code, rae);
-            }
-        }
+	public enum DocumentNameCode {
+		PASSENGER_LIST("745"), CREW_LIST("250"), FLIGHT_STATUS_UPDATE("266"), MASTER_CREW_LIST(
+				"336"), GATE_PASS_REQUEST("655");
 
-        public static DocumentNameCode forCode(String code) {
-            return BY_CODE_MAP.get(code);
-        }        
-    }
+		private final String code;
 
-    public enum DocumentIdentifier {
-        // PASSENGER_LIST
-        CHANGE_PAX_DATA("CP"),
-        CANCEL_RESERVATION("XR"),
-        REDUCTION_IN_PARTY("RP"),
-        
-        // FLIGHT_STATUS_UPDATE
-        FLIGHT_CLOSE("CL"),
-        FLIGHT_CLOSE_WITH_PAX_NOT_ON_BOARD("CLNB"),
-        FLIGHT_CLOSE_WITH_PAX_ON_BOARD("CLOB"),
-        CANCEL_FLIGHT("XF"),
-        CHANGE_FLIGHT("CF"),
+		private DocumentNameCode(String code) {
+			this.code = code;
+		}
 
-        // CREW_LIST
-        PASSENGER_FLIGHT_REGULAR_SCHEDULED_CREW("C"),
-        PASSENGER_FLIGHT_CREW_CHANGE("CC"),
-        CARGO_FLIGHT_REGULAR_SCHEDULED_CREW("B"),
-        CARGO_FLIGHT_CREW_CHANGE("BC"),
-        OVERFLIGHT_OF_PASSENGER_FLIGHT("A"),
-        OVERFLIGHT_OF_CARGO_FLIGHT("D"),
-        DOMESTIC_CONTINUANCE_OF_PASSENGER_FLIGHT_REGULAR_SCHEDULED_CREW("E"),
-        DOMESTIC_CONTINUANCE_OF_PASSENGER_FLIGHT_CREW_CHANGE("EC"),
-        DOMESTIC_CONTINUANCE_OF_CARGO_FLIGHT_REGULAR_SCHEDULED_CREW("F"),
-        DOMESTIC_CONTINUANCE_OF_CARGO_FLIGHT_CREW_CHANGE("FC"),
-        
-        // MASTER_CREW_LIST
-        ADD("G"),
-        DELETE("H"),
-        CHANGE("I");
-        
-        private String code;
-        private DocumentIdentifier(String code) { this.code = code; }  
-        public String getCode() { return code; }
+		public String getCode() {
+			return code;
+		}
 
-        private static final Map<String, DocumentIdentifier> BY_CODE_MAP = new LinkedHashMap<>();
-        static {
-            for (DocumentIdentifier rae : DocumentIdentifier.values()) {
-                BY_CODE_MAP.put(rae.code, rae);
-            }
-        }
+		private static final Map<String, DocumentNameCode> BY_CODE_MAP = new LinkedHashMap<>();
+		static {
+			for (DocumentNameCode rae : DocumentNameCode.values()) {
+				BY_CODE_MAP.put(rae.code, rae);
+			}
+		}
 
-        public static DocumentIdentifier forCode(String code) {
-            return BY_CODE_MAP.get(code);
-        }        
-    }
+		public static DocumentNameCode forCode(String code) {
+			return BY_CODE_MAP.get(code);
+		}
+	}
 
-    /** mandatory: overall message type */
-    private DocumentNameCode documentCode;
-    
-    /**
-     * optional: a secondary code that gives more info about the message type
-     */
-    private DocumentIdentifier documentSubCode;
-    
-    public BGM(List<Composite> composites) throws ParseException {
-        super(BGM.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                this.documentCode = DocumentNameCode.forCode(c.getElement(0));
-                if (this.documentCode == null) {
-                    throw new ParseException("BGM unknown document name code: " + c.getElement(0));
-                }
-                break;
- 
-            case 1:
-                this.documentSubCode = DocumentIdentifier.forCode(c.getElement(0));
-                break;
-            }
-        }
-    }
+	public enum DocumentIdentifier {
+		// PASSENGER_LIST
+		CHANGE_PAX_DATA("CP"), CANCEL_RESERVATION("XR"), REDUCTION_IN_PARTY("RP"),
 
-    public DocumentNameCode getDocumentNameCode() {
-        return documentCode;
-    }
+		// FLIGHT_STATUS_UPDATE
+		FLIGHT_CLOSE("CL"), FLIGHT_CLOSE_WITH_PAX_NOT_ON_BOARD("CLNB"), FLIGHT_CLOSE_WITH_PAX_ON_BOARD(
+				"CLOB"), CANCEL_FLIGHT("XF"), CHANGE_FLIGHT("CF"),
 
-    public DocumentIdentifier getDocumentSubCode() {
-        return documentSubCode;
-    }
+		// CREW_LIST
+		PASSENGER_FLIGHT_REGULAR_SCHEDULED_CREW("C"), PASSENGER_FLIGHT_CREW_CHANGE(
+				"CC"), CARGO_FLIGHT_REGULAR_SCHEDULED_CREW("B"), CARGO_FLIGHT_CREW_CHANGE(
+						"BC"), OVERFLIGHT_OF_PASSENGER_FLIGHT("A"), OVERFLIGHT_OF_CARGO_FLIGHT(
+								"D"), DOMESTIC_CONTINUANCE_OF_PASSENGER_FLIGHT_REGULAR_SCHEDULED_CREW(
+										"E"), DOMESTIC_CONTINUANCE_OF_PASSENGER_FLIGHT_CREW_CHANGE(
+												"EC"), DOMESTIC_CONTINUANCE_OF_CARGO_FLIGHT_REGULAR_SCHEDULED_CREW(
+														"F"), DOMESTIC_CONTINUANCE_OF_CARGO_FLIGHT_CREW_CHANGE("FC"),
 
-    public String getCode() {
-        String id = (this.documentSubCode != null) ? this.documentSubCode.getCode() : "";
-        return String.valueOf(this.documentCode.getCode()) + id;
-    }
+		// MASTER_CREW_LIST
+		ADD("G"), DELETE("H"), CHANGE("I");
+
+		private String code;
+
+		private DocumentIdentifier(String code) {
+			this.code = code;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		private static final Map<String, DocumentIdentifier> BY_CODE_MAP = new LinkedHashMap<>();
+		static {
+			for (DocumentIdentifier rae : DocumentIdentifier.values()) {
+				BY_CODE_MAP.put(rae.code, rae);
+			}
+		}
+
+		public static DocumentIdentifier forCode(String code) {
+			return BY_CODE_MAP.get(code);
+		}
+	}
+
+	/** mandatory: overall message type */
+	private DocumentNameCode documentCode;
+
+	/**
+	 * optional: a secondary code that gives more info about the message type
+	 */
+	private DocumentIdentifier documentSubCode;
+
+	public BGM(List<Composite> composites) throws ParseException {
+		super(BGM.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				this.documentCode = DocumentNameCode.forCode(c.getElement(0));
+				if (this.documentCode == null) {
+					throw new ParseException("BGM unknown document name code: " + c.getElement(0));
+				}
+				break;
+
+			case 1:
+				this.documentSubCode = DocumentIdentifier.forCode(c.getElement(0));
+				break;
+			}
+		}
+	}
+
+	public DocumentNameCode getDocumentNameCode() {
+		return documentCode;
+	}
+
+	public DocumentIdentifier getDocumentSubCode() {
+		return documentSubCode;
+	}
+
+	public String getCode() {
+		String id = (this.documentSubCode != null) ? this.documentSubCode.getCode() : "";
+		return String.valueOf(this.documentCode.getCode()) + id;
+	}
 }

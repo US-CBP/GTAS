@@ -22,102 +22,102 @@ import gov.gtas.model.lookup.Country;
 
 /**
  * 
- * class LookupRepositoryImpl serves as delivering lookup table
- *         data to the calling applications. The purpose of this class is to
- *         enable the CACHING for methods passing QUERYHINT in the query.
+ * class LookupRepositoryImpl serves as delivering lookup table data to the
+ * calling applications. The purpose of this class is to enable the CACHING for
+ * methods passing QUERYHINT in the query.
  *
  */
 @Repository
 public class LookupRepositoryImpl implements LookUpRepository {
 
-    @Autowired
-    private CountryRepository countryRepository;
+	@Autowired
+	private CountryRepository countryRepository;
 
-    @Autowired
-    private AirportRepository airportRepository;
+	@Autowired
+	private AirportRepository airportRepository;
 
-    @Autowired
-    private CarrierRepository carrierRepository;
+	@Autowired
+	private CarrierRepository carrierRepository;
 
-    @Autowired
-    private FlightDirectionRepository flightDirectionRepository;
-    
-    @Autowired
-    private AppConfigurationRepository appConfigRepository;
+	@Autowired
+	private FlightDirectionRepository flightDirectionRepository;
 
-    @Override
-    @Cacheable("app_configuration")
-    public List<AppConfiguration> getAllAppConfiguration() {
-        return (List<AppConfiguration>) appConfigRepository.findAll();
-    }
+	@Autowired
+	private AppConfigurationRepository appConfigRepository;
 
-    @Override
-    @Cacheable("flightDirection")
-    public List<FlightDirection> getFlightDirections() {
-        return (List<FlightDirection>) flightDirectionRepository.findAll();
-    }
+	@Override
+	@Cacheable("app_configuration")
+	public List<AppConfiguration> getAllAppConfiguration() {
+		return (List<AppConfiguration>) appConfigRepository.findAll();
+	}
 
-    @Override
-    @Cacheable("country")
-    public List<Country> getAllCountries() {
-        return (List<Country>) countryRepository.findAll();
-    }
+	@Override
+	@Cacheable("flightDirection")
+	public List<FlightDirection> getFlightDirections() {
+		return (List<FlightDirection>) flightDirectionRepository.findAll();
+	}
 
-    @Override
-    @Cacheable("carrier")
-    public List<Carrier> getAllCarriers() {
-        return (List<Carrier>) carrierRepository.findAll();
-    }
+	@Override
+	@Cacheable("country")
+	public List<Country> getAllCountries() {
+		return (List<Country>) countryRepository.findAll();
+	}
 
-    @Override
-    @Cacheable("airport")
-    public List<Airport> getAllAirports() {
-        return (List<Airport>) airportRepository.findAll();
-    }
+	@Override
+	@Cacheable("carrier")
+	public List<Carrier> getAllCarriers() {
+		return (List<Carrier>) carrierRepository.findAll();
+	}
 
-    @Override
-    @Transactional
-    @CacheEvict(value = "carrier", allEntries = true)
-    public void clearAllEntitiesCache() {
-        // remove all entities from cache
-    }
+	@Override
+	@Cacheable("airport")
+	public List<Airport> getAllAirports() {
+		return (List<Airport>) airportRepository.findAll();
+	}
 
-    @Override
-    @Transactional
-    public void clearEntityFromCache(Long id) {
-        // NOTE: later
+	@Override
+	@Transactional
+	@CacheEvict(value = "carrier", allEntries = true)
+	public void clearAllEntitiesCache() {
+		// remove all entities from cache
+	}
 
-    }
+	@Override
+	@Transactional
+	public void clearEntityFromCache(Long id) {
+		// NOTE: later
 
-    @Override
-    @Transactional
-    public Country saveCountry(Country country) {
-        return countryRepository.save(country);
-    }
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "country", key = "#countryName")
-    public Country getCountry(String countryName) {
-        return countryRepository.findByName(countryName);
-    }
+	@Override
+	@Transactional
+	public Country saveCountry(Country country) {
+		return countryRepository.save(country);
+	}
 
-    @Transactional
-    @CacheEvict(value = "country", key = "#countryName")
-    public void removeCountryCache(String countryName) {
-        // remove entity from cache only
-    }
+	@Override
+	@Transactional
+	@Cacheable(value = "country", key = "#countryName")
+	public Country getCountry(String countryName) {
+		return countryRepository.findByName(countryName);
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "app_configuration", key = "#option")
-    public String getAppConfigOption(String option) {
-    	AppConfiguration opt = appConfigRepository.findByOption(option);
-    	return (opt != null) ? opt.getValue() : null;
-    }
+	@Transactional
+	@CacheEvict(value = "country", key = "#countryName")
+	public void removeCountryCache(String countryName) {
+		// remove entity from cache only
+	}
 
-    @Transactional
-    public void deleteCountryDb(Country country) {
-        countryRepository.delete(country);
-    }
+	@Override
+	@Transactional
+	@Cacheable(value = "app_configuration", key = "#option")
+	public String getAppConfigOption(String option) {
+		AppConfiguration opt = appConfigRepository.findByOption(option);
+		return (opt != null) ? opt.getValue() : null;
+	}
+
+	@Transactional
+	public void deleteCountryDb(Country country) {
+		countryRepository.delete(country);
+	}
 }

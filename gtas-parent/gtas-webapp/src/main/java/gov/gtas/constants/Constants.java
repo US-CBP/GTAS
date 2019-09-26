@@ -13,7 +13,7 @@ public final class Constants {
 	public static final String RUN_QUERY_FLIGHT_URI = "/queryFlights";
 	public static final String RUN_QUERY_PASSENGER_URI = "/queryPassengers";
 	public static final String PATH_VARIABLE_ID = "/{id}";
-        public static final String APIS_ONLY_FLAG = "/apisOnlyFlag";
+	public static final String APIS_ONLY_FLAG = "/apisOnlyFlag";
 
 	// Search URI
 	public static final String SEARCH_SERVICE = "/search";
@@ -81,12 +81,12 @@ public final class Constants {
 	public static final String WHITELIST_CREATE = "/whitelists";
 	public static final String WHITELIST_DELETE = "/whitelists/{id}";
 	public static final String WHITELIST_UPDATE = "/whitelists/{id}";
-	
+
 	public static final String FLIGHT_DIRECTION_INCOMING = "I";
 	public static final String FLIGHT_DIRECTION_OUTGOING = "O";
 	public static final String FLIGHT_DIRECTION_INCOMING_DESC = "Inbound";
 	public static final String FLIGHT_DIRECTION_OUTGOING_DESC = "Outbound";
-	
+
 	public static final String USER_PRIMARY_LOCATION = "USER_PRIMARY_LOCATION";
 
 }

@@ -29,101 +29,101 @@ import gov.gtas.parsers.edifact.Segment;
  */
 public class ORG extends Segment {
 
-    private String airlineCode;
-    private String locationCode;
-                                
-    private String travelAgentIdentifier;
-    private String reservationSystemCode;
-    private String reservationSystemKey;
-    
-    private String agentLocationCode;
-    
-    private String companyIdentification;
-    private String systemLocationCode;
-    
-    private String originatorTypeCode;
-    private String originatorCountryCode;
-    private String originatorCurrencyCode;
-    private String originatorLanguageCode;
+	private String airlineCode;
+	private String locationCode;
 
-    public ORG(List<Composite> composites) {
-        super("ORG", composites);
-        
-        for (int i=0; i<numComposites(); i++) {
-            Composite c = getComposite(i);
-            
-            switch (i) {
-            case 0:
-                this.airlineCode = c.getElement(0);
-                this.locationCode = c.getElement(1);
-                break;
-            case 1:
-                this.travelAgentIdentifier = c.getElement(0);
-                this.reservationSystemCode = c.getElement(1);
-                this.reservationSystemKey = c.getElement(2);
-                break;
-            case 2:
-                this.agentLocationCode = c.getElement(0);
-                break;
-            case 3:
-                this.companyIdentification = c.getElement(0);
-                this.systemLocationCode = c.getElement(1);
-                break;
-            case 4:
-                this.originatorTypeCode = c.getElement(0);
-                this.originatorCountryCode = c.getElement(1);
-                this.originatorCurrencyCode = c.getElement(2);
-                this.originatorLanguageCode = c.getElement(3);
-                break;
-            }
-        }
-    }
+	private String travelAgentIdentifier;
+	private String reservationSystemCode;
+	private String reservationSystemKey;
 
-    public String getAirlineCode() {
-        return airlineCode;
-    }
+	private String agentLocationCode;
 
-    public String getLocationCode() {
-        return locationCode;
-    }
+	private String companyIdentification;
+	private String systemLocationCode;
 
-    public String getTravelAgentIdentifier() {
-        return travelAgentIdentifier;
-    }
+	private String originatorTypeCode;
+	private String originatorCountryCode;
+	private String originatorCurrencyCode;
+	private String originatorLanguageCode;
 
-    public String getReservationSystemCode() {
-        return reservationSystemCode;
-    }
+	public ORG(List<Composite> composites) {
+		super("ORG", composites);
 
-    public String getReservationSystemKey() {
-        return reservationSystemKey;
-    }
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
 
-    public String getAgentLocationCode() {
-        return agentLocationCode;
-    }
+			switch (i) {
+			case 0:
+				this.airlineCode = c.getElement(0);
+				this.locationCode = c.getElement(1);
+				break;
+			case 1:
+				this.travelAgentIdentifier = c.getElement(0);
+				this.reservationSystemCode = c.getElement(1);
+				this.reservationSystemKey = c.getElement(2);
+				break;
+			case 2:
+				this.agentLocationCode = c.getElement(0);
+				break;
+			case 3:
+				this.companyIdentification = c.getElement(0);
+				this.systemLocationCode = c.getElement(1);
+				break;
+			case 4:
+				this.originatorTypeCode = c.getElement(0);
+				this.originatorCountryCode = c.getElement(1);
+				this.originatorCurrencyCode = c.getElement(2);
+				this.originatorLanguageCode = c.getElement(3);
+				break;
+			}
+		}
+	}
 
-    public String getCompanyIdentification() {
-        return companyIdentification;
-    }
+	public String getAirlineCode() {
+		return airlineCode;
+	}
 
-    public String getSystemLocationCode() {
-        return systemLocationCode;
-    }
+	public String getLocationCode() {
+		return locationCode;
+	}
 
-    public String getOriginatorTypeCode() {
-        return originatorTypeCode;
-    }
+	public String getTravelAgentIdentifier() {
+		return travelAgentIdentifier;
+	}
 
-    public String getOriginatorCountryCode() {
-        return originatorCountryCode;
-    }
+	public String getReservationSystemCode() {
+		return reservationSystemCode;
+	}
 
-    public String getOriginatorCurrencyCode() {
-        return originatorCurrencyCode;
-    }
+	public String getReservationSystemKey() {
+		return reservationSystemKey;
+	}
 
-    public String getOriginatorLanguageCode() {
-        return originatorLanguageCode;
-    }
+	public String getAgentLocationCode() {
+		return agentLocationCode;
+	}
+
+	public String getCompanyIdentification() {
+		return companyIdentification;
+	}
+
+	public String getSystemLocationCode() {
+		return systemLocationCode;
+	}
+
+	public String getOriginatorTypeCode() {
+		return originatorTypeCode;
+	}
+
+	public String getOriginatorCountryCode() {
+		return originatorCountryCode;
+	}
+
+	public String getOriginatorCurrencyCode() {
+		return originatorCurrencyCode;
+	}
+
+	public String getOriginatorLanguageCode() {
+		return originatorLanguageCode;
+	}
 }

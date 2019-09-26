@@ -22,7 +22,7 @@ import gov.gtas.parsers.edifact.Segment;
  * (PTK+NR++150610:2200+DL+006+ATL')
  */
 public class PTK extends Segment {
-    public PTK(List<Composite> composites) {
-        super(PTK.class.getSimpleName(), composites);
-    }
+	public PTK(List<Composite> composites) {
+		super(PTK.class.getSimpleName(), composites);
+	}
 }

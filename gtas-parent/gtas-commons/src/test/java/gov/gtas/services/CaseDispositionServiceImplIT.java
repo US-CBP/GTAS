@@ -27,29 +27,26 @@ import gov.gtas.repository.CaseDispositionRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class })
 public class CaseDispositionServiceImplIT {
-    @Before
-    public void setUp() throws Exception {
-    }
+	@Before
+	public void setUp() throws Exception {
+	}
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Autowired
-    private CaseDispositionService caseDispService;
-    
-    @Autowired
-    private CaseDispositionRepository caseRepo;
+	@Autowired
+	private CaseDispositionService caseDispService;
 
+	@Autowired
+	private CaseDispositionRepository caseRepo;
 
-    @Test
-    public void testCreateCase() throws Exception {
-    	Random _rand = new Random();
-        List<Long> _tempHitList = new ArrayList<>();
-        _tempHitList.add(new Long(1L));
-        assertTrue(true);
-    }
-
-
+	@Test
+	public void testCreateCase() throws Exception {
+		Random _rand = new Random();
+		List<Long> _tempHitList = new ArrayList<>();
+		_tempHitList.add(new Long(1L));
+		assertTrue(true);
+	}
 
 }

@@ -12,6 +12,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface HitsDispositionRepository extends JpaRepository<HitsDisposition, Long> {
 
-    @Query("SELECT h FROM HitsDisposition h where h.hitId = (:hitId)")
-    public HitsDisposition findByCriteria(@Param("hitId") Long hitId );
+	@Query("SELECT h FROM HitsDisposition h where h.hitId = (:hitId)")
+	public HitsDisposition findByCriteria(@Param("hitId") Long hitId);
 }

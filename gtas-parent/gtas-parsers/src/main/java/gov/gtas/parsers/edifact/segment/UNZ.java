@@ -15,29 +15,29 @@ import gov.gtas.parsers.edifact.Segment;
  * UNZ Interchange Trailer
  */
 public class UNZ extends Segment {
-    private String interchangeControlCount;
-    private String interchangeControlReference;
+	private String interchangeControlCount;
+	private String interchangeControlReference;
 
-    public UNZ(List<Composite> composites) {
-        super(UNZ.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                this.interchangeControlCount = c.getElement(0);
-                break;
-            case 1:
-                this.interchangeControlReference = c.getElement(0);
-                break;
-            }
-        }
-    }
+	public UNZ(List<Composite> composites) {
+		super(UNZ.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				this.interchangeControlCount = c.getElement(0);
+				break;
+			case 1:
+				this.interchangeControlReference = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public String getInterchangeControlCount() {
-        return interchangeControlCount;
-    }
+	public String getInterchangeControlCount() {
+		return interchangeControlCount;
+	}
 
-    public String getInterchangeControlReference() {
-        return interchangeControlReference;
-    }
+	public String getInterchangeControlReference() {
+		return interchangeControlReference;
+	}
 }
