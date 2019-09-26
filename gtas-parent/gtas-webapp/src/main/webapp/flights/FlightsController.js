@@ -362,7 +362,7 @@
           {
               name: 'passengerCount',
               field: 'passengerCount',
-              displayName: $translate.instant('menu.passengers'),
+              displayName: $translate.instant('flight.passengers'),
               enableFiltering: false,
               cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
           },

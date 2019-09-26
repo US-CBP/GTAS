@@ -1368,10 +1368,10 @@
       return codeTooltipService.getCodeTooltipData(field, type);
     };
 
-    $scope.hitTooltipData = ["Loading..."];
+    $scope.hitTooltipData = ["{{'msg.loading' | translate}}"];
 
     $scope.resetTooltip = function() {
-      $scope.hitTooltipData = ["Loading..."];
+      $scope.hitTooltipData = ["{{'msg.loading' | translate}}"];
       // $('md-tooltip').remove();
     };
 
