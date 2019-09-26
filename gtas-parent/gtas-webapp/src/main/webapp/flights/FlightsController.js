@@ -420,7 +420,7 @@
           },
           {
               name: 'direction',
-              displayName: $translate.instant('direction'),
+              displayName: $translate.instant('flight.direction'),
               cellTemplate: '<span>{{COL_FIELD}}</span>',
               visible: true
           },
