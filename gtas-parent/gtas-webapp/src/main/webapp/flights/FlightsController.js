@@ -507,7 +507,7 @@
         {
              name: 'lastName',
              displayName: $translate.instant('pass.lastname'),
-             cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+             cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="{{`msg.launchflightpax` | translate}}" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
         },
         {
            name: 'firstName',
