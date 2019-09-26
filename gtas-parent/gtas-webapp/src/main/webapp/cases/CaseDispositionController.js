@@ -203,7 +203,8 @@
                     field: 'flightNumber',
                     name: 'flightNumber',
                     displayName: $translate.instant('flight.flight'),
-                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="' 
+                    + $translate.instant('msg.launchflightpax') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
@@ -261,14 +262,14 @@
                     function(data){
                         if(data!=null && data.data.cases!=null){
                             if(data.data.cases.length < 1){
-                                $scope.errorToast("No Results Found", toastPosition);
+                                $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition);
                             }
                         $scope.casesDispGrid.data = data.data.cases;
                         $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
                             }
                             else{
-                            $scope.errorToast("No Results Found", toastPosition)
+                            $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition)
                         }
                         spinnerService.hide('html5spinner');
                     });
