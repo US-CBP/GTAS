@@ -1158,11 +1158,11 @@
           stateName = $state.$current.self.name,
           ruleGridColumns = [{
               name: 'ruleTitle',
-              displayName: 'Title',
+              displayName: $translate.instant('rule.title'),
               cellTemplate: '<md-button aria-label="title" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
           }, {
               name: 'ruleConditions',
-              displayName: 'Conditions',
+              displayName: $translate.instant('rule.conditions'),
               field: 'hitsDetailsList[0]',
               cellFilter: 'hitsConditionDisplayFilter'
           }],
