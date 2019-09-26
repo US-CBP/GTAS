@@ -372,7 +372,7 @@
                               <thead>
                                 <tr>
                                   <th>&nbsp;</th>
-                                  <th>BagID</th>
+                                  <th>{{'bag.bagid' | translate}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -391,13 +391,13 @@
                     <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
                         <h4 class="h-label no-margin-top" >
-                          Phone Numbers ({{ passenger.apisMessageVo.phoneNumbers.length }})
+                            {{'phone.phonenumbers' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})
                         </h4>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                           <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                             <thead>
                             <tr>
-                              <th>Phone Number</th>
+                              <th>{{'phone.phonenumber' | translate}}</th>
                             </tr>
                             </thead>
                               <tbody>
@@ -417,19 +417,19 @@
                   <div class="cbp-card-container full-width">
                     <div class="cbp-card cbp-card-shadow">
                       <h4 class="h-label no-margin-top" >
-                        Passengers on Reservation ({{ passenger.apisMessageVo.flightpaxs.length }})
+                        {{'apis.passengersonreservation' | translate}} ({{ passenger.apisMessageVo.flightpaxs.length }})
                       </h4>
                       <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                         <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                         <thead>
                           <tr>
-                            <th>First Name</th>
-                            <th>Middle Name</th>
-                            <th>Last Name</th>
-                            <th>Pax Type</th>
-                            <th>Residence</th>
-                            <th>Port of Arrival</th>
-                            <th>Ref Num</th>
+                            <th>{{'pass.firstname' | translate}}</th>
+                            <th>{{'pass.middlename' | translate}}</th>
+                            <th>{{'pass.lastname' | translate}}</th>
+                            <th>{{'pass.type' | translate}}</th>
+                            <th>{{'pass.residence' | translate}}</th>
+                            <th>{{'flight.destinationairport' | translate}}</th>
+                            <th>{{'pnr.refnum' | translate}}</th>
                           </tr>
                           </thead>
                           <tbody>
