@@ -7,12 +7,12 @@
     <div class="col-xs-12 pull-left">
       <form name="sideForm" class="filters" _lpchecked="1">
         <div class="filter-list" role="tablist">
-          <h1 class="filter-heading">{{'filters' | translate}}
+          <h1 class="filter-heading">{{'nav.filters' | translate}}
             <button type="submit" class="btn btn-icon-only btn-hover">
               <md-tooltip>{{'flight.filter' | translate}}</md-tooltip>
               <i class="fa fa-search"></i>
             </button>
-            <a href="#" ng-click="reset()" class="filters-clear">{{'clearfilters' | translate}}</a>
+            <a href="#" ng-click="reset()" class="filters-clear">{{'nav.clearfilters' | translate}}</a>
           </h1>
           <div ng-show='filterCheck("paxname")'>
             <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#paxnameGroup" aria-controls="nameGroup" class="filter-group-title">
@@ -217,7 +217,7 @@
 
           <div ng-show='filterCheck("casesDate")'>
             <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
-              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> <span ng-show='filterCheck("dateLabel")'>{{'flight.flight' | translate}}</span> {{'daterange' | translate}}
+              <a href="#"><i class="fa fa-angle-right pull-right"></i></a> <span ng-show='filterCheck("dateLabel")'>{{'flight.flight' | translate}}</span> {{'nav.daterange' | translate}}
             </h3>
             <div id="filterGroup9" class="collapse in">
               <div class="filter-group-content">
@@ -231,7 +231,7 @@
                       </label>
                       <div class="validation-messages" ng-messages="sideForm.startDate.$error">
                         <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                          <i class="fa fa-times-circle" aria-hidden="true"></i>{{'msg.invaliddate' | translate}}
                         </div>
                       </div>
                     </div>
@@ -244,7 +244,7 @@
                       </label>
                       <div class="validation-messages" ng-messages="sideForm.endDate.$error">
                         <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                          <i class="fa fa-times-circle" aria-hidden="true"></i>{{'msg.invaliddate' | translate}}
                         </div>
                       </div>
                     </div>
@@ -257,7 +257,7 @@
           <div ng-show='filterCheck("date")'>
             <h3 aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup6" aria-controls="filterGroup6" class="filter-group-title">
               <a href="#"><i class="fa fa-angle-right pull-right"></i></a> 
-              <span ng-show='filterCheck("dateLabel")'>{{'flight.flight' | translate}}</span> {{'daterange' | translate}}
+              <span ng-show='filterCheck("dateLabel")'>{{'flight.flight' | translate}}</span> {{'nav.daterange' | translate}}
             </h3>
             <div id="filterGroup6" class="collapse in">
               <div class="filter-group-content">
@@ -271,7 +271,7 @@
                       </label>
                       <div class="validation-messages" ng-messages="sideForm.startDate.$error">
                         <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                          <i class="fa fa-times-circle" aria-hidden="true"></i>{{'msg.invaliddate' | translate}}
                         </div>
                       </div>
                     </div>
@@ -284,7 +284,7 @@
                       </label>
                       <div class="validation-messages" ng-messages="sideForm.endDate.$error">
                         <div ng-message="valid" class="alert alert-danger" role="alert">
-                          <i class="fa fa-times-circle" aria-hidden="true"></i> Invalid Date
+                          <i class="fa fa-times-circle" aria-hidden="true"></i>{{'msg.invaliddate' | translate}}
                         </div>
                       </div>
                     </div>
