@@ -204,7 +204,7 @@
                     name: 'flightNumber',
                     displayName: $translate.instant('flight.flight'),
                     cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="' 
-                    + $translate.instant('msg.launchflightpax') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    + $translate.instant('msg.launchcase') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
