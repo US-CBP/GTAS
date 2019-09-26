@@ -69,7 +69,8 @@
             	   name: 'name',
             	   enableCellEdit: false,
                  displayName: $translate.instant('pass.name'),
-            	   cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.caseId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                 cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.caseId}}"' +
+                 ' title="' + $translate.instant('msg.launchcase') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                },
 
                {
