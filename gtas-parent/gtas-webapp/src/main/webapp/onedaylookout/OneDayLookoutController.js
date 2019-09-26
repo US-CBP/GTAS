@@ -45,14 +45,14 @@
                     	 if(newValue != oldValue){
                     		 oneDayLookoutService.updateEncounteredStatus(rowEntity.caseId,newValue).then(function(resp){
 								if(resp.status == 200){
-									 let title="Encountered Status Updated Successfully!";
-									 let content="New Status: " + newValue;
+									 let title=$translate.instant('msg.encounteredstatus');
+									 let content=$translate.instant('msg.newstatus') + ": " + newValue;
 									$scope.showAlert(title, content);
 								}
 								else{
 									// $scope.encounterUpdateStatus="failure";
-									let title="Failed to Update Encounter Status!";
-									 let content="Please Try Again!";
+									let title=$translate.instant('msg.failedtoupdate');
+									 let content=$translate.instant('msg.pleasetryagain');
 									$scope.showAlert(title, content);
 								}
                     		 });
@@ -104,7 +104,7 @@
 					{id:'Missed', encounteredStatus:'Missed'}
 					],
 				   headerCellFilter: 'translate',
-				   cellTooltip:'Double click to make a status change'
+				   cellTooltip: $translate.instant('msg.doubleclick')
 
                },
                {
