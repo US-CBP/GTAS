@@ -82,7 +82,7 @@
             <tr>
               <td class="half-width txt-right"><strong>{{'pass.seat' | translate}}</strong></td>
               <td class="half-width">
-                <a class="primary-link" title="Show seat map" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
+                <a class="primary-link" title="{{'msg.showseatmap' | translate}}" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
               </td>
             </tr>
             <tr>
@@ -239,7 +239,7 @@
                               </thead>
                               <tbody>
                               <tr ng-repeat="case in caseHistory">
-                                <td><a ng-href="#/casedetail/{{case.id}}" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
+                                <td><a ng-href="#/casedetail/{{case.id}}" title="{{'msg.showcasedetails' | translate}}"><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
                                 <td>{{case.flightNumber}}</td>
                                 <td>{{case.document}}</td>
                                 <td>{{case.status}}</td>
@@ -436,7 +436,7 @@
                           <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                             <td>{{flightpax.firstName}}</td>
                             <td>{{flightpax.middleName}}</td>
-                            <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail">{{flightpax.lastName}}</a></td>
+                            <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
                             <td>
                                 <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
                           <md-tooltip class="multi-tooltip" md-direction="left">
@@ -512,7 +512,7 @@
                                   <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                     <td style="align-items: center;">{{leg.legNumber }}</td>
                                     <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                      <a class="primary-link" title="Show flight details" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                      <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
                                     <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -550,7 +550,7 @@
                                   <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
                                     <td>{{ pass.firstName }}</td>
                                     <td>{{ pass.middleName }}</td>
-                                    <td><a title="Show passenger detail" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
+                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
                                         <md-tooltip class="multi-tooltip" md-direction="left">
@@ -810,7 +810,7 @@
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead aria-hidden="true">
                               <tr>
-                                <th class="txt-right">{{'flight.flightleg' | translate}}</th>
+                                <th class="txt-right">{{'flight.flightnum' | translate}}</th>
                                 <th class="txt-right">{{'pass.passengername' | translate}}</th>
                                 <th class="txt-right">{{'bag.bagcount' | translate}}</th>
                                 <th class="txt-right">{{'bag.totalbagweight' | translate}}</th>
@@ -921,7 +921,7 @@
                           <tr ng-repeat="k in flight | orderBy:'-etd'">
                             <td ng-if="!k.bookingDetail">
                               <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
-                                 target="pax.detail" title="Show passenger detail">
+                                 target="pax.detail" title="{{'msg.showflightdetails' | translate}}">
                                 {{k.fullFlightNumber}}</a>
                             </td>
                             <td class="md-primary md-default-theme"
