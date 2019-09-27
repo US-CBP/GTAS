@@ -17,7 +17,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To identify a charge.
  */
 public class CPI extends Segment {
-    public CPI(List<Composite> composites) {
-        super(CPI.class.getSimpleName(), composites);
-    }
+	public CPI(List<Composite> composites) {
+		super(CPI.class.getSimpleName(), composites);
+	}
 }

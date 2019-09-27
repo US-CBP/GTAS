@@ -13,27 +13,28 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  * Error processing utility functions.
  */
 public final class ErrorUtils {
-    private ErrorUtils() { }
-    
-    public static void constructExceptionDetails(Throwable exception, List<String> details){
-        details.add("Exception class:"+exception.getClass().getSimpleName());
-        details.add("Exception messsage:"+exception.getMessage());
-        for(StackTraceElement el:exception.getStackTrace()){
-            details.add(el.toString());
-        }
-        if(exception.getCause() != null){
-            details.add(">>>>>>>> Caused by:");
-            constructExceptionDetails(exception.getCause(), details);
-        }
-    }
+	private ErrorUtils() {
+	}
 
-    private static final int MAX_ERROR_LENG = 4000;
+	public static void constructExceptionDetails(Throwable exception, List<String> details) {
+		details.add("Exception class:" + exception.getClass().getSimpleName());
+		details.add("Exception messsage:" + exception.getMessage());
+		for (StackTraceElement el : exception.getStackTrace()) {
+			details.add(el.toString());
+		}
+		if (exception.getCause() != null) {
+			details.add(">>>>>>>> Caused by:");
+			constructExceptionDetails(exception.getCause(), details);
+		}
+	}
 
-    public static String getStacktrace(Throwable e) {
-        String stacktrace = ExceptionUtils.getStackTrace(e);
-        if (stacktrace.length() > MAX_ERROR_LENG) {
-            stacktrace = stacktrace.substring(0, MAX_ERROR_LENG);
-        }
-        return stacktrace;
-    }
+	private static final int MAX_ERROR_LENG = 4000;
+
+	public static String getStacktrace(Throwable e) {
+		String stacktrace = ExceptionUtils.getStackTrace(e);
+		if (stacktrace.length() > MAX_ERROR_LENG) {
+			stacktrace = stacktrace.substring(0, MAX_ERROR_LENG);
+		}
+		return stacktrace;
+	}
 }

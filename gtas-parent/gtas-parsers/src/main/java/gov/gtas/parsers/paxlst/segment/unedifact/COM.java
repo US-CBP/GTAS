@@ -20,42 +20,42 @@ import gov.gtas.parsers.edifact.Segment;
  * Example: COM+202 628 9292:TE+202 628 4998:FX+davidsonr.at.iata.org:EM’
  */
 public class COM extends Segment {
-    private String phoneNumber;
-    private String faxNumber;
-    private String email;
+	private String phoneNumber;
+	private String faxNumber;
+	private String email;
 
-    public COM(List<Composite> composites) {
-        super(COM.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            String type = c.getElement(1);
-            if (type == null) {
-                continue;
-            }
-            
-            switch (type) {
-            case "TE":
-                this.phoneNumber = c.getElement(0);
-                break;
-            case "FX":
-                this.faxNumber = c.getElement(0);
-                break;
-            case "EM":
-                this.email = c.getElement(0);
-                break;
-            }
-        }
-    }
+	public COM(List<Composite> composites) {
+		super(COM.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			String type = c.getElement(1);
+			if (type == null) {
+				continue;
+			}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+			switch (type) {
+			case "TE":
+				this.phoneNumber = c.getElement(0);
+				break;
+			case "FX":
+				this.faxNumber = c.getElement(0);
+				break;
+			case "EM":
+				this.email = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public String getFaxNumber() {
-        return faxNumber;
-    }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getFaxNumber() {
+		return faxNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
 }

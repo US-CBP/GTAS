@@ -9,8 +9,8 @@ import org.springframework.data.repository.query.Param;
 import gov.gtas.model.Bag;
 import gov.gtas.model.PaymentForm;
 
-public interface PaymentFormRepository extends CrudRepository<PaymentForm, Long>{
-	
+public interface PaymentFormRepository extends CrudRepository<PaymentForm, Long> {
+
 	@Query("SELECT p FROM PaymentForm p WHERE p.pnr.id = :pnrId")
 	List<Bag> findByPnrId(@Param("pnrId") Long pnrId);
 }

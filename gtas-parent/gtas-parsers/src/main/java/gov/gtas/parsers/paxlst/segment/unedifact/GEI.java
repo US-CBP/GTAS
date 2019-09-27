@@ -22,31 +22,31 @@ import gov.gtas.parsers.edifact.Segment;
  * been verified.
  */
 public class GEI extends Segment {
-    private boolean verified;
+	private boolean verified;
 
-    public GEI(List<Composite> composites) {
-        super(GEI.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 1:
-                switch (c.getElement(0)) {
-                case "173":
-                case "ZZZ":
-                    this.verified = true;
-                    break;
-                case "174":
-                    this.verified = false;
-                    break;
-                default:
-                    this.verified = false;
-                }
-                break;
-            }
-        }
-    }
+	public GEI(List<Composite> composites) {
+		super(GEI.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 1:
+				switch (c.getElement(0)) {
+				case "173":
+				case "ZZZ":
+					this.verified = true;
+					break;
+				case "174":
+					this.verified = false;
+					break;
+				default:
+					this.verified = false;
+				}
+				break;
+			}
+		}
+	}
 
-    public boolean isVerified() {
-        return verified;
-    }
+	public boolean isVerified() {
+		return verified;
+	}
 }

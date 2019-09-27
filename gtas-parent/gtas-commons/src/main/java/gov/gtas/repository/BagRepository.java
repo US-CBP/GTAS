@@ -19,11 +19,11 @@ import javax.transaction.Transactional;
 public interface BagRepository extends CrudRepository<Bag, Long> {
 
 	@Query("SELECT bags FROM Bag bags WHERE bags.flight.id = :flightId AND bags.passenger.id = :passengerId")
-	List<Bag> findFromFlightAndPassenger(@Param("flightId") Long flightId,
-										 @Param("passengerId") Long passengerId);
+	List<Bag> findFromFlightAndPassenger(@Param("flightId") Long flightId, @Param("passengerId") Long passengerId);
+
 	@Transactional
 	@Query("SELECT bags from Bag bags where bags.passenger.id in :paxIds")
-    Set<Bag> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
+	Set<Bag> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
 
 	@Transactional
 	@Query(" SELECT bags from Bag bags left join fetch bags.bookingDetail where bags.passenger.id in :passengerIds ")

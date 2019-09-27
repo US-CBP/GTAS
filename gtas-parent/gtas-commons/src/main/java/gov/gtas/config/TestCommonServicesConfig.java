@@ -14,15 +14,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * The configuration class can be imported into an XML configuration by:<br>
- * <context:annotation-config/> <bean
- * class="gov.gtas.config.TestCommonServicesConfig"/>
+ * <context:annotation-config/>
+ * <bean class="gov.gtas.config.TestCommonServicesConfig"/>
  */
 @Configuration
 @ComponentScan("gov.gtas")
 @PropertySource({ "classpath:default.application.properties" })
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
-@Import({AsyncConfig.class, CommonServicesConfig.class})
+@Import({ AsyncConfig.class, CommonServicesConfig.class })
 public class TestCommonServicesConfig {
 
 }

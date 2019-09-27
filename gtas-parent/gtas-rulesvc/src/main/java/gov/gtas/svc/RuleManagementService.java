@@ -20,8 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
  */
 public interface RuleManagementService {
 	/**
-	 * Creates a named Knowledge Base from the given DRL rules string and saves
-	 * it in the DB. Note: the KB name must not be the default KB name.
+	 * Creates a named Knowledge Base from the given DRL rules string and saves it
+	 * in the DB. Note: the KB name must not be the default KB name.
 	 * 
 	 * @param kbName
 	 *            the Knowledge Base name.
@@ -29,8 +29,7 @@ public interface RuleManagementService {
 	 *            the rules.
 	 * @return the KnowledgeBase object.
 	 */
-	KnowledgeBase createKnowledgeBaseFromDRLString(String kbName,
-			String drlString);
+	KnowledgeBase createKnowledgeBaseFromDRLString(String kbName, String drlString);
 
 	/**
 	 * Fetches DRL rules from a Knowledge Base.
@@ -51,8 +50,8 @@ public interface RuleManagementService {
 	String fetchDefaultDrlRulesFromKnowledgeBase();
 
 	/**
-	 * Creates a Knowledge Base from a list of UDR rule objects and saves it to
-	 * the DB.
+	 * Creates a Knowledge Base from a list of UDR rule objects and saves it to the
+	 * DB.
 	 * 
 	 * @param kbName
 	 *            the name of the Knowledge Base.
@@ -62,12 +61,11 @@ public interface RuleManagementService {
 	 *            user id
 	 * @return the created Knowledge Base.
 	 */
-	KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName,
-			Collection<UdrRule> rules, String userId);
+	KnowledgeBase createKnowledgeBaseFromUdrRules(String kbName, Collection<UdrRule> rules, String userId);
 
 	/**
-	 * Creates a Knowledge Base from a list of watch list item objects and saves
-	 * it to the DB.
+	 * Creates a Knowledge Base from a list of watch list item objects and saves it
+	 * to the DB.
 	 * 
 	 * @param kbName
 	 *            the name of the Knowledge Base.
@@ -75,16 +73,15 @@ public interface RuleManagementService {
 	 *            the collection of watch list items.
 	 * @return the created Knowledge Base.
 	 */
-	KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName,
-			Iterable<WatchlistItem> rules);
+	KnowledgeBase createKnowledgeBaseFromWatchlistItems(String kbName, Iterable<WatchlistItem> rules);
 
 	/**
 	 * Deletes the named Knowledge Base.
 	 * 
 	 * @param kbName
 	 *            the knowledge base name.
-	 * @return the deleted knowledge base, or null if the knowledge base could
-	 *         not be found.
+	 * @return the deleted knowledge base, or null if the knowledge base could not
+	 *         be found.
 	 */
 	KnowledgeBase deleteKnowledgeBase(String kbName);
 }

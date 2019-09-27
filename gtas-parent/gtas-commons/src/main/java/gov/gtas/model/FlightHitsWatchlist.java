@@ -6,49 +6,48 @@ import javax.persistence.*;
 @Table(name = "flight_hit_watchlist")
 public class FlightHitsWatchlist {
 
-    @Id
-    @Column(name = "fhw_flight_id", columnDefinition = "bigint unsigned")
-    private
-    Long flightId;
+	@Id
+	@Column(name = "fhw_flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    Flight flight;
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "fhw_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	Flight flight;
 
-    @Column(name = "fhw_hit_count")
-    private Integer hitCount;
+	@Column(name = "fhw_hit_count")
+	private Integer hitCount;
 
-    @SuppressWarnings("unused")
-    public FlightHitsWatchlist() {
-    }
+	@SuppressWarnings("unused")
+	public FlightHitsWatchlist() {
+	}
 
-    public FlightHitsWatchlist(Long flightId, Integer hitCount) {
-        this.flightId = flightId;
-        this.hitCount = hitCount;
-    }
+	public FlightHitsWatchlist(Long flightId, Integer hitCount) {
+		this.flightId = flightId;
+		this.hitCount = hitCount;
+	}
 
-    public Integer getHitCount() {
-        return hitCount;
-    }
+	public Integer getHitCount() {
+		return hitCount;
+	}
 
-    public void setHitCount(Integer hitCount) {
-        this.hitCount = hitCount;
-    }
+	public void setHitCount(Integer hitCount) {
+		this.hitCount = hitCount;
+	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
 }

@@ -17,7 +17,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To indicate totals of a goods item.
  */
 public class GID extends Segment {
-    public GID(List<Composite> composites) {
-        super(GID.class.getSimpleName(), composites);
-    }
+	public GID(List<Composite> composites) {
+		super(GID.class.getSimpleName(), composites);
+	}
 }

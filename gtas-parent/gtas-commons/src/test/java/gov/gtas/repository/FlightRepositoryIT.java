@@ -26,11 +26,9 @@ import gov.gtas.model.Passenger;
 import gov.gtas.services.dto.FlightsRequestDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
 @Rollback(true)
-public class FlightRepositoryIT extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class FlightRepositoryIT extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	private FlightRepository flightDao;
@@ -184,8 +182,7 @@ public class FlightRepositoryIT extends
 		int count = 0;
 		List<Flight> flights = result.getRight();
 		for (Flight f : flights) {
-			if ("XX".equalsIgnoreCase(f.getCarrier())
-					|| "YY".equalsIgnoreCase(f.getCarrier())) {
+			if ("XX".equalsIgnoreCase(f.getCarrier()) || "YY".equalsIgnoreCase(f.getCarrier())) {
 				count++;
 			}
 		}
@@ -203,8 +200,7 @@ public class FlightRepositoryIT extends
 		int count = 0;
 		List<Flight> flights = result.getRight();
 		for (Flight f : flights) {
-			if ("XX".equalsIgnoreCase(f.getCarrier())
-					|| "YY".equalsIgnoreCase(f.getCarrier())) {
+			if ("XX".equalsIgnoreCase(f.getCarrier()) || "YY".equalsIgnoreCase(f.getCarrier())) {
 				count++;
 			}
 		}

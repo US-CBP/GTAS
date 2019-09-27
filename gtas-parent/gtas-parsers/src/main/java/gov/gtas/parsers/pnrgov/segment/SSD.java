@@ -19,17 +19,17 @@ import gov.gtas.parsers.edifact.Segment;
  * Ex:The passenger has been assigned seat 24A in coach.(SSD+24A++++Y’)
  */
 public class SSD extends Segment {
-    private String seatNumber;
+	private String seatNumber;
 
-    public SSD(List<Composite> composites) {
-        super(SSD.class.getSimpleName(), composites);
-        Composite c = getComposite(0);
-        if (c != null) {
-            this.seatNumber = c.getElement(0);
-        }
-    }
+	public SSD(List<Composite> composites) {
+		super(SSD.class.getSimpleName(), composites);
+		Composite c = getComposite(0);
+		if (c != null) {
+			this.seatNumber = c.getElement(0);
+		}
+	}
 
-    public String getSeatNumber() {
-        return seatNumber;
-    }
+	public String getSeatNumber() {
+		return seatNumber;
+	}
 }

@@ -11,11 +11,10 @@ import javax.persistence.Table;
 @IdClass(UserLocationPK.class)
 public class UserLocation {
 
-	
 	@Id
 	@Column(name = "user_id")
 	private String userId;
-	
+
 	@Id
 	@Column(name = "airport")
 	private String airport;
@@ -23,14 +22,14 @@ public class UserLocation {
 	@Column(name = "primary_location")
 	private Boolean primaryLocation;
 
-	public UserLocation() {}
-	
-	public UserLocation(String userId,String airport,Boolean primaryLocation) 
-	{
+	public UserLocation() {
+	}
+
+	public UserLocation(String userId, String airport, Boolean primaryLocation) {
 		this.userId = userId;
 		this.airport = airport;
 		this.primaryLocation = primaryLocation;
-		
+
 	}
 
 	public Boolean getPrimaryLocation() {
@@ -56,21 +55,5 @@ public class UserLocation {
 	public void setAirport(String airport) {
 		this.airport = airport;
 	}
-	
-	
-
-
-	
-	
-
-	
-	
-
-	
-
-	
-	
-	
-	
 
 }

@@ -18,20 +18,24 @@ import org.springframework.data.repository.query.Param;
  * The Interface FlightRepositoryCustom.
  */
 public interface FlightRepositoryCustom {
-    /**
-     * Return all flights by criteria
-     * @param dto the request parameters, filters, etc.
-     * @return tuple consisting of total count and list of results.
-     */
-    public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
-    
-    /**
-     * Delete all messages.
-     *
-     * @throws Exception the exception
-     */
-    public void deleteAllMessages() throws Exception ;
+	/**
+	 * Return all flights by criteria
+	 * 
+	 * @param dto
+	 *            the request parameters, filters, etc.
+	 * @return tuple consisting of total count and list of results.
+	 */
+	public Pair<Long, List<Flight>> findByCriteria(FlightsRequestDto dto);
 
-    public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);    
-    public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef);
+	/**
+	 * Delete all messages.
+	 *
+	 * @throws Exception
+	 *             the exception
+	 */
+	public void deleteAllMessages() throws Exception;
+
+	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef);
+
+	public List<Flight> getTravelHistoryNotByItinerary(Long paxId, Long pnrId, String pnrRef);
 }

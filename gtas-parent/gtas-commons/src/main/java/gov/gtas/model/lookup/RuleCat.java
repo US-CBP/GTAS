@@ -18,105 +18,97 @@ import java.util.*;
 @Entity
 @Table(name = "rule_category")
 public class RuleCat extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Column(name = "catId", nullable = false)
-    private Long catId;
+	@Column(name = "catId", nullable = false)
+	private Long catId;
 
-    @Column(name = "category", nullable = false)
-    private String category;
+	@Column(name = "category", nullable = false)
+	private String category;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+	@Column(name = "description", nullable = true)
+	private String description;
 
-    @Column(name = "priority", nullable = false)
-    private Long priority;
+	@Column(name = "priority", nullable = false)
+	private Long priority;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<HitsDisposition> hitsDispositions = new HashSet<>();
+	@JsonIgnore
+	@OneToMany(mappedBy = "ruleCat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
-    public Long getCatId() {
-        return catId;
-    }
+	public Long getCatId() {
+		return catId;
+	}
 
-    public void setCatId(Long catId) {
-        this.catId = catId;
-    }
+	public void setCatId(Long catId) {
+		this.catId = catId;
+	}
 
-    public String getCategory() {
-        return category;
-    }
+	public String getCategory() {
+		return category;
+	}
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+	public void setCategory(String category) {
+		this.category = category;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public Long getPriority() {
-        return priority;
-    }
+	public Long getPriority() {
+		return priority;
+	}
 
-    public void setPriority(Long priority) {
-        this.priority = priority;
-    }
+	public void setPriority(Long priority) {
+		this.priority = priority;
+	}
 
-    public RuleCat() {
-    }
+	public RuleCat() {
+	}
 
-    public RuleCat(Long catId) {
-        this.catId = catId;
-    }
+	public RuleCat(Long catId) {
+		this.catId = catId;
+	}
 
-//    public List<HitsDisposition> getHitsDispositions() {
-//        return hitsDispositions;
-//    }
-//
-//    public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
-//        this.hitsDispositions = hitsDispositions;
-//    }
+	// public List<HitsDisposition> getHitsDispositions() {
+	// return hitsDispositions;
+	// }
+	//
+	// public void setHitsDispositions(List<HitsDisposition> hitsDispositions) {
+	// this.hitsDispositions = hitsDispositions;
+	// }
 
+	public Set<HitsDisposition> getHitsDispositions() {
+		return hitsDispositions;
+	}
 
-    public Set<HitsDisposition> getHitsDispositions() {
-        return hitsDispositions;
-    }
+	public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
+		this.hitsDispositions = hitsDispositions;
+	}
 
-    public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
-        this.hitsDispositions = hitsDispositions;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        if (o == null || getClass() != o.getClass()) return false;
+		RuleCat ruleCat = (RuleCat) o;
 
-        RuleCat ruleCat = (RuleCat) o;
+		return new EqualsBuilder().appendSuper(super.equals(o)).append(catId, ruleCat.catId)
+				.append(category, ruleCat.category).append(description, ruleCat.description)
+				.append(priority, ruleCat.priority).isEquals();
+	}
 
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(catId, ruleCat.catId)
-                .append(category, ruleCat.category)
-                .append(description, ruleCat.description)
-                .append(priority, ruleCat.priority)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(catId)
-                .append(category)
-                .append(description)
-                .append(priority)
-                .toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(catId).append(category)
+				.append(description).append(priority).toHashCode();
+	}
 }

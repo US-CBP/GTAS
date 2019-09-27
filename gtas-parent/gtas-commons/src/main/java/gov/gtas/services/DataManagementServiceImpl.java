@@ -11,18 +11,16 @@ import gov.gtas.model.User;
 import gov.gtas.repository.DataManagementRepository;
 
 @Service
-public class DataManagementServiceImpl implements DataManagementService
-{
-	
+public class DataManagementServiceImpl implements DataManagementService {
+
 	@Autowired
 	private DataManagementRepository dataManagementRepository;
-	
 
 	@Override
 	@Transactional
-	public void truncateAllMessageDataByDate(LocalDate localDate, User currentUser, DataManagementTruncation type) throws Exception
-	{
+	public void truncateAllMessageDataByDate(LocalDate localDate, User currentUser, DataManagementTruncation type)
+			throws Exception {
 		dataManagementRepository.truncateAllMessageDataByDate(localDate, currentUser, type);
-		
+
 	}
 }

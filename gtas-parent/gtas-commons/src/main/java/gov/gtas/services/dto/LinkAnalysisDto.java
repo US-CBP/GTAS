@@ -14,10 +14,10 @@ public class LinkAnalysisDto {
 	private final List<LinkPassengerVo> passengers;
 	/** total hits returned by search engine */
 	private final long totalHits;
-	
+
 	private final String error;
 
-	public LinkAnalysisDto(String error){
+	public LinkAnalysisDto(String error) {
 		this.error = error;
 		this.totalHits = 0;
 		this.passengers = new ArrayList<>();
@@ -39,5 +39,5 @@ public class LinkAnalysisDto {
 
 	public String getError() {
 		return error;
-	}	
+	}
 }

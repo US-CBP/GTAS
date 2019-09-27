@@ -68,7 +68,7 @@ public class JPQLGeneratorTest {
 		Assert.assertEquals(" left join pnr.frequentFlyers ff", joinCondition);
 
 	}
-	
+
 	@Test
 	public void testJoinPassengerBag() throws InvalidQueryRepositoryException {
 
@@ -76,7 +76,7 @@ public class JPQLGeneratorTest {
 		Assert.assertEquals(" left join p.bags bag", joinCondition);
 
 	}
-	
+
 	@Test
 	public void testJoinTravelAgency() throws InvalidQueryRepositoryException {
 

@@ -16,85 +16,85 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserData implements Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2939774474055002106L;
-    private final String userId;
-    private final String password;
-    private final String firstName;
-    private final String lastName;
-    private final int active;
-    private Set<RoleData> roles = new HashSet<RoleData>();
-    
-    public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
-            @JsonProperty("firstName") String firstName, @JsonProperty("lasatName") String lastName,
-            @JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.active = active;
-        this.password = password;
-        this.roles = roles;
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2939774474055002106L;
+	private final String userId;
+	private final String password;
+	private final String firstName;
+	private final String lastName;
+	private final int active;
+	private Set<RoleData> roles = new HashSet<RoleData>();
 
-    @JsonProperty("userId")
-    public final String getUserId() {
-        return userId;
-    }
+	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
+			@JsonProperty("firstName") String firstName, @JsonProperty("lasatName") String lastName,
+			@JsonProperty("active") int active, @JsonProperty("roles") Set<RoleData> roles) {
+		this.userId = userId;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.active = active;
+		this.password = password;
+		this.roles = roles;
+	}
 
-    @JsonProperty("password")
-    public final String getPassword() {
-        return password;
-    }
+	@JsonProperty("userId")
+	public final String getUserId() {
+		return userId;
+	}
 
-    @JsonProperty("firstName")
-    public final String getFirstName() {
-        return firstName;
-    }
+	@JsonProperty("password")
+	public final String getPassword() {
+		return password;
+	}
 
-    @JsonProperty("lastName")
-    public final String getLastName() {
-        return lastName;
-    }
+	@JsonProperty("firstName")
+	public final String getFirstName() {
+		return firstName;
+	}
 
-    @JsonProperty("active")
-    public final int getActive() {
-        return active;
-    }
+	@JsonProperty("lastName")
+	public final String getLastName() {
+		return lastName;
+	}
 
-    public final Set<RoleData> getRoles() {
-        return roles;
-    }
+	@JsonProperty("active")
+	public final int getActive() {
+		return active;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
-    }
+	public final Set<RoleData> getRoles() {
+		return roles;
+	}
 
-    @Override
-    public boolean equals(Object target) {
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
+	}
 
-        if (this == target) {
-            return true;
-        }
+	@Override
+	public boolean equals(Object target) {
 
-        if (!(target instanceof UserData)) {
-            return false;
-        }
+		if (this == target) {
+			return true;
+		}
 
-        UserData dataTarget = ((UserData) target);
+		if (!(target instanceof UserData)) {
+			return false;
+		}
 
-        return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
-                .append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
-                .append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
-                .append(this.roles, dataTarget.getRoles()).isEquals();
-    }
+		UserData dataTarget = ((UserData) target);
 
-    @Override
-    public String toString() {
-        return "UserData [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
-                + lastName + ", active=" + active + ", roles=" + roles +"]";
-    }
+		return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
+				.append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
+				.append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
+				.append(this.roles, dataTarget.getRoles()).isEquals();
+	}
+
+	@Override
+	public String toString() {
+		return "UserData [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", active=" + active + ", roles=" + roles + "]";
+	}
 
 }

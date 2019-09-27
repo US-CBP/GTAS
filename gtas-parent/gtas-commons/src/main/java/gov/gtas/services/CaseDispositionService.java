@@ -30,67 +30,75 @@ import static gov.gtas.constant.GtasSecurityConstants.*;
 
 public interface CaseDispositionService {
 
-    @PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
-    public CasePageDto findAll(CaseRequestDto dto);
+	@PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
+	public CasePageDto findAll(CaseRequestDto dto);
 
-    @PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
-    public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
+	@PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
+	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
-    @PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
-    public CasePageDto caseWithoutHitDispositions(CaseRequestDto dto);
+	@PreAuthorize(ALL_PRIVS_AND_ONE_DAY)
+	public CasePageDto caseWithoutHitDispositions(CaseRequestDto dto);
 
-    public List<HitDispositionStatus> getHitDispositionStatuses();
-    
-    public List<CaseDispositionStatus> getCaseDispositionStatuses();
+	public List<HitDispositionStatus> getHitDispositionStatuses();
 
-//    public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
-//
-//    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, List<Long> hit_ids);
+	public List<CaseDispositionStatus> getCaseDispositionStatuses();
 
-    public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document, String hitDesc, 
-                       List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+	// public Case create(Long flight_id, Long pax_id, List<Long> hit_ids);
+	//
+	// public Case create(Long flight_id, Long pax_id, String paxName, String
+	// paxType, String hitDesc, List<Long> hit_ids);
 
-    public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
+	public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob,
+			String document, String hitDesc, List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
+			Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
-    public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document, String hitDesc, List<Long> hit_ids, String username, MultipartFile fileToAttach);
+	public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
 
-    public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
+	public Case createManualCaseAttachment(Long flight_id, Long pax_id, String paxName, String paxType,
+			String nationality, Date dob, String document, String hitDesc, List<Long> hit_ids, String username,
+			MultipartFile fileToAttach);
 
-    public Case addGeneralCaseComment(CaseCommentRequestDto caseCommentRequestDto);
+	public Case addCaseComments(Long flight_id, Long pax_id, Long hit_id);
 
-    public Case addCaseComments(Long caseID, Long hit_id, String caseComments, String status, String validHit, MultipartFile fileToAttach, String username, String caseDisposition);
+	public Case addGeneralCaseComment(CaseCommentRequestDto caseCommentRequestDto);
 
-    public Passenger findPaxByID(Long id);
+	public Case addCaseComments(Long caseID, Long hit_id, String caseComments, String status, String validHit,
+			MultipartFile fileToAttach, String username, String caseDisposition);
 
-    public Flight findFlightByID(Long id);
+	public Passenger findPaxByID(Long id);
 
-//    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, Long hit_id);
-//
-//    public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String hitDesc, Long hit_id);
+	public Flight findFlightByID(Long id);
 
-    public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document,
-                                                   String hitDesc, Long hit_id,Map<Long, Case> caseMap, Map<Long, Flight> flightMap, 
-                                                   Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+	// public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id,
+	// Long hit_id);
+	//
+	// public List<Case> registerCasesFromRuleService(Long flight_id, Long pax_id,
+	// String paxName, String paxType, String hitDesc, Long hit_id);
 
-    public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob, String document,
-                                                 String hitDesc, Long hit_id, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
-                                                 Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+	public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName,
+			String paxType, String nationality, Date dob, String document, String hitDesc, Long hit_id,
+			Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap,
+			Map<Long, RuleCat> ruleCatMap);
 
-    public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
-    
-    public List<OneDayLookoutVo> getOneDayLookoutByDateAndAirport(Date date, String airport);
-    
-    public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
-    
-    public List<Case> getCaseByPaxId(List<Long> paxIds);
-    
-    public List<Case> getCaseHistoryByPaxId(Long paxId);
+	public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
+			String nationality, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
+			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
 
-    public String getAPISOnlyFlagAndVersion();
-    
-    public Iterable<RuleCat> findAllRuleCat();
+	public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
+
+	public List<OneDayLookoutVo> getOneDayLookoutByDateAndAirport(Date date, String airport);
+
+	public Boolean updateDayLookoutFlag(Long caseId, Boolean flag);
+
+	public List<Case> getCaseByPaxId(List<Long> paxIds);
+
+	public List<Case> getCaseHistoryByPaxId(Long paxId);
+
+	public String getAPISOnlyFlagAndVersion();
+
+	public Iterable<RuleCat> findAllRuleCat();
 
 	public void updateEncounteredStatus(Long caseIdAsLong, EncounteredStatusEnum newEncounteredStatus);
 
-    Set<Case> getOpenCasesWithTimeLeft();
+	Set<Case> getOpenCasesWithTimeLeft();
 }

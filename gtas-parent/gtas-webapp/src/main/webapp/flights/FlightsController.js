@@ -5,7 +5,7 @@
  */
 (function () {
   'use strict';
-  app.controller('FlightsController', function ($scope, $state, $stateParams, $mdToast, codeService, $translate,
+  app.controller('FlightsController', function ($scope, $state, $stateParams, $mdToast, codeService, $filter, $translate,
           flightService,flightSearchOptions, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
       $scope.errorToast = function(error){
           $mdToast.show($mdToast.simple()
@@ -207,6 +207,16 @@
           else return;
       });
 
+      var fixGridData = function(grid, row, col, value) {
+        if (col.name === 'countDownTimer') {
+            value = row.entity.countDown.countDownTimer;
+        }
+        if (col.name === 'eta' || col.name === 'etd') {
+           value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+        }
+        return value;
+      }
+
       
       $scope.selectedFlight = $stateParams.flight;
       $scope.flightDirections = flightDirections;
@@ -224,11 +234,21 @@
           enableColumnMenus: false,
           enableGridMenu: true,
           enableExpandableRowHeader: false,
+          exporterPdfDefaultStyle: {fontSize: 9},
+          exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+          exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+          },
+          exporterPdfPageSize: 'LETTER',
+          exporterPdfMaxGridWidth: 500,
           exporterCsvFilename: 'FlightGid.csv',
           exporterExcelFilename: 'flightGrid.xlsx',
           exporterExcelSheetName: 'Data',
           expandableRowHeight: 200,
           expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+          exporterFieldCallback: function ( grid, row, col, value ){
+              return fixGridData (grid, row, col, value);
+          },
 
           onRegisterApi: function (gridApi) {
               $scope.gridApi = gridApi;
@@ -311,12 +331,22 @@
               enableColumnMenus: false,
               enableExpandableRowHeader: false,
               enableGridMenu: true,
+              exporterPdfDefaultStyle: {fontSize: 9},
+              exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+              exporterPdfFooter: function ( currentPage, pageCount ) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+              },
+              exporterPdfPageSize: 'LETTER',
+              exporterPdfMaxGridWidth: 500,
               exporterCsvFilename: 'FlightsQueryGrid.csv',
               exporterExcelFilename: 'flightsQueryGrid.xlsx',
               exporterExcelSheetName: 'Data',
               expandableRowHeight: 200,
               expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-
+              exporterFieldCallback: function ( grid, row, col, value ){
+                return fixGridData (grid, row, col, value);
+              },  
+            
              onRegisterApi: function (gridApi) {
                  $scope.gridApi = gridApi;
 

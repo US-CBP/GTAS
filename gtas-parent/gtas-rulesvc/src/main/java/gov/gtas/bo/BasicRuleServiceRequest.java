@@ -12,8 +12,7 @@ import java.util.LinkedList;
 /**
  * The Class BasicRuleServiceRequest.
  */
-public class BasicRuleServiceRequest implements RuleServiceRequest,
-		Serializable {
+public class BasicRuleServiceRequest implements RuleServiceRequest, Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 8527612411998852833L;
@@ -40,8 +39,7 @@ public class BasicRuleServiceRequest implements RuleServiceRequest,
 	 * @param type
 	 *            the type of request.
 	 */
-	public BasicRuleServiceRequest(final Collection<Object> requestColl,
-			final RuleServiceRequestType type) {
+	public BasicRuleServiceRequest(final Collection<Object> requestColl, final RuleServiceRequestType type) {
 		this.requestObjects = requestColl;
 		this.requestType = type;
 	}

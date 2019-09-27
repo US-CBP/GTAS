@@ -16,23 +16,21 @@ import java.util.List;
 @Service
 public class CountryRestoreServiceImpl implements CountryRestoreService {
 
-    @Resource
-    private CountryRestoreRepository repo;
-    
+	@Resource
+	private CountryRestoreRepository repo;
 
-    @Override
-    @Transactional
-    public List<CountryRestore> findAll() {
-        
-        return (List<CountryRestore>)repo.findAll();
-    }
+	@Override
+	@Transactional
+	public List<CountryRestore> findAll() {
 
+		return (List<CountryRestore>) repo.findAll();
+	}
 
-    @Override
-    @Transactional
-    public CountryRestore findById(Long id) {
-        
-        return repo.findById(id).orElse(null);
-    }
+	@Override
+	@Transactional
+	public CountryRestore findById(Long id) {
+
+		return repo.findById(id).orElse(null);
+	}
 
 }

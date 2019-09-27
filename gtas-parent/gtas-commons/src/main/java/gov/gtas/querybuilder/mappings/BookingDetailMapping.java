@@ -9,42 +9,43 @@ import gov.gtas.enumtype.TypeEnum;
 
 public enum BookingDetailMapping implements IEntityMapping {
 
-    ORIGIN ("origin", "Origin", TypeEnum.STRING.getType()),
-    DESTINATION ("destination", "Destination", TypeEnum.STRING.getType());
-    
-    private String fieldName;
-    private String friendlyName;
-    private String fieldType;
-    private boolean displayField;
-    
-    private BookingDetailMapping(String fieldName, String friendlyName,
-            String fieldType, boolean displayField) {
-        this.fieldName = fieldName;
-        this.friendlyName = friendlyName;
-        this.fieldType = fieldType;
-        this.displayField = displayField;
-    }
-    private BookingDetailMapping(String fieldName, String friendlyName,
-            String fieldType) {
-        this(fieldName, friendlyName, fieldType, true);
-    }
-    public String getFieldName() {
-        return fieldName;
-    }
+	ORIGIN("origin", "Origin", TypeEnum.STRING.getType()),
 
-    public String getFriendlyName() {
-        return friendlyName;
-    }
+	DESTINATION("destination", "Destination", TypeEnum.STRING.getType());
 
-    public String getFieldType() {
-        return fieldType;
-    }
-    
-    /**
-     * @return the displayField
-     */
-    public boolean isDisplayField() {
-        return displayField;
-    }
-    
+	private String fieldName;
+	private String friendlyName;
+	private String fieldType;
+	private boolean displayField;
+
+	private BookingDetailMapping(String fieldName, String friendlyName, String fieldType, boolean displayField) {
+		this.fieldName = fieldName;
+		this.friendlyName = friendlyName;
+		this.fieldType = fieldType;
+		this.displayField = displayField;
+	}
+
+	private BookingDetailMapping(String fieldName, String friendlyName, String fieldType) {
+		this(fieldName, friendlyName, fieldType, true);
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public String getFieldType() {
+		return fieldType;
+	}
+
+	/**
+	 * @return the displayField
+	 */
+	public boolean isDisplayField() {
+		return displayField;
+	}
+
 }

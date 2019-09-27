@@ -25,24 +25,23 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * attempts.
  */
 public class AjaxAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-    private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationSuccessHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(AjaxAuthenticationSuccessHandler.class);
 
-    private AuthenticationSuccessHandler defaultHandler;
-    
-    public AjaxAuthenticationSuccessHandler(AuthenticationSuccessHandler defaultHandler) {
-        this.defaultHandler = defaultHandler;
-    }
+	private AuthenticationSuccessHandler defaultHandler;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
-        if ("true".equals(request.getHeader("X-Login-Ajax-call"))) {
-            response.getWriter().print("ok");
-            response.getWriter().flush();
+	public AjaxAuthenticationSuccessHandler(AuthenticationSuccessHandler defaultHandler) {
+		this.defaultHandler = defaultHandler;
+	}
 
-        } else {
-            defaultHandler.onAuthenticationSuccess(request, response, authentication);
-        }
-    }
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException, ServletException {
+		if ("true".equals(request.getHeader("X-Login-Ajax-call"))) {
+			response.getWriter().print("ok");
+			response.getWriter().flush();
+
+		} else {
+			defaultHandler.onAuthenticationSuccess(request, response, authentication);
+		}
+	}
 }

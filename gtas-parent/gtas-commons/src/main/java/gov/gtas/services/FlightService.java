@@ -28,20 +28,19 @@ public interface FlightService {
 
 	public Flight findById(Long id);
 
-	//@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	// @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	public FlightsPageDto findAll(FlightsRequestDto dto);
 
-	public Flight getUniqueFlightByCriteria(String carrier,
-			String flightNumber, String origin, String destination,
+	public Flight getUniqueFlightByCriteria(String carrier, String flightNumber, String origin, String destination,
 			Date flightDate);
 
 	public List<Flight> getFlightByPaxId(Long paxId);
 
 	public List<Flight> getFlightsByDates(Date startDate, Date endDate);
 
-	//@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(
-			String firstName, String lastName, Set<Document> documents);
+	// @PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	public HashMap<Document, List<Flight>> getFlightsByPassengerNameAndDocument(String firstName, String lastName,
+			Set<Document> documents);
 
 	public List<Flight> getFlightsThreeDaysForwardInbound();
 
@@ -56,10 +55,11 @@ public interface FlightService {
 	public int getPassengerCount(Flight f);
 
 	/*
-	* Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist matches.
-	* */
+	 * Get fuzzy matches only. Does not get fuzzy matches that have firm watchlist
+	 * matches.
+	 */
 	public Long getFlightFuzzyMatchesOnly(Long flightId);
-	
+
 	public List<SeatVo> getSeatsByFlightId(Long flightId);
 
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights);

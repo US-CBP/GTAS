@@ -18,7 +18,7 @@ public class TamrResponse {
 	private Object acknowledgment;
 
 	private Object error;
-	
+
 	private Object recordErrors;
 
 	public Object getError() {

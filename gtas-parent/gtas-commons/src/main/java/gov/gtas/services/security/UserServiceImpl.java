@@ -45,21 +45,17 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
 
-	private Pattern BCRYPT_PATTERN = Pattern
-			.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserServiceImpl.class);
+	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
+
+	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Override
 	@Transactional
 	public UserData create(UserData userData) {
 		User userEntity = userServiceUtil.mapUserEntityFromUserData(userData);
-		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity
-				.getPassword()));
+		userEntity.setPassword((new BCryptPasswordEncoder()).encode(userEntity.getPassword()));
 		if (userData.getRoles() != null) {
-			Set<Role> roleCollection = roleServiceUtil
-					.mapEntityCollectionFromRoleDataSet(userData.getRoles());
+			Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(userData.getRoles());
 			userEntity.setRoles(roleCollection);
 		}
 		User newUserEntity = userRepository.save(userEntity);
@@ -78,8 +74,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public List<UserData> findAll() {
 		Iterable<User> usersCollection = userRepository.findAll();
-		return userServiceUtil
-				.getUserDataListFromEntityCollection(usersCollection);
+		return userServiceUtil.getUserDataListFromEntityCollection(usersCollection);
 	}
 
 	@Override
@@ -92,8 +87,7 @@ public class UserServiceImpl implements UserService {
 			entity.setFirstName(mappedEnity.getFirstName());
 			entity.setLastName(mappedEnity.getLastName());
 			if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
-				entity.setPassword(passwordEncoder.encode(mappedEnity
-						.getPassword()));
+				entity.setPassword(passwordEncoder.encode(mappedEnity.getPassword()));
 			} else {
 				entity.setPassword(mappedEnity.getPassword());
 			}
@@ -102,8 +96,7 @@ public class UserServiceImpl implements UserService {
 			if (data.getRoles() != null && !data.getRoles().isEmpty()) {
 				Set<Role> oRoles = entity.getRoles();
 				oRoles.clear();
-				Set<Role> roleCollection = roleServiceUtil
-						.mapEntityCollectionFromRoleDataSet(data.getRoles());
+				Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
 				oRoles.addAll(roleCollection);
 				entity.setRoles(oRoles);
 			}
@@ -127,8 +120,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * Fetches the user object and throws an unchecked exception if the user
-	 * cannot be found.
+	 * Fetches the user object and throws an unchecked exception if the user cannot
+	 * be found.
 	 * 
 	 * @param userId
 	 *            the ID of the user to fetch.
@@ -139,24 +132,20 @@ public class UserServiceImpl implements UserService {
 	public User fetchUser(final String userId) {
 		UserData userData = findById(userId);
 		if (userData == null) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					CommonErrorConstants.INVALID_USER_ID_ERROR_CODE, userId);
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.INVALID_USER_ID_ERROR_CODE,
+					userId);
 		}
 		return userServiceUtil.mapUserEntityFromUserData(userData);
 	}
 
-	
-	
 	/**
 	 * Returns true if the user has an Admin Role
 	 * 
 	 * @param userId
 	 *            the ID of the user to fetch.
-	 * @return 
-	 * 			true if the user has Admin role
-	 * 			flase otherwise
+	 * @return true if the user has Admin role flase otherwise
 	 */
-	
+
 	public boolean isAdminUser(String userId) {
 		boolean isAdmin = false;
 
@@ -168,6 +157,7 @@ public class UserServiceImpl implements UserService {
 
 		return isAdmin;
 	}
+
 	public boolean treatAsOneDay(String userId) {
 
 		UserData user = findById(userId);
@@ -176,24 +166,21 @@ public class UserServiceImpl implements UserService {
 
 		return userRoles.contains(oneDay) && userRoles.size() == 1;
 
-
 	}
 
 	@Override
 	public UserData updateByAdmin(UserData data) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		User entity = userRepository.findOne(data.getUserId());
-		
+
 		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
 			entity.setLastName(mappedEnity.getLastName());
-			
-			if(data.getPassword()!=null && !data.getPassword().isEmpty())
-			{
+
+			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
 				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {
-					entity.setPassword(passwordEncoder.encode(mappedEnity
-						.getPassword()));
+					entity.setPassword(passwordEncoder.encode(mappedEnity.getPassword()));
 				} else {
 					entity.setPassword(mappedEnity.getPassword());
 				}
@@ -201,22 +188,20 @@ public class UserServiceImpl implements UserService {
 
 			entity.setActive(mappedEnity.getActive());
 			if (data.getRoles() != null) {// && !data.getRoles().isEmpty()) {
-				if(!data.getRoles().isEmpty()) {
+				if (!data.getRoles().isEmpty()) {
 					Set<Role> oRoles = entity.getRoles();
 					oRoles.clear();
-					Set<Role> roleCollection = roleServiceUtil
-							.mapEntityCollectionFromRoleDataSet(data.getRoles());
+					Set<Role> roleCollection = roleServiceUtil.mapEntityCollectionFromRoleDataSet(data.getRoles());
 					oRoles.addAll(roleCollection);
 					entity.setRoles(oRoles);
-				}
-				else {
+				} else {
 					entity.setRoles(new HashSet<Role>());
 				}
 			}
 
 			User savedEntity = userRepository.save(entity);
 			logger.debug("Updated by Admin successfully in " + this.getClass().getName());
-			
+
 			return userServiceUtil.mapUserDataFromEntity(savedEntity);
 		}
 		return null;

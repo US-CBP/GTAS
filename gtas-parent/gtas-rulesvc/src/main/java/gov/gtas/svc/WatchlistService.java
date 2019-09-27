@@ -45,8 +45,7 @@ public interface WatchlistService {
 	 * @return the service response JSON format.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
-	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId,
-			WatchlistSpec wlToCreateUpdateDelete);
+	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdateDelete);
 
 	/**
 	 * Creates/Updates watch list items from the specified watch list.
@@ -59,8 +58,7 @@ public interface WatchlistService {
 	 * @return the service response JSON format.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
-	JsonServiceResponse createUpdateWatchlistItems(String userId,
-			WatchlistSpec wlToCreateUpdate);
+	JsonServiceResponse createUpdateWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate);
 
 	/**
 	 * Fetches all watch lists
@@ -74,8 +72,7 @@ public interface WatchlistService {
 	 * Compiles all watch lists into a named knowledge base
 	 * 
 	 * @param knowledgeBaseName
-	 *            name of the knowledge base to compile the watch list rules
-	 *            into.
+	 *            name of the knowledge base to compile the watch list rules into.
 	 * @return the list of all available watch list objects.
 	 */
 	JsonServiceResponse activateAllWatchlists(String knowledgeBaseName);
@@ -100,16 +97,16 @@ public interface WatchlistService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	JsonServiceResponse deleteWatchlist(String userId, String wlName);
-	
+
 	public List<JsonLookupData> findWatchlistCategories();
-	
+
 	public void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId);
-	
+
 	public WatchlistItem fetchWatchlistItemById(Long watchlistItemId);
-	
-	public WatchlistCategory  fetchWatchlistCategoryById(Long categoryID);
-	
+
+	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID);
+
 	List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName);
 
-    void createWatchlistCategory(WatchlistCategory wlCat);
+	void createWatchlistCategory(WatchlistCategory wlCat);
 }

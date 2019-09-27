@@ -51,122 +51,110 @@ import gov.gtas.testdatagen.PnrDataGenerator;
 @Rollback(true)
 @Ignore
 public class TargetingServicePnrIT {
-    private static final Logger logger = LoggerFactory.getLogger(TargetingServicePnrIT.class);
-    public static final String UDR_RULE_AUTHOR="test";
+	private static final Logger logger = LoggerFactory.getLogger(TargetingServicePnrIT.class);
+	public static final String UDR_RULE_AUTHOR = "test";
 
-    @Autowired
-    TargetingService targetingService;
+	@Autowired
+	TargetingService targetingService;
 
-    @Resource
-    private PnrRepository pnrRepository;
-    
-    @Test
-    @Transactional
-    public void testDataGeneration() {
-        Pnr pnr1 = PnrDataGenerator.createTestPnr(1L);
-        assertNotNull(pnr1);
-        assertNotNull(pnr1.getId());
-        int size1 = pnr1.getPassengers().size();
-        assertTrue(size1 == 4 || size1 == 2 );
-        Passenger pax = pnr1.getPassengers().iterator().next();
-        assertNotNull("Pax ID is null", pax.getId());
-    }
+	@Resource
+	private PnrRepository pnrRepository;
 
-    @Test
-    @Transactional
-    public void testPnrRuleExecution1() throws ParseException {
-        /*
-         * one rule with multiple conditions involving PNR record locator
-         * and passenger type and last name.
-         */
-        Pnr msg = PnrDataGenerator.createTestPnr(1L);
-        DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-        UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, PNR_PASSENGER_RULE_INDX);
-        String drlRules = drlBuilder.addRule(udrRule).build();
-        RuleServiceRequest request = TargetingServiceUtils
-                .createPnrRequestContext(msg).getRuleServiceRequest();
-        RuleServiceResult result = targetingService.applyRules(request,
-                drlRules);
-        assertNotNull(result);
-        assertEquals("Expected 2 hit", 2, result.getResultList().size());
-        RuleHitDetail res1 = (RuleHitDetail) (result.getResultList().get(0));
-        assertNotNull("passenger ID in result is null", res1.getPassengerId());
-        assertTrue("Expected passenger with id in (2,3)", (res1.getPassengerId() == 2L || res1.getPassengerId() == 3L));
-        RuleHitDetail res2 = (RuleHitDetail) (result.getResultList().get(1));
-        assertNotNull("passenger ID in result is null", res2.getPassengerId());
-        assertTrue("Expected passenger with id in (2,3)", (res2.getPassengerId() == 2L || res2.getPassengerId() == 3L));
-        assertTrue(res1.getPassengerId() != res2.getPassengerId());
-    }
+	@Test
+	@Transactional
+	public void testDataGeneration() {
+		Pnr pnr1 = PnrDataGenerator.createTestPnr(1L);
+		assertNotNull(pnr1);
+		assertNotNull(pnr1.getId());
+		int size1 = pnr1.getPassengers().size();
+		assertTrue(size1 == 4 || size1 == 2);
+		Passenger pax = pnr1.getPassengers().iterator().next();
+		assertNotNull("Pax ID is null", pax.getId());
+	}
 
-    @Test
-    @Transactional
-    public void testPnrRuleExecution2() throws ParseException {
-        Pnr msg = PnrDataGenerator.createTestPnr(1L);
-        DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-        UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, ADDRESS_PHONE_EMAIL_DOCUMENT_RULE_INDX);
-        String drlRules = drlBuilder.addRule(udrRule).build();
-        RuleServiceRequest request = TargetingServiceUtils
-                .createPnrRequestContext(msg).getRuleServiceRequest();
-        RuleServiceResult result = targetingService.applyRules(request,
-                drlRules);
-        assertNotNull(result);
-        assertEquals("Expected 2 hits", 2, result.getResultList().size());
-        Iterator<RuleHitDetail> itr = result.getResultList().iterator();
-        RuleHitDetail res1 = (RuleHitDetail) (itr.next());
-        assertNotNull("passenger ID in result is null", res1.getPassengerId());
-        assertTrue(
-                "Hit Passenger id mismatch",
-                new Long(1L).equals(res1.getPassengerId())
-                        || new Long(2L).equals(res1.getPassengerId()));
-        RuleHitDetail res2 = (RuleHitDetail) (itr.next());
-        assertNotNull("passenger ID in result is null", res2.getPassengerId());
-        assertTrue(
-                "Hit Passenger id mismatch",
-                new Long(1L).equals(res2.getPassengerId())
-                        || new Long(2L).equals(res2.getPassengerId()));
-        assertTrue("Expected passenger ids to be different", res1.getPassengerId() != res2.getPassengerId());
-    }
+	@Test
+	@Transactional
+	public void testPnrRuleExecution1() throws ParseException {
+		/*
+		 * one rule with multiple conditions involving PNR record locator and passenger
+		 * type and last name.
+		 */
+		Pnr msg = PnrDataGenerator.createTestPnr(1L);
+		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, PNR_PASSENGER_RULE_INDX);
+		String drlRules = drlBuilder.addRule(udrRule).build();
+		RuleServiceRequest request = TargetingServiceUtils.createPnrRequestContext(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
+		assertNotNull(result);
+		assertEquals("Expected 2 hit", 2, result.getResultList().size());
+		RuleHitDetail res1 = (RuleHitDetail) (result.getResultList().get(0));
+		assertNotNull("passenger ID in result is null", res1.getPassengerId());
+		assertTrue("Expected passenger with id in (2,3)", (res1.getPassengerId() == 2L || res1.getPassengerId() == 3L));
+		RuleHitDetail res2 = (RuleHitDetail) (result.getResultList().get(1));
+		assertNotNull("passenger ID in result is null", res2.getPassengerId());
+		assertTrue("Expected passenger with id in (2,3)", (res2.getPassengerId() == 2L || res2.getPassengerId() == 3L));
+		assertTrue(res1.getPassengerId() != res2.getPassengerId());
+	}
 
-    @Test
-    @Transactional
-    public void testPnrRuleExecution3() throws ParseException {
-        // select all passengers in a flight
-        Pnr msg = PnrDataGenerator.createTestPnr2(1L);
-        DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-        UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, AGENCY_CC_FF_FLIGHT_DOC_RULE_INDX);
-        String drlRules = drlBuilder.addRule(udrRule).build();
-        logger.info(drlRules);
-        RuleServiceRequest request = TargetingServiceUtils
-                .createPnrRequestContext(msg).getRuleServiceRequest();
-        RuleServiceResult result = targetingService.applyRules(request,
-                drlRules);
-        assertNotNull(result);
-        assertEquals("Expected 1 hit", 1, result.getResultList().size());
-        RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
-        assertNotNull("passenger ID in result is null", res.getPassengerId());
-        assertEquals("Hit Passenger id mismatch",
-                6L, res.getPassengerId());
-    }
+	@Test
+	@Transactional
+	public void testPnrRuleExecution2() throws ParseException {
+		Pnr msg = PnrDataGenerator.createTestPnr(1L);
+		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR,
+				ADDRESS_PHONE_EMAIL_DOCUMENT_RULE_INDX);
+		String drlRules = drlBuilder.addRule(udrRule).build();
+		RuleServiceRequest request = TargetingServiceUtils.createPnrRequestContext(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
+		assertNotNull(result);
+		assertEquals("Expected 2 hits", 2, result.getResultList().size());
+		Iterator<RuleHitDetail> itr = result.getResultList().iterator();
+		RuleHitDetail res1 = (RuleHitDetail) (itr.next());
+		assertNotNull("passenger ID in result is null", res1.getPassengerId());
+		assertTrue("Hit Passenger id mismatch",
+				new Long(1L).equals(res1.getPassengerId()) || new Long(2L).equals(res1.getPassengerId()));
+		RuleHitDetail res2 = (RuleHitDetail) (itr.next());
+		assertNotNull("passenger ID in result is null", res2.getPassengerId());
+		assertTrue("Hit Passenger id mismatch",
+				new Long(1L).equals(res2.getPassengerId()) || new Long(2L).equals(res2.getPassengerId()));
+		assertTrue("Expected passenger ids to be different", res1.getPassengerId() != res2.getPassengerId());
+	}
 
-    @Test
-    @Transactional
-    public void testPnrRuleExecution4() throws ParseException {//seat rule with IN operator
-        // select all passengers in a flight
-        Pnr msg = PnrDataGenerator.createTestPnr2(1L);
-        DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
-        UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, RuleBuilderTestUtils.PNR_SEAT_RULE_INDX);
-        String drlRules = drlBuilder.addRule(udrRule).build();
-        logger.info(drlRules);
-        RuleServiceRequest request = TargetingServiceUtils
-                .createPnrRequestContext(msg).getRuleServiceRequest();
-        RuleServiceResult result = targetingService.applyRules(request,
-                drlRules);
-        assertNotNull(result);
-        assertEquals("Expected 1 hit", 1, result.getResultList().size());
-        RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
-        assertNotNull("passenger ID in result is null", res.getPassengerId());
-        assertEquals("Hit Passenger id mismatch",
-                5L, res.getPassengerId());
-    }
+	@Test
+	@Transactional
+	public void testPnrRuleExecution3() throws ParseException {
+		// select all passengers in a flight
+		Pnr msg = PnrDataGenerator.createTestPnr2(1L);
+		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR, AGENCY_CC_FF_FLIGHT_DOC_RULE_INDX);
+		String drlRules = drlBuilder.addRule(udrRule).build();
+		logger.info(drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createPnrRequestContext(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
+		assertNotNull(result);
+		assertEquals("Expected 1 hit", 1, result.getResultList().size());
+		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
+		assertNotNull("passenger ID in result is null", res.getPassengerId());
+		assertEquals("Hit Passenger id mismatch", 6L, res.getPassengerId());
+	}
+
+	@Test
+	@Transactional
+	public void testPnrRuleExecution4() throws ParseException {// seat rule with IN operator
+		// select all passengers in a flight
+		Pnr msg = PnrDataGenerator.createTestPnr2(1L);
+		DrlRuleFileBuilder drlBuilder = new DrlRuleFileBuilder();
+		UdrRule udrRule = RuleBuilderTestUtils.createSimpleUdrRule(UDR_RULE_AUTHOR,
+				RuleBuilderTestUtils.PNR_SEAT_RULE_INDX);
+		String drlRules = drlBuilder.addRule(udrRule).build();
+		logger.info(drlRules);
+		RuleServiceRequest request = TargetingServiceUtils.createPnrRequestContext(msg).getRuleServiceRequest();
+		RuleServiceResult result = targetingService.applyRules(request, drlRules);
+		assertNotNull(result);
+		assertEquals("Expected 1 hit", 1, result.getResultList().size());
+		RuleHitDetail res = (RuleHitDetail) (result.getResultList().get(0));
+		assertNotNull("passenger ID in result is null", res.getPassengerId());
+		assertEquals("Hit Passenger id mismatch", 5L, res.getPassengerId());
+	}
 
 }

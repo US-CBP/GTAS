@@ -16,11 +16,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
  * The Interface UserService.
  */
 public interface UserService {
-	
+
 	/**
 	 * Creates the User.
 	 *
-	 * @param userData the user data
+	 * @param userData
+	 *            the user data
 	 * @return the user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
@@ -29,7 +30,8 @@ public interface UserService {
 	/**
 	 * Delete.
 	 *
-	 * @param id the user id
+	 * @param id
+	 *            the user id
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public void delete(String id);
@@ -45,16 +47,18 @@ public interface UserService {
 	/**
 	 * Update the user.
 	 *
-	 * @param userData the user data
+	 * @param userData
+	 *            the user data
 	 * @return the updated user data
 	 */
-	
+
 	public UserData update(UserData user);
-	
+
 	/**
 	 * Update the user.
 	 *
-	 * @param userData the user data
+	 * @param userData
+	 *            the user data
 	 * @return the updated user data
 	 */
 	@PreAuthorize(PRIVILEGE_ADMIN)
@@ -63,7 +67,8 @@ public interface UserService {
 	/**
 	 * Find by id.
 	 *
-	 * @param id the id
+	 * @param id
+	 *            the id
 	 * @return the user data
 	 */
 	public UserData findById(String id);
@@ -71,11 +76,12 @@ public interface UserService {
 	/**
 	 * Fetch user.
 	 *
-	 * @param userId the user id
+	 * @param userId
+	 *            the user id
 	 * @return the user
 	 */
 	public User fetchUser(final String userId);
-	
+
 	public boolean isAdminUser(String userId);
 
 	public boolean treatAsOneDay(String userId);

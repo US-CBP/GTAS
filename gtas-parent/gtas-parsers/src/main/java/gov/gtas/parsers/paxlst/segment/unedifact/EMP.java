@@ -17,7 +17,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To specify employment details.
  */
 public class EMP extends Segment {
-    public EMP(List<Composite> composites) {
-        super(EMP.class.getSimpleName(), composites);
-    }
+	public EMP(List<Composite> composites) {
+		super(EMP.class.getSimpleName(), composites);
+	}
 }

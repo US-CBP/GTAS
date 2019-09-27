@@ -12,18 +12,17 @@ import java.util.Objects;
 @Table(name = "passenger_trip_details")
 public class PassengerTripDetails extends BaseEntityAudit {
 
-    public PassengerTripDetails() {
-    }
+	public PassengerTripDetails() {
+	}
 
 	@Column(name = "ptd_id", columnDefinition = "bigint unsigned", updatable = false, insertable = false)
-	private
-	Long paxId;
+	private Long paxId;
 
 	public PassengerTripDetails(Passenger p) {
 		this.passenger = p;
 	}
 
-    public Passenger getPassenger() {
+	public Passenger getPassenger() {
 		return passenger;
 	}
 
@@ -31,40 +30,40 @@ public class PassengerTripDetails extends BaseEntityAudit {
 		this.passenger = passenger;
 	}
 
-	@OneToOne(optional = false, fetch=FetchType.LAZY)
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ptd_id", referencedColumnName = "id")
-    Passenger passenger; 
-    
-    /** calculated field */
-    @Column(name = "days_visa_valid")
-    private Integer numberOfDaysVisaValid;
-    
-    private String embarkation;
+	Passenger passenger;
 
-    private String debarkation;
+	/** calculated field */
+	@Column(name = "days_visa_valid")
+	private Integer numberOfDaysVisaValid;
 
-    @Column(name = "embark_country")
-    private String embarkCountry;
+	private String embarkation;
 
-    @Column(name = "debark_country")
-    private String debarkCountry;
+	private String debarkation;
 
-    @Column(name = "ref_number")
-    private String reservationReferenceNumber;
-    
-    @Column(name = "pnr_ref_number")
-    private String pnrReservationReferenceNumber;
- 
+	@Column(name = "embark_country")
+	private String embarkCountry;
+
+	@Column(name = "debark_country")
+	private String debarkCountry;
+
+	@Column(name = "ref_number")
+	private String reservationReferenceNumber;
+
+	@Column(name = "pnr_ref_number")
+	private String pnrReservationReferenceNumber;
+
 	@Column(name = "travel_frequency")
-    private Integer travelFrequency=0;
-    
-    @Transient
-    private String totalBagWeight;
- 
-    @Transient
-    private String bagNum;
-    
-    public String getPnrReservationReferenceNumber() {
+	private Integer travelFrequency = 0;
+
+	@Transient
+	private String totalBagWeight;
+
+	@Transient
+	private String bagNum;
+
+	public String getPnrReservationReferenceNumber() {
 		return pnrReservationReferenceNumber;
 	}
 
@@ -95,7 +94,7 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	public void setTotalBagWeight(String totalBagWeight) {
 		this.totalBagWeight = totalBagWeight;
 	}
-	
+
 	public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
 	}
@@ -105,48 +104,47 @@ public class PassengerTripDetails extends BaseEntityAudit {
 	}
 
 	public void addApisMessage(ApisMessage apisMessage) {
-    }
+	}
 
-    public String getEmbarkation() {
-        return embarkation;
-    }
+	public String getEmbarkation() {
+		return embarkation;
+	}
 
-    public void setEmbarkation(String embarkation) {
-        this.embarkation = embarkation;
-    }
+	public void setEmbarkation(String embarkation) {
+		this.embarkation = embarkation;
+	}
 
-    public String getDebarkation() {
-        return debarkation;
-    }
+	public String getDebarkation() {
+		return debarkation;
+	}
 
-    public void setDebarkation(String debarkation) {
-        this.debarkation = debarkation;
-    }
+	public void setDebarkation(String debarkation) {
+		this.debarkation = debarkation;
+	}
 
-    public String getEmbarkCountry() {
-        return embarkCountry;
-    }
+	public String getEmbarkCountry() {
+		return embarkCountry;
+	}
 
-    public void setEmbarkCountry(String embarkCountry) {
-        this.embarkCountry = embarkCountry;
-    }
+	public void setEmbarkCountry(String embarkCountry) {
+		this.embarkCountry = embarkCountry;
+	}
 
-    public String getDebarkCountry() {
-        return debarkCountry;
-    }
+	public String getDebarkCountry() {
+		return debarkCountry;
+	}
 
-    public void setDebarkCountry(String debarkCountry) {
-        this.debarkCountry = debarkCountry;
-    }
-    
-    public Integer getNumberOfDaysVisaValid() {
+	public void setDebarkCountry(String debarkCountry) {
+		this.debarkCountry = debarkCountry;
+	}
+
+	public Integer getNumberOfDaysVisaValid() {
 		return numberOfDaysVisaValid;
 	}
 
 	public void setNumberOfDaysVisaValid(Integer numberOfDaysVisaValid) {
 		this.numberOfDaysVisaValid = numberOfDaysVisaValid;
 	}
-
 
 	public void setPaxId(Long paxId) {
 		this.paxId = paxId;
@@ -158,8 +156,10 @@ public class PassengerTripDetails extends BaseEntityAudit {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof PassengerTripDetails)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof PassengerTripDetails))
+			return false;
 		PassengerTripDetails that = (PassengerTripDetails) o;
 		return getPaxId().equals(that.getPaxId());
 	}

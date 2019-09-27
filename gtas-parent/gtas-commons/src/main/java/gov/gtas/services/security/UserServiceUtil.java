@@ -30,33 +30,27 @@ public class UserServiceUtil {
 	 *            the user entities
 	 * @return the user data list from entity collection
 	 */
-	public List<UserData> getUserDataListFromEntityCollection(
-			Iterable<User> userEntities) {
+	public List<UserData> getUserDataListFromEntityCollection(Iterable<User> userEntities) {
 
-		Stream<User> aStream = StreamSupport.stream(userEntities.spliterator(),
-				false);
+		Stream<User> aStream = StreamSupport.stream(userEntities.spliterator(), false);
 
-		List<UserData> users = (List<UserData>) aStream.map(
-				new Function<User, UserData>() {
+		List<UserData> users = (List<UserData>) aStream.map(new Function<User, UserData>() {
+
+			@Override
+			public UserData apply(User user) {
+
+				Set<RoleData> roles = user.getRoles().stream().map(new Function<Role, RoleData>() {
 
 					@Override
-					public UserData apply(User user) {
-
-						Set<RoleData> roles = user.getRoles().stream()
-								.map(new Function<Role, RoleData>() {
-
-									@Override
-									public RoleData apply(Role role) {
-										return new RoleData(role.getRoleId(),
-												role.getRoleDescription());
-									}
-
-								}).collect(Collectors.toSet());
-						return new UserData(user.getUserId(), user
-								.getPassword(), user.getFirstName(), user
-								.getLastName(), user.getActive(), roles);
+					public RoleData apply(Role role) {
+						return new RoleData(role.getRoleId(), role.getRoleDescription());
 					}
-				}).collect(Collectors.toList());
+
+				}).collect(Collectors.toSet());
+				return new UserData(user.getUserId(), user.getPassword(), user.getFirstName(), user.getLastName(),
+						user.getActive(), roles);
+			}
+		}).collect(Collectors.toList());
 		aStream.close();
 		return users;
 	}
@@ -69,17 +63,14 @@ public class UserServiceUtil {
 	 * @return the user data
 	 */
 	public UserData mapUserDataFromEntity(User entity) {
-		Set<RoleData> roles = entity.getRoles().stream()
-				.map(new Function<Role, RoleData>() {
-					@Override
-					public RoleData apply(Role role) {
-						return new RoleData(role.getRoleId(), role
-								.getRoleDescription());
-					}
-				}).collect(Collectors.toSet());
+		Set<RoleData> roles = entity.getRoles().stream().map(new Function<Role, RoleData>() {
+			@Override
+			public RoleData apply(Role role) {
+				return new RoleData(role.getRoleId(), role.getRoleDescription());
+			}
+		}).collect(Collectors.toSet());
 
-		return new UserData(entity.getUserId(), entity.getPassword(),
-				entity.getFirstName(), entity.getLastName(),
+		return new UserData(entity.getUserId(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
 				entity.getActive(), roles);
 	}
 
@@ -92,18 +83,15 @@ public class UserServiceUtil {
 	 */
 	public User mapUserEntityFromUserData(UserData userData) {
 
-		Set<Role> roles = userData.getRoles().stream()
-				.map(new Function<RoleData, Role>() {
-					@Override
-					public Role apply(RoleData roleData) {
-						return new Role(roleData.getRoleId(), roleData
-								.getRoleDescription());
-					}
+		Set<Role> roles = userData.getRoles().stream().map(new Function<RoleData, Role>() {
+			@Override
+			public Role apply(RoleData roleData) {
+				return new Role(roleData.getRoleId(), roleData.getRoleDescription());
+			}
 
-				}).collect(Collectors.toSet());
+		}).collect(Collectors.toSet());
 
-		return new User(userData.getUserId(), userData.getPassword(),
-				userData.getFirstName(), userData.getLastName(),
+		return new User(userData.getUserId(), userData.getPassword(), userData.getFirstName(), userData.getLastName(),
 				userData.getActive(), roles);
 	}
 }

@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="resources/node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
+  <link rel="stylesheet" href="resources/node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="resources/node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
   <link href="resources/css/misc_fonts.css" rel="stylesheet">
   <link href="resources/css/misc_italian.css" rel="stylesheet">
   <script src="resources/node_modules/jquery/dist/jquery.js"></script>
@@ -90,10 +92,10 @@
               <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
           </li>
-          
+
         </ul>
-        
-       
+
+
         	<ul class="nav navbar-nav navbar-right">
          		 <li class="dropdown mobile-hide">
             		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
@@ -106,8 +108,8 @@
               </li>
               </ul>
           </ul>
-        
-        
+
+
 
         <ul class="nav navbar-nav navbar-right">
           <li data-toggle="hover" class="dropdown">
@@ -198,7 +200,7 @@
     </div>
   </div>
 
-  
+
 <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
   <div class="content" ui-view=""  ></div>
@@ -206,9 +208,7 @@
 
   <script src="resources/node_modules/angular/angular.js"></script>
   <script src="resources/node_modules/ng-idle/angular-idle.min.js"></script>
-
   <script src="resources/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
-
   <script src="resources/node_modules/moment/min/moment.min.js"></script>
   <script src="resources/node_modules/jquery/dist/jquery.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
@@ -219,6 +219,8 @@
   <script src="resources/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/node_modules/jquery-extendext/jQuery.extendext.min.js"></script>
   <script src="resources/node_modules/csv-js/csv.js"></script>
+  <script src="resources/node_modules/pdfmake/build/pdfmake.min.js"></script>
+  <script src="resources/node_modules/pdfmake/build/vfs_fonts.js"></script>
   <script src="resources/node_modules/lodash/lodash.min.js"></script>
   <script src="resources/node_modules/jszip/dist/jszip.min.js"></script>
   <script src="resources/node_modules/excel-builder/dist/excel-builder.dist.min.js"></script>
@@ -254,17 +256,19 @@
   <script src="resources/node_modules/trix/dist/trix.js"></script>
   <script src="resources/node_modules/angular-trix/dist/angular-trix.min.js"></script>
   <script src='seatsMap/jquery.seat-charts.min.js'></script>
+  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
+  <script src="resources/node_modules/angular-datetime-input/dist/datetime.js"></script>
 
-  <script src='resources/node_modules/d3/dist/d3.min.js'></script>
-  <script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
-
+<script src='resources/node_modules/d3/dist/d3.min.js'></script>
+<script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>
 <script src='common/directives.js'></script>
 <script src='common/filters.js'></script>
 <script src='common/services.js'></script>
-<script src='factory/ModalGridFactory.js'></script> 
+<script src='factory/ModalGridFactory.js'></script>
 <script src='factory/JqueryQueryBuilderWidget.js'></script>
 <script src='adhocquery/linkGraph.js'></script>
 <script src='dashboard/DashboardController.js'></script>
@@ -300,7 +304,8 @@
 <script src='help/AboutGtasController.js'></script>
 <script src='help/AboutGtasService.js'></script>
 
-<script type="text/ng-template" id="dialog1.tmpl.html">
+
+  <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>
         <md-dialog-content>

@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Entity
-@Table(name="attachment")
+@Table(name = "attachment")
 public class Attachment implements Serializable {
 
 	/**
@@ -20,38 +20,35 @@ public class Attachment implements Serializable {
 
 	@Id
 	@GeneratedValue
-	@Column(name="id")
+	@Column(name = "id")
 	private Integer id;
 
-	@Column(name="name")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name="description")
+	@Column(name = "description")
 	private String description;
 
-	@Column(name="filename")
+	@Column(name = "filename")
 	private String filename;
 
-	@Column(name="content", length=2000000)
+	@Column(name = "content", length = 2000000)
 	@Lob
 	private Blob content;
-	
-	@Column(name="content_type")
+
+	@Column(name = "content_type")
 	private String contentType;
-	
-	@Column(name="created")
-	@Temporal(TemporalType.TIMESTAMP)  
+
+	@Column(name = "created")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-        private Passenger passenger;
+	private Passenger passenger;
 
-        @ManyToMany(
-        mappedBy = "attachmentSet",
-        targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL
-        )
-        private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
-    
+	@ManyToMany(mappedBy = "attachmentSet", targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL)
+	private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
+
 	public Integer getId() {
 		return id;
 	}
@@ -108,8 +105,8 @@ public class Attachment implements Serializable {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-	
-    public Passenger getPassenger() {
+
+	public Passenger getPassenger() {
 		return passenger;
 	}
 
@@ -117,38 +114,36 @@ public class Attachment implements Serializable {
 		this.passenger = passenger;
 	}
 
-    public Set<HitsDispositionComments> getHitsDispositionComments() {
-        return hitsDispositionComments;
-    }
+	public Set<HitsDispositionComments> getHitsDispositionComments() {
+		return hitsDispositionComments;
+	}
 
-    public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
-        this.hitsDispositionComments = hitsDispositionComments;
-    }
-        
-        
+	public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
+		this.hitsDispositionComments = hitsDispositionComments;
+	}
 
-	@Override  
-    public int hashCode() {  
-        int hash = 0;  
-        hash += (this.getId() != null ? this.getId().hashCode() : 0);  
-  
-        return hash;  
-    }  
-  
-    @Override  
-    public boolean equals(Object object) {  
-    if (this == object)  
-            return true;  
-        if (object == null)  
-            return false;  
-        if (getClass() != object.getClass())  
-            return false;  
-  
-        Attachment other = (Attachment) object;  
-        if (this.getId() != other.getId() && (this.getId() == null || !this.id.equals(other.id))) {  
-            return false;  
-        }  
-        return true;  
-    }  
+	@Override
+	public int hashCode() {
+		int hash = 0;
+		hash += (this.getId() != null ? this.getId().hashCode() : 0);
+
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object)
+			return true;
+		if (object == null)
+			return false;
+		if (getClass() != object.getClass())
+			return false;
+
+		Attachment other = (Attachment) object;
+		if (this.getId() != other.getId() && (this.getId() == null || !this.id.equals(other.id))) {
+			return false;
+		}
+		return true;
+	}
 
 }

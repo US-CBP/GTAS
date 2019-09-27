@@ -11,60 +11,60 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public class HitsDispositionCommentsVo implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-  
-    private Date createdAt;  
-  
-    private String createdBy;  
-  
-    private Date updatedAt;  
-  
-    private String updatedBy;  
+	private static final long serialVersionUID = 1L;
 
-    public HitsDispositionCommentsVo() { }
+	private Date createdAt;
 
-    private String comments;
+	private String createdBy;
 
-    private long hitDispId;
+	private Date updatedAt;
 
-    private long hitId;
+	private String updatedBy;
 
-    private Set<AttachmentVo> attachmentSet = new HashSet<AttachmentVo>();
+	public HitsDispositionCommentsVo() {
+	}
 
-    public String getComments() {
-        return comments;
-    }
+	private String comments;
 
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
+	private long hitDispId;
 
-    public long getHitDispId() {
-        return hitDispId;
-    }
+	private long hitId;
 
-    public void setHitDispId(long hitDispId) {
-        this.hitDispId = hitDispId;
-    }
+	private Set<AttachmentVo> attachmentSet = new HashSet<AttachmentVo>();
 
-    public long getHitId() {
-        return hitId;
-    }
+	public String getComments() {
+		return comments;
+	}
 
-    public void setHitId(long hitId) {
-        this.hitId = hitId;
-    }
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
 
-    public Set<AttachmentVo> getAttachmentSet() {
-        return attachmentSet;
-    }
+	public long getHitDispId() {
+		return hitDispId;
+	}
 
-    public void setAttachmentSet(Set<AttachmentVo> attachmentSet) {
-        this.attachmentSet = attachmentSet;
-    }
+	public void setHitDispId(long hitDispId) {
+		this.hitDispId = hitDispId;
+	}
+
+	public long getHitId() {
+		return hitId;
+	}
+
+	public void setHitId(long hitId) {
+		this.hitId = hitId;
+	}
+
+	public Set<AttachmentVo> getAttachmentSet() {
+		return attachmentSet;
+	}
+
+	public void setAttachmentSet(Set<AttachmentVo> attachmentSet) {
+		this.attachmentSet = attachmentSet;
+	}
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -97,6 +97,5 @@ public class HitsDispositionCommentsVo implements Serializable {
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
 	}
-    
-    
+
 }

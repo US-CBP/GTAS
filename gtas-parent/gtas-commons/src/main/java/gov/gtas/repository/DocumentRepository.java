@@ -17,14 +17,14 @@ import gov.gtas.model.Passenger;
 
 import javax.transaction.Transactional;
 
-public interface DocumentRepository extends CrudRepository<Document, Long>{
-    @Query("SELECT d FROM Document d WHERE passenger_id = :id")
-    public List<Document> getPassengerDocuments(@Param("id") Long id);
-    
-    public Document findByDocumentNumberAndPassenger(String documentNumber, Passenger passenger);
+public interface DocumentRepository extends CrudRepository<Document, Long> {
+	@Query("SELECT d FROM Document d WHERE passenger_id = :id")
+	public List<Document> getPassengerDocuments(@Param("id") Long id);
 
-    @Transactional
-    @Query("Select d from Document d where d.paxId in :paxIds")
-    Set<Document> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
+	public List<Document> findByDocumentNumberAndPassenger(String documentNumber, Passenger passenger);
+
+	@Transactional
+	@Query("Select d from Document d where d.paxId in :paxIds")
+	Set<Document> getAllByPaxId(@Param("paxIds") Set<Long> paxIds);
 
 }

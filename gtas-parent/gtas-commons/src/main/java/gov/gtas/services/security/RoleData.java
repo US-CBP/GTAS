@@ -14,52 +14,52 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RoleData implements Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -1912655527084973025L;
-    private final int roleId;
-    private final String roleDescription;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1912655527084973025L;
+	private final int roleId;
+	private final String roleDescription;
 
-    public RoleData(@JsonProperty("roleId") int roleId, @JsonProperty("roleDescription") String roleDescription) {
-        this.roleId = roleId;
-        this.roleDescription = roleDescription;
-    }
+	public RoleData(@JsonProperty("roleId") int roleId, @JsonProperty("roleDescription") String roleDescription) {
+		this.roleId = roleId;
+		this.roleDescription = roleDescription;
+	}
 
-    @JsonProperty("roleId")
-    public final int getRoleId() {
-        return roleId;
-    }
+	@JsonProperty("roleId")
+	public final int getRoleId() {
+		return roleId;
+	}
 
-    @JsonProperty("roleDescription")
-    public final String getRoleDescription() {
-        return roleDescription;
-    }
+	@JsonProperty("roleDescription")
+	public final String getRoleDescription() {
+		return roleDescription;
+	}
 
-    @Override
-    public String toString() {
-        return "RoleData [roleId=" + roleId + ", roleDescription=" + roleDescription + "]";
-    }
+	@Override
+	public String toString() {
+		return "RoleData [roleId=" + roleId + ", roleDescription=" + roleDescription + "]";
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.roleId, this.roleDescription);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.roleId, this.roleDescription);
+	}
 
-    @Override
-    public boolean equals(Object target) {
-        if (this == target) {
-            return true;
-        }
+	@Override
+	public boolean equals(Object target) {
+		if (this == target) {
+			return true;
+		}
 
-        if (!(target instanceof RoleData)) {
-            return false;
-        }
+		if (!(target instanceof RoleData)) {
+			return false;
+		}
 
-        RoleData dataTarget = ((RoleData) target);
+		RoleData dataTarget = ((RoleData) target);
 
-        return new EqualsBuilder().append(this.roleId, dataTarget.getRoleId())
-                .append(this.roleDescription, dataTarget.getRoleDescription()).isEquals();
-    }
+		return new EqualsBuilder().append(this.roleId, dataTarget.getRoleId())
+				.append(this.roleDescription, dataTarget.getRoleDescription()).isEquals();
+	}
 
 }

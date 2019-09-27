@@ -28,28 +28,27 @@ import java.util.stream.StreamSupport;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    @Resource
-    private RoleRepository roleRepository;
-    
-    @Autowired
-    private RoleServiceUtil roleServiceUtil;
+	@Resource
+	private RoleRepository roleRepository;
 
-    @Override
-    @Transactional
-    public Set<RoleData> findAll() {
+	@Autowired
+	private RoleServiceUtil roleServiceUtil;
 
-        Iterable<Role> roleEntityCollection = roleRepository.findAll();
-        
-                // filter out the SysAdmin role; it should not be a choice on the front end.
-        List<Role> filteredRoleList = StreamSupport.stream(roleEntityCollection.spliterator(), false)
-        	      .filter(r -> (r.getRoleId() != 6))
-        	      .collect(Collectors.toList());        
-        
-        Set<RoleData> roles = roleServiceUtil.getRoleDataSetFromEntityCollection(filteredRoleList);
+	@Override
+	@Transactional
+	public Set<RoleData> findAll() {
 
-        return roles;
-    }
+		Iterable<Role> roleEntityCollection = roleRepository.findAll();
+
+		// filter out the SysAdmin role; it should not be a choice on the front end.
+		List<Role> filteredRoleList = StreamSupport.stream(roleEntityCollection.spliterator(), false)
+				.filter(r -> (r.getRoleId() != 6)).collect(Collectors.toList());
+
+		Set<RoleData> roles = roleServiceUtil.getRoleDataSetFromEntityCollection(filteredRoleList);
+
+		return roles;
+	}
 }

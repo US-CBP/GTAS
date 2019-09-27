@@ -44,7 +44,7 @@ public class FlightsRequestDto implements Serializable {
 	private transient List<SortOptionsDto> sort;
 
 	private String flightCategory;
-	
+
 	private String searchSubmitFlag;
 
 	/**
@@ -127,8 +127,7 @@ public class FlightsRequestDto implements Serializable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this,
-				ToStringStyle.MULTI_LINE_STYLE);
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	public String getFlightCategory() {
@@ -146,6 +145,5 @@ public class FlightsRequestDto implements Serializable {
 	public void setSearchSubmitFlag(String searchSubmitFlag) {
 		this.searchSubmitFlag = searchSubmitFlag;
 	}
-	
-	
+
 }

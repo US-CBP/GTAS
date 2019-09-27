@@ -22,11 +22,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes =  {TestCommonServicesConfig.class,
-		CachingConfig.class})
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
 @Rollback(true)
-public class ApisMessageServiceIT extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class ApisMessageServiceIT extends AbstractTransactionalJUnit4SpringContextTests {
 	@Autowired
 	private Loader svc;
 
@@ -35,16 +33,15 @@ public class ApisMessageServiceIT extends
 	@Before
 	public void setUp() throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
-		this.message = new File(classLoader.getResource(
-				"apis-messages/airline2.edi").getFile());
+		this.message = new File(classLoader.getResource("apis-messages/airline2.edi").getFile());
 	}
 
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-		svc.processMessage(this.message, new String[]{"placeholder"});
+		svc.processMessage(this.message, new String[] { "placeholder" });
 	}
-	
+
 	@Test
 	@Transactional
 	public void testProgressiveFlightWithDomesticContinuance() {

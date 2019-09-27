@@ -10,109 +10,113 @@ import gov.gtas.model.User;
 import gov.gtas.util.DateCalendarUtils;
 
 public class AuditRecordVo {
-    private String actionType;
-    private String status;
-    private String message;
-    private String user;
-    private String userName;
-    private String timestamp;
-    private String target;
-    private String actionData;
-    
-    public AuditRecordVo(){}
-    
-    public AuditRecordVo(AuditRecord auditRecord){
-        this.actionType = auditRecord.getActionType().toString();
-        this.status = auditRecord.getActionStatus().toString();
-        this.message = auditRecord.getMessage();
-        final User usr = auditRecord.getUser();
-        this.user = usr.getUserId();
-        this.userName = usr.getFirstName()+" "+usr.getLastName();
-        this.timestamp = DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp());
-        this.target = auditRecord.getTarget();
-        this.actionData = auditRecord.getActionData();
-    }
+	private String actionType;
+	private String status;
+	private String message;
+	private String user;
+	private String userName;
+	private String timestamp;
+	private String target;
+	private String actionData;
 
-    public String getActionType() {
-        return actionType;
-    }
+	public AuditRecordVo() {
+	}
 
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
-    }
+	public AuditRecordVo(AuditRecord auditRecord) {
+		this.actionType = auditRecord.getActionType().toString();
+		this.status = auditRecord.getActionStatus().toString();
+		this.message = auditRecord.getMessage();
+		final User usr = auditRecord.getUser();
+		this.user = usr.getUserId();
+		this.userName = usr.getFirstName() + " " + usr.getLastName();
+		this.timestamp = DateCalendarUtils.formatRuleEngineDateTime(auditRecord.getTimestamp());
+		this.target = auditRecord.getTarget();
+		this.actionData = auditRecord.getActionData();
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getActionType() {
+		return actionType;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setActionType(String actionType) {
+		this.actionType = actionType;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public String getUser() {
-        return user;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setUser(String userId) {
-        this.user = userId;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+	public String getUser() {
+		return user;
+	}
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+	public void setUser(String userId) {
+		this.user = userId;
+	}
 
-    /**
-     * @return the userName
-     */
-    public String getUserName() {
-        return userName;
-    }
+	public String getTimestamp() {
+		return timestamp;
+	}
 
-    /**
-     * @param userName the userName to set
-     */
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
 
-    /**
-     * @return the target
-     */
-    public String getTarget() {
-        return target;
-    }
+	/**
+	 * @return the userName
+	 */
+	public String getUserName() {
+		return userName;
+	}
 
-    /**
-     * @param target the target to set
-     */
-    public void setTarget(String target) {
-        this.target = target;
-    }
+	/**
+	 * @param userName
+	 *            the userName to set
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    /**
-     * @return the actionData
-     */
-    public String getActionData() {
-        return actionData;
-    }
+	/**
+	 * @return the target
+	 */
+	public String getTarget() {
+		return target;
+	}
 
-    /**
-     * @param actionData the actionData to set
-     */
-    public void setActionData(String actionData) {
-        this.actionData = actionData;
-    }
-    
+	/**
+	 * @param target
+	 *            the target to set
+	 */
+	public void setTarget(String target) {
+		this.target = target;
+	}
+
+	/**
+	 * @return the actionData
+	 */
+	public String getActionData() {
+		return actionData;
+	}
+
+	/**
+	 * @param actionData
+	 *            the actionData to set
+	 */
+	public void setActionData(String actionData) {
+		this.actionData = actionData;
+	}
+
 }

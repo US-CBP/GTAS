@@ -8,10 +8,9 @@ package gov.gtas.repository;
 import gov.gtas.model.lookup.AirportRestore;
 import org.springframework.data.repository.CrudRepository;
 
-public interface AirportRestoreRepository extends CrudRepository<AirportRestore, Long>{
+public interface AirportRestoreRepository extends CrudRepository<AirportRestore, Long> {
 
-    default AirportRestore findOne(Long airportId)
-    {
-    	return findById(airportId).orElse(null);
-    }
+	default AirportRestore findOne(Long airportId) {
+		return findById(airportId).orElse(null);
+	}
 }

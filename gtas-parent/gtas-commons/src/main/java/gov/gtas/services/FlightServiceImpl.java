@@ -60,26 +60,35 @@ public class FlightServiceImpl implements FlightService {
 	@Override
 	@Transactional
 	public Flight create(Flight flight) {
-    return flightRespository.save(flight);
+		return flightRespository.save(flight);
 	}
 
-    @Override
-    @Transactional
-    public FlightsPageDto findAll(FlightsRequestDto dto) {
+	@Override
+	@Transactional
+	public FlightsPageDto findAll(FlightsRequestDto dto) {
 		Pair<Long, List<Flight>> tuple = flightRespository.findByCriteria(dto);
 		List<Flight> flights = tuple.getRight();
-    	List<FlightVo> vos = convertFlightToFlightVo(flights);
+		List<FlightVo> vos = convertFlightToFlightVo(flights);
 		return new FlightsPageDto(vos, tuple.getLeft());
-    }
+	}
 
-    @Override
+	@Override
 	public List<FlightVo> convertFlightToFlightVo(List<Flight> flights) {
 		List<FlightVo> flightVos = new ArrayList<>();
 		CountDownCalculator countDownCalculator = new CountDownCalculator(new Date());
 		for (Flight f : flights) {
 			FlightVo vo = new FlightVo();
 			Date countDownToDate = f.getFlightCountDownView().getCountDownTimer();
-			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+
+			CountDownVo countDownVo;
+			if (countDownToDate == null) {
+				// This should not happen, but if it somehow does we need to return a vo instead
+				// of throwing a null pointer.
+				logger.error("count down is null, returning generic countdown vo!");
+				countDownVo = new CountDownVo("Error, no date provided (it is null)!", false, Long.MIN_VALUE);
+			} else {
+				countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate);
+			}
 			vo.setCountDown(countDownVo);
 			vo.setDirection(f.getDirection());
 			List<CodeShareVo> codeshareList = new ArrayList<>();
@@ -105,13 +114,13 @@ public class FlightServiceImpl implements FlightService {
 				vo.setPassengerCount(f.getFlightPassengerCount().getPassengerCount());
 			}
 			vo.setPaxWatchlistLinkHits(fuzzyHits.longValue());
-			List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); //get codeshare list
-			for(CodeShareFlight cs : csl){ // grab all codeshares from it
-				   CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
+			List<CodeShareFlight> csl = flightRespository.getCodeSharesForFlight(f.getId()); // get codeshare list
+			for (CodeShareFlight cs : csl) { // grab all codeshares from it
+				CodeShareVo codeshare = new CodeShareVo(); // Convert to Vo for transfer
 				BeanUtils.copyProperties(cs, codeshare);
-				codeshareList.add(codeshare); //Add csVo to list
+				codeshareList.add(codeshare); // Add csVo to list
 			}
-			vo.setCodeshares(codeshareList); //add csVOlist to flightvo
+			vo.setCodeshares(codeshareList); // add csVOlist to flightvo
 			flightVos.add(vo);
 		}
 		return flightVos;
@@ -151,13 +160,11 @@ public class FlightServiceImpl implements FlightService {
 			flightToUpdate.setUpdatedAt(new Date());
 			// TODO replace with logged in user id
 			flightToUpdate.setUpdatedBy(flight.getUpdatedBy());
-			/*if (flight.getPassengers() != null && flight.getPassengers().size() > 0) {
-				Iterator it = flight.getPassengers().iterator();
-				while (it.hasNext()) {
-					Passenger p = (Passenger) it.next();
-					// flightToUpdate.addPassenger(p);
-				}
-			}*/
+			/*
+			 * if (flight.getPassengers() != null && flight.getPassengers().size() > 0) {
+			 * Iterator it = flight.getPassengers().iterator(); while (it.hasNext()) {
+			 * Passenger p = (Passenger) it.next(); // flightToUpdate.addPassenger(p); } }
+			 */
 		}
 		return flightToUpdate;
 	}
@@ -225,16 +232,13 @@ public class FlightServiceImpl implements FlightService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Long getFlightFuzzyMatchesOnly(Long flightId) {
-		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " +
-				"FROM pax_watchlist_link pwl " +
-				"WHERE pwl.passenger_id not in (SELECT hitSumm.passenger_id " +
-				"FROM hits_summary hitSumm where wl_hit_count > 0) " +
-				"and pwl.passenger_id in " +
-				"(select passenger_id from gtas.flight_passenger where flight_id = " + flightId + " )";
+		String sqlStr = "SELECT count(DISTINCT pwl.passenger_id) " + "FROM pax_watchlist_link pwl "
+				+ "WHERE pwl.passenger_id not in (SELECT hitSumm.passenger_id "
+				+ "FROM hits_summary hitSumm where wl_hit_count > 0) " + "and pwl.passenger_id in "
+				+ "(select passenger_id from gtas.flight_passenger where flight_id = " + flightId + " )";
 		List<BigInteger> resultList = em.createNativeQuery(sqlStr).getResultList();
 		return resultList.get(0).longValueExact();
 	}
-
 
 	@Override
 	public void setAllPassengers(Set<Passenger> passengers, Long flightId) {
@@ -281,8 +285,8 @@ public class FlightServiceImpl implements FlightService {
 				vo.setMiddleInitial(passenger.getPassengerDetails().getMiddleName());
 				vo.setFlightNumber(flight.getFlightNumber());
 				vo.setRefNumber(passenger.getPassengerTripDetails().getReservationReferenceNumber());
-                vo.setHasHits(passenger.getHits().size() > 0);
-                seatVos.add(vo);
+				vo.setHasHits(passenger.getHits().size() > 0);
+				seatVos.add(vo);
 			}
 		}
 
@@ -290,13 +294,8 @@ public class FlightServiceImpl implements FlightService {
 			if (parentSeatVo.getRefNumber() == null) {
 				parentSeatVo.setCoTravellers(new String[0]);
 			} else {
-				parentSeatVo.setCoTravellers(seatVos
-						.stream()
-						.filter(isCoTravelerSeat(parentSeatVo))
-						.collect(Collectors.toList())
-						.stream()
-						.map(SeatVo::getNumber)
-						.toArray(String[]::new));
+				parentSeatVo.setCoTravellers(seatVos.stream().filter(isCoTravelerSeat(parentSeatVo))
+						.collect(Collectors.toList()).stream().map(SeatVo::getNumber).toArray(String[]::new));
 			}
 		});
 
@@ -304,8 +303,7 @@ public class FlightServiceImpl implements FlightService {
 	}
 
 	private Predicate<SeatVo> isCoTravelerSeat(SeatVo parentSeatVo) {
-		return childSeatVo ->
-				childSeatVo.getRefNumber() != null
+		return childSeatVo -> childSeatVo.getRefNumber() != null
 				& !parentSeatVo.getNumber().equals(childSeatVo.getNumber())
 				& parentSeatVo.getRefNumber().equals(childSeatVo.getRefNumber());
 	}

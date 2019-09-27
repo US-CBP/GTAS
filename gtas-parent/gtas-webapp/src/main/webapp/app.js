@@ -37,7 +37,9 @@ var app;
             'ngIdle',
             'chart.js',
             'summernote',
-            'angularTrix'
+            'angularTrix',
+            'ui.bootstrap.datetimepicker',
+            'datetime'
         ],
         language = function ($translateProvider) {  
 

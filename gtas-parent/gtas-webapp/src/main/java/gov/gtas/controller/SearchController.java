@@ -26,36 +26,32 @@ import gov.gtas.services.search.SearchService;
 @RestController
 @RequestMapping(Constants.SEARCH_SERVICE)
 public class SearchController {
-    private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
-    
-    @Autowired
-    SearchService searchService;
-    
-    @Autowired
-    PassengerService paxService;
+	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
 
-    @RequestMapping(value = Constants.RUN_SEARCH_PASSENGER_URI, method=RequestMethod.GET)
-    public JsonServiceResponse runPassengerQuery(
-    		@RequestParam(value = "query") String query,
-    		@RequestParam(value = "pageNumber") Integer pageNumber,
-    		@RequestParam(value="pageSize") Integer pageSize,
-    		@RequestParam(value = "column") String column,
-    		@RequestParam(value = "dir") String dir) throws InvalidQueryException {
-    	
-        AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize, column, dir);
-        return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
-    }       
-    @RequestMapping(value = "/queryLinks", method=RequestMethod.GET)
-    public JsonServiceResponse runLinksQuery(
-    		@RequestParam(value = "paxId") Long paxId,
-    		@RequestParam(value = "pageNumber") Integer pageNumber,
-    		@RequestParam(value="pageSize") Integer pageSize,
-    		@RequestParam(value = "column") String column,
-    		@RequestParam(value = "dir") String dir) throws InvalidQueryException {
-    	
-    	
-    	Passenger pax = paxService.findByIdWithFlightPaxAndDocuments(paxId);
-    	LinkAnalysisDto queryResults = searchService.findPaxLinks(pax, pageNumber, pageSize, column, dir);
-        return new JsonServiceResponse(Status.SUCCESS, "success" , queryResults);
-    }  
+	@Autowired
+	SearchService searchService;
+
+	@Autowired
+	PassengerService paxService;
+
+	@RequestMapping(value = Constants.RUN_SEARCH_PASSENGER_URI, method = RequestMethod.GET)
+	public JsonServiceResponse runPassengerQuery(@RequestParam(value = "query") String query,
+			@RequestParam(value = "pageNumber") Integer pageNumber, @RequestParam(value = "pageSize") Integer pageSize,
+			@RequestParam(value = "column") String column, @RequestParam(value = "dir") String dir)
+			throws InvalidQueryException {
+
+		AdhocQueryDto queryResults = searchService.findPassengers(query, pageNumber, pageSize, column, dir);
+		return new JsonServiceResponse(Status.SUCCESS, "success", queryResults);
+	}
+
+	@RequestMapping(value = "/queryLinks", method = RequestMethod.GET)
+	public JsonServiceResponse runLinksQuery(@RequestParam(value = "paxId") Long paxId,
+			@RequestParam(value = "pageNumber") Integer pageNumber, @RequestParam(value = "pageSize") Integer pageSize,
+			@RequestParam(value = "column") String column, @RequestParam(value = "dir") String dir)
+			throws InvalidQueryException {
+
+		Passenger pax = paxService.findByIdWithFlightPaxAndDocuments(paxId);
+		LinkAnalysisDto queryResults = searchService.findPaxLinks(pax, pageNumber, pageSize, column, dir);
+		return new JsonServiceResponse(Status.SUCCESS, "success", queryResults);
+	}
 }

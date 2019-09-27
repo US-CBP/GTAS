@@ -195,33 +195,19 @@ public class Whitelist extends BaseEntityAudit {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((nationality == null) ? 0 : nationality
-						.hashCode());
+		result = prime * result + ((nationality == null) ? 0 : nationality.hashCode());
 		result = prime * result + ((dob == null) ? 0 : dob.hashCode());
-		result = prime * result
-				+ ((documentNumber == null) ? 0 : documentNumber.hashCode());
-		result = prime * result
-				+ ((documentType == null) ? 0 : documentType.hashCode());
-		result = prime * result
-				+ ((expirationDate == null) ? 0 : expirationDate.hashCode());
-		result = prime * result
-				+ ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((documentNumber == null) ? 0 : documentNumber.hashCode());
+		result = prime * result + ((documentType == null) ? 0 : documentType.hashCode());
+		result = prime * result + ((expirationDate == null) ? 0 : expirationDate.hashCode());
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
-		result = prime * result
-				+ ((issuanceCountry == null) ? 0 : issuanceCountry.hashCode());
-		result = prime * result
-				+ ((issuanceDate == null) ? 0 : issuanceDate.hashCode());
-		result = prime * result
-				+ ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result
-				+ ((middleName == null) ? 0 : middleName.hashCode());
-		result = prime
-				* result
-				+ ((residencyCountry == null) ? 0 : residencyCountry.hashCode());
-		result = prime * result
-				+ ((whiteListEditor == null) ? 0 : whiteListEditor.hashCode());
+		result = prime * result + ((issuanceCountry == null) ? 0 : issuanceCountry.hashCode());
+		result = prime * result + ((issuanceDate == null) ? 0 : issuanceDate.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
+		result = prime * result + ((residencyCountry == null) ? 0 : residencyCountry.hashCode());
+		result = prime * result + ((whiteListEditor == null) ? 0 : whiteListEditor.hashCode());
 		return result;
 	}
 
@@ -235,7 +221,7 @@ public class Whitelist extends BaseEntityAudit {
 			return false;
 		Whitelist other = (Whitelist) obj;
 		if (nationality == null) {
-			if (other.nationality!= null)
+			if (other.nationality != null)
 				return false;
 		} else if (!nationality.equals(other.nationality))
 			return false;

@@ -33,60 +33,60 @@ import gov.gtas.parsers.exception.ParseException;
  * on 24 FEB which departs at 9:35 pm.(TVL+240210:2135+ATL+AMS+DL+9375’)
  */
 public class TVL_L0 extends Segment {
-    private Date etd;
-    private Date eta;
-    private String origin;
-    private String destination;
-    private String carrier;
-    private String flightNumber;
+	private Date etd;
+	private Date eta;
+	private String origin;
+	private String destination;
+	private String carrier;
+	private String flightNumber;
 
-    public TVL_L0(List<Composite> composites) throws ParseException {
-        super("TVL", composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                Date[] tmp = TVL.getEtdEta(c);
-                etd = tmp[0];
-                eta = tmp[1];
-                break;
-            case 1:
-                origin = c.getElement(0);
-                break;
-            case 2:
-                destination = c.getElement(0);
-                break;
-            case 3:
-                carrier = c.getElement(0);
-                break;
-            case 4:
-                flightNumber = c.getElement(0);
-                break;
-            }
-        }
-    }
+	public TVL_L0(List<Composite> composites) throws ParseException {
+		super("TVL", composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				Date[] tmp = TVL.getEtdEta(c);
+				etd = tmp[0];
+				eta = tmp[1];
+				break;
+			case 1:
+				origin = c.getElement(0);
+				break;
+			case 2:
+				destination = c.getElement(0);
+				break;
+			case 3:
+				carrier = c.getElement(0);
+				break;
+			case 4:
+				flightNumber = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public Date getEtd() {
-        return etd;
-    }
+	public Date getEtd() {
+		return etd;
+	}
 
-    public Date getEta() {
-        return eta;
-    }
+	public Date getEta() {
+		return eta;
+	}
 
-    public String getOrigin() {
-        return origin;
-    }
+	public String getOrigin() {
+		return origin;
+	}
 
-    public String getDestination() {
-        return destination;
-    }
+	public String getDestination() {
+		return destination;
+	}
 
-    public String getCarrier() {
-        return carrier;
-    }
+	public String getCarrier() {
+		return carrier;
+	}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+	public String getFlightNumber() {
+		return flightNumber;
+	}
 }

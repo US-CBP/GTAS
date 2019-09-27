@@ -18,23 +18,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarrierRestoreServiceImpl implements CarrierRestoreService {
 
-    @Resource
-    private CarrierRestoreRepository repo;
-    
+	@Resource
+	private CarrierRestoreRepository repo;
 
-    @Override
-    @Transactional
-    public List<CarrierRestore> findAll() {
-        
-        return (List<CarrierRestore>)repo.findAll();
-    }
+	@Override
+	@Transactional
+	public List<CarrierRestore> findAll() {
 
+		return (List<CarrierRestore>) repo.findAll();
+	}
 
-    @Override
-    @Transactional
-    public CarrierRestore findById(Long id) {
-        
-        return repo.findById(id).orElse(null);
-    }
+	@Override
+	@Transactional
+	public CarrierRestore findById(Long id) {
+
+		return repo.findById(id).orElse(null);
+	}
 
 }
