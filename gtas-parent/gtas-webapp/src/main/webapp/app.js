@@ -86,8 +86,7 @@ var app;
         },
         initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
-            console.log('initialize');
-            $rootScope.$on('$stateChangeStart',
+             $rootScope.$on('$stateChangeStart',
 
                 function (event, toState) {
             		Idle.watch();
