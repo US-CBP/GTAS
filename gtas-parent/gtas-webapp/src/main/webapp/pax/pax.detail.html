@@ -31,31 +31,31 @@
             </table>
           </h6>
         </div>
-    
+
         <div>
           <table class="table table-responsive table-condensed table-borderless">
             <tr>
-              <td class="half-width txt-right"><strong>Last Name</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.lastname' | translate}}</strong></td>
               <td class="half-width">{{passenger.lastName}}</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>First Name</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.firstname' | translate}}</strong></td>
               <td class="half-width">{{passenger.firstName}}</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Middle Name</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.middlename' | translate}}</strong></td>
               <td class="half-width">{{passenger.middleName}}</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Age</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.age' | translate}}</strong></td>
               <td class="half-width">{{passenger.age}} ({{ passenger.dob | date:"yyyy-MM-dd" }})</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Gender</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.gender' | translate}}</strong></td>
               <td class="half-width">{{getCodeTooltipData( passenger.gender,"gender")}}</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Nationality</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.nationality' | translate}}</strong></td>
               <td class="half-width">
               <span ng-mouseleave="resetTooltip()">{{passenger.nationality}}
                 <md-tooltip class="multi-tooltip" md-direction="right">
@@ -65,7 +65,7 @@
           </tr>
             <tr>
     
-              <td class="half-width txt-right"><strong>Residence</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.residence' | translate}}</strong></td>
               <td class="half-width">
                 <span ng-mouseleave="resetTooltip()">{{passenger.residencyCountry}}
                   <md-tooltip class="multi-tooltip" md-direction="right">
@@ -80,17 +80,17 @@
     
         <table class="table table-responsive table-condensed table-borderless">
             <tr>
-              <td class="half-width txt-right"><strong>Seat</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.seat' | translate}}</strong></td>
               <td class="half-width">
-                <a class="primary-link" title="Show seat map" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
+                <a class="primary-link" title="{{'msg.showseatmap' | translate}}" ng-href="#/seatsMap/{{passenger.paxId}}/{{passenger.flightId}}/{{passenger.seat}}" id="seat-map">{{ passenger.seat }}</a>
               </td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Passenger Type</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.paxtype' | translate}}</strong></td>
               <td class="half-width">{{getCodeTooltipData( passenger.passengerType,"passenger")}}</td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Embarkation</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.originairport' | translate}}</strong></td>
               <td class="half-width"><div>
                 <span ng-mouseleave="resetTooltip()">{{ passenger.flightOrigin }}
                   <md-tooltip class="multi-tooltip" md-direction="right">
@@ -100,7 +100,7 @@
               </td>
             </tr>
             <tr>
-              <td class="half-width txt-right"><strong>Debarkation</strong></td>
+              <td class="half-width txt-right"><strong>{{'pass.destinationairport' | translate}}</strong></td>
               <td class="half-width"><div>
                   <span ng-mouseleave="resetTooltip()">{{ passenger.flightDestination }}
                     <md-tooltip class="multi-tooltip" md-direction="right">
@@ -110,13 +110,13 @@
                 </td>
               </tr>
               <tr ng-if="passenger.pnrVo">
-                <td class="half-width txt-right"><strong>Last PNR</strong></td>
+                <td class="half-width txt-right"><strong>{{'pass.lastpnr' | translate}}</strong></td>
                 <td class="half-width">
                   {{passenger.pnrVo.transmissionDate}}
                 </td>
               </tr>
               <tr ng-if="passenger.apisMessageVo">
-                <td class="half-width txt-right"><strong>Last APIS</strong></td>
+                <td class="half-width txt-right"><strong>{{'pass.lastapis' | translate}}</strong></td>
                 <td class="half-width">
                   {{passenger.apisMessageVo.transmissionDate}}
                 </td>
@@ -125,7 +125,7 @@
     
           <table class="table table-responsive table-borderless table-condensed margin-0">
             <tr ng-if="passenger.pnrVo !== null">
-              <td>PNR</td>
+              <td>{{'pnr' | translate}}</td>
               <td>
                 <div>
                   <ol class="nav-steps">
@@ -143,7 +143,7 @@
           </table>
           <table class="table table-responsive table-borderless table-condensed ">
             <tr>
-              <td>APIS</td>
+              <td>{{'apis' | translate}}</td>
               <td>
                 <div>
                   <ol class="nav-dots">
@@ -199,13 +199,13 @@
         <!--  ACTION BUTTONS  -->
         <div class="flex justify-around action-buttons">
             <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
-              <i class="fa fa-eye"></i> &nbsp;Add to Watchlist
+              <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
             </button>
             <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
-              <i class="fa fa-download" aria-hidden="true"></i> &nbsp;Pax Detail
+              <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
             </a>
             <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
-              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;Create Case
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
             </a>
             </div>
     
@@ -217,7 +217,7 @@
             <md-tabs id="detailSection" md-stretch-tabs="never" md-dynamic-height>
     
               <!-- SUMMARY TAB  -->
-              <md-tab label="Summary">
+              <md-tab label="{{'tab.summary' | translate}}">
     
                   <div class="flex flex-center sm-pad scroll-container-outer">
                     <div class="flex flex-vert ie-fix-md half-width align-items-center">
@@ -225,21 +225,21 @@
                       <!------  CASE HISTORY   ------>
                       <div class="full-width cbp-card-container">
                         <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top" >Case History</h4>
+                          <h4 class="h-label no-margin-top" >{{'case.casehistory' | translate}}</h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead>
                               <tr>
-                                <th>Case Id</th>
-                                <th>Flight</th>
-                                <th>Doc #</th>
-                                <th>Status</th>
-                                <th>Top Rule Category </th>
+                                <th>{{'case.caseid' | translate}}</th>
+                                <th>{{'case.flight' | translate}}</th>
+                                <th>{{'case.docnum' | translate}}</th>
+                                <th>{{'case.status' | translate}}</th>
+                                <th>{{'case.toprulecategory' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody>
                               <tr ng-repeat="case in caseHistory">
-                                <td><a ng-href="#/casedetail/{{case.id}}" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
+                                <td><a ng-href="#/casedetail/{{case.id}}" title="{{'msg.showcasedetails' | translate}}"><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
                                 <td>{{case.flightNumber}}</td>
                                 <td>{{case.document}}</td>
                                 <td>{{case.status}}</td>
@@ -256,15 +256,15 @@
                       <!------  DOCUMENTS   ------>
                       <div class="full-width cbp-card-container">
                         <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top" >Documents</h4>
+                          <h4 class="h-label no-margin-top" >{{'doc.documents' | translate}}</h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead>
                               <tr>
-                                <th>Doc #</th>
-                                <th>Type</th>
-                                <th>Iss. Country</th>
-                                <th>Exp. Date</th>
+                                <th>{{'doc.docnum' | translate}}</th>
+                                <th>{{'doc.type' | translate}}</th>
+                                <th>{{'doc.iss.country' | translate}}</th>
+                                <th>{{'doc.exp.date' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody>
@@ -295,7 +295,7 @@
                       <!------  WATCHLIST MATCHES   ------>
                       <div class="full-width cbp-card-container">
                         <div class="cbp-card cbp-card-shadow">
-                          <h4 class="h-label no-margin-top" >Partial Hits
+                          <h4 class="h-label no-margin-top" >{{'hit.partialhits' | translate}}
                             <button ng-click="saveWatchListMatchByPaxId()" type="button" class="btn btn-icon-only btn-primary">
                               <i class="fa fa-inverse fa-refresh"></i>
                             </button>
@@ -304,11 +304,11 @@
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead>
                               <tr>
-                                <th>Category</th>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>DOB</th>
-                                <th>% Match</th>
+                                <th>{{'hit.category' | translate}}</th>
+                                <th>{{'pass.lastname' | translate}}</th>
+                                <th>{{'pass.firstname' | translate}}</th>
+                                <th>{{'pass.dob' | translate}}</th>
+                                <th>{{'hit.percentmatch' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody>
@@ -327,14 +327,14 @@
     
                         <div class="full-width cbp-card-container"  ng-if="ruleHits != undefined && ruleHits != null && ruleHits.length > 0">
                           <div class="cbp-card cbp-card-shadow">
-                              <h4 class="h-label no-margin-top" >Hits Summary</h4>
+                              <h4 class="h-label no-margin-top" >{{'hit.hitssummary' | translate}}</h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead>
                                 <tr>
-                                  <th>Category</th>
-                                  <th>Title</th>
-                                  <th>Conditions</th>
+                                  <th>{{'hit.category' | translate}}</th>
+                                  <th>{{'hit.title' | translate}}</th>
+                                  <th>{{'hit.conditions' | translate}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -355,16 +355,16 @@
     
     
               <!-- APIs Tab -->
-              <md-tab label="APIs" ng-if="passenger.apisMessageVo.apisRecordExists">
+              <md-tab label="{{'tab.apis' | translate}}" ng-if="passenger.apisMessageVo.apisRecordExists">
                 <div class="flex flex-center sm-pad">
                   <div class="flex flex-vert ie-fix-md half-width align-items-center">
                     <!--Total Bags!-->
                     <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
                         <h4 class="h-label no-margin-top" >
-                          Total APIS Baggage ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
+                          {{'bag.totalapisbaggage' | translate}} ({{ passenger.apisMessageVo.bagCount?passenger.apisMessageVo.bagCount:0}})
                           <span class="right-header">
-                          Baggage Weight ({{passenger.apisMessageVo.bagWeight}} kg)
+                            {{'bag.baggageweight' | translate}} ({{passenger.apisMessageVo.bagWeight}} kg)
                         </span>
                         </h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
@@ -372,7 +372,7 @@
                               <thead>
                                 <tr>
                                   <th>&nbsp;</th>
-                                  <th>BagID</th>
+                                  <th>{{'bag.bagid' | translate}}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -391,13 +391,13 @@
                     <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
                         <h4 class="h-label no-margin-top" >
-                          Phone Numbers ({{ passenger.apisMessageVo.phoneNumbers.length }})
+                            {{'phone.phonenumbers' | translate}} ({{ passenger.apisMessageVo.phoneNumbers.length }})
                         </h4>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                           <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                             <thead>
                             <tr>
-                              <th>Phone Number</th>
+                              <th>{{'phone.phonenumber' | translate}}</th>
                             </tr>
                             </thead>
                               <tbody>
@@ -417,26 +417,26 @@
                   <div class="cbp-card-container full-width">
                     <div class="cbp-card cbp-card-shadow">
                       <h4 class="h-label no-margin-top" >
-                        Passengers on Reservation ({{ passenger.apisMessageVo.flightpaxs.length }})
+                        {{'apis.passengersonreservation' | translate}} ({{ passenger.apisMessageVo.flightpaxs.length }})
                       </h4>
                       <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                         <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                         <thead>
                           <tr>
-                            <th>First Name</th>
-                            <th>Middle Name</th>
-                            <th>Last Name</th>
-                            <th>Pax Type</th>
-                            <th>Residence</th>
-                            <th>Port of Arrival</th>
-                            <th>Ref Num</th>
+                            <th>{{'pass.firstname' | translate}}</th>
+                            <th>{{'pass.middlename' | translate}}</th>
+                            <th>{{'pass.lastname' | translate}}</th>
+                            <th>{{'pass.type' | translate}}</th>
+                            <th>{{'pass.residence' | translate}}</th>
+                            <th>{{'flight.destinationairport' | translate}}</th>
+                            <th>{{'pnr.refnum' | translate}}</th>
                           </tr>
                           </thead>
                           <tbody>
                           <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                             <td>{{flightpax.firstName}}</td>
                             <td>{{flightpax.middleName}}</td>
-                            <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="Show passenger detail">{{flightpax.lastName}}</a></td>
+                            <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
                             <td>
                                 <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
                           <md-tooltip class="multi-tooltip" md-direction="left">
@@ -471,13 +471,13 @@
     
     
               <!-- PNR Tab -->
-              <md-tab label="PNR" ng-if="passenger.pnrVo.pnrRecordExists" md-ink-ripple="{{ 'teal' }}">
+              <md-tab label="{{'tab.pnr' | translate}}" ng-if="passenger.pnrVo.pnrRecordExists" md-ink-ripple="{{ 'teal' }}">
                   <div class="flex flex-center sm-pad">
                     <div class="flex flex-40 flex-vert ie-fix-md align-items-center">
                       <!--RawPNR!-->
                       <div class="full-width cbp-card-container gtas-card-container">
                           <div class="cbp-card cbp-card-shadow">
-                            <h4 class="h-label no-margin-top">Raw PNR</h4>
+                            <h4 class="h-label no-margin-top">{{'pnr.rawpnr' | translate}}</h4>
                             <div class="no-pad-top panel-body flex flex-vert ie-fix-lg scroll-card">
                               <table id="pnrtable" class="table table-condensed table-responsive table-wrap margin-0">
                                 <tr ng-repeat="i in passenger.pnrVo.segmentList track by $index">
@@ -495,23 +495,24 @@
                         <!--Itinerary!-->
                         <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
-                              <h4 class="h-label no-margin-top">Itinerary ({{ passenger.pnrVo.flightLegs.length }})&nbsp;&nbsp;&nbsp;<span class="right-header"> Trip Type: {{passenger.pnrVo.tripType}}</span></h4>
+                              <h4 class="h-label no-margin-top">{{'pnr.itinerary' | translate}} ({{ passenger.pnrVo.flightLegs.length }})
+                                <span class="right-header">{{'pnr.triptype' | translate}}: {{passenger.pnrVo.tripType}}</span></h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead class="floating-table-header flex-center">
                                   <tr>
-                                    <th>Leg</th>
-                                    <th>Flight#</th>
-                                    <th>Origin / Destination</th>
-                                    <th>ETD</th>
-                                    <th>ETA</th>
+                                    <th>{{'flight.leg' | translate}}</th>
+                                    <th>{{'flight.flightnum' | translate}}</th>
+                                    <th>{{'flight.origindestination' | translate}}</th>
+                                    <th>{{'flight.departure' | translate}}</th>
+                                    <th>{{'flight.arrival' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
                                   <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                     <td style="align-items: center;">{{leg.legNumber }}</td>
                                     <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                      <a class="primary-link" title="Show flight details" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                      <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
                                     <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -533,23 +534,23 @@
                           <!--PNR Names!-->
                           <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
-                              <h4 class="h-label no-margin-top" >PNR Names  ({{ passenger.pnrVo.passengers.length }})</h4>
+                              <h4 class="h-label no-margin-top" >{{'pnr.pnrnames' | translate}}  ({{ passenger.pnrVo.passengers.length }})</h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead>
                                   <tr>
-                                    <th>First Name</th>
-                                    <th>Middle Name</th>
-                                    <th>Last Name</th>
-                                    <th>Gender</th>
-                                    <th>Age</th>
+                                    <th>{{'pass.firstname' | translate}}</th>
+                                    <th>{{'pass.middlename' | translate}}</th>
+                                    <th>{{'pass.lastname' | translate}}</th>
+                                    <th>{{'pass.gender' | translate}}</th>
+                                    <th>{{'pass.age' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
                                   <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
                                     <td>{{ pass.firstName }}</td>
                                     <td>{{ pass.middleName }}</td>
-                                    <td><a title="Show passenger detail" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
+                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
                                         <md-tooltip class="multi-tooltip" md-direction="left">
@@ -568,18 +569,18 @@
                           <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Documents ({{ passenger.pnrVo.documents.length}})
+                                {{'doc.documents' | translate}}  ({{ passenger.pnrVo.documents.length}})
                               </h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                     <thead>
                                   <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Type</th>
-                                    <th>Iss. Country</th>
-                                    <th>Number</th>
-                                    <th>Exp. Date</th>
+                                    <th>{{'pass.firstname' | translate}}</th>
+                                    <th>{{'pass.lastname' | translate}}</th>
+                                    <th>{{'doc.type' | translate}}</th>
+                                    <th>{{'doc.iss.country' | translate}}</th>
+                                    <th>{{'doc.number' | translate}}</th>
+                                    <th>{{'doc.exp.date' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -606,20 +607,21 @@
                           <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Addresses({{ passenger.pnrVo.addresses.length }})
+                                {{'add.addresses' | translate}} ({{ passenger.pnrVo.addresses.length }})
                               </h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
                                   <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                       <thead>
                                   <tr>
-                                    <th>City</th>
-                                    <th>State</th>
-                                    <th>Country</th>
-                                    <th>Street</th>
+                                    <th>{{'add.street' | translate}}</th>
+                                    <th>{{'add.city' | translate}}</th>
+                                    <th>{{'add.state' | translate}}</th>
+                                    <th>{{'add.country' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
                                   <tr ng-repeat="addr in passenger.pnrVo.addresses track by $index" ng-click="highlightClass('ADD'+addr.city)">
+                                    <td>{{ addr.line1 }}</td>
                                     <td>{{ addr.city }}</td>
                                     <td>{{ addr.state }}</td>
                                     <td>
@@ -627,7 +629,6 @@
                                         <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(addr.country,"country")}}</div></md-tooltip>
                                       </span>
                                     </td>
-                                    <td>{{ addr.line1 }}</td>
                                   </tr>
                                   </tbody>
                                 </table>
@@ -638,13 +639,13 @@
                           <div class="cbp-card-container full-width">
                               <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Phone Numbers ({{ passenger.pnrVo.phoneNumbers.length }})
+                                {{'phone.phonenumbers' | translate}} ({{ passenger.pnrVo.phoneNumbers.length }})
                               </h4>
                               <div class="no-pad-top no-pad-btm panel-body flex flex-vert ie-fix-md">
                                   <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                       <thead>
                                   <tr>
-                                    <th>Phone Number</th>
+                                    <th>{{'phone.phonenumber' | translate}}</th>
                                   </tr>
                                   </thead>
                                 </table>
@@ -664,13 +665,13 @@
                           <div ng-if="passenger.pnrVo.emails.length>0" class="cbp-card-container full-width ">
                             <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Email Addresses ({{passenger.pnrVo.emails.length}})
+                                {{'email.emailaddresses' | translate}} ({{passenger.pnrVo.emails.length}})
                               </h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                   <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                       <thead>
                                   <tr>
-                                    <th>Email Address</th>
+                                    <th>{{'email.emailaddress' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -686,16 +687,16 @@
                           <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Credit Cards ({{passenger.pnrVo.creditCards.length}})
+                                {{'cc.creditcards' | translate}} ({{passenger.pnrVo.creditCards.length}})
                               </h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md four-table">
                                   <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                       <thead>
                                   <tr>
-                                    <th>Holder</th>
-                                    <th>Type</th>
-                                    <th>Number</th>
-                                    <th>Exp. Date</th>
+                                    <th>{{'cc.holder' | translate}}</th>
+                                    <th>{{'cc.type' | translate}}</th>
+                                    <th>{{'cc.number' | translate}}</th>
+                                    <th>{{'cc.expdate' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody>
@@ -714,14 +715,14 @@
                           <div class="cbp-card-container full-width">
                             <div class="cbp-card cbp-card-shadow">
                               <h4 class="h-label no-margin-top" >
-                                Frequent Flyer Numbers ({{passenger.pnrVo.frequentFlyerDetails.length}})
+                                  {{'ff.frequentfliernumbers' | translate}} ({{passenger.pnrVo.frequentFlyerDetails.length}})
                               </h4>
                               <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                                 <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                     <thead aria-hidden="true">
                                   <tr>
-                                    <th class="txt-right">Airline</th>
-                                    <th class="txt-right">Number</th>
+                                    <th class="txt-right">{{'ff.airline' | translate}}</th>
+                                    <th class="txt-right">{{'ff.number' | translate}}</th>
                                   </tr>
                                   </thead>
                                   <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body">
@@ -740,16 +741,16 @@
                         <div class="cbp-card-container full-width">
                         <div class="cbp-card cbp-card-shadow">
                           <h4 class="h-label no-margin-top" >
-                            Seat Information
+                              {{'flight.seatinformation' | translate}}
                           </h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                               <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead>
                               <tr>
-                                <th>Last Name</th>
-                                <th>First Name</th>
-                                <th>Flight#</th>
-                                <th>Seat#</th>
+                                <th>{{'pass.lastname' | translate}}</th>
+                                <th>{{'pass.firstname' | translate}}</th>
+                                <th>{{'flight.flightnum' | translate}}</th>
+                                <th>{{'flight.seatnum' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody>
@@ -768,18 +769,18 @@
                       <div class="cbp-card-container full-width">
                         <div class="cbp-card cbp-card-shadow">
                           <h4 class="h-label no-margin-top" >
-                            Agencies ({{ passenger.pnrVo.agencies.length}})
+                            {{'agency.agencies' | translate}} ({{ passenger.pnrVo.agencies.length}})
                           </h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md six-table">
                               <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                   <thead>
                               <tr>
-                                <th>Type</th>
-                                <th>City</th>
-                                <th>ID</th>
-                                <th>Location</th>
-                                <th>Name</th>
-                                <th>Phone</th>
+                                <th>{{'agency.type' | translate}}</th>
+                                <th>{{'agency.city' | translate}}</th>
+                                <th>{{'agency.id' | translate}}</th>
+                                <th>{{'agency.location' | translate}}</th>
+                                <th>{{'agency.name' | translate}}</th>
+                                <th>{{'agency.phone' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody>
@@ -802,19 +803,19 @@
                       <div class="cbp-card-container full-width">
                         <div class="cbp-card cbp-card-shadow">
                           <h4 class="h-label no-margin-top">
-                            Total PNR Baggage ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
-                            <span class="right-header">Baggage Weight ({{passenger.pnrVo.baggageWeight}} Kg)</span>
+                            {{'bag.totalpnrbaggage' | translate}} ({{passenger.pnrVo.totalbagCount || 0}})&nbsp;&nbsp;&nbsp;
+                            <span class="right-header">{{'bag.baggageweight' | translate}} ({{passenger.pnrVo.baggageWeight}} Kg)</span>
                           </h4>
                           <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                               <thead aria-hidden="true">
                               <tr>
-                                <th>Flight Leg</th>
-                                <th class="txt-right">Passenger Name</th>
-                                <th class="txt-right">Bag Count</th>
-                                <th class="txt-right">Total Bag Weight</th>
-                                <th class="txt-right">Bag Destination</th>
-                                <th class="txt-right">Bag ID(s)</th>
+                                <th class="txt-right">{{'flight.flightnum' | translate}}</th>
+                                <th class="txt-right">{{'pass.passengername' | translate}}</th>
+                                <th class="txt-right">{{'bag.bagcount' | translate}}</th>
+                                <th class="txt-right">{{'bag.totalbagweight' | translate}}</th>
+                                <th class="txt-right">{{'bag.bagdestination' | translate}}</th>
+                                <th class="txt-right">{{'bag.bagids' | translate}}</th>
                               </tr>
                               </thead>
                               <tbody class="cbp-table-selectable mdl-js-data-table floating-table-body" ng-repeat="leg in orderedFlightLegs">
@@ -845,28 +846,27 @@
                   </div>
               </md-tab>
     
-    
               <!-- Flight History Tab -->
-              <md-tab label="Loading Flight History..." ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
+              <md-tab label="{{'msg.loading' | translate}}" ng-disabled="isLoadingFlightHistory" ng-if="isLoadingFlightHistory">
               </md-tab>
-              <md-tab label="{{ 'pass.flt.history' | translate}}" ng-if="!isLoadingFlightHistory">
+              <md-tab label="{{ 'tab.flighthistory' | translate}}" ng-if="!isLoadingFlightHistory">
                 <md-tab-body>
                   <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
                   <!--Current Itinerary!-->
                   <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Current Itinerary</h4>
+                        <h4 class="h-label no-margin-top" >{{'flight.currentitinerary' | translate}}</h4>
                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                           <table aria-hidden="true" class="table table-condensed table-responsive floating-table-header">
                             <thead>
                             <tr>
-                              <th>Carrier/Flight</th>
-                              <th>ETA</th>
-                              <th>ETD</th>
-                              <th>Origin Country</th>
-                              <th>Origin Airport</th>
-                              <th>Destination Country</th>
-                              <th>Destination Airport</th>
+                              <th>{{'flight.flightnum' | translate}}</th>
+                              <th>{{'flight.arrival' | translate}}</th>
+                              <th>{{'flight.departure' | translate}}</th>
+                              <th>{{'flight.origincountry' | translate}}</th>
+                              <th>{{'flight.originairport' | translate}}</th>
+                              <th>{{'flight.destinationcountry' | translate}}</th>
+                              <th>{{'flight.destinationairport' | translate}}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -903,25 +903,25 @@
                   <!--Seat Information!-->
                   <div class="cbp-card-container full-width">
                     <div class="cbp-card cbp-card-shadow" ng-repeat-start="flight in passenger.fullFlightHistoryVo">
-                      <h4 class="h-label no-margin-top">Total Flight History</h4>
+                      <h4 class="h-label no-margin-top">{{'flight.totalflighthistory' | translate}}</h4>
                       <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
                         <table aria-hidden="true" class="table table-condensed table-responsive floating-table-header">
                           <thead>
                           <tr>
-                            <th>Carrier/Flight</th>
-                            <th>ETA</th>
-                            <th>ETD</th>
-                            <th>Origin Country</th>
-                            <th>Origin Airport</th>
-                            <th>Destination Country</th>
-                            <th>Destination Airport</th>
-                          </tr>
+                            <th>{{'flight.flightnum' | translate}}</th>
+                            <th>{{'flight.arrival' | translate}}</th>
+                            <th>{{'flight.departure' | translate}}</th>
+                            <th>{{'flight.origincountry' | translate}}</th>
+                            <th>{{'flight.originairport' | translate}}</th>
+                            <th>{{'flight.destinationcountry' | translate}}</th>
+                            <th>{{'flight.destinationairport' | translate}}</th>
+                        </tr>
                           </thead>
                           <tbody>
                           <tr ng-repeat="k in flight | orderBy:'-etd'">
                             <td ng-if="!k.bookingDetail">
                               <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
-                                 target="pax.detail" title="Show passenger detail">
+                                 target="pax.detail" title="{{'msg.showflightdetails' | translate}}">
                                 {{k.fullFlightNumber}}</a>
                             </td>
                             <td class="md-primary md-default-theme"
@@ -964,13 +964,13 @@
               </md-tab>
     
               <!-- Link Analysis Tab -->
-              <md-tab label="Link Analysis" ng-click="activateGraph()">
+              <md-tab label="{{'tab.linkanalysis' | translate}}" ng-click="activateGraph()">
                 <md-tab-body>
                   <div class="flex flex-vert ie-fix-md full-width align-items-center scroll-container-outer">
                   <!-- SEARCH  -->
                   <div class="cbp-card-container full-width">
                       <div class="cbp-card cbp-card-shadow">
-                        <h4 class="h-label no-margin-top" >Search</h4>
+                        <h4 class="h-label no-margin-top" >{{'nav.search' | translate}}</h4>
   
                       <div class="ppt-body">
   
@@ -979,73 +979,73 @@
                           <div class="ppt-container-graph">
                                 <nav id="popoto-saves" class="ppt-taxo-nav">
                                   <div id="saves">
-                                      <span class="ppt-header-span">This Passenger:</span>
+                                      <span class="ppt-header-span">{{'la.thispassenger' | translate}}:</span>
                                       <table class="ppt-saved-ul">
                                         <tr id="Pax" ng-click="onClickSavedGraph('pax')">
                                           <td><i class="fa fa-user-circle-o pptpassenger"></i></td>
-                                          <td><span class="ppt-label" title="Passenger links">Passenger</span></td>
+                                          <td><span class="ppt-label" title="Passenger links">{{'la.passenger' | translate}}</span></td>
                                         </tr>
                                         <tr id="Address" ng-click="onClickSavedGraph('address')">
                                             <td><i class="fa fa-home pptaddress"></i></td>
-                                          <td><span class="ppt-label" title="Addresses used by this passenger">Address</span></td>
+                                          <td><span class="ppt-label" title="Addresses used by this passenger">{{'la.address' | translate}}</span></td>
                                         </tr>
                                         <tr id="CreditCard" ng-click="onClickSavedGraph('creditcard')">
                                             <td><i class="fa fa-credit-card-alt pptcreditcard"></i></td>
-                                          <td><span class="ppt-label" title="Credit cards used by this passenger">Credit Card</span></td>
+                                          <td><span class="ppt-label" title="Credit cards used by this passenger">{{'la.creditcard' | translate}}</span></td>
                                         </tr>
                                         <tr id="Phone" ng-click="onClickSavedGraph('phone')">
                                             <td><i class="fa fa-phone pptphone"></i></td>
-                                          <td><span class="ppt-label" title="Phone numbers used by this passenger">Phone</span></td>
+                                          <td><span class="ppt-label" title="Phone numbers used by this passenger">{{'la.phone' | translate}}</span></td>
                                         </tr>
                                         <tr id="Email" ng-click="onClickSavedGraph('email')">
                                             <td><i class="fa fa-envelope pptemail"></i></td>
-                                          <td><span class="ppt-label" title="Email addresses used by this passenger">Email</span></td>
+                                          <td><span class="ppt-label" title="Email addresses used by this passenger">{{'la.email' | translate}}</span></td>
                                         </tr>
                                         <tr id="Hit" ng-click="onClickSavedGraph('hit')">
                                             <td><i class="fa fa-exclamation-circle ppthit"></i></td>
-                                          <td><span class="ppt-label" title="Hits for this passenger">Hit</span></td>
+                                          <td><span class="ppt-label" title="Hits for this passenger">{{'la.hit' | translate}}</span></td>
                                         </tr>
                                         <tr id="Document" ng-click="onClickSavedGraph('document')">
                                             <td>
                                                 <img src="resources/img/document.svg" class="pptdocument"></img>
                                               </td>
-                                          <td><span class="ppt-label" title="Documents used by this passenger">Document</span></td>
+                                          <td><span class="ppt-label" title="Documents used by this passenger">{{'la.document' | translate}}</span></td>
                                             </tr>
                                           </table>
                                       <hr>
                                       <br>
   
-                                      <span class="ppt-header-span">This Flight:</span>
+                                      <span class="ppt-header-span">{{'la.thisflight' | translate}}:</span>
                                       <table class="ppt-saved-ul">
                                         <tr id="Flight" ng-click="onClickSavedGraph('flight')">
                                           <td><i class="fa fa-plane pptflight"></i></td>
-                                        <td><span class="ppt-label" title="Flight links">Flight</span></td>
+                                        <td><span class="ppt-label" title="Flight links">{{'la.flight' | translate}}</span></td>
                                       </tr>
                                       <tr id="Address" ng-click="onClickSavedGraph('addressall')">
                                           <td><i class="fa fa-home pptaddress"></i></td>
-                                        <td><span class="ppt-label" title="All passenger addresses for this flight">All Addresses</span></td>
+                                        <td><span class="ppt-label" title="All passenger addresses for this flight">{{'la.alladdresses' | translate}}</span></td>
                                       </tr>
                                       <tr id="CreditCard" ng-click="onClickSavedGraph('creditcardall')">
                                           <td><i class="fa fa-credit-card-alt pptcreditcard"></i></td>
-                                        <td><span class="ppt-label" title="All passenger credit cards for this flight">All Credit Cards</span></td>
+                                        <td><span class="ppt-label" title="All passenger credit cards for this flight">{{'la.allcreditcards' | translate}}</span></td>
                                       </tr>
                                       <tr id="Phone" ng-click="onClickSavedGraph('phoneall')">
                                           <td><i class="fa fa-phone pptphone"></i></td>
-                                        <td><span class="ppt-label" title="All passenger phone numbers for this flight">All Phones</span></td>
+                                        <td><span class="ppt-label" title="All passenger phone numbers for this flight">{{'la.allphones' | translate}}</span></td>
                                       </tr>
                                       <tr id="Email" ng-click="onClickSavedGraph('emailall')">
                                           <td><i class="fa fa-envelope pptemail"></i></td>
-                                        <td><span class="ppt-label" title="All passenger email addresses for this flight">All Emails</span></td>
+                                        <td><span class="ppt-label" title="All passenger email addresses for this flight">{{'la.allemails' | translate}}</span></td>
                                       </tr>
                                       <tr id="Hit" ng-click="onClickSavedGraph('hitall')">
                                           <td><i class="fa fa-exclamation-circle ppthit"></i></td>
-                                        <td><span class="ppt-label" title="All passenger hits for this flight">All Hits</span></td>
+                                        <td><span class="ppt-label" title="All passenger hits for this flight">{{'la.allhits' | translate}}</span></td>
                                       </tr>
                                       <tr id="Document" ng-click="onClickSavedGraph('documentall')">
                                           <td>
                                               <img src="resources/img/document.svg" class="pptdocument"></img>
                                             </td>
-                                    <td><span class="ppt-label" title="All passenger documents for this flight">All Documents</span></td>
+                                    <td><span class="ppt-label" title="All passenger documents for this flight">{{'la.alldocuments' | translate}}</span></td>
                                           </tr>
                                         </table>
                                 </div>

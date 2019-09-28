@@ -389,7 +389,7 @@
               }
           };
       })
-    .service("gridOptionsLookupService", function (uiGridConstants) {
+    .service("gridOptionsLookupService", function ($translate, uiGridConstants) {
           var today = moment().format("YYYY-MM-DD"),
             pageOfPages = function(currentPage, pageCount) {
               return (
@@ -766,8 +766,7 @@
               admin: [
                 {
                   name: "active",
-                  displayName: "admin.active",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('admin.active'),
                   field: "active",
                   cellFilter: "userStatusFilter",
                   width: "10%",
@@ -1000,8 +999,7 @@
                   {
                     field: "documentNumber",
                     name: "documentNumber",
-                    //displayName: "Number",
-                    displayName: "doc.Number",
+                    displayName: "doc.number",
                     headerCellFilter: "translate",
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
