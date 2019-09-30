@@ -288,12 +288,11 @@
                             enableVerticalScrollbar: 1,
 
                     }
-
                     var request ={
                         dest:row.entity.destination,
                         direction:row.entity.direction,
-                        etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
-                        etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                        etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
+                        etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
                         flightNumber:row.entity.fullFlightNumber,
                         origin: row.entity.origin,
                         lastname:"",
@@ -363,8 +362,8 @@
                         var request ={
                             dest:row.entity.destination,
                             direction:row.entity.direction,
-                            etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
-                            etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                            etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
+                            etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
                             flightNumber:row.entity.fullFlightNumber,
                             origin: row.entity.origin,
                             lastname:"",
@@ -380,8 +379,8 @@
                            passengerHitList.push(value);
                          }
                          });
-                         spinnerService.show('html5spinner');
                          row.entity.subGridOptions.data=passengerHitList;
+                         spinnerService.hide('html5spinner');
                        });
                       }
                  });
