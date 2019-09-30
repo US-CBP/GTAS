@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionDetailCtrl',
-        function ($scope, $http, $mdToast,
+        function ($scope, $http, $mdToast, $translate,
                   gridService, $mdDialog,
                   spinnerService, caseDispositionService, newCases, caseService, $state, $mdSidenav, AuthService) {
     	    $scope.showHitDisposition = false;
