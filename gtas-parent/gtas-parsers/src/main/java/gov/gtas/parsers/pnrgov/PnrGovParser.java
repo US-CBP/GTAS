@@ -514,7 +514,7 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 
 						SeatVo seat = new SeatVo();
 						seat.setTravelerReferenceNumber(refNumber);
-						seat.setNumber(details.getSpecialRequirementData());
+						seat.setNumber(trimLeadingZeros(details.getSpecialRequirementData()));
 						seat.setOrigin(ssr.getBoardCity());
 						seat.setDestination(ssr.getOffCity());
 						if (seat.isValid()) {
@@ -550,6 +550,14 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			}
 			processGroup6_Agent(dat, tvl, flightVo);
 		}
+	}
+	
+	private String trimLeadingZeros(String input) {
+		if(input == null || input.charAt(0) != '0') {
+			return input;
+		}
+		
+		return (trimLeadingZeros(input.substring(1)));
 	}
 
 	private void getEmail(SSR ssr, String code) {
