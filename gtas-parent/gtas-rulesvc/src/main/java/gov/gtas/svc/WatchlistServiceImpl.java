@@ -12,7 +12,7 @@ import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.error.WatchlistServiceErrorHandler;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -146,7 +146,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public synchronized void updateWatchlistItemCategory(Long categoryID, Long watchlistItemId) {
 		//
 		WatchlistItem watchlistItem = this.fetchWatchlistItemById(watchlistItemId);
-		watchlistItem.setWatchlistCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));
+		watchlistItem.setHitCategory(fetchWatchlistCategoryById(Long.parseLong(categoryID.toString())));
 		this.watchlistPersistenceService.updateWatchlistItemCategory(watchlistItem);
 	}
 
@@ -157,7 +157,7 @@ public class WatchlistServiceImpl implements WatchlistService {
 	}
 
 	@Override
-	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
+	public HitCategory fetchWatchlistCategoryById(Long categoryID) {
 		//
 		return this.watchlistPersistenceService.fetchWatchlistCategoryById(categoryID);
 	}
@@ -167,10 +167,4 @@ public class WatchlistServiceImpl implements WatchlistService {
 		// TODO
 		return this.watchlistPersistenceService.findItemsByWatchlistName(watchlistName);
 	}
-
-	@Override
-	public void createWatchlistCategory(WatchlistCategory wlCat) {
-		this.watchlistPersistenceService.saveWatchlistCategory(wlCat);
-	}
-
 }

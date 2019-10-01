@@ -8,15 +8,16 @@ package gov.gtas.repository;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import gov.gtas.model.Disposition;
 import gov.gtas.model.Passenger;
 import org.springframework.lang.NonNull;
 
-public interface PassengerRepository extends PagingAndSortingRepository<Passenger, Long>, PassengerRepositoryCustom {
+public interface PassengerRepository extends JpaRepository<Passenger, Long>, PassengerRepositoryCustom {
 
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "WHERE p.id = :id")
@@ -24,15 +25,13 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 
 	@Query("SELECT p FROM Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents " + "left join fetch p.flight "
-			+ "left join fetch  p.paxWatchlistLinks " + "WHERE p.id = :id")
+			+ "WHERE p.id = :id")
 	Passenger getFullPassengerById(@Param("id") Long id);
 
 	@Query("SELECT p from Passenger p " + "left join fetch p.passengerTripDetails "
 			+ "left join fetch p.passengerDetails " + "left join fetch p.documents " + "where p.id in :id")
 	List<Passenger> getPassengersById(@Param("id") List<Long> id);
 
-	@Query("SELECT p from Passenger p " + "left join fetch p.hits " + "left join fetch p.flight " + "where p.id in :id")
-	Set<Passenger> getPassengerWithHits(@Param("id") Set<Long> id);
 	/*
 	 * 
 	 * @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) = UPPER(:firstName) AND UPPER(p.lastName) = UPPER(:lastName)"
@@ -98,7 +97,7 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 			+ "or pnrs.id in :messageId")
 	Set<Passenger> getPassengerWithIdInformation(@Param("messageId") Set<Long> messageId);
 
-	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.paxWatchlistLinks "
+	@Query("SELECT p FROM Passenger p "
 			+ " LEFT JOIN FETCH p.passengerDetails " + " LEFT JOIN FETCH p.passengerWLTimestamp "
 			+ " LEFT JOIN FETCH p.documents " + " LEFT JOIN FETCH p.flight " + " LEFT JOIN p.apisMessage am "
 			+ " LEFT JOIN p.pnrs pnr " + " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
@@ -125,6 +124,13 @@ public interface PassengerRepository extends PagingAndSortingRepository<Passenge
 	Set<Passenger> getPassengerUsingREF(@NonNull @Param("flightId") Long flightId,
 			@NonNull @Param("pnrReservationReferenceNumber") String pnrReservationReferenceNumber,
 			@NonNull @Param("recordLocator") String recordLocator);
+
+	@Query("Select p from Passenger p left join fetch p.hitDetails join p.flight where p.id in :passengerIds")
+	Set<Passenger> getPassengersWithHitDetails(@Param("passengerIds") Set<Long> passengerIds);
+
+	@EntityGraph(value = "passengerGraph",  type = EntityGraph.EntityGraphType.FETCH)
+	@Query("Select p from Passenger p left join p.flight where p.id in :passengerIds")
+	Set<Passenger> getPassengersWithFlightDetails(@Param("passengerIds") Set<Long> passengerIds);
 
 	// @Query("SELECT p FROM Passenger p WHERE UPPER(p.firstName) =
 	// UPPER(:firstName) " +

@@ -28,13 +28,10 @@ public class PassengerWLTimestamp {
 
 	@OneToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "pwlt_id", referencedColumnName = "id", updatable = false, insertable = false)
-	Passenger passenger;
+	private Passenger passenger;
 
 	@Column(name = "pwlt_watchlist_check_timestamp")
 	private Date watchlistCheckTimestamp;
-
-	@Column(name = "pwlt_hit_count")
-	private Integer hitCount = 0;
 
 	public Date getWatchlistCheckTimestamp() {
 		return watchlistCheckTimestamp;
@@ -45,12 +42,12 @@ public class PassengerWLTimestamp {
 		this.watchlistCheckTimestamp = watchlistCheckTimestamp;
 	}
 
-	public Integer getHitCount() {
-		return hitCount;
+	public Passenger getPassenger() {
+		return passenger;
 	}
 
-	public void setHitCount(Integer hitCount) {
-		this.hitCount = hitCount;
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
 	}
 
 	@Override
@@ -67,4 +64,5 @@ public class PassengerWLTimestamp {
 	public int hashCode() {
 		return Objects.hash(paxId);
 	}
+
 }

@@ -35,7 +35,7 @@ public class Bag extends BaseEntity {
 	@Column(name = "destination_country")
 	private String country;
 
-	@ManyToOne()
+	@ManyToOne(fetch = FetchType.LAZY) // Rules engine performance affected when not lazy.
 	@JoinColumn(name = "passenger_id", nullable = false, insertable = false, updatable = false)
 	private Passenger passenger;
 

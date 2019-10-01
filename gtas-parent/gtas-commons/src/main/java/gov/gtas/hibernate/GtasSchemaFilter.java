@@ -13,11 +13,22 @@ import org.hibernate.boot.model.relational.Sequence;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.schema.spi.SchemaFilter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 //For filtering out custom views on hibernate create.
 public class GtasSchemaFilter implements SchemaFilter {
 
 	static final GtasSchemaFilter INSTANCE = new GtasSchemaFilter();
-
+	private static final Set<String>  whiteList = new HashSet<String>() {{
+		add("flight_countdown_view");
+		add("hits_summary_view");
+		add("flight_passenger_count_view");
+		add("flight_hits_wl_view");
+		add("flight_hits_rule_view");
+		add("flight_hits_fuzzy_view");
+		add("flight_hits_graph_view");
+	}};
 	@Override
 	public boolean includeNamespace(Namespace namespace) {
 		return true;
@@ -25,7 +36,7 @@ public class GtasSchemaFilter implements SchemaFilter {
 
 	@Override
 	public boolean includeTable(Table table) {
-		return !table.getName().contains("flight_countdown_view");
+		return !whiteList.contains(table.getName());
 	}
 
 	@Override

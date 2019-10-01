@@ -8,11 +8,10 @@ package gov.gtas.services.watchlist;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.AuditRecord;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,7 +42,7 @@ public interface WatchlistPersistenceService {
 
 	/**
 	 * Find and return the list of all watch lists.
-	 * 
+	 *
 	 * @return list of all watch lists.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
@@ -110,15 +109,14 @@ public interface WatchlistPersistenceService {
 	 */
 	public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName);
 
-	public List<WatchlistCategory> findWatchlistCategories();
+	public List<HitCategory> findWatchlistCategories();
 
 	WatchlistItem updateWatchlistItemCategory(WatchlistItem watchlistItem);
 
-	WatchlistCategory fetchWatchlistCategoryById(Long categoryID);
+	HitCategory fetchWatchlistCategoryById(Long categoryID);
 
 	WatchlistItem findWatchlistItemById(Long watchlistItemId);
 
 	List<WatchlistItem> findItemsByWatchlistName(String watchlistName);
 
-	void saveWatchlistCategory(WatchlistCategory watchlistCategory);
 }

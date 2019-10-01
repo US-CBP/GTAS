@@ -58,7 +58,7 @@ public class RulePersistenceServiceIT {
 	private UserService userService;
 
 	@Autowired
-	private RuleCatService ruleCatService;
+	private HitCategoryService ruleCatService;
 
 	private RuleServiceDataGenUtils testGenUtils;
 

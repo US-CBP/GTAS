@@ -15,8 +15,4 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface FlightFuzzyHitsRepository extends CrudRepository<FlightHitsFuzzy, Long> {
-
-	@Transactional
-	@Query("Select count(pwlts) from PassengerWLTimestamp pwlts where pwlts.passenger.flight.id = :flightId and pwlts.hitCount > 0")
-	Integer fuzzyCount(@Param("flightId") Long flightId);
 }

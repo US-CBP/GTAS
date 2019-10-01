@@ -5,8 +5,6 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.Role;
-import gov.gtas.model.User;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +23,12 @@ import gov.gtas.model.Attachment;
 import gov.gtas.model.Case;
 import gov.gtas.model.lookup.CaseDispositionStatus;
 import gov.gtas.model.lookup.HitDispositionStatus;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.CaseDispositionServiceImpl;
-import gov.gtas.services.RuleCatService;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
 import gov.gtas.services.security.UserService;
@@ -59,7 +57,7 @@ public class CaseDispositionController {
 	private CaseDispositionService caseDispositionService;
 
 	@Autowired
-	private RuleCatService ruleCatService;
+	private HitCategoryService ruleCatService;
 
 	@Autowired
 	private UserService userService;
@@ -139,14 +137,14 @@ public class CaseDispositionController {
 
 	// getRuleCats
 	@RequestMapping(method = RequestMethod.GET, value = "/getRuleCats")
-	public List<RuleCat> getRuleCats() throws Exception {
+	public List<HitCategory> getRuleCats() throws Exception {
 
-		List<RuleCat> _tempRuleCatList = new ArrayList<RuleCat>();
-		Iterable<RuleCat> _tempIterable = ruleCatService.findAll();
+		List<HitCategory> _tempRuleCatList = new ArrayList<HitCategory>();
+		Iterable<HitCategory> _tempIterable = ruleCatService.findAll();
 		if (_tempIterable != null) {
 			_tempRuleCatList = StreamSupport.stream(_tempIterable.spliterator(), false).collect(Collectors.toList());
 		}
-		for (RuleCat _tempRuleCat : _tempRuleCatList) {
+		for (HitCategory _tempRuleCat : _tempRuleCatList) {
 			// _tempRuleCat.setHitsDispositions(null);
 		}
 		return _tempRuleCatList;

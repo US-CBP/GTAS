@@ -12,6 +12,7 @@ import java.util.*;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 
 import gov.gtas.model.*;
@@ -54,31 +55,13 @@ public class PassengerServiceImpl implements PassengerService {
 	private PassengerRepository passengerRespository;
 
 	@Resource
-	private HitsSummaryRepository hitsSummaryRepository;
-
-	@Resource
 	private DocumentRepository documentRepository;
-
-	@Resource
-	private DispositionStatusRepository dispositionStatusRepo;
-
-	@Resource
-	private DispositionRepository dispositionRepo;
-
-	@Resource
-	private SeatRepository seatRepository;
 
 	@Autowired
 	private AuditRecordRepository auditLogRepository;
 
 	@Autowired
 	private FlightRepository flightRespository;
-
-	@Autowired
-	private PnrRepository pnrRepository;
-
-	@Autowired
-	private BagRepository bagRespository;
 
 	@Autowired
 	private BookingDetailRepository bookingDetailRepository;
@@ -105,107 +88,58 @@ public class PassengerServiceImpl implements PassengerService {
 	@Transactional
 	public PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request) {
 		List<PassengerGridItemVo> rv = new ArrayList<>();
-		Pair<Long, List<Object[]>> tuple = passengerRespository.findByCriteria(flightId, request);
+		Pair<Long, List<Passenger>> tuple = passengerRespository.findByCriteria(flightId, request);
 		int count = 0;
-		for (Object[] objs : tuple.getRight()) {
+		for (Passenger passenger : tuple.getRight()) {
 			if (count == request.getPageSize()) {
 				break;
 			}
-
-			Passenger p = (Passenger) objs[0];
-			Flight f = (Flight) objs[1];
-			HitsSummary hit = (HitsSummary) objs[2];
-			// PaxWatchlistLink link = (PaxWatchlistLink) objs[3];
-
-			if (hit != null && !f.getId().equals(hit.getFlightId())) {
-				continue;
-			}
-
 			PassengerGridItemVo vo = new PassengerGridItemVo();
-			BeanUtils.copyProperties(p, vo);
-			BeanUtils.copyProperties(p.getPassengerDetails(), vo);
-			BeanUtils.copyProperties(p.getPassengerTripDetails(), vo);
-			vo.setId(p.getId());
+			BeanUtils.copyProperties(passenger.getPassengerDetails(), vo);
+			BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
+			BeanUtils.copyProperties(passenger, vo);
+			vo.setId(passenger.getId());
 
-			for (Document d : p.getDocuments()) {
+			for (Document d : passenger.getDocuments()) {
 				DocumentVo docVo = DocumentVo.fromDocument(d);
 				vo.addDocument(docVo);
 			}
 
-			if (hit != null) {
-				for (HitDetail hd : hit.getHitdetails()) {
-
-					if ("GH".equalsIgnoreCase(hd.getHitType())) {
-						vo.setOnRuleHitList(true);
-					}
-					if ("R".equalsIgnoreCase(hd.getHitType())) {
-						vo.setOnRuleHitList(true);
-					}
-					if ("P".equalsIgnoreCase(hd.getHitType())) {
+			for (HitDetail hd : passenger.getHitDetails()) {
+				switch(hd.getHitEnum()) {
+					case WATCHLIST_PASSENGER:
 						vo.setOnWatchList(true);
-					}
-					if ("D".equalsIgnoreCase(hd.getHitType())) {
+						break;
+					case WATCHLIST_DOCUMENT:
+						vo.setOnWatchList(true);
 						vo.setOnWatchListDoc(true);
-					}
+						break;
+					case PARTIAL_WATCHLIST:
+						vo.setOnWatchListLink(true);
+						break;
+					case USER_DEFINED_RULE:
+					case GRAPH_HIT:
+						vo.setOnRuleHitList(true);
+						break;
+					case MANUAL_HIT:
+						break;
 				}
-			}
-			if (p.getPassengerWLTimestamp() != null && p.getPassengerWLTimestamp().getHitCount() != null
-					&& p.getPassengerWLTimestamp().getHitCount() > 0) {
-				vo.setOnWatchListLink(true);
 			}
 
 			// grab flight info
-			vo.setFlightId(f.getId().toString());
-			vo.setFlightNumber(f.getFlightNumber());
-			vo.setFullFlightNumber(f.getFullFlightNumber());
-			vo.setCarrier(f.getCarrier());
-			vo.setFlightOrigin(f.getOrigin());
-			vo.setFlightDestination(f.getDestination());
-			vo.setEtd(f.getMutableFlightDetails().getEtd());
-			vo.setEta(f.getMutableFlightDetails().getEta());
+			Flight flightPaxOn = passenger.getFlight();
+			vo.setFlightId(flightPaxOn.getId().toString());
+			vo.setFlightNumber(flightPaxOn.getFlightNumber());
+			vo.setFullFlightNumber(flightPaxOn.getFullFlightNumber());
+			vo.setCarrier(flightPaxOn.getCarrier());
+			vo.setFlightOrigin(flightPaxOn.getOrigin());
+			vo.setFlightDestination(flightPaxOn.getDestination());
+			vo.setEtd(flightPaxOn.getMutableFlightDetails().getEtd());
+			vo.setEta(flightPaxOn.getMutableFlightDetails().getEta());
 			rv.add(vo);
 			count++;
 		}
-
 		return new PassengersPageDto(rv, tuple.getLeft());
-
-	}
-
-	@Override
-	@Transactional
-	public List<CaseVo> getAllDispositions() {
-		List<CaseVo> rv = new ArrayList<>();
-		List<Object[]> cases = passengerRespository.findAllDispositions();
-		for (Object[] objs : cases) {
-			CaseVo vo = new CaseVo();
-			rv.add(vo);
-			Long passengerId = ((BigInteger) objs[0]).longValue();
-			vo.setPassengerId(passengerId);
-			Long flightId = ((BigInteger) objs[1]).longValue();
-			vo.setFlightId(flightId);
-			vo.setFirstName((String) objs[2]);
-			vo.setLastName((String) objs[3]);
-			vo.setMiddleName((String) objs[4]);
-			vo.setFlightNumber((String) objs[5]);
-
-			Flight f = flightRespository.findById(flightId).orElse(null);
-			vo.setFlightETADate(f.getMutableFlightDetails().getEta());
-			vo.setFlightETDDate(f.getMutableFlightDetails().getEtd());
-			vo.setFlightDirection(f.getDirection());
-
-			Timestamp ts = (Timestamp) objs[6];
-			String datetime = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(ts);
-			vo.setCreateDate(datetime);
-			vo.setStatus((String) objs[7]);
-			for (HitsSummary h : hitsSummaryRepository.findByFlightIdAndPassengerId(flightId, passengerId)) {
-				if (vo.getHitType() != null) {
-					vo.setHitType(vo.getHitType() + h.getHitType());
-				} else {
-					vo.setHitType(h.getHitType());
-				}
-			}
-		}
-		return rv;
 	}
 
 	@Override
@@ -239,60 +173,6 @@ public class PassengerServiceImpl implements PassengerService {
 		return passengerToUpdate;
 	}
 
-	@Override
-	@Transactional
-	public List<Disposition> getPassengerDispositionHistory(Long passengerId, Long flightId) {
-		return passengerRespository.getPassengerDispositionHistory(passengerId, flightId);
-	}
-
-	@Override
-	public List<DispositionStatus> getDispositionStatuses() {
-		Iterable<DispositionStatus> i = dispositionStatusRepo.findAll();
-		if (i != null) {
-			return IteratorUtils.toList(i.iterator());
-		}
-		return new ArrayList<>();
-	}
-
-	@Transactional
-	@Override
-	public void createOrEditDispositionStatus(DispositionStatus ds) {
-		dispositionStatusRepo.save(ds);
-	}
-
-	@Transactional
-	@Override
-	public void deleteDispositionStatus(DispositionStatus ds) {
-		dispositionStatusRepo.delete(ds);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see gov.gtas.services.PassengerService#createDisposition(gov.gtas.services
-	 * .DispositionData)
-	 */
-	@Transactional
-	@Override
-	public void createDisposition(DispositionData disposition, User loggedinUser) {
-		Disposition d = new Disposition();
-		d.setCreatedAt(new Date());
-		d.setCreatedBy(disposition.getUser());
-		Flight f = new Flight();
-		f.setId(disposition.getFlightId());
-		d.setFlightId(f.getId());
-		Passenger p = new Passenger();
-		p.setId(disposition.getPassengerId());
-		d.setPassenger(p);
-		d.setComments(disposition.getComments());
-		DispositionStatus status = new DispositionStatus();
-		status.setId(disposition.getStatusId());
-		d.setStatus(status);
-
-		dispositionRepo.save(d);
-		writeAuditLogForDisposition(disposition.getPassengerId(), loggedinUser);
-	}
-
 	/**
 	 * Write audit log for disposition.
 	 */
@@ -312,31 +192,6 @@ public class PassengerServiceImpl implements PassengerService {
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
-	}
-
-	@Override
-	public void createDisposition(List<HitsSummary> hitsList) {
-
-		List<Disposition> dispositionsList = new ArrayList<>();
-		Set<Long> hitsIds = hitsList.stream().map(HitsSummary::getPaxId).collect(toSet());
-		if (!hitsIds.isEmpty()) {
-			Set<Long> passengerIdsWithDisposition = dispositionRepo.getExisitngPaxIds(hitsIds);
-			for (HitsSummary hit : hitsList) {
-				if (!passengerIdsWithDisposition.contains(hit.getPaxId())) {
-					Disposition d = createDispositionFromHitsSummary(hit);
-					dispositionsList.add(d);
-				}
-			}
-			if (!dispositionsList.isEmpty()) {
-				dispositionRepo.saveAll(dispositionsList);
-			}
-		}
-	}
-
-	@Override
-	public void createDisposition(HitsSummary hit) {
-		Disposition d = createDispositionFromHitsSummary(hit);
-		dispositionRepo.save(d);
 	}
 
 	private Disposition createDispositionFromHitsSummary(HitsSummary hit) {
@@ -366,17 +221,6 @@ public class PassengerServiceImpl implements PassengerService {
 
 	@Override
 	@Transactional
-	public List<Flight> getTravelHistory(Long pId, String docNum, String docIssuCountry, Date docExpDate) {
-		/*
-		 * List<Passenger> paxL = passengerRespository.findByAttributes(pId, docNum,
-		 * docIssuCountry, docExpDate); return paxL.stream().map(pax ->
-		 * pax.getFlight()).flatMap(Set::stream).collect(Collectors.toList());
-		 */
-		return null;
-	}
-
-	@Override
-	@Transactional
 	public List<Flight> getTravelHistoryByItinerary(Long pnrId, String pnrRef) {
 		return flightRespository.getTravelHistoryByItinerary(pnrId, pnrRef);
 	}
@@ -393,36 +237,9 @@ public class PassengerServiceImpl implements PassengerService {
 		return bookingDetailRepository.getBookingDetailsByPassengerIdTag(pId);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Set<Flight> getAllFlights(Long id) {
-		String sqlStr = "SELECT f.* FROM flight_passenger fp JOIN flight f ON (fp.flight_id = f.id) WHERE fp.passenger_id="
-				+ id + "";
-		List<Flight> resultList = em.createNativeQuery(sqlStr, Flight.class).getResultList();
-		Set<Flight> flightSet = null;
-		if (resultList != null) {
-			flightSet = new HashSet<Flight>(resultList);
-		}
-		return flightSet;
-	}
-
 	@Override
 	public Set<FlightPax> findFlightPaxFromPassengerIds(List<Long> passengerIdList) {
 		return flightPaxRepository.findFlightFromPassIdList(passengerIdList);
-	}
-
-	@Override
-	public List<Passenger> getPaxByPaxIdList(List<Long> passengerIdList) {
-		return passengerRepository.getPassengersById(passengerIdList);
-	}
-
-	@Override
-	public List<Flight> getFlightsByIdList(List<Long> flightIdList) {
-		String sqlStr = "SELECT f FROM Flight f WHERE f.id IN :fidList";
-		Query query = em.createQuery(sqlStr);
-		query.setParameter("fidList", flightIdList);
-		List<Flight> flightList = query.getResultList();
-		return flightList;
 	}
 
 	@Override
@@ -442,26 +259,6 @@ public class PassengerServiceImpl implements PassengerService {
 	}
 
 	@Override
-	public void SetSingleFlight(Flight f, Long id) {
-		String sqlStr = "INSERT INTO flight_passenger(flight_id, passenger_id) VALUES(" + f.getId() + "," + id + ");";
-		em.createNativeQuery(sqlStr).executeUpdate();
-	}
-
-	@Override
-	public Map<Long, List<HitsSummary>> getHitsSummaryMappedToPassengerIds(Set<Long> passengerIds) {
-		List<Long> paxIds = new ArrayList<>(passengerIds);
-		Set<HitsSummary> hitsSummaries = hitsSummaryRepository.findHitsByPassengerIdList(paxIds);
-		Map<Long, List<HitsSummary>> mappedValues = new HashMap<>();
-		for (HitsSummary hs : hitsSummaries) {
-			Long paxId = hs.getPaxId();
-			List<HitsSummary> hsList = new ArrayList<>();
-			hsList.add(hs);
-			mappedValues.put(paxId, hsList);
-		}
-		return mappedValues;
-	}
-
-	@Override
 	public Map<Long, Set<Document>> getDocumentMappedToPassengerIds(Set<Long> passengerIds) {
 		Set<Document> docSet = documentRepository.getAllByPaxId(passengerIds);
 		Map<Long, Set<Document>> mappedValues = new HashMap<>();
@@ -477,4 +274,10 @@ public class PassengerServiceImpl implements PassengerService {
 		}
 		return mappedValues;
 	}
+
+	@Override
+	public Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds) {
+		return passengerRepository.getPassengersWithHitDetails(passengerIds);
+	}
+
 }

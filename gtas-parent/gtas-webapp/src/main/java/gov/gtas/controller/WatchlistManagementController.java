@@ -12,29 +12,22 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.lookup.WatchlistCategory;
-import gov.gtas.model.watchlist.Watchlist;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
-import gov.gtas.repository.watchlist.WatchlistItemRepository;
-import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.svc.RuleManagementService;
 import gov.gtas.svc.WatchlistService;
-import gov.gtas.svc.util.WatchlistServiceJsonResponseHelper;
 import gov.gtas.util.SampleDataGenerator;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.mvel2.ErrorDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +40,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -60,6 +51,9 @@ public class WatchlistManagementController {
 
 	@Autowired
 	private WatchlistService watchlistService;
+
+	@Autowired
+	private HitCategoryService hitCategoryService;
 
 	@Autowired
 	private RuleManagementService ruleManagementService;
@@ -91,19 +85,12 @@ public class WatchlistManagementController {
 				for (; i < itemSpec.getTerms().length; i++) {
 					items[i] = itemSpec.getTerms()[i];
 				}
-				items[i] = new WatchlistTerm("categoryId", "int", item.getWatchlistCategory().getId().toString());
+				items[i] = new WatchlistTerm("categoryId", "int", item.getHitCategory().getId().toString());
 				itemSpec.setTerms(items);
 				resp.addWatchlistItem(itemSpec);
 
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error!" , e);
 			}
 		}
 
@@ -137,10 +124,10 @@ public class WatchlistManagementController {
 
 	@RequestMapping(value = Constants.WL_ADD_WL_CAT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void createWatchlistCategory(@RequestBody JsonLookupData wlCategory) {
-		WatchlistCategory wlCat = new WatchlistCategory();
-		wlCat.setDescription(wlCategory.getDescription());
-		wlCat.setName(wlCategory.getLabel());
-		watchlistService.createWatchlistCategory(wlCat);
+		HitCategory hitCategory = new HitCategory();
+		hitCategory.setDescription(wlCategory.getDescription());
+		hitCategory.setName(wlCategory.getLabel());
+		hitCategoryService.create(hitCategory);
 
 	}
 

@@ -12,6 +12,10 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
+@NamedEntityGraph(name = "passengerGraph", attributeNodes = {
+		@NamedAttributeNode("id"),
+		@NamedAttributeNode("uuid"),
+		@NamedAttributeNode("flight")})
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
@@ -60,11 +64,11 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Seat> seatAssignments = new HashSet<>();
 
-	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
-	private Set<HitsSummary> hits = new HashSet<>();
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
+	private HitsSummary hits;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
-	private Set<PaxWatchlistLink> paxWatchlistLinks = new HashSet<>();
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<HitDetail> hitDetails = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Bag> bags = new HashSet<>();
@@ -222,21 +226,22 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerWLTimestamp = passengerWLTimestamp;
 	}
 
-	public Set<PaxWatchlistLink> getPaxWatchlistLinks() {
-		return paxWatchlistLinks;
+	public Set<HitDetail> getHitDetails() {
+		return hitDetails;
 	}
 
-	public void setPaxWatchlistLinks(Set<PaxWatchlistLink> paxWatchlistLinks) {
-		this.paxWatchlistLinks = paxWatchlistLinks;
+	public void setHitDetails(Set<HitDetail> hitDetails) {
+		this.hitDetails = hitDetails;
 	}
-
-	public Set<HitsSummary> getHits() {
+/*
+	public HitsSummary getHits() {
 		return hits;
 	}
 
-	public void setHits(Set<HitsSummary> hits) {
+	public void setHits(HitsSummary hits) {
 		this.hits = hits;
 	}
+*/
 
 	@Override
 	public int hashCode() {
@@ -261,4 +266,11 @@ public class Passenger extends BaseEntityAudit {
 		this.passengerIDTag = passengerIDTag;
 	}
 
+	public HitsSummary getHits() {
+		return hits;
+	}
+
+	public void setHits(HitsSummary hits) {
+		this.hits = hits;
+	}
 }

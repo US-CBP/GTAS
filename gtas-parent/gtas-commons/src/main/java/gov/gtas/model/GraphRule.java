@@ -1,12 +1,18 @@
 package gov.gtas.model;
 
+import gov.gtas.enumtype.HitTypeEnum;
+
 import javax.persistence.*;
 import java.util.*;
 
 @SuppressWarnings("unused") // This is for getters and setters
 @Entity
 @Table(name = "graph_rules")
-public class GraphRule extends BaseEntityAudit {
+public class GraphRule extends Lookout {
+
+	public GraphRule() {
+		setHitTypeEnum(HitTypeEnum.GRAPH_HIT);
+	}
 
 	@Column(name = "description")
 	private String description;

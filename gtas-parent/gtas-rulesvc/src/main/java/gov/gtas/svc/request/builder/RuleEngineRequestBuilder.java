@@ -70,6 +70,8 @@ public class RuleEngineRequestBuilder {
 
 	private final PassengerTripRepository passengerTripRepository;
 
+	private final PassengerRepository passengerRepository;
+
 	private final PassengerDetailRepository passengerDetailRepository;
 
 	private final SeatRepository seatRepository;
@@ -82,9 +84,10 @@ public class RuleEngineRequestBuilder {
 
 	@Autowired
 	public RuleEngineRequestBuilder(PnrRepository pnrRepository, PassengerTripRepository passengerTripRepository,
-			PassengerDetailRepository passengerDetailRepository, SeatRepository seatRepository,
-			BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
-			ApisMessageRepository apisMessageRepository) {
+									PassengerDetailRepository passengerDetailRepository, SeatRepository seatRepository,
+									BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
+									ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
+		this.passengerRepository = passengerRepository;
 		this.requestObjectList = new ArrayList<>(300000);
 		this.addressIdSet = new HashSet<>();
 		this.creditCardIdSet = new HashSet<>();
@@ -164,7 +167,9 @@ public class RuleEngineRequestBuilder {
 	public void addApisMessage(List<ApisMessage> apisMessage) {
 		logger.debug("Entering APIS messages");
 		Set<Long> apisIds = apisMessage.stream().map(ApisMessage::getId).collect(Collectors.toSet());
-		Set<Passenger> passengerSet = apisMessageRepository.getPassengerWithFlightInfo(apisIds);
+		Set<Long> paxId = apisMessageRepository.getPassengerWithFlightInfo(apisIds);
+		logger.debug("FlightGot");
+		Set<Passenger> passengerSet = passengerRepository.getPassengersWithFlightDetails(paxId);
 		addFlights(passengerSet);
 		Set<Flight> flightSet = addFlights(passengerSet);
 		addFlights(flightSet);
@@ -235,20 +240,19 @@ public class RuleEngineRequestBuilder {
 	}
 
 	private void addPassengerInfo(Set<Passenger> passengerSet) {
-		Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
 		addToRequestObjectSet(passengerSet);
-		addPassengesInformationFacts(paxIds);
+		addPassengesInformationFacts(passengerSet);
 	}
 
-	private void addPassengesInformationFacts(Set<Long> paxIds) {
-		logger.debug("pax info");
-		logger.debug("paxMap");
-		Set<PassengerDetails> passengerDetails = passengerDetailRepository.getDetailsofPaxId(paxIds);
+	private void addPassengesInformationFacts(Set<Passenger> passengerSet) {
+        logger.debug("pax info");
+        logger.debug("paxMap");
+        Set<PassengerDetails> passengerDetails = passengerSet.stream().map(Passenger::getPassengerDetails).collect(Collectors.toSet());
+        logger.debug("trip detail map");
+        Set<PassengerTripDetails> passengerTripDetails = passengerSet.stream().map(Passenger::getPassengerTripDetails).collect(Collectors.toSet());
 
-		logger.debug("trip detail map");
-		Set<PassengerTripDetails> passengerTripDetails = passengerTripRepository.getTripDetailsByPaxId(paxIds);
-
-		logger.debug("seatMap");
+        Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
+        logger.debug("seatMap");
 		Set<Seat> paxSeats = seatRepository.getByPaxId(paxIds);
 		logger.debug("bags map");
 		Set<Bag> bags = bagRepository.getAllByPaxId(paxIds);

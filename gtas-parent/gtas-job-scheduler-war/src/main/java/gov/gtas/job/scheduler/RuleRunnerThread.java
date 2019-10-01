@@ -11,14 +11,15 @@ package gov.gtas.job.scheduler;
 import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.MessageStatus;
 import gov.gtas.model.MessageStatusEnum;
 import gov.gtas.repository.AppConfigurationRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.RuleHitPersistenceService;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
-import gov.gtas.svc.TargetingServiceResults;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import gov.gtas.svc.util.TargetingResultUtils;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
@@ -61,30 +63,31 @@ public class RuleRunnerThread implements Callable<Boolean> {
 		logger.debug("Starting rule running scheduled task");
 		boolean success = true;
 		long start = System.nanoTime();
-		RuleResultsWithMessageStatus ruleResults = null;
+		RuleResultsWithMessageStatus ruleResults;
 		TargetingService targetingService = applicationContext.getBean(TargetingService.class);
+		RuleHitPersistenceService persistenceService = applicationContext.getBean(RuleHitPersistenceService.class);
 		try {
 			ruleResults = targetingService.analyzeLoadedMessages(messageStatuses);
-			List<TargetingServiceResults> targetingServiceResultsList = targetingService
-					.createHitsAndCases(ruleResults.getRuleResults());
+			logger.debug("generating hit details");
+			Set<HitDetail> hitDetails = targetingService.generateHitDetails(ruleResults.getRuleResults());
 			logger.debug("About to batch");
 			int BATCH_SIZE = Integer.parseInt(appConfigurationService
-					.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
-			List<TargetingServiceResults> batchedTargetingServiceResults = TargetingResultUtils
-					.batchResults(targetingServiceResultsList, BATCH_SIZE);
+					.findByOption(AppConfigurationRepository.MAX_RULE_DETAILS_CREATED).getValue());
+			List<Set<HitDetail>> batchedTargetingServiceResults = TargetingResultUtils.batchResults(hitDetails,
+					BATCH_SIZE);
 			logger.debug("done batching");
-			int count = 1;
 			if (ruleResults.getMessageStatusList() != null) {
 				Date analyzedAt = new Date();
 				ruleResults.getMessageStatusList().forEach(m -> {
 					m.setMessageStatusEnum(MessageStatusEnum.ANALYZED);
 					m.setAnalyzedTimestamp(analyzedAt);
 				});
-				for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
+				int count = 1;
+				for (Set<HitDetail> hitDetailSet : batchedTargetingServiceResults) {
 					try {
-						logger.info("Saving rules/summary targeting results " + count + " of "
+						logger.debug("Saving rule hit details results batch " + count + " of "
 								+ batchedTargetingServiceResults.size() + "...");
-						targetingService.saveEverything(targetingServiceResults);
+						persistenceService.persistToDatabase(hitDetailSet);
 					} catch (Exception ignored) {
 						ruleResults.getMessageStatusList()
 								.forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
@@ -122,11 +125,8 @@ public class RuleRunnerThread implements Callable<Boolean> {
 					? exception.getCause().getMessage()
 					: "Error in rule runner";
 			logger.error(errorMessage);
-			if (ruleResults != null) {
-				ruleResults.getMessageStatusList()
-						.forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING));
-				targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
-			}
+			messageStatuses.forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.FAILED_ANALYZING));
+			targetingService.saveMessageStatuses(messageStatuses);
 			ErrorDetailInfo errInfo = ErrorHandlerFactory
 					.createErrorDetails(RuleServiceConstants.RULE_ENGINE_RUNNER_ERROR_CODE, exception);
 			errorPersistenceService.create(errInfo);

@@ -6,17 +6,14 @@
 package gov.gtas.svc.util;
 
 import gov.gtas.bo.BasicRuleServiceResult;
-import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.RuleHitDetail;
 import gov.gtas.bo.RuleServiceResult;
-import gov.gtas.bo.TargetDetailVo;
-import gov.gtas.bo.TargetSummaryVo;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.PassengerService;
 import gov.gtas.svc.TargetingResultServices;
-import gov.gtas.svc.TargetingServiceResults;
 
 import java.util.*;
 
@@ -27,54 +24,8 @@ import org.slf4j.LoggerFactory;
 public class TargetingResultUtils {
 	private static final Logger logger = LoggerFactory.getLogger(TargetingResultUtils.class);
 
-	static Map<Long, Flight> createFlightMap(List<RuleHitDetail> ruleHitDetailList, PassengerService passengerService) {
-		List<Long> flightIdList = new ArrayList<>();
-		List<Flight> flightResultList;
-		Map<Long, Flight> flightMap = new HashMap<>();
-
-		for (RuleHitDetail rhd : ruleHitDetailList) {
-			Long flightId = rhd.getFlightId();
-			flightIdList.add(flightId);
-		}
-
-		if (!flightIdList.isEmpty()) {
-			flightResultList = passengerService.getFlightsByIdList(flightIdList);
-
-			for (Flight flight : flightResultList) {
-				flightMap.put(flight.getId(), flight);
-			}
-		}
-
-		return flightMap;
-	}
-
-	static Map<Long, Passenger> createPassengerMap(List<RuleHitDetail> ruleHitDetailList,
-			PassengerService passengerService) {
-		List<Long> passengerIdList = new ArrayList<>();
-		List<Passenger> passengerResultList;
-		Map<Long, Passenger> passengerMap = new HashMap<>();
-
-		for (RuleHitDetail rhd : ruleHitDetailList) {
-			Long passengerId = rhd.getPassengerId();
-			passengerIdList.add(passengerId);
-
-		}
-
-		if (!passengerIdList.isEmpty()) {
-			passengerResultList = passengerService.getPaxByPaxIdList(passengerIdList);
-
-			for (Passenger passenger : passengerResultList) {
-				passengerMap.put(passenger.getId(), passenger);
-
-			}
-		}
-
-		return passengerMap;
-
-	}
-
-	static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList,
-			PassengerService passengerService) {
+	private static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList,
+																  PassengerService passengerService) {
 		List<Long> ruleHitDetailPassengerIdList = new ArrayList<>();
 		Map<Long, List<Long>> passengerFlightMap = new HashMap<>();
 
@@ -160,85 +111,23 @@ public class TargetingResultUtils {
 		return new BasicRuleServiceResult(new LinkedList<>(resultMap.values()), result.getExecutionStatistics());
 	}
 
-	public static List<TargetingServiceResults> batchResults(List<TargetingServiceResults> targetingServiceResultsList,
+	public static List<Set<HitDetail>> batchResults(Set<HitDetail> hitDetailSet,
 			int BATCH_SIZE) {
 
-		List<TargetingServiceResults> batchedResults = new ArrayList<>();
-		TargetingServiceResults conglomerateResults = new TargetingServiceResults();
-		int counter = 0;
-		while (!targetingServiceResultsList.isEmpty()) {
-			TargetingServiceResults targetingServiceResults = targetingServiceResultsList.get(0);
-			if (targetingServiceResults != null) {
-				Set<Case> casesSet = conglomerateResults.getCaseSet();
-				List<HitsSummary> hitsSummaries = conglomerateResults.getHitsSummaryList();
-				if (casesSet == null) {
-					conglomerateResults.setCaseSet(targetingServiceResults.getCaseSet());
-				} else {
-					if (targetingServiceResults.getCaseSet() != null) {
-						conglomerateResults.getCaseSet().addAll(targetingServiceResults.getCaseSet());
-					}
+		List<Set<HitDetail>> batchedResults = new ArrayList<>();
+		Set<HitDetail> hitDetails = new HashSet<>();
+		for (HitDetail hitDetail : hitDetailSet) {
+				hitDetails.add(hitDetail);
+				if (hitDetails.size() >= BATCH_SIZE) {
+					batchedResults.add(hitDetails);
+					hitDetails = new HashSet<>();
 				}
-				if (hitsSummaries == null) {
-					conglomerateResults.setHitsSummaryList(targetingServiceResults.getHitsSummaryList());
-				} else {
-					if (targetingServiceResults.getHitsSummaryList() != null) {
-						conglomerateResults.getHitsSummaryList().addAll(targetingServiceResults.getHitsSummaryList());
-					}
-				}
-				counter++;
-				if (targetingServiceResultsList.size() == 1) {
-					batchedResults.add(conglomerateResults);
-				} else {
-					if (counter >= BATCH_SIZE) {
-						batchedResults.add(conglomerateResults);
-						conglomerateResults = new TargetingServiceResults();
-						counter = 1;
-					}
-				}
-				targetingServiceResultsList.remove(0);
-			}
+		}
+		// after loop put the remaining hits being processed in the batched result.
+		if (!hitDetails.isEmpty()) {
+			batchedResults.add(hitDetails);
 		}
 		return batchedResults;
-	}
-
-	public static List<TargetingServiceResults> getTargetingResults(Set<Case> casesSet,
-			List<HitsSummary> hitsSummaryList) {
-		Map<Long, Set<Case>> caseToFlightIdMap = new HashMap<>();
-		List<TargetingServiceResults> targetingServiceResultsList = new ArrayList<>();
-		for (Case caze : casesSet) {
-			Long flightId = caze.getFlightId();
-			if (caseToFlightIdMap.containsKey(flightId)) {
-				caseToFlightIdMap.get(flightId).add(caze);
-			} else {
-				Set<Case> objectHashSet = new HashSet<>();
-				objectHashSet.add(caze);
-				caseToFlightIdMap.put(flightId, objectHashSet);
-			}
-		}
-
-		Map<Long, List<HitsSummary>> hitSummaryToFlightIdMap = new HashMap<>();
-		for (HitsSummary hitsSummary : hitsSummaryList) {
-			Long flightId = hitsSummary.getFlightId();
-			if (hitSummaryToFlightIdMap.containsKey(flightId)) {
-				hitSummaryToFlightIdMap.get(flightId).add(hitsSummary);
-			} else {
-				List<HitsSummary> hitsSummaries = new ArrayList<>();
-				hitsSummaries.add(hitsSummary);
-				hitSummaryToFlightIdMap.put(flightId, hitsSummaries);
-			}
-		}
-		Set<Long> flightIdsToProcess = new HashSet<>();
-		flightIdsToProcess.addAll(caseToFlightIdMap.keySet());
-		flightIdsToProcess.addAll(hitSummaryToFlightIdMap.keySet());
-		for (Long flightId : flightIdsToProcess) {
-			Set<Case> cases = caseToFlightIdMap.get(flightId);
-			List<HitsSummary> hitsSummaries = hitSummaryToFlightIdMap.get(flightId);
-			TargetingServiceResults targetingServiceResults = new TargetingServiceResults();
-			targetingServiceResults.setCaseSet(cases);
-			targetingServiceResults.setHitsSummaryList(hitsSummaries);
-			targetingServiceResultsList.add(targetingServiceResults);
-		}
-		return targetingServiceResultsList;
 	}
 
 	public static List<RuleHitDetail> filterRuleHitDetails(List<RuleHitDetail> resultList,
@@ -252,17 +141,17 @@ public class TargetingResultUtils {
 		Map<Long, Integer> graphRuleIdAsKeyCountAsValue = new HashMap<>();
 		Map<Long, Integer> watchlistIdAsKeyCountAsValue = new HashMap<>();
 		for (RuleHitDetail ruleHitDetail : rhdSet) {
-			if (HitTypeEnum.GH == ruleHitDetail.getHitType()) {
-				Long graphRuleId = ruleHitDetail.getRuleId();
+			if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
+				Long graphRuleId = ruleHitDetail.getLookoutId();
 				if (graphRuleIdAsKeyCountAsValue.containsKey(graphRuleId)) {
 					Integer hitCount = graphRuleIdAsKeyCountAsValue.get(graphRuleId);
 					graphRuleIdAsKeyCountAsValue.put(graphRuleId, hitCount + 1);
 				} else {
 					graphRuleIdAsKeyCountAsValue.put(graphRuleId, 1);
 				}
-			} else if (HitTypeEnum.PD == ruleHitDetail.getHitType() || HitTypeEnum.P == ruleHitDetail.getHitType()
-					|| HitTypeEnum.D == ruleHitDetail.getHitType()) {
-				Long wlRuleId = ruleHitDetail.getRuleId();
+			} else if (HitTypeEnum.WATCHLIST_PASSENGER == ruleHitDetail.getHitType()
+					|| HitTypeEnum.WATCHLIST_DOCUMENT == ruleHitDetail.getHitType()) {
+				Long wlRuleId = ruleHitDetail.getLookoutId();
 				if (watchlistIdAsKeyCountAsValue.containsKey(wlRuleId)) {
 					Integer hitCount = watchlistIdAsKeyCountAsValue.get(wlRuleId);
 					watchlistIdAsKeyCountAsValue.put(wlRuleId, hitCount + 1);
@@ -270,7 +159,7 @@ public class TargetingResultUtils {
 					watchlistIdAsKeyCountAsValue.put(wlRuleId, 1);
 				}
 			} else {
-				Long udrRuleId = ruleHitDetail.getUdrRuleId();
+				Long udrRuleId = ruleHitDetail.getLookoutId();
 				if (udrRuleIdAsKeyCountAsValue.containsKey(udrRuleId)) {
 					Integer hitCount = udrRuleIdAsKeyCountAsValue.get(udrRuleId);
 					udrRuleIdAsKeyCountAsValue.put(udrRuleId, hitCount + 1);
@@ -289,23 +178,23 @@ public class TargetingResultUtils {
 		Integer MAX_RULE_HITS = maxRuleHitsAsString == null ? Integer.MAX_VALUE : Integer.parseInt(maxRuleHitsAsString);
 		for (RuleHitDetail ruleHitDetail : rhdSet) {
 			Long ruleId;
-			if (HitTypeEnum.GH == ruleHitDetail.getHitType()) {
-				ruleId = ruleHitDetail.getRuleId();
+			if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
+				ruleId = ruleHitDetail.getLookoutId();
 				if (graphRuleIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
 					graphFilteredRules.add(ruleId);
 				}
-			} else if (HitTypeEnum.PD == ruleHitDetail.getHitType() || HitTypeEnum.P == ruleHitDetail.getHitType()
-					|| HitTypeEnum.D == ruleHitDetail.getHitType()) {
-				ruleId = ruleHitDetail.getRuleId();
+			} else if (HitTypeEnum.WATCHLIST_PASSENGER == ruleHitDetail.getHitType()
+					|| HitTypeEnum.WATCHLIST_DOCUMENT == ruleHitDetail.getHitType()) {
+				ruleId = ruleHitDetail.getLookoutId();
 				if (watchlistIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
 					watchlistFilteredRules.add(ruleId);
 				}
 			} else {
-				ruleId = ruleHitDetail.getUdrRuleId(); // UDR uses UDRID instead of rule ID.
+				ruleId = ruleHitDetail.getLookoutId(); // UDR uses UDRID instead of rule ID.
 				if (udrRuleIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
@@ -358,7 +247,7 @@ public class TargetingResultUtils {
 		RuleHitDetail resrhd = resultMap.get(rhd);
 		if (resrhd != null && !resrhd.getRuleId().equals(rhd.getRuleId())) {
 			resrhd.incrementHitCount();
-			if (resrhd.getUdrRuleId() != null) {
+			if (resrhd.getLookoutId() != null) {
 				logger.debug("This is a rule hit so increment the rule hit count.");
 				// this is a rule hit
 				resrhd.incrementRuleHitCount();
@@ -366,30 +255,12 @@ public class TargetingResultUtils {
 				logger.debug("This is a watch list hit.");
 				// this is a watch list hit
 				if (resrhd.getHitType() != rhd.getHitType()) {
-					resrhd.setHitType(HitTypeEnum.PD);
+					resrhd.setHitType(HitTypeEnum.WATCHLIST_PASSENGER);
 				}
 			}
 		} else if (resrhd == null) {
 			resultMap.put(rhd, rhd);
 		}
 		// logger.info("Exiting processPassengerFlight().");
-	}
-
-	public static void updateRuleExecutionContext(RuleServiceResult res, RuleResults ruleResults) {
-		logger.debug("Entering updateRuleExecutionContext().");
-		final Map<String, TargetSummaryVo> hitSummaryMap = new HashMap<>();
-		for (RuleHitDetail rhd : res.getResultList()) {
-			String key = rhd.getFlightId() + "/" + rhd.getPassengerId();
-			TargetSummaryVo hitSummmary = hitSummaryMap.get(key);
-			if (hitSummmary == null) {
-				hitSummmary = new TargetSummaryVo(rhd.getHitType(), rhd.getFlightId(), rhd.getPassengerType(),
-						rhd.getPassengerId(), rhd.getPassengerName());
-				hitSummaryMap.put(key, hitSummmary);
-			}
-			hitSummmary.addHitDetail(new TargetDetailVo(rhd.getUdrRuleId(), rhd.getRuleId(), rhd.getHitType(),
-					rhd.getTitle(), rhd.getHitReasons()));
-		}
-		ruleResults.setTargetingResult(hitSummaryMap.values());
-		logger.debug("Exiting updateRuleExecutionContext().");
 	}
 }

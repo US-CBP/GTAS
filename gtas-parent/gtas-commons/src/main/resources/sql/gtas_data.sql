@@ -59,7 +59,7 @@ insert into app_configuration (opt, val, description) values('BOOKING_COMPRESSIO
 insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_RULE_RUN','3000','Maximum number of passengers processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_PASSENGERS_PER_FUZZY_MATCH','2','Maximum number of passengers processed by rules per run');
 insert into app_configuration (opt, val, description) values('MAX_MESSAGES_PER_RULE_RUN','500','Maximum number of messages processed by rules per run');
-insert into app_configuration (opt, val, description) values('MAX_FLIGHTS_PER_BATCH','2','Number of flights saved per batch.');
+insert into app_configuration (opt, val, description) values('MAX_RULE_DETAILS_CREATED','250','Number of hit details saved per batch.');
 insert into app_configuration (opt, val, description) values('THREADS_ON_LOADER','5','Number of threads on loader.');
 insert into app_configuration (opt, val, description) values('DATA_MANAGEMENT_TRUNC_TYPE_FLAG', 'ALL', 'Type of values include, ALL, APIS, PNR');
 insert into app_configuration (opt, val, description)values ('THREADS_ON_RULES', '5', 'Number of threads on loader.');
@@ -70,32 +70,10 @@ insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 
 insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
 INSERT INTO app_configuration (description, opt, val) VALUES ('UTC Server Time', 'UTC_SERVER', 'true');
 
-/*These 4 statuses are irremovable (though mutable) and must exist in some form in order to preserve the case management flow, with this order for ID purposes. */
-insert into disposition_status(id, name, description) values(1, 'NEW', 'New Case');
-insert into disposition_status(id, name, description) values(2, 'OPEN', 'Case is open');
-insert into disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
-insert into disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
-insert into disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
+insert into hit_category(id, category, description) values(1, 'General', 'General category');
+insert into hit_category(id, category, description) values(2, 'Terrorism', 'Terrorism related entities');
+insert into hit_category(id, category, description) values(3, 'World Health', 'Health Alert related');
+insert into hit_category(id, category, description) values(4, 'Federal Law Enforcement', 'Federal watch category');
+insert into hit_category(id, category, description) values(5, 'Local Law Enforcement', 'Local watch category');
 
-insert into hit_disposition_status(id, name, description) values(1, 'NEW', 'New Case');
-insert into hit_disposition_status(id, name, description) values(2, 'OPEN', 'Case is open');
-insert into hit_disposition_status(id, name, description) values(3, 'CLOSED', 'No action required');
-insert into hit_disposition_status(id, name, description) values(4, 'RE-OPEN', 'Re-opened case');
-insert into hit_disposition_status(id, name, description) values(5, 'PENDING CLOSURE','Case is pending closure');
-
-insert into case_disposition_status(id, name, description) values(1, 'Admit', 'Admit');
-insert into case_disposition_status(id, name, description) values(2, 'Deny Boarding', 'Deny Boarding');
-insert into case_disposition_status(id, name, description) values(3, 'No Show', 'No Show');
-insert into case_disposition_status(id, name, description) values(4, 'Cancelled', 'Cancelled');
-insert into case_disposition_status(id, name, description) values(5, 'Duplicate','Duplicate');
-insert into case_disposition_status(id, name, description) values(6, 'Refuse Entry', 'Refuse Entry');
-insert into case_disposition_status(id, name, description) values(7, 'Secondary Referral', 'Secondary Referral');
-insert into case_disposition_status(id, name, description) values(8, 'False Match', 'False Match');
-
-
-insert into rule_category(catId, category, description, priority) values(1, 'General', 'General category', 5);
-insert into rule_category(catId, category, description, priority) values(2, 'Terrorism', 'Terrorism related entities', 1);
-insert into rule_category(catId, category, description, priority) values(3, 'World Health', 'Health Alert related', 2);
-insert into rule_category(catId, category, description, priority) values(4, 'Federal Law Enforcement', 'Federal watch category', 3);
-insert into rule_category(catId, category, description, priority) values(5, 'Local Law Enforcement', 'Local watch category', 4);
 

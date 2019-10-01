@@ -48,6 +48,12 @@
               return dfd.promise;
           }
 
+          function getPaxDetailHitHistory(paxId) {
+              var dfd = $q.defer();
+              dfd.resolve($http.get("/gtas/passengers/passenger/hitdetailhistory?paxId=" + paxId ));
+              return dfd.promise;
+          }
+
           function getPaxAttachments(paxId){
             var dfd = $q.defer();
             dfd.resolve($http.get('/gtas/getattachments?paxId='+ paxId));
@@ -112,6 +118,7 @@
                   getPaxFlightHistory: getPaxFlightHistory,
                   getPaxFullTravelHistory: getPaxFullTravelHistory,
                   getPaxBookingDetailHistory: getPaxBookingDetailHistory,
+                  getPaxDetailHitHistory : getPaxDetailHitHistory,
                   getPaxAttachments: getPaxAttachments,
                   savePaxAttachments: savePaxAttachments,
                   deleteAttachment: deleteAttachment,

@@ -4,12 +4,9 @@ import gov.gtas.model.Case;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.lookup.RuleCat;
-import gov.gtas.repository.FlightRepository;
-import gov.gtas.repository.PassengerRepository;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.PassengerService;
-import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.Map;
 import java.util.HashMap;
 import org.slf4j.Logger;
@@ -34,7 +31,7 @@ public class NameMatchCaseMgmtUtils {
 	 * @param dispositionService
 	 */
 	public boolean processPassengerFlight(String ruleDescription, Passenger passenger, Long wl_id, Flight flight,
-			Case existingCase, Map<Long, RuleCat> ruleCatMap) {
+			Case existingCase, Map<Long, HitCategory> ruleCatMap) {
 
 		// Feed into Case Mgmt., Flight_ID, Pax_ID, Rule_ID to build a case
 		Long _tempPaxId = passenger.getId(); // pax_id;

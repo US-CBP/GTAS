@@ -21,11 +21,10 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.User;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AuditRecordRepository;
-import gov.gtas.repository.watchlist.WatchlistCatRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
 import gov.gtas.services.security.UserService;
@@ -61,9 +60,6 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 
 	@Resource
 	private WatchlistItemRepository watchlistItemRepository;
-
-	@Resource
-	private WatchlistCatRepository watchlistCategoryRepository;
 
 	@Resource
 	private AuditRecordRepository auditRecordRepository;
@@ -251,8 +247,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 
 	}
 
-	public List<WatchlistCategory> findWatchlistCategories() {
-		//
+	public List<HitCategory> findWatchlistCategories() {
 		return this.watchlistRepository.getWatchlistCategories();
 	}
 
@@ -261,7 +256,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	}
 
 	@Override
-	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
+	public HitCategory fetchWatchlistCategoryById(Long categoryID) {
 		//
 		return this.watchlistRepository.getWatchlistCategoryById(categoryID);
 	}
@@ -276,10 +271,6 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	public List<WatchlistItem> findItemsByWatchlistName(String watchlistName) {
 		//
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
-	}
-
-	public void saveWatchlistCategory(WatchlistCategory watchlistCategory) {
-		this.watchlistCategoryRepository.save(watchlistCategory);
 	}
 
 }

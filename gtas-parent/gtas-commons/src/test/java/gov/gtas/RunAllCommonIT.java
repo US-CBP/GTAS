@@ -6,7 +6,6 @@
 package gov.gtas;
 
 import gov.gtas.repository.FlightRepositoryIT;
-import gov.gtas.repository.HitsSummaryRepositoryIT;
 import gov.gtas.services.AuditLogPersistenceServiceIT;
 import gov.gtas.services.PnrServiceIT;
 import gov.gtas.services.RulePersistenceServiceIT;
@@ -19,7 +18,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ HitsSummaryRepositoryIT.class, AuditLogPersistenceServiceIT.class, RulePersistenceServiceIT.class,
+@SuiteClasses({ AuditLogPersistenceServiceIT.class, RulePersistenceServiceIT.class,
 		UserServiceIT.class, PnrServiceIT.class, WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class,
 		WhitelistPersistenceServiceIT.class })
 public class RunAllCommonIT {

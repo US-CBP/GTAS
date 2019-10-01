@@ -1,31 +1,32 @@
 /*
- * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
- * Please see LICENSE.txt for details.
+ *
+ *  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+ *  *
+ *  * Please see LICENSE.txt for details.
+ *
  */
-package gov.gtas.bo;
+package gov.gtas.model;
 
 import gov.gtas.enumtype.HitTypeEnum;
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
 import gov.gtas.model.lookup.PassengerTypeCode;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.NonNull;
 
 /**
- * The Class RuleHitDetail that contains
+ * The Class RuleHitDetail corresponds to the entity HitDetail
  */
-public class RuleHitDetail implements Serializable, Cloneable {
+public final class RuleHitDetail implements Serializable, Cloneable {
 	private static final long serialVersionUID = 2946626283174855377L;
 
 	public static final String HIT_REASON_SEPARATOR = "///";
 
 	private String hitRule;
 
-	private Long udrRuleId;
+	private Long lookoutId;
 
 	private Long ruleId;
 
@@ -59,11 +60,18 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	public RuleHitDetail() {
 	}
 
+	public RuleHitDetail(@NonNull HitTypeEnum hitTypeEnum) {
+		Objects.requireNonNull(hitTypeEnum);
+		this.hitType = hitTypeEnum;
+	}
+
 	/**
 	 * This constructor is used when creating a hit detail object as a result of a
 	 * UDR rule hit.
+	 *
+	 * The RULE ENGINE will automatically generate this
 	 * 
-	 * @param udrId
+	 * @param lookoutId
 	 *            a udr rule Id (can be null)
 	 * @param ruleId
 	 *            a numeric rule Id (can be null)
@@ -76,13 +84,17 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public RuleHitDetail(final Long udrId, final Long ruleId, final String ruleTitle, final Passenger passenger,
+	public RuleHitDetail(final Long lookoutId, final Long ruleId, final String ruleTitle, final Passenger passenger,
 			final Flight flight, final String cause) {
-		this.udrRuleId = udrId;
+
+		// THIS IS GENERATED FOR RULE HITS BY RULE ENGINE - SEE HOW RULES ARE MADE.
+		// DO NOT CHANGE UNLESS UPDATING THE RULE GENERATION AS WELL
+		this.hitType = HitTypeEnum.USER_DEFINED_RULE;
+		this.lookoutId = lookoutId;
 		this.ruleId = ruleId;
 		this.title = ruleTitle;
 		this.description = ruleTitle;
-		this.hitRule = ruleTitle + "(" + udrId + ")";
+		this.hitRule = ruleTitle + "(" + lookoutId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger.getPassengerDetails().getPassengerType());
 		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
@@ -92,7 +104,6 @@ public class RuleHitDetail implements Serializable, Cloneable {
 			this.flightId = flight.getId();
 		}
 		this.passenger = passenger;
-		this.hitType = HitTypeEnum.R;
 		this.hitCount = 1;
 		this.ruleHitCount = 1;
 	}
@@ -101,39 +112,35 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	 * This constructor is used when creating a hit detail object as a result of a
 	 * watch list hit.
 	 * 
-	 * @param watchlistItemId
+	 * @param lookoutId
 	 *            a watchlistItem id
 	 * @param hitType
-	 *            hit Type
-	 * @param ruleId
-	 *            a numeric rule Id (can be null)
-	 * @param ruleTitle
-	 *            the name of the DRL rule(Rule.getName()).
+	 *            hit Type - corresponds to hit type enum
 	 * @param passenger
 	 *            the Passenger object that matched.
-	 * @param flight
-	 *            the flight object that matched.
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public RuleHitDetail(final Long watchlistItemId, final String hitType, final Passenger passenger,
-			final String cause) {
-		this.udrRuleId = null;
-		this.ruleId = watchlistItemId;
+	public RuleHitDetail(final Long lookoutId, final String hitType, final Passenger passenger, final String cause) {
+		// THIS IS GENERATED FOR WATCHLIST HITS
+		//
+		this.lookoutId = lookoutId;
+		this.ruleId = lookoutId;
 		switch (hitType) {
 		case "D":
-			this.title = "Document List Rule #" + watchlistItemId;
-			this.hitType = HitTypeEnum.D;
+			this.title = "Document List Rule #" + lookoutId;
+			this.hitType = HitTypeEnum.WATCHLIST_DOCUMENT;
+
 			break;
 		case "P":
-			this.title = "Passenger List Rule #" + watchlistItemId;
-			this.hitType = HitTypeEnum.P;
+			this.title = "Passenger List Rule #" + lookoutId;
+			this.hitType = HitTypeEnum.WATCHLIST_PASSENGER;
 			break;
 		default:
 			break;
 		}
 		this.description = this.title;
-		this.hitRule = this.title + "(" + watchlistItemId + ")";
+		this.hitRule = this.title + "(" + lookoutId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger.getPassengerDetails().getPassengerType());
 		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
@@ -153,8 +160,8 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	/**
 	 * @return the udrRuleId
 	 */
-	public Long getUdrRuleId() {
-		return udrRuleId;
+	public Long getLookoutId() {
+		return lookoutId;
 	}
 
 	/**
@@ -244,8 +251,7 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	}
 
 	/**
-	 * @param hitCount
-	 *            the hitCount to set
+	 *             the hitCount to set
 	 */
 	public void incrementHitCount() {
 		this.hitCount++;
@@ -258,9 +264,7 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		return ruleHitCount;
 	}
 
-	/**
-	 * @param ruleHitCount
-	 *            the ruleHitCount to set
+	/***            the ruleHitCount to set
 	 */
 	public void incrementRuleHitCount() {
 		this.ruleHitCount++;
@@ -285,8 +289,8 @@ public class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = hitRule;
 	}
 
-	public void setUdrRuleId(Long udrRuleId) {
-		this.udrRuleId = udrRuleId;
+	public void setLookoutId(Long lookoutId) {
+		this.lookoutId = lookoutId;
 	}
 
 	public void setRuleId(Long ruleId) {
@@ -339,19 +343,18 @@ public class RuleHitDetail implements Serializable, Cloneable {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(this.ruleId, this.passengerId, this.flightId, this.hitType);
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof RuleHitDetail))
+			return false;
+		RuleHitDetail hitDetail = (RuleHitDetail) o;
+		return getPassengerId() == hitDetail.getPassengerId()
+				&& getLookoutId().equals(hitDetail.getLookoutId());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof RuleHitDetail))
-			return false;
-		final RuleHitDetail other = (RuleHitDetail) obj;
-		return Objects.equals(this.ruleId, other.ruleId) && Objects.equals(this.passengerId, other.passengerId)
-				&& Objects.equals(this.flightId, other.flightId) && Objects.equals(this.hitType, other.getHitType());
+	public int hashCode() {
+		return Objects.hash(getLookoutId(), getPassengerId());
 	}
-
 }

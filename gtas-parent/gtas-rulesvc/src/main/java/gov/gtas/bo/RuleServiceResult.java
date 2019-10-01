@@ -5,6 +5,8 @@
  */
 package gov.gtas.bo;
 
+import gov.gtas.model.RuleHitDetail;
+
 import java.util.List;
 
 /**

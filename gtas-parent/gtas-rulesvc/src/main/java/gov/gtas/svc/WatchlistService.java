@@ -9,7 +9,7 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAG
 
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
-import gov.gtas.model.lookup.WatchlistCategory;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
 
@@ -104,9 +104,8 @@ public interface WatchlistService {
 
 	public WatchlistItem fetchWatchlistItemById(Long watchlistItemId);
 
-	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID);
+	public HitCategory fetchWatchlistCategoryById(Long categoryID);
 
 	List<WatchlistItem> fetchItemsByWatchlistName(String watchlistName);
 
-	void createWatchlistCategory(WatchlistCategory wlCat);
 }

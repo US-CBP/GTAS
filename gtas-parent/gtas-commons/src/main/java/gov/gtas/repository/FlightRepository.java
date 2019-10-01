@@ -83,8 +83,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long>, FlightRep
 	@Query("SELECT c FROM CodeShareFlight c where c.operatingFlightId = :flightId group by c.marketingFlightNumber")
 	List<CodeShareFlight> getCodeSharesForFlight(@Param("flightId") Long flightId);
 
-	@Query("SELECT DISTINCT f FROM Flight f " + "LEFT JOIN FETCH f.passengers pass "
-			+ "LEFT JOIN FETCH pass.paxWatchlistLinks " + "LEFT JOIN FETCH pass.documents "
+	@Query("SELECT DISTINCT f FROM Flight f  LEFT JOIN FETCH f.passengers pass "
+			+ " LEFT JOIN FETCH pass.documents "
 			+ "LEFT JOIN FETCH pass.passengerWLTimestamp pwts "
 			+ "WHERE (f.mutableFlightDetails.eta BETWEEN :dateTimeStart AND :dateTimeEnd "
 			+ "            OR f.mutableFlightDetails.etd BETWEEN :dateTimeStart AND :dateTimeEnd) "

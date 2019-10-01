@@ -19,12 +19,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.model.*;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.RuleHitPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,113 +36,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.Case;
-import gov.gtas.model.Flight;
-import gov.gtas.model.FlightHitsFuzzy;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PassengerWLTimestamp;
-import gov.gtas.model.PaxWatchlistLink;
-import gov.gtas.model.lookup.RuleCat;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
-import gov.gtas.model.watchlist.json.WatchlistTerm;
 import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.FlightFuzzyHitsRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.repository.PassengerWatchlistRepository;
-import gov.gtas.repository.PaxWatchlistLinkRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
-import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.DerogResponse;
 import gov.gtas.services.matcher.quickmatch.MatchingContext;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcherImpl;
-import gov.gtas.services.matching.PaxWatchlistLinkVo;
 
 @Component
 @Scope("prototype")
 public class MatchingServiceImpl implements MatchingService {
-	private final PaxWatchlistLinkRepository paxWatchlistLinkRepository;
 	private final WatchlistItemRepository watchlistItemRepository;
 	private final PassengerRepository passengerRepository;
 	private final WatchlistRepository watchlistRepository;
-	private final CaseDispositionService caseDispositionService;
-	private final FlightFuzzyHitsRepository flightFuzzyHitsRepository;
 	private final PassengerWatchlistRepository passengerWatchlistRepository;
 	private final AppConfigurationRepository appConfigRepository;
 	private final PassengerService passengerService;
+	final private ApplicationContext applicationContext;
 
 	@Value("${partial.hits.case.create}")
 	private Boolean hitWillCreateCase;
 
-	private final NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils;
-
 	private ObjectMapper mapper = new ObjectMapper();
 	private static Logger logger = LoggerFactory.getLogger(MatchingService.class);
 
-	public MatchingServiceImpl(PaxWatchlistLinkRepository paxWatchlistLinkRepository,
-			WatchlistItemRepository watchlistItemRepository, PassengerRepository passengerRepository,
-			WatchlistRepository watchlistRepository, CaseDispositionService caseDispositionService,
-			FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-			PassengerWatchlistRepository passengerWatchlistRepository, AppConfigurationRepository appConfigRepository,
-			PassengerService passengerService, NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils) {
-		this.paxWatchlistLinkRepository = paxWatchlistLinkRepository;
+	public MatchingServiceImpl(WatchlistItemRepository watchlistItemRepository, PassengerRepository passengerRepository,
+			WatchlistRepository watchlistRepository, PassengerWatchlistRepository passengerWatchlistRepository,
+			AppConfigurationRepository appConfigRepository, PassengerService passengerService,
+			ApplicationContext applicationContext) {
 		this.watchlistItemRepository = watchlistItemRepository;
 		this.passengerRepository = passengerRepository;
 		this.watchlistRepository = watchlistRepository;
-		this.caseDispositionService = caseDispositionService;
-		this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
 		this.passengerWatchlistRepository = passengerWatchlistRepository;
 		this.appConfigRepository = appConfigRepository;
 		this.passengerService = passengerService;
-		this.nameMatchCaseMgmtUtils = nameMatchCaseMgmtUtils;
-	}
-
-	private PaxWatchlistLinkVo convertToVo(PaxWatchlistLink pwLink) {
-		return convertToVo(pwLink.getPercentMatch(), pwLink.getLastRunTimestamp(), pwLink.getVerifiedStatus(),
-				pwLink.getPassenger(), pwLink.getWatchlistItem());
-	}
-
-	private PaxWatchlistLinkVo convertToVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus,
-			Passenger passenger, WatchlistItem item) {
-		String firstName = "";
-		String lastName = "";
-		String dob = "";
-		try {
-			WatchlistItemSpec itemSpec = mapper.readValue(item.getItemData(), WatchlistItemSpec.class);
-
-			WatchlistTerm[] items = itemSpec.getTerms();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].getField().equals("firstName")) {
-					firstName = items[i].getValue();
-				}
-
-				if (items[i].getField().equals("lastName")) {
-					lastName = items[i].getValue();
-				}
-
-				if (items[i].getField().equals("dob")) {
-					dob = items[i].getValue();
-				}
-			}
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
-
-		return new PaxWatchlistLinkVo(percentMatch, lastRunTimestamp, verifiedStatus, passenger.getId(), item.getId(),
-				firstName, lastName, dob, item.getWatchlistCategory().getName());
-	}
-
-	public List<PaxWatchlistLinkVo> findByPassengerId(Long id) {
-		List<PaxWatchlistLinkVo> pwlList = new ArrayList<PaxWatchlistLinkVo>();
-		for (PaxWatchlistLink pwLink : paxWatchlistLinkRepository.findByPassengerId(id)) {
-			pwlList.add(convertToVo(pwLink));
-		}
-		return pwlList;
+		this.applicationContext = applicationContext;
 	}
 
 	// Overloaded method that will save on erroneous passenger calls during
@@ -147,21 +85,19 @@ public class MatchingServiceImpl implements MatchingService {
 	public void performFuzzyMatching(Long id) {
 		logger.debug("Starting fuzzy matching");
 		Passenger passenger = passengerRepository.getFullPassengerById(id);
-		Set<Passenger> passengers = Collections.singleton(passenger);
+		RuleHitPersistenceService ruleHitPersistenceService = applicationContext
+				.getBean(RuleHitPersistenceService.class);
 		Flight flight = passenger.getFlight();
-		MatcherParameters matcherParameters = getMatcherParameters(passengers);
-
-		performFuzzyMatching(flight, passenger, matcherParameters);
+		MatcherParameters matcherParameters = getMatcherParameters();
+		Set<HitDetail> hitDetailSet = performFuzzyMatching(flight, passenger, matcherParameters);
+		ruleHitPersistenceService.persistToDatabase(hitDetailSet);
 		logger.debug("ending fuzzy matching");
 
 	}
 
-	private MatcherParameters getMatcherParameters(Set<Passenger> passengers) {
+	private MatcherParameters getMatcherParameters() {
 		logger.debug("getting matcher parameters");
 		MatcherParameters matcherParameters = new MatcherParameters();
-		matcherParameters.setCaseMap(createCaseMap(
-				passengers.stream().map(Passenger::getId).collect(Collectors.toList()), this.caseDispositionService));
-		matcherParameters.setRuleCatMap(createRuleCatMap(caseDispositionService));
 		matcherParameters
 				.set_watchlists(watchlistRepository.getWatchlistByNames(Collections.singletonList("Passenger")));
 		Map<Long, List<WatchlistItem>> watchlistListMap = new HashMap<>();
@@ -175,38 +111,15 @@ public class MatchingServiceImpl implements MatchingService {
 		matcherParameters.setWatchlistListMap(watchlistListMap);
 		matcherParameters.setThreshold(Float.parseFloat(
 				(appConfigRepository.findByOption(AppConfigurationRepository.MATCHING_THRESHOLD).getValue())));
-		matcherParameters.setDobYearOffset(getDobYearOffset(MatchingContext.DOB_YEAR_OFFSET));
-		matcherParameters.setPaxWatchlistLinks(this.getPaxWatchlistLinks(passengers));
-
+		matcherParameters.setDobYearOffset(getDobYearOffset());
 		matcherParameters.get_watchlists().forEach(w -> {
 			List<HashMap<String, String>> derogLists = createWatchlistItems(
 					matcherParameters.getWatchlistListMap().get(w.getId()));
 			matcherParameters.addDerogList(derogLists);
 		});
-
-		//
 		matcherParameters.setQm(new QuickMatcherImpl(matcherParameters.getDerogList()));
-
 		logger.debug("got matcher parameters");
 		return matcherParameters;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Map<Long, Set<Long>> getPaxWatchlistLinks(Set<Passenger> passengers) {
-
-		Map<Long, Set<Long>> watchlistLinks = new HashMap<>();
-		for (Passenger passenger : passengers) {
-
-			Set<Long> links = new HashSet<>();
-			for (PaxWatchlistLink item : passenger.getPaxWatchlistLinks()) {
-				links.add(item.getId());
-			}
-			watchlistLinks.put(passenger.getId(), links);
-		}
-		return watchlistLinks;
 	}
 
 	private List<HashMap<String, String>> createWatchlistItems(List<WatchlistItem> watchlistItems) {
@@ -235,73 +148,59 @@ public class MatchingServiceImpl implements MatchingService {
 		return derogList;
 	}
 
-	public int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters) {
+	public Set<HitDetail> performFuzzyMatching(Flight flight, Passenger passenger,
+			MatcherParameters matcherParameters) {
 
 		logger.debug("Starting fuzzy matching");
-
+		Set<HitDetail> hitDetailSet = new HashSet<>();
 		List<Watchlist> watchlistsList = matcherParameters.get_watchlists();
-		int hitCounter = 0;
 		for (Watchlist watchlist : watchlistsList) {
 			if (passengerNeedsWatchlistCheck(passenger, watchlist)) {
-
-				Set<Long> wlItemIds = matcherParameters.getPaxWatchlistLinks(passenger.getId());
-				hitCounter += wlItemIds.size();
-				//
 				MatchingResult result = matcherParameters.getQm().match(passenger, matcherParameters.getThreshold(),
-						matcherParameters.getDobYearOffset(), wlItemIds);
-
-				// These will make calls to the database to save a watchlist link and make a
-				// case.
-				// This will cause performance issues IF every passenger hits on a watchlist.
-				ProcessedMatcherResults processedResults = processMatcherResults(flight, passenger, matcherParameters,
-						result);
-				hitCounter += processedResults.getHitCounter();
+						matcherParameters.getDobYearOffset());
+				Set<HitDetail> passengerHitDetails = processMatcherResults(passenger, result);
+				hitDetailSet.addAll(passengerHitDetails);
 			}
 		}
 		logger.debug("ended fuzzy matching");
-
-		return hitCounter;
+		return hitDetailSet;
 	}
 
-	ProcessedMatcherResults processMatcherResults(Flight flight, Passenger passenger,
-			MatcherParameters matcherParameters, MatchingResult result) {
-		ProcessedMatcherResults processedMatcherResults = new ProcessedMatcherResults();
-		int hitCounter = 0;
+	private Set<HitDetail> processMatcherResults(Passenger passenger, MatchingResult result) {
+		Set<HitDetail> hitDetailSet = new HashSet<>();
 		if (result.getTotalHits() >= 0) {
 			Map<String, DerogResponse> _responses = result.getResponses();
 			for (String key : _responses.keySet()) {
 				List<DerogHit> derogs = _responses.get(key).getDerogIds();
 				for (DerogHit hit : derogs) {
-					hitCounter++;
-					paxWatchlistLinkRepository.savePaxWatchlistLink(new Date(), hit.getPercent(), 0, passenger.getId(),
-							Long.parseLong(hit.getDerogId()));
-					Case existingCase = matcherParameters.getCaseMap().get(passenger.getId());
-					// make a call to open case here
-					if (hitWillCreateCase) {
-						nameMatchCaseMgmtUtils.processPassengerFlight(hit.getRuleDescription(), passenger,
-								Long.parseLong(hit.getDerogId()), flight, existingCase,
-								matcherParameters.getRuleCatMap());
-						processedMatcherResults.setCaseCreated(true);
-					}
+					HitDetail hitDetail = new HitDetail(HitTypeEnum.PARTIAL_WATCHLIST);
+					hitDetail.setPassengerId(passenger.getId());
+					hitDetail.setPassenger(passenger);
+					hitDetail.setLookoutId(Long.parseLong(hit.getDerogId()));
+					hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
+					hitDetail.setRuleConditions(hit.getRuleDescription());
+					hitDetail.setCreatedDate(new Date());
+					hitDetail.setTitle("Full/Partial Name Match on Item #" +hit.getDerogId());
+					hitDetail.setPercentage(hit.getPercent());
+					hitDetailSet.add(hitDetail);
+
 				}
 			}
 		}
-		processedMatcherResults.setHitCounter(hitCounter);
-		return processedMatcherResults;
+		return hitDetailSet;
 	}
 
-	private int getDobYearOffset(int dobYearOffset) {
+	private int getDobYearOffset() {
+		int dobYearOffset = MatchingContext.DOB_YEAR_OFFSET;
 		try {
 
 			dobYearOffset = Integer.parseInt(appConfigRepository.findByOption(QUICKMATCH_DOB_YEAR_OFFSET).getValue());
 
 		} catch (Exception e) {
-
 			logger.warn(
 					"QUICKMATCH_DOB_YEAR_OFFSET is not configured properly - DEFAULT offset value of {} will be used instead. "
 							+ "Set QUICKMATCH_DOB_YEAR_OFFSET in application config",
 					dobYearOffset);
-
 		}
 		return dobYearOffset;
 	}
@@ -310,33 +209,6 @@ public class MatchingServiceImpl implements MatchingService {
 		return passenger.getPassengerWLTimestamp() == null
 				|| passenger.getPassengerWLTimestamp().getWatchlistCheckTimestamp() == null || passenger
 						.getPassengerWLTimestamp().getWatchlistCheckTimestamp().before(watchlist.getEditTimestamp());
-	}
-
-	private static Map<Long, RuleCat> createRuleCatMap(CaseDispositionService dispositionService) {
-		Map<Long, RuleCat> ruleCatMap = new HashMap<>();
-		Iterable<RuleCat> ruleCatList = dispositionService.findAllRuleCat();
-		for (RuleCat ruleCat : ruleCatList) {
-			ruleCatMap.put(ruleCat.getId(), ruleCat);
-		}
-
-		return ruleCatMap;
-	}
-
-	private static Map<Long, Case> createCaseMap(List<Long> passengerIdList,
-			CaseDispositionService dispositionService) {
-		List<Case> caseResultList = null;
-		Map<Long, Case> caseMap = new HashMap<>();
-
-		if (!passengerIdList.isEmpty()) {
-			caseResultList = dispositionService.getCaseByPaxId(passengerIdList);
-
-			for (Case caze : caseResultList) {
-				caseMap.put(caze.getPaxId(), caze);
-
-			}
-		}
-
-		return caseMap;
 	}
 
 	/**
@@ -361,29 +233,25 @@ public class MatchingServiceImpl implements MatchingService {
 		logger.debug("Execution to get initial matching data is = {}ms", (endTime - startTime) / 1000000);
 		// Begin matching for all passengers on all flights retrieved within time frame.
 		if (passengers != null && !passengers.isEmpty()) { // Don't try and match if no flights
+			RuleHitPersistenceService ruleHitPersistenceService = applicationContext
+					.getBean(RuleHitPersistenceService.class);
 			startTime = System.nanoTime();
-			Set<Flight> flights = new HashSet<>();
 			Set<PassengerWLTimestamp> savingPassengerSet = new HashSet<>();
-			MatcherParameters matcherParameters = getMatcherParameters(passengers);
-
+			MatcherParameters matcherParameters = getMatcherParameters();
+			Set<HitDetail> partialWatchlistHits = new HashSet<>();
 			for (Passenger passenger : passengers) {
 				try {
-					flights.add(passenger.getFlight());
-					int fuzzyHitCounts = performFuzzyMatching(passenger.getFlight(), passenger, matcherParameters);
+					Set<HitDetail> passengerHits = performFuzzyMatching(passenger.getFlight(), passenger,
+							matcherParameters);
+					partialWatchlistHits.addAll(passengerHits);
 					PassengerWLTimestamp passengerWLTimestamp;
 					if (passenger.getPassengerWLTimestamp() == null) {
 						passengerWLTimestamp = new PassengerWLTimestamp(passenger.getId(), new Date());
-						passengerWLTimestamp.setHitCount(fuzzyHitCounts);
 					} else {
 						passengerWLTimestamp = passenger.getPassengerWLTimestamp();
 						passengerWLTimestamp.setWatchlistCheckTimestamp(new Date());
-						if (passengerWLTimestamp.getHitCount() != null) {
-							passengerWLTimestamp.setHitCount(passengerWLTimestamp.getHitCount() + fuzzyHitCounts);
-						} else {
-							passengerWLTimestamp.setHitCount(fuzzyHitCounts);
-						}
 					}
-					if (fuzzyHitCounts > 0) {
+					if (passengerHits.size() > 0) {
 						totalMatchCount++;
 					}
 					savingPassengerSet.add(passengerWLTimestamp);
@@ -393,13 +261,7 @@ public class MatchingServiceImpl implements MatchingService {
 				}
 			}
 			passengerWatchlistRepository.saveAll(savingPassengerSet);
-			for (Flight flight : flights) {
-				FlightHitsFuzzy flightHitsFuzzy = new FlightHitsFuzzy();
-				Integer hits = flightFuzzyHitsRepository.fuzzyCount(flight.getId());
-				flightHitsFuzzy.setHitCount(hits);
-				flightHitsFuzzy.setFlightId(flight.getId());
-				flightFuzzyHitsRepository.save(flightHitsFuzzy);
-			}
+			ruleHitPersistenceService.persistToDatabase(partialWatchlistHits);
 		}
 		endTime = System.nanoTime();
 		int paxTotal = passengers == null ? 0 : passengers.size();
@@ -407,13 +269,5 @@ public class MatchingServiceImpl implements MatchingService {
 		logger.info("Execution time for performFuzzyMatching() for loop  = {} ms, {} passengers",
 				(endTime - startTime) / 1000000, paxTotal);
 		return totalMatchCount;
-	}
-
-	public Boolean getHitWillCreateCase() {
-		return hitWillCreateCase;
-	}
-
-	public void setHitWillCreateCase(Boolean hitWillCreateCase) {
-		this.hitWillCreateCase = hitWillCreateCase;
 	}
 }

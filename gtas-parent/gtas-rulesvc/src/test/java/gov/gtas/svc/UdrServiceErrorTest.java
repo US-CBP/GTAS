@@ -18,14 +18,14 @@ import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.error.CommonValidationException;
 import gov.gtas.model.User;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
 import gov.gtas.model.udr.json.util.UdrSpecificationBuilder;
 import gov.gtas.querybuilder.mappings.PassengerMapping;
 import gov.gtas.services.AuditLogPersistenceService;
-import gov.gtas.services.RuleCatService;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.security.UserData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.security.UserServiceUtil;
@@ -81,27 +81,24 @@ public class UdrServiceErrorTest {
 	private RuleManagementService mockRuleManagementService;
 
 	@Mock
-	private RuleCatService mockRuleCatService;
+	private HitCategoryService mockRuleCatService;
 
 	@Before
 	public void setUp() throws Exception {
 		udrService = new UdrServiceImpl();
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(udrService, "rulePersistenceService", mockRulePersistenceSvc);
-		RuleCat mockRuleCat = getMockRuleCat();
-		Mockito.when(mockRuleCatService.findRuleCatByCatId(1L)).thenReturn(mockRuleCat);
+		HitCategory mockRuleCat = getMockRuleCat();
+		Mockito.when(mockRuleCatService.findById(1L)).thenReturn(mockRuleCat);
 		ReflectionTestUtils.setField(udrService, "userService", mockUserService);
 		ReflectionTestUtils.setField(udrService, "ruleManagementService", mockRuleManagementService);
 		ReflectionTestUtils.setField(udrService, "auditLogPersistenceService", mockAuditLogPersistenceService);
 		ReflectionTestUtils.setField(udrService, "ruleCatService", mockRuleCatService);
 	}
 
-	private RuleCat getMockRuleCat() {
-		RuleCat ruleCat = new RuleCat();
-		ruleCat.setCatId(1L);
+	private HitCategory getMockRuleCat() {
+		HitCategory ruleCat = new HitCategory();
 		ruleCat.setId(1L);
-		ruleCat.setCategory("General");
-		ruleCat.setPriority(5L);
 		return ruleCat;
 	}
 

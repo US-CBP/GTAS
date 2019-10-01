@@ -167,26 +167,6 @@ public class WatchlistPersistenceServiceIT {
 		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1) || !item.getItemData().equalsIgnoreCase(deldata2));
 	}
 
-	@Transactional
-	@Test()
-	@Ignore
-	public void testWatchlistSummary() {
-		List<WatchlistItem> createList = testGenUtils.createWatchlistItems(TEST_WL_ITEMS1);
-		testTarget.createUpdateDelete(TEST_WL_NAME, TEST_WL_ENTITY, createList, null,
-				WatchlistDataGenUtils.TEST_USER1_ID);
-		Watchlist wl = testTarget.findByName(TEST_WL_NAME);
-		assertNotNull(wl);
-		List<Watchlist> summaryList = testTarget.findAllSummary();
-		assertTrue(summaryList.size() >= 1);// there may be existing Watch lists
-		int matchcount = 0;
-		for (Watchlist watchlist : summaryList) {
-			if (TEST_WL_NAME.equals(watchlist.getWatchlistName())) {
-				assertEquals(TEST_WL_ENTITY, watchlist.getWatchlistEntity());
-				++matchcount;
-			}
-		}
-		assertEquals(1, matchcount);
-	}
 
 	private String addDeleteItem(List<WatchlistItem> delList, WatchlistItem item) {
 		String deldata = item.getItemData();

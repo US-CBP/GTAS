@@ -5,21 +5,32 @@
  */
 package gov.gtas.services.matching;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.model.watchlist.json.WatchlistItemSpec;
+import gov.gtas.model.watchlist.json.WatchlistTerm;
 
 public class PaxWatchlistLinkVo {
 
 	private float percentMatch;
 	private Date lastRunTimestamp;
 	private int verifiedStatus;
+
 	private Long watchlistItemId;
 	private Long passengerId;
 	private String watchListFirstName;
 	private String watchListLastName;
 	private String watchListDOB;
 	private String watchlistCategory;
+	private static final ObjectMapper mapper = new ObjectMapper();
+
+	public PaxWatchlistLinkVo() {}
 
 	public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus, Long watchlistItemId,
 			Long passengerId) {
@@ -28,10 +39,9 @@ public class PaxWatchlistLinkVo {
 		this.lastRunTimestamp = lastRunTimestamp;
 		this.verifiedStatus = verifiedStatus;
 		this.watchlistItemId = watchlistItemId;
-		this.passengerId = passengerId;
 	}
 
-	public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus, Long passengerId,
+	public PaxWatchlistLinkVo(float percentMatch, Date lastRunTimestamp, int verifiedStatus,
 			Long watchlistItemId, String watchListFirstName, String watchListLastName, String watchListDOB,
 			String watchlistCategory) {
 		super();
@@ -46,7 +56,31 @@ public class PaxWatchlistLinkVo {
 		this.watchlistCategory = watchlistCategory;
 	}
 
-	public String getWatchListFirstName() {
+    public static PaxWatchlistLinkVo fromHitDetail(HitDetail hitDetail) throws IOException {
+		PaxWatchlistLinkVo paxWatchlistLinkVo = new PaxWatchlistLinkVo();
+		WatchlistItem watchlistItem = (WatchlistItem)hitDetail.getLookout();
+		WatchlistItemSpec itemSpec = new ObjectMapper().readValue(watchlistItem.getItemData(), WatchlistItemSpec.class);
+		WatchlistTerm[] items = itemSpec.getTerms();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getField().equals("firstName")) {
+				paxWatchlistLinkVo.setWatchListFirstName(items[i].getValue());
+			}
+			if (items[i].getField().equals("lastName")) {
+				paxWatchlistLinkVo.setWatchListLastName(items[i].getValue());
+			}
+			if (items[i].getField().equals("dob")) {
+				paxWatchlistLinkVo.setWatchListDOB(items[i].getValue());
+			}
+		}
+		paxWatchlistLinkVo.setWatchlistItemId(hitDetail.getLookoutId());
+		paxWatchlistLinkVo.setPassengerId(hitDetail.getPassengerId());
+		paxWatchlistLinkVo.setPercentMatch(hitDetail.getPercentage());
+		String category = hitDetail.getLookout().getHitCategory().getName();
+		paxWatchlistLinkVo.setWatchlistCategory(category);
+		return paxWatchlistLinkVo;
+    }
+
+    public String getWatchListFirstName() {
 		return watchListFirstName;
 	}
 
@@ -117,4 +151,20 @@ public class PaxWatchlistLinkVo {
 	public void setWatchlistCategory(String watchlistCategory) {
 		this.watchlistCategory = watchlistCategory;
 	}
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PaxWatchlistLinkVo that = (PaxWatchlistLinkVo) o;
+		return getWatchlistItemId().equals(that.getWatchlistItemId()) &&
+				getPassengerId().equals(that.getPassengerId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getWatchlistItemId(), getPassengerId());
+	}
+
 }

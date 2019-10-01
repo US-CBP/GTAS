@@ -204,14 +204,12 @@ public class QueryBuilderService {
 				passengerIds.add(passenger.getId());
 			}
 
-			Map<Long, List<HitsSummary>> paxHitSummary = passengerService
-					.getHitsSummaryMappedToPassengerIds(passengerIds);
 			Map<Long, Set<Document>> paxDocuments = passengerService.getDocumentMappedToPassengerIds(passengerIds);
 
 			for (Object[] result : resultList.getResult()) {
 				Passenger passenger = (Passenger) result[1];
 				Flight flight = (Flight) result[2];
-				PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
+				PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
 				passengerList.add(vo);
 			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
@@ -221,8 +219,8 @@ public class QueryBuilderService {
 		return new PassengersPageDto(passengerList, totalCount, queryLimitReached);
 	}
 
-	PassengerGridItemVo createPassengerGridItemVo(Map<Long, List<HitsSummary>> paxHitSummary,
-			Map<Long, Set<Document>> paxDocuments, Passenger passenger, Flight flight) {
+	PassengerGridItemVo createPassengerGridItemVo(Map<Long, Set<Document>> paxDocuments, Passenger passenger,
+			Flight flight) {
 
 		PassengerGridItemVo vo = new PassengerGridItemVo();
 
@@ -232,18 +230,15 @@ public class QueryBuilderService {
 		BeanUtils.copyProperties(passenger.getPassengerTripDetails(), vo);
 		vo.setId(passenger.getId());
 
-		// populate with hits information
-		List<HitsSummary> hitsSummaries = paxHitSummary.get(passenger.getId());
-		if (!CollectionUtils.isEmpty(hitsSummaries)) {
-			boolean isRuleHit = false;
-			boolean isWatchlistHit = false;
-			for (HitsSummary hs : hitsSummaries) {
-				isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
-				isWatchlistHit = hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
-			}
-			vo.setOnRuleHitList(isRuleHit);
-			vo.setOnWatchList(isWatchlistHit);
+		boolean isRuleHit = false;
+		boolean isWatchlistHit = false;
+		HitsSummary hs = passenger.getHits();
+		if (hs != null) {
+			isRuleHit = hs.getRuleHitCount() != null && hs.getRuleHitCount() > 0;
+			isWatchlistHit = hs.getWatchListHitCount() != null && hs.getWatchListHitCount() > 0;
 		}
+		vo.setOnRuleHitList(isRuleHit);
+		vo.setOnWatchList(isWatchlistHit);
 
 		// populate with document information
 		Set<Document> passengerDocuments = paxDocuments.get(passenger.getId());

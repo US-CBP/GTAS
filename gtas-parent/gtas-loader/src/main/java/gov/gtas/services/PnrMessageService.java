@@ -122,7 +122,6 @@ public class PnrMessageService extends MessageLoaderService {
 
 			int createdPassengers = loaderRepo.createPassengers(passengerInformationDTO.getNewPax(),
 					passengerInformationDTO.getOldPax(), pnr.getPassengers(), primeFlight, pnr.getBookingDetails());
-			loaderRepo.updateFlightPassengerCount(primeFlight, createdPassengers);
 			Set<Bag> bagList = createBagInformation(vo, pnr, primeFlight);
 			WeightCountDto weightCountDto = getBagStatistics(bagList);
 			pnr.setBagCount(weightCountDto.getCount());

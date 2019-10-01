@@ -32,6 +32,10 @@
     $scope.isClosedCase = false;
     $scope.casesListWithCats = [];
     $scope.ruleHits = ruleHits;
+
+
+    $scope.isLoadingHistoricalHits = true;
+    $scope.hitHistory;
     $scope.caseHistory = caseHistory.data;
     $scope.ruleCats = ruleCats.data;
     $scope.slides = [];
@@ -973,6 +977,25 @@
           $scope.isLoadingFlightHistory = false;
         });
     };
+
+    paxDetailService
+        .getPaxDetailHitHistory($scope.passenger.paxId)
+        .then(function(response) {
+          $scope.hitHistory =  response.data;
+          if (
+              $scope.hitHistory != typeof "undefined" &&
+              $scope.hitHistory != null &&
+              $scope.hitHistory.length > 0
+          ) {
+            $.each($scope.hitHistory, function(index, value) {
+              value.ruleConditions = value.ruleConditions.replace(
+                  /[.*+?^${}()|[\]\\]/g,
+                  ""
+              );
+            });
+          }
+          $scope.isLoadingHistoricalHits = false;
+        });
 
     //Adds user from pax detail page to watchlist.
     $scope.addEntityToWatchlist = function() {

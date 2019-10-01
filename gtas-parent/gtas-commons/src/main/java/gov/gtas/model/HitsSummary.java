@@ -5,6 +5,7 @@
  */
 package gov.gtas.model;
 
+
 import java.util.*;
 
 import javax.persistence.*;
@@ -12,17 +13,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "hits_summary")
 public class HitsSummary extends BaseEntity {
-	private static final long serialVersionUID = 3436310987156511552L;
 
-	public HitsSummary() {
-	}
-
-	@Column(name = "created_date", nullable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdDate;
-
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<HitDetail> hitdetails = new HashSet<>();
+	@Column(name = "hs_passenger_id", columnDefinition = "bigint unsigned")
+	private Long paxId;
 
 	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
 	private Long flightId;
@@ -31,58 +24,63 @@ public class HitsSummary extends BaseEntity {
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Flight flight;
 
-	@Column(name = "passenger_id", columnDefinition = "bigint unsigned")
-	private Long paxId;
-
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
+	@JoinColumn(name = "hs_passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
 	private Passenger passenger;
 
-	@Column(name = "rule_hit_count")
-	private Integer ruleHitCount = 0;
+	@Column(name = "hs_rule_count")
+	private int ruleHitCount = 0;
 
-	@Column(name = "hit_type")
-	private String hitType;
+	@Column(name = "hs_wl_count")
+	private int watchListHitCount = 0;
 
-	@Column(name = "wl_hit_count")
-	private Integer watchListHitCount = 0;
+	@Column(name = "hs_graph_count")
+	private int graphHitCount = 0;
 
-	@Column(name = "graph_hit_count")
-	private Integer graphHitCount = 0;
+	@Column(name = "hs_manual_count")
+	private int manualHitCount = 0;
+
+	@Column(name = "hs_partial_count")
+	private int partialHitCount;
 
 	@Transient
-	private Boolean saveHits = false;
+	boolean updated = false;
 
-	public Boolean getSaveHits() {
-		return saveHits;
+	public void setRuleHitCount(int ruleHitCount) {
+		this.ruleHitCount = ruleHitCount;
 	}
 
-	public void setSaveHits(Boolean saveHits) {
-		this.saveHits = saveHits;
+	public int getManualHitCount() {
+		return manualHitCount;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public void setManualHitCount(int manualHitCount) {
+		this.manualHitCount = manualHitCount;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+
+	public boolean isUpdated() {
+		return updated;
 	}
 
-	public Set<HitDetail> getHitdetails() {
-		return hitdetails;
+	public void setUpdated(boolean updated) {
+		this.updated = updated;
 	}
 
-	public void setHitdetails(Set<HitDetail> hitdetails) {
-		this.hitdetails = hitdetails;
+	public void setWatchListHitCount(int watchListHitCount) {
+		this.watchListHitCount = watchListHitCount;
 	}
 
-	public String getHitType() {
-		return hitType;
+	public void setGraphHitCount(int graphHitCount) {
+		this.graphHitCount = graphHitCount;
 	}
 
-	public void setHitType(String hitType) {
-		this.hitType = hitType;
+	public int getPartialHitCount() {
+		return partialHitCount;
+	}
+
+	public void setPartialHitCount(int partialHitCount) {
+		this.partialHitCount = partialHitCount;
 	}
 
 	public Integer getRuleHitCount() {
@@ -95,18 +93,6 @@ public class HitsSummary extends BaseEntity {
 
 	public Integer getWatchListHitCount() {
 		return watchListHitCount;
-	}
-
-	public void setWatchListHitCount(Integer watchListHitCount) {
-		this.watchListHitCount = watchListHitCount;
-	}
-
-	public Long getFlightId() {
-		return flightId;
-	}
-
-	public void setFlightId(Long flightId) {
-		this.flightId = flightId;
 	}
 
 	public Long getPaxId() {
@@ -125,20 +111,28 @@ public class HitsSummary extends BaseEntity {
 		this.passenger = passenger;
 	}
 
+	public Integer getGraphHitCount() {
+		return graphHitCount;
+	}
+
+	public boolean hasHits() {
+		return (ruleHitCount + graphHitCount + watchListHitCount + manualHitCount + partialHitCount) > 0;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
+
 	public Flight getFlight() {
 		return flight;
 	}
 
 	public void setFlight(Flight flight) {
 		this.flight = flight;
-	}
-
-	public Integer getGraphHitCount() {
-		return graphHitCount;
-	}
-
-	public void setGraphHitCount(Integer graphHitCount) {
-		this.graphHitCount = graphHitCount;
 	}
 
 	@Override
@@ -148,11 +142,12 @@ public class HitsSummary extends BaseEntity {
 		if (!(o instanceof HitsSummary))
 			return false;
 		HitsSummary that = (HitsSummary) o;
-		return getFlightId().equals(that.getFlightId()) && getPaxId().equals(that.getPaxId());
+		return getPaxId().equals(that.getPaxId());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getFlightId(), getPaxId());
+		return Objects.hash(getPaxId());
 	}
+
 }

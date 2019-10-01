@@ -14,6 +14,7 @@ import gov.gtas.model.Flight;
 import gov.gtas.model.Passenger;
 
 import gov.gtas.model.PassengerDetails;
+import gov.gtas.model.RuleHitDetail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -5,7 +5,7 @@
  */
 package gov.gtas.rule.builder;
 
-import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.RuleHitDetail;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.enumtype.CriteriaOperatorEnum;
@@ -408,7 +408,7 @@ public class RuleConditionBuilder {
 		String cause = conditionDescriptionBuilder.toString().replace("\"", "'");
 		ruleStringBuilder.append("then\n");
 
-		HitTypeEnum hitType = (entity == EntityEnum.PASSENGER) ? HitTypeEnum.P : HitTypeEnum.D;
+		HitTypeEnum hitType = (entity == EntityEnum.PASSENGER) ? HitTypeEnum.WATCHLIST_PASSENGER : HitTypeEnum.WATCHLIST_DOCUMENT;
 
 		// the watch list item id id may not be available at
 		// this stage so we add defer adding it

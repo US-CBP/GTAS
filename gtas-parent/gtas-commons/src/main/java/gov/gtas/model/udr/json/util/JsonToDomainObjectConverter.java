@@ -9,7 +9,7 @@ import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.enumtype.YesNoEnum;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.model.User;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.RuleMeta;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.udr.json.MetaData;
@@ -138,7 +138,7 @@ public class JsonToDomainObjectConverter {
 		Long ruleCatID = null;
 		if (ruleMeta.getRuleCategories() != null && !ruleMeta.getRuleCategories().isEmpty()) {
 			ruleCatID = ruleMeta.getRuleCategories().stream().filter(ruleCat -> ruleCat.getId() != null).findFirst()
-					.map(RuleCat::getId).orElse(null);
+					.map(HitCategory::getId).orElse(null);
 		}
 		return ruleCatID;
 	}
@@ -262,8 +262,8 @@ public class JsonToDomainObjectConverter {
 	private static RuleMeta createRuleMeta(Long id, String title, String descr, Date startDate, Date endDate,
 			YesNoEnum enabled, Long _tempRuleCatStr, Boolean overMaxHits) {
 		RuleMeta meta = new RuleMeta();
-		Set<RuleCat> _tempRuleCatSet = new HashSet<>();
-		RuleCat _tempRuleCat = new RuleCat();
+		Set<HitCategory> _tempRuleCatSet = new HashSet<>();
+		HitCategory _tempRuleCat = new HitCategory();
 		if (id != null) {
 			meta.setId(id);
 		}

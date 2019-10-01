@@ -6,7 +6,7 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 
 import javax.persistence.*;
 
@@ -53,7 +53,7 @@ public class HitsDisposition extends BaseEntityAudit {
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "rule_cat_id")
-	private RuleCat ruleCat;
+	private HitCategory ruleCat;
 
 	public void addHitsDispositionComments(HitsDispositionComments _tempComments) {
 		dispComments.add(_tempComments);
@@ -108,11 +108,11 @@ public class HitsDisposition extends BaseEntityAudit {
 		this.aCase = aCase;
 	}
 
-	public RuleCat getRuleCat() {
+	public HitCategory getRuleCat() {
 		return ruleCat;
 	}
 
-	public void setRuleCat(RuleCat ruleCat) {
+	public void setRuleCat(HitCategory ruleCat) {
 		this.ruleCat = ruleCat;
 	}
 

@@ -8,11 +8,10 @@ package gov.gtas.rule;
 import static gov.gtas.rule.listener.RuleEventListenerUtils.createEventListeners;
 import gov.gtas.bo.BasicRuleServiceResult;
 import gov.gtas.bo.RuleExecutionStatistics;
-import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.RuleHitDetail;
 import gov.gtas.bo.RuleServiceRequest;
 import gov.gtas.bo.RuleServiceResult;
 import gov.gtas.constant.CommonErrorConstants;
-import gov.gtas.constant.RuleConstants;
 import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.error.ErrorHandler;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -20,34 +19,27 @@ import gov.gtas.error.RuleServiceErrorHandler;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.UdrRule;
-import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.rule.listener.RuleEventListenerUtils;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.UdrService;
-import gov.gtas.util.Bench;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.persistence.annotations.CascadeOnDelete;
 import org.kie.api.KieBase;
 import org.kie.api.runtime.Globals;
 import org.kie.api.runtime.StatelessKieSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 

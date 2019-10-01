@@ -8,23 +8,23 @@
 
 package gov.gtas.job.scheduler;
 
-import gov.gtas.bo.RuleHitDetail;
+import gov.gtas.model.RuleHitDetail;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.repository.udr.RuleMetaRepository;
 import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.PassengerService;
+import gov.gtas.services.RuleHitPersistenceService;
 import gov.gtas.svc.GraphRulesService;
 import gov.gtas.svc.TargetingResultServices;
-import gov.gtas.svc.TargetingServiceResults;
 import gov.gtas.svc.util.TargetingResultUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -42,6 +42,8 @@ public class GraphRulesThread implements Callable<Boolean> {
 
 	private final PassengerRepository passengerRepository;
 
+	private final ApplicationContext applicationContext;
+
 	private List<MessageStatus> messageStatuses = new ArrayList<>();
 
 	private PassengerService passengerService;
@@ -49,17 +51,22 @@ public class GraphRulesThread implements Callable<Boolean> {
 	private RuleMetaRepository ruleMetaRepository;
 
 	public GraphRulesThread(GraphRulesService graphRulesService, MessageStatusRepository messageStatusRepository,
-			PassengerRepository passengerRepository, PassengerService passengerService,
-			AppConfigurationService appConfigurationService, RuleMetaRepository ruleMetaRepository) {
+			ApplicationContext applicationContext, PassengerRepository passengerRepository,
+			PassengerService passengerService, AppConfigurationService appConfigurationService,
+			RuleMetaRepository ruleMetaRepository) {
 		this.graphRulesService = graphRulesService;
 		this.messageStatusRepository = messageStatusRepository;
 		this.passengerRepository = passengerRepository;
+		this.applicationContext = applicationContext;
 		this.passengerService = passengerService;
 		this.appConfigurationService = appConfigurationService;
 		this.ruleMetaRepository = ruleMetaRepository;
 	}
 
 	public Boolean call() {
+		RuleHitPersistenceService ruleHitPersistenceService = applicationContext
+				.getBean(RuleHitPersistenceService.class);
+
 		boolean returnVal = true;
 		long start = System.nanoTime();
 		List<MessageStatus> processedMessages = getMessageStatuses();
@@ -72,29 +79,24 @@ public class GraphRulesThread implements Callable<Boolean> {
 					.collect(Collectors.toSet());
 			processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
 			Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
-			Set<Flight> passengerFlights = passengers.stream().map(Passenger::getFlight).collect(Collectors.toSet());
 			Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
 			TargetingResultServices targetingResultServices = getTargetingResultOptions();
-
 			List<RuleHitDetail> filteredList = TargetingResultUtils
 					.filterRuleHitDetails(new ArrayList<>(graphHitDetailSet), targetingResultServices);
-			Set<Case> newCases = graphRulesService.graphCases(new HashSet<>(filteredList)); // Cast to set.
-			List<HitsSummary> hitsSummaries = graphRulesService.getHitsSummariesFromRuleDetails(filteredList);
+			Set<HitDetail> hitDetails = graphRulesService.generateHitDetails(filteredList);
 
-			List<TargetingServiceResults> targetingServiceResultsList = TargetingResultUtils
-					.getTargetingResults(newCases, hitsSummaries);
 			int BATCH_SIZE = Integer.parseInt(appConfigurationService
 					.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
-			List<TargetingServiceResults> batchedTargetingServiceResults = TargetingResultUtils
-					.batchResults(targetingServiceResultsList, BATCH_SIZE);
+
+			List<Set<HitDetail>> batchedTargetingServiceResults = TargetingResultUtils.batchResults(hitDetails,
+					BATCH_SIZE);
 
 			int count = 1;
-			for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
+			for (Set<HitDetail> hitDetailSet : batchedTargetingServiceResults) {
 				try {
-					logger.info(
-							"Saving graph results " + count + " of " + batchedTargetingServiceResults.size() + "...");
-					graphRulesService.saveResults(new HashSet<>(targetingServiceResults.getHitsSummaryList()),
-							targetingServiceResults.getCaseSet());
+					logger.info("Saving batched graph results " + count + " of " + batchedTargetingServiceResults.size()
+							+ "...");
+					ruleHitPersistenceService.persistToDatabase(hitDetailSet);
 				} catch (Exception ignored) {
 					logger.warn("Exception saving hits summaries count " + count + " and/or hit details! ", ignored);
 					processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
@@ -104,7 +106,6 @@ public class GraphRulesThread implements Callable<Boolean> {
 			if (!batchedTargetingServiceResults.isEmpty()) {
 				logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
 			}
-			graphRulesService.updateFlightGraphHitCount(passengerFlights);
 		} catch (Exception e) {
 			logger.warn("Exception running graph rules! ", e);
 			processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));

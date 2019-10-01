@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +50,7 @@ public interface CaseDispositionService {
 
 	public Case create(Long flight_id, Long pax_id, String paxName, String paxType, String nationality, Date dob,
 			String document, String hitDesc, List<Long> hit_ids, Map<Long, Case> caseMap, Map<Long, Flight> flightMap,
-			Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+			Map<Long, Passenger> passengerMap, Map<Long, HitCategory> ruleCatMap);
 
 	public Case createManualCase(Long flight_id, Long pax_id, Long rule_cat_id, String comments, String username);
 
@@ -78,11 +78,11 @@ public interface CaseDispositionService {
 	public List<Case> registerAndSaveNewCaseFromFuzzyMatching(Long flight_id, Long pax_id, String paxName,
 			String paxType, String nationality, Date dob, String document, String hitDesc, Long hit_id,
 			Map<Long, Case> caseMap, Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap,
-			Map<Long, RuleCat> ruleCatMap);
+			Map<Long, HitCategory> ruleCatMap);
 
 	public Case registerCaseFromRuleService(Long flight_id, Long pax_id, String paxName, String paxType,
 			String nationality, Date dob, String document, String hitDesc, Long hit_id, Map<Long, Case> caseMap,
-			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, RuleCat> ruleCatMap);
+			Map<Long, Flight> flightMap, Map<Long, Passenger> passengerMap, Map<Long, HitCategory> ruleCatMap);
 
 	public List<OneDayLookoutVo> getOneDayLookoutByDate(Date date);
 
@@ -96,7 +96,7 @@ public interface CaseDispositionService {
 
 	public String getAPISOnlyFlagAndVersion();
 
-	public Iterable<RuleCat> findAllRuleCat();
+	public Iterable<HitCategory> findAllRuleCat();
 
 	public void updateEncounteredStatus(Long caseIdAsLong, EncounteredStatusEnum newEncounteredStatus);
 

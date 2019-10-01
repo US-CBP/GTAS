@@ -8,9 +8,10 @@
 
 package gov.gtas.services;
 
-import gov.gtas.model.HitsSummary;
+import gov.gtas.model.HitDetail;
 import gov.gtas.model.Message;
 import gov.gtas.model.MessageStatus;
+import gov.gtas.repository.HitDetailRepository;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,12 +26,12 @@ public class AdminServiceImpl implements AdminService {
 
 	private MessageService messageService;
 
-	private HitsSummaryService hitsSummaryService;
+	private HitDetailRepository hitDetailRepository;
 
 	@Autowired
-	public AdminServiceImpl(MessageService messageService, HitsSummaryService hitsSummaryService) {
+	public AdminServiceImpl(MessageService messageService, HitDetailRepository hitDetailRepository) {
 		this.messageService = messageService;
-		this.hitsSummaryService = hitsSummaryService;
+		this.hitDetailRepository = hitDetailRepository;
 	}
 
 	@Override
@@ -46,9 +47,9 @@ public class AdminServiceImpl implements AdminService {
 				.ifPresent(m -> applicationStatisticsDTO.setLastMessageInSystem(m.getCreateDate()));
 		List<MessageStatus> msList = messageList.stream().map(Message::getStatus).collect(Collectors.toList());
 		populateApplicationStatistics(applicationStatisticsDTO, msList);
-		HitsSummary summary = hitsSummaryService.getMostRecentHitsSummary();
-		if (summary != null) {
-			applicationStatisticsDTO.setMostRecentRuleHit(summary.getCreatedDate());
+		HitDetail mostRecentHitDetail = hitDetailRepository.findFirstByOrderByIdDesc();
+		if (mostRecentHitDetail != null) {
+			applicationStatisticsDTO.setMostRecentRuleHit(mostRecentHitDetail.getCreatedDate());
 		}
 		return applicationStatisticsDTO;
 	}

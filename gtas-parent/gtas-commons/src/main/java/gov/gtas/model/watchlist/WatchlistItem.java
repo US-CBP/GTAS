@@ -5,30 +5,24 @@
  */
 package gov.gtas.model.watchlist;
 
-import gov.gtas.model.BaseEntity;
-import gov.gtas.model.PaxWatchlistLink;
-import gov.gtas.model.lookup.WatchlistCategory;
-
-import java.util.HashSet;
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.model.Lookout;
 import java.util.Objects;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "wl_item")
-public class WatchlistItem extends BaseEntity {
+public class WatchlistItem extends Lookout {
 	private static final long serialVersionUID = 3593L;
 
 	public WatchlistItem() {
+		this.setHitTypeEnum(HitTypeEnum.WATCHLIST);
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -40,13 +34,6 @@ public class WatchlistItem extends BaseEntity {
 
 	@Column(name = "ITM_RL_DATA", nullable = true, columnDefinition = "TEXT NOT NULL")
 	private String itemRuleData;
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "Wl_CATEGORY_REF", referencedColumnName = "ID", nullable = true, foreignKey = @ForeignKey(name = "FK_Wl_CATEGORY_ID"))
-	private WatchlistCategory watchlistCategory;
-
-	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "watchlistItem")
-	private Set<PaxWatchlistLink> paxWatchlistLink = new HashSet<>();
 
 	/**
 	 * @return the watch list
@@ -93,14 +80,6 @@ public class WatchlistItem extends BaseEntity {
 		this.itemRuleData = itemRuleData;
 	}
 
-	public WatchlistCategory getWatchlistCategory() {
-		return watchlistCategory;
-	}
-
-	public void setWatchlistCategory(WatchlistCategory watchlistCategory) {
-		this.watchlistCategory = watchlistCategory;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.itemData);
@@ -116,13 +95,5 @@ public class WatchlistItem extends BaseEntity {
 			return false;
 		final WatchlistItem other = (WatchlistItem) obj;
 		return Objects.equals(this.itemData, other.itemData);
-	}
-
-	public Set<PaxWatchlistLink> getPaxWatchlistLink() {
-		return paxWatchlistLink;
-	}
-
-	public void setPaxWatchlistLink(Set<PaxWatchlistLink> paxWatchlistLink) {
-		this.paxWatchlistLink = paxWatchlistLink;
 	}
 }

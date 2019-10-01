@@ -18,7 +18,7 @@ import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.User;
-import gov.gtas.model.lookup.RuleCat;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.Rule;
 import gov.gtas.model.udr.RuleMeta;
@@ -28,10 +28,9 @@ import gov.gtas.model.udr.json.MetaData;
 import gov.gtas.model.udr.json.QueryObject;
 import gov.gtas.model.udr.json.UdrSpecification;
 import gov.gtas.model.udr.json.util.JsonToDomainObjectConverter;
-import gov.gtas.repository.HitsSummaryRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import gov.gtas.services.AuditLogPersistenceService;
-import gov.gtas.services.RuleCatService;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.services.udr.RulePersistenceService;
 import gov.gtas.svc.util.UdrServiceHelper;
@@ -39,13 +38,7 @@ import gov.gtas.svc.util.UdrServiceJsonResponseHelper;
 import gov.gtas.util.DateCalendarUtils;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -54,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -70,9 +64,6 @@ public class UdrServiceImpl implements UdrService {
 	@Resource
 	private UdrRuleRepository udrRuleRepository;
 
-	@Resource
-	private HitsSummaryRepository hitSummaryRepository;
-
 	@Autowired
 	private AuditLogPersistenceService auditLogPersistenceService;
 
@@ -84,7 +75,10 @@ public class UdrServiceImpl implements UdrService {
 
 	// @RuleCategory changes
 	@Autowired
-	private RuleCatService ruleCatService;
+	private HitCategoryService hitCategoryService;
+
+	@Value("${hit.general.category}")
+	private Long defaultCategory;
 
 	@Override
 	@Transactional
@@ -135,7 +129,7 @@ public class UdrServiceImpl implements UdrService {
 	 * @return summary list.
 	 */
 	private List<JsonUdrListElement> convertSummaryList(List<UdrRule> fetchedRuleList) {
-		Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
+		 Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
 		List<JsonUdrListElement> ret = new LinkedList<>();
 		if (fetchedRuleList != null && !fetchedRuleList.isEmpty()) {
 			for (UdrRule udrRule : fetchedRuleList) {
@@ -162,14 +156,13 @@ public class UdrServiceImpl implements UdrService {
 	}
 
 	private Map<Long, Long> createUdrHitCountMap() {
-		List<Object[]> udrCounts = hitSummaryRepository.findDetailsByUdr();
-		Map<Long, Long> hitCountMap = new HashMap<Long, Long>();
+		List<Object[]> udrCounts = udrRuleRepository.getCounts();
+		Map<Long, Long> hitCountMap = new HashMap<>();
 		if (!CollectionUtils.isEmpty(udrCounts)) {
 			for (Object[] data : udrCounts) {
-				/*
-				 * map key is UDR ID map value is hit count
-				 */
-				hitCountMap.put((Long) data[0], (Long) data[1]);
+				Long udrId = (Long)data[0];
+				Long udrHitCount = (Long)data[1];
+				hitCountMap.put(udrId, udrHitCount);
 			}
 		}
 		return hitCountMap;
@@ -257,7 +250,7 @@ public class UdrServiceImpl implements UdrService {
 		UdrRule ruleToSave = null;
 		try {
 			ruleToSave = JsonToDomainObjectConverter.createUdrRuleFromJson(udrToCreate, author);
-			setRuleCatOnRuleMeta(ruleToSave.getMetaData());
+			setRuleCatOnRuleMeta(ruleToSave.getMetaData(), ruleToSave);
 			UdrServiceHelper.addEngineRulesToUdrRule(ruleToSave, udrToCreate);
 		} catch (IOException ioe) {
 			logger.error("error creating udr!", ioe);
@@ -387,7 +380,7 @@ public class UdrServiceImpl implements UdrService {
 		try {
 			RuleMeta ruleMeta = JsonToDomainObjectConverter.extractRuleMetaUpdates(udrToUpdate);
 			ruleToUpdate.setTitle(ruleMeta.getTitle());
-			setRuleCatOnRuleMeta(ruleMeta);
+			setRuleCatOnRuleMeta(ruleMeta, ruleToUpdate);
 			ruleToUpdate.setMetaData(ruleMeta);
 		} catch (Exception ex) {
 			logger.error("Error updating rule meta data!", ex);
@@ -473,15 +466,13 @@ public class UdrServiceImpl implements UdrService {
 
 	// @RuleCat changes
 	// Utility method to retrieve RuleCat Set from nested RuleMeta under UDR Rule
-	private void setRuleCatOnRuleMeta(RuleMeta ruleMeta) {
-
-		RuleCat ruleCat = ruleMeta.getRuleCategories().stream().filter(rc -> rc.getId() != null).findAny()
-				.orElse(ruleCatService.findRuleCatByCatId(1L)); // Default to 1L - "General Rule Category"
-
-		// finally, retrieve this category object and set it in UDRrule for persistence
-		ruleCat = ruleCatService.findRuleCatByID(ruleCat.getId());
-		Set<RuleCat> ruleCatSet = new HashSet<>();
-		ruleCatSet.add(ruleCat);
+	private void setRuleCatOnRuleMeta(RuleMeta ruleMeta, UdrRule ruleToSave) {
+		HitCategory hitCategory = ruleMeta.getRuleCategories().stream().filter(rc -> rc.getId() != null).findAny()
+				.orElse(hitCategoryService.findById(defaultCategory));
+		hitCategory = hitCategoryService.findById(hitCategory.getId());
+		Set<HitCategory> ruleCatSet = new HashSet<>();
+		ruleCatSet.add(hitCategory);
 		ruleMeta.setRuleCategories(ruleCatSet);
+		ruleToSave.setHitCategory(hitCategory);
 	}
 }

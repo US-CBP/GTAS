@@ -8,13 +8,9 @@ package gov.gtas.repository;
 import java.util.List;
 import java.util.Set;
 
-import gov.gtas.model.Flight;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.PaymentForm;
+import gov.gtas.model.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import gov.gtas.model.Pnr;
 
 import javax.transaction.Transactional;
 

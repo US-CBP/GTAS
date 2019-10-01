@@ -5,73 +5,43 @@
  */
 package gov.gtas.enumtype;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
+
 public enum HitTypeEnum {
 
-	R, // Rule Hit
+	USER_DEFINED_RULE("R"), // Rule Hit
 
-	P, // Watchlist Passenger Hit
+	WATCHLIST("WL"), // General watchlist hit
 
-	D, // Watchlist Document Hit
+	WATCHLIST_PASSENGER("P"), // Watchlist Passenger Hit
 
-	PD, // Watchlist Passenger and Document Hit
+	WATCHLIST_DOCUMENT("D"), // Watchlist Document Hit
 
-	RPD, // UDR rule, Watchlist Passenger and Document Hit
+	PARTIAL_WATCHLIST("PWL"), // Watchlist Document Hit
 
-	RP, // UDR rule, Watchlist Passenger Hit
+	GRAPH_HIT("GH"), // Graph Database rule
 
-	RD, // UDR rule, Watchlist Document Hit
+	MANUAL_HIT("M"); // Manual Hit
 
-	GH; // Graph Database rule
+	private final String hitType;
 
-	public HitTypeEnum addHitType(HitTypeEnum hitTypeToAdd) {
-		HitTypeEnum ret = this;
-		switch (hitTypeToAdd) {
-		case R:
-			if (this == P) {
-				ret = RP;
-			} else if (this == D) {
-				ret = RD;
-			} else if (this == PD) {
-				ret = RPD;
-			}
-			break;
-		case P:
-			if (this == R) {
-				ret = RP;
-			} else if (this == D) {
-				ret = PD;
-			} else if (this == RD) {
-				ret = RPD;
-			}
-			break;
-		case D:
-			if (this == P) {
-				ret = PD;
-			} else if (this == R) {
-				ret = RD;
-			} else if (this == RP) {
-				ret = RPD;
-			}
-			break;
-		case PD:
-			if (this == R) {
-				ret = RPD;
-			}
-			break;
-		case RP:
-			if (this == D) {
-				ret = RPD;
-			}
-			break;
-		case RD:
-			if (this == P) {
-				ret = RPD;
-			}
-			break;
-		default:
-			break;
+	HitTypeEnum(String hitType) {
+		this.hitType = hitType;
+	}
 
-		}
-		return ret;
+	private static final Map<String, HitTypeEnum> stringToEnum = Stream.of(values())
+			.collect(toMap(Object::toString, e -> e));
+
+	public static Optional<HitTypeEnum> fromString(String entityName) {
+		return Optional.ofNullable(stringToEnum.get(entityName));
+	}
+
+	@Override
+	public String toString() {
+		return hitType;
 	}
 }
