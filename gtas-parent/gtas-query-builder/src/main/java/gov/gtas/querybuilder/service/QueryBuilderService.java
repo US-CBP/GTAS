@@ -203,16 +203,17 @@ public class QueryBuilderService {
 				Passenger passenger = (Passenger) result[1];
 				passengerIds.add(passenger.getId());
 			}
+			if (!passengerIds.isEmpty()) {
+				Map<Long, List<HitsSummary>> paxHitSummary = passengerService
+						.getHitsSummaryMappedToPassengerIds(passengerIds);
+				Map<Long, Set<Document>> paxDocuments = passengerService.getDocumentMappedToPassengerIds(passengerIds);
 
-			Map<Long, List<HitsSummary>> paxHitSummary = passengerService
-					.getHitsSummaryMappedToPassengerIds(passengerIds);
-			Map<Long, Set<Document>> paxDocuments = passengerService.getDocumentMappedToPassengerIds(passengerIds);
-
-			for (Object[] result : resultList.getResult()) {
-				Passenger passenger = (Passenger) result[1];
-				Flight flight = (Flight) result[2];
-				PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
-				passengerList.add(vo);
+				for (Object[] result : resultList.getResult()) {
+					Passenger passenger = (Passenger) result[1];
+					Flight flight = (Flight) result[2];
+					PassengerGridItemVo vo = createPassengerGridItemVo(paxHitSummary, paxDocuments, passenger, flight);
+					passengerList.add(vo);
+				}
 			}
 		} catch (InvalidQueryRepositoryException | IllegalArgumentException e) {
 			throw new InvalidQueryException(e.getMessage(), queryRequest.getQuery());
