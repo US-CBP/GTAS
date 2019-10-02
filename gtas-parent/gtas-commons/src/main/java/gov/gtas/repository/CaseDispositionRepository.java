@@ -53,7 +53,7 @@ public interface CaseDispositionRepository extends JpaRepository<Case, Long>, Ca
 	@Query("SELECT p FROM Case c join c.hitsDispositions p where c.id = (:caseId)")
 	public Set<HitsDisposition> getHitsDispositionByCaseId(@Param("caseId") Long caseId);
 
-	@Query("SELECT c " + "FROM Case c " + "Where c.flightId in :flightIds")
+	@Query("SELECT c " + "FROM Case c " + "Where c.flightId in :flightIds and c.status = 'NEW'")
 	public Set<Case> getCasesByFlightIds(@Param("flightIds") Set<Long> flightIds);
 
 	@Modifying

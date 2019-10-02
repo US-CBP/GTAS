@@ -1220,11 +1220,11 @@ public class CaseDispositionServiceImpl implements CaseDispositionService {
 
 	public Set<Case> getOpenCasesWithTimeLeft() {
 		List<Flight> flightList = flightService.getFlightsThreeDaysForwardInbound();
-		flightList.addAll(flightService.getFlightsThreeDaysForwardOutbound());
+		// flightList.addAll(flightService.getFlightsThreeDaysForwardOutbound());
 		Set<Long> flightIds = flightList.stream().map(Flight::getId).collect(Collectors.toSet());
 		Set<Case> casesBeforeTakeOff = new HashSet<>();
 		if (!flightIds.isEmpty()) {
-			casesBeforeTakeOff = getCasesWithTimeLeft(caseDispositionRepository.getCasesByFlightIds(flightIds));
+			casesBeforeTakeOff = caseDispositionRepository.getCasesByFlightIds(flightIds);
 		}
 		return casesBeforeTakeOff;
 	}
