@@ -141,62 +141,6 @@ public final class DateCalendarUtils {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		return format.format(date);
 	}
-<<<<<<< HEAD
-    
-    public static Date parseRuleEngineDate(final String dateString) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATE_FORMAT);
-        return format.parse(dateString);
-    }
-
-    public static String formatRuleEngineDate(final Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATE_FORMAT);
-        return format.format(date);
-    }
-
-    public static String formatRuleEngineDateTime(final Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATETIME_FORMAT);
-        return format.format(date);
-    }
-    
-    /**
-     * Get the year value of the { @date } passed in
-     * 
-     * @param date
-     * @return
-     */
-    public static int getYearOfDate(String date, DateTimeFormatter dateTimeFormatter) {
-    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
-    	return travLocalDate.getYear();
-    }
-    
-    /**
-     * Gets the month-of-year field
-     * 
-     * @param date
-     * @param dateTimeFormatter
-     * @return
-     */
-    public static int getMonthOfDate(String date, DateTimeFormatter dateTimeFormatter) {
-    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
-    	return travLocalDate.getMonth().getValue();
-    }
-    
-    /**
-     * Gets the day-of-month field.
-     * 
-     * @param date
-     * @param dateTimeFormatter
-     * @return
-     */
-    public static int getDayOfDate(String date, DateTimeFormatter dateTimeFormatter) {
-    	LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
-    	return travLocalDate.getDayOfMonth();
-    }
-    
-    public static LocalDate parseLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
-    	return LocalDate.parse(date, dateTimeFormatter);
-    }
-=======
 
 	public static Date parseRuleEngineDate(final String dateString) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATE_FORMAT);
@@ -227,5 +171,28 @@ public final class DateCalendarUtils {
 	public static LocalDate parseLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
 		return LocalDate.parse(date, dateTimeFormatter);
 	}
->>>>>>> 2b3c651e44ee8a49287f4f8c89b64eca173301f8
+
+	/**
+	 * Gets the month-of-year field
+	 * 
+	 * @param date
+	 * @param dateTimeFormatter
+	 * @return
+	 */
+	public static int getMonthOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+		LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+		return travLocalDate.getMonth().getValue();
+	}
+
+	/**
+	 * Gets the day-of-month field.
+	 * 
+	 * @param date
+	 * @param dateTimeFormatter
+	 * @return
+	 */
+	public static int getDayOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+		LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+		return travLocalDate.getDayOfMonth();
+	}
 }
