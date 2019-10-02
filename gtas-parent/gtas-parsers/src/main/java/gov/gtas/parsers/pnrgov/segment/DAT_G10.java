@@ -24,20 +24,20 @@ import gov.gtas.parsers.exception.ParseException;
  * Universal Time Coordinated (UTC)
  */
 public class DAT_G10 extends DAT {
-    private static final String PNR_HISTORY = "T";
-    private Date pnrHistorytDateTime;
-    
-    public DAT_G10(List<Composite> composites) throws ParseException {
-        super(composites);
-        
-        for (DatDetails d : getDateTimes()) {
-            if (PNR_HISTORY.equals(d.getType())) {
-                this.pnrHistorytDateTime = d.getDateTime();
-            }
-        }
-    }
+	private static final String PNR_HISTORY = "T";
+	private Date pnrHistorytDateTime;
 
-    public Date getPnrHistorytDateTime() {
-        return pnrHistorytDateTime;
-    }
+	public DAT_G10(List<Composite> composites) throws ParseException {
+		super(composites);
+
+		for (DatDetails d : getDateTimes()) {
+			if (PNR_HISTORY.equals(d.getType())) {
+				this.pnrHistorytDateTime = d.getDateTime();
+			}
+		}
+	}
+
+	public Date getPnrHistorytDateTime() {
+		return pnrHistorytDateTime;
+	}
 }

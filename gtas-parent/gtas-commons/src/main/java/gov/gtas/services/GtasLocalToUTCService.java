@@ -11,5 +11,5 @@ package gov.gtas.services;
 import java.util.Date;
 
 public interface GtasLocalToUTCService {
-    Date convertFromAirportCode(String airportCode, Date date);
+	Date convertFromAirportCode(String airportCode, Date date);
 }

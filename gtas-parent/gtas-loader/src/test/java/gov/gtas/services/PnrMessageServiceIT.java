@@ -37,11 +37,9 @@ import gov.gtas.repository.FlightLegRepository;
 import gov.gtas.repository.FlightRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class, })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class, })
 @Rollback(true)
-public class PnrMessageServiceIT extends
-		AbstractTransactionalJUnit4SpringContextTests {
+public class PnrMessageServiceIT extends AbstractTransactionalJUnit4SpringContextTests {
 	@Autowired
 	private Loader svc;
 
@@ -49,15 +47,14 @@ public class PnrMessageServiceIT extends
 
 	@Autowired
 	private FlightRepository flightDao;
-	
+
 	@Autowired
 	private FlightLegRepository flightLegRepository;
 
 	@Before
 	public void setUp() throws Exception {
 		ClassLoader classLoader = getClass().getClassLoader();
-		this.message = new File(classLoader.getResource(
-				"pnr-messages/2_pnrs_basic.edi").getFile());
+		this.message = new File(classLoader.getResource("pnr-messages/2_pnrs_basic.edi").getFile());
 	}
 
 	@Test
@@ -107,37 +104,38 @@ public class PnrMessageServiceIT extends
 
 		Set<Flight> dummy = new HashSet<>();
 		Set<Passenger> paxDummy = new HashSet<>();
-/*
-		loaderRepo.processFlightsAndBookingDetails(flights, passengers, dummy,
-				paxDummy, new ArrayList<FlightLeg>(),new String[]{"placeholder"},new HashSet<BookingDetail>());
-*/
-	//	List<Passenger> pax = paxDao.getPassengersByLastName("doe");
-//		assertEquals(1, pax.size());
+		/*
+		 * loaderRepo.processFlightsAndBookingDetails(flights, passengers, dummy,
+		 * paxDummy, new ArrayList<FlightLeg>(),new String[]{"placeholder"},new
+		 * HashSet<BookingDetail>());
+		 */
+		// List<Passenger> pax = paxDao.getPassengersByLastName("doe");
+		// assertEquals(1, pax.size());
 	}
 
 	@Test()
 	@Transactional
 	public void testRunService() throws ParseException {
-    svc.processMessage(this.message, new String[]{"placeholder"});
+		svc.processMessage(this.message, new String[] { "placeholder" });
 	}
 
 	@Test()
 	@Transactional
 	public void testServiceWithBags() {
 		ClassLoader classLoader = getClass().getClassLoader();
-		this.message = new File(classLoader.getResource(
-				"pnr-messages/pnrMessageExample.txt").getFile());
-		svc.processMessage(this.message, new String[]{"placeholder"});
+		this.message = new File(classLoader.getResource("pnr-messages/pnrMessageExample.txt").getFile());
+		svc.processMessage(this.message, new String[] { "placeholder" });
 	}
 
-  // Runs the createNewFlight method in LoaderUtils, does not crash
+	// Runs the createNewFlight method in LoaderUtils, does not crash
 	@Test
 	@Transactional
 	public void smokeTestGtasLoaderImpl() {
 		this.message = new File(
 				getClass().getClassLoader().getResource("pnr-messages/multiple_flight_leg_pnr.txt").getFile());
-    ProcessedMessages msgs = svc.processMessage(this.message, new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
+		ProcessedMessages msgs = svc.processMessage(this.message,
+				new String[] { "FRA", "IAD", "UA", "0988", "1526097600000", "1526142000000" });
 
-    assertNotNull(msgs);
+		assertNotNull(msgs);
 	}
 }

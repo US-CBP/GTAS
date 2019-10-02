@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface HitDetailRepository extends CrudRepository<HitDetail, Long> {
 
-    @Query("DELETE FROM HitDetail hd WHERE hd.parent.id = (:id)")
-    @Modifying
-    @Transactional
-    public void deleteDBData(@Param("id") Long id);
+	@Query("DELETE FROM HitDetail hd WHERE hd.parent.id = (:id)")
+	@Modifying
+	@Transactional
+	public void deleteDBData(@Param("id") Long id);
 
 }

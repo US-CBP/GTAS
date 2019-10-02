@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionManualCtrl',
-        function ($scope, $http, $mdToast,
+        function ($scope, $http, $mdToast, $translate,
                   gridService, $timeout,
                   spinnerService, caseDispositionService, caseService, $state, $mdSidenav, AuthService,
                   passenger, ruleCats, codeTooltipService) {
@@ -161,12 +161,12 @@
 
             $scope.saveCase = function(){
                 if (!hasData(($scope.rule || {}).ruleCat)) {
-                  $scope.errorToast("The case requires a Rule Category.");
+                  $scope.errorToast($translate.instant('msg.caserequiresrulecategory'));
                   return;
                 }
 
                 if(!hasData($scope.commentText)) {
-                  $scope.errorToast("The case requires a comment.")
+                  $scope.errorToast($translate.instant('msg.caserequirescomment'));
                   return;
                 }
                 
@@ -176,7 +176,7 @@
                     .then(function (aCase) {
                         spinnerService.hide('html5spinner');
                         var toastPosition = angular.element(document.getElementById('hitForm'));
-                        $scope.successToast("Case Created");
+                        $scope.successToast($translate.instant('msg.casecreated'));
                         //$timeout($state.transitionTo('caseDisposition'),5000);
                         $timeout($state.transitionTo('casedetail', { caseId: aCase.data.id }),5000);
                     });

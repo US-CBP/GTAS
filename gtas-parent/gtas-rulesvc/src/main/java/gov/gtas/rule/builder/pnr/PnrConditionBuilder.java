@@ -10,11 +10,11 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class PnrConditionBuilder extends EntityConditionBuilder {
 
-    public PnrConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.PNR.getEntityName());
-    }
+	public PnrConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.PNR.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
 }

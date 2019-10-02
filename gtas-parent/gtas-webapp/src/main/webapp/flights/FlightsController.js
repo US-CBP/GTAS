@@ -5,7 +5,7 @@
  */
 (function () {
   'use strict';
-  app.controller('FlightsController', function ($scope, $state, $stateParams, $mdToast, codeService,
+  app.controller('FlightsController', function ($scope, $state, $stateParams, $mdToast, codeService, $filter, $translate,
           flightService,flightSearchOptions, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
       $scope.errorToast = function(error){
           $mdToast.show($mdToast.simple()
@@ -207,6 +207,16 @@
           else return;
       });
 
+      var fixGridData = function(grid, row, col, value) {
+        if (col.name === 'countDownTimer') {
+            value = row.entity.countDown.countDownTimer;
+        }
+        if (col.name === 'eta' || col.name === 'etd') {
+           value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+        }
+        return value;
+      }
+
       
       $scope.selectedFlight = $stateParams.flight;
       $scope.flightDirections = flightDirections;
@@ -224,11 +234,21 @@
           enableColumnMenus: false,
           enableGridMenu: true,
           enableExpandableRowHeader: false,
+          exporterPdfDefaultStyle: {fontSize: 9},
+          exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+          exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+          },
+          exporterPdfPageSize: 'LETTER',
+          exporterPdfMaxGridWidth: 500,
           exporterCsvFilename: 'FlightGid.csv',
           exporterExcelFilename: 'flightGrid.xlsx',
           exporterExcelSheetName: 'Data',
           expandableRowHeight: 200,
           expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+          exporterFieldCallback: function ( grid, row, col, value ){
+              return fixGridData (grid, row, col, value);
+          },
 
           onRegisterApi: function (gridApi) {
               $scope.gridApi = gridApi;
@@ -268,12 +288,11 @@
                             enableVerticalScrollbar: 1,
 
                     }
-
                     var request ={
                         dest:row.entity.destination,
                         direction:row.entity.direction,
-                        etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
-                        etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                        etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
+                        etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
                         flightNumber:row.entity.fullFlightNumber,
                         origin: row.entity.origin,
                         lastname:"",
@@ -311,12 +330,22 @@
               enableColumnMenus: false,
               enableExpandableRowHeader: false,
               enableGridMenu: true,
+              exporterPdfDefaultStyle: {fontSize: 9},
+              exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+              exporterPdfFooter: function ( currentPage, pageCount ) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+              },
+              exporterPdfPageSize: 'LETTER',
+              exporterPdfMaxGridWidth: 500,
               exporterCsvFilename: 'FlightsQueryGrid.csv',
               exporterExcelFilename: 'flightsQueryGrid.xlsx',
               exporterExcelSheetName: 'Data',
               expandableRowHeight: 200,
               expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
-
+              exporterFieldCallback: function ( grid, row, col, value ){
+                return fixGridData (grid, row, col, value);
+              },  
+            
              onRegisterApi: function (gridApi) {
                  $scope.gridApi = gridApi;
 
@@ -333,8 +362,8 @@
                         var request ={
                             dest:row.entity.destination,
                             direction:row.entity.direction,
-                            etaEnd:new Date(row.entity.etd.substring(0,10).split('-').join(',')),
-                            etaStart:new Date(row.entity.eta.substring(0,10).split('-').join(',')),
+                            etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
+                            etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
                             flightNumber:row.entity.fullFlightNumber,
                             origin: row.entity.origin,
                             lastname:"",
@@ -350,8 +379,8 @@
                            passengerHitList.push(value);
                          }
                          });
-                         spinnerService.show('html5spinner');
                          row.entity.subGridOptions.data=passengerHitList;
+                         spinnerService.hide('html5spinner');
                        });
                       }
                  });
@@ -362,21 +391,21 @@
           {
               name: 'passengerCount',
               field: 'passengerCount',
-              displayName: 'Passengers',
+              displayName: $translate.instant('flight.passengers'),
               enableFiltering: false,
               cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
           },
           {
               name: 'countDownTimer',
               field: 'countDown.millisecondsFromDate',
-              displayName: 'Count Down',
+              displayName: $translate.instant('flight.countdown'),
               type: 'number',
               enableFiltering: false,
               cellTemplate: '<span ng-class="{\'text-success\': row.entity.countDown.closeToCountDown}">{{row.entity.countDown.countDownTimer}}</span>'
           },
           {
               name: 'listHitCount',
-              displayName: 'Watchlist Hits',
+              displayName: $translate.instant('hit.watchlisthits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -387,7 +416,7 @@
           },
           {
               name: 'ruleHitCount',
-              displayName: 'Rule Hits',
+              displayName: $translate.instant('hit.rulehits'),
               enableFiltering: false,
               cellClass: gridService.colorHits,
               sort: {
@@ -398,7 +427,7 @@
           },
           {
               name: 'graphHitCount',
-              displayName: 'Graph Hits',
+              displayName: $translate.instant('hit.graphhits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -409,7 +438,7 @@
           },
           {
               name: 'fuzzyHitCount',
-              displayName: 'Partial Hits',
+              displayName: $translate.instant('hit.partialhits'),
               enableFiltering: false,
               cellClass: "gridService.colorHits",
               sort: {
@@ -420,20 +449,20 @@
           },
           {
               name: 'direction',
-              displayName: 'Direction', headerCellFilter: 'translate',
+              displayName: $translate.instant('flight.direction'),
               cellTemplate: '<span>{{COL_FIELD}}</span>',
               visible: true
           },
           {
               name: 'flightNumber',
-              displayName: 'flight.flight', headerCellFilter: 'translate',
+              displayName: $translate.instant('flight.flight'),
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()" ng-disabled="row.entity.codeshares.length === 0">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div ng-repeat="item in row.entity.codeshares">Codeshare Flight #: {{item.marketingFlightNumber}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>'
           },
           {
               name: 'carrier',
-              displayName: 'flight.carrier', headerCellFilter: 'translate',
+              displayName: $translate.instant('flight.carrier'),
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"carrier")}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>',
@@ -441,28 +470,26 @@
 
           },
           {
-              name: 'eta', displayName: 'pass.eta', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+              name: 'eta', displayName: $translate.instant('flight.arrival'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
           },
           {
-              name: 'etd', displayName: 'pass.etd', headerCellFilter: 'translate', type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
+              name: 'etd', displayName: $translate.instant('flight.departure'), type: 'date', cellFilter: 'date:\'yyyy-MM-dd HH:mm\''
           },
           {
-              name: 'origin', displayName: 'flight.origin', headerCellFilter: 'translate', visible: true,
+              name: 'origin', displayName: $translate.instant('flight.origin'), visible: true,
 
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
-                  + '</md-button>',
-
-
+                  + '</md-button>'
           },
           {
-              name: 'originCountry', displayName: 'doc.country', headerCellFilter: 'translate', visible: false,
+              name: 'originCountry', displayName: $translate.instant('doc.country'), visible: false,
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>'
           },
           {
-              name: 'destination', displayName: 'flight.destination', headerCellFilter: 'translate',
+              name: 'destination', displayName: $translate.instant('flight.destination'),
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>',
@@ -470,7 +497,7 @@
 
           },
           {
-              name: 'destinationCountry', displayName: 'pass.destination', headerCellFilter: 'translate',
+              name: 'destinationCountry', displayName: $translate.instant('pass.destination'),
               cellTemplate: '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">'
                   + '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"country")}}</div></md-tooltip>{{COL_FIELD}}'
                   + '</md-button>',
@@ -484,7 +511,8 @@
     $scope.passengerSubGridColumnDefs =
       [
          {
-             name: 'onRuleHitList', displayName: 'Rule Hits',
+             name: 'onRuleHitList',
+             displayName: $translate.instant('hit.rulehits'),
              cellClass: "rule-hit",
              sort: {
                  direction: uiGridConstants.DESC,
@@ -493,7 +521,8 @@
              cellTemplate: '<md-button aria-label="hits" ng-click="grid.api.expandable.toggleRowExpansion(row.entity)" disabled="{{row.entity.onRuleHitList|ruleHitButton}}"><span ng-if="row.entity.onRuleHitList" class="badge warning-back warning-border-th">{{+row.entity.onRuleHitList}}</span></md-button>'
          },
          {
-             name: 'onWatchList', displayName: 'Watchlist Hits',
+             name: 'onWatchList',
+             displayName: $translate.instant('hit.watchlisthits'),
              cellClass: gridService.anyWatchlistHit,
              sort: {
                  direction: uiGridConstants.DESC,
@@ -501,14 +530,26 @@
              },
              cellTemplate: '<span ng-if="row.entity.onWatchListDoc || row.entity.onWatchList" class="badge danger-back danger-border-th">{{+row.entity.onWatchListDoc+row.entity.onWatchList}}</span>'
          },
-         {name: 'passengerType', displayName:'T', headerCellFilter: 'translate'},
-         {
-             name: 'lastName', displayName:'pass.lastname', headerCellFilter: 'translate',
-             cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-         },
-         {name: 'firstName', displayName:'pass.firstname', headerCellFilter: 'translate'},
-         {name: 'middleName', displayName:'pass.middlename', headerCellFilter: 'translate'},
-         {name: 'fullFlightNumber', displayName:'pass.flight', headerCellFilter: 'translate' },
+         {name: 'passengerType',
+         displayName: $translate.instant('pass.type')
+        },
+        {
+             name: 'lastName',
+             displayName: $translate.instant('pass.lastname'),
+             cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="{{`msg.launchflightpax` | translate}}" target="pax.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+        },
+        {
+           name: 'firstName',
+           displayName: $translate.instant('pass.firstname')
+        },
+        {
+          name: 'middleName',
+          displayName: $translate.instant('pass.middlename')
+        },
+        {
+          name: 'fullFlightNumber',
+          displayName: $translate.instant('flight.flightnum')
+        },
          {
              name: 'eta',
              type: 'date',
@@ -517,19 +558,27 @@
                  priority: 2
              },
              cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
-             displayName:'pass.eta', headerCellFilter: 'translate',
+             displayName: $translate.instant('flight.arrival'),
              visible: (stateName === 'paxAll')
          },
          {name: 'etd',
              type: 'date',
-             displayName:'pass.etd',
-             headerCellFilter: 'translate',
+             displayName: $translate.instant('flight.departure'),
              cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
              visible: (stateName === 'paxAll')},
-         {name: 'gender', displayName:'Gender', headerCellFilter: 'translate'},
-         {name: 'dob', displayName:'pass.dob', headerCellFilter: 'translate', cellFilter: 'date',
+         {
+           name: 'gender',
+           displayName: $translate.instant('pass.gender')
+          },
+         {
+           name: 'dob',
+           displayName: $translate.instant('pass.dob'),
+           cellFilter: 'date',
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'},
-         {name: 'nationality', displayName:'add.Country', headerCellFilter: 'translate'}
+         {
+           name: 'nationality',
+           displayName: $translate.instant('pass.nationality'),
+          }
      ];
 
     $scope.queryPassengersOnSelectedFlight = function (row_entity) {

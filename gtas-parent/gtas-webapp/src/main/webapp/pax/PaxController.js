@@ -11,6 +11,7 @@
     $mdDialog,
     $mdSidenav,
     $timeout,
+    $translate,
     passenger,
     $mdToast,
     spinnerService,
@@ -46,7 +47,7 @@
     $scope.destination = $scope.passenger.debarkation;
     $scope.SvgType = 2;
     $scope.isReloaded = true;
-
+    
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
     });
@@ -65,7 +66,7 @@
     vaquita.graph.HORIZONTAL_NODES = 1;
 
     vaquita.graph.setZoom(0.5, 2);
-    
+
     $scope.palette = {
       address: "#2C17B1",
       airport: "#1144AA",
@@ -1094,7 +1095,9 @@
     $injector,
     $stateParams,
     $state,
+    $filter,
     $mdToast,
+    $translate,
     paxService,
     sharedPaxData,
     uiGridConstants,
@@ -1156,11 +1159,11 @@
           stateName = $state.$current.self.name,
           ruleGridColumns = [{
               name: 'ruleTitle',
-              displayName: 'Title',
+              displayName: $translate.instant('rule.title'),
               cellTemplate: '<md-button aria-label="title" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
           }, {
               name: 'ruleConditions',
-              displayName: 'Conditions',
+              displayName: $translate.instant('rule.conditions'),
               field: 'hitsDetailsList[0]',
               cellFilter: 'hitsConditionDisplayFilter'
           }],
@@ -1287,6 +1290,16 @@
       return $scope.list(index);
     };
 
+    var fixGridData = function(grid, row, col, value) {
+      if (col.name === 'countDownTimer') {
+          value = row.entity.countDown.countDownTimer;
+      }
+      if (col.name === 'eta' || col.name === 'etd') {
+         value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+      }
+      return value;
+    }
+
     $scope.buildAfterEntitiesLoaded();
 
     $scope.passengerGrid = {
@@ -1302,12 +1315,22 @@
       enableColumnMenus: false,
       multiSelect: false,
       enableGridMenu: true,
+      exporterPdfDefaultStyle: {fontSize: 9},
+      exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+      exporterPdfFooter: function ( currentPage, pageCount ) {
+        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+      },
+      exporterPdfPageSize: 'LETTER',
+      exporterPdfMaxGridWidth: 500,
       exporterCsvFilename: 'PassengerGrid.csv',
       exporterExcelFilename: 'PassengerGrid.xlsx',
       exporterExcelSheetName: 'Data',
       enableExpandableRowHeader: false,
 
       expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+      exporterFieldCallback: function ( grid, row, col, value ){
+        return fixGridData (grid, row, col, value);
+      },
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
 
@@ -1334,6 +1357,13 @@
       enableVerticalScrollbar: 1,
       enableColumnMenus: false,
       enableGridMenu: true,
+      exporterPdfDefaultStyle: {fontSize: 9},
+      exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+      exporterPdfFooter: function ( currentPage, pageCount ) {
+        return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+      },
+      exporterPdfPageSize: 'LETTER',
+      exporterPdfMaxGridWidth: 500,
       exporterCsvFilename: 'passengerQueryGrid.csv',
       exporterExcelFilename: 'passengerQueryGrid.xlsx',
       exporterExcelSheetName: 'Data',
@@ -1341,6 +1371,9 @@
       enableExpandableRowHeader: false,
       minRowsToShow: 10,
       expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
+      exporterFieldCallback: function ( grid, row, col, value ){
+        return fixGridData (grid, row, col, value);
+      },
 
       onRegisterApi: function(gridApi) {
         $scope.gridApi = gridApi;
@@ -1366,10 +1399,10 @@
       return codeTooltipService.getCodeTooltipData(field, type);
     };
 
-    $scope.hitTooltipData = ["Loading..."];
+    $scope.hitTooltipData = ["{{'msg.loading' | translate}}"];
 
     $scope.resetTooltip = function() {
-      $scope.hitTooltipData = ["Loading..."];
+      $scope.hitTooltipData = ["{{'msg.loading' | translate}}"];
       // $('md-tooltip').remove();
     };
 
@@ -1391,7 +1424,7 @@
         {
           field: "onRuleHitList",
           name: "onRuleHitList",
-          displayName: "Rule Hits",
+          displayName: $translate.instant('hit.rulehits'),
           width: 100,
           cellClass: "rule-hit",
           sort: {
@@ -1405,7 +1438,7 @@
         },
         {
           name: "onWatchList",
-          displayName: "Watchlist Hits",
+          displayName: $translate.instant('hit.watchlisthits'),
           width: 130,
           cellClass: gridService.anyWatchlistHit,
           sort: {
@@ -1421,48 +1454,42 @@
         {
           field: "passengerType",
           name: "passengerType",
-          displayName: "T",
+          displayName: $translate.instant('pass.type'),
           width: 50
         },
         {
           field: "lastName",
           name: "lastName",
-          displayName: "pass.lastname",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.lastname'),
           cellTemplate:
             '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
         },
         {
           field: "firstName",
           name: "firstName",
-          displayName: "pass.firstname",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('pass.firstname')
         },
         {
           field: "middleName",
           name: "middleName",
-          displayName: "pass.middlename",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('pass.middlename')
         },
         {
           field: "documents[0].documentNumber",
           name: "documentNumber",
-          displayName: "pass.docNum",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.docNum'),
           width: 120
         },
         {
           field: "flightNumber",
           name: "flightNumber",
-          displayName: "pass.flight",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.flight'),
           cellTemplate: "<span>{{row.entity.carrier}}{{COL_FIELD}}</span>"
         },
         {
           field: "flightOrigin",
           name: "flightOriginairport",
-          displayName: "pass.originairport",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.originairport'),
           cellTemplate:
             '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">' +
             '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}' +
@@ -1471,8 +1498,7 @@
         {
           field: "flightDestination",
           name: "flightDestinationairport",
-          displayName: "pass.destinationairport",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.destinationairport'),
           cellTemplate:
             '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetCountryTooltip()">' +
             '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"airport")}}</div></md-tooltip>{{COL_FIELD}}' +
@@ -1487,34 +1513,30 @@
             direction: uiGridConstants.DESC,
             priority: 2
           },
-          displayName: "pass.eta",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('flight.arrival')
         },
         {
           field: "etd",
           name: "etd",
           type: 'date',
           cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
-          displayName: "pass.etd",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('flight.departure'),
         },
         {
           field: "gender",
           name: "gender",
-          displayName: "G",
+          displayName: $translate.instant('pass.gender'),
           width: 50
         },
         {
           name: "dob",
-          displayName: "pass.dob",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.dob'),
           cellFilter: "date",
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'
         },
         {
           name: "nationality",
-          displayName: "Nationality",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.nationality'),
           width: 75,
           cellTemplate:
             '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">' +
@@ -1526,7 +1548,7 @@
       $scope.passengerGrid.columnDefs = [
         {
           name: "onRuleHitList",
-          displayName: "Rule Hits",
+          displayName: $translate.instant('hit.rulehits'),
           width: 100,
           cellClass: "rule-hit",
           sort: {
@@ -1540,7 +1562,7 @@
         },
         {
           name: "onWatchList",
-          displayName: "Watchlist Hits",
+          displayName: $translate.instant('hit.watchlisthits'),
           width: 130,
           cellClass: gridService.anyWatchlistHit,
           sort: {
@@ -1555,9 +1577,8 @@
         },
         {
           name: "passengerType",
-          displayName: "T",
+          displayName: $translate.instant('pass.type'),
           width: 50,
-          headerCellFilter: "translate",
           cellTemplate:
             "<md-button>" +
             '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"passenger")}}</div></md-tooltip>{{COL_FIELD}}' +
@@ -1565,26 +1586,22 @@
         },
         {
           name: "lastName",
-          displayName: "pass.lastname",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.lastname'),
           cellTemplate:
             '<md-button aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
         },
         {
           name: "firstName",
-          displayName: "pass.firstname",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('pass.firstname')
         },
         {
           name: "middleName",
-          displayName: "pass.middlename",
-          headerCellFilter: "translate"
+          displayName: $translate.instant('pass.middlename'),
         },
         {
           field: "documents[0].documentNumber",
           name: "documentNumber",
-          displayName: "pass.docNum",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.docNum'),
           width: 130
         },
         {
@@ -1595,23 +1612,20 @@
             direction: uiGridConstants.DESC,
             priority: 2
           },
-          displayName: "pass.eta",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('flight.arrival'),
           visible: stateName === "paxAll"
         },
         {
           name: "etd",
           type: 'date',
           cellFilter: 'date:\'yyyy-MM-dd HH:mm\'',
-          displayName: "pass.etd",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('flight.departure'),
           visible: stateName === "paxAll"
         },
         {
           name: "gender",
-          displayName: "G",
+          displayName: $translate.instant('pass.gender'),
           width: 50,
-          headerCellFilter: "translate",
           cellTemplate:
             "<md-button>" +
             '<md-tooltip class="multi-tooltip" md-direction="left"><div>{{grid.appScope.getCodeTooltipData(COL_FIELD,"gender")}}</div></md-tooltip>{{COL_FIELD}}' +
@@ -1619,15 +1633,13 @@
         },
         {
           name: "dob",
-          displayName: "pass.dob",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.dob'),
           cellFilter: "date",
           cellTemplate: '<span>{{COL_FIELD| date:"yyyy-MM-dd"}}</span>'
         },
         {
           name: "nationality",
-          displayName: "Nationality",
-          headerCellFilter: "translate",
+          displayName: $translate.instant('pass.nationality'),
           width: 120,
           cellTemplate:
             '<md-button aria-label="hits" ng-mouseleave="grid.appScope.resetTooltip()">' +

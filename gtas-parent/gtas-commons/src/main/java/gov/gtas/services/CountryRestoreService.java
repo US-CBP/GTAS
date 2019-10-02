@@ -10,6 +10,7 @@ import gov.gtas.model.lookup.CountryRestore;
 import java.util.List;
 
 public interface CountryRestoreService {
-    public List<CountryRestore> findAll();
-    public CountryRestore findById(Long id);
+	public List<CountryRestore> findAll();
+
+	public CountryRestore findById(Long id);
 }

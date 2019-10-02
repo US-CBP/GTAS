@@ -28,8 +28,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class,
-		WebAppConfig.class })
+@ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })
 @WebAppConfiguration
 @Rollback(true)
 public class SecurityUserDetailsServiceIT {

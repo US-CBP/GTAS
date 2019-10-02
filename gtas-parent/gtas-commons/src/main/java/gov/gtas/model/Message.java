@@ -40,20 +40,19 @@ public class Message extends BaseEntity {
 	@OneToOne(targetEntity = MessageStatus.class, mappedBy = "message", fetch = FetchType.EAGER)
 	@JoinColumn(name = "id", unique = true, referencedColumnName = "ms_message_id", insertable = false, updatable = false)
 	private MessageStatus status;
-	
-    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "message")
-    private List<FlightLeg> flightLegs = new ArrayList<>();
-    
-    @ManyToMany(fetch=FetchType.LAZY,targetEntity = BookingDetail.class)
+
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "message")
+	private List<FlightLeg> flightLegs = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = BookingDetail.class)
 	@JoinTable(name = "message_booking", joinColumns = @JoinColumn(name = "message_id"), inverseJoinColumns = @JoinColumn(name = "booking_detail_id"))
 	private Set<BookingDetail> bookingDetails = new HashSet<>();
 
 	@Column(length = 4000)
 	private String error;
 
-	@Column(name="passenger_count")
+	@Column(name = "passenger_count")
 	protected Integer passengerCount;
-
 
 	public Integer getPassengerCount() {
 		return passengerCount;
@@ -62,6 +61,7 @@ public class Message extends BaseEntity {
 	public void setPassengerCount(Integer passengerCount) {
 		this.passengerCount = passengerCount;
 	}
+
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -116,24 +116,24 @@ public class Message extends BaseEntity {
 	}
 
 	public void addFlightLeg(FlightLeg leg) {
-        flightLegs.add(leg);
-        leg.setMessage(this);
-    }
+		flightLegs.add(leg);
+		leg.setMessage(this);
+	}
 
 	public void removeFlightLeg(FlightLeg leg) {
-		 flightLegs.remove(leg);
-	     leg.setMessage(null);
+		flightLegs.remove(leg);
+		leg.setMessage(null);
 	}
-	
-    public List<FlightLeg> getFlightLegs() {
-        return flightLegs;
-    }
 
-    public void setFlightLegs(List<FlightLeg> flightLegs) {
-        this.flightLegs = flightLegs;
-    }
-    
-    public Set<BookingDetail> getBookingDetails() {
+	public List<FlightLeg> getFlightLegs() {
+		return flightLegs;
+	}
+
+	public void setFlightLegs(List<FlightLeg> flightLegs) {
+		this.flightLegs = flightLegs;
+	}
+
+	public Set<BookingDetail> getBookingDetails() {
 		return bookingDetails;
 	}
 
@@ -141,21 +141,21 @@ public class Message extends BaseEntity {
 		this.bookingDetails = bookingDetails;
 	}
 
-//    public void addPassenger(Passenger p) {
-//        if (this.passengers == null) {
-//            this.passengers = new HashSet<>();
-//        }
-//        this.passengers.add(p);
-//    }
-//
-//    public Set<Passenger> getPassengers() {
-//        return passengers;
-//    }
-//
-//    public void setPassengers(Set<Passenger> passengers) {
-//        this.passengers = passengers;
-//    }
-//
+	// public void addPassenger(Passenger p) {
+	// if (this.passengers == null) {
+	// this.passengers = new HashSet<>();
+	// }
+	// this.passengers.add(p);
+	// }
+	//
+	// public Set<Passenger> getPassengers() {
+	// return passengers;
+	// }
+	//
+	// public void setPassengers(Set<Passenger> passengers) {
+	// this.passengers = passengers;
+	// }
+	//
 
 	@Override
 	public boolean equals(Object obj) {

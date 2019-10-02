@@ -32,24 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @Rollback(true)
 public class RuleUtilsIT {
-	private static final String testDrl = "package gov.gtas.rule; "
-			+ "import gov.gtas.model.ApisMessage; "
-			+ "global java.util.List resultList; "
-			+ "rule \"RH1 - Hello Messsage\" "
-			+ "dialect \"mvel\" "
-			+ "when "
+	private static final String testDrl = "package gov.gtas.rule; " + "import gov.gtas.model.ApisMessage; "
+			+ "global java.util.List resultList; " + "rule \"RH1 - Hello Messsage\" " + "dialect \"mvel\" " + "when "
 			+ "m:ApisMessage( edifactMessage.transmissionSource.equals(\"Hello\"), date:edifactMessage.transmissionDate ) "
-			+ "then "
-			+ "System.out.println( \"Transmission date =\"+date ); "
-			+ "modify ( m ) { edifactMessage.transmissionSource = \"Goodbye\"}; "
-			+ "end "
-			+ "rule \"RH2 - GoodBye Messsage\" "
-			+ "dialect \"java\" "
-			+ "when "
+			+ "then " + "System.out.println( \"Transmission date =\"+date ); "
+			+ "modify ( m ) { edifactMessage.transmissionSource = \"Goodbye\"}; " + "end "
+			+ "rule \"RH2 - GoodBye Messsage\" " + "dialect \"java\" " + "when "
 			+ "m:ApisMessage( edifactMessage.transmissionSource.equals(\"Goodbye\"), date:edifactMessage.transmissionDate ) "
 			+ "then " + "System.out.println( \"Got Goodbye\"); "
-			+ "resultList.add(m.getEdifactMessage().getTransmissionDate()); "
-			+ "end";
+			+ "resultList.add(m.getEdifactMessage().getTransmissionDate()); " + "end";
 
 	@Test
 	@Transactional
@@ -82,8 +73,7 @@ public class RuleUtilsIT {
 
 		assertNotNull(resList);
 		assertEquals("Result list is empty", 1, resList.size());
-		assertEquals("Expected Transmission Date", transmissionDate,
-				resList.get(0));
+		assertEquals("Expected Transmission Date", transmissionDate, resList.get(0));
 	}
 
 	@Test
@@ -93,16 +83,14 @@ public class RuleUtilsIT {
 		KieBase kbase = RuleUtils.createKieBaseFromDrlString(testDrl);
 		KieSession s1 = RuleUtils.createSession(kbase);
 		KieSession s2 = RuleUtils.createSession(kbase);
-		assertNotEquals("Unexpected - got identical ids for two sessions",
-				s1.getId(), s2.getId());
+		assertNotEquals("Unexpected - got identical ids for two sessions", s1.getId(), s2.getId());
 		s1.dispose();
 		s2.dispose();
 	}
 
 	@Test
 	@Transactional
-	public void testBinarySerializationOfKieBase() throws IOException,
-			ClassNotFoundException {
+	public void testBinarySerializationOfKieBase() throws IOException, ClassNotFoundException {
 		KieBase kbase = RuleUtils.createKieBaseFromDrlString(testDrl);
 		byte[] blob = RuleUtils.convertKieBaseToBytes(kbase);
 		assertNotNull("ERROR - KieBase blob is null", blob);

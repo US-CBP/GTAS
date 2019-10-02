@@ -14,20 +14,20 @@ import java.util.UUID;
 @Entity
 @Table(name = "bag")
 public class Bag extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	public Bag() {
-    }
+	}
 
-    @Column(name = "bag_identification", nullable = false)
-    private String bagId;
+	@Column(name = "bag_identification", nullable = false)
+	private String bagId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "flight_id",referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
 	private Flight flight;
 
 	@Column(name = "data_source")
-    private String data_source;
+	private String data_source;
 
 	@Column(name = "destination_city")
 	private String destination;
@@ -45,23 +45,23 @@ public class Bag extends BaseEntity {
 	@Column(name = "destination_airport")
 	private String destinationAirport;
 
-    @Column(name = "airline")
+	@Column(name = "airline")
 	private String airline;
-    
-    @Column(name = "headpool")
-	private boolean headPool=false;
+
+	@Column(name = "headpool")
+	private boolean headPool = false;
 
 	@Column(name = "memberpool")
 	private boolean memberPool = false;
 
-    @Column(name = "primeFlight")
+	@Column(name = "primeFlight")
 	private boolean primeFlight;
 
-    @ManyToOne()
+	@ManyToOne()
 	@JoinColumn(name = "bagMeasurements")
 	private BagMeasurements bagMeasurements;
 
-	@ManyToMany(fetch = FetchType.LAZY ,targetEntity = BookingDetail.class)
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = BookingDetail.class)
 	@JoinTable(name = "bag_bd_join", joinColumns = @JoinColumn(name = "bag_id"), inverseJoinColumns = @JoinColumn(name = "bd_id"))
 	private Set<BookingDetail> bookingDetail = new HashSet<>();
 
@@ -105,6 +105,7 @@ public class Bag extends BaseEntity {
 	public void setBagSerialCount(String bagSerialCount) {
 		this.bagSerialCount = bagSerialCount;
 	}
+
 	public UUID getParserUUID() {
 		return parserUUID;
 	}
@@ -112,6 +113,7 @@ public class Bag extends BaseEntity {
 	public void setParserUUID(UUID parserUUID) {
 		this.parserUUID = parserUUID;
 	}
+
 	public boolean isHeadPool() {
 		return headPool;
 	}
@@ -177,39 +179,28 @@ public class Bag extends BaseEntity {
 	}
 
 	public String getBagId() {
-        return bagId;
-    }
-
-    public void setBagId(String bagId) {
-        this.bagId = bagId;
-    }
-    @Override
-	public String toString() {
-
-        return "\nbagid " +
-                bagId +
-                "\npass id " +
-                passenger.getId() +
-                "\nflight id " +
-                flight.getId() +
-                "\ndata source " +
-                data_source +
-                "\nDestination " +
-                destination +
-                "\nDestination airport " +
-                destinationAirport +
-                "\nAirline " +
-                airline;
+		return bagId;
 	}
 
+	public void setBagId(String bagId) {
+		this.bagId = bagId;
+	}
 
-    public void setBookingDetail(Set<BookingDetail> bookingDetail) {
-        this.bookingDetail = bookingDetail;
-    }
+	@Override
+	public String toString() {
 
-    public Set<BookingDetail> getBookingDetail() {
-        return bookingDetail;
-    }
+		return "\nbagid " + bagId + "\npass id " + passenger.getId() + "\nflight id " + flight.getId()
+				+ "\ndata source " + data_source + "\nDestination " + destination + "\nDestination airport "
+				+ destinationAirport + "\nAirline " + airline;
+	}
+
+	public void setBookingDetail(Set<BookingDetail> bookingDetail) {
+		this.bookingDetail = bookingDetail;
+	}
+
+	public Set<BookingDetail> getBookingDetail() {
+		return bookingDetail;
+	}
 
 	public boolean isPrimeFlight() {
 		return primeFlight;
@@ -229,26 +220,23 @@ public class Bag extends BaseEntity {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof Bag)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof Bag))
+			return false;
 		Bag bag = (Bag) o;
-		return isHeadPool() == bag.isHeadPool() &&
-				isMemberPool() == bag.isMemberPool() &&
-				isPrimeFlight() == bag.isPrimeFlight() &&
-				Objects.equals(getBagId(), bag.getBagId()) &&
-				Objects.equals(getData_source(), bag.getData_source()) &&
-				Objects.equals(getDestination(), bag.getDestination()) &&
-				Objects.equals(getPassengerId(), bag.getPassengerId()) &&
-				Objects.equals(getDestinationAirport(), bag.getDestinationAirport()) &&
-				Objects.equals(getBagSerialCount(), bag.getBagSerialCount()) &&
-				Objects.equals(getAirline(), bag.getAirline());
+		return isHeadPool() == bag.isHeadPool() && isMemberPool() == bag.isMemberPool()
+				&& isPrimeFlight() == bag.isPrimeFlight() && Objects.equals(getBagId(), bag.getBagId())
+				&& Objects.equals(getData_source(), bag.getData_source())
+				&& Objects.equals(getDestination(), bag.getDestination())
+				&& Objects.equals(getPassengerId(), bag.getPassengerId())
+				&& Objects.equals(getDestinationAirport(), bag.getDestinationAirport())
+				&& Objects.equals(getBagSerialCount(), bag.getBagSerialCount())
+				&& Objects.equals(getAirline(), bag.getAirline());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getBagId(),
-				getData_source(),
-				getPassengerId(),
-				getBagSerialCount());
+		return Objects.hash(getBagId(), getData_source(), getPassengerId(), getBagSerialCount());
 	}
 }

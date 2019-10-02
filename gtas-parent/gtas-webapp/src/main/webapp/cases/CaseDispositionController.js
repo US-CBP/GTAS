@@ -6,8 +6,8 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionCtrl',
-        function ($scope, $http, $mdToast,
-                  gridService,
+        function ($scope, $http, $mdToast, $filter,
+                  gridService, $translate,
                   spinnerService, caseDispositionService, newCases,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval) {
 
@@ -154,6 +154,19 @@
                 $interval(function () {$scope.refreshCountDown();}, 20000);
             },10000);
 
+            var fixGridData = function(grid, row, col, value) {
+                if (col.name === 'countdown') {
+                    value = row.entity.countDownTimeDisplay;
+                }
+                if (col.name === 'eta' || col.name === 'etd') {
+                   value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+                }
+                if (col.name === 'highPriorityRuleCatId') {
+                    value = grid.appScope.casesListWithCats[row.entity.highPriorityRuleCatId];
+                }
+                return value;
+              }
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -169,9 +182,19 @@
                 multiSelect: false,
                 enableExpandableRowHeader: false,
                 enableGridMenu: true,
+                exporterPdfDefaultStyle: {fontSize: 9},
+                exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+                exporterPdfFooter: function ( currentPage, pageCount ) {
+                    return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+                },
+                exporterPdfPageSize: 'LETTER',
+                exporterPdfMaxGridWidth: 500,
                 exporterCsvFilename: 'case-disposition.csv',
                 exporterExcelFilename: 'case-disposition.xlsx',
                 exporterExcelSheetName: 'Data',
+                exporterFieldCallback: function ( grid, row, col, value ){
+					return fixGridData (grid, row, col, value);
+				},
 
                 onRegisterApi: function (gridApi) {
                     $scope.gridApi = gridApi;
@@ -202,35 +225,36 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
-                    displayName: 'Flight', headerCellFilter: 'translate',
-                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    displayName: $translate.instant('flight.flight'),
+                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="' 
+                    + $translate.instant('msg.launchcase') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                 },
                 {
                     field: 'countdown',
                     name: 'countdown',
-                    displayName: 'Countdown Timer', headerCellFilter: 'translate',
+                    displayName: $translate.instant('flight.countdown'),
                     cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
-                    displayName: 'Top Rule Category',
+                    displayName: $translate.instant('case.toprulecategory'),
                     cellTemplate: '<span>{{grid.appScope.casesListWithCats[COL_FIELD]}}</span>'
                 },
                 {
                     field: 'lastName',
                     name: 'lastName',
-                    displayName: 'Last Name', headerCellFilter: 'translate'
+                    displayName: $translate.instant('pass.lastname')
                 },
                 {
                     field: 'firstName',
                     name: 'firstName',
-                    displayName: 'First Name', headerCellFilter: 'translate'
+                    displayName: $translate.instant('pass.firstname'),
                 },
                 {
                     field: 'status',
                     name: 'status',
-                    displayName: 'Status'
+                    displayName: $translate.instant('case.status')
                 }
 
             ];
@@ -261,14 +285,14 @@
                     function(data){
                         if(data!=null && data.data.cases!=null){
                             if(data.data.cases.length < 1){
-                                $scope.errorToast("No Results Found", toastPosition);
+                                $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition);
                             }
                         $scope.casesDispGrid.data = data.data.cases;
                         $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
                             }
                             else{
-                            $scope.errorToast("No Results Found", toastPosition)
+                            $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition)
                         }
                         spinnerService.hide('html5spinner');
                     });

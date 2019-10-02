@@ -50,10 +50,8 @@ import org.springframework.util.CollectionUtils;
  * The back-end service for persisting watch lists.
  */
 @Service
-public class WatchlistPersistenceServiceImpl implements
-		WatchlistPersistenceService {
-	private static final Logger logger = LoggerFactory
-			.getLogger(WatchlistPersistenceServiceImpl.class);
+public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceService {
+	private static final Logger logger = LoggerFactory.getLogger(WatchlistPersistenceServiceImpl.class);
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -75,8 +73,7 @@ public class WatchlistPersistenceServiceImpl implements
 
 	@Override
 	@Transactional
-	public List<Long> createUpdateDelete(String wlName, EntityEnum entity,
-			List<WatchlistItem> createUpdateList,
+	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
 			List<WatchlistItem> deleteList, String userId) {
 		final User user = userService.fetchUser(userId);
 		Watchlist watchlist = watchlistRepository.getWatchlistByName(wlName);
@@ -85,8 +82,7 @@ public class WatchlistPersistenceServiceImpl implements
 		} else if (entity != watchlist.getWatchlistEntity()) {
 			// existing watch list has a different entity than that specified in
 			// the create/update operation
-			ErrorHandlerFactory.createAndThrowException(
-					CommonErrorConstants.INVALID_ARGUMENT_ERROR_CODE, "entity",
+			ErrorHandlerFactory.createAndThrowException(CommonErrorConstants.INVALID_ARGUMENT_ERROR_CODE, "entity",
 					"Update Watchlist");
 		}
 		// set the audit fields
@@ -98,12 +94,10 @@ public class WatchlistPersistenceServiceImpl implements
 		if (CollectionUtils.isEmpty(createUpdateList)) {
 			doDeleteWithLogging(watchlist, user, deleteList);
 		} else if (CollectionUtils.isEmpty(deleteList)) {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(
-					watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
 			ret.addAll(createUpdateIds);
 		} else {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(
-					watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
 			doDeleteWithLogging(watchlist, user, deleteList);
 			ret.addAll(createUpdateIds);
 		}
@@ -122,8 +116,7 @@ public class WatchlistPersistenceServiceImpl implements
 
 	@Override
 	public List<Watchlist> findAllSummary() {
-		List<Object[]> summaryList = watchlistRepository
-				.fetchWatchlistSummary();
+		List<Object[]> summaryList = watchlistRepository.fetchWatchlistSummary();
 		List<Watchlist> ret = new LinkedList<>();
 		for (Object[] line : summaryList) {
 			ret.add(new Watchlist(line[0].toString(), (EntityEnum) line[1]));
@@ -138,55 +131,46 @@ public class WatchlistPersistenceServiceImpl implements
 
 	@Override
 	@Transactional
-	public Watchlist deleteWatchlist(String name, boolean forceFlag,
-			String userId) {
+	public Watchlist deleteWatchlist(String name, boolean forceFlag, String userId) {
 		final User user = userService.fetchUser(userId);
 		Watchlist wl = watchlistRepository.getWatchlistByName(name);
 		if (wl != null) {
-			List<WatchlistItem> childItems = watchlistItemRepository
-					.getItemsByWatchlistName(name);
+			List<WatchlistItem> childItems = watchlistItemRepository.getItemsByWatchlistName(name);
 			if (!CollectionUtils.isEmpty(childItems) && forceFlag) {
 				watchlistItemRepository.deleteAll(childItems);
 				watchlistRepository.delete(wl);
 			} else if (CollectionUtils.isEmpty(childItems)) {
 				watchlistRepository.delete(wl);
 			} else {
-				throw ErrorHandlerFactory
-						.getErrorHandler()
-						.createException(
-								WatchlistConstants.CANNOT_DELETE_NONEMPTY_WATCHLIST_ERROR_CODE,
-								name);
+				throw ErrorHandlerFactory.getErrorHandler()
+						.createException(WatchlistConstants.CANNOT_DELETE_NONEMPTY_WATCHLIST_ERROR_CODE, name);
 			}
 			// write the audit record
-			auditRecordRepository.save(createAuditLogRecord(
-					AuditActionType.DELETE_ALL_WL, wl, null,
+			auditRecordRepository.save(createAuditLogRecord(AuditActionType.DELETE_ALL_WL, wl, null,
 					WATCHLIST_LOG_DELETE_ALL_MESSAGE, user));
 		} else {
-			logger.warn("WatchlistPersistenceServiceImpl.deleteWatchlist - cannot delete watchlist since it does not exist:"
-					+ name);
+			logger.warn(
+					"WatchlistPersistenceServiceImpl.deleteWatchlist - cannot delete watchlist since it does not exist:"
+							+ name);
 		}
 		return wl;
 	}
 
 	@Override
 	public List<AuditRecord> findLogEntriesForWatchlist(String watchlistName) {
-		AuditActionTarget target = new AuditActionTarget(
-				AuditActionType.CREATE_WL, watchlistName, null);
+		AuditActionTarget target = new AuditActionTarget(AuditActionType.CREATE_WL, watchlistName, null);
 		return auditRecordRepository.findByTarget(target.toString());
 	}
 
-	private void doDeleteWithLogging(Watchlist watchlist, User editUser,
-			Collection<WatchlistItem> deleteItems) {
+	private void doDeleteWithLogging(Watchlist watchlist, User editUser, Collection<WatchlistItem> deleteItems) {
 		if (!CollectionUtils.isEmpty(deleteItems)) {
 			List<WatchlistItem> hydratedDeleteItems = new ArrayList<>();
 			List<AuditRecord> logRecords = new LinkedList<>();
 			Map<Long, WatchlistItem> updateDeleteItemMap = validateItemsPresentInDb(deleteItems);
 			for (WatchlistItem item : deleteItems) {
-				WatchlistItem itemToDelete = updateDeleteItemMap.get(item
-						.getId());
-				logRecords.add(createAuditLogRecord(AuditActionType.DELETE_WL,
-						watchlist, itemToDelete, WATCHLIST_LOG_DELETE_MESSAGE,
-						editUser));
+				WatchlistItem itemToDelete = updateDeleteItemMap.get(item.getId());
+				logRecords.add(createAuditLogRecord(AuditActionType.DELETE_WL, watchlist, itemToDelete,
+						WATCHLIST_LOG_DELETE_MESSAGE, editUser));
 				hydratedDeleteItems.add(itemToDelete);
 			}
 			watchlistItemRepository.deleteAll(hydratedDeleteItems);
@@ -194,63 +178,51 @@ public class WatchlistPersistenceServiceImpl implements
 		}
 	}
 
-	private Collection<Long> doCreateUpdateWithLogging(Watchlist watchlist,
-			User editUser, Collection<WatchlistItem> createUpdateItems) {
+	private Collection<Long> doCreateUpdateWithLogging(Watchlist watchlist, User editUser,
+			Collection<WatchlistItem> createUpdateItems) {
 		final List<Long> ret = new LinkedList<>();
 		List<AuditRecord> logRecords = new LinkedList<>();
 		if (createUpdateItems != null && !createUpdateItems.isEmpty()) {
 			List<WatchlistItem> updList = new LinkedList<>();
 			for (WatchlistItem item : createUpdateItems) {
 				if (item.getId() != null) {
-					logRecords.add(createAuditLogRecord(
-							AuditActionType.UPDATE_WL, watchlist, item,
+					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
 							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
 					updList.add(item);
 				} else {
-					logRecords.add(createAuditLogRecord(
-							AuditActionType.CREATE_WL, watchlist, item,
+					logRecords.add(createAuditLogRecord(AuditActionType.CREATE_WL, watchlist, item,
 							WATCHLIST_LOG_CREATE_MESSAGE, editUser));
 				}
 				item.setWatchlist(watchlist);
 			}
 			validateItemsPresentInDb(updList);
-			Iterable<WatchlistItem> savedItems = watchlistItemRepository
-					.saveAll(createUpdateItems);
+			Iterable<WatchlistItem> savedItems = watchlistItemRepository.saveAll(createUpdateItems);
 			auditRecordRepository.saveAll(logRecords);
 			savedItems.forEach(item -> ret.add(item.getId()));
 		}
 		return ret;
 	}
 
-	private AuditRecord createAuditLogRecord(AuditActionType type,
-			Watchlist watchlist, WatchlistItem item, String message,
-			User editUser) {
-		AuditActionTarget target = new AuditActionTarget(type,
-				watchlist.getWatchlistName(), null);
+	private AuditRecord createAuditLogRecord(AuditActionType type, Watchlist watchlist, WatchlistItem item,
+			String message, User editUser) {
+		AuditActionTarget target = new AuditActionTarget(type, watchlist.getWatchlistName(), null);
 		AuditActionData actionData = new AuditActionData();
 		if (item != null) {
-			actionData.addProperty("itemId",
-					item.getId() != null ? String.valueOf(item.getId())
-							: StringUtils.EMPTY);
+			actionData.addProperty("itemId", item.getId() != null ? String.valueOf(item.getId()) : StringUtils.EMPTY);
 		}
 		actionData.addProperty("user", editUser.getUserId());
-		actionData.addProperty(
-				"editDate",
-				watchlist.getEditTimestamp() != null ? DateCalendarUtils
-						.formatJsonDate(watchlist.getEditTimestamp())
+		actionData.addProperty("editDate",
+				watchlist.getEditTimestamp() != null ? DateCalendarUtils.formatJsonDate(watchlist.getEditTimestamp())
 						: StringUtils.EMPTY);
-		return new AuditRecord(type, target.toString(), Status.SUCCESS,
-				message, actionData.toString(), editUser);
+		return new AuditRecord(type, target.toString(), Status.SUCCESS, message, actionData.toString(), editUser);
 	}
 
-	private Map<Long, WatchlistItem> validateItemsPresentInDb(
-			Collection<WatchlistItem> targetItems) {
+	private Map<Long, WatchlistItem> validateItemsPresentInDb(Collection<WatchlistItem> targetItems) {
 		Map<Long, WatchlistItem> ret = new HashMap<>();
 		if (targetItems != null && !targetItems.isEmpty()) {
-			List<Long> lst = targetItems.stream().map(itm -> itm.getId())
-					.collect(Collectors.toList());
+			List<Long> lst = targetItems.stream().map(itm -> itm.getId()).collect(Collectors.toList());
 			Iterable<WatchlistItem> items = watchlistItemRepository.findAllById(lst);
-					
+
 			int itemCount = 0;
 			for (WatchlistItem itm : items) {
 				ret.put(itm.getId(), itm);
@@ -263,8 +235,7 @@ public class WatchlistPersistenceServiceImpl implements
 		return ret;
 	}
 
-	private void handleMissingWlItemError(
-			Collection<WatchlistItem> targetItems, Set<Long> foundKeys) {
+	private void handleMissingWlItemError(Collection<WatchlistItem> targetItems, Set<Long> foundKeys) {
 		final StringBuilder bldr = new StringBuilder();
 		targetItems.forEach(itm -> bldr.append(itm.getId()).append(','));
 		String targets = bldr.substring(0, bldr.length() - 1);
@@ -275,42 +246,40 @@ public class WatchlistPersistenceServiceImpl implements
 			found = bldr2.substring(0, bldr2.length() - 1);
 		}
 
-		ErrorHandlerFactory.createAndThrowException(
-				WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE,
+		ErrorHandlerFactory.createAndThrowException(WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE,
 				targets, found);
 
 	}
 
 	public List<WatchlistCategory> findWatchlistCategories() {
-		// 
+		//
 		return this.watchlistRepository.getWatchlistCategories();
 	}
-	
+
 	public WatchlistItem updateWatchlistItemCategory(WatchlistItem watchlistItem) {
 		return this.watchlistItemRepository.save(watchlistItem);
 	}
 
 	@Override
 	public WatchlistCategory fetchWatchlistCategoryById(Long categoryID) {
-		// 
+		//
 		return this.watchlistRepository.getWatchlistCategoryById(categoryID);
 	}
 
 	@Override
 	public WatchlistItem findWatchlistItemById(Long watchlistItemId) {
-		// 
+		//
 		return this.watchlistItemRepository.findById(watchlistItemId).orElse(null);
 	}
 
 	@Override
 	public List<WatchlistItem> findItemsByWatchlistName(String watchlistName) {
-		// 
+		//
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
 	}
 
 	public WatchlistCategory saveWatchlistCategory(WatchlistCategory watchlistCategory) {
 		return this.watchlistCategoryRepository.save(watchlistCategory);
 	}
-
 
 }

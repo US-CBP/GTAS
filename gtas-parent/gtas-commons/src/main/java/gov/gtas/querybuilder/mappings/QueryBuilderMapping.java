@@ -10,23 +10,23 @@ import java.util.List;
 
 public class QueryBuilderMapping {
 
-    private String label;
-    private List<Column> columns = new ArrayList<>();
-    
-    public String getLabel() {
-        return label;
-    }
-    
-    public void setLabel(String label) {
-        this.label = label;
-    }
-    
-    public List<Column> getColumns() {
-        return columns;
-    }
-    
-    public void setColumns(List<Column> columns) {
-        this.columns = columns;
-    }
-    
+	private String label;
+	private List<Column> columns = new ArrayList<>();
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public List<Column> getColumns() {
+		return columns;
+	}
+
+	public void setColumns(List<Column> columns) {
+		this.columns = columns;
+	}
+
 }

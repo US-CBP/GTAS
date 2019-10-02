@@ -10,5 +10,5 @@ package gov.gtas.validators;
  * database to avoid database exceptions and failures.
  */
 public interface Validatable {
-    public boolean isValid();
+	public boolean isValid();
 }

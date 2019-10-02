@@ -10,28 +10,31 @@ import gov.gtas.vo.passenger.FlightVo;
 import java.util.List;
 
 public class FlightQueryVo {
-    private List<FlightVo> flights;
-    private long totalFlights;
-    private boolean queryLimitReached;
-    
-    public List<FlightVo> getFlights() {
-        return flights;
-    }
-    public void setFlights(List<FlightVo> flights) {
-        this.flights = flights;
-    }
-    public long getTotalFlights() {
-        return totalFlights;
-    }
-    public void setTotalFlights(long totalFlights) {
-        this.totalFlights = totalFlights;
-    }
+	private List<FlightVo> flights;
+	private long totalFlights;
+	private boolean queryLimitReached;
 
-    public boolean isQueryLimitReached() {
-        return queryLimitReached;
-    }
+	public List<FlightVo> getFlights() {
+		return flights;
+	}
 
-    public void setQueryLimitReached(boolean queryLimitReached) {
-        this.queryLimitReached = queryLimitReached;
-    }
+	public void setFlights(List<FlightVo> flights) {
+		this.flights = flights;
+	}
+
+	public long getTotalFlights() {
+		return totalFlights;
+	}
+
+	public void setTotalFlights(long totalFlights) {
+		this.totalFlights = totalFlights;
+	}
+
+	public boolean isQueryLimitReached() {
+		return queryLimitReached;
+	}
+
+	public void setQueryLimitReached(boolean queryLimitReached) {
+		this.queryLimitReached = queryLimitReached;
+	}
 }

@@ -9,7 +9,7 @@
 package gov.gtas.services;
 
 public class DuplicateHashCodeException extends LoaderException {
-    public DuplicateHashCodeException(String message) {
-        super(message);
-    }
+	public DuplicateHashCodeException(String message) {
+		super(message);
+	}
 }

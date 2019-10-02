@@ -24,39 +24,39 @@ import gov.gtas.parsers.edifact.Segment;
  * </ul>
  */
 public class DOC extends Segment {
-    private String docCode;
-    private String documentIdentifier;
+	private String docCode;
+	private String documentIdentifier;
 
-    public DOC(List<Composite> composites) {
-        super(DOC.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            switch (i) {
-            case 0:
-                // DOC+L:110:111+AA299167
-                // DOC+P+QG176295
-                this.docCode = c.getElement(0);
-                break;
-            case 1:
-                this.documentIdentifier = c.getElement(0);
-                break;
-            }
-        }
-    }
+	public DOC(List<Composite> composites) {
+		super(DOC.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
+			switch (i) {
+			case 0:
+				// DOC+L:110:111+AA299167
+				// DOC+P+QG176295
+				this.docCode = c.getElement(0);
+				break;
+			case 1:
+				this.documentIdentifier = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public String getDocCode() {
-        return docCode;
-    }
+	public String getDocCode() {
+		return docCode;
+	}
 
-    public void setDocCode(String docCode) {
-        this.docCode = docCode;
-    }
+	public void setDocCode(String docCode) {
+		this.docCode = docCode;
+	}
 
-    public String getDocumentIdentifier() {
-        return documentIdentifier;
-    }
+	public String getDocumentIdentifier() {
+		return documentIdentifier;
+	}
 
-    public void setDocumentIdentifier(String documentIdentifier) {
-        this.documentIdentifier = documentIdentifier;
-    }
+	public void setDocumentIdentifier(String documentIdentifier) {
+		this.documentIdentifier = documentIdentifier;
+	}
 }

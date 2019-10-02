@@ -6,34 +6,30 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Id;
 
-
-
 public class UserLocationPK implements Serializable {
-	
+
 	/**
 	 * A Composite key class for user_location table
 	 */
 	private static final long serialVersionUID = 1L;
 
-
-	
 	private String userId;
-	
+
 	private String airport;
 
 	public String getUserId() {
 		return userId;
 	}
 
-	public UserLocationPK() {}
-	
-	public UserLocationPK(String userId, String airport) 
-	{
+	public UserLocationPK() {
+	}
+
+	public UserLocationPK(String userId, String airport) {
 		this.userId = userId;
 		this.airport = airport;
-		
+
 	}
-	
+
 	public String getAirport() {
 		return airport;
 	}
@@ -68,8 +64,5 @@ public class UserLocationPK implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
-	
 
 }

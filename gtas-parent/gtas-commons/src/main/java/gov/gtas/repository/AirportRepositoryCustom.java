@@ -9,7 +9,8 @@ import gov.gtas.model.lookup.Airport;
 
 public interface AirportRepositoryCustom {
 
-  Airport restore(Airport airport);
-  int restoreAll();
+	Airport restore(Airport airport);
+
+	int restoreAll();
 
 }

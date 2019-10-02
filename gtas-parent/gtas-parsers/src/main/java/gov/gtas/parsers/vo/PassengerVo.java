@@ -18,40 +18,40 @@ import gov.gtas.validators.Validatable;
 
 public class PassengerVo implements Validatable {
 
-    /**
-     * a unique passenger reference identifier (from PNR) used to cross
-     * reference passenger information in a PNR
-     */
-    private String travelerReferenceNumber;
+	/**
+	 * a unique passenger reference identifier (from PNR) used to cross reference
+	 * passenger information in a PNR
+	 */
+	private String travelerReferenceNumber;
 
-    private UUID passengerVoUUID = UUID.randomUUID();
-    private String title;
-    private String firstName;
-    private String middleName;
-    private String lastName;
-    private String suffix;
-    private String gender;
-    private String nationality;
-    private String residencyCountry;
-    private String passengerType;
-    private Integer age;
-    private Date dob;
-    private String embarkation;
-    private String debarkation;
-    private Boolean deleted = Boolean.FALSE;
-    private List<DocumentVo> documents = new ArrayList<>();
-    private List<SeatVo> seatAssignments = new ArrayList<>();
-    private List<TicketFareVo> tickets = new ArrayList<>();
-    private List<BagVo> bagVos = new ArrayList<>();
-    private String address;
-    private String bagId;
-    private String bagNum;
-    private String totalBagWeight;
-    private String reservationReferenceNumber;
-    private String pnrReservationReferenceNumber;
-    private String pnrRecordLocator;
+	private UUID passengerVoUUID = UUID.randomUUID();
+	private String title;
+	private String firstName;
+	private String middleName;
+	private String lastName;
+	private String suffix;
+	private String gender;
+	private String nationality;
+	private String residencyCountry;
+	private String passengerType;
+	private Integer age;
+	private Date dob;
+	private String embarkation;
+	private String debarkation;
+	private Boolean deleted = Boolean.FALSE;
+	private List<DocumentVo> documents = new ArrayList<>();
+	private List<SeatVo> seatAssignments = new ArrayList<>();
+	private List<TicketFareVo> tickets = new ArrayList<>();
+	private List<BagVo> bagVos = new ArrayList<>();
+	private String address;
+	private String bagId;
+	private String bagNum;
+	private String totalBagWeight;
+	private String reservationReferenceNumber;
+	private String pnrReservationReferenceNumber;
+	private String pnrRecordLocator;
 
-  	public String getPnrRecordLocator() {
+	public String getPnrRecordLocator() {
 		return pnrRecordLocator;
 	}
 
@@ -92,257 +92,257 @@ public class PassengerVo implements Validatable {
 	}
 
 	public String getBagId() {
-        return bagId;
-    }
+		return bagId;
+	}
 
-    public void setBagId(String bagId) {
-        this.bagId = bagId;
-    }
+	public void setBagId(String bagId) {
+		this.bagId = bagId;
+	}
 
-    public String getBagNum() {
-        return bagNum;
-    }
+	public String getBagNum() {
+		return bagNum;
+	}
 
-    public void setBagNum(String bagNum) {
-        this.bagNum = bagNum;
-    }
+	public void setBagNum(String bagNum) {
+		this.bagNum = bagNum;
+	}
 
-    private List<String> bags = new ArrayList<>();
+	private List<String> bags = new ArrayList<>();
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public List<String> getBags() {
-        return bags;
-    }
+	public List<String> getBags() {
+		return bags;
+	}
 
-    public void setBags(List<String> bags) {
-        this.bags = bags;
-    }
+	public void setBags(List<String> bags) {
+		this.bags = bags;
+	}
 
-    public void addDocument(DocumentVo d) {
-        documents.add(d);
-    }
+	public void addDocument(DocumentVo d) {
+		documents.add(d);
+	}
 
-    public List<DocumentVo> getDocuments() {
-        return documents;
-    }
+	public List<DocumentVo> getDocuments() {
+		return documents;
+	}
 
-    public String getTravelerReferenceNumber() {
-        return travelerReferenceNumber;
-    }
+	public String getTravelerReferenceNumber() {
+		return travelerReferenceNumber;
+	}
 
-    public void setTravelerReferenceNumber(String travelerReferenceNumber) {
-        this.travelerReferenceNumber = travelerReferenceNumber;
-    }
+	public void setTravelerReferenceNumber(String travelerReferenceNumber) {
+		this.travelerReferenceNumber = travelerReferenceNumber;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getMiddleName() {
-        return middleName;
-    }
+	public String getMiddleName() {
+		return middleName;
+	}
 
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public String getSuffix() {
-        return suffix;
-    }
+	public String getSuffix() {
+		return suffix;
+	}
 
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 
-    public String getGender() {
-        return gender;
-    }
+	public String getGender() {
+		return gender;
+	}
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
 
-    public String getNationality() {
-        return nationality;
-    }
+	public String getNationality() {
+		return nationality;
+	}
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
 
-    public String getResidencyCountry() {
-        return residencyCountry;
-    }
+	public String getResidencyCountry() {
+		return residencyCountry;
+	}
 
-    public void setResidencyCountry(String residencyCountry) {
-        this.residencyCountry = residencyCountry;
-    }
+	public void setResidencyCountry(String residencyCountry) {
+		this.residencyCountry = residencyCountry;
+	}
 
-    public String getPassengerType() {
-        return passengerType;
-    }
+	public String getPassengerType() {
+		return passengerType;
+	}
 
-    public void setPassengerType(String passengerType) {
-        this.passengerType = passengerType;
-    }
+	public void setPassengerType(String passengerType) {
+		this.passengerType = passengerType;
+	}
 
-    public Integer getAge() {
-        return age;
-    }
+	public Integer getAge() {
+		return age;
+	}
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
-    public Date getDob() {
-        return dob;
-    }
+	public Date getDob() {
+		return dob;
+	}
 
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
 
-    public String getEmbarkation() {
-        return embarkation;
-    }
+	public String getEmbarkation() {
+		return embarkation;
+	}
 
-    public void setEmbarkation(String embarkation) {
-        this.embarkation = embarkation;
-    }
+	public void setEmbarkation(String embarkation) {
+		this.embarkation = embarkation;
+	}
 
-    public String getDebarkation() {
-        return debarkation;
-    }
+	public String getDebarkation() {
+		return debarkation;
+	}
 
-    public void setDebarkation(String debarkation) {
-        this.debarkation = debarkation;
-    }
+	public void setDebarkation(String debarkation) {
+		this.debarkation = debarkation;
+	}
 
-    public void setDocuments(List<DocumentVo> documents) {
-        this.documents = documents;
-    }
+	public void setDocuments(List<DocumentVo> documents) {
+		this.documents = documents;
+	}
 
-    public Boolean getDeleted() {
-        return deleted;
-    }
+	public Boolean getDeleted() {
+		return deleted;
+	}
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    public List<SeatVo> getSeatAssignments() {
-        return seatAssignments;
-    }
+	public List<SeatVo> getSeatAssignments() {
+		return seatAssignments;
+	}
 
-    public void setSeatAssignments(List<SeatVo> seatAssignments) {
-        this.seatAssignments = seatAssignments;
-    }
+	public void setSeatAssignments(List<SeatVo> seatAssignments) {
+		this.seatAssignments = seatAssignments;
+	}
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
-    @Override
-    public boolean isValid() {
-        return StringUtils.isNotBlank(this.firstName) && StringUtils.isNotBlank(this.lastName);
-    }
+	@Override
+	public boolean isValid() {
+		return StringUtils.isNotBlank(this.firstName) && StringUtils.isNotBlank(this.lastName);
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((dob == null) ? 0 : dob.hashCode());
-        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((gender == null) ? 0 : gender.hashCode());
-        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-        result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
-        result = prime * result + ((passengerType == null) ? 0 : passengerType.hashCode());
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((dob == null) ? 0 : dob.hashCode());
+		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
+		result = prime * result + ((passengerType == null) ? 0 : passengerType.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        PassengerVo other = (PassengerVo) obj;
-        if (dob == null) {
-            if (other.dob != null)
-                return false;
-        } else if (!dob.equals(other.dob))
-            return false;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
-            return false;
-        if (gender == null) {
-            if (other.gender != null)
-                return false;
-        } else if (!gender.equals(other.gender))
-            return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
-            return false;
-        if (middleName == null) {
-            if (other.middleName != null)
-                return false;
-        } else if (!middleName.equals(other.middleName))
-            return false;
-        if (passengerType == null) {
-            if (other.passengerType != null)
-                return false;
-        } else if (!passengerType.equals(other.passengerType))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PassengerVo other = (PassengerVo) obj;
+		if (dob == null) {
+			if (other.dob != null)
+				return false;
+		} else if (!dob.equals(other.dob))
+			return false;
+		if (firstName == null) {
+			if (other.firstName != null)
+				return false;
+		} else if (!firstName.equals(other.firstName))
+			return false;
+		if (gender == null) {
+			if (other.gender != null)
+				return false;
+		} else if (!gender.equals(other.gender))
+			return false;
+		if (lastName == null) {
+			if (other.lastName != null)
+				return false;
+		} else if (!lastName.equals(other.lastName))
+			return false;
+		if (middleName == null) {
+			if (other.middleName != null)
+				return false;
+		} else if (!middleName.equals(other.middleName))
+			return false;
+		if (passengerType == null) {
+			if (other.passengerType != null)
+				return false;
+		} else if (!passengerType.equals(other.passengerType))
+			return false;
+		return true;
+	}
 
-    public List<BagVo> getBagVos() {
-        return bagVos;
-    }
+	public List<BagVo> getBagVos() {
+		return bagVos;
+	}
 
-    public void setBagVos(List<BagVo> bagVos) {
-        this.bagVos = bagVos;
-    }
+	public void setBagVos(List<BagVo> bagVos) {
+		this.bagVos = bagVos;
+	}
 
-    public UUID getPassengerVoUUID() {
-        return passengerVoUUID;
-    }
+	public UUID getPassengerVoUUID() {
+		return passengerVoUUID;
+	}
 
-    public void setPassengerVoUUID(UUID passengerVoUUID) {
-        this.passengerVoUUID = passengerVoUUID;
-    }
+	public void setPassengerVoUUID(UUID passengerVoUUID) {
+		this.passengerVoUUID = passengerVoUUID;
+	}
 }

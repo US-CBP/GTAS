@@ -18,8 +18,10 @@ import gov.gtas.model.BaseEntity;
 @Table(name = "app_configuration")
 public class AppConfiguration extends BaseEntity {
     private static final long serialVersionUID = 1L;
-    public AppConfiguration() { }
     
+	public AppConfiguration() {
+	}
+
     // mysql (not mariadb) reserves the word 'option'
     @Column(name = "opt", unique = true)
     private String option;

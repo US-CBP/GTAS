@@ -21,43 +21,43 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 
 public class QueueService {
-    private static AmazonSQS sqs;
-    static {
-        sqs = new AmazonSQSClient();
-    }
+	private static AmazonSQS sqs;
+	static {
+		sqs = new AmazonSQSClient();
+	}
 
-    private String queueUrl;
-    
-    public QueueService(String queueUrl, String region) {
-        configure(queueUrl, region);
-    }
-    
-    public void configure(String queueUrl, String region) {
-    	if(queueUrl == null || region == null)
-    		return;
-    	
-        this.queueUrl = queueUrl.trim();
-        
-        // override the default region
-        sqs.setRegion(RegionUtils.getRegion(region.trim()));
+	private String queueUrl;
 
-    }
-    
-    public void sendMessage(String msg) {
-        sqs.sendMessage(new SendMessageRequest(this.queueUrl, msg));
-    }
-    
-    public List<Message> receiveMessages() {
-        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(this.queueUrl);
-        return sqs.receiveMessage(receiveMessageRequest).getMessages();
-    }
-    
-    public void deleteMessage(String receiptHandle) {
-        sqs.deleteMessage(new DeleteMessageRequest(this.queueUrl, receiptHandle));
-    }
-    
-    public List<String> listQueues() {
-        return sqs.listQueues().getQueueUrls();
-    }
-    
+	public QueueService(String queueUrl, String region) {
+		configure(queueUrl, region);
+	}
+
+	public void configure(String queueUrl, String region) {
+		if (queueUrl == null || region == null)
+			return;
+
+		this.queueUrl = queueUrl.trim();
+
+		// override the default region
+		sqs.setRegion(RegionUtils.getRegion(region.trim()));
+
+	}
+
+	public void sendMessage(String msg) {
+		sqs.sendMessage(new SendMessageRequest(this.queueUrl, msg));
+	}
+
+	public List<Message> receiveMessages() {
+		ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(this.queueUrl);
+		return sqs.receiveMessage(receiveMessageRequest).getMessages();
+	}
+
+	public void deleteMessage(String receiptHandle) {
+		sqs.deleteMessage(new DeleteMessageRequest(this.queueUrl, receiptHandle));
+	}
+
+	public List<String> listQueues() {
+		return sqs.listQueues().getQueueUrls();
+	}
+
 }

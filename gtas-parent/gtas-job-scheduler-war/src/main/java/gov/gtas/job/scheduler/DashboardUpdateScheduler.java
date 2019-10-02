@@ -28,99 +28,93 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
- * Dashboard Scheduler class. Using Spring's Scheduled annotation for 
- * scheduling tasks. The class reads configuration values from 
- * an external file.
+ * Dashboard Scheduler class. Using Spring's Scheduled annotation for scheduling
+ * tasks. The class reads configuration values from an external file.
  *
  */
 @Component
 public class DashboardUpdateScheduler {
 
-    /** The Constant logger. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(DashboardUpdateScheduler.class);
+	/** The Constant logger. */
+	private static final Logger logger = LoggerFactory.getLogger(DashboardUpdateScheduler.class);
 
-    /** The entity manager. */
-    @PersistenceContext
-    private EntityManager entityManager;
+	/** The entity manager. */
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    /** The api dashboard update sql. */
-    @Value("${dashboard.api.message.update}")
-    private String apiDashboardUpdateSql;
+	/** The api dashboard update sql. */
+	@Value("${dashboard.api.message.update}")
+	private String apiDashboardUpdateSql;
 
-    /** The pnr dashboard update sql. */
-    @Value("${dashboard.pnr.message.update}")
-    private String pnrDashboardUpdateSql;
+	/** The pnr dashboard update sql. */
+	@Value("${dashboard.pnr.message.update}")
+	private String pnrDashboardUpdateSql;
 
-    /** The error persistence service. */
-    private ErrorPersistenceService errorPersistenceService;
+	/** The error persistence service. */
+	private ErrorPersistenceService errorPersistenceService;
 
-    /** The audit log persistence service. */
-    private AuditLogPersistenceService auditLogPersistenceService;
+	/** The audit log persistence service. */
+	private AuditLogPersistenceService auditLogPersistenceService;
 
-    /**
-     * Instantiates a new dashboard update scheduler.
-     *
-     * @param errorPersistenceService the error persistence service
-     * @param auditLogPersistenceService the audit log persistence service
-     */
-    @Autowired
-    public DashboardUpdateScheduler(
-            ErrorPersistenceService errorPersistenceService,
-            AuditLogPersistenceService auditLogPersistenceService) {
-        this.errorPersistenceService = errorPersistenceService;
-        this.auditLogPersistenceService = auditLogPersistenceService;
-    }
+	/**
+	 * Instantiates a new dashboard update scheduler.
+	 *
+	 * @param errorPersistenceService
+	 *            the error persistence service
+	 * @param auditLogPersistenceService
+	 *            the audit log persistence service
+	 */
+	@Autowired
+	public DashboardUpdateScheduler(ErrorPersistenceService errorPersistenceService,
+			AuditLogPersistenceService auditLogPersistenceService) {
+		this.errorPersistenceService = errorPersistenceService;
+		this.auditLogPersistenceService = auditLogPersistenceService;
+	}
 
-    /**
-     * Job scheduling.
-     */
-    //@Scheduled(fixedDelayString = "${dashboard.fixedDelay.in.milliseconds}")
-    @Transactional
-    public void jobScheduling() {
-        logger.debug("entering jobScheduling()");
+	/**
+	 * Job scheduling.
+	 */
+	// @Scheduled(fixedDelayString = "${dashboard.fixedDelay.in.milliseconds}")
+	@Transactional
+	public void jobScheduling() {
+		logger.debug("entering jobScheduling()");
 
-        try {
-            entityManager.createNativeQuery(apiDashboardUpdateSql)
-                    .executeUpdate();
-            logger.info("Updated dashboard api.");
-            int updatedRecords = entityManager.createNativeQuery(
-                    pnrDashboardUpdateSql).executeUpdate();
-            logger.info("Updated dashboard pnr.");
-            writeAuditLogForUpdatingDashboardRun(updatedRecords);
-        } catch (Exception ex) {
-            logger.error("SQLException:" + ex.getMessage(), ex);
-            ErrorDetailInfo errInfo = ErrorHandlerFactory
-                    .createErrorDetails(ex);
-            errorPersistenceService.create(errInfo);
-        }
+		try {
+			entityManager.createNativeQuery(apiDashboardUpdateSql).executeUpdate();
+			logger.info("Updated dashboard api.");
+			int updatedRecords = entityManager.createNativeQuery(pnrDashboardUpdateSql).executeUpdate();
+			logger.info("Updated dashboard pnr.");
+			writeAuditLogForUpdatingDashboardRun(updatedRecords);
+		} catch (Exception ex) {
+			logger.error("SQLException:" + ex.getMessage(), ex);
+			ErrorDetailInfo errInfo = ErrorHandlerFactory.createErrorDetails(ex);
+			errorPersistenceService.create(errInfo);
+		}
 
-        logger.debug("exiting jobScheduling()");
+		logger.debug("exiting jobScheduling()");
 
-    }
+	}
 
-    /**
-     * Write audit log for updating dashboard run.
-     *
-     * @param updatedRecords the updated records
-     */
-    private void writeAuditLogForUpdatingDashboardRun(Integer updatedRecords) {
-        try {
-            AuditActionTarget target = new AuditActionTarget(
-                    AuditActionType.UPDATE_DASHBOARD_RUN,
-                    "GTAS Updating Dashboard", null);
-            AuditActionData actionData = new AuditActionData();
-            actionData.addProperty("updatedDashboardRecord", String.valueOf(updatedRecords));
-            String message = "Updating Dashboard run on " + new Date();
-            auditLogPersistenceService.create(AuditActionType.UPDATE_DASHBOARD_RUN,
-                    target.toString(), actionData.toString(), message,
-                    GTAS_APPLICATION_USERID);
-        } catch (Exception ex) {
-            logger.error("Exception:" + ex.getMessage(), ex);
-            ErrorDetailInfo errInfo = ErrorHandlerFactory
-                    .createErrorDetails(ex);
-            errorPersistenceService.create(errInfo);
-        }
-    }
+	/**
+	 * Write audit log for updating dashboard run.
+	 *
+	 * @param updatedRecords
+	 *            the updated records
+	 */
+	private void writeAuditLogForUpdatingDashboardRun(Integer updatedRecords) {
+		try {
+			AuditActionTarget target = new AuditActionTarget(AuditActionType.UPDATE_DASHBOARD_RUN,
+					"GTAS Updating Dashboard", null);
+			AuditActionData actionData = new AuditActionData();
+			actionData.addProperty("updatedDashboardRecord", String.valueOf(updatedRecords));
+			String message = "Updating Dashboard run on " + new Date();
+			auditLogPersistenceService.create(AuditActionType.UPDATE_DASHBOARD_RUN, target.toString(),
+					actionData.toString(), message, GTAS_APPLICATION_USERID);
+		} catch (Exception ex) {
+			logger.error("Exception:" + ex.getMessage(), ex);
+			ErrorDetailInfo errInfo = ErrorHandlerFactory.createErrorDetails(ex);
+			errorPersistenceService.create(errInfo);
+		}
+	}
 
 }

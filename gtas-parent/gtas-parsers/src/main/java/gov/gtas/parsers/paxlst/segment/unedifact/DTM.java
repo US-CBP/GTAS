@@ -28,59 +28,62 @@ import gov.gtas.parsers.util.ParseUtils;
  * crew member (i.e. February 17, 1964.)
  */
 public class DTM extends Segment {
-    private static final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_YEAR_FIRST;
-    private static final String DATE_TIME_FORMAT = DateUtils.DT_FORMAT_YEAR_FIRST;
+	private static final String DATE_ONLY_FORMAT = DateUtils.DATE_FORMAT_YEAR_FIRST;
+	private static final String DATE_TIME_FORMAT = DateUtils.DT_FORMAT_YEAR_FIRST;
 
-    public enum DtmCode {
-        DEPARTURE("189"), 
-        ARRIVAL("232"), 
-        ARRIVAL_AND_DEPARTURE_MCL("554"),
+	public enum DtmCode {
+		DEPARTURE("189"), ARRIVAL("232"), ARRIVAL_AND_DEPARTURE_MCL("554"),
 
-        DATE_OF_BIRTH("329"), 
-        PASSPORT_EXPIRATION_DATE("36");
-        
-        private final String code;
-        private DtmCode(String code) { this.code = code; }        
-        public String getCode() { return code; }
-        
-        private static final Map<String, DtmCode> BY_CODE_MAP = new LinkedHashMap<>();
-        static {
-            for (DtmCode rae : DtmCode.values()) {
-                BY_CODE_MAP.put(rae.code, rae);
-            }
-        }
+		DATE_OF_BIRTH("329"), PASSPORT_EXPIRATION_DATE("36");
 
-        public static DtmCode forCode(String code) {
-            return BY_CODE_MAP.get(code);
-        }                
-    }
+		private final String code;
 
-    private DtmCode dtmCode;
-    private Date dtmValue;
+		private DtmCode(String code) {
+			this.code = code;
+		}
 
-    public DTM(List<Composite> composites) throws ParseException {
-        super(DTM.class.getSimpleName(), composites);
-        Composite c = getComposite(0);
-        if (c != null) {
-            this.dtmCode = DtmCode.forCode(c.getElement(0));
+		public String getCode() {
+			return code;
+		}
 
-            String d = c.getElement(1);
-            if (d != null) {
-                String dateFormat = (d.length() == DATE_TIME_FORMAT.length()) ? DATE_TIME_FORMAT : DATE_ONLY_FORMAT;
-                if (this.dtmCode == DtmCode.DATE_OF_BIRTH) {
-                    this.dtmValue = ParseUtils.parseBirthday(d, dateFormat);
-                } else {
-                    this.dtmValue = ParseUtils.parseDateTime(d, dateFormat);
-                }
-            }
-        }
-    }
+		private static final Map<String, DtmCode> BY_CODE_MAP = new LinkedHashMap<>();
+		static {
+			for (DtmCode rae : DtmCode.values()) {
+				BY_CODE_MAP.put(rae.code, rae);
+			}
+		}
 
-    public DtmCode getDtmCode() {
-        return dtmCode;
-    }
+		public static DtmCode forCode(String code) {
+			return BY_CODE_MAP.get(code);
+		}
+	}
 
-    public Date getDtmValue() {
-        return dtmValue;
-    }
+	private DtmCode dtmCode;
+	private Date dtmValue;
+
+	public DTM(List<Composite> composites) throws ParseException {
+		super(DTM.class.getSimpleName(), composites);
+		Composite c = getComposite(0);
+		if (c != null) {
+			this.dtmCode = DtmCode.forCode(c.getElement(0));
+
+			String d = c.getElement(1);
+			if (d != null) {
+				String dateFormat = (d.length() == DATE_TIME_FORMAT.length()) ? DATE_TIME_FORMAT : DATE_ONLY_FORMAT;
+				if (this.dtmCode == DtmCode.DATE_OF_BIRTH) {
+					this.dtmValue = ParseUtils.parseBirthday(d, dateFormat);
+				} else {
+					this.dtmValue = ParseUtils.parseDateTime(d, dateFormat);
+				}
+			}
+		}
+	}
+
+	public DtmCode getDtmCode() {
+		return dtmCode;
+	}
+
+	public Date getDtmValue() {
+		return dtmValue;
+	}
 }

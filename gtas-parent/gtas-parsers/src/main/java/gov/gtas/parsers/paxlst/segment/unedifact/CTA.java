@@ -21,7 +21,7 @@ import gov.gtas.parsers.edifact.Segment;
  * exist in prior versions.
  */
 public class CTA extends Segment {
-    public CTA(List<Composite> composites) {
-        super(CTA.class.getSimpleName(), composites);
-    }
+	public CTA(List<Composite> composites) {
+		super(CTA.class.getSimpleName(), composites);
+	}
 }

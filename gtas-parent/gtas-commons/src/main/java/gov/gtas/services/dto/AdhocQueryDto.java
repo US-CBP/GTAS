@@ -18,13 +18,13 @@ import gov.gtas.services.search.FlightPassengerVo;
 public class AdhocQueryDto {
 	/** a single page of search results */
 	private final List<FlightPassengerVo> passengers;
-	
+
 	/** total hits returned by search engine */
 	private final long totalHits;
-	
+
 	private final String error;
 
-	public AdhocQueryDto(String error){
+	public AdhocQueryDto(String error) {
 		this.error = error;
 		this.totalHits = 0;
 		this.passengers = new ArrayList<>();
@@ -35,11 +35,11 @@ public class AdhocQueryDto {
 		this.totalHits = totalHits;
 		this.passengers = pass;
 	}
-	
+
 	public List<FlightPassengerVo> getPassengers() {
 		return passengers;
 	}
-	
+
 	public long getTotalHits() {
 		return totalHits;
 	}

@@ -10,8 +10,7 @@ import java.util.Set;
 
 public interface PassengerTripRepository extends CrudRepository<PassengerTripDetails, Long> {
 
-
-    @Transactional
-    @Query("Select ptd from PassengerTripDetails ptd where ptd.paxId in :paxIds " )
-    Set<PassengerTripDetails> getTripDetailsByPaxId(@Param("paxIds") Set<Long> paxIds);
+	@Transactional
+	@Query("Select ptd from PassengerTripDetails ptd where ptd.paxId in :paxIds ")
+	Set<PassengerTripDetails> getTripDetailsByPaxId(@Param("paxIds") Set<Long> paxIds);
 }

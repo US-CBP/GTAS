@@ -11,25 +11,27 @@ import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
 /**
- * <p>TRI: TRAVELLER REFERENCE INFORMATION 
- * <p>Check-in info; sequence number.
+ * <p>
+ * TRI: TRAVELLER REFERENCE INFORMATION
+ * <p>
+ * Check-in info; sequence number.
  */
 public class TRI extends Segment {
-    private String travelerReferenceNumber;
-    
-    public TRI(List<Composite> composites) {
-        super(TRI.class.getSimpleName(), composites);
-        Composite c = getComposite(1);
-        if (c != null) {
-            this.travelerReferenceNumber = c.getElement(3);
-        }
-    }
+	private String travelerReferenceNumber;
 
-    public String getTravelerReferenceNumber() {
-        return travelerReferenceNumber;
-    }
+	public TRI(List<Composite> composites) {
+		super(TRI.class.getSimpleName(), composites);
+		Composite c = getComposite(1);
+		if (c != null) {
+			this.travelerReferenceNumber = c.getElement(3);
+		}
+	}
 
-    public void setTravelerReferenceNumber(String travelerReferenceNumber) {
-        this.travelerReferenceNumber = travelerReferenceNumber;
-    }
+	public String getTravelerReferenceNumber() {
+		return travelerReferenceNumber;
+	}
+
+	public void setTravelerReferenceNumber(String travelerReferenceNumber) {
+		this.travelerReferenceNumber = travelerReferenceNumber;
+	}
 }

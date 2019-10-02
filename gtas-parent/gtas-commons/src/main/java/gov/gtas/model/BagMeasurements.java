@@ -1,6 +1,5 @@
 package gov.gtas.model;
 
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,72 +9,69 @@ import java.util.UUID;
 @Table(name = "bag_measurements")
 public class BagMeasurements extends BaseEntity {
 
-    @Column(name = "bag_count")
-    private Integer bagCount;
+	@Column(name = "bag_count")
+	private Integer bagCount;
 
-    @Column(name = "bag_weight_in_kilos")
-    private Double weight;
+	@Column(name = "bag_weight_in_kilos")
+	private Double weight;
 
+	@Column(name = "initial_measurement_in")
+	private String measurementIn;
 
-    @Column(name = "initial_measurement_in")
-    private String measurementIn;
+	@OneToMany(mappedBy = "bagMeasurements")
+	private List<Bag> bagList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bagMeasurements")
-    private List<Bag> bagList = new ArrayList<>();
+	@Column(name = "raw_weight_from_message")
+	private Double rawWeight;
 
-    @Column(name = "raw_weight_from_message")
-    private Double rawWeight;
+	@Transient
+	private UUID parserUUID;
 
+	public Integer getBagCount() {
+		return bagCount;
+	}
 
-    @Transient
-    private UUID parserUUID;
+	public Double getWeight() {
+		return weight;
+	}
 
+	public Double getRawWeight() {
+		return rawWeight;
+	}
 
-    public Integer getBagCount() {
-        return bagCount;
-    }
+	public void setRawWeight(Double rawWeight) {
+		this.rawWeight = rawWeight;
+	}
 
-    public Double getWeight() {
-        return weight;
-    }
+	public void setBagCount(Integer bagCount) {
+		this.bagCount = bagCount;
+	}
 
-    public Double getRawWeight() {
-        return rawWeight;
-    }
+	public void setWeight(Double weight) {
+		this.weight = weight;
+	}
 
-    public void setRawWeight(Double rawWeight) {
-        this.rawWeight = rawWeight;
-    }
+	public String getMeasurementIn() {
+		return measurementIn;
+	}
 
+	public void setMeasurementIn(String measurementIn) {
+		this.measurementIn = measurementIn;
+	}
 
-    public void setBagCount(Integer bagCount) {
-        this.bagCount = bagCount;
-    }
+	public List<Bag> getBagList() {
+		return bagList;
+	}
 
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
+	public void setBagList(List<Bag> bagList) {
+		this.bagList = bagList;
+	}
 
-    public String getMeasurementIn() {
-        return measurementIn;
-    }
+	public UUID getParserUUID() {
+		return parserUUID;
+	}
 
-    public void setMeasurementIn(String measurementIn) {
-        this.measurementIn = measurementIn;
-    }
-    public List<Bag> getBagList() {
-        return bagList;
-    }
-
-    public void setBagList(List<Bag> bagList) {
-        this.bagList = bagList;
-    }
-
-    public UUID getParserUUID() {
-        return parserUUID;
-    }
-
-    public void setParserUUID(UUID parserUUID) {
-        this.parserUUID = parserUUID;
-    }
+	public void setParserUUID(UUID parserUUID) {
+		this.parserUUID = parserUUID;
+	}
 }

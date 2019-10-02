@@ -24,13 +24,13 @@ public class NotificationController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/errorMessage")
-	public List<ErrorMessageVo> getErrorMessage(){
+	public List<ErrorMessageVo> getErrorMessage() {
 		Set<MessageStatus> errorStatuses = new HashSet<>();
-		return 	null;
+		return null;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/hitCount")
-	public Integer getHitCount(){
+	public Integer getHitCount() {
 		Set<Case> caseList = caseDispositionService.getOpenCasesWithTimeLeft();
 		return caseList.size();
 	}

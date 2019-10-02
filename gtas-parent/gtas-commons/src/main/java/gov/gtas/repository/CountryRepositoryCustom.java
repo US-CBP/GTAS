@@ -9,7 +9,8 @@ import gov.gtas.model.lookup.Country;
 
 public interface CountryRepositoryCustom {
 
-  Country restore(Country country);
-  int restoreAll();
+	Country restore(Country country);
+
+	int restoreAll();
 
 }

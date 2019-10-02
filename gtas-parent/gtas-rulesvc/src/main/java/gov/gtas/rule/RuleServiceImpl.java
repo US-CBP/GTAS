@@ -57,8 +57,7 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class RuleServiceImpl implements RuleService {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(RuleServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RuleServiceImpl.class);
 
 	@Autowired
 	private RulePersistenceService rulePersistenceService;
@@ -79,22 +78,17 @@ public class RuleServiceImpl implements RuleService {
 	}
 
 	@Override
-	public RuleServiceResult invokeAdhocRules(String rulesFilePath,
-			RuleServiceRequest req) {
+	public RuleServiceResult invokeAdhocRules(String rulesFilePath, RuleServiceRequest req) {
 		if (null == req) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
+			throw ErrorHandlerFactory.getErrorHandler().createException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
 					"RuleServiceRequest", "RuleServiceImpl.invokeRuleset()");
 		}
 		KieBase kbase = null;
 		try {
 			kbase = RuleUtils.createKieBaseFromClasspathFile(rulesFilePath);
 		} catch (IOException ioe) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.KB_CREATION_IO_ERROR_CODE,
-					ioe,
-					"RuleServiceImpl.invokeAdhocRules() with file:"
-							+ rulesFilePath);
+			throw ErrorHandlerFactory.getErrorHandler().createException(RuleServiceConstants.KB_CREATION_IO_ERROR_CODE,
+					ioe, "RuleServiceImpl.invokeAdhocRules() with file:" + rulesFilePath);
 		}
 		return createSessionAndExecuteRules(kbase, req);
 	}
@@ -109,13 +103,11 @@ public class RuleServiceImpl implements RuleService {
 	 *            the request object container.
 	 * @return the rule execution result.
 	 */
-	private RuleServiceResult createSessionAndExecuteRules(KieBase kbase,
-			RuleServiceRequest req) {
+	private RuleServiceResult createSessionAndExecuteRules(KieBase kbase, RuleServiceRequest req) {
 		logger.info("Entering createSessionAndExecuteRules() and creating Stateless session.");
 
 		StatelessKieSession ksession = kbase.newStatelessKieSession();
-		ksession.setGlobal(RuleServiceConstants.RULE_RESULT_LIST_NAME,
-				new ArrayList<Object>());
+		ksession.setGlobal(RuleServiceConstants.RULE_RESULT_LIST_NAME, new ArrayList<Object>());
 
 		/*
 		 * object where execution statistics are collected.
@@ -123,8 +115,7 @@ public class RuleServiceImpl implements RuleService {
 		final RuleExecutionStatistics stats = new RuleExecutionStatistics();
 
 		List<EventListener> listeners = createEventListeners(stats);
-		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession,
-				listeners);
+		RuleEventListenerUtils.addEventListenersToKieSEssion(ksession, listeners);
 
 		logger.debug("About to run rules.");
 		Collection<?> requestObjects = req.getRequestObjects();
@@ -150,8 +141,7 @@ public class RuleServiceImpl implements RuleService {
 	}
 
 	@Override
-	public RuleServiceResult invokeRuleEngine(RuleServiceRequest req,
-			String kbName) {
+	public RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName) {
 		logger.debug("Entering invokeRuleEngine().");
 		KnowledgeBase kbRecord;
 		// check if there is any undeleted and enabled rule
@@ -163,13 +153,12 @@ public class RuleServiceImpl implements RuleService {
 			} else {
 				kbRecord = rulePersistenceService.findUdrKnowledgeBase();
 				if (kbRecord != null) {
-					List<Rule> rules = rulePersistenceService
-							.findRulesByKnowledgeBaseId(kbRecord.getId());
+					List<Rule> rules = rulePersistenceService.findRulesByKnowledgeBaseId(kbRecord.getId());
 					if (!CollectionUtils.isEmpty(rules)) {
-						/*udrService.recompileRules(
-								RuleConstants.UDR_KNOWLEDGE_BASE_NAME, null);
-						kbRecord = rulePersistenceService
-								.findUdrKnowledgeBase();*/
+						/*
+						 * udrService.recompileRules( RuleConstants.UDR_KNOWLEDGE_BASE_NAME, null);
+						 * kbRecord = rulePersistenceService .findUdrKnowledgeBase();
+						 */
 					}
 				}
 			}
@@ -184,14 +173,12 @@ public class RuleServiceImpl implements RuleService {
 		try {
 			// create KieBase object from compressed binary data read from db
 			logger.info("Loading KieBase");
-			KieBase kb = RuleUtils
-					.convertKieBasefromBytes(kbRecord.getKbBlob());
+			KieBase kb = RuleUtils.convertKieBasefromBytes(kbRecord.getKbBlob());
 			logger.info("LoadedKieBase");
 			return createSessionAndExecuteRules(kb, req);
 		} catch (IOException | ClassNotFoundException ex) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.KB_DESERIALIZATION_ERROR_CODE, ex,
-					kbRecord.getId());
+			throw ErrorHandlerFactory.getErrorHandler()
+					.createException(RuleServiceConstants.KB_DESERIALIZATION_ERROR_CODE, ex, kbRecord.getId());
 		}
 	}
 
@@ -201,15 +188,13 @@ public class RuleServiceImpl implements RuleService {
 	}
 
 	@Override
-	public RuleServiceResult invokeAdhocRulesFromString(String rules,
-			RuleServiceRequest req) {
+	public RuleServiceResult invokeAdhocRulesFromString(String rules, RuleServiceRequest req) {
 		KieBase kbase = null;
 		try {
 			kbase = RuleUtils.createKieBaseFromDrlString(rules);
 		} catch (IOException ioe) {
-			throw ErrorHandlerFactory.getErrorHandler().createException(
-					RuleServiceConstants.KB_CREATION_IO_ERROR_CODE, ioe,
-					"RuleServiceImpl.invokeAdhocRulesFRomString()");
+			throw ErrorHandlerFactory.getErrorHandler().createException(RuleServiceConstants.KB_CREATION_IO_ERROR_CODE,
+					ioe, "RuleServiceImpl.invokeAdhocRulesFRomString()");
 		}
 		return createSessionAndExecuteRules(kbase, req);
 	}

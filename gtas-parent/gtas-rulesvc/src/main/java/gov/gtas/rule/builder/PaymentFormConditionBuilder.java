@@ -12,22 +12,18 @@ import static gov.gtas.rule.builder.RuleTemplateConstants.LINK_VARIABLE_SUFFIX;
  * @author gbays
  */
 public class PaymentFormConditionBuilder extends EntityConditionBuilder {
-    
-    public PaymentFormConditionBuilder (final String drlVariableName)
-    {
-        super(drlVariableName, RuleTemplateConstants.PAYMENT_FORM_ENTITY_NAME);
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
-    
-    
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) 
-    {
-   
-    }
-    
-}
 
+	public PaymentFormConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, RuleTemplateConstants.PAYMENT_FORM_ENTITY_NAME);
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
+
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+
+	}
+
+}

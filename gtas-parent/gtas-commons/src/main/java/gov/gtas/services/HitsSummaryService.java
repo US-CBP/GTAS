@@ -18,17 +18,13 @@ public interface HitsSummaryService {
 
 	public List<HitsSummary> findHitsByFlightId(@Param("fid") Long flightId);
 
-	public List<HitsSummary> findByFlightIdAndPassengerIdAndUdrRule(
-			Long fightId, Long passengerId);
+	public List<HitsSummary> findByFlightIdAndPassengerIdAndUdrRule(Long fightId, Long passengerId);
 
-	public List<HitsSummary> findByFlightIdAndPassengerIdAndWL(Long fightId,
-			Long passengerId);
+	public List<HitsSummary> findByFlightIdAndPassengerIdAndWL(Long fightId, Long passengerId);
 
-	public List<HitsSummary> findByFlightIdAndPassengerIdAndCombinedWithUdrRule(
-			Long fightId, Long passengerId);
+	public List<HitsSummary> findByFlightIdAndPassengerIdAndCombinedWithUdrRule(Long fightId, Long passengerId);
 
-	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId,
-			Long passengerId);
+	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId, Long passengerId);
 
 	public HitsSummary getMostRecentHitsSummary();
 	

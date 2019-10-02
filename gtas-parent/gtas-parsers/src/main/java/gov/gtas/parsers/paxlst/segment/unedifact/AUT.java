@@ -17,11 +17,11 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To specify results of the application of an authentication
  * procedure.
  * <p>
- * Note: this segment is specified in the UN/edifact spec, but we have
- * yet to see a message in the wild with one.
+ * Note: this segment is specified in the UN/edifact spec, but we have yet to
+ * see a message in the wild with one.
  */
 public class AUT extends Segment {
-    public AUT(List<Composite> composites) {
-        super(AUT.class.getSimpleName(), composites);
-    }
+	public AUT(List<Composite> composites) {
+		super(AUT.class.getSimpleName(), composites);
+	}
 }

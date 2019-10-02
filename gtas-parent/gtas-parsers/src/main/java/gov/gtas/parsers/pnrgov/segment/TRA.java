@@ -21,40 +21,40 @@ import gov.gtas.parsers.edifact.Segment;
  * carrier information
  */
 public class TRA extends Segment {
-    private String airline;
-    private String flightNumber;
-    private String bookingDesignator;
-    private String flightSuffix;
+	private String airline;
+	private String flightNumber;
+	private String bookingDesignator;
+	private String flightSuffix;
 
-    public TRA(List<Composite> composites) {
-        super(TRA.class.getSimpleName(), composites);
-        
-        Composite c = getComposite(0);
-        if (c != null) {
-            this.airline = c.getElement(0);
-        }
-        
-        c = getComposite(1);
-        if (c != null) {
-            this.flightNumber = c.getElement(0);
-            this.bookingDesignator = c.getElement(1);
-            this.flightSuffix = c.getElement(2);
-        }
-    }
+	public TRA(List<Composite> composites) {
+		super(TRA.class.getSimpleName(), composites);
 
-    public String getAirline() {
-        return airline;
-    }
+		Composite c = getComposite(0);
+		if (c != null) {
+			this.airline = c.getElement(0);
+		}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+		c = getComposite(1);
+		if (c != null) {
+			this.flightNumber = c.getElement(0);
+			this.bookingDesignator = c.getElement(1);
+			this.flightSuffix = c.getElement(2);
+		}
+	}
 
-    public String getBookingDesignator() {
-        return bookingDesignator;
-    }
+	public String getAirline() {
+		return airline;
+	}
 
-    public String getFlightSuffix() {
-        return flightSuffix;
-    }
+	public String getFlightNumber() {
+		return flightNumber;
+	}
+
+	public String getBookingDesignator() {
+		return bookingDesignator;
+	}
+
+	public String getFlightSuffix() {
+		return flightSuffix;
+	}
 }

@@ -22,65 +22,60 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "phone")
 public class Phone extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;  
-    public Phone() { }
-    
-    @Column(nullable = false)
-    private String number;
+	private static final long serialVersionUID = 1L;
+
+	public Phone() {
+	}
+
+	@Column(nullable = false)
+	private String number;
 
 	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
-    private Long flightId;
+	private Long flightId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    private Flight flight;
-    
-	@ManyToMany(
-        mappedBy = "phones",
-        targetEntity = Pnr.class
-    )
-    private Set<Pnr> pnrs = new HashSet<>();
-    
-    @ManyToMany(
-            mappedBy = "phones",
-            targetEntity = Pnr.class
-        )
-    private Set<ApisMessage> apisMessages = new HashSet<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	private Flight flight;
 
-    
-    public Set<ApisMessage> getApisMessages() {
+	@ManyToMany(mappedBy = "phones", targetEntity = Pnr.class)
+	private Set<Pnr> pnrs = new HashSet<>();
+
+	@ManyToMany(mappedBy = "phones", targetEntity = Pnr.class)
+	private Set<ApisMessage> apisMessages = new HashSet<>();
+
+	public Set<ApisMessage> getApisMessages() {
 		return apisMessages;
 	}
 
 	public void setApisMessages(Set<ApisMessage> apisMessages) {
 		this.apisMessages = apisMessages;
 	}
-	
-    public String getNumber() {
-        return number;
-    }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
-    
-    public Set<Pnr> getPnrs() {
-        return pnrs;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public void setPnrs(Set<Pnr> pnrs) {
-        this.pnrs = pnrs;
-    }
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    public Flight getFlight() {
+	public Set<Pnr> getPnrs() {
+		return pnrs;
+	}
+
+	public void setPnrs(Set<Pnr> pnrs) {
+		this.pnrs = pnrs;
+	}
+
+	public Flight getFlight() {
 		return flight;
 	}
 
 	public void setFlight(Flight flight) {
 		this.flight = flight;
 	}
-	
-    public Long getFlightId() {
+
+	public Long getFlightId() {
 		return flightId;
 	}
 
@@ -89,19 +84,19 @@ public class Phone extends BaseEntityAudit {
 	}
 
 	@Override
-    public int hashCode() {
-        return Objects.hash(this.number);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Phone other = (Phone) obj;
-        return Objects.equals(this.number, other.number);
-    }       
+	public int hashCode() {
+		return Objects.hash(this.number);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Phone other = (Phone) obj;
+		return Objects.equals(this.number, other.number);
+	}
 }

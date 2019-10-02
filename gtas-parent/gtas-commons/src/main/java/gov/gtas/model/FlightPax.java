@@ -8,54 +8,54 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "flight_pax",
-		indexes = @Index(columnList = "ref_number", name = "flight_pax_ref_number_index"))
+@Table(name = "flight_pax", indexes = @Index(columnList = "ref_number", name = "flight_pax_ref_number_index"))
 public class FlightPax implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	public FlightPax(){}
+
+	public FlightPax() {
+	}
 
 	public FlightPax(Long passengerId) {
 		this.passengerId = passengerId;
 	}
-	
-    @Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-    @Basic(optional = false)  
-    @Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")  
-    private Long id;  
-    
-    @Column(name= "traveler_type")
-    private String travelerType;
-    
-    @Column(name= "residence_country")
-    private String residenceCountry;
-    
-    @ManyToOne
-    @JoinColumn(name="install_address_id",nullable = true,referencedColumnName = "id")
-    private Address installationAddress;
 
-    @Column(name="embarkation")
-    private String embarkation;
-    
-    @Column(name="debarkation")
-    private String debarkation;
-    
-    @Column(name="first_arrival_port")
-    private String portOfFirstArrival;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Basic(optional = false)
+	@Column(name = "id", nullable = false, columnDefinition = "bigint unsigned")
+	private Long id;
 
-    @ManyToMany(mappedBy = "flightPaxList", targetEntity = ApisMessage.class)
-    private Set<ApisMessage> apisMessage = new HashSet<>();
+	@Column(name = "traveler_type")
+	private String travelerType;
 
-    @Column(name = "ref_number")
-    private String reservationReferenceNumber;
- 
-    @Column(name = "emb_country")
-    private String embarkationCountry;
-    
-    @Column(name = "deb_country")
-    private String debarkationCountry;
+	@Column(name = "residence_country")
+	private String residenceCountry;
+
+	@ManyToOne
+	@JoinColumn(name = "install_address_id", nullable = true, referencedColumnName = "id")
+	private Address installationAddress;
+
+	@Column(name = "embarkation")
+	private String embarkation;
+
+	@Column(name = "debarkation")
+	private String debarkation;
+
+	@Column(name = "first_arrival_port")
+	private String portOfFirstArrival;
+
+	@ManyToMany(mappedBy = "flightPaxList", targetEntity = ApisMessage.class)
+	private Set<ApisMessage> apisMessage = new HashSet<>();
+
+	@Column(name = "ref_number")
+	private String reservationReferenceNumber;
+
+	@Column(name = "emb_country")
+	private String embarkationCountry;
+
+	@Column(name = "deb_country")
+	private String debarkationCountry;
 
 	@Column(name = "msg_source")
 	private String messageSource;
@@ -70,7 +70,7 @@ public class FlightPax implements Serializable {
 	private double averageBagWeight;
 
 	@Column(name = "head_of_pool", nullable = false)
-	private boolean headOfPool=false;
+	private boolean headOfPool = false;
 
 	public Long getFlightId() {
 		return flightId;
@@ -81,8 +81,7 @@ public class FlightPax implements Serializable {
 	}
 
 	@Column(name = "flight_id", columnDefinition = "bigint unsigned")
-	private
-	Long flightId;
+	private Long flightId;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "flight_id", referencedColumnName = "id", updatable = false, insertable = false)
@@ -97,8 +96,7 @@ public class FlightPax implements Serializable {
 	}
 
 	@Column(name = "passenger_id", columnDefinition = "bigint unsigned")
-	private
-	Long passengerId;
+	private Long passengerId;
 
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "passenger_id", referencedColumnName = "id", updatable = false, insertable = false)
@@ -182,7 +180,7 @@ public class FlightPax implements Serializable {
 
 	public void setPortOfFirstArrival(String portOfFirstArrival) {
 		this.portOfFirstArrival = portOfFirstArrival;
-	} 
+	}
 
 	public String getReservationReferenceNumber() {
 		return reservationReferenceNumber;
@@ -249,28 +247,27 @@ public class FlightPax implements Serializable {
 	}
 
 	@Override
-    public int hashCode() {
-        return Objects.hash(this.getFlightId(), this.getPassengerId(), this.getMessageSource());
-    }
+	public int hashCode() {
+		return Objects.hash(this.getFlightId(), this.getPassengerId(), this.getMessageSource());
+	}
 
-    @Override
-    public boolean equals(Object target) {
-        if (this == target) {
-            return true;
-        }
+	@Override
+	public boolean equals(Object target) {
+		if (this == target) {
+			return true;
+		}
 
-        if (!(target instanceof FlightPax)) {
-            return false;
-        }
+		if (!(target instanceof FlightPax)) {
+			return false;
+		}
 
-        FlightPax dataTarget = ((FlightPax) target);
+		FlightPax dataTarget = ((FlightPax) target);
 
-        return ((this.getFlightId().equals(dataTarget.getFlightId()) &&
-        		(this.getPassengerId().equals(dataTarget.getPassengerId()))) &&
-				((this.getMessageSource() == null && dataTarget.getMessageSource() == null)
-						|| ((this.getMessageSource() != null
-						&& dataTarget.getMessageSource() != null) &&
-						this.getMessageSource().equals(dataTarget.getMessageSource()))));
-    }  
-     
+		return ((this.getFlightId().equals(dataTarget.getFlightId())
+				&& (this.getPassengerId().equals(dataTarget.getPassengerId())))
+				&& ((this.getMessageSource() == null && dataTarget.getMessageSource() == null)
+						|| ((this.getMessageSource() != null && dataTarget.getMessageSource() != null)
+								&& this.getMessageSource().equals(dataTarget.getMessageSource()))));
+	}
+
 }

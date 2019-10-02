@@ -13,8 +13,8 @@ import gov.gtas.bo.RuleServiceResult;
  */
 public interface RuleService {
 	/**
-	 * Execute the rule engine on the specified request for the specified rule
-	 * file. (Note: the file should be on the class path.)
+	 * Execute the rule engine on the specified request for the specified rule file.
+	 * (Note: the file should be on the class path.)
 	 * 
 	 * @param ruleFilePath
 	 *            the path name of the rule file to invoke the engine on.
@@ -22,8 +22,7 @@ public interface RuleService {
 	 *            the rule request message.
 	 * @return the result of the rule engine invocation.
 	 */
-	RuleServiceResult invokeAdhocRules(String ruleFilePath,
-			RuleServiceRequest req);
+	RuleServiceResult invokeAdhocRules(String ruleFilePath, RuleServiceRequest req);
 
 	/**
 	 * Execute the rule engine on the specified request for the specified rules
@@ -35,8 +34,7 @@ public interface RuleService {
 	 *            the rule request message.
 	 * @return the result of the rule engine invocation.
 	 */
-	RuleServiceResult invokeAdhocRulesFromString(String rules,
-			RuleServiceRequest req);
+	RuleServiceResult invokeAdhocRulesFromString(String rules, RuleServiceRequest req);
 
 	/**
 	 * Execute the rule engine on the specified request for the default
@@ -55,8 +53,7 @@ public interface RuleService {
 	 * @param req
 	 *            the rule request message.
 	 * @param kbName
-	 *            The name of the knowledge base to use for executing the
-	 *            request.
+	 *            The name of the knowledge base to use for executing the request.
 	 * @return the result of the rule engine invocation.
 	 */
 	RuleServiceResult invokeRuleEngine(RuleServiceRequest req, String kbName);

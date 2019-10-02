@@ -39,112 +39,112 @@ import gov.gtas.parsers.pnrgov.PnrUtils;
  * Flown segments are to be included in history. Departure and arrival
  * city/airport codes as contained in the passenger's booked itinerary.
  * 
- * This example contains an illustration of both the operating and the marketing TVLs for a codeshare situation
- * where the marketing carrier is DL and the operating carrier is KL..
- * TVL+010410:2235: 020410:1200+ATL+AMS+DL:KL+9362:K
+ * This example contains an illustration of both the operating and the marketing
+ * TVLs for a codeshare situation where the marketing carrier is DL and the
+ * operating carrier is KL.. TVL+010410:2235: 020410:1200+ATL+AMS+DL:KL+9362:K
  * TVL+++++972:M
  */
 public class TVL extends Segment {
-    private Date etd;
-    private Date eta;
-    private String origin;
-    private String destination;
-    private String carrier;
-    private String operatingCarrier;
-    private String flightNumber;
-    private String reservationBookingDesignator;
+	private Date etd;
+	private Date eta;
+	private String origin;
+	private String destination;
+	private String carrier;
+	private String operatingCarrier;
+	private String flightNumber;
+	private String reservationBookingDesignator;
 
-    public TVL(List<Composite> composites) throws ParseException {
-        super(TVL.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
-            
-            switch (i) {
-            case 0:
-                Date[] tmp = getEtdEta(c);
-                etd = tmp[0];
-                eta = tmp[1];
-                break;
-            case 1:
-                this.origin = c.getElement(0);
-                break;
-            case 2:
-                this.destination = c.getElement(0);
-                break;
-            case 3:
-                this.carrier = c.getElement(0);
-                this.operatingCarrier = c.getElement(1);
-                break;
-            case 4:
-                this.flightNumber = c.getElement(0);
-                this.reservationBookingDesignator = c.getElement(1);
-            }                
-        }
-    }
-    
-    /**
-     * @return [etd, eta]
-     */
-    public static Date[] getEtdEta(Composite c) throws ParseException {
-        Date[] rv = new Date[2];
-        
-        String departureDate = c.getElement(0);
-        String departureTime = c.getElement(1);
-        if (departureTime != null) {
-            departureDate += departureTime;
-        }
+	public TVL(List<Composite> composites) throws ParseException {
+		super(TVL.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
 
-        String arrivalDate = c.getElement(2);
-        String arrivalTime = c.getElement(3);
-        if (arrivalTime != null) {
-            // As a shorthand some TVL segments leave out the
-            // arrival date if it's the same as the departure date
-            // e.g. TVL+121210:0915::1230
-            if (StringUtils.isBlank(arrivalDate)) {
-                arrivalDate = c.getElement(0);
-            }
-            arrivalDate += arrivalTime;
-        }
-        
-        if (departureDate != null) {
-            rv[0] = PnrUtils.parseDateTime(departureDate);
-        }
-        if (arrivalDate != null) {
-            rv[1] = PnrUtils.parseDateTime(arrivalDate);
-        }
-        
-        return rv;
-    }
+			switch (i) {
+			case 0:
+				Date[] tmp = getEtdEta(c);
+				etd = tmp[0];
+				eta = tmp[1];
+				break;
+			case 1:
+				this.origin = c.getElement(0);
+				break;
+			case 2:
+				this.destination = c.getElement(0);
+				break;
+			case 3:
+				this.carrier = c.getElement(0);
+				this.operatingCarrier = c.getElement(1);
+				break;
+			case 4:
+				this.flightNumber = c.getElement(0);
+				this.reservationBookingDesignator = c.getElement(1);
+			}
+		}
+	}
 
-    public Date getEtd() {
-        return etd;
-    }
+	/**
+	 * @return [etd, eta]
+	 */
+	public static Date[] getEtdEta(Composite c) throws ParseException {
+		Date[] rv = new Date[2];
 
-    public Date getEta() {
-        return eta;
-    }
+		String departureDate = c.getElement(0);
+		String departureTime = c.getElement(1);
+		if (departureTime != null) {
+			departureDate += departureTime;
+		}
 
-    public String getOrigin() {
-        return origin;
-    }
+		String arrivalDate = c.getElement(2);
+		String arrivalTime = c.getElement(3);
+		if (arrivalTime != null) {
+			// As a shorthand some TVL segments leave out the
+			// arrival date if it's the same as the departure date
+			// e.g. TVL+121210:0915::1230
+			if (StringUtils.isBlank(arrivalDate)) {
+				arrivalDate = c.getElement(0);
+			}
+			arrivalDate += arrivalTime;
+		}
 
-    public String getDestination() {
-        return destination;
-    }
+		if (departureDate != null) {
+			rv[0] = PnrUtils.parseDateTime(departureDate);
+		}
+		if (arrivalDate != null) {
+			rv[1] = PnrUtils.parseDateTime(arrivalDate);
+		}
 
-    public String getCarrier() {
-        return carrier;
-    }
+		return rv;
+	}
 
-    public String getOperatingCarrier() {
-        return operatingCarrier;
-    }
+	public Date getEtd() {
+		return etd;
+	}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
+	public Date getEta() {
+		return eta;
+	}
 
-    public String getReservationBookingDesignator() {
-        return reservationBookingDesignator;
-    }
+	public String getOrigin() {
+		return origin;
+	}
+
+	public String getDestination() {
+		return destination;
+	}
+
+	public String getCarrier() {
+		return carrier;
+	}
+
+	public String getOperatingCarrier() {
+		return operatingCarrier;
+	}
+
+	public String getFlightNumber() {
+		return flightNumber;
+	}
+
+	public String getReservationBookingDesignator() {
+		return reservationBookingDesignator;
+	}
 }

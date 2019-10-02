@@ -12,9 +12,9 @@ import gov.gtas.model.Flight;
 
 import java.util.List;
 
-public interface AddressRepository extends CrudRepository<Address, Long>{
-    List<Address> findByLine1AndCityAndStateAndPostalCodeAndCountry(
-            String line1, String city, String state, String postalCode, String country);
+public interface AddressRepository extends CrudRepository<Address, Long> {
+	List<Address> findByLine1AndCityAndStateAndPostalCodeAndCountry(String line1, String city, String state,
+			String postalCode, String country);
 
 	List<Address> findByLine1AndCityAndStateAndPostalCodeAndCountryAndFlightId(String line1, String city, String state,
 			String postalCode, String country, Long flightId);

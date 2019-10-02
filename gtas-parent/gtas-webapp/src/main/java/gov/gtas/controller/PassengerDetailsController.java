@@ -73,16 +73,16 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private UserService uService;
-	
+
 	@Autowired
 	private MatchingService matchingService;
 
 	@Resource
 	private BagRepository bagRepository;
-	
+
 	@Resource
 	private SeatRepository seatRepository;
-	
+
 	@Resource
 	private ApisMessageRepository apisMessageRepository;
 
@@ -94,8 +94,7 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/{id}/details", method = RequestMethod.GET)
-	public PassengerVo getPassengerByPaxIdAndFlightId(
-			@PathVariable(value = "id") String paxId,
+	public PassengerVo getPassengerByPaxIdAndFlightId(@PathVariable(value = "id") String paxId,
 			@RequestParam(value = "flightId", required = false) String flightId) {
 		PassengerVo vo = new PassengerVo();
 		Passenger t = pService.findByIdWithFlightPaxAndDocuments(Long.valueOf(paxId));
@@ -112,21 +111,20 @@ public class PassengerDetailsController {
 			vo.setFlightDestination(flight.getDestination());
 			vo.setFlightId(flight.getId().toString());
 			vo.setFlightIdTag(flight.getIdTag());
-			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(
-					flight.getId(), t.getId());
+			List<Seat> seatList = seatRepository.findByFlightIdAndPassengerId(flight.getId(), t.getId());
 			if (CollectionUtils.isNotEmpty(seatList)) {
-				List<String> seats = seatList.stream().map(seat -> seat.getNumber())
-						.distinct().collect(Collectors.toList());
+				List<String> seats = seatList.stream().map(seat -> seat.getNumber()).distinct()
+						.collect(Collectors.toList());
 				if (seats.size() == 1) {
 					vo.setSeat(seats.get(0));
 				}
 			}
 			bagList = new ArrayList<>(bagRepository.findFromFlightAndPassenger(flight.getId(), t.getId()));
 		}
-    vo.setPaxId(String.valueOf(t.getId()));
-    if (t.getPassengerIDTag() != null) {
-      vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
-    }
+		vo.setPaxId(String.valueOf(t.getId()));
+		if (t.getPassengerIDTag() != null) {
+			vo.setPaxIdTag(t.getPassengerIDTag().getIdTag());
+		}
 		vo.setPassengerType(t.getPassengerDetails().getPassengerType());
 		vo.setLastName(t.getPassengerDetails().getLastName());
 		vo.setFirstName(t.getPassengerDetails().getFirstName());
@@ -141,7 +139,7 @@ public class PassengerDetailsController {
 		vo.setGender(t.getPassengerDetails().getGender() != null ? t.getPassengerDetails().getGender() : "");
 		vo.setResidencyCountry(t.getPassengerDetails().getResidencyCountry());
 		vo.setSuffix(t.getPassengerDetails().getSuffix());
-    vo.setTitle(t.getPassengerDetails().getTitle());
+		vo.setTitle(t.getPassengerDetails().getTitle());
 
 		Iterator<Document> docIter = t.getDocuments().iterator();
 		while (docIter.hasNext()) {
@@ -154,7 +152,6 @@ public class PassengerDetailsController {
 			docVo.setIssuanceDate(d.getIssuanceDate());
 			vo.addDocument(docVo);
 		}
-
 
 		List<Disposition> cases = pService.getPassengerDispositionHistory(Long.valueOf(paxId),
 				Long.parseLong(flightId));
@@ -171,40 +168,40 @@ public class PassengerDetailsController {
 			}
 			vo.setDispositionHistory(history);
 		}
-	
+
 		// Gather PNR Details
-		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(
-				t.getId(), new Long(flightId));
-		
+		List<Pnr> pnrList = pnrService.findPnrByPassengerIdAndFlightId(t.getId(), new Long(flightId));
+
 		if (!pnrList.isEmpty()) {
-      //APB - why are we not getting the passengerIds from the latest PNR??
+			// APB - why are we not getting the passengerIds from the latest PNR??
 			List<Long> passengerIds = pnrList.get(0).getPassengers().stream().map(Passenger::getId).collect(toList());
 			Set<Bag> pnrBag = bagRepository.getBagsByPassengerIds(passengerIds);
 
-      // APB - Here we are using "getLatestPnrFromList" to choose which element from pnrList to use,
-      // so why use pnrList.get(0) for the pax data ???
-			Pnr source=getLatestPnrFromList(pnrList);
-			vo.setPnrVo(mapPnrToPnrVo(source));			
+			// APB - Here we are using "getLatestPnrFromList" to choose which element from
+			// pnrList to use,
+			// so why use pnrList.get(0) for the pax data ???
+			Pnr source = getLatestPnrFromList(pnrList);
+			vo.setPnrVo(mapPnrToPnrVo(source));
 			PnrVo tempVo = vo.getPnrVo();
 			BagSummaryVo bagSummaryVo = BagSummaryVo.createFromFlightAndBookingDetails(pnrBag);
 			tempVo.setBagSummaryVo(bagSummaryVo);
 
-			//Assign seat for every passenger on pnr
-			for(Passenger p: pnrList.get(0).getPassengers()) {
+			// Assign seat for every passenger on pnr
+			for (Passenger p : pnrList.get(0).getPassengers()) {
 				FlightPax flightPax = getPnrFlightPax(p, flight);
 				Optional<BagVo> bagVoOptional = getBagOptional(flightPax);
 				bagVoOptional.ifPresent(tempVo::addBag);
 				for (Seat s : p.getSeatAssignments()) {
-          // exclude APIS seat data
-          if (!s.getApis()) {
-            SeatVo seatVo = new SeatVo();
-            seatVo.setFirstName(p.getPassengerDetails().getFirstName());
-            seatVo.setLastName(p.getPassengerDetails().getLastName());
-            seatVo.setNumber(s.getNumber());
-            seatVo.setApis(s.getApis());
-            seatVo.setFlightNumber(flight.getFullFlightNumber());
-            tempVo.addSeat(seatVo);
-          }
+					// exclude APIS seat data
+					if (!s.getApis()) {
+						SeatVo seatVo = new SeatVo();
+						seatVo.setFirstName(p.getPassengerDetails().getFirstName());
+						seatVo.setLastName(p.getPassengerDetails().getLastName());
+						seatVo.setNumber(s.getNumber());
+						seatVo.setApis(s.getApis());
+						seatVo.setFlightNumber(flight.getFullFlightNumber());
+						tempVo.addSeat(seatVo);
+					}
 				}
 			}
 
@@ -215,18 +212,21 @@ public class PassengerDetailsController {
 			parseRawMessageToSegmentList(tempVo);
 			vo.setPnrVo(tempVo);
 		}
-		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId), t.getId());
-		if(!apisList.isEmpty()) {
+		List<ApisMessage> apisList = apisMessageRepository.findByFlightIdAndPassengerId(Long.parseLong(flightId),
+				t.getId());
+		if (!apisList.isEmpty()) {
 			ApisMessage apis = apisList.get(0);
 			ApisMessageVo apisVo = new ApisMessageVo();
 			apisVo.setApisRecordExists(true);
 			apisVo.setTransmissionDate(apis.getEdifactMessage().getTransmissionDate());
-			
-			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), t.getId());			
-			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId())
-					.stream().filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
 
-			if(!apisMessageFlightPaxs.isEmpty()) {
+			List<String> refList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
+					t.getId());
+			List<FlightPax> apisMessageFlightPaxs = apisMessageRepository
+					.findFlightPaxByFlightIdandPassengerId(Long.parseLong(flightId), t.getId()).stream()
+					.filter(a -> a.getMessageSource().equals("APIS")).collect(Collectors.toList());
+
+			if (!apisMessageFlightPaxs.isEmpty()) {
 				FlightPax apisMessageFlightPax = apisMessageFlightPaxs.get(0);
 				apisVo.setBagCount(apisMessageFlightPax.getBagCount());
 				apisVo.setBagWeight(apisMessageFlightPax.getBagWeight());
@@ -237,8 +237,8 @@ public class PassengerDetailsController {
 				apisVo.addFlightpax(flightPassengerVo);
 			}
 
-			for(Bag b: bagList) {
-				if(b.getData_source().equalsIgnoreCase("apis")){
+			for (Bag b : bagList) {
+				if (b.getData_source().equalsIgnoreCase("apis")) {
 					BagVo bagVo = new BagVo();
 					bagVo.setBagId(b.getBagId());
 					bagVo.setData_source(b.getData_source());
@@ -246,30 +246,24 @@ public class PassengerDetailsController {
 					apisVo.addBag(bagVo);
 				}
 			}
-			
+
 			Iterator<Phone> phoneIter = apis.getPhones().iterator();
-			while(phoneIter.hasNext()) {
+			while (phoneIter.hasNext()) {
 				Phone p = phoneIter.next();
 				PhoneVo pVo = new PhoneVo();
 				pVo.setNumber(p.getNumber());
 				apisVo.addPhoneNumber(pVo);
 			}
 			vo.setApisMessageVo(apisVo);
-    }
-    
+		}
+
 		return vo;
 	}
-
-
 
 	private FlightPax getPnrFlightPax(Passenger p, Flight flight) {
 		FlightPax flightPax;
 		if (p.getFlightPaxList() != null && !p.getFlightPaxList().isEmpty()) {
-			flightPax = p.getFlightPaxList()
-					.stream()
-					.filter(fp -> isPnr(fp, flight))
-					.findFirst()
-					.orElse(null);
+			flightPax = p.getFlightPaxList().stream().filter(fp -> isPnr(fp, flight)).findFirst().orElse(null);
 		} else {
 			flightPax = null;
 		}
@@ -277,8 +271,7 @@ public class PassengerDetailsController {
 	}
 
 	private boolean isPnr(FlightPax fp, Flight flight) {
-		return fp.getMessageSource() != null
-				&& fp.getMessageSource().equalsIgnoreCase("PNR")
+		return fp.getMessageSource() != null && fp.getMessageSource().equalsIgnoreCase("PNR")
 				&& fp.getFlight().equals(flight);
 	}
 
@@ -300,7 +293,6 @@ public class PassengerDetailsController {
 		return bagVoOptional;
 	}
 
-
 	/**
 	 * Gets the travel history by pnr id and pnr ref.
 	 *
@@ -308,99 +300,91 @@ public class PassengerDetailsController {
 	 *            the passenger id
 	 * @param flightId
 	 *            the flight id
-		 * @return the travel history by passenger and document
+	 * @return the travel history by passenger and document
 	 * @throws ParseException
 	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/flighthistory", method = RequestMethod.GET)
-	public List<FlightVo> getTravelHistoryByPassengerAndItinerary(
-			@RequestParam String paxId,
-			@RequestParam String flightId)
-			throws ParseException {
+	public List<FlightVo> getTravelHistoryByPassengerAndItinerary(@RequestParam String paxId,
+			@RequestParam String flightId) throws ParseException {
 
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
-		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;
-		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
+		List<String> pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
+				Long.parseLong(paxId));
+		String pnrRef = !pnrRefList.isEmpty() ? pnrRefList.get(0) : null;
+		Long pnrId = !pnrs.isEmpty() ? pnrs.get(0).getId() : null;
 
-		if(pnrId != null || pnrRef!=null) {
-			return pService
-					.getTravelHistoryByItinerary(pnrId, pnrRef)
-					.stream()
-					.map(flight -> {
-								FlightVo flightVo = new FlightVo();
-								copyModelToVo(flight, flightVo);
-								copyModelToVo(flight.getMutableFlightDetails(), flightVo);
-								flightVo.setId(flight.getId());
-								return flightVo;
-							}).collect(Collectors.toCollection(LinkedList::new));
-		}
-		else {
-		return new ArrayList<FlightVo>();
+		if (pnrId != null || pnrRef != null) {
+			return pService.getTravelHistoryByItinerary(pnrId, pnrRef).stream().map(flight -> {
+				FlightVo flightVo = new FlightVo();
+				copyModelToVo(flight, flightVo);
+				copyModelToVo(flight.getMutableFlightDetails(), flightVo);
+				flightVo.setId(flight.getId());
+				return flightVo;
+			}).collect(Collectors.toCollection(LinkedList::new));
+		} else {
+			return new ArrayList<FlightVo>();
 		}
 
 	}
+
 	/**
 	 * Gets the travel history by passenger and document.
 	 *
 	 * @param paxId
 	 *            the passenger id
 	 * @param flightId
-	 * 			  the flight id           
+	 *            the flight id
 	 * @return the travel history by passenger and document
 	 * @throws ParseException
 	 */
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/travelhistory", method = RequestMethod.GET)
-	public List<FlightVo> getTravelHistoryByPassengerAndNotItinerary(
-			@RequestParam String paxId,
-			@RequestParam String flightId)
-			throws ParseException {
-		
+	public List<FlightVo> getTravelHistoryByPassengerAndNotItinerary(@RequestParam String paxId,
+			@RequestParam String flightId) throws ParseException {
+
 		List<Pnr> pnrs = pnrService.findPnrByPassengerIdAndFlightId(Long.parseLong(paxId), Long.parseLong(flightId));
-		List<String>pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId), Long.parseLong(paxId));
-		String pnrRef = !pnrRefList.isEmpty()? pnrRefList.get(0):null;		
-		Long pnrId = !pnrs.isEmpty()? pnrs.get(0).getId():null;
-		
-		return pService
-			.getTravelHistoryNotByItinerary(Long.valueOf(paxId), pnrId, pnrRef)
-			.stream().map(flight -> {
-						FlightVo flightVo = new FlightVo();
-						copyModelToVo(flight, flightVo);
-                                                flightVo.setFlightId(flight.getId().toString());
-						return flightVo;
-					}).collect(Collectors.toCollection(LinkedList::new));
+		List<String> pnrRefList = apisMessageRepository.findApisRefByFlightIdandPassengerId(Long.parseLong(flightId),
+				Long.parseLong(paxId));
+		String pnrRef = !pnrRefList.isEmpty() ? pnrRefList.get(0) : null;
+		Long pnrId = !pnrs.isEmpty() ? pnrs.get(0).getId() : null;
+
+		return pService.getTravelHistoryNotByItinerary(Long.valueOf(paxId), pnrId, pnrRef).stream().map(flight -> {
+			FlightVo flightVo = new FlightVo();
+			copyModelToVo(flight, flightVo);
+			flightVo.setFlightId(flight.getId().toString());
+			return flightVo;
+		}).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/bookingdetailhistory", method = RequestMethod.GET)
-	public List<FlightVoForFlightHistory> getBookingDetailHistoryByPassenger(
-			@RequestParam String paxId,
+	public List<FlightVoForFlightHistory> getBookingDetailHistoryByPassenger(@RequestParam String paxId,
 			@RequestParam String flightId) {
 
 		List<Passenger> passengersWithSamePassengerIdTag = pService.getBookingDetailHistoryByPaxID(Long.valueOf(paxId));
 		return copyBookingDetailFlightModelToVo(passengersWithSamePassengerIdTag);
 
 	}
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/savewatchlistlink", method = RequestMethod.GET)
-	public void saveWatchListMatchByPaxId (@RequestParam String paxId) {
+	public void saveWatchListMatchByPaxId(@RequestParam String paxId) {
 		matchingService.performFuzzyMatching(Long.valueOf(paxId));
 	}
-	
+
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passengers/passenger/getwatchlistlink", method = RequestMethod.GET)
-	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId (@RequestParam String paxId) {
+	public List<PaxWatchlistLinkVo> getWatchListMatchByPaxId(@RequestParam String paxId) {
 		return matchingService.findByPassengerId(Long.valueOf(paxId));
 	}
-	
+
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
 	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
 
@@ -420,8 +404,7 @@ public class PassengerDetailsController {
 	}
 
 	@RequestMapping(value = "/disposition", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse createDisposition(
-			@RequestBody DispositionData disposition) {
+	public @ResponseBody JsonServiceResponse createDisposition(@RequestBody DispositionData disposition) {
 		JsonServiceResponse response = checkIfValidCaseStatusAction(disposition);
 		if (response.getStatus().equals(Status.SUCCESS)) {
 			String userId = GtasSecurityUtils.fetchLoggedInUserId();
@@ -431,29 +414,23 @@ public class PassengerDetailsController {
 	}
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(
-			@RequestBody DispositionStatus ds) {
+	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(@RequestBody DispositionStatus ds) {
 		pService.createOrEditDispositionStatus(ds);
-		return new JsonServiceResponse(Status.SUCCESS,
-				"Creation or Edit of disposition status successful");
+		return new JsonServiceResponse(Status.SUCCESS, "Creation or Edit of disposition status successful");
 	}
 
 	@RequestMapping(value = "/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse deleteDispositionStatus(
-			@RequestBody DispositionStatus ds) {
+	public @ResponseBody JsonServiceResponse deleteDispositionStatus(@RequestBody DispositionStatus ds) {
 		if (!isRemovableDispositionStatus(ds)) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"This status is irremovable");
+			return new JsonServiceResponse(Status.FAILURE, "This status is irremovable");
 		}
 		try {
 			pService.deleteDispositionStatus(ds);
 		} catch (ConstraintViolationException e) {
 			return new JsonServiceResponse(Status.FAILURE,
-					"Case already exists with " + ds.getName()
-							+ ". You may not remove this status");
+					"Case already exists with " + ds.getName() + ". You may not remove this status");
 		}
-		return new JsonServiceResponse(Status.SUCCESS,
-				"Deletion of disposition status successful");
+		return new JsonServiceResponse(Status.SUCCESS, "Deletion of disposition status successful");
 	}
 
 	/**
@@ -465,8 +442,7 @@ public class PassengerDetailsController {
 	public PnrVo mapPnrToPnrVo(Pnr source) {
 		PnrVo target = new PnrVo();
 
-		if (source.getRecordLocator() == null
-				|| source.getRecordLocator().isEmpty()) {
+		if (source.getRecordLocator() == null || source.getRecordLocator().isEmpty()) {
 			target.setPnrRecordExists(false);
 			return target;
 		}
@@ -485,9 +461,10 @@ public class PassengerDetailsController {
 		target.setRaw(LobUtils.convertClobToString(source.getRaw()));
 		target.setTransmissionDate(source.getEdifactMessage().getTransmissionDate());
 		target.setTotal_bag_count(source.getTotal_bag_count());
-		if(source.getBaggageWeight()!=null)target.setBaggageWeight(source.getBaggageWeight());
-                
-                target.setTripType(source.getTripType());
+		if (source.getBaggageWeight() != null)
+			target.setBaggageWeight(source.getBaggageWeight());
+
+		target.setTripType(source.getTripType());
 
 		if (!source.getAddresses().isEmpty()) {
 			Iterator it = source.getAddresses().iterator();
@@ -501,7 +478,7 @@ public class PassengerDetailsController {
 
 				} catch (IllegalAccessException | InvocationTargetException e) {
 					logger.error("Unable to copy properties, catching and moving to next address", e);
-				} 
+				}
 
 				target.getAddresses().add(aVo);
 
@@ -554,22 +531,24 @@ public class PassengerDetailsController {
 				copyModelToVo(p, pVo);
 				target.getPhoneNumbers().add(pVo);
 			}
-		}		
+		}
 
 		if (!source.getFlightLegs().isEmpty()) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
 			for (FlightLeg fl : _tempFL) {
 				FlightLegVo flVo = new FlightLegVo();
 				flVo.setLegNumber(fl.getLegNumber().toString());
-				if(fl.getFlight() != null){
+				if (fl.getFlight() != null) {
 					flVo.setFlightNumber(fl.getFlight().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getFlight().getOrigin());
 					flVo.setDestinationAirport(fl.getFlight().getDestination());
-					flVo.setEtd(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
-					flVo.setEta(DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
+					flVo.setEtd(
+							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEtd()));
+					flVo.setEta(
+							DateCalendarUtils.formatJsonDateTime(fl.getFlight().getMutableFlightDetails().getEta()));
 					flVo.setFlightId(Long.toString(fl.getFlight().getId()));
 					flVo.setDirection(fl.getFlight().getDirection());
-				} else{
+				} else {
 					flVo.setFlightNumber(fl.getBookingDetail().getFullFlightNumber());
 					flVo.setOriginAirport(fl.getBookingDetail().getOrigin());
 					flVo.setDestinationAirport(fl.getBookingDetail().getDestination());
@@ -593,9 +572,9 @@ public class PassengerDetailsController {
 				pVo.setGender(p.getPassengerDetails().getGender());
 				pVo.setPaxId(Long.toString(p.getId()));
 				target.getPassengers().add(pVo);
-				
+
 				Set<Document> documents = p.getDocuments();
-				for (Document d: documents) {
+				for (Document d : documents) {
 					DocumentVo documentVo = new DocumentVo();
 					documentVo.setFirstName(d.getPassenger().getPassengerDetails().getFirstName());
 					documentVo.setLastName(d.getPassenger().getPassengerDetails().getLastName());
@@ -610,17 +589,19 @@ public class PassengerDetailsController {
 		}
 		return target;
 	}
+
 	/**
-	 * Segments PnrRaw String
-	 * Required for Frontend to highlight segment corresponding to pnr section
+	 * Segments PnrRaw String Required for Frontend to highlight segment
+	 * corresponding to pnr section
+	 * 
 	 * @param targetVo
 	 */
 	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
 		if (targetVo != null && targetVo.getRaw() != null) {
-                    
-			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(),"\n");
-			List<KeyValue> segmentList= new ArrayList<>();
-			
+
+			StringTokenizer _tempStr = new StringTokenizer(targetVo.getRaw(), "\n");
+			List<KeyValue> segmentList = new ArrayList<>();
+
 			final String ITIN = "TVL";
 			final String NAME = "SSR";
 			final String DOC = "DOCS";
@@ -631,66 +612,66 @@ public class PassengerDetailsController {
 			final String TIF = "TIF";
 
 			String tifSegment = "";
-                        Integer indexInteger = 0;
-                        
+			Integer indexInteger = 0;
+
 			while (_tempStr.hasMoreTokens()) {
 				String currString = _tempStr.nextToken();
 				StringBuilder segment = new StringBuilder();
-				
-				//Itinerary
+
+				// Itinerary
 				if (currString.contains(ITIN)) {
-					for(FlightLegVo f: targetVo.getFlightLegs()) {
-						if(currString.contains(f.getOriginAirport())) {
+					for (FlightLegVo f : targetVo.getFlightLegs()) {
+						if (currString.contains(f.getOriginAirport())) {
 							segment.append(ITIN);
 							segment.append(f.getOriginAirport());
 							segment.append(" ");
 						}
 					}
 				}
-				//PNR names
+				// PNR names
 				if (currString.contains(NAME)) {
-					for(PassengerVo p: targetVo.getPassengers()) {
-						if(currString.contains(p.getFirstName())) {
+					for (PassengerVo p : targetVo.getPassengers()) {
+						if (currString.contains(p.getFirstName())) {
 							segment.append(NAME);
 							segment.append(p.getFirstName());
 							segment.append(" ");
 						}
 					}
 				}
-				//Doc Numbers
+				// Doc Numbers
 				if (currString.contains(DOC)) {
-					for(DocumentVo d: targetVo.getDocuments()) {
-						if(currString.contains(d.getDocumentNumber())) {
+					for (DocumentVo d : targetVo.getDocuments()) {
+						if (currString.contains(d.getDocumentNumber())) {
 							segment.append(DOC);
 							segment.append(d.getDocumentNumber());
 							segment.append(" ");
 						}
 					}
 				}
-				//Addresses
+				// Addresses
 				if (currString.contains(ADD)) {
-					for(AddressVo a: targetVo.getAddresses()) {
-						if(a.getCity() != null && currString.contains(a.getCity())) {
+					for (AddressVo a : targetVo.getAddresses()) {
+						if (a.getCity() != null && currString.contains(a.getCity())) {
 							segment.append(ADD);
 							segment.append(a.getCity());
 							segment.append(" ");
 						}
 					}
 				}
-				//FOP
+				// FOP
 				if (currString.contains(CC)) {
-					for(CreditCardVo c: targetVo.getCreditCards()) {
-						if(currString.contains(c.getNumber().substring(c.getNumber().length()-4))) {
+					for (CreditCardVo c : targetVo.getCreditCards()) {
+						if (currString.contains(c.getNumber().substring(c.getNumber().length() - 4))) {
 							segment.append(CC);
 							segment.append(c.getNumber());
 							segment.append(" ");
 						}
 					}
 				}
-				//Frequent Flyer
+				// Frequent Flyer
 				if (currString.contains(FF)) {
-					for(FrequentFlyerVo f: targetVo.getFrequentFlyerDetails()) {
-						if(currString.contains(f.getNumber())) {
+					for (FrequentFlyerVo f : targetVo.getFrequentFlyerDetails()) {
+						if (currString.contains(f.getNumber())) {
 							segment.append(FF);
 							segment.append(f.getNumber());
 							segment.append(" ");
@@ -698,13 +679,14 @@ public class PassengerDetailsController {
 					}
 				}
 
-				/* GR.7 TIF - the checked-in name.
-				Used to link bags to passengers.*/
+				/*
+				 * GR.7 TIF - the checked-in name. Used to link bags to passengers.
+				 */
 				if (currString.contains(TIF)) {
 					tifSegment = currString;
 				}
 
-//             Bag
+				// Bag
 				if (currString.contains(BAG)) {
 					for (BagVo b : targetVo.getBags()) {
 						if (isRelatedToTifPassenger(tifSegment, b)) {
@@ -715,74 +697,70 @@ public class PassengerDetailsController {
 						}
 					}
 				}
-				//Phone
-				for(PhoneVo p: targetVo.getPhoneNumbers()) {
-					if(currString.contains(p.getNumber().substring(p.getNumber().length()-4))) {
+				// Phone
+				for (PhoneVo p : targetVo.getPhoneNumbers()) {
+					if (currString.contains(p.getNumber().substring(p.getNumber().length() - 4))) {
 						segment.append("PHONE");
 						segment.append(p.getNumber());
 						segment.append(" ");
 					}
 				}
-				
-				//Email
-				for(EmailVo e: targetVo.getEmails()) {
+
+				// Email
+				for (EmailVo e : targetVo.getEmails()) {
 					boolean isMatch = true;
 					String[] words = e.getAddress().split("[^a-zA-Z0-9']+");
 
-					for(String word: words) {
-						if(!currString.contains(word)) {
+					for (String word : words) {
+						if (!currString.contains(word)) {
 							isMatch = false;
 							break;
 						}
 					}
-					if(words.length>0 && isMatch) {
+					if (words.length > 0 && isMatch) {
 						segment.append("EMAIL");
 						segment.append(e.getAddress());
 						segment.append(" ");
 					}
 				}
-				
-				//Seat
-				for(SeatVo s: targetVo.getSeatAssignments()) {
-					if(currString.contains(s.getNumber())) {
+
+				// Seat
+				for (SeatVo s : targetVo.getSeatAssignments()) {
+					if (currString.contains(s.getNumber())) {
 						segment.append("SEAT");
 						segment.append(s.getNumber());
 						segment.append(" ");
 					}
 				}
-				
-				//Agency
-				for(AgencyVo a: targetVo.getAgencies()) {
-					if(a.getIdentifier() != null && currString.contains(a.getIdentifier())) {
+
+				// Agency
+				for (AgencyVo a : targetVo.getAgencies()) {
+					if (a.getIdentifier() != null && currString.contains(a.getIdentifier())) {
 						segment.append("AGEN");
 						segment.append(a.getIdentifier());
 						segment.append(" ");
 					}
 				}
-                                
-                                if (segment.toString().isEmpty())
-                                {
-                                   KeyValue kv = new KeyValue(indexInteger.toString(), currString);
-                                   segmentList.add(kv); 
-                                }
-				else
-                                {
-                                   KeyValue kv2 = new KeyValue(segment.toString(), currString);
-                                   segmentList.add(kv2); ;
-                                }
-                                
-                                indexInteger++;
+
+				if (segment.toString().isEmpty()) {
+					KeyValue kv = new KeyValue(indexInteger.toString(), currString);
+					segmentList.add(kv);
+				} else {
+					KeyValue kv2 = new KeyValue(segment.toString(), currString);
+					segmentList.add(kv2);
+					;
+				}
+
+				indexInteger++;
 			}
 			targetVo.setSegmentList(segmentList);
 		}
 	}
 
 	private boolean isRelatedToTifPassenger(String tifSegment, BagVo b) {
-		return b.getData_source().equalsIgnoreCase("PNR") &&
-				b.getPassFirstName() != null &&
-				tifSegment.contains(b.getPassFirstName()) &&
-				b.getPassLastName() != null &&
-				tifSegment.contains(b.getPassLastName());
+		return b.getData_source().equalsIgnoreCase("PNR") && b.getPassFirstName() != null
+				&& tifSegment.contains(b.getPassFirstName()) && b.getPassLastName() != null
+				&& tifSegment.contains(b.getPassLastName());
 	}
 
 	/**
@@ -796,49 +774,43 @@ public class PassengerDetailsController {
 			BeanUtils.copyProperties(target, source);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			logger.error("error copying model to vo", e);
-		} 
+		}
 	}
 
-    /**
-     *
-     * @param allPassengersRelatingToSingleIdTag -
-	 * Passengers represent a single person on a flight once. Passenger Id Tag is how multiple passengers are stored together
-	 *                                           in one identity. The list passed in is several passengers who are mapped to a single
-	 *                                           passenger id tag / passenger identity. The Method will return a list of
-	 *                                           booking details and flights from the list of passenger ids.
-     */
-	private List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(List<Passenger> allPassengersRelatingToSingleIdTag) {
+	/**
+	 *
+	 * @param allPassengersRelatingToSingleIdTag
+	 *            - Passengers represent a single person on a flight once. Passenger
+	 *            Id Tag is how multiple passengers are stored together in one
+	 *            identity. The list passed in is several passengers who are mapped
+	 *            to a single passenger id tag / passenger identity. The Method will
+	 *            return a list of booking details and flights from the list of
+	 *            passenger ids.
+	 */
+	private List<FlightVoForFlightHistory> copyBookingDetailFlightModelToVo(
+			List<Passenger> allPassengersRelatingToSingleIdTag) {
 
-	    List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
+		List<FlightVoForFlightHistory> flightsAndBookingDetailsRelatingToSamePaxIdTag = new ArrayList<>();
 
-        try {
+		try {
 
 			List<FlightPax> flightPassengersList = getFlightPaxes(allPassengersRelatingToSingleIdTag);
 
-			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList
-					.stream()
+			Set<Pair<Passenger, Flight>> associatedPaxFlights = flightPassengersList.stream()
 					.map(flightPax -> new ImmutablePair<>(flightPax.getPassenger(), flightPax.getFlight()))
 					.collect(Collectors.toSet());
 
-			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights
-					.stream()
-					.map(passengerFlightPair -> {
-										FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
-										populateFlightVoWithFlightDetail(passengerFlightPair.getRight(), flightVo);
-										Long pId = passengerFlightPair.getLeft().getId();
-										flightVo.setPassId(pId.toString());
-										flightVo.setBookingDetail(false);
-										return flightVo;
-									})
-					.collect(toList());
+			List<FlightVoForFlightHistory> flightHistory = associatedPaxFlights.stream().map(passengerFlightPair -> {
+				FlightVoForFlightHistory flightVo = new FlightVoForFlightHistory();
+				populateFlightVoWithFlightDetail(passengerFlightPair.getRight(), flightVo);
+				Long pId = passengerFlightPair.getLeft().getId();
+				flightVo.setPassId(pId.toString());
+				flightVo.setBookingDetail(false);
+				return flightVo;
+			}).collect(toList());
 
-			List<BookingDetail> passengerBookingDetails =
-					allPassengersRelatingToSingleIdTag
-					.stream()
-					.map(Passenger::getBookingDetails)
-					.flatMap(Collection::stream)
-					.distinct()
-					.collect(toList());
+			List<BookingDetail> passengerBookingDetails = allPassengersRelatingToSingleIdTag.stream()
+					.map(Passenger::getBookingDetails).flatMap(Collection::stream).distinct().collect(toList());
 
 			List<FlightVoForFlightHistory> bookingDetailsHistory = passengerBookingDetails.stream()
 					.map(bookingDetail -> {
@@ -846,8 +818,7 @@ public class PassengerDetailsController {
 						populateFlightVoWithBookingDetail(bookingDetail, flightVo);
 						flightVo.setBookingDetail(true);
 						return flightVo;
-					})
-					.collect(toList());
+					}).collect(toList());
 
 			flightsAndBookingDetailsRelatingToSamePaxIdTag.addAll(flightHistory);
 			flightsAndBookingDetailsRelatingToSamePaxIdTag.addAll(bookingDetailsHistory);
@@ -861,10 +832,8 @@ public class PassengerDetailsController {
 
 	private List<FlightPax> getFlightPaxes(List<Passenger> allPassengersRelatingToSingleIdTag) {
 
-		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag
-				.stream()
-				.flatMap(p -> p.getFlightPaxList().stream())
-				.collect(toList());
+		List<FlightPax> flightPaxes = allPassengersRelatingToSingleIdTag.stream()
+				.flatMap(p -> p.getFlightPaxList().stream()).collect(toList());
 
 		List<FlightPax> filteredFlightPax = new ArrayList<>();
 		Map<Pair<Passenger, Flight>, Boolean> flightPaxRecorded = new HashMap<>();
@@ -879,38 +848,38 @@ public class PassengerDetailsController {
 	}
 
 	/**
-     *
-     * @param source
-     * @param target
-     */
-	private void populateFlightVoWithBookingDetail(BookingDetail source, FlightVo target){
-        try {
+	 *
+	 * @param source
+	 * @param target
+	 */
+	private void populateFlightVoWithBookingDetail(BookingDetail source, FlightVo target) {
+		try {
 
-            target.setFlightNumber(((BookingDetail)source).getFlightNumber());
-            target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
-            target.setCarrier(((BookingDetail)source).getFlightNumber());
-            target.setEtaDate(((BookingDetail)source).getEtaDate());
-            target.setEtdDate(((BookingDetail)source).getEtdDate());
-            target.setOriginCountry(((BookingDetail)source).getOriginCountry());
-            target.setOrigin(((BookingDetail)source).getOrigin());
-            target.setDestinationCountry(((BookingDetail)source).getDestinationCountry());
-            target.setDestination(((BookingDetail)source).getDestination());
-			target.setEtd(((BookingDetail)source).getEtd());
-			target.setEta(((BookingDetail)source).getEta());
-			//target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
-            target.setFlightId(source.getId().toString());
+			target.setFlightNumber(((BookingDetail) source).getFlightNumber());
+			target.setFullFlightNumber(((BookingDetail) source).getFullFlightNumber());
+			target.setCarrier(((BookingDetail) source).getFlightNumber());
+			target.setEtaDate(((BookingDetail) source).getEtaDate());
+			target.setEtdDate(((BookingDetail) source).getEtdDate());
+			target.setOriginCountry(((BookingDetail) source).getOriginCountry());
+			target.setOrigin(((BookingDetail) source).getOrigin());
+			target.setDestinationCountry(((BookingDetail) source).getDestinationCountry());
+			target.setDestination(((BookingDetail) source).getDestination());
+			target.setEtd(((BookingDetail) source).getEtd());
+			target.setEta(((BookingDetail) source).getEta());
+			// target.setFullFlightNumber(((BookingDetail)source).getFullFlightNumber());
+			target.setFlightId(source.getId().toString());
 
-        } catch (Exception e) {
-            logger.error("error populating flight with booking details", e);
-        }
-    }
+		} catch (Exception e) {
+			logger.error("error populating flight with booking details", e);
+		}
+	}
 
 	/**
 	 *
 	 * @param source
 	 * @param target
 	 */
-	private void populateFlightVoWithFlightDetail(Flight source, FlightVo target){
+	private void populateFlightVoWithFlightDetail(Flight source, FlightVo target) {
 		try {
 
 			target.setFlightNumber(source.getFlightNumber());
@@ -924,13 +893,12 @@ public class PassengerDetailsController {
 			target.setEtd(source.getMutableFlightDetails().getEtd());
 			target.setEta(source.getMutableFlightDetails().getEta());
 			target.setFullFlightNumber(source.getFullFlightNumber());
-     		target.setFlightId(source.getId().toString());
-      		target.setIdTag(source.getIdTag());
+			target.setFlightId(source.getId().toString());
+			target.setIdTag(source.getIdTag());
 		} catch (Exception e) {
 			logger.error("error populating flight vo", e);
 		}
 	}
-
 
 	/**
 	 * Static utility method to ignore nulls while copying
@@ -945,7 +913,8 @@ public class PassengerDetailsController {
 		Set<String> emptyNames = new HashSet<String>();
 		for (java.beans.PropertyDescriptor pd : pds) {
 			Object srcValue = src.getPropertyValue(pd.getName());
-			if (srcValue == null) emptyNames.add(pd.getName());
+			if (srcValue == null)
+				emptyNames.add(pd.getName());
 		}
 		String[] result = new String[emptyNames.size()];
 		return emptyNames.toArray(result);
@@ -974,44 +943,37 @@ public class PassengerDetailsController {
 		return true;
 	}
 
-	private JsonServiceResponse checkIfValidCaseStatusAction(
-			DispositionData disposition) {
+	private JsonServiceResponse checkIfValidCaseStatusAction(DispositionData disposition) {
 		DispositionStatus currentDispStatus = getCurrentDispositionStatus(disposition);
 
 		if (currentDispStatus == null) { // if no history
 			// Conditions: Action cannot close
 			if (disposition.getStatusId().equals(3L)) {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current Status: Unknown. May not be set to CLOSE");
+				return new JsonServiceResponse(Status.FAILURE, "Current Status: Unknown. May not be set to CLOSE");
 			}
-			return new JsonServiceResponse(Status.SUCCESS,
-					"Successful status change from Unknown");
+			return new JsonServiceResponse(Status.SUCCESS, "Successful status change from Unknown");
 		}
 
 		if (currentDispStatus.getId().equals(1L)) { // if existing status is
 													// New...
 			// Conditions: Action can NOT be re-open, new, or closed
-			if (disposition.getStatusId().equals(1L)
-					|| disposition.getStatusId().equals(3L)
+			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L)
 					|| disposition.getStatusId().equals(4L)) {
 				return new JsonServiceResponse(Status.FAILURE,
 						"Current Status: NEW. Cannot be set to RE-OPEN or CLOSED");
 			} else {
-				return new JsonServiceResponse(Status.SUCCESS,
-						"Successful state change from NEW");
+				return new JsonServiceResponse(Status.SUCCESS, "Successful state change from NEW");
 			}
 		}
 
 		if (currentDispStatus.getId().equals(2L)) { // If existing status is
 													// Open...
 			// Conditions: Action can NOT be set to re-open or closed.
-			if (disposition.getStatusId().equals(2L)
-					|| disposition.getStatusId().equals(3L)) {
+			if (disposition.getStatusId().equals(2L) || disposition.getStatusId().equals(3L)) {
 				return new JsonServiceResponse(Status.FAILURE,
 						"Current status: OPEN. Cannot be set to CLOSED or RE-OPEN");
 			} else {
-				return new JsonServiceResponse(Status.SUCCESS,
-						"Successful status change from OPEN");
+				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from OPEN");
 			}
 		}
 
@@ -1020,105 +982,94 @@ public class PassengerDetailsController {
 			// Conditions: Action may only be set to 'Re-open' AND be admin
 			boolean isAdmin = false;
 			if (disposition.getStatusId().equals(4L)) {// If is re-open
-				for (RoleData r : uService.findById(disposition.getUser())
-						.getRoles()) { // determine if current user is Admin
+				for (RoleData r : uService.findById(disposition.getUser()).getRoles()) { // determine if current user is
+																							// Admin
 					if (r.getRoleId() == 1) {
 						isAdmin = true;
 					}
 				}
 				if (isAdmin) {
-					return new JsonServiceResponse(Status.SUCCESS,
-							"Successful status change from CLOSED");
+					return new JsonServiceResponse(Status.SUCCESS, "Successful status change from CLOSED");
 				} else {
 					return new JsonServiceResponse(Status.FAILURE,
 							"Current status: CLOSED. Only administrators may RE-OPEN a CLOSED status");
 				}
 			} else {
-				return new JsonServiceResponse(Status.FAILURE,
-						"Current status: CLOSED. May only be set to RE-OPEN.");
+				return new JsonServiceResponse(Status.FAILURE, "Current status: CLOSED. May only be set to RE-OPEN.");
 			}
 		}
 
 		if (currentDispStatus.getId().equals(4L)) {// If existing status is
 													// Re-open
 			// Conditions: Action may not be set to Open, New or Closed
-			if (disposition.getStatusId().equals(1L)
-					|| disposition.getStatusId().equals(2L)
+			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L)
 					|| disposition.getStatusId().equals(3L)) {
 				return new JsonServiceResponse(Status.FAILURE,
 						"Current status: RE-OPEN. Cannot be set to OPEN or CLOSED");
 			} else {
-				return new JsonServiceResponse(Status.SUCCESS,
-						"Successful status change from RE-OPEN");
+				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from RE-OPEN");
 			}
 		}
 
 		if (currentDispStatus.getId().equals(5L)) {// If existing status is
 													// Pending Closure
 			// Conditions: Action may not be set to Open or New
-			if (disposition.getStatusId().equals(1L)
-					|| disposition.getStatusId().equals(2L)) {
+			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(2L)) {
 				return new JsonServiceResponse(Status.FAILURE,
 						"Current status: PENDING CLOSURE. Cannot be set to OPEN");
 			} else {
-				return new JsonServiceResponse(Status.SUCCESS,
-						"Successful status change from PENDING CLOSURE");
+				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from PENDING CLOSURE");
 			}
 		}
 		// If the current status is not of the base 5, then we have no hard rule
 		// set for them other than do not set to close or new
 		if (currentDispStatus.getId() > 5L) {
-			if (disposition.getStatusId().equals(1L)
-					|| disposition.getStatusId().equals(3L)) {
+			if (disposition.getStatusId().equals(1L) || disposition.getStatusId().equals(3L)) {
 				return new JsonServiceResponse(Status.FAILURE,
 						"Current status: Custom. Cannot be set to NEW or CLOSED");
 			} else {
-				return new JsonServiceResponse(Status.SUCCESS,
-						"Successful status change from custom status");
+				return new JsonServiceResponse(Status.SUCCESS, "Successful status change from custom status");
 			}
 		}
 
 		// If the current id of the disposition is < 1 there is a problem with
 		// the database.
-		return new JsonServiceResponse(Status.FAILURE, "Current status is "
-				+ currentDispStatus.getId()
-				+ " and breaks expected conventions");
+		return new JsonServiceResponse(Status.FAILURE,
+				"Current status is " + currentDispStatus.getId() + " and breaks expected conventions");
 
 	}
 
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)
-    public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
+	public @ResponseBody java.util.List<SeatVo> getSeatsByFlightId(@PathVariable(value = "flightId") Long flightId) {
 
-    	return fService.getSeatsByFlightId(flightId);
-    }
+		return fService.getSeatsByFlightId(flightId);
+	}
 
 	private Pnr getLatestPnrFromList(List<Pnr> pnrList) {
 		Pnr latest = pnrList.get(0);
-		for(Pnr p:pnrList) {
-			if(p.getId() >latest.getId()) {
-				latest=p;
+		for (Pnr p : pnrList) {
+			if (p.getId() > latest.getId()) {
+				latest = p;
 			}
 		}
 		return latest;
 	}
-	private DispositionStatus getCurrentDispositionStatus(
-			DispositionData disposition) {
-		List<Disposition> dispList = pService.getPassengerDispositionHistory(
-				disposition.getPassengerId(), disposition.getFlightId());
+
+	private DispositionStatus getCurrentDispositionStatus(DispositionData disposition) {
+		List<Disposition> dispList = pService.getPassengerDispositionHistory(disposition.getPassengerId(),
+				disposition.getFlightId());
 		Disposition mostRecentDisposition = null;
 
 		for (Disposition d : dispList) {
-			if (mostRecentDisposition == null
-					|| mostRecentDisposition.getCreatedAt().before(
-							d.getCreatedAt())) {
+			if (mostRecentDisposition == null || mostRecentDisposition.getCreatedAt().before(d.getCreatedAt())) {
 				mostRecentDisposition = d;
 			}
 		}
 		if (mostRecentDisposition != null) {
 			return mostRecentDisposition.getStatus();
 		} else {
-		return null;
+			return null;
 		}
 	}
-        
+
 }

@@ -21,257 +21,252 @@ import java.util.Set;
 @Entity
 @Table(name = "cases")
 public class Case extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public Case() { }
+	public Case() {
+	}
 
-    @Column(name = "flightId", nullable = false, columnDefinition = "bigint unsigned")
-    private Long flightId;
+	@Column(name = "flightId", nullable = false, columnDefinition = "bigint unsigned")
+	private Long flightId;
 
-    @Column(name = "paxId", nullable = false)
-    private Long paxId;
+	@Column(name = "paxId", nullable = false)
+	private Long paxId;
 
-    @Column(name = "eta_date", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date flightETADate;
+	@Column(name = "eta_date", nullable = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date flightETADate;
 
-    @Column(name = "etd_date", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date flightETDDate;
+	@Column(name = "etd_date", nullable = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date flightETDDate;
 
-    @Column(name = "passengerName", nullable = true)
-    private String paxName;
+	@Column(name = "passengerName", nullable = true)
+	private String paxName;
 
-    @Column(name = "dob", nullable = true)
-    private Date dob;
+	@Column(name = "dob", nullable = true)
+	private Date dob;
 
-    @Column(name = "nationality", nullable = true)
-    private String nationality;
+	@Column(name = "nationality", nullable = true)
+	private String nationality;
 
-    @Column(name = "passengerType", nullable = true)
-    private String paxType;
+	@Column(name = "passengerType", nullable = true)
+	private String paxType;
 
-    @Column(name = "document", nullable = true)
-    private String document;
+	@Column(name = "document", nullable = true)
+	private String document;
 
-    @Column(name = "status", nullable = false)
-    private String status;
+	@Column(name = "status", nullable = false)
+	private String status;
 
-    @Column(name = "highPriorityRuleCatId", nullable = false)
-    private Long highPriorityRuleCatId = new Long(1L);
+	@Column(name = "highPriorityRuleCatId", nullable = false)
+	private Long highPriorityRuleCatId = new Long(1L);
 
-    @JsonIgnore
-    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval=true)
-    @JoinColumn(name="case_id", nullable = false)
-    private Set<HitsDisposition> hitsDispositions = new HashSet<>();
+	@JsonIgnore
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, orphanRemoval = true)
+	@JoinColumn(name = "case_id", nullable = false)
+	private Set<HitsDisposition> hitsDispositions = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "cc_id")
-    private Set<CaseComment> caseComments = new HashSet<>();
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.PERSIST, CascadeType.MERGE })
+	@JoinColumn(name = "cc_id")
+	private Set<CaseComment> caseComments = new HashSet<>();
 
-    @Column(name = "case_officer_status")
-    private String caseOfficerStatus;
+	@Column(name = "case_officer_status")
+	private String caseOfficerStatus;
 
+	@Transient
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date countdown;
 
-    @Transient
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date countdown;
+	public void addHitsDisposition(HitsDisposition _tempHit) {
+		hitsDispositions.add(_tempHit);
+		// _tempHit.setaCase(this);
+	}
 
-    public void addHitsDisposition(HitsDisposition _tempHit){
-        hitsDispositions.add(_tempHit);
-        //_tempHit.setaCase(this);
-    }
+	@Column(name = "flightNumber")
+	private String flightNumber;
 
-    @Column(name = "flightNumber")
-    private String flightNumber;
+	@Column(name = "lastName")
+	private String lastName;
 
-    @Column(name = "lastName")
-    private String lastName;
+	@Column(name = "firstName")
+	private String firstName;
 
-    @Column(name = "firstName")
-    private String firstName;
-    
-    @Column(name = "one_day_lookout_flag")
-    private Boolean oneDayLookoutFlag;
-    
-    @Column(name = "disposition", nullable = true)
-    private String disposition;
+	@Column(name = "one_day_lookout_flag")
+	private Boolean oneDayLookoutFlag;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "flightId",insertable=false, updatable=false, referencedColumnName = "id")
-    private Flight flight;
+	@Column(name = "disposition", nullable = true)
+	private String disposition;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "flightId", insertable = false, updatable = false, referencedColumnName = "id")
+	private Flight flight;
 
 	public Set<HitsDisposition> getHitsDispositions() {
-        return hitsDispositions;
-    }
+		return hitsDispositions;
+	}
 
-    @Transient
-    private Boolean saveCase = false;
+	@Transient
+	private Boolean saveCase = false;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "encountered_status", nullable = false)
+	private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;// The default value for
+																							// encountered status
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "encountered_status", nullable=false)
-    private EncounteredStatusEnum encounteredStatus = EncounteredStatusEnum.NOT_ENCOUNTERED;//The default value for encountered status
+	public EncounteredStatusEnum getEncounteredStatus() {
+		return encounteredStatus;
+	}
 
+	public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
+		this.encounteredStatus = encounteredStatus;
+	}
 
-    public EncounteredStatusEnum getEncounteredStatus() {
-        return encounteredStatus;
-    }
+	public Boolean getSaveCase() {
+		return saveCase;
+	}
 
+	public void setSaveCase(Boolean saveCase) {
+		this.saveCase = saveCase;
+	}
 
-    public void setEncounteredStatus(EncounteredStatusEnum encounteredStatus) {
-        this.encounteredStatus = encounteredStatus;
-    }
+	public String getCaseOfficerStatus() {
+		return caseOfficerStatus;
+	}
 
+	public void setCaseOfficerStatus(String caseOfficerStatus) {
+		this.caseOfficerStatus = caseOfficerStatus;
+	}
 
-    public Boolean getSaveCase() {
-        return saveCase;
-    }
+	public Set<CaseComment> getCaseComments() {
+		return caseComments;
+	}
 
-    public void setSaveCase(Boolean saveCase) {
-        this.saveCase = saveCase;
-    }
+	public void setCaseComments(Set<CaseComment> caseComments) {
+		this.caseComments = caseComments;
+	}
 
-    public String getCaseOfficerStatus() {
-        return caseOfficerStatus;
-    }
+	public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
+		this.hitsDispositions = hitsDispositions;
+	}
 
-    public void setCaseOfficerStatus(String caseOfficerStatus) {
-        this.caseOfficerStatus = caseOfficerStatus;
-    }
+	public Date getDob() {
+		return dob;
+	}
 
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
 
+	public String getNationality() {
+		return nationality;
+	}
 
-    public Set<CaseComment> getCaseComments() {
-        return caseComments;
-    }
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
 
-    public void setCaseComments(Set<CaseComment> caseComments) {
-        this.caseComments = caseComments;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
-        this.hitsDispositions = hitsDispositions;
-    }
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
-    public Date getDob() {
-        return dob;
-    }
+	public Long getPaxId() {
+		return paxId;
+	}
 
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
+	public Date getFlightETADate() {
+		return flightETADate;
+	}
 
-    public String getNationality() {
-        return nationality;
-    }
+	public void setFlightETADate(Date flightETADate) {
+		this.flightETADate = flightETADate;
+	}
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
+	public Date getFlightETDDate() {
+		return flightETDDate;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public void setFlightETDDate(Date flightETDDate) {
+		this.flightETDDate = flightETDDate;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+	public void setPaxId(Long paxId) {
 
-    public Long getPaxId() {
-        return paxId;
-    }
+		this.paxId = paxId;
+	}
 
-    public Date getFlightETADate() {
-        return flightETADate;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setFlightETADate(Date flightETADate) {
-        this.flightETADate = flightETADate;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public Date getFlightETDDate() {
-        return flightETDDate;
-    }
+	public String getPaxName() {
+		return paxName;
+	}
 
-    public void setFlightETDDate(Date flightETDDate) {
-        this.flightETDDate = flightETDDate;
-    }
+	public String getPassengerName() {
+		return paxName;
+	}
 
-    public void setPaxId(Long paxId) {
+	public void setPaxName(String paxName) {
+		this.paxName = paxName;
+	}
 
-        this.paxId = paxId;
-    }
+	public String getPaxType() {
+		return paxType;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public void setPaxType(String paxType) {
+		this.paxType = paxType;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public String getDocument() {
+		return document;
+	}
 
-    public String getPaxName() {
-        return paxName;
-    }
+	public void setDocument(String document) {
+		this.document = document;
+	}
 
-    public String getPassengerName(){return paxName;}
+	public Long getHighPriorityRuleCatId() {
+		return highPriorityRuleCatId;
+	}
 
-    public void setPaxName(String paxName) {
-        this.paxName = paxName;
-    }
+	public void setHighPriorityRuleCatId(Long highPriorityRuleCatId) {
+		this.highPriorityRuleCatId = highPriorityRuleCatId;
+	}
 
-    public String getPaxType() {
-        return paxType;
-    }
+	public String getFlightNumber() {
+		return flightNumber;
+	}
 
-    public void setPaxType(String paxType) {
-        this.paxType = paxType;
-    }
+	public void setFlightNumber(String flightNumber) {
+		this.flightNumber = flightNumber;
+	}
 
-    public String getDocument() {
-        return document;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setDocument(String document) {
-        this.document = document;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public Long getHighPriorityRuleCatId() {
-        return highPriorityRuleCatId;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setHighPriorityRuleCatId(Long highPriorityRuleCatId) {
-        this.highPriorityRuleCatId = highPriorityRuleCatId;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getFlightNumber() {
-        return flightNumber;
-    }
-
-    public void setFlightNumber(String flightNumber) {
-        this.flightNumber = flightNumber;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-
-
-    public Flight getFlight() {
+	public Flight getFlight() {
 		return flight;
 	}
 
@@ -279,13 +274,13 @@ public class Case extends BaseEntityAudit {
 		this.flight = flight;
 	}
 
-    public Date getCountdown() {
-        return countdown;
-    }
+	public Date getCountdown() {
+		return countdown;
+	}
 
-    public void setCountdown(Date countdown) {
-        this.countdown = countdown;
-    }
+	public void setCountdown(Date countdown) {
+		this.countdown = countdown;
+	}
 
 	public Boolean getOneDayLookoutFlag() {
 		return oneDayLookoutFlag;
@@ -295,8 +290,6 @@ public class Case extends BaseEntityAudit {
 		this.oneDayLookoutFlag = oneDayLookoutFlag;
 	}
 
-	
-	
 	public String getDisposition() {
 		return disposition;
 	}
@@ -306,27 +299,22 @@ public class Case extends BaseEntityAudit {
 	}
 
 	@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        Case aCase = (Case) o;
+		Case aCase = (Case) o;
 
-        return new EqualsBuilder()
-                .append(flightId, aCase.flightId)
-                .append(paxId, aCase.paxId)
-                .append(status, aCase.status)
-                .isEquals();
-    }
+		return new EqualsBuilder().append(flightId, aCase.flightId).append(paxId, aCase.paxId)
+				.append(status, aCase.status).isEquals();
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(flightId)
-                .append(paxId)
-                .append(status)
-                .toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(flightId).append(paxId).append(status).toHashCode();
+	}
 
 }

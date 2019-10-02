@@ -14,15 +14,15 @@ public class MathUtilsTest {
 	@Test
 	public void testReverseUnitConversion() {
 		double tolerance = 0.00001;
-		//1 kilogram is equals to 2.2046226218 pounds
-		assertEquals(1, MathUtils.poundsToKilos(2.2046226218),tolerance);
+		// 1 kilogram is equals to 2.2046226218 pounds
+		assertEquals(1, MathUtils.poundsToKilos(2.2046226218), tolerance);
 	}
-	
+
 	@Test
 	public void testUnitConversion() {
 		double tolerance = 0.00001;
-		//1 Pound is equals to 0.453592 Kgs
-		assertEquals(0.453592, MathUtils.poundsToKilos(1),tolerance);
+		// 1 Pound is equals to 0.453592 Kgs
+		assertEquals(0.453592, MathUtils.poundsToKilos(1), tolerance);
 	}
-	
+
 }

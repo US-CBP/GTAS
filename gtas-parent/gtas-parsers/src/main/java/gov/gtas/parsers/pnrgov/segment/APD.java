@@ -19,7 +19,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Ex:Equipment Type of Boeing 747 (APD+747')
  */
 public class APD extends Segment {
-    public APD(List<Composite> composites) {
-        super(APD.class.getSimpleName(), composites);
-    }
+	public APD(List<Composite> composites) {
+		super(APD.class.getSimpleName(), composites);
+	}
 }

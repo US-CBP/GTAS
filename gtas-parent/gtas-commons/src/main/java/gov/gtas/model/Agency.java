@@ -20,38 +20,35 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "agency")
 public class Agency extends BaseEntityAudit {
-    private static final long serialVersionUID = 1L;
-    public Agency() { }
-    
-    /** 
-     * Company identification: could be an airline code or
-     * the name of the agency.
-     */
-    @Column(nullable = false)    
-    private String name;
-    
-    /** IATA airport/city code of the delivering system */
-    private String location;
-    
-    /** IATA travel agency ID number */
-    private String identifier;
-    
-    private String country;
+	private static final long serialVersionUID = 1L;
 
-    private String phone;
-    
-    private String city;
-    
-    private String type;
-    
-    @ManyToMany(
-        mappedBy = "agencies",
-        targetEntity = Pnr.class
-    )
-    private Set<Pnr> pnrs = new HashSet<>();
-    
-    
-    public String getCity() {
+	public Agency() {
+	}
+
+	/**
+	 * Company identification: could be an airline code or the name of the agency.
+	 */
+	@Column(nullable = false)
+	private String name;
+
+	/** IATA airport/city code of the delivering system */
+	private String location;
+
+	/** IATA travel agency ID number */
+	private String identifier;
+
+	private String country;
+
+	private String phone;
+
+	private String city;
+
+	private String type;
+
+	@ManyToMany(mappedBy = "agencies", targetEntity = Pnr.class)
+	private Set<Pnr> pnrs = new HashSet<>();
+
+	public String getCity() {
 		return city;
 	}
 
@@ -60,46 +57,46 @@ public class Agency extends BaseEntityAudit {
 	}
 
 	public String getName() {
-        return name;
-    }
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getLocation() {
-        return location;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-    public String getIdentifier() {
-        return identifier;
-    }
+	public String getIdentifier() {
+		return identifier;
+	}
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
-    }
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
 
-    public String getCountry() {
-        return country;
-    }
+	public String getCountry() {
+		return country;
+	}
 
-    public void setCountry(String country) {
-        this.country = country;
-    }
+	public void setCountry(String country) {
+		this.country = country;
+	}
 
-    public String getPhone() {
-        return phone;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public String getType() {
+	public String getType() {
 		return type;
 	}
 
@@ -108,28 +105,27 @@ public class Agency extends BaseEntityAudit {
 	}
 
 	public Set<Pnr> getPnrs() {
-        return pnrs;
-    }
+		return pnrs;
+	}
 
-    public void setPnrs(Set<Pnr> pnrs) {
-        this.pnrs = pnrs;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name, this.location);
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Agency other = (Agency) obj;
-        return Objects.equals(this.name, other.name)
-                && Objects.equals(this.location, other.location);
-    }       
+	public void setPnrs(Set<Pnr> pnrs) {
+		this.pnrs = pnrs;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name, this.location);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Agency other = (Agency) obj;
+		return Objects.equals(this.name, other.name) && Objects.equals(this.location, other.location);
+	}
 }

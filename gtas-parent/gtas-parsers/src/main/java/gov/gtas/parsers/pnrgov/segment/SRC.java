@@ -18,7 +18,7 @@ import gov.gtas.parsers.edifact.Segment;
  * message. This trigger segment is sent as an empty segment.(Ex: SRC')
  */
 public class SRC extends Segment {
-    public SRC(List<Composite> composites) {
-        super(SRC.class.getSimpleName(), composites);
-    }
+	public SRC(List<Composite> composites) {
+		super(SRC.class.getSimpleName(), composites);
+	}
 }

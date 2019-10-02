@@ -14,10 +14,10 @@ public class TamrResponseData {
 	public Long gtasId;
 	public double version;
 	public double score;
-	
+
 	@JsonIgnore
 	public List<Object> derogIds;
-	
+
 	public TamrResponseData() {
 
 	}
@@ -61,6 +61,5 @@ public class TamrResponseData {
 	public void setDerogs(List<Object> derogs) {
 		this.derogIds = derogs;
 	}
-	
-	
+
 }

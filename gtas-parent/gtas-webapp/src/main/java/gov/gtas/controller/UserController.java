@@ -43,8 +43,7 @@ import gov.gtas.validator.UserDataValidator;
 @RestController
 public class UserController {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(UserController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
 	private UserService userService;
@@ -68,87 +67,68 @@ public class UserController {
 		Validator validator = this.new Validator();
 		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.create(userData);
-			return new JsonServiceResponse(Status.SUCCESS,
-					validator.getErrMessage(), rUserData);
+			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 		} else {
-			return new JsonServiceResponse(Status.FAILURE,
-					validator.getErrMessage(), rUserData);
+			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), rUserData);
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public JsonServiceResponse updateUser(@RequestBody @Valid UserData userData) {
-		
-			
+
 		UserData rUserData = userData;
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
-		if(!isAdmin)
-		{
-			if( !userId.equalsIgnoreCase(userData.getUserId()) )
-			{
+		if (!isAdmin) {
+			if (!userId.equalsIgnoreCase(userData.getUserId())) {
 				logger.error("The logged in user does not have a permission to update another user's credentials");
-				return new JsonServiceResponse(Status.FAILURE,
-						"Not Authorized to update user credentials", rUserData);
+				return new JsonServiceResponse(Status.FAILURE, "Not Authorized to update user credentials", rUserData);
 			}
 		}
-		
+
 		Validator validator = this.new Validator();
 		if (validator.isValid(userData.getPassword(), userData.getUserId())) {
 			rUserData = userService.update(userData);
 			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
-			return new JsonServiceResponse(Status.SUCCESS,
-					validator.getErrMessage(), rUserData);
+			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
 		} else {
-			logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "+ validator.getErrMessage());
-			return new JsonServiceResponse(Status.FAILURE,
-					validator.getErrMessage(), rUserData);
-		}
-	}
-	
-	@RequestMapping(method = RequestMethod.PUT, value = "/manageuser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public JsonServiceResponse manageuser(@RequestBody UserData userData) {
-		
-		
-		UserData rUserData = userData;
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = userService.isAdminUser(userId);
-		if(!isAdmin)
-		{
-					logger.error("The logged in user does not have a permission to update another user's credentials");
-				return new JsonServiceResponse(Status.FAILURE,
-						"Not Authorized to update user credentials", rUserData);
-		}
-		
-		Validator validator = this.new Validator();
-		
-		if(userData.getPassword()!=null && !userData.getPassword().isEmpty())
-		{
-			if (validator.isValid(userData.getPassword(), userData.getUserId())) 
-			{
-				rUserData = userService.updateByAdmin(userData);
-				logger.info("The User Information is updated sucessfully for " + userData.getUserId());
-				return new JsonServiceResponse(Status.SUCCESS,
-						validator.getErrMessage(), rUserData);
-			}
-			else {
-				logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "+ validator.getErrMessage());
-				return new JsonServiceResponse(Status.FAILURE,
-						validator.getErrMessage(), rUserData);
-			}
-		}
-		
-		else
-		{
-			rUserData = userService.updateByAdmin(userData);
-			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
-			return new JsonServiceResponse(Status.SUCCESS,
-					validator.getErrMessage(), rUserData);
+			logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "
+					+ validator.getErrMessage());
+			return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), rUserData);
 		}
 	}
 
-	
-	
+	@RequestMapping(method = RequestMethod.PUT, value = "/manageuser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse manageuser(@RequestBody UserData userData) {
+
+		UserData rUserData = userData;
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		boolean isAdmin = userService.isAdminUser(userId);
+		if (!isAdmin) {
+			logger.error("The logged in user does not have a permission to update another user's credentials");
+			return new JsonServiceResponse(Status.FAILURE, "Not Authorized to update user credentials", rUserData);
+		}
+
+		Validator validator = this.new Validator();
+
+		if (userData.getPassword() != null && !userData.getPassword().isEmpty()) {
+			if (validator.isValid(userData.getPassword(), userData.getUserId())) {
+				rUserData = userService.updateByAdmin(userData);
+				logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+				return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
+			} else {
+				logger.error("The User Information is not updated due to errors for " + userData.getUserId() + " "
+						+ validator.getErrMessage());
+				return new JsonServiceResponse(Status.FAILURE, validator.getErrMessage(), rUserData);
+			}
+		}
+
+		else {
+			rUserData = userService.updateByAdmin(userData);
+			logger.info("The User Information is updated sucessfully for " + userData.getUserId());
+			return new JsonServiceResponse(Status.SUCCESS, validator.getErrMessage(), rUserData);
+		}
+	}
 
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping("/user")
@@ -162,14 +142,10 @@ public class UserController {
 
 		public boolean isValid(final String password, final String userName) {
 			final PasswordValidator validator = new PasswordValidator(
-					Arrays.asList(
-							new LengthRule(10, 20),
-							new CharacterRule(EnglishCharacterData.UpperCase, 1),
-							new CharacterRule(EnglishCharacterData.LowerCase, 1),
-							new UsernameRule(), new CharacterRule(
-									EnglishCharacterData.Digit, 1),
-							new CharacterRule(EnglishCharacterData.Special, 1),
-							new WhitespaceRule()));
+					Arrays.asList(new LengthRule(10, 20), new CharacterRule(EnglishCharacterData.UpperCase, 1),
+							new CharacterRule(EnglishCharacterData.LowerCase, 1), new UsernameRule(),
+							new CharacterRule(EnglishCharacterData.Digit, 1),
+							new CharacterRule(EnglishCharacterData.Special, 1), new WhitespaceRule()));
 			PasswordData pd = new PasswordData(password);
 			pd.setUsername(userName);
 			final RuleResult result = validator.validate(pd);
