@@ -1,5 +1,5 @@
-<h3 class="block-label upper-cnt">Query Results: Flights</h3>
-<h3 ng-if="queryLimitReached" class="block-label upper-cnt">Maximum result reached, data may be truncated</h3>
+<h3 class="block-label upper-cnt">{{'qry.flightstitle' | translate}}</h3>
+<h3 ng-if="queryLimitReached" class="block-label upper-cnt">{{'qry.maximunresults' | translate}}</h3>
 <div ng-if="stateName != 'queryFlights'"
         ui-grid="flightsGrid"
         ui-grid-pagination
