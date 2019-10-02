@@ -308,8 +308,8 @@ public class WatchlistPersistenceServiceImpl implements
 		return this.watchlistItemRepository.getItemsByWatchlistName(watchlistName);
 	}
 
-	public void saveWatchlistCategory(WatchlistCategory watchlistCategory) {
-		this.watchlistCategoryRepository.save(watchlistCategory);
+	public WatchlistCategory saveWatchlistCategory(WatchlistCategory watchlistCategory) {
+		return this.watchlistCategoryRepository.save(watchlistCategory);
 	}
 
 

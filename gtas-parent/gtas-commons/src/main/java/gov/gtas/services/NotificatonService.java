@@ -5,11 +5,11 @@
  */
 package gov.gtas.services;
 
-import java.util.List;
+import java.util.Set;
 
-import gov.gtas.model.HitsSummary;
+import gov.gtas.aws.HitNotificationConfig;
 
 public interface NotificatonService {
 
-	void sendHitNotifications(List<HitsSummary> hitsSummaryList);
+	Set<String> sendHitNotifications(HitNotificationConfig config);
 }
