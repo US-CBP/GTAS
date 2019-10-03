@@ -5,7 +5,6 @@
  */
 package gov.gtas.vo.passenger;
 
-import gov.gtas.model.HitsDisposition;
 import java.util.Set;
 
 import java.util.Date;
@@ -32,7 +31,6 @@ public class CaseVo {
 	private String createDate;
 	private String status;
 	private String description;
-	private Set<HitsDisposition> hitsDispositions;
 	private Set<HitsDispositionVo> hitsDispositionVos;
 	private Set<GeneralCaseCommentVo> generalCaseCommentVos;
 	private String caseOfficerStatus;
@@ -224,14 +222,6 @@ public class CaseVo {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public Set<HitsDisposition> getHitsDispositions() {
-		return hitsDispositions;
-	}
-
-	public void setHitsDispositions(Set<HitsDisposition> hitsDispositions) {
-		this.hitsDispositions = hitsDispositions;
 	}
 
 	public Boolean getOneDayLookoutFlag() {

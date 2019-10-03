@@ -12,15 +12,12 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.*;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
-import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.PassengerService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.*;
 
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -37,15 +34,11 @@ public class MatchingServiceImplTest {
 	@Mock
 	WatchlistRepository watchlistRepository;
 	@Mock
-	CaseDispositionService caseDispositionService;
-	@Mock
 	FlightFuzzyHitsRepository flightFuzzyHitsRepository;
 	@Mock
 	PassengerWatchlistRepository passengerWatchlistRepository;
 	@Mock
 	AppConfigurationRepository appConfigRepository;
-	@Mock
-	NameMatchCaseMgmtUtils nameMatchCaseMgmtUtils;
 	@Mock
 	PassengerService passengerService;
 

@@ -7,14 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gov.gtas.model.Case;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
 public class MatcherParameters {
-	private Map<Long, Case> caseMap;
 	private Map<Long, HitCategory> ruleCatMap;
 	private List<Watchlist> _watchlists;
 	private Map<Long, List<WatchlistItem>> watchlistListMap;
@@ -65,14 +63,6 @@ public class MatcherParameters {
 
 	public void setQm(QuickMatcher qm) {
 		this.qm = qm;
-	}
-
-	Map<Long, Case> getCaseMap() {
-		return caseMap;
-	}
-
-	void setCaseMap(Map<Long, Case> caseMap) {
-		this.caseMap = caseMap;
 	}
 
 	Map<Long, HitCategory> getRuleCatMap() {

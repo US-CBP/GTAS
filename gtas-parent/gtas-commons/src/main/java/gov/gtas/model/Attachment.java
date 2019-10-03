@@ -46,8 +46,6 @@ public class Attachment implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
-	@ManyToMany(mappedBy = "attachmentSet", targetEntity = HitsDispositionComments.class, cascade = CascadeType.ALL)
-	private Set<HitsDispositionComments> hitsDispositionComments = new HashSet<>();
 
 	public Integer getId() {
 		return id;
@@ -112,14 +110,6 @@ public class Attachment implements Serializable {
 
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
-	}
-
-	public Set<HitsDispositionComments> getHitsDispositionComments() {
-		return hitsDispositionComments;
-	}
-
-	public void setHitsDispositionComments(Set<HitsDispositionComments> hitsDispositionComments) {
-		this.hitsDispositionComments = hitsDispositionComments;
 	}
 
 	@Override

@@ -18,16 +18,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import gov.gtas.constants.Constants;
 import gov.gtas.model.Attachment;
-import gov.gtas.model.Case;
-import gov.gtas.model.lookup.CaseDispositionStatus;
-import gov.gtas.model.lookup.HitDispositionStatus;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.CaseDispositionService;
-import gov.gtas.services.CaseDispositionServiceImpl;
 import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.dto.CasePageDto;
 import gov.gtas.services.dto.CaseRequestDto;
@@ -35,7 +29,6 @@ import gov.gtas.services.security.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
@@ -54,9 +47,6 @@ import org.springframework.http.ResponseEntity;
 public class CaseDispositionController {
 
 	@Autowired
-	private CaseDispositionService caseDispositionService;
-
-	@Autowired
 	private HitCategoryService ruleCatService;
 
 	@Autowired
@@ -70,32 +60,14 @@ public class CaseDispositionController {
 	@RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
 
-		hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		boolean isAdmin = userService.isAdminUser(userId);
-
-		if (!isAdmin) {
-			String userLocation = (String) hsr.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
-			request.setUserLocation(userLocation);
-		}
-
-		CasePageDto casePageDto = caseDispositionService.findAll(request);
-		return casePageDto;
+		return new CasePageDto(new ArrayList<>(),0L);
 	}
 
 	// getOneHistDisp
 	@RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		CasePageDto res;
-		boolean treatAsOneDay = userService.treatAsOneDay(userId);
-		if (treatAsOneDay) {
-			res = caseDispositionService.caseWithoutHitDispositions(request);
-		} else {
-			res = caseDispositionService.findHitsDispositionByCriteria(request);
-		}
-		return res;
+		return new CasePageDto(new ArrayList<>(),0L);
 	}
 
 	// getHistDispComments
@@ -153,106 +125,25 @@ public class CaseDispositionController {
 	// updateHistDisp
 	@RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
 	public @ResponseBody boolean updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-		Case aCase = new Case();
-		boolean isUpdateSuccessful = false;
-		try {
-
-			logger.info("Updating a case to disposition: " + request.getCaseDisposition() + " and case status: "
-					+ request.getStatus());
-
-			aCase = caseDispositionService.addCaseComments(request.getCaseId(), request.getHitId(),
-					request.getCaseComments(), request.getStatus(), request.getValidHit(), request.getMultipartFile(),
-					GtasSecurityUtils.fetchLoggedInUserId(), request.getCaseDisposition());
-			isUpdateSuccessful = true;
-
-		} catch (Exception ex) {
-			logger.error("Error updating histDisp!", ex);
-		}
-		return isUpdateSuccessful;
+		return true;
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/addCaseComment")
 	public @ResponseBody boolean addCaseComment(@RequestBody CaseCommentRequestDto caseCommentRequestDto) {
-		boolean isUpdateSuccessful = false;
-		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		caseCommentRequestDto.setUser(userId);
-		try {
-			if ("MISSED".equalsIgnoreCase(caseCommentRequestDto.getCaseStatus())
-					&& caseCommentRequestDto.getComment() == null) {
-				throw new RuntimeException("Updating to missed MUST have a comment");
-			}
-			logger.info("Adding case comment");
-			caseDispositionService.addGeneralCaseComment(caseCommentRequestDto);
-			isUpdateSuccessful = true;
-		} catch (Exception ex) {
-			logger.error("Error updating general case comment!", ex);
-		}
-		return isUpdateSuccessful;
+		return true;
 	}
 
 	// updateHistDispAttachments
 	@RequestMapping(method = RequestMethod.POST, value = "/updateHistDispAttachments")
-	public @ResponseBody Case updateHistDispAttachments(@RequestParam("file") MultipartFile file,
+	public void updateHistDispAttachments(@RequestParam("file") MultipartFile file,
 			@RequestParam("flightId") String flightId, @RequestParam("paxId") String paxId,
 			@RequestParam("caseId") Long caseId, @RequestParam("hitId") String hitId,
 			@RequestParam("caseComments") String caseComments, @RequestParam("status") String status,
 			@RequestParam("validHit") String validHit, @RequestParam("caseDisposition") String caseDisposition) {
-		Case aCase = new Case();
-		try {
-			MultipartFile multipartFile = file;
-
-			aCase = caseDispositionService.addCaseComments(caseId, Long.parseLong(hitId), caseComments, status,
-					validHit, multipartFile, GtasSecurityUtils.fetchLoggedInUserId(), caseDisposition);
-		} catch (Exception ex) {
-			logger.error("Error in histDispAttachements!", ex);
-		}
-		// TODO: replace the return type of the method with a DTO object to avoid self
-		// referencing loop while converting to JSON by spring
-		Case newCase = new Case();
-		newCase.setId(aCase.getId());
-		newCase.setHitsDispositions(aCase.getHitsDispositions());
-		return newCase;
 	}
 
-	// createManualCaseAttachments
-	// @RequestMapping(method = RequestMethod.POST, value =
-	// "/createManualCaseAttachments")
-	// public
-	// @ResponseBody
-	// Case createManualCaseAttachments(@RequestParam("file") MultipartFile file,
-	// @RequestParam("flightId") String flightId, @RequestParam("paxId") String
-	// paxId,
-	// @RequestParam("hitId") String hitId, @RequestParam("caseComments")String
-	// caseComments,
-	// @RequestParam("status")String status,
-	// @RequestParam("validHit")String validHit) {
-	// Case aCase = new Case();
-	// try {
-	// MultipartFile multipartFile = file;
-	//
-	// aCase = caseDispositionService.addCaseComments(Long.parseLong(flightId),
-	// Long.parseLong(paxId),
-	// Long.parseLong(hitId), caseComments,
-	// status, validHit,
-	// multipartFile, GtasSecurityUtils.fetchLoggedInUserId(), null);
-	// } catch (Exception ex) {
-	// logger.error("Error in create manual case attachments", ex);
-	// }
-	// return aCase;
-	// }
-
-	// createManualCase
 	@RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
-	public @ResponseBody Case createManualCase(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-		Case aCase = new Case();
-		try {
-
-			aCase = caseDispositionService.createManualCase(request.getFlightId(), request.getPaxId(),
-					request.getRuleCatId(), request.getCaseComments(), GtasSecurityUtils.fetchLoggedInUserId());
-		} catch (Exception ex) {
-			logger.error("Error in create manual case", ex);
-		}
-		return aCase;
+	public @ResponseBody void createManualCase(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
 	}
 
 	// updateCase
@@ -265,34 +156,20 @@ public class CaseDispositionController {
 	}
 
 	@RequestMapping(value = "/hitdispositionstatuses", method = RequestMethod.GET)
-	public @ResponseBody List<HitDispositionStatus> getHitDispositionStatuses() {
-		return caseDispositionService.getHitDispositionStatuses();
+	public @ResponseBody List<Object> getHitDispositionStatuses() {
+		return new ArrayList<>();
 	}
 
 	@RequestMapping(value = "/casedisposition", method = RequestMethod.GET)
-	public @ResponseBody List<CaseDispositionStatus> getCaseDispositionStatuses() {
-		return caseDispositionService.getCaseDispositionStatuses();
+	public @ResponseBody List<Object> getCaseDispositionStatuses() {
+		return new ArrayList<>();
 	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)
 	public List<CaseVo> getPassengerCaseHistory(@PathVariable(value = "paxId") Long paxId) {
-
-		List<CaseVo> vos = new ArrayList<CaseVo>();
-
-		List<Case> cases = caseDispositionService.getCaseHistoryByPaxId(paxId);
-
-		for (Case _case : cases) {
-			CaseVo vo = new CaseVo();
-			_case.getFlight().setPnrs(null); // TODO: need to cherry-pick the fields we need to copy to DTO, failed to
-												// serialize the lazy loaded entities
-			_case.setHitsDispositions(null);
-			CaseDispositionServiceImpl.copyIgnoringNullValues(_case, vo);
-			vos.add(vo);
-		}
-
-		return vos;
+		return new ArrayList<>();
 	}
 
 }

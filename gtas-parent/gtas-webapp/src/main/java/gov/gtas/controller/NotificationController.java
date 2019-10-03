@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import gov.gtas.model.Case;
-import gov.gtas.services.CaseDispositionService;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +16,7 @@ import gov.gtas.vo.ErrorMessageVo;
 @RestController
 public class NotificationController {
 
-	private final CaseDispositionService caseDispositionService;
-
-	public NotificationController(CaseDispositionService caseDispositionService) {
-		this.caseDispositionService = caseDispositionService;
+	public NotificationController() {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/errorMessage")
@@ -31,7 +27,7 @@ public class NotificationController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/hitCount")
 	public Integer getHitCount() {
-		Set<Case> caseList = caseDispositionService.getOpenCasesWithTimeLeft();
-		return caseList.size();
+
+		return 0;
 	}
 }

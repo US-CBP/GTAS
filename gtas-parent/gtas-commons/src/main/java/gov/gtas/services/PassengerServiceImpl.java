@@ -5,21 +5,15 @@
  */
 package gov.gtas.services;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +25,10 @@ import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
 import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.PassengerVo;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.Query;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -192,19 +181,6 @@ public class PassengerServiceImpl implements PassengerService {
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
 		}
-	}
-
-	private Disposition createDispositionFromHitsSummary(HitsSummary hit) {
-		Disposition d = new Disposition();
-		Date date = new Date();
-		d.setCreatedAt(date);
-		d.setCreatedBy("SYSTEM");
-		d.setComments("A new disposition has been created on " + date);
-		d.setPaxId(hit.getPaxId());
-		DispositionStatus status = new DispositionStatus();
-		status.setId(1L);
-		d.setStatus(status);
-		return d;
 	}
 
 	@Override

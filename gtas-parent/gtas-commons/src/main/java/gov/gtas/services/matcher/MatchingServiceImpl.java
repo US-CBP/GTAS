@@ -180,8 +180,9 @@ public class MatchingServiceImpl implements MatchingService {
 					hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
 					hitDetail.setRuleConditions(hit.getRuleDescription());
 					hitDetail.setCreatedDate(new Date());
-					hitDetail.setTitle("Full/Partial Name Match on Item #" +hit.getDerogId());
+					hitDetail.setTitle("Full/Partial Name Match on WL Item ID#" +hit.getDerogId());
 					hitDetail.setPercentage(hit.getPercent());
+					hitDetail.setDescription("Jaro-Winkler or Double Metaphone match on WL Item #" + hit.getDerogId());
 					hitDetailSet.add(hitDetail);
 
 				}

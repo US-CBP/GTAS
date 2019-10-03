@@ -20,7 +20,6 @@ import gov.gtas.querybuilder.model.QueryRequest;
 import gov.gtas.querybuilder.model.UserQueryRequest;
 import gov.gtas.querybuilder.service.QueryBuilderService;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.dto.FlightsPageDto;
 import gov.gtas.services.dto.PassengersPageDto;
 
@@ -54,8 +53,6 @@ public class QueryBuilderController {
 	@Autowired
 	QueryBuilderService queryService;
 
-	@Autowired
-	CaseDispositionService caseDispositionService;
 
 	/**
 	 * This method generates the Entity and Field mappings for the Rule and Query UI
@@ -180,9 +177,7 @@ public class QueryBuilderController {
 	@RequestMapping(value = Constants.APIS_ONLY_FLAG, method = RequestMethod.GET)
 	@ResponseBody
 	public String getApisOnlyFlagAndVersion() {
-		String apisOnlyFlagAndVersion = caseDispositionService.getAPISOnlyFlagAndVersion();
-
-		return apisOnlyFlagAndVersion;
+		return "FALSE";
 	}
 
 	private Map<String, QueryBuilderMapping> getQueryBuilderMapping() {

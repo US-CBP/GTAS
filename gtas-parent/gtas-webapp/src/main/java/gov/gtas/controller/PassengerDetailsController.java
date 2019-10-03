@@ -42,11 +42,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.json.KeyValue;
-import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.ApisMessageRepository;
 import gov.gtas.repository.BagRepository;
 import gov.gtas.repository.SeatRepository;
-import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
@@ -403,7 +401,7 @@ public class PassengerDetailsController {
 	}
 
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
-	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
+	public @ResponseBody List<Object> getDispositionStatuses() {
 		return new ArrayList<>();
 	}
 
@@ -413,20 +411,12 @@ public class PassengerDetailsController {
 	}
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(@RequestBody DispositionStatus ds) {
+	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus() {
 		return new JsonServiceResponse(Status.SUCCESS, "Creation or Edit of disposition status successful");
 	}
 
 	@RequestMapping(value = "/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody JsonServiceResponse deleteDispositionStatus(@RequestBody DispositionStatus ds) {
-		if (!isRemovableDispositionStatus(ds)) {
-			return new JsonServiceResponse(Status.FAILURE, "This status is irremovable");
-		}
-		try {
-		} catch (ConstraintViolationException e) {
-			return new JsonServiceResponse(Status.FAILURE,
-					"Case already exists with " + ds.getName() + ". You may not remove this status");
-		}
+	public @ResponseBody JsonServiceResponse deleteDispositionStatus() {
 		return new JsonServiceResponse(Status.SUCCESS, "Deletion of disposition status successful");
 	}
 
@@ -929,15 +919,6 @@ public class PassengerDetailsController {
 		} catch (Exception ex) {
 			logger.error("error copy properties ignoring null values", ex);
 		}
-	}
-
-	private boolean isRemovableDispositionStatus(DispositionStatus ds) {
-		// Prevent deletion of any of the original disp status ids (New, Closed,
-		// Open, Re-opened, Pending Closure)
-		if (ds.getId() <= 5L) {
-			return false;
-		}
-		return true;
 	}
 
 	@RequestMapping(value = "/seats/{flightId}", method = RequestMethod.GET)

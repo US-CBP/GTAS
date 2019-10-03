@@ -13,7 +13,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.services.CaseDispositionService;
 import gov.gtas.services.dto.CaseRequestDto;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -54,12 +53,6 @@ public class CaseDispositionRepositoryIT {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-	@Autowired
-	private CaseDispositionRepository caseDispositionRepository;
-
-	@Autowired
-	private CaseDispositionService caseDispositionService;
 
 	@Test
 	public void testFindAllPageable() throws Exception {
@@ -111,6 +104,5 @@ public class CaseDispositionRepositoryIT {
 		_tempDto.setPageSize(pageable.getPageSize());
 		// _tempDto.setFlightId(20L);
 
-		assertNotNull(caseDispositionRepository.findAll());
 	}
 }
