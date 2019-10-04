@@ -766,7 +766,7 @@
               admin: [
                 {
                   name: "active",
-                  displayName: $translate.instant('admin.active'),
+                  displayName: $translate.instant('user.active'),
                   field: "active",
                   cellFilter: "userStatusFilter",
                   width: "10%",
@@ -777,8 +777,7 @@
                 },
                 {
                   name: "userId",
-                  displayName: "admin.userid",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.username'),
                   field: "userId",
                   width: "15%",
                   cellTemplate:
@@ -786,22 +785,19 @@
                 },
                 {
                   name: "firstName",
-                  displayName: "pass.firstname",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.firstname'),
                   field: "firstName",
                   width: "15%"
                 },
                 {
                   name: "lastName",
-                  displayName: "pass.lastname",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.lastname'),
                   field: "lastName",
                   width: "20%"
                 },
                 {
                   name: "roles",
-                  displayName: "user.roles",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.roles'),
                   field: "roles",
                   cellFilter: "roleDescriptionFilter",
                   width: "40%",
