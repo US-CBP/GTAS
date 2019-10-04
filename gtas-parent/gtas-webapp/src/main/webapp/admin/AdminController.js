@@ -4,7 +4,7 @@
  * Please see LICENSE.txt for details.
  */
 app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
-                                      errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService
+  errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService, $translate
 , statisticService) {
   'use strict';
   var CARRIER = 'carrier';
@@ -53,18 +53,18 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   var setAuditData = function (data) {
     $scope.auditGrid.data = data;
     if(data && data.length > 0){
-        that.successToast('Audit Log Data Loaded.');
+        that.successToast($translate.instant('msg.auditlogdataloaded'));
     } else {
-        that.successToast('Filter conditions did not return any Audit Log Data.');
+        that.successToast($translate.instant('msg.noauditlogdata'));
     }
   };
   var setErrorData = function (data) {
-          $scope.errorGrid.data = data;
-          if(data && data.length > 0){
-             that.successToast('Error Log Data Loaded.')
-          } else {
-             that.successToast('Filter conditions did not return any Error Log Data.');
-          }
+    $scope.errorGrid.data = data;
+    if(data && data.length > 0){
+      that.successToast($translate.instant('msg.errorlogdataloaded'));
+    } else {
+      that.successToast($translate.instant('msg.noerrorlogdata'));
+    }
       };
   var setupUserGrid = function(){
       $scope.userGrid = gridOptionsLookupService.getGridOptions('admin');
@@ -428,7 +428,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         $scope.errorToast(response.data.statusText);
       }
     }).error(function(response){
-      $scope.errorToast(response.data.statusText + " You may not remove a status already saved to an existing case");
+      $scope.errorToast(response.data.statusText + " " + $translate.instant('msg.maynotremovestatus'));
     });
 
   };
@@ -474,9 +474,9 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   $scope.saveSettings = function() {
     defaultSettingsService.saveSettings($scope.settingsInfo)
     .then(function success(response) {
-      alert("Settings saved successfully");
+      alert($translate.instant('msg.settingssaved'));
     },function error(response){
-      alert("Error when saving settings");
+      alert($translate.instant('msg.errorsavingsettings'));
     });
   }
 

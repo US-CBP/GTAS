@@ -65,15 +65,15 @@
     <div class="md-pad">
         <button type="button" class="btn btn-primary pull-left" 
           ng-click="saveCode()">
-            <i class="fa fa-inverse fa-floppy-o"></i> Save 
+            <i class="fa fa-inverse fa-floppy-o"></i> {{'btn.save' | translate}} 
         </button>
         <button type="button" class="btn btn-warning pull-right margin-left-1"
           ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
-          ng-click="deleteCode()"><i class="fa fa-trash"></i> Delete 
+          ng-click="deleteCode()"><i class="fa fa-trash"></i> {{'btn.delete' | translate}} 
       </button>
       <button type="button" class="btn btn-warning pull-right margin-left-1"
       ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
-      ng-click="restoreCode()"><i class="fa fa-undo"></i> Restore 
+      ng-click="restoreCode()"><i class="fa fa-undo"></i> {{'btn.restore' | translate}} 
   </button>
 </div>
   </form>
@@ -87,9 +87,9 @@
                 <md-content class="md-padding padding-top-0 padding-bottom-0">
                   <div>
                       <md-button ng-click="createUser()" class="md-raised pull-left md-primary md-raised]">
-                          <md-tooltip>Add User</md-tooltip>
+                          <md-tooltip>{{'btn.adduser' | translate}}</md-tooltip>
                           <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
-                          Add User
+                          {{'btn.adduser' | translate}}
                       </md-button>
                   </div>
                 </md-content>
