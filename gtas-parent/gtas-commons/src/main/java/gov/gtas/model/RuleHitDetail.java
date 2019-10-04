@@ -26,7 +26,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 
 	private String hitRule;
 
-	private Long lookoutId;
+	private Long hitMakerId;
 
 	private Long ruleId;
 
@@ -71,7 +71,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	 *
 	 * The RULE ENGINE will automatically generate this
 	 * 
-	 * @param lookoutId
+	 * @param hitMakerId
 	 *            a udr rule Id (can be null)
 	 * @param ruleId
 	 *            a numeric rule Id (can be null)
@@ -84,17 +84,17 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public RuleHitDetail(final Long lookoutId, final Long ruleId, final String ruleTitle, final Passenger passenger,
-			final Flight flight, final String cause) {
+	public RuleHitDetail(final Long hitMakerId, final Long ruleId, final String ruleTitle, final Passenger passenger,
+						 final Flight flight, final String cause) {
 
 		// THIS IS GENERATED FOR RULE HITS BY RULE ENGINE - SEE HOW RULES ARE MADE.
 		// DO NOT CHANGE UNLESS UPDATING THE RULE GENERATION AS WELL
 		this.hitType = HitTypeEnum.USER_DEFINED_RULE;
-		this.lookoutId = lookoutId;
+		this.hitMakerId = hitMakerId;
 		this.ruleId = ruleId;
 		this.title = ruleTitle;
 		this.description = ruleTitle;
-		this.hitRule = ruleTitle + "(" + lookoutId + ")";
+		this.hitRule = ruleTitle + "(" + hitMakerId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger.getPassengerDetails().getPassengerType());
 		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
@@ -112,7 +112,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	 * This constructor is used when creating a hit detail object as a result of a
 	 * watch list hit.
 	 * 
-	 * @param lookoutId
+	 * @param hitMakerId
 	 *            a watchlistItem id
 	 * @param hitType
 	 *            hit Type - corresponds to hit type enum
@@ -121,26 +121,26 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public RuleHitDetail(final Long lookoutId, final String hitType, final Passenger passenger, final String cause) {
+	public RuleHitDetail(final Long hitMakerId, final String hitType, final Passenger passenger, final String cause) {
 		// THIS IS GENERATED FOR WATCHLIST HITS
 		//
-		this.lookoutId = lookoutId;
-		this.ruleId = lookoutId;
+		this.hitMakerId = hitMakerId;
+		this.ruleId = hitMakerId;
 		switch (hitType) {
 		case "D":
-			this.title = "Document List Rule #" + lookoutId;
+			this.title = "Document List Rule #" + hitMakerId;
 			this.hitType = HitTypeEnum.WATCHLIST_DOCUMENT;
 
 			break;
 		case "P":
-			this.title = "Passenger List Rule #" + lookoutId;
+			this.title = "Passenger List Rule #" + hitMakerId;
 			this.hitType = HitTypeEnum.WATCHLIST_PASSENGER;
 			break;
 		default:
 			break;
 		}
 		this.description = this.title;
-		this.hitRule = this.title + "(" + lookoutId + ")";
+		this.hitRule = this.title + "(" + hitMakerId + ")";
 		this.passengerId = passenger.getId();
 		this.passengerType = PassengerTypeCode.valueOf(passenger.getPassengerDetails().getPassengerType());
 		this.passengerName = passenger.getPassengerDetails().getFirstName() + " "
@@ -160,8 +160,8 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	/**
 	 * @return the udrRuleId
 	 */
-	public Long getLookoutId() {
-		return lookoutId;
+	public Long getHitMakerId() {
+		return hitMakerId;
 	}
 
 	/**
@@ -289,8 +289,8 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 		this.hitRule = hitRule;
 	}
 
-	public void setLookoutId(Long lookoutId) {
-		this.lookoutId = lookoutId;
+	public void setHitMakerId(Long hitMakerId) {
+		this.hitMakerId = hitMakerId;
 	}
 
 	public void setRuleId(Long ruleId) {
@@ -350,11 +350,11 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 			return false;
 		RuleHitDetail hitDetail = (RuleHitDetail) o;
 		return getPassengerId() == hitDetail.getPassengerId()
-				&& getLookoutId().equals(hitDetail.getLookoutId());
+				&& getHitMakerId().equals(hitDetail.getHitMakerId());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getLookoutId(), getPassengerId());
+		return Objects.hash(getHitMakerId(), getPassengerId());
 	}
 }

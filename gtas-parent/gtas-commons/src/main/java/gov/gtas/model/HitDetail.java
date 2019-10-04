@@ -12,7 +12,6 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitTypeEnum;
-import gov.gtas.model.lookup.HitCategory;
 
 @Entity
 @Table(name = "hit_detail")
@@ -26,10 +25,6 @@ public class HitDetail extends BaseEntity {
 		this.hitEnum = hitEnum;
 		this.setHitType(hitEnum.toString());
 	}
-
-	@Column
-	@JsonIgnore
-	private HitCategory category;
 
 	@Column(name = "title", nullable = false)
 	private String Title;
@@ -46,13 +41,13 @@ public class HitDetail extends BaseEntity {
 	// Binds directly to rule, watchlist item, or graph hit
 	// Null when manual hit.
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "lookout_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@JoinColumn(name = "hm_id", referencedColumnName = "id", insertable = false, updatable = false)
 	@JsonIgnore
-	protected Lookout lookout;
+	private HitMaker hitMaker;
 
 	@JsonIgnore
-	@Column(name = "lookout_id", columnDefinition = "bigint unsigned", nullable = false)
-	private Long lookoutId;
+	@Column(name = "hm_id", columnDefinition = "bigint unsigned", nullable = false)
+	private Long hitMakerId;
 
 	/**
 	 * String representation of matched conditions; it can be split into String[]
@@ -77,8 +72,33 @@ public class HitDetail extends BaseEntity {
 	@Column(name = "passenger", columnDefinition = "bigint unsigned")
 	protected Long passengerId;
 
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "flight", insertable = false, updatable = false, referencedColumnName = "id")
+	private Flight flight;
+
+	@Column(name = "flight", columnDefinition = "bigint unsigned", nullable = false)
+	private Long flightId;
+
 	@Column(name = "percentage_match")
-	protected float percentage = 1; // 1 = 100%
+	private float percentage = 1; // 1 = 100%
+
+
+	public Flight getFlight() {
+		return flight;
+	}
+
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
+
+	public Long getFlightId() {
+		return flightId;
+	}
+
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
 	public Date getCreatedDate() {
 		return createdDate;
@@ -135,13 +155,13 @@ public class HitDetail extends BaseEntity {
 		if (!(o instanceof HitDetail))
 			return false;
 		HitDetail hitDetail = (HitDetail) o;
-		return getPassengerId().equals(hitDetail.getPassengerId()) && getLookoutId().equals(hitDetail.getLookoutId())
+		return getPassengerId().equals(hitDetail.getPassengerId()) && getHitMakerId().equals(hitDetail.getHitMakerId())
 				&& getHitEnum().equals(hitDetail.getHitEnum());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getLookoutId(), getPassengerId(), getHitEnum());
+		return Objects.hash(getHitMakerId(), getPassengerId(), getHitEnum());
 	}
 
 	public Passenger getPassenger() {
@@ -168,27 +188,27 @@ public class HitDetail extends BaseEntity {
 		this.hitEnum = hitEnum;
 	}
 
-	public Lookout getLookout() {
-		return lookout;
+	public HitMaker getHitMaker() {
+		return hitMaker;
 	}
 
-	public Long getLookoutId() {
-		return lookoutId;
+	public Long getHitMakerId() {
+		return hitMakerId;
 	}
 
-	public void setLookout(Lookout lookout) {
-		this.lookout = lookout;
+	public void setHitMaker(HitMaker hitMaker) {
+		this.hitMaker = hitMaker;
 	}
 
-	public void setLookoutId(Long lookoutId) {
-		this.lookoutId = lookoutId;
+	public void setHitMakerId(Long hitMakerId) {
+		this.hitMakerId = hitMakerId;
 	}
 
 	public static HitDetail from(RuleHitDetail ruleHitDetail) {
 		HitDetail hitDetail = new HitDetail(ruleHitDetail.getHitType());
 		hitDetail.setHitType(ruleHitDetail.getHitType().toString());
 		hitDetail.setPassengerId(ruleHitDetail.getPassengerId());
-		hitDetail.setLookoutId(ruleHitDetail.getLookoutId());
+		hitDetail.setHitMakerId(ruleHitDetail.getHitMakerId());
 		hitDetail.setRuleId(ruleHitDetail.getRuleId());
 		hitDetail.setDescription(ruleHitDetail.getDescription());
 		hitDetail.setCreatedDate(new Date());

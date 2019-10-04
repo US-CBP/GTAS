@@ -79,6 +79,9 @@ public class Passenger extends BaseEntityAudit {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<TicketFare> tickets = new HashSet<>();
 
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<Notification> notifications = new HashSet<>();
+
 	@Type(type = "uuid-char")
 	@Column(name = "uuid", updatable = false)
 	private UUID uuid = UUID.randomUUID();
@@ -233,15 +236,6 @@ public class Passenger extends BaseEntityAudit {
 	public void setHitDetails(Set<HitDetail> hitDetails) {
 		this.hitDetails = hitDetails;
 	}
-/*
-	public HitsSummary getHits() {
-		return hits;
-	}
-
-	public void setHits(HitsSummary hits) {
-		this.hits = hits;
-	}
-*/
 
 	@Override
 	public int hashCode() {
@@ -272,5 +266,13 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setHits(HitsSummary hits) {
 		this.hits = hits;
+	}
+
+	public Set<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(Set<Notification> notifications) {
+		this.notifications = notifications;
 	}
 }

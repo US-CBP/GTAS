@@ -91,6 +91,11 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 						if (passengerHitDetails.contains(ruleEngineDetail)) {
 							existingDetails++;
 						} else {
+							// The flight can always be found to the flight passenger (flight passenger is
+							// always resolved to a single flight
+							// In order to make a join easy for the web application we are
+							// Adding a relationship to the flight directly from the hit detail.
+							ruleEngineDetail.setFlightId(passenger.getFlight().getId());
 							HitsSummary hitsSummary = passenger.getHits();
 							if (hitsSummary == null) {
 								hitsSummary = new HitsSummary();

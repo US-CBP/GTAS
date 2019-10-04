@@ -8,7 +8,7 @@ import java.util.*;
 @SuppressWarnings("unused") // This is for getters and setters
 @Entity
 @Table(name = "graph_rules")
-public class GraphRule extends Lookout {
+public class GraphRule extends HitMaker {
 
 	public GraphRule() {
 		setHitTypeEnum(HitTypeEnum.GRAPH_HIT);

@@ -6,7 +6,7 @@
 package gov.gtas.model.watchlist;
 
 import gov.gtas.enumtype.HitTypeEnum;
-import gov.gtas.model.Lookout;
+import gov.gtas.model.HitMaker;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -18,7 +18,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "wl_item")
-public class WatchlistItem extends Lookout {
+public class WatchlistItem extends HitMaker {
 	private static final long serialVersionUID = 3593L;
 
 	public WatchlistItem() {

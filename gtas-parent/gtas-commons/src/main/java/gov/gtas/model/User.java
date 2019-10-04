@@ -10,16 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
@@ -58,6 +49,14 @@ public class User implements Serializable {
 
 	@Column(name = "active")
 	private int active;
+
+	// Notification that the user is a part of (elected or assigned)
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private Set<UserNotification> notifications = new HashSet<>();
+
+	//Notifications that the user created / owns.
+	@OneToMany(mappedBy = "notificationOwner", fetch = FetchType.LAZY)
+	private Set<Notification> notificationOwners = new HashSet<>();
 
 	public int getActive() {
 		return active;
@@ -141,4 +140,19 @@ public class User implements Serializable {
 				+ lastName + ", active=" + active + ", roles=" + roles + "]";
 	}
 
+	public Set<UserNotification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(Set<UserNotification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public Set<Notification> getNotificationOwners() {
+		return notificationOwners;
+	}
+
+	public void setNotificationOwners(Set<Notification> notificationOwners) {
+		this.notificationOwners = notificationOwners;
+	}
 }

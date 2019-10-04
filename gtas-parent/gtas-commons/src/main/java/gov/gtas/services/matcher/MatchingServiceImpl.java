@@ -176,7 +176,7 @@ public class MatchingServiceImpl implements MatchingService {
 					HitDetail hitDetail = new HitDetail(HitTypeEnum.PARTIAL_WATCHLIST);
 					hitDetail.setPassengerId(passenger.getId());
 					hitDetail.setPassenger(passenger);
-					hitDetail.setLookoutId(Long.parseLong(hit.getDerogId()));
+					hitDetail.setHitMakerId(Long.parseLong(hit.getDerogId()));
 					hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
 					hitDetail.setRuleConditions(hit.getRuleDescription());
 					hitDetail.setCreatedDate(new Date());

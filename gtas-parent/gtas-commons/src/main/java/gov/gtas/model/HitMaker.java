@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "lookout")
+@Table(name = "hit_maker")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Lookout extends BaseEntity {
+public abstract class HitMaker extends BaseEntity {
 
 	@Column(name = "hit_type", nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -29,7 +29,7 @@ public abstract class Lookout extends BaseEntity {
 	@JoinColumn(name = "hit_category", referencedColumnName = "id", columnDefinition = "bigint unsigned")
 	private HitCategory hitCategory;
 
-	@OneToMany(mappedBy = "lookout", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "hitMaker", fetch = FetchType.LAZY)
 	private Set<HitDetail> hitDetailSet = new HashSet<>();
 
 	public HitCategory getHitCategory() {

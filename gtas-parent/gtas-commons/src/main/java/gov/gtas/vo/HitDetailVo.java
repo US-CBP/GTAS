@@ -40,7 +40,7 @@ public class HitDetailVo {
 		HitDetailVo hitDetailVo = new HitDetailVo();
 		hitDetailVo.setRuleId(hitDetail.getRuleId());
 		hitDetailVo.setCreateDate(hitDetail.getCreatedDate());
-		hitDetailVo.setCategory(hitDetail.getLookout().getHitCategory().getName());
+		hitDetailVo.setCategory(hitDetail.getHitMaker().getHitCategory().getName());
 		hitDetailVo.setFlightId(hitDetail.getPassenger().getFlight().getId());
 		hitDetailVo.setPaxId(hitDetail.getPassenger().getId());
 		hitDetailVo.setRuleConditions(hitDetail.getRuleConditions());

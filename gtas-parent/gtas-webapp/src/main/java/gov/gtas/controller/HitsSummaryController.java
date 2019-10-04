@@ -5,7 +5,7 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.Lookout;
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.HitDetailService;
 import gov.gtas.vo.HitDetailVo;
@@ -58,11 +58,11 @@ public class HitsSummaryController {
 			hitDetailVo.setRuleId(htd.getRuleId());
 			hitDetailVo.setRuleTitle(htd.getTitle());
 			hitDetailVo.setRuleDesc(htd.getDescription());
-			Lookout lookout = htd.getLookout();
+			HitMaker lookout = htd.getHitMaker();
 			HitCategory hitCategory = lookout.getHitCategory();
 			hitDetailVo.setCategory(hitCategory.getName());
-			htd.setLookoutId(null);
-			htd.setLookout(null);
+			htd.setHitMakerId(null);
+			htd.setHitMaker(null);
 			hitDetailVo.getHitsDetailsList().add(htd);
 			hitDetailVoList.add(hitDetailVo);
 		}

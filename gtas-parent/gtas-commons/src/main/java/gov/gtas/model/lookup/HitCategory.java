@@ -7,7 +7,8 @@ package gov.gtas.model.lookup;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.BaseEntityAudit;
-import gov.gtas.model.Lookout;
+import gov.gtas.model.HitMaker;
+import gov.gtas.model.UserGroup;
 
 import javax.persistence.*;
 import java.util.*;
@@ -25,7 +26,11 @@ public class HitCategory extends BaseEntityAudit {
 
 	@OneToMany(mappedBy = "hitCategory")
 	@JsonIgnore
-	private Set<Lookout> lookout = new HashSet<>();
+	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	@ManyToMany(mappedBy = "hitCategories")
+	@JsonIgnore
+	private Set<UserGroup> userGroups;
 
 	@Override
 	public boolean equals(Object o) {
@@ -50,12 +55,12 @@ public class HitCategory extends BaseEntityAudit {
 		return description;
 	}
 
-	public Set<Lookout> getLookout() {
-		return lookout;
+	public Set<HitMaker> getHitMakers() {
+		return hitMakers;
 	}
 
-	public void setLookout(Set<Lookout> lookout) {
-		this.lookout = lookout;
+	public void setHitMakers(Set<HitMaker> hitMakers) {
+		this.hitMakers = hitMakers;
 	}
 
 	public void setName(String name) {
@@ -64,5 +69,13 @@ public class HitCategory extends BaseEntityAudit {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Set<UserGroup> getUserGroups() {
+		return userGroups;
+	}
+
+	public void setUserGroups(Set<UserGroup> userGroups) {
+		this.userGroups = userGroups;
 	}
 }

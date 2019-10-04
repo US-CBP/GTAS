@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "manual_lookout")
-public class ManualHit extends Lookout {
+public class ManualHit extends HitMaker {
 
     private String description;
 

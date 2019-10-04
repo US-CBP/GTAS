@@ -73,7 +73,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 			@NonNull @Param("pnrReservationReferenceNumber") String pnrReservationReferenceNumber,
 			@NonNull @Param("recordLocator") String recordLocator);
 
-	@Query("Select p from Passenger p left join fetch p.hitDetails join p.flight where p.id in :passengerIds")
+	@Query("Select p from Passenger p left join fetch p.hitDetails left join fetch p.flight where p.id in :passengerIds")
 	Set<Passenger> getPassengersWithHitDetails(@Param("passengerIds") Set<Long> passengerIds);
 
 	@EntityGraph(value = "passengerGraph",  type = EntityGraph.EntityGraphType.FETCH)

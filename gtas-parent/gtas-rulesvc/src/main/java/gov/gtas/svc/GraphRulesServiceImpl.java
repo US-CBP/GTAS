@@ -91,7 +91,7 @@ public class GraphRulesServiceImpl implements GraphRulesService {
 					rhd.setPassengerId(passenger.getId());
 					rhd.setPassengerType(PassengerTypeCode.P);
 					rhd.setFlightId(passenger.getFlight().getId());
-					rhd.setLookoutId(graphRule.getId());
+					rhd.setHitMakerId(graphRule.getId());
 					rhd.setCipherQuery(graphRule.getCipherQuery());
 					ruleHitDetails.add(rhd);
 				}

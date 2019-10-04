@@ -11,7 +11,6 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.model.HitDetail;
-import gov.gtas.model.Passenger;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistTerm;
@@ -58,7 +57,7 @@ public class PaxWatchlistLinkVo {
 
     public static PaxWatchlistLinkVo fromHitDetail(HitDetail hitDetail) throws IOException {
 		PaxWatchlistLinkVo paxWatchlistLinkVo = new PaxWatchlistLinkVo();
-		WatchlistItem watchlistItem = (WatchlistItem)hitDetail.getLookout();
+		WatchlistItem watchlistItem = (WatchlistItem)hitDetail.getHitMaker();
 		WatchlistItemSpec itemSpec = new ObjectMapper().readValue(watchlistItem.getItemData(), WatchlistItemSpec.class);
 		WatchlistTerm[] items = itemSpec.getTerms();
 		for (int i = 0; i < items.length; i++) {
@@ -72,10 +71,10 @@ public class PaxWatchlistLinkVo {
 				paxWatchlistLinkVo.setWatchListDOB(items[i].getValue());
 			}
 		}
-		paxWatchlistLinkVo.setWatchlistItemId(hitDetail.getLookoutId());
+		paxWatchlistLinkVo.setWatchlistItemId(hitDetail.getHitMakerId());
 		paxWatchlistLinkVo.setPassengerId(hitDetail.getPassengerId());
 		paxWatchlistLinkVo.setPercentMatch(hitDetail.getPercentage());
-		String category = hitDetail.getLookout().getHitCategory().getName();
+		String category = hitDetail.getHitMaker().getHitCategory().getName();
 		paxWatchlistLinkVo.setWatchlistCategory(category);
 		return paxWatchlistLinkVo;
     }

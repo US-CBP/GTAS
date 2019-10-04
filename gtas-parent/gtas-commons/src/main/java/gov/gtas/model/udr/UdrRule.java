@@ -8,7 +8,7 @@ package gov.gtas.model.udr;
 import static gov.gtas.constant.DomainModelConstants.UDR_UNIQUE_CONSTRAINT_NAME;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.YesNoEnum;
-import gov.gtas.model.Lookout;
+import gov.gtas.model.HitMaker;
 import gov.gtas.model.User;
 import gov.gtas.util.DateCalendarUtils;
 
@@ -40,7 +40,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @Entity
 @Table(name = "udr_rule", uniqueConstraints = {
 		@UniqueConstraint(name = UDR_UNIQUE_CONSTRAINT_NAME, columnNames = { "AUTHOR", "TITLE", "DEL_ID" }) })
-public class UdrRule extends Lookout {
+public class UdrRule extends HitMaker {
 
 	/**
 	 * serial version UID

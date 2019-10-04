@@ -142,7 +142,7 @@ public class TargetingResultUtils {
 		Map<Long, Integer> watchlistIdAsKeyCountAsValue = new HashMap<>();
 		for (RuleHitDetail ruleHitDetail : rhdSet) {
 			if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
-				Long graphRuleId = ruleHitDetail.getLookoutId();
+				Long graphRuleId = ruleHitDetail.getHitMakerId();
 				if (graphRuleIdAsKeyCountAsValue.containsKey(graphRuleId)) {
 					Integer hitCount = graphRuleIdAsKeyCountAsValue.get(graphRuleId);
 					graphRuleIdAsKeyCountAsValue.put(graphRuleId, hitCount + 1);
@@ -151,7 +151,7 @@ public class TargetingResultUtils {
 				}
 			} else if (HitTypeEnum.WATCHLIST_PASSENGER == ruleHitDetail.getHitType()
 					|| HitTypeEnum.WATCHLIST_DOCUMENT == ruleHitDetail.getHitType()) {
-				Long wlRuleId = ruleHitDetail.getLookoutId();
+				Long wlRuleId = ruleHitDetail.getHitMakerId();
 				if (watchlistIdAsKeyCountAsValue.containsKey(wlRuleId)) {
 					Integer hitCount = watchlistIdAsKeyCountAsValue.get(wlRuleId);
 					watchlistIdAsKeyCountAsValue.put(wlRuleId, hitCount + 1);
@@ -159,7 +159,7 @@ public class TargetingResultUtils {
 					watchlistIdAsKeyCountAsValue.put(wlRuleId, 1);
 				}
 			} else {
-				Long udrRuleId = ruleHitDetail.getLookoutId();
+				Long udrRuleId = ruleHitDetail.getHitMakerId();
 				if (udrRuleIdAsKeyCountAsValue.containsKey(udrRuleId)) {
 					Integer hitCount = udrRuleIdAsKeyCountAsValue.get(udrRuleId);
 					udrRuleIdAsKeyCountAsValue.put(udrRuleId, hitCount + 1);
@@ -179,7 +179,7 @@ public class TargetingResultUtils {
 		for (RuleHitDetail ruleHitDetail : rhdSet) {
 			Long ruleId;
 			if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
-				ruleId = ruleHitDetail.getLookoutId();
+				ruleId = ruleHitDetail.getHitMakerId();
 				if (graphRuleIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
@@ -187,14 +187,14 @@ public class TargetingResultUtils {
 				}
 			} else if (HitTypeEnum.WATCHLIST_PASSENGER == ruleHitDetail.getHitType()
 					|| HitTypeEnum.WATCHLIST_DOCUMENT == ruleHitDetail.getHitType()) {
-				ruleId = ruleHitDetail.getLookoutId();
+				ruleId = ruleHitDetail.getHitMakerId();
 				if (watchlistIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
 					watchlistFilteredRules.add(ruleId);
 				}
 			} else {
-				ruleId = ruleHitDetail.getLookoutId(); // UDR uses UDRID instead of rule ID.
+				ruleId = ruleHitDetail.getHitMakerId(); // UDR uses UDRID instead of rule ID.
 				if (udrRuleIdAsKeyCountAsValue.get(ruleId) <= MAX_RULE_HITS) {
 					filteredList.add(ruleHitDetail);
 				} else {
@@ -247,7 +247,7 @@ public class TargetingResultUtils {
 		RuleHitDetail resrhd = resultMap.get(rhd);
 		if (resrhd != null && !resrhd.getRuleId().equals(rhd.getRuleId())) {
 			resrhd.incrementHitCount();
-			if (resrhd.getLookoutId() != null) {
+			if (resrhd.getHitMakerId() != null) {
 				logger.debug("This is a rule hit so increment the rule hit count.");
 				// this is a rule hit
 				resrhd.incrementRuleHitCount();
