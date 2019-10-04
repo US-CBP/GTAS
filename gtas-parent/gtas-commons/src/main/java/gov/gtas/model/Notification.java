@@ -38,4 +38,43 @@ public abstract class Notification extends BaseEntityAudit {
     @Column(name = "n_send_when", nullable = false)
     private NotificationSend notificationSend;
 
+    public Passenger getPassenger() {
+        return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public NotificationStatus getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(NotificationStatus notificationStatus) {
+        this.notificationStatus = notificationStatus;
+    }
+
+    public NotificationSend getNotificationSend() {
+        return notificationSend;
+    }
+
+    public void setNotificationSend(NotificationSend notificationSend) {
+        this.notificationSend = notificationSend;
+    }
+
+    public User getNotificationOwner() {
+        return notificationOwner;
+    }
+
+    public void setNotificationOwner(User notificationOwner) {
+        this.notificationOwner = notificationOwner;
+    }
 }

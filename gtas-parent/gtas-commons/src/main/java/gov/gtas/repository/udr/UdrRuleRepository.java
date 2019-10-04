@@ -62,6 +62,6 @@ public interface UdrRuleRepository extends CrudRepository<UdrRule, Long>, JpaSpe
 		return findById(id).orElse(null);
 	}
 
-	@Query("select udr.id, count(hd.id) from HitDetail hd, UdrRule udr where hd.lookoutId = udr.id group by udr.id")
+	@Query("select udr.id, count(hd.id) from HitDetail hd, UdrRule udr where hd.hitMakerId = udr.id group by udr.id")
     List<Object[]> getCounts();
 }

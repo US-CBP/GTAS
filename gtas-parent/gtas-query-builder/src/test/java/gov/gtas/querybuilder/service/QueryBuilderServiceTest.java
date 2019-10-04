@@ -274,7 +274,6 @@ public class QueryBuilderServiceTest {
 		Assert.assertEquals(passengerGridItemVo.getNationality(), "foo");
 		Assert.assertEquals(passengerGridItemVo.getLastName(), "bar");
 		Assert.assertEquals(passengerGridItemVo.getDocuments().size(), 1);
-		Assert.assertEquals(passengerGridItemVo.getOnWatchList(), true);
 
 	}
 

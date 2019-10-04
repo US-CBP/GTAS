@@ -54,9 +54,14 @@ public class User implements Serializable {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<UserNotification> notifications = new HashSet<>();
 
-	//Notifications that the user created / owns.
+	// Notifications that the user created / owns.
 	@OneToMany(mappedBy = "notificationOwner", fetch = FetchType.LAZY)
 	private Set<Notification> notificationOwners = new HashSet<>();
+
+	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<Role>();
 
 	public int getActive() {
 		return active;
@@ -65,11 +70,6 @@ public class User implements Serializable {
 	public void setActive(int active) {
 		this.active = active;
 	}
-
-	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<Role>();
 
 	public Set<Role> getRoles() {
 		return roles;

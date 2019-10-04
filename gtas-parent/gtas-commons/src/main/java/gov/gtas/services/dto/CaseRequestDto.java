@@ -16,7 +16,7 @@ public class CaseRequestDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	// e.g. 2015-10-02T18:33:03.412Z
-	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	private int pageNumber;
 
@@ -49,8 +49,6 @@ public class CaseRequestDto implements Serializable {
 	private Long ruleCatId;
 
 	private Boolean oneDayLookoutFlag;
-
-	private MultipartFile multipartFile;
 
 	private String caseDisposition;
 
@@ -160,14 +158,6 @@ public class CaseRequestDto implements Serializable {
 
 	public void setFile(File file) {
 		this.file = file;
-	}
-
-	public MultipartFile getMultipartFile() {
-		return multipartFile;
-	}
-
-	public void setMultipartFile(MultipartFile multipartFile) {
-		this.multipartFile = multipartFile;
 	}
 
 	public Long getRuleCatId() {

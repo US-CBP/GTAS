@@ -38,7 +38,7 @@ public class DateUtilsTest {
 		dates.put(2011, "111001");
 		dates.put(1959, "591001");
 		dates.put(1938, "381001");
-		dates.put(1919, "191001");
+		dates.put(2019, "191001");
 		dates.put(2018, "181001");
 		dates.put(1940, "401001");
 		dates.put(2012, "120101");

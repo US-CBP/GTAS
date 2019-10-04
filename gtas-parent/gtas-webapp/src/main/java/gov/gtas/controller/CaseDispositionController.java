@@ -5,18 +5,12 @@
  */
 package gov.gtas.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import gov.gtas.model.Attachment;
 import gov.gtas.model.lookup.HitCategory;
@@ -31,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import gov.gtas.vo.passenger.CaseVo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -56,11 +51,14 @@ public class CaseDispositionController {
 	private AttachmentRepository attachmentRepo;
 
 	private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
+	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(CaseRequestDto.DATE_FORMAT);
+	private static final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
 
-	@RequestMapping(value = "/getAllCaseDispositions", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CasePageDto getAll(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
-
-		return new CasePageDto(new ArrayList<>(),0L);
+	@RequestMapping(value = "/hits", method = RequestMethod.GET,
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody CasePageDto getAll(@RequestParam("requestDto") String requestDto) throws IOException {
+		final CaseRequestDto dto = objectMapper.readValue(requestDto, CaseRequestDto.class);
+		return null;
 	}
 
 	// getOneHistDisp
@@ -162,13 +160,6 @@ public class CaseDispositionController {
 
 	@RequestMapping(value = "/casedisposition", method = RequestMethod.GET)
 	public @ResponseBody List<Object> getCaseDispositionStatuses() {
-		return new ArrayList<>();
-	}
-
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passenger/caseHistory/{paxId}", method = RequestMethod.GET)
-	public List<CaseVo> getPassengerCaseHistory(@PathVariable(value = "paxId") Long paxId) {
 		return new ArrayList<>();
 	}
 

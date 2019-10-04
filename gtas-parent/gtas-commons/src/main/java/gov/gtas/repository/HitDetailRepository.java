@@ -18,7 +18,7 @@ public interface HitDetailRepository extends CrudRepository<HitDetail, Long> {
 
 	HitDetail findFirstByOrderByIdDesc();
 
-	@Query("SELECT hd from HitDetail hd left join fetch hd.lookout l left join fetch l.hitCategory where hd.passenger.id = :passengerId")
+	@Query("SELECT hd from HitDetail hd left join fetch hd.hitMaker l left join fetch l.hitCategory where hd.passenger.id = :passengerId")
 	Set<HitDetail> getSetFromPassengerId(@Param("passengerId") Long passengerId);
 
 	Set<HitDetail> findFirst10ByPassengerInOrderByCreatedDateDesc(Set<Passenger> passenger);

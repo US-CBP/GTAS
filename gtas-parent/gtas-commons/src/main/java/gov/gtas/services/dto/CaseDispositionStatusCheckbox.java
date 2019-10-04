@@ -1,12 +1,12 @@
 package gov.gtas.services.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gov.gtas.enumtype.CaseDispositionStatusEnum;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaseDispositionStatusCheckbox {
+public class CaseDispositionStatusCheckbox implements Serializable {
 
 	@JsonProperty("NEW")
 	private Boolean newCases;
@@ -18,6 +18,8 @@ public class CaseDispositionStatusCheckbox {
 	private Boolean reopenedCases;
 	@JsonProperty("PENDINGCLOSURE")
 	private Boolean pendingClosure;
+
+	CaseDispositionStatusCheckbox(){}
 
 	public Boolean getNewCases() {
 		return newCases;
@@ -62,19 +64,19 @@ public class CaseDispositionStatusCheckbox {
 	public List<String> namesOfCheckedBoxes() {
 		List<String> checkedBoxes = new ArrayList<>();
 		if (newCases) {
-			checkedBoxes.add(CaseDispositionStatusEnum.NEW.getType());
+			checkedBoxes.add("NEW");
 		}
 		if (openCases) {
-			checkedBoxes.add(CaseDispositionStatusEnum.OPEN.getType());
+			checkedBoxes.add("OPEN");
 		}
 		if (closedCases) {
-			checkedBoxes.add(CaseDispositionStatusEnum.CLOSED.getType());
+			checkedBoxes.add("CLOSED");
 		}
 		if (reopenedCases) {
-			checkedBoxes.add(CaseDispositionStatusEnum.REOPEN.getType());
+			checkedBoxes.add("RE_OPEN");
 		}
 		if (pendingClosure) {
-			checkedBoxes.add(CaseDispositionStatusEnum.PENDINGCLOSURE.getType());
+			checkedBoxes.add("PENDING_CLOSURE");
 		}
 		return checkedBoxes;
 	}

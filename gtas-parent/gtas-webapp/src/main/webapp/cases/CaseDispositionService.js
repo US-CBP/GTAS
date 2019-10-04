@@ -21,9 +21,13 @@
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: pageRequest
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: pageRequest},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
@@ -78,9 +82,13 @@
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: pageRequest
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: pageRequest},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
@@ -120,9 +128,13 @@
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
-                    method: 'post',
-                    url: "/gtas/getAllCaseDispositions/",
-                    data: param
+                    method: 'get',
+                    url: "/gtas/hits/",
+                    params: {requestDto: param},
+                    data: '',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                 }));
                 return dfd.promise;
             }
