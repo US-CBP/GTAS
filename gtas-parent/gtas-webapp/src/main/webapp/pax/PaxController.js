@@ -1073,7 +1073,17 @@
         }
       );
     };
-
+   
+    $scope.userHasRole = function(roleId){
+    	var hasRole = false;
+    	$.each(user.data.roles, function(index, value) {
+    		if (value.roleId === roleId) {
+    			hasRole = true;
+                }
+    		});
+    	return hasRole;
+    }
+    
     //dialog function for image display dialog
     $scope.showAttachments = function(attachmentList) {
       $mdDialog.show({
