@@ -541,8 +541,7 @@
               audit: [
                 {
                   name: "action",
-                  displayName: "admin.action",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.action'),
                   field: "actionType",
                   width: "10%",
                   sort: {
@@ -552,29 +551,25 @@
                 },
                 {
                   name: "user",
-                  displayName: "admin.user",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.user'),
                   field: "user",
                   width: "15%"
                 },
                 {
                   name: "status",
-                  displayName: "admin.status",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.status'),
                   field: "status",
                   width: "10%"
                 },
                 {
                   name: "message",
-                  displayName: "admin.message",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.message'),
                   field: "message",
                   width: "20%"
                 },
                 {
                   name: "timestamp",
-                  displayName: "admin.timestamp",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.timestamp'),
                   field: "timestamp",
                   width: "45%"
                 }
