@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,8 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 	private final Logger logger = LoggerFactory.getLogger(NotificatonServiceImpl.class);
 
+	// Date format in the subject line and body of the notification email
+	private static final String DOB_FORMAT = "dd-MMM-yy";
 	private final SnsService snsService;
 
 	private AmazonSNS amazonSNS;
@@ -121,17 +124,28 @@ public class NotificatonServiceImpl implements NotificatonService {
 	private static Predicate<NotificationTextVo> dayMonthEqualsJanuaryFirst() {
 
 		return p -> {
-			int day = DateCalendarUtils.getDayOfDate(p.getDob(),
-					DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT));
+			int day = DateCalendarUtils.getDayOfDate(p.getDob(), DateTimeFormatter.ofPattern(DOB_FORMAT, Locale.ROOT));
 
 			int month = DateCalendarUtils.getMonthOfDate(p.getDob(),
-					DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT));
+					DateTimeFormatter.ofPattern(DOB_FORMAT, Locale.ROOT));
 			return (day != 01) || (month != 01);
 		};
 	}
 
 	private String sendHitNotification(NotificationTextVo notification) {
-		return snsService.sendNotification(this.amazonSNS, notification.toString(), this.topicSubject, topicArn);
+		return snsService.sendNotification(this.amazonSNS, notification.toString(),
+				this.getSubjectLine(notification, topicSubject), topicArn);
+	}
+
+	private String getSubjectLine(NotificationTextVo notification, String subject) {
+		StringJoiner subjectBuilder = new StringJoiner(" ", "", subject);
+		subjectBuilder.add(notification.getLastName().toUpperCase());
+		subjectBuilder.add(notification.getFirstName().toLowerCase());
+		subjectBuilder.add(notification.getDob());
+		subjectBuilder.add(notification.getFlightNumber());
+		subjectBuilder.add(notification.getTimeRemaining());
+		subjectBuilder.add(" ");
+		return subjectBuilder.toString();
 	}
 
 	/**
@@ -168,7 +182,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 			notificationVo.setWatchlistOrRuleName(wlCategory.getName());
 			notificationVo.setWlCategoryId(wlCategory.getId());
 		}
-		notificationVo.setDob(p.getPassengerDetails().getDob().toString());
+		notificationVo.setDob(DateCalendarUtils.format(p.getPassengerDetails().getDob(), DOB_FORMAT));
 		// If the passenger has more than one document, reduce the list into a comma
 		// separate document numbers string
 		notificationVo
