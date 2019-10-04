@@ -30,10 +30,10 @@ import static gov.gtas.constant.GtasSecurityConstants.*;
 
 public interface CaseDispositionService {
 
-	@PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	public CasePageDto findAll(CaseRequestDto dto);
 
-	@PreAuthorize(PRIVLEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES_AND_VIEW_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	public CasePageDto findHitsDispositionByCriteria(CaseRequestDto dto);
 
 	@PreAuthorize(ALL_PRIVS_AND_ONE_DAY)

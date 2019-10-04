@@ -70,6 +70,7 @@ public final class Constants {
 	public static final String VIEW_FLIGHT_PASSENGERS_ROLE = "VIEW_FLIGHT_PASSENGERS";
 	public static final String MANAGE_WATCHLIST_ROLE = "MANAGE_WATCHLIST";
 	public static final String ADMIN_ROLE = "ADMIN";
+	public static final String MANAGE_CASES_ROLE = "MANAGE_CASES";
 
 	// Security URL Paths
 	public static final String LOGIN_PAGE = "/login.html";

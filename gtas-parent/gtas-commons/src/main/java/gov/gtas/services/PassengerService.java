@@ -6,6 +6,7 @@
 package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_CASES;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
 
 import gov.gtas.model.*;
@@ -48,10 +49,10 @@ public interface PassengerService {
 
 	void createDisposition(List<HitsSummary> hit);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	List<DispositionStatus> getDispositionStatuses();
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	List<CaseVo> getAllDispositions();
 
 	void createOrEditDispositionStatus(DispositionStatus ds);

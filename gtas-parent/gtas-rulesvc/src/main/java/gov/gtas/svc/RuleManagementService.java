@@ -6,7 +6,6 @@
 package gov.gtas.svc;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES;
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST;
 import gov.gtas.model.udr.KnowledgeBase;
 import gov.gtas.model.udr.UdrRule;
 import gov.gtas.model.watchlist.WatchlistItem;
@@ -38,7 +37,7 @@ public interface RuleManagementService {
 	 *            the knowledge base name.
 	 * @return the DRL rules as a string.
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES)
 	String fetchDrlRulesFromKnowledgeBase(String kbName);
 
 	/**

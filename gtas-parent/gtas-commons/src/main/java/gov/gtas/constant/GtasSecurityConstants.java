@@ -44,6 +44,8 @@ public class GtasSecurityConstants {
 
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_CASES = "hasAnyAuthority('Admin', 'Manage Cases')";
 
+	//These below are now defunct excepting ALL_PRIVS_AND_ONE_DAY
+	
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST = "hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List')";
 
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES = "hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List', 'Manage Queries')";
