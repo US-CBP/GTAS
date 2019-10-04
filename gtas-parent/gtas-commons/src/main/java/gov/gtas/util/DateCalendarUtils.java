@@ -119,18 +119,15 @@ public final class DateCalendarUtils {
 	}
 
 	public static Date parseJsonDate(final String dateString) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.UDR_DATE_FORMAT);
-		return format.parse(dateString);
+		return parse(dateString, RuleConstants.UDR_DATE_FORMAT);
 	}
 
 	public static Date parseJsonDateTime(final String dateString) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.UDR_DATETIME_FORMAT);
-		return format.parse(dateString);
+		return parse(dateString, RuleConstants.UDR_DATETIME_FORMAT);
 	}
 
 	public static String formatJsonDate(final Date date) {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.UDR_DATE_FORMAT);
-		return format.format(date);
+		return format(date, RuleConstants.UDR_DATE_FORMAT);
 	}
 
 	public static String formatJsonDateTime(final Date date) {
@@ -138,23 +135,19 @@ public final class DateCalendarUtils {
 		if (date == null) {
 			return null;
 		}
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		return format.format(date);
+		return format(date, "yyyy-MM-dd HH:mm");
 	}
 
 	public static Date parseRuleEngineDate(final String dateString) throws ParseException {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATE_FORMAT);
-		return format.parse(dateString);
+		return parse(dateString, RuleConstants.RULE_ENGINE_DATE_FORMAT);
 	}
 
 	public static String formatRuleEngineDate(final Date date) {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATE_FORMAT);
-		return format.format(date);
+		return format(date, RuleConstants.RULE_ENGINE_DATE_FORMAT);
 	}
 
 	public static String formatRuleEngineDateTime(final Date date) {
-		SimpleDateFormat format = new SimpleDateFormat(RuleConstants.RULE_ENGINE_DATETIME_FORMAT);
-		return format.format(date);
+		return format(date, RuleConstants.RULE_ENGINE_DATETIME_FORMAT);
 	}
 
 	/**
@@ -170,5 +163,39 @@ public final class DateCalendarUtils {
 
 	public static LocalDate parseLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
 		return LocalDate.parse(date, dateTimeFormatter);
+	}
+
+	/**
+	 * Gets the month-of-year field
+	 * 
+	 * @param date
+	 * @param dateTimeFormatter
+	 * @return
+	 */
+	public static int getMonthOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+		LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+		return travLocalDate.getMonth().getValue();
+	}
+
+	/**
+	 * Gets the day-of-month field.
+	 * 
+	 * @param date
+	 * @param dateTimeFormatter
+	 * @return
+	 */
+	public static int getDayOfDate(String date, DateTimeFormatter dateTimeFormatter) {
+		LocalDate travLocalDate = parseLocalDate(date, dateTimeFormatter);
+		return travLocalDate.getDayOfMonth();
+	}
+
+	public static String format(Date date, String format) {
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		return formatter.format(date);
+	}
+
+	public static Date parse(String stringDate, String format) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat(format);
+		return formatter.parse(stringDate);
 	}
 }

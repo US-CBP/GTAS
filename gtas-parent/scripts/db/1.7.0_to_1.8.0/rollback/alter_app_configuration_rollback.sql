@@ -1,0 +1,1 @@
+DROP INDEX app_configuration_opt_key ON app_configuration;
