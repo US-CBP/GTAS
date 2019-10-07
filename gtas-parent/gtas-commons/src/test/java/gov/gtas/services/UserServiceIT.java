@@ -36,8 +36,7 @@ import org.springframework.test.annotation.Rollback;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
 @Rollback(true)
 public class UserServiceIT {
 
@@ -82,13 +81,11 @@ public class UserServiceIT {
 	public void testCreateUserWithRoles() {
 		// Arrange
 
-		Stream<RoleData> streamRoles = roles.stream().filter(
-				r -> r.getRoleId() == 2);
+		Stream<RoleData> streamRoles = roles.stream().filter(r -> r.getRoleId() == 2);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		logger.info(authRoles.toString());
-		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
 
 		UserData actualUser = null;
 		// Act
@@ -106,8 +103,7 @@ public class UserServiceIT {
 	public void testCreateUserWithRolesAndFilter() {
 		// Arrange
 
-		Stream<RoleData> streamRoles = roles.stream().filter(
-				r -> r.getRoleId() == 2 || r.getRoleId() == 5);
+		Stream<RoleData> streamRoles = roles.stream().filter(r -> r.getRoleId() == 2 || r.getRoleId() == 5);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		Set<String> originAirports = new HashSet<String>();
@@ -123,15 +119,16 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
 
 		UserData actualUser = null;
 		// Act
 		try {
 			actualUser = userService.create(expectedUser);
 		} catch (Exception e) {
-			logger.error("error!", e);;;
+			logger.error("error!", e);
+			;
+			;
 		}
 
 		// Assert
@@ -143,13 +140,11 @@ public class UserServiceIT {
 	public void testUpdateUserWithOutFilters() {
 
 		// Arrange
-		Stream<RoleData> streamRoles = roles.stream().filter(
-				r -> r.getRoleId() == 2);
+		Stream<RoleData> streamRoles = roles.stream().filter(r -> r.getRoleId() == 2);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		logger.info(authRoles.toString());
-		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
 
 		try {
 			userService.create(expectedUser);
@@ -157,8 +152,7 @@ public class UserServiceIT {
 			logger.error("error!", e);
 		}
 		// update lastname
-		UserData expectedUserU = new UserData("iTest99", "password", "test",
-				"100", 1, authRoles);
+		UserData expectedUserU = new UserData("iTest99", "password", "test", "100", 1, authRoles);
 
 		UserData actualUserU = null;
 		// Act
@@ -178,8 +172,7 @@ public class UserServiceIT {
 	public void testUpdateUserWithFilters() {
 		// Arrange
 
-		Stream<RoleData> streamRoles = roles.stream().filter(
-				r -> r.getRoleId() == 2 || r.getRoleId() == 5);
+		Stream<RoleData> streamRoles = roles.stream().filter(r -> r.getRoleId() == 2 || r.getRoleId() == 5);
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		Set<String> originAirports = new HashSet<String>();
@@ -191,18 +184,18 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		UserData expectedUser = new UserData("iTest99", "password", "test",
-				"99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
 
 		// Act
 		try {
 			userService.create(expectedUser);
 		} catch (Exception e) {
-			logger.error("error!", e);;;
+			logger.error("error!", e);
+			;
+			;
 		}
 
-		Stream<RoleData> streamRolesU = roles.stream().filter(
-				r -> r.getRoleId() == 2 || r.getRoleId() == 3);
+		Stream<RoleData> streamRolesU = roles.stream().filter(r -> r.getRoleId() == 2 || r.getRoleId() == 3);
 		Set<RoleData> authRolesU = streamRolesU.collect(Collectors.toSet());
 		originAirports.add("GKA");
 
@@ -211,8 +204,7 @@ public class UserServiceIT {
 		etaEnd = 3;
 
 		logger.info(authRoles.toString());
-		UserData expectedUserU = new UserData("iTest99", "password", "test",
-				"99", 1, authRolesU);
+		UserData expectedUserU = new UserData("iTest99", "password", "test", "99", 1, authRolesU);
 
 		UserData actualUserU = null;
 		// Act

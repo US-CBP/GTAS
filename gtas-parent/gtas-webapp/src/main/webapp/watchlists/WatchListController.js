@@ -116,6 +116,14 @@
                 }
             });
         };
+        $scope.watchlistGrid.exporterMenuPdf = true;
+        $scope.watchlistGrid.exporterPdfDefaultStyle = {fontSize: 9};
+        $scope.watchlistGrid.exporterPdfTableHeaderStyle = {fontSize: 10, bold: true, italics: true, color: 'red'};
+        $scope.watchlistGrid.exporterPdfFooter = function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        };
+        $scope.watchlistGrid.exporterPdfPageSize = 'LETTER';
+        $scope.watchlistGrid.exporterPdfMaxGridWidth = 500;
         $scope.watchlistGrid.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             gridApi.selection.on.rowSelectionChanged($scope, isItTrashTime);
@@ -447,6 +455,13 @@
             paginationPageSize: 10,           
             columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').CATEGORY,
             enableGridMenu: true,
+            exporterPdfDefaultStyle: {fontSize: 9},
+            exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+            exporterPdfFooter: function ( currentPage, pageCount ) {
+                return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+            },
+            exporterPdfPageSize: 'LETTER',
+            exporterPdfMaxGridWidth: 500,
             exporterCsvFilename: 'watch-list-types.csv',
             exporterExcelFilename: 'watch-list-types.xlsx',
             exporterExcelSheetName: 'Data'

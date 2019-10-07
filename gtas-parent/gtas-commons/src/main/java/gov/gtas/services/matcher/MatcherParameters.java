@@ -14,17 +14,17 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
 public class MatcherParameters {
-    private Map<Long, Case> caseMap;
-    private Map<Long, RuleCat> ruleCatMap;
-    private List<Watchlist> _watchlists;
-    private Map<Long, List<WatchlistItem>> watchlistListMap;
-    private float threshold;
-    private int dobYearOffset; 
-   	private QuickMatcher qm;
-    
-    /*
-     * Map<Passenger.id, Set<WatchlistItem.id>>
-     */
+	private Map<Long, Case> caseMap;
+	private Map<Long, RuleCat> ruleCatMap;
+	private List<Watchlist> _watchlists;
+	private Map<Long, List<WatchlistItem>> watchlistListMap;
+	private float threshold;
+	private int dobYearOffset;
+	private QuickMatcher qm;
+
+	/*
+	 * Map<Passenger.id, Set<WatchlistItem.id>>
+	 */
 	private Map<Long, Set<Long>> paxWatchlistLinks;
 
 	private List<HashMap<String, String>> derogList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class MatcherParameters {
 	}
 
 	public void addDerogList(List<HashMap<String, String>> derogList) {
-		if(this.derogList == null)
+		if (this.derogList == null)
 			this.derogList = new ArrayList<>();
 		this.derogList.addAll(derogList);
 	}
@@ -68,43 +68,43 @@ public class MatcherParameters {
 	}
 
 	Map<Long, Case> getCaseMap() {
-        return caseMap;
-    }
+		return caseMap;
+	}
 
-    void setCaseMap(Map<Long, Case> caseMap) {
-        this.caseMap = caseMap;
-    }
+	void setCaseMap(Map<Long, Case> caseMap) {
+		this.caseMap = caseMap;
+	}
 
-    Map<Long, RuleCat> getRuleCatMap() {
-        return ruleCatMap;
-    }
+	Map<Long, RuleCat> getRuleCatMap() {
+		return ruleCatMap;
+	}
 
-    void setRuleCatMap(Map<Long, RuleCat> ruleCatMap) {
-        this.ruleCatMap = ruleCatMap;
-    }
+	void setRuleCatMap(Map<Long, RuleCat> ruleCatMap) {
+		this.ruleCatMap = ruleCatMap;
+	}
 
-    List<Watchlist> get_watchlists() {
-        return _watchlists;
-    }
+	List<Watchlist> get_watchlists() {
+		return _watchlists;
+	}
 
-    void set_watchlists(List<Watchlist> _watchlists) {
-        this._watchlists = _watchlists;
-    }
+	void set_watchlists(List<Watchlist> _watchlists) {
+		this._watchlists = _watchlists;
+	}
 
-    Map<Long, List<WatchlistItem>> getWatchlistListMap() {
-        return watchlistListMap;
-    }
+	Map<Long, List<WatchlistItem>> getWatchlistListMap() {
+		return watchlistListMap;
+	}
 
-    void setWatchlistListMap(Map<Long, List<WatchlistItem>> watchlistListMap) {
-        this.watchlistListMap = watchlistListMap;
-    }
+	void setWatchlistListMap(Map<Long, List<WatchlistItem>> watchlistListMap) {
+		this.watchlistListMap = watchlistListMap;
+	}
 
-    public float getThreshold() {
-        return threshold;
-    }
+	public float getThreshold() {
+		return threshold;
+	}
 
-    public void setThreshold(float threshold) {
-        this.threshold = threshold;
-    }
+	public void setThreshold(float threshold) {
+		this.threshold = threshold;
+	}
 
 }

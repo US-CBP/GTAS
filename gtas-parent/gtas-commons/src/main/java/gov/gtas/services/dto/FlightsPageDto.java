@@ -10,31 +10,33 @@ import java.util.List;
 import gov.gtas.vo.passenger.FlightVo;
 
 public class FlightsPageDto {
-    private List<FlightVo> flights;
-    private boolean queryLimitReached;
-    private long totalFlights;
-    public FlightsPageDto(List<FlightVo> flights, long totalFlights) {
-        this(flights, totalFlights, false);
-    }
+	private List<FlightVo> flights;
+	private boolean queryLimitReached;
+	private long totalFlights;
 
-    public FlightsPageDto(List<FlightVo> flights, long totalFlights, boolean queryLimitReached) {
-      this.flights = flights;
-      this.totalFlights = totalFlights;
-      this.queryLimitReached = queryLimitReached;
-    }
+	public FlightsPageDto(List<FlightVo> flights, long totalFlights) {
+		this(flights, totalFlights, false);
+	}
 
-    public List<FlightVo> getFlights() {
-        return flights;
-    }
-    public long getTotalFlights() {
-        return totalFlights;
-    }
+	public FlightsPageDto(List<FlightVo> flights, long totalFlights, boolean queryLimitReached) {
+		this.flights = flights;
+		this.totalFlights = totalFlights;
+		this.queryLimitReached = queryLimitReached;
+	}
 
-    public boolean isQueryLimitReached() {
-        return queryLimitReached;
-    }
+	public List<FlightVo> getFlights() {
+		return flights;
+	}
 
-    public void setQueryLimitReached(boolean queryLimitReached) {
-        this.queryLimitReached = queryLimitReached;
-    }
+	public long getTotalFlights() {
+		return totalFlights;
+	}
+
+	public boolean isQueryLimitReached() {
+		return queryLimitReached;
+	}
+
+	public void setQueryLimitReached(boolean queryLimitReached) {
+		this.queryLimitReached = queryLimitReached;
+	}
 }

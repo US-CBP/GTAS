@@ -29,117 +29,120 @@ import gov.gtas.parsers.edifact.Segment;
  * </ul>
  */
 public class NAD extends Segment {
-    public enum NadCode {
-        REPORTING_PARTY("MS"),
-        PASSENGER("FL"),
-        CREW_MEMBER("FM"),
-        INTRANSIT_PASSENGER("DDU"),
-        INTRANSIT_CREW_MEMBER("DDT");
-        
-        private final String code;
-        private NadCode(String code) { this.code = code; }        
-        public String getCode() { return code; }
-        
-        private static final Map<String, NadCode> BY_CODE_MAP = new LinkedHashMap<>();
-        static {
-            for (NadCode rae : NadCode.values()) {
-                BY_CODE_MAP.put(rae.code, rae);
-            }
-        }
+	public enum NadCode {
+		REPORTING_PARTY("MS"), PASSENGER("FL"), CREW_MEMBER("FM"), INTRANSIT_PASSENGER("DDU"), INTRANSIT_CREW_MEMBER(
+				"DDT");
 
-        public static NadCode forCode(String code) {
-            return BY_CODE_MAP.get(code);
-        }        
-    }
-    
-    private NadCode nadCode;
-    
-    /** Used only with reporting party */
-    private String profileName;
-    
-    private String lastName;
-    private String firstName;
-    private String middleName;
-    private String numberAndStreetIdentifier;
-    private String city;
-    private String countrySubCode;
-    private String postalCode;
-    private String countryCode;
-    
-    public NAD(List<Composite> composites) {
-        super(NAD.class.getSimpleName(), composites);
-        for (int i=0; i<numComposites(); i++) {
-            Composite c = getComposite(i);
-            
-            switch (i) {
-            case 0:
-                this.nadCode = NadCode.forCode(c.getElement(0));
-                break;
-            case 3:
-                if (c.numElements() == 1) {
-                    this.profileName = c.getElement(0);
-                } else {
-                    this.lastName = c.getElement(0);
-                    this.firstName = c.getElement(1);
-                    this.middleName = c.getElement(2);
-                }
-                break;
-            case 4:
-                this.numberAndStreetIdentifier = c.getElement(0);
-                break;
-            case 5:
-                this.city = c.getElement(0);
-                break;
-            case 6:
-                this.countrySubCode = c.getElement(0);
-                break;
-            case 7:
-                this.postalCode = c.getElement(0);
-                break;
-            case 8:
-                this.countryCode = c.getElement(0);
-                break;
-            }
-        }
-    }
+		private final String code;
 
-    public NadCode getNadCode() {
-        return nadCode;
-    }
+		private NadCode(String code) {
+			this.code = code;
+		}
 
-    public String getProfileName() {
-        return profileName;
-    }
+		public String getCode() {
+			return code;
+		}
 
-    public String getLastName() {
-        return lastName;
-    }
+		private static final Map<String, NadCode> BY_CODE_MAP = new LinkedHashMap<>();
+		static {
+			for (NadCode rae : NadCode.values()) {
+				BY_CODE_MAP.put(rae.code, rae);
+			}
+		}
 
-    public String getFirstName() {
-        return firstName;
-    }
+		public static NadCode forCode(String code) {
+			return BY_CODE_MAP.get(code);
+		}
+	}
 
-    public String getMiddleName() {
-        return middleName;
-    }
+	private NadCode nadCode;
 
-    public String getNumberAndStreetIdentifier() {
-        return numberAndStreetIdentifier;
-    }
+	/** Used only with reporting party */
+	private String profileName;
 
-    public String getCity() {
-        return city;
-    }
+	private String lastName;
+	private String firstName;
+	private String middleName;
+	private String numberAndStreetIdentifier;
+	private String city;
+	private String countrySubCode;
+	private String postalCode;
+	private String countryCode;
 
-    public String getCountrySubCode() {
-        return countrySubCode;
-    }
+	public NAD(List<Composite> composites) {
+		super(NAD.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
 
-    public String getPostalCode() {
-        return postalCode;
-    }
+			switch (i) {
+			case 0:
+				this.nadCode = NadCode.forCode(c.getElement(0));
+				break;
+			case 3:
+				if (c.numElements() == 1) {
+					this.profileName = c.getElement(0);
+				} else {
+					this.lastName = c.getElement(0);
+					this.firstName = c.getElement(1);
+					this.middleName = c.getElement(2);
+				}
+				break;
+			case 4:
+				this.numberAndStreetIdentifier = c.getElement(0);
+				break;
+			case 5:
+				this.city = c.getElement(0);
+				break;
+			case 6:
+				this.countrySubCode = c.getElement(0);
+				break;
+			case 7:
+				this.postalCode = c.getElement(0);
+				break;
+			case 8:
+				this.countryCode = c.getElement(0);
+				break;
+			}
+		}
+	}
 
-    public String getCountryCode() {
-        return countryCode;
-    }
+	public NadCode getNadCode() {
+		return nadCode;
+	}
+
+	public String getProfileName() {
+		return profileName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public String getNumberAndStreetIdentifier() {
+		return numberAndStreetIdentifier;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public String getCountrySubCode() {
+		return countrySubCode;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public String getCountryCode() {
+		return countryCode;
+	}
 }

@@ -11,15 +11,15 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class CreditCardConditionBuilder extends EntityConditionBuilder {
 
-    public CreditCardConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.CREDIT_CARD.getEntityName());
-    }
+	public CreditCardConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.CREDIT_CARD.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
 }

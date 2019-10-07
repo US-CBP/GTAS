@@ -16,23 +16,21 @@ import java.util.List;
 @Service
 public class AirportRestoreServiceImpl implements AirportRestoreService {
 
-    @Resource
-    private AirportRestoreRepository repo;
-    
+	@Resource
+	private AirportRestoreRepository repo;
 
-    @Override
-    @Transactional
-    public List<AirportRestore> findAll() {
-        
-        return (List<AirportRestore>)repo.findAll();
-    }
+	@Override
+	@Transactional
+	public List<AirportRestore> findAll() {
 
+		return (List<AirportRestore>) repo.findAll();
+	}
 
-    @Override
-    @Transactional
-    public AirportRestore findById(Long id) {
-        
-        return repo.findById(id).orElse(null);
-    }
+	@Override
+	@Transactional
+	public AirportRestore findById(Long id) {
+
+		return repo.findById(id).orElse(null);
+	}
 
 }

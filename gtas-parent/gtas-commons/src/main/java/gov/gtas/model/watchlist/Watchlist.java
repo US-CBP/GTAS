@@ -26,89 +26,93 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "watch_list",
-            uniqueConstraints= {@UniqueConstraint(name = WL_UNIQUE_CONSTRAINT_NAME, columnNames={"WL_NAME"})})
+@Table(name = "watch_list", uniqueConstraints = {
+		@UniqueConstraint(name = WL_UNIQUE_CONSTRAINT_NAME, columnNames = { "WL_NAME" }) })
 public class Watchlist extends BaseEntity {
-    private static final long serialVersionUID = 345L;  
-    
-    public Watchlist() { }
-    public Watchlist(String name, EntityEnum entity) { 
-        this.watchlistName = name;
-        this.watchlistEntity = entity;
-    }
+	private static final long serialVersionUID = 345L;
 
-    @ManyToOne
-    @JoinColumn(name="WL_EDITOR", referencedColumnName="user_id", nullable = false)     
-    private User watchListEditor;
-        
-    @Column(name = "WL_NAME", nullable=false, length = DomainModelConstants.WL_NAME_COLUMN_SIZE)
-    private String watchlistName;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name = "WL_ENTITY", nullable=false, length = DomainModelConstants.ENTITY_NAME_SIZE)
-    private EntityEnum watchlistEntity;
-    
-    @Column(name = "WL_EDIT_DTTM", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date editTimestamp;
-    
-    /**
-     * @return the watchListEditor
-     */
-    public User getWatchListEditor() {
-        return watchListEditor;
-    }
+	public Watchlist() {
+	}
 
-    /**
-     * @param watchListEditor the watchListEditor to set
-     */
-    public void setWatchListEditor(User watchListEditor) {
-        this.watchListEditor = watchListEditor;
-    }
+	public Watchlist(String name, EntityEnum entity) {
+		this.watchlistName = name;
+		this.watchlistEntity = entity;
+	}
 
-    /**
-     * @return the editTimestamp
-     */
-    public Date getEditTimestamp() {
-        return editTimestamp;
-    }
+	@ManyToOne
+	@JoinColumn(name = "WL_EDITOR", referencedColumnName = "user_id", nullable = false)
+	private User watchListEditor;
 
-    /**
-     * @param editTimestamp the editTimestamp to set
-     */
-    public void setEditTimestamp(Date editTimestamp) {
-        this.editTimestamp = editTimestamp;
-    }
+	@Column(name = "WL_NAME", nullable = false, length = DomainModelConstants.WL_NAME_COLUMN_SIZE)
+	private String watchlistName;
 
-    /**
-     * @return the watchlistName
-     */
-    public String getWatchlistName() {
-        return watchlistName;
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "WL_ENTITY", nullable = false, length = DomainModelConstants.ENTITY_NAME_SIZE)
+	private EntityEnum watchlistEntity;
 
-    /**
-     * @return the watchlistEntity
-     */
-    public EntityEnum getWatchlistEntity() {
-        return watchlistEntity;
-    }
+	@Column(name = "WL_EDIT_DTTM", nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date editTimestamp;
 
-    @Override
-    public int hashCode() {
-       return super.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Watchlist other = (Watchlist)obj;
-        return Objects.equals(this.watchListEditor, other.watchListEditor)
-                && Objects.equals(this.watchlistName, other.watchlistName);
-    }    
+	/**
+	 * @return the watchListEditor
+	 */
+	public User getWatchListEditor() {
+		return watchListEditor;
+	}
+
+	/**
+	 * @param watchListEditor
+	 *            the watchListEditor to set
+	 */
+	public void setWatchListEditor(User watchListEditor) {
+		this.watchListEditor = watchListEditor;
+	}
+
+	/**
+	 * @return the editTimestamp
+	 */
+	public Date getEditTimestamp() {
+		return editTimestamp;
+	}
+
+	/**
+	 * @param editTimestamp
+	 *            the editTimestamp to set
+	 */
+	public void setEditTimestamp(Date editTimestamp) {
+		this.editTimestamp = editTimestamp;
+	}
+
+	/**
+	 * @return the watchlistName
+	 */
+	public String getWatchlistName() {
+		return watchlistName;
+	}
+
+	/**
+	 * @return the watchlistEntity
+	 */
+	public EntityEnum getWatchlistEntity() {
+		return watchlistEntity;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Watchlist other = (Watchlist) obj;
+		return Objects.equals(this.watchListEditor, other.watchListEditor)
+				&& Objects.equals(this.watchlistName, other.watchlistName);
+	}
 }

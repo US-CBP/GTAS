@@ -19,43 +19,44 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @see Segment
  */
 public final class Composite {
-    private final List<String> elements;
+	private final List<String> elements;
 
-    public Composite(List<String> elements) {
-        if (CollectionUtils.isNotEmpty(elements)) {
-            this.elements = elements;
-        } else {
-            this.elements = new ArrayList<>();
-        }
-    }
-    
-    /**
-     * Convenience method that returns element at index 'index'. Will return
-     * null for any index > num elements.
-     */
-    public String getElement(int index) {
-        if (index < 0) {
-            throw new IndexOutOfBoundsException();
-        } else if (index >= numElements()) {
-            return null;
-        } else {
-            return this.elements.get(index);
-        }
-    }
+	public Composite(List<String> elements) {
+		if (CollectionUtils.isNotEmpty(elements)) {
+			this.elements = elements;
+		} else {
+			this.elements = new ArrayList<>();
+		}
+	}
 
-    public List<String> getElements() {
-        return elements;
-    }
+	/**
+	 * Convenience method that returns element at index 'index'. Will return null
+	 * for any index > num elements.
+	 */
+	public String getElement(int index) {
+		if (index < 0) {
+			throw new IndexOutOfBoundsException();
+		} else if (index >= numElements()) {
+			return null;
+		} else {
+			return this.elements.get(index);
+		}
+	}
 
-    public int numElements() {
-        return this.elements.size();
-    }
+	public List<String> getElements() {
+		return elements;
+	}
 
-    public boolean hasPopulatedElements() {
-        return this.numElements() > 1 || StringUtils.isNotBlank(this.getElement(0));
-    }
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
+	public int numElements() {
+		return this.elements.size();
+	}
+
+	public boolean hasPopulatedElements() {
+		return this.numElements() > 1 || StringUtils.isNotBlank(this.getElement(0));
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }

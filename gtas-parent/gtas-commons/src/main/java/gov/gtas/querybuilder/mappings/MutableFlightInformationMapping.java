@@ -2,41 +2,43 @@ package gov.gtas.querybuilder.mappings;
 
 import gov.gtas.enumtype.TypeEnum;
 
-public enum  MutableFlightInformationMapping  implements IEntityMapping {
+public enum MutableFlightInformationMapping implements IEntityMapping {
 
-    ETA ("etaDate", "ETA", TypeEnum.DATE.getType());
+	ETA("etaDate", "ETA", TypeEnum.DATE.getType());
 
-    private String fieldName;
-    private String friendlyName;
-    private String fieldType;
-    private boolean displayField;
+	private String fieldName;
+	private String friendlyName;
+	private String fieldType;
+	private boolean displayField;
 
-    MutableFlightInformationMapping(String fieldName, String friendlyName, String fieldType, boolean displayField) {
-        this.fieldName = fieldName;
-        this.friendlyName = friendlyName;
-        this.fieldType = fieldType;
-        this.displayField = displayField;
-    }
-    MutableFlightInformationMapping(String fieldName, String friendlyName, String fieldType) {
-        this(fieldName, friendlyName, fieldType, true);
-    }
-    public String getFieldName() {
-        return fieldName;
-    }
+	MutableFlightInformationMapping(String fieldName, String friendlyName, String fieldType, boolean displayField) {
+		this.fieldName = fieldName;
+		this.friendlyName = friendlyName;
+		this.fieldType = fieldType;
+		this.displayField = displayField;
+	}
 
-    public String getFriendlyName() {
-        return friendlyName;
-    }
+	MutableFlightInformationMapping(String fieldName, String friendlyName, String fieldType) {
+		this(fieldName, friendlyName, fieldType, true);
+	}
 
-    public String getFieldType() {
-        return fieldType;
-    }
+	public String getFieldName() {
+		return fieldName;
+	}
 
-    /**
-     * @return the displayField
-     */
-    public boolean isDisplayField() {
-        return displayField;
-    }
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public String getFieldType() {
+		return fieldType;
+	}
+
+	/**
+	 * @return the displayField
+	 */
+	public boolean isDisplayField() {
+		return displayField;
+	}
 
 }

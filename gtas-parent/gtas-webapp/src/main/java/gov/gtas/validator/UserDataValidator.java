@@ -17,31 +17,31 @@ import gov.gtas.services.security.UserData;
 
 @Component
 public class UserDataValidator implements Validator {
-    private static final String USERID_REQUIRED = "UserId required .";
-    private static final String PASSWORD_REQUIRED = "Password required.";
-    private static final String FIRST_NAME_REQUIRED = "First Name required.";
-    private static final String LAST_NAME_REQUIRED = "Last Name required.";
-    private static final String ACTIVE_FLAG_REQUIRED = "Active Flag required.";
-    private static final String ROLE_REQUIRED = "Roles Required";
+	private static final String USERID_REQUIRED = "UserId required .";
+	private static final String PASSWORD_REQUIRED = "Password required.";
+	private static final String FIRST_NAME_REQUIRED = "First Name required.";
+	private static final String LAST_NAME_REQUIRED = "Last Name required.";
+	private static final String ACTIVE_FLAG_REQUIRED = "Active Flag required.";
+	private static final String ROLE_REQUIRED = "Roles Required";
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return UserData.class.isAssignableFrom(clazz);
-    }
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return UserData.class.isAssignableFrom(clazz);
+	}
 
-    @Override
-    public void validate(Object target, Errors errors) {
+	@Override
+	public void validate(Object target, Errors errors) {
 
-        UserData userDataRequest = (UserData) target;
-        Set<RoleData> roles = userDataRequest.getRoles();
-        ValidationUtils.rejectIfEmpty(errors, "userId", USERID_REQUIRED);
-        ValidationUtils.rejectIfEmpty(errors, "password", PASSWORD_REQUIRED);
-        ValidationUtils.rejectIfEmpty(errors, "firstName", FIRST_NAME_REQUIRED);
-        ValidationUtils.rejectIfEmpty(errors, "lastName", LAST_NAME_REQUIRED);
-        ValidationUtils.rejectIfEmpty(errors, "active", ACTIVE_FLAG_REQUIRED);
-        if (roles == null)
-            errors.rejectValue("roles", ROLE_REQUIRED);
+		UserData userDataRequest = (UserData) target;
+		Set<RoleData> roles = userDataRequest.getRoles();
+		ValidationUtils.rejectIfEmpty(errors, "userId", USERID_REQUIRED);
+		ValidationUtils.rejectIfEmpty(errors, "password", PASSWORD_REQUIRED);
+		ValidationUtils.rejectIfEmpty(errors, "firstName", FIRST_NAME_REQUIRED);
+		ValidationUtils.rejectIfEmpty(errors, "lastName", LAST_NAME_REQUIRED);
+		ValidationUtils.rejectIfEmpty(errors, "active", ACTIVE_FLAG_REQUIRED);
+		if (roles == null)
+			errors.rejectValue("roles", ROLE_REQUIRED);
 
-    }
+	}
 
 }

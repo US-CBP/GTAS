@@ -13,8 +13,9 @@ import gov.gtas.model.ReportingParty;
 
 import java.util.List;
 
-public interface ReportingPartyRepository extends CrudRepository<ReportingParty, Long>{
-    @Query("select rp from ReportingParty rp where upper(rp.partyName) = upper(:partyName) and rp.telephone = :telephone")
-    public List<ReportingParty> getReportingParty(@Param("partyName") String partyName, @Param("telephone") String telephone);
+public interface ReportingPartyRepository extends CrudRepository<ReportingParty, Long> {
+	@Query("select rp from ReportingParty rp where upper(rp.partyName) = upper(:partyName) and rp.telephone = :telephone")
+	public List<ReportingParty> getReportingParty(@Param("partyName") String partyName,
+			@Param("telephone") String telephone);
 
 }

@@ -30,8 +30,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class ApisDirectoryReader implements Runnable {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(ApisDirectoryReader.class);
+	private static final Logger logger = LoggerFactory.getLogger(ApisDirectoryReader.class);
 	/** the watchService that is passed in from above */
 	private WatchService fileWatcher;
 	private String directoryPath;
@@ -49,13 +48,13 @@ public class ApisDirectoryReader implements Runnable {
 	}
 
 	/**
-	 * In order to implement a file watcher, we loop forever ensuring requesting
-	 * to take the next item from the file watchers queue.
+	 * In order to implement a file watcher, we loop forever ensuring requesting to
+	 * take the next item from the file watchers queue.
 	 */
 	@Override
 	public void run() {
-		ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(
-				CommonServicesConfig.class, CachingConfig.class);
+		ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(CommonServicesConfig.class,
+				CachingConfig.class);
 		MessageLoaderService svc = ctx.getBean(ApisMessageService.class);
 		try {
 			// get the first event before looping
@@ -71,16 +70,12 @@ public class ApisDirectoryReader implements Runnable {
 						Path newPath = ((WatchEvent<Path>) event).context();
 						logger.info("New file arrived: " + newPath);
 						File f = newPath.toFile();
-						Path moveFrom = fromFileSystem
-								.getPath(getDirectoryPath() + File.separator
-										+ f.getName());
-						Path moveTo = toFileSystem.getPath(getDirectoryPath()
-								+ File.separator + "OLD" + File.separator
-								+ f.getName());
+						Path moveFrom = fromFileSystem.getPath(getDirectoryPath() + File.separator + f.getName());
+						Path moveTo = toFileSystem
+								.getPath(getDirectoryPath() + File.separator + "OLD" + File.separator + f.getName());
 						processNewFile(moveFrom, svc);
 
-						Files.move(moveFrom, moveTo,
-								StandardCopyOption.REPLACE_EXISTING);
+						Files.move(moveFrom, moveTo, StandardCopyOption.REPLACE_EXISTING);
 						fromFileSystem.close();
 						toFileSystem.close();
 
@@ -108,7 +103,6 @@ public class ApisDirectoryReader implements Runnable {
 	private void processNewFile(Path p, MessageLoaderService svc) {
 
 		// MessageLoader.processSingleFile(svc, p.toFile());
-		logger.info("*****************processing file"
-				+ p.toFile().getAbsolutePath());
+		logger.info("*****************processing file" + p.toFile().getAbsolutePath());
 	}
 }

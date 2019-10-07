@@ -8,12 +8,12 @@ import gov.gtas.model.Passenger;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 
 public interface MatchingService {
-	
+
 	List<PaxWatchlistLinkVo> findByPassengerId(Long id);
 
 	void performFuzzyMatching(Long id);
 
-    int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters);
+	int performFuzzyMatching(Flight flight, Passenger passenger, MatcherParameters matcherParameters);
 
-    int findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses);
+	int findMatchesBasedOnTimeThreshold(List<MessageStatus> messageStatuses);
 }

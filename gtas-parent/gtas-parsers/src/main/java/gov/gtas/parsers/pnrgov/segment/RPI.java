@@ -11,13 +11,13 @@ import gov.gtas.parsers.edifact.Composite;
 import gov.gtas.parsers.edifact.Segment;
 
 /**
- * Class RPI to hold Related product information
- * To indicate quantity and action required in relation to a product.
+ * Class RPI to hold Related product information To indicate quantity and action
+ * required in relation to a product.
  *
- *Example:Flight booking status is holds confirmed for 3 passengers(RPI+3+HK')
+ * Example:Flight booking status is holds confirmed for 3 passengers(RPI+3+HK')
  */
-public class RPI extends Segment{
-    public RPI(List<Composite> composites) {
-        super(RPI.class.getSimpleName(), composites);
-    }
+public class RPI extends Segment {
+	public RPI(List<Composite> composites) {
+		super(RPI.class.getSimpleName(), composites);
+	}
 }

@@ -33,11 +33,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * The Class AuditLogPersistenceServiceImpl.
  */
 @Service
-public class AuditLogPersistenceServiceImpl implements
-		AuditLogPersistenceService {
+public class AuditLogPersistenceServiceImpl implements AuditLogPersistenceService {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(AuditLogPersistenceServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(AuditLogPersistenceServiceImpl.class);
 
 	@Resource
 	private AuditRecordRepository auditLogRepository;
@@ -77,8 +75,7 @@ public class AuditLogPersistenceServiceImpl implements
 	}
 
 	@Override
-	public List<AuditRecord> findByUserAndActionType(
-			AuditActionType actionType, String userId) {
+	public List<AuditRecord> findByUserAndActionType(AuditActionType actionType, String userId) {
 		User user = userService.fetchUser(userId);
 		return auditLogRepository.findByUserAndActionType(user, actionType);
 	}
@@ -86,8 +83,7 @@ public class AuditLogPersistenceServiceImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#findByUserAndTarget(java
+	 * @see gov.gtas.services.AuditLogPersistenceService#findByUserAndTarget(java
 	 * .lang.String, java.lang.String)
 	 */
 	@Override
@@ -100,8 +96,7 @@ public class AuditLogPersistenceServiceImpl implements
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#findByTarget(java.lang.String
-	 * )
+	 * gov.gtas.services.AuditLogPersistenceService#findByTarget(java.lang.String )
 	 */
 	@Override
 	public List<AuditRecord> findByTarget(String target) {
@@ -119,14 +114,12 @@ public class AuditLogPersistenceServiceImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
+	 * @see gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
 	 * .AuditActionType, java.lang.String, java.lang.Object, java.lang.String,
 	 * gov.gtas.model.User)
 	 */
 	@Override
-	public AuditRecord create(AuditActionType actionType, String target,
-			Object actionData, String message, User user) {
+	public AuditRecord create(AuditActionType actionType, String target, Object actionData, String message, User user) {
 		ObjectMapper mapper = new ObjectMapper();
 		String actionDataString = null;
 		if (actionData != null) {
@@ -137,32 +130,27 @@ public class AuditLogPersistenceServiceImpl implements
 					actionDataString = mapper.writeValueAsString(actionData);
 				}
 			} catch (Exception ex) {
-				logger.warn(String.format(
-						AUDIT_LOG_WARNING_CANNOT_CONVERT_JSON_TO_STRING,
-						actionType, target, message));
+				logger.warn(
+						String.format(AUDIT_LOG_WARNING_CANNOT_CONVERT_JSON_TO_STRING, actionType, target, message));
 			}
 		}
-		return auditLogRepository.save(new AuditRecord(actionType, target,
-				Status.SUCCESS, message, actionDataString, user));
+		return auditLogRepository
+				.save(new AuditRecord(actionType, target, Status.SUCCESS, message, actionDataString, user));
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
+	 * @see gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
 	 * .AuditActionType, gov.gtas.json.AuditActionTarget,
 	 * gov.gtas.json.AuditActionData, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public AuditRecord create(AuditActionType actionType,
-			AuditActionTarget target, AuditActionData actionData,
+	public AuditRecord create(AuditActionType actionType, AuditActionTarget target, AuditActionData actionData,
 			String message, String userId) {
 		try {
-			String targetStr = target != null ? target.toString()
-					: StringUtils.EMPTY;
-			String actionDataStr = actionData != null ? actionData.toString()
-					: StringUtils.EMPTY;
+			String targetStr = target != null ? target.toString() : StringUtils.EMPTY;
+			String actionDataStr = actionData != null ? actionData.toString() : StringUtils.EMPTY;
 			return create(actionType, targetStr, actionDataStr, message, userId);
 		} catch (Exception ex) {
 			logger.warn(ex.getMessage());
@@ -173,14 +161,13 @@ public class AuditLogPersistenceServiceImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
+	 * @see gov.gtas.services.AuditLogPersistenceService#create(gov.gtas.enumtype
 	 * .AuditActionType, java.lang.String, java.lang.Object, java.lang.String,
 	 * java.lang.String)
 	 */
 	@Override
-	public AuditRecord create(AuditActionType actionType, String target,
-			Object actionData, String message, String userId) {
+	public AuditRecord create(AuditActionType actionType, String target, Object actionData, String message,
+			String userId) {
 		User user = userService.fetchUser(userId);
 		return create(actionType, target, actionData, message, user);
 	}
@@ -188,32 +175,28 @@ public class AuditLogPersistenceServiceImpl implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * gov.gtas.services.AuditLogPersistenceService#findByUserActionDateRange
+	 * @see gov.gtas.services.AuditLogPersistenceService#findByUserActionDateRange
 	 * (java.lang.String, gov.gtas.enumtype.AuditActionType, java.util.Date,
 	 * java.util.Date)
 	 */
 	@Override
-	public List<AuditRecord> findByUserActionDateRange(String userId,
-			AuditActionType action, Date dateFrom, Date dateTo) {
+	public List<AuditRecord> findByUserActionDateRange(String userId, AuditActionType action, Date dateFrom,
+			Date dateTo) {
 
 		List<AuditRecord> ret = new LinkedList<>();
 		boolean byUser = !StringUtils.isEmpty(userId);
 		Date today = new Date();
 		if (dateFrom != null && byUser && action != null) {
 			User user = userService.fetchUser(userId);
-			ret = auditLogRepository.findByUserActionTimestampRange(user,
-					action, dateFrom, dateTo != null ? dateTo : today);
+			ret = auditLogRepository.findByUserActionTimestampRange(user, action, dateFrom,
+					dateTo != null ? dateTo : today);
 		} else if (dateFrom != null && byUser) {
 			User user = userService.fetchUser(userId);
-			ret = auditLogRepository.findByUserTimestampRange(user, dateFrom,
-					dateTo != null ? dateTo : today);
+			ret = auditLogRepository.findByUserTimestampRange(user, dateFrom, dateTo != null ? dateTo : today);
 		} else if (dateFrom != null && action != null) {
-			ret = auditLogRepository.findByActionTimestampRange(action,
-					dateFrom, dateTo != null ? dateTo : today);
+			ret = auditLogRepository.findByActionTimestampRange(action, dateFrom, dateTo != null ? dateTo : today);
 		} else if (dateFrom != null) {
-			ret = auditLogRepository.findByTimestampRange(dateFrom,
-					dateTo != null ? dateTo : today);
+			ret = auditLogRepository.findByTimestampRange(dateFrom, dateTo != null ? dateTo : today);
 		} else if (byUser && action != null) {
 			User user = userService.fetchUser(userId);
 			ret = auditLogRepository.findByUserAndActionType(user, action);

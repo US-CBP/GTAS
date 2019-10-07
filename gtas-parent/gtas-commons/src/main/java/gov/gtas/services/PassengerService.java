@@ -33,15 +33,13 @@ public interface PassengerService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
 
-/*
-
-	List<Passenger> getPassengersByLastName(String lastName);
-*/
-
+	/*
+	 * 
+	 * List<Passenger> getPassengersByLastName(String lastName);
+	 */
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	List<Disposition> getPassengerDispositionHistory(Long passengerId,
-													 Long flightId);
+	List<Disposition> getPassengerDispositionHistory(Long passengerId, Long flightId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	void createDisposition(DispositionData disposition, User user);
@@ -63,21 +61,26 @@ public interface PassengerService {
 	/**
 	 * Gets the passengers by criteria.
 	 *
-	 * @param flightId optional
-	 * @param request  the request
+	 * @param flightId
+	 *            optional
+	 * @param request
+	 *            the request
 	 * @return the passengers by criteria
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	PassengersPageDto getPassengersByCriteria(Long flightId,
-											  PassengersRequestDto request);
+	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	/**
 	 * Gets the travel history.
 	 *
-	 * @param pId               the id
-	 * @param docNum            the doc num
-	 * @param docIssuCountry    the doc issu country
-	 * @param docExpirationDate the doc expiration date
+	 * @param pId
+	 *            the id
+	 * @param docNum
+	 *            the doc num
+	 * @param docIssuCountry
+	 *            the doc issu country
+	 * @param docExpirationDate
+	 *            the doc expiration date
 	 * @return the travel history
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)

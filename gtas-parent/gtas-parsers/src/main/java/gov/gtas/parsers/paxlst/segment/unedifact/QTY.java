@@ -17,7 +17,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To specify a pertinent quantity.
  */
 public class QTY extends Segment {
-    public QTY(List<Composite> composites) {
-        super(QTY.class.getSimpleName(), composites);
-    }
+	public QTY(List<Composite> composites) {
+		super(QTY.class.getSimpleName(), composites);
+	}
 }

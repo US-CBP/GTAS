@@ -14,49 +14,48 @@ import javax.persistence.*;
 @Table(name = "flight_hit_fuzzy")
 public class FlightHitsFuzzy {
 
-    @Id
-    @Column(name = "fhf_flight_id", columnDefinition = "bigint unsigned")
-    private
-    Long flightId;
+	@Id
+	@Column(name = "fhf_flight_id", columnDefinition = "bigint unsigned")
+	private Long flightId;
 
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fhf_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
-    Flight flight;
+	@OneToOne(optional = false, fetch = FetchType.LAZY)
+	@JoinColumn(name = "fhf_flight_id", referencedColumnName = "id", updatable = false, insertable = false)
+	Flight flight;
 
-    @Column(name = "fhf_hit_count")
-    private Integer hitCount;
+	@Column(name = "fhf_hit_count")
+	private Integer hitCount;
 
-    @SuppressWarnings("unused")
-    public FlightHitsFuzzy() {
-    }
+	@SuppressWarnings("unused")
+	public FlightHitsFuzzy() {
+	}
 
-    public FlightHitsFuzzy(Long flightId, Integer hitCount) {
-        this.hitCount = hitCount;
-        this.flightId = flightId;
-    }
+	public FlightHitsFuzzy(Long flightId, Integer hitCount) {
+		this.hitCount = hitCount;
+		this.flightId = flightId;
+	}
 
-    public Integer getHitCount() {
-        return hitCount;
-    }
+	public Integer getHitCount() {
+		return hitCount;
+	}
 
-    public void setHitCount(Integer hitCount) {
-        this.hitCount = hitCount;
-    }
+	public void setHitCount(Integer hitCount) {
+		this.hitCount = hitCount;
+	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
 }

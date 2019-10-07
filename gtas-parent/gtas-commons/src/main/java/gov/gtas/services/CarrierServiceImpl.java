@@ -19,77 +19,77 @@ import org.springframework.stereotype.Service;
 @Service
 public class CarrierServiceImpl implements CarrierService {
 
-    @Resource
-    private CarrierRepository carrierRespository;
-    @Resource
-    private CarrierRepositoryCustom carrierRepoCust;
-    
-    @Override
-    @Transactional
-    public Carrier create(Carrier carrier) {
-        return carrierRespository.save(carrier);
-    }
+	@Resource
+	private CarrierRepository carrierRespository;
+	@Resource
+	private CarrierRepositoryCustom carrierRepoCust;
 
-    @Override
-    @Transactional
-    public Carrier delete(Long id) {
-        Carrier carrier = this.findById(id);
-        if(carrier != null){
-            carrierRespository.delete(carrier);
-        }
-        return carrier;
-    }
+	@Override
+	@Transactional
+	public Carrier create(Carrier carrier) {
+		return carrierRespository.save(carrier);
+	}
 
-    @Override
-    @Transactional
-    public List<Carrier> findAll() {
-        
-        return (List<Carrier>)carrierRespository.findAll();
-    }
+	@Override
+	@Transactional
+	public Carrier delete(Long id) {
+		Carrier carrier = this.findById(id);
+		if (carrier != null) {
+			carrierRespository.delete(carrier);
+		}
+		return carrier;
+	}
 
-    @Override
-    @Transactional
-    public Carrier update(Carrier carrier) {
-      // validate no duplicate codes
-      return carrierRespository.save(carrier);
-    }
+	@Override
+	@Transactional
+	public List<Carrier> findAll() {
 
-    @Override
-    @Transactional
-    public Carrier findById(Long id) {
-        return carrierRespository.findById(id).orElse(null);
-    }
+		return (List<Carrier>) carrierRespository.findAll();
+	}
 
-    @Override
-    @Transactional
-    public Carrier restore(Carrier carrier) {
-      return carrierRepoCust.restore(carrier);
-    }
+	@Override
+	@Transactional
+	public Carrier update(Carrier carrier) {
+		// validate no duplicate codes
+		return carrierRespository.save(carrier);
+	}
 
-    @Override
-    @Transactional
-    public int restoreAll() {
-      return carrierRepoCust.restoreAll();
-    }
+	@Override
+	@Transactional
+	public Carrier findById(Long id) {
+		return carrierRespository.findById(id).orElse(null);
+	}
 
-    @Override
-    @Transactional
-    public Carrier getCarrierByTwoLetterCode(String carrierCode) {
-        Carrier carrier = null;
-        List<Carrier> carriers = carrierRespository.getCarrierByTwoLetterCode(carrierCode);
-        if(carriers != null && carriers.size() > 0)
-            carrier = carriers.get(0);
-        return carrier;
-    }
+	@Override
+	@Transactional
+	public Carrier restore(Carrier carrier) {
+		return carrierRepoCust.restore(carrier);
+	}
 
-    @Override
-    @Transactional
-    public Carrier getCarrierByThreeLetterCode(String carrierCode) {
-        Carrier carrier = null;
-        List<Carrier> carriers = carrierRespository.getCarrierByThreeLetterCode(carrierCode);
-        if(carriers != null && carriers.size() > 0)
-            carrier = carriers.get(0);
-        return carrier;
-    }
+	@Override
+	@Transactional
+	public int restoreAll() {
+		return carrierRepoCust.restoreAll();
+	}
+
+	@Override
+	@Transactional
+	public Carrier getCarrierByTwoLetterCode(String carrierCode) {
+		Carrier carrier = null;
+		List<Carrier> carriers = carrierRespository.getCarrierByTwoLetterCode(carrierCode);
+		if (carriers != null && carriers.size() > 0)
+			carrier = carriers.get(0);
+		return carrier;
+	}
+
+	@Override
+	@Transactional
+	public Carrier getCarrierByThreeLetterCode(String carrierCode) {
+		Carrier carrier = null;
+		List<Carrier> carriers = carrierRespository.getCarrierByThreeLetterCode(carrierCode);
+		if (carriers != null && carriers.size() > 0)
+			carrier = carriers.get(0);
+		return carrier;
+	}
 
 }

@@ -37,15 +37,19 @@ var app;
             'ngIdle',
             'chart.js',
             'summernote',
-            'angularTrix'
+            'angularTrix',
+            'ui.bootstrap.datetimepicker',
+            'datetime'
         ],
-        language = function ($translateProvider) {
+        language = function ($translateProvider) {  
 
-    		$translateProvider.useUrlLoader('/gtas/messageBundle/');
+        var pref = window.navigator.language.split('-')[0];
+
+        $translateProvider.useUrlLoader('/gtas/messageBundle/');
     		$translateProvider.useCookieStorage();
-    		$translateProvider.preferredLanguage('en');
+    		$translateProvider.preferredLanguage(pref);
     		$translateProvider.fallbackLanguage('en');
-    		$translateProvider.useSanitizeValueStrategy('escape');
+        $translateProvider.useSanitizeValueStrategy('escape');
 
 		},
 		idleWatchConfig = function(IdleProvider, KeepaliveProvider, TitleProvider){
@@ -82,7 +86,7 @@ var app;
         },
         initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
-            $rootScope.$on('$stateChangeStart',
+             $rootScope.$on('$stateChangeStart',
 
                 function (event, toState) {
             		Idle.watch();
@@ -705,6 +709,7 @@ var app;
                 aboutgtas: {name: ['aboutgtas']}
             };
             $scope.onRoute = function (key) {
+
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);
             };
             $scope.showNav = function () {
@@ -789,7 +794,8 @@ var app;
         .module('myApp', appDependencies)
         .config(router)
         .config(localDateMomentFormat)
-        .config(language)
+
+        .config(language)    // ngx
         .config(idleWatchConfig)
         .constant('USER_ROLES', {
             ADMIN: 'Admin',
@@ -806,7 +812,7 @@ var app;
             MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
-            LOCALE_COOKIE_KEY: 'myLocaleCookie',
+            LOCALE_COOKIE_KEY: 'myLocaleCookie',  // ngx
             LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '
         })
         .run(initialize)
@@ -837,6 +843,7 @@ var app;
             var currentUser;
             return {
                 checkRole: function (user) {
+
                     currentUser = user;
                     currentUser.hasRole = function (requiredRole) {
                         var hasRole = false;

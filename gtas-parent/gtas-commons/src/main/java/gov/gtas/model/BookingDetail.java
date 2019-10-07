@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 @Table(name = "booking_detail")
 public class BookingDetail extends BaseEntityAudit {
 
-
 	@Size(min = 4, max = 4)
 	@Column(name = "flight_number", length = 4, nullable = false)
 	private String flightNumber;
@@ -63,50 +62,46 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Column(name = "destination_country", length = 3)
 	private String destinationCountry;
-	
-	@OneToMany(mappedBy ="bookingDetail")
+
+	@OneToMany(mappedBy = "bookingDetail")
 	private Set<FlightLeg> flightLegs;
 
-    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Passenger.class)
-    private Set<Passenger> passengers = new HashSet<>();
+	@ManyToMany(mappedBy = "bookingDetails", targetEntity = Passenger.class)
+	private Set<Passenger> passengers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "bookingDetails", targetEntity = Message.class)
-    private Set<Message> messages = new HashSet<>();
-    
-    @Column(name="full_flight_number")
-    private String fullFlightNumber;
+	@ManyToMany(mappedBy = "bookingDetails", targetEntity = Message.class)
+	private Set<Message> messages = new HashSet<>();
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "flight", updatable = false, insertable = false)
-    private Flight flight;
+	@Column(name = "full_flight_number")
+	private String fullFlightNumber;
 
-    @Column(name = "flight", columnDefinition = "bigint unsigned")
-    private Long flightId;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "flight", updatable = false, insertable = false)
+	private Flight flight;
 
+	@Column(name = "flight", columnDefinition = "bigint unsigned")
+	private Long flightId;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class, mappedBy = "bookingDetail")
-    private Set<Bag> bags = new HashSet<>();
+	@ManyToMany(fetch = FetchType.LAZY, targetEntity = Bag.class, mappedBy = "bookingDetail")
+	private Set<Bag> bags = new HashSet<>();
 
+	/*
+	 *
+	 * Used to keep a referenced to FlightVO from parser. Only used in loader to
+	 * help establish relationships.
+	 */
+	@Transient
+	private UUID parserUUID;
 
-    /*
-     *
-     * Used to keep a referenced to FlightVO from parser.
-     * Only used in loader to help establish relationships.
-     * */
-    @Transient
-    private UUID parserUUID;
+	public UUID getParserUUID() {
+		return parserUUID;
+	}
 
-    public UUID getParserUUID() {
-        return parserUUID;
-    }
+	public void setParserUUID(UUID parserUUID) {
+		this.parserUUID = parserUUID;
+	}
 
-    public void setParserUUID(UUID parserUUID) {
-        this.parserUUID = parserUUID;
-    }
-
-
-
-    public Set<Passenger> getPassengers() {
+	public Set<Passenger> getPassengers() {
 		return passengers;
 	}
 
@@ -121,7 +116,6 @@ public class BookingDetail extends BaseEntityAudit {
 	public void setMessages(Set<Message> pnrs) {
 		this.messages = pnrs;
 	}
-
 
 	public String getFlightNumber() {
 		return flightNumber;
@@ -211,13 +205,13 @@ public class BookingDetail extends BaseEntityAudit {
 		this.fullFlightNumber = fullFlightNumber;
 	}
 
-    public Flight getFlight() {
-        return flight;
-    }
+	public Flight getFlight() {
+		return flight;
+	}
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
-    }
+	public void setFlight(Flight flight) {
+		this.flight = flight;
+	}
 
 	public Long getFlightId() {
 		return flightId;
@@ -227,13 +221,13 @@ public class BookingDetail extends BaseEntityAudit {
 		this.flightId = flightId;
 	}
 
-    public Set<Bag> getBags() {
-        return bags;
-    }
+	public Set<Bag> getBags() {
+		return bags;
+	}
 
-    public void setBags(Set<Bag> bags) {
-        this.bags = bags;
-    }
+	public void setBags(Set<Bag> bags) {
+		this.bags = bags;
+	}
 
 	public Date getEtd() {
 		return etd;
@@ -246,17 +240,24 @@ public class BookingDetail extends BaseEntityAudit {
 	public Date getEta() {
 		return eta;
 	}
+
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
 		BookingDetail that = (BookingDetail) o;
 
-		if (!flightNumber.equals(that.flightNumber)) return false;
-		if (!etdDate.equals(that.etdDate)) return false;
-		if (!etaDate.equals(that.etaDate)) return false;
-		if (!origin.equals(that.origin)) return false;
+		if (!flightNumber.equals(that.flightNumber))
+			return false;
+		if (!etdDate.equals(that.etdDate))
+			return false;
+		if (!etaDate.equals(that.etaDate))
+			return false;
+		if (!origin.equals(that.origin))
+			return false;
 		return destination.equals(that.destination);
 	}
 
@@ -273,21 +274,10 @@ public class BookingDetail extends BaseEntityAudit {
 
 	@Override
 	public String toString() {
-		return "BookingDetail{" +
-				"flightNumber='" + flightNumber + '\'' +
-				", etdDate=" + etdDate +
-				", etaDate=" + etaDate +
-				", localEtd=" + localEtdDate +
-				", localEta=" + localEtaDate +
-                ", etd=" + etd +
-                ", eta=" + eta +
-				", origin='" + origin + '\'' +
-				", originCountry='" + originCountry + '\'' +
-				", destination='" + destination + '\'' +
-				", destinationCountry='" + destinationCountry + '\'' +
-				", flightLegs=" + flightLegs +
-				", passengers=" + passengers +
-				", pnrs=" + messages +
-				'}';
+		return "BookingDetail{" + "flightNumber='" + flightNumber + '\'' + ", etdDate=" + etdDate + ", etaDate="
+				+ etaDate + ", localEtd=" + localEtdDate + ", localEta=" + localEtaDate + ", etd=" + etd + ", eta="
+				+ eta + ", origin='" + origin + '\'' + ", originCountry='" + originCountry + '\'' + ", destination='"
+				+ destination + '\'' + ", destinationCountry='" + destinationCountry + '\'' + ", flightLegs="
+				+ flightLegs + ", passengers=" + passengers + ", pnrs=" + messages + '}';
 	}
 }

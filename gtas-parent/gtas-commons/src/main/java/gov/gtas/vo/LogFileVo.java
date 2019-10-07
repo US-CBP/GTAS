@@ -12,55 +12,54 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class LogFileVo {
-  private String fileName;
-  private Long size;
-  private Date creationDate;
-  private Date lastModified;
+	private String fileName;
+	private Long size;
+	private Date creationDate;
+	private Date lastModified;
 
-  public LogFileVo() {
-  }
+	public LogFileVo() {
+	}
 
-  public LogFileVo(File file) throws IOException {
-      this.fileName = file.getName();
+	public LogFileVo(File file) throws IOException {
+		this.fileName = file.getName();
 
-      BasicFileAttributes attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+		BasicFileAttributes attributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
 
-      this.size = attributes.size();
-      this.lastModified = new Date(attributes.lastModifiedTime().toMillis());
-      this.creationDate = new Date(attributes.creationTime().toMillis());
-    }
+		this.size = attributes.size();
+		this.lastModified = new Date(attributes.lastModifiedTime().toMillis());
+		this.creationDate = new Date(attributes.creationTime().toMillis());
+	}
 
-    public String getFileName() {
-        return fileName;
-    }
+	public String getFileName() {
+		return fileName;
+	}
 
-    public void setFileName(String name) {
-        this.fileName = name;
-    }
+	public void setFileName(String name) {
+		this.fileName = name;
+	}
 
-    public Long getSize() {
-        return size;
-    }
+	public Long getSize() {
+		return size;
+	}
 
-    public void setSize(Long size) {
-        this.size = size;
-    }
+	public void setSize(Long size) {
+		this.size = size;
+	}
 
-    public Date getCreationDate() {
-        return creationDate;
-    }
+	public Date getCreationDate() {
+		return creationDate;
+	}
 
-    public void setCreationDate(Date date) {
-        this.creationDate = date;
-    }
+	public void setCreationDate(Date date) {
+		this.creationDate = date;
+	}
 
-    public Date getLastModified() {
-      return lastModified;
-  }
+	public Date getLastModified() {
+		return lastModified;
+	}
 
-  public void setLastModified(Date date) {
-      this.lastModified = date;
-  }
+	public void setLastModified(Date date) {
+		this.lastModified = date;
+	}
 
-    
 }

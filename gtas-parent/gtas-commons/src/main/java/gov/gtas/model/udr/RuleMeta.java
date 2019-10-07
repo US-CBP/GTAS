@@ -28,265 +28,265 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity
 @Table(name = "rule_meta")
 public class RuleMeta implements Serializable {
-    /**
-     * serial version UID
-     */
-    private static final long serialVersionUID = 384462394390643572L;
+	/**
+	 * serial version UID
+	 */
+	private static final long serialVersionUID = 384462394390643572L;
 
-    @Id
-    @Column(name = "ID")
-    private Long id;
+	@Id
+	@Column(name = "ID")
+	private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "ID", referencedColumnName = "ID", insertable = false, updatable = false)
-    private UdrRule parent;
+	@OneToOne
+	@JoinColumn(name = "ID", referencedColumnName = "ID", insertable = false, updatable = false)
+	private UdrRule parent;
 
-    @Column(name = "TITLE", nullable = false, length = 20)
-    private String title;
+	@Column(name = "TITLE", nullable = false, length = 20)
+	private String title;
 
-    @Column(name = "DESCRIPTION", length = 1024)
-    private String description;
+	@Column(name = "DESCRIPTION", length = 1024)
+	private String description;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "START_DT", nullable = false, length = 19)
-    private Date startDt;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "START_DT", nullable = false, length = 19)
+	private Date startDt;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "END_DT", length = 19)
-    private Date endDt;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "END_DT", length = 19)
+	private Date endDt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "ENABLE_FLAG", nullable = false, length = 1)
-    private YesNoEnum enabled;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ENABLE_FLAG", nullable = false, length = 1)
+	private YesNoEnum enabled;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "HIGH_PRIORITY_FLAG", nullable = false, length = 1)
-    private YesNoEnum priorityHigh;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "HIGH_PRIORITY_FLAG", nullable = false, length = 1)
+	private YesNoEnum priorityHigh;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "HIT_SHARE_FLAG", nullable = false, length = 1)
-    private YesNoEnum hitSharing;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "HIT_SHARE_FLAG", nullable = false, length = 1)
+	private YesNoEnum hitSharing;
 
+	@ManyToMany(targetEntity = RuleCat.class, cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+	@JoinTable(name = "udr_rule_cat", joinColumns = @JoinColumn(name = "udr_rule_id"), inverseJoinColumns = @JoinColumn(name = "rule_cat_id"))
+	private Set<RuleCat> ruleCategories = new HashSet<RuleCat>();
 
-    @ManyToMany(targetEntity = RuleCat.class, cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "udr_rule_cat", joinColumns = @JoinColumn(name = "udr_rule_id"), inverseJoinColumns = @JoinColumn(name = "rule_cat_id"))
-    private Set<RuleCat> ruleCategories = new HashSet<RuleCat>();
+	@Column(name = "RM_OVER_MAX_HITS_FLAG")
+	private Boolean overMaxHits;
 
+	/**
+	 * Constructor for JPA.
+	 */
+	public RuleMeta() {
+		super();
+		this.priorityHigh = YesNoEnum.N;
+		this.hitSharing = YesNoEnum.N;
+	}
 
-    @Column(name = "RM_OVER_MAX_HITS_FLAG")
-    private Boolean overMaxHits;
+	public RuleMeta(Date startDt, Date endDt) {
+		this();
+		this.startDt = startDt;
+		this.endDt = endDt;
+	}
 
-    /**
-     * Constructor for JPA.
-     */
-    public RuleMeta() {
-        super();
-        this.priorityHigh = YesNoEnum.N;
-        this.hitSharing = YesNoEnum.N;
-    }
+	public RuleMeta(UdrRule parentRule, String title, String description, Date startDt, Date endDt, YesNoEnum enabled,
+			YesNoEnum priorityHigh, YesNoEnum hitSharing) {
+		this.id = parentRule.getId();
+		this.title = title;
+		this.description = description;
+		this.startDt = startDt;
+		this.endDt = endDt;
+		this.enabled = enabled;
+		this.priorityHigh = priorityHigh;
+		this.hitSharing = hitSharing;
+	}
 
-    public RuleMeta(Date startDt, Date endDt) {
-        this();
-        this.startDt = startDt;
-        this.endDt = endDt;
-    }
+	public RuleMeta(Long id, String title, String description, Date startDt, Date endDt, YesNoEnum enabled,
+			YesNoEnum priorityHigh, YesNoEnum hitSharing, Set<RuleCat> ruleCategories) {
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.startDt = startDt;
+		this.endDt = endDt;
+		this.enabled = enabled;
+		this.priorityHigh = priorityHigh;
+		this.hitSharing = hitSharing;
+		this.ruleCategories = ruleCategories;
+	}
 
-    public RuleMeta(UdrRule parentRule, String title, String description, Date startDt,
-                    Date endDt, YesNoEnum enabled, YesNoEnum priorityHigh,
-                    YesNoEnum hitSharing) {
-        this.id = parentRule.getId();
-        this.title = title;
-        this.description = description;
-        this.startDt = startDt;
-        this.endDt = endDt;
-        this.enabled = enabled;
-        this.priorityHigh = priorityHigh;
-        this.hitSharing = hitSharing;
-    }
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
 
-    public RuleMeta(Long id, String title, String description,
-                    Date startDt, Date endDt, YesNoEnum enabled,
-                    YesNoEnum priorityHigh, YesNoEnum hitSharing, Set<RuleCat> ruleCategories) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.startDt = startDt;
-        this.endDt = endDt;
-        this.enabled = enabled;
-        this.priorityHigh = priorityHigh;
-        this.hitSharing = hitSharing;
-        this.ruleCategories = ruleCategories;
-    }
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    /**
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
+	/**
+	 * @return the enabled
+	 */
+	public YesNoEnum getEnabled() {
+		return enabled;
+	}
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
+	/**
+	 * @return the parent
+	 */
+	public UdrRule getParent() {
+		return parent;
+	}
 
-    /**
-     * @return the enabled
-     */
-    public YesNoEnum getEnabled() {
-        return enabled;
-    }
+	/**
+	 * @param parent
+	 *            the parent to set
+	 */
+	public void setParent(UdrRule parent) {
+		this.parent = parent;
+		if (parent != null && parent.getId() != null) {
+			this.id = parent.getId();
+		}
+	}
 
-    /**
-     * @return the parent
-     */
-    public UdrRule getParent() {
-        return parent;
-    }
+	/**
+	 * @param enabled
+	 *            the enabled to set
+	 */
+	public void setEnabled(YesNoEnum enabled) {
+		this.enabled = enabled;
+	}
 
-    /**
-     * @param parent the parent to set
-     */
-    public void setParent(UdrRule parent) {
-        this.parent = parent;
-        if (parent != null && parent.getId() != null) {
-            this.id = parent.getId();
-        }
-    }
+	/**
+	 * @return the priorityHigh
+	 */
+	public YesNoEnum getPriorityHigh() {
+		return priorityHigh;
+	}
 
-    /**
-     * @param enabled the enabled to set
-     */
-    public void setEnabled(YesNoEnum enabled) {
-        this.enabled = enabled;
-    }
+	/**
+	 * @param priorityHigh
+	 *            the priorityHigh to set
+	 */
+	public void setPriorityHigh(YesNoEnum priorityHigh) {
+		this.priorityHigh = priorityHigh;
+	}
 
-    /**
-     * @return the priorityHigh
-     */
-    public YesNoEnum getPriorityHigh() {
-        return priorityHigh;
-    }
+	/**
+	 * @return the hitSharing
+	 */
+	public YesNoEnum getHitSharing() {
+		return hitSharing;
+	}
 
-    /**
-     * @param priorityHigh the priorityHigh to set
-     */
-    public void setPriorityHigh(YesNoEnum priorityHigh) {
-        this.priorityHigh = priorityHigh;
-    }
+	/**
+	 * @param hitSharing
+	 *            the hitSharing to set
+	 */
+	public void setHitSharing(YesNoEnum hitSharing) {
+		this.hitSharing = hitSharing;
+	}
 
-    /**
-     * @return the hitSharing
-     */
-    public YesNoEnum getHitSharing() {
-        return hitSharing;
-    }
+	public String getTitle() {
+		return this.title;
+	}
 
-    /**
-     * @param hitSharing the hitSharing to set
-     */
-    public void setHitSharing(YesNoEnum hitSharing) {
-        this.hitSharing = hitSharing;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getDescription() {
-        return this.description;
-    }
+	public Date getStartDt() {
+		return this.startDt;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setStartDt(Date startDt) {
+		this.startDt = startDt;
+	}
 
-    public Date getStartDt() {
-        return this.startDt;
-    }
+	public Date getEndDt() {
+		return this.endDt;
+	}
 
-    public void setStartDt(Date startDt) {
-        this.startDt = startDt;
-    }
+	public void setEndDt(Date endDt) {
+		this.endDt = endDt;
+	}
 
-    public Date getEndDt() {
-        return this.endDt;
-    }
+	@Override
+	public int hashCode() {
+		HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
+		hashCodeBuilder.append(title);
+		hashCodeBuilder.append(description);
+		hashCodeBuilder.append(startDt);
+		hashCodeBuilder.append(endDt);
+		hashCodeBuilder.append(enabled);
+		hashCodeBuilder.append(priorityHigh);
+		hashCodeBuilder.append(hitSharing);
+		return hashCodeBuilder.toHashCode();
+	}
 
-    public void setEndDt(Date endDt) {
-        this.endDt = endDt;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof RuleMeta)) {
+			return false;
+		}
+		RuleMeta other = (RuleMeta) obj;
+		EqualsBuilder equalsBuilder = new EqualsBuilder();
+		equalsBuilder.append(title, other.title);
+		equalsBuilder.append(description, other.description);
 
+		// start and end date equality up to seconds
+		if (!DateCalendarUtils.dateRoundedEquals(startDt, other.startDt)
+				|| !DateCalendarUtils.dateRoundedEquals(endDt, other.endDt)) {
+			return false;
+		}
 
-    @Override
-    public int hashCode() {
-        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-        hashCodeBuilder.append(title);
-        hashCodeBuilder.append(description);
-        hashCodeBuilder.append(startDt);
-        hashCodeBuilder.append(endDt);
-        hashCodeBuilder.append(enabled);
-        hashCodeBuilder.append(priorityHigh);
-        hashCodeBuilder.append(hitSharing);
-        return hashCodeBuilder.toHashCode();
-    }
+		equalsBuilder.append(enabled, other.enabled);
+		equalsBuilder.append(priorityHigh, other.priorityHigh);
+		equalsBuilder.append(hitSharing, other.hitSharing);
+		return equalsBuilder.isEquals();
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof RuleMeta)) {
-            return false;
-        }
-        RuleMeta other = (RuleMeta) obj;
-        EqualsBuilder equalsBuilder = new EqualsBuilder();
-        equalsBuilder.append(title, other.title);
-        equalsBuilder.append(description, other.description);
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
-        //start and end date equality up to seconds
-        if (!DateCalendarUtils.dateRoundedEquals(startDt, other.startDt)
-                || !DateCalendarUtils.dateRoundedEquals(endDt, other.endDt)) {
-            return false;
-        }
+	public Set<RuleCat> getRuleCategories() {
+		return ruleCategories;
+	}
 
-        equalsBuilder.append(enabled, other.enabled);
-        equalsBuilder.append(priorityHigh, other.priorityHigh);
-        equalsBuilder.append(hitSharing, other.hitSharing);
-        return equalsBuilder.isEquals();
-    }
+	public void setRuleCategories(Set<RuleCat> ruleCategories) {
+		this.ruleCategories = ruleCategories;
+	}
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public Boolean getOverMaxHits() {
+		// handle cast to primitive boolean
+		if (overMaxHits == null) {
+			return false;
+		}
+		return overMaxHits;
+	}
 
-    public Set<RuleCat> getRuleCategories() {
-        return ruleCategories;
-    }
-
-    public void setRuleCategories(Set<RuleCat> ruleCategories) {
-        this.ruleCategories = ruleCategories;
-    }
-
-    public Boolean getOverMaxHits() {
-        //handle cast to primitive boolean
-        if (overMaxHits == null) {
-            return false;
-        }
-        return overMaxHits;
-    }
-
-    public void setOverMaxHits(Boolean overMaxHits) {
-        this.overMaxHits = overMaxHits;
-    }
+	public void setOverMaxHits(Boolean overMaxHits) {
+		this.overMaxHits = overMaxHits;
+	}
 }

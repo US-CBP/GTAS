@@ -30,8 +30,10 @@ public class TamrMessageReceiver {
 
 	@Autowired
 	private PassengerIDTagRepository passengerIDTagRepository;
-	//Commented out listener, uncomment for tamr integration
-	//@JmsListener(containerFactory = "tamrJmsListenerContainerFactory", destination = "OutboundQueue")
+
+	// Commented out listener, uncomment for tamr integration
+	// @JmsListener(containerFactory = "tamrJmsListenerContainerFactory",
+	// destination = "OutboundQueue")
 	public void receive(javax.jms.Message msg) {
 		logger.info("############### TAMR data received .... ################");
 		TextMessage textMessage = null;

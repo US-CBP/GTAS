@@ -9,24 +9,24 @@
   <div style="width: 100%;margin-top:10px;height:70px" align="center">
     <md-button ng-click="getPreviousDayData()" ng-disabled="isBackButtonDisabled"
             class="btn btn-default">
-            <md-tooltip>Yesterday's lookout list</md-tooltip>
+            <md-tooltip>{{'odl.yesterdayslookoutlist' | translate}}</md-tooltip>
             <i class="fa fa-minus" aria-hidden="true"></i>
-            &nbsp;<Strong>1 Day</Strong>
+            &nbsp;<Strong>{{'odl.1day' | translate}}</Strong>
      </md-button>
      
     
     <md-button ng-click="getTodaysData()" ng-disabled="isTodayButtonDisabled"
             class="btn btn-default">
-            <md-tooltip>Today's lookout list</md-tooltip>
+            <md-tooltip>{{'odl.todayslookoutlist' | translate}}</md-tooltip>
             <i class="fa" aria-hidden="true"></i>
-            &nbsp;<Strong>Today</Strong>
+            &nbsp;<Strong>{{'odl.today' | translate}}</Strong>
      </md-button>
   
     <md-button ng-click="getNextDayData()" ng-disabled="isForwardButtonDisabled"
             class="btn btn-default">
-            <md-tooltip>Tomorrow's lookout list</md-tooltip>
+            <md-tooltip>{{'odl.tomorrowslookoutlist' | translate}}</md-tooltip>
             <i class="fa fa-plus" aria-hidden="true"></i>
-            &nbsp;<Strong>1 Day</Strong>
+            &nbsp;<Strong>{{'odl.1day' | translate}}</Strong>
      </md-button>
     
   

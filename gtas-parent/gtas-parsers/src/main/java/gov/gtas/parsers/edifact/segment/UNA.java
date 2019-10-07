@@ -22,61 +22,61 @@ package gov.gtas.parsers.edifact.segment;
  * character shall not be used in more than one position of the UNA.
  */
 public final class UNA {
-    public static final String DEFAULT_UNA = "UNA:+.? '";
-    public static final int NUM_UNA_CHARS = 6;
-    private static final int TOTAL_UNA_SEGMENT_LENGTH = DEFAULT_UNA.length();
+	public static final String DEFAULT_UNA = "UNA:+.? '";
+	public static final int NUM_UNA_CHARS = 6;
+	private static final int TOTAL_UNA_SEGMENT_LENGTH = DEFAULT_UNA.length();
 
-    private String segmentText;
-    private char componentDataElementSeparator;
-    private char dataElementSeparator;
-    private char decimalMark;
-    private char releaseCharacter;
-    private char repetitionSeparator;
-    private char segmentTerminator;
+	private String segmentText;
+	private char componentDataElementSeparator;
+	private char dataElementSeparator;
+	private char decimalMark;
+	private char releaseCharacter;
+	private char repetitionSeparator;
+	private char segmentTerminator;
 
-    public UNA() {
-        this(DEFAULT_UNA);
-    }
+	public UNA() {
+		this(DEFAULT_UNA);
+	}
 
-    public UNA(String unaSegment) {
-        if (unaSegment == null || unaSegment.length() != TOTAL_UNA_SEGMENT_LENGTH) {
-            throw new IllegalArgumentException("una segment length != " + TOTAL_UNA_SEGMENT_LENGTH);
-        }
-        this.segmentText = unaSegment;
-        
-        this.componentDataElementSeparator = unaSegment.charAt(3);
-        this.dataElementSeparator = unaSegment.charAt(4);
-        this.decimalMark = unaSegment.charAt(5);
-        this.releaseCharacter = unaSegment.charAt(6);
-        this.repetitionSeparator = unaSegment.charAt(7);
-        this.segmentTerminator = unaSegment.charAt(8);
-    }
+	public UNA(String unaSegment) {
+		if (unaSegment == null || unaSegment.length() != TOTAL_UNA_SEGMENT_LENGTH) {
+			throw new IllegalArgumentException("una segment length != " + TOTAL_UNA_SEGMENT_LENGTH);
+		}
+		this.segmentText = unaSegment;
 
-    public String getSegmentText() {
-        return segmentText;
-    }
+		this.componentDataElementSeparator = unaSegment.charAt(3);
+		this.dataElementSeparator = unaSegment.charAt(4);
+		this.decimalMark = unaSegment.charAt(5);
+		this.releaseCharacter = unaSegment.charAt(6);
+		this.repetitionSeparator = unaSegment.charAt(7);
+		this.segmentTerminator = unaSegment.charAt(8);
+	}
 
-    public char getComponentDataElementSeparator() {
-        return componentDataElementSeparator;
-    }
+	public String getSegmentText() {
+		return segmentText;
+	}
 
-    public char getDataElementSeparator() {
-        return dataElementSeparator;
-    }
+	public char getComponentDataElementSeparator() {
+		return componentDataElementSeparator;
+	}
 
-    public char getDecimalMark() {
-        return decimalMark;
-    }
+	public char getDataElementSeparator() {
+		return dataElementSeparator;
+	}
 
-    public char getReleaseCharacter() {
-        return releaseCharacter;
-    }
+	public char getDecimalMark() {
+		return decimalMark;
+	}
 
-    public char getRepetitionSeparator() {
-        return repetitionSeparator;
-    }
+	public char getReleaseCharacter() {
+		return releaseCharacter;
+	}
 
-    public char getSegmentTerminator() {
-        return segmentTerminator;
-    }
+	public char getRepetitionSeparator() {
+		return repetitionSeparator;
+	}
+
+	public char getSegmentTerminator() {
+		return segmentTerminator;
+	}
 }

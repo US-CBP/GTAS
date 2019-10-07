@@ -16,19 +16,20 @@ import org.hibernate.tool.schema.spi.SchemaFilter;
 //For filtering out custom views on hibernate create.
 public class GtasSchemaFilter implements SchemaFilter {
 
-    static final GtasSchemaFilter INSTANCE = new GtasSchemaFilter();
-    @Override
-    public boolean includeNamespace(Namespace namespace) {
-        return true;
-    }
+	static final GtasSchemaFilter INSTANCE = new GtasSchemaFilter();
 
-    @Override
-    public boolean includeTable(Table table) {
-        return !table.getName().contains("flight_countdown_view");
-    }
+	@Override
+	public boolean includeNamespace(Namespace namespace) {
+		return true;
+	}
 
-    @Override
-    public boolean includeSequence(Sequence sequence) {
-        return true;
-    }
+	@Override
+	public boolean includeTable(Table table) {
+		return !table.getName().contains("flight_countdown_view");
+	}
+
+	@Override
+	public boolean includeSequence(Sequence sequence) {
+		return true;
+	}
 }

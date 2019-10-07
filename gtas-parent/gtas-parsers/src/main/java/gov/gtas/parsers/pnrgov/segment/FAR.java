@@ -13,10 +13,11 @@ import gov.gtas.parsers.edifact.Segment;
 /**
  * <p>
  * FAR: FARE INFORMATION
- * <p>Class FAR to hold Fare information for a passenger(s)
+ * <p>
+ * Class FAR to hold Fare information for a passenger(s)
  */
 public class FAR extends Segment {
-    public FAR(List<Composite> composites) {
-        super(FAR.class.getSimpleName(), composites);
-    }
+	public FAR(List<Composite> composites) {
+		super(FAR.class.getSimpleName(), composites);
+	}
 }

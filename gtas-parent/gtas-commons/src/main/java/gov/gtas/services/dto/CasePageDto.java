@@ -11,16 +11,19 @@ import java.util.List;
 
 public class CasePageDto {
 
-    private List<CaseVo> cases;
-    private long totalCases;
-    public CasePageDto(List<CaseVo> cases, long totalCases) {
-        this.cases = cases;
-        this.totalCases = totalCases;
-    }
-    public List<CaseVo> getcases() {
-        return cases;
-    }
-    public long gettotalCases() {
-        return totalCases;
-    }
+	private List<CaseVo> cases;
+	private long totalCases;
+
+	public CasePageDto(List<CaseVo> cases, long totalCases) {
+		this.cases = cases;
+		this.totalCases = totalCases;
+	}
+
+	public List<CaseVo> getcases() {
+		return cases;
+	}
+
+	public long gettotalCases() {
+		return totalCases;
+	}
 }

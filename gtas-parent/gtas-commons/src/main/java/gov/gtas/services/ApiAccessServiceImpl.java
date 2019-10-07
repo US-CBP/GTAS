@@ -5,7 +5,6 @@
  */
 package gov.gtas.services;
 
-
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -22,48 +21,46 @@ public class ApiAccessServiceImpl implements ApiAccessService {
 
 	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @Resource
-    private ApiAccessRepository apiAccessRepository;
-    
-    @Override
-    @Transactional
-    public ApiAccess create(ApiAccess apiAccess) {
-    	apiAccess.setPassword(passwordEncoder.encode(apiAccess
-				.getPassword()));
-        return apiAccessRepository.save(apiAccess);
-    }
+	@Resource
+	private ApiAccessRepository apiAccessRepository;
 
-    @Override
-    @Transactional
-    public ApiAccess delete(Long id) {
-    	ApiAccess apiAccess = this.findById(id);
-        if(apiAccess != null){
-        	apiAccessRepository.delete(apiAccess);
-        }
-        return apiAccess;
-    }
+	@Override
+	@Transactional
+	public ApiAccess create(ApiAccess apiAccess) {
+		apiAccess.setPassword(passwordEncoder.encode(apiAccess.getPassword()));
+		return apiAccessRepository.save(apiAccess);
+	}
 
-    @Override
-    @Transactional
-    public List<ApiAccess> findAll() {
-        return (List<ApiAccess>)apiAccessRepository.findAll();
-    }
+	@Override
+	@Transactional
+	public ApiAccess delete(Long id) {
+		ApiAccess apiAccess = this.findById(id);
+		if (apiAccess != null) {
+			apiAccessRepository.delete(apiAccess);
+		}
+		return apiAccess;
+	}
 
-    @Override
-    @Transactional
-    public ApiAccess update(ApiAccess apiAccess) {
-    	//If the password changed we need to encrypt it
-    	if(!passwordEncoder.matches(findById(apiAccess.getId()).getPassword(),apiAccess.getPassword())) {
-        	apiAccess.setPassword(passwordEncoder.encode(apiAccess
-    				.getPassword()));
-    	}
-        return apiAccessRepository.save(apiAccess);
-    }
+	@Override
+	@Transactional
+	public List<ApiAccess> findAll() {
+		return (List<ApiAccess>) apiAccessRepository.findAll();
+	}
 
-    @Override
-    @Transactional
-    public ApiAccess findById(Long id) {
-        return apiAccessRepository.findById(id).orElse(null);
-    }
-    
+	@Override
+	@Transactional
+	public ApiAccess update(ApiAccess apiAccess) {
+		// If the password changed we need to encrypt it
+		if (!passwordEncoder.matches(findById(apiAccess.getId()).getPassword(), apiAccess.getPassword())) {
+			apiAccess.setPassword(passwordEncoder.encode(apiAccess.getPassword()));
+		}
+		return apiAccessRepository.save(apiAccess);
+	}
+
+	@Override
+	@Transactional
+	public ApiAccess findById(Long id) {
+		return apiAccessRepository.findById(id).orElse(null);
+	}
+
 }

@@ -49,10 +49,10 @@ public class SQSLoaderScheduler {
 
 	@Value("${sqs.loader.queue}")
 	private String queue;
-	
+
 	@Value("${sqs.loader.region}")
 	private String region;
-	
+
 	@Autowired
 	private InboundQMessageSender sender;
 
@@ -65,11 +65,11 @@ public class SQSLoaderScheduler {
 		try {
 
 			logger.debug("Scheduler pulling for messages ..... ");
-			
-			if(this.queueService == null) {
+
+			if (this.queueService == null) {
 				this.queueService = new QueueService(this.queue, this.region);
 			}
-			
+
 			List<Message> messages = queueService.receiveMessages();
 
 			messages.forEach(p -> {

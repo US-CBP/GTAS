@@ -31,7 +31,7 @@ public class UtilController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private UserLocationSetting userLocationSetting;
 
@@ -57,11 +57,13 @@ public class UtilController {
 				flightSearchVo.getFlightDirectionList().add(flightSearchVo.new FlightDirectionVo("O", "Outbound"));
 
 				String userLocationAirport;
-				Object userLocationObject = httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
+				Object userLocationObject = httpServletRequest.getSession()
+						.getAttribute(Constants.USER_PRIMARY_LOCATION);
 				if (userLocationObject != null) {
 					userLocationAirport = userLocationObject.toString();
 				} else {
-					UserLocationStatus userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+					UserLocationStatus userLocationStatus = userLocationSetting.setPrimaryLocation(httpServletRequest,
+							userId);
 					userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
 				}
 				flightSearchVo.setUserLocation(userLocationAirport);

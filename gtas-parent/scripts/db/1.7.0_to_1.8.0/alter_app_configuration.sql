@@ -1,0 +1,1 @@
+ALTER TABLE app_configuration ADD CONSTRAINT app_configuration_opt_key UNIQUE (`opt`);

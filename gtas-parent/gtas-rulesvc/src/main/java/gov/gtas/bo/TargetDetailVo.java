@@ -33,8 +33,8 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	private String[] hitReasons;
 
 	/**
-	 * This constructor is used when creating a detail object as a result of a
-	 * UDR rule hit.
+	 * This constructor is used when creating a detail object as a result of a UDR
+	 * rule hit.
 	 * 
 	 * @param ruleId
 	 *            a numeric rule Id (can be null)
@@ -47,8 +47,7 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	 * @param cause
 	 *            the reason for the match.
 	 */
-	public TargetDetailVo(final Long udrId, final Long ruleId,
-			final HitTypeEnum hitType, final String ruleTitle,
+	public TargetDetailVo(final Long udrId, final Long ruleId, final HitTypeEnum hitType, final String ruleTitle,
 			final String[] cause) {
 		this.udrRuleId = udrId;
 		this.ruleId = ruleId;
@@ -56,9 +55,8 @@ public class TargetDetailVo implements Serializable, Cloneable {
 		switch (hitType) {
 		case R:
 			this.title = ruleTitle;
-			this.description = String
-					.format("There was a match for UDR '%s', with id=%d, and ruleId=%d",
-							ruleTitle, udrId, ruleId);
+			this.description = String.format("There was a match for UDR '%s', with id=%d, and ruleId=%d", ruleTitle,
+					udrId, ruleId);
 			break;
 		case D:
 			this.title = ruleTitle;

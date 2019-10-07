@@ -37,92 +37,92 @@ import gov.gtas.parsers.pnrgov.PnrUtils;
  * </ul>
  */
 public class RCI extends Segment {
-    private static final String DCS_CONTROL_TYPE = "C";
+	private static final String DCS_CONTROL_TYPE = "C";
 
-    public class ReservationControlInfo {
-        private String airlineCode;
-        private String reservationControlNumber;
-        private String reservationControlType;
-        private Date timeCreated;
-        private boolean isDcsReference;
+	public class ReservationControlInfo {
+		private String airlineCode;
+		private String reservationControlNumber;
+		private String reservationControlType;
+		private Date timeCreated;
+		private boolean isDcsReference;
 
-        public String getAirlineCode() {
-            return airlineCode;
-        }
+		public String getAirlineCode() {
+			return airlineCode;
+		}
 
-        public void setAirlineCode(String airlineCode) {
-            this.airlineCode = airlineCode;
-        }
+		public void setAirlineCode(String airlineCode) {
+			this.airlineCode = airlineCode;
+		}
 
-        public String getReservationControlNumber() {
-            return reservationControlNumber;
-        }
+		public String getReservationControlNumber() {
+			return reservationControlNumber;
+		}
 
-        public void setReservationControlNumber(String reservationControlNumber) {
-            this.reservationControlNumber = reservationControlNumber;
-        }
+		public void setReservationControlNumber(String reservationControlNumber) {
+			this.reservationControlNumber = reservationControlNumber;
+		}
 
-        public String getReservationControlType() {
-            return reservationControlType;
-        }
+		public String getReservationControlType() {
+			return reservationControlType;
+		}
 
-        public void setReservationControlType(String reservationControlType) {
-            this.reservationControlType = reservationControlType;
-        }
+		public void setReservationControlType(String reservationControlType) {
+			this.reservationControlType = reservationControlType;
+		}
 
-        public Date getTimeCreated() {
-            return timeCreated;
-        }
+		public Date getTimeCreated() {
+			return timeCreated;
+		}
 
-        public void setTimeCreated(Date timeCreated) {
-            this.timeCreated = timeCreated;
-        }
+		public void setTimeCreated(Date timeCreated) {
+			this.timeCreated = timeCreated;
+		}
 
-        public boolean isDcsReference() {
-            return isDcsReference;
-        }
+		public boolean isDcsReference() {
+			return isDcsReference;
+		}
 
-        public void setDcsReference(boolean isDcsReference) {
-            this.isDcsReference = isDcsReference;
-        }
-        
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
-        }
-    }
+		public void setDcsReference(boolean isDcsReference) {
+			this.isDcsReference = isDcsReference;
+		}
 
-    private List<ReservationControlInfo> reservations;
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.DEFAULT_STYLE);
+		}
+	}
 
-    public RCI(List<Composite> composites) throws ParseException {
-        super(RCI.class.getSimpleName(), composites);
-        reservations = new ArrayList<>(numComposites());
-        
-        for (int i = 0; i < numComposites(); i++) {
-            ReservationControlInfo r = new ReservationControlInfo();
-            Composite c = getComposite(i);
+	private List<ReservationControlInfo> reservations;
 
-            r.setAirlineCode(c.getElement(0));
-            r.setReservationControlNumber(c.getElement(1));
+	public RCI(List<Composite> composites) throws ParseException {
+		super(RCI.class.getSimpleName(), composites);
+		reservations = new ArrayList<>(numComposites());
 
-            String controlType = c.getElement(2);
-            r.setReservationControlType(controlType);
-            r.setDcsReference(DCS_CONTROL_TYPE.equals(controlType));
+		for (int i = 0; i < numComposites(); i++) {
+			ReservationControlInfo r = new ReservationControlInfo();
+			Composite c = getComposite(i);
 
-            String dt = c.getElement(3);
-            if (dt != null) {
-                if (c.getElement(4) != null) {
-                    dt += c.getElement(4);
-                    
-                }
-                r.setTimeCreated(PnrUtils.parseDateTime(dt));
-            }
+			r.setAirlineCode(c.getElement(0));
+			r.setReservationControlNumber(c.getElement(1));
 
-            reservations.add(r);
-        }
-    }
+			String controlType = c.getElement(2);
+			r.setReservationControlType(controlType);
+			r.setDcsReference(DCS_CONTROL_TYPE.equals(controlType));
 
-    public List<ReservationControlInfo> getReservations() {
-        return reservations;
-    }
+			String dt = c.getElement(3);
+			if (dt != null) {
+				if (c.getElement(4) != null) {
+					dt += c.getElement(4);
+
+				}
+				r.setTimeCreated(PnrUtils.parseDateTime(dt));
+			}
+
+			reservations.add(r);
+		}
+	}
+
+	public List<ReservationControlInfo> getReservations() {
+		return reservations;
+	}
 }

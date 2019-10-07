@@ -6,7 +6,6 @@
  *
  */
 
-
 package gov.gtas.vo;
 
 import gov.gtas.model.Bag;
@@ -19,18 +18,18 @@ import org.springframework.util.Assert;
 
 public class BagVoTest {
 
-    @Test
-    public void testBagWithNullMeasurementValues() {
-        Bag bag = new Bag();
-        Passenger pax = new Passenger();
-        pax.setId(-1L);
-        Flight flight = new Flight();
-        flight.setId(-1L);
-        bag.setPassenger(pax);
-        bag.setFlight(flight);
-        BagMeasurements bagMeasurements = new BagMeasurements();
-        bag.setBagMeasurements(bagMeasurements);
-        BagVo bagVo = BagVo.fromBag(bag);
-        Assert.notNull(bagVo, "no exception thrown");
-    }
+	@Test
+	public void testBagWithNullMeasurementValues() {
+		Bag bag = new Bag();
+		Passenger pax = new Passenger();
+		pax.setId(-1L);
+		Flight flight = new Flight();
+		flight.setId(-1L);
+		bag.setPassenger(pax);
+		bag.setFlight(flight);
+		BagMeasurements bagMeasurements = new BagMeasurements();
+		bag.setBagMeasurements(bagMeasurements);
+		BagVo bagVo = BagVo.fromBag(bag);
+		Assert.notNull(bagVo, "no exception thrown");
+	}
 }

@@ -34,100 +34,100 @@ import java.util.stream.Collectors;
 @Scope("prototype")
 public class GraphRulesThread implements Callable<Boolean> {
 
-    private Logger logger = LoggerFactory.getLogger(GraphRulesThread.class);
+	private Logger logger = LoggerFactory.getLogger(GraphRulesThread.class);
 
-    private final GraphRulesService graphRulesService;
+	private final GraphRulesService graphRulesService;
 
-    private final MessageStatusRepository messageStatusRepository;
+	private final MessageStatusRepository messageStatusRepository;
 
-    private final PassengerRepository passengerRepository;
+	private final PassengerRepository passengerRepository;
 
-    private List<MessageStatus> messageStatuses = new ArrayList<>();
+	private List<MessageStatus> messageStatuses = new ArrayList<>();
 
-    private PassengerService passengerService;
-    private AppConfigurationService appConfigurationService;
-    private RuleMetaRepository ruleMetaRepository;
+	private PassengerService passengerService;
+	private AppConfigurationService appConfigurationService;
+	private RuleMetaRepository ruleMetaRepository;
 
+	public GraphRulesThread(GraphRulesService graphRulesService, MessageStatusRepository messageStatusRepository,
+			PassengerRepository passengerRepository, PassengerService passengerService,
+			AppConfigurationService appConfigurationService, RuleMetaRepository ruleMetaRepository) {
+		this.graphRulesService = graphRulesService;
+		this.messageStatusRepository = messageStatusRepository;
+		this.passengerRepository = passengerRepository;
+		this.passengerService = passengerService;
+		this.appConfigurationService = appConfigurationService;
+		this.ruleMetaRepository = ruleMetaRepository;
+	}
 
-    public GraphRulesThread(
-            GraphRulesService graphRulesService,
-            MessageStatusRepository messageStatusRepository,
-            PassengerRepository passengerRepository,
-            PassengerService passengerService,
-            AppConfigurationService appConfigurationService,
-            RuleMetaRepository ruleMetaRepository) {
-        this.graphRulesService = graphRulesService;
-        this.messageStatusRepository = messageStatusRepository;
-        this.passengerRepository = passengerRepository;
-        this.passengerService = passengerService;
-        this.appConfigurationService = appConfigurationService;
-        this.ruleMetaRepository = ruleMetaRepository;
-    }
+	public Boolean call() {
+		boolean returnVal = true;
+		long start = System.nanoTime();
+		List<MessageStatus> processedMessages = getMessageStatuses();
+		if (processedMessages.isEmpty()) {
+			return true;
+		}
 
-    public Boolean call() {
-        boolean returnVal = true;
-        long start = System.nanoTime();
-        List<MessageStatus> processedMessages = getMessageStatuses();
-        if (processedMessages.isEmpty()) {
-            return true;
-        }
+		try {
+			Set<Long> messageId = processedMessages.stream().map(MessageStatus::getMessageId)
+					.collect(Collectors.toSet());
+			processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
+			Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
+			Set<Flight> passengerFlights = passengers.stream().map(Passenger::getFlight).collect(Collectors.toSet());
+			Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
+			TargetingResultServices targetingResultServices = getTargetingResultOptions();
 
-        try {
-            Set<Long> messageId = processedMessages.stream()
-                    .map(MessageStatus::getMessageId)
-                    .collect(Collectors.toSet());
-            processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
-            Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
-            Set<Flight> passengerFlights = passengers.stream().map(Passenger::getFlight).collect(Collectors.toSet());
-            Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
-            TargetingResultServices targetingResultServices = getTargetingResultOptions();
+			List<RuleHitDetail> filteredList = TargetingResultUtils
+					.filterRuleHitDetails(new ArrayList<>(graphHitDetailSet), targetingResultServices);
+			Set<Case> newCases = graphRulesService.graphCases(new HashSet<>(filteredList)); // Cast to set.
+			List<HitsSummary> hitsSummaries = graphRulesService.getHitsSummariesFromRuleDetails(filteredList);
 
-            List<RuleHitDetail> filteredList = TargetingResultUtils.filterRuleHitDetails(new ArrayList<>(graphHitDetailSet), targetingResultServices);
-            Set<Case> newCases = graphRulesService.graphCases(new HashSet<>(filteredList)); // Cast to set.
-            List<HitsSummary> hitsSummaries = graphRulesService.getHitsSummariesFromRuleDetails(filteredList);
+			List<TargetingServiceResults> targetingServiceResultsList = TargetingResultUtils
+					.getTargetingResults(newCases, hitsSummaries);
+			int BATCH_SIZE = Integer.parseInt(appConfigurationService
+					.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
+			List<TargetingServiceResults> batchedTargetingServiceResults = TargetingResultUtils
+					.batchResults(targetingServiceResultsList, BATCH_SIZE);
 
-            List<TargetingServiceResults> targetingServiceResultsList = TargetingResultUtils.getTargetingResults(newCases, hitsSummaries);
-            int BATCH_SIZE = Integer.parseInt(appConfigurationService.findByOption(AppConfigurationRepository.MAX_FLIGHTS_SAVED_PER_BATCH).getValue());
-            List<TargetingServiceResults> batchedTargetingServiceResults = TargetingResultUtils.batchResults(targetingServiceResultsList, BATCH_SIZE);
+			int count = 1;
+			for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
+				try {
+					logger.info(
+							"Saving graph results " + count + " of " + batchedTargetingServiceResults.size() + "...");
+					graphRulesService.saveResults(new HashSet<>(targetingServiceResults.getHitsSummaryList()),
+							targetingServiceResults.getCaseSet());
+				} catch (Exception ignored) {
+					logger.warn("Exception saving hits summaries count " + count + " and/or hit details! ", ignored);
+					processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
+				}
+				count++;
+			}
+			if (!batchedTargetingServiceResults.isEmpty()) {
+				logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
+			}
+			graphRulesService.updateFlightGraphHitCount(passengerFlights);
+		} catch (Exception e) {
+			logger.warn("Exception running graph rules! ", e);
+			processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
+			returnVal = false;
+		} finally {
+			messageStatusRepository.saveAll(processedMessages);
+		}
+		return returnVal;
+	}
 
-            int count = 1;
-            for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
-                try {
-                    logger.info("Saving graph results " + count + " of " + batchedTargetingServiceResults.size() + "...");
-                    graphRulesService.saveResults(new HashSet<>(targetingServiceResults.getHitsSummaryList()), targetingServiceResults.getCaseSet());
-                } catch (Exception ignored) {
-                    logger.warn("Exception saving hits summaries count " + count + " and/or hit details! ", ignored);
-                    processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
-                }
-                count++;
-            }
-            if (!batchedTargetingServiceResults.isEmpty()) {
-                logger.info("Graph Database Ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
-            }
-            graphRulesService.updateFlightGraphHitCount(passengerFlights);
-        } catch (Exception e) {
-            logger.warn("Exception running graph rules! ", e);
-            processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.FAILED_NEO_4_J));
-            returnVal = false;
-        } finally {
-            messageStatusRepository.saveAll(processedMessages);
-        }
-        return returnVal;
-    }
+	private List<MessageStatus> getMessageStatuses() {
+		return messageStatuses;
+	}
 
-    private List<MessageStatus> getMessageStatuses() {
-        return messageStatuses;
-    }
+	void setMessageStatuses(List<MessageStatus> messageStatuses) {
+		this.messageStatuses = messageStatuses;
+	}
 
-    void setMessageStatuses(List<MessageStatus> messageStatuses) {
-        this.messageStatuses = messageStatuses;
-    }
-
-    private TargetingResultServices getTargetingResultOptions() {
-        TargetingResultServices targetingResultServices = new TargetingResultServices();
-        targetingResultServices.setAppConfigurationService(appConfigurationService);
-        targetingResultServices.setPassengerService(passengerService);
-        targetingResultServices.setRuleMetaRepository(ruleMetaRepository);
-        return targetingResultServices;
-    }
+	private TargetingResultServices getTargetingResultOptions() {
+		TargetingResultServices targetingResultServices = new TargetingResultServices();
+		targetingResultServices.setAppConfigurationService(appConfigurationService);
+		targetingResultServices.setPassengerService(passengerService);
+		targetingResultServices.setRuleMetaRepository(ruleMetaRepository);
+		return targetingResultServices;
+	}
 }

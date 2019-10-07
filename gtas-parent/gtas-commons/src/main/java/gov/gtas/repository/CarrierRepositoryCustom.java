@@ -10,9 +10,9 @@ import javax.transaction.Transactional;
 
 public interface CarrierRepositoryCustom {
 
-  Carrier restore(Carrier carrier);
+	Carrier restore(Carrier carrier);
 
-  @Transactional
-  int restoreAll();
+	@Transactional
+	int restoreAll();
 
 }

@@ -37,45 +37,41 @@ import org.springframework.test.util.ReflectionTestUtils;
  */
 @Ignore
 public class TargetingServiceTest {
-    private TargetingService targetingService;
+	private TargetingService targetingService;
 
-    @Mock
-    private RuleService mockRuleService;
+	@Mock
+	private RuleService mockRuleService;
 
-    @Mock
-    private ApisMessageRepository mockApisMsgRepository;
-/*
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        targetingService = new TargetingServiceImpl(mockRuleService);
-        ReflectionTestUtils.setField(targetingService, "apisMsgRepository",
-                mockApisMsgRepository);
-    }*/
+	@Mock
+	private ApisMessageRepository mockApisMsgRepository;
+	/*
+	 * @Before public void setUp() throws Exception {
+	 * MockitoAnnotations.initMocks(this); targetingService = new
+	 * TargetingServiceImpl(mockRuleService);
+	 * ReflectionTestUtils.setField(targetingService, "apisMsgRepository",
+	 * mockApisMsgRepository); }
+	 */
 
-    @After
-    public void tearDown() throws Exception {
-    }
+	@After
+	public void tearDown() throws Exception {
+	}
 
-    @Test
-    @Ignore
-    public void testInitialization() {
-        assertNotNull("Autowire of targeting service failed", targetingService);
-        assertNotNull("Autowire of rule service failed",
-                ReflectionTestUtils.getField(targetingService, "ruleService"));
-    }
+	@Test
+	@Ignore
+	public void testInitialization() {
+		assertNotNull("Autowire of targeting service failed", targetingService);
+		assertNotNull("Autowire of rule service failed", ReflectionTestUtils.getField(targetingService, "ruleService"));
+	}
 
-    @Test
-    @Ignore // move to an IT test class to get needed autowired services.
-    public void testAnalyzeApisMessage() {
-        ReflectionTestUtils.setField(targetingService, "ruleService",
-                mockRuleService);
-        ApisMessage message = new ApisMessage();
-        RuleServiceResult result = new BasicRuleServiceResult(
-                new LinkedList<RuleHitDetail>(), new RuleExecutionStatistics());
-        when(mockRuleService.invokeRuleEngine(any(RuleServiceRequest.class)))
-                .thenReturn(result);
-        targetingService.analyzeApisMessage(message);
-        verify(mockRuleService).invokeRuleEngine(any(RuleServiceRequest.class));
-    }
+	@Test
+	@Ignore // move to an IT test class to get needed autowired services.
+	public void testAnalyzeApisMessage() {
+		ReflectionTestUtils.setField(targetingService, "ruleService", mockRuleService);
+		ApisMessage message = new ApisMessage();
+		RuleServiceResult result = new BasicRuleServiceResult(new LinkedList<RuleHitDetail>(),
+				new RuleExecutionStatistics());
+		when(mockRuleService.invokeRuleEngine(any(RuleServiceRequest.class))).thenReturn(result);
+		targetingService.analyzeApisMessage(message);
+		verify(mockRuleService).invokeRuleEngine(any(RuleServiceRequest.class));
+	}
 }

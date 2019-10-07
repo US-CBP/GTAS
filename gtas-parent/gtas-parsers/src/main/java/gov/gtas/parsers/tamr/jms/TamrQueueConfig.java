@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.destination.DestinationResolver;
+
 //Uncomment in order in part to re-enable queues
 /*@Configuration
 @EnableJms*/
@@ -24,7 +25,7 @@ public class TamrQueueConfig {
 	public DefaultJmsListenerContainerFactory tamrJmsListenerContainerFactory() {
 		DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
 		factory.setConnectionFactory(
-				//Add tamr connection details here.
+				// Add tamr connection details here.
 				new ActiveMQConnectionFactory(""));
 		factory.setDestinationResolver(new DestinationResolver() {
 

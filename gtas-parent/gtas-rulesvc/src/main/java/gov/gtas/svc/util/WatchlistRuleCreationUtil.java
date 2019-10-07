@@ -20,28 +20,25 @@ import java.util.UUID;
  * Helper class for the UDR service.
  */
 public class WatchlistRuleCreationUtil {
-    public static List<String> createWatchlistRule(EntityEnum entity, WatchlistTerm[] wlData,
-            String title, StringBuilder ruleOutput) {
+	public static List<String> createWatchlistRule(EntityEnum entity, WatchlistTerm[] wlData, String title,
+			StringBuilder ruleOutput) {
 
-        ruleOutput.append("rule \"").append(title).append(":%d\"")
-                .append(NEW_LINE).append("when\n");
-        List<QueryTerm> queryTerms = new ArrayList<>();
-        UUID qtUUID = UUID.randomUUID(); //UUID is how the rule engine tells which group an object is in.
-        for (WatchlistTerm wlterm : wlData) {
-            QueryTerm trm = new QueryTerm(entity.getEntityName(),
-                    wlterm.getField(), wlterm.getType(),
-                    CriteriaOperatorEnum.EQUAL.toString(), new String[]{wlterm.getValue()});
-            trm.setUuid(qtUUID);
-            queryTerms.add(trm);
-        }
-        RuleConditionBuilder ruleConditionBuilder = new RuleConditionBuilder(queryTerms);
-        for (QueryTerm qt : queryTerms) {
-            ruleConditionBuilder.addRuleCondition(qt);
-        }
-        ruleConditionBuilder.buildConditionsAndApppend(ruleOutput);
+		ruleOutput.append("rule \"").append(title).append(":%d\"").append(NEW_LINE).append("when\n");
+		List<QueryTerm> queryTerms = new ArrayList<>();
+		UUID qtUUID = UUID.randomUUID(); // UUID is how the rule engine tells which group an object is in.
+		for (WatchlistTerm wlterm : wlData) {
+			QueryTerm trm = new QueryTerm(entity.getEntityName(), wlterm.getField(), wlterm.getType(),
+					CriteriaOperatorEnum.EQUAL.toString(), new String[] { wlterm.getValue() });
+			trm.setUuid(qtUUID);
+			queryTerms.add(trm);
+		}
+		RuleConditionBuilder ruleConditionBuilder = new RuleConditionBuilder(queryTerms);
+		for (QueryTerm qt : queryTerms) {
+			ruleConditionBuilder.addRuleCondition(qt);
+		}
+		ruleConditionBuilder.buildConditionsAndApppend(ruleOutput);
 
-        return ruleConditionBuilder.addWatchlistRuleAction(ruleOutput, entity
-        );
-    }
+		return ruleConditionBuilder.addWatchlistRuleAction(ruleOutput, entity);
+	}
 
 }

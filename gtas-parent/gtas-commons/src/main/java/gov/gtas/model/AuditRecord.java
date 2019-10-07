@@ -49,8 +49,8 @@ public class AuditRecord extends BaseEntity {
 	 * @param user
 	 *            the user
 	 */
-	public AuditRecord(AuditActionType actionType, String target,
-			Status status, String message, String data, User user) {
+	public AuditRecord(AuditActionType actionType, String target, Status status, String message, String data,
+			User user) {
 		this.actionType = actionType;
 		this.target = target;
 		this.actionStatus = status;
@@ -78,8 +78,7 @@ public class AuditRecord extends BaseEntity {
 	 * @param timestamp
 	 *            the timestamp
 	 */
-	public AuditRecord(AuditActionType actionType, String target,
-			Status status, String message, String data, User user,
+	public AuditRecord(AuditActionType actionType, String target, Status status, String message, String data, User user,
 			Date timestamp) {
 		this.actionType = actionType;
 		this.target = target;
@@ -90,8 +89,7 @@ public class AuditRecord extends BaseEntity {
 		this.timestamp = timestamp;
 	}
 
-	public AuditRecord(AuditActionType actionType, String target,
-			String message, User user) {
+	public AuditRecord(AuditActionType actionType, String target, String message, User user) {
 		this(actionType, target, Status.SUCCESS, message, null, user);
 	}
 
@@ -192,8 +190,7 @@ public class AuditRecord extends BaseEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		final AuditRecord other = (AuditRecord) obj;
-		return Objects.equals(this.actionType, other.actionType)
-				&& Objects.equals(this.message, other.message)
+		return Objects.equals(this.actionType, other.actionType) && Objects.equals(this.message, other.message)
 				&& Objects.equals(this.timestamp, other.timestamp);
 	}
 }

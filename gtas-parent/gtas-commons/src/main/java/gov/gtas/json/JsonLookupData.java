@@ -18,7 +18,7 @@ public class JsonLookupData {
 		this.description = description;
 	}
 
-	@SuppressWarnings("unused") //Used to marshal object.
+	@SuppressWarnings("unused") // Used to marshal object.
 	public JsonLookupData() {
 	}
 

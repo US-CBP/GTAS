@@ -21,8 +21,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.google.inject.internal.util.Lists;
 
+import gov.gtas.aws.HitNotificationConfig;
 import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.error.ErrorHandlerFactory;
@@ -96,7 +98,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
                     try {
                         logger.info("Saving rules/summary targeting results {} of {} ...", count, batchedTargetingServiceResults.size());
                         targetingService.saveEverything(targetingServiceResults);
-                        // wait until all currently loaded messages are loaded then send hit notifications later
+                        // wait until all currently loading messages are loaded then send hit notifications later
                         waitListForNotification.addAll(targetingServiceResults.getHitsSummaryList());
                     } catch (Exception ignored) {
                         ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
@@ -105,11 +107,11 @@ public class RuleRunnerThread implements Callable<Boolean> {
                     count++;
                 }
                 logger.info("Rules and Watchlist ran in {} m/s.", (System.nanoTime() - start) / 1000000);
-                
-				long notificationStart = System.nanoTime();
-				// Send hit notification using AWS SNS topic
-				notificationSerivce.sendHitNotifications(waitListForNotification);
-				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
+
+				if (!waitListForNotification.isEmpty()) {
+					// Send hit notifications using AWS SNS topic
+					sendNotifications(waitListForNotification);
+				}
             }
             logger.debug("entering matching service portion of jobScheduling");
             boolean fuzzyMatchingOn = false;
@@ -147,6 +149,37 @@ public class RuleRunnerThread implements Callable<Boolean> {
         logger.debug("exiting jobScheduling()");
         return success;
     }
+
+
+	private void sendNotifications(List<HitsSummary> waitListForNotification) {
+		boolean hitNotificationEnabled = false;
+		String topicArn = null;
+		String topicSubject = null;
+		Long interpolRedNoticesId = null;
+		try {
+			hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
+					.findByOption(AppConfigurationRepository.ENABLE_INTERPOL_HIT_NOTIFICATION).getValue());
+
+			if (hitNotificationEnabled) {
+				long notificationStart = System.nanoTime();
+				topicArn = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_ARN).getValue();
+				topicSubject = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_SUBJECT).getValue();
+				// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
+				interpolRedNoticesId = Long.parseLong(appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
+				HitNotificationConfig hitNotificationConfig = new HitNotificationConfig(
+						AmazonSNSClientBuilder.standard().build(), waitListForNotification, topicArn, topicSubject,
+						interpolRedNoticesId);
+				notificationSerivce.sendHitNotifications(hitNotificationConfig);
+				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
+			}
+		} catch (Exception e) {
+			logger.warn(
+					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");
+		}
+	}
 
 
     void setMessageStatuses(List<MessageStatus> messageStatuses) {

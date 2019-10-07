@@ -11,15 +11,15 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class AddressConditionBuilder extends EntityConditionBuilder {
 
-    public AddressConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.ADDRESS.getEntityName());
-    }
+	public AddressConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.ADDRESS.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
 }

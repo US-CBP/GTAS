@@ -14,27 +14,27 @@ import gov.gtas.model.lookup.Carrier;
 import gov.gtas.model.lookup.Country;
 
 public interface LookUpRepository {
-    public List<Country> getAllCountries();
+	public List<Country> getAllCountries();
 
-    public List<Carrier> getAllCarriers();
+	public List<Carrier> getAllCarriers();
 
-    public List<Airport> getAllAirports();
-    
-    public List<FlightDirection> getFlightDirections();
+	public List<Airport> getAllAirports();
 
-    public List<AppConfiguration> getAllAppConfiguration();
+	public List<FlightDirection> getFlightDirections();
 
-    public void clearAllEntitiesCache();
+	public List<AppConfiguration> getAllAppConfiguration();
 
-    public void clearEntityFromCache(Long id);
+	public void clearAllEntitiesCache();
 
-    public Country saveCountry(Country country);
+	public void clearEntityFromCache(Long id);
 
-    public Country getCountry(String countryName);
+	public Country saveCountry(Country country);
 
-    public String getAppConfigOption(String option);
+	public Country getCountry(String countryName);
 
-    public void removeCountryCache(String countryName);
+	public String getAppConfigOption(String option);
 
-    public void deleteCountryDb(Country country);
+	public void removeCountryCache(String countryName);
+
+	public void deleteCountryDb(Country country);
 }

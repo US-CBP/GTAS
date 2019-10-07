@@ -35,61 +35,59 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = RuleServiceConfig.class)
 @Rollback(true)
 public class RuleRepositoryIT {
-    @Autowired
-    private RuleService testTarget;
+	@Autowired
+	private RuleService testTarget;
 
-    @Autowired
-    private IntegrationTestBuilder integrationTestBuilder;
+	@Autowired
+	private IntegrationTestBuilder integrationTestBuilder;
 
-    private IntegrationTestData integrationTestData;
+	private IntegrationTestData integrationTestData;
 
-    @Before
-    @Transactional
-    public void setUp() {
-    }
+	@Before
+	@Transactional
+	public void setUp() {
+	}
 
-    @After
-    @Transactional
-    public void tearDown() {
-        integrationTestBuilder.reset();
-    }
+	@After
+	@Transactional
+	public void tearDown() {
+		integrationTestBuilder.reset();
+	}
 
+	@Test(expected = CommonServiceException.class)
+	@Transactional
+	public void testNullRequest() {
+		testTarget.invokeAdhocRules("gtas.drl", null);
+	}
 
-    @Test(expected = CommonServiceException.class)
-    @Transactional
-    public void testNullRequest() {
-        testTarget.invokeAdhocRules("gtas.drl", null);
-    }
+	@Test
+	@Transactional
+	@Ignore
+	public void testBasicApisRequest() {
+		integrationTestData = integrationTestBuilder.messageType(APIS).build();
+		integrationTestData.getPassenger().getPassengerTripDetails().setEmbarkation("Timbuktu");
+		integrationTestData.getFlight().setFlightNumber("testFlightNum");
+		integrationTestData.getFlightPaxApis().setBagWeight(0);
 
-    @Test
-    @Transactional
-    @Ignore
-    public void testBasicApisRequest() {
-        integrationTestData = integrationTestBuilder.messageType(APIS).build();
-        integrationTestData.getPassenger().getPassengerTripDetails().setEmbarkation("Timbuktu");
-        integrationTestData.getFlight().setFlightNumber("testFlightNum");
-        integrationTestData.getFlightPaxApis().setBagWeight(0);
+		RuleExecutionContext ruleExecutionContext = TargetingServiceUtils
+				.createApisRequest(integrationTestData.getApisMessage());
+		RuleServiceRequest ruleServiceRequest = ruleExecutionContext.getRuleServiceRequest();
+		String filePathForDrl = RuleServiceConstants.DEFAULT_RULESET_NAME;
+		RuleServiceResult result = testTarget.invokeAdhocRules(filePathForDrl, ruleServiceRequest);
+		RuleExecutionStatistics executionStatistics = result.getExecutionStatistics();
 
-        RuleExecutionContext ruleExecutionContext = TargetingServiceUtils.createApisRequest(integrationTestData.getApisMessage());
-        RuleServiceRequest ruleServiceRequest = ruleExecutionContext.getRuleServiceRequest();
-        String filePathForDrl = RuleServiceConstants.DEFAULT_RULESET_NAME;
-        RuleServiceResult result = testTarget.invokeAdhocRules(filePathForDrl, ruleServiceRequest);
-        RuleExecutionStatistics executionStatistics = result.getExecutionStatistics();
-
-        assertNotNull(result);
-        assertNotNull(result.getResultList());
-        assertEquals("Result list is empty", 1, result.getResultList().size());
-        //Odd placement - Passenger lives in a RuleHitDetail list due to how the drl file processes.
-        assertEquals("Expected Passenger", integrationTestData.getPassenger(), result.getResultList().get(0));
-        assertNotNull(executionStatistics);
-        assertEquals("Expected 2 rules to be fired", 2,
-                executionStatistics.getTotalRulesFired());
-        assertEquals("Expected 2 rule names in list", 2, executionStatistics
-                .getRuleFiringSequence().size());
-        // Expecting 1 apis flight pax + 1 flight + 1 passenger to be affected / used.
-        assertEquals("Expected 3 object to be affected", 3,
-                executionStatistics.getTotalObjectsModified());
-        assertEquals("Expected 3 object to be inserted", 3, executionStatistics
-                .getInsertedObjectClassNameList().size());
-    }
+		assertNotNull(result);
+		assertNotNull(result.getResultList());
+		assertEquals("Result list is empty", 1, result.getResultList().size());
+		// Odd placement - Passenger lives in a RuleHitDetail list due to how the drl
+		// file processes.
+		assertEquals("Expected Passenger", integrationTestData.getPassenger(), result.getResultList().get(0));
+		assertNotNull(executionStatistics);
+		assertEquals("Expected 2 rules to be fired", 2, executionStatistics.getTotalRulesFired());
+		assertEquals("Expected 2 rule names in list", 2, executionStatistics.getRuleFiringSequence().size());
+		// Expecting 1 apis flight pax + 1 flight + 1 passenger to be affected / used.
+		assertEquals("Expected 3 object to be affected", 3, executionStatistics.getTotalObjectsModified());
+		assertEquals("Expected 3 object to be inserted", 3,
+				executionStatistics.getInsertedObjectClassNameList().size());
+	}
 }

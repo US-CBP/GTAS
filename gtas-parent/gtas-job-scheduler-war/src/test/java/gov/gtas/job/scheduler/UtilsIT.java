@@ -47,153 +47,151 @@ public class UtilsIT {
 	@Value("${message.dir.error}")
 	private String errorstr;
 
-  private final String TESTFILE = "TESTFILENAME.txt";
-  private final String TESTFILE2 = "TESTFILENAME";
+	private final String TESTFILE = "TESTFILENAME.txt";
+	private final String TESTFILE2 = "TESTFILENAME";
 
-  @Before
-  public void before() {}
+	@Before
+	public void before() {
+	}
 
-  @After
-  public void after() {}
+	@After
+	public void after() {
+	}
 
-    @Test
-    public void testMoveToDir_ERROR() throws LoaderException {
-      String filename = TESTFILE2;
-      File test = getOriginFile(filename, "THIS IS SOME TEST TEXT");
+	@Test
+	public void testMoveToDir_ERROR() throws LoaderException {
+		String filename = TESTFILE2;
+		File test = getOriginFile(filename, "THIS IS SOME TEST TEXT");
 
-      moveToDirWrapper(errorstr, test);
-      String pathstr = errorstr + File.separator + filename;
+		moveToDirWrapper(errorstr, test);
+		String pathstr = errorstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Error dir");
-    }
+		Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Error dir");
+	}
 
-    @Test
-    public void testMoveToDir_PROCESSED() throws LoaderException {
-      String filename = TESTFILE;
-      File test = getOriginFile(filename, "more text stuff");
+	@Test
+	public void testMoveToDir_PROCESSED() throws LoaderException {
+		String filename = TESTFILE;
+		File test = getOriginFile(filename, "more text stuff");
 
-      moveToDirWrapper(processedstr, test);
-      String pathstr = processedstr + File.separator + filename;
+		moveToDirWrapper(processedstr, test);
+		String pathstr = processedstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Processed dir");
-    }
+		Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in Processed dir");
+	}
 
-    @Test
-    public void testMoveToDir_WORKING() throws LoaderException {
-      String filename = TESTFILE;
-      File test = getOriginFile(filename, "more text stuff");
+	@Test
+	public void testMoveToDir_WORKING() throws LoaderException {
+		String filename = TESTFILE;
+		File test = getOriginFile(filename, "more text stuff");
 
-      moveToDirWrapper(workingstr, test);
-      String pathstr = workingstr + File.separator + filename;
+		moveToDirWrapper(workingstr, test);
+		String pathstr = workingstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in WORKING dir");
-    }
+		Assert.isTrue(Files.exists(Paths.get(pathstr)), "File not found in WORKING dir");
+	}
 
-    @Test
-    public void testMoveToDir_NULL() throws LoaderException {
-      String filename = TESTFILE;
-      String pathstr = workingstr + File.separator + filename;
+	@Test
+	public void testMoveToDir_NULL() throws LoaderException {
+		String filename = TESTFILE;
+		String pathstr = workingstr + File.separator + filename;
 
-      File existing = new File(pathstr);
-      existing.delete();
+		File existing = new File(pathstr);
+		existing.delete();
 
-      File test = getOriginFile(filename, "more text stuff");
-      moveToDirWrapper(null, test);
+		File test = getOriginFile(filename, "more text stuff");
+		moveToDirWrapper(null, test);
 
-      assertFalse("File should not exist in WORKING", Files.exists(Paths.get(pathstr)));
-    }
+		assertFalse("File should not exist in WORKING", Files.exists(Paths.get(pathstr)));
+	}
 
+	/**
+	 * TestMoveDuplicates tests - Utils.moveToDirectory should overwrite existing
+	 * files when moving, but should append a timestamp and save as a new file.
+	 * 
+	 * @throws LoaderException
+	 */
+	@Test
+	public void testMoveDuplicates_WORKING() throws LoaderException {
+		String filename = TESTFILE2;
+		File test = getOriginFile(filename, "more text stuff");
 
-    /**
-     * TestMoveDuplicates tests - Utils.moveToDirectory should  overwrite
-     * existing files when moving, but should append a timestamp and save as a new
-     * file.
-     * @throws LoaderException
-     */
-    @Test
-    public void testMoveDuplicates_WORKING() throws LoaderException {
-      String filename = TESTFILE2;
-      File test = getOriginFile(filename, "more text stuff");
+		moveToDirWrapper(workingstr, test);
+		String originalpathstr = workingstr + File.separator + filename;
 
-      moveToDirWrapper(workingstr, test);
-      String originalpathstr = workingstr + File.separator + filename;
+		Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in WORKING dir");
 
-      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in WORKING dir");
+		// repeat with the same filenames, expect 2 files in the target dir.
+		File test2 = getOriginFile(filename, "more text stuff");
 
-      //repeat with the same filenames, expect 2 files in the target dir.
-      File test2 = getOriginFile(filename, "more text stuff");
+		File dupeFile = moveToDirWrapper(workingstr, test2);
+		Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in WORKING dir");
+		assertEquals(originalpathstr, dupeFile.toPath().toString());
+	}
 
-      File dupeFile = moveToDirWrapper(workingstr, test2);
-      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in WORKING dir");
-      assertEquals(originalpathstr, dupeFile.toPath().toString());
-    }
+	@Test
+	public void testMoveDuplicates_PROCESSED() throws LoaderException {
+		String filename = TESTFILE;
+		File test = getOriginFile(filename, "more text stuff");
 
-    
-    @Test
-    public void testMoveDuplicates_PROCESSED() throws LoaderException {
-      String filename = TESTFILE;
-      File test = getOriginFile(filename, "more text stuff");
+		moveToDirWrapper(processedstr, test);
+		String originalpathstr = processedstr + File.separator + filename;
 
-      moveToDirWrapper(processedstr, test);
-      String originalpathstr = processedstr + File.separator + filename;
+		Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
 
-      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in Processed dir");
+		// repeat with the same filenames, expect 2 files in the target dir.
+		File test2 = getOriginFile(filename, "more text stuff");
 
-      //repeat with the same filenames, expect 2 files in the target dir.
-      File test2 = getOriginFile(filename, "more text stuff");
+		File dupeFile = moveToDirWrapper(processedstr, test2);
+		Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
+		assertEquals(originalpathstr, dupeFile.toPath().toString());
+	}
 
-      File dupeFile = moveToDirWrapper(processedstr, test2);
-      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in Processed dir");
-      assertEquals(originalpathstr, dupeFile.toPath().toString());
-    }
-    
-    @Test
-    public void testMoveDuplicates_ERROR() throws LoaderException {
-      String filename = TESTFILE;
-      File test = getOriginFile(filename, "more text stuff");
+	@Test
+	public void testMoveDuplicates_ERROR() throws LoaderException {
+		String filename = TESTFILE;
+		File test = getOriginFile(filename, "more text stuff");
 
-      moveToDirWrapper(errorstr, test);
-      String originalpathstr = errorstr + File.separator + filename;
+		moveToDirWrapper(errorstr, test);
+		String originalpathstr = errorstr + File.separator + filename;
 
-      Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in ERROR dir");
+		Assert.isTrue(Files.exists(Paths.get(originalpathstr)), "File not found in ERROR dir");
 
-      //repeat with the same filenames, expect 2 files in the target dir.
-      File test2 = getOriginFile(filename, "more text stuff");
+		// repeat with the same filenames, expect 2 files in the target dir.
+		File test2 = getOriginFile(filename, "more text stuff");
 
-      File dupeFile = moveToDirWrapper(errorstr, test2);
-      Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in ERROR dir");
-      assertEquals(originalpathstr, dupeFile.toPath().toString());
-    }
+		File dupeFile = moveToDirWrapper(errorstr, test2);
+		Assert.isTrue(Files.exists(dupeFile.toPath()), "DUPE file not found in ERROR dir");
+		assertEquals(originalpathstr, dupeFile.toPath().toString());
+	}
 
+	// ---------------------------
+	// PRIVATE METHODS
+	// ---------------------------
 
-    // ---------------------------
-    // PRIVATE METHODS
-    // ---------------------------
-    
-    // Wrapper for the method under test, Utils.moveToDir.
-    // Ensures moved files get deleted on exit since we are actually writing to disk 
-    // for integration tests. Calling Utils.moveToDir directly will require manual cleanup.
-    private File moveToDirWrapper(String target, File file) throws LoaderException {
-      File movedFile = Utils.moveToDirectory(target, file);
-      movedFile.deleteOnExit();
-      return movedFile;
-    }
+	// Wrapper for the method under test, Utils.moveToDir.
+	// Ensures moved files get deleted on exit since we are actually writing to disk
+	// for integration tests. Calling Utils.moveToDir directly will require manual
+	// cleanup.
+	private File moveToDirWrapper(String target, File file) throws LoaderException {
+		File movedFile = Utils.moveToDirectory(target, file);
+		movedFile.deleteOnExit();
+		return movedFile;
+	}
 
-    //Creates a new file in the origin directory, deletes it on test completion.
-    private File getOriginFile(String fileName, String fileText) throws LoaderException {
-      File file = new File(Paths.get(originstr) + File.separator + fileName);
+	// Creates a new file in the origin directory, deletes it on test completion.
+	private File getOriginFile(String fileName, String fileText) throws LoaderException {
+		File file = new File(Paths.get(originstr) + File.separator + fileName);
 
-      file.deleteOnExit();
-      try {
-        FileWriter fw = new FileWriter(file, false);
-        fw.write(fileText);
-        fw.close();
-      }
-      catch (Exception ex) { }
-      
-      return file;
-    }
+		file.deleteOnExit();
+		try {
+			FileWriter fw = new FileWriter(file, false);
+			fw.write(fileText);
+			fw.close();
+		} catch (Exception ex) {
+		}
 
-
+		return file;
+	}
 
 } //

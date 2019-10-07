@@ -27,67 +27,65 @@ import gov.gtas.parsers.exception.ParseException;
  * </ul>
  */
 public class FTX extends Segment {
-    public enum FtxCode {
-        BAG
-    }
+	public enum FtxCode {
+		BAG
+	}
 
-    private FtxCode ftxCode;
+	private FtxCode ftxCode;
 
-    /**
-     * This element reports the Bag Tag identification reference
-     */
-    private String bagId;
+	/**
+	 * This element reports the Bag Tag identification reference
+	 */
+	private String bagId;
 
-    //UGANDA SPECIFIC WEIGHT-NOT AVAILABLE IN REGULAR APIS FILE
-    private String bagWeight;
+	// UGANDA SPECIFIC WEIGHT-NOT AVAILABLE IN REGULAR APIS FILE
+	private String bagWeight;
 
-    /**
-     * Conditional: This element reports a numeric value indicating a sequence
-     * of values in a +1 increment beginning with the value in the previous
-     * element.
-     */
-    private String numBags;
+	/**
+	 * Conditional: This element reports a numeric value indicating a sequence of
+	 * values in a +1 increment beginning with the value in the previous element.
+	 */
+	private String numBags;
 
-    public FTX(List<Composite> composites) throws ParseException {
-        super(FTX.class.getSimpleName(), composites);
-        for (int i = 0; i < numComposites(); i++) {
-            Composite c = getComposite(i);
+	public FTX(List<Composite> composites) throws ParseException {
+		super(FTX.class.getSimpleName(), composites);
+		for (int i = 0; i < numComposites(); i++) {
+			Composite c = getComposite(i);
 
-            switch (i) {
-                case 0:
-                    if ("BAG".equals(c.getElement(0))) {
-                        this.ftxCode = FtxCode.BAG;
-                    }
-                    break;
-                case 1:
-                    if (this.ftxCode == FtxCode.BAG) {
-                        this.bagWeight = c.getElement(0);
-                    }
-                    break;
-                case 3:
-                    if (this.ftxCode == FtxCode.BAG) {
-                        this.bagId = c.getElement(0);
-                        this.numBags = c.getElement(1);
-                    }
-                    break;
-            }
-        }
-    }
+			switch (i) {
+			case 0:
+				if ("BAG".equals(c.getElement(0))) {
+					this.ftxCode = FtxCode.BAG;
+				}
+				break;
+			case 1:
+				if (this.ftxCode == FtxCode.BAG) {
+					this.bagWeight = c.getElement(0);
+				}
+				break;
+			case 3:
+				if (this.ftxCode == FtxCode.BAG) {
+					this.bagId = c.getElement(0);
+					this.numBags = c.getElement(1);
+				}
+				break;
+			}
+		}
+	}
 
+	public String getBagWeight() {
+		return bagWeight;
+	}
 
-    public String getBagWeight() {
-        return bagWeight;
-    }
+	public FtxCode getFtxCode() {
+		return ftxCode;
+	}
 
-    public FtxCode getFtxCode() {
-        return ftxCode;
-    }
+	public String getBagId() {
+		return bagId;
+	}
 
-    public String getBagId() {
-        return bagId;
-    }
-
-    public String getNumBags() {
-        return numBags;
-    }
+	public String getNumBags() {
+		return numBags;
+	}
 }

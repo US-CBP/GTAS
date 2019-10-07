@@ -18,81 +18,81 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AirportServiceImpl implements AirportService{
+public class AirportServiceImpl implements AirportService {
 
-    @Resource
-    private AirportRepository airportRepo;
-    @Resource
-    private AirportRepositoryCustom airportRepoCust;
+	@Resource
+	private AirportRepository airportRepo;
+	@Resource
+	private AirportRepositoryCustom airportRepoCust;
 
-    @Override
-    @Transactional
-    public Airport create(Airport port) {
-        return airportRepo.save(port);
-    }
+	@Override
+	@Transactional
+	public Airport create(Airport port) {
+		return airportRepo.save(port);
+	}
 
-    @Override
-    @Transactional
-    public Airport delete(Long id) {
-        Airport port = this.findById(id);
-        if(port != null){
-            airportRepo.delete(port);
-        }
-        return port;
-    }
+	@Override
+	@Transactional
+	public Airport delete(Long id) {
+		Airport port = this.findById(id);
+		if (port != null) {
+			airportRepo.delete(port);
+		}
+		return port;
+	}
 
-    @Override
-    @Transactional
-    public List<Airport> findAll() {
-        // TODO Auto-generated method stub
-        return (List<Airport>)airportRepo.findAll();
-    }
+	@Override
+	@Transactional
+	public List<Airport> findAll() {
+		// TODO Auto-generated method stub
+		return (List<Airport>) airportRepo.findAll();
+	}
 
-    @Override
-    @Transactional
-    public Airport update(Airport port) {
-      return airportRepo.save(port);
-    }
+	@Override
+	@Transactional
+	public Airport update(Airport port) {
+		return airportRepo.save(port);
+	}
 
-    @Override
-    @Transactional
-    public Airport findById(Long id) {
-        
-        return airportRepo.findOne(id);
-    }
+	@Override
+	@Transactional
+	public Airport findById(Long id) {
 
-    @Override
-    @Transactional
-    public Airport restore(Airport airport) {
-        return airportRepoCust.restore(airport);
-    }
+		return airportRepo.findOne(id);
+	}
 
-    @Override
-    @Transactional
-    public int restoreAll() {
-        return airportRepoCust.restoreAll();
-    }
+	@Override
+	@Transactional
+	public Airport restore(Airport airport) {
+		return airportRepoCust.restore(airport);
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "airportCache", key = "#airportCode")
-    public Airport getAirportByThreeLetterCode(String airportCode) {
-        Airport airport = null;
-        List<Airport> airports =airportRepo.getAirportByThreeLetterCode(airportCode);
-        if(airports != null && airports.size() >0)
-        airport = airports.get(0);
-        return airport;
-    }
+	@Override
+	@Transactional
+	public int restoreAll() {
+		return airportRepoCust.restoreAll();
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "airportCache", key = "#airportCode")
-    public Airport getAirportByFourLetterCode(String airportCode) {
-        Airport airport = null;
-        List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);
-        if(airports != null && airports.size() >0)
-        airport = airports.get(0);
-        return airport;
-    }
+	@Override
+	@Transactional
+	@Cacheable(value = "airportCache", key = "#airportCode")
+	public Airport getAirportByThreeLetterCode(String airportCode) {
+		Airport airport = null;
+		List<Airport> airports = airportRepo.getAirportByThreeLetterCode(airportCode);
+		if (airports != null && airports.size() > 0)
+			airport = airports.get(0);
+		return airport;
+	}
+
+	@Override
+	@Transactional
+	@Cacheable(value = "airportCache", key = "#airportCode")
+	public Airport getAirportByFourLetterCode(String airportCode) {
+		Airport airport = null;
+		List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);
+		if (airports != null && airports.size() > 0)
+			airport = airports.get(0);
+		return airport;
+	}
 
 }

@@ -30,10 +30,8 @@ import gov.gtas.services.matcher.quickmatch.DerogHit;
 import gov.gtas.services.matcher.quickmatch.MatchingResult;
 import gov.gtas.services.matcher.quickmatch.QuickMatcher;
 
-
 public class QuickMatcherTest {
 
-	 
 	private ObjectMapper mapper = new ObjectMapper();
 
 	@Test
@@ -69,7 +67,7 @@ public class QuickMatcherTest {
 		Passenger p = getTestPassenger(1, "John", "Doe", null, "1988-03-15");
 
 		List<HashMap<String, String>> derogList = getTestWL(11, "John", "Doe", "1988-03-15");
-		
+
 		QuickMatcher qm = new QuickMatcherImpl(derogList);
 		MatchingResult result = qm.match(p, .80F, DOB_YEAR_OFFSET);
 		result.getResponses();
@@ -91,7 +89,7 @@ public class QuickMatcherTest {
 
 		assertEquals(0, result.getTotalHits());
 	}
-	
+
 	@Test
 	public void doubleMetaphoneMissAndjaroWinklerHitWithSameDOBShouldHit() throws IOException {
 
@@ -119,7 +117,7 @@ public class QuickMatcherTest {
 
 		assertEquals(0, result.getTotalHits());
 	}
-	
+
 	@Test
 	public void doubleMetaphoneAndjaroWinklerMatchWithDOBOffTheThresholdShouldNotHit() throws IOException {
 
@@ -133,16 +131,16 @@ public class QuickMatcherTest {
 
 		assertEquals(0, result.getTotalHits());
 	}
-	
+
 	@Test
 	public void quickmatchWithoutDerogListShouldFailtAssertion() {
-	
+
 		QuickMatcher qm = new QuickMatcherImpl(null);
 		Passenger p = getTestPassenger(22322, "David", "Josph", null, "1988-03-15");
 		MatchingResult result = qm.match(p);
 		assertEquals(0, result.getTotalHits());
 	}
-	
+
 	private List<HashMap<String, String>> getTestWL(int id, String firstName, String lastName, String dob)
 			throws IOException {
 

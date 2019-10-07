@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan("gov.gtas")
 @EnableTransactionManagement
 public class RuleServiceConfig {
-    @Resource
-    private Environment env;
+	@Resource
+	private Environment env;
 
 }

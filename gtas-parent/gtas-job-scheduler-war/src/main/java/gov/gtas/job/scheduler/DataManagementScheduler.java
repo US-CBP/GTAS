@@ -25,56 +25,56 @@ import java.util.List;
 @Component
 public class DataManagementScheduler {
 
+	private static final Logger logger = LoggerFactory.getLogger(DataManagementScheduler.class);
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(DataManagementScheduler.class);
+	@Autowired
+	private DataManagementRepository dataManagementRepository;
 
-    @Autowired
-    private DataManagementRepository dataManagementRepository;
+	@Autowired
+	private DataManagementService dataManagementService;
 
-    @Autowired
-    private DataManagementService dataManagementService;
+	@Autowired
+	private AppConfigurationService appConfigurationService;
 
-    @Autowired
-    private AppConfigurationService appConfigurationService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private UserService userService;
+	private Integer DEFAULT_TIME_IN_MONTHS = 6;
 
-    private Integer DEFAULT_TIME_IN_MONTHS = 6;
+	// @Scheduled(fixedDelayString = "${datamanagement.fixedDelay.in.milliseconds}",
+	// initialDelayString = "${datamanagement.initialDelay.in.milliseconds}")
+	public void jobScheduling() {
 
+		try {
 
-    //@Scheduled(fixedDelayString = "${datamanagement.fixedDelay.in.milliseconds}", initialDelayString = "${datamanagement.initialDelay.in.milliseconds}")
-    public void jobScheduling() {
+			String truncTypeFlag = appConfigurationService
+					.findByOption(AppConfigurationRepository.DATA_MANAGEMENT_TRUNC_TYPE_FLAG).getValue();
+			Long truncTimeFlag = Long.parseLong(appConfigurationService
+					.findByOption(AppConfigurationRepository.DATA_MANAGEMENT_CUT_OFF_TIME_SPAN).getValue());
+			DataManagementTruncation passThruTruncTypeFlag;
+			User currentUser = userService.fetchUser("admin");
 
-        try {
+			if (truncTypeFlag.startsWith("API")) {
+				passThruTruncTypeFlag = DataManagementTruncation.APIS_ONLY;
+			} else if (truncTypeFlag.startsWith("PNR")) {
+				passThruTruncTypeFlag = DataManagementTruncation.PNR_ONLY;
+			} else {
+				passThruTruncTypeFlag = DataManagementTruncation.ALL;
+			}
 
-            String truncTypeFlag = appConfigurationService.findByOption(AppConfigurationRepository.DATA_MANAGEMENT_TRUNC_TYPE_FLAG).getValue();
-            Long truncTimeFlag = Long.parseLong(appConfigurationService.findByOption(AppConfigurationRepository.DATA_MANAGEMENT_CUT_OFF_TIME_SPAN).getValue());
-            DataManagementTruncation passThruTruncTypeFlag;
-            User currentUser = userService.fetchUser("admin");
+			if (((truncTimeFlag < 1 || (truncTimeFlag > 24)))) {
+				truncTimeFlag = DEFAULT_TIME_IN_MONTHS.longValue();
+			}
 
-            if (truncTypeFlag.startsWith("API")) {
-                passThruTruncTypeFlag = DataManagementTruncation.APIS_ONLY;
-            } else if (truncTypeFlag.startsWith("PNR")) {
-                passThruTruncTypeFlag = DataManagementTruncation.PNR_ONLY;
-            } else {
-                passThruTruncTypeFlag = DataManagementTruncation.ALL;
-            }
+			dataManagementService.truncateAllMessageDataByDate(LocalDate.now().minusMonths(truncTimeFlag), currentUser,
+					passThruTruncTypeFlag);
 
-            if(((truncTimeFlag < 1 || (truncTimeFlag > 24)))){
-                truncTimeFlag = DEFAULT_TIME_IN_MONTHS.longValue();
-            }
+		} catch (IllegalArgumentException iex) {
+			logger.error(iex.getMessage());
 
-            dataManagementService.truncateAllMessageDataByDate(LocalDate.now().minusMonths(truncTimeFlag), currentUser, passThruTruncTypeFlag);
-
-        }catch (IllegalArgumentException iex){
-            logger.error(iex.getMessage());
-
-        }catch (Exception ex){
-            logger.error(ex.getMessage());
-        }
-    }
-
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+		}
+	}
 
 }

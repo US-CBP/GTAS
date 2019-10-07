@@ -29,8 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class WhitelistContoller {
-	private static final Logger logger = LoggerFactory
-			.getLogger(WhitelistContoller.class);
+	private static final Logger logger = LoggerFactory.getLogger(WhitelistContoller.class);
 
 	@Autowired
 	private WhitelistService whitelistService;
@@ -56,8 +55,7 @@ public class WhitelistContoller {
 	@RequestMapping(value = Constants.WHITELIST_DELETE, method = RequestMethod.DELETE)
 	public void deleteWhitelist(@PathVariable(value = "id") String id) {
 		logger.info("delete a whitelist.");
-		whitelistService.delete(Long.valueOf(id),
-				GtasSecurityUtils.fetchLoggedInUserId());
+		whitelistService.delete(Long.valueOf(id), GtasSecurityUtils.fetchLoggedInUserId());
 	}
 
 	/**

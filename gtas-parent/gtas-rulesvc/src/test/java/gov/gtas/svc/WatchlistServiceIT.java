@@ -48,7 +48,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 
-
 /**
  * Integration tests for the UDR management service.
  */
@@ -79,11 +78,9 @@ public class WatchlistServiceIT {
 	public void testCreateWatchlist() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
-				user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
-		List<ServiceResponseDetailAttribute> respDetails = resp
-				.getResponseDetails();
+		List<ServiceResponseDetailAttribute> respDetails = resp.getResponseDetails();
 		assertEquals(3, respDetails.size());// wl id, wl name, list of
 											// inserted/updated ids
 		Watchlist wl = wlPersistenceService.findByName(WL_NAME1);
@@ -92,10 +89,8 @@ public class WatchlistServiceIT {
 		assertEquals(WL_NAME1, wl.getWatchlistName());
 		assertEquals(EntityEnum.PASSENGER, wl.getWatchlistEntity());
 		assertEquals(user, wl.getWatchListEditor());
-		assertTrue(DateCalendarUtils.dateRoundedEquals(new Date(),
-				wl.getEditTimestamp(), Calendar.HOUR));
-		List<WatchlistItem> items = wlPersistenceService
-				.findWatchlistItems(WL_NAME1);
+		assertTrue(DateCalendarUtils.dateRoundedEquals(new Date(), wl.getEditTimestamp(), Calendar.HOUR));
+		List<WatchlistItem> items = wlPersistenceService.findWatchlistItems(WL_NAME1);
 		assertEquals(2, items.size());
 		for (WatchlistItem itm : items) {
 			assertNotNull(itm.getItemRuleData());
@@ -105,8 +100,7 @@ public class WatchlistServiceIT {
 			assertTrue(itmData.matches("\\{.*\\}"));
 		}
 
-		List<AuditRecord> logs = wlPersistenceService
-				.findLogEntriesForWatchlist(WL_NAME1);
+		List<AuditRecord> logs = wlPersistenceService.findLogEntriesForWatchlist(WL_NAME1);
 		assertNotNull(logs);
 		assertEquals(2, logs.size());
 	}
@@ -116,8 +110,7 @@ public class WatchlistServiceIT {
 	public void testUpdateDeleteWatchlistItem() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
-				user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -127,12 +120,10 @@ public class WatchlistServiceIT {
 		items.get(0).setAction(WatchlistEditEnum.U.getOperationName());
 		items.get(1).setAction(WatchlistEditEnum.D.getOperationName());
 
-		resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(),
-				spec);
+		resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 
-		List<WatchlistItem> updItems = wlPersistenceService
-				.findWatchlistItems(WL_NAME1);
+		List<WatchlistItem> updItems = wlPersistenceService.findWatchlistItems(WL_NAME1);
 		assertEquals(1, updItems.size());
 		WatchlistItem itm = updItems.get(0);
 		assertNotNull(itm.getItemRuleData());
@@ -141,8 +132,7 @@ public class WatchlistServiceIT {
 		assertTrue(!StringUtils.isEmpty(itmData));
 		assertTrue(itmData.matches("\\{.*\\}"));
 
-		List<AuditRecord> logs = wlPersistenceService
-				.findLogEntriesForWatchlist(WL_NAME1);
+		List<AuditRecord> logs = wlPersistenceService.findLogEntriesForWatchlist(WL_NAME1);
 		assertNotNull(logs);
 		assertEquals(4, logs.size());
 	}
@@ -152,8 +142,7 @@ public class WatchlistServiceIT {
 	public void testUpdateWatchlistItemError() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
-				user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -167,9 +156,7 @@ public class WatchlistServiceIT {
 			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 			fail("Expecting exception");
 		} catch (CommonServiceException cse) {
-			assertEquals(
-					WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE,
-					cse.getErrorCode());
+			assertEquals(WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE, cse.getErrorCode());
 		}
 	}
 
@@ -178,8 +165,7 @@ public class WatchlistServiceIT {
 	public void testDeleteWatchlistItemError() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
-				user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -193,9 +179,7 @@ public class WatchlistServiceIT {
 			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 			fail("Expecting exception");
 		} catch (CommonServiceException cse) {
-			assertEquals(
-					WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE,
-					cse.getErrorCode());
+			assertEquals(WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE, cse.getErrorCode());
 		}
 	}
 
@@ -204,13 +188,11 @@ public class WatchlistServiceIT {
 	public void testKnowledgeBaseForWl() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(
-				user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		resp = wlService.activateAllWatchlists(WL_KB_NAME);
 		assertEquals(Status.SUCCESS, resp.getStatus());
-		String drl = ruleManagementService
-				.fetchDrlRulesFromKnowledgeBase(WL_KB_NAME);
+		String drl = ruleManagementService.fetchDrlRulesFromKnowledgeBase(WL_KB_NAME);
 		assertNotNull(drl);
 	}
 
@@ -222,13 +204,11 @@ public class WatchlistServiceIT {
 		Set<RoleData> roles = new HashSet<RoleData>();
 		roles.add(new RoleData(1, "ADMIN"));
 
-		UserData usr = new UserData(USER_ID, "password", USER_FNAME,
-				USER_LASTNAME, 1, roles);
+		UserData usr = new UserData(USER_ID, "password", USER_FNAME, USER_LASTNAME, 1, roles);
 		Role role = new Role();
 		role.setRoleDescription(ROLE_NAME);
 
-		User user = userServiceUtil.mapUserEntityFromUserData(userService
-				.create(usr));
+		User user = userServiceUtil.mapUserEntityFromUserData(userService.create(usr));
 
 		return user;
 	}

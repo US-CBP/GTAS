@@ -18,46 +18,46 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import gov.gtas.validators.Validatable;
 
 public class PnrVo extends MessageVo implements Validatable {
-    private String messageCode;
-    
-    private String recordLocator;
-    private String carrier;
-    private String origin;
-    private String originCountry;
-    private Date dateBooked;
-    private Date dateReceived;
-    private Date departureDate;
-    private Integer passengerCount;
-    private Integer bagCount;
-    private double baggageWeight = 0;
-    private int total_bag_count = 0;
-    private double total_bag_weight = 0;
-    private String baggageUnit;
-    private String formOfPayment;
-    private TVL_L0 primeFlight;
-    private Integer daysBookedBeforeTravel;
-    
-    private List<PassengerVo> passengers = new ArrayList<>();
-    private List<BagMeasurementsVo> bagMeasurements = new ArrayList<>();
-    private List<AddressVo> addresses = new ArrayList<>();
-    private List<PhoneVo> phoneNumbers = new ArrayList<>();
-    private List<CreditCardVo> creditCards = new ArrayList<>();
-    private List<FrequentFlyerVo> frequentFlyerDetails = new ArrayList<>();
-    private List<EmailVo> emails = new ArrayList<>();
-    private List<AgencyVo> agencies = new ArrayList<>();
-    private List<CodeShareVo> codeshares = new ArrayList<>();
-    private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
-    private Date reservationCreateDate;
-    private Boolean headPool = Boolean.FALSE;
+	private String messageCode;
 
+	private String recordLocator;
+	private String carrier;
+	private String origin;
+	private String originCountry;
+	private Date dateBooked;
+	private Date dateReceived;
+	private Date departureDate;
+	private Integer passengerCount;
+	private Integer bagCount;
+	private double baggageWeight = 0;
+	private int total_bag_count = 0;
+	private double total_bag_weight = 0;
+	private String baggageUnit;
+	private String formOfPayment;
+	private TVL_L0 primeFlight;
+	private Integer daysBookedBeforeTravel;
 
-    public double getTotal_bag_weight() {
-        return total_bag_weight;
-    }
+	private List<PassengerVo> passengers = new ArrayList<>();
+	private List<BagMeasurementsVo> bagMeasurements = new ArrayList<>();
+	private List<AddressVo> addresses = new ArrayList<>();
+	private List<PhoneVo> phoneNumbers = new ArrayList<>();
+	private List<CreditCardVo> creditCards = new ArrayList<>();
+	private List<FrequentFlyerVo> frequentFlyerDetails = new ArrayList<>();
+	private List<EmailVo> emails = new ArrayList<>();
+	private List<AgencyVo> agencies = new ArrayList<>();
+	private List<CodeShareVo> codeshares = new ArrayList<>();
+	private List<PaymentFormVo> FormOfPayments = new ArrayList<>();
+	private Date reservationCreateDate;
+	private Boolean headPool = Boolean.FALSE;
 
-    public void setTotal_bag_weight(double total_bag_weight) {
-        this.total_bag_weight = total_bag_weight;
-    }
+	public double getTotal_bag_weight() {
+		return total_bag_weight;
+	}
+
+	public void setTotal_bag_weight(double total_bag_weight) {
+		this.total_bag_weight = total_bag_weight;
+	}
+
 	public Boolean getHeadPool() {
 		return headPool;
 	}
@@ -107,163 +107,163 @@ public class PnrVo extends MessageVo implements Validatable {
 	}
 
 	public PnrVo() {
-        this.bagCount = 0;
-        this.passengerCount = 0;
-    }
-     
-    public List<EmailVo> getEmails() {
-        return emails;
-    }
+		this.bagCount = 0;
+		this.passengerCount = 0;
+	}
 
-    public void setEmails(List<EmailVo> emails) {
-        this.emails = emails;
-    }
+	public List<EmailVo> getEmails() {
+		return emails;
+	}
 
-    public Integer getDaysBookedBeforeTravel() {
-        return daysBookedBeforeTravel;
-    }
+	public void setEmails(List<EmailVo> emails) {
+		this.emails = emails;
+	}
 
-    public void setDaysBookedBeforeTravel(Integer daysBookedBeforeTravel) {
-        this.daysBookedBeforeTravel = daysBookedBeforeTravel;
-    }
-    
-    public String getMessageCode() {
-        return messageCode;
-    }
-    
-    public void setMessageCode(String messageCode) {
-        this.messageCode = messageCode;
-    }
-    
-    public String getRecordLocator() {
-        return recordLocator;
-    }
+	public Integer getDaysBookedBeforeTravel() {
+		return daysBookedBeforeTravel;
+	}
 
-    public void setRecordLocator(String recordLocator) {
-        this.recordLocator = recordLocator;
-    }
+	public void setDaysBookedBeforeTravel(Integer daysBookedBeforeTravel) {
+		this.daysBookedBeforeTravel = daysBookedBeforeTravel;
+	}
 
-    public String getCarrier() {
-        return carrier;
-    }
+	public String getMessageCode() {
+		return messageCode;
+	}
 
-    public void setCarrier(String carrier) {
-        this.carrier = carrier;
-    }
+	public void setMessageCode(String messageCode) {
+		this.messageCode = messageCode;
+	}
 
-    public String getOrigin() {
-        return origin;
-    }
+	public String getRecordLocator() {
+		return recordLocator;
+	}
 
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
+	public void setRecordLocator(String recordLocator) {
+		this.recordLocator = recordLocator;
+	}
 
-    public String getOriginCountry() {
-        return originCountry;
-    }
+	public String getCarrier() {
+		return carrier;
+	}
 
-    public void setOriginCountry(String originCountry) {
-        this.originCountry = originCountry;
-    }
+	public void setCarrier(String carrier) {
+		this.carrier = carrier;
+	}
 
-    public Date getDateBooked() {
-        return dateBooked;
-    }
+	public String getOrigin() {
+		return origin;
+	}
 
-    public void setDateBooked(Date dateBooked) {
-        this.dateBooked = dateBooked;
-    }
-    
-    public Date getDateReceived() {
-        return dateReceived;
-    }
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
 
-    public void setDateReceived(Date dateReceived) {
-        this.dateReceived = dateReceived;
-    }
+	public String getOriginCountry() {
+		return originCountry;
+	}
 
-    public Date getDepartureDate() {
-        return departureDate;
-    }
+	public void setOriginCountry(String originCountry) {
+		this.originCountry = originCountry;
+	}
 
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
+	public Date getDateBooked() {
+		return dateBooked;
+	}
 
-    public Integer getPassengerCount() {
-        return passengerCount;
-    }
+	public void setDateBooked(Date dateBooked) {
+		this.dateBooked = dateBooked;
+	}
 
-    public void setPassengerCount(Integer passengerCount) {
-        this.passengerCount = passengerCount;
-    }
+	public Date getDateReceived() {
+		return dateReceived;
+	}
 
-    public Integer getBagCount() {
-        return bagCount;
-    }
+	public void setDateReceived(Date dateReceived) {
+		this.dateReceived = dateReceived;
+	}
 
-    public void setBagCount(Integer bagCount) {
-        this.bagCount = bagCount;
-    }
+	public Date getDepartureDate() {
+		return departureDate;
+	}
 
-    public String getFormOfPayment() {
-        return formOfPayment;
-    }
+	public void setDepartureDate(Date departureDate) {
+		this.departureDate = departureDate;
+	}
 
-    public void setFormOfPayment(String formOfPayment) {
-        this.formOfPayment = formOfPayment;
-    }
+	public Integer getPassengerCount() {
+		return passengerCount;
+	}
 
-    public List<PassengerVo> getPassengers() {
-        return passengers;
-    }
+	public void setPassengerCount(Integer passengerCount) {
+		this.passengerCount = passengerCount;
+	}
 
-    public void setPassengers(List<PassengerVo> passengers) {
-        this.passengers = passengers;
-    }
+	public Integer getBagCount() {
+		return bagCount;
+	}
 
-    public List<AgencyVo> getAgencies() {
-        return agencies;
-    }
+	public void setBagCount(Integer bagCount) {
+		this.bagCount = bagCount;
+	}
 
-    public void setAgencies(List<AgencyVo> agencies) {
-        this.agencies = agencies;
-    }
+	public String getFormOfPayment() {
+		return formOfPayment;
+	}
 
-    public List<AddressVo> getAddresses() {
-        return addresses;
-    }
+	public void setFormOfPayment(String formOfPayment) {
+		this.formOfPayment = formOfPayment;
+	}
 
-    public void setAddresses(List<AddressVo> addresses) {
-        this.addresses = addresses;
-    }
+	public List<PassengerVo> getPassengers() {
+		return passengers;
+	}
 
-    public List<PhoneVo> getPhoneNumbers() {
-        return phoneNumbers;
-    }
+	public void setPassengers(List<PassengerVo> passengers) {
+		this.passengers = passengers;
+	}
 
-    public void setPhoneNumbers(List<PhoneVo> phoneNumbers) {
-        this.phoneNumbers = phoneNumbers;
-    }
+	public List<AgencyVo> getAgencies() {
+		return agencies;
+	}
 
-    public List<CreditCardVo> getCreditCards() {
-        return creditCards;
-    }
+	public void setAgencies(List<AgencyVo> agencies) {
+		this.agencies = agencies;
+	}
 
-    public void setCreditCards(List<CreditCardVo> creditCards) {
-        this.creditCards = creditCards;
-    }
+	public List<AddressVo> getAddresses() {
+		return addresses;
+	}
 
-    public List<FrequentFlyerVo> getFrequentFlyerDetails() {
-        return frequentFlyerDetails;
-    }
+	public void setAddresses(List<AddressVo> addresses) {
+		this.addresses = addresses;
+	}
 
-    public void setFrequentFlyerDetails(List<FrequentFlyerVo> frequentFlyerDetails) {
-        this.frequentFlyerDetails = frequentFlyerDetails;
-    }
+	public List<PhoneVo> getPhoneNumbers() {
+		return phoneNumbers;
+	}
 
-    public Date getReservationCreateDate() {
+	public void setPhoneNumbers(List<PhoneVo> phoneNumbers) {
+		this.phoneNumbers = phoneNumbers;
+	}
+
+	public List<CreditCardVo> getCreditCards() {
+		return creditCards;
+	}
+
+	public void setCreditCards(List<CreditCardVo> creditCards) {
+		this.creditCards = creditCards;
+	}
+
+	public List<FrequentFlyerVo> getFrequentFlyerDetails() {
+		return frequentFlyerDetails;
+	}
+
+	public void setFrequentFlyerDetails(List<FrequentFlyerVo> frequentFlyerDetails) {
+		this.frequentFlyerDetails = frequentFlyerDetails;
+	}
+
+	public Date getReservationCreateDate() {
 		return reservationCreateDate;
 	}
 
@@ -273,33 +273,34 @@ public class PnrVo extends MessageVo implements Validatable {
 
 	public void addFormOfPayments(PaymentFormVo payment) {
 		FormOfPayments.add(payment);
-    }
+	}
+
 	@Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 
-    @Override
-    public boolean isValid() {
-        if(StringUtils.isBlank(this.recordLocator) || StringUtils.isBlank(this.carrier)){
-            return false;
-        }
-        return true;
-    }
+	@Override
+	public boolean isValid() {
+		if (StringUtils.isBlank(this.recordLocator) || StringUtils.isBlank(this.carrier)) {
+			return false;
+		}
+		return true;
+	}
 
-    public TVL_L0 getPrimeFlight() {
-        return primeFlight;
-    }
+	public TVL_L0 getPrimeFlight() {
+		return primeFlight;
+	}
 
-    public void setPrimeFlight(TVL_L0 primeFlight) {
-        this.primeFlight = primeFlight;
-    }
+	public void setPrimeFlight(TVL_L0 primeFlight) {
+		this.primeFlight = primeFlight;
+	}
 
-    public List<BagMeasurementsVo> getBagMeasurements() {
-        return bagMeasurements;
-    }
+	public List<BagMeasurementsVo> getBagMeasurements() {
+		return bagMeasurements;
+	}
 
-    public void setBagMeasurements(List<BagMeasurementsVo> bagMeasurements) {
-        this.bagMeasurements = bagMeasurements;
-    }
+	public void setBagMeasurements(List<BagMeasurementsVo> bagMeasurements) {
+		this.bagMeasurements = bagMeasurements;
+	}
 }

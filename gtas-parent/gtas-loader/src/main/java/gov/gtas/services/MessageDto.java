@@ -8,7 +8,7 @@ import gov.gtas.model.Pnr;
 import gov.gtas.parsers.vo.MessageVo;
 
 public class MessageDto {
-	
+
 	private Pnr pnr;
 	private ApisMessage apis;
 	private String rawMsg;
@@ -19,7 +19,8 @@ public class MessageDto {
 	private String[] primeFlightKey;
 	private MessageStatus messageStatus;
 
-	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo, String[] primeFlightKey){
+	public MessageDto(Pnr pnr, ApisMessage apis, List<String> rawMsgs, String rawMsg, String msgType, MessageVo msgVo,
+			String[] primeFlightKey) {
 		this.pnr = pnr;
 		this.apis = apis;
 		this.msgType = msgType;
@@ -28,9 +29,9 @@ public class MessageDto {
 		this.rawMsgs = rawMsgs;
 		this.primeFlightKey = primeFlightKey;
 	}
-	
-	public MessageDto(){
-		
+
+	public MessageDto() {
+
 	};
 
 	public Pnr getPnr() {
@@ -96,7 +97,7 @@ public class MessageDto {
 	public void setPrimeFlightKey(String[] primeFlightKey) {
 		this.primeFlightKey = primeFlightKey;
 	}
-	
+
 	public MessageStatus getMessageStatus() {
 		return messageStatus;
 	}

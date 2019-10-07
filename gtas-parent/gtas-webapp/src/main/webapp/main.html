@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="resources/node_modules/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="resources/css/gtas.css" />
   <link rel="stylesheet" href="resources/css/main.css" />
+  <link rel="stylesheet" href="resources/node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="resources/node_modules/angularjs-bootstrap-datetimepicker/src/css/datetimepicker.css"/>
   <link href="resources/css/misc_fonts.css" rel="stylesheet">
   <link href="resources/css/misc_italian.css" rel="stylesheet">
   <script src="resources/node_modules/jquery/dist/jquery.js"></script>
@@ -48,38 +50,39 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 		    </button>
+        
       </div>
       <div id="navbar-user-info" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
           <li class="dropdown mobile-hide">
             <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              Tools<span class="caret"></span>
+              {{'nav.tools' | translate}}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="#/build/query">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;Queries</a>
+                &nbsp;{{'nav.queries' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_RULES }}]"><a href="#/build/rule">
                 <i class="fa fa-flag" aria-hidden="true"></i>
-                &nbsp;Rules</a>
+                &nbsp;{{'nav.riskcriteria' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}]"><a href="#/watchlists">
                 <i class="fa fa-eye" aria-hidden="true"></i>
-                &nbsp;Watch List</a>
+                &nbsp;{{'nav.watchlist' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
                 <a href="#/admin">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                &nbsp;Admin</a>
+                &nbsp;{{'nav.admin' | translate}}</a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]"><a href="#/upload">
                 <i class="fa fa-upload" aria-hidden="true"></i>
-                &nbsp;Upload</a></li>
+                &nbsp;{{'nav.upload' | translate}}</a></li>
               <!-- Neo4J Browser pop out-->
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }}]"><a href="{{getNeo4JUrl()}}" target="_blank">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-                &nbsp;Neo4J Browser</a>
+                &nbsp;{{'nav.neo4j' | translate}}</a>
               </li>
             </ul>
           </li>
@@ -89,24 +92,24 @@
               <span class="notif-icon-cnt">{{getHitCount()}}</span>
             </a>
           </li>
-          
+
         </ul>
-        
-       
+
+
         	<ul class="nav navbar-nav navbar-right">
          		 <li class="dropdown mobile-hide">
             		<a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#">
-              			Help<span class="caret"></span>
+              			{{'nav.help' | translate}}<span class="caret"></span>
            			 </a>
            	 <ul class="dropdown-menu" role="menu">
               	<li ><a href="#/aboutgtas">
                 <i class="fa fa-info-circle" aria-hidden="true"></i>
-                &nbsp;About GTAS</a>
+                &nbsp;{{'gtas.about' | translate}}</a>
               </li>
               </ul>
           </ul>
-        
-        
+
+
 
         <ul class="nav navbar-nav navbar-right">
           <li data-toggle="hover" class="dropdown">
@@ -119,18 +122,18 @@
 		        </a>
             <ul rel="right-menu-links" role="menu" class="dropdown-menu">
               <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}]">
-                <a title="Settings" href="#/userSettings">Change Password</a>
+                <a href="#/userSettings">{{'nav.settings' | translate}}</a>
               </li>
               <li class="divider"></li>
               <li data-has-role="[{{ ROLES.MANAGE_QUERIES }},{{ ROLES.MANAGE_RULES }},{{ ROLES.MANAGE_WATCHLIST }},{{ ROLES.VIEW_FLIGHT_PASSENGERS }}, {{ROLES.ONE_DAY_LOOKOUT }} ]">
-                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  Office Location  </a>
+                <a title="Office Location" href="#/userlocation"> <span class="fa fa-building"></span>&nbsp;  {{'officelocation' | translate}}  </a>
               </li>
               <li data-has-role="[{{ ROLES.ADMIN }}]">
-                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">Office Location </span>   </a>
+                <a title=""> <span style="opacity: 0.4;filter: alpha(opacity=40);" class="fa fa-building"></span>&nbsp;<span style="color:lightgrey">{{'officelocation' | translate}}</span>   </a>
               </li>
               <li class="divider"></li>
               <li>
-                <a href ng-click="logout()" title="Logout">Logout</a>
+                <a href ng-click="logout()">{{'login.logout' | translate}}</a>
               </li>
             </ul>
           </li>
@@ -155,7 +158,7 @@
           <ul class="nav nav-tabs nav-tabs-light" role="tablist">
             <li ng-class="{'active': setSelectedTab('/flights')}">
               <a ng-disabled="onRoute('flights')" href="#/flights" role="tab">
-	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; Flights</a></li>
+	              	<i class="fa fa-plane" aria-hidden="true"></i> &nbsp; {{'nav.flights' | translate}}</a></li>
             <!--<li ng-class="{'active': setSelectedTab('/passengers')}">-->
               <!--<a ng-disabled="onRoute('passengers')" href="#/passengers" role="tab">-->
 	              	<!--<i class="fa fa-user" aria-hidden="true"></i> &nbsp; Passengers-->
@@ -163,14 +166,14 @@
             <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}]"
               ng-class="{'active': setSelectedTab('/casedisposition')}">
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
-	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;Cases
+	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'case.cases' | translate}}
 	              </a></li>
 	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}, {{ ROLES.ONE_DAY_LOOKOUT }}]"
               ng-class="{'active': setSelectedTab('/onedaylookout')}">
               <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
-	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;One Day Lookouts
+	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;{{'odl.onedaylookouts' | translate}}
 	              </a>
-	         </li>        
+	         </li>
           </ul>
         </div>
 
@@ -179,7 +182,7 @@
             <div data-has-role="[{{ ROLES.ADMIN }}, {{ROLES.MANAGE_QUERIES }}]" class="form-group">
               <div class="input-group">
                 <div class="mdl-textfield mdl-js-textfield">
-                  <label for="main-search" class="mdl-textfield__label">Search</label>
+                  <label for="main-search" class="mdl-textfield__label">{{'nav.search' | translate}}</label>
                   <input ng-model="searchBarContent.content" ng-disabled="onRoute('adhocquery') || currentLocation.val === '/adhocquery'" ng-keypress="$event.which === 13 && searchBarQuery() && setSelectedTab('adhocquery')" type="text" id="main-search" class="mdl-textfield__input"
                   />
                 </div>
@@ -197,7 +200,7 @@
     </div>
   </div>
 
-  
+
 <div ui-view="nav"></div>
   <div ui-view="header" href="#/dashboard"></div>
   <div class="content" ui-view=""  ></div>
@@ -205,9 +208,7 @@
 
   <script src="resources/node_modules/angular/angular.js"></script>
   <script src="resources/node_modules/ng-idle/angular-idle.min.js"></script>
-
   <script src="resources/node_modules/angular-ui-router/release/angular-ui-router.min.js"></script>
-
   <script src="resources/node_modules/moment/min/moment.min.js"></script>
   <script src="resources/node_modules/jquery/dist/jquery.js"></script>
   <script src="resources/node_modules/cbp-theme/dist/cbp-theme.js"></script>
@@ -218,6 +219,8 @@
   <script src="resources/node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
   <script src="resources/node_modules/jquery-extendext/jQuery.extendext.min.js"></script>
   <script src="resources/node_modules/csv-js/csv.js"></script>
+  <script src="resources/node_modules/pdfmake/build/pdfmake.min.js"></script>
+  <script src="resources/node_modules/pdfmake/build/vfs_fonts.js"></script>
   <script src="resources/node_modules/lodash/lodash.min.js"></script>
   <script src="resources/node_modules/jszip/dist/jszip.min.js"></script>
   <script src="resources/node_modules/excel-builder/dist/excel-builder.dist.min.js"></script>
@@ -235,6 +238,7 @@
   <script src="resources/node_modules/jspdf/dist/jspdf.min.js"></script>
   <script src='resources/js/html2canvas.js'></script>
   <script src='resources/js/html2pdf.js'></script>
+  <!-- // ngx -->
   <script src="resources/node_modules/angular-translate/dist/angular-translate.min.js"></script>
   <script src="resources/node_modules/angular-cookies/angular-cookies.min.js"></script>
   <script src="resources/node_modules/angular-translate-storage-cookie/angular-translate-storage-cookie.js"></script>
@@ -252,16 +256,19 @@
   <script src="resources/node_modules/trix/dist/trix.js"></script>
   <script src="resources/node_modules/angular-trix/dist/angular-trix.min.js"></script>
   <script src='seatsMap/jquery.seat-charts.min.js'></script>
+  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.js"></script>
+  <script src="resources/node_modules/angularjs-bootstrap-datetimepicker/src/js/datetimepicker.templates.js"></script>
+  <script src="resources/node_modules/angular-datetime-input/dist/datetime.js"></script>
 
-  <script src='resources/node_modules/d3/dist/d3.min.js'></script>
-  <script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
+<script src='resources/node_modules/d3/dist/d3.min.js'></script>
+<script src='resources/node_modules/vaquita/dist/vaquita.js'></script>
 <script src='app.js'></script>
 <script src='login/AuthService.js'></script>
 <script src='login/LoginController.js'></script>
 <script src='common/directives.js'></script>
 <script src='common/filters.js'></script>
 <script src='common/services.js'></script>
-<script src='factory/ModalGridFactory.js'></script> 
+<script src='factory/ModalGridFactory.js'></script>
 <script src='factory/JqueryQueryBuilderWidget.js'></script>
 <script src='adhocquery/linkGraph.js'></script>
 <script src='dashboard/DashboardController.js'></script>
@@ -297,22 +304,22 @@
 <script src='help/AboutGtasController.js'></script>
 <script src='help/AboutGtasService.js'></script>
 
-<script type="text/ng-template" id="dialog1.tmpl.html">
+
+  <script type="text/ng-template" id="dialog1.tmpl.html">
     <md-dialog ng-cloak>
       <form>
         <md-dialog-content>
           <div class="md-dialog-content">
-            <h2 class="md-title">Idle Timeout Warning</h2>
+            <h2 class="md-title">{{'msg.idletimeoutwarning' | translate}}</h2>
             <div class="_md-dialog-content-body ng-scope">
-              <p class="ng-binding">
-                You have been idle for too long. If you wish to maintain your session please click the button below</p>
+              <p class="ng-binding">{{'msg.idletoolong' | translate}}</p>
             </div>
-            <span idle-countdown="countdown"> You will be logged out automatically in <strong style="font-size:xx-large;">{{countdown}}</strong> seconds. </span>
+            <span idle-countdown="countdown">{{'msg.youwillbeloggedout' | translate}} <strong style="font-size:xx-large;">{{countdown}}</strong> {{'msg.seconds' | translate}}. </span>
           </div>
         </md-dialog-content>
         <md-dialog-actions layout="row">
           <md-dialog-actions layout="row" class="layout-row">
-            <md-button ng-click="dialog.hide()">Continue Session</md-button>
+            <md-button ng-click="dialog.hide()">{{'msg.continuesession' | translate}}</md-button>
           </md-dialog-actions>
         </md-dialog-actions>
       </form>
@@ -325,7 +332,7 @@
       <div class="overlay"></div>
       <div class="spinner">
         <button class="btn btn-default" disabled>
-            <i class="fa fa-spinner fa-spin"></i> Please Wait...
+            <i class="fa fa-spinner fa-spin"></i> {{'msg.wait' | translate}}...
         </button>
       </div>
     </spinner>
