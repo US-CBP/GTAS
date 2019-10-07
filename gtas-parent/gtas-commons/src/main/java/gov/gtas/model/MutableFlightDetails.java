@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "mutable_flight_details")
+@Table(name = "mutable_flight_details", indexes = @Index(columnList = "full_utc_eta_timestamp", name = "utc_eta_index"))
 public class MutableFlightDetails {
 
 	@SuppressWarnings("unused")

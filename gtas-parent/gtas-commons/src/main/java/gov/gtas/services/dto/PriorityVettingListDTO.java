@@ -9,12 +9,12 @@ import gov.gtas.vo.passenger.CaseVo;
 
 import java.util.List;
 
-public class CasePageDto {
+public class PriorityVettingListDTO {
 
 	private List<CaseVo> cases;
 	private long totalCases;
 
-	public CasePageDto(List<CaseVo> cases, long totalCases) {
+	public PriorityVettingListDTO(List<CaseVo> cases, long totalCases) {
 		this.cases = cases;
 		this.totalCases = totalCases;
 	}

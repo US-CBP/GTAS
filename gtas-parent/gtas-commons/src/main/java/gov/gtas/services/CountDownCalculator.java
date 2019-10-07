@@ -25,6 +25,10 @@ class CountDownCalculator {
 		this.currentTime = currentTime;
 	}
 
+	CountDownCalculator() {
+		this.currentTime = new Date();
+	}
+
 	CountDownVo getCountDownFromDate(Date countDownTo) {
 		return getCountDownFromDate(countDownTo, 30, 30);
 	}

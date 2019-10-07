@@ -6,7 +6,9 @@
 package gov.gtas.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -20,6 +22,9 @@ public class HitDetail extends BaseEntity {
 
 	HitDetail() {
 	}
+
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "hitDetail", fetch = FetchType.LAZY)
+	private Set<HitViewStatus> hitViewStatus = new HashSet<>();
 
 	public HitDetail(HitTypeEnum hitEnum) {
 		this.hitEnum = hitEnum;
@@ -82,7 +87,6 @@ public class HitDetail extends BaseEntity {
 
 	@Column(name = "percentage_match")
 	private float percentage = 1; // 1 = 100%
-
 
 	public Flight getFlight() {
 		return flight;
@@ -236,4 +240,11 @@ public class HitDetail extends BaseEntity {
 		this.percentage = percentage;
 	}
 
+	public Set<HitViewStatus> getHitViewStatus() {
+		return hitViewStatus;
+	}
+
+	public void setHitViewStatus(Set<HitViewStatus> hitViewStatus) {
+		this.hitViewStatus = hitViewStatus;
+	}
 }

@@ -1,3 +1,4 @@
+
 -- ----------------------------
 -- Roles
 -- ----------------------------
@@ -76,4 +77,11 @@ insert into hit_category(id, category, description) values(3, 'World Health', 'H
 insert into hit_category(id, category, description) values(4, 'Federal Law Enforcement', 'Federal watch category');
 insert into hit_category(id, category, description) values(5, 'Local Law Enforcement', 'Local watch category');
 
-
+INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
+INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'admin');
+INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'gtas');
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 1);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 2);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 3);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 4);
+INSERT INTO gtas.ug_hit_category_join (ug_id, hc_id) VALUES (1, 5);

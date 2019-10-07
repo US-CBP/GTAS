@@ -6,6 +6,7 @@
 package gov.gtas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.services.PriorityVettingListService;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,9 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.AttachmentRepository;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitCategoryService;
-import gov.gtas.services.dto.CasePageDto;
-import gov.gtas.services.dto.CaseRequestDto;
-import gov.gtas.services.security.UserService;
+import gov.gtas.services.dto.PriorityVettingListDTO;
+import gov.gtas.services.dto.PriorityVettingListRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
@@ -39,33 +38,40 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-public class CaseDispositionController {
+public class PriorityVettingListController {
 
-	@Autowired
-	private HitCategoryService ruleCatService;
+	private final HitCategoryService hitCategoryService;
 
-	@Autowired
-	private UserService userService;
+	private final PriorityVettingListService priorityVettingListService;
 
-	@Autowired
-	private AttachmentRepository attachmentRepo;
+	private final AttachmentRepository attachmentRepo;
 
-	private final Logger logger = LoggerFactory.getLogger(CaseDispositionController.class);
-	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(CaseRequestDto.DATE_FORMAT);
+	private final Logger logger = LoggerFactory.getLogger(PriorityVettingListController.class);
+	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+			PriorityVettingListRequest.DATE_FORMAT);
 	private static final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
 
-	@RequestMapping(value = "/hits", method = RequestMethod.GET,
-			consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CasePageDto getAll(@RequestParam("requestDto") String requestDto) throws IOException {
-		final CaseRequestDto dto = objectMapper.readValue(requestDto, CaseRequestDto.class);
-		return null;
+	public PriorityVettingListController(HitCategoryService hitCategoryService,
+			PriorityVettingListService priorityVettingListService, AttachmentRepository attachmentRepo) {
+		this.hitCategoryService = hitCategoryService;
+		this.priorityVettingListService = priorityVettingListService;
+		this.attachmentRepo = attachmentRepo;
+	}
+
+	@RequestMapping(value = "/hits", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody PriorityVettingListDTO getAll(@RequestParam("requestDto") String requestDto)
+			throws IOException {
+		final PriorityVettingListRequest request = objectMapper.readValue(requestDto, PriorityVettingListRequest.class);
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		return priorityVettingListService.generateDtoFromRequest(request, userId);
 	}
 
 	// getOneHistDisp
 	@RequestMapping(method = RequestMethod.POST, value = "/getOneHistDisp", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody CasePageDto getOneHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+	public @ResponseBody PriorityVettingListDTO getOneHistDisp(@RequestBody PriorityVettingListRequest request,
+			HttpServletRequest hsr) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
-		return new CasePageDto(new ArrayList<>(),0L);
+		return new PriorityVettingListDTO(new ArrayList<>(), 0L);
 	}
 
 	// getHistDispComments
@@ -110,7 +116,7 @@ public class CaseDispositionController {
 	public List<HitCategory> getRuleCats() throws Exception {
 
 		List<HitCategory> _tempRuleCatList = new ArrayList<HitCategory>();
-		Iterable<HitCategory> _tempIterable = ruleCatService.findAll();
+		Iterable<HitCategory> _tempIterable = hitCategoryService.findAll();
 		if (_tempIterable != null) {
 			_tempRuleCatList = StreamSupport.stream(_tempIterable.spliterator(), false).collect(Collectors.toList());
 		}
@@ -122,7 +128,8 @@ public class CaseDispositionController {
 
 	// updateHistDisp
 	@RequestMapping(method = RequestMethod.POST, value = "/updateHistDisp")
-	public @ResponseBody boolean updateHistDisp(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+	public @ResponseBody boolean updateHistDisp(@RequestBody PriorityVettingListRequest request,
+			HttpServletRequest hsr) {
 		return true;
 	}
 
@@ -141,7 +148,8 @@ public class CaseDispositionController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/createManualCase")
-	public @ResponseBody void createManualCase(@RequestBody CaseRequestDto request, HttpServletRequest hsr) {
+	public @ResponseBody void createManualCase(@RequestBody PriorityVettingListRequest request,
+			HttpServletRequest hsr) {
 	}
 
 	// updateCase

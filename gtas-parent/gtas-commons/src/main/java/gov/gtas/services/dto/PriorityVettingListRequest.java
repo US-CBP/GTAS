@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class CaseRequestDto implements Serializable {
+public class PriorityVettingListRequest extends PassengersRequestDto implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,7 +27,7 @@ public class CaseRequestDto implements Serializable {
 
 	private Long caseId;
 
-	private CaseDispositionStatusCheckbox displayStatusCheckBoxes;
+	private PriorityVettingListStatus displayStatusCheckBoxes;
 
 	private Long paxId;
 
@@ -213,11 +212,11 @@ public class CaseRequestDto implements Serializable {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
-	public CaseDispositionStatusCheckbox getDisplayStatusCheckBoxes() {
+	public PriorityVettingListStatus getDisplayStatusCheckBoxes() {
 		return displayStatusCheckBoxes;
 	}
 
-	public void setDisplayStatusCheckBoxes(CaseDispositionStatusCheckbox displayStatusCheckBoxes) {
+	public void setDisplayStatusCheckBoxes(PriorityVettingListStatus displayStatusCheckBoxes) {
 		this.displayStatusCheckBoxes = displayStatusCheckBoxes;
 	}
 

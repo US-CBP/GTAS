@@ -30,7 +30,7 @@ public class HitCategory extends BaseEntityAudit {
 
 	@ManyToMany(mappedBy = "hitCategories")
 	@JsonIgnore
-	private Set<UserGroup> userGroups;
+	private Set<UserGroup> userGroups = new HashSet<>();
 
 	@Override
 	public boolean equals(Object o) {

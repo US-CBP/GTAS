@@ -6,14 +6,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import gov.gtas.config.TestCommonServicesConfig;
-import gov.gtas.services.dto.CaseRequestDto;
+import gov.gtas.services.dto.PriorityVettingListRequest;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { TestCommonServicesConfig.class })
@@ -99,7 +98,7 @@ public class CaseDispositionRepositoryIT {
 			}
 		};
 
-		CaseRequestDto _tempDto = new CaseRequestDto();
+		PriorityVettingListRequest _tempDto = new PriorityVettingListRequest();
 		_tempDto.setPageNumber(pageable.getPageNumber());
 		_tempDto.setPageSize(pageable.getPageSize());
 		// _tempDto.setFlightId(20L);

@@ -51,10 +51,7 @@
             function getDefaultDispCheckboxes() {
                 return {
                     NEW: true,
-                    OPEN: false,
-                    CLOSED: false,
-                    REOPEN: false,
-                    PENDINGCLOSURE: false
+                    DISMISSED: false
                 };
             }
             function getDefaultTimeLeft() {

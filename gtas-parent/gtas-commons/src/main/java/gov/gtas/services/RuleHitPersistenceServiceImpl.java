@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import org.slf4j.Logger;
@@ -41,10 +42,12 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 	private final FlightGraphHitsRepository flightGraphHitsRepository;
 
+	private final HitMakerRepository hitMakerRepository;
+
 	public RuleHitPersistenceServiceImpl(PassengerService passengerService, HitDetailRepository hitDetailRepository,
 			HitsSummaryRepository hitsSummaryRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository,
 			FlightHitsRuleRepository flightHitsRuleRepository, FlightFuzzyHitsRepository flightFuzzyHitsRepository,
-			FlightGraphHitsRepository flightGraphHitsRepository) {
+			FlightGraphHitsRepository flightGraphHitsRepository, HitMakerRepository hitMakerRepository) {
 		this.passengerService = passengerService;
 		this.hitDetailRepository = hitDetailRepository;
 		this.hitsSummaryRepository = hitsSummaryRepository;
@@ -52,6 +55,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		this.flightHitsRuleRepository = flightHitsRuleRepository;
 		this.flightFuzzyHitsRepository = flightFuzzyHitsRepository;
 		this.flightGraphHitsRepository = flightGraphHitsRepository;
+		this.hitMakerRepository = hitMakerRepository;
 	}
 
 	@Transactional
@@ -139,6 +143,23 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 					}
 				}
 				if (!hitDetailsToPersist.isEmpty()) {
+
+					Set<Long> hitMakerIds = hitDetailsToPersist.stream().map(HitDetail::getHitMakerId)
+							.collect(Collectors.toSet());
+
+					Iterable<HitMaker> hitMakersSet = hitMakerRepository.findAllById(hitMakerIds);
+
+					Map<Long, Set<UserGroup>> hitMakerMappedByPrimaryKey = new HashMap<>();
+					for (HitMaker hitMaker : hitMakersSet) {
+						hitMakerMappedByPrimaryKey.put(hitMaker.getId(), hitMaker.getHitCategory().getUserGroups());
+					}
+
+					for (HitDetail hd : hitDetailsToPersist) {
+						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
+							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW);
+							hd.getHitViewStatus().add(hitViewStatus);
+						}
+					}
 					hitDetailRepository.saveAll(hitDetailsToPersist);
 				}
 				if (!updatedHitsSummaries.isEmpty()) {

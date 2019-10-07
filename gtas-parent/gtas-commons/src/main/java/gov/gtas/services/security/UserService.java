@@ -9,7 +9,9 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 import gov.gtas.model.User;
 
 import java.util.List;
+import java.util.Set;
 
+import gov.gtas.model.UserGroup;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**
@@ -81,6 +83,8 @@ public interface UserService {
 	 * @return the user
 	 */
 	public User fetchUser(final String userId);
+
+	public Set<UserGroup> fetchUserGroups(final String userId);
 
 	public boolean isAdminUser(String userId);
 

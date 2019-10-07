@@ -5,28 +5,21 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.services.dto.PriorityVettingListRequest;
 import gov.gtas.services.dto.SortOptionsDto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
-import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -34,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
@@ -41,6 +35,171 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@SuppressWarnings("DuplicatedCode")
+	@Override
+	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
+			Set<UserGroup> userGroupSet) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// ROOT QUERY
+		CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
+		Root<Passenger> pax = q.from(Passenger.class);
+		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax);
+		q.select(pax).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
+		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
+		List<Passenger> results = typedQuery.getResultList();
+
+		// COUNT QUERY (count version of root query without pagination and a count
+		// distinct on pax id)
+		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+		Root<Passenger> paxCount = countQuery.from(Passenger.class);
+		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
+				paxCount);
+		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
+		TypedQuery typedCountQuery = em.createQuery(countQuery);
+		Optional countResult = typedCountQuery.getResultList().stream().findFirst();
+		Long passengerCount = countResult.isPresent() ? (Long) countResult.get() : 0L;
+
+		return new ImmutablePair<>(passengerCount, results);
+	}
+
+	private <T> List<Predicate> joinAndCreateHitViewPredicates(PriorityVettingListRequest dto,
+			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<Passenger> pax) {
+		// ROOT QUERY JOINS
+		Join<Passenger, Flight> flight = pax.join("flight", JoinType.INNER);
+		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
+				JoinType.INNER);
+		Join<Passenger, HitsSummary> hits = pax.join("hits", JoinType.INNER);
+		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
+		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
+		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
+		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
+		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
+		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
+		// **** PREDICATES ****
+		List<Predicate> queryPredicates = new ArrayList<>();
+		// TIME UP TO -30 MINUTE PREDICATE
+		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
+			LocalDateTime ldt = LocalDateTime.now(ZoneOffset.UTC);
+			ldt = ldt.minusMinutes(30L);
+			Date oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC));
+			Predicate countDownPredicate = cb
+					.and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"), oneHourAgo));
+			queryPredicates.add(countDownPredicate);
+		}
+
+		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
+		if (dto.getDisplayStatusCheckBoxes().getNewItems() != null && dto.getDisplayStatusCheckBoxes().getNewItems()) {
+			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
+		}
+		if (dto.getDisplayStatusCheckBoxes().getDismissed() == null
+				|| !dto.getDisplayStatusCheckBoxes().getDismissed()) {
+			hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
+		}
+		// Special case. Unused value to give result of 0.
+		if (hitViewStatusEnumSet.isEmpty()) {
+			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
+		}
+		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
+		queryPredicates.add(hitViewStatus);
+		// LAST NAME PREDICATE
+		if (StringUtils.isNotBlank(dto.getLastName())) {
+			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
+			queryPredicates.add(cb.like(paxDetailsJoin.get("lastName"), likeString));
+		}
+
+		// USER GROUP PREDICATE
+		Predicate userGroupFilter = cb.and(cb.in(hitCategoryJoin.joinSet("userGroups")).value(userGroupSet));
+		queryPredicates.add(userGroupFilter);
+
+		// FLIGHT PREDICATES
+		if (!CollectionUtils.isEmpty(dto.getOriginAirports())) {
+			Predicate originPredicate = flight.get("origin").in(dto.getOriginAirports());
+			Predicate originAirportsPredicate = cb.and(originPredicate);
+			queryPredicates.add(originAirportsPredicate);
+		}
+
+		if (!CollectionUtils.isEmpty(dto.getDestinationAirports())) {
+			Predicate destPredicate = flight.get("destination").in(dto.getDestinationAirports());
+			Predicate destAirportsPredicate = cb.and(destPredicate);
+			queryPredicates.add(destAirportsPredicate);
+		}
+		if (StringUtils.isNotBlank(dto.getFlightNumber())) {
+			String likeString = String.format("%%%s%%", dto.getFlightNumber().toUpperCase());
+			queryPredicates.add(cb.like(flight.get("fullFlightNumber"), likeString));
+		}
+		/*
+		 * hack: javascript sends the empty string represented by the 'all' dropdown
+		 * value as '0', so we check for that here to mean 'any direction'
+		 */
+		if (StringUtils.isNotBlank(dto.getDirection()) && !"A".equals(dto.getDirection())) {
+			queryPredicates.add(cb.equal(flight.get("direction"), dto.getDirection()));
+		}
+
+		// ETA / ETD PREDICATE - REQUIRED!!
+		if (dto.getEtaEnd() == null || dto.getEtaStart() == null) {
+			throw new RuntimeException("Flight dates required!");
+		} else {
+			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
+			Predicate startPredicate = cb.greaterThanOrEqualTo(eta, dto.getEtaStart());
+			Predicate endPredicate = cb.lessThanOrEqualTo(eta, dto.getEtaEnd());
+			Predicate etaCondition = cb.and(startPredicate, endPredicate);
+			queryPredicates.add(etaCondition);
+		}
+
+		// SORTING
+		if (dto.getSort() != null) {
+			List<Order> orderList = new ArrayList<>();
+			for (SortOptionsDto sort : dto.getSort()) {
+				List<Expression<?>> orderByItem = new ArrayList<>();
+				String column = sort.getColumn();
+				if (isFlightColumn(column)) {
+					orderByItem.add(flight.get(column));
+				} else if (column.equals("onRuleHitList")) {
+					orderByItem.add(hits.get("ruleHitCount"));
+					orderByItem.add(hits.get("graphHitCount"));
+					orderByItem.add(hits.get("manualHitCount"));
+				} else if (column.equals("onWatchList")) {
+					orderByItem.add(hits.get("watchListHitCount"));
+					orderByItem.add(hits.get("partialHitCount"));
+				} else if ("eta".equalsIgnoreCase(column)) {
+					orderByItem.add(mutableFlightDetailsJoin.get("eta"));
+					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
+				} else if ("countdown".equalsIgnoreCase(column)) {
+					orderByItem.add(flightCountDownViewJoin.get("countDownTimer"));
+				}
+
+				else if (!"documentNumber".equalsIgnoreCase(column)) {
+					orderByItem.add(paxDetailsJoin.get(column));
+				}
+				if (sort.getDir().equals("desc")) {
+					for (Expression<?> e : orderByItem) {
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column)) {
+							// The fuzzy matching can occur when the hits summary is null. Coalesce these
+							// values to a 0
+							// in order to have fuzzy matching show up in ordered form.
+							orderList.add(cb.desc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.desc(e));
+						}
+					}
+				} else {
+					for (Expression<?> e : orderByItem) {
+						if ("onWatchList".equalsIgnoreCase(column) || "onRuleHitList".equalsIgnoreCase(column)) {
+							orderList.add(cb.asc(cb.coalesce(e, 0)));
+						} else {
+							orderList.add(cb.asc(e));
+						}
+					}
+				}
+			}
+			q.orderBy(orderList);
+		}
+
+		return queryPredicates;
+	}
 
 	@Override
 	public Pair<Long, List<Passenger>> findByCriteria(Long flightId, PassengersRequestDto dto) {
@@ -113,7 +272,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		q.select(pax).where(predicates.toArray(new Predicate[] {}));
-		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize());
+		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), true);
 
 		// total count: does not require joining on hitssummary
 		CriteriaQuery<Long> cnt = cb.createQuery(Long.class);
@@ -158,7 +317,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		return predicates;
 	}
 
-	private <T> TypedQuery<T> addPagination(CriteriaQuery<T> q, int pageNumber, int pageSize) {
+	private <T> TypedQuery<T> addPagination(CriteriaQuery<T> q, int pageNumber, int pageSize, boolean extraResults) {
 		int offset = (pageNumber - 1) * pageSize;
 		TypedQuery<T> typedQuery = em.createQuery(q);
 		typedQuery.setFirstResult(offset);
@@ -169,7 +328,11 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		 * hitssummary will not work correctly if we have to check both flight id and
 		 * passenger id.
 		 */
-		typedQuery.setMaxResults(pageSize * 3);
+		if (extraResults) {
+			typedQuery.setMaxResults(pageSize * 3);
+		} else {
+			typedQuery.setMaxResults(pageSize);
+		}
 		return typedQuery;
 	}
 

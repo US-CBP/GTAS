@@ -5,6 +5,7 @@
  */
 package gov.gtas.services.security;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import gov.gtas.model.UserGroup;
+import gov.gtas.repository.UserGroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,9 @@ public class UserServiceImpl implements UserService {
 
 	@Resource
 	private UserRepository userRepository;
+
+	@Resource
+	private UserGroupRepository userGroupRepository;
 
 	@Autowired
 	private UserServiceUtil userServiceUtil;
@@ -136,6 +142,13 @@ public class UserServiceImpl implements UserService {
 					userId);
 		}
 		return userServiceUtil.mapUserEntityFromUserData(userData);
+	}
+
+	@Override
+	@Transactional
+	public Set<UserGroup> fetchUserGroups(final String userId) {
+		User user = userRepository.findOne(userId);
+		return userGroupRepository.findDistinctByGroupMembersIn(Collections.singleton(user));
 	}
 
 	/**

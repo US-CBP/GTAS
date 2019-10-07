@@ -12,47 +12,69 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.enumtype.HitViewStatusEnum;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name="hit_view_status")
+@Table(name = "hit_view_status", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "hv_hit_detail", "hv_user_group" }, name = "hvs_unique_constraint") })
 public class HitViewStatus extends BaseEntityAudit {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hv_hit_detail", referencedColumnName = "id")
-    @JsonIgnore
-    private HitDetail hitDetail;
+	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse) {
+		this.hitDetail = hitDetail;
+		this.userGroup = userGroup;
+		this.hitViewStatusEnum = hvse;
+	}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hv_user_group", referencedColumnName = "id")
-    @JsonIgnore
-    private UserGroup userGroup;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hv_hit_detail", referencedColumnName = "id", nullable = false)
+	@JsonIgnore
+	private HitDetail hitDetail;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "hv_status")
-    private HitViewStatusEnum hitViewStatusEnum;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hv_user_group", referencedColumnName = "id", nullable = false)
+	@JsonIgnore
+	private UserGroup userGroup;
 
-    public HitDetail getHitDetail() {
-        return hitDetail;
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "hv_status", nullable = false)
+	private HitViewStatusEnum hitViewStatusEnum;
 
-    public void setHitDetail(HitDetail hitDetail) {
-        this.hitDetail = hitDetail;
-    }
+	public HitDetail getHitDetail() {
+		return hitDetail;
+	}
 
-    public UserGroup getUserGroup() {
-        return userGroup;
-    }
+	public void setHitDetail(HitDetail hitDetail) {
+		this.hitDetail = hitDetail;
+	}
 
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
-    }
+	public UserGroup getUserGroup() {
+		return userGroup;
+	}
 
-    public HitViewStatusEnum getHitViewStatusEnum() {
-        return hitViewStatusEnum;
-    }
+	public void setUserGroup(UserGroup userGroup) {
+		this.userGroup = userGroup;
+	}
 
-    public void setHitViewStatusEnum(HitViewStatusEnum hitViewStatusEnum) {
-        this.hitViewStatusEnum = hitViewStatusEnum;
-    }
+	public HitViewStatusEnum getHitViewStatusEnum() {
+		return hitViewStatusEnum;
+	}
 
+	public void setHitViewStatusEnum(HitViewStatusEnum hitViewStatusEnum) {
+		this.hitViewStatusEnum = hitViewStatusEnum;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		HitViewStatus that = (HitViewStatus) o;
+		return getHitDetail().equals(that.getHitDetail()) && getUserGroup().equals(that.getUserGroup());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getHitDetail(), getUserGroup());
+	}
 }

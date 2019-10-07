@@ -18,6 +18,10 @@ public enum HitViewStatusEnum {
 
 	DISMISSED("DISMISSED"),
 
+	NEW("NEW"),
+
+	NOT_USED("NOT_USED"),
+
 	PRIORITY("PRIORITY"),
 
 	IN_PROGRESS("IN_PROGRESS");

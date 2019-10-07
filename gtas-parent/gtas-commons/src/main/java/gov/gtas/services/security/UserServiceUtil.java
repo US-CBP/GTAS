@@ -63,13 +63,8 @@ public class UserServiceUtil {
 	 * @return the user data
 	 */
 	public UserData mapUserDataFromEntity(User entity) {
-		Set<RoleData> roles = entity.getRoles().stream().map(new Function<Role, RoleData>() {
-			@Override
-			public RoleData apply(Role role) {
-				return new RoleData(role.getRoleId(), role.getRoleDescription());
-			}
-		}).collect(Collectors.toSet());
-
+		Set<RoleData> roles = entity.getRoles().stream()
+				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
 		return new UserData(entity.getUserId(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
 				entity.getActive(), roles);
 	}
