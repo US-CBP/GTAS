@@ -17,39 +17,33 @@ import gov.gtas.model.BaseEntity;
 @Entity
 @Table(name = "app_configuration")
 public class AppConfiguration extends BaseEntity {
-	private static final long serialVersionUID = 1L;
-
+    private static final long serialVersionUID = 1L;
+    
 	public AppConfiguration() {
 	}
 
-	// mysql (not mariadb) reserves the word 'option'
-	@Column(name = "opt")
-	private String option;
-	@Column(name = "val")
-	private String value;
-	private String description;
-
-	public String getOption() {
-		return option;
-	}
-
-	public void setOption(String option) {
-		this.option = option;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    // mysql (not mariadb) reserves the word 'option'
+    @Column(name = "opt", unique = true)
+    private String option;
+    @Column(name = "val")
+    private String value;
+    private String description;
+    public String getOption() {
+        return option;
+    }
+    public void setOption(String option) {
+        this.option = option;
+    }
+    public String getValue() {
+        return value;
+    }
+    public void setValue(String value) {
+        this.value = value;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

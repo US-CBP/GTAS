@@ -5,11 +5,9 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
 
 import java.util.List;
-
 import org.springframework.data.repository.query.Param;
 
 public interface HitsSummaryService {
@@ -29,4 +27,6 @@ public interface HitsSummaryService {
 	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId, Long passengerId);
 
 	public HitsSummary getMostRecentHitsSummary();
+	
+	public List<HitsSummary> findByIds(List<Long> hitsSummaryIds);
 }

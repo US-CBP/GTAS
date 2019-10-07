@@ -486,11 +486,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Sort rows-passenger-address</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Sort rows-passenger-address</from>
       <to>Neo4J Output - passenger-address relationship</to>
       <enabled>Y</enabled>
@@ -503,6 +498,21 @@
     <hop>
       <from>Select values</from>
       <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>Select values 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Sort rows-passenger-address</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -540,7 +550,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>944</xloc>
+      <xloc>608</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1504,7 +1514,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
+      <xloc>128</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1529,7 +1539,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
+      <xloc>448</xloc>
       <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1573,7 +1583,38 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>720</xloc>
+      <xloc>448</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>NODE_DATETIME</name>
+        <type>system date (variable)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>768</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1661,6 +1702,12 @@
           <type>String</type>
           <primary>Y</primary>
         </property>
+        <property>
+          <name>node_updated_on</name>
+          <value>node_updated_on</value>
+          <type>Date</type>
+          <primary>N</primary>
+        </property>
       </properties>
     </to>
     <relationship>PASSENGER_ADDRESS_LABEL</relationship>
@@ -1675,8 +1722,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1168</xloc>
-      <yloc>400</yloc>
+      <xloc>1264</xloc>
+      <yloc>384</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1737,7 +1784,52 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
+      <xloc>288</xloc>
+      <yloc>240</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>NODE_DATETIME</name>
+        <rename>node_updated_on</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>992</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1787,7 +1879,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1168</xloc>
+      <xloc>1264</xloc>
       <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>

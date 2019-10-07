@@ -5,13 +5,11 @@
  */
 package gov.gtas.services;
 
-import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
 import gov.gtas.repository.HitsSummaryRepository;
 
 import java.util.Arrays;
 import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +69,11 @@ public class HitsSummaryServiceImpl implements HitsSummaryService {
 	@Override
 	public HitsSummary getMostRecentHitsSummary() {
 		return hitsSummaryRepository.findFirstByOrderByIdDesc();
+	}
+
+	@Override
+	public List<HitsSummary> findByIds(List<Long> ids) {
+		return (List<HitsSummary>) hitsSummaryRepository.findAllById(ids);
 	}
 
 }
