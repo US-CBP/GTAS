@@ -728,8 +728,7 @@
                 {
                   name: "Error ID",
                   field: "errorId",
-                  displayName: "admin.errorid",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errorid'),
                   width: "15%",
                   sort: {
                     direction: uiGridConstants.DESC,
@@ -738,22 +737,19 @@
                 },
                 {
                   name: "Error Code",
-                  displayName: "admin.errorcode",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errorcode'),
                   field: "errorCode",
                   width: "15%"
                 },
                 {
                   name: "DateTime",
-                  displayName: "admin.DateTime",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.timestamp'),
                   field: "errorTimestamp",
                   width: "15%"
                 },
                 {
                   name: "Error Description",
-                  displayName: "admin.errordescription",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errordescription'),
                   field: "errorDescription",
                   width: "55%"
                 }
