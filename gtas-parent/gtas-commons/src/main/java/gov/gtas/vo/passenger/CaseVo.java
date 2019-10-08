@@ -5,6 +5,8 @@
  */
 package gov.gtas.vo.passenger;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ public class CaseVo {
 	private String firstName;
 	private String middleName;
 	private String nationality;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FlightVo.SHORT_DATE_FORMAT)
 	private Date dob;
 	private String document;
 	private Long highPriorityRuleCatId;
@@ -41,6 +44,8 @@ public class CaseVo {
 	private Date countdownTime;
 	private String disposition;
 	private ArrayList<String> hitNames;
+	private String gender;
+	private String docType;
 
 	public String getCaseOfficerStatus() {
 		return caseOfficerStatus;
@@ -280,5 +285,21 @@ public class CaseVo {
 
     public ArrayList<String> getHitNames() {
 		return this.hitNames;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	
+	public String getGender() {
+		return gender;
+	}
+
+	public void setDocType(String docType) {
+		this.docType = docType;
+	}
+	
+	public String getDocType() {
+		return this.docType;
 	}
 }

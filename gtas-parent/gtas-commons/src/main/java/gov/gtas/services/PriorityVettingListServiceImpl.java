@@ -10,10 +10,9 @@ package gov.gtas.services;
 
 import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitViewStatus;
-import gov.gtas.model.Passenger;
-import gov.gtas.model.UserGroup;
+import gov.gtas.model.*;
+import gov.gtas.model.dto.ViewUpdateDTo;
+import gov.gtas.repository.HitViewStatusRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.services.dto.PriorityVettingListDTO;
 import gov.gtas.services.dto.PriorityVettingListRequest;
@@ -33,9 +32,12 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	private final PassengerRepository passengerRepository;
 
-	public PriorityVettingListServiceImpl(UserService userService, PassengerRepository passengerRepository) {
+	private final HitViewStatusRepository hitViewStatusRepository;
+
+	public PriorityVettingListServiceImpl(UserService userService, PassengerRepository passengerRepository, HitViewStatusRepository hitViewStatusRepository) {
 		this.userService = userService;
 		this.passengerRepository = passengerRepository;
+		this.hitViewStatusRepository = hitViewStatusRepository;
 	}
 
 	@Override
@@ -80,16 +82,28 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 					}
 				}
 			}
+
+			String docNum = "";
+			String docType = "";
+			for (Document doc : passenger.getDocuments()) {
+					docNum = doc.getDocumentNumber();
+					docType = doc.getDocumentType();
+				if ("P".equalsIgnoreCase(doc.getDocumentType())) {
+					break;
+				}
+			}
+
+			caseVo.setDocument(docNum);
+			caseVo.setDocType(docType);
 			hvsEnums.sort(Comparator.naturalOrder());
 			caseVo.setStatus(hvsEnums.get(0).toString());
-
+			caseVo.setGender(passenger.getPassengerDetails().getGender());
 			caseVo.setHitNames(hitDetailsTitles);
 			caseVo.setCountdownTime(countDownTo);
-
+			caseVo.setNationality(passenger.getPassengerDetails().getNationality());
 			caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());
 			caseVo.setCurrentTime(new Date());
 			caseVo.setDob(passenger.getPassengerDetails().getDob());
-			caseVo.setDocument("doc");
 			caseVo.setFirstName(passenger.getPassengerDetails().getFirstName());
 			caseVo.setLastName(passenger.getPassengerDetails().getLastName());
 			caseVo.setPaxName(passenger.getPassengerDetails().getFirstName() + " "
@@ -99,7 +113,19 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightNumber(passenger.getFlight().getFullFlightNumber());
 			caseVOS.add(caseVo);
 		}
-		// }
 		return new PriorityVettingListDTO(caseVOS, count);
+	}
+
+	@Override
+	@Transactional
+	public synchronized void update(ViewUpdateDTo viewUpdateDTo) {
+		Long paxId = viewUpdateDTo.getPassengerId();
+		Passenger p  = passengerRepository.findById(paxId).orElseThrow(RuntimeException::new);
+		Set<HitViewStatus> hitViewStatuses = hitViewStatusRepository.findAllByPassenger(p);
+		HitViewStatusEnum hitViewStatusEnum = HitViewStatusEnum.fromString(viewUpdateDTo.getStatus()).orElseThrow(RuntimeException::new);
+		for (HitViewStatus hvs : hitViewStatuses) {
+			hvs.setHitViewStatusEnum(hitViewStatusEnum);
+		}
+		hitViewStatusRepository.saveAll(hitViewStatuses);
 	}
 }

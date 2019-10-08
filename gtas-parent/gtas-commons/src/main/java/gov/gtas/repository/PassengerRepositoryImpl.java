@@ -97,7 +97,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
 		}
 		if (dto.getDisplayStatusCheckBoxes().getDismissed() == null
-				|| !dto.getDisplayStatusCheckBoxes().getDismissed()) {
+				|| dto.getDisplayStatusCheckBoxes().getDismissed()) {
 			hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
 		}
 		// Special case. Unused value to give result of 0.

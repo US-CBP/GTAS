@@ -34,10 +34,10 @@ public enum HitViewStatusEnum {
 	}
 
 	private static final Map<String, HitViewStatusEnum> stringToEnum = Stream.of(values())
-			.collect(toMap(Object::toString, e -> e));
+			.collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
 	public static Optional<HitViewStatusEnum> fromString(String entityName) {
-		return Optional.ofNullable(stringToEnum.get(entityName));
+		return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase()));
 	}
 
 	@Override

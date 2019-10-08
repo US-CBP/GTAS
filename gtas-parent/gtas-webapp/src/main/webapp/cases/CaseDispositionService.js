@@ -332,6 +332,23 @@
 //
 //            }
 
+            function updatePassengerHitViews(hitViewVo) {
+                let dfd = $q.defer();
+                let updateVo = {
+                    flightId: hitViewVo.flightId,
+                    passengerId: hitViewVo.paxId,
+                    status: 'DISMISSED'
+                };
+                dfd.resolve(
+                    $http({
+                        method: 'post',
+                        url: "/gtas/hits/",
+                        data: updateVo
+                    })
+                );
+            return dfd.promise;
+            }
+
              function getCurrentServerTime() {
   
                 var currentServerTimeMillis = 0;
@@ -354,6 +371,7 @@
                 getAllCases: getAllCases,
                 getOneHitsDisposition: getOneHitsDisposition,
                 getRuleCats: getRuleCats,
+                updatePassengerHitViews : updatePassengerHitViews,
                 updateHitsDisposition: updateHitsDisposition,
                 addToOneDayLookout: addToOneDayLookout,
                 removeFromOneDayLookoutList: removeFromOneDayLookoutList,

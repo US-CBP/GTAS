@@ -6,6 +6,7 @@
 package gov.gtas.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.gtas.model.dto.ViewUpdateDTo;
 import gov.gtas.services.PriorityVettingListService;
 import gov.gtas.services.dto.CaseCommentRequestDto;
 import org.slf4j.Logger;
@@ -64,6 +65,13 @@ public class PriorityVettingListController {
 		final PriorityVettingListRequest request = objectMapper.readValue(requestDto, PriorityVettingListRequest.class);
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		return priorityVettingListService.generateDtoFromRequest(request, userId);
+	}
+
+	@RequestMapping(value = "/hits", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String update(@RequestBody ViewUpdateDTo requestDto)
+			{
+		priorityVettingListService.update(requestDto);
+		return "success";
 	}
 
 	// getOneHistDisp

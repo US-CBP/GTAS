@@ -167,6 +167,13 @@
                 return value;
               }
 
+            $scope.deleteRow = function(row) {
+                caseDispositionService.updatePassengerHitViews(row.entity).then(
+                );
+                const index = $scope.casesDispGrid.data.indexOf(row.entity);
+                $scope.casesDispGrid.data.splice(index, 1);
+            };
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -247,17 +254,26 @@
                     field: 'lastName',
                     name: 'lastName',
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" title="'
-                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}, {{row.entity.firstName}}</md-button>'
-
+                    cellTemplate: '<div><md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" target="_blank" ' +
+                        'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
+                        '<li>' +
+                        '{{COL_FIELD}}, {{row.entity.firstName}}' +
+                        '</li>' +
+                        '<li>{{row.entity.dob}} / {{row.entity.nationality}} / {{row.entity.gender}}</li>' +
+                        '<li>Doc({{row.entity.docType}}): {{row.entity.document}}</li>' +
+                        '</ul>' +
+                        '</div></md-button></div>'
                 },
                 {
                     field: 'status',
                     name: 'status',
-                    displayName: $translate.instant('case.status')
+                    displayName: $translate.instant('case.status'),
+                    cellTemplate: '<div ng-if="row.entity.status === \'DISMISSED\'">{{row.entity.status}}</div>' +
+                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)">Dismiss</button>'
                 }
 
             ];
+
 
             $scope.getTableHeight = function () {
                 return gridService.calculateGridHeight(newCases.data.totalCases);
