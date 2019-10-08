@@ -53,7 +53,7 @@ public class DataManagementController
 		  sysAdminRole =  roles.stream().filter(r -> (r.getRoleId() == 6)).findAny();
 	  }
 	  
-	  if (sysAdminRole.isPresent())
+	  if (sysAdminRole != null && sysAdminRole.isPresent())
 	  {
 		 returnStr = dataManagementPage;
      
