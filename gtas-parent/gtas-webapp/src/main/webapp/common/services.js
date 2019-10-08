@@ -688,32 +688,28 @@
                 },
                 {
                   name: "fileName",
-                  displayName: "File Name",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.filename'),
                   field: "fileName",
                   cellTemplate: "<div>{{COL_FIELD | uppercase}}</div>",
                   width: "43%"
                 },
                 {
                   name: "size",
-                  displayName: "Size",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.size'),
                   field: "size",
                   cellTemplate: "<div>{{grid.appScope.formatBytes(COL_FIELD)}}</div>",
                   width: "15%"
                 },
                 {
                   name: "creationDate",
-                  displayName: "Date Created",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.datecreated'),
                   cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
                   field: "creationDate",
                   width: "20%"
                 },
                 {
                   name: "lastModified",
-                  displayName: "Last Modified",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.lastmodified'),
                   field: "lastModified",
                   cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
                   width: "20%"
