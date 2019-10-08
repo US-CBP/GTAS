@@ -17,11 +17,7 @@ import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HitsSummaryController {
@@ -38,6 +34,7 @@ public class HitsSummaryController {
 	public @ResponseBody Set<HitDetailVo> getRules(@RequestParam(value = "passengerId", required = false) String id) {
 		return getHitDetailsMapped(hitsDetailsService.getByPassengerId(Long.parseLong(id)));
 	}
+
 
 	@RequestMapping(value = "/hit/flightpassenger", method = RequestMethod.GET)
 	@Transactional
@@ -60,7 +57,7 @@ public class HitsSummaryController {
 			hitDetailVo.setRuleDesc(htd.getDescription());
 			HitMaker lookout = htd.getHitMaker();
 			HitCategory hitCategory = lookout.getHitCategory();
-			hitDetailVo.setCategory(hitCategory.getName());
+			hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
 			htd.setHitMakerId(null);
 			htd.setHitMaker(null);
 			htd.setHitViewStatus(null);

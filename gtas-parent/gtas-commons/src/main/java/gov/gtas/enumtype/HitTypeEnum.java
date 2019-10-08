@@ -13,24 +13,26 @@ import static java.util.stream.Collectors.toMap;
 
 public enum HitTypeEnum {
 
-	USER_DEFINED_RULE("R"), // Rule Hit
+	USER_DEFINED_RULE("R", "R"), // Rule Hit
 
-	WATCHLIST("WL"), // General watchlist hit
+	WATCHLIST("WL", "WL"), // General watchlist hit
 
-	WATCHLIST_PASSENGER("P"), // Watchlist Passenger Hit
+	WATCHLIST_PASSENGER("P", "WL"), // Watchlist Passenger Hit
 
-	WATCHLIST_DOCUMENT("D"), // Watchlist Document Hit
+	WATCHLIST_DOCUMENT("D", "WL"), // Watchlist Document Hit
 
-	PARTIAL_WATCHLIST("PWL"), // Watchlist Document Hit
+	PARTIAL_WATCHLIST("PWL", "PWL"), // Watchlist Document Hit
 
-	GRAPH_HIT("GH"), // Graph Database rule
+	GRAPH_HIT("GH", "GH"), // Graph Database rule
 
-	MANUAL_HIT("M"); // Manual Hit
+	MANUAL_HIT("M", "M"); // Manual Hit
 
 	private final String hitType;
+	private final String displayName;
 
-	HitTypeEnum(String hitType) {
+	HitTypeEnum(String hitType, String displayName) {
 		this.hitType = hitType;
+		this.displayName = displayName;
 	}
 
 	private static final Map<String, HitTypeEnum> stringToEnum = Stream.of(values())
@@ -43,5 +45,9 @@ public enum HitTypeEnum {
 	@Override
 	public String toString() {
 		return hitType;
+	}
+
+	public String getDisplayName() {
+		return displayName;
 	}
 }

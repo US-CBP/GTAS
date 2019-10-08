@@ -152,7 +152,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		// SORTING
-		if (dto.getSort() != null) {
+ 		if (dto.getSort() != null) {
 			List<Order> orderList = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
 				List<Expression<?>> orderByItem = new ArrayList<>();
@@ -173,8 +173,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(flightCountDownViewJoin.get("countDownTimer"));
 				} else if ("highPriorityRuleCatId".equalsIgnoreCase(column)) {
 					orderByItem.add(hitCategoryJoin.get("severity"));
+				} else if ("flightNumber".equalsIgnoreCase(column)) {
+					orderByItem.add(flight.get("flightNumber"));
 				}
-
 				else if (!"documentNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(paxDetailsJoin.get(column));
 				}

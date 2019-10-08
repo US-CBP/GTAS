@@ -176,8 +176,8 @@
                 paginationCurrentPage: $scope.pageNumber,
                 useExternalPagination: true,
                 enableFiltering: true,
-                enableHorizontalScrollbar: 0,
-                enableVerticalScrollbar: 0,
+                enableHorizontalScrollbar:  uiGridConstants.scrollbars.NEVER,
+                enableVerticalScrollbar:  uiGridConstants.scrollbars.NEVER,
                 enableColumnMenus: false,
                 multiSelect: false,
                 enableExpandableRowHeader: false,
@@ -237,7 +237,7 @@
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
                     displayName: $translate.instant('case.toprulecategory'),
-                    cellTemplate: '<div class="case-grid"><ul>' +
+                    cellTemplate: '<div class="case-grid" ng-class="{\'caseHits\': row.entity.hitNames.length > 1}"><ul>' +
                         '' +
                         '<li ng-repeat="hit in row.entity.hitNames">{{hit}}</li>' +
                         '</ul>' +
@@ -246,17 +246,9 @@
                 {
                     field: 'lastName',
                     name: 'lastName',
-                    displayName: $translate.instant('pass.lastname'),
+                    displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" title="'
-                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-
-                },
-                {
-                    field: 'firstName',
-                    name: 'firstName',
-                    displayName: $translate.instant('pass.firstname'),
-                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" title="'
-                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}, {{row.entity.firstName}}</md-button>'
 
                 },
                 {

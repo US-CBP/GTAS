@@ -8,6 +8,7 @@
 
 package gov.gtas.services;
 
+import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitViewStatus;
@@ -51,14 +52,27 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			Date countDownTo = passenger.getFlight().getFlightCountDownView().getCountDownTimer();
 			CountDownCalculator countDownCalculator = new CountDownCalculator();
 			CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownTo, 30, 30);
-			ArrayList<String> hitDetails = new ArrayList<>();
+			ArrayList<String> hitDetailsTitles = new ArrayList<>();
 			List<HitViewStatusEnum> hvsEnums = new ArrayList<>();
-			for (HitDetail hd : passenger.getHitDetails()) {
+
+			List<HitDetail> hitDetailsList = new ArrayList<>(passenger.getHitDetails());
+			hitDetailsList.sort((hd1, hd2) -> {
+				HitSeverityEnum hse1 = hd1.getHitMaker().getHitCategory().getSeverity();
+				HitSeverityEnum hse2 = hd2.getHitMaker().getHitCategory().getSeverity();
+				return Integer.compare(hse1.ordinal(), hse2.ordinal());
+			});
+			for (HitDetail hd : hitDetailsList) {
 				Set<UserGroup> hitUserGroups = hd.getHitMaker().getHitCategory().getUserGroups();
 				String severity = hd.getHitMaker().getHitCategory().getSeverity().toString();
 				if (!Collections.disjoint(hitUserGroups, userGroups)) {
-					hitDetails.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | "
-							+ hd.getTitle() + " ");
+					String title;
+					if (hd.getTitle().length() > 8) {
+						title = hd.getTitle().substring(0,8) + "...";
+					} else {
+						title = hd.getTitle();
+					}
+					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | "
+							+ title + "(" + hd.getHitEnum().getDisplayName() +")");
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
@@ -69,7 +83,7 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			hvsEnums.sort(Comparator.naturalOrder());
 			caseVo.setStatus(hvsEnums.get(0).toString());
 
-			caseVo.setHitNames(hitDetails);
+			caseVo.setHitNames(hitDetailsTitles);
 			caseVo.setCountdownTime(countDownTo);
 
 			caseVo.setCountDownTimeDisplay(countDownVo.getCountDownTimer());

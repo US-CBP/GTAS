@@ -298,42 +298,99 @@ span.right-header{
 }
 
 div[ui-grid] {
+  list-style: none;
+  overflow: no-display;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  display: flex;
+
 }
 .case-grid.ui-grid {
   height: calc(100vh - 140px);
   min-height: 240px;
+  list-style: none;
+  display: flex;
+  text-overflow: clip;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 
+  overflow: no-display;
 }
 
 .case-grid .ui-grid-cell .ui-grid-vertical-bar {
   rowHeight:75px;
   font-size: 12px;
+  text-overflow: clip;
   line-height: 20px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  overflow: no-display;
+  vertical-align: middle;
+
 }
 
 
 .case-grid  .ui-grid-row {
   height: 65px!important;
+  list-style: none;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  overflow: no-display;
+  vertical-align: middle;
+
 }
 
 .case-grid  .ui-grid-row>div {
   display: table-row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
   overflow-wrap: break-word;
+
+  display: flex;
   height: 65px!important;
+  text-overflow: clip;
+  overflow: no-display;
+  list-style: none;
+  vertical-align: middle;
+
 }
 
 .case-grid  .ui-grid-row>div .ui-grid-cell {
-  display: table-cell;
+  display: flex;
+  align-content: center;
   overflow-wrap: break-word;
   float: none;
+  text-overflow: clip;
+  list-style: none;
+  overflow: no-display;
   vertical-align: middle;
   height: 65px!important;
 }
 
+.caseHits {
+  place-self: baseline;
+}
+
 .case-grid  .ui-grid-cell-contents {
   white-space: normal;
-  text-overflow: inherit;
-  word-break: break-word;
+  list-style: none;
+  overflow: no-display;
+  text-align: center;
+  align-items: center;
+  vertical-align: middle;
+  justify-content: center;
+  display: flex;
+  text-overflow: ellipsis;
 }
 
 /*Sizing Styles */
@@ -810,8 +867,8 @@ div[ui-grid] {
   text-align: center;
 }
 .ui-grid-cell {
-  text-align: center;
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
   font-size: 14px;
