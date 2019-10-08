@@ -685,6 +685,7 @@ var app;
             $scope.errorList = [];
             $scope.hitCount = 0;
             $scope.neo4jUrl = "http://localhost:7474/browser/";
+            $scope.agencyName = '';
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -729,6 +730,14 @@ var app;
                     return $scope.hitCount;
             };
 
+            configService.agencyName().then(function(value) {
+                $scope.agencyName = value.data;
+             });
+            
+            $scope.getAgencyName = function() {
+            	return $scope.agencyName;
+            };
+            
             configService.neo4j().then(function(value) {
                $scope.neo4jUrl = value.data;
             });

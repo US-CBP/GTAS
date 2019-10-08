@@ -1680,6 +1680,15 @@
         });
         return response.then(handleSuccess, handleError);
       }
+        
+       function agencyName() {
+        	var dfd = $q.defer();
+            dfd.resolve($http({
+              method: 'get',
+              url: CONFIG_URL + "/agencyName"
+          }));
+          return dfd.promise;
+        }
 
       function handleError(response) {
         return $q.reject(response.data.message);
@@ -1694,7 +1703,8 @@
               neo4j: neo4j,
               kibanaUrl: kibanaUrl,
               cypherUrl: cypherUrl,
-              cypherAuth: cypherAuth
+              cypherAuth: cypherAuth,
+              agencyName: agencyName
           });
         });
   }());
