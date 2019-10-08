@@ -582,37 +582,38 @@
                   width: "1%", cellTemplate: '<a class="full-width editLink" ng-click="grid.appScope.openSidebarEdit(row.entity)"><i class="fa fa-edit"></a>'
                 },
                 {
-                  name: "id", headerCellFilter: "translate", field: "id", visible: false,
+                  name: "id", field: "id", visible: false,
                   width: "0%", type: "string"
                 },
                 {
-                  name: "iata", displayName: "IATA", headerCellFilter: "translate", field: "iata",
+                  name: "iata",
+                  displayName: $translate.instant('airport.iata'),
+                  field: "iata",
                   width: "10%", type: "string"
                 },
                 {
-                  name: "icao", displayName: "ICAO", field: "icao",
-                  headerCellFilter: "translate", width: "10%", type: "string",
+                  name: "icao",
+                  displayName: $translate.instant('airport.icao'),
+                  field: "icao",
+                  width: "10%", type: "string",
                  },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.name'),
                   field: "name",
                   width: "*",
                   type: "string"
                 },
                 {
                   name: "city",
-                  displayName: "CITY",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.city'),
                   field: "city",
                   width: "20%",
                   type: "string"
                 },
                 {
                   name: "country",
-                  displayName: "COUNTRY",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.country'),
                   field: "country",
                   width: "10%",
                   type: "string"
@@ -631,15 +632,13 @@
                 },
                 {
                   name: "iata",
-                  displayName: "IATA",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('carrier.iata'),
                   field: "iata",
                   width: "25%"
                 },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('carrier.name'),
                   field: "name",
                   width: "74%"
                 }
@@ -657,29 +656,25 @@
                 },
                 {
                   name: "iso2",
-                  displayName: "ISO2",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.iso2'),
                   field: "iso2",
                   width: "14%"
                 },
                 {
                   name: "iso3",
-                  displayName: "ISO3",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.iso3'),
                   field: "iso3",
                   width: "15%"
                 },
                 {
                   name: "isoNumeric",
-                  displayName: "ISO Numeric",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.isonumeric'),
                   field: "isoNumeric",
                   width: "15%"
                 },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.name'),
                   field: "name",
                   width: "55%"
                 }

@@ -140,7 +140,7 @@ var bindZipGrid = function(data) {
   $scope.zipGrid.data = [];
 
   if (!Array.isArray(data) || data.length === 0) {
-    that.successToast('No log files were found.');
+    that.successToast($translate.instant('msg.nologfiles'));
     return;
   }
 
@@ -244,7 +244,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   }
   
   $scope.openSidebarEdit = function (row) {
-    $scope.codeAction = 'Edit';
+    $scope.codeAction = 'edit';
     $scope.rowSelectedRaw = row;
     $scope.rowSelected = Object.assign({}, row);  //new copy for mutations
 
@@ -252,10 +252,9 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   };
   
   $scope.openSidebarAdd = function () {
-    $scope.codeAction = 'Add';
+    $scope.codeAction = 'add';
     $scope.rowSelectedRaw = {};
     $scope.rowSelected = {};
-    $scope.codeAction = 'Add';
 
     $mdSidenav(CODESIDEBAR).open();
   };
@@ -278,16 +277,16 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     if (!isEqual){
       var tab = $scope.activeCodeTab;
 
-      if (action === 'Edit') {
+      if (action === 'edit') {
         codeService.updateCode(tab, $scope.rowSelected)
         .then(function(response) {
           if (response.status === 'FAILURE') {
             $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
-            $scope.errorToast('The record cannot be saved with this data');
+            $scope.errorToast($translate.instant('msg.recordcannotbesaved'));
           }
           else {
             $scope.refreshActiveCodeGrid();
-            that.successToast("Code successfully saved.");
+            that.successToast($translate.instant('msg.codesuccessfullysaved'));
             $scope.OK = false;
           }
         });
@@ -300,7 +299,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     }
     else {
       $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
-      $scope.errorToast('No changes to the record were detected');
+      $scope.errorToast($translate.instant('msg.nochangesdetected'));
     }
   };
 
@@ -327,13 +326,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm("Are you sure you want to delete this code?");
+    var r = confirm($translate.instant('msg.confirmdeletecode'));
     if (r == true) {
       codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast("Code successfully deleted.");
+        that.successToast($translate.instant('msg.codesuccessfullydeleted'));
         $scope.OK = false;
       }
     }
@@ -344,13 +343,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm("Are you sure you want to restore this code to its original value?");
+    var r = confirm($translate.instant('msg.confirmrestorecode'));
     if (r == true) {
       codeService.restoreCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast("Code successfully restored.");
+        that.successToast($translate.instant('msg.codesuccessfullyrestored'));
         $scope.OK = false;
       }
     }
@@ -361,13 +360,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm(`Are you sure you want to restore all ${tab.toUpperCase()} codes to their original values?`);
+    var r = confirm($translate.instant(`msg.confirmrestore${tab}codes`));
     if (r == true) {
       codeService.restoreAllCodes(tab).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast(`All ${tab} codes successfully restored.`);
+        that.successToast($translate.instant(`msg.${tab}codessuccessfullyrestored`));
         $scope.OK = false;
       }
     }

@@ -47,11 +47,11 @@
   </style>
   
 <md-sidenav id="codeSidebar" class="md-sidenav-right md-whiteframe-z2" md-component-id="codeSidebar">
-  <h3 class="block-label no-margin-top">{{codeAction + ' ' + activeCodeTab | capitalize}}</h3>
+  <h3 class="block-label no-margin-top">{{activeCodeTab + '.' + codeAction + activeCodeTab | translate | uppercase}}</h3>
   <form name="codeEditorForm" class="filters" _lpchecked="1" >
     <div class="filter-list" role="tablist" ng-repeat="col in codeColList[activeCodeTab]">
 
-      <h5 role="tab" aria-controls="filterGroup5" class="fieldFont filter-group-title no-margin">{{ col.name | uppercase }}
+      <h5 role="tab" aria-controls="filterGroup5" class="fieldFont filter-group-title no-margin">{{ activeCodeTab + '.' + col.name.toLowerCase() | translate | uppercase }}
       </h5>
       <div  id="filterGroup5">
         <div class="filter-group-content">
