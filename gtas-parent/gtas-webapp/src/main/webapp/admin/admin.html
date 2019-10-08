@@ -82,7 +82,7 @@
   <div class="margin-top-1">
   <md-content class="upper-cnt-nav">
       <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
-          <md-tab label="Manage Users" layout="column">
+          <md-tab label="{{'tab.manageusers' | translate}}" layout="column">
               <div layout="column">
                 <md-content class="md-padding padding-top-0 padding-bottom-0">
                   <div>
@@ -98,22 +98,22 @@
                       </md-content>
               </div>
           </md-tab>
-          <md-tab label = "Audit Log View">
+          <md-tab label = "{{'tab.auditlog' | translate}}">
               <ng-include src="'admin/auditlog.html'"/>
           </md-tab>
-          <md-tab label = "Error Log View">
+          <md-tab label = "{{'tab.errorlog' | translate}}">
               <ng-include src="'admin/errorlog.html'"/>
           </md-tab>
-          <md-tab label = "Code Editor">
+          <md-tab label = "{{'tab.codeeditor' | translate}}">
             <ng-include src="'admin/codeEditor.html'" />
           </md-tab>
-          <md-tab label = "Settings">
+          <md-tab label = "{{'tab.settings' | translate}}">
             <ng-include src="'admin/settings.html'" />
           </md-tab>
-          <md-tab label = "File Download">
+          <md-tab label = "{{'tab.filedownload' | translate}}">
             <ng-include src="'admin/fileDownload.html'" />
           </md-tab>
-          <md-tab label = "Loading/Rule Statistics">
+          <md-tab label = "{{'tab.loadingrulestatistics' | translate}}">
             <ng-include src="'admin/statistics.html'" />
           </md-tab>
 
