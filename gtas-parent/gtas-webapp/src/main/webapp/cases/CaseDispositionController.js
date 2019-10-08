@@ -232,11 +232,13 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
+                    width: 100,
                     displayName: $translate.instant('flight.flight')
                 },
                 {
                     field: 'countdown',
                     name: 'countdown',
+                    width: 150,
                     displayName: $translate.instant('flight.countdown'),
                     cellTemplate: '<div><span class="case-grid">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
@@ -253,6 +255,7 @@
                 {
                     field: 'lastName',
                     name: 'lastName',
+                    width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
                     cellTemplate: '<div><md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" target="_blank" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
