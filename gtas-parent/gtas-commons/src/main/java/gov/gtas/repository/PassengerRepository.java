@@ -45,10 +45,10 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 			+ "or pnrs.id in :messageId")
 	Set<Passenger> getPassengerWithIdInformation(@Param("messageId") Set<Long> messageId);
 
-	@Query("SELECT p FROM Passenger p "
-			+ " LEFT JOIN FETCH p.passengerDetails " + " LEFT JOIN FETCH p.passengerWLTimestamp "
-			+ " LEFT JOIN FETCH p.documents " + " LEFT JOIN FETCH p.flight " + " LEFT JOIN p.apisMessage am "
-			+ " LEFT JOIN p.pnrs pnr " + " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
+	@Query("SELECT p FROM Passenger p " + " LEFT JOIN FETCH p.passengerDetails "
+			+ " LEFT JOIN FETCH p.passengerWLTimestamp " + " LEFT JOIN FETCH p.documents "
+			+ " LEFT JOIN FETCH p.flight " + " LEFT JOIN p.apisMessage am " + " LEFT JOIN p.pnrs pnr "
+			+ " WHERE (p.flight.id in :flightIds" + " AND (am.id IN :messageIds "
 			+ "       OR pnr.id IN :messageIds)) ")
 	Set<Passenger> getPassengerMatchingInformation(@Param("messageIds") Set<Long> messageIds,
 			@Param("flightIds") Set<Long> flightIds);
@@ -76,8 +76,11 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	@Query("Select p from Passenger p left join fetch p.hitDetails left join fetch p.flight where p.id in :passengerIds")
 	Set<Passenger> getPassengersWithHitDetails(@Param("passengerIds") Set<Long> passengerIds);
 
-	@EntityGraph(value = "passengerGraph",  type = EntityGraph.EntityGraphType.FETCH)
+	@EntityGraph(value = "passengerGraph", type = EntityGraph.EntityGraphType.FETCH)
 	@Query("Select p from Passenger p left join p.flight where p.id in :passengerIds")
 	Set<Passenger> getPassengersWithFlightDetails(@Param("passengerIds") Set<Long> passengerIds);
 
+	@Query("select p from Passenger p inner join fetch p.flight inner join fetch p.documents inner join fetch p.hitDetails hd inner join fetch"
+			+ " hd.hitMaker hm inner join fetch  hm.hitCategory hc inner join fetch hc.userGroups inner join fetch p.hits where p.id in :paxIds")
+	Set<Passenger> getPassengersForVettingPage(@Param("paxIds") Set<Long> paxIds);
 }

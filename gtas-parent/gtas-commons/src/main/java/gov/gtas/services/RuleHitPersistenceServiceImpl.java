@@ -137,6 +137,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 								logger.warn("UNIMPLEMENTED FIELD - COUNT NOT SAVED - " + ruleEngineDetail.getHitEnum());
 							}
 							newDetails++;
+							ruleEngineDetail.setPassenger(passenger);
+							ruleEngineDetail.setPassengerId(passenger.getId());
 							hitDetailsToPersist.add(ruleEngineDetail);
 							updatedHitsSummaries.add(hitsSummary);
 						}
@@ -156,7 +158,7 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 					for (HitDetail hd : hitDetailsToPersist) {
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
-							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW);
+							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW, hd.getPassenger());
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}

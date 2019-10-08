@@ -296,12 +296,45 @@ span.right-header{
   height: calc(100vh - 120px);
   min-height: 240px;
 }
+
+div[ui-grid] {
+}
 .case-grid.ui-grid {
   height: calc(100vh - 140px);
   min-height: 240px;
+
+}
+
+.case-grid .ui-grid-cell .ui-grid-vertical-bar {
+  rowHeight:75px;
+  font-size: 12px;
+  line-height: 20px;
 }
 
 
+.case-grid  .ui-grid-row {
+  height: 65px!important;
+}
+
+.case-grid  .ui-grid-row>div {
+  display: table-row;
+  overflow-wrap: break-word;
+  height: 65px!important;
+}
+
+.case-grid  .ui-grid-row>div .ui-grid-cell {
+  display: table-cell;
+  overflow-wrap: break-word;
+  float: none;
+  vertical-align: middle;
+  height: 65px!important;
+}
+
+.case-grid  .ui-grid-cell-contents {
+  white-space: normal;
+  text-overflow: inherit;
+  word-break: break-word;
+}
 
 /*Sizing Styles */
 .fnt-small {
@@ -772,6 +805,7 @@ span.right-header{
     min-height: 20px;
     min-width: inherit;
 }
+
 .ui-grid-cell-contents {
   text-align: center;
 }

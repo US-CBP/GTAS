@@ -5,6 +5,7 @@
  */
 package gov.gtas.vo.passenger;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import java.util.Date;
@@ -39,6 +40,7 @@ public class CaseVo {
 	private String countDownTimeDisplay;
 	private Date countdownTime;
 	private String disposition;
+	private ArrayList<String> hitNames;
 
 	public String getCaseOfficerStatus() {
 		return caseOfficerStatus;
@@ -272,4 +274,11 @@ public class CaseVo {
 		this.generalCaseCommentVos = generalCaseCommentVos;
 	}
 
+    public void setHitNames(ArrayList<String> hitNames) {
+		this.hitNames = hitNames;
+    }
+
+    public ArrayList<String> getHitNames() {
+		return this.hitNames;
+	}
 }

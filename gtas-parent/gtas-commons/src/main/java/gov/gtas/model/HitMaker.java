@@ -24,7 +24,6 @@ public abstract class HitMaker extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	protected HitTypeEnum hitTypeEnum;
 
-
 	@ManyToOne
 	@JoinColumn(name = "hit_category", referencedColumnName = "id", columnDefinition = "bigint unsigned")
 	private HitCategory hitCategory;

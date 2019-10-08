@@ -12,10 +12,13 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
-@NamedEntityGraph(name = "passengerGraph", attributeNodes = {
+@NamedEntityGraph(name = "passengerGraph",  attributeNodes = {
 		@NamedAttributeNode("id"),
 		@NamedAttributeNode("uuid"),
-		@NamedAttributeNode("flight")})
+		@NamedAttributeNode("flight"),
+		@NamedAttributeNode("hitDetails"),
+ 		@NamedAttributeNode("passengerDetails"),
+		@NamedAttributeNode(("documents"))})
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +72,9 @@ public class Passenger extends BaseEntityAudit {
 
 	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<HitDetail> hitDetails = new HashSet<>();
+
+	@OneToMany(mappedBy = "passenger", fetch = FetchType.LAZY)
+	private Set<HitViewStatus> hitViewStatuses = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "passenger", fetch = FetchType.LAZY)
 	private Set<Bag> bags = new HashSet<>();
@@ -274,5 +280,13 @@ public class Passenger extends BaseEntityAudit {
 
 	public void setNotifications(Set<Notification> notifications) {
 		this.notifications = notifications;
+	}
+
+	public Set<HitViewStatus> getHitViewStatuses() {
+		return hitViewStatuses;
+	}
+
+	public void setHitViewStatuses(Set<HitViewStatus> hitViewStatuses) {
+		this.hitViewStatuses = hitViewStatuses;
 	}
 }

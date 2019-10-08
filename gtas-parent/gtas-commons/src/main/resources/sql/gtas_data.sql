@@ -71,11 +71,11 @@ insert into app_configuration (opt, val, description)values ('GRAPH_DB_TOGGLE', 
 insert into app_configuration (description, opt, val) values ('Time in years - an offset in which quickmatch can apply during fuzzy matching', 'QUICKMATCH_DOB_YEAR_OFFSET', '3');
 INSERT INTO app_configuration (description, opt, val) VALUES ('UTC Server Time', 'UTC_SERVER', 'true');
 
-insert into hit_category(id, category, description) values(1, 'General', 'General category');
-insert into hit_category(id, category, description) values(2, 'Terrorism', 'Terrorism related entities');
-insert into hit_category(id, category, description) values(3, 'World Health', 'Health Alert related');
-insert into hit_category(id, category, description) values(4, 'Federal Law Enforcement', 'Federal watch category');
-insert into hit_category(id, category, description) values(5, 'Local Law Enforcement', 'Local watch category');
+insert into hit_category(id, category, description, severity) values(1, 'General', 'General category', 2);
+insert into hit_category(id, category, description, severity) values(2, 'Terrorism', 'Terrorism related entities',0);
+insert into hit_category(id, category, description, severity) values(3, 'World Health', 'Health Alert related',1);
+insert into hit_category(id, category, description, severity) values(4, 'Federal Law Enforcement', 'Federal watch category',0);
+insert into hit_category(id, category, description, severity) values(5, 'Local Law Enforcement', 'Local watch category',0);
 
 INSERT INTO gtas.user_group (id, created_at, created_by, updated_at, updated_by, ug_name) VALUES (1, null, null, null, null, 'default');
 INSERT INTO gtas.ug_user_join (ug_id, user_id) VALUES (1, 'admin');

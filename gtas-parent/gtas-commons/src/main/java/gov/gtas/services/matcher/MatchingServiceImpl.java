@@ -173,18 +173,19 @@ public class MatchingServiceImpl implements MatchingService {
 			for (String key : _responses.keySet()) {
 				List<DerogHit> derogs = _responses.get(key).getDerogIds();
 				for (DerogHit hit : derogs) {
-					HitDetail hitDetail = new HitDetail(HitTypeEnum.PARTIAL_WATCHLIST);
-					hitDetail.setPassengerId(passenger.getId());
-					hitDetail.setPassenger(passenger);
-					hitDetail.setHitMakerId(Long.parseLong(hit.getDerogId()));
-					hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
-					hitDetail.setRuleConditions(hit.getRuleDescription());
-					hitDetail.setCreatedDate(new Date());
-					hitDetail.setTitle("Full/Partial Name Match on WL Item ID#" +hit.getDerogId());
-					hitDetail.setPercentage(hit.getPercent());
-					hitDetail.setDescription("Jaro-Winkler or Double Metaphone match on WL Item #" + hit.getDerogId());
-					hitDetailSet.add(hitDetail);
-
+					if (hit.getPercent() != 1f) {
+						HitDetail hitDetail = new HitDetail(HitTypeEnum.PARTIAL_WATCHLIST);
+						hitDetail.setPassengerId(passenger.getId());
+						hitDetail.setPassenger(passenger);
+						hitDetail.setHitMakerId(Long.parseLong(hit.getDerogId()));
+						hitDetail.setRuleId(Long.parseLong(hit.getDerogId()));
+						hitDetail.setRuleConditions(hit.getRuleDescription());
+						hitDetail.setCreatedDate(new Date());
+						hitDetail.setTitle("Partial Name Match");
+						hitDetail.setPercentage(hit.getPercent());
+						hitDetail.setDescription("Jaro-Winkler or Double Metaphone match on WL Item #" + hit.getDerogId());
+						hitDetailSet.add(hitDetail);
+					}
 				}
 			}
 		}

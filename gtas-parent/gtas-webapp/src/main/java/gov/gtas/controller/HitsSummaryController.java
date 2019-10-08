@@ -63,6 +63,7 @@ public class HitsSummaryController {
 			hitDetailVo.setCategory(hitCategory.getName());
 			htd.setHitMakerId(null);
 			htd.setHitMaker(null);
+			htd.setHitViewStatus(null);
 			hitDetailVo.getHitsDetailsList().add(htd);
 			hitDetailVoList.add(hitDetailVo);
 		}

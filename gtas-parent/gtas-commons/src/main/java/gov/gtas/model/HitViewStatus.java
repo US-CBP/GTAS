@@ -19,11 +19,19 @@ import java.util.Objects;
 		@UniqueConstraint(columnNames = { "hv_hit_detail", "hv_user_group" }, name = "hvs_unique_constraint") })
 public class HitViewStatus extends BaseEntityAudit {
 
-	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse) {
+	HitViewStatus(){}
+
+	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse, Passenger passenger) {
 		this.hitDetail = hitDetail;
 		this.userGroup = userGroup;
 		this.hitViewStatusEnum = hvse;
+		this.passenger = passenger;
 	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hv_passenger_id", referencedColumnName = "id", nullable = false)
+	@JsonIgnore
+	private Passenger passenger;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "hv_hit_detail", referencedColumnName = "id", nullable = false)
@@ -76,5 +84,13 @@ public class HitViewStatus extends BaseEntityAudit {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getHitDetail(), getUserGroup());
+	}
+
+	public Passenger getPassenger() {
+		return passenger;
+	}
+
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
 	}
 }

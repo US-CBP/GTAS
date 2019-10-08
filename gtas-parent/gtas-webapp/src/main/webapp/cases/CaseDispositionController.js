@@ -149,10 +149,10 @@
                 $scope.casesDispGrid.data = $scope.casesList;
 
             };
-
+/*
             $timeout(function () {
                 $interval(function () {$scope.refreshCountDown();}, 20000);
-            },10000);
+            },10000);*/
 
             var fixGridData = function(grid, row, col, value) {
                 if (col.name === 'countdown') {
@@ -225,31 +225,39 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
-                    displayName: $translate.instant('flight.flight'),
-                    cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.id}}" title="' 
-                    + $translate.instant('msg.launchcase') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+                    displayName: $translate.instant('flight.flight')
                 },
                 {
                     field: 'countdown',
                     name: 'countdown',
                     displayName: $translate.instant('flight.countdown'),
-                    cellTemplate: '<div><span class="countdown2">{{row.entity.countDownTimeDisplay}}</span></div>'
+                    cellTemplate: '<div><span class="case-grid">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
                 {
                     field: 'highPriorityRuleCatId',
                     name: 'highPriorityRuleCatId',
                     displayName: $translate.instant('case.toprulecategory'),
-                    cellTemplate: '<span>{{grid.appScope.casesListWithCats[COL_FIELD]}}</span>'
+                    cellTemplate: '<div class="case-grid"><ul>' +
+                        '' +
+                        '<li ng-repeat="hit in row.entity.hitNames">{{hit}}</li>' +
+                        '</ul>' +
+                        '</div>'
                 },
                 {
                     field: 'lastName',
                     name: 'lastName',
-                    displayName: $translate.instant('pass.lastname')
+                    displayName: $translate.instant('pass.lastname'),
+                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" title="'
+                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+
                 },
                 {
                     field: 'firstName',
                     name: 'firstName',
                     displayName: $translate.instant('pass.firstname'),
+                    cellTemplate: '<md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" title="'
+                        + $translate.instant('msg.launchcase') + '" target="case.detail" class="case-grid md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
+
                 },
                 {
                     field: 'status',

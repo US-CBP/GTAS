@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -38,6 +39,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 
 	@SuppressWarnings("DuplicatedCode")
 	@Override
+	@Transactional
 	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
 			Set<UserGroup> userGroupSet) {
 
@@ -169,6 +171,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					// !!!!! THIS COVERS THE ELSE STATEMENT !!!!!
 				} else if ("countdown".equalsIgnoreCase(column)) {
 					orderByItem.add(flightCountDownViewJoin.get("countDownTimer"));
+				} else if ("highPriorityRuleCatId".equalsIgnoreCase(column)) {
+					orderByItem.add(hitCategoryJoin.get("severity"));
 				}
 
 				else if (!"documentNumber".equalsIgnoreCase(column)) {

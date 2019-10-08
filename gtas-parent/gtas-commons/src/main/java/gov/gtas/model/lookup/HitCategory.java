@@ -6,6 +6,7 @@
 package gov.gtas.model.lookup;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.model.BaseEntityAudit;
 import gov.gtas.model.HitMaker;
 import gov.gtas.model.UserGroup;
@@ -23,6 +24,10 @@ public class HitCategory extends BaseEntityAudit {
 
 	@Column(name = "description")
 	private String description;
+
+	@Column(name = "severity", nullable = false)
+	@Enumerated(EnumType.ORDINAL)
+	private HitSeverityEnum severity;
 
 	@OneToMany(mappedBy = "hitCategory")
 	@JsonIgnore
@@ -77,5 +82,13 @@ public class HitCategory extends BaseEntityAudit {
 
 	public void setUserGroups(Set<UserGroup> userGroups) {
 		this.userGroups = userGroups;
+	}
+
+	public HitSeverityEnum getSeverity() {
+		return severity;
+	}
+
+	public void setSeverity(HitSeverityEnum severity) {
+		this.severity = severity;
 	}
 }
