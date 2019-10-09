@@ -364,6 +364,25 @@
                 return currentServerTimeMillis;
              }
 
+             function notify(hitView) {
+                let emailDto = {
+                    to: ["testytest1232019@outlook.com"],
+                    subject: "Testing Email Notification",
+                    body: "This a test email from GTAS!",
+                    pathToAttachment: null
+                };
+
+                 const dfq = $q.defer();
+                 dfq.resolve(
+                     $http({
+                         method: 'post',
+                         url: "/gtas/notify",
+                         data: emailDto
+                     })
+                 );
+                 
+             }
+
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -385,7 +404,8 @@
                 updateGeneralComments : updateGeneralComments,
                 getDefaultSort: getDefaultSort,
                 getDefaultTimeLeft: getDefaultTimeLeft,
-                getDefaultModel: getDefaultModel
+                getDefaultModel: getDefaultModel,
+                notify: notify
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })

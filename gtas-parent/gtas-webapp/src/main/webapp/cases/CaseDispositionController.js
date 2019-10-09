@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, newCases,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList = newCases.data.cases;
@@ -174,6 +174,33 @@
                 $scope.casesDispGrid.data.splice(index, 1);
             };
 
+            $scope.emailDto = {
+                to: '',
+                subject: '',
+                body: '',
+            }
+            $scope.notify = function(row) {               
+                // $uibModal.open({
+                //     templateUrl:'notificationTemplate.html',
+                //     backdrop: true,
+                //     windowClass: 'modal',
+                //     controller: function ( $scope, $uibModalInstance, emailDto) {
+                //         $scope.emailDto = emailDto;
+
+                //         $scope.cancel = function () {
+                //             $uibModalInstance.dismiss('cancel'); 
+                //         };
+
+                //         $scope.submit = function () {
+                //             caseDispositionService.notify($scope.emailDto);
+                //             $uibModalInstance.dismiss('cancel'); 
+                //         }
+                //     }
+                // })
+                caseDispositionService.notify(row.entity);
+               
+            };
+
 
             $scope.casesDispGrid = {
                 data: $scope.casesList,
@@ -272,8 +299,10 @@
                     name: 'status',
                     displayName: $translate.instant('case.status'),
                     cellTemplate: '<div ng-if="row.entity.status === \'DISMISSED\'">{{row.entity.status}}</div>' +
-                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)">Dismiss</button>'
+                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)">Dismiss</button>' +
+                        '<button  class="btn primary" ng-click="grid.appScope.notify(row)">Notify</button>'
                 }
+                
 
             ];
 

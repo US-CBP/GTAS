@@ -14,6 +14,7 @@ import javax.sql.DataSource;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -74,6 +76,25 @@ public class CommonServicesConfig {
 	private static final String PROPERTY_NAME_HIBERNATE_CONNECTION_CHARSET = "hibernate.connection.charSet";
 	private static final String PROPERTY_NAME_HIBERNATE_USEUNICODE = "hibernate.connection.useUnicode";
 	private static final String PROPERTY_NAME_HIBERNATE_CHARACTERENCODING = "hibernate.connection.characterEncoding";
+	
+	@Value("${spring.mail.username}")
+	private String mailSenderUserName;
+	
+	@Value("${spring.mail.password}")
+	private String mailSenderPassword;
+	
+	@Value("${spring.mail.port}")
+	private String mailSenderPort;
+	
+	@Value("${spring.mail.host}")
+	private String mailSenderHost;
+	
+	@Value("${spring.mail.properties.mail.smpt.auth}")
+	private String mail_sender_smpt_auth;
+	
+	@Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+	private String mail_sender_smtp_starttls_enable;
+	
 
 	@SuppressWarnings("Duplicates")
 	private Properties hibProperties() {
@@ -160,6 +181,26 @@ public class CommonServicesConfig {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
 		return transactionManager;
+	}
+			
+
+	@Bean
+	public JavaMailSenderImpl javaMailSenderImpl() {
+
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+		mailSender.setUsername(mailSenderUserName);
+		mailSender.setPassword(mailSenderPassword);
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", mail_sender_smpt_auth);
+		props.put("mail.smtp.starttls.enable", mail_sender_smtp_starttls_enable);
+		props.put("mail.smtp.host", mailSenderHost);
+		props.put("mail.smtp.port", mailSenderPort);
+
+		mailSender.setJavaMailProperties(props);
+
+		return mailSender;
 	}
 
 }
