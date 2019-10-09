@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   app.controller('FlightsController', function ($scope, $state, $stateParams, $mdToast, codeService, $filter, $translate,
-          flightService,flightSearchOptions, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout) {
+          flightService,flightSearchOptions, gridService, uiGridConstants, executeQueryService, flights, flightsModel, spinnerService, paxService, codeTooltipService, $timeout, user) {
       $scope.errorToast = function(error){
           $mdToast.show($mdToast.simple()
            .content(error)
@@ -279,39 +279,6 @@
               gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
                 $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
               });
-
-              gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                  if (row.isExpanded) {
-                    row.entity.subGridOptions = {
-                       columnDefs: $scope.passengerSubGridColumnDefs,
-                       enableHorizontalScrollbar: 0,
-                            enableVerticalScrollbar: 1,
-
-                    }
-                    var request ={
-                        dest:row.entity.destination,
-                        direction:row.entity.direction,
-                        etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
-                        etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
-                        flightNumber:row.entity.fullFlightNumber,
-                        origin: row.entity.origin,
-                        lastname:"",
-                        pageNumber:1,
-                        pageSize:5000
-                    };
-                   spinnerService.show('html5spinner');
-                    paxService.getPax(row.entity.id, request).then(function(data){
-                      var passengerHitList = [];
-                      $.each(data.data.passengers, function(index,value){
-                      if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
-                        passengerHitList.push(value);
-                      }
-                      });
-                      row.entity.subGridOptions.data=passengerHitList;
-                     spinnerService.hide('html5spinner');
-                    });
-                  }
-              });
           }
       };
 
@@ -393,7 +360,9 @@
               field: 'passengerCount',
               displayName: $translate.instant('flight.passengers'),
               enableFiltering: false,
-              cellTemplate: '<a ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'
+              cellTemplate: 
+            	  '<a ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(2) || grid.appScope.userHasRole(1)" ui-sref="flightpax({id: row.entity.id, flightNumber: row.entity.fullFlightNumber, origin: row.entity.origin, dest: row.entity.destination, direction: row.entity.direction})" href="#/flights/{{row.entity.id}}/{{row.entity.fullFlightNumber}}/{{row.entity.origin}}/{{row.entity.destination}}/{{row.entity.direction}}/" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</a>'+
+            	  '<a ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(2) && !grid.appScope.userHasRole(1)" href="" class="md-primary md-button md-default-theme disabled" >{{COL_FIELD}}</a>'
           },
           {
               name: 'countDownTimer',
@@ -629,6 +598,15 @@
     $scope.filterCheck = function(option) {
       var filters = ['origin', 'destination', 'flight', 'direction', 'date'];
       return filters.includes(option);
+    }
+    $scope.userHasRole = function(roleId){
+    	var hasRole = false;
+    	$.each(user.data.roles, function(index, value) {
+    		if (value.roleId === roleId) {
+    			hasRole = true;
+                }
+    		});
+    	return hasRole;
     }
     resolvePage();
     mapAirports();

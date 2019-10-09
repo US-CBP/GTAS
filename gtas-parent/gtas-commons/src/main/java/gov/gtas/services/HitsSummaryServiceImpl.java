@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_HITS;
 
 @Service
 @Transactional
@@ -26,42 +26,42 @@ public class HitsSummaryServiceImpl implements HitsSummaryService {
 	HitsSummaryRepository hitsSummaryRepository;
 
 	@Override
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public HitsSummary findByPassengerId(Long id) {
 		return hitsSummaryRepository.findRuleHitsByPassengerId(id);
 	}
 
 	@Override
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public Iterable<HitsSummary> findAll() {
 		return hitsSummaryRepository.findAll();
 	}
 
 	@Override
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public List<HitsSummary> findHitsByFlightId(Long flightId) {
 		return hitsSummaryRepository.findHitsByFlightId(flightId);
 	}
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public List<HitsSummary> findByFlightIdAndPassengerIdAndUdrRule(Long fightId, Long passengerId) {
 		List<String> listHitTypes = Arrays.asList("R", "RPD", "RP", "RD");
 		return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(fightId, passengerId, listHitTypes);
 	}
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public List<HitsSummary> findByFlightIdAndPassengerIdAndWL(Long fightId, Long passengerId) {
 		List<String> listHitTypes = Arrays.asList("P", "D", "PD");
 		return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(fightId, passengerId, listHitTypes);
 	}
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public List<HitsSummary> findByFlightIdAndPassengerIdAndCombinedWithUdrRule(Long fightId, Long passengerId) {
 		List<String> listHitTypes = Arrays.asList("RPD", "RP", "RD");
 		return hitsSummaryRepository.findByFlightIdAndPassengerIdWithHitTypes(fightId, passengerId, listHitTypes);
 	}
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_HITS)
 	public List<HitsSummary> findByFlightIdAndPassengerId(Long fightId, Long passengerId) {
 		return hitsSummaryRepository.findByFlightIdAndPassengerId(fightId, passengerId);
 	}

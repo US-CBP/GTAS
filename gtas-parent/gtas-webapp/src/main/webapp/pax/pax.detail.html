@@ -198,13 +198,16 @@
     <section>
         <!--  ACTION BUTTONS  -->
         <div class="flex justify-around action-buttons">
-            <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
+            <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
               <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
             </button>
             <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
               <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
             </a>
-            <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
+            <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
+            </a>
+            <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
               <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
             </a>
             </div>
@@ -239,7 +242,8 @@
                               </thead>
                               <tbody>
                               <tr ng-repeat="case in caseHistory">
-                                <td><a ng-href="#/casedetail/{{case.id}}" title="{{'msg.showcasedetails' | translate}}"><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a>
+                                <td ng-if= "userHasRole(9) || userHasRole(1)" ><a ng-href="#/casedetail/{{case.id}}" title="{{'msg.showcasedetails' | translate}}"><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</a></td>
+                                <td ng-if= "!userHasRole(9) && !userHasRole(1)" ><i class="fa fa-link aria-hidden="true"></i> {{case.id}}</td>
                                 <td>{{case.flightNumber}}</td>
                                 <td>{{case.document}}</td>
                                 <td>{{case.status}}</td>
