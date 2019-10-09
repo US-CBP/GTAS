@@ -7,7 +7,7 @@ package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_CASES;
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES;
 
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.DispositionStatus;
@@ -68,7 +68,7 @@ public interface PassengerService {
 	 *            the request
 	 * @return the passengers by criteria
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
 	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	/**

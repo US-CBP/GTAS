@@ -336,6 +336,9 @@ var app;
                         },
                         flightSearchOptions: function(flightService){
                             return flightService.getFlightDirectionList();
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -546,6 +549,9 @@ var app;
                         },
                         passengers: function (paxService, $stateParams, paxModel) {
                           return paxService.getPax($stateParams.id, paxModel.alldatamodel());
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -789,6 +795,15 @@ var app;
                     }
                 });
             };
+            $scope.userHasRole = function(roleId){
+            	var hasRole = false;
+            	$.each(user.roles, function(index, value) {
+            		if (value.roleId === roleId) {
+            			hasRole = true;
+                        }
+            		});
+            	return hasRole;
+            }
         };
     app = angular
         .module('myApp', appDependencies)

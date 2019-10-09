@@ -44,6 +44,10 @@ public class GtasSecurityConstants {
 
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_CASES = "hasAnyAuthority('Admin', 'Manage Cases')";
 
+	//This combo role is generated because of a specific edge case: Manage queries can see list of passengers in nearly all facets EXCEPT for after flight grid selection, this makes little sense
+	//This enables the list of pax after a flight is selected to be displayed for users with the permission Manage Queries
+	public static final String PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES = "hasAnyAuthority('Admin','View Passenger','Manage Queries')";
+	
 	//These below are now defunct excepting ALL_PRIVS_AND_ONE_DAY
 	
 	public static final String PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST = "hasAnyAuthority('Admin', 'Manage Rules', 'Manage Watch List')";
