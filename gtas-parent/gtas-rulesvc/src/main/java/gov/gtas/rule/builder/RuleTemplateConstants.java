@@ -15,49 +15,66 @@ public class RuleTemplateConstants {
     public static final String SEAT_ATTRIBUTE_NAME = "number";
     public static final String DOLLAR_SIGN = "$";
 
+    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
+    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
+    static final Map<String,String> passDetailsMap;
+    static {
+        HashMap<String, String> passengerDetailsMap = new HashMap<String, String>() {};
+        passengerDetailsMap.put("PASSENGERDETAILS.AGE", "age");
+        passengerDetailsMap.put("PASSENGERDETAILS.DOB", "dob");
+        passengerDetailsMap.put("PASSENGERDETAILS.GENDER", "gender");
+        passengerDetailsMap.put("PASSENGERDETAILS.FIRSTNAME", "firstName");
+        passengerDetailsMap.put("PASSENGERDETAILS.LASTNAME", "lastName");
+        passengerDetailsMap.put("PASSENGERDETAILS.MIDDLENAME", "middleName");
+        passengerDetailsMap.put("PASSENGERDETAILS.RESIDENCYCOUNTRY", "residencyCountry");
+        passengerDetailsMap.put("PASSENGERDETAILS.NATIONALITY", "nationality");
+        passengerDetailsMap.put("PASSENGERDETAILS.PASSENGERTYPE", "passengerType");
+        passDetailsMap = Collections.unmodifiableMap(passengerDetailsMap);
+    }
+
+    static final Set<String> PASSENGER_DETAILS_SET;
+    static {
+        HashSet<String> passengerDetailsSet = new HashSet<String>() {};
+        passengerDetailsSet.add("AGE");
+        passengerDetailsSet.add("DOB");
+        passengerDetailsSet.add("GENDER");
+        passengerDetailsSet.add("FIRSTNAME");
+        passengerDetailsSet.add("LASTNAME");
+        passengerDetailsSet.add("MIDDLENAME");
+        passengerDetailsSet.add("RESIDENCYCOUNTRY");
+        passengerDetailsSet.add("NATIONALITY");
+        passengerDetailsSet.add("PASSENGERTYPE");
+        PASSENGER_DETAILS_SET = Collections.unmodifiableSet(passengerDetailsSet);
+    }
+
+    static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
 
     //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
     //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
-    public static final Map<String,String> passDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
-    	put("PASSENGERDETAILS.AGE","age");
-    	put("PASSENGERDETAILS.DOB","dob");
-    	put("PASSENGERDETAILS.GENDER","gender");
-    	put("PASSENGERDETAILS.FIRSTNAME","firstName");
-    	put("PASSENGERDETAILS.LASTNAME","lastName");
-    	put("PASSENGERDETAILS.MIDDLENAME","middleName");
-    	put("PASSENGERDETAILS.RESIDENCYCOUNTRY","residencyCountry");
-    	put("PASSENGERDETAILS.NATIONALITY","nationality");
-    	put("PASSENGERDETAILS.PASSENGERTYPE","passengerType");
-    }});
+    static final Map<String,String> passTripDetailsMap;
+    static {
+        HashMap<String, String> passengerTripDetailsMap = new HashMap<String, String>() {};
+        passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.EMBARKATION", "embarkation");
+        passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.DEBARKATION", "debarkation");
+        passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY", "travelFrequency");
+        passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY", "embarkCountry");
+        passengerTripDetailsMap.put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY", "debarkCountry");
+        passTripDetailsMap = Collections.unmodifiableMap(passengerTripDetailsMap);
+    }
 
-    public static final Set<String> PASSENGER_DETAILS_SET = Collections.unmodifiableSet(new HashSet<String>(){{
-        add("AGE");
-        add("DOB");
-        add("GENDER");
-        add("FIRSTNAME");
-        add("LASTNAME");
-        add("MIDDLENAME");
-        add("RESIDENCYCOUNTRY");
-        add("NATIONALITY");
-        add("PASSENGERTYPE");
-    }});
+    static final Set<String> FLIGHT_MUTABLE_DETAILS;
+    static {
+        HashSet<String> flightDetailsSet = new HashSet<String>(){};
+        flightDetailsSet.add("ETADATE");
+        FLIGHT_MUTABLE_DETAILS = Collections.unmodifiableSet(flightDetailsSet);
+    }
 
-    public static final String PASSENGER_DETAILS_NAME= "PassengerDetails";
-    //CASE MATTERS -> LINKS TO FRONT END RULE CREATION - Doing a "toUpper" on comparison.
-    //Field Names coming from the query builder have different format than needed for rule builder, this map syncs the naming conventions
-    public static final Map<String,String> passTripDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
-    	put("PASSENGERTRIPDETAILS.EMBARKATION","embarkation");
-    	put("PASSENGERTRIPDETAILS.DEBARKATION","debarkation");
-    	put("PASSENGERTRIPDETAILS.TRAVELFREQUENCY","travelFrequency");
-    	put("PASSENGERTRIPDETAILS.EMBARKCOUNTRY","embarkCountry");
-    	put("PASSENGERTRIPDETAILS.DEBARKCOUNTRY","debarkCountry");
-    }});
-    public static final Set<String> FLIGHT_MUTABLE_DETAILS = Collections.unmodifiableSet(new HashSet<String>(){{
-        add("ETADATE");
-    }});
-    public static final Map<String,String> flightMutableDetailsMap = Collections.unmodifiableMap(new HashMap<String,String>(){{
-    	put("MUTABLEFLIGHTDETAILS.ETA","etadate");
-    }});
+    static final Map<String,String> flightMutableDetailsMap;
+    static {
+        HashMap<String, String> flightDetailsMap = new HashMap<String, String>(){};
+        flightDetailsMap.put("MUTABLEFLIGHTDETAILS.ETA", "etadate");
+        flightMutableDetailsMap = Collections.unmodifiableMap(flightDetailsMap);
+    }
 
     public static final String PASSENGER_TRIP_DETAILS_NAME = "PassengerTripDetails";
 
