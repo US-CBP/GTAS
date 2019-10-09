@@ -9,6 +9,6 @@ source ../set_env.sh
 cd $ES_INSTALL_LOCATION
 
 echo "stopping logstash ...."
-sudo kill -9 `cat ./logstash/pid`
+kill `cat ./logstash/pid`
 echo "logstash stopped!!!!"
 

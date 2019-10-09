@@ -1,0 +1,1 @@
+select * from message_delivery_comp_vw

@@ -42,7 +42,7 @@ public class WatchlistItem extends BaseEntity {
 	private String itemRuleData;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "Wl_CATEGORY_REF", referencedColumnName = "ID", nullable = true, foreignKey=@ForeignKey(name="FK_Wl_CATEGORY_ID"))
+	@JoinColumn(name = "Wl_CATEGORY_REF", referencedColumnName = "ID", nullable = true, foreignKey = @ForeignKey(name = "FK_Wl_CATEGORY_ID"))
 	private WatchlistCategory watchlistCategory;
 
 	@OneToMany(cascade = CascadeType.REMOVE, mappedBy = "watchlistItem")

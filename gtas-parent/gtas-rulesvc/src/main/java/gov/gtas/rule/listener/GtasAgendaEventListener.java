@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GtasAgendaEventListener extends DefaultAgendaEventListener {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(GtasAgendaEventListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(GtasAgendaEventListener.class);
 
 	private List<String> ruleNameList = new ArrayList<>();
 
@@ -46,15 +45,13 @@ public class GtasAgendaEventListener extends DefaultAgendaEventListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.kie.api.event.rule.DefaultAgendaEventListener#afterMatchFired(org
+	 * @see org.kie.api.event.rule.DefaultAgendaEventListener#afterMatchFired(org
 	 * .kie.api.event.rule.AfterMatchFiredEvent)
 	 */
 	@Override
 	public void afterMatchFired(AfterMatchFiredEvent event) {
 		this.ruleExecutionStatistics.incrementTotalRulesFired();
-		this.ruleExecutionStatistics.addRuleFired(event.getMatch().getRule()
-				.getName());
+		this.ruleExecutionStatistics.addRuleFired(event.getMatch().getRule().getName());
 
 		Rule rule = event.getMatch().getRule();
 		String ruleName = rule.getName();
@@ -66,8 +63,7 @@ public class GtasAgendaEventListener extends DefaultAgendaEventListener {
 		if (ruleMetaDataMap.size() > 0) {
 			sb.append("\n  With [" + ruleMetaDataMap.size() + "] meta-data:");
 			for (Map.Entry<String, Object> e : ruleMetaDataMap.entrySet()) {
-				sb.append("\n    key=" + e.getKey() + ", value="
-						+ ruleMetaDataMap.get(e.getKey()));
+				sb.append("\n    key=" + e.getKey() + ", value=" + ruleMetaDataMap.get(e.getKey()));
 			}
 		}
 		logger.debug(sb.toString());

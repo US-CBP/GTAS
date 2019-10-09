@@ -10,16 +10,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * Query detail content marker interface.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-@JsonSubTypes({@JsonSubTypes.Type(QueryTerm.class), @JsonSubTypes.Type(QueryObject.class)})
-public interface QueryEntity extends Serializable{
-    /**
-     * Creates a canonical form of the query expression as sum of "minterms".
-     * Each "minterm" is a list of QueryTerm which can be converted to a Drools rule.
-     * @return
-     */
-    List<List<QueryTerm>> createFlattenedList();
+@JsonSubTypes({ @JsonSubTypes.Type(QueryTerm.class), @JsonSubTypes.Type(QueryObject.class) })
+public interface QueryEntity extends Serializable {
+	/**
+	 * Creates a canonical form of the query expression as sum of "minterms". Each
+	 * "minterm" is a list of QueryTerm which can be converted to a Drools rule.
+	 * 
+	 * @return
+	 */
+	List<List<QueryTerm>> createFlattenedList();
 }

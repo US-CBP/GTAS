@@ -8,31 +8,38 @@
 
 package gov.gtas.job.scheduler;
 
-import gov.gtas.constant.RuleServiceConstants;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.services.matcher.MatchingService;
-import gov.gtas.svc.TargetingService;
-import gov.gtas.svc.TargetingServiceResults;
-import gov.gtas.svc.util.RuleResultsWithMessageStatus;
-import gov.gtas.svc.util.TargetingResultUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import com.google.inject.internal.util.Lists;
+
+import gov.gtas.aws.HitNotificationConfig;
+import gov.gtas.constant.RuleServiceConstants;
+import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.model.HitsSummary;
+import gov.gtas.model.MessageStatus;
+import gov.gtas.model.MessageStatusEnum;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.AppConfigurationService;
+import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.NotificatonService;
+import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.svc.TargetingService;
+import gov.gtas.svc.TargetingServiceResults;
+import gov.gtas.svc.util.RuleResultsWithMessageStatus;
+import gov.gtas.svc.util.TargetingResultUtils;
 
 @Component
 @Scope("prototype")
@@ -50,13 +57,18 @@ public class RuleRunnerThread implements Callable<Boolean> {
     private final AppConfigurationService appConfigurationService;
 
     private List<MessageStatus> messageStatuses = new ArrayList<>();
+    
+    private NotificatonService notificationSerivce;
 
 
     public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
-                            AppConfigurationService appConfigurationService, ApplicationContext applicationContext) {
+                            AppConfigurationService appConfigurationService, 
+                            ApplicationContext applicationContext,
+                            NotificatonService notificationSerivce) {
         this.errorPersistenceService = errorPersistenceService;
         this.appConfigurationService = appConfigurationService;
         this.applicationContext = applicationContext;
+        this.notificationSerivce = notificationSerivce;
     }
 
 
@@ -74,6 +86,8 @@ public class RuleRunnerThread implements Callable<Boolean> {
             List<TargetingServiceResults> batchedTargetingServiceResults = TargetingResultUtils.batchResults(targetingServiceResultsList, BATCH_SIZE);
             logger.debug("done batching");
             int count = 1;
+            List<HitsSummary> waitListForNotification = Lists.newArrayList();
+            
             if (ruleResults.getMessageStatusList() != null) {
                 Date analyzedAt = new Date();
                 ruleResults.getMessageStatusList().forEach(m -> {
@@ -82,15 +96,22 @@ public class RuleRunnerThread implements Callable<Boolean> {
                 });
                 for (TargetingServiceResults targetingServiceResults : batchedTargetingServiceResults) {
                     try {
-                        logger.info("Saving rules/summary targeting results " + count + " of " + batchedTargetingServiceResults.size() + "...");
+                        logger.info("Saving rules/summary targeting results {} of {} ...", count, batchedTargetingServiceResults.size());
                         targetingService.saveEverything(targetingServiceResults);
+                        // wait until all currently loading messages are loaded then send hit notifications later
+                        waitListForNotification.addAll(targetingServiceResults.getHitsSummaryList());
                     } catch (Exception ignored) {
                         ruleResults.getMessageStatusList().forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
                         logger.error("Failed to save rules summary count " + count + " with following stacktrace: ", ignored);
                     }
                     count++;
                 }
-                logger.info("Rules and Watchlist ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
+                logger.info("Rules and Watchlist ran in {} m/s.", (System.nanoTime() - start) / 1000000);
+
+				if (!waitListForNotification.isEmpty()) {
+					// Send hit notifications using AWS SNS topic
+					sendNotifications(waitListForNotification);
+				}
             }
             logger.debug("entering matching service portion of jobScheduling");
             boolean fuzzyMatchingOn = false;
@@ -106,13 +127,13 @@ public class RuleRunnerThread implements Callable<Boolean> {
                 int fuzzyHits = matchingService.findMatchesBasedOnTimeThreshold(messageStatuses);
                 logger.debug("exiting matching service portion of jobScheduling");
                 if (fuzzyHits > 0) {
-                    logger.info("Fuzzy Matching had " + fuzzyHits + " hits and Ran in  " + (System.nanoTime() - fuzzyStart) / 1000000 + "m/s.");
+                    logger.info("Fuzzy Matching had {} hits and Ran in {} m/s.", fuzzyHits, (System.nanoTime() - fuzzyStart) / 1000000);
                 }
             }
             if (ruleResults.getMessageStatusList() != null) {
                 targetingService.saveMessageStatuses(ruleResults.getMessageStatusList());
             }
-            logger.debug("Total rule running scheduled task took  " + (System.nanoTime() - start) / 1000000 + "m/s.");
+            logger.debug("Total rule running scheduled task took  {} m/s.", (System.nanoTime() - start) / 1000000);
         } catch (Exception exception) {
             String errorMessage = exception.getCause() != null && exception.getCause().getMessage() != null ? exception.getCause().getMessage() : "Error in rule runner";
             logger.error(errorMessage);
@@ -128,6 +149,37 @@ public class RuleRunnerThread implements Callable<Boolean> {
         logger.debug("exiting jobScheduling()");
         return success;
     }
+
+
+	private void sendNotifications(List<HitsSummary> waitListForNotification) {
+		boolean hitNotificationEnabled = false;
+		String topicArn = null;
+		String topicSubject = null;
+		Long interpolRedNoticesId = null;
+		try {
+			hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
+					.findByOption(AppConfigurationRepository.ENABLE_INTERPOL_HIT_NOTIFICATION).getValue());
+
+			if (hitNotificationEnabled) {
+				long notificationStart = System.nanoTime();
+				topicArn = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_ARN).getValue();
+				topicSubject = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_SUBJECT).getValue();
+				// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
+				interpolRedNoticesId = Long.parseLong(appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
+				HitNotificationConfig hitNotificationConfig = new HitNotificationConfig(
+						AmazonSNSClientBuilder.standard().build(), waitListForNotification, topicArn, topicSubject,
+						interpolRedNoticesId);
+				notificationSerivce.sendHitNotifications(hitNotificationConfig);
+				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
+			}
+		} catch (Exception e) {
+			logger.warn(
+					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");
+		}
+	}
 
 
     void setMessageStatuses(List<MessageStatus> messageStatuses) {

@@ -6,7 +6,8 @@
 package gov.gtas.services;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_CASES;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES;
 
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.DispositionStatus;
@@ -33,15 +34,13 @@ public interface PassengerService {
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
 
-/*
-
-	List<Passenger> getPassengersByLastName(String lastName);
-*/
-
+	/*
+	 * 
+	 * List<Passenger> getPassengersByLastName(String lastName);
+	 */
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	List<Disposition> getPassengerDispositionHistory(Long passengerId,
-													 Long flightId);
+	List<Disposition> getPassengerDispositionHistory(Long passengerId, Long flightId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	void createDisposition(DispositionData disposition, User user);
@@ -50,10 +49,10 @@ public interface PassengerService {
 
 	void createDisposition(List<HitsSummary> hit);
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	List<DispositionStatus> getDispositionStatuses();
 
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_CASES)
 	List<CaseVo> getAllDispositions();
 
 	void createOrEditDispositionStatus(DispositionStatus ds);
@@ -63,21 +62,26 @@ public interface PassengerService {
 	/**
 	 * Gets the passengers by criteria.
 	 *
-	 * @param flightId optional
-	 * @param request  the request
+	 * @param flightId
+	 *            optional
+	 * @param request
+	 *            the request
 	 * @return the passengers by criteria
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	PassengersPageDto getPassengersByCriteria(Long flightId,
-											  PassengersRequestDto request);
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
+	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	/**
 	 * Gets the travel history.
 	 *
-	 * @param pId               the id
-	 * @param docNum            the doc num
-	 * @param docIssuCountry    the doc issu country
-	 * @param docExpirationDate the doc expiration date
+	 * @param pId
+	 *            the id
+	 * @param docNum
+	 *            the doc num
+	 * @param docIssuCountry
+	 *            the doc issu country
+	 * @param docExpirationDate
+	 *            the doc expiration date
 	 * @return the travel history
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)

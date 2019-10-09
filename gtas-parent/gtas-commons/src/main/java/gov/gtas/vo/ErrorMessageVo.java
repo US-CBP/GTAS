@@ -12,27 +12,35 @@ public class ErrorMessageVo {
 	private Date createDate;
 	private String error;
 	private String status;
+
 	public long getId() {
 		return id;
 	}
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 	public Date getCreateDate() {
 		return createDate;
 	}
+
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+
 	public String getError() {
 		return error;
 	}
+
 	public void setError(String error) {
 		this.error = error;
 	}
+
 	public String getStatus() {
 		return status;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}

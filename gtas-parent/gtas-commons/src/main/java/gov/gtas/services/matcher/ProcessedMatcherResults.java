@@ -10,22 +10,22 @@ package gov.gtas.services.matcher;
 
 class ProcessedMatcherResults {
 
-    private boolean caseCreated = false;
-    private int hitCounter;
+	private boolean caseCreated = false;
+	private int hitCounter;
 
-    void setCaseCreated(boolean caseCreated) {
-        this.caseCreated = caseCreated;
-    }
+	void setCaseCreated(boolean caseCreated) {
+		this.caseCreated = caseCreated;
+	}
 
-    boolean getCaseCreated() {
-        return caseCreated;
-    }
+	boolean getCaseCreated() {
+		return caseCreated;
+	}
 
-    void setHitCounter(int hitCounter) {
-        this.hitCounter = hitCounter;
-    }
+	void setHitCounter(int hitCounter) {
+		this.hitCounter = hitCounter;
+	}
 
-    int getHitCounter() {
-        return hitCounter;
-    }
+	int getHitCounter() {
+		return hitCounter;
+	}
 }

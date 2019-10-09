@@ -27,113 +27,112 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "user_query")
 @NamedQueries({
-    @NamedQuery(name = Constants.IS_VALID_USER, query = "select count(u.userId) from User u where u.userId = :userId"),
-    @NamedQuery(name = Constants.UNIQUE_TITLE_QUERY, query = "select q.id from UserQuery q where q.deletedDt is null and q.createdBy = :createdBy and q.title = :title"),
-    @NamedQuery(name = Constants.LIST_QUERY, query = "select q from UserQuery q where q.createdBy.userId = :createdBy and q.deletedDt is null order by q.id"),
-})
+		@NamedQuery(name = Constants.IS_VALID_USER, query = "select count(u.userId) from User u where u.userId = :userId"),
+		@NamedQuery(name = Constants.UNIQUE_TITLE_QUERY, query = "select q.id from UserQuery q where q.deletedDt is null and q.createdBy = :createdBy and q.title = :title"),
+		@NamedQuery(name = Constants.LIST_QUERY, query = "select q from UserQuery q where q.createdBy.userId = :createdBy and q.deletedDt is null order by q.id"), })
 public class UserQuery implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Integer id;
-        
-    @Column(name = "created_dt", nullable = false)
-    private Date createdDt;
-    
-    @ManyToOne
-    @JoinColumn(name = "created_by")
-    @NotNull
-    private User createdBy;
-    
-    @Column(name = "deleted_dt")
-    private Date deletedDt;
-    
-    @ManyToOne
-    @JoinColumn(name = "deleted_by")
-    private User deletedBy;
-    
-    @Column(name = "query_title", length = 20, nullable = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    private String title;
-    
-    @Column(name = "query_description", length = 100)
-    @Size(max = 100)
-    private String description;
-    
-    @Column(name = "query_text", nullable = false, columnDefinition = "LONGTEXT")
-    @NotNull
-    @Size(min = 1)
-    private String queryText;
-    
-    public UserQuery() {
-    }
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	@Column(name = "created_dt", nullable = false)
+	private Date createdDt;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	@ManyToOne
+	@JoinColumn(name = "created_by")
+	@NotNull
+	private User createdBy;
 
-    public Date getCreatedDt() {
-        return createdDt;
-    }
+	@Column(name = "deleted_dt")
+	private Date deletedDt;
 
-    public void setCreatedDt(Date createdDt) {
-        this.createdDt = createdDt;
-    }
+	@ManyToOne
+	@JoinColumn(name = "deleted_by")
+	private User deletedBy;
 
-    public User getCreatedBy() {
-        return createdBy;
-    }
+	@Column(name = "query_title", length = 20, nullable = false)
+	@NotNull
+	@Size(min = 1, max = 20)
+	private String title;
 
-    public void setCreatedBy(User createdBy) {
-        this.createdBy = createdBy;
-    }
+	@Column(name = "query_description", length = 100)
+	@Size(max = 100)
+	private String description;
 
-    public Date getDeletedDt() {
-        return deletedDt;
-    }
+	@Column(name = "query_text", nullable = false, columnDefinition = "LONGTEXT")
+	@NotNull
+	@Size(min = 1)
+	private String queryText;
 
-    public void setDeletedDt(Date deletedDt) {
-        this.deletedDt = deletedDt;
-    }
+	public UserQuery() {
+	}
 
-    public User getDeletedBy() {
-        return deletedBy;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setDeletedBy(User deletedBy) {
-        this.deletedBy = deletedBy;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public Date getCreatedDt() {
+		return createdDt;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setCreatedDt(Date createdDt) {
+		this.createdDt = createdDt;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public User getCreatedBy() {
+		return createdBy;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
 
-    public String getQueryText() {
-        return queryText;
-    }
+	public Date getDeletedDt() {
+		return deletedDt;
+	}
 
-    public void setQueryText(String queryText) {
-        this.queryText = queryText;
-    }
+	public void setDeletedDt(Date deletedDt) {
+		this.deletedDt = deletedDt;
+	}
+
+	public User getDeletedBy() {
+		return deletedBy;
+	}
+
+	public void setDeletedBy(User deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getQueryText() {
+		return queryText;
+	}
+
+	public void setQueryText(String queryText) {
+		this.queryText = queryText;
+	}
 
 }

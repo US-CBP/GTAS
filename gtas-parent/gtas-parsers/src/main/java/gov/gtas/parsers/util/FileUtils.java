@@ -16,24 +16,24 @@ import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
 
 public final class FileUtils {
-    private FileUtils() {
-    }
+	private FileUtils() {
+	}
 
-    public static byte[] readSmallFile(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        return Files.readAllBytes(path);
-    }
+	public static byte[] readSmallFile(String filePath) throws IOException {
+		Path path = Paths.get(filePath);
+		return Files.readAllBytes(path);
+	}
 
-    public static void writeToFile(String fileName, String s) throws IOException, FileNotFoundException {
-        FileOutputStream output = null;
-        try {
-            byte[] bytes = s.getBytes();
-            output = new FileOutputStream(new File(fileName));
-            IOUtils.write(bytes, output);
-        } finally {
-            if (output != null) {
-                output.close();
-            }
-        }
-    }
+	public static void writeToFile(String fileName, String s) throws IOException, FileNotFoundException {
+		FileOutputStream output = null;
+		try {
+			byte[] bytes = s.getBytes();
+			output = new FileOutputStream(new File(fileName));
+			IOUtils.write(bytes, output);
+		} finally {
+			if (output != null) {
+				output.close();
+			}
+		}
+	}
 }

@@ -17,12 +17,20 @@ import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import java.util.List;
 
 public interface QueryBuilderRepository {
-    
-    public FlightQueryVo getFlightsByDynamicQuery(QueryRequest queryRequest) throws InvalidQueryRepositoryException;
-    public PassengerQueryVo getPassengersByDynamicQuery(QueryRequest queryRequest) throws InvalidQueryRepositoryException;
-    public UserQuery saveQuery(UserQuery query) throws QueryAlreadyExistsRepositoryException, InvalidQueryRepositoryException, InvalidUserRepositoryException;
-    public UserQuery editQuery(UserQuery query) throws QueryAlreadyExistsRepositoryException, QueryDoesNotExistRepositoryException, 
-        InvalidQueryRepositoryException, InvalidUserRepositoryException;
-    public List<UserQuery> listQueryByUser(String userId) throws InvalidUserRepositoryException;
-    public void deleteQuery(String userId, int queryId) throws InvalidUserRepositoryException, QueryDoesNotExistRepositoryException;
+
+	public FlightQueryVo getFlightsByDynamicQuery(QueryRequest queryRequest) throws InvalidQueryRepositoryException;
+
+	public PassengerQueryVo getPassengersByDynamicQuery(QueryRequest queryRequest)
+			throws InvalidQueryRepositoryException;
+
+	public UserQuery saveQuery(UserQuery query) throws QueryAlreadyExistsRepositoryException,
+			InvalidQueryRepositoryException, InvalidUserRepositoryException;
+
+	public UserQuery editQuery(UserQuery query) throws QueryAlreadyExistsRepositoryException,
+			QueryDoesNotExistRepositoryException, InvalidQueryRepositoryException, InvalidUserRepositoryException;
+
+	public List<UserQuery> listQueryByUser(String userId) throws InvalidUserRepositoryException;
+
+	public void deleteQuery(String userId, int queryId)
+			throws InvalidUserRepositoryException, QueryDoesNotExistRepositoryException;
 }

@@ -1,32 +1,34 @@
 package gov.gtas.services;
 
 public class WeightCountDto {
-    private Double weight;
-    private Integer count;
-    public Double getWeight() {
-        return weight;
-    }
+	private Double weight;
+	private Integer count;
 
-    void setWeight(Double weight) {
-        this.weight = weight;
-    }
+	public Double getWeight() {
+		return weight;
+	}
 
-    public Integer getCount() {
-        return count;
-    }
+	void setWeight(Double weight) {
+		this.weight = weight;
+	}
 
-    void setCount(Integer count) {
-        this.count = count;
-    }
-    Double average() {
-        Double average = 0D;
-        if (weight == null || count == null) return average;
-        if(weight > 0 && count >0){
-            Long averageLong = Math.round(weight/count);
-            average = averageLong.doubleValue();
-        }
-        return average;
-    }
+	public Integer getCount() {
+		return count;
+	}
 
+	void setCount(Integer count) {
+		this.count = count;
+	}
+
+	Double average() {
+		Double average = 0D;
+		if (weight == null || count == null)
+			return average;
+		if (weight > 0 && count > 0) {
+			Long averageLong = Math.round(weight / count);
+			average = averageLong.doubleValue();
+		}
+		return average;
+	}
 
 }

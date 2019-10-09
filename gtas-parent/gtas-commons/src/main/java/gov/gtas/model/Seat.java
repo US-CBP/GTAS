@@ -10,8 +10,8 @@ import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "seat", uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"number", "apis", "passenger_id", "flight_id" }) })
+@Table(name = "seat", uniqueConstraints = {
+		@UniqueConstraint(columnNames = { "number", "apis", "passenger_id", "flight_id" }) })
 public class Seat extends BaseEntity {
 	private static final long serialVersionUID = 1L;
 
@@ -78,12 +78,11 @@ public class Seat extends BaseEntity {
 
 	@Override
 	public int hashCode() {
-		String num =  this.number == null ? null : this.number.toUpperCase();
+		String num = this.number == null ? null : this.number.toUpperCase();
 		if (num != null) {
 			num = num.replaceAll("\\\\", "");
 		}
-		return Objects
-				.hash(num, this.apis, this.paxId);
+		return Objects.hash(num, this.apis, this.paxId);
 	}
 
 	@Override
@@ -93,16 +92,15 @@ public class Seat extends BaseEntity {
 		if (!(obj instanceof Seat))
 			return false;
 		final Seat other = (Seat) obj;
-		String num =   this.number == null ? null : this.number.toUpperCase();
+		String num = this.number == null ? null : this.number.toUpperCase();
 		if (num != null) {
 			num = num.replaceAll("\\\\", "");
 		}
-		String num2 =  other.getNumber() == null ? null : other.getNumber().toUpperCase();
+		String num2 = other.getNumber() == null ? null : other.getNumber().toUpperCase();
 		if (num2 != null) {
 			num2 = num2.replaceAll("\\\\", "");
 		}
-		return Objects.equals(num, num2)
-				&& Objects.equals(this.apis, other.apis)
+		return Objects.equals(num, num2) && Objects.equals(this.apis, other.apis)
 				&& Objects.equals(this.paxId, other.paxId);
 	}
 }

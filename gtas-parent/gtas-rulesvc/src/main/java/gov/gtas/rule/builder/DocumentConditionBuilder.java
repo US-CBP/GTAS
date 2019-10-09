@@ -9,19 +9,19 @@ import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.querybuilder.mappings.DocumentMapping;
 
 public class DocumentConditionBuilder extends EntityConditionBuilder {
-    /*
-     * The logger for the DocumentConditionBuilder.
-     */
-    DocumentConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.DOCUMENT.getEntityName());
-    }
+	/*
+	 * The logger for the DocumentConditionBuilder.
+	 */
+	DocumentConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.DOCUMENT.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
 
-    String getPassengerIdLinkExpression() {
-        return getDrlVariableName()+"."+DocumentMapping.DOCUMENT_OWNER_ID.getFieldName();
-    }
+	String getPassengerIdLinkExpression() {
+		return getDrlVariableName() + "." + DocumentMapping.DOCUMENT_OWNER_ID.getFieldName();
+	}
 
 }

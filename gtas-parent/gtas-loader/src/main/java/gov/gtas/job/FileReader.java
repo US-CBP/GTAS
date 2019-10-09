@@ -29,8 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FileReader {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(FileReader.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileReader.class);
 
 	@Autowired
 	ApisMessageService apisService;
@@ -45,19 +44,19 @@ public class FileReader {
 	// @Scheduled(initialDelay=6000,fixedRate=180000)
 	public void CheckForNewFile() {
 		logger.info("*************************************************************************************");
-		logger.info("************************* FILE READING JOB BEGIN AT ************************"
-				+ new Date());
+		logger.info("************************* FILE READING JOB BEGIN AT ************************" + new Date());
 		logger.info("*************************************************************************************");
 		Properties properties = getSchedulerProperties();
 		if (properties != null) {
 			File apisFolder = new File(properties.getProperty("apis.dir.origin"));
 			File apisProcessedFolder = new File(properties.getProperty("apis.dir.processed"));
-			// File apisWorkingFolder = new File(properties.getProperty("apis.dir.working"));
-      File pnrFolder = new File(properties.getProperty("pnr.dir.origin"));
+			// File apisWorkingFolder = new
+			// File(properties.getProperty("apis.dir.working"));
+			File pnrFolder = new File(properties.getProperty("pnr.dir.origin"));
 			File pnrProcessedFolder = new File(properties.getProperty("pnr.dir.processed"));
-      // File pnrWorkingFolder = new File(properties.getProperty("pnr.dir.working"));
+			// File pnrWorkingFolder = new File(properties.getProperty("pnr.dir.working"));
 
-      boolean finished = checkAndMoveApisFiles(apisFolder, apisProcessedFolder);
+			boolean finished = checkAndMoveApisFiles(apisFolder, apisProcessedFolder);
 			if (finished) {
 				checkAndMovePnrFiles(pnrFolder, pnrProcessedFolder);
 			}
@@ -67,8 +66,7 @@ public class FileReader {
 			System.exit(0);
 		}
 		logger.info("*************************************************************************************");
-		logger.info("************************* FILE READING JOB ENDED AT **********************"
-				+ new Date());
+		logger.info("************************* FILE READING JOB ENDED AT **********************" + new Date());
 		logger.info("*************************************************************************************");
 	}
 
@@ -82,16 +80,12 @@ public class FileReader {
 					if (!fileEntry.isDirectory()) {
 						FileSystem fromFileSystem = FileSystems.getDefault();
 						FileSystem toFileSystem = FileSystems.getDefault();
-						Path moveFrom = fromFileSystem.getPath(fileEntry
-								.getPath());
-						Path moveTo = toFileSystem.getPath(processedFolder
-								.getPath()
-								+ File.separator
-								+ fileEntry.getName());
+						Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
+						Path moveTo = toFileSystem
+								.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
 						if (fileEntry.isFile()) {
 							logger.info("Reading file from : " + moveFrom);
-							logger.info("Moving file after processing to : "
-									+ moveTo);
+							logger.info("Moving file after processing to : " + moveTo);
 							fileEntry.renameTo(moveTo.toFile());
 						}
 						fromFileSystem.close();
@@ -102,14 +96,12 @@ public class FileReader {
 			logger.info("#####################  FINISHED PROCESSING PNR FILES ############################");
 		} catch (Exception e) {
 			handleExceptions(e);
-			logger.info("Exception saving PNR GOV message file"
-					+ e.getMessage());
+			logger.info("Exception saving PNR GOV message file" + e.getMessage());
 		}
 	}
 
 	private void handleExceptions(Exception e) {
-		ErrorDetailInfo errorDetails = ErrorHandlerFactory
-				.createErrorDetails(e);
+		ErrorDetailInfo errorDetails = ErrorHandlerFactory.createErrorDetails(e);
 		try {
 			errorDetails = errorService.create(errorDetails); // add the saved
 																// ID
@@ -129,19 +121,15 @@ public class FileReader {
 					if (!fileEntry.isDirectory()) {
 						FileSystem fromFileSystem = FileSystems.getDefault();
 						FileSystem toFileSystem = FileSystems.getDefault();
-						Path moveFrom = fromFileSystem.getPath(fileEntry
-								.getPath());
-						Path moveTo = toFileSystem.getPath(processedFolder
-								.getPath()
-								+ File.separator
-								+ fileEntry.getName());
+						Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
+						Path moveTo = toFileSystem
+								.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
 						if (fileEntry.isFile()) {
 							logger.info("Reading file from : " + moveFrom);
 							// MessageLoader.processSingleFile(apisService,
 							// fileEntry);
 							// apisService.processMessage(moveFrom.toString());
-							logger.info("Moving file after processing to : "
-									+ moveTo);
+							logger.info("Moving file after processing to : " + moveTo);
 							fileEntry.renameTo(moveTo.toFile());
 						}
 						fromFileSystem.close();
@@ -162,13 +150,11 @@ public class FileReader {
 		InputStream input = null;
 		try {
 			ClassLoader classLoader = getClass().getClassLoader();
-			File file = new File(classLoader.getResource(
-					"loaderScheduler.properties").getFile());
+			File file = new File(classLoader.getResource("loaderScheduler.properties").getFile());
 			input = new FileInputStream(file);
 			prop.load(input);
 		} catch (IOException e1) {
-			logger.info("Exception loading loaderScheduler.properties"
-					+ e1.getMessage());
+			logger.info("Exception loading loaderScheduler.properties" + e1.getMessage());
 		}
 		return prop;
 	}

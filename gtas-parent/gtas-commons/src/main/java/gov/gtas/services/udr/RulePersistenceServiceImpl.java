@@ -49,8 +49,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	/*
 	 * The logger for the RulePersistenceService.
 	 */
-	private static final Logger logger = LoggerFactory
-			.getLogger(RulePersistenceServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(RulePersistenceServiceImpl.class);
 
 	private static final int UPDATE_BATCH_SIZE = 100;
 
@@ -76,9 +75,8 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 
 		if (savedMeta == null) {
 			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
-					CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
-					"UDR metatdata", "RulePersistenceServiceImpl.create()");
+			throw errorHandler.createException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, "UDR metatdata",
+					"RulePersistenceServiceImpl.create()");
 		}
 
 		// set the audit fields
@@ -124,8 +122,8 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 			udrRuleRepository.save(ruleToDelete);
 		} else {
 			ruleToDelete = null; // in case delete flag was Y
-			logger.warn("RulePersistenceServiceImpl.delete() - object does not exist or has already been deleted:"
-					+ id);
+			logger.warn(
+					"RulePersistenceServiceImpl.delete() - object does not exist or has already been deleted:" + id);
 		}
 		return ruleToDelete;
 	}
@@ -133,8 +131,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	@Override
 	@Transactional(value = TxType.SUPPORTS)
 	public List<UdrRule> findAll() {
-		return udrRuleRepository.findByDeletedAndEnabled(YesNoEnum.N,
-				YesNoEnum.Y);
+		return udrRuleRepository.findByDeletedAndEnabled(YesNoEnum.N, YesNoEnum.Y);
 	}
 
 	@Override
@@ -147,11 +144,10 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	}
 
 	@Override
-	public Collection<? extends BaseEntity> batchUpdate(
-			Collection<? extends BaseEntity> entities) {
+	public Collection<? extends BaseEntity> batchUpdate(Collection<? extends BaseEntity> entities) {
 		/*
-		 * Note: this method is only used for Knowledge base maintenance. Hence
-		 * there is no need for logging the updates in this method.
+		 * Note: this method is only used for Knowledge base maintenance. Hence there is
+		 * no need for logging the updates in this method.
 		 */
 		List<BaseEntity> ret = new LinkedList<>();
 		int count = 0;
@@ -174,9 +170,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 
 		if (rule.getId() == null) {
 			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
-					CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, "id",
-					"Update UDR");
+			throw errorHandler.createException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, "id", "Update UDR");
 		}
 
 		rule.setEditDt(new Date());
@@ -190,9 +184,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 
 		if (rule.getId() == null) {
 			ErrorHandler errorHandler = ErrorHandlerFactory.getErrorHandler();
-			throw errorHandler.createException(
-					CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, "id",
-					"Update UDR");
+			throw errorHandler.createException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, "id", "Update UDR");
 		}
 
 		rule.setEditDt(new Date());
@@ -209,8 +201,7 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 	@Override
 	@Transactional(TxType.SUPPORTS)
 	public UdrRule findByTitleAndAuthor(String title, String authorUserId) {
-		return udrRuleRepository
-				.getUdrRuleByTitleAndAuthor(title, authorUserId);
+		return udrRuleRepository.getUdrRuleByTitleAndAuthor(title, authorUserId);
 	}
 
 	@Override
@@ -223,13 +214,11 @@ public class RulePersistenceServiceImpl implements RulePersistenceService {
 		List<UdrRule> ret = null;
 		try {
 			// remove the time portion of the date
-			Date tDate = DateCalendarUtils.parseJsonDate(DateCalendarUtils
-					.formatJsonDate(targetDate));
+			Date tDate = DateCalendarUtils.parseJsonDate(DateCalendarUtils.formatJsonDate(targetDate));
 			ret = udrRuleRepository.findValidUdrRuleByDate(tDate);
 		} catch (ParseException ex) {
 			throw ErrorHandlerFactory.getErrorHandler().createException(
-					CommonErrorConstants.INVALID_ARGUMENT_ERROR_CODE, ex,
-					"targetDate",
+					CommonErrorConstants.INVALID_ARGUMENT_ERROR_CODE, ex, "targetDate",
 					"RulePersistenceServiceImpl.findValidUdrOnDate");
 		}
 		return ret;

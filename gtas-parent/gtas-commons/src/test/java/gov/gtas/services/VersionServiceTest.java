@@ -25,7 +25,7 @@ public class VersionServiceTest {
 		versionService.getApplicationVersionNumber();
 		Assert.assertEquals(versionService.getApplicationVersionNumber(), "1.6");
 	}
-	
+
 	@Test
 	public void getApplicationVersionNumberTest2() {
 		versionService.getApplicationVersionNumber();

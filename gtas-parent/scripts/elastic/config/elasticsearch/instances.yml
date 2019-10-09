@@ -1,0 +1,9 @@
+instances:  
+  - name: 'elasticsearch'
+    dns:  [ 'localhost', 'elasticsearch']
+
+  - name: 'kibana'
+    dns:  [ 'localhost', 'kibana']
+
+  - name: 'logstash'
+    dns:  [ 'localhost', 'logstash']

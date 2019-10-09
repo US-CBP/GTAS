@@ -25,16 +25,16 @@ public class SearchServiceElastic implements SearchService {
 
 	@Autowired
 	private ElasticHelper elastic;
-	
+
 	@Override
 	public AdhocQueryDto findPassengers(String query, int pageNumber, int pageSize, String column, String dir) {
 		AdhocQueryDto rv = null;
-		
+
 		elastic.initClient();
-		if (elastic.isDown()) { 
+		if (elastic.isDown()) {
 			return errorDto;
 		}
-		
+
 		try {
 			rv = elastic.searchPassengers(query, pageNumber, pageSize, column, dir);
 		} catch (Exception e) {
@@ -44,15 +44,16 @@ public class SearchServiceElastic implements SearchService {
 
 		return rv;
 	}
+
 	@Override
 	public LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir) {
 		LinkAnalysisDto la = null;
-		
+
 		elastic.initClient();
-		if (elastic.isDown()) { 
+		if (elastic.isDown()) {
 			return linkErrorDto;
 		}
-		
+
 		try {
 			la = elastic.findPaxLinks(pax, pageNumber, pageSize, column, dir);
 		} catch (Exception e) {

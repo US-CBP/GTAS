@@ -16,65 +16,75 @@ import gov.gtas.parsers.util.ParseUtils;
 import gov.gtas.validators.Validatable;
 
 public class DocumentVo implements Validatable {
-    private String documentType;
-    private String documentNumber;
-    private Date expirationDate;
-    private Date issuanceDate;
-    private String issuanceCountry;
-    /**
-     * date format used for passport/visa expiration, issuance date
-     */
-    private static final String DOC_DATE_FORMAT = "ddMMMyy";
-    
-    public DocumentVo() {
-    	
-    }
-    
-    public DocumentVo(SSRDoco ssrDoco) {
-    	this.setDocumentNumber(ssrDoco.getVisaDocNumber());
-    	this.setDocumentType(ssrDoco.getSsrDocoType().toString());
-    	this.setExpirationDate(null); //SSRDoco does not have an expiration date field
-    	this.setIssuanceCountry(ssrDoco.getVisaDocPlaceOfIssuance());
-    	this.setIssuanceDate(ParseUtils.parseDateTime(ssrDoco.getVisaDocIssuanceDate(), DOC_DATE_FORMAT));
-    }
+	private String documentType;
+	private String documentNumber;
+	private Date expirationDate;
+	private Date issuanceDate;
+	private String issuanceCountry;
+	/**
+	 * date format used for passport/visa expiration, issuance date
+	 */
+	private static final String DOC_DATE_FORMAT = "ddMMMyy";
 
-    public String getDocumentType() {
-        return documentType;
-    }
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
-    }
-    public String getDocumentNumber() {
-        return documentNumber;
-    }
-    public void setDocumentNumber(String documentNumber) {
-        this.documentNumber = documentNumber;
-    }
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-    public Date getIssuanceDate() {
-        return issuanceDate;
-    }
-    public void setIssuanceDate(Date issuanceDate) {
-        this.issuanceDate = issuanceDate;
-    }
-    public String getIssuanceCountry() {
-        return issuanceCountry;
-    }
-    public void setIssuanceCountry(String issuanceCountry) {
-        this.issuanceCountry = issuanceCountry;
-    }
-    @Override
-    public boolean isValid() {
-        return StringUtils.isNotBlank(this.documentNumber) 
-               && StringUtils.isNotBlank(this.documentType);
-    }    
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public DocumentVo() {
+
+	}
+
+	public DocumentVo(SSRDoco ssrDoco) {
+		this.setDocumentNumber(ssrDoco.getVisaDocNumber());
+		this.setDocumentType(ssrDoco.getSsrDocoType().toString());
+		this.setExpirationDate(null); // SSRDoco does not have an expiration date field
+		this.setIssuanceCountry(ssrDoco.getVisaDocPlaceOfIssuance());
+		this.setIssuanceDate(ParseUtils.parseDateTime(ssrDoco.getVisaDocIssuanceDate(), DOC_DATE_FORMAT));
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+
+	public void setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+	}
+
+	public Date getExpirationDate() {
+		return expirationDate;
+	}
+
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+
+	public Date getIssuanceDate() {
+		return issuanceDate;
+	}
+
+	public void setIssuanceDate(Date issuanceDate) {
+		this.issuanceDate = issuanceDate;
+	}
+
+	public String getIssuanceCountry() {
+		return issuanceCountry;
+	}
+
+	public void setIssuanceCountry(String issuanceCountry) {
+		this.issuanceCountry = issuanceCountry;
+	}
+
+	@Override
+	public boolean isValid() {
+		return StringUtils.isNotBlank(this.documentNumber) && StringUtils.isNotBlank(this.documentType);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

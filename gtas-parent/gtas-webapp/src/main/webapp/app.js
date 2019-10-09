@@ -41,13 +41,15 @@ var app;
             'ui.bootstrap.datetimepicker',
             'datetime'
         ],
-        language = function ($translateProvider) {
+        language = function ($translateProvider) {  
 
-    		$translateProvider.useUrlLoader('/gtas/messageBundle/');
+        var pref = window.navigator.language.split('-')[0];
+
+        $translateProvider.useUrlLoader('/gtas/messageBundle/');
     		$translateProvider.useCookieStorage();
-    		$translateProvider.preferredLanguage('en');
+    		$translateProvider.preferredLanguage(pref);
     		$translateProvider.fallbackLanguage('en');
-    		$translateProvider.useSanitizeValueStrategy('escape');
+        $translateProvider.useSanitizeValueStrategy('escape');
 
 		},
 		idleWatchConfig = function(IdleProvider, KeepaliveProvider, TitleProvider){
@@ -84,7 +86,7 @@ var app;
         },
         initialize = function ($rootScope, $location, AuthService, userService, USER_ROLES, $state, APP_CONSTANTS, $sessionStorage, checkUserRoleFactory, Idle, $mdDialog, configService, codeService) {
             $rootScope.ROLES = USER_ROLES;
-            $rootScope.$on('$stateChangeStart',
+             $rootScope.$on('$stateChangeStart',
 
                 function (event, toState) {
             		Idle.watch();
@@ -319,7 +321,7 @@ var app;
                 })
                 .state('flights', {
                     url: '/flights',
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_CASES, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     authenticate: true,
                     views: {
                         '@': {
@@ -334,6 +336,9 @@ var app;
                         },
                         flightSearchOptions: function(flightService){
                             return flightService.getFlightDirectionList();
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -356,7 +361,7 @@ var app;
                 .state('casemanual', {
                     url: '/casemanual/:flightId/:paxId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionManualCtrl',
@@ -376,7 +381,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -393,7 +398,7 @@ var app;
                 .state('caseDisposition', {
                     url: '/casedisposition',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionCtrl',
@@ -544,6 +549,9 @@ var app;
                         },
                         passengers: function (paxService, $stateParams, paxModel) {
                           return paxService.getPax($stateParams.id, paxModel.alldatamodel());
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -572,7 +580,7 @@ var app;
                 .state('detail', {
                     url: '/paxdetail/{paxId}/{flightId}',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
                             controller: 'PassengerDetailCtrl',
@@ -626,7 +634,7 @@ var app;
                 .state('userlocation', {
                     url: '/userlocation',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'UserLocationController',
@@ -642,7 +650,7 @@ var app;
                 .state('userSettings', {
                     url: '/userSettings',
                     authenticate: true,
-                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'UserSettingsController',
@@ -658,7 +666,7 @@ var app;
                 .state('seatsMap', {
                 	url: '/seatsMap/{paxId}/{flightId}/{seat}',
                 	authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                     	'@' : {
                     		controller: 'SeatsMapController',
@@ -683,6 +691,7 @@ var app;
             $scope.errorList = [];
             $scope.hitCount = 0;
             $scope.neo4jUrl = "http://localhost:7474/browser/";
+            $scope.agencyName = '';
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -707,6 +716,7 @@ var app;
                 aboutgtas: {name: ['aboutgtas']}
             };
             $scope.onRoute = function (key) {
+
                 return (lookup[key].name && lookup[key].name.indexOf($scope.stateName) >= 0) || (lookup[key].mode && lookup[key].mode.indexOf($scope.mode) >= 0);
             };
             $scope.showNav = function () {
@@ -726,6 +736,14 @@ var app;
                     return $scope.hitCount;
             };
 
+            configService.agencyName().then(function(value) {
+                $scope.agencyName = value.data;
+             });
+            
+            $scope.getAgencyName = function() {
+            	return $scope.agencyName;
+            };
+            
             configService.neo4j().then(function(value) {
                $scope.neo4jUrl = value.data;
             });
@@ -786,12 +804,22 @@ var app;
                     }
                 });
             };
+            $scope.userHasRole = function(roleId){
+            	var hasRole = false;
+            	$.each(user.roles, function(index, value) {
+            		if (value.roleId === roleId) {
+            			hasRole = true;
+                        }
+            		});
+            	return hasRole;
+            }
         };
     app = angular
         .module('myApp', appDependencies)
         .config(router)
         .config(localDateMomentFormat)
-        .config(language)
+
+        .config(language)    // ngx
         .config(idleWatchConfig)
         .constant('USER_ROLES', {
             ADMIN: 'Admin',
@@ -800,7 +828,8 @@ var app;
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',
             ONE_DAY_LOOKOUT: 'One Day Lookout',
-            MANAGE_HITS: 'Manage Hits'
+            MANAGE_HITS: 'Manage Hits',
+            MANAGE_CASES: 'Manage Cases'
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',
@@ -808,7 +837,7 @@ var app;
             MAIN_PAGE: 'main.html#/'+ 'flights',
             ONE_DAY_LOOKOUT: 'main.html#/onedaylookout',
             CURRENT_USER: 'CurrentUser',
-            LOCALE_COOKIE_KEY: 'myLocaleCookie',
+            LOCALE_COOKIE_KEY: 'myLocaleCookie',  // ngx
             LOGIN_ERROR_MSG: ' Invalid User Name or Password. Please Try Again '
         })
         .run(initialize)
@@ -839,6 +868,7 @@ var app;
             var currentUser;
             return {
                 checkRole: function (user) {
+
                     currentUser = user;
                     currentUser.hasRole = function (requiredRole) {
                         var hasRole = false;

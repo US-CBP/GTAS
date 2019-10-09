@@ -18,37 +18,35 @@ import java.util.Date;
  * @author gbays
  */
 @Service
-public class AppConfigurationServiceImpl implements AppConfigurationService
-{
+public class AppConfigurationServiceImpl implements AppConfigurationService {
 
-    @Resource
-    private AppConfigurationRepository appConfigurationRepository; 
-    
-    @Override
-    public AppConfiguration findByOption(String option)
-    {
-        AppConfiguration appConfig = appConfigurationRepository.findByOption(option);
-        
-        return appConfig;
-        
-    }
+	@Resource
+	private AppConfigurationRepository appConfigurationRepository;
 
-    public Date offSetTimeZone(Date date) {
-        if (date == null) {
-            return null;
-        }
-        int hour_offset = Integer.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.HOURLY_ADJ).getValue());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(Calendar.HOUR_OF_DAY, hour_offset);
-        return calendar.getTime();
-    }
-    
-    @Override
-    public AppConfiguration save(AppConfiguration appConfig)
-    {
-       appConfigurationRepository.save(appConfig);
-       return appConfig; 
-    }
-    
+	@Override
+	public AppConfiguration findByOption(String option) {
+		AppConfiguration appConfig = appConfigurationRepository.findByOption(option);
+
+		return appConfig;
+
+	}
+
+	public Date offSetTimeZone(Date date) {
+		if (date == null) {
+			return null;
+		}
+		int hour_offset = Integer
+				.parseInt(appConfigurationRepository.findByOption(AppConfigurationRepository.HOURLY_ADJ).getValue());
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.HOUR_OF_DAY, hour_offset);
+		return calendar.getTime();
+	}
+
+	@Override
+	public AppConfiguration save(AppConfiguration appConfig) {
+		appConfigurationRepository.save(appConfig);
+		return appConfig;
+	}
+
 }

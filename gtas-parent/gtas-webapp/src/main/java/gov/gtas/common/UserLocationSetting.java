@@ -61,9 +61,9 @@ public class UserLocationSetting {
 				&& !userLocationStatus.isPrimaryLocationCreated()
 				&& !userLocationStatus.isPrimaryLocationEnabledInDb()) {
 			/*
-			 * No location airports were found in user_location table so insert the dashboard
-			 * airport in the user_location table, mark it as a primary location, and set
-			 * the http session
+			 * No location airports were found in user_location table so insert the
+			 * dashboard airport in the user_location table, mark it as a primary location,
+			 * and set the http session
 			 */
 			try {
 
@@ -80,11 +80,10 @@ public class UserLocationSetting {
 				logger.error("An error has occurred when creating new user location in the database.");
 			}
 
-		} else if (userLocationStatus.getPrimaryLocationAirport() == null)
-		{
+		} else if (userLocationStatus.getPrimaryLocationAirport() == null) {
 			logger.error("ERROR! The user location could not be set correctly");
 		}
-		
+
 		return userLocationStatus;
 	}
 
@@ -113,10 +112,8 @@ public class UserLocationSetting {
 			if (userLocationVoList != null && !userLocationVoList.isEmpty()) {
 
 				/*
-				 * Case 1.1
-				 * The user has a primary location Airport 
-				 * 2. The primary location is enabled in user location table 
-				 * 3. The primary location airport record is
+				 * Case 1.1 The user has a primary location Airport 2. The primary location is
+				 * enabled in user location table 3. The primary location airport record is
 				 * already created in GTAS user_location table
 				 */
 
@@ -132,8 +129,7 @@ public class UserLocationSetting {
 				}
 
 				/*
-				 * Case 1.2 
-				 *  The user has one or more locations but a primary location is not
+				 * Case 1.2 The user has one or more locations but a primary location is not
 				 * enabled in the user_location table
 				 */
 

@@ -15,13 +15,12 @@ import java.util.List;
 @Service
 public class MessageServiceImpl implements MessageService {
 
-    @Resource
-    MessageRepository messageRepository;
+	@Resource
+	MessageRepository messageRepository;
 
-    @SuppressWarnings("unchecked") //findTop500ByOrderByIdDesc will always return a subclass of message.
-    public List<Message> getMostRecent500Messages() {
-        return (List<Message>) messageRepository.findTop500ByOrderByIdDesc();
-    }
-
+	@SuppressWarnings("unchecked") // findTop500ByOrderByIdDesc will always return a subclass of message.
+	public List<Message> getMostRecent500Messages() {
+		return (List<Message>) messageRepository.findTop500ByOrderByIdDesc();
+	}
 
 }

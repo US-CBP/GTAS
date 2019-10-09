@@ -11,15 +11,15 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class DwellTimeConditionBuilder extends EntityConditionBuilder {
 
-    public DwellTimeConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.DWELL_TIME.getEntityName());
-    }
+	public DwellTimeConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.DWELL_TIME.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
 }

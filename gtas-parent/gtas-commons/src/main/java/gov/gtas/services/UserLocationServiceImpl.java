@@ -25,7 +25,7 @@ public class UserLocationServiceImpl implements UserLocationService {
 	@Override
 	public List<UserLocationVo> getUserLocation(String userId) throws Exception {
 
-		logger.debug("Getting user location for for user: " + userId + " "+ this.getClass().getName());
+		logger.debug("Getting user location for for user: " + userId + " " + this.getClass().getName());
 
 		List<UserLocationVo> userLocationVoList = new ArrayList<UserLocationVo>();
 
@@ -60,7 +60,8 @@ public class UserLocationServiceImpl implements UserLocationService {
 	@Override
 	public boolean updateUserPrimaryLocation(String userId, String location, Boolean flag) throws Exception {
 
-		logger.debug("Updating user location for for user: " + userId + " " + location +"  "+ this.getClass().getName());
+		logger.debug(
+				"Updating user location for for user: " + userId + " " + location + "  " + this.getClass().getName());
 
 		boolean isPrimaryLocationUpdated = false;
 
@@ -87,7 +88,8 @@ public class UserLocationServiceImpl implements UserLocationService {
 
 	public Boolean createUserPrimaryLocation(String userId, String location, Boolean flag) throws Exception {
 
-		logger.debug("Inserting user primary location for user: " + userId + " " + location + " with flag " + flag + " "+ this.getClass().getName());
+		logger.debug("Inserting user primary location for user: " + userId + " " + location + " with flag " + flag + " "
+				+ this.getClass().getName());
 
 		boolean isPrimaryLocationInserted = false;
 

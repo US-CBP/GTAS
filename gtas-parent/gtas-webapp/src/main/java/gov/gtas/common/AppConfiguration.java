@@ -23,55 +23,55 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-@Configuration 
-@ComponentScan("gov.gtas") 
+@Configuration
+@ComponentScan("gov.gtas")
 @PropertySource("classpath:application.properties")
 @EnableWebMvc
-public class AppConfiguration extends WebMvcConfigurerAdapter {  
-	 private static final Logger logger = LoggerFactory
-	            .getLogger(AppConfiguration.class);
-    @Bean(name="gtasMessageSource")
-    public MessageSource messageSource() {
-        GtasResourceBundleMessageSource messageSource = new GtasResourceBundleMessageSource();
-        messageSource.setBasename("/WEB-INF/messages/messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
-    
-    @Bean
-    public LocaleResolver localeResolver(){
-    	
-    	Properties prop = new Properties();
-    	InputStream input = null;
-    	String language="en";
-    	try {
-    		input =this.getClass().getClassLoader().getResourceAsStream("application.properties");
-    		prop.load(input);
-    		language=prop.getProperty("site.language");
-    		
-    	} catch (IOException ex) {
-    		//logger.error("error!", e);
-    	} finally {
-    		if (input != null) {
-    			try {
-    				input.close();
-    			} catch (IOException e) {
-    				//logger.error("error!", e);
-    			}
-    		}
-    	}
-        CookieLocaleResolver resolver = new CookieLocaleResolver();
-        resolver.setDefaultLocale(new Locale(language));
-        resolver.setCookieName("myLocaleCookie");
-        resolver.setCookieMaxAge(4800);
-    return resolver;
-    }
+public class AppConfiguration extends WebMvcConfigurerAdapter {
+	private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
-        interceptor.setParamName("lang");
-        registry.addInterceptor(interceptor);
-    }
-    
-} 
+	@Bean(name = "gtasMessageSource")
+	public MessageSource messageSource() {
+		GtasResourceBundleMessageSource messageSource = new GtasResourceBundleMessageSource();
+		messageSource.setBasename("/WEB-INF/messages/messages");
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
+	}
+
+	@Bean
+	public LocaleResolver localeResolver() {
+
+		Properties prop = new Properties();
+		InputStream input = null;
+		String language = "en";
+		try {
+			input = this.getClass().getClassLoader().getResourceAsStream("application.properties");
+			prop.load(input);
+			language = prop.getProperty("site.language");
+
+		} catch (IOException ex) {
+			// logger.error("error!", e);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// logger.error("error!", e);
+				}
+			}
+		}
+		CookieLocaleResolver resolver = new CookieLocaleResolver();
+		resolver.setDefaultLocale(new Locale(language));
+		resolver.setCookieName("myLocaleCookie");
+		resolver.setCookieMaxAge(4800);
+		return resolver;
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+		interceptor.setParamName("lang");
+		registry.addInterceptor(interceptor);
+	}
+
+}

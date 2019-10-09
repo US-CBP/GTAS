@@ -27,6 +27,15 @@
 - pipeline.id:  flightleg
   path.config:  "./config/logstash-flight_legs.conf"
   pipeline.workers: 1
+  
+- pipeline.id: message_delivery_comp
+  pipeline.workers: 1
+  path.config: "../config/logstash-message_delivery_comp.conf"
+  
+- pipeline.id: message_count_comp
+  pipeline.workers: 1
+  path.config: "../config/logstash-message_count_comp.conf"  
+  
 # - pipeline.id: countries
 #   pipeline.workers: 1
 #   pipeline.batch.size: 125

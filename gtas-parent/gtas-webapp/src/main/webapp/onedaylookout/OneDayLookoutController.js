@@ -8,7 +8,7 @@
 (function () {
     'use strict';
     app.controller('OneDayLookoutCtrl',
-        function ($scope, $state, $http, $mdToast,
+        function ($scope, $state, $http, $mdToast, $translate,
                   gridService, lookoutData,oneDayLookoutService,
                   spinnerService,  $filter, $mdDialog) {
     	
@@ -16,8 +16,18 @@
     	 $scope.stateName = stateName;
     	 $scope.pageSize = 25;
     	 $scope.lookoutDate = $filter('date')(new Date(), 'yyyy-MM-dd'); //current date
-    	 $scope.isTodayButtonDisabled = true;
-      
+		 $scope.isTodayButtonDisabled = true;
+		 
+		 var fixGridData = function(grid, row, col, value) {
+			if (col.name === 'countDownTimer') {
+				value = row.entity.countDown.countDownTimer;
+			}
+			if (col.name === 'eta' || col.name === 'etd') {
+			   value =   $filter('date')(value, 'yyyy-MM-dd HH:mm');
+			}
+			return value;
+		  }
+					
     	 $scope.oneDayLookoutGrid = {
                  data:  lookoutData.data,
                  paginationPageSizes: [10, 25, 50],
@@ -29,10 +39,19 @@
                  multiSelect: false,
 				 enableExpandableRowHeader: false,
 				 enableGridMenu: true,
+				 exporterPdfDefaultStyle: {fontSize: 9},
+              	 exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+              	 exporterPdfFooter: function ( currentPage, pageCount ) {
+                	return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+              	 },
+              	 exporterPdfPageSize: 'LETTER',
+              	 exporterPdfMaxGridWidth: 500,
                  exporterCsvFilename: 'one-day-lookout.csv',
                  exporterExcelFilename: 'one-day-lookout.xlsx',
                  exporterExcelSheetName: 'Data',
-
+				 exporterFieldCallback: function ( grid, row, col, value ){
+					return fixGridData (grid, row, col, value);
+				  },
                  onRegisterApi: function (gridApi) {
                      $scope.gridApi = gridApi;
 
@@ -45,14 +64,14 @@
                     	 if(newValue != oldValue){
                     		 oneDayLookoutService.updateEncounteredStatus(rowEntity.caseId,newValue).then(function(resp){
 								if(resp.status == 200){
-									 let title="Encountered Status Updated Successfully!";
-									 let content="New Status: " + newValue;
+									 let title=$translate.instant('msg.encounteredstatus');
+									 let content=$translate.instant('msg.newstatus') + ": " + newValue;
 									$scope.showAlert(title, content);
 								}
 								else{
 									// $scope.encounterUpdateStatus="failure";
-									let title="Failed to Update Encounter Status!";
-									 let content="Please Try Again!";
+									let title=$translate.instant('msg.failedtoupdate');
+									 let content=$translate.instant('msg.pleasetryagain');
 									$scope.showAlert(title, content);
 								}
                     		 });
@@ -68,28 +87,27 @@
             	   field: 'name',
             	   name: 'name',
             	   enableCellEdit: false,
-            	   displayName: 'Name', headerCellFilter: 'translate',
-            	   cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.caseId}}" title="Launch Case Detail in new window" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
-            	 
-
+                 displayName: $translate.instant('pass.name'),
+                 cellTemplate: '<md-button aria-label="type" href="#/casedetail/{{row.entity.caseId}}"' +
+                 ' title="' + $translate.instant('msg.launchcase') + '" target="case.detail" class="md-primary md-button md-default-theme" >{{COL_FIELD}}</md-button>'
                },
 
                {
             	   field: 'document',
             	   name: 'document',
             	   enableCellEdit: false,
-            	   displayName: 'Passport Number', headerCellFilter: 'translate'
+                 displayName: $translate.instant('doc.passportnumber')
                },
                {
             	   field: 'disposition',
             	   name: 'disposition',
             	   enableCellEdit: false,
-            	   displayName: 'Disposition', headerCellFilter: 'translate'
+                 displayName: $translate.instant('case.disposition')
                },
                {
             	   field: 'encounteredStatus',
             	   name: 'encounteredStatus',
-				   displayName: 'Encountered',
+                 displayName: $translate.instant('case.encountered'),
 				   width: '20%',
 				   enableCellEdit: true,
 				   editableCellTemplate: 'ui-grid/dropdownEditor',
@@ -105,32 +123,32 @@
 					{id:'Missed', encounteredStatus:'Missed'}
 					],
 				   headerCellFilter: 'translate',
-				   cellTooltip:'Double click to make a status change'
+				   cellTooltip: $translate.instant('msg.doubleclick')
 
                },
                {
             	   field: 'fullFlightNumber',
             	   name: 'fullFlightNumber',
             	   enableCellEdit: false,
-            	   displayName: 'Flight', headerCellFilter: 'translate'
+                 displayName: $translate.instant('flight.flight')
                },
 	       {
             	   field: 'origDestAirportsStr',
             	   name: 'origDestAirportsStr',
             	   enableCellEdit: false,
-            	   displayName: 'Origin/Destination', headerCellFilter: 'translate'
+                 displayName: $translate.instant('flight.origindestination')
                },
                {
             	   field: 'etaEtdTime',
             	   name: 'etaEtdTime',
             	   enableCellEdit: false,
-            	   displayName: 'ETD/ETA', headerCellFilter: 'translate'
+                 displayName: $translate.instant('flight.departurearrival')
                },
                {
             	   field: 'direction',
             	   name: 'direction',
             	   enableCellEdit: false,
-            	   displayName: 'Direction', headerCellFilter: 'translate'
+                 displayName: $translate.instant('flight.direction')
                }          
              ];
 

@@ -18,7 +18,7 @@ public class Document extends BaseEntity {
 	public Document() {
 	}
 
-	public Document(String documentNumber){
+	public Document(String documentNumber) {
 		this.documentNumber = documentNumber;
 	}
 
@@ -46,11 +46,10 @@ public class Document extends BaseEntity {
 	@Column(name = "passenger_id", columnDefinition = "bigint unsigned", insertable = false, updatable = false)
 	private Long paxId;
 
-    /** calculated field */
-    @Column(name = "days_valid")
-    private Integer numberOfDaysValid;
- 
-    
+	/** calculated field */
+	@Column(name = "days_valid")
+	private Integer numberOfDaysValid;
+
 	public Integer getNumberOfDaysValid() {
 		return numberOfDaysValid;
 	}
@@ -110,6 +109,7 @@ public class Document extends BaseEntity {
 	public void setPaxId(Long paxId) {
 		this.paxId = paxId;
 	}
+
 	public void setPassenger(Passenger passenger) {
 		this.passenger = passenger;
 	}
@@ -126,7 +126,6 @@ public class Document extends BaseEntity {
 		if (!(obj instanceof Document))
 			return false;
 		final Document other = (Document) obj;
-		return Objects.equals(this.documentNumber, other.documentNumber)
-				&& Objects.equals(this.paxId, other.paxId);
+		return Objects.equals(this.documentNumber, other.documentNumber) && Objects.equals(this.paxId, other.paxId);
 	}
 }

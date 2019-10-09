@@ -17,7 +17,7 @@ import gov.gtas.parsers.edifact.Segment;
  * Function: To provide control total (total # of passengers in this message).
  */
 public class CNT extends Segment {
-    public CNT(List<Composite> composites) {
-        super(CNT.class.getSimpleName(), composites);
-    }
+	public CNT(List<Composite> composites) {
+		super(CNT.class.getSimpleName(), composites);
+	}
 }

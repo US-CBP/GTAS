@@ -87,16 +87,14 @@ public class PnrServiceImpl implements PnrService {
 	@Override
 	@Transactional
 	/*
-	 * A duplicate method to avoid 'LazyInitializationException' in the
-	 * Controller -- Can be removed after a fix
+	 * A duplicate method to avoid 'LazyInitializationException' in the Controller
+	 * -- Can be removed after a fix
 	 */
-	public List<Pnr> findPnrByPassengerIdAndFlightId(Long passengerId,
-			Long flightId) {
+	public List<Pnr> findPnrByPassengerIdAndFlightId(Long passengerId, Long flightId) {
 
 		Pnr rv = new Pnr();
 		List<Pnr> _retList = new ArrayList<Pnr>();
-		Set<Pnr> _tempPnrList = pnrRespository
-				.getPnrsByPassengerIdAndFlightId(passengerId, flightId);
+		Set<Pnr> _tempPnrList = pnrRespository.getPnrsByPassengerIdAndFlightId(passengerId, flightId);
 
 		for (Pnr _tempPnr : _tempPnrList) {
 			rv = new Pnr();
@@ -126,7 +124,7 @@ public class PnrServiceImpl implements PnrService {
 		target.setDateReceived(source.getDateReceived());
 		target.setRaw(source.getRaw());
 		target.setEdifactMessage(source.getEdifactMessage());
-                target.setTripType(source.getTripType());
+		target.setTripType(source.getTripType());
 
 		if (source.getAddresses() != null && source.getAddresses().size() > 0) {
 			Iterator it = source.getAddresses().iterator();
@@ -135,8 +133,7 @@ public class PnrServiceImpl implements PnrService {
 
 				// TODO equals contract is not working for address.work
 				// around/compare manually
-				Address chkAddress = getExistingAddress(a,
-						target.getAddresses());
+				Address chkAddress = getExistingAddress(a, target.getAddresses());
 				if (chkAddress == null) {
 					target.addAddress(a);
 				}
@@ -146,8 +143,7 @@ public class PnrServiceImpl implements PnrService {
 			target.setAgencies(source.getAgencies());
 		}
 
-		if (source.getCreditCards() != null
-				&& source.getCreditCards().size() > 0) {
+		if (source.getCreditCards() != null && source.getCreditCards().size() > 0) {
 			Iterator it1 = source.getCreditCards().iterator();
 			while (it1.hasNext()) {
 				CreditCard cc = (CreditCard) it1.next();
@@ -156,8 +152,7 @@ public class PnrServiceImpl implements PnrService {
 				}
 			}
 		}
-		if (source.getFrequentFlyers() != null
-				&& source.getFrequentFlyers().size() > 0) {
+		if (source.getFrequentFlyers() != null && source.getFrequentFlyers().size() > 0) {
 			Iterator it2 = source.getFrequentFlyers().iterator();
 			while (it2.hasNext()) {
 				FrequentFlyer ff = (FrequentFlyer) it2.next();
@@ -201,7 +196,7 @@ public class PnrServiceImpl implements PnrService {
 				}
 			}
 		}
-		
+
 		if (source.getPassengers() != null && source.getPassengers().size() > 0) {
 			Iterator it6 = source.getPassengers().iterator();
 			while (it6.hasNext()) {
@@ -215,11 +210,11 @@ public class PnrServiceImpl implements PnrService {
 
 	}
 
-	private boolean checkFormOfPaymentExist(List<PaymentForm> forms, PaymentForm form){
+	private boolean checkFormOfPaymentExist(List<PaymentForm> forms, PaymentForm form) {
 		boolean flag = false;
-		for(PaymentForm pf:forms){
-			if(pf.getPnr().equals(form.getPnr())){
-				flag=true;
+		for (PaymentForm pf : forms) {
+			if (pf.getPnr().equals(form.getPnr())) {
+				flag = true;
 				break;
 			}
 		}
@@ -230,7 +225,7 @@ public class PnrServiceImpl implements PnrService {
 
 		if (fl.getFlight() == null)
 			return false;
-		
+
 		for (FlightLeg leg : flightLegs) {
 			if (leg.getFlight() != null) {
 				if ((leg.getFlight()).equals(fl.getFlight()) && (leg.getMessage()).equals(fl.getMessage())) {
@@ -246,7 +241,7 @@ public class PnrServiceImpl implements PnrService {
 		}
 		return false;
 	}
-	
+
 	private Address getExistingAddress(Address a, Set<Address> addresses) {
 		Address chk = null;
 		if (addresses != null && addresses.size() > 0) {
@@ -257,8 +252,7 @@ public class PnrServiceImpl implements PnrService {
 						&& StringUtils.equals(a.getCountry(), chk.getCountry())
 						&& StringUtils.equals(a.getLine1(), chk.getLine1())
 						&& StringUtils.equals(a.getState(), chk.getState())
-						&& StringUtils.equals(a.getPostalCode(),
-								chk.getPostalCode())) {
+						&& StringUtils.equals(a.getPostalCode(), chk.getPostalCode())) {
 					return chk;
 				}
 				chk = null;
@@ -268,16 +262,16 @@ public class PnrServiceImpl implements PnrService {
 
 	}
 
-	private boolean checkPassengerAndFlightOnPNR(Pnr source, Long passengerId,
-			Long flightId) {
+	private boolean checkPassengerAndFlightOnPNR(Pnr source, Long passengerId, Long flightId) {
 
 		boolean flightCheck = false, passengerCheck = false;
 
 		if (source.getFlightLegs() != null && source.getFlightLegs().size() > 0) {
 			List<FlightLeg> _tempFL = source.getFlightLegs();
 			for (FlightLeg fl : _tempFL) {
-				
-				if(fl.getFlight() != null){ //FlightLegs contain both flights and booking details, we only care to compare against flights here
+
+				if (fl.getFlight() != null) { // FlightLegs contain both flights and booking details, we only care to
+												// compare against flights here
 					if (fl.getFlight().getId().equals(flightId)) {
 						flightCheck = true;
 						break;

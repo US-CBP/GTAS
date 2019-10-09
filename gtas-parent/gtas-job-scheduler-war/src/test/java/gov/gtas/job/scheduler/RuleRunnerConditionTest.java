@@ -23,7 +23,6 @@ public class RuleRunnerConditionTest {
 	@Mock
 	AnnotatedTypeMetadata metadata;
 
-
 	@Test
 	public void testEnabled() {
 		Mockito.when(environment.getProperty("enable.rule.runner")).thenReturn("true");

@@ -37,6 +37,9 @@ body{
 .gtas-brand:before {
 	content: 'Global Travel Assessment System'
 }
+.gtas-brand-sub {
+	font-size: 13px;
+}
 @media (max-width:550px) {
     .gtas-brand:before {
         content: 'GTAS'

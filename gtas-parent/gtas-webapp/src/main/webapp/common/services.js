@@ -389,7 +389,7 @@
               }
           };
       })
-    .service("gridOptionsLookupService", function (uiGridConstants) {
+    .service("gridOptionsLookupService", function ($translate, uiGridConstants) {
           var today = moment().format("YYYY-MM-DD"),
             pageOfPages = function(currentPage, pageCount) {
               return (
@@ -541,8 +541,7 @@
               audit: [
                 {
                   name: "action",
-                  displayName: "admin.action",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.action'),
                   field: "actionType",
                   width: "10%",
                   sort: {
@@ -552,29 +551,25 @@
                 },
                 {
                   name: "user",
-                  displayName: "admin.user",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.user'),
                   field: "user",
                   width: "15%"
                 },
                 {
                   name: "status",
-                  displayName: "admin.status",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.status'),
                   field: "status",
                   width: "10%"
                 },
                 {
                   name: "message",
-                  displayName: "admin.message",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.message'),
                   field: "message",
                   width: "20%"
                 },
                 {
                   name: "timestamp",
-                  displayName: "admin.timestamp",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.timestamp'),
                   field: "timestamp",
                   width: "45%"
                 }
@@ -587,37 +582,38 @@
                   width: "1%", cellTemplate: '<a class="full-width editLink" ng-click="grid.appScope.openSidebarEdit(row.entity)"><i class="fa fa-edit"></a>'
                 },
                 {
-                  name: "id", headerCellFilter: "translate", field: "id", visible: false,
+                  name: "id", field: "id", visible: false,
                   width: "0%", type: "string"
                 },
                 {
-                  name: "iata", displayName: "IATA", headerCellFilter: "translate", field: "iata",
+                  name: "iata",
+                  displayName: $translate.instant('airport.iata'),
+                  field: "iata",
                   width: "10%", type: "string"
                 },
                 {
-                  name: "icao", displayName: "ICAO", field: "icao",
-                  headerCellFilter: "translate", width: "10%", type: "string",
+                  name: "icao",
+                  displayName: $translate.instant('airport.icao'),
+                  field: "icao",
+                  width: "10%", type: "string",
                  },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.name'),
                   field: "name",
                   width: "*",
                   type: "string"
                 },
                 {
                   name: "city",
-                  displayName: "CITY",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.city'),
                   field: "city",
                   width: "20%",
                   type: "string"
                 },
                 {
                   name: "country",
-                  displayName: "COUNTRY",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('airport.country'),
                   field: "country",
                   width: "10%",
                   type: "string"
@@ -636,15 +632,13 @@
                 },
                 {
                   name: "iata",
-                  displayName: "IATA",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('carrier.iata'),
                   field: "iata",
                   width: "25%"
                 },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('carrier.name'),
                   field: "name",
                   width: "74%"
                 }
@@ -662,29 +656,25 @@
                 },
                 {
                   name: "iso2",
-                  displayName: "ISO2",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.iso2'),
                   field: "iso2",
                   width: "14%"
                 },
                 {
                   name: "iso3",
-                  displayName: "ISO3",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.iso3'),
                   field: "iso3",
                   width: "15%"
                 },
                 {
                   name: "isoNumeric",
-                  displayName: "ISO Numeric",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.isonumeric'),
                   field: "isoNumeric",
                   width: "15%"
                 },
                 {
                   name: "name",
-                  displayName: "NAME",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('country.name'),
                   field: "name",
                   width: "55%"
                 }
@@ -698,32 +688,28 @@
                 },
                 {
                   name: "fileName",
-                  displayName: "File Name",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.filename'),
                   field: "fileName",
                   cellTemplate: "<div>{{COL_FIELD | uppercase}}</div>",
                   width: "43%"
                 },
                 {
                   name: "size",
-                  displayName: "Size",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.size'),
                   field: "size",
                   cellTemplate: "<div>{{grid.appScope.formatBytes(COL_FIELD)}}</div>",
                   width: "15%"
                 },
                 {
                   name: "creationDate",
-                  displayName: "Date Created",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.datecreated'),
                   cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
                   field: "creationDate",
                   width: "20%"
                 },
                 {
                   name: "lastModified",
-                  displayName: "Last Modified",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('files.lastmodified'),
                   field: "lastModified",
                   cellTemplate: "<div>{{COL_FIELD | date:\'yyyy-MM-dd HH:mm:ss\'}}</div>",
                   width: "20%"
@@ -733,8 +719,7 @@
                 {
                   name: "Error ID",
                   field: "errorId",
-                  displayName: "admin.errorid",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errorid'),
                   width: "15%",
                   sort: {
                     direction: uiGridConstants.DESC,
@@ -743,22 +728,19 @@
                 },
                 {
                   name: "Error Code",
-                  displayName: "admin.errorcode",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errorcode'),
                   field: "errorCode",
                   width: "15%"
                 },
                 {
                   name: "DateTime",
-                  displayName: "admin.DateTime",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.timestamp'),
                   field: "errorTimestamp",
                   width: "15%"
                 },
                 {
                   name: "Error Description",
-                  displayName: "admin.errordescription",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('log.errordescription'),
                   field: "errorDescription",
                   width: "55%"
                 }
@@ -766,8 +748,7 @@
               admin: [
                 {
                   name: "active",
-                  displayName: "admin.active",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.active'),
                   field: "active",
                   cellFilter: "userStatusFilter",
                   width: "10%",
@@ -778,8 +759,7 @@
                 },
                 {
                   name: "userId",
-                  displayName: "admin.userid",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.username'),
                   field: "userId",
                   width: "15%",
                   cellTemplate:
@@ -787,22 +767,19 @@
                 },
                 {
                   name: "firstName",
-                  displayName: "pass.firstname",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.firstname'),
                   field: "firstName",
                   width: "15%"
                 },
                 {
                   name: "lastName",
-                  displayName: "pass.lastname",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.lastname'),
                   field: "lastName",
                   width: "20%"
                 },
                 {
                   name: "roles",
-                  displayName: "user.roles",
-                  headerCellFilter: "translate",
+                  displayName: $translate.instant('user.roles'),
                   field: "roles",
                   cellFilter: "roleDescriptionFilter",
                   width: "40%",
@@ -1000,8 +977,7 @@
                   {
                     field: "documentNumber",
                     name: "documentNumber",
-                    //displayName: "Number",
-                    displayName: "doc.Number",
+                    displayName: "doc.number",
                     headerCellFilter: "translate",
                     cellTemplate:
                       '<md-button class="md-primary"  ng-click="grid.appScope.editRecord(row.entity)" style="min-width: 0; margin: 0 auto; width: 100%;" >{{COL_FIELD}}</md-button>',
@@ -1682,6 +1658,15 @@
         });
         return response.then(handleSuccess, handleError);
       }
+        
+       function agencyName() {
+        	var dfd = $q.defer();
+            dfd.resolve($http({
+              method: 'get',
+              url: CONFIG_URL + "/agencyName"
+          }));
+          return dfd.promise;
+        }
 
       function handleError(response) {
         return $q.reject(response.data.message);
@@ -1696,7 +1681,8 @@
               neo4j: neo4j,
               kibanaUrl: kibanaUrl,
               cypherUrl: cypherUrl,
-              cypherAuth: cypherAuth
+              cypherAuth: cypherAuth,
+              agencyName: agencyName
           });
         });
   }());

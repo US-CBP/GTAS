@@ -30,54 +30,54 @@ import gov.gtas.services.security.UserData;
 @WebAppConfiguration
 public class UserDataValidatorIT {
 
-    private static final String USER_ID = "vtammineni";
-    private static final String PASSWORD = "passowrd";
-    private static final String FIRST_NAME = "venu";
-    private static final String LAST_NAME = "tammineni";
-    private static final int ACTIVE = 1;
-    private static final int ROLE_ID = 7;
-    private static final String ROLE_DESCRIPTION = "ADMIN";
-    private static final String TEST_OBJECT_NAME = "testUserData";
+	private static final String USER_ID = "vtammineni";
+	private static final String PASSWORD = "passowrd";
+	private static final String FIRST_NAME = "venu";
+	private static final String LAST_NAME = "tammineni";
+	private static final int ACTIVE = 1;
+	private static final int ROLE_ID = 7;
+	private static final String ROLE_DESCRIPTION = "ADMIN";
+	private static final String TEST_OBJECT_NAME = "testUserData";
 
-    private UserDataValidator userDataValidator;
+	private UserDataValidator userDataValidator;
 
-    @Before
-    public void setUp() {
-        userDataValidator = new UserDataValidator();
-    }
+	@Before
+	public void setUp() {
+		userDataValidator = new UserDataValidator();
+	}
 
-    @Test
-    public void testSupports() {
-        assertTrue(userDataValidator.supports(UserData.class));
-    }
+	@Test
+	public void testSupports() {
+		assertTrue(userDataValidator.supports(UserData.class));
+	}
 
-    /**
-     * empty request test case
-     */
-    @Test
-    public void testEmptyRequestFields() {
-        Set<RoleData> roles=new HashSet<RoleData>();
-        
-        roles.add(new RoleData(ROLE_ID,ROLE_DESCRIPTION));      
-        UserData testUserData = new UserData(null,PASSWORD,FIRST_NAME,LAST_NAME,ACTIVE, roles);
+	/**
+	 * empty request test case
+	 */
+	@Test
+	public void testEmptyRequestFields() {
+		Set<RoleData> roles = new HashSet<RoleData>();
 
-        Errors errors = new BeanPropertyBindingResult(testUserData, TEST_OBJECT_NAME);
-        userDataValidator.validate(testUserData, errors);
-        assertTrue("Should have errors", errors.hasErrors());
-    }
-    
-    /**
-     * valid input request test case.
-     */
-    @Test
-    public void testValidRequest() {
-        Set<RoleData> roles=new HashSet<RoleData>();
-        
-        roles.add(new RoleData(ROLE_ID,ROLE_DESCRIPTION));      
-        UserData testUserData = new UserData(FIRST_NAME,PASSWORD,FIRST_NAME,LAST_NAME,ACTIVE, roles);
+		roles.add(new RoleData(ROLE_ID, ROLE_DESCRIPTION));
+		UserData testUserData = new UserData(null, PASSWORD, FIRST_NAME, LAST_NAME, ACTIVE, roles);
 
-        Errors errors = new BeanPropertyBindingResult(testUserData, TEST_OBJECT_NAME);
-        userDataValidator.validate(testUserData, errors);
-        assertFalse("valid request", errors.hasErrors());
-    }
+		Errors errors = new BeanPropertyBindingResult(testUserData, TEST_OBJECT_NAME);
+		userDataValidator.validate(testUserData, errors);
+		assertTrue("Should have errors", errors.hasErrors());
+	}
+
+	/**
+	 * valid input request test case.
+	 */
+	@Test
+	public void testValidRequest() {
+		Set<RoleData> roles = new HashSet<RoleData>();
+
+		roles.add(new RoleData(ROLE_ID, ROLE_DESCRIPTION));
+		UserData testUserData = new UserData(FIRST_NAME, PASSWORD, FIRST_NAME, LAST_NAME, ACTIVE, roles);
+
+		Errors errors = new BeanPropertyBindingResult(testUserData, TEST_OBJECT_NAME);
+		userDataValidator.validate(testUserData, errors);
+		assertFalse("valid request", errors.hasErrors());
+	}
 }

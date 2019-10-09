@@ -28,8 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestCommonServicesConfig.class,
-		CachingConfig.class })
+@ContextConfiguration(classes = { TestCommonServicesConfig.class, CachingConfig.class })
 @Rollback
 public class WhitelistPersistenceServiceIT {
 

@@ -24,7 +24,7 @@ public class PassengerResolverServiceImpl implements PassengerResolverService {
 			//
 			return this.passengerIDTagRepository.findPaxIdsByTamrId(idTag.getTamrId());
 		} else {
-			//Edge case - passenger failed to create pax id.
+			// Edge case - passenger failed to create pax id.
 			if (idTag == null || idTag.getIdTag() == null) {
 				return Collections.singletonList(pax_id);
 			}

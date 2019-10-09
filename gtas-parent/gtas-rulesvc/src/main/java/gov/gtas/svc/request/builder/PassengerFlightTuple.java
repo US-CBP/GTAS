@@ -25,7 +25,6 @@ public class PassengerFlightTuple {
 		this.mutableFlightDetails = flight.getMutableFlightDetails();
 	}
 
-
 	public MutableFlightDetails getMutableFlightDetails() {
 		return mutableFlightDetails;
 	}
@@ -33,7 +32,6 @@ public class PassengerFlightTuple {
 	public Passenger getPassenger() {
 		return passenger;
 	}
-
 
 	public Flight getFlight() {
 		return flight;

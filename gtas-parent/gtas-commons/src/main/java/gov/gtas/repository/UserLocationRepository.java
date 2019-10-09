@@ -12,17 +12,14 @@ import org.springframework.data.repository.query.Param;
 import gov.gtas.model.UserLocation;
 
 public interface UserLocationRepository extends CrudRepository<UserLocation, String> {
-	
-	
+
 	@Query("SELECT u FROM UserLocation u  WHERE u.userId = (:userId)")
-    public Set<UserLocation> getUserLocationByUserId(@Param("userId") String userId);
-	
+	public Set<UserLocation> getUserLocationByUserId(@Param("userId") String userId);
+
 	@Modifying
 	@Transactional
 	@Query("update UserLocation u set u.primaryLocation = :flag where u.userId = :userId AND u.airport = :location")
-	public Integer updateUserPrimaryLocation(@Param("userId") String userId, @Param("location") String location, @Param("flag") Boolean flag );
-	
-	
-
+	public Integer updateUserPrimaryLocation(@Param("userId") String userId, @Param("location") String location,
+			@Param("flag") Boolean flag);
 
 }

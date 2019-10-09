@@ -1,29 +1,31 @@
 package gov.gtas.enumtype;
 
 public enum DataManagementTruncation {
-    ALL ("ALL"),
-    APIS_ONLY ("APIS_ONLY"),
-    PNR_ONLY ("PNR_ONLY");
+	ALL("ALL"),
 
-    private String type;
+	APIS_ONLY("APIS_ONLY"),
 
-    private DataManagementTruncation(String type) {
-        this.type = type;
-    }
+	PNR_ONLY("PNR_ONLY");
 
-    public String getType() {
-        return type;
-    }
+	private String type;
 
-    public static DataManagementTruncation getEnum(String value) {
+	private DataManagementTruncation(String type) {
+		this.type = type;
+	}
 
-        for (DataManagementTruncation typeEnum : DataManagementTruncation.values()) {
-            if(typeEnum.name().equalsIgnoreCase(value)) {
-                return typeEnum;
-            }
-        }
+	public String getType() {
+		return type;
+	}
 
-        throw new IllegalArgumentException();
-    }
+	public static DataManagementTruncation getEnum(String value) {
+
+		for (DataManagementTruncation typeEnum : DataManagementTruncation.values()) {
+			if (typeEnum.name().equalsIgnoreCase(value)) {
+				return typeEnum;
+			}
+		}
+
+		throw new IllegalArgumentException();
+	}
 
 }

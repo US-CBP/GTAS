@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Set;
 
 public interface GraphRulesService {
-    Set<RuleHitDetail> graphResults(Set<Passenger> passengers) throws URISyntaxException;
+	Set<RuleHitDetail> graphResults(Set<Passenger> passengers) throws URISyntaxException;
 
-    void saveResults(Set<HitsSummary> hitsSummaries, Set<Case> newCases);
+	void saveResults(Set<HitsSummary> hitsSummaries, Set<Case> newCases);
 
-    Set<Case> graphCases(Set<RuleHitDetail> graphHitDetailSet);
+	Set<Case> graphCases(Set<RuleHitDetail> graphHitDetailSet);
 
-    List<HitsSummary> getHitsSummariesFromRuleDetails(List<RuleHitDetail> filteredList);
+	List<HitsSummary> getHitsSummariesFromRuleDetails(List<RuleHitDetail> filteredList);
 
-    void updateFlightGraphHitCount(Set<Flight> passengerFlights);
+	void updateFlightGraphHitCount(Set<Flight> passengerFlights);
 }

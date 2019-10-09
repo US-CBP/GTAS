@@ -13,23 +13,23 @@ import org.hibernate.tool.schema.spi.SchemaFilterProvider;
 
 public class GtasSchemaFilterProvider implements SchemaFilterProvider {
 
-    @Override
-    public SchemaFilter getCreateFilter() {
-        return GtasSchemaFilter.INSTANCE;
-    }
+	@Override
+	public SchemaFilter getCreateFilter() {
+		return GtasSchemaFilter.INSTANCE;
+	}
 
-    @Override
-    public SchemaFilter getDropFilter() {
-        return GtasSchemaFilter.INSTANCE;
-    }
+	@Override
+	public SchemaFilter getDropFilter() {
+		return GtasSchemaFilter.INSTANCE;
+	}
 
-    @Override
-    public SchemaFilter getMigrateFilter() {
-        return GtasSchemaFilter.INSTANCE;
-    }
+	@Override
+	public SchemaFilter getMigrateFilter() {
+		return GtasSchemaFilter.INSTANCE;
+	}
 
-    @Override
-    public SchemaFilter getValidateFilter() {
-        return GtasSchemaFilter.INSTANCE;
-    }
+	@Override
+	public SchemaFilter getValidateFilter() {
+		return GtasSchemaFilter.INSTANCE;
+	}
 }

@@ -58,14 +58,13 @@ public class DashboardController {
 
 	@Autowired
 	private HitsSummaryService hitsSummaryService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private UserLocationSetting userLocationSetting;
 
-	
 	private static final String EMPTY_STRING = "";
 
 	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
@@ -101,22 +100,16 @@ public class DashboardController {
 		flightsAndPassengersAndHitsCount.put("watchListCount", new AtomicLong(watchListHits));
 		flightsAndPassengersAndHitsCount.put("passengersCount", new AtomicInteger(paxCount));
 		flightsAndPassengersAndHitsCount.put("flightsList", hitAndAirportExtractor.getAirportList());
-		//set user location
+		// set user location
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
 
-		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null)
-			{
-				userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
-			}
-			
+		if (!isAdmin && httpServletRequest.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION) == null) {
+			userLocationSetting.setPrimaryLocation(httpServletRequest, userId);
+		}
 
 		return flightsAndPassengersAndHitsCount;
 	}
-
-
-
-
 
 	/**
 	 * Gets the flights, passengers and hits count.

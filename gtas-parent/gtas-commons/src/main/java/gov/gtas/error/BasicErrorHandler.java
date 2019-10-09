@@ -42,8 +42,7 @@ public class BasicErrorHandler implements ErrorHandler {
 	/**
 	 * The logger for the Rule Engine Error Handler
 	 */
-	private static final Logger logger = LoggerFactory
-			.getLogger(BasicErrorHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(BasicErrorHandler.class);
 
 	/**
 	 * The map of all error codes handled by this handler.
@@ -63,17 +62,12 @@ public class BasicErrorHandler implements ErrorHandler {
 	public BasicErrorHandler() {
 		errorMap = new HashMap<String, String>();
 		errorMap.put(NULL_ARGUMENT_ERROR_CODE, NULL_ARGUMENT_ERROR_MESSAGE);
-		errorMap.put(INVALID_ARGUMENT_ERROR_CODE,
-				INVALID_ARGUMENT_ERROR_MESSAGE);
+		errorMap.put(INVALID_ARGUMENT_ERROR_CODE, INVALID_ARGUMENT_ERROR_MESSAGE);
 		errorMap.put(INVALID_USER_ID_ERROR_CODE, INVALID_USER_ID_ERROR_MESSAGE);
-		errorMap.put(INPUT_JSON_FORMAT_ERROR_CODE,
-				INPUT_JSON_FORMAT_ERROR_MESSAGE);
-		errorMap.put(UPDATE_RECORD_MISSING_ERROR_CODE,
-				UPDATE_RECORD_MISSING_ERROR_MESSAGE);
-		errorMap.put(QUERY_RESULT_EMPTY_ERROR_CODE,
-				QUERY_RESULT_EMPTY_ERROR_MESSAGE);
-		errorMap.put(JSON_INPUT_VALIDATION_ERROR_CODE,
-				JSON_INPUT_VALIDATION_ERROR_MESSAGE);
+		errorMap.put(INPUT_JSON_FORMAT_ERROR_CODE, INPUT_JSON_FORMAT_ERROR_MESSAGE);
+		errorMap.put(UPDATE_RECORD_MISSING_ERROR_CODE, UPDATE_RECORD_MISSING_ERROR_MESSAGE);
+		errorMap.put(QUERY_RESULT_EMPTY_ERROR_CODE, QUERY_RESULT_EMPTY_ERROR_MESSAGE);
+		errorMap.put(JSON_INPUT_VALIDATION_ERROR_CODE, JSON_INPUT_VALIDATION_ERROR_MESSAGE);
 		errorMap.put(UNAUTHORIZED_ERROR_CODE, UNAUTHORIZED_ERROR_MESSAGE);
 		errorMap.put(NO_ENABLED_RULE_ERROR_CODE, NO_ENABLED_RULE_ERROR_MESSAGE);
 		exceptionProcessorMap = new HashMap<String, Function<Exception, ErrorDetailInfo>>();
@@ -89,8 +83,7 @@ public class BasicErrorHandler implements ErrorHandler {
 	}
 
 	@Override
-	public CommonServiceException createException(String errorCode,
-			Exception cause, Object... args) {
+	public CommonServiceException createException(String errorCode, Exception cause, Object... args) {
 		CommonServiceException ret = null;
 		final String errorMessage = errorMap.get(errorCode);
 		if (errorMessage != null) {
@@ -99,25 +92,22 @@ public class BasicErrorHandler implements ErrorHandler {
 			ret = this.delegate.createException(errorCode, cause, args);
 		}
 		if (ret == null) {
-			ret = createExceptionAndLog(
-					CommonErrorConstants.UNKNOWN_ERROR_CODE, cause,
+			ret = createExceptionAndLog(CommonErrorConstants.UNKNOWN_ERROR_CODE, cause,
 					CommonErrorConstants.UNKNOWN_ERROR_CODE_MESSAGE, errorCode);
 		}
 		return ret;
 	}
 
 	@Override
-	public CommonServiceException createException(String errorCode,
-			Object... args) {
+	public CommonServiceException createException(String errorCode, Object... args) {
 		return createException(errorCode, null, args);
 	}
 
 	@Override
 	public ErrorDetailInfo processError(final Exception exception) {
 		ErrorDetailInfo ret = null;
-		logger.error("",exception);
-		Function<Exception, ErrorDetailInfo> processor = exceptionProcessorMap
-				.get(exception.getClass().getName());
+		logger.error("", exception);
+		Function<Exception, ErrorDetailInfo> processor = exceptionProcessorMap.get(exception.getClass().getName());
 		if (processor != null) {
 			ret = processor.apply(exception);
 		} else if (this.delegate != null) {
@@ -125,8 +115,7 @@ public class BasicErrorHandler implements ErrorHandler {
 		} else {
 			logger.error(exception.getMessage());
 			if (exception instanceof CommonServiceException) {
-				ret = ErrorUtils
-						.createErrorDetails((CommonServiceException) exception);
+				ret = ErrorUtils.createErrorDetails((CommonServiceException) exception);
 			} else {
 				ret = ErrorUtils.createErrorDetails(exception);
 			}
@@ -135,23 +124,19 @@ public class BasicErrorHandler implements ErrorHandler {
 	}
 
 	@Override
-	public ErrorDetailInfo processError(String code, String description,
-			List<String> details) {
+	public ErrorDetailInfo processError(String code, String description, List<String> details) {
 		ErrorDetailInfo ret = null;
 		CommonServiceException exception = null;
 		final String errorMessage = errorMap.get(code);
 		if (errorMessage != null) {
-			exception = createExceptionAndLog(code, null, errorMessage,
-					details.toArray());
+			exception = createExceptionAndLog(code, null, errorMessage, details.toArray());
 		} else if (this.delegate != null) {
-			exception = this.delegate.createException(code, null,
-					details.toArray());
+			exception = this.delegate.createException(code, null, details.toArray());
 		}
 		if (exception != null) {
 			ret = processError(exception);
 		} else {
-			ret = new BasicErrorDetailInfo(null, code, new Date(), description,
-					details);
+			ret = new BasicErrorDetailInfo(null, code, new Date(), description, details);
 		}
 		return ret;
 	}
@@ -164,8 +149,7 @@ public class BasicErrorHandler implements ErrorHandler {
 	 * @param processor
 	 *            the lambda.
 	 */
-	protected void addCustomErrorProcesssor(
-			Class<? extends Exception> exceptionClass,
+	protected void addCustomErrorProcesssor(Class<? extends Exception> exceptionClass,
 			Function<Exception, ErrorDetailInfo> processor) {
 		this.exceptionProcessorMap.put(exceptionClass.getName(), processor);
 	}
@@ -184,9 +168,9 @@ public class BasicErrorHandler implements ErrorHandler {
 			errorMap.put(errCode, errMessage);
 		} else {
 			// message already exists - log error
-			logger.error(String
-					.format("BasicErrorHandler.addErrorCodeToHandlerMap() - Duplicate errorCode '%s' (messsage = '%s').",
-							errCode, errMessage));
+			logger.error(String.format(
+					"BasicErrorHandler.addErrorCodeToHandlerMap() - Duplicate errorCode '%s' (messsage = '%s').",
+					errCode, errMessage));
 		}
 	}
 
@@ -201,9 +185,8 @@ public class BasicErrorHandler implements ErrorHandler {
 	 *            the arguments for the error message template.
 	 * @return the exception object.
 	 */
-	protected CommonServiceException createExceptionAndLog(String errorCode,
-			Exception cause, String errorMessageTemplate,
-			Object... errorMessageArgs) {
+	protected CommonServiceException createExceptionAndLog(String errorCode, Exception cause,
+			String errorMessageTemplate, Object... errorMessageArgs) {
 		String message = String.format(errorMessageTemplate, errorMessageArgs);
 		if (cause == null) {
 			return new CommonServiceException(errorCode, message);

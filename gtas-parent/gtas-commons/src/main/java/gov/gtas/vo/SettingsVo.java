@@ -6,65 +6,67 @@
 package gov.gtas.vo;
 
 public class SettingsVo {
-    private double matchingThreshold;
-    private int maxPassengerQueryResult;
-    private int maxFlightQueryResult;
-    private double flightRange;
-    private String apisOnlyFlag;
-    private String apisVersion;
-    private Integer maxRuleHit;
+	private double matchingThreshold;
+	private int maxPassengerQueryResult;
+	private int maxFlightQueryResult;
+	private double flightRange;
+	private String apisOnlyFlag;
+	private String apisVersion;
+	private Integer maxRuleHit;
 
-    public double getMatchingThreshold() {
-            return matchingThreshold;
-    }
-    public void setMatchingThreshold(double matchingThreshold) {
-            this.matchingThreshold = matchingThreshold;
-    }
-    public double getFlightRange() {
-            return flightRange;
-    }
-    public void setFlightRange(double flightRange) {
-            this.flightRange = flightRange;
-    }
+	public double getMatchingThreshold() {
+		return matchingThreshold;
+	}
 
-    public String getApisOnlyFlag() {
-        return apisOnlyFlag;
-    }
+	public void setMatchingThreshold(double matchingThreshold) {
+		this.matchingThreshold = matchingThreshold;
+	}
 
-    public void setApisOnlyFlag(String apisOnlyFlag) {
-        this.apisOnlyFlag = apisOnlyFlag;
-    }
+	public double getFlightRange() {
+		return flightRange;
+	}
 
-    public String getApisVersion() {
-        return apisVersion;
-    }
+	public void setFlightRange(double flightRange) {
+		this.flightRange = flightRange;
+	}
 
-    public void setApisVersion(String apisVersion) {
-        this.apisVersion = apisVersion;
-    }
+	public String getApisOnlyFlag() {
+		return apisOnlyFlag;
+	}
 
+	public void setApisOnlyFlag(String apisOnlyFlag) {
+		this.apisOnlyFlag = apisOnlyFlag;
+	}
 
-    public int getMaxPassengerQueryResult() {
-        return maxPassengerQueryResult;
-    }
+	public String getApisVersion() {
+		return apisVersion;
+	}
 
-    public void setMaxPassengerQueryResult(int maxPassengerQueryResult) {
-        this.maxPassengerQueryResult = maxPassengerQueryResult;
-    }
+	public void setApisVersion(String apisVersion) {
+		this.apisVersion = apisVersion;
+	}
 
-    public int getMaxFlightQueryResult() {
-        return maxFlightQueryResult;
-    }
+	public int getMaxPassengerQueryResult() {
+		return maxPassengerQueryResult;
+	}
 
-    public void setMaxFlightQueryResult(int maxFlightQueryResult) {
-        this.maxFlightQueryResult = maxFlightQueryResult;
-    }
+	public void setMaxPassengerQueryResult(int maxPassengerQueryResult) {
+		this.maxPassengerQueryResult = maxPassengerQueryResult;
+	}
 
-    public Integer getMaxRuleHit() {
-        return maxRuleHit;
-    }
+	public int getMaxFlightQueryResult() {
+		return maxFlightQueryResult;
+	}
 
-    public void setMaxRuleHit(Integer maxRuleHit) {
-        this.maxRuleHit = maxRuleHit;
-    }
+	public void setMaxFlightQueryResult(int maxFlightQueryResult) {
+		this.maxFlightQueryResult = maxFlightQueryResult;
+	}
+
+	public Integer getMaxRuleHit() {
+		return maxRuleHit;
+	}
+
+	public void setMaxRuleHit(Integer maxRuleHit) {
+		this.maxRuleHit = maxRuleHit;
+	}
 }

@@ -54,7 +54,7 @@ public class FlightPassengerController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private UserLocationSetting userLocationSetting;
 
@@ -67,30 +67,24 @@ public class FlightPassengerController {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		boolean isAdmin = userService.isAdminUser(userId);
 		String userLocationAirport;
-		UserLocationStatus  userLocationStatus = null;
-		Set <String> defaultDestAirport = new HashSet<String>();
+		UserLocationStatus userLocationStatus = null;
+		Set<String> defaultDestAirport = new HashSet<String>();
 
-		if (!isAdmin )
-		{
+		if (!isAdmin) {
 			Object userLocationObject = hsr.getSession().getAttribute(Constants.USER_PRIMARY_LOCATION);
-			if(userLocationObject!=null)
-			{
+			if (userLocationObject != null) {
 				userLocationAirport = userLocationObject.toString();
-			}
-			else
-			{
+			} else {
 				userLocationStatus = userLocationSetting.setPrimaryLocation(hsr, userId);
 				userLocationAirport = userLocationStatus.getPrimaryLocationAirport();
 			}
-			
-			if(request.getSearchSubmitFlag()==null && userLocationAirport!=null )
-			{
+
+			if (request.getSearchSubmitFlag() == null && userLocationAirport != null) {
 				defaultDestAirport.add(userLocationAirport);
 				request.setDestinationAirports(defaultDestAirport);
 			}
-			
+
 		}
-		
 
 		return flightService.findAll(request);
 	}
@@ -108,7 +102,5 @@ public class FlightPassengerController {
 		hsr.getSession(true).setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 		return paxService.getPassengersByCriteria(null, request);
 	}
-
-
 
 }

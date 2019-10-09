@@ -15,27 +15,26 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestJndiBean {
 
-	private final Logger logger  = LoggerFactory.getLogger(TestJndiBean.class);
+	private final Logger logger = LoggerFactory.getLogger(TestJndiBean.class);
 
-	
 	public TestJndiBean() {
 		try {
-            DriverAdapterCPDS cpds = new DriverAdapterCPDS();
-            cpds.setDriver("org.mariadb.jdbc.Driver");
-            cpds.setUrl("jdbc:mariadb://localhost:3306/gtas");
-            cpds.setUser("root");
-            cpds.setPassword("admin");
+			DriverAdapterCPDS cpds = new DriverAdapterCPDS();
+			cpds.setDriver("org.mariadb.jdbc.Driver");
+			cpds.setUrl("jdbc:mariadb://localhost:3306/gtas");
+			cpds.setUser("root");
+			cpds.setPassword("admin");
 
-            SharedPoolDataSource dataSource = new SharedPoolDataSource();
-            dataSource.setConnectionPoolDataSource(cpds);
-            dataSource.setMaxActive(10);
-            dataSource.setMaxWait(50);
+			SharedPoolDataSource dataSource = new SharedPoolDataSource();
+			dataSource.setConnectionPoolDataSource(cpds);
+			dataSource.setMaxActive(10);
+			dataSource.setMaxWait(50);
 
-            SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
-            builder.bind("java:comp/env/jdbc/gtasDataSource", dataSource);
-            builder.activate();
-        } catch (Exception ex) {
-            logger.warn(ex.getMessage());
-        }
+			SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+			builder.bind("java:comp/env/jdbc/gtasDataSource", dataSource);
+			builder.activate();
+		} catch (Exception ex) {
+			logger.warn(ex.getMessage());
+		}
 	}
 }

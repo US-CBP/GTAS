@@ -39,26 +39,22 @@ import com.allanditzel.springframework.security.web.csrf.CsrfTokenResponseHeader
 @EnableWebSecurity
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AppSecurityConfig.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AppSecurityConfig.class);
 
 	@Autowired
 	private SecurityUserDetailsService userDetailsService;
 
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*",
-				"/flights/**/*", "/pax/**/*", "/query-builder/**/*",
-				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*",
-				"/dist/**/*", "/jqb/**/*", "/userSettings/**/*", "/cases/**/*","/onedaylookout/**/*","/userlocation/**/*",
-				"/resources/**", "/common/**/*", "/login/**", "/admin/**","/flightdirectionlist/**/*","/applicationVersionNumber/**/*",
-				"/app.js", "WEB-INF/**/*", "/data/**");
+		web.ignoring().antMatchers("/factory/**/*", "/admin/**/*", "/flights/**/*", "/pax/**/*", "/query-builder/**/*",
+				"/watchlists/**/*", "/build/**/*", "/dashboard/**/*", "/dist/**/*", "/jqb/**/*", "/userSettings/**/*",
+				"/cases/**/*", "/onedaylookout/**/*", "/userlocation/**/*", "/resources/**", "/common/**/*",
+				"/login/**", "/admin/**", "/flightdirectionlist/**/*", "/applicationVersionNumber/**/*", "/app.js",
+				"WEB-INF/**/*", "/data/**");
 	}
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth)
-			throws Exception {
-		auth.userDetailsService(userDetailsService).passwordEncoder(
-				new BCryptPasswordEncoder());
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 
 	@Override
@@ -67,36 +63,20 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 		SavedRequestAwareAuthenticationSuccessHandler savedReqHandler = new SavedRequestAwareAuthenticationSuccessHandler();
 
 		CsrfTokenResponseHeaderBindingFilter csrfTokenFilter = new CsrfTokenResponseHeaderBindingFilter();
-		http.addFilterAfter(csrfTokenFilter, CsrfFilter.class).csrf()
-				.csrfTokenRepository(csrfTokenRepository());
+		http.addFilterAfter(csrfTokenFilter, CsrfFilter.class).csrf().csrfTokenRepository(csrfTokenRepository());
 
 		http.csrf().disable();
 
 		http.authorizeRequests()
-				.antMatchers("/resources/*/**", "/resources/**/*",
-						"/resources/**", "/common/**", "/login/**",
+				.antMatchers("/resources/*/**", "/resources/**/*", "/resources/**", "/common/**", "/login/**",
 						"/authenticate")
-				.permitAll()
-				.anyRequest()
-				.authenticated()
-				.and()
-				.formLogin()
-				.loginProcessingUrl("/authenticate")
-				.usernameParameter("username")
-				.passwordParameter("password")
-				.successHandler(
-						new AjaxAuthenticationSuccessHandler(savedReqHandler))
-				.failureHandler(new SimpleUrlAuthenticationFailureHandler())
-				.loginPage("/login.html")
-				.and()
-				.logout()
-				.logoutUrl("/logout")
-				.logoutSuccessUrl("/login.html")
-				.invalidateHttpSession(true)
-				.permitAll();
+				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/authenticate")
+				.usernameParameter("username").passwordParameter("password")
+				.successHandler(new AjaxAuthenticationSuccessHandler(savedReqHandler))
+				.failureHandler(new SimpleUrlAuthenticationFailureHandler()).loginPage("/login.html").and().logout()
+				.logoutUrl("/logout").logoutSuccessUrl("/login.html").invalidateHttpSession(true).permitAll();
 
-		http.sessionManagement().maximumSessions(1).and()
-				.sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
+		http.sessionManagement().maximumSessions(1).and().sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
 		if ("true".equals(System.getProperty("httpsOnly"))) {
 			LOGGER.info("launching the application in HTTPS-only mode");

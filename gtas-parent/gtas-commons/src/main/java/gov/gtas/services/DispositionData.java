@@ -19,10 +19,8 @@ public class DispositionData {
 	private final String comments;
 	private final String user;
 
-	public DispositionData(@JsonProperty("passengerId") Long passengerId,
-			@JsonProperty("flightId") Long flightId,
-			@JsonProperty("statusId") Long statusId,
-			@JsonProperty("comments") String comments,
+	public DispositionData(@JsonProperty("passengerId") Long passengerId, @JsonProperty("flightId") Long flightId,
+			@JsonProperty("statusId") Long statusId, @JsonProperty("comments") String comments,
 			@JsonProperty("user") String user) {
 		this.passengerId = passengerId;
 		this.flightId = flightId;
@@ -58,8 +56,7 @@ public class DispositionData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.passengerId, this.flightId, this.statusId,
-				this.comments);
+		return Objects.hash(this.passengerId, this.flightId, this.statusId, this.comments);
 	}
 
 	@Override
@@ -69,15 +66,12 @@ public class DispositionData {
 		if (!(obj instanceof DispositionData))
 			return false;
 		final DispositionData other = (DispositionData) obj;
-		return Objects.equals(this.passengerId, other.passengerId)
-				&& Objects.equals(this.flightId, other.flightId)
-				&& Objects.equals(this.statusId, other.statusId)
-				&& Objects.equals(this.comments, other.comments);
+		return Objects.equals(this.passengerId, other.passengerId) && Objects.equals(this.flightId, other.flightId)
+				&& Objects.equals(this.statusId, other.statusId) && Objects.equals(this.comments, other.comments);
 	}
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this,
-				ToStringStyle.MULTI_LINE_STYLE);
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 }

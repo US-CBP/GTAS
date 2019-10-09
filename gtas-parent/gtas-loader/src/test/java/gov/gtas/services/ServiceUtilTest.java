@@ -324,7 +324,6 @@ public class ServiceUtilTest {
 		passenger.setPassengerIDTag(idTag);
 		passenger.setId(1L);
 
-
 		Set<Passenger> passengerSet = new HashSet<>();
 		passengerSet.add(passenger);
 

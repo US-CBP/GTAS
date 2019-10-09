@@ -1,0 +1,4 @@
+INSERT INTO app_configuration (description, opt, val) VALUES ('Toggle Interpol Red Notices Watch List Hit Notification ARN', 'INTERPOL_SNS_NOTIFICATION_ARN', '');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Toggle Interpol Red Notices Watch List Hit Notification', 'ENABLE_INTERPOL_HIT_NOTIFICATION', 'true');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices ID', 'INTERPOL_WATCHLIST_ID', '');
+INSERT INTO app_configuration (description, opt, val) VALUES ('Interpol Red Notices Notification Subject', 'INTERPOL_SNS_NOTIFICATION_SUBJECT', 'GTAS priority Hit Notification');

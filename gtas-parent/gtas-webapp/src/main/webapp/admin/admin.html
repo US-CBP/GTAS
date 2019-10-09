@@ -47,11 +47,11 @@
   </style>
   
 <md-sidenav id="codeSidebar" class="md-sidenav-right md-whiteframe-z2" md-component-id="codeSidebar">
-  <h3 class="block-label no-margin-top">{{codeAction + ' ' + activeCodeTab | capitalize}}</h3>
+  <h3 class="block-label no-margin-top">{{activeCodeTab + '.' + codeAction + activeCodeTab | translate | uppercase}}</h3>
   <form name="codeEditorForm" class="filters" _lpchecked="1" >
     <div class="filter-list" role="tablist" ng-repeat="col in codeColList[activeCodeTab]">
 
-      <h5 role="tab" aria-controls="filterGroup5" class="fieldFont filter-group-title no-margin">{{ col.name | uppercase }}
+      <h5 role="tab" aria-controls="filterGroup5" class="fieldFont filter-group-title no-margin">{{ activeCodeTab + '.' + col.name.toLowerCase() | translate | uppercase }}
       </h5>
       <div  id="filterGroup5">
         <div class="filter-group-content">
@@ -65,15 +65,15 @@
     <div class="md-pad">
         <button type="button" class="btn btn-primary pull-left" 
           ng-click="saveCode()">
-            <i class="fa fa-inverse fa-floppy-o"></i> Save 
+            <i class="fa fa-inverse fa-floppy-o"></i> {{'btn.save' | translate}} 
         </button>
         <button type="button" class="btn btn-warning pull-right margin-left-1"
           ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
-          ng-click="deleteCode()"><i class="fa fa-trash"></i> Delete 
+          ng-click="deleteCode()"><i class="fa fa-trash"></i> {{'btn.delete' | translate}} 
       </button>
       <button type="button" class="btn btn-warning pull-right margin-left-1"
       ng-if="(rowSelected || {}).id !== undefined" ng-disabled="rowSelected === null"
-      ng-click="restoreCode()"><i class="fa fa-undo"></i> Restore 
+      ng-click="restoreCode()"><i class="fa fa-undo"></i> {{'btn.restore' | translate}} 
   </button>
 </div>
   </form>
@@ -82,14 +82,14 @@
   <div class="margin-top-1">
   <md-content class="upper-cnt-nav">
       <md-tabs md-dynamic-height md-border-bottom md-selected="selectedTabIndex">
-          <md-tab label="Manage Users" layout="column">
+          <md-tab label="{{'tab.manageusers' | translate}}" layout="column">
               <div layout="column">
                 <md-content class="md-padding padding-top-0 padding-bottom-0">
                   <div>
                       <md-button ng-click="createUser()" class="md-raised pull-left md-primary md-raised]">
-                          <md-tooltip>Add User</md-tooltip>
+                          <md-tooltip>{{'btn.adduser' | translate}}</md-tooltip>
                           <i class="glyphicon glyphicon-plus"></i><i class="glyphicon glyphicon-user"></i>
-                          Add User
+                          {{'btn.adduser' | translate}}
                       </md-button>
                   </div>
                 </md-content>
@@ -98,22 +98,22 @@
                       </md-content>
               </div>
           </md-tab>
-          <md-tab label = "Audit Log View">
+          <md-tab label = "{{'tab.auditlog' | translate}}">
               <ng-include src="'admin/auditlog.html'"/>
           </md-tab>
-          <md-tab label = "Error Log View">
+          <md-tab label = "{{'tab.errorlog' | translate}}">
               <ng-include src="'admin/errorlog.html'"/>
           </md-tab>
-          <md-tab label = "Code Editor">
+          <md-tab label = "{{'tab.codeeditor' | translate}}">
             <ng-include src="'admin/codeEditor.html'" />
           </md-tab>
-          <md-tab label = "Settings">
+          <md-tab label = "{{'tab.settings' | translate}}">
             <ng-include src="'admin/settings.html'" />
           </md-tab>
-          <md-tab label = "File Download">
+          <md-tab label = "{{'tab.filedownload' | translate}}">
             <ng-include src="'admin/fileDownload.html'" />
           </md-tab>
-          <md-tab label = "Loading/Rule Statistics">
+          <md-tab label = "{{'tab.loadingrulestatistics' | translate}}">
             <ng-include src="'admin/statistics.html'" />
           </md-tab>
 

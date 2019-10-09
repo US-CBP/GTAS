@@ -6,9 +6,8 @@
 
 package gov.gtas.repository;
 
-
 import gov.gtas.model.HitsDispositionComments;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface HitsDispositionCommentsRepository  extends JpaRepository<HitsDispositionComments, Long> {
+public interface HitsDispositionCommentsRepository extends JpaRepository<HitsDispositionComments, Long> {
 }

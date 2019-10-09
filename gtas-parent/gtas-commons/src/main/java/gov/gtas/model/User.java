@@ -28,117 +28,117 @@ import gov.gtas.constant.DomainModelConstants;
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public User() {
-    }
+	public User() {
+	}
 
-    public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles) {
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles) {
 
-        this.userId = userId;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.active = active;
-        this.roles = roles;
-    }
+		this.userId = userId;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.active = active;
+		this.roles = roles;
+	}
 
-    @Id
-    @Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
-    private String userId;
+	@Id
+	@Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
+	private String userId;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+	@Column(name = "password", nullable = false)
+	private String password;
 
-    @Column(name = "first_name")
-    private String firstName;
+	@Column(name = "first_name")
+	private String firstName;
 
-    @Column(name = "last_name")
-    private String lastName;
+	@Column(name = "last_name")
+	private String lastName;
 
-    @Column(name = "active")
-    private int active;
+	@Column(name = "active")
+	private int active;
 
-    public int getActive() {
-        return active;
-    }
+	public int getActive() {
+		return active;
+	}
 
-    public void setActive(int active) {
-        this.active = active;
-    }
+	public void setActive(int active) {
+		this.active = active;
+	}
 
-    @ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id") , inverseJoinColumns = @JoinColumn(name = "role_id") )
-    private Set<Role> roles = new HashSet<Role>();
+	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<Role>();
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+	public Set<Role> getRoles() {
+		return roles;
+	}
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
 
-    public String getUserId() {
-        return userId;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    @Override
-    public boolean equals(Object target) {
-        if (this == target) {
-            return true;
-        }
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
+	}
 
-        if (!(target instanceof User)) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object target) {
+		if (this == target) {
+			return true;
+		}
 
-        User dataTarget = ((User) target);
+		if (!(target instanceof User)) {
+			return false;
+		}
 
-        return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
-                .append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
-                .append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
-                .append(this.roles, dataTarget.getRoles()).isEquals();
-    }
-    
-    @Override
-    public String toString() {
-        return "User [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
-                + lastName + ", active=" + active + ", roles=" + roles + "]";
-    }
+		User dataTarget = ((User) target);
+
+		return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
+				.append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
+				.append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
+				.append(this.roles, dataTarget.getRoles()).isEquals();
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", password=" + password + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", active=" + active + ", roles=" + roles + "]";
+	}
 
 }

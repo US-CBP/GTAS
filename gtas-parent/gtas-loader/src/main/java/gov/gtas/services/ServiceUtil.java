@@ -211,12 +211,12 @@ public class ServiceUtil implements LoaderServices {
 				String passengerIdTag = createPassengerIdTag(pvo);
 				for (Passenger pax : flightPaxList) {
 					if (pax.getPassengerIDTag() != null) {
-                        String paxIdTag = pax.getPassengerIDTag().getIdTag();
-                        if (paxIdTag.equals(passengerIdTag)) {
-                            existingPassenger = pax;
-                            foundPassenger = true;
-                        }
-                    }
+						String paxIdTag = pax.getPassengerIDTag().getIdTag();
+						if (paxIdTag.equals(passengerIdTag)) {
+							existingPassenger = pax;
+							foundPassenger = true;
+						}
+					}
 				}
 			}
 
@@ -268,8 +268,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name, Last Name, and gender
 				if (!foundPassenger && newPaxHasGender) {
 					for (Passenger pax : flightPaxList) {
-						if (haveSameGender(pax, pvo)
-								&& isNull(pax.getPassengerDetails().getDob())
+						if (haveSameGender(pax, pvo) && isNull(pax.getPassengerDetails().getDob())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
 							break;
@@ -280,8 +279,7 @@ public class ServiceUtil implements LoaderServices {
 				// Find passenger by First Name and Last Name
 				if (!foundPassenger) {
 					for (Passenger pax : flightPaxList) {
-						if (isNull(pax.getPassengerDetails().getDob())
-								&& isNull(pax.getPassengerDetails().getGender())
+						if (isNull(pax.getPassengerDetails().getDob()) && isNull(pax.getPassengerDetails().getGender())
 								&& isNull(pax.getDocuments())) {
 							existingPassenger = pax;
 

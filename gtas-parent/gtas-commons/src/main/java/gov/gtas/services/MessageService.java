@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface MessageService {
 
-    List<Message> getMostRecent500Messages();
+	List<Message> getMostRecent500Messages();
 
 }

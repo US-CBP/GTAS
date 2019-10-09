@@ -44,14 +44,14 @@ public abstract class PnrAttributeLink implements Serializable {
 		return linkAttributeId;
 	}
 
-
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof PnrAttributeLink)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof PnrAttributeLink))
+			return false;
 		PnrAttributeLink that = (PnrAttributeLink) o;
-		return getPnrId() == that.getPnrId() &&
-				getLinkAttributeId() == that.getLinkAttributeId();
+		return getPnrId() == that.getPnrId() && getLinkAttributeId() == that.getLinkAttributeId();
 	}
 
 	@Override

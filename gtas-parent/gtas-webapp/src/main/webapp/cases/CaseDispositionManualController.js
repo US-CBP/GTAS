@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionManualCtrl',
-        function ($scope, $http, $mdToast,
+        function ($scope, $http, $mdToast, $translate,
                   gridService, $timeout,
                   spinnerService, caseDispositionService, caseService, $state, $mdSidenav, AuthService,
                   passenger, ruleCats, codeTooltipService) {
@@ -159,14 +159,24 @@
                 }
             };
 
-            $scope.commentConfirm = function(){
+            $scope.saveCase = function(){
+                if (!hasData(($scope.rule || {}).ruleCat)) {
+                  $scope.errorToast($translate.instant('msg.caserequiresrulecategory'));
+                  return;
+                }
+
+                if(!hasData($scope.commentText)) {
+                  $scope.errorToast($translate.instant('msg.caserequirescomment'));
+                  return;
+                }
+                
                 spinnerService.show('html5spinner');
                 caseDispositionService.postManualCase($scope.passenger.flightId, $scope.passenger.paxId,
                     $scope.rule.ruleCat, $scope.commentText, null)
                     .then(function (aCase) {
                         spinnerService.hide('html5spinner');
                         var toastPosition = angular.element(document.getElementById('hitForm'));
-                        $scope.successToast("Case Created");
+                        $scope.successToast($translate.instant('msg.casecreated'));
                         //$timeout($state.transitionTo('caseDisposition'),5000);
                         $timeout($state.transitionTo('casedetail', { caseId: aCase.data.id }),5000);
                     });
@@ -265,7 +275,12 @@
 
             // End Trix attachment logic
 
-
+            function hasData(obj) {
+              if(typeof(obj) === 'object' || typeof(obj) === 'undefined')
+                return Object.keys(obj || {}).length > 0;
+              else
+                return String(obj).trim().length > 0;
+             }
 
         })
 }());

@@ -6,31 +6,31 @@ import gov.gtas.services.PassengerService;
 
 public class TargetingResultServices {
 
-    private PassengerService passengerService;
-    private AppConfigurationService appConfigurationService;
-    private RuleMetaRepository ruleMetaRepository;
+	private PassengerService passengerService;
+	private AppConfigurationService appConfigurationService;
+	private RuleMetaRepository ruleMetaRepository;
 
-    public PassengerService getPassengerService() {
-        return passengerService;
-    }
+	public PassengerService getPassengerService() {
+		return passengerService;
+	}
 
-    public void setPassengerService(PassengerService passengerService) {
-        this.passengerService = passengerService;
-    }
+	public void setPassengerService(PassengerService passengerService) {
+		this.passengerService = passengerService;
+	}
 
-    public AppConfigurationService getAppConfigurationService() {
-        return appConfigurationService;
-    }
+	public AppConfigurationService getAppConfigurationService() {
+		return appConfigurationService;
+	}
 
-    public void setAppConfigurationService(AppConfigurationService appConfigurationService) {
-        this.appConfigurationService = appConfigurationService;
-    }
+	public void setAppConfigurationService(AppConfigurationService appConfigurationService) {
+		this.appConfigurationService = appConfigurationService;
+	}
 
-    public RuleMetaRepository getRuleMetaRepository() {
-        return ruleMetaRepository;
-    }
+	public RuleMetaRepository getRuleMetaRepository() {
+		return ruleMetaRepository;
+	}
 
-    public void setRuleMetaRepository(RuleMetaRepository ruleMetaRepository) {
-        this.ruleMetaRepository = ruleMetaRepository;
-    }
+	public void setRuleMetaRepository(RuleMetaRepository ruleMetaRepository) {
+		this.ruleMetaRepository = ruleMetaRepository;
+	}
 }

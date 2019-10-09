@@ -25,73 +25,72 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class WebAppGlobalErrorHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebAppGlobalErrorHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebAppGlobalErrorHandler.class);
 
+	@Autowired
+	ErrorPersistenceService errorService;
+	/*
+	 * The logger for the Webapp Global Error Handler
+	 */
+	// private static final Logger logger = LoggerFactory
+	// .getLogger(WebAppGlobalErrorHandler.class);
 
-    @Autowired
-    ErrorPersistenceService errorService;
-    /*
-     * The logger for the Webapp Global Error Handler
-     */
-//  private static final Logger logger = LoggerFactory
-//          .getLogger(WebAppGlobalErrorHandler.class);
-    
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CommonServiceException.class)
-    public @ResponseBody JsonServiceResponse handleError(CommonServiceException ex) {
-        ErrorDetailInfo err = null;
-        if(ex.isLogable()){
-            err = generateErrorInfoAndLogError(ex);
-        } else{
-            err= ErrorHandlerFactory.getErrorHandler().processError(ex);
-        }
-        return new JsonServiceResponse(err.getErrorCode(),
-                err.getErrorDescription(), null);
-    }
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public @ResponseBody JsonServiceResponse handleError(HttpMessageNotReadableException ex) {
-        return new JsonServiceResponse(WebappErrorConstants.MALFORMED_JSON_ERROR_CODE,
-                String.format(WebappErrorConstants.MALFORMED_JSON_ERROR_MESSAGE, ex.getMessage()), null);       
-    }
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(CommonServiceException.class)
+	public @ResponseBody JsonServiceResponse handleError(CommonServiceException ex) {
+		ErrorDetailInfo err = null;
+		if (ex.isLogable()) {
+			err = generateErrorInfoAndLogError(ex);
+		} else {
+			err = ErrorHandlerFactory.getErrorHandler().processError(ex);
+		}
+		return new JsonServiceResponse(err.getErrorCode(), err.getErrorDescription(), null);
+	}
 
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(JpaSystemException.class)
-    public @ResponseBody JsonServiceResponse handleError(JpaSystemException ex) {
-        JsonServiceResponse resp = GlobalErrorHandlerHelper.createDbErrorResponse(errorService, ex);
-            return resp;
-    }
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(TypeMismatchException.class)
-    public @ResponseBody JsonServiceResponse handleError(TypeMismatchException ex) {
-        logger.error("handling error :", ex);
-        return new JsonServiceResponse(ErrorConstants.INVALID_PATH_VARIABLE_ERROR_CODE,
-        "The REST path variable could not be parsed:"
-                + ex.getMessage(), null);
-    }
-    @ResponseStatus(value=HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public @ResponseBody JsonServiceResponse handleError(HttpRequestMethodNotSupportedException ex) {
-        logger.error("handling error.", ex);
-        return new JsonServiceResponse( ErrorConstants.HTTP_METHOD_NOT_SUPPORTED_ERROR_CODE,
-        "The URL could not be dispatched:"
-                + ex.getMessage(), null);
-    }
-   
-    @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public @ResponseBody JsonServiceResponse handleError(Exception ex) {
-        return new JsonServiceResponse(generateErrorInfoAndLogError(ex));           
-    }
-    
-    private ErrorDetailInfo generateErrorInfoAndLogError(Exception ex){
-        ErrorDetailInfo errorDetails = ErrorHandlerFactory.createErrorDetails(ex);
-        try{
-            errorDetails = errorService.create(errorDetails); //add the saved ID
-        } catch (Exception exception){
-            //possibly DB is down
-            logger.error("error - is DB down?", exception);
-        }
-        return  errorDetails;   
-    }
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public @ResponseBody JsonServiceResponse handleError(HttpMessageNotReadableException ex) {
+		return new JsonServiceResponse(WebappErrorConstants.MALFORMED_JSON_ERROR_CODE,
+				String.format(WebappErrorConstants.MALFORMED_JSON_ERROR_MESSAGE, ex.getMessage()), null);
+	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(JpaSystemException.class)
+	public @ResponseBody JsonServiceResponse handleError(JpaSystemException ex) {
+		JsonServiceResponse resp = GlobalErrorHandlerHelper.createDbErrorResponse(errorService, ex);
+		return resp;
+	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(TypeMismatchException.class)
+	public @ResponseBody JsonServiceResponse handleError(TypeMismatchException ex) {
+		logger.error("handling error :", ex);
+		return new JsonServiceResponse(ErrorConstants.INVALID_PATH_VARIABLE_ERROR_CODE,
+				"The REST path variable could not be parsed:" + ex.getMessage(), null);
+	}
+
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public @ResponseBody JsonServiceResponse handleError(HttpRequestMethodNotSupportedException ex) {
+		logger.error("handling error.", ex);
+		return new JsonServiceResponse(ErrorConstants.HTTP_METHOD_NOT_SUPPORTED_ERROR_CODE,
+				"The URL could not be dispatched:" + ex.getMessage(), null);
+	}
+
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(Exception.class)
+	public @ResponseBody JsonServiceResponse handleError(Exception ex) {
+		return new JsonServiceResponse(generateErrorInfoAndLogError(ex));
+	}
+
+	private ErrorDetailInfo generateErrorInfoAndLogError(Exception ex) {
+		ErrorDetailInfo errorDetails = ErrorHandlerFactory.createErrorDetails(ex);
+		try {
+			errorDetails = errorService.create(errorDetails); // add the saved ID
+		} catch (Exception exception) {
+			// possibly DB is down
+			logger.error("error - is DB down?", exception);
+		}
+		return errorDetails;
+	}
 }

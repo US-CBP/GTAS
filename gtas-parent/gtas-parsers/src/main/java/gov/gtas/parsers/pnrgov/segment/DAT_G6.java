@@ -28,30 +28,30 @@ import gov.gtas.parsers.exception.ParseException;
  * Examples:
  * <ul>
  * <li>Check-in transaction date/time (DAT+2:010604:1800’)
- * <li>Check-in including date time is expressed as free text 
- * (DAT+3:L FT WW D014357 12AUG121423Z 1D5723')
+ * <li>Check-in including date time is expressed as free text (DAT+3:L FT WW
+ * D014357 12AUG121423Z 1D5723')
  * </ul>
  * 
  * TODO: handle free text date time
  */
 public class DAT_G6 extends DAT {
-    private static final String CHECKIN_CODE = "2";
-    private static final String CHECKIN_FREE_TEXT_CODE = "3";
+	private static final String CHECKIN_CODE = "2";
+	private static final String CHECKIN_FREE_TEXT_CODE = "3";
 
-    private Date checkinTime;
+	private Date checkinTime;
 
-    public DAT_G6(List<Composite> composites) throws ParseException {
-        super(composites);
-        
-        for (DatDetails d : getDateTimes()) {
-            String code = d.getType();
-            if (CHECKIN_CODE.equals(code) || CHECKIN_FREE_TEXT_CODE.equals(code)) {
-                this.checkinTime = d.getDateTime();
-            }
-        }
-    }
+	public DAT_G6(List<Composite> composites) throws ParseException {
+		super(composites);
 
-    public Date getCheckinTime() {
-        return checkinTime;
-    }
+		for (DatDetails d : getDateTimes()) {
+			String code = d.getType();
+			if (CHECKIN_CODE.equals(code) || CHECKIN_FREE_TEXT_CODE.equals(code)) {
+				this.checkinTime = d.getDateTime();
+			}
+		}
+	}
+
+	public Date getCheckinTime() {
+		return checkinTime;
+	}
 }

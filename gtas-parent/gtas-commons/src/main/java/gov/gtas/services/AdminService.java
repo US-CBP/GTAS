@@ -15,6 +15,6 @@ import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 public interface AdminService {
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    ApplicationStatisticsDTO createApplicationStatisticsDto();
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	ApplicationStatisticsDTO createApplicationStatisticsDto();
 }

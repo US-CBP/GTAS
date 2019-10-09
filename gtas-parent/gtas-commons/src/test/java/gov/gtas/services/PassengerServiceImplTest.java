@@ -30,86 +30,91 @@ import java.util.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PassengerServiceImplTest {
 
-    @Mock
-    PassengerRepository passengerRepository;
+	@Mock
+	PassengerRepository passengerRepository;
 
-    @InjectMocks
-    PassengerServiceImpl passengerService;
+	@InjectMocks
+	PassengerServiceImpl passengerService;
 
-    private final Passenger p = new Passenger();
+	private final Passenger p = new Passenger();
 
-    private final Flight f = new Flight();
+	private final Flight f = new Flight();
 
-    private final String SEAT_NUMBER = "a non blank seat number";
-    @Before
-    public void before() {
-        MockitoAnnotations.initMocks(passengerRepository);
+	private final String SEAT_NUMBER = "a non blank seat number";
 
-        //Make non-mockito mocked test data
-        Set<Long> messageId = new HashSet<>(Collections.singletonList(5L));
-        Set<Long> flightId = new HashSet<>(Collections.singletonList(1L));
-        Set<Seat> paxSeats = new HashSet<>();
-        Seat passengerSeat = new Seat();
-        passengerSeat.setFlight(f);
-        passengerSeat.setNumber(SEAT_NUMBER);
-        passengerSeat.setPassenger(p);
-        passengerSeat.setPaxId(p.getId());
-        passengerSeat.setApis(false);
+	@Before
+	public void before() {
+		MockitoAnnotations.initMocks(passengerRepository);
 
-        p.setSeatAssignments(paxSeats);
-        p.setDocuments(new HashSet<>());
-        p.getSeatAssignments().add(passengerSeat);
-        PassengerDetails passengerDetails = new PassengerDetails(p);
-        passengerDetails.setFirstName("foo");
-        passengerDetails.setLastName("bar");
-        passengerDetails.setNationality("baz");
-        p.setPassengerDetails(passengerDetails);
-        p.setPassengerTripDetails(new PassengerTripDetails(p));
-        f.setId(1L);
-        MutableFlightDetails mfd = new MutableFlightDetails(1L);
-        mfd.setEtd(new Date());
-        mfd.setEta(new Date());
-        f.setMutableFlightDetails(mfd);
-        f.setEtdDate(new Date());
-        Mockito.when(passengerRepository.getPassengerMatchingInformation(messageId, flightId)).thenReturn(new HashSet<Passenger>()
-        {{
-            add(p);
-        }});
-        ReflectionTestUtils.setField(passengerService, "passengerRespository", passengerRepository);
-    }
+		// Make non-mockito mocked test data
+		Set<Long> messageId = new HashSet<>(Collections.singletonList(5L));
+		Set<Long> flightId = new HashSet<>(Collections.singletonList(1L));
+		Set<Seat> paxSeats = new HashSet<>();
+		Seat passengerSeat = new Seat();
+		passengerSeat.setFlight(f);
+		passengerSeat.setNumber(SEAT_NUMBER);
+		passengerSeat.setPassenger(p);
+		passengerSeat.setPaxId(p.getId());
+		passengerSeat.setApis(false);
 
-    @Test
-    public void passengerProcessedToPassengerGridVoHappyPath() {
+		p.setSeatAssignments(paxSeats);
+		p.setDocuments(new HashSet<>());
+		p.getSeatAssignments().add(passengerSeat);
+		PassengerDetails passengerDetails = new PassengerDetails(p);
+		passengerDetails.setFirstName("foo");
+		passengerDetails.setLastName("bar");
+		passengerDetails.setNationality("baz");
+		p.setPassengerDetails(passengerDetails);
+		p.setPassengerTripDetails(new PassengerTripDetails(p));
+		f.setId(1L);
+		MutableFlightDetails mfd = new MutableFlightDetails(1L);
+		mfd.setEtd(new Date());
+		mfd.setEta(new Date());
+		f.setMutableFlightDetails(mfd);
+		f.setEtdDate(new Date());
+		Mockito.when(passengerRepository.getPassengerMatchingInformation(messageId, flightId))
+				.thenReturn(new HashSet<Passenger>() {
+					{
+						add(p);
+					}
+				});
+		ReflectionTestUtils.setField(passengerService, "passengerRespository", passengerRepository);
+	}
 
-        List<Object[]> queryResultList = new ArrayList<>();
+	@Test
+	public void passengerProcessedToPassengerGridVoHappyPath() {
 
-        Object [] itemOnQueryResultList = new Object[3];
-        itemOnQueryResultList[0] = p;
-        itemOnQueryResultList[1] = f;
-        queryResultList.add(itemOnQueryResultList);
+		List<Object[]> queryResultList = new ArrayList<>();
 
-        Pair<Long, List<Object[]>> findByCriteriaResult = new ImmutablePair<>(1L, queryResultList);
+		Object[] itemOnQueryResultList = new Object[3];
+		itemOnQueryResultList[0] = p;
+		itemOnQueryResultList[1] = f;
+		queryResultList.add(itemOnQueryResultList);
 
-        PassengersRequestDto prdto = new PassengersRequestDto();
-        prdto.setPageSize(25);
+		Pair<Long, List<Object[]>> findByCriteriaResult = new ImmutablePair<>(1L, queryResultList);
 
-        Mockito.when(passengerRepository.findByCriteria(1L, prdto)).thenReturn(findByCriteriaResult);
+		PassengersRequestDto prdto = new PassengersRequestDto();
+		prdto.setPageSize(25);
 
-        PassengersPageDto passengersByCriteriaTest = passengerService.getPassengersByCriteria(1L, prdto);
+		Mockito.when(passengerRepository.findByCriteria(1L, prdto)).thenReturn(findByCriteriaResult);
 
-        PassengerGridItemVo processedPassenger = passengersByCriteriaTest.getPassengers().get(0);
-        Assert.assertEquals(processedPassenger.getFirstName(), "foo");
-        Assert.assertEquals(processedPassenger.getLastName(), "bar");
-        Assert.assertEquals(processedPassenger.getNationality(), "baz");
-        Assert.assertEquals(passengersByCriteriaTest.getTotalPassengers(), 1L);
-    }
-    @Test
-    public void correctlyPassesParameters() {
-        MessageStatus messageStatus = new MessageStatus();
-        messageStatus.setFlightId(1L);
-        messageStatus.setMessageId(5L);
-        Set<Passenger> passengers = passengerService.getPassengersForFuzzyMatching(Collections.singletonList(messageStatus));
-        Assert.assertEquals(passengers.size(), 1);
-        Assert.assertEquals(passengers.iterator().next(), p);
-    }
+		PassengersPageDto passengersByCriteriaTest = passengerService.getPassengersByCriteria(1L, prdto);
+
+		PassengerGridItemVo processedPassenger = passengersByCriteriaTest.getPassengers().get(0);
+		Assert.assertEquals(processedPassenger.getFirstName(), "foo");
+		Assert.assertEquals(processedPassenger.getLastName(), "bar");
+		Assert.assertEquals(processedPassenger.getNationality(), "baz");
+		Assert.assertEquals(passengersByCriteriaTest.getTotalPassengers(), 1L);
+	}
+
+	@Test
+	public void correctlyPassesParameters() {
+		MessageStatus messageStatus = new MessageStatus();
+		messageStatus.setFlightId(1L);
+		messageStatus.setMessageId(5L);
+		Set<Passenger> passengers = passengerService
+				.getPassengersForFuzzyMatching(Collections.singletonList(messageStatus));
+		Assert.assertEquals(passengers.size(), 1);
+		Assert.assertEquals(passengers.iterator().next(), p);
+	}
 }

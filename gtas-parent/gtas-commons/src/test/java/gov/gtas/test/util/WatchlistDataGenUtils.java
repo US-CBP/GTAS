@@ -21,42 +21,42 @@ import org.slf4j.LoggerFactory;
  * Generates test data for rules domain objects.
  */
 public class WatchlistDataGenUtils {
-    private static final Logger logger = LoggerFactory.getLogger(WatchlistDataGenUtils.class);
-    public static final String TEST_WATCHLIST_PREFIX = "TestWL";
+	private static final Logger logger = LoggerFactory.getLogger(WatchlistDataGenUtils.class);
+	public static final String TEST_WATCHLIST_PREFIX = "TestWL";
 
-    public static final int TEST_ROLE1_ID = 1;
-    public static final String TEST_ROLE1_DESCRIPTION = "admin";
-    public static final String TEST_USER1_ID = "gtas";
+	public static final int TEST_ROLE1_ID = 1;
+	public static final String TEST_ROLE1_DESCRIPTION = "admin";
+	public static final String TEST_USER1_ID = "gtas";
 
-    public static final int TEST_ROLE2_ID = 99;
-    public static final String TEST_ROLE2_DESCRIPTION = "readonly";
-    public static final String TEST_USER2_ID = "gtas";
+	public static final int TEST_ROLE2_ID = 99;
+	public static final String TEST_ROLE2_DESCRIPTION = "readonly";
+	public static final String TEST_USER2_ID = "gtas";
 
-    private UserService userService;
+	private UserService userService;
 
-    public WatchlistDataGenUtils(UserService usrSvc) {
-        this.userService = usrSvc;
-    }
+	public WatchlistDataGenUtils(UserService usrSvc) {
+		this.userService = usrSvc;
+	}
 
-    public void initUserData() {
-        try {
-            Set<RoleData> roles = new HashSet<RoleData>();
-            roles.add(new RoleData(1, "ADMIN"));
-            UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles);
-            userService.create(userData);
-        } catch (Exception e) {
-            logger.error("error!", e);
-        }
-    }
+	public void initUserData() {
+		try {
+			Set<RoleData> roles = new HashSet<RoleData>();
+			roles.add(new RoleData(1, "ADMIN"));
+			UserData userData = new UserData("jJone", "password", "JP", "Jones", 1, roles);
+			userService.create(userData);
+		} catch (Exception e) {
+			logger.error("error!", e);
+		}
+	}
 
-    public List<WatchlistItem> createWatchlistItems(String[] jsonArray) {
-        List<WatchlistItem> ret = new LinkedList<WatchlistItem>();
-        for (String json : jsonArray) {
-            WatchlistItem item = new WatchlistItem();
-            item.setItemData(json);
-            ret.add(item);
-        }
-        return ret;
-    }
+	public List<WatchlistItem> createWatchlistItems(String[] jsonArray) {
+		List<WatchlistItem> ret = new LinkedList<WatchlistItem>();
+		for (String json : jsonArray) {
+			WatchlistItem item = new WatchlistItem();
+			item.setItemData(json);
+			ret.add(item);
+		}
+		return ret;
+	}
 
 }

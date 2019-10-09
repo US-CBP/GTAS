@@ -23,7 +23,7 @@ public class MatchingResult {
 	public MatchingResult(int totalHits, Map<String, DerogResponse> responses) {
 		this.totalHits = totalHits;
 		this.responses = responses;
-		
+
 	}
 
 	@Override
@@ -31,5 +31,4 @@ public class MatchingResult {
 		return "MatchingResult [totalHits=" + totalHits + ", responses=" + responses + "]";
 	}
 
-	
 }

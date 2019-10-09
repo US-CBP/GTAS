@@ -8,10 +8,9 @@ package gov.gtas.repository;
 import gov.gtas.model.lookup.CountryRestore;
 import org.springframework.data.repository.CrudRepository;
 
-public interface CountryRestoreRepository extends CrudRepository<CountryRestore, Long>{
+public interface CountryRestoreRepository extends CrudRepository<CountryRestore, Long> {
 
-    default CountryRestore findOne(Long countryId)
-    {
-    	return findById(countryId).orElse(null);
-    }
+	default CountryRestore findOne(Long countryId) {
+		return findById(countryId).orElse(null);
+	}
 }

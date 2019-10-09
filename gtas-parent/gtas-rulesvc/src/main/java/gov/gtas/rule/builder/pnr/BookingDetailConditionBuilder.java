@@ -11,15 +11,15 @@ import gov.gtas.rule.builder.EntityConditionBuilder;
 
 public class BookingDetailConditionBuilder extends EntityConditionBuilder {
 
-    public BookingDetailConditionBuilder(final String drlVariableName) {
-        super(drlVariableName, EntityEnum.BOOKING_DETAIL.getEntityName());
-    }
+	public BookingDetailConditionBuilder(final String drlVariableName) {
+		super(drlVariableName, EntityEnum.BOOKING_DETAIL.getEntityName());
+	}
 
-    @Override
-    protected void addSpecialConditions(StringBuilder bldr) {
-    }
-    
-    public String getLinkVariableName(){
-        return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
-    }
+	@Override
+	protected void addSpecialConditions(StringBuilder bldr) {
+	}
+
+	public String getLinkVariableName() {
+		return getDrlVariableName() + LINK_VARIABLE_SUFFIX;
+	}
 }

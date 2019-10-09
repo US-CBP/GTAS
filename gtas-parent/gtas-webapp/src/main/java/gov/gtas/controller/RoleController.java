@@ -18,13 +18,13 @@ import gov.gtas.services.security.RoleService;
 @RestController
 public class RoleController {
 
-    @Autowired
-    RoleService roleService;
+	@Autowired
+	RoleService roleService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/roles/")
-    public Set<RoleData> getAllRoles() {
+	@RequestMapping(method = RequestMethod.GET, value = "/roles/")
+	public Set<RoleData> getAllRoles() {
 
-        return roleService.findAll();
-    }
+		return roleService.findAll();
+	}
 
 }

@@ -43,168 +43,128 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * End to end Integration tests for Watch list.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class,
-        WebAppConfig.class })
+@ContextConfiguration(classes = { TestMvcRestServiceWebConfig.class, WebAppConfig.class })
 @WebAppConfiguration
 @Rollback(true)
 @Ignore
 public class WatchlistManagementControllerIT {
-    private static final String TEST_USER = "test";
-    private static final String WL_NAME = "TestWL123";
-    private MockMvc mockMvc;
+	private static final String TEST_USER = "test";
+	private static final String WL_NAME = "TestWL123";
+	private MockMvc mockMvc;
 
-    @Autowired
-    private WatchlistService watchlistService;
+	@Autowired
+	private WatchlistService watchlistService;
 
-    @Autowired
-    private RuleManagementService ruleManagementService;
+	@Autowired
+	private RuleManagementService ruleManagementService;
 
-    private WatchlistManagementController watchlistController;
+	private WatchlistManagementController watchlistController;
 
-    @Before
-    public void setUp() {
-        watchlistController = new WatchlistManagementController();
-        ReflectionTestUtils.setField(watchlistController,
-                "ruleManagementService", ruleManagementService);
-        ReflectionTestUtils.setField(watchlistController, "watchlistService",
-                watchlistService);
+	@Before
+	public void setUp() {
+		watchlistController = new WatchlistManagementController();
+		ReflectionTestUtils.setField(watchlistController, "ruleManagementService", ruleManagementService);
+		ReflectionTestUtils.setField(watchlistController, "watchlistService", watchlistService);
 
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(watchlistController)
-                .defaultRequest(
-                        get("/").contextPath("/gtas").accept(
-                                MediaType.APPLICATION_JSON)).build();
-    }
+		mockMvc = MockMvcBuilders.standaloneSetup(watchlistController)
+				.defaultRequest(get("/").contextPath("/gtas").accept(MediaType.APPLICATION_JSON)).build();
+	}
 
-    @Test
-    @Transactional
-    @WithUserDetails(TEST_USER)
-    public void testGetWl() throws Exception {
-        watchlistService.createUpdateDeleteWatchlistItems("test",
-                SampleDataGenerator.newWlWith2Items(WL_NAME));
+	@Test
+	@Transactional
+	@WithUserDetails(TEST_USER)
+	public void testGetWl() throws Exception {
+		watchlistService.createUpdateDeleteWatchlistItems("test", SampleDataGenerator.newWlWith2Items(WL_NAME));
 
-        mockMvc.perform(get("/gtas/wl/PASSENGER/" + WL_NAME))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$result.name", is(WL_NAME)))
-                .andExpect(jsonPath("$result.entity", is("Passenger")))
-                .andExpect(jsonPath("$result.watchlistItems", hasSize(2)))
-                .andExpect(
-                        jsonPath("$result.watchlistItems[0].action",
-                                is((String) null)))
-                .andExpect(
-                        jsonPath("$result.watchlistItems[1].action",
-                                is((String) null)));
-    }
+		mockMvc.perform(get("/gtas/wl/PASSENGER/" + WL_NAME)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$result.name", is(WL_NAME))).andExpect(jsonPath("$result.entity", is("Passenger")))
+				.andExpect(jsonPath("$result.watchlistItems", hasSize(2)))
+				.andExpect(jsonPath("$result.watchlistItems[0].action", is((String) null)))
+				.andExpect(jsonPath("$result.watchlistItems[1].action", is((String) null)));
+	}
 
-    @Test
-    @Transactional
-    @WithUserDetails(TEST_USER)
-    public void testGetEmptyWl() throws Exception {
-        /*
-         * Get on any watch list name will return an empty watch list if it does
-         * not exist in the DB.
-         */
-        mockMvc.perform(get("/gtas/wl/PASSENGER/foobar"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$result.name", is("foobar")))
-                .andExpect(jsonPath("$result.entity", is("PASSENGER")))
-                .andExpect(jsonPath("$result.watchlistItems", hasSize(0)));
-    }
+	@Test
+	@Transactional
+	@WithUserDetails(TEST_USER)
+	public void testGetEmptyWl() throws Exception {
+		/*
+		 * Get on any watch list name will return an empty watch list if it does not
+		 * exist in the DB.
+		 */
+		mockMvc.perform(get("/gtas/wl/PASSENGER/foobar")).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$result.name", is("foobar")))
+				.andExpect(jsonPath("$result.entity", is("PASSENGER")))
+				.andExpect(jsonPath("$result.watchlistItems", hasSize(0)));
+	}
 
-    @Test
-    @Transactional
-    @WithUserDetails(TEST_USER)
-    public void testCreateWl() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mockMvc.perform(
-                post("/gtas/wl/adelorie").contentType(
-                        MediaType.APPLICATION_JSON).content(
-                        mapper.writeValueAsString(SampleDataGenerator
-                                .newWlWith2Items(WL_NAME))))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(
-                        jsonPath("$.status",
-                                is(Status.SUCCESS.toString())))
-                .andExpect(jsonPath("$.responseDetails", hasSize(3)))
-                .andExpect(
-                        jsonPath("$.responseDetails[0].attributeName", is("id")))
-                .andExpect(
-                        jsonPath("$.responseDetails[1].attributeName",
-                                is("title")));
+	@Test
+	@Transactional
+	@WithUserDetails(TEST_USER)
+	public void testCreateWl() throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		mockMvc.perform(post("/gtas/wl/adelorie").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(SampleDataGenerator.newWlWith2Items(WL_NAME))))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(Status.SUCCESS.toString())))
+				.andExpect(jsonPath("$.responseDetails", hasSize(3)))
+				.andExpect(jsonPath("$.responseDetails[0].attributeName", is("id")))
+				.andExpect(jsonPath("$.responseDetails[1].attributeName", is("title")));
 
-    }
+	}
 
-    @Test
-    @Transactional
-    @WithUserDetails(TEST_USER)
-    public void testUpdateDeleteWl() throws Exception {
-        watchlistService.createUpdateDeleteWatchlistItems(TEST_USER,
-                SampleDataGenerator.newWlWith2Items(WL_NAME));
-        WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
-        assertNotNull(wlSpec);
-        // the watch list has two items
-        assertEquals(2, wlSpec.getWatchlistItems().size());
+	@Test
+	@Transactional
+	@WithUserDetails(TEST_USER)
+	public void testUpdateDeleteWl() throws Exception {
+		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME));
+		WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
+		assertNotNull(wlSpec);
+		// the watch list has two items
+		assertEquals(2, wlSpec.getWatchlistItems().size());
 
-        wlSpec.getWatchlistItems().get(0)
-                .setAction(WatchlistEditEnum.U.getOperationName());// update one
-                                                                    // item
-        wlSpec.getWatchlistItems().get(1)
-                .setAction(WatchlistEditEnum.D.getOperationName());// delete one
-                                                                    // item
-        ObjectMapper mapper = new ObjectMapper();
-        mockMvc.perform(
-                post("/gtas/wl/passenger").contentType(
-                        MediaType.APPLICATION_JSON).content(
-                        mapper.writeValueAsString(wlSpec)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(
-                        jsonPath("$.status",
-                                is(Status.SUCCESS.toString())))
-                .andExpect(
-                        jsonPath("$.responseDetails[0].attributeName", is("id")))
-                .andExpect(
-                        jsonPath("$.responseDetails[1].attributeName",
-                                is("title")));
+		wlSpec.getWatchlistItems().get(0).setAction(WatchlistEditEnum.U.getOperationName());// update one
+																							// item
+		wlSpec.getWatchlistItems().get(1).setAction(WatchlistEditEnum.D.getOperationName());// delete one
+																							// item
+		ObjectMapper mapper = new ObjectMapper();
+		mockMvc.perform(post("/gtas/wl/passenger").contentType(MediaType.APPLICATION_JSON)
+				.content(mapper.writeValueAsString(wlSpec))).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(Status.SUCCESS.toString())))
+				.andExpect(jsonPath("$.responseDetails[0].attributeName", is("id")))
+				.andExpect(jsonPath("$.responseDetails[1].attributeName", is("title")));
 
-        wlSpec = watchlistService.fetchWatchlist(WL_NAME);
-        // the watch list now has one item
-        assertEquals(1, wlSpec.getWatchlistItems().size());
-    }
+		wlSpec = watchlistService.fetchWatchlist(WL_NAME);
+		// the watch list now has one item
+		assertEquals(1, wlSpec.getWatchlistItems().size());
+	}
 
-    @Test
-    @Transactional
-    @WithUserDetails(TEST_USER)
-    public void testDeleteAllWl() throws Exception {
-        watchlistService.createUpdateDeleteWatchlistItems(TEST_USER,
-                SampleDataGenerator.newWlWith2Items(WL_NAME));
-        WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
-        assertNotNull(wlSpec);
-        // the watch list has two items
-        assertEquals(2, wlSpec.getWatchlistItems().size());
+	@Test
+	@Transactional
+	@WithUserDetails(TEST_USER)
+	public void testDeleteAllWl() throws Exception {
+		watchlistService.createUpdateDeleteWatchlistItems(TEST_USER, SampleDataGenerator.newWlWith2Items(WL_NAME));
+		WatchlistSpec wlSpec = watchlistService.fetchWatchlist(WL_NAME);
+		assertNotNull(wlSpec);
+		// the watch list has two items
+		assertEquals(2, wlSpec.getWatchlistItems().size());
 
-        mockMvc.perform(delete("/gtas/wl/passenger/"+WL_NAME))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(
-                        jsonPath("$.status",
-                                is(Status.SUCCESS.toString())))
-                .andExpect(
-                        jsonPath("$.responseDetails[0].attributeName", is("id")))
-                .andExpect(
-                        jsonPath("$.responseDetails[1].attributeName",
-                                is("title")));
+		mockMvc.perform(delete("/gtas/wl/passenger/" + WL_NAME)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.status", is(Status.SUCCESS.toString())))
+				.andExpect(jsonPath("$.responseDetails[0].attributeName", is("id")))
+				.andExpect(jsonPath("$.responseDetails[1].attributeName", is("title")));
 
-        wlSpec = watchlistService.fetchWatchlist(WL_NAME);
-        // the watch list has been deleted
-        assertNull(wlSpec);
-    }
+		wlSpec = watchlistService.fetchWatchlist(WL_NAME);
+		// the watch list has been deleted
+		assertNull(wlSpec);
+	}
 
 }

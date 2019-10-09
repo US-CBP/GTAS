@@ -7,26 +7,26 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toMap;
 
 public enum ProcessingIndicatorCode {
-    HEAD_OF_POOL("HP"),
-    MEMBER_OF_POOL("MP");
+	HEAD_OF_POOL("HP"),
 
-    private String code;
+	MEMBER_OF_POOL("MP");
 
-    ProcessingIndicatorCode(String code) {
-        this.code = code;
-    }
+	private String code;
 
-    private static final Map<String, ProcessingIndicatorCode> stringToEnum =
-            Stream.of(values()).collect(
-                    toMap(Object::toString, e -> e));
+	ProcessingIndicatorCode(String code) {
+		this.code = code;
+	}
 
-    public static Optional<ProcessingIndicatorCode> fromString(String indicatorCode) {
-        return Optional.ofNullable(stringToEnum.get(indicatorCode));
-    }
+	private static final Map<String, ProcessingIndicatorCode> stringToEnum = Stream.of(values())
+			.collect(toMap(Object::toString, e -> e));
 
-    @Override
-    public String toString() {
-        return this.code;
-    }
+	public static Optional<ProcessingIndicatorCode> fromString(String indicatorCode) {
+		return Optional.ofNullable(stringToEnum.get(indicatorCode));
+	}
+
+	@Override
+	public String toString() {
+		return this.code;
+	}
 
 }

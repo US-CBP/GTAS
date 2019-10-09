@@ -4,20 +4,19 @@ import org.apache.commons.lang3.StringUtils;
 
 public class TicketFareVo {
 
+	private Long id;
 
-    private Long id; 
+	private String paymentAmount;
 
-    private String paymentAmount;
+	private String currencyCode;
 
-    private String currencyCode;
+	private String ticketNumber = "0";
 
-    private String ticketNumber="0";
+	private String ticketType;
 
-    private String ticketType;
+	private String numberOfBooklets;
 
-    private String numberOfBooklets;
-    
-    private boolean ticketless;
+	private boolean ticketless;
 
 	public Long getId() {
 		return id;
@@ -74,13 +73,13 @@ public class TicketFareVo {
 	public void setTicketless(boolean ticketless) {
 		this.ticketless = ticketless;
 	}
-    
-	public boolean isValid(){
-		boolean valid=true;
-		if((this.ticketNumber.equals("0") && (!this.isTicketless())) && StringUtils.isBlank(this.paymentAmount) ){
-			valid=false;
+
+	public boolean isValid() {
+		boolean valid = true;
+		if ((this.ticketNumber.equals("0") && (!this.isTicketless())) && StringUtils.isBlank(this.paymentAmount)) {
+			valid = false;
 		}
 		return valid;
 	}
-    
+
 }
