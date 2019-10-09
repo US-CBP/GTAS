@@ -1,0 +1,1 @@
+INSERT INTO role VALUES ('9', 'Manage Cases');
