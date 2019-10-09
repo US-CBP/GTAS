@@ -39,7 +39,8 @@ var app;
             'summernote',
             'angularTrix',
             'ui.bootstrap.datetimepicker',
-            'datetime'
+            'datetime',
+            'ui.bootstrap'
         ],
         language = function ($translateProvider) {  
 
