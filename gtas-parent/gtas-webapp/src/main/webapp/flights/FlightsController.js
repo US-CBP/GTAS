@@ -279,39 +279,6 @@
               gridApi.core.on.columnVisibilityChanged( $scope, function( changedColumn ){
                 $scope.columnChanged = { name: changedColumn.colDef.name, visible: changedColumn.colDef.visible };
               });
-
-              gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                  if (row.isExpanded) {
-                    row.entity.subGridOptions = {
-                       columnDefs: $scope.passengerSubGridColumnDefs,
-                       enableHorizontalScrollbar: 0,
-                            enableVerticalScrollbar: 1,
-
-                    }
-                    var request ={
-                        dest:row.entity.destination,
-                        direction:row.entity.direction,
-                        etaEnd:new Date(row.entity.etd.toString().substring(0,10).split('-').join(',')),
-                        etaStart:new Date(row.entity.eta.toString().substring(0,10).split('-').join(',')),
-                        flightNumber:row.entity.fullFlightNumber,
-                        origin: row.entity.origin,
-                        lastname:"",
-                        pageNumber:1,
-                        pageSize:5000
-                    };
-                   spinnerService.show('html5spinner');
-                    paxService.getPax(row.entity.id, request).then(function(data){
-                      var passengerHitList = [];
-                      $.each(data.data.passengers, function(index,value){
-                      if (value.onRuleHitList || value.onWatchList || value.onWatchListDoc){
-                        passengerHitList.push(value);
-                      }
-                      });
-                      row.entity.subGridOptions.data=passengerHitList;
-                     spinnerService.hide('html5spinner');
-                    });
-                  }
-              });
           }
       };
 
