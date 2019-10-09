@@ -313,9 +313,9 @@
                     field: 'status',
                     name: 'status',
                     displayName: $translate.instant('case.status'),
-                    cellTemplate: '<button ng-if="row.entity.status === \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.reOpen(row)">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)">Dismiss</button>' +
-                        '<button  class="btn primary" ng-click="grid.appScope.notify(row)">Notify</button>'
+                    cellTemplate: '<button ng-if="row.entity.status === \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Dismiss</button>' +
+                        '<button  class="btn primary" ng-click="grid.appScope.notify(row)" style="margin:5px;">Notify</button>'
                 }
                 
 
