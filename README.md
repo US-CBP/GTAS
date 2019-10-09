@@ -1,5 +1,9 @@
 [![HitCount](http://hits.dwyl.io/US-CBP/GTAS.svg)](http://hits.dwyl.io/US-CBP/GTAS)
 
+## Resources
+
+* [Installation Videos on YouTube](https://www.youtube.com/watch?v=1h626On3Tto&t=18s)
+* [Supporting Files on Google Drive](https://drive.google.com/drive/u/1/folders/1rAlHrBQZwaZmU45MH8DyhW5rlffkCqGO)
 
 #
 <p align="center"><img width=50% src="https://user-images.githubusercontent.com/20464494/62487148-1ad6c580-b78f-11e9-9327-816d1590ad7f.png"></p>
