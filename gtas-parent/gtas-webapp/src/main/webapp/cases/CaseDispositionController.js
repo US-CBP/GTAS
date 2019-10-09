@@ -168,10 +168,25 @@
               }
 
             $scope.deleteRow = function(row) {
-                caseDispositionService.updatePassengerHitViews(row.entity).then(
-                );
-                const index = $scope.casesDispGrid.data.indexOf(row.entity);
-                $scope.casesDispGrid.data.splice(index, 1);
+                row.entity.status = 'DISMISSED';
+                caseDispositionService.updatePassengerHitViews(row.entity, 'DISMISSED').then(function(result) {
+                }
+            );
+                if (! $scope.model.displayStatusCheckBoxes.DISMISSED) {
+                    const index = $scope.casesDispGrid.data.indexOf(row.entity);
+                    $scope.casesDispGrid.data.splice(index, 1);
+                }
+            };
+
+            $scope.reOpen = function(row) {
+                row.entity.status = 'RE_OPENED';
+                caseDispositionService.updatePassengerHitViews(row.entity, 'RE_OPENED').then(function(result) {
+                }
+            );
+                if ( ! $scope.model.displayStatusCheckBoxes.RE_OPENED) {
+                    const index = $scope.casesDispGrid.data.indexOf(row.entity);
+                    $scope.casesDispGrid.data.splice(index, 1);
+                }
             };
 
             $scope.emailDto = {
@@ -298,7 +313,7 @@
                     field: 'status',
                     name: 'status',
                     displayName: $translate.instant('case.status'),
-                    cellTemplate: '<div ng-if="row.entity.status === \'DISMISSED\'">{{row.entity.status}}</div>' +
+                    cellTemplate: '<button ng-if="row.entity.status === \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.reOpen(row)">Re-Open</button>' +
                         '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)">Dismiss</button>' +
                         '<button  class="btn primary" ng-click="grid.appScope.notify(row)">Notify</button>'
                 }

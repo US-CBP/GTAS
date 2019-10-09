@@ -51,6 +51,7 @@
             function getDefaultDispCheckboxes() {
                 return {
                     NEW: true,
+                    RE_OPENED: false,
                     DISMISSED: false
                 };
             }
@@ -332,12 +333,12 @@
 //
 //            }
 
-            function updatePassengerHitViews(hitViewVo) {
+            function updatePassengerHitViews(hitViewVo, status) {
                 let dfd = $q.defer();
                 let updateVo = {
                     flightId: hitViewVo.flightId,
                     passengerId: hitViewVo.paxId,
-                    status: 'DISMISSED'
+                    status: status
                 };
                 dfd.resolve(
                     $http({
@@ -380,7 +381,7 @@
                          data: emailDto
                      })
                  );
-                 
+                 return dfq.promise;
              }
 
             return ({

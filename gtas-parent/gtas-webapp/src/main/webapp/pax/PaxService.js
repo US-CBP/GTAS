@@ -288,7 +288,8 @@
               $.each(ruleSummaryHits.data, function(index,value){
                 var hitDetail = value.hitsDetailsList[0]; //First object in this 'array' contains the values needed for the front-end display
                 hitDetail.category = value.category;
-                ruleHitsList.push(hitDetail); 
+                hitDetail.severity = value.severity;
+                ruleHitsList.push(hitDetail);
               });
               }
             return ruleHitsList;

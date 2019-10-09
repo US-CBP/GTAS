@@ -55,12 +55,14 @@ public class HitsSummaryController {
 			hitDetailVo.setRuleId(htd.getRuleId());
 			hitDetailVo.setRuleTitle(htd.getTitle());
 			hitDetailVo.setRuleDesc(htd.getDescription());
+			hitDetailVo.setSeverity(htd.getHitMaker().getHitCategory().getSeverity().toString());
 			HitMaker lookout = htd.getHitMaker();
 			HitCategory hitCategory = lookout.getHitCategory();
 			hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
 			htd.setHitMakerId(null);
 			htd.setHitMaker(null);
 			htd.setHitViewStatus(null);
+
 			hitDetailVo.getHitsDetailsList().add(htd);
 			hitDetailVoList.add(hitDetailVo);
 		}

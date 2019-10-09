@@ -12,6 +12,8 @@ public class PriorityVettingListStatus implements Serializable {
 	private Boolean newItems;
 	@JsonProperty("DISMISSED")
 	private Boolean dismissed;
+	@JsonProperty("RE_OPENED")
+	private Boolean reOpened;
 
 	PriorityVettingListStatus() {
 	}
@@ -30,6 +32,14 @@ public class PriorityVettingListStatus implements Serializable {
 
 	public void setDismissed(Boolean dismissed) {
 		this.dismissed = dismissed;
+	}
+
+	public Boolean getReOpened() {
+		return reOpened;
+	}
+
+	public void setReOpened(Boolean reOpened) {
+		this.reOpened = reOpened;
 	}
 
 	public List<String> namesOfCheckedBoxes() {

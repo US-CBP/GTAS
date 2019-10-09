@@ -35,6 +35,7 @@ public class HitDetailVo {
 	private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
 
 	private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
+	private String severity;
 
 	public static HitDetailVo from(HitDetail hitDetail) {
 		HitDetailVo hitDetailVo = new HitDetailVo();
@@ -164,4 +165,12 @@ public class HitDetailVo {
 	public int hashCode() {
 		return Objects.hash(getPaxId(), getFlightId(), getRuleConditions(), getCreateDate(), getRuleId(), getRuleTitle(), getRuleDesc(), getCategory());
 	}
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
 }

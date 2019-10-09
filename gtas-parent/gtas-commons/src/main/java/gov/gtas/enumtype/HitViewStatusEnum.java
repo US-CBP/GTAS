@@ -22,6 +22,8 @@ public enum HitViewStatusEnum {
 
 	NEW("NEW"),
 
+	RE_OPENED("RE_OPENED"),
+
 	DISMISSED("DISMISSED"),
 
 	NOT_USED("NOT_USED");
@@ -31,6 +33,7 @@ public enum HitViewStatusEnum {
 
 	HitViewStatusEnum(String hitViewStatus) {
 		this.hitViewStatus = hitViewStatus;
+
 	}
 
 	private static final Map<String, HitViewStatusEnum> stringToEnum = Stream.of(values())
