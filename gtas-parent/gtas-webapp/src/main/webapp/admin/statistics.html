@@ -6,21 +6,21 @@
   ~  */
   -->
     <dl class="row">
-        <dt class="col-sm-2"><h2>Loader/Rule Statistics</h2></dt>
+        <dt class="col-sm-2"><h2>{{'stats.loaderrulestats' | translate}}</h2></dt>
         <dd class="col-sm-8">
             <dl >
-                <dt>Last message received:</dt>
+                <dt>{{'stats.lastmessagereceived' | translate}}:</dt>
                 <dd>{{getStatistics().lastMessageInSystem}}</dd>
-                <dt>Last message analyzed:</dt>
+                <dt>{{'stats.lastmessageanalyzed' | translate}}:</dt>
                 <dd>{{getStatistics().lastMessageAnalyzedByDrools}}</dd>
-                <dt>Most Recent Rule Hit(Partial excluded) timestamp:</dt>
+                <dt>{{'stats.mostrecentrulehit' | translate}}:</dt>
                 <dd>{{getStatistics().mostRecentRuleHit}}</dd>
-                <dt>Passengers count from last 500 messages: </dt>
+                <dt>{{'stats.paxcount' | translate}}: </dt>
                 <dd>{{getStatistics().passengerCount}}</dd>
-                <dt>Loading/Parsing errors past 500 messages:</dt>
+                <dt>{{'stats.loadingparsingerrors' | translate}}:</dt>
                 <dd>{{getStatistics().failedParsingCount +
                     getStatistics().failedLoadCount}}</dd>
-                <dt>Rule errors last 500 messages:</dt>
+                <dt>{{'stats.ruleerrors' | translate}}:</dt>
                 <dd>{{getStatistics().failedNeo4jCount +
                     getStatistics().failedAnalyzedCount + getStatistics().partialAnalyzedCount}}
                 </dd>

@@ -4,7 +4,7 @@
  * Please see LICENSE.txt for details.
  */
 app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
-                                      errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService
+  errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService, $translate
 , statisticService) {
   'use strict';
   var CARRIER = 'carrier';
@@ -53,18 +53,18 @@ app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptions
   var setAuditData = function (data) {
     $scope.auditGrid.data = data;
     if(data && data.length > 0){
-        that.successToast('Audit Log Data Loaded.');
+        that.successToast($translate.instant('msg.auditlogdataloaded'));
     } else {
-        that.successToast('Filter conditions did not return any Audit Log Data.');
+        that.successToast($translate.instant('msg.noauditlogdata'));
     }
   };
   var setErrorData = function (data) {
-          $scope.errorGrid.data = data;
-          if(data && data.length > 0){
-             that.successToast('Error Log Data Loaded.')
-          } else {
-             that.successToast('Filter conditions did not return any Error Log Data.');
-          }
+    $scope.errorGrid.data = data;
+    if(data && data.length > 0){
+      that.successToast($translate.instant('msg.errorlogdataloaded'));
+    } else {
+      that.successToast($translate.instant('msg.noerrorlogdata'));
+    }
       };
   var setupUserGrid = function(){
       $scope.userGrid = gridOptionsLookupService.getGridOptions('admin');
@@ -140,7 +140,7 @@ var bindZipGrid = function(data) {
   $scope.zipGrid.data = [];
 
   if (!Array.isArray(data) || data.length === 0) {
-    that.successToast('No log files were found.');
+    that.successToast($translate.instant('msg.nologfiles'));
     return;
   }
 
@@ -244,7 +244,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   }
   
   $scope.openSidebarEdit = function (row) {
-    $scope.codeAction = 'Edit';
+    $scope.codeAction = 'edit';
     $scope.rowSelectedRaw = row;
     $scope.rowSelected = Object.assign({}, row);  //new copy for mutations
 
@@ -252,10 +252,9 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   };
   
   $scope.openSidebarAdd = function () {
-    $scope.codeAction = 'Add';
+    $scope.codeAction = 'add';
     $scope.rowSelectedRaw = {};
     $scope.rowSelected = {};
-    $scope.codeAction = 'Add';
 
     $mdSidenav(CODESIDEBAR).open();
   };
@@ -278,16 +277,16 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     if (!isEqual){
       var tab = $scope.activeCodeTab;
 
-      if (action === 'Edit') {
+      if (action === 'edit') {
         codeService.updateCode(tab, $scope.rowSelected)
         .then(function(response) {
           if (response.status === 'FAILURE') {
             $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
-            $scope.errorToast('The record cannot be saved with this data');
+            $scope.errorToast($translate.instant('msg.recordcannotbesaved'));
           }
           else {
             $scope.refreshActiveCodeGrid();
-            that.successToast("Code successfully saved.");
+            that.successToast($translate.instant('msg.codesuccessfullysaved'));
             $scope.OK = false;
           }
         });
@@ -300,7 +299,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
     }
     else {
       $scope.toastParent = $document[0].getElementById(CODESIDEBAR);
-      $scope.errorToast('No changes to the record were detected');
+      $scope.errorToast($translate.instant('msg.nochangesdetected'));
     }
   };
 
@@ -327,13 +326,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm("Are you sure you want to delete this code?");
+    var r = confirm($translate.instant('msg.confirmdeletecode'));
     if (r == true) {
       codeService.deleteCode(tab, $scope.rowSelected.id).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast("Code successfully deleted.");
+        that.successToast($translate.instant('msg.codesuccessfullydeleted'));
         $scope.OK = false;
       }
     }
@@ -344,13 +343,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm("Are you sure you want to restore this code to its original value?");
+    var r = confirm($translate.instant('msg.confirmrestorecode'));
     if (r == true) {
       codeService.restoreCode(tab, $scope.rowSelected).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast("Code successfully restored.");
+        that.successToast($translate.instant('msg.codesuccessfullyrestored'));
         $scope.OK = false;
       }
     }
@@ -361,13 +360,13 @@ $scope.formatBytes = function(bytes, decimals = 2) {
 
     $scope.toastParent = $document[0].getElementById(tab+'Grid');
 
-    var r = confirm(`Are you sure you want to restore all ${tab.toUpperCase()} codes to their original values?`);
+    var r = confirm($translate.instant(`msg.confirmrestore${tab}codes`));
     if (r == true) {
       codeService.restoreAllCodes(tab).then($scope.refreshActiveCodeGrid, $scope.errorToast);
       refreshTooltips();
 
       if($scope.OK) {
-        that.successToast(`All ${tab} codes successfully restored.`);
+        that.successToast($translate.instant(`msg.${tab}codessuccessfullyrestored`));
         $scope.OK = false;
       }
     }
@@ -428,7 +427,7 @@ $scope.formatBytes = function(bytes, decimals = 2) {
         $scope.errorToast(response.data.statusText);
       }
     }).error(function(response){
-      $scope.errorToast(response.data.statusText + " You may not remove a status already saved to an existing case");
+      $scope.errorToast(response.data.statusText + " " + $translate.instant('msg.maynotremovestatus'));
     });
 
   };
@@ -474,9 +473,9 @@ $scope.formatBytes = function(bytes, decimals = 2) {
   $scope.saveSettings = function() {
     defaultSettingsService.saveSettings($scope.settingsInfo)
     .then(function success(response) {
-      alert("Settings saved successfully");
+      alert($translate.instant('msg.settingssaved'));
     },function error(response){
-      alert("Error when saving settings");
+      alert($translate.instant('msg.errorsavingsettings'));
     });
   }
 
