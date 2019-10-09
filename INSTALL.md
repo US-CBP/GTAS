@@ -2,7 +2,7 @@
 
 Please refer to the GTAS Technical Guide document for a more detailed set of installation instructions or, check out our youtube playlist that walks you through the whole process:
 
-https://www.youtube.com/playlist?list=PLrB3ZYSlISMA5aNaOhxhvqjoNHTjZIfkK
+https://www.youtube.com/watch?v=1h626On3Tto&t=18s
 
 ## Environment
 
