@@ -15,7 +15,7 @@
         <skip.integration.tests>true</skip.integration.tests>
         <skip.unit.tests>false</skip.unit.tests>
         <javadoc-plugin.version>3.0.1</javadoc-plugin.version>
-        <sonar-plugin.version>3.6.0.1398</sonar-plugin.version>
+        <sonar-plugin.version>3.7.0.1746</sonar-plugin.version>
         <elasticsearch.version>6.5.0</elasticsearch.version>
         <sonar.sources>src/main/java</sonar.sources>
         <jackson.version>2.9.9</jackson.version>
