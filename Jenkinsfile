@@ -30,24 +30,24 @@ volumes: [
             container('maven') {
 
                 stage('Validate project') {
-                    sh 'mvn -f gtas-parent -B  validate'        
+                    sh 'mvn -f gtas-parent/gtas-rulesvc/ -B  validate'        
                 }
                 
                 stage('Compile project') {
-                    sh 'mvn -B  -f gtas-parent compile package -Dmaven.test.failure.ignore=true'
+                    sh 'mvn -B  -f gtas-parent/gtas-rulesvc/ compile package -Dmaven.test.failure.ignore=true'
                 }
                 
                 stage('Unit Test and coverage project') {
-                    sh 'mvn -B -f gtas-parent test -Dmaven.test.failure.ignore=true'
+                    sh 'mvn -B -f gtas-parent/gtas-rulesvc/ test -Dmaven.test.failure.ignore=true'
                 }
                 
                stage('Security Scan components') {
-                   sh 'mvn -B -f gtas-parent dependency-check:check -DfailBuildOnCVSS=10 -Dmaven.test.failure.ignore=true'
+                   sh 'mvn -B -f gtas-parent/gtas-rulesvc/ dependency-check:check -DfailBuildOnCVSS=10 -Dmaven.test.failure.ignore=true'
                }
             
                 stage ('Package and Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn -f gtas-parent jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
+                        sh "mvn -f gtas-parent/gtas-rulesvc/ jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
                 }
                 
