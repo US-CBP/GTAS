@@ -20,16 +20,28 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class HitMaker extends BaseEntity {
 
-	@Column(name = "hit_type", nullable = false)
+	@Column(name = "hm_hit_type", nullable = false)
 	@Enumerated(EnumType.STRING)
 	protected HitTypeEnum hitTypeEnum;
 
 	@ManyToOne
-	@JoinColumn(name = "hit_category", referencedColumnName = "id", columnDefinition = "bigint unsigned")
+	@JoinColumn(name = "hm_hit_category", referencedColumnName = "id", columnDefinition = "bigint unsigned", nullable = false)
 	private HitCategory hitCategory;
 
 	@OneToMany(mappedBy = "hitMaker", fetch = FetchType.LAZY)
 	private Set<HitDetail> hitDetailSet = new HashSet<>();
+
+	@ManyToOne
+	@JoinColumn(name = "hm_author", referencedColumnName = "user_id", nullable = false)
+	protected User author;
+
+	public User getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
+	}
 
 	public HitCategory getHitCategory() {
 		return hitCategory;

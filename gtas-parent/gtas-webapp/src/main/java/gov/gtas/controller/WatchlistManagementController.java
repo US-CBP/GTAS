@@ -150,16 +150,16 @@ public class WatchlistManagementController {
 		List<WatchlistTerm> _terms = new ArrayList<WatchlistTerm>();
 
 		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
-
+		Long categoryId = 0L;
 		for (WatchlistItemSpec spec : inputSpec.getWatchlistItems()) {
 			if (spec.getTerms() != null) {
-				Long categoryID = new Long(0);
+				categoryId = new Long(0);
 				_terms = new ArrayList<WatchlistTerm>();
 				for (int i = 0; i < spec.getTerms().length; i++) {
 					if (!spec.getTerms()[i].getField().equals("categoryId"))
 						_terms.add(spec.getTerms()[i]);
 					else
-						categoryID = Long.parseLong(spec.getTerms()[i].getValue());
+						categoryId = Long.parseLong(spec.getTerms()[i].getValue());
 				}
 				spec.setTerms((_terms.toArray(new WatchlistTerm[1])));
 
@@ -169,11 +169,11 @@ public class WatchlistManagementController {
 
 				validateInput(_spec);
 
-				JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec);
+				JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec, categoryId);
 
-				if (categoryID > 0) {
+				if (categoryId > 0) {
 					List<Long> ids = (List<Long>) result.getResult();
-					watchlistService.updateWatchlistItemCategory(categoryID, ids.get(0));
+					watchlistService.updateWatchlistItemCategory(categoryId, ids.get(0));
 				}
 
 				results.add(result);
@@ -182,10 +182,6 @@ public class WatchlistManagementController {
 
 		// validateInput(inputSpec);
 
-		if (results.size() == 0) {
-			validateInput(inputSpec);
-			return watchlistService.createUpdateDeleteWatchlistItems(userId, inputSpec);
-		}
 		JsonServiceResponse res = results.stream().reduce(results.get(0),
 				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
 		return res;

@@ -63,6 +63,9 @@ public class User implements Serializable {
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<Role>();
 
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+	private Set<HitMaker> hitMakers = new HashSet<>();
+
 	public int getActive() {
 		return active;
 	}
@@ -154,5 +157,13 @@ public class User implements Serializable {
 
 	public void setNotificationOwners(Set<Notification> notificationOwners) {
 		this.notificationOwners = notificationOwners;
+	}
+
+	public Set<HitMaker> getHitMakers() {
+		return hitMakers;
+	}
+
+	public void setHitMakers(Set<HitMaker> hitMakers) {
+		this.hitMakers = hitMakers;
 	}
 }

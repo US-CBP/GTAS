@@ -35,7 +35,7 @@ public class WatchlistRuleGenerator {
 			for (String[] data : WL_DATA) {
 				spec.addWatchlistItem(createItem(entity, null, "create", data));
 			}
-			watchlistService.createUpdateDeleteWatchlistItems(WL_AUTHOR, spec);
+			watchlistService.createUpdateDeleteWatchlistItems(WL_AUTHOR, spec, 1L);
 		}
 	}
 

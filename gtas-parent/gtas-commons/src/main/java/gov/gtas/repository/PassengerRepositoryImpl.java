@@ -41,14 +41,14 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	@Override
 	@Transactional
 	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
-			Set<UserGroup> userGroupSet) {
+																Set<UserGroup> userGroupSet, String userId) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		// ROOT QUERY
 		CriteriaQuery<Passenger> q = cb.createQuery(Passenger.class);
 		Root<Passenger> pax = q.from(Passenger.class);
-		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax);
+		List<Predicate> rootQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, q, pax, userId);
 		q.select(pax).where(rootQueryPredicate.toArray(new Predicate[] {})).groupBy(pax.get("id"));
 		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
 		List<Passenger> results = typedQuery.getResultList();
@@ -58,7 +58,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Passenger> paxCount = countQuery.from(Passenger.class);
 		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
-				paxCount);
+				paxCount, userId);
 		countQuery.select(cb.countDistinct(paxCount.get("id"))).where(countQueryPredicate.toArray(new Predicate[] {}));
 		TypedQuery typedCountQuery = em.createQuery(countQuery);
 		Optional countResult = typedCountQuery.getResultList().stream().findFirst();
@@ -68,7 +68,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	}
 
 	private <T> List<Predicate> joinAndCreateHitViewPredicates(PriorityVettingListRequest dto,
-			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<Passenger> pax) {
+			Set<UserGroup> userGroupSet, CriteriaBuilder cb, CriteriaQuery<T> q, Root<Passenger> pax, String userId) {
 		// ROOT QUERY JOINS
 		Join<Passenger, Flight> flight = pax.join("flight", JoinType.INNER);
 		Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin = flight.join("mutableFlightDetails",
@@ -77,9 +77,10 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<Flight, FlightCountDownView> flightCountDownViewJoin = flight.join("flightCountDownView", JoinType.INNER);
 		Join<Passenger, PassengerDetails> paxDetailsJoin = pax.join("passengerDetails", JoinType.INNER);
 		Join<Passenger, HitDetail> hitDetails = pax.join("hitDetails", JoinType.INNER);
+		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
-		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
+		Join<HitMaker, User>  hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
 		// **** PREDICATES ****
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
@@ -110,6 +111,12 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
 		queryPredicates.add(hitViewStatus);
+
+		if (dto.getAuthorOnly() != null && dto.getAuthorOnly()) {
+			Predicate authorOnly = cb.equal(hitMakerUserJoin.get("userId"), userId);
+			queryPredicates.add(authorOnly);
+		}
+
 		// LAST NAME PREDICATE
 		if (StringUtils.isNotBlank(dto.getLastName())) {
 			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());

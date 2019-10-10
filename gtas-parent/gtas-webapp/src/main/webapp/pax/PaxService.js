@@ -289,6 +289,7 @@
                 var hitDetail = value.hitsDetailsList[0]; //First object in this 'array' contains the values needed for the front-end display
                 hitDetail.category = value.category;
                 hitDetail.severity = value.severity;
+                hitDetail.author = value.author;
                 ruleHitsList.push(hitDetail);
               });
               }

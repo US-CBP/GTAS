@@ -38,8 +38,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @Entity
-@Table(name = "udr_rule", uniqueConstraints = {
-		@UniqueConstraint(name = UDR_UNIQUE_CONSTRAINT_NAME, columnNames = { "AUTHOR", "TITLE", "DEL_ID" }) })
+@Table(name = "udr_rule")
 public class UdrRule extends HitMaker {
 
 	/**
@@ -58,11 +57,7 @@ public class UdrRule extends HitMaker {
 	@Column(name = "DEL_ID", nullable = false)
 	private Long deleteId;
 
-	@ManyToOne
-	@JoinColumn(name = "AUTHOR", referencedColumnName = "user_id", nullable = false)
-	private User author;
-
-	@Column(name = "TITLE", nullable = false, length = 20)
+	@Column(name = "TITLE", nullable = false, length = 20, unique = true)
 	private String title;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -108,20 +103,6 @@ public class UdrRule extends HitMaker {
 		this.editDt = editDt;
 	}
 
-	/**
-	 * @return the author
-	 */
-	public User getAuthor() {
-		return author;
-	}
-
-	/**
-	 * @param author
-	 *            the author to set
-	 */
-	public void setAuthor(User author) {
-		this.author = author;
-	}
 
 	/**
 	 * @return the title

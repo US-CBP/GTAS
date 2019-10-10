@@ -27,6 +27,7 @@ import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.repository.AuditRecordRepository;
 import gov.gtas.repository.watchlist.WatchlistItemRepository;
 import gov.gtas.repository.watchlist.WatchlistRepository;
+import gov.gtas.services.HitCategoryService;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 
@@ -67,10 +68,13 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	@Autowired
 	private UserService userService;
 
+	@Resource
+	private HitCategoryService hitCategoryService;
+
 	@Override
 	@Transactional
 	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
-			List<WatchlistItem> deleteList, String userId) {
+			List<WatchlistItem> deleteList, String userId, Long catId) {
 		final User user = userService.fetchUser(userId);
 		Watchlist watchlist = watchlistRepository.getWatchlistByName(wlName);
 		if (watchlist == null) {
@@ -90,10 +94,10 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 		if (CollectionUtils.isEmpty(createUpdateList)) {
 			doDeleteWithLogging(watchlist, user, deleteList);
 		} else if (CollectionUtils.isEmpty(deleteList)) {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList, catId);
 			ret.addAll(createUpdateIds);
 		} else {
-			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList);
+			Collection<Long> createUpdateIds = doCreateUpdateWithLogging(watchlist, user, createUpdateList, catId);
 			doDeleteWithLogging(watchlist, user, deleteList);
 			ret.addAll(createUpdateIds);
 		}
@@ -175,8 +179,9 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 	}
 
 	private Collection<Long> doCreateUpdateWithLogging(Watchlist watchlist, User editUser,
-			Collection<WatchlistItem> createUpdateItems) {
+			Collection<WatchlistItem> createUpdateItems, Long catId) {
 		final List<Long> ret = new LinkedList<>();
+		HitCategory hc = hitCategoryService.findById(catId);
 		List<AuditRecord> logRecords = new LinkedList<>();
 		if (createUpdateItems != null && !createUpdateItems.isEmpty()) {
 			List<WatchlistItem> updList = new LinkedList<>();
@@ -184,8 +189,11 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 				if (item.getId() != null) {
 					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
 							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
+					item.setHitCategory(hc);
 					updList.add(item);
 				} else {
+					item.setAuthor(editUser);
+					item.setHitCategory(hc);
 					logRecords.add(createAuditLogRecord(AuditActionType.CREATE_WL, watchlist, item,
 							WATCHLIST_LOG_CREATE_MESSAGE, editUser));
 				}

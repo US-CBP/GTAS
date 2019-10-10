@@ -233,6 +233,7 @@
                               <thead>
                               <tr>
                                 <th>{{'hit.severity' | translate}}</th>
+                                <th>{{'hit.author' | translate}}</th>
                                 <th>{{'hit.category' | translate}}</th>
                                 <th>{{'hit.title' | translate}}</th>
                                 <th>{{'hit.conditions' | translate}}</th>
@@ -241,6 +242,7 @@
                               <tbody>
                               <tr ng-repeat="j in ruleHits track by $index">
                                 <td>{{j.severity}}</td>
+                                <td>{{j.author}}</td>
                                 <td>{{j.category}}</td>
                                 <td>{{j.title}}</td>
                                 <td>{{j.ruleConditions}}</td>

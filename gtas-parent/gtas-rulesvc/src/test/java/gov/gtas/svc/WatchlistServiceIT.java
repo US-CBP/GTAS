@@ -78,7 +78,7 @@ public class WatchlistServiceIT {
 	public void testCreateWatchlist() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		List<ServiceResponseDetailAttribute> respDetails = resp.getResponseDetails();
 		assertEquals(3, respDetails.size());// wl id, wl name, list of
@@ -110,7 +110,7 @@ public class WatchlistServiceIT {
 	public void testUpdateDeleteWatchlistItem() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -120,7 +120,7 @@ public class WatchlistServiceIT {
 		items.get(0).setAction(WatchlistEditEnum.U.getOperationName());
 		items.get(1).setAction(WatchlistEditEnum.D.getOperationName());
 
-		resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 
 		List<WatchlistItem> updItems = wlPersistenceService.findWatchlistItems(WL_NAME1);
@@ -142,7 +142,7 @@ public class WatchlistServiceIT {
 	public void testUpdateWatchlistItemError() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -153,7 +153,7 @@ public class WatchlistServiceIT {
 		items.get(0).setId(2341L);
 		items.get(1).setAction(WatchlistEditEnum.D.getOperationName());
 		try {
-			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 			fail("Expecting exception");
 		} catch (CommonServiceException cse) {
 			assertEquals(WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE, cse.getErrorCode());
@@ -165,7 +165,7 @@ public class WatchlistServiceIT {
 	public void testDeleteWatchlistItemError() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		spec = wlService.fetchWatchlist(WL_NAME1);
 		assertNotNull(spec);
@@ -176,7 +176,7 @@ public class WatchlistServiceIT {
 		items.get(1).setAction(WatchlistEditEnum.D.getOperationName());
 		items.get(1).setId(2341L);
 		try {
-			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+			wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 			fail("Expecting exception");
 		} catch (CommonServiceException cse) {
 			assertEquals(WatchlistConstants.MISSING_DELETE_OR_UPDATE_ITEM_ERROR_CODE, cse.getErrorCode());
@@ -188,7 +188,7 @@ public class WatchlistServiceIT {
 	public void testKnowledgeBaseForWl() {
 		User user = createUser();
 		WatchlistSpec spec = SampleDataGenerator.newWlWith2Items(WL_NAME1);
-		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec);
+		JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), spec, 1L);
 		assertEquals(Status.SUCCESS, resp.getStatus());
 		resp = wlService.activateAllWatchlists(WL_KB_NAME);
 		assertEquals(Status.SUCCESS, resp.getStatus());

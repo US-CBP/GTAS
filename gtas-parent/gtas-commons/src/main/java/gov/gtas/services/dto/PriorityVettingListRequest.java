@@ -49,6 +49,8 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	private Boolean oneDayLookoutFlag;
 
+	private Boolean isAuthorOnly;
+
 	private String caseDisposition;
 
 	private String userLocation;
@@ -242,5 +244,13 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	public void setWithTimeLeft(Boolean withTimeLeft) {
 		this.withTimeLeft = withTimeLeft;
+	}
+
+	public Boolean getAuthorOnly() {
+		return isAuthorOnly;
+	}
+
+	public void setAuthorOnly(Boolean authorOnly) {
+		isAuthorOnly = authorOnly;
 	}
 }

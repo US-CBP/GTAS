@@ -42,7 +42,7 @@ public interface WatchlistPersistenceService {
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
 	public List<Long> createUpdateDelete(String wlName, EntityEnum entity, List<WatchlistItem> createUpdateList,
-			List<WatchlistItem> deleteList, String userId);
+			List<WatchlistItem> deleteList, String userId, Long catId);
 
 	/**
 	 * Find and return the list of all watch lists.

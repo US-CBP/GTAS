@@ -59,6 +59,7 @@ public class HitsSummaryController {
 			HitMaker lookout = htd.getHitMaker();
 			HitCategory hitCategory = lookout.getHitCategory();
 			hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
+			hitDetailVo.setRuleAuthor(htd.getHitMaker().getAuthor().getUserId());
 			htd.setHitMakerId(null);
 			htd.setHitMaker(null);
 			htd.setHitViewStatus(null);

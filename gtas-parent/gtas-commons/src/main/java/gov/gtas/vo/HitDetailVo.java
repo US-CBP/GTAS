@@ -36,6 +36,7 @@ public class HitDetailVo {
 
 	private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
 	private String severity;
+	private String ruleAuthor;
 
 	public static HitDetailVo from(HitDetail hitDetail) {
 		HitDetailVo hitDetailVo = new HitDetailVo();
@@ -173,4 +174,11 @@ public class HitDetailVo {
     public String getSeverity() {
         return severity;
     }
+
+    public void setRuleAuthor(String userId) {
+		this.ruleAuthor = userId;
+    }
+    public String getAuthor() {
+		return ruleAuthor;
+	}
 }

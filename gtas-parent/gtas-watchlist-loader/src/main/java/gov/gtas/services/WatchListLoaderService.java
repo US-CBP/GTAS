@@ -176,11 +176,11 @@ public class WatchListLoaderService {
 				}
 
 			}
-			JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret);
+			JsonServiceResponse resp = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret, 1L);
 			logger.info("****************************************************************");
 			logger.info("Passenger WatchList Saved " + resp.getMessage());
 			logger.info("****************************************************************");
-			JsonServiceResponse resp1 = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret_D);
+			JsonServiceResponse resp1 = wlService.createUpdateDeleteWatchlistItems(user.getUserId(), ret_D, 1L);
 			logger.info("****************************************************************");
 			logger.info("Document WatchList Saved " + resp1.getMessage());
 			logger.info("****************************************************************");
