@@ -34,20 +34,20 @@ volumes: [
                 }
                 
                 stage('Compile project') {
-                    sh 'mvn -B  -f gtas-parent compile package'
+                    sh 'mvn -B  -f gtas-parent compile package -Dmaven.test.failure.ignore=true'
                 }
                 
                 stage('Unit Test and coverage project') {
-                    sh 'mvn -B -f gtas-parent test'
+                    sh 'mvn -B -f gtas-parent test -Dmaven.test.failure.ignore=true'
                 }
                 
                stage('Security Scan components') {
-                   sh 'mvn -B -f gtas-parent dependency-check:check -DfailBuildOnCVSS=10'
+                   sh 'mvn -B -f gtas-parent dependency-check:check -DfailBuildOnCVSS=10 -Dmaven.test.failure.ignore=true'
                }
             
                 stage ('Package and Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn -f gtas-parent jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar"
+                        sh "mvn -f gtas-parent jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
                 }
                 
