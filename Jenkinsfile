@@ -43,7 +43,7 @@ volumes: [
                             
                 stage ('Package and Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn -f gtas-parent/ jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
+                        sh "mvn -f gtas-parent/  pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
                 }
                 
