@@ -38,16 +38,16 @@ volumes: [
                 }
                 
                 stage('Unit Test and coverage project') {
-                    sh 'mvn -B  test'
+                    sh 'mvn -B -f gtas-parent test'
                 }
                 
                stage('Security Scan components') {
-                   sh 'mvn -B dependency-check:check -DfailBuildOnCVSS=10'
+                   sh 'mvn -B -f gtas-parent dependency-check:check -DfailBuildOnCVSS=10'
                }
             
                 stage ('Package and Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar"
+                        sh "mvn -f gtas-parent jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar"
                     }
                 }
                 
