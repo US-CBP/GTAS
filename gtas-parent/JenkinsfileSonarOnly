@@ -18,7 +18,10 @@ podTemplate(label: label, serviceAccount: 'jenkins', containers: [
                 container('jdk8') {
                      stage('Inspect Server Code (QG)') {
                          withSonarQubeEnv ("sonarqube") {
-                             sh './mvnw install -Dmaven.test.failure.ignore=true -Dmaven.test.skip=true sonar:sonar'
+                             sh """
+                             chmod 771 ./mvnw
+                             ./mvnw install -Dmaven.test.failure.ignore=true -Dmaven.test.skip=true sonar:sonar
+                             """
                          }
                      }
                 }
