@@ -21,7 +21,7 @@ podTemplate(label: label, serviceAccount: 'jenkins', containers: [
                              sh """
                              cd gtas-parent
                              chmod 771 ./mvnw
-                             ./mvnw install -Dmaven.test.failure.ignore=true -Dmaven.test.skip=true sonar:sonar
+                             ./mvnw install -Dmaven.test.failure.ignore=true sonar:sonar
                              """
                          }
                      }
