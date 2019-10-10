@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import gov.gtas.model.lookup.HitCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,7 @@ import com.google.inject.internal.util.Sets;
 import gov.gtas.aws.HitNotificationConfig;
 import gov.gtas.model.Document;
 import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.lookup.WatchlistCategory;
-import gov.gtas.repository.HitsSummaryRepository;
-import gov.gtas.services.watchlist.WatchlistCatService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.vo.NotificationTextVo;
 
@@ -53,14 +50,10 @@ public class NotificatonServiceImpl implements NotificatonService {
 	private String topicArn;
 	private String topicSubject;
 
-	private final HitsSummaryRepository hitsSummaryRepository;
+	private final HitCategoryService watchlistCatService;
 
-	private final WatchlistCatService watchlistCatService;
-
-	public NotificatonServiceImpl(SnsService snsService, HitsSummaryRepository hitsSummaryService,
-			WatchlistCatService watchlistCatService) {
+	public NotificatonServiceImpl(SnsService snsService, HitCategoryService watchlistCatService) {
 		this.snsService = snsService;
-		this.hitsSummaryRepository = hitsSummaryService;
 		this.watchlistCatService = watchlistCatService;
 	}
 
@@ -92,7 +85,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 			long start = System.nanoTime();
 
-			/**
+			/*
 			 * Set SNS topic Amazon Resource Name (ARN) and the subject line
 			 */
 			List<NotificationTextVo> notifications = this.notificationTexts(config.getHits());
@@ -105,7 +98,9 @@ public class NotificatonServiceImpl implements NotificatonService {
 					.filter(p -> p.getWlCategoryId().longValue() == config.getTargetwatchlistId())
 					.collect(Collectors.toList());
 			// for every hit summary, send a separate notification
-			notifications.forEach(n -> messageIds.add(this.sendHitNotification(n)));
+			for (NotificationTextVo n : notifications) {
+				messageIds.add(this.sendHitNotification(n));
+			}
 			logger.debug("Notifications sent in {} m/s", (System.nanoTime() - start) / 1000000);
 
 		} catch (Exception e) {
@@ -119,7 +114,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 	/**
 	 * Predicate to check if DOB is January First
 	 * 
-	 * @return
+	 * @return if the day and month is jan 1
 	 */
 	private static Predicate<NotificationTextVo> dayMonthEqualsJanuaryFirst() {
 
@@ -128,7 +123,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 			int month = DateCalendarUtils.getMonthOfDate(p.getDob(),
 					DateTimeFormatter.ofPattern(DOB_FORMAT, Locale.ROOT));
-			return (day != 01) || (month != 01);
+			return (day != 1) || (month != 1);
 		};
 	}
 
@@ -150,29 +145,25 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 	/**
 	 * 
-	 * @param hitsSummaryList
 	 * @return List<NotificationTextVo>
 	 */
 
-	private List<NotificationTextVo> notificationTexts(List<HitsSummary> hitsSummaryList) {
+	private List<NotificationTextVo> notificationTexts(Set<Passenger> passengersWithHits) {
 
 		List<NotificationTextVo> notificationTexts = Lists.newArrayList();
-		hitsSummaryList = (List<HitsSummary>) this.hitsSummaryRepository
-				.findAllById(hitsSummaryList.stream().map(HitsSummary::getId).collect(Collectors.toList()));
 
-		hitsSummaryList.forEach(o -> {
-			Passenger p = o.getPassenger();
-			HitDetail hitDetail = o.getHitdetails().stream().filter(h -> h.getHitType().equals("P")).findFirst().get();
-			notificationTexts.add(getNotificationVo(o, p, hitDetail));
-		});
+		for (Passenger passenger : passengersWithHits) {
+			passenger.getHitDetails().stream().filter(h -> h.getHitType().equals("P")).findFirst()
+					.ifPresent(hitDetail -> notificationTexts.add(getNotificationVo(passenger, hitDetail)));
+		}
 
 		return notificationTexts;
 	}
 
-	private NotificationTextVo getNotificationVo(HitsSummary o, Passenger p, HitDetail hitDetail) {
+	private NotificationTextVo getNotificationVo(Passenger p, HitDetail hitDetail) {
 
 		NotificationTextVo notificationVo = new NotificationTextVo();
-		WatchlistCategory wlCategory = this.watchlistCatService.findCatByWatchlistItemId(hitDetail.getRuleId());
+		HitCategory wlCategory = this.watchlistCatService.findById(hitDetail.getHitMakerId());
 
 		notificationVo.setFirstName(p.getPassengerDetails().getFirstName());
 		notificationVo.setLastName(p.getPassengerDetails().getLastName());
@@ -191,7 +182,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 		// direction
 		CountDownCalculator calculator = new CountDownCalculator(new Date());
 		notificationVo.setTimeRemaining(calculator
-				.getCountDownFromDate(o.getFlight().getFlightCountDownView().getCountDownTimer()).getCountDownTimer());
+				.getCountDownFromDate(p.getFlight().getFlightCountDownView().getCountDownTimer()).getCountDownTimer());
 		logger.debug("{}", notificationVo);
 
 		return notificationVo;

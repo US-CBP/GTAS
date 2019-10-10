@@ -14,7 +14,7 @@ import java.util.Set;
 
 public interface RuleHitPersistenceService {
 
-    void persistToDatabase(Set<HitDetail> hitDetailSet);
+    Iterable<HitDetail> persistToDatabase(Set<HitDetail> hitDetailSet);
 
     void updateFlightHitCounts(Set<Long> flights);
 }

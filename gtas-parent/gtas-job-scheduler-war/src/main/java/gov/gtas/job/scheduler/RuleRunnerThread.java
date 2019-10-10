@@ -8,33 +8,33 @@
 
 package gov.gtas.job.scheduler;
 
-import gov.gtas.constant.RuleServiceConstants;
-import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.error.ErrorHandlerFactory;
-import gov.gtas.model.HitDetail;
-import gov.gtas.model.MessageStatus;
-import gov.gtas.model.MessageStatusEnum;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.ErrorPersistenceService;
+import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
+
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
+
+import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import gov.gtas.aws.HitNotificationConfig;
+import gov.gtas.model.*;
 import gov.gtas.services.RuleHitPersistenceService;
-import gov.gtas.services.matcher.MatchingService;
-import gov.gtas.svc.TargetingService;
-import gov.gtas.svc.util.RuleResultsWithMessageStatus;
-import gov.gtas.svc.util.TargetingResultUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
-import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
+import gov.gtas.constant.RuleServiceConstants;
+import gov.gtas.error.ErrorDetailInfo;
+import gov.gtas.error.ErrorHandlerFactory;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.services.AppConfigurationService;
+import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.NotificatonService;
+import gov.gtas.services.matcher.MatchingService;
+import gov.gtas.svc.TargetingService;
+import gov.gtas.svc.util.RuleResultsWithMessageStatus;
+import gov.gtas.svc.util.TargetingResultUtils;
 
 @Component
 @Scope("prototype")
@@ -52,11 +52,17 @@ public class RuleRunnerThread implements Callable<Boolean> {
 
 	private List<MessageStatus> messageStatuses = new ArrayList<>();
 
+    private NotificatonService notificationSerivce;
+
+
 	public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
-			AppConfigurationService appConfigurationService, ApplicationContext applicationContext) {
+                            AppConfigurationService appConfigurationService,
+                            ApplicationContext applicationContext,
+                            NotificatonService notificationSerivce) {
 		this.errorPersistenceService = errorPersistenceService;
 		this.appConfigurationService = appConfigurationService;
 		this.applicationContext = applicationContext;
+        this.notificationSerivce = notificationSerivce;
 	}
 
 	public Boolean call() {
@@ -83,11 +89,15 @@ public class RuleRunnerThread implements Callable<Boolean> {
 					m.setAnalyzedTimestamp(analyzedAt);
 				});
 				int count = 1;
+				Set<HitDetail> firstTimeHits = new HashSet<>();
 				for (Set<HitDetail> hitDetailSet : batchedTargetingServiceResults) {
 					try {
 						logger.debug("Saving rule hit details results batch " + count + " of "
 								+ batchedTargetingServiceResults.size() + "...");
-						persistenceService.persistToDatabase(hitDetailSet);
+						Iterable<HitDetail> hitDetailIterable = persistenceService.persistToDatabase(hitDetailSet);
+						if (hitDetailIterable != null) {
+							hitDetailIterable.forEach(firstTimeHits::add);
+						}
 					} catch (Exception ignored) {
 						ruleResults.getMessageStatusList()
 								.forEach(m -> m.setMessageStatusEnum(MessageStatusEnum.PARTIAL_ANALYZE));
@@ -96,7 +106,13 @@ public class RuleRunnerThread implements Callable<Boolean> {
 					}
 					count++;
 				}
-				logger.info("Rules and Watchlist ran in " + (System.nanoTime() - start) / 1000000 + "m/s.");
+                logger.info("Rules and Watchlist ran in {} m/s.", (System.nanoTime() - start) / 1000000);
+
+				if (!firstTimeHits.isEmpty()) {
+					// Send hit notifications using AWS SNS topic
+					Set<Passenger> passengersWithFirstTimeHits = firstTimeHits.stream().map(HitDetail::getPassenger).collect(Collectors.toSet());
+					sendNotifications(passengersWithFirstTimeHits);
+				}
 			}
 			logger.debug("entering matching service portion of jobScheduling");
 			boolean fuzzyMatchingOn = false;
@@ -135,6 +151,38 @@ public class RuleRunnerThread implements Callable<Boolean> {
 		logger.debug("exiting jobScheduling()");
 		return success;
 	}
+
+
+	private void sendNotifications(Set<Passenger> passengersWithNewHits) {
+		boolean hitNotificationEnabled;
+		String topicArn;
+		String topicSubject;
+		Long interpolRedNoticesId;
+		try {
+			hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
+					.findByOption(AppConfigurationRepository.ENABLE_INTERPOL_HIT_NOTIFICATION).getValue());
+
+			if (hitNotificationEnabled) {
+				long notificationStart = System.nanoTime();
+				topicArn = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_ARN).getValue();
+				topicSubject = appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_SUBJECT).getValue();
+				// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
+				interpolRedNoticesId = Long.parseLong(appConfigurationService
+						.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
+				HitNotificationConfig hitNotificationConfig = new HitNotificationConfig(
+						AmazonSNSClientBuilder.standard().build(), passengersWithNewHits, topicArn, topicSubject,
+						interpolRedNoticesId);
+				notificationSerivce.sendHitNotifications(hitNotificationConfig);
+				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
+			}
+		} catch (Exception e) {
+			logger.warn(
+					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");
+		}
+	}
+
 
 	void setMessageStatuses(List<MessageStatus> messageStatuses) {
 		this.messageStatuses = messageStatuses;

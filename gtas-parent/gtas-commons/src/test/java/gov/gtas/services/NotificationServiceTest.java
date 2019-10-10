@@ -9,10 +9,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import gov.gtas.enumtype.HitTypeEnum;
+import gov.gtas.model.lookup.HitCategory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -26,12 +28,8 @@ import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.FlightCountDownView;
 import gov.gtas.model.HitDetail;
-import gov.gtas.model.HitsSummary;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
-import gov.gtas.model.lookup.WatchlistCategory;
-import gov.gtas.repository.HitsSummaryRepository;
-import gov.gtas.services.watchlist.WatchlistCatService;
 
 public class NotificationServiceTest {
 
@@ -39,31 +37,26 @@ public class NotificationServiceTest {
 	@Mock
 	private SnsService snsService;
 	@Mock
-	private HitsSummaryRepository hitsSummaryRepository;
-	@Mock
-	private AppConfigurationService appConfigurationService;
-	@Mock
-	private WatchlistCatService watchlistCatService;
+	private HitCategoryService watchlistCatService;
 	@Mock
 	private AmazonSNS amazonSNS;
 
-	private String message = "this is a test message";
-	private String messageId = "FcdR4553DF";
 	private String subject = "Test";
 	private String arn = "test";
 	private final Long TARGET_WATCHLIST_ID = 4L;
-	private final Long WRONG_TARGET_WATCHLIST_ID = Long.MAX_VALUE;
 	private final Long WATCHLIST_ITEM_ID = 1L;
 
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		notificationService = new NotificatonServiceImpl(snsService, hitsSummaryRepository, watchlistCatService);
+		notificationService = new NotificatonServiceImpl(snsService, watchlistCatService);
 
+		String messageId = "FcdR4553DF";
+		String message = "this is a test message";
 		when(snsService.sendNotification(amazonSNS, message, subject, arn)).thenReturn(messageId);
 		// Create test WatchlistCategory
-		WatchlistCategory category = createTestWatchlistCategory(TARGET_WATCHLIST_ID);
-		when(this.watchlistCatService.findCatByWatchlistItemId(WATCHLIST_ITEM_ID)).thenReturn(category);
+		HitCategory category = createTestWatchlistCategory(TARGET_WATCHLIST_ID);
+		when(this.watchlistCatService.findById(WATCHLIST_ITEM_ID)).thenReturn(category);
 
 	}
 
@@ -71,15 +64,14 @@ public class NotificationServiceTest {
 	public void testSendNotification_WrongTargetWatchlistId_returnsZeroMessageId() {
 
 		// Create test hits summary
-		HitsSummary hitsSummary = createFakeHitSummary(java.sql.Date.valueOf(LocalDate.of(1998, 1, 12)));
+		Passenger p = createFakePassenger(java.sql.Date.valueOf(LocalDate.of(1998, 1, 12)));
 
 		// Set hit details
 		HitDetail hitDetail = createTestHitDetail();
-		hitsSummary.getHitdetails().add(hitDetail);
+		p.getHitDetails().add(hitDetail);
 
-		when(this.hitsSummaryRepository.findAllById(Arrays.asList(1L))).thenReturn(Arrays.asList(hitsSummary));
-
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Arrays.asList(hitsSummary), arn, subject,
+		Long WRONG_TARGET_WATCHLIST_ID = Long.MAX_VALUE;
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				WRONG_TARGET_WATCHLIST_ID);
 		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
@@ -90,15 +82,13 @@ public class NotificationServiceTest {
 	public void testSendNotification_PassengerDobJanuaryFirst_returnsZeroMessageId() {
 
 		// Create test hits summary
-		HitsSummary hitsSummary = createFakeHitSummary(java.sql.Date.valueOf(LocalDate.of(1998, 1, 1)));
+		Passenger p = createFakePassenger(java.sql.Date.valueOf(LocalDate.of(1998, 1, 1)));
 
 		// Set hit details
 		HitDetail hitDetail = createTestHitDetail();
-		hitsSummary.getHitdetails().add(hitDetail);
+		p.getHitDetails().add(hitDetail);
 
-		when(this.hitsSummaryRepository.findAllById(Arrays.asList(1L))).thenReturn(Arrays.asList(hitsSummary));
-
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Arrays.asList(hitsSummary), arn, subject,
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS,Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
 		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
@@ -109,15 +99,13 @@ public class NotificationServiceTest {
 	public void testSendNotification_PassengerDobNOTJanuaryFirstWithValidWatchlistId_returnsOneMessageId() {
 
 		// Create test hits summary
-		HitsSummary hitsSummary = createFakeHitSummary(java.sql.Date.valueOf(LocalDate.of(1998, 10, 04)));
+		Passenger p  = createFakePassenger(java.sql.Date.valueOf(LocalDate.of(1998, 10, 4)));
 
 		// Set hit details
 		HitDetail hitDetail = createTestHitDetail();
-		hitsSummary.getHitdetails().add(hitDetail);
+		p.getHitDetails().add(hitDetail);
 
-		when(this.hitsSummaryRepository.findAllById(Arrays.asList(1L))).thenReturn(Arrays.asList(hitsSummary));
-
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Arrays.asList(hitsSummary), arn, subject,
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
 		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
@@ -125,24 +113,21 @@ public class NotificationServiceTest {
 	}
 
 	private HitDetail createTestHitDetail() {
-		HitDetail hitDetail = new HitDetail();
+		HitDetail hitDetail = new HitDetail(HitTypeEnum.WATCHLIST_PASSENGER);
 		hitDetail.setHitType("P");
-		hitDetail.setRuleId(WATCHLIST_ITEM_ID);
+		hitDetail.setHitMakerId(WATCHLIST_ITEM_ID);
 		return hitDetail;
 	}
 
-	private WatchlistCategory createTestWatchlistCategory(Long watchListId) {
-		WatchlistCategory category = new WatchlistCategory();
+	private HitCategory createTestWatchlistCategory(Long watchListId) {
+		HitCategory category = new HitCategory();
 		category.setId(watchListId);
 		category.setDescription("Interpol");
 		category.setName("Interpol");
 		return category;
 	}
 
-	private HitsSummary createFakeHitSummary(Date passengerDob) {
-		HitsSummary hitsSummary = new HitsSummary();
-		hitsSummary.setId(1L);
-		hitsSummary.setHitdetails(Sets.newLinkedHashSet());
+	private Passenger createFakePassenger(Date passengerDob) {
 
 		// Set passenger information
 		Passenger passenger = new Passenger();
@@ -165,9 +150,6 @@ public class NotificationServiceTest {
 		Document document = new Document();
 		document.setDocumentNumber("AAA09876");
 		passenger.addDocument(document);
-
-		hitsSummary.setPassenger(passenger);
-		hitsSummary.setFlight(flight);
-		return hitsSummary;
+		return passenger;
 	}
 }

@@ -7,15 +7,15 @@ package gov.gtas.services;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
+import gov.gtas.model.Passenger;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -29,7 +29,6 @@ import gov.gtas.model.HitsSummary;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AsyncConfig.class, TestCommonServicesConfig.class })
-@Rollback(true)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NotificationServiceIT {
 
@@ -47,14 +46,14 @@ public class NotificationServiceIT {
 	@Test
 	public void testSendHitNotification() {
 
-		/**
+		/*
 		 * Update the arn name below to run the integration test manually
 		 */
 		final String arn = "";
 		AmazonSNS amazonSNS = AmazonSNSClientBuilder.standard().build();
 		HitsSummary s = new HitsSummary();
 		s.setId(1L);
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Arrays.asList(s), arn, "test", 4L);
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(new Passenger()), arn, "test", 4L);
 
 		Set<String> messageIDs = this.notificatonService.sendHitNotifications(config);
 

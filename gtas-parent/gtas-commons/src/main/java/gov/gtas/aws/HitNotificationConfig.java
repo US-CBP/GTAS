@@ -5,16 +5,16 @@
  */
 package gov.gtas.aws;
 
-import java.util.List;
+import java.util.Set;
 
 import com.amazonaws.services.sns.AmazonSNS;
 
-import gov.gtas.model.HitsSummary;
+import gov.gtas.model.Passenger;
 
 public class HitNotificationConfig {
 
 	private final AmazonSNS amazonSNS;
-	private final List<HitsSummary> hits;
+	private final Set<Passenger> hits;
 	private final String topicArn;
 	private final String topicSubject;
 	private final Long targetwatchlistId;
@@ -23,8 +23,8 @@ public class HitNotificationConfig {
 		return targetwatchlistId;
 	}
 
-	public HitNotificationConfig(AmazonSNS amazonSNS, List<HitsSummary> hits, String topicArn, String topicSubject,
-			Long targetwatchlistId) {
+	public HitNotificationConfig(AmazonSNS amazonSNS, Set<Passenger> hits, String topicArn, String topicSubject,
+								 Long targetwatchlistId) {
 		this.amazonSNS = amazonSNS;
 		this.hits = hits;
 		this.topicArn = topicArn;
@@ -36,7 +36,7 @@ public class HitNotificationConfig {
 		return amazonSNS;
 	}
 
-	public List<HitsSummary> getHits() {
+	public Set<Passenger> getHits() {
 		return hits;
 	}
 

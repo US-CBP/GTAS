@@ -59,7 +59,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 	}
 
 	@Transactional
-	public void persistToDatabase(@NonNull Set<HitDetail> hitDetailSet) {
+	public Iterable<HitDetail> persistToDatabase(@NonNull Set<HitDetail> hitDetailSet) {
+		Iterable<HitDetail> hitDetailIterable = null;
 		try {
 			Objects.requireNonNull(hitDetailSet);
 			if (!hitDetailSet.isEmpty()) {
@@ -158,11 +159,12 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 
 					for (HitDetail hd : hitDetailsToPersist) {
 						for (UserGroup ug : hitMakerMappedByPrimaryKey.get(hd.getHitMakerId())) {
-							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW, hd.getPassenger());
+							HitViewStatus hitViewStatus = new HitViewStatus(hd, ug, HitViewStatusEnum.NEW,
+									hd.getPassenger());
 							hd.getHitViewStatus().add(hitViewStatus);
 						}
 					}
-					hitDetailRepository.saveAll(hitDetailsToPersist);
+					hitDetailIterable = hitDetailRepository.saveAll(hitDetailsToPersist);
 				}
 				if (!updatedHitsSummaries.isEmpty()) {
 					hitsSummaryRepository.saveAll(updatedHitsSummaries);
@@ -176,6 +178,8 @@ public class RuleHitPersistenceServiceImpl implements RuleHitPersistenceService 
 		} catch (Exception e) {
 			logger.warn("UNABLE TO CREATE NEW HIT DETAILS. FAILURE! ", e);
 		}
+
+		return hitDetailIterable;
 	}
 
 	/*
