@@ -40,21 +40,22 @@ volumes: [
                 stage('Unit Test and coverage project') {
                     sh 'mvn -B -f gtas-parent/ test -Dmaven.test.failure.ignore=true'
                 }
-                
-               stage('Security Scan components') {
-                   sh 'mvn -B -f gtas-parent/ org.owasp:dependency-check-maven:check  -Dmaven.test.failure.ignore=true'
-               }
-            
+                            
                 stage ('Package and Code Analysis') {
                     withSonarQubeEnv {
                         sh "mvn -f gtas-parent/ jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
                 }
                 
+                
                 stage('Publish test results') {
                     junit 'target/surefire-reports/*.xml'
                 } 
                 
+                
+                stage('Security Scan components') {
+                   sh 'mvn -B -f gtas-parent/ org.owasp:dependency-check-maven:check  -Dmaven.test.failure.ignore=true'
+               }
                 
             }
         }
