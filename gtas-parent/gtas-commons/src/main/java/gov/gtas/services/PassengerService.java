@@ -38,7 +38,7 @@ public interface PassengerService {
 	 *            the request
 	 * @return the passengers by criteria
 	 */
-	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
 	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)

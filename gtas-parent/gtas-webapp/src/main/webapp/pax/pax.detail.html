@@ -161,10 +161,10 @@
     
     <div class="cbp-sidebar-offset margin-top-1">
       <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="addWatchlist">
-        <h4 class="block-label no-margin-top">Watch List Category</h4>
+        <h4 class="block-label no-margin-top">{{'wl.watchlistcategory' | translate}}</h4>
         <form name="watchlist" class="filters" _lpchecked="1" ng-submit="showConfirm()">
           <h4  aria-expanded="true" data-toggle="collapse" role="tab" data-target="#filterGroup7" aria-controls="filterGroup7" class="filter-group-title">
-            <a href="#"><i class="fa fa-angle-right pull-right"></i></a> Category:
+            <a href="#"><i class="fa fa-angle-right pull-right"></i></a>{{'wl.category' | translate}}:
           </h4>
           <div id="filterGroup7" class="collapse in" aria-expanded="true">
             <div class="filter-group-content">
@@ -182,7 +182,7 @@
     
             <button type="submit" class="btn btn-icon-only btn-primary pull-right">
               <i class="fa fa-inverse fa-floppy-o"></i>
-              <md-tooltip>Save</md-tooltip>
+              <md-tooltip>{{'wl.save' | translate}}</md-tooltip>
             </button>
           </div>
         </form>
@@ -198,13 +198,16 @@
     <section>
         <!--  ACTION BUTTONS  -->
         <div class="flex justify-around action-buttons">
-            <button type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
+            <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
               <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
             </button>
             <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
               <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
             </a>
-            <a class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
+            <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
+              <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
+            </a>
+            <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
               <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
             </a>
             </div>
@@ -270,7 +273,7 @@
                                 <td>
                                 <span ng-mouseleave="resetTooltip()">{{ doc.documentType }}
                         <md-tooltip class="multi-tooltip" md-direction="bottom">
-                          <div>{{getCodeTooltipData(doc.documentType,"document")}}</div>
+                          <div>{{getCodeTooltipData(doc.documentType,"dictionary")}}</div>
                           </md-tooltip>
                       </span>
                                 </td>
@@ -588,7 +591,7 @@
                                     <td>{{doc.firstName}}</td>
                                     <td>{{doc.lastName}}</td>
                                     <td><span ng-mouseleave="resetTooltip()">{{doc.documentType}}
-                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"document")}}</div></md-tooltip>
+                                        <md-tooltip class="multi-tooltip" md-direction="left"><div>{{getCodeTooltipData(doc.documentType,"dictionary")}}</div></md-tooltip>
                                       </span>
                                     </td>
                                     <td><span ng-mouseleave="resetTooltip()">{{doc.issuanceCountry}}

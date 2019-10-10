@@ -7,8 +7,10 @@ package gov.gtas.util;
 
 import static org.junit.Assert.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Before;
@@ -68,5 +70,27 @@ public class DateCalendarUtilTest {
 				DateCalendarUtils.dateRoundedGreater(dt2, dt1, Calendar.HOUR_OF_DAY));
 		assertFalse("Did not expect Rounded less than at Day granularity to succeed",
 				DateCalendarUtils.dateRoundedGreater(dt2, dt1, Calendar.DAY_OF_MONTH));
+	}
+
+	@Test
+	public void testDayOfDate() {
+		int day = DateCalendarUtils.getDayOfDate("2019-02-19", DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT));
+		assertEquals(19, day);
+	}
+
+	@Test
+	public void testMonthOfDate() {
+		int month = DateCalendarUtils.getMonthOfDate("2019-02-19",
+				DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT));
+		assertEquals(02, month);
+		assertEquals(2, month);
+	}
+
+	@Test
+	public void testYearOfDate() {
+
+		int year = DateCalendarUtils.getYearOfDate("2019-02-19",
+				DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT));
+		assertEquals(2019, year);
 	}
 }

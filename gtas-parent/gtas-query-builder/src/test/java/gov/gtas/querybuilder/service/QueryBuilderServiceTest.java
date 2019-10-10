@@ -27,6 +27,7 @@ import gov.gtas.querybuilder.model.QueryRequest;
 import gov.gtas.querybuilder.model.UserQuery;
 import gov.gtas.querybuilder.model.UserQueryRequest;
 import gov.gtas.querybuilder.repository.QueryBuilderRepository;
+import gov.gtas.querybuilder.vo.PassengerQueryVo;
 import gov.gtas.services.PassengerService;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
 
@@ -93,6 +94,19 @@ public class QueryBuilderServiceTest {
 		when(queryRepository.saveQuery(any(UserQuery.class))).thenThrow(queryExistsRepoException);
 
 		queryService.saveQuery(userId, request);
+	}
+
+	@Test
+	public void testNoResults() throws InvalidQueryRepositoryException, InvalidQueryException {
+		QueryRequest qr = new QueryRequest();
+		QueryObject qo = new QueryObject();
+		qo.setCondition("AND");
+		QueryEntity qe = new QueryTerm();
+		qr.setQuery(qo);
+		PassengerQueryVo pqv = new PassengerQueryVo();
+		pqv.setResult(new ArrayList<>());
+		when(queryRepository.getPassengersByDynamicQuery(qr)).thenReturn(pqv);
+		queryService.runPassengerQuery(qr);
 	}
 
 	@Test(expected = InvalidQueryException.class)

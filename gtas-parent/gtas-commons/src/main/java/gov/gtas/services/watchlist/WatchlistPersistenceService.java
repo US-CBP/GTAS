@@ -6,13 +6,17 @@
 package gov.gtas.services.watchlist;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST;
+
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import gov.gtas.enumtype.EntityEnum;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 
-import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 

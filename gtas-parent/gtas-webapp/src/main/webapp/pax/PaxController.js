@@ -1096,7 +1096,17 @@
         }
       );
     };
-
+   
+    $scope.userHasRole = function(roleId){
+    	var hasRole = false;
+    	$.each(user.data.roles, function(index, value) {
+    		if (value.roleId === roleId) {
+    			hasRole = true;
+                }
+    		});
+    	return hasRole;
+    }
+    
     //dialog function for image display dialog
     $scope.showAttachments = function(attachmentList) {
       $mdDialog.show({
@@ -1134,7 +1144,8 @@
     $http,
     codeTooltipService,
     codeService,
-    spinnerService
+    spinnerService,
+    user
   ) {
     $scope.errorToast = function(error) {
       $mdToast.show(
@@ -1485,7 +1496,8 @@
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),
           cellTemplate:
-            '<md-button aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
+            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="type" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail.{{row.entity.id}}.{{row.entity.flightId}}" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
+        	'<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="type" href="" title="Launch Flight Passengers in new window" class="md-primary md-button md-default-theme disabled">{{COL_FIELD}}</md-button>'
         },
         {
           field: "firstName",
@@ -1611,7 +1623,8 @@
           name: "lastName",
           displayName: $translate.instant('pass.lastname'),
           cellTemplate:
-            '<md-button aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'
+            '<md-button ng-if="grid.appScope.userHasRole(3) || grid.appScope.userHasRole(1)" aria-label="Last Name" href="#/paxdetail/{{row.entity.id}}/{{row.entity.flightId}}" title="Launch Flight Passengers in new window" target="pax.detail" class="md-primary md-button md-default-theme">{{COL_FIELD}}</md-button>'+
+            '<md-button ng-if="!grid.appScope.userHasRole(3) && !grid.appScope.userHasRole(1)" aria-label="Last Name" href="" title="Launch Flight Passengers in new window" target="" class="disabled">{{COL_FIELD}}</md-button>'
         },
         {
           name: "firstName",
@@ -1756,7 +1769,17 @@
       var filters = ["origin", "destination", "flight", "direction", "date"];
       return filters.includes(option);
     };
-
+    
+    $scope.userHasRole = function(roleId){
+    	var hasRole = false;
+    	$.each(user.data.roles, function(index, value) {
+    		if (value.roleId === roleId) {
+    			hasRole = true;
+                }
+    		});
+    	return hasRole;
+    }
+    
     getPage();
     mapAirports();
   });

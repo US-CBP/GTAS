@@ -1996,9 +1996,9 @@ for logging purposes</note>
           <primary>N</primary>
         </property>
         <property>
-          <name>last_updated_on</name>
+          <name>node_updated_on</name>
           <value>LAST_UPDATE_DTM</value>
-          <type>LocalDateTime</type>
+          <type>Date</type>
           <primary>N</primary>
         </property>
       </properties>
@@ -2119,7 +2119,7 @@ for logging purposes</note>
           <primary>N</primary>
         </property>
         <property>
-          <name>last_updated_on</name>
+          <name>node_updated_on</name>
           <value>LAST_UPDATE_DTM</value>
           <type>LocalDateTime</type>
           <primary>N</primary>

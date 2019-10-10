@@ -40,8 +40,8 @@
       <a href="#admin" role="tab" ng-click="setActiveZipData($index, type)">{{type | uppercase}}</a>
     </li>
   </ul>
-  <span id="zipLogTitle" ng-show="hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>{{activeZipType | uppercase}} LOG FILES</h3></span>
-  <span id="noZipsFoundMsg" ng-show="!hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>NO LOG FILES FOUND</h3></span>
+  <span id="zipLogTitle" ng-show="hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>{{activeZipType | uppercase}} {{'files.logfiles' | translate | uppercase}}</h3></span>
+  <span id="noZipsFoundMsg" ng-show="!hasZipLogs" class="text-primary" style="text-align: -webkit-center;"><h3>{{'files.nologfilesfound' | translate | uppercase}}</h3></span>
 
   <div layout="column">
     <md-content>

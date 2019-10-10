@@ -322,7 +322,7 @@ var app;
                 })
                 .state('flights', {
                     url: '/flights',
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_CASES, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
                     authenticate: true,
                     views: {
                         '@': {
@@ -337,6 +337,9 @@ var app;
                         },
                         flightSearchOptions: function(flightService){
                             return flightService.getFlightDirectionList();
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -359,7 +362,7 @@ var app;
                 .state('casemanual', {
                     url: '/casemanual/:flightId/:paxId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionManualCtrl',
@@ -379,7 +382,7 @@ var app;
                 .state('casedetail', {
                     url: '/casedetail/:caseId',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES, USER_ROLES.ONE_DAY_LOOKOUT],
                     views: {
                         '@': {
                             controller: 'CaseDispositionDetailCtrl',
@@ -396,7 +399,7 @@ var app;
                 .state('caseDisposition', {
                     url: '/casedisposition',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'CaseDispositionCtrl',
@@ -547,6 +550,9 @@ var app;
                         },
                         passengers: function (paxService, $stateParams, paxModel) {
                           return paxService.getPax($stateParams.id, paxModel.alldatamodel());
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -575,7 +581,7 @@ var app;
                 .state('detail', {
                     url: '/paxdetail/{paxId}/{flightId}',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                         '@': {
                             controller: 'PassengerDetailCtrl',
@@ -629,7 +635,7 @@ var app;
                 .state('userlocation', {
                     url: '/userlocation',
                     authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'UserLocationController',
@@ -645,7 +651,7 @@ var app;
                 .state('userSettings', {
                     url: '/userSettings',
                     authenticate: true,
-                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ONE_DAY_LOOKOUT, USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST, USER_ROLES.MANAGE_CASES],
                     views: {
                         '@': {
                             controller: 'UserSettingsController',
@@ -661,7 +667,7 @@ var app;
                 .state('seatsMap', {
                 	url: '/seatsMap/{paxId}/{flightId}/{seat}',
                 	authenticate: true,
-                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS, USER_ROLES.MANAGE_QUERIES, USER_ROLES.MANAGE_RULES, USER_ROLES.MANAGE_WATCHLIST],
+                    roles: [USER_ROLES.ADMIN, USER_ROLES.VIEW_FLIGHT_PASSENGERS],
                     views: {
                     	'@' : {
                     		controller: 'SeatsMapController',
@@ -686,6 +692,7 @@ var app;
             $scope.errorList = [];
             $scope.hitCount = 0;
             $scope.neo4jUrl = "http://localhost:7474/browser/";
+            $scope.agencyName = '';
             var originatorEv;
 
             this.openMenu = function($mdOpenMenu, ev) {
@@ -730,6 +737,14 @@ var app;
                     return $scope.hitCount;
             };
 
+            configService.agencyName().then(function(value) {
+                $scope.agencyName = value.data;
+             });
+            
+            $scope.getAgencyName = function() {
+            	return $scope.agencyName;
+            };
+            
             configService.neo4j().then(function(value) {
                $scope.neo4jUrl = value.data;
             });
@@ -790,6 +805,15 @@ var app;
                     }
                 });
             };
+            $scope.userHasRole = function(roleId){
+            	var hasRole = false;
+            	$.each(user.roles, function(index, value) {
+            		if (value.roleId === roleId) {
+            			hasRole = true;
+                        }
+            		});
+            	return hasRole;
+            }
         };
     app = angular
         .module('myApp', appDependencies)
@@ -805,7 +829,8 @@ var app;
             MANAGE_RULES: 'Manage Rules',
             MANAGE_WATCHLIST: 'Manage Watch List',
             ONE_DAY_LOOKOUT: 'One Day Lookout',
-            MANAGE_HITS: 'Manage Hits'
+            MANAGE_HITS: 'Manage Hits',
+            MANAGE_CASES: 'Manage Cases'
         })
         .constant('APP_CONSTANTS', {
             LOGIN_PAGE: 'login.html',

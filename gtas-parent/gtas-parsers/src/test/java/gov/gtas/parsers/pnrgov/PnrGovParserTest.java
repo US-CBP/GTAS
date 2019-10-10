@@ -156,7 +156,8 @@ public class PnrGovParserTest implements ParserTestHelper {
 		assertEquals(seat.getApis(), false);
 		assertEquals(seat.getDestination(), "IAD");
 		assertEquals(seat.getOrigin(), "SFO");
-		assertEquals(seat.getNumber(), "074E");
+		assertNotEquals(seat.getNumber(), "074E");
+		assertEquals(seat.getNumber(), "74E");
 		assertEquals(seat.getTravelerReferenceNumber(), "1");
 	}
 

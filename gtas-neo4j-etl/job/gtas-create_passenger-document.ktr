@@ -483,11 +483,6 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Sort rows</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Filter rows</from>
       <to>Add constants</to>
       <enabled>Y</enabled>
@@ -505,6 +500,21 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
     <hop>
       <from>CSV file input-document</from>
       <to>Select values</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
+      <to>Get system info</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Get system info</from>
+      <to>Select values 2</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 2</from>
+      <to>Sort rows</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -554,7 +564,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>768</xloc>
+      <xloc>624</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1584,7 +1594,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>160</xloc>
+      <xloc>112</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1609,7 +1619,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>608</xloc>
+      <xloc>480</xloc>
       <yloc>352</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1665,7 +1675,38 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>608</xloc>
+      <xloc>480</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Get system info</name>
+    <type>SystemInfo</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>NODE_DATETIME</name>
+        <type>system date (variable)</type>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>768</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1741,6 +1782,12 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
           <type>String</type>
           <primary>Y</primary>
         </property>
+        <property>
+          <name>node_updated_on</name>
+          <value>node_updated_on</value>
+          <type>Date</type>
+          <primary>N</primary>
+        </property>
       </properties>
     </to>
     <relationship>PASSENGER-DOCUMENT_LABEL</relationship>
@@ -1755,7 +1802,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1152</xloc>
+      <xloc>1248</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1851,7 +1898,52 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
+      <xloc>304</xloc>
+      <yloc>256</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>NODE_DATETIME</name>
+        <rename>node_updated_on</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyy-MM-dd HH:mm:ss</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>928</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1901,7 +1993,7 @@ All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S.
       </output>
     </remotesteps>
     <GUI>
-      <xloc>928</xloc>
+      <xloc>1056</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
