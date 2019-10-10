@@ -42,7 +42,7 @@ volumes: [
                 }
                 
                stage('Security Scan components') {
-                   sh 'mvn -B -f gtas-parent/ dependency-check:check -DfailBuildOnCVSS=10 -Dmaven.test.failure.ignore=true'
+                   sh 'mvn -B -f gtas-parent/ org.owasp:dependency-check-maven:check -DfailBuildOnCVSS=10 -Dmaven.test.failure.ignore=true'
                }
             
                 stage ('Package and Code Analysis') {
