@@ -30,6 +30,7 @@ volumes: [
             container('maven') {
 
                 stage('Validate project') {
+                    sh 'cd gtas-parent'
                     sh 'mvn -B  validate'        
                 }
                 
