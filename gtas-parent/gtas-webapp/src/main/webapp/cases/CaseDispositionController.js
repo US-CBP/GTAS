@@ -91,6 +91,22 @@
                 $scope.statusGroup = $scope.dispositionStatuses;
             });
 
+            $scope.resolvePage = function () {
+                var postData = {
+                    pageNumber:   $scope.pageNumber,
+                    pageSize:     $scope.pageSize,
+                    sort:     $scope.model.sort,
+                    model:        $scope.model
+                };
+                spinnerService.show('html5spinner');
+                caseDispositionService.getPagedCases(postData).then(
+                    function(data){
+                        $scope.casesDispGrid.data = data.data.cases;
+                        $scope.casesList = data.data.cases;
+                        $scope.casesDispGrid.totalItems = data.data.totalCases;
+                        spinnerService.hide('html5spinner');
+                    });
+            };
             $scope.refreshCountDown = function () {
 
                 var currentTimeMillis = caseDispositionService.getCurrentServerTime();
@@ -340,6 +356,9 @@
             ];
 
 
+            $scope.getTableHeight = function () {
+                return gridService.calculateGridHeight(newCases.data.totalCases);
+            };
             //toggleDiv and filterCheck required for sidepanel
             $scope.toggleDiv = function(div) {
                 var element = document.getElementById(div);
