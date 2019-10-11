@@ -7,10 +7,18 @@
  */
 app.service("caseModel", [function () {
     'use strict';
-    var defaultSort = [
+    let defaultSort = [
+            {column: 'countDown', dir: 'asc'},
+
         ],
-        startDate = new Date(),
-        endDate = new Date();
+    displayStatusCheckBoxes =     {
+        NEW: true,
+        RE_OPENED: false,
+        DISMISSED: false
+    },
+
+    startDate = new Date(),
+    endDate = new Date();
     endDate.setDate(endDate.getDate() + 1);
     startDate.setHours(startDate.getHours()-1);
 
@@ -22,6 +30,7 @@ app.service("caseModel", [function () {
         this.etaStart = startDate;
         this.etaEnd = endDate;
         this.sort = defaultSort;
+        this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     };
     this.reset();
 }]);

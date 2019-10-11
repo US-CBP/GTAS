@@ -45,6 +45,10 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	public PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId) {
 		Set<UserGroup> userGroups = userService.fetchUserGroups(userId);
 
+		if (request == null) {
+			return new PriorityVettingListDTO(new ArrayList<>(), 0L);
+		}
+
 		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups, userId);
 		long count = immutablePair.getLeft();
 		List<CaseVo> caseVOS = new ArrayList<>();

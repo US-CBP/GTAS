@@ -22,12 +22,6 @@
             $scope.trueFalseBoolean = "YES";
             $scope.model = caseModel;
 
-            $scope.model.reset = function(){
-                angular.forEach($scope.model, function(item, index){
-                    index = $scope.emptyString;
-                });
-            };
-
             $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
                     .content(error)
@@ -164,7 +158,7 @@
                     value = grid.appScope.casesListWithCats[row.entity.highPriorityRuleCatId];
                 }
                 return value;
-              }
+              };
 
             $scope.deleteRow = function(row) {
                 row.entity.status = 'DISMISSED';
@@ -192,7 +186,7 @@
                 to: '',
                 subject: '',
                 body: '',
-            }
+            };
             $scope.notify = function(row) {               
                 // $uibModal.open({
                 //     templateUrl:'notificationTemplate.html',
