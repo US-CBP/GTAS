@@ -11,17 +11,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "attachment")
-public class Attachment implements Serializable {
+public class Attachment extends BaseEntityAudit implements Serializable  {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@GeneratedValue
-	@Column(name = "id")
-	private Integer id;
 
 	@Column(name = "name")
 	private String name;
@@ -46,14 +41,8 @@ public class Attachment implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	@ManyToMany(mappedBy = "attachments", targetEntity = Comment.class)
+	private Set<Comment> comments = new HashSet<>();
 
 	public String getName() {
 		return name;
@@ -136,4 +125,11 @@ public class Attachment implements Serializable {
 		return true;
 	}
 
+	public Set<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(Set<Comment> comments) {
+		this.comments = comments;
+	}
 }
