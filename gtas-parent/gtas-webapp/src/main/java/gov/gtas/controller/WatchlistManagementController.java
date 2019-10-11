@@ -123,8 +123,7 @@ public class WatchlistManagementController {
     public JsonServiceResponse createWatchlist(@PathVariable String entity,
                                                @RequestBody WatchlistSpec inputSpec) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist Create request by user ="
-                + userId);
+        logger.info("******** Received Watchlist Create request by user: {}", userId);
 
         return createUpdateWatchlist(inputSpec);
     }
@@ -140,8 +139,7 @@ public class WatchlistManagementController {
     public JsonServiceResponse updateWatchlist(@PathVariable String entity,
                                                @RequestBody WatchlistSpec inputSpec) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist Update request by user ="
-                + userId);
+        logger.info("******** Received Watchlist Update request by user: {}", userId);
 
         return createUpdateWatchlist(inputSpec);
     }
