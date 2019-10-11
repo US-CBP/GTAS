@@ -58,8 +58,6 @@ public class IntegrateUnTaggedPassengerListScheduler {
             }*/
         }
 
-        final java.util.Random rand = new java.util.Random();
-
         try {
             for (Passenger _tempPaxWithIdTag : paxListNotNull) {
                 boolean paxFoundFlag = false;
