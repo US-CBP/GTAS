@@ -31,6 +31,8 @@ public class IntegrateUnTaggedPassengerListScheduler {
     private static final Logger logger = LoggerFactory
             .getLogger(IntegrateUnTaggedPassengerListScheduler.class);
 
+    private java.util.Random rand = new java.util.Random();
+
     @Autowired
     private PassengerRepository passengerDao;
 
@@ -109,7 +111,7 @@ public class IntegrateUnTaggedPassengerListScheduler {
      */
     private String generateRandomIDTag(int strLength){
         final String lexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
-        final java.util.Random rand = new java.util.Random();
+
         StringBuilder builder = new StringBuilder();
         while(builder.toString().length() == 0) {
             int length = (strLength>0)?(strLength):(9);
