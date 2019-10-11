@@ -92,7 +92,10 @@ public class FileReader {
 							logger.info("Reading file from : " + moveFrom);
 							logger.info("Moving file after processing to : "
 									+ moveTo);
-							fileEntry.renameTo(moveTo.toFile());
+							boolean fileEntryRenamed = fileEntry.renameTo(moveTo.toFile());
+							if (!fileEntryRenamed) {
+								logger.error("fileEntry rename failed");
+							}
 						}
 						fromFileSystem.close();
 						toFileSystem.close();
@@ -142,7 +145,10 @@ public class FileReader {
 							// apisService.processMessage(moveFrom.toString());
 							logger.info("Moving file after processing to : "
 									+ moveTo);
-							fileEntry.renameTo(moveTo.toFile());
+							boolean fileEntryRenamed = fileEntry.renameTo(moveTo.toFile());
+							if (!fileEntryRenamed) {
+								logger.error("fileEntry rename failed");
+							}
 						}
 						fromFileSystem.close();
 						toFileSystem.close();
