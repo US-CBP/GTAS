@@ -94,16 +94,18 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
-		if (dto.getDisplayStatusCheckBoxes().getNewItems() != null && dto.getDisplayStatusCheckBoxes().getNewItems()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
-		}
-		if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
-				&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
-		}
-		if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
-				&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
+		if (dto.getDisplayStatusCheckBoxes() != null) {
+			if (dto.getDisplayStatusCheckBoxes().getNewItems() != null && dto.getDisplayStatusCheckBoxes().getNewItems()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
+					&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
+					&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
+			}
 		}
 		// Special case. Unused value to give result of 0.
 		if (hitViewStatusEnumSet.isEmpty()) {

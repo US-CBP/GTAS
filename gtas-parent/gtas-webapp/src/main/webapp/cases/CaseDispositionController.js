@@ -8,11 +8,11 @@
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
-                  spinnerService, caseDispositionService, newCases,
+                  spinnerService, caseDispositionService, caseModel,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog) {
 
             spinnerService.hide('html5spinner');
-            $scope.casesList = newCases.data.cases;
+            $scope.casesList;
             $scope.casesListWithCats=[];
             $scope.ruleCats=ruleCats.data;
             $scope.pageSize = 10;
@@ -20,7 +20,7 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
-            $scope.model = caseDispositionService.getDefaultModel();
+            $scope.model = caseModel;
 
             $scope.model.reset = function(){
                 angular.forEach($scope.model, function(item, index){
@@ -90,23 +90,6 @@
                 $scope.dispositionStatuses = response.data;
                 $scope.statusGroup = $scope.dispositionStatuses;
             });
-
-            $scope.resolvePage = function () {
-                var postData = {
-                    pageNumber:   $scope.pageNumber,
-                    pageSize:     $scope.pageSize,
-                    sort:     $scope.model.sort,
-                    model:        $scope.model
-                };
-                spinnerService.show('html5spinner');
-                caseDispositionService.getPagedCases(postData).then(
-                    function(data){
-                        $scope.casesDispGrid.data = data.data.cases;
-                        $scope.casesList = data.data.cases;
-                        $scope.casesDispGrid.totalItems = data.data.totalCases;
-                        spinnerService.hide('html5spinner');
-                    });
-            };
 
             $scope.refreshCountDown = function () {
 
@@ -256,7 +239,6 @@
             $scope.casesDispGrid = {
                 data: $scope.casesList,
                 paginationPageSizes: [10, 15, 25],
-                totalItems: newCases.data.totalCases,
                 paginationPageSize: $scope.pageSize,
                 paginationCurrentPage: $scope.pageNumber,
                 useExternalPagination: true,
@@ -358,9 +340,6 @@
             ];
 
 
-            $scope.getTableHeight = function () {
-                return gridService.calculateGridHeight(newCases.data.totalCases);
-            };
             //toggleDiv and filterCheck required for sidepanel
             $scope.toggleDiv = function(div) {
                 var element = document.getElementById(div);
@@ -396,19 +375,6 @@
                         spinnerService.hide('html5spinner');
                     });
             };
-
-            $scope.reset = function () {
-                $scope.model.name = $scope.emptyString;
-                $scope.model.flightNumber = $scope.emptyString;
-                $scope.model.status = $scope.emptyString;
-                $scope.model.ruleCat = $scope.emptyString;
-                $scope.model.etaStart = caseDispositionService.getDefaultStartDate();
-                $scope.model.etaEnd = caseDispositionService.getDefaultEndDate();
-                $scope.model.displayStatusCheckBoxes = caseDispositionService.getDefaultDispCheckboxes();
-                $scope.model.sort = caseDispositionService.getDefaultSort();
-                $scope.model.withTimeLeft = caseDispositionService.getDefaultTimeLeft();
-                $scope.resolvePage();
-            };
-
-        })
+            $scope.filter();
+        });
 }());
