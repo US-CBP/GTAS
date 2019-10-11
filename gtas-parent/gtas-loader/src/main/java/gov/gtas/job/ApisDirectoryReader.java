@@ -97,7 +97,10 @@ public class ApisDirectoryReader implements Runnable {
 					break;
 				}
 			}
-		} catch (InterruptedException | IOException e) {
+		} catch (InterruptedException e) {
+			logger.error("error!", e);
+			Thread.currentThread().interrupt();
+		} catch (IOException e) {
 			logger.error("error!", e);
 		} finally {
 			ctx.close();
