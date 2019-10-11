@@ -407,8 +407,8 @@ public class PnrUtils {
         String temp = null;
         String[] tokens = freeText.split("/");
         for (String s : tokens) {
-            String trimed_s = s.trim();
-            if (trimed_s.indexOf("-") > 0) {
+            String trimedS = s.trim();
+            if (trimedS.indexOf("-") > 0) {
                 temp = s.substring(0, s.indexOf("-"));
             }
         }
@@ -419,8 +419,8 @@ public class PnrUtils {
         String temp = null;
         String[] tokens = freeText.split("/");
         for (String s : tokens) {
-            String trimed_s = s.trim();
-            if (trimed_s.indexOf("-") > 0) {
+            String trimedS = s.trim();
+            if (trimedS.indexOf("-") > 0) {
                 temp = s.substring(0, s.indexOf("-"));
             }
         }
