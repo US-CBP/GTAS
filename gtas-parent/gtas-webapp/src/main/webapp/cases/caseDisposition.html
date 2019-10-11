@@ -1,11 +1,13 @@
 <style>
   .ui-grid-viewport {
     overflow-y: scroll !important;
-  
+    overflow-scrolling: unset;
   }
 </style>
-  
-<div ng-include="'views/sidepanel.html'"></div>
+
+<div class="cbp-sidebar caseFilter sidebar margin-1 margin-top-1"
+     style="width: 290px;" ng-include="'cases/caseSearch.html'"></div>
 <div id="casesDispGrid" ui-grid="casesDispGrid" ui-grid-pagination
      ui-grid-auto-resize ui-grid-move-columns ui-grid-exporter
-     class="upper-cnt grid case-grid"></div>
+     class="margin-top-1 grid case-grid" style="width: 84%; margin-left: 304px;"></div>
+

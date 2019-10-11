@@ -32,8 +32,7 @@
     $scope.isClosedCase = false;
     $scope.casesListWithCats = [];
     $scope.ruleHits = ruleHits;
-
-
+    $scope.watchlistCategoryId;
     $scope.isLoadingHistoricalHits = true;
     $scope.hitHistory;
     $scope.caseHistory = caseHistory.data;
@@ -612,7 +611,6 @@
       $("md-tooltip").remove();
     };
 
-    $scope.watchlistCategoryId;
 
     watchListService.getWatchlistCategories().then(function(res) {
       $scope.watchlistCategories = res.data;

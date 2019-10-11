@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, newCases,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList = newCases.data.cases;
@@ -217,6 +217,42 @@
             };
 
 
+            $scope.showPassenger = function (row) {
+                const pax = row.entity;
+                $scope.paxId = pax.paxId;
+                $scope.flightId = pax.flightId;
+                $mdDialog.show({
+                    controller: 'PassengerDetailCtrl',
+                    templateUrl: 'pax/pax.detail.html',
+                    clickOutsideToClose: true,
+                    resolve: {
+                        passenger: function (paxDetailService) {
+                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
+                        }
+                        ,
+                        user: function (userService) {
+                            return userService.getUserData();
+                        }
+                        ,
+                        caseHistory: function (paxDetailService) {
+                            return paxDetailService.getPaxCaseHistory($scope.paxId);
+                        }
+                        ,
+                        ruleCats: function (caseDispositionService) {
+                            return caseDispositionService.getRuleCats();
+                        }
+                        ,
+                        ruleHits: function (paxService) {
+                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
+                        }
+                        ,
+                        watchlistLinks: function (paxDetailService) {
+                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        }
+                    }
+                })
+                ;
+            };
             $scope.casesDispGrid = {
                 data: $scope.casesList,
                 paginationPageSizes: [10, 15, 25],
@@ -299,7 +335,7 @@
                     name: 'lastName',
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<div><md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" target="_blank" ' +
+                    cellTemplate: '<div><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
