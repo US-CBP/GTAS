@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -120,14 +119,14 @@ public class WatchlistManagementController {
      * @param inputSpec the input spec
      * @return the json service response
      */
-    @RequestMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonServiceResponse createWatchlist(@PathVariable String entity,
                                                @RequestBody WatchlistSpec inputSpec) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
         logger.info("******** Received Watchlist Create request by user ="
                 + userId);
 
-        return createUpdateWatchlist(entity, inputSpec);
+        return createUpdateWatchlist(inputSpec);
     }
 
     /**
@@ -137,14 +136,14 @@ public class WatchlistManagementController {
      * @param inputSpec the input spec
      * @return the json service response
      */
-    @RequestMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
     public JsonServiceResponse updateWatchlist(@PathVariable String entity,
                                                @RequestBody WatchlistSpec inputSpec) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
         logger.info("******** Received Watchlist Update request by user ="
                 + userId);
 
-        return createUpdateWatchlist(entity, inputSpec);
+        return createUpdateWatchlist(inputSpec);
     }
 
     /**
@@ -227,8 +226,7 @@ public class WatchlistManagementController {
         }
     }
 
-    private JsonServiceResponse createUpdateWatchlist(String entity,
-                                                      WatchlistSpec inputSpec) {
+    private JsonServiceResponse createUpdateWatchlist(WatchlistSpec inputSpec) {
         String userId = GtasSecurityUtils.fetchLoggedInUserId();
         logger.info("******** Received Watchlist Create/Update request by user ="
                 + userId);
