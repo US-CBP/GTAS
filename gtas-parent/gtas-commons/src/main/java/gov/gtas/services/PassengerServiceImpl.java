@@ -190,6 +190,7 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setFlightNumber((String) objs[5]);
 
             Flight f = flightRespository.findById(flightId).orElse(null);
+            assert f != null;
             vo.setFlightETADate(f.getMutableFlightDetails().getEta());
             vo.setFlightETDDate(f.getMutableFlightDetails().getEtd());
             vo.setFlightDirection(f.getDirection());

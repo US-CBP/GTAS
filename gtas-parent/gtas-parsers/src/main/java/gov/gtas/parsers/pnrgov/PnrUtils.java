@@ -403,24 +403,24 @@ public class PnrUtils {
         return phoneText;
     }
 
-    public static String getFrequentFlyertextFromFreeText(String freeText) {
+    static String getFrequentFlyertextFromFreeText(String freeText) {
         String temp = null;
         String[] tokens = freeText.split("/");
         for (String s : tokens) {
-            s.trim();
-            if (s.indexOf("-") > 0) {
+            String trimed_s = s.trim();
+            if (trimed_s.indexOf("-") > 0) {
                 temp = s.substring(0, s.indexOf("-"));
             }
         }
         return temp;
     }
 
-    public static String getPhoneNumberFromFreeText(String freeText) {
+    static String getPhoneNumberFromFreeText(String freeText) {
         String temp = null;
         String[] tokens = freeText.split("/");
         for (String s : tokens) {
-            s.trim();
-            if (s.indexOf("-") > 0) {
+            String trimed_s = s.trim();
+            if (trimed_s.indexOf("-") > 0) {
                 temp = s.substring(0, s.indexOf("-"));
             }
         }

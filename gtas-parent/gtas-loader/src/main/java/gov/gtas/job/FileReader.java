@@ -49,7 +49,7 @@ public class FileReader {
 				+ new Date());
 		logger.info("*************************************************************************************");
 		Properties properties = getSchedulerProperties();
-		if (properties != null) {
+		if (properties != null && properties.propertyNames().hasMoreElements()) {
 			File apisFolder = new File(properties.getProperty("apis.dir.origin"));
 			File apisProcessedFolder = new File(properties.getProperty("apis.dir.processed"));
 			// File apisWorkingFolder = new File(properties.getProperty("apis.dir.working"));
