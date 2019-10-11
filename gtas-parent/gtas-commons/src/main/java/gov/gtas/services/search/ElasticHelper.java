@@ -101,7 +101,7 @@ public class ElasticHelper {
 	////////////////////////////////////////////////////////////////////
 	// init methods
 	
-    private void initClient() {
+    void initClient() {
 		if (isUp()) {
 			return;
 		}
@@ -177,7 +177,7 @@ public class ElasticHelper {
 		
 	}
 	
-	private AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {
+	AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir) throws ParseException {
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
 		SearchHit[] resultsArry = results.getHits();
@@ -243,7 +243,7 @@ public class ElasticHelper {
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 	
-	private LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir) throws ParseException {
+	LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir) throws ParseException {
 		if(pax==null) {
 			return new LinkAnalysisDto(new ArrayList(), 0);
 		}
