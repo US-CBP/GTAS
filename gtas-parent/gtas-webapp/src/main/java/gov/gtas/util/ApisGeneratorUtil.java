@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * ApisGeneratorUtil gets called from controller classes to verify the UGANDA specific files 
  * and convert them into APIS files and upload to the designated directory to process.
- * @see gov.gtas.controller.UploadController.java
+ * @see gov.gtas.controller.UploadController
  *
  */
 public class ApisGeneratorUtil {
@@ -188,49 +188,50 @@ public class ApisGeneratorUtil {
 		sb.append("DTM+36:180221'"+newline);
 		sb.append("LOC+91+UGA'"+newline);
 	}
-	
-	public static boolean isUgandaManifest(File fin){
-		boolean chk=false;
-		if(fin != null){
-			
-			String flightregex="^FLIGHT: (.*)\\s+DATE: (.*)$";
-			Pattern pattern = Pattern.compile(flightregex);
-			FileInputStream fis = null;
-			BufferedReader br = null;
-			String line;
-			try {
-				fis = new FileInputStream(fin);
-				br = new BufferedReader(new InputStreamReader(fis));
-		    	while ((line = br.readLine()) != null) {
-		    		Matcher matcher = pattern.matcher(line); 
-		    		 while (matcher.find()) { 
-		    			 return true;
-		    		 }
-		    	}
-			} catch (FileNotFoundException e) {
-				logger.error("Error in APIS generator:", e);
-			} catch (IOException e) {
-				logger.error("Error in APIS generator", e);
-			}finally{
-				fin.deleteOnExit();
-				if(br != null){
-					try {
-						br.close();
-					} catch (IOException e) {
-						logger.error("Error in APIS generator.", e);
-					}
-				}
 
-				if (fis != null) {
-					try {
-						fis.close();
-					} catch (IOException e) {
-						logger.error("Error in APIS generator.", e);
-					}
+	public static boolean isUgandaManifest(File fin) {
+		if (fin == null) {
+			return false;
+		}
+
+		String flightregex = "^FLIGHT: (.*)\\s+DATE: (.*)$";
+		Pattern pattern = Pattern.compile(flightregex);
+		FileInputStream fis = null;
+		BufferedReader br = null;
+		String line;
+		try {
+			fis = new FileInputStream(fin);
+			br = new BufferedReader(new InputStreamReader(fis));
+			while ((line = br.readLine()) != null) {
+				Matcher matcher = pattern.matcher(line);
+				if (matcher.find()) {
+					return true;
+				}
+			}
+		} catch (FileNotFoundException e) {
+			logger.error("Error in APIS generator:", e);
+		} catch (IOException e) {
+			logger.error("Error in APIS generator", e);
+		} finally {
+			fin.deleteOnExit();
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error("Error in APIS generator.", e);
+				}
+			}
+
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					logger.error("Error in APIS generator.", e);
 				}
 			}
 		}
-		return chk;
+
+		return false;
 	}
 	
 	private static String getDateInYYMMDD(String dateString){
