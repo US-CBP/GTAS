@@ -63,10 +63,8 @@ public class WatchlistManagementController {
         logger.debug("******** name =" + name);
 
         WatchlistSpec resp = new WatchlistSpec(name, entity);
-        Iterator<WatchlistItem> watchlistItems = this.watchlistService.fetchItemsByWatchlistName(name).iterator();
 
-        while (watchlistItems.hasNext()) {
-            WatchlistItem item = watchlistItems.next();
+        for (WatchlistItem item : this.watchlistService.fetchItemsByWatchlistName(name)) {
             try {
                 WatchlistItemSpec itemSpec = new ObjectMapper().readValue(item.getItemData(),
                         WatchlistItemSpec.class);
@@ -82,14 +80,11 @@ public class WatchlistManagementController {
                 resp.addWatchlistItem(itemSpec);
 
             } catch (JsonParseException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("caught JsonParseException");
             } catch (JsonMappingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("caught JsonMappingException");
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("caught IOException");
             }
         }
 
