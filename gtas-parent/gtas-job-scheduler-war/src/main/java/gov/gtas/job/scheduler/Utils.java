@@ -65,6 +65,7 @@ public class Utils {
 
     Path targetPath = Paths.get(target + File.separator + fileName);
     File f = null;
+    FileWriter fw = null;
 
     try {
       // if(Files.exists(targetPath)) {
@@ -74,12 +75,20 @@ public class Utils {
 
       f = targetPath.toFile();
 
-      FileWriter fw = new FileWriter(f, false);
+      fw = new FileWriter(f, false);
       fw.write(fileText);
       fw.close();
     } catch (IOException e) {
       // attempt to write it to an error directory here??
       logger.error("error writing to directory " + target, e);
+    } finally {
+      try {
+        if (fw != null) {
+          fw.close();
+        }
+      } catch (IOException e) {
+        logger.error("error writing to directory (closing file) " + target, e);
+      }
     }
     
     return f;
