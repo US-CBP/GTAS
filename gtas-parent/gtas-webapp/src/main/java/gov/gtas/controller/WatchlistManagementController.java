@@ -80,11 +80,11 @@ public class WatchlistManagementController {
                 resp.addWatchlistItem(itemSpec);
 
             } catch (JsonParseException e) {
-                logger.debug("caught JsonParseException");
+                logger.error("caught JsonParseException");
             } catch (JsonMappingException e) {
-                logger.debug("caught JsonMappingException");
+                logger.error("caught JsonMappingException");
             } catch (IOException e) {
-                logger.debug("caught IOException");
+                logger.error("caught IOException");
             }
         }
 

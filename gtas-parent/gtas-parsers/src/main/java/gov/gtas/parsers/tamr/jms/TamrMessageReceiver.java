@@ -49,8 +49,7 @@ public class TamrMessageReceiver {
 						this.passengerIDTagRepository.updateTamrId(p.gtasId, p.getTamrId());
 					});
 			} catch (JMSException e) {
-				//
-				e.printStackTrace();
+				logger.error("caught JMSException");
 			}
 		}
 	}
