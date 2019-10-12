@@ -145,12 +145,12 @@ public class DashboardController {
 		return flightsAndPassengersAndHitsCount;
 	}
 
-	class MessageCount implements Serializable {
+	private static final class MessageCount implements Serializable {
 		String STATE = EMPTY_STRING;
 		String API = EMPTY_STRING;
 		String PNR = EMPTY_STRING;
 
-		public MessageCount(String STATE, String API, String PNR) {
+		MessageCount(String STATE, String API, String PNR) {
 			this.STATE = STATE;
 			this.API = API;
 			this.PNR = PNR;
@@ -181,14 +181,14 @@ public class DashboardController {
 		}
 	}
 
-	class AirportVO implements Serializable {
+	private static final class AirportVO implements Serializable {
 		Double longitude = 0.0;
 		Double latitude = 0.0;
 		String airportCodeStr = EMPTY_STRING;
 		String airportName = EMPTY_STRING;
 		boolean hits = false;
 
-		public AirportVO(Double longitude, Double latitude, String airportCodeStr, String airportName, boolean hits) {
+		AirportVO(Double longitude, Double latitude, String airportCodeStr, String airportName, boolean hits) {
 			this.longitude = longitude;
 			this.latitude = latitude;
 			this.airportCodeStr = airportCodeStr;

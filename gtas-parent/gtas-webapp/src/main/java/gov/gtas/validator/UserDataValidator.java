@@ -18,7 +18,7 @@ import gov.gtas.services.security.UserData;
 @Component
 public class UserDataValidator implements Validator {
 	private static final String USERID_REQUIRED = "UserId required .";
-	private static final String PASSWORD_REQUIRED = "Password required.";
+    private static final String CRED_REQUIRED = "Password required.";
 	private static final String FIRST_NAME_REQUIRED = "First Name required.";
 	private static final String LAST_NAME_REQUIRED = "Last Name required.";
 	private static final String ACTIVE_FLAG_REQUIRED = "Active Flag required.";
@@ -35,7 +35,7 @@ public class UserDataValidator implements Validator {
 		UserData userDataRequest = (UserData) target;
 		Set<RoleData> roles = userDataRequest.getRoles();
 		ValidationUtils.rejectIfEmpty(errors, "userId", USERID_REQUIRED);
-		ValidationUtils.rejectIfEmpty(errors, "password", PASSWORD_REQUIRED);
+        ValidationUtils.rejectIfEmpty(errors, "password", CRED_REQUIRED);
 		ValidationUtils.rejectIfEmpty(errors, "firstName", FIRST_NAME_REQUIRED);
 		ValidationUtils.rejectIfEmpty(errors, "lastName", LAST_NAME_REQUIRED);
 		ValidationUtils.rejectIfEmpty(errors, "active", ACTIVE_FLAG_REQUIRED);

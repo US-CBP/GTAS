@@ -192,7 +192,7 @@ public class QueryBuilderService {
 		try {
 			PassengerQueryVo resultList = queryRepository.getPassengersByDynamicQuery(queryRequest);
 			queryLimitReached = resultList.isQueryLimitReached();
-			if (resultList == null) {
+			if (resultList.getTotalPassengers() == 0) {
 				return new PassengersPageDto(passengerList, totalCount);
 			}
 

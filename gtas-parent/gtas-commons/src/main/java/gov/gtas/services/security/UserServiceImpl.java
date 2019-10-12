@@ -108,7 +108,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional
 	public UserData findById(String id) {
 		User userEntity = userRepository.findOne(id);
 		UserData userData = null;
@@ -128,7 +127,6 @@ public class UserServiceImpl implements UserService {
 	 * @return the user fetched from the DB.
 	 */
 	@Override
-	@Transactional
 	public User fetchUser(final String userId) {
 		UserData userData = findById(userId);
 		if (userData == null) {
