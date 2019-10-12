@@ -48,7 +48,7 @@ public class CommonServicesConfig {
 
 	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "entitymanager.packages.to.scan";
 	private static final String PROPERTY_NAME_DATABASE_DRIVER = "hibernate.connection.driver_class";
-	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "hibernate.connection.password";
+	private static final String PROPERTY_NAME_DATABASE_CRED = "hibernate.connection.password";
 	private static final String PROPERTY_NAME_DATABASE_URL = "hibernate.connection.url";
 	private static final String PROPERTY_NAME_DATABASE_USERNAME = "hibernate.connection.username";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
@@ -152,7 +152,7 @@ public class CommonServicesConfig {
 		}
 		dataSource.setJdbcUrl(env.getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
 		dataSource.setUser(env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-		dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
+		dataSource.setPassword(env.getRequiredProperty(PROPERTY_NAME_DATABASE_CRED));
 		dataSource.setMinPoolSize(Integer.parseInt(env.getRequiredProperty(PROPERTY_NAME_C3P0_MIN_SIZE)));
 		dataSource.setMaxPoolSize(Integer.parseInt(env.getRequiredProperty(PROPERTY_NAME_C3P0_MAX_SIZE)));
 		dataSource.setMaxIdleTime(Integer.parseInt(env.getRequiredProperty(PROPERTY_NAME_C3P0_MAX_IDLETIME)));

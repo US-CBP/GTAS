@@ -1,0 +1,39 @@
+def appName = 'gtas-parent'
+def label = "build-${appName}-${currentBuild.number}"
+def commit = 'a1b2c3d4' // this will be updated later
+def envs = ['dev', 'test', 'prod']
+
+podTemplate(label: label, serviceAccount: 'jenkins', containers: [
+    containerTemplate(name: 'jdk8', image: 'openjdk:8', command: 'cat', ttyEnabled: true),
+]) {
+
+    node(label) {
+        try {
+            stage('Get Project') {
+                def myRepo = checkout scm
+                commit = "${myRepo.GIT_COMMIT[0..8]}"
+            }
+
+            stage('Build') {
+                container('jdk8') {
+                     stage('Code Analysis') {
+                         withSonarQubeEnv ("sonarqube") {
+                             sh """
+                             cd gtas-parent
+                             chmod 771 ./mvnw
+                             ./mvnw install -Dmaven.test.failure.ignore=true
+
+                             cd gtas-rulesvc
+                             ../mvnw sonar:sonar
+                             """
+                         }
+                     }
+                }
+            }
+        } catch (e) {
+            // If there was an exception thrown, the build failed
+            currentBuild.result = "FAILURE"
+            throw e
+        }
+    }
+}

@@ -54,6 +54,7 @@ public class LoaderWorkerThread implements Runnable {
 				msg = queue.poll(5000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				logger.error("error polling queue", e);
+				Thread.currentThread().interrupt();
 			}
 			if (msg != null) {
 				try {
@@ -64,10 +65,10 @@ public class LoaderWorkerThread implements Runnable {
 					logger.debug(Thread.currentThread().getName() + " FileName = " + fileName);
 					try {
 						processCommand();
-					} catch (Exception ignored) {
+					} catch (Exception e) {
 						logger.error("Catastrophic failure, " + "uncaught exception would cause"
 								+ " thread destruction without queue destruction "
-								+ "causing memory leak. Process Aborted! ", ignored);
+								+ "causing memory leak. Process Aborted! ", e);
 					}
 				} finally {
 					// ALWAYS release a lock when finished with a message.

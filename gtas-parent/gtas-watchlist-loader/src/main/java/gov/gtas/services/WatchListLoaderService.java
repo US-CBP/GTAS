@@ -106,13 +106,15 @@ public class WatchListLoaderService {
 	}
 
 	private static void parseAndLoadWatchList(ConfigurableApplicationContext ctx, File f) {
+		CSVParser parser = null;
+
 		try {
 			UserService userService = (UserService) ctx.getBean(UserService.class);
 			WatchlistService wlService = (WatchlistService) ctx.getBean(WatchlistService.class);
 			UserData user = userService.findById("gtas");
 			logger.info(user.getUserId());
 
-			CSVParser parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withHeader());
+			parser = new CSVParser(new FileReader(f), CSVFormat.DEFAULT.withHeader());
 			if (f.toString().endsWith("xls") || f.toString().endsWith("xlsx")) {
 				parser = new CSVParser(new FileReader(f), CSVFormat.EXCEL.withHeader());
 			}
@@ -188,13 +190,18 @@ public class WatchListLoaderService {
 			logger.info("****************************************************************");
 			logger.info(" All WatchList items were Activated " + resp2.getMessage());
 			logger.info("****************************************************************");
-			parser.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			logger.error("parse load watchlist error!", e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("parse load watchlist error.", e);
+		} finally {
+			try {
+				parser.close();
+			} catch (IOException e) {
+				logger.error("parse load watchlist error.", e);
+			}
 		}
 	}
 

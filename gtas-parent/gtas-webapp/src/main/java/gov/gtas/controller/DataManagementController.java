@@ -42,7 +42,7 @@ public class DataManagementController {
 		User currentUser = fetchCurrentUser();
 		Set<Role> roles = currentUser.getRoles();
 
-		Optional<Role> sysAdminRole = null;
+		Optional<Role> sysAdminRole = Optional.empty();
 
 		if (!roles.isEmpty()) {
 			sysAdminRole = roles.stream().filter(r -> (r.getRoleId() == 6)).findAny();

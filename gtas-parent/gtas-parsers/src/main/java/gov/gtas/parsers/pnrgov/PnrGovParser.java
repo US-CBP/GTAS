@@ -551,12 +551,12 @@ public final class PnrGovParser extends EdifactParser<PnrVo> {
 			processGroup6_Agent(dat, tvl, flightVo);
 		}
 	}
-	
+
 	private String trimLeadingZeros(String input) {
-		if(input == null || input.charAt(0) != '0') {
+		if (input == null || input.charAt(0) != '0') {
 			return input;
 		}
-		
+
 		return (trimLeadingZeros(input.substring(1)));
 	}
 
