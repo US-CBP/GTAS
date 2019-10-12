@@ -48,9 +48,9 @@ public class PriorityVettingListController {
 	private final AttachmentRepository attachmentRepo;
 
 	private final Logger logger = LoggerFactory.getLogger(PriorityVettingListController.class);
-	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+	private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
 			PriorityVettingListRequest.DATE_FORMAT);
-	private static final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
+	private final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
 
 	public PriorityVettingListController(HitCategoryService hitCategoryService,
 			PriorityVettingListService priorityVettingListService, AttachmentRepository attachmentRepo) {
