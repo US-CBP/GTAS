@@ -62,7 +62,7 @@ volumes: [
         stage('Create Docker images') {
           container('docker') {
          withCredentials([[$class: 'UsernamePasswordMultiBinding',
-           credentialsId: 'philruff2gitlab',
+           credentialsId: 'registry',
            usernameVariable: 'DOCKER_REG_USER',
            passwordVariable: 'DOCKER_REG_PASSWORD']]) {
           sh """
