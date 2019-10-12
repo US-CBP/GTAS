@@ -49,9 +49,9 @@ volumes: [
                 }
                 
                 
-               // stage('Publish test results') {
-               //     junit 'target/surefire-reports/*.xml'
-               // } 
+                stage('Publish test results') {
+                    junit 'gtas-parent/target/surefire-reports/*.xml'
+                } 
                 
                 
                 stage('Security Scan components') {
