@@ -5,7 +5,7 @@
  *  * Please see LICENSE.txt for details.
  *
  */
-app.service("caseModel", [function () {
+app.service("caseModel",  function (caseDispositionService) {
     'use strict';
     let defaultSort = [
             {column: 'countDown', dir: 'asc'},
@@ -13,24 +13,25 @@ app.service("caseModel", [function () {
         ],
     displayStatusCheckBoxes =     {
         NEW: true,
-        RE_OPENED: false,
+        RE_OPENED: true,
         DISMISSED: false
     },
-
+    ruleCatFilter,
     startDate = new Date(),
     endDate = new Date();
     endDate.setDate(endDate.getDate() + 1);
     startDate.setHours(startDate.getHours()-1);
-
+    ruleCatFilter = caseDispositionService.getDefaultCats();
     this.reset = function () {
         this.pageNumber = 1;
         this.pageSize = typeof this.pageSize != "undefined" ? this.pageSize : 10;
         this.origin = [];
         this.dest = [];
         this.etaStart = startDate;
+        this.ruleCatFilter = ruleCatFilter;
         this.etaEnd = endDate;
         this.sort = defaultSort;
         this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     };
     this.reset();
-}]);
+});

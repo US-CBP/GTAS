@@ -15,6 +15,8 @@
                     pageNumber: "1",
                     displayStatusCheckBoxes: getDefaultDispCheckboxes(),
                     withTimeLeft: getDefaultTimeLeft(),
+                    myRulesOnly: true,
+                    ruleCatFilter: getDefaultCats(),
                     etaStart: getDefaultStartDate(),
                     etaEnd: getDefaultEndDate(),
                     sort : getDefaultSort()
@@ -383,7 +385,16 @@
                  );
                  return dfq.promise;
              }
+            function getDefaultCats() {
+                let ruleList = [];
 
+                getRuleCats().then(function(result){
+                    for (let rule of Object.values(result.data)) {
+                        ruleList.push({name : rule.name, value: true})
+                    }
+                });
+                return ruleList;
+            }
             return ({
                 getDispositionStatuses: getDispositionStatuses,
                 getHitDispositionStatuses: getHitDispositionStatuses,
@@ -391,6 +402,7 @@
                 getAllCases: getAllCases,
                 getOneHitsDisposition: getOneHitsDisposition,
                 getRuleCats: getRuleCats,
+                getDefaultCats: getDefaultCats,
                 updatePassengerHitViews : updatePassengerHitViews,
                 updateHitsDisposition: updateHitsDisposition,
                 addToOneDayLookout: addToOneDayLookout,
