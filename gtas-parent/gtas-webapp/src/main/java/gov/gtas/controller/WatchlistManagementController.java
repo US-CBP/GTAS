@@ -16,7 +16,6 @@ import gov.gtas.error.CommonServiceException;
 import gov.gtas.json.JsonLookupData;
 import gov.gtas.json.JsonServiceResponse;
 import gov.gtas.model.lookup.HitCategory;
-import gov.gtas.model.lookup.WatchlistCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
 import gov.gtas.model.watchlist.json.WatchlistItemSpec;
 import gov.gtas.model.watchlist.json.WatchlistSpec;
@@ -240,8 +239,7 @@ public class WatchlistManagementController {
 		long categoryId = 0L;
 		for (WatchlistItemSpec spec : inputSpec.getWatchlistItems()) {
 			if (spec.getTerms() != null) {
-				categoryID = 0L;
-				_terms = new ArrayList<WatchlistTerm>();
+				_terms = new ArrayList<>();
 				for (int i = 0; i < spec.getTerms().length; i++) {
 					if (!spec.getTerms()[i].getField().equals("categoryId"))
 						_terms.add(spec.getTerms()[i]);
@@ -267,12 +265,6 @@ public class WatchlistManagementController {
 			}
 		}
 
-		// validateInput(inputSpec);
-
-		if (results.size() == 0) {
-			validateInput(inputSpec);
-			return watchlistService.createUpdateDeleteWatchlistItems(userId, inputSpec);
-		}
 		return results.stream().reduce(results.get(0),
 				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
 	}
