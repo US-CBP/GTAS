@@ -19,51 +19,51 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 @Service
-public class ErrorPersistenceServiceImpl implements ErrorPersistenceService{
-    @Resource
-    private ErrorRecordRepository errorRecordRepository;
-    
-    @Override
-    public ErrorDetailInfo create(ErrorDetailInfo error) {
-        ErrorRecord err =  errorRecordRepository.save(new ErrorRecord(error));
-        return new BasicErrorDetailInfo(err.getId(), err.getCode(), err.getTimestamp(), err.getDescription(), err.fetchErrorDetails());
-    }
+public class ErrorPersistenceServiceImpl implements ErrorPersistenceService {
+	@Resource
+	private ErrorRecordRepository errorRecordRepository;
 
-    @Override
-    public ErrorDetailInfo findById(Long id) {
-        ErrorRecord err =  errorRecordRepository.findById(id).orElse(null);
-        assert err != null;
-        return new BasicErrorDetailInfo(err.getId(), err.getCode(), err.getTimestamp(), err.getDescription(), err.fetchErrorDetails());
-    }
+	@Override
+	public ErrorDetailInfo create(ErrorDetailInfo error) {
+		ErrorRecord err = errorRecordRepository.save(new ErrorRecord(error));
+		return new BasicErrorDetailInfo(err.getId(), err.getCode(), err.getTimestamp(), err.getDescription(),
+				err.fetchErrorDetails());
+	}
 
-    @Override
-    public List<ErrorDetailInfo> findByDateRange(Date fromDate,
-            Date toDate) {
-        return convert(errorRecordRepository.findByTimestampRange(fromDate, toDate));
-    }
+	@Override
+	public ErrorDetailInfo findById(Long id) {
+		ErrorRecord err = errorRecordRepository.findById(id).orElse(null);
+		assert err != null;
+		return new BasicErrorDetailInfo(err.getId(), err.getCode(), err.getTimestamp(), err.getDescription(),
+				err.fetchErrorDetails());
+	}
 
-    @Override
-    public List<ErrorDetailInfo> findByDateFrom(Date fromDate) {
-        return convert(errorRecordRepository.findByTimestampFrom(fromDate));
-    }
+	@Override
+	public List<ErrorDetailInfo> findByDateRange(Date fromDate, Date toDate) {
+		return convert(errorRecordRepository.findByTimestampRange(fromDate, toDate));
+	}
 
-    @Override
-    public List<ErrorDetailInfo> findByCode(String code) {
-        return convert(errorRecordRepository.findByCode(code));
-    }
+	@Override
+	public List<ErrorDetailInfo> findByDateFrom(Date fromDate) {
+		return convert(errorRecordRepository.findByTimestampFrom(fromDate));
+	}
 
-    private List<ErrorDetailInfo> convert(List<ErrorRecord> lst){
-        List<ErrorDetailInfo> ret;
-        if(!CollectionUtils.isEmpty(lst)){
-            ret = lst.stream().map(
-                                   (ErrorRecord e)->
-                                        new BasicErrorDetailInfo(e.getId(), e.getCode(), e.getTimestamp(), e.getDescription(), e.fetchErrorDetails()))
-                              .collect(Collectors.toList());
-        } else {
-            ret = new LinkedList<ErrorDetailInfo>();
-        }
-        return ret;
-        
-    }
+	@Override
+	public List<ErrorDetailInfo> findByCode(String code) {
+		return convert(errorRecordRepository.findByCode(code));
+	}
+
+	private List<ErrorDetailInfo> convert(List<ErrorRecord> lst) {
+		List<ErrorDetailInfo> ret;
+		if (!CollectionUtils.isEmpty(lst)) {
+			ret = lst.stream().map((ErrorRecord e) -> new BasicErrorDetailInfo(e.getId(), e.getCode(), e.getTimestamp(),
+					e.getDescription(), e.fetchErrorDetails())).collect(Collectors.toList());
+		} else {
+			ret = new LinkedList<ErrorDetailInfo>();
+		}
+		return ret;
+
+	}
 }

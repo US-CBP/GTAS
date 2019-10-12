@@ -23,30 +23,32 @@ import org.springframework.core.annotation.Order;
 import org.springframework.core.Ordered;
 
 public class CorsFilter {
-    private static Logger logger = LoggerFactory.getLogger(CorsFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(CorsFilter.class);
 
-  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
-    HttpServletResponse response = (HttpServletResponse) res;
-    HttpServletRequest request = (HttpServletRequest) req;
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
-    response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-    response.setHeader("Access-Control-Max-Age", "3600");
-    
-    if(!request.getMethod().equals("OPTIONS")) {
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
+		HttpServletResponse response = (HttpServletResponse) res;
+		HttpServletRequest request = (HttpServletRequest) req;
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+		response.setHeader("Access-Control-Max-Age", "3600");
 
-        try{
-                chain.doFilter(req, res);
-            }catch(Exception ex){
-                logger.error("error in cors filter.", ex);
-            }
-    
-    }
+		if (!request.getMethod().equals("OPTIONS")) {
 
-  }
+			try {
+				chain.doFilter(req, res);
+			} catch (Exception ex) {
+				logger.error("error in cors filter.", ex);
+			}
 
-  public void init(FilterConfig filterConfig) {}
+		}
 
-  public void destroy() {}
- 
+	}
+
+	public void init(FilterConfig filterConfig) {
+	}
+
+	public void destroy() {
+	}
+
 }

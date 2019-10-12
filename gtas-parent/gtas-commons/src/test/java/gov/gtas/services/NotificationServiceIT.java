@@ -39,8 +39,7 @@ public class NotificationServiceIT {
 	/***
 	 * THIS TEST IS EXCLUDED FROM BEING RUN BY DEFAULT.
 	 * 
-	 * See excludes property of the maven-failsafe-plugin in
-	 * gtas-parent/pom/.xml
+	 * See excludes property of the maven-failsafe-plugin in gtas-parent/pom/.xml
 	 * 
 	 */
 

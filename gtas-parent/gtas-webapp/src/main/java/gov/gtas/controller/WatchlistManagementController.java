@@ -40,235 +40,229 @@ import java.util.List;
  */
 @RestController
 public class WatchlistManagementController {
-    private static final Logger logger = LoggerFactory
-            .getLogger(WatchlistManagementController.class);
+	private static final Logger logger = LoggerFactory.getLogger(WatchlistManagementController.class);
 
-    @Autowired
-    private WatchlistService watchlistService;
+	@Autowired
+	private WatchlistService watchlistService;
 
-    @Autowired
-    private RuleManagementService ruleManagementService;
+	@Autowired
+	private RuleManagementService ruleManagementService;
 
-    /**
-     * Gets the watchlist.
-     *
-     * @param entity the entity
-     * @param name   the name
-     * @return the watchlist
-     */
-    @RequestMapping(value = Constants.WL_GET_BY_NAME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonServiceResponse getWatchlist(@PathVariable String entity,
-                                            @PathVariable String name) {
-        logger.debug("******** name =" + name);
+	/**
+	 * Gets the watchlist.
+	 *
+	 * @param entity
+	 *            the entity
+	 * @param name
+	 *            the name
+	 * @return the watchlist
+	 */
+	@RequestMapping(value = Constants.WL_GET_BY_NAME, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse getWatchlist(@PathVariable String entity, @PathVariable String name) {
+		logger.debug("******** name =" + name);
 
-        WatchlistSpec resp = new WatchlistSpec(name, entity);
+		WatchlistSpec resp = new WatchlistSpec(name, entity);
 
-        for (WatchlistItem item : this.watchlistService.fetchItemsByWatchlistName(name)) {
-            try {
-                WatchlistItemSpec itemSpec = new ObjectMapper().readValue(item.getItemData(),
-                        WatchlistItemSpec.class);
-                itemSpec.setId(item.getId());
+		for (WatchlistItem item : this.watchlistService.fetchItemsByWatchlistName(name)) {
+			try {
+				WatchlistItemSpec itemSpec = new ObjectMapper().readValue(item.getItemData(), WatchlistItemSpec.class);
+				itemSpec.setId(item.getId());
 
-                WatchlistTerm[] items = new WatchlistTerm[itemSpec.getTerms().length + 1];
-                int i = 0;
-                for (; i < itemSpec.getTerms().length; i++) {
-                    items[i] = itemSpec.getTerms()[i];
-                }
-                items[i] = new WatchlistTerm("categoryId", "int", item.getWatchlistCategory().getId().toString());
-                itemSpec.setTerms(items);
-                resp.addWatchlistItem(itemSpec);
+				WatchlistTerm[] items = new WatchlistTerm[itemSpec.getTerms().length + 1];
+				int i = 0;
+				for (; i < itemSpec.getTerms().length; i++) {
+					items[i] = itemSpec.getTerms()[i];
+				}
+				items[i] = new WatchlistTerm("categoryId", "int", item.getWatchlistCategory().getId().toString());
+				itemSpec.setTerms(items);
+				resp.addWatchlistItem(itemSpec);
 
-            } catch (JsonParseException e) {
-                logger.error("caught JsonParseException");
-            } catch (JsonMappingException e) {
-                logger.error("caught JsonMappingException");
-            } catch (IOException e) {
-                logger.error("caught IOException");
-            }
-        }
+			} catch (JsonParseException e) {
+				logger.error("caught JsonParseException");
+			} catch (JsonMappingException e) {
+				logger.error("caught JsonMappingException");
+			} catch (IOException e) {
+				logger.error("caught IOException");
+			}
+		}
 
-        return new JsonServiceResponse(Status.SUCCESS,
-                "GET Watchlist By Name was successful", resp);
-    }
+		return new JsonServiceResponse(Status.SUCCESS, "GET Watchlist By Name was successful", resp);
+	}
 
-    @RequestMapping(value = Constants.WL_GETALL, method = RequestMethod.GET)
-    public List<WatchlistSpec> getWatchlist() {
-        return watchlistService.fetchAllWatchlists();
-    }
+	@RequestMapping(value = Constants.WL_GETALL, method = RequestMethod.GET)
+	public List<WatchlistSpec> getWatchlist() {
+		return watchlistService.fetchAllWatchlists();
+	}
 
-    @RequestMapping(value = Constants.WL_GETDRL, method = RequestMethod.GET)
-    public JsonServiceResponse getDrl() {
-        String rules = ruleManagementService
-                .fetchDrlRulesFromKnowledgeBase(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
-        return createDrlRulesResponse(rules);
-    }
+	@RequestMapping(value = Constants.WL_GETDRL, method = RequestMethod.GET)
+	public JsonServiceResponse getDrl() {
+		String rules = ruleManagementService.fetchDrlRulesFromKnowledgeBase(WatchlistConstants.WL_KNOWLEDGE_BASE_NAME);
+		return createDrlRulesResponse(rules);
+	}
 
-    @RequestMapping(value = Constants.WL_ADD_WL_CAT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void createWatchlistCategory(@RequestBody JsonLookupData wlCategory) {
-        WatchlistCategory wlCat = new WatchlistCategory();
-        wlCat.setDescription(wlCategory.getDescription());
-        wlCat.setName(wlCategory.getLabel());
-        watchlistService.createWatchlistCategory(wlCat);
+	@RequestMapping(value = Constants.WL_ADD_WL_CAT, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void createWatchlistCategory(@RequestBody JsonLookupData wlCategory) {
+		WatchlistCategory wlCat = new WatchlistCategory();
+		wlCat.setDescription(wlCategory.getDescription());
+		wlCat.setName(wlCategory.getLabel());
+		watchlistService.createWatchlistCategory(wlCat);
 
-    }
+	}
 
-    /**
-     * Creates the watchlist.
-     *
-     * @param entity    the entity
-     * @param inputSpec the input spec
-     * @return the json service response
-     */
-    @PostMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonServiceResponse createWatchlist(@PathVariable String entity,
-                                               @RequestBody WatchlistSpec inputSpec) {
-        String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist Create request by user: {}", userId);
+	/**
+	 * Creates the watchlist.
+	 *
+	 * @param entity
+	 *            the entity
+	 * @param inputSpec
+	 *            the input spec
+	 * @return the json service response
+	 */
+	@PostMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse createWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("******** Received Watchlist Create request by user: {}", userId);
 
-        return createUpdateWatchlist(inputSpec);
-    }
+		return createUpdateWatchlist(inputSpec);
+	}
 
-    /**
-     * Updates the watchlist.
-     *
-     * @param entity    the entity
-     * @param inputSpec the input spec
-     * @return the json service response
-     */
-    @PutMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonServiceResponse updateWatchlist(@PathVariable String entity,
-                                               @RequestBody WatchlistSpec inputSpec) {
-        String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist Update request by user: {}", userId);
+	/**
+	 * Updates the watchlist.
+	 *
+	 * @param entity
+	 *            the entity
+	 * @param inputSpec
+	 *            the input spec
+	 * @return the json service response
+	 */
+	@PutMapping(value = Constants.WL_CREATE_UPDATE_DELETE_ITEMS, produces = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse updateWatchlist(@PathVariable String entity, @RequestBody WatchlistSpec inputSpec) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("******** Received Watchlist Update request by user: {}", userId);
 
-        return createUpdateWatchlist(inputSpec);
-    }
+		return createUpdateWatchlist(inputSpec);
+	}
 
-    /**
-     * Delete all watchlist items.
-     *
-     * @param name the name
-     * @return the json service response
-     */
-    @RequestMapping(value = Constants.WL_DELETE, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonServiceResponse deleteAllWatchlistItems(@PathVariable String name) {
-        String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist DeleteAll request for watch list ="
-                + name + " by user " + userId);
-        //return watchlistService.deleteWatchlist(userId,name);
+	/**
+	 * Delete all watchlist items.
+	 *
+	 * @param name
+	 *            the name
+	 * @return the json service response
+	 */
+	@RequestMapping(value = Constants.WL_DELETE, method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse deleteAllWatchlistItems(@PathVariable String name) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("******** Received Watchlist DeleteAll request for watch list =" + name + " by user " + userId);
+		// return watchlistService.deleteWatchlist(userId,name);
 
-        return watchlistService.deleteWatchlist(userId, "NONE");
-    }
+		return watchlistService.deleteWatchlist(userId, "NONE");
+	}
 
-    /**
-     * Compile watchlists.
-     *
-     * @return the json service response
-     */
-    @RequestMapping(value = Constants.WL_COMPILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public JsonServiceResponse compileWatchlists() {
-        return watchlistService.activateAllWatchlists();
-    }
+	/**
+	 * Compile watchlists.
+	 *
+	 * @return the json service response
+	 */
+	@RequestMapping(value = Constants.WL_COMPILE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public JsonServiceResponse compileWatchlists() {
+		return watchlistService.activateAllWatchlists();
+	}
 
-    /**
-     * @return
-     */
-    @RequestMapping(value = Constants.WL_TEST, method = RequestMethod.GET)
-    public WatchlistSpec getTestWatchlist() {
-        return SampleDataGenerator.createSampleWatchlist("TestWatchlist");
-    }
+	/**
+	 * @return
+	 */
+	@RequestMapping(value = Constants.WL_TEST, method = RequestMethod.GET)
+	public WatchlistSpec getTestWatchlist() {
+		return SampleDataGenerator.createSampleWatchlist("TestWatchlist");
+	}
 
-    @RequestMapping(value = Constants.WL_CATEGORY_GETALL, method = RequestMethod.GET)
-    @ResponseBody
-    public List<JsonLookupData> getWatchlistCategories() {
+	@RequestMapping(value = Constants.WL_CATEGORY_GETALL, method = RequestMethod.GET)
+	@ResponseBody
+	public List<JsonLookupData> getWatchlistCategories() {
 
-        List<JsonLookupData> result = watchlistService.findWatchlistCategories();
-        return result;
-    }
+		List<JsonLookupData> result = watchlistService.findWatchlistCategories();
+		return result;
+	}
 
-    /**
-     * Creates the DRL rule response JSON object.
-     *
-     * @param rules the DRL rules.
-     * @return the JSON response object containing the rules.
-     */
-    private JsonServiceResponse createDrlRulesResponse(String rules) {
-        JsonServiceResponse resp = new JsonServiceResponse(Status.SUCCESS,
-                "Drools rules fetched successfully");
-        String[] lines = rules.split("\n");
-        resp.addResponseDetails(new JsonServiceResponse.ServiceResponseDetailAttribute(
-                "DRL Rules", lines));
-        return resp;
-    }
+	/**
+	 * Creates the DRL rule response JSON object.
+	 *
+	 * @param rules
+	 *            the DRL rules.
+	 * @return the JSON response object containing the rules.
+	 */
+	private JsonServiceResponse createDrlRulesResponse(String rules) {
+		JsonServiceResponse resp = new JsonServiceResponse(Status.SUCCESS, "Drools rules fetched successfully");
+		String[] lines = rules.split("\n");
+		resp.addResponseDetails(new JsonServiceResponse.ServiceResponseDetailAttribute("DRL Rules", lines));
+		return resp;
+	}
 
-    private Object merge(Object a, Object b) {
-        if (a == null)
-            return merge(new ArrayList<>(), b);
-        if (b == null)
-            return merge(a, new ArrayList<>());
-        List<Long> _a = (List<Long>) a;
-        List<Long> _b = (List<Long>) b;
-        _a.addAll(_b);
-        return _a;
-    }
+	private Object merge(Object a, Object b) {
+		if (a == null)
+			return merge(new ArrayList<>(), b);
+		if (b == null)
+			return merge(a, new ArrayList<>());
+		List<Long> _a = (List<Long>) a;
+		List<Long> _b = (List<Long>) b;
+		_a.addAll(_b);
+		return _a;
+	}
 
-    private void validateInput(WatchlistSpec inputSpec) {
-        List<WatchlistItemSpec> items = inputSpec != null ? inputSpec
-                .getWatchlistItems() : null;
-        if (inputSpec == null || CollectionUtils.isEmpty(items)) {
-            throw new CommonServiceException(
-                    CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
-                    String.format(
-                            CommonErrorConstants.NULL_ARGUMENT_ERROR_MESSAGE,
-                            "Create Query For Rule", "inputSpec"));
-        }
-    }
+	private void validateInput(WatchlistSpec inputSpec) {
+		List<WatchlistItemSpec> items = inputSpec != null ? inputSpec.getWatchlistItems() : null;
+		if (inputSpec == null || CollectionUtils.isEmpty(items)) {
+			throw new CommonServiceException(CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE, String
+					.format(CommonErrorConstants.NULL_ARGUMENT_ERROR_MESSAGE, "Create Query For Rule", "inputSpec"));
+		}
+	}
 
-    private JsonServiceResponse createUpdateWatchlist(WatchlistSpec inputSpec) {
-        String userId = GtasSecurityUtils.fetchLoggedInUserId();
-        logger.info("******** Received Watchlist Create/Update request by user ="
-                + userId);
+	private JsonServiceResponse createUpdateWatchlist(WatchlistSpec inputSpec) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		logger.info("******** Received Watchlist Create/Update request by user =" + userId);
 
-        List<WatchlistTerm> _terms = new ArrayList<WatchlistTerm>();
+		List<WatchlistTerm> _terms = new ArrayList<WatchlistTerm>();
 
-        List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
+		List<JsonServiceResponse> results = new ArrayList<JsonServiceResponse>();
 
-        for (WatchlistItemSpec spec : inputSpec.getWatchlistItems()) {
-            if (spec.getTerms() != null) {
-                long categoryID = 0L;
-                _terms = new ArrayList<WatchlistTerm>();
-                for (int i = 0; i < spec.getTerms().length; i++) {
-                    if (!spec.getTerms()[i].getField().equals("categoryId"))
-                        _terms.add(spec.getTerms()[i]);
-                    else
-                        categoryID = Long.parseLong(spec.getTerms()[i].getValue());
-                }
-                spec.setTerms((_terms.toArray(new WatchlistTerm[1])));
+		for (WatchlistItemSpec spec : inputSpec.getWatchlistItems()) {
+			if (spec.getTerms() != null) {
+				long categoryID = 0L;
+				_terms = new ArrayList<WatchlistTerm>();
+				for (int i = 0; i < spec.getTerms().length; i++) {
+					if (!spec.getTerms()[i].getField().equals("categoryId"))
+						_terms.add(spec.getTerms()[i]);
+					else
+						categoryID = Long.parseLong(spec.getTerms()[i].getValue());
+				}
+				spec.setTerms((_terms.toArray(new WatchlistTerm[1])));
 
-                WatchlistSpec _spec = new WatchlistSpec(inputSpec.getName(), inputSpec.getEntity());
+				WatchlistSpec _spec = new WatchlistSpec(inputSpec.getName(), inputSpec.getEntity());
 
-                _spec.addWatchlistItem(spec);
+				_spec.addWatchlistItem(spec);
 
-                validateInput(_spec);
+				validateInput(_spec);
 
-                JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec);
+				JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec);
 
-                if (categoryID > 0) {
-                    List<Long> ids = (List<Long>) result.getResult();
-                    watchlistService.updateWatchlistItemCategory(categoryID, ids.get(0));
-                }
+				if (categoryID > 0) {
+					List<Long> ids = (List<Long>) result.getResult();
+					watchlistService.updateWatchlistItemCategory(categoryID, ids.get(0));
+				}
 
-                results.add(result);
-            }
-        }
+				results.add(result);
+			}
+		}
 
-        //validateInput(inputSpec);
+		// validateInput(inputSpec);
 
-        if (results.size() == 0) {
-            validateInput(inputSpec);
-            return watchlistService.createUpdateDeleteWatchlistItems(userId, inputSpec);
-        }
-        return results.stream().reduce(results.get(0), (a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
-    }
+		if (results.size() == 0) {
+			validateInput(inputSpec);
+			return watchlistService.createUpdateDeleteWatchlistItems(userId, inputSpec);
+		}
+		return results.stream().reduce(results.get(0),
+				(a, b) -> new JsonServiceResponse(a.getStatus(), a.getMessage(), merge(a.getResult(), b.getResult())));
+	}
 
 }
