@@ -43,7 +43,7 @@ volumes: [
                             
                 stage ('Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn -f gtas-parent/ jacoco:check test pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
+                        sh "mvn -f gtas-parent/ jacoco:report test pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
                 }
                 
