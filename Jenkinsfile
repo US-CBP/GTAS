@@ -37,11 +37,11 @@ volumes: [
                     sh 'mvn -B  -f gtas-parent/ compile package -Dmaven.test.failure.ignore=true'
                 }
                 
-                stage('Unit Test and coverage project') {
+                stage('Unit Test') {
                     sh 'mvn -B -f gtas-parent/ test -Dmaven.test.failure.ignore=true'
                 }
                             
-                stage ('Package and Code Analysis') {
+                stage ('Code Analysis') {
                     withSonarQubeEnv {
                         sh "mvn -f gtas-parent/  pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
