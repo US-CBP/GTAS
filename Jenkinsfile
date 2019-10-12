@@ -17,9 +17,9 @@ volumes: [
         def shortGitCommit = "${gitCommit[0..10]}"
         def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
         def gitCommitCount = sh(script: "git rev-list --all --count", returnStdout: true)
-        def regURL = "registry.gitlab.com/unisys-fed/appserv-demos/ice18-tc"
+        def regURL = "dockerhub.com/paruff/gtas"
 
-        def regNamespace = "registry.gitlab.com/unisys-fed/appserv-demos/ice18-tc"
+        def regNamespace = "dockerhub.com/paruff/gtas"
         def artifactID = sh(script: "grep '<artifactId>' pom.xml | head -n 1 | sed -e 's/artifactId//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
         def POMversion = sh(script: "grep '<version>' pom.xml | head -n 1 | sed -e 's/version//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
  
