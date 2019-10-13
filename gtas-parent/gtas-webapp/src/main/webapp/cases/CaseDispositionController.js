@@ -216,8 +216,9 @@
                 $scope.flightId = pax.flightId;
                 $mdDialog.show({
                     controller: 'PassengerDetailCtrl',
-                    templateUrl: 'pax/pax.detail.html',
+                    templateUrl: 'pax/pax.detail.modal.html',
                     clickOutsideToClose: true,
+                    fullscreen: true,
                     resolve: {
                         passenger: function (paxDetailService) {
                             return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
@@ -241,6 +242,9 @@
                         ,
                         watchlistLinks: function (paxDetailService) {
                             return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        },
+                        disableLinks: function() {
+                            return true;
                         }
                     }
                 })

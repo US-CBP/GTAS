@@ -606,6 +606,9 @@ var app;
                         },
                         watchlistLinks: function(paxDetailService, $stateParams){
                           return paxDetailService.getPaxWatchlistLink($stateParams.paxId)
+                        },
+                        disableLinks: function() {
+                            return false;
                         }
                     }
                 })

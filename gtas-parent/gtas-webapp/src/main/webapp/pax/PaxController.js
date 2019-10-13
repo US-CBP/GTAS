@@ -22,10 +22,12 @@
     watchlistLinks,
     paxDetailService,
     caseService,
+    disableLinks,
     watchListService,
     codeTooltipService,
     configService
   ) {
+    $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
     $scope.isLoadingFlightHistory = true;

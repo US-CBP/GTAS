@@ -35,9 +35,6 @@
         </form>
     </md-sidenav>
 
-    <style>
-    </style>
-
     <!-- BEGIN CONTENT -->
     <div>
 
@@ -45,13 +42,11 @@
             <!--  ACTION BUTTONS  -->
 
 
-
-
             <div class="panel panel-default margin-right-1">
 
 
                 <!-- MD TABS AND CONTENT -->
-                <md-tabs id="detailSection" md-stretch-tabs="never" md-dynamic-height>
+                <md-tabs id="detailSection" md-stretch-tabs="never" md-dynamic-height >
 
                     <!-- SUMMARY TAB  -->
                     <md-tab label="{{'tab.summary' | translate}}">
@@ -181,7 +176,7 @@
                                                     <td>{{j.title}}</td>
                                                     <td>{{j.ruleConditions}}</td>
                                                     <td>{{j.createDate |date:'yyyy-MM-dd'}}</td>
-                                                    <td> <a href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
+                                                    <td> <a ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -275,7 +270,7 @@
                                                 <tr ng-repeat="flightpax in passenger.apisMessageVo.flightpaxs">
                                                     <td>{{flightpax.firstName}}</td>
                                                     <td>{{flightpax.middleName}}</td>
-                                                    <td><a class="primary-link" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
+                                                    <td><a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{flightpax.passengerId}}/{{flightpax.flightId}}" target="pax.detail" title="{{'msg.showpassengerdetails' | translate}}">{{flightpax.lastName}}</a></td>
                                                     <td>
                                 <span ng-mouseleave="resetTooltip()">{{ flightpax.passengerType }}
                           <md-tooltip class="multi-tooltip" md-direction="left">
@@ -351,7 +346,7 @@
                                                 <tr ng-repeat="leg in passenger.pnrVo.flightLegs" ng-click="highlightClass('TVL'+leg.originAirport)">
                                                     <td style="align-items: center;">{{leg.legNumber }}</td>
                                                     <td ng-if="!leg.bookingDetailId" style="align-items: left; width: 10%;">
-                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
+                                                        <a class="primary-link" title="{{'msg.showflightdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/flightpax/{{leg.flightId}}/{{leg.flightNumber}}/{{leg.originAirport}}/{{leg.destinationAirport}}/{{leg.direction}}/{{leg.eta.substring(0, 10)}}/{{leg.etd.substring(0, 10);}}">{{leg.flightNumber | nospace }}</a></td>
                                                     <td ng-if="leg.bookingDetailId" style="align-items: left; width: 10%;">{{leg.flightNumber | nospace }}</td>
                                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{leg.originAirport }}
@@ -389,7 +384,7 @@
                                                 <tr ng-repeat="pass in passenger.pnrVo.passengers" ng-click="highlightClass('SSR'+pass.firstName)">
                                                     <td>{{ pass.firstName }}</td>
                                                     <td>{{ pass.middleName }}</td>
-                                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
+                                                    <td><a title="{{'msg.showpassengerdetails' | translate}}" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{pass.paxId}}/{{passenger.flightId}}">{{ pass.lastName }}</a></td>
                                                     <td>
                                       <span ng-mouseleave="resetTooltip()">{{ pass.gender }}
                                         <md-tooltip class="multi-tooltip" md-direction="left">
@@ -759,9 +754,12 @@
                                                 <tbody>
                                                 <tr ng-repeat="k in flight | orderBy:'-etd'">
                                                     <td ng-if="!k.bookingDetail">
-                                                        <a class="primary-link" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
-                                                           target="pax.detail" title="{{'msg.showflightdetails' | translate}}">
-                                                            {{k.fullFlightNumber}}</a>
+                                                        <a class="primary-link" ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{k.passId}}/{{k.flightId}}"
+                                                           target="pax.detail" title="{{'msg.showflightdetails' | translate}}"
+                                                           ng-class="{'disabled': disableLinks}"
+                                                        >
+                                                            {{k.fullFlightNumber}}
+                                                        </a>
                                                     </td>
                                                     <td class="md-primary md-default-theme"
                                                         style="text-decoration: none;
@@ -925,7 +923,7 @@
 
                 </md-tabs>
                 <!-- END - TABS AND CONTENT -->
-                <div class="flex justify-around action-buttons">
+                <div class="flex justify-around action-buttons" ng-show="!disableLinks">
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
                         <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
                     </button>
@@ -935,7 +933,7 @@
                     <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
                     </a>
-                    <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
+                    <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
                     </a>
                 </div>

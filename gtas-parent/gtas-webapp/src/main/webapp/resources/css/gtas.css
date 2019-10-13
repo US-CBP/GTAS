@@ -478,6 +478,14 @@ div[ui-grid] {
 .white-space-preline {
   white-space:pre-line;
 }
+
+.disabled {
+  color: #AAAAAA;
+  cursor: default;
+  pointer-events: none;
+  text-decoration: none;
+}
+
 .flex {
   display: flex;
   display: -ms-flexbox;
