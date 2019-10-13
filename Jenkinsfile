@@ -19,7 +19,7 @@ volumes: [
         def gitCommitCount = sh(script: "git rev-list --all --count", returnStdout: true)
         def regURL = "dockerhub.com/paruff/gtas"
 
-        def regNamespace = "dockerhub.com/paruff/gtas"
+        def regNamespace = "paruff"
         def artifactID = sh(script: "grep '<artifactId>' pom.xml | head -n 1 | sed -e 's/artifactId//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
         def POMversion = sh(script: "grep '<version>' pom.xml | head -n 1 | sed -e 's/version//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
  
