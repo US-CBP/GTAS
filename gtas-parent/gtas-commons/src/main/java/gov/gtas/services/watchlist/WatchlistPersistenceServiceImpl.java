@@ -190,6 +190,7 @@ public class WatchlistPersistenceServiceImpl implements WatchlistPersistenceServ
 					logRecords.add(createAuditLogRecord(AuditActionType.UPDATE_WL, watchlist, item,
 							WATCHLIST_LOG_UPDATE_MESSAGE, editUser));
 					item.setHitCategory(hc);
+					item.setAuthor(editUser);
 					updList.add(item);
 				} else {
 					item.setAuthor(editUser);

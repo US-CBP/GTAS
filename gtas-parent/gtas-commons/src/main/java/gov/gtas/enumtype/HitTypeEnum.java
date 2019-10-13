@@ -25,7 +25,9 @@ public enum HitTypeEnum {
 
 	GRAPH_HIT("GH", "GH"), // Graph Database rule
 
-	MANUAL_HIT("M", "M"); // Manual Hit
+	MANUAL_HIT("M", "M"), // Manual Hit
+
+	NOT_USED("VV", "VV"); // Not used - for sorting in database.
 
 	private final String hitType;
 	private final String displayName;

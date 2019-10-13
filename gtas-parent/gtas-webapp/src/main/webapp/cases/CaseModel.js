@@ -16,6 +16,12 @@ app.service("caseModel",  function (caseDispositionService) {
         RE_OPENED: true,
         DISMISSED: false
     },
+    ruleTypes =     {
+        WATCHLIST: true,
+        USER_RULE: true,
+        GRAPH_RULE: true,
+        PARTIAL_WATCHLIST: false
+    },
     ruleCatFilter,
     startDate = new Date(),
     endDate = new Date();
@@ -29,7 +35,9 @@ app.service("caseModel",  function (caseDispositionService) {
         this.dest = [];
         this.etaStart = startDate;
         this.ruleCatFilter = ruleCatFilter;
+        this.myRulesOnly = false;
         this.etaEnd = endDate;
+        this.ruleTypes=ruleTypes;
         this.sort = defaultSort;
         this.displayStatusCheckBoxes = displayStatusCheckBoxes;
     };

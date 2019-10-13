@@ -15,7 +15,13 @@
                     pageNumber: "1",
                     displayStatusCheckBoxes: getDefaultDispCheckboxes(),
                     withTimeLeft: getDefaultTimeLeft(),
-                    myRulesOnly: true,
+                    myRulesOnly: false,
+                    ruleTypes:    {
+                        WATCHLIST: true,
+                        USER_RULE: true,
+                        GRAPH_RULE: true,
+                        PARTIAL_WATCHLIST: false
+                    },
                     ruleCatFilter: getDefaultCats(),
                     etaStart: getDefaultStartDate(),
                     etaEnd: getDefaultEndDate(),
@@ -78,7 +84,9 @@
                     ruleCatId: params.model.ruleCat,
                     etaStart: params.model.etaStart,
                     etaEnd: params.model.etaEnd,
+                    ruleTypes: params.model.ruleTypes,
                     displayStatusCheckBoxes : params.model.displayStatusCheckBoxes
+
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({
@@ -116,6 +124,9 @@
                     pageNumber: "1",
                     flightNumber: model.flightNumber,
                     displayStatusCheckBoxes: model.displayStatusCheckBoxes,
+                    ruleCatFilter: model.ruleCatFilter,
+                    myRulesOnly: model.myRulesOnly,
+                    ruleTypes: model.ruleTypes,
                     withTimeLeft: model.withTimeLeft,
                     lastName: model.name,
                     status: model.status,
@@ -387,7 +398,6 @@
              }
             function getDefaultCats() {
                 let ruleList = [];
-
                 getRuleCats().then(function(result){
                     for (let rule of Object.values(result.data)) {
                         ruleList.push({name : rule.name, value: true})

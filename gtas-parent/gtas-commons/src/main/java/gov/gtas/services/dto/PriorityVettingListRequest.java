@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	private int pageNumber;
 
+	private Boolean myRulesOnly;
+
 	private int pageSize;
 
 	private Long flightId;
@@ -28,6 +31,12 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 	private Long caseId;
 
 	private PriorityVettingListStatus displayStatusCheckBoxes;
+
+	@JsonProperty("ruleTypes")
+	private transient PriorityVettingListRuleTypes priorityVettingListRuleTypes;
+
+	@JsonProperty("ruleCatFilter")
+	private transient List<RuleCatFilterCheckbox> ruleCatFilter = new ArrayList<>();
 
 	private Long paxId;
 
@@ -65,6 +74,14 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	private transient List<SortOptionsDto> sort;
 
+	public PriorityVettingListRuleTypes getPriorityVettingListRuleTypes() {
+		return priorityVettingListRuleTypes;
+	}
+
+	public void setPriorityVettingListRuleTypes(PriorityVettingListRuleTypes priorityVettingListRuleTypes) {
+		this.priorityVettingListRuleTypes = priorityVettingListRuleTypes;
+	}
+
 	public int getPageNumber() {
 		return pageNumber;
 	}
@@ -87,6 +104,14 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	public void setHitId(Long hitId) {
 		this.hitId = hitId;
+	}
+
+	public Boolean getMyRulesOnly() {
+		return myRulesOnly;
+	}
+
+	public void setMyRulesOnly(Boolean myRulesOnly) {
+		this.myRulesOnly = myRulesOnly;
 	}
 
 	public String getCaseComments() {
@@ -119,6 +144,14 @@ public class PriorityVettingListRequest extends PassengersRequestDto implements 
 
 	public void setFlightId(Long flightId) {
 		this.flightId = flightId;
+	}
+
+	public List<RuleCatFilterCheckbox> getRuleCatFilter() {
+		return ruleCatFilter;
+	}
+
+	public void setRuleCatFilter(List<RuleCatFilterCheckbox> ruleCatFilter) {
+		this.ruleCatFilter = ruleCatFilter;
 	}
 
 	public Date getEtaStart() {
