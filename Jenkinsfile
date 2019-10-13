@@ -67,7 +67,7 @@ volumes: [
            usernameVariable: 'DOCKER_REG_USER',
            passwordVariable: 'DOCKER_REG_PASSWORD']]) {
           sh """
-            docker login registry.gitlab.com -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
+            docker login -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
             docker build -t ${regNamespace}/${artifactID} .
             docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${shortGitCommit}
             echo $gitBranch
