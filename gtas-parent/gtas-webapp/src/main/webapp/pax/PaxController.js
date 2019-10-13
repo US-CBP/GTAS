@@ -52,7 +52,9 @@
     $scope.destination = $scope.passenger.debarkation;
     $scope.SvgType = 2;
     $scope.isReloaded = true;
-    
+    $scope.answer = function(answer) {
+      $mdDialog.hide(answer);
+    };
     configService.cypherUrl().then(function(result){
       vaquita.rest.CYPHER_URL = result;  
     });

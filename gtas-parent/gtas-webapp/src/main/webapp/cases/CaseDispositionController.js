@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -247,8 +247,13 @@
                             return true;
                         }
                     }
-                })
-                ;
+                }).then(function(answer) {
+                    if (answer === 'dismiss') {
+                        $scope.deleteRow(row);
+                    } else if (answer === 'fullPax') {
+                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    }
+                });
             };
             $scope.casesDispGrid = {
                 data: $scope.casesList,
