@@ -54,9 +54,9 @@ volumes: [
              //   } 
                 
                 
-            //    stage('Security Scan components') {
-            //       sh 'mvn -B -f gtas-parent/ org.owasp:dependency-check-maven:check  -Dmaven.test.failure.ignore=true'
-            //   }
+                stage('Security Scan components') {
+                   sh 'mvn -B -f gtas-parent/ install org.owasp:dependency-check-maven:check  -Dmaven.test.failure.ignore=true'
+               }
                 
             }
         }
