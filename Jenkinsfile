@@ -45,7 +45,7 @@ volumes: [
                     withSonarQubeEnv {
                         sh "mvn -f gtas-parent/ jacoco:report test pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
-                    junit 'gtas-parent/target/surefire-reports/*.xml'
+                 //   junit 'gtas-parent/target/surefire-reports/*.xml'
                 }
                 
                 
