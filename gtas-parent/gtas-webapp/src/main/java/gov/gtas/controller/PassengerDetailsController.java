@@ -402,7 +402,7 @@ public class PassengerDetailsController {
 	}
 	
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)
-	public @ResponseBody List<DispositionStatus> getDispositionStatuses() {
+	public @ResponseBody List<DispositionStatusVo> getDispositionStatuses() {
 
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		User user = userService.fetchUser(userId);
