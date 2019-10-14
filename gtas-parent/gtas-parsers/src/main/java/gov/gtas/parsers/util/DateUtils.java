@@ -66,8 +66,11 @@ public final class DateUtils {
 		if (etd == null || expDt == null) {
 			return 0;
 		}
+
 		long etdMillis = etd.getTime();
 		long expMillis = expDt.getTime();
-		return (int) Math.round((expMillis - etdMillis) / (24 * 60 * 60 * 1000));
+		float deltaMillis = (float) (expMillis - etdMillis);
+
+		return Math.round(deltaMillis / (24 * 60 * 60 * 1000));
 	}
 }

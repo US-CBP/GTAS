@@ -407,6 +407,12 @@ public class UdrServiceImpl implements UdrService {
 		if (author == null || !author.getUserId().equals(userId)) {
 			user = userService.fetchUser(userId);
 		}
+
+		String auditUserId = userId;
+		if (user != null) {
+			auditUserId = user.getUserId();
+		}
+
 		String message = null;
 		AuditActionTarget target = new AuditActionTarget(actionType, udr.getTitle(),
 				udr.getId() != null ? String.valueOf(udr.getId()) : null);
@@ -414,30 +420,30 @@ public class UdrServiceImpl implements UdrService {
 		switch (actionType) {
 		case UPDATE_UDR:
 			message = UDR_LOG_UPDATE_MESSAGE;
-			actionData = createAuditDetailForUdr(udrspec, author);
+			actionData = createAuditDetailForUdr(udrspec, auditUserId);
 			break;
 		case UPDATE_UDR_META:
 			message = UDR_LOG_UPDATE_META_MESSAGE;
-			actionData = createAuditDetailForUdr(udrspec, author);
+			actionData = createAuditDetailForUdr(udrspec, auditUserId);
 			break;
 		case CREATE_UDR:
 			message = UDR_LOG_CREATE_MESSAGE;
-			actionData = createAuditDetailForUdr(udrspec, author);
+			actionData = createAuditDetailForUdr(udrspec, auditUserId);
 			break;
 		case DELETE_UDR:
 			message = UDR_LOG_DELETE_MESSAGE;
-			actionData = createAuditDetailForUdr(udr, author);
+			actionData = createAuditDetailForUdr(udr, auditUserId);
 			break;
 		default:
 			break;
 
 		}
-		auditLogPersistenceService.create(actionType, target, actionData, message, user.getUserId());
+		auditLogPersistenceService.create(actionType, target, actionData, message, auditUserId);
 	}
 
-	private AuditActionData createAuditDetailForUdr(UdrRule udr, User author) {
+	private AuditActionData createAuditDetailForUdr(UdrRule udr, String auditUserId) {
 		AuditActionData actionData = new AuditActionData();
-		actionData.addProperty("author", udr.getAuthor() != null ? udr.getAuthor().getUserId() : author.getUserId());
+		actionData.addProperty("author", udr.getAuthor() != null ? udr.getAuthor().getUserId() : auditUserId);
 		actionData.addProperty("description",
 				udr.getMetaData().getDescription() != null ? udr.getMetaData().getDescription() : StringUtils.EMPTY);
 		actionData.addProperty("startDate", DateCalendarUtils.formatJsonDate(udr.getMetaData().getStartDt()));
@@ -449,10 +455,10 @@ public class UdrServiceImpl implements UdrService {
 		return actionData;
 	}
 
-	private AuditActionData createAuditDetailForUdr(UdrSpecification udrspec, User author) {
+	private AuditActionData createAuditDetailForUdr(UdrSpecification udrspec, String auditUserId) {
 		AuditActionData actionData = new AuditActionData();
 		MetaData meta = udrspec.getSummary();
-		actionData.addProperty("author", meta.getAuthor() != null ? meta.getAuthor() : author.getUserId());
+		actionData.addProperty("author", meta.getAuthor() != null ? meta.getAuthor() : auditUserId);
 		actionData.addProperty("description",
 				meta.getDescription() != null ? meta.getDescription() : StringUtils.EMPTY);
 		actionData.addProperty("startDate", DateCalendarUtils.formatJsonDate(meta.getStartDate()));

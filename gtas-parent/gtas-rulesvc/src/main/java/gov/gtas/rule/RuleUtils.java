@@ -91,12 +91,8 @@ public class RuleUtils {
 	 *            the source KieBase
 	 * @return the created KieSession
 	 */
-	public static KieSession createSession(KieBase kieBase) {
-		KieSession ksession;
-		synchronized (kieBase) {
-			ksession = kieBase.newKieSession();
-		}
-		return ksession;
+	public static synchronized KieSession createSession(KieBase kieBase) {
+		return kieBase.newKieSession();
 	}
 
 	/**

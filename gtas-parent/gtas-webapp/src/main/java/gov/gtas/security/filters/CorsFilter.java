@@ -33,15 +33,13 @@ public class CorsFilter {
 		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
 		response.setHeader("Access-Control-Max-Age", "3600");
 
-		if (request.getMethod() != "OPTIONS") {
+		if (!request.getMethod().equals("OPTIONS")) {
 
 			try {
 				chain.doFilter(req, res);
 			} catch (Exception ex) {
 				logger.error("error in cors filter.", ex);
 			}
-
-		} else {
 
 		}
 

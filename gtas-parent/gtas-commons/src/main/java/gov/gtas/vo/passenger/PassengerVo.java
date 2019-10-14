@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import gov.gtas.vo.BaseVo;
 
 public class PassengerVo extends BaseVo {
-	private static final SimpleDateFormat dtFormat = new SimpleDateFormat(FlightVo.DATE_FORMAT);
+	private SimpleDateFormat dtFormat = new SimpleDateFormat(FlightVo.DATE_FORMAT);
 
 	private String title;
 	private String firstName;

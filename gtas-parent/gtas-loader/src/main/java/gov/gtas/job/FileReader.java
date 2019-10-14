@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.job;
@@ -47,7 +47,7 @@ public class FileReader {
 		logger.info("************************* FILE READING JOB BEGIN AT ************************" + new Date());
 		logger.info("*************************************************************************************");
 		Properties properties = getSchedulerProperties();
-		if (properties != null) {
+		if (properties.propertyNames().hasMoreElements()) {
 			File apisFolder = new File(properties.getProperty("apis.dir.origin"));
 			File apisProcessedFolder = new File(properties.getProperty("apis.dir.processed"));
 			// File apisWorkingFolder = new
@@ -75,24 +75,31 @@ public class FileReader {
 			logger.info("#################################################################################");
 			logger.info("#####################  CHECKING AND PROCESSING PNR FILES FROM ###################"
 					+ folder.getAbsolutePath());
-			if (folder.isDirectory()) {
-				for (final File fileEntry : folder.listFiles()) {
-					if (!fileEntry.isDirectory()) {
-						FileSystem fromFileSystem = FileSystems.getDefault();
-						FileSystem toFileSystem = FileSystems.getDefault();
-						Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
-						Path moveTo = toFileSystem
-								.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
-						if (fileEntry.isFile()) {
-							logger.info("Reading file from : " + moveFrom);
-							logger.info("Moving file after processing to : " + moveTo);
-							fileEntry.renameTo(moveTo.toFile());
+
+			if (!folder.isDirectory()) {
+				return;
+			}
+
+			for (final File fileEntry : folder.listFiles()) {
+				if (!fileEntry.isDirectory()) {
+					FileSystem fromFileSystem = FileSystems.getDefault();
+					FileSystem toFileSystem = FileSystems.getDefault();
+					Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
+					Path moveTo = toFileSystem
+							.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
+					if (fileEntry.isFile()) {
+						logger.info("Reading file from : " + moveFrom);
+						logger.info("Moving file after processing to : " + moveTo);
+						boolean fileEntryRenamed = fileEntry.renameTo(moveTo.toFile());
+						if (!fileEntryRenamed) {
+							logger.error("fileEntry rename failed");
 						}
-						fromFileSystem.close();
-						toFileSystem.close();
 					}
+					fromFileSystem.close();
+					toFileSystem.close();
 				}
 			}
+
 			logger.info("#####################  FINISHED PROCESSING PNR FILES ############################");
 		} catch (Exception e) {
 			handleExceptions(e);
@@ -104,7 +111,7 @@ public class FileReader {
 		ErrorDetailInfo errorDetails = ErrorHandlerFactory.createErrorDetails(e);
 		try {
 			errorDetails = errorService.create(errorDetails); // add the saved
-																// ID
+			// ID
 		} catch (Exception exception) {
 			// possibly DB is down
 			logger.error("Error creating error details", e);
@@ -112,37 +119,43 @@ public class FileReader {
 	}
 
 	private boolean checkAndMoveApisFiles(File folder, File processedFolder) {
-		boolean finished = false;
 		try {
 			logger.info("***********************CHECKING AND PROCESSING APIS FILES FROM**********************"
 					+ folder.getAbsolutePath());
-			if (folder.isDirectory()) {
-				for (final File fileEntry : folder.listFiles()) {
-					if (!fileEntry.isDirectory()) {
-						FileSystem fromFileSystem = FileSystems.getDefault();
-						FileSystem toFileSystem = FileSystems.getDefault();
-						Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
-						Path moveTo = toFileSystem
-								.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
-						if (fileEntry.isFile()) {
-							logger.info("Reading file from : " + moveFrom);
-							// MessageLoader.processSingleFile(apisService,
-							// fileEntry);
-							// apisService.processMessage(moveFrom.toString());
-							logger.info("Moving file after processing to : " + moveTo);
-							fileEntry.renameTo(moveTo.toFile());
+
+			if (!folder.isDirectory()) {
+				return true;
+			}
+
+			for (final File fileEntry : folder.listFiles()) {
+				if (!fileEntry.isDirectory()) {
+					FileSystem fromFileSystem = FileSystems.getDefault();
+					FileSystem toFileSystem = FileSystems.getDefault();
+					Path moveFrom = fromFileSystem.getPath(fileEntry.getPath());
+					Path moveTo = toFileSystem
+							.getPath(processedFolder.getPath() + File.separator + fileEntry.getName());
+					if (fileEntry.isFile()) {
+						logger.info("Reading file from : " + moveFrom);
+						// MessageLoader.processSingleFile(apisService,
+						// fileEntry);
+						// apisService.processMessage(moveFrom.toString());
+						logger.info("Moving file after processing to : " + moveTo);
+						boolean fileEntryRenamed = fileEntry.renameTo(moveTo.toFile());
+						if (!fileEntryRenamed) {
+							logger.error("fileEntry rename failed");
 						}
-						fromFileSystem.close();
-						toFileSystem.close();
 					}
+					fromFileSystem.close();
+					toFileSystem.close();
 				}
 			}
-			finished = true;
 		} catch (Exception e) {
 			handleExceptions(e);
 			logger.info("Exception saving APIS message file" + e.getMessage());
+			return false;
 		}
-		return finished;
+
+		return true;
 	}
 
 	private Properties getSchedulerProperties() {
