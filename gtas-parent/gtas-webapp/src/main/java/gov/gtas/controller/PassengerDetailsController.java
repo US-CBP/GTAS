@@ -432,7 +432,7 @@ public class PassengerDetailsController {
 
 	@RequestMapping(value = "/createoreditdispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JsonServiceResponse createOrEditDispositionStatus(
-			@RequestBody DispositionStatus ds) {
+			@RequestBody DispositionStatusVo ds) {
 		pService.createOrEditDispositionStatus(ds);
 		return new JsonServiceResponse(Status.SUCCESS,
 				"Creation or Edit of disposition status successful");
@@ -440,7 +440,7 @@ public class PassengerDetailsController {
 
 	@RequestMapping(value = "/deletedispstatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody JsonServiceResponse deleteDispositionStatus(
-			@RequestBody DispositionStatus ds) {
+			@RequestBody DispositionStatusVo ds) {
 		if (!isRemovableDispositionStatus(ds)) {
 			return new JsonServiceResponse(Status.FAILURE,
 					"This status is irremovable");
@@ -965,13 +965,10 @@ public class PassengerDetailsController {
 		}
 	}
 
-	private boolean isRemovableDispositionStatus(DispositionStatus ds) {
+	private boolean isRemovableDispositionStatus(DispositionStatusVo ds) {
 		// Prevent deletion of any of the original disp status ids (New, Closed,
 		// Open, Re-opened, Pending Closure)
-		if (ds.getId() <= 5L) {
-			return false;
-		}
-		return true;
+		return ds.getId() > 5L;
 	}
 
 	private JsonServiceResponse checkIfValidCaseStatusAction(

@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
 
 import gov.gtas.model.*;
 import gov.gtas.repository.*;
-import gov.gtas.vo.passenger.PassengerGridItemVo;
+import gov.gtas.vo.passenger.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,9 +33,6 @@ import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.PassengerVo;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
@@ -242,23 +239,33 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public List<DispositionStatus> getDispositionStatuses() {
-        Iterable<DispositionStatus> i = dispositionStatusRepo.findAll();
-        if (i != null) {
-            return IteratorUtils.toList(i.iterator());
+    public List<DispositionStatusVo> getDispositionStatuses() {
+        List<DispositionStatusVo> dispositionStatusVos = new ArrayList<>();
+
+        Iterable<DispositionStatus> dispositionStatuses = dispositionStatusRepo.findAll();
+
+        if (dispositionStatuses != null) {
+            for (DispositionStatus dispositionStatus : dispositionStatuses) {
+                dispositionStatusVos.add(new DispositionStatusVo(dispositionStatus.getName(), dispositionStatus.getDescription()));
+            }
         }
-        return new ArrayList<>();
+
+        return dispositionStatusVos;
     }
 
     @Transactional
     @Override
-    public void createOrEditDispositionStatus(DispositionStatus ds) {
+    public void createOrEditDispositionStatus(DispositionStatusVo dsvo) {
+        DispositionStatus ds = new DispositionStatus(dsvo.getName(), dsvo.getDescription());
+
         dispositionStatusRepo.save(ds);
     }
 
     @Transactional
     @Override
-    public void deleteDispositionStatus(DispositionStatus ds) {
+    public void deleteDispositionStatus(DispositionStatusVo dsvo) {
+        DispositionStatus ds = new DispositionStatus(dsvo.getName(), dsvo.getDescription());
+
         dispositionStatusRepo.delete(ds);
     }
 

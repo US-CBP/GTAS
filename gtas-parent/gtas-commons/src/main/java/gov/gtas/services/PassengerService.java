@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gov.gtas.vo.passenger.DispositionStatusVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface PassengerService {
@@ -51,14 +52,14 @@ public interface PassengerService {
 	void createDisposition(List<HitsSummary> hit);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
-	List<DispositionStatus> getDispositionStatuses();
+	List<DispositionStatusVo> getDispositionStatuses();
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES)
 	List<CaseVo> getAllDispositions();
 
-	void createOrEditDispositionStatus(DispositionStatus ds);
+	void createOrEditDispositionStatus(DispositionStatusVo ds);
 
-	void deleteDispositionStatus(DispositionStatus ds);
+	void deleteDispositionStatus(DispositionStatusVo ds);
 
 	/**
 	 * Gets the passengers by criteria.
