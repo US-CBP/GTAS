@@ -22,7 +22,8 @@ public class DispositionStatus extends BaseEntity {
 
     public DispositionStatus() { }
 
-    public DispositionStatus(String name, String description) {
+    public DispositionStatus(Long id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
     }

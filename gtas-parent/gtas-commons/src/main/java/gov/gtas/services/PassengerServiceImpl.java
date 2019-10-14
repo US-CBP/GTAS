@@ -244,7 +244,7 @@ public class PassengerServiceImpl implements PassengerService {
 
         if (dispositionStatuses != null) {
             for (DispositionStatus dispositionStatus : dispositionStatuses) {
-                dispositionStatusVos.add(new DispositionStatusVo(dispositionStatus.getName(), dispositionStatus.getDescription()));
+                dispositionStatusVos.add(new DispositionStatusVo(dispositionStatus.getId(), dispositionStatus.getName(), dispositionStatus.getDescription()));
             }
         }
 
@@ -254,7 +254,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     @Override
     public void createOrEditDispositionStatus(DispositionStatusVo dsvo) {
-        DispositionStatus ds = new DispositionStatus(dsvo.getName(), dsvo.getDescription());
+        DispositionStatus ds = new DispositionStatus(dsvo.getId(), dsvo.getName(), dsvo.getDescription());
 
         dispositionStatusRepo.save(ds);
     }
@@ -262,7 +262,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     @Override
     public void deleteDispositionStatus(DispositionStatusVo dsvo) {
-        DispositionStatus ds = new DispositionStatus(dsvo.getName(), dsvo.getDescription());
+        DispositionStatus ds = new DispositionStatus(dsvo.getId(), dsvo.getName(), dsvo.getDescription());
 
         dispositionStatusRepo.delete(ds);
     }
