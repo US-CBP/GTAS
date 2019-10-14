@@ -70,9 +70,9 @@ volumes: [
             docker login -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
             echo ${regNamespace}/${artifactID}
             cd gtas-parent/gtas-job-scheduler-war/
-            docker build -t paruff/GTAS .
+            docker build -t paruff/gtas .
             # docker build -t ${regNamespace}/${artifactID} .
-            docker tag paruff/GTAS paruff/GTAS:${POMversion}.${shortGitCommit}
+            docker tag paruff/gtas paruff/gtas:${POMversion}.${shortGitCommit}
             echo $gitBranch
             echo $branchName
             if [ ${gitBranch} == "origin/master" ] ; then
