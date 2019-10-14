@@ -16,6 +16,7 @@
     $mdToast,
     spinnerService,
     user,
+    paxService,
     caseHistory,
     ruleCats,
     ruleHits,
@@ -771,18 +772,25 @@
       );
     }
 
-    //Removes extraneous characters from rule hit descriptions
+    function stripCharacters() {
+      $.each($scope.ruleHits, function (index, value) {
+        if (value.ruleConditions !== typeof "undefined" &&
+            value.ruleConditions != null) {
+          value.ruleConditions = value.ruleConditions.replace(
+              /[.*+?^${}()|[\]\\]/g,
+              ""
+          );
+        }
+      });
+    }
+
+//Removes extraneous characters from rule hit descriptions
     if (
-      $scope.ruleHits != typeof "undefined" &&
+      $scope.ruleHits !== typeof "undefined" &&
       $scope.ruleHits != null &&
       $scope.ruleHits.length > 0
     ) {
-      $.each($scope.ruleHits, function(index, value) {
-        value.ruleConditions = value.ruleConditions.replace(
-          /[.*+?^${}()|[\]\\]/g,
-          ""
-        );
-      });
+      stripCharacters();
     }
 
     $scope.getTotalOf = function(coll, id, fieldToTotal) {
@@ -827,6 +835,15 @@
         });
     };
 
+    $scope.refreshHitDetailsList = function() {
+      paxService.getRuleHitsByFlightAndPax($scope.passenger.paxId, $scope.passenger.flightId).then(
+          function(result) {
+            $scope.ruleHits = result;
+            stripCharacters();
+          }
+      );
+    };
+
     $scope.refreshCasesHistory = function() {
       paxDetailService
         .getPaxCaseHistory($scope.passenger.paxId)
@@ -841,6 +858,7 @@
         .then(function(response) {
           $scope.getWatchListMatchByPaxId();
           $scope.refreshCasesHistory($scope.passenger.paxId);
+          $scope.refreshHitDetailsList($scope.passenger.paxId, $scope.passenger.flightId);
         });
     };
 
@@ -1070,6 +1088,14 @@
             }
           });
         });
+    };
+
+    $scope.dismiss = function () {
+      let paxId = $scope.passenger.paxId;
+      paxDetailService.updatePassengerHitDetails(paxId, 'DISMISSED')
+          .then(function (response) {
+            $scope.refreshHitDetailsList();
+          });
     };
 
     $scope.addToWatchlist = function() {

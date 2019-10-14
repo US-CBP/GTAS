@@ -61,6 +61,7 @@
                                             <table aria-hidden="true" class="table table-condensed table-responsive margin-0 floating-table-header">
                                                 <thead>
                                                 <tr>
+                                                    <th>{{'hit.status' | translate}}</th>
                                                     <th>{{'hit.severity' | translate}}</th>
                                                     <th>{{'hit.author' | translate}}</th>
                                                     <th>{{'hit.category' | translate}}</th>
@@ -70,11 +71,12 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr ng-repeat="j in ruleHits track by $index">
+                                                    <td>{{j.status}}</td>
                                                     <td>{{j.severity}}</td>
                                                     <td>{{j.author}}</td>
                                                     <td>{{j.category}}</td>
-                                                    <td>{{j.title}}</td>
-                                                    <td>{{j.author}}</td>
+                                                    <td>{{j.ruleTitle}}</td>
+                                                    <td>{{j.ruleConditions}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
@@ -924,8 +926,11 @@
                 </md-tabs>
                 <!-- END - TABS AND CONTENT -->
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="addToWatchlist()">
+                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
                         <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
+                    </button>
+                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="dismiss()">
+                        <i class="fa fa-gavel"></i> &nbsp;{{'btn.dismiss' | translate}}
                     </button>
                     <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
                         <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}

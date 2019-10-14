@@ -50,6 +50,9 @@ public class User implements Serializable {
 	@Column(name = "active")
 	private int active;
 
+	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
+	private Set<UserGroup> userGroups = new HashSet<>();
+
 	// Notification that the user is a part of (elected or assigned)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<UserNotification> notifications = new HashSet<>();
@@ -59,9 +62,8 @@ public class User implements Serializable {
 	private Set<Notification> notificationOwners = new HashSet<>();
 
 	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<Role>();
+	private Set<Role> roles = new HashSet<>();
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();
@@ -165,5 +167,13 @@ public class User implements Serializable {
 
 	public void setHitMakers(Set<HitMaker> hitMakers) {
 		this.hitMakers = hitMakers;
+	}
+
+	public Set<UserGroup> getUserGroups() {
+		return userGroups;
+	}
+
+	public void setUserGroups(Set<UserGroup> userGroups) {
+		this.userGroups = userGroups;
 	}
 }
