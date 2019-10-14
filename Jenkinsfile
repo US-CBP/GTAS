@@ -69,6 +69,7 @@ volumes: [
           sh """
             docker login -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
             echo ${regNamespace}/${artifactID}
+            cd gtas-parent/gtas-job-scheduler-war/
             docker build -t paruff/GTAS .
             docker build -t ${regNamespace}/${artifactID} .
             docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${shortGitCommit}
