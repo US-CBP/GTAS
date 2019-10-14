@@ -46,7 +46,7 @@ public class TamrMessageReceiver {
 				if (res != null && res.getTravelerQuery() != null)
 					res.getTravelerQuery().forEach(p -> {
 						logger.info("Run update -> Tamr: " + p.getTamrId() + ", gtasId: " + p.getGtasId());
-						this.passengerIDTagRepository.updateTamrId(p.gtasId, p.getTamrId());
+						this.passengerIDTagRepository.updateTamrId(p.getGtasId(), p.getTamrId());
 					});
 			} catch (JMSException e) {
 				logger.error("caught JMSException");
