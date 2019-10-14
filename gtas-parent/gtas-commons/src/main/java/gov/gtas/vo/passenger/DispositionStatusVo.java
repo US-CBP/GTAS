@@ -7,7 +7,7 @@ package gov.gtas.vo.passenger;
 
 import gov.gtas.model.BaseEntity;
 
-public class DispositionStatusVo extends BaseEntity {
+public class DispositionStatusVo {
     private static final long serialVersionUID = 1L;
 
     private String name;

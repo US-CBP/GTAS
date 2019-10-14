@@ -5,37 +5,35 @@
  */
 package gov.gtas.services;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.AuditActionData;
+import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.*;
-import gov.gtas.vo.passenger.*;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IteratorUtils;
+import gov.gtas.services.dto.PassengersPageDto;
+import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.DispositionStatusVo;
+import gov.gtas.vo.passenger.DocumentVo;
+import gov.gtas.vo.passenger.PassengerGridItemVo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.AuditActionData;
-import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.lookup.DispositionStatus;
-import gov.gtas.services.dto.PassengersPageDto;
-import gov.gtas.services.dto.PassengersRequestDto;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 

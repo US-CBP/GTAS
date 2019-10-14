@@ -5,22 +5,20 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
-
 import gov.gtas.model.*;
-import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.DispositionStatusVo;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gov.gtas.vo.passenger.DispositionStatusVo;
-import org.springframework.security.access.prepost.PreAuthorize;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_MANAGE_RULES_AND_MANAGE_WATCH_LIST_AND_MANAGE_QUERIES;
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 
 public interface PassengerService {
 
