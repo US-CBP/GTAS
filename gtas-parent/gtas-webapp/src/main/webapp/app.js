@@ -505,6 +505,9 @@ var app;
                         },
                         flightSearchOptions: function(flightService){
                             return flightService.getFlightDirectionList();
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
@@ -575,6 +578,9 @@ var app;
                                 query: query
                             };
                             return executeQueryService.queryPassengers(postData);
+                        },
+                        user: function (userService) {
+                            return userService.getUserData();
                         }
                     }
                 })
