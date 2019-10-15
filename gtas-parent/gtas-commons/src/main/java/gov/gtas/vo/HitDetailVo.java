@@ -24,6 +24,8 @@ public class HitDetailVo {
 
 	private Date createDate;
 
+	private Date flightDate;
+
 	private Long ruleId;
 
 	private String ruleTitle;
@@ -45,6 +47,7 @@ public class HitDetailVo {
 		hitDetailVo.setCreateDate(hitDetail.getCreatedDate());
 		hitDetailVo.setCategory(hitDetail.getHitMaker().getHitCategory().getName());
 		hitDetailVo.setFlightId(hitDetail.getPassenger().getFlight().getId());
+		hitDetailVo.setFlightDate(hitDetail.getFlight().getMutableFlightDetails().getEtd());
 		hitDetailVo.setPaxId(hitDetail.getPassenger().getId());
 		hitDetailVo.setRuleConditions(hitDetail.getRuleConditions());
 		hitDetailVo.setRuleDesc(hitDetail.getDescription());
@@ -160,7 +163,16 @@ public class HitDetailVo {
 		return Objects.hash(getPaxId(), getFlightId(), getRuleConditions(), getCreateDate(), getRuleId(), getRuleTitle(), getRuleDesc(), getCategory());
 	}
 
-    public void setSeverity(String severity) {
+	public Date getFlightDate() {
+		return flightDate;
+	}
+
+	public void setFlightDate(Date flightDate) {
+		this.flightDate = flightDate;
+	}
+
+
+	public void setSeverity(String severity) {
         this.severity = severity;
     }
 

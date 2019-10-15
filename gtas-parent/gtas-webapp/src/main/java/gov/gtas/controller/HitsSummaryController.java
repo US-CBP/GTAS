@@ -77,7 +77,7 @@ public class HitsSummaryController {
 					stringJoiner.add(hitViewStatus.getHitViewStatusEnum().toString());
 				}
 			}
-
+			hitDetailVo.setFlightDate(htd.getFlight().getMutableFlightDetails().getEtd());
 			hitDetailVo.setStatus(stringJoiner.toString());
 			hitDetailVoList.add(hitDetailVo);
 		}
