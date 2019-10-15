@@ -79,7 +79,7 @@ volumes: [
          }
       }
     }
-    stage('deploy 2 k8s') {
+    stage('deploy 2 dev') {
       container('kubectl') {
         sh "kubectl get pods -n default"
 
