@@ -72,7 +72,8 @@ volumes: [
             cd gtas-parent/gtas-job-scheduler-war/
             docker build -t paruff/gtas .
             # docker build -t ${regNamespace}/${artifactID} .
-            docker tag paruff/gtas paruff/gtas:${POMversion}.${shortGitCommit}
+            docker tag paruff/gtas paruff/gtas:0.1.0.${shortGitCommit}
+            docker tag paruff/gtas paruff/gtas:0.1.0.${gitCommitCount}
  //           echo $gitBranch
  //           echo $branchName
  //           if [ ${gitBranch} == "origin/master" ] ; then
