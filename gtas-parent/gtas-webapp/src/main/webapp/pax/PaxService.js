@@ -113,8 +113,25 @@
                return dfd.promise;
           }
 
+          function updatePassengerHitDetails(paxId, status) {
+              var dfd = $q.defer();
+              let updateVo = {
+                  passengerId: paxId,
+                  status: status
+              };
+              dfd.resolve(
+                  $http({
+                      method: 'post',
+                      url: "/gtas/hits/",
+                      data: updateVo
+                  })
+              );
+              return dfd.promise;
+          }
+
           return ({getPaxCaseHistory: getPaxCaseHistory,
               getPaxDetail: getPaxDetail,
+                  updatePassengerHitDetails: updatePassengerHitDetails,
                   getPaxFlightHistory: getPaxFlightHistory,
                   getPaxFullTravelHistory: getPaxFullTravelHistory,
                   getPaxBookingDetailHistory: getPaxBookingDetailHistory,
@@ -286,11 +303,7 @@
             var ruleHitsList = [];
             if(angular.isDefined(ruleSummaryHits) && ruleSummaryHits.data.length > 0){
               $.each(ruleSummaryHits.data, function(index,value){
-                var hitDetail = value.hitsDetailsList[0]; //First object in this 'array' contains the values needed for the front-end display
-                hitDetail.category = value.category;
-                hitDetail.severity = value.severity;
-                hitDetail.author = value.author;
-                ruleHitsList.push(hitDetail);
+                ruleHitsList.push(value);
               });
               }
             return ruleHitsList;

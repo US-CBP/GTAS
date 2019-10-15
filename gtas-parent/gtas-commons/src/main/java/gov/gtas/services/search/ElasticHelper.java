@@ -86,11 +86,11 @@ import org.apache.logging.log4j.message.Message;
 @Service
 public class ElasticHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ElasticHelper.class);
-	public static final String INDEX_NAME = "flightpax";
-	public static final String FLIGHTPAX_TYPE = "doc";
+	private static final String INDEX_NAME = "flightpax";
+	private static final String FLIGHTPAX_TYPE = "doc";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm";
-	private static SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
+	private SimpleDateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
 
 	private TransportClient client;
 
@@ -100,7 +100,7 @@ public class ElasticHelper {
 	////////////////////////////////////////////////////////////////////
 	// init methods
 
-	public void initClient() {
+	void initClient() {
 		if (isUp()) {
 			return;
 		}
@@ -139,7 +139,7 @@ public class ElasticHelper {
 	}
 
 	@PreDestroy
-	public void closeClient() {
+	private void closeClient() {
 		logger.info("Closing ElasticSearch client");
 		if (isDown()) {
 			return;
@@ -175,7 +175,7 @@ public class ElasticHelper {
 
 	}
 
-	public AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir)
+	AdhocQueryDto searchPassengers(String query, int pageNumber, int pageSize, String column, String dir)
 			throws ParseException {
 		ArrayList<FlightPassengerVo> rv = new ArrayList<>();
 		SearchHits results = search(query, pageNumber, pageSize, column, dir);
@@ -242,7 +242,7 @@ public class ElasticHelper {
 		return new AdhocQueryDto(rv, results.getTotalHits());
 	}
 
-	public LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir)
+	LinkAnalysisDto findPaxLinks(Passenger pax, int pageNumber, int pageSize, String column, String dir)
 			throws ParseException {
 		if (pax == null) {
 			return new LinkAnalysisDto(new ArrayList(), 0);

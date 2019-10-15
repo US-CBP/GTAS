@@ -5,11 +5,13 @@
  */
 package gov.gtas.repository;
 
+import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.enumtype.HitViewStatusEnum;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.services.dto.PassengersRequestDto;
 import gov.gtas.services.dto.PriorityVettingListRequest;
+import gov.gtas.services.dto.RuleCatFilterCheckbox;
 import gov.gtas.services.dto.SortOptionsDto;
 
 import java.time.LocalDateTime;
@@ -41,7 +43,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 	@Override
 	@Transactional
 	public Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest dto,
-																Set<UserGroup> userGroupSet, String userId) {
+			Set<UserGroup> userGroupSet, String userId) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -53,8 +55,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		TypedQuery<Passenger> typedQuery = addPagination(q, dto.getPageNumber(), dto.getPageSize(), false);
 		List<Passenger> results = typedQuery.getResultList();
 
-		// COUNT QUERY (count version of root query without pagination and a count
-		// distinct on pax id)
+		// COUNT QUERY - a version of root query without pagination and a count distinct
+		// on pax id
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Passenger> paxCount = countQuery.from(Passenger.class);
 		List<Predicate> countQueryPredicate = joinAndCreateHitViewPredicates(dto, userGroupSet, cb, countQuery,
@@ -80,7 +82,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		Join<HitDetail, HitViewStatus> hitViewJoin = hitDetails.join("hitViewStatus", JoinType.INNER);
 		Join<HitDetail, HitMaker> hitMakerJoin = hitDetails.join("hitMaker", JoinType.INNER);
 		Join<HitMaker, HitCategory> hitCategoryJoin = hitMakerJoin.join("hitCategory", JoinType.INNER);
-		Join<HitMaker, User>  hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
+		Join<HitMaker, User> hitMakerUserJoin = hitMakerJoin.join("author", JoinType.INNER);
 		// **** PREDICATES ****
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
@@ -94,29 +96,48 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
-		if (dto.getDisplayStatusCheckBoxes().getNewItems() != null && dto.getDisplayStatusCheckBoxes().getNewItems()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
-		}
-		if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
-				&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
-		}
-		if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
-				&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
-			hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
+		if (dto.getDisplayStatusCheckBoxes() != null) {
+			if (dto.getDisplayStatusCheckBoxes().getNewItems() != null
+					&& dto.getDisplayStatusCheckBoxes().getNewItems()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
+					&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
+			}
+			if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
+					&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.RE_OPENED);
+			}
 		}
 		// Special case. Unused value to give result of 0.
 		if (hitViewStatusEnumSet.isEmpty()) {
 			hitViewStatusEnumSet.add(HitViewStatusEnum.NOT_USED);
 		}
+
 		Predicate hitViewStatus = cb.in(hitViewJoin.get("hitViewStatusEnum")).value(hitViewStatusEnumSet);
 		queryPredicates.add(hitViewStatus);
 
-		if (dto.getAuthorOnly() != null && dto.getAuthorOnly()) {
+		if (dto.getMyRulesOnly() != null && dto.getMyRulesOnly()) {
 			Predicate authorOnly = cb.equal(hitMakerUserJoin.get("userId"), userId);
 			queryPredicates.add(authorOnly);
 		}
 
+		if (dto.getRuleCatFilter() != null && !dto.getRuleCatFilter().isEmpty()) {
+			Set<String> categoriesToConsider = new HashSet<>();
+			for (RuleCatFilterCheckbox rcfc : dto.getRuleCatFilter()) {
+				if (rcfc.getValue()) {
+					categoriesToConsider.add(rcfc.getName());
+				}
+			}
+			Predicate hitCatsIn = cb.in(hitCategoryJoin.get("name")).value(categoriesToConsider);
+			queryPredicates.add(hitCatsIn);
+		}
+		if (dto.getPriorityVettingListRuleTypes() != null) {
+			Set<HitTypeEnum> hitTypeEnums = dto.getPriorityVettingListRuleTypes().hitTypeEnums();
+			Predicate hitTypeEnumsIn = cb.in(hitDetails.get("hitEnum")).value(hitTypeEnums);
+			queryPredicates.add(hitTypeEnumsIn);
+		}
 		// LAST NAME PREDICATE
 		if (StringUtils.isNotBlank(dto.getLastName())) {
 			String likeString = String.format("%%%s%%", dto.getLastName().toUpperCase());
@@ -163,7 +184,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		}
 
 		// SORTING
- 		if (dto.getSort() != null) {
+		if (dto.getSort() != null) {
 			List<Order> orderList = new ArrayList<>();
 			for (SortOptionsDto sort : dto.getSort()) {
 				List<Expression<?>> orderByItem = new ArrayList<>();
@@ -188,8 +209,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(flight.get("flightNumber"));
 				} else if ("status".equalsIgnoreCase(column)) {
 					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
-				}
-				else if (!"documentNumber".equalsIgnoreCase(column)) {
+				} else if (!"documentNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(paxDetailsJoin.get(column));
 				}
 				if (sort.getDir().equals("desc")) {

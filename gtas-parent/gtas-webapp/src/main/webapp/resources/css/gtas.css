@@ -333,7 +333,6 @@ div[ui-grid] {
   justify-content: center;
   overflow: no-display;
   vertical-align: middle;
-
 }
 
 
@@ -479,6 +478,14 @@ div[ui-grid] {
 .white-space-preline {
   white-space:pre-line;
 }
+
+.disabled {
+  color: #AAAAAA;
+  cursor: default;
+  pointer-events: none;
+  text-decoration: none;
+}
+
 .flex {
   display: flex;
   display: -ms-flexbox;
@@ -812,6 +819,16 @@ div[ui-grid] {
   margin-top: 51px;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+.caseFilter {
+  z-index: 1 !important;
+  position: absolute;
+  height: 85vh;
+  padding: 10px;
+  width: 250px;
+  margin-top: 51px;
+  overflow-y: scroll;
+  overflow-x: auto;
 }
 #sidebar-toggle {
   position: absolute;

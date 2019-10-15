@@ -20,15 +20,18 @@ import java.util.Set;
 public class GtasSchemaFilter implements SchemaFilter {
 
 	static final GtasSchemaFilter INSTANCE = new GtasSchemaFilter();
-	private static final Set<String>  whiteList = new HashSet<String>() {{
-		add("flight_countdown_view");
-		add("hits_summary_view");
-		add("flight_passenger_count_view");
-		add("flight_hits_wl_view");
-		add("flight_hits_rule_view");
-		add("flight_hits_fuzzy_view");
-		add("flight_hits_graph_view");
-	}};
+	private final Set<String>  whiteList = new HashSet<>();
+
+	private GtasSchemaFilter() {
+		whiteList.add("flight_countdown_view");
+		whiteList.add("hits_summary_view");
+		whiteList.add("flight_passenger_count_view");
+		whiteList.add("flight_hits_wl_view");
+		whiteList.add("flight_hits_rule_view");
+		whiteList.add("flight_hits_fuzzy_view");
+		whiteList.add("flight_hits_graph_view");
+	}
+
 	@Override
 	public boolean includeNamespace(Namespace namespace) {
 		return true;

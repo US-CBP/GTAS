@@ -8,11 +8,11 @@
     app.controller('CaseDispositionCtrl',
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
-                  spinnerService, caseDispositionService, newCases,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, userService) {
+                  spinnerService, caseDispositionService, caseModel,
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, $uibModal, userService) {
 
             spinnerService.hide('html5spinner');
-            $scope.casesList = newCases.data.cases;
+            $scope.casesList;
             $scope.casesListWithCats=[];
             $scope.ruleCats=ruleCats.data;
             $scope.pageSize = 10;
@@ -20,13 +20,7 @@
             $scope.emptyString = "";
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
-            $scope.model = caseDispositionService.getDefaultModel();
-
-            $scope.model.reset = function(){
-                angular.forEach($scope.model, function(item, index){
-                    index = $scope.emptyString;
-                });
-            };
+            $scope.model = caseModel;
 
             $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
@@ -107,7 +101,6 @@
                         spinnerService.hide('html5spinner');
                     });
             };
-
             $scope.refreshCountDown = function () {
 
                 var currentTimeMillis = caseDispositionService.getCurrentServerTime();
@@ -165,7 +158,7 @@
                     value = grid.appScope.casesListWithCats[row.entity.highPriorityRuleCatId];
                 }
                 return value;
-              }
+              };
 
             $scope.deleteRow = function(row) {
                 row.entity.status = 'DISMISSED';
@@ -282,10 +275,54 @@
             }
 
 
+            $scope.showPassenger = function (row) {
+                const pax = row.entity;
+                $scope.paxId = pax.paxId;
+                $scope.flightId = pax.flightId;
+                $mdDialog.show({
+                    controller: 'PassengerDetailCtrl',
+                    templateUrl: 'pax/pax.detail.modal.html',
+                    clickOutsideToClose: true,
+                    fullscreen: true,
+                    resolve: {
+                        passenger: function (paxDetailService) {
+                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
+                        }
+                        ,
+                        user: function (userService) {
+                            return userService.getUserData();
+                        }
+                        ,
+                        caseHistory: function (paxDetailService) {
+                            return paxDetailService.getPaxCaseHistory($scope.paxId);
+                        }
+                        ,
+                        ruleCats: function (caseDispositionService) {
+                            return caseDispositionService.getRuleCats();
+                        }
+                        ,
+                        ruleHits: function (paxService) {
+                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
+                        }
+                        ,
+                        watchlistLinks: function (paxDetailService) {
+                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        },
+                        disableLinks: function() {
+                            return true;
+                        }
+                    }
+                }).then(function(answer) {
+                    if (answer === 'dismiss') {
+                        $scope.deleteRow(row);
+                    } else if (answer === 'fullPax') {
+                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    }
+                });
+            };
             $scope.casesDispGrid = {
                 data: $scope.casesList,
                 paginationPageSizes: [10, 15, 25],
-                totalItems: newCases.data.totalCases,
                 paginationPageSize: $scope.pageSize,
                 paginationCurrentPage: $scope.pageNumber,
                 useExternalPagination: true,
@@ -364,7 +401,7 @@
                     name: 'lastName',
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<div><md-button aria-label="type" href="#/paxdetail/{{row.entity.paxId}}/{{row.entity.flightId}}" target="_blank" ' +
+                    cellTemplate: '<div><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
@@ -378,8 +415,8 @@
                     field: 'status',
                     name: 'status',
                     displayName: $translate.instant('case.status'),
-                    cellTemplate: '<button ng-if="row.entity.status === \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'DISMISSED\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Dismiss</button>' +
+                    cellTemplate: '<button ng-if="row.entity.status === \'Dismissed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Dismissed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Dismiss</button>' +
                         '<button class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
@@ -401,7 +438,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'date']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'date', 'onlyMyRules', 'ruleTypes']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
@@ -425,19 +462,6 @@
                         spinnerService.hide('html5spinner');
                     });
             };
-
-            $scope.reset = function () {
-                $scope.model.name = $scope.emptyString;
-                $scope.model.flightNumber = $scope.emptyString;
-                $scope.model.status = $scope.emptyString;
-                $scope.model.ruleCat = $scope.emptyString;
-                $scope.model.etaStart = caseDispositionService.getDefaultStartDate();
-                $scope.model.etaEnd = caseDispositionService.getDefaultEndDate();
-                $scope.model.displayStatusCheckBoxes = caseDispositionService.getDefaultDispCheckboxes();
-                $scope.model.sort = caseDispositionService.getDefaultSort();
-                $scope.model.withTimeLeft = caseDispositionService.getDefaultTimeLeft();
-                $scope.resolvePage();
-            };
-
-        })
+            $scope.filter();
+        });
 }());

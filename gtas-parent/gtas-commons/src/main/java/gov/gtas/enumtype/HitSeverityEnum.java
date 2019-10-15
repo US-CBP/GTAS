@@ -18,11 +18,11 @@ public enum  HitSeverityEnum {
 
     // Using ordinal to sort.
 
+    TOP("Top"),
+
     HIGH("High"),
 
-    MEDIUM("Medium"),
-
-    LOW("Low");
+    NORMAL("Normal");
 
     private final String hitSeverity;
 

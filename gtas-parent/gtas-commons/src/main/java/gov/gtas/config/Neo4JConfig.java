@@ -25,7 +25,7 @@ public class Neo4JConfig {
 	private Environment env;
 
 	private static final String PROPERTY_NAME_USERNAME = "neo4jusername";
-	private static final String PROPERTY_NAME_PASSWORD = "neo4jpassword";
+	private static final String PROPERTY_NAME_CRED = "neo4jpassword";
 	private static final String NEO_4_J_ENABLED = "neo4jEnabled";
 
 	public Neo4JConfig() {
@@ -40,7 +40,7 @@ public class Neo4JConfig {
 	}
 
 	public String neoPassword() {
-		return env.getRequiredProperty(PROPERTY_NAME_PASSWORD);
+		return env.getRequiredProperty(PROPERTY_NAME_CRED);
 	}
 
 }

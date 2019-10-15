@@ -16,18 +16,17 @@ import static java.util.stream.Collectors.toMap;
 
 public enum HitViewStatusEnum {
 
-	PRIORITY("PRIORITY"),
+	PRIORITY("Priority"),
 
-	IN_PROGRESS("IN_PROGRESS"),
+	IN_PROGRESS("In_Progress"),
 
-	NEW("NEW"),
+	NEW("New"),
 
-	RE_OPENED("RE_OPENED"),
+	RE_OPENED("Re_Opened"),
 
-	DISMISSED("DISMISSED"),
+	DISMISSED("Dismissed"),
 
-	NOT_USED("NOT_USED");
-
+	NOT_USED("Not_Used");
 
 	private String hitViewStatus;
 

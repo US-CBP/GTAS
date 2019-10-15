@@ -48,9 +48,8 @@ public class PriorityVettingListController {
 	private final AttachmentRepository attachmentRepo;
 
 	private final Logger logger = LoggerFactory.getLogger(PriorityVettingListController.class);
-	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-			PriorityVettingListRequest.DATE_FORMAT);
-	private static final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
+	private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(PriorityVettingListRequest.DATE_FORMAT);
+	private final ObjectMapper objectMapper = new ObjectMapper().setDateFormat(simpleDateFormat);
 
 	public PriorityVettingListController(HitCategoryService hitCategoryService,
 			PriorityVettingListService priorityVettingListService, AttachmentRepository attachmentRepo) {
@@ -68,8 +67,7 @@ public class PriorityVettingListController {
 	}
 
 	@RequestMapping(value = "/hits", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void update(@RequestBody ViewUpdateDTo requestDto)
-			{
+	public void update(@RequestBody ViewUpdateDTo requestDto) {
 		priorityVettingListService.update(requestDto);
 	}
 

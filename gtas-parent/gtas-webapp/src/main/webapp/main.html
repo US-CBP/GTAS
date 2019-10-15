@@ -171,12 +171,6 @@
               <a ng-disabled="onRoute('cases')" href="#/casedisposition" role="tab">
 	              	<i class="fa fa-folder" aria-hidden="true"></i> &nbsp;{{'case.cases' | translate}}
 	              </a></li>
-	              <li data-has-role="[{{ ROLES.ADMIN }}, {{ ROLES.MANAGE_WATCHLIST }}, {{ ROLES.MANAGE_RULES }}, {{ ROLES.MANAGE_QUERIES }}, {{ ROLES.ONE_DAY_LOOKOUT }}]"
-              ng-class="{'active': setSelectedTab('/onedaylookout')}">
-              <a ng-disabled="onRoute('onedaylookout')" href="#/onedaylookout" role="tab">
-	              	<i  class="fa fa-binoculars" aria-hidden="true" ></i> &nbsp;{{'odl.onedaylookouts' | translate}}
-	              </a>
-	         </li>
           </ul>
         </div>
 
@@ -279,6 +273,7 @@
 <script src='dashboard/DashboardController.js'></script>
 <script src='dashboard/DashboardService.js'></script>
 <script src='flights/FlightsModel.js'></script>
+<script src='cases/CaseModel.js'></script>
 <script src='flights/FlightsController.js'></script>
 <script src='flights/FlightsService.js'></script>
 <script src='pax/PaxModel.js'></script>

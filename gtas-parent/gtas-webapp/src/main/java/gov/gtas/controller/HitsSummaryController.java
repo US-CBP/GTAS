@@ -5,11 +5,12 @@
  */
 package gov.gtas.controller;
 
-import gov.gtas.model.HitMaker;
+import gov.gtas.model.*;
 import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.repository.UserRepository;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.HitDetailService;
 import gov.gtas.vo.HitDetailVo;
-import gov.gtas.model.HitDetail;
 
 import java.util.*;
 
@@ -25,14 +26,20 @@ public class HitsSummaryController {
 
 	private final HitDetailService hitsDetailsService;
 
-	public HitsSummaryController(HitDetailService hitsDetailsService) {
+	private final UserRepository userRepository;
+
+	public HitsSummaryController(HitDetailService hitsDetailsService, UserRepository userRepository) {
 		this.hitsDetailsService = hitsDetailsService;
+		this.userRepository = userRepository;
 	}
 
 	@RequestMapping(value = "/hit/passenger", method = RequestMethod.GET)
 	@Transactional
 	public @ResponseBody Set<HitDetailVo> getRules(@RequestParam(value = "passengerId", required = false) String id) {
-		return getHitDetailsMapped(hitsDetailsService.getByPassengerId(Long.parseLong(id)));
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		User user = userRepository.userAndGroups(userId).orElseThrow(RuntimeException::new);
+		Set<HitDetail> hitDetailSet = hitsDetailsService.getByPassengerId(Long.parseLong(id));
+		return getHitDetailsMapped(hitDetailSet, user);
 	}
 
 
@@ -41,16 +48,17 @@ public class HitsSummaryController {
 	public @ResponseBody LinkedHashSet<HitDetailVo> getRulesByPassengerAndFlight(
 			@RequestParam(value = "passengerId") String passengerId,
 			@RequestParam(value = "flightId") String flightId) {
-
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		User user = userRepository.userAndGroups(userId).orElseThrow(RuntimeException::new);
 		Set<HitDetail> hitDetailSet = hitsDetailsService.getByPassengerId(Long.parseLong(passengerId));
-		return getHitDetailsMapped(hitDetailSet);
+		return getHitDetailsMapped(hitDetailSet, user);
 	};
 
 	@Transactional
-	public LinkedHashSet<HitDetailVo> getHitDetailsMapped(Set<HitDetail> tempHitDetailList) {
+	public LinkedHashSet<HitDetailVo> getHitDetailsMapped(Set<HitDetail> passengerHitDetails, User user) {
 
 		LinkedHashSet<HitDetailVo> hitDetailVoList = new LinkedHashSet<>();
-		for (HitDetail htd : tempHitDetailList) {
+		for (HitDetail htd : passengerHitDetails) {
 			HitDetailVo hitDetailVo = new HitDetailVo();
 			hitDetailVo.setRuleId(htd.getRuleId());
 			hitDetailVo.setRuleTitle(htd.getTitle());
@@ -60,11 +68,17 @@ public class HitsSummaryController {
 			HitCategory hitCategory = lookout.getHitCategory();
 			hitDetailVo.setCategory(hitCategory.getName() + "(" + htd.getHitEnum().getDisplayName() + ")");
 			hitDetailVo.setRuleAuthor(htd.getHitMaker().getAuthor().getUserId());
-			htd.setHitMakerId(null);
-			htd.setHitMaker(null);
-			htd.setHitViewStatus(null);
+			hitDetailVo.setRuleConditions(htd.getRuleConditions());
+			hitDetailVo.setRuleTitle(htd.getTitle());
+			StringJoiner stringJoiner = new StringJoiner(", ");
+			Set<UserGroup> userGroups = user.getUserGroups();
+			for (HitViewStatus hitViewStatus : htd.getHitViewStatus()) {
+				if (userGroups.contains(hitViewStatus.getUserGroup())) {
+					stringJoiner.add(hitViewStatus.getHitViewStatusEnum().toString());
+				}
+			}
 
-			hitDetailVo.getHitsDetailsList().add(htd);
+			hitDetailVo.setStatus(stringJoiner.toString());
 			hitDetailVoList.add(hitDetailVo);
 		}
 		return hitDetailVoList;

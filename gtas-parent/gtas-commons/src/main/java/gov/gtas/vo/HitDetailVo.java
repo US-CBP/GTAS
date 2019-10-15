@@ -14,6 +14,8 @@ public class HitDetailVo {
 
 	private HitsSummary parent;
 
+	private String status;
+
 	private Long paxId;
 
 	private Long flightId;
@@ -34,7 +36,6 @@ public class HitDetailVo {
 
 	private HashMap<Integer, List<HitDetail>> HitsRulesAndDetails;
 
-	private List<HitDetail> hitsDetailsList = new ArrayList<HitDetail>();
 	private String severity;
 	private String ruleAuthor;
 
@@ -107,14 +108,6 @@ public class HitDetailVo {
 		this.ruleType = ruleType;
 	}
 
-	public List<HitDetail> getHitsDetailsList() {
-		return hitsDetailsList;
-	}
-
-	public void setHitsDetailsList(List<HitDetail> hitsDetailsList) {
-		this.hitsDetailsList = hitsDetailsList;
-	}
-
 	public HashMap<Integer, List<HitDetail>> getHitsRulesAndDetails() {
 		return HitsRulesAndDetails;
 	}
@@ -181,4 +174,13 @@ public class HitDetailVo {
     public String getAuthor() {
 		return ruleAuthor;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 }

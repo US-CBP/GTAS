@@ -85,7 +85,7 @@ public class EntityResolverUtils {
 			}
 		}
 
-		if (!passportNumber.isEmpty()) {
+		if (!passportNumber.isEmpty() && expirationDate != null) {
 			hashString = makeSHA1Hash(String.join("", passportNumber, issuanceCountry, expirationDate.toString()));
 		}
 

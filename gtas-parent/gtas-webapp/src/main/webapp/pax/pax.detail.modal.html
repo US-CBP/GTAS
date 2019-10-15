@@ -1,0 +1,35 @@
+
+
+  <!--
+  ~ /*
+  ~  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+  ~  *
+  ~  * Please see LICENSE.txt for details.
+  ~  */
+  -->
+
+  <!--- todo: i18n for date formats required here!! -->
+
+  <md-dialog style="height: 100%; width:100%">
+    <!-- BEGIN SIDEBAR -->
+    <div layout="row">
+      <span flex></span>
+      <md-button ng-click="addToWatchlist()" >
+        Add to Watchlist
+      </md-button>
+      <md-button ng-click="answer('fullPax')" >
+        Load Full Details
+      </md-button>
+      <md-button ng-click="answer('dismiss')" >
+        Dismiss From PVL
+      </md-button>
+      <md-button ng-click="answer('viewed')" style="margin-right:20px;" >
+        Return
+      </md-button>
+    </div>
+    <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'">
+    </div>  <!-- END SIDEBAR -->
+    <div class="cbp-sidebar-offset margin-top-1" ng-include="'pax/paxTabs.html'">
+    </div>
+
+  </md-dialog>

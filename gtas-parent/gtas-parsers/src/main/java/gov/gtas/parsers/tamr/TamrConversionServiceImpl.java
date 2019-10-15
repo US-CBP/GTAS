@@ -134,7 +134,7 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			try {
 				tamrJSON = mapper.writeValueAsString(passengers);
 			} catch (JsonProcessingException e) {
-				e.printStackTrace();
+				logger.error("caught JsonProcessingException");
 			}
 		}
 		return tamrJSON;
@@ -152,7 +152,7 @@ public class TamrConversionServiceImpl implements TamrConversionService {
 			// use.
 			// messageSender.sendMessageToTamr("InboundQueue", tamrJSON);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("caught Exception");
 		}
 		// System.out.println(tamrJSON);
 	}
