@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
 
+import gov.gtas.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +34,6 @@ import gov.gtas.model.HitsSummary;
 import gov.gtas.model.lookup.Airport;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.security.service.GtasSecurityUtils;
-import gov.gtas.services.AirportService;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.FlightService;
-import gov.gtas.services.HitsSummaryService;
-import gov.gtas.services.MessageService;
-import gov.gtas.services.PassengerService;
-import gov.gtas.services.PnrService;
-import gov.gtas.services.UserLocationService;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.vo.passenger.UserLocationVo;
@@ -301,7 +294,7 @@ public class DashboardController {
 			AirportVO _tempAirportVO;
 			for (Flight flight : flightList) {
 				List<HitsSummary> hitsSummaryList = hitsSummaryService.findHitsByFlightId(flight.getId());
-				_tempAirport = airportService.getAirportByThreeLetterCode(flight.getOrigin());
+				_tempAirport = AirportServiceImpl.buildAirport(airportService.getAirportByThreeLetterCode(flight.getOrigin()));
 				_tempAirportVO = new AirportVO(0.0, 0.0, EMPTY_STRING, EMPTY_STRING, false);
 				_tempAirportVO.setAirportCodeStr(_tempAirport.getIata());
 				_tempAirportVO.setAirportName(_tempAirport.getCity());

@@ -7,15 +7,15 @@ package gov.gtas.services;
 
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
-import gov.gtas.model.FlightPassenger;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.lookup.Airport;
 import gov.gtas.parsers.vo.DocumentVo;
 import gov.gtas.parsers.vo.PassengerVo;
 import gov.gtas.repository.FlightPassengerRepository;
 import gov.gtas.repository.PassengerRepository;
 import gov.gtas.util.EntityResolverUtils;
-
+import gov.gtas.vo.lookup.AirportVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,9 +27,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class ServiceUtil implements LoaderServices {
@@ -49,7 +46,7 @@ public class ServiceUtil implements LoaderServices {
 
 	public String getCountry(String airport) {
 
-		Airport a = airportService.getAirportByThreeLetterCode(airport);
+		AirportVo a = airportService.getAirportByThreeLetterCode(airport);
 		if (a == null) {
 			return "USA";
 		}

@@ -5,19 +5,18 @@
  */
 package gov.gtas.services;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Paths;
-import java.security.NoSuchAlgorithmException;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.Airport;
+import gov.gtas.model.lookup.FlightDirectionCode;
+import gov.gtas.parsers.exception.ParseException;
 import gov.gtas.parsers.pnrgov.enums.SSRDocsType;
+import gov.gtas.parsers.util.DateUtils;
+import gov.gtas.parsers.vo.*;
+import gov.gtas.repository.AppConfigurationRepository;
+import gov.gtas.repository.LookUpRepository;
+import gov.gtas.util.EntityResolverUtils;
+import gov.gtas.vo.lookup.AirportVo;
+import gov.gtas.vo.lookup.CountryVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,29 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
-import gov.gtas.model.lookup.Airport;
-import gov.gtas.model.lookup.Country;
-import gov.gtas.model.lookup.FlightDirectionCode;
-import gov.gtas.parsers.exception.ParseException;
-import gov.gtas.parsers.util.DateUtils;
-import gov.gtas.parsers.vo.AddressVo;
-import gov.gtas.parsers.vo.AgencyVo;
-import gov.gtas.parsers.vo.CodeShareVo;
-import gov.gtas.parsers.vo.CreditCardVo;
-import gov.gtas.parsers.vo.DocumentVo;
-import gov.gtas.parsers.vo.EmailVo;
-import gov.gtas.parsers.vo.FlightVo;
-import gov.gtas.parsers.vo.FrequentFlyerVo;
-import gov.gtas.parsers.vo.PassengerVo;
-import gov.gtas.parsers.vo.PaymentFormVo;
-import gov.gtas.parsers.vo.PhoneVo;
-import gov.gtas.parsers.vo.PnrVo;
-import gov.gtas.parsers.vo.ReportingPartyVo;
-import gov.gtas.parsers.vo.TicketFareVo;
-import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.repository.LookUpRepository;
-import gov.gtas.util.EntityResolverUtils;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class LoaderUtils {
@@ -343,7 +325,7 @@ public class LoaderUtils {
         BeanUtils.copyProperties(vo, a);
         if (StringUtils.isNotBlank(vo.getCity())) {
             
-            Airport aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
+            AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
             if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
             	a.setCity(aPort.getCity());
             	a.setCountry(aPort.getCountry());
@@ -351,7 +333,7 @@ public class LoaderUtils {
            
         }
         if(StringUtils.isBlank(vo.getCity()) && StringUtils.isNotBlank(vo.getLocation())){
-        	Airport aPort = airportService.getAirportByThreeLetterCode(vo.getLocation());
+            AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getLocation());
         	if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
                 a.setCity(aPort.getCity());
                 a.setCountry(aPort.getCountry());
@@ -366,9 +348,9 @@ public class LoaderUtils {
         }
 
         if (code.length() == 3) {
-            return airportService.getAirportByThreeLetterCode(code);
+            return AirportServiceImpl.buildAirport(airportService.getAirportByThreeLetterCode(code));
         } else if (code.length() == 4) {
-            return airportService.getAirportByFourLetterCode(code);
+            return AirportServiceImpl.buildAirport(airportService.getAirportByFourLetterCode(code));
         }
 
         logger.warn("Unknown airport code: " + code);
@@ -507,12 +489,12 @@ public class LoaderUtils {
         }
 
         if (code.length() == 2) {
-            Country c = countryService.getCountryByTwoLetterCode(code);
+            CountryVo c = countryService.getCountryByTwoLetterCode(code);
             if (c != null) {
                 return c.getIso3();
             }
         } else if (code.length() == 3) {
-            Country c = countryService.getCountryByThreeLetterCode(code);
+            CountryVo c = countryService.getCountryByThreeLetterCode(code);
             if (c != null) {
                 return code;
             }
