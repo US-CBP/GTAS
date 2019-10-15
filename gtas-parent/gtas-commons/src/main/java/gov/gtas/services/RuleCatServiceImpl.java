@@ -5,12 +5,17 @@
  */
 package gov.gtas.services;
 
+import gov.gtas.model.UserGroup;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.repository.HitCategoryRepository;
+import gov.gtas.repository.UserGroupRepository;
 import gov.gtas.repository.udr.UdrRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -26,6 +31,12 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Resource
 	private UdrRuleRepository udrRuleRepository;
 
+	@Autowired
+	private UserGroupRepository userGroupRepository;
+
+	@Value("${user.group.default}")
+	private Long defaultUserGroupId;
+
 	@Override
 	public Iterable<HitCategory> findAll() {
 		return hitCategoryRepository.findAll();
@@ -37,9 +48,13 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	}
 
 	@Override
+	@Transactional
 	public void create(HitCategory hitCategory) {
+		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId).orElseThrow(RuntimeException::new);
 		hitCategory.setCreatedAt(new Date());
-		hitCategoryRepository.save(hitCategory);
+		hitCategory = hitCategoryRepository.save(hitCategory);
+		defaultUserGroup.getHitCategories().add(hitCategory);
+		userGroupRepository.save(defaultUserGroup);
 	}
 
 }
