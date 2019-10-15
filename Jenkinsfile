@@ -73,16 +73,16 @@ volumes: [
             docker build -t paruff/gtas .
             # docker build -t ${regNamespace}/${artifactID} .
             docker tag paruff/gtas paruff/gtas:${POMversion}.${shortGitCommit}
-            echo $gitBranch
-            echo $branchName
-            if [ ${gitBranch} == "origin/master" ] ; then
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${BUILD_NUMBER}
-            fi
-            if [ ${gitBranch} == "origin/develop" ] ; then
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${gitCommitCount}
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${BUILD_NUMBER}
-            fi
+ //           echo $gitBranch
+ //           echo $branchName
+ //           if [ ${gitBranch} == "origin/master" ] ; then
+ //               docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}
+ //               docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${BUILD_NUMBER}
+ //           fi
+ //           if [ ${gitBranch} == "origin/develop" ] ; then
+ //               docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${gitCommitCount}
+  //              docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${BUILD_NUMBER}
+  //          fi
             docker push ${regNamespace}/${artifactID}
             """
          }
