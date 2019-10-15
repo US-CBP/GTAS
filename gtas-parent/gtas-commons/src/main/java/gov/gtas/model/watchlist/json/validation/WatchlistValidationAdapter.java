@@ -60,7 +60,7 @@ public class WatchlistValidationAdapter {
         for (WatchlistItemSpec itm : wljson.getWatchlistItems()) {
             errors = new BeanPropertyBindingResult(itm, "watch list item");
             WatchlistEditEnum action = validateAction(itm, errors);
-            if (itm.getTerms() == null && action != WatchlistEditEnum.D) {
+            if (itm.getTerms() == null && action != null && action != WatchlistEditEnum.D) {
                 throw ErrorHandlerFactory.getErrorHandler().createException(
                         CommonErrorConstants.NULL_ARGUMENT_ERROR_CODE,
                         "Watch list rule items", action.getOperationName());

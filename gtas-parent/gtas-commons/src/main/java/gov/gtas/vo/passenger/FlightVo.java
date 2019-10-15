@@ -18,8 +18,8 @@ import gov.gtas.vo.BaseVo;
 
 public class FlightVo extends BaseVo {
     public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm";
-    public static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
-    private static final SimpleDateFormat dtFormat = new SimpleDateFormat(DATE_FORMAT);
+    static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
+    private SimpleDateFormat dtFormat = new SimpleDateFormat(DATE_FORMAT);
     
     private String flightId;
     private String carrier;

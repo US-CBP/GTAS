@@ -5,40 +5,35 @@
  */
 package gov.gtas.services;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import gov.gtas.enumtype.AuditActionType;
+import gov.gtas.enumtype.Status;
+import gov.gtas.json.AuditActionData;
+import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.*;
+import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.*;
+import gov.gtas.services.dto.PassengersPageDto;
+import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.DispositionStatusVo;
+import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import gov.gtas.enumtype.AuditActionType;
-import gov.gtas.enumtype.Status;
-import gov.gtas.json.AuditActionData;
-import gov.gtas.json.AuditActionTarget;
-import gov.gtas.model.lookup.DispositionStatus;
-import gov.gtas.services.dto.PassengersPageDto;
-import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.DocumentVo;
-import gov.gtas.vo.passenger.PassengerVo;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -190,6 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
             vo.setFlightNumber((String) objs[5]);
 
             Flight f = flightRespository.findById(flightId).orElse(null);
+            assert f != null;
             vo.setFlightETADate(f.getMutableFlightDetails().getEta());
             vo.setFlightETDDate(f.getMutableFlightDetails().getEtd());
             vo.setFlightDirection(f.getDirection());
@@ -241,23 +237,33 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public List<DispositionStatus> getDispositionStatuses() {
-        Iterable<DispositionStatus> i = dispositionStatusRepo.findAll();
-        if (i != null) {
-            return IteratorUtils.toList(i.iterator());
+    public List<DispositionStatusVo> getDispositionStatuses() {
+        List<DispositionStatusVo> dispositionStatusVos = new ArrayList<>();
+
+        Iterable<DispositionStatus> dispositionStatuses = dispositionStatusRepo.findAll();
+
+        if (dispositionStatuses != null) {
+            for (DispositionStatus dispositionStatus : dispositionStatuses) {
+                dispositionStatusVos.add(new DispositionStatusVo(dispositionStatus.getId(), dispositionStatus.getName(), dispositionStatus.getDescription()));
+            }
         }
-        return new ArrayList<>();
+
+        return dispositionStatusVos;
     }
 
     @Transactional
     @Override
-    public void createOrEditDispositionStatus(DispositionStatus ds) {
+    public void createOrEditDispositionStatus(DispositionStatusVo dsvo) {
+        DispositionStatus ds = new DispositionStatus(dsvo.getId(), dsvo.getName(), dsvo.getDescription());
+
         dispositionStatusRepo.save(ds);
     }
 
     @Transactional
     @Override
-    public void deleteDispositionStatus(DispositionStatus ds) {
+    public void deleteDispositionStatus(DispositionStatusVo dsvo) {
+        DispositionStatus ds = new DispositionStatus(dsvo.getId(), dsvo.getName(), dsvo.getDescription());
+
         dispositionStatusRepo.delete(ds);
     }
 

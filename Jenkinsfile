@@ -72,17 +72,8 @@ volumes: [
             cd gtas-parent/gtas-job-scheduler-war/
             docker build -t paruff/gtas .
             # docker build -t ${regNamespace}/${artifactID} .
-            docker tag paruff/gtas paruff/gtas:${POMversion}.${shortGitCommit}
-            echo $gitBranch
-            echo $branchName
-            if [ ${gitBranch} == "origin/master" ] ; then
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${BUILD_NUMBER}
-            fi
-            if [ ${gitBranch} == "origin/develop" ] ; then
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${gitCommitCount}
-                docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${BUILD_NUMBER}
-            fi
+            docker tag paruff/gtas paruff/gtas:0.1.0.${shortGitCommit}
+            docker tag paruff/gtas paruff/gtas:0.1.0.${gitCommitCount}
             docker push ${regNamespace}/${artifactID}
             """
          }
@@ -96,7 +87,7 @@ volumes: [
 // first time                        sh "kubectl expose deployment ${artifactID} --type=LoadBalancer --port=8080"
 
 
-        sh "kubectl set image deployments/${artifactID} ${artifactID}=${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}"
+        sh "kubectl apply -f gtas-k8s-ds.yaml -n dev"
 
       }
     }

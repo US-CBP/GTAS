@@ -46,7 +46,7 @@ public class DataManagementController
 	  User currentUser = fetchCurrentUser();
 	  Set<Role> roles = currentUser.getRoles();
 
-	  Optional<Role> sysAdminRole = null;
+	  Optional<Role> sysAdminRole = Optional.empty();
 	  
 	  if (!roles.isEmpty())
 	  {
