@@ -86,7 +86,8 @@
                     etaEnd: params.model.etaEnd,
                     ruleTypes: params.model.ruleTypes,
                     displayStatusCheckBoxes : params.model.displayStatusCheckBoxes,
-                    ruleCatFilter: params.model.ruleCatFilter
+                    ruleCatFilter: params.model.ruleCatFilter,
+                    myRulesOnly: model.myRulesOnly
                 };
                 var dfd = $q.defer();
                 dfd.resolve($http({

@@ -40,6 +40,7 @@ app.service("caseModel",  function (caseDispositionService) {
         this.ruleTypes=ruleTypes;
         this.sort = defaultSort;
         this.displayStatusCheckBoxes = displayStatusCheckBoxes;
+        this.withTimeLeft = true;
     };
     this.reset();
 });
