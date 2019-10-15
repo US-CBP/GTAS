@@ -88,7 +88,7 @@ public class ApiAccessServiceImpl implements ApiAccessService {
         return buildApiAccessVo(apiAccess);
     }
 
-    static ApiAccessVo buildApiAccessVo(ApiAccess apiAccess) {
+    private ApiAccessVo buildApiAccessVo(ApiAccess apiAccess) {
         ApiAccessVo apiAccessVo = new ApiAccessVo(apiAccess.getUsername(), apiAccess.getPassword(), apiAccess.getEmail(), apiAccess.getOrganization());
 
         if (apiAccess.getId() != null) {
@@ -109,7 +109,7 @@ public class ApiAccessServiceImpl implements ApiAccessService {
         return apiAccessVo;
     }
 
-    static ApiAccess buildApiAccess(ApiAccessVo apiAccessVo) {
+    private ApiAccess buildApiAccess(ApiAccessVo apiAccessVo) {
         ApiAccess apiAccess = new ApiAccess(apiAccessVo.getUsername(), apiAccessVo.getPassword(), apiAccessVo.getEmail(), apiAccessVo.getOrganization());
 
         if (apiAccessVo.getId() != null) {
