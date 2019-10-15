@@ -57,6 +57,8 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 
 	private String cipherQuery;
 
+	private String setGraphHitDisplay;
+
 	public RuleHitDetail() {
 	}
 
@@ -356,5 +358,13 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getHitMakerId(), getPassengerId());
+	}
+
+	public String getSetGraphHitDisplay() {
+		return setGraphHitDisplay;
+	}
+
+	public void setSetGraphHitDisplay(String setGraphHitDisplay) {
+		this.setGraphHitDisplay = setGraphHitDisplay;
 	}
 }

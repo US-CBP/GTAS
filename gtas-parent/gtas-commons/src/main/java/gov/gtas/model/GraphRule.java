@@ -23,6 +23,19 @@ public class GraphRule extends HitMaker {
 	@Column(name = "cipherQuery", length = 10000)
 	private String cipherQuery;
 
+	@Column(name = "displayCondition")
+	public String getDisplayCondition() {
+		return displayCondition;
+	}
+
+	public void setDisplayCondition(String displayCondition) {
+		this.displayCondition = displayCondition;
+	}
+
+	@Column(name="displayCondition")
+	private String displayCondition;
+
+
 	@OneToMany(mappedBy = "graphRule")
 	private Set<GraphRuleParameter> graphParameter = new HashSet<>();
 
