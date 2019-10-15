@@ -57,7 +57,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 
 	private String cipherQuery;
 
-	private String setGraphHitDisplay;
+	private String graphHitDisplay;
 
 	public RuleHitDetail() {
 	}
@@ -360,11 +360,11 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 		return Objects.hash(getHitMakerId(), getPassengerId());
 	}
 
-	public String getSetGraphHitDisplay() {
-		return setGraphHitDisplay;
+	public String getGraphHitDisplay() {
+		return graphHitDisplay;
 	}
 
-	public void setSetGraphHitDisplay(String setGraphHitDisplay) {
-		this.setGraphHitDisplay = setGraphHitDisplay;
+	public void setGraphHitDisplay(String graphHitDisplay) {
+		this.graphHitDisplay = graphHitDisplay;
 	}
 }

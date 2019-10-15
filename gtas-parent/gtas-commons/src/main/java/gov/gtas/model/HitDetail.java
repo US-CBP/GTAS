@@ -218,7 +218,7 @@ public class HitDetail extends BaseEntity {
 		hitDetail.setCreatedDate(new Date());
 		hitDetail.setTitle(ruleHitDetail.getTitle());
 		if (HitTypeEnum.GRAPH_HIT == ruleHitDetail.getHitType()) {
-			hitDetail.setRuleConditions(ruleHitDetail.getCipherQuery());
+			hitDetail.setRuleConditions(ruleHitDetail.getGraphHitDisplay());
 		} else {
 			String[] hitReasons = ruleHitDetail.getHitReasons();
 			StringBuilder sb = new StringBuilder();
