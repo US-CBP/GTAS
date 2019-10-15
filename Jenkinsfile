@@ -74,7 +74,7 @@ volumes: [
             # docker build -t ${regNamespace}/${artifactID} .
             docker tag paruff/gtas paruff/gtas:0.1.0.${shortGitCommit}
             docker tag paruff/gtas paruff/gtas:0.1.0.${gitCommitCount}
-            docker push ${regNamespace}/${artifactID}
+            docker push paruff/gtas
             """
          }
       }
