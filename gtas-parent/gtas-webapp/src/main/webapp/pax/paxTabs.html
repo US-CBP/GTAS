@@ -932,7 +932,7 @@
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="dismiss()">
                         <i class="fa fa-gavel"></i> &nbsp;{{'btn.dismiss' | translate}}
                     </button>
-                    <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
+                  <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
                         <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}
                     </a>
                     <a ng-if="!userHasRole(9) && !userHasRole(1)" ng-disabled = "true" class="btn btn-primary">
@@ -940,7 +940,7 @@
                     </a>
                     <a ng-if="userHasRole(9) || userHasRole(1)" class="btn btn-primary" ng-class="{'disabled': disableLinks}" href="#/casemanual/{{passenger.flightId}}/{{passenger.paxId}}">
                         <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> &nbsp;{{'btn.createcase' | translate}}
-                    </a>
+                    </a>-->
                 </div>
 
 
