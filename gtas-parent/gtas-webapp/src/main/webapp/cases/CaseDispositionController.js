@@ -327,7 +327,7 @@
                     displayName: $translate.instant('case.toprulecategory'),
                     cellTemplate: '<div class="case-grid" ng-class="{\'caseHits\': row.entity.hitNames.length > 1}"><ul>' +
                         '' +
-                        '<li ng-repeat="hit in row.entity.hitNames">{{hit}}</li>' +
+                        '<li ng-repeat="hit in row.entity.hitNames track by $index">{{hit}}</li>' +
                         '</ul>' +
                         '</div>'
                 },
