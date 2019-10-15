@@ -8,12 +8,12 @@ package gov.gtas.controller;
 import gov.gtas.constant.AuditLogConstants;
 import gov.gtas.enumtype.AuditActionType;
 import gov.gtas.error.ErrorDetailInfo;
-import gov.gtas.model.ApiAccess;
 import gov.gtas.model.AuditRecord;
 import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.util.DateCalendarUtils;
+import gov.gtas.vo.ApiAccessVo;
 import gov.gtas.vo.AuditRecordVo;
 import gov.gtas.vo.LogFileVo;
 import gov.gtas.vo.SettingsVo;
@@ -253,22 +253,22 @@ public class AdminController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/apiAccess")
-    public List<ApiAccess> getAllApiAccess() {
+    public List<ApiAccessVo> getAllApiAccess() {
         return apiAccessService.findAll();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiAccess createApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+    public ApiAccessVo createApiAccess(@RequestBody @Valid ApiAccessVo apiAccess) {
         return apiAccessService.create(apiAccess);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/apiAccess", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ApiAccess updateApiAccess(@RequestBody @Valid ApiAccess apiAccess) {
+    public ApiAccessVo updateApiAccess(@RequestBody @Valid ApiAccessVo apiAccess) {
         return apiAccessService.update(apiAccess);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/apiAccess/{id}")
-    public ApiAccess deleteApiAccess(@PathVariable Long id) {
+    public ApiAccessVo deleteApiAccess(@PathVariable Long id) {
         return apiAccessService.delete(id);
     }
 
