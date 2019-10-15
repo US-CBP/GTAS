@@ -119,7 +119,7 @@ public class AirportServiceImpl implements AirportService {
         return null;
     }
 
-    private AirportVo buildAirportVo(Airport airport) {
+    static AirportVo buildAirportVo(Airport airport) {
         return new AirportVo(
                 airport.getId(), airport.getOriginId(),
                 airport.getName(), airport.getIata(), airport.getIcao(),

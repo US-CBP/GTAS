@@ -57,8 +57,8 @@ public class LocalToUTCServiceTest {
         iad.setLatitude(new BigDecimal(38.944500d));
         iad.setLongitude(new BigDecimal(-77.455803d));
         iad.setName("Washington Dulles International Airport");
-        Mockito.when(airportService.getAirportByThreeLetterCode("IAD")).thenReturn(iad);
-        Mockito.when(airportService.getAirportByFourLetterCode("KIAD")).thenReturn(iad);
+        Mockito.when(airportService.getAirportByThreeLetterCode("IAD")).thenReturn(AirportServiceImpl.buildAirportVo(iad));
+        Mockito.when(airportService.getAirportByFourLetterCode("KIAD")).thenReturn(AirportServiceImpl.buildAirportVo(iad));
     }
 
 
