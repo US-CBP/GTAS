@@ -81,7 +81,7 @@ volumes: [
     }
     stage('deploy 2 k8s') {
       container('kubectl') {
-        sh "kubectl get pods"
+        sh "kubectl get pods -n default"
 
 // first time                        sh "kubectl create deployment ${artifactID} --image=${regNamespace}/${artifactID}"
 // first time                        sh "kubectl expose deployment ${artifactID} --type=LoadBalancer --port=8080"
