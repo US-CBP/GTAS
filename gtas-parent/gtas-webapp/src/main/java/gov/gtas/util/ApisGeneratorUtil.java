@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * ApisGeneratorUtil gets called from controller classes to verify the UGANDA specific files 
  * and convert them into APIS files and upload to the designated directory to process.
- * @see gov.gtas.controller.UploadController.java
+ * @see gov.gtas.controller.UploadController
  *
  */
 public class ApisGeneratorUtil {
@@ -38,54 +38,57 @@ public class ApisGeneratorUtil {
         Pattern pattern = Pattern.compile(flightregex); 
         Pattern patternorigin = Pattern.compile(orginRegex); 
         Pattern patternpax = Pattern.compile(paxRegex); 
-    	FileInputStream fis = new FileInputStream(fin);
-    	BufferedReader br = new BufferedReader(new InputStreamReader(fis));
     	String line = null;
-    	StringBuilder sb=new StringBuilder();
-    	String carrier = "";
-    	String flight_num ="";
-    	String origin = "";
-    	String dest = "";
-    	String flight_date ="";
-    	String mod_f_Date="";
-    	boolean enhancedManifest=false;
-    	while ((line = br.readLine()) != null) {
-    		Matcher matcher = pattern.matcher(line); 
-    		Matcher matcherorigen = patternorigin.matcher(line); 
-    		Matcher matcherpax = patternpax.matcher(line); 
-            while (matcher.find()) { 
-            	String header=matcher.group();
-            	header=header.replaceAll("\\s+", "");
-            	carrier = header.substring(header.indexOf(ApisGeneratorUtil.STR_FLIGHT)+ApisGeneratorUtil.STR_FLIGHT.length(),header.indexOf(ApisGeneratorUtil.STR_DATE)-3);
-            	flight_num = header.substring(header.indexOf(ApisGeneratorUtil.STR_FLIGHT)+ApisGeneratorUtil.STR_FLIGHT.length()+2,header.indexOf(ApisGeneratorUtil.STR_DATE));
-            	flight_date = header.substring(header.indexOf(ApisGeneratorUtil.STR_DATE)+ApisGeneratorUtil.STR_DATE.length(),header.length());
-            	mod_f_Date=getDateInYYMMDD(flight_date);
-            	prepareHeader(carrier,flight_num, sb);
-            	enhancedManifest=true;
-            }
-            while(matcherorigen.find()){
-            	String origenDetails=matcherorigen.group();
-            	origin =origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_EMBARK)+ApisGeneratorUtil.STR_EMBARK.length(),origenDetails.indexOf(ApisGeneratorUtil.STR_DEST));
-            	dest =origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_DEST)+ApisGeneratorUtil.STR_DEST.length(),origenDetails.length());
-            	if(StringUtils.isNotBlank(origin) && StringUtils.isNotBlank(dest)){
-            		origin=origin.replaceAll("\\s+", "");
-            		dest=dest.replaceAll("\\s+", "");
-            		
-            	}
-            	prepareFlightSegment(sb,carrier, flight_num, origin, mod_f_Date, dest);
-            }
-            while(matcherpax.find()){
-            	String paxDetails=matcherpax.group();
-            	String[] tokens=paxDetails.split("/");
-            	if(tokens != null && tokens.length > 11){
-            		buildPaxList(sb,paxDetails,origin,dest);
-            	}
-            }
-    	}
-    	br.close();
+		StringBuilder sb=new StringBuilder();
+		String carrier = "";
+		String flight_num ="";
+		String origin = "";
+		String dest = "";
+		String flight_date ="";
+		String mod_f_Date="";
+		boolean enhancedManifest=false;
+
+		try (FileInputStream fis = new FileInputStream(fin); BufferedReader br = new BufferedReader(new InputStreamReader(fis))) {
+
+			while ((line = br.readLine()) != null) {
+				Matcher matcher = pattern.matcher(line);
+				Matcher matcherorigen = patternorigin.matcher(line);
+				Matcher matcherpax = patternpax.matcher(line);
+				while (matcher.find()) {
+					String header = matcher.group();
+					header = header.replaceAll("\\s+", "");
+					carrier = header.substring(header.indexOf(ApisGeneratorUtil.STR_FLIGHT) + ApisGeneratorUtil.STR_FLIGHT.length(), header.indexOf(ApisGeneratorUtil.STR_DATE) - 3);
+					flight_num = header.substring(header.indexOf(ApisGeneratorUtil.STR_FLIGHT) + ApisGeneratorUtil.STR_FLIGHT.length() + 2, header.indexOf(ApisGeneratorUtil.STR_DATE));
+					flight_date = header.substring(header.indexOf(ApisGeneratorUtil.STR_DATE) + ApisGeneratorUtil.STR_DATE.length(), header.length());
+					mod_f_Date = getDateInYYMMDD(flight_date);
+					prepareHeader(carrier, flight_num, sb);
+					enhancedManifest = true;
+				}
+				while (matcherorigen.find()) {
+					String origenDetails = matcherorigen.group();
+					origin = origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_EMBARK) + ApisGeneratorUtil.STR_EMBARK.length(), origenDetails.indexOf(ApisGeneratorUtil.STR_DEST));
+					dest = origenDetails.substring(origenDetails.indexOf(ApisGeneratorUtil.STR_DEST) + ApisGeneratorUtil.STR_DEST.length(), origenDetails.length());
+					if (StringUtils.isNotBlank(origin) && StringUtils.isNotBlank(dest)) {
+						origin = origin.replaceAll("\\s+", "");
+						dest = dest.replaceAll("\\s+", "");
+
+					}
+					prepareFlightSegment(sb, carrier, flight_num, origin, mod_f_Date, dest);
+				}
+				while (matcherpax.find()) {
+					String paxDetails = matcherpax.group();
+					String[] tokens = paxDetails.split("/");
+					if (tokens != null && tokens.length > 11) {
+						buildPaxList(sb, paxDetails, origin, dest);
+					}
+				}
+			}
+		}
+
     	if(enhancedManifest){
     		buildApisFooter(sb);
     	}
+
     	return sb;
     }
     
@@ -185,41 +188,50 @@ public class ApisGeneratorUtil {
 		sb.append("DTM+36:180221'"+newline);
 		sb.append("LOC+91+UGA'"+newline);
 	}
-	
-	public static boolean isUgandaManifest(File fin){
-		boolean chk=false;
-		if(fin != null){
-			
-			String flightregex="^FLIGHT: (.*)\\s+DATE: (.*)$";
-			Pattern pattern = Pattern.compile(flightregex);
-			FileInputStream fis=null;
-			BufferedReader br = null;
-			String line = null;
-			try {
-				fis = new FileInputStream(fin);
-				br = new BufferedReader(new InputStreamReader(fis));
-		    	while ((line = br.readLine()) != null) {
-		    		Matcher matcher = pattern.matcher(line); 
-		    		 while (matcher.find()) { 
-		    			 return true;
-		    		 }
-		    	}
-			} catch (FileNotFoundException e) {
-				logger.error("Error in APIS generator:", e);
-			} catch (IOException e) {
-				logger.error("Error in APIS generator", e);
-			}finally{
-				fin.deleteOnExit();
-				if(!(br==null)){
-					try {
-						br.close();
-					} catch (IOException e) {
-						logger.error("Error in APIS generator.", e);
-					}
+
+	public static boolean isUgandaManifest(File fin) {
+		if (fin == null) {
+			return false;
+		}
+
+		String flightregex = "^FLIGHT: (.*)\\s+DATE: (.*)$";
+		Pattern pattern = Pattern.compile(flightregex);
+		FileInputStream fis = null;
+		BufferedReader br = null;
+		String line;
+		try {
+			fis = new FileInputStream(fin);
+			br = new BufferedReader(new InputStreamReader(fis));
+			while ((line = br.readLine()) != null) {
+				Matcher matcher = pattern.matcher(line);
+				if (matcher.find()) {
+					return true;
+				}
+			}
+		} catch (FileNotFoundException e) {
+			logger.error("Error in APIS generator:", e);
+		} catch (IOException e) {
+			logger.error("Error in APIS generator", e);
+		} finally {
+			fin.deleteOnExit();
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.error("Error in APIS generator.", e);
+				}
+			}
+
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					logger.error("Error in APIS generator.", e);
 				}
 			}
 		}
-		return chk;
+
+		return false;
 	}
 	
 	private static String getDateInYYMMDD(String dateString){

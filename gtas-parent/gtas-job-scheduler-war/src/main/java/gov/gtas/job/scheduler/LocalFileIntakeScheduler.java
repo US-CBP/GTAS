@@ -93,7 +93,10 @@ public class LocalFileIntakeScheduler {
         byte[] raw = FileUtils.readSmallFile(filePath);
         String tmp = new String(raw, StandardCharsets.UTF_8);
         sender.sendFileContent(outboundLoaderQueue, tmp, f.getName());
-        f.delete();
+        boolean fileDeleted = f.delete();
+        if (!fileDeleted) {
+            logger.error("file deletion failed");
+        }
     }
 
 
