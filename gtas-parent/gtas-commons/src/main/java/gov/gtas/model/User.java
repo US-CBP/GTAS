@@ -49,6 +49,9 @@ public class User implements Serializable {
 
 	@Column(name = "active")
 	private int active;
+	
+	@Column(name = "email")
+	private String email;
 
 	// Notification that the user is a part of (elected or assigned)
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -62,6 +65,14 @@ public class User implements Serializable {
 
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<Role>();
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();

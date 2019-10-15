@@ -367,9 +367,9 @@
 
              function notify(hitView) {
                 let emailDto = {
-                    to: ["testytest1232019@outlook.com"],
-                    subject: "Testing Email Notification",
-                    body: "This a test email from GTAS!",
+                    to: hitView.to,
+                    subject: hitView.subject,
+                    body: hitView.body,
                     pathToAttachment: null
                 };
 

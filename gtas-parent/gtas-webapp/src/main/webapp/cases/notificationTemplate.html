@@ -1,19 +1,37 @@
-<div type="text/ng-template">
-    <div class="modal-header">
-        <h3>Notification Form</h3>
-    </div>
-    <form ng-submit="submit()">
-      <div class="modal-body">
-        <label>Email address:</label>
-        <input type="email" ng-model="emailDto.to"/>
-        <label>Subject</label>
-        <input type="text" ng-model="emailDto.subject"/>
-        <label>Description</label>
-        <textarea ng-model="emailDto.body"></textarea>
-      </div>
-      <div class="modal-footer">
-          <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-          <input type="submit" class="btn primary-btn" value="Submit" />
-      </div>
-    </form>
+<div class="modal-header">
+  <h3 class="modal-title" id="modal-title">Notification Form</h3>
 </div>
+
+<form ng-submit="submit()">
+  <div class="modal-body" id="modal-body">
+    <uib-tabset>
+      <uib-tab index="0">
+          <uib-tab-heading>
+              <span class="glyphicon glyphicon-bullhorn"></span> Notify Group
+            </uib-tab-heading>
+        <div class="checkbox">
+          <input type="checkbox" id="select-all" ng-click="toggleUser()"/>
+          <label for="sellect-all">Notify all users in this group</label>
+        </div>
+        <div class="checkbox" ng-repeat="user in allUsers">
+          <input type="checkbox" name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
+          <label>{{user.firstName}} {{user.lastName}}</label>
+        </div>
+      </uib-tab>
+      <uib-tab index="1" >
+          <uib-tab-heading>
+              <span class="glyphicon glyphicon-bullhorn"></span> Notify External User
+            </uib-tab-heading>
+        <div class="modal-body from-group">
+          <label>Email address:</label>
+          <input type="email" class="form-control" ng-model="noneGtasUser.email" placeholder="email@example.com"/>
+        </div>
+      </uib-tab>
+    </uib-tabset>
+  </div>
+
+  <div class="modal-footer">
+    <input type="submit" class="btn btn-primary" value="Submit" />
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+  </div>
+</form>
