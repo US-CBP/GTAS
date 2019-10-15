@@ -21,6 +21,7 @@ import gov.gtas.repository.UserGroupRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleServiceUtil roleServiceUtil;
 
+	@Value("${user.group.default}")
+	private Long defaultUserGroupId;
+
 	private Pattern BCRYPT_PATTERN = Pattern.compile("\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}");
 
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -65,6 +69,9 @@ public class UserServiceImpl implements UserService {
 			userEntity.setRoles(roleCollection);
 		}
 		User newUserEntity = userRepository.save(userEntity);
+		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId).orElseThrow(RuntimeException::new);
+		defaultUserGroup.getGroupMembers().add(newUserEntity);
+		userGroupRepository.save(defaultUserGroup);
 		return userServiceUtil.mapUserDataFromEntity(newUserEntity);
 	}
 
