@@ -25,6 +25,7 @@
                 WatchlistCategory: function (entity) {
                     this.label = entity ? entity.name : null;
                     this.description = entity ? entity.description : null;
+                    this.severity = entity ? entity.severity : null;
                 }
             },
             resetModels = function (m) {
@@ -207,6 +208,7 @@
                 watchListService.getWatchlistCategories().then(function(res){
                     $scope.watchlistCategories =  res.data;
                     $scope.wlCatagoryGrid.data =  res.data;
+                    $scope.severity.data = res.data;
                     $scope.watchlistCategories.forEach(function(item){
                         $scope.categories[item.id]=item.label;
                     });

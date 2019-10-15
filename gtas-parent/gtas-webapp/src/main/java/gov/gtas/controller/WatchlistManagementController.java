@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.constant.CommonErrorConstants;
 import gov.gtas.constant.WatchlistConstants;
 import gov.gtas.constants.Constants;
+import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.enumtype.Status;
 import gov.gtas.error.CommonServiceException;
 import gov.gtas.json.JsonLookupData;
@@ -116,6 +117,8 @@ public class WatchlistManagementController {
 		HitCategory hitCategory = new HitCategory();
 		hitCategory.setDescription(wlCategory.getDescription());
 		hitCategory.setName(wlCategory.getLabel());
+		HitSeverityEnum hitSeverityEnum = HitSeverityEnum.fromString(wlCategory.getSeverity()).orElseThrow(RuntimeException::new);
+		hitCategory.setSeverity(hitSeverityEnum);
 		hitCategoryService.create(hitCategory);
 
 	}

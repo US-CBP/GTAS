@@ -34,7 +34,7 @@ public enum  HitSeverityEnum {
             .collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
     public static Optional<HitSeverityEnum> fromString(String entityName) {
-        return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase()));
+        return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase().trim()));
     }
 
     @Override

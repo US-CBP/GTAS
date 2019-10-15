@@ -10,16 +10,26 @@ public class JsonLookupData {
 	private Long id;
 	private String label;
 	private String description;
+	private String severity;
 
-	public JsonLookupData(Long id, String label, String description) {
+	public JsonLookupData(Long id, String label, String description, String severity) {
 		super();
 		this.id = id;
 		this.label = label;
 		this.description = description;
+		this.severity = severity;
 	}
 
 	@SuppressWarnings("unused") // Used to marshal object.
 	public JsonLookupData() {
+	}
+
+	public String getSeverity() {
+		return severity;
+	}
+
+	public void setSeverity(String severity) {
+		this.severity = severity;
 	}
 
 	public Long getId() {
