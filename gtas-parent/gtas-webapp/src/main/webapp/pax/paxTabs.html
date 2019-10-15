@@ -697,8 +697,8 @@
                                                 <thead>
                                                 <tr>
                                                     <th>{{'flight.flightnum' | translate}}</th>
-                                                    <th>{{'flight.arrival' | translate}}</th>
                                                     <th>{{'flight.departure' | translate}}</th>
+                                                    <th>{{'flight.arrival' | translate}}</th>
                                                     <th>{{'flight.origincountry' | translate}}</th>
                                                     <th>{{'flight.originairport' | translate}}</th>
                                                     <th>{{'flight.destinationcountry' | translate}}</th>
@@ -708,8 +708,8 @@
                                                 <tbody>
                                                 <tr ng-repeat="j in passenger.flightHistoryVo | orderBy:'-etd'">
                                                     <td>{{j.fullFlightNumber}}</td>
-                                                    <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                     <td>{{j.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                                    <td>{{j.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                     <td>
                                   <span ng-mouseleave="resetTooltip()">{{j.originCountry}}
                                     <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(j.originCountry,"country")}}</div></md-tooltip>
@@ -745,8 +745,8 @@
                                                 <thead>
                                                 <tr>
                                                     <th>{{'flight.flightnum' | translate}}</th>
-                                                    <th>{{'flight.arrival' | translate}}</th>
                                                     <th>{{'flight.departure' | translate}}</th>
+                                                    <th>{{'flight.arrival' | translate}}</th>
                                                     <th>{{'flight.origincountry' | translate}}</th>
                                                     <th>{{'flight.originairport' | translate}}</th>
                                                     <th>{{'flight.destinationcountry' | translate}}</th>
@@ -769,8 +769,8 @@
                                                         ng-if="k.bookingDetail">
                                                         {{k.fullFlightNumber}}
                                                     </td>
-                                                    <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                     <td>{{k.etd | date:'MM/dd/yyyy HH:mm'}}</td>
+                                                    <td>{{k.eta | date:'MM/dd/yyyy HH:mm'}}</td>
                                                     <td>
                                 <span ng-mouseleave="resetTooltip()">{{k.originCountry}}
                                       <md-tooltip class="multi-tooltip" md-direction="bottom"><div>{{getCodeTooltipData(k.originCountry,"country")}}</div></md-tooltip>
