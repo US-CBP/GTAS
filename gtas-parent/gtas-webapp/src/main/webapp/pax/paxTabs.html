@@ -166,7 +166,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th>{{'hit.category' | translate}}</th>
-                                                    <th>{{'hit.title' | translate}}</th>
+                                                    <th>{{'hit.documentNumber' | translate}}</th>
                                                     <th>{{'hit.conditions' | translate}}</th>
                                                     <th>{{'hit.flightDate' | translate}}</th>
                                                     <th>{{'hit.flightPaxLink' | translate}}</th>
@@ -175,7 +175,7 @@
                                                 <tbody>
                                                 <tr ng-repeat="j in hitHistory track by $index">
                                                     <td>{{j.category}}</td>
-                                                    <td>{{j.title}}</td>
+                                                    <td>{{j.passengerDocNumber}}</td>
                                                     <td>{{j.ruleConditions}}</td>
                                                     <td>{{j.flightDate |date:'yyyy-MM-dd'}}</td>
                                                     <td> <a ng-class="{'disabled': disableLinks}" href="#/paxdetail/{{j.paxId}}/{{j.flightId}}">Details</a></td>

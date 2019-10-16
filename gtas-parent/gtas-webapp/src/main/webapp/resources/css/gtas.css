@@ -480,7 +480,7 @@ div[ui-grid] {
 }
 
 .disabled {
-  color: #AAAAAA;
+  color: #8e908c;
   cursor: default;
   pointer-events: none;
   text-decoration: none;
