@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, $uibModal, userService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -21,6 +21,7 @@
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
             $scope.model = caseModel;
+            $scope.enableEmailNotification= true;
 
             $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
@@ -38,6 +39,17 @@
                     $scope.gridApi.exporter.pdfExport('all', 'all');
                 }
             };
+
+            $scope.isEmailNotificationEnabled = function() {
+                var data = '';
+                configService.enableEmailNotificationService().then(function(value) {
+                    data = value.data;
+                 });
+                 if (data.toLowerCase == 'false') {
+                    $scope.enableEmailNotification = false;
+                 }               
+                 return $scope.enableEmailNotification;
+            }
 
 //            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
 //                $timeout(function () {
@@ -417,7 +429,7 @@
                     displayName: $translate.instant('case.status'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Dismissed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
                         '<button ng-if="row.entity.status !== \'Dismissed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Dismiss</button>' +
-                        '<button class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
+                        '<button ng-if="isEmailNotificationEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 
