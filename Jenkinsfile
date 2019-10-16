@@ -81,23 +81,17 @@ volumes: [
     }
     stage('deploy 2 dev') {
       container('kubectl') {
-        sh "kubectl get pods -n default"
-
-// first time                        sh "kubectl create deployment ${artifactID} --image=${regNamespace}/${artifactID}"
-// first time                        sh "kubectl expose deployment ${artifactID} --type=LoadBalancer --port=8080"
-
-
+        
         sh "kubectl apply -f gtas-k8s-ds.yaml -n dev"
-
+          sh "kubectl get pods "
       }
     }
-
             // Input Step
 timeout(time: 15, unit: "MINUTES") {
     input message: 'Do you want to approve the deploy in TEST?', ok: 'Yes'
 }
             
-                stage('deploy 2 test') {
+  stage('deploy 2 test') {
       container('kubectl') {
 
         sh "kubectl apply -f gtas-k8s-ds.yaml -n test"
