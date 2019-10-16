@@ -79,29 +79,7 @@ volumes: [
          }
       }
     }
-    stage('deploy 2 dev') {
-      container('kubectl') {
-        
-        sh "kubectl apply -f gtas-k8s-ds.yaml -n dev"
-          sh "kubectl get pods "
-      }
-    }
-            // Input Step
-timeout(time: 15, unit: "MINUTES") {
-    input message: 'Do you want to approve the deploy in TEST?', ok: 'Yes'
-}
-            
-  stage('deploy 2 test') {
-      container('kubectl') {
-
-        sh "kubectl apply -f gtas-k8s-ds.yaml -n test"
-
-      }
-    }
-            // Input Step
-timeout(time: 30, unit: "MINUTES") {
-    input message: 'Do you want to approve the deploy in production?', ok: 'Yes'
-}
+ 
     
     } catch (e) {
         currentBuild.result = 'FAILURE'
