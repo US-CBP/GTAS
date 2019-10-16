@@ -60,7 +60,7 @@
                 return {
                     NEW: true,
                     RE_OPENED: false,
-                    DISMISSED: false
+                    REVIEWED: false
                 };
             }
             function getDefaultTimeLeft() {

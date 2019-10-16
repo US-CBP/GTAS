@@ -101,9 +101,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					&& dto.getDisplayStatusCheckBoxes().getNewItems()) {
 				hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
 			}
-			if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
-					&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
-				hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
+			if (dto.getDisplayStatusCheckBoxes().getReviewed() != null
+					&& dto.getDisplayStatusCheckBoxes().getReviewed()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.REVIEWED);
 			}
 			if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
 					&& dto.getDisplayStatusCheckBoxes().getReOpened()) {

@@ -14,7 +14,7 @@ app.service("caseModel",  function (caseDispositionService) {
     displayStatusCheckBoxes =     {
         NEW: true,
         RE_OPENED: true,
-        DISMISSED: false
+        REVIEWED: false
     },
     ruleTypes =     {
         WATCHLIST: true,

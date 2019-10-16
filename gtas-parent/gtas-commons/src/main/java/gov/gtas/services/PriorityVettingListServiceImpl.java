@@ -127,13 +127,14 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	@Override
 	@Transactional
-	public synchronized void update(ViewUpdateDTo viewUpdateDTo) {
+	public synchronized void update(ViewUpdateDTo viewUpdateDTo, String userId) {
 		Long paxId = viewUpdateDTo.getPassengerId();
 		Passenger p  = passengerRepository.findById(paxId).orElseThrow(RuntimeException::new);
 		Set<HitViewStatus> hitViewStatuses = hitViewStatusRepository.findAllByPassenger(p);
 		HitViewStatusEnum hitViewStatusEnum = HitViewStatusEnum.fromString(viewUpdateDTo.getStatus()).orElseThrow(RuntimeException::new);
 		for (HitViewStatus hvs : hitViewStatuses) {
 			hvs.setHitViewStatusEnum(hitViewStatusEnum);
+			hvs.setUpdatedBy(userId);
 		}
 		hitViewStatusRepository.saveAll(hitViewStatuses);
 	}

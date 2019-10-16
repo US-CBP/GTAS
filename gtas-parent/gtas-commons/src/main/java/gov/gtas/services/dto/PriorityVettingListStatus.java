@@ -10,8 +10,8 @@ public class PriorityVettingListStatus implements Serializable {
 
 	@JsonProperty("NEW")
 	private Boolean newItems;
-	@JsonProperty("DISMISSED")
-	private Boolean dismissed;
+	@JsonProperty("REVIEWED")
+	private Boolean reviewed;
 	@JsonProperty("RE_OPENED")
 	private Boolean reOpened;
 
@@ -26,12 +26,12 @@ public class PriorityVettingListStatus implements Serializable {
 		this.newItems = newItems;
 	}
 
-	public Boolean getDismissed() {
-		return dismissed;
+	public Boolean getReviewed() {
+		return reviewed;
 	}
 
-	public void setDismissed(Boolean dismissed) {
-		this.dismissed = dismissed;
+	public void setReviewed(Boolean reviewed) {
+		this.reviewed = reviewed;
 	}
 
 	public Boolean getReOpened() {
@@ -47,8 +47,8 @@ public class PriorityVettingListStatus implements Serializable {
 		if (newItems) {
 			checkedBoxes.add("NEW");
 		}
-		if (dismissed) {
-			checkedBoxes.add("DISMISSED");
+		if (reviewed) {
+			checkedBoxes.add("REVIEWED");
 		}
 		return checkedBoxes;
 	}

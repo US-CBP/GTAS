@@ -927,10 +927,10 @@
                 <!-- END - TABS AND CONTENT -->
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
-                        <i class="fa fa-eye"></i> &nbsp;{{'btn.addtowatchlist' | translate}}
+                        &nbsp;{{'btn.addtowatchlist' | translate}}
                     </button>
-                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="dismiss()">
-                        <i class="fa fa-gavel"></i> &nbsp;{{'btn.dismiss' | translate}}
+                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-info" ng-click="review()">
+                        &nbsp;{{'btn.reviewed' | translate}}
                     </button>
                   <!--  <a class="btn btn-primary" ng-href="{{jsonData}}" download="paxDetail.json">
                         <i class="fa fa-download" aria-hidden="true"></i> &nbsp;{{'btn.paxdetail' | translate}}

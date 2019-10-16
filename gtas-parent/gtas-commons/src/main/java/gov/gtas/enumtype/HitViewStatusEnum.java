@@ -24,7 +24,7 @@ public enum HitViewStatusEnum {
 
 	RE_OPENED("Re_Opened"),
 
-	DISMISSED("Dismissed"),
+	REVIEWED("Reviewed"),
 
 	NOT_USED("Not_Used");
 
