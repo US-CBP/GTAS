@@ -373,7 +373,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'date', 'onlyMyRules', 'ruleTypes']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','etaetdfilter', 'dateLabel', 'date', 'onlyMyRules', 'ruleTypes']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 
