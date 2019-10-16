@@ -1,5 +1,3 @@
-service/access/frontend.yaml 
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,7 +32,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: "gcr.io/google-samples/hello-frontend:1.0"
+        image: "paruff/gtas:latest"
         lifecycle:
           preStop:
             exec:
