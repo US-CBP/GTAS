@@ -86,14 +86,14 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		// **** PREDICATES ****
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
-		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
+/*		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
 			LocalDateTime ldt = LocalDateTime.now(ZoneOffset.UTC);
 			ldt = ldt.minusMinutes(30L);
 			Date oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC));
 			Predicate countDownPredicate = cb
 					.and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"), oneHourAgo));
 			queryPredicates.add(countDownPredicate);
-		}
+		}*/
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
 		if (dto.getDisplayStatusCheckBoxes() != null) {
