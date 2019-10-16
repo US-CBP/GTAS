@@ -311,8 +311,23 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
-                    width: 100,
-                    displayName: $translate.instant('flight.flight')
+                    width: 325,
+                    displayName: $translate.instant('flight.flight'),
+                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
+                        '<div class="flex">' +
+                        '<span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i></span>' +
+                        '<span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i></span>' +
+                        '<span class="sm-pad flight-num">{{row.entity.flightNumber}}</span>' +
+                        '<span class="sm-pad">' +
+                        '<div>' +
+                        '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' +
+                        '{{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '<div>' +
+                        '<i class="fa fa-arrow-circle-down" aria-hidden="true"></i>' +
+                        '{{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '</span>' +
+                        '</div>' +
+                        '</div>'
                 },
                 {
                     field: 'countdown',

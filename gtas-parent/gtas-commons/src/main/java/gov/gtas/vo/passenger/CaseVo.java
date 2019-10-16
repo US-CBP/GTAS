@@ -23,6 +23,8 @@ public class CaseVo {
 	private Date flightETADate;
 	private Date flightETDDate;
 	private String flightDirection;
+	private String flightDestination;
+	private String flightOrigin;
 	private String lastName;
 	private String firstName;
 	private String middleName;
@@ -301,5 +303,21 @@ public class CaseVo {
 	
 	public String getDocType() {
 		return this.docType;
+	}
+
+	public String getFlightDestination() {
+		return flightDestination;
+	}
+
+	public void setFlightDestination(String flightDestination) {
+		this.flightDestination = flightDestination;
+	}
+
+	public String getFlightOrigin() {
+		return flightOrigin;
+	}
+
+	public void setFlightOrigin(String flightOrigin) {
+		this.flightOrigin = flightOrigin;
 	}
 }

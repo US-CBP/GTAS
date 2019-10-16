@@ -115,6 +115,11 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightId(passenger.getFlight().getId());
 			caseVo.setPaxId(passenger.getId());
 			caseVo.setFlightNumber(passenger.getFlight().getFullFlightNumber());
+			caseVo.setFlightDirection(passenger.getFlight().getDirection());
+			caseVo.setFlightETADate(passenger.getFlight().getMutableFlightDetails().getEta());
+			caseVo.setFlightETDDate(passenger.getFlight().getMutableFlightDetails().getEtd());
+			caseVo.setFlightOrigin(passenger.getFlight().getOrigin());
+			caseVo.setFlightDestination(passenger.getFlight().getDestination());
 			caseVOS.add(caseVo);
 		}
 		return new PriorityVettingListDTO(caseVOS, count);
