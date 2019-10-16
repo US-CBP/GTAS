@@ -176,11 +176,15 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		if (dto.getEtaEnd() == null || dto.getEtaStart() == null) {
 			throw new RuntimeException("Flight dates required!");
 		} else {
-			Path<Date> eta = mutableFlightDetailsJoin.get("eta");
-			Predicate startPredicate = cb.greaterThanOrEqualTo(eta, dto.getEtaStart());
-			Predicate endPredicate = cb.lessThanOrEqualTo(eta, dto.getEtaEnd());
-			Predicate etaCondition = cb.and(startPredicate, endPredicate);
-			queryPredicates.add(etaCondition);
+			Expression<Date> relevantDate = cb.selectCase(flight.get("direction"))
+					.when("O", mutableFlightDetailsJoin.get("etd"))
+					.when("I", mutableFlightDetailsJoin.get("eta"))
+					.otherwise(mutableFlightDetailsJoin.get("eta"))
+					.as(Date.class);
+			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
+			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
+			Predicate relevantDateExpression = cb.and(startPredicate, endPredicate);
+			queryPredicates.add(relevantDateExpression);
 		}
 
 		// SORTING
