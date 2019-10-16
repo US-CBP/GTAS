@@ -29,11 +29,11 @@ volumes: [
         stage('Maven project') {
             container('maven') {
 
-                stage('Validate project') {
+                stage('Validate') {
                     sh 'mvn -f gtas-parent/ -B  validate'        
                 }
                 
-                stage('Compile project') {
+                stage('Compile') {
                     sh 'mvn -B  -f gtas-parent/ compile  -Dmaven.test.failure.ignore=true'
                 }
                 
