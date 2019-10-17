@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "passenger_comments")
-public class PassengerComment extends Comment {
+@Table(name = "passenger_notes")
+public class PassengerNote extends Note {
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

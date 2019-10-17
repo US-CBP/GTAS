@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum CommentType {
+public enum NoteType {
 
 	GENERAL_PASSENGER("GENERAL_PASSENGER"),
 
@@ -22,7 +22,7 @@ public enum CommentType {
 
 	private String type;
 
-	CommentType(String type) {
+	NoteType(String type) {
 		this.type = type;
 	}
 
@@ -30,10 +30,10 @@ public enum CommentType {
 		return type;
 	}
 
-	private static final Map<String, CommentType> stringToEnum = Stream.of(values())
+	private static final Map<String, NoteType> stringToEnum = Stream.of(values())
 			.collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
-	public static Optional<CommentType> fromString(String entityName) {
+	public static Optional<NoteType> fromString(String entityName) {
 		return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase()));
 	}
 

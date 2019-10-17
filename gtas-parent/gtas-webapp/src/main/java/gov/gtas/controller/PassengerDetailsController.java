@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 import gov.gtas.services.*;
+import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -92,6 +93,9 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private HitDetailService hitDetailService;
+	
+	@Autowired
+	private PassengerNoteService paxNoteService;
 
 	static final String EMPTY_STRING = "";
 
@@ -398,6 +402,27 @@ public class PassengerDetailsController {
 		}
 
 		return paxWatchlistLinkVos;
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/allnotes", method = RequestMethod.GET)
+	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam String paxId) {
+		return paxNoteService.getAllHistoricalNotes(paxId);
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/eventnotes", method = RequestMethod.GET)
+	public PassengerNoteSetDto getAllPassengerEventNotes(@RequestParam String paxId) {
+		return paxNoteService.getAllEventNotes(paxId);
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@RequestMapping(value = "/passengers/passenger/note", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void savePassengerComment(@RequestBody PassengerNote note) {
+		paxNoteService.saveNote(note);
 	}
 
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)

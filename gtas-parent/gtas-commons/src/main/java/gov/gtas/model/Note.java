@@ -9,48 +9,48 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import gov.gtas.enumtype.CommentType;
+import gov.gtas.enumtype.NoteType;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "comment")
+@Table(name = "notes")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Comment extends BaseEntityAudit {
+public abstract class Note extends BaseEntityAudit {
 
-    @Column(name = "cmt_plain_text", length = 10000, nullable = false)
-    private String plainTextComment;
+    @Column(name = "note_plain_text", length = 10000, nullable = false)
+    private String plainTextNote;
 
-    @Column(name = "cmt_rtf_text", length = 10000, nullable = false)
-    private String rtfComment;
+    @Column(name = "note_rtf_text", length = 10000, nullable = false)
+    private String rtfNote;
 
-    @Column(name = "cmt_type", nullable = false)
+    @Column(name = "note_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private CommentType commentType;
+    private NoteType noteType;
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "comment_attachment",
+    @JoinTable(name = "note_attachment",
             joinColumns = @JoinColumn(name = "comment_id"),
             inverseJoinColumns = @JoinColumn(name = "attachment_id"))
     private Set<Attachment> attachments = new HashSet<>();
 
-    public String getPlainTextComment() {
-        return plainTextComment;
+    public String getPlainTextNote() {
+        return plainTextNote;
     }
 
-    public void setPlainTextComment(String plainTextComment) {
-        this.plainTextComment = plainTextComment;
+    public void setPlainTextComment(String plainTextNote) {
+        this.plainTextNote = plainTextNote;
     }
 
-    public String getRtfComment() {
-        return rtfComment;
+    public String getRtfNote() {
+        return rtfNote;
     }
 
-    public void setRtfComment(String rtfComment) {
-        this.rtfComment = rtfComment;
+    public void setRtfComment(String rtfNote) {
+        this.rtfNote = rtfNote;
     }
 
     public Set<Attachment> getAttachments() {
