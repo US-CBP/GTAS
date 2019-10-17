@@ -21,7 +21,6 @@
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
             $scope.model = caseModel;
-            $scope.enableEmailNotification= true;
 
             $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
@@ -39,25 +38,12 @@
                     $scope.gridApi.exporter.pdfExport('all', 'all');
                 }
             };
-
-            $scope.isEmailNotificationEnabled = function() {
-                var data = '';
-                configService.enableEmailNotificationService().then(function(value) {
-                    data = value.data;
-                 });
-                 if (data.toLowerCase == 'false') {
-                    $scope.enableEmailNotification = false;
-                 }
-                 return $scope.enableEmailNotification;
-            }
-
-//            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
-//                $timeout(function () {
-//                    $scope.showCountdownLabelFlag = ((typeof response !== undefined) && response.data.startsWith("Y")) ? true : false;
-//
-//                }, 1000);
-//            });
-
+            $scope.enableEmailNotification =  configService.enableEmailNotificationService().then(function(value) {
+                $scope.enableEmailNotification = value.data;
+            });
+            $scope.isEmailEnabled = function() {
+                return $scope.enableEmailNotification === 'true';
+            };
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
@@ -285,8 +271,6 @@
 
                 return subject;
             }
-
-
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
                 $scope.paxId = pax.paxId;
@@ -409,7 +393,7 @@
                 {
                     field: 'countdown',
                     name: 'countdown',
-                    width: 150,
+                    width: 135,
                     displayName: $translate.instant('flight.countdown'),
                     cellTemplate: '<div><span class="case-grid">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
@@ -428,7 +412,7 @@
                     name: 'lastName',
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
+                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace bold"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
@@ -441,15 +425,16 @@
                 {
                     field: 'status',
                     name: 'status',
+                    width: 135,
                     displayName: $translate.instant('case.status'),
                 },
                 {
                     field: 'status',
                     name: 'action',
                     displayName: $translate.instant('case.action'),
-                    cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' +
-                        '<button ng-if="isEmailNotificationEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
+                    cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 

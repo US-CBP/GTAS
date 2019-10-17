@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title" id="modal-title">Notification Form</h3>
+  <h3 class="modal-title" id="modal-title">Email Notification</h3>
 </div>
 
 <form ng-submit="submit()">
@@ -11,7 +11,7 @@
             </uib-tab-heading>
         <div class="checkbox">
           <input type="checkbox" id="select-all" ng-click="toggleUser()"/>
-          <label for="sellect-all">Notify all users in this group</label>
+          <label for="select-all">Notify all users in this group</label>
         </div>
         <div class="checkbox" ng-repeat="user in allUsers">
           <input type="checkbox" name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
