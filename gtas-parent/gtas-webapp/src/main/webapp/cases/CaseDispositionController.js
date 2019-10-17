@@ -172,7 +172,7 @@
             };
 
             $scope.reOpen = function(row) {
-                row.entity.status = 'RE_OPENED';
+                row.entity.status = 'Re_Opened';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'RE_OPENED').then(function(result) {
                 }
             );
@@ -365,8 +365,13 @@
                     field: 'status',
                     name: 'status',
                     displayName: $translate.instant('case.status'),
+                },
+                {
+                    field: 'status',
+                    name: 'action',
+                    displayName: $translate.instant('case.action'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Reviewed</button>' /*+
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' /*+
                         '<button  class="btn primary" ng-click="grid.appScope.notify(row)" style="margin:5px;">Notify</button>'*/
                 }
                 

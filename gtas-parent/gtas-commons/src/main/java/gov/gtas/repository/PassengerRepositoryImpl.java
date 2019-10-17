@@ -211,7 +211,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(hitCategoryJoin.get("severity"));
 				} else if ("flightNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(flight.get("flightNumber"));
-				} else if ("status".equalsIgnoreCase(column)) {
+				} else if ("status".equalsIgnoreCase(column) || "action".equalsIgnoreCase(column)) {
 					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
 				} else if (!"documentNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(paxDetailsJoin.get(column));
