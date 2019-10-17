@@ -1,17 +1,21 @@
 package gov.gtas.services;
 
-import java.util.LinkedHashSet;
-
-import gov.gtas.model.PassengerNote;
+import gov.gtas.model.dto.PassengerNoteDto;
 import gov.gtas.services.dto.PassengerNoteSetDto;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
 
 public interface PassengerNoteService {
-	
-	 PassengerNoteSetDto getAllEventNotes(String paxId);
-	 PassengerNoteSetDto getAllHistoricalNotes(String paxId);
-	 void saveNote(PassengerNote note);
-	 
-	 //This particular action might not be used for now
-	 void deleteNote(String noteId); 
-	
+
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	PassengerNoteSetDto getAllEventNotes(Long paxId);
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	PassengerNoteSetDto getAllHistoricalNotes(Long paxId);
+
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	void saveNote(PassengerNoteDto note, String userId);
+
 }

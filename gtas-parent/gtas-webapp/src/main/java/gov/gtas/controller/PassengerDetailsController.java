@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.model.dto.PassengerNoteDto;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.vo.HitDetailVo;
@@ -32,13 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
@@ -373,7 +369,6 @@ public class PassengerDetailsController {
 		Passenger p = pService.findById(paxId);
 		passengerSet.remove(p);
 		return hitDetailService.getLast10RecentHits(passengerSet);
-
 	}
 
 	@ResponseBody
@@ -406,23 +401,21 @@ public class PassengerDetailsController {
 	
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/allnotes", method = RequestMethod.GET)
-	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam String paxId) {
-		return paxNoteService.getAllHistoricalNotes(paxId);
+	@GetMapping(value = "/passengers/passenger/notes")
+	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam Long paxId, @RequestParam Boolean historicalNotes) {
+		if (historicalNotes != null && historicalNotes) {
+			return paxNoteService.getAllHistoricalNotes(paxId);
+		} else {
+			return paxNoteService.getAllEventNotes(paxId);
+		}
 	}
 	
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/eventnotes", method = RequestMethod.GET)
-	public PassengerNoteSetDto getAllPassengerEventNotes(@RequestParam String paxId) {
-		return paxNoteService.getAllEventNotes(paxId);
-	}
-	
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(value = "/passengers/passenger/note", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void savePassengerComment(@RequestBody PassengerNote note) {
-		paxNoteService.saveNote(note);
+	@PostMapping(value = "/passengers/passenger/note", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void savePassengerNote (@RequestBody PassengerNoteDto note) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		paxNoteService.saveNote(note, userId);
 	}
 
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)

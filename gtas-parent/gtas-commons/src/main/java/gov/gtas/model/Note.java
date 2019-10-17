@@ -61,4 +61,12 @@ public abstract class Note extends BaseEntityAudit {
         this.attachments = attachments;
     }
 
+    public NoteType getNoteType() {
+        return noteType;
+    }
+
+    public void setNoteType(NoteType noteType) {
+        this.noteType = noteType;
+    }
+
 }
