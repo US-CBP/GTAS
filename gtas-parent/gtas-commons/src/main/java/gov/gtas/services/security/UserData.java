@@ -26,6 +26,7 @@ public class UserData implements Serializable {
 	private final String lastName;
 	private final int active;
 	private Set<RoleData> roles = new HashSet<RoleData>();
+	private  String email;	
 
 	public UserData(@JsonProperty("userId") String userId, @JsonProperty("password") String password,
 			@JsonProperty("firstName") String firstName, @JsonProperty("lasatName") String lastName,
@@ -36,6 +37,15 @@ public class UserData implements Serializable {
 		this.active = active;
 		this.password = password;
 		this.roles = roles;
+	}
+	
+	@JsonProperty("email")
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	@JsonProperty("userId")

@@ -1090,9 +1090,9 @@
         });
     };
 
-    $scope.dismiss = function () {
+    $scope.review = function () {
       let paxId = $scope.passenger.paxId;
-      paxDetailService.updatePassengerHitDetails(paxId, 'DISMISSED')
+      paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
           .then(function (response) {
             $scope.refreshHitDetailsList();
           });

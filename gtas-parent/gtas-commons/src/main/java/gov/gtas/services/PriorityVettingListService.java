@@ -20,6 +20,6 @@ public interface PriorityVettingListService {
 	PriorityVettingListDTO generateDtoFromRequest(PriorityVettingListRequest request, String userId);
 
 	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	void update(ViewUpdateDTo viewUpdateDTo);
+	void update(ViewUpdateDTo viewUpdateDTo, String userId);
 
 }

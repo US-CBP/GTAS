@@ -49,6 +49,9 @@ public class User implements Serializable {
 
 	@Column(name = "active")
 	private int active;
+	
+	@Column(name = "email")
+	private String email;
 
 	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
 	private Set<UserGroup> userGroups = new HashSet<>();
@@ -64,6 +67,14 @@ public class User implements Serializable {
 	@ManyToMany(targetEntity = Role.class, cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
 	private Set<HitMaker> hitMakers = new HashSet<>();

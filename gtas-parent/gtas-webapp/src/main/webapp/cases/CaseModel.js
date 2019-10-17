@@ -14,7 +14,7 @@ app.service("caseModel",  function (caseDispositionService) {
     displayStatusCheckBoxes =     {
         NEW: true,
         RE_OPENED: true,
-        DISMISSED: false
+        REVIEWED: false
     },
     ruleTypes =     {
         WATCHLIST: true,
@@ -26,7 +26,7 @@ app.service("caseModel",  function (caseDispositionService) {
     startDate = new Date(),
     endDate = new Date();
     endDate.setDate(endDate.getDate() + 1);
-    startDate.setHours(startDate.getHours()-1);
+    startDate.setMinutes(startDate.getMinutes()-15);
     ruleCatFilter = caseDispositionService.getDefaultCats();
     this.reset = function () {
         this.pageNumber = 1;

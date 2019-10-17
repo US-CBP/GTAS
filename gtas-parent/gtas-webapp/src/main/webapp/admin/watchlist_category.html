@@ -1,0 +1,28 @@
+
+
+
+
+<div class="manage">
+    <div ui-grid="wlCatagoryGrid" ui-grid-pagination ui-grid-exporter class="grid"></div>
+</div>
+
+<div class="actions md-pad">
+
+<button ng-click="addWlCategory()" class="btn btn-default pull-right">
+    <md-tooltip>Add WL Category</md-tooltip>
+    <i class="fa fa-plus"></i> Add WL Category
+</button>
+
+</div>
+
+
+
+
+<spinner name="html5spinner" ng-cloak="">
+  <div class="overlay"></div>
+  <div class="spinner">
+    <button class="btn btn-default" disabled>
+        <i class="fa fa-spinner fa-spin"></i> Please Wait...
+    </button>
+  </div>
+</spinner>

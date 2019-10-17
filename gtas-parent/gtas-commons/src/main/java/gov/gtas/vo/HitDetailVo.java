@@ -5,8 +5,10 @@
  */
 package gov.gtas.vo;
 
+import gov.gtas.model.Document;
 import gov.gtas.model.HitDetail;
 import gov.gtas.model.HitsSummary;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -41,6 +43,8 @@ public class HitDetailVo {
 	private String severity;
 	private String ruleAuthor;
 
+	private String passengerDocNumber;
+
 	public static HitDetailVo from(HitDetail hitDetail) {
 		HitDetailVo hitDetailVo = new HitDetailVo();
 		hitDetailVo.setRuleId(hitDetail.getRuleId());
@@ -52,6 +56,17 @@ public class HitDetailVo {
 		hitDetailVo.setRuleConditions(hitDetail.getRuleConditions());
 		hitDetailVo.setRuleDesc(hitDetail.getDescription());
 		hitDetailVo.setRuleTitle(hitDetail.getTitle());
+		String documentNumber = "";
+		for (Document d : hitDetail.getPassenger().getDocuments()) {
+			documentNumber = d.getDocumentNumber();
+			if (StringUtils.isNotBlank(documentNumber) && StringUtils.isNotBlank(d.getDocumentType())) {
+				documentNumber = documentNumber + "(" + d.getDocumentType() + ")";
+			}
+			if ("P".equalsIgnoreCase(d.getDocumentType())) {
+				break;
+			}
+		}
+		hitDetailVo.setPassengerDocNumber(documentNumber);
 		return hitDetailVo;
 	}
 
@@ -195,4 +210,11 @@ public class HitDetailVo {
 		this.status = status;
 	}
 
+	public String getPassengerDocNumber() {
+		return passengerDocNumber;
+	}
+
+	public void setPassengerDocNumber(String passengerDocNumber) {
+		this.passengerDocNumber = passengerDocNumber;
+	}
 }

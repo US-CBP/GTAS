@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -38,14 +38,12 @@
                     $scope.gridApi.exporter.pdfExport('all', 'all');
                 }
             };
-
-//            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
-//                $timeout(function () {
-//                    $scope.showCountdownLabelFlag = ((typeof response !== undefined) && response.data.startsWith("Y")) ? true : false;
-//
-//                }, 1000);
-//            });
-
+            $scope.enableEmailNotification =  configService.enableEmailNotificationService().then(function(value) {
+                $scope.enableEmailNotification = value.data;
+            });
+            $scope.isEmailEnabled = function() {
+                return $scope.enableEmailNotification === 'true';
+            };
 
             caseService.getDispositionStatuses().then(function (response) {
                 $scope.dispositionStatuses = response.data;
@@ -161,18 +159,18 @@
               };
 
             $scope.deleteRow = function(row) {
-                row.entity.status = 'DISMISSED';
-                caseDispositionService.updatePassengerHitViews(row.entity, 'DISMISSED').then(function(result) {
+                row.entity.status = 'Reviewed';
+                caseDispositionService.updatePassengerHitViews(row.entity, 'REVIEWED').then(function(result) {
                 }
             );
-                if (! $scope.model.displayStatusCheckBoxes.DISMISSED) {
+                if (! $scope.model.displayStatusCheckBoxes.REVIEWED) {
                     const index = $scope.casesDispGrid.data.indexOf(row.entity);
                     $scope.casesDispGrid.data.splice(index, 1);
                 }
             };
 
             $scope.reOpen = function(row) {
-                row.entity.status = 'RE_OPENED';
+                row.entity.status = 'Re_Opened';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'RE_OPENED').then(function(result) {
                 }
             );
@@ -181,35 +179,98 @@
                     $scope.casesDispGrid.data.splice(index, 1);
                 }
             };
+            $scope.notify = function(row) {
+                $scope.notificationData = row;
+               var notificationModalInstance = $uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: 'modal-title',
+                    ariaDescribedBy: 'modal-body',
+                    templateUrl:'cases/notificationTemplate.html',
+                    backdrop: true,
+                    controller: NotificationModalCtrl,
+                    scope: $scope
 
-            $scope.emailDto = {
-                to: '',
-                subject: '',
-                body: '',
-            };
-            $scope.notify = function(row) {               
-                // $uibModal.open({
-                //     templateUrl:'notificationTemplate.html',
-                //     backdrop: true,
-                //     windowClass: 'modal',
-                //     controller: function ( $scope, $uibModalInstance, emailDto) {
-                //         $scope.emailDto = emailDto;
+                });
 
-                //         $scope.cancel = function () {
-                //             $uibModalInstance.dismiss('cancel'); 
-                //         };
+                notificationModalInstance.result.then(function() {
+                    $uibModalInstance.close();
+                })
 
-                //         $scope.submit = function () {
-                //             caseDispositionService.notify($scope.emailDto);
-                //             $uibModalInstance.dismiss('cancel'); 
-                //         }
-                //     }
-                // })
-                caseDispositionService.notify(row.entity);
-               
             };
 
+            var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
+                var loggedInUser = $rootScope.currentlyLoggedInUser;
+                $scope.noneGtasUser = {};
+                var setUserData = function (data) {
+                    $scope.allUsers= data;
+                    $scope.allUsers.forEach(function(user) {
+                        user.selected = false;
+                    })
+                };
+                userService.getAllUsers().then(setUserData);
 
+                $scope.submit = function () {
+                    $scope.selectedEmails = [];
+                    $scope.allUsers.forEach(function(user){
+                        if (user.selected) {
+                            $scope.selectedEmails.push(user.email);
+                        }
+                    });
+                    if ($scope.noneGtasUser.email != null) {
+                        $scope.selectedEmails.push($scope.noneGtasUser.email);
+                    }
+                    var emailDto = {
+                        to: $scope.selectedEmails,
+                        subject: makeEmailSubjectText($scope.notificationData),
+                        body: makeEmailBodyText($scope.notificationData),
+                    };
+                    if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
+                        caseDispositionService.notify(emailDto);
+                    }
+
+                    $uibModalInstance.dismiss('cancel');
+
+                }
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+
+                $scope.toggleUser = function () {
+                    angular.forEach($scope.allUsers, function(user) {
+                        user.selected = event.target.checked;
+                    })
+                }
+
+            };
+
+            var makeEmailBodyText = function(hitView) {
+                var emailText = 'Hit Status: ' + hitView.entity.status + '\n' +
+                'First Name: ' +  hitView.entity.firstName + '\n' +
+                'Last Name: ' + hitView.entity.lastName + '\n' +
+                'flight Number: ' + hitView.entity.flightNumber + '\n' +
+                'DOB : ' + hitView.entity.dob + '\n' +
+                'Gender : ' + hitView.entity.gender + '\n' +
+                'Document Type: ' + hitView.entity.docType + '\n' +
+                'Document Number: ' + hitView.entity.document + '\n' +
+                'Severity | Category | Rule (Type): \n';
+                angular.forEach(hitView.entity.hitNames, function(hitName) {
+                    emailText += '\t' + hitName + '\n';
+                });
+
+                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay;
+
+                return emailText;
+            }
+
+            var makeEmailSubjectText = function(hitView) {
+                var subject = '(GTAS): ' +
+                hitView.entity.lastName.toUpperCase() + ', ' +
+                hitView.entity.firstName +
+                ' Hit Status Notification';
+
+                return subject;
+            }
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
                 $scope.paxId = pax.paxId;
@@ -248,7 +309,7 @@
                         }
                     }
                 }).then(function(answer) {
-                    if (answer === 'dismiss') {
+                    if (answer === 'reviewed') {
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
@@ -311,13 +372,28 @@
                 {
                     field: 'flightNumber',
                     name: 'flightNumber',
-                    width: 100,
-                    displayName: $translate.instant('flight.flight')
+                    width: 325,
+                    displayName: $translate.instant('flight.flight'),
+                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace">' +
+                        '<div class="flex">' +
+                        '<span ng-if="row.entity.flightDirection === \'O\'" class="sm-pad flight-num"><i class="fa fa-plane" aria-hidden="true"></i></span>' +
+                        '<span ng-if="row.entity.flightDirection === \'I\'" class="sm-pad flight-num"><i class="fa fa-flip-vertical fa-plane" aria-hidden="true"></i></span>' +
+                        '<span class="sm-pad flight-num">{{row.entity.flightNumber}}</span>' +
+                        '<span class="sm-pad">' +
+                        '<div>' +
+                        '<i class="fa fa-arrow-circle-up" aria-hidden="true"></i>' +
+                        '{{row.entity.flightOrigin}} {{row.entity.flightETDDate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '<div>' +
+                        '<i class="fa fa-arrow-circle-down" aria-hidden="true"></i>' +
+                        '{{row.entity.flightDestination}} {{row.entity.flightETADate | date:\'yyyy-MM-dd HH:mm\'}}</div>' +
+                        '</span>' +
+                        '</div>' +
+                        '</div>'
                 },
                 {
                     field: 'countdown',
                     name: 'countdown',
-                    width: 150,
+                    width: 135,
                     displayName: $translate.instant('flight.countdown'),
                     cellTemplate: '<div><span class="case-grid">{{row.entity.countDownTimeDisplay}}</span></div>'
                 },
@@ -336,7 +412,7 @@
                     name: 'lastName',
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<div><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
+                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
@@ -349,10 +425,16 @@
                 {
                     field: 'status',
                     name: 'status',
+                    width: 135,
                     displayName: $translate.instant('case.status'),
-                    cellTemplate: '<button ng-if="row.entity.status === \'Dismissed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Dismissed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Dismiss</button>' /*+
-                        '<button  class="btn primary" ng-click="grid.appScope.notify(row)" style="margin:5px;">Notify</button>'*/
+                },
+                {
+                    field: 'status',
+                    name: 'action',
+                    displayName: $translate.instant('case.action'),
+                    cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' +
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 
@@ -373,7 +455,7 @@
                 }
               };
             $scope.filterCheck = function(option) {
-              var filters = ['paxname', 'flight', 'dispstatus', 'withTimeLeft', 'rulecats','etaetdfilter', 'dateLabel', 'date', 'onlyMyRules', 'ruleTypes']; //, 'priority', 'dateLabel', 'date'
+              var filters = ['paxname', 'flight', 'dispstatus', 'rulecats','etaetdfilter', 'dateLabel', 'date', 'onlyMyRules', 'ruleTypes']; //, 'priority', 'dateLabel', 'date'
               return filters.includes(option);
             };
 

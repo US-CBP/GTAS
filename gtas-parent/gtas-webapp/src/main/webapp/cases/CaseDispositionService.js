@@ -60,7 +60,7 @@
                 return {
                     NEW: true,
                     RE_OPENED: false,
-                    DISMISSED: false
+                    REVIEWED: false
                 };
             }
             function getDefaultTimeLeft() {
@@ -381,9 +381,9 @@
 
              function notify(hitView) {
                 let emailDto = {
-                    to: ["email address goes here"],
-                    subject: "Testing Email Notification",
-                    body: "This a test email from GTAS!",
+                    to: hitView.to,
+                    subject: hitView.subject,
+                    body: hitView.body,
                     pathToAttachment: null
                 };
 

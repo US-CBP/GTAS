@@ -86,14 +86,14 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		// **** PREDICATES ****
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
-		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
+/*		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
 			LocalDateTime ldt = LocalDateTime.now(ZoneOffset.UTC);
 			ldt = ldt.minusMinutes(30L);
 			Date oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC));
 			Predicate countDownPredicate = cb
 					.and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"), oneHourAgo));
 			queryPredicates.add(countDownPredicate);
-		}
+		}*/
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
 		if (dto.getDisplayStatusCheckBoxes() != null) {
@@ -101,9 +101,9 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					&& dto.getDisplayStatusCheckBoxes().getNewItems()) {
 				hitViewStatusEnumSet.add(HitViewStatusEnum.NEW);
 			}
-			if (dto.getDisplayStatusCheckBoxes().getDismissed() != null
-					&& dto.getDisplayStatusCheckBoxes().getDismissed()) {
-				hitViewStatusEnumSet.add(HitViewStatusEnum.DISMISSED);
+			if (dto.getDisplayStatusCheckBoxes().getReviewed() != null
+					&& dto.getDisplayStatusCheckBoxes().getReviewed()) {
+				hitViewStatusEnumSet.add(HitViewStatusEnum.REVIEWED);
 			}
 			if (dto.getDisplayStatusCheckBoxes().getReOpened() != null
 					&& dto.getDisplayStatusCheckBoxes().getReOpened()) {
@@ -211,7 +211,7 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 					orderByItem.add(hitCategoryJoin.get("severity"));
 				} else if ("flightNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(flight.get("flightNumber"));
-				} else if ("status".equalsIgnoreCase(column)) {
+				} else if ("status".equalsIgnoreCase(column) || "action".equalsIgnoreCase(column)) {
 					orderByItem.add(hitViewJoin.get("hitViewStatusEnum"));
 				} else if (!"documentNumber".equalsIgnoreCase(column)) {
 					orderByItem.add(paxDetailsJoin.get(column));

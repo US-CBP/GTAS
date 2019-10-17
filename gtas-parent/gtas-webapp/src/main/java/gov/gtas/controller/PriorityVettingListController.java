@@ -68,7 +68,8 @@ public class PriorityVettingListController {
 
 	@RequestMapping(value = "/hits", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void update(@RequestBody ViewUpdateDTo requestDto) {
-		priorityVettingListService.update(requestDto);
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		priorityVettingListService.update(requestDto, userId);
 	}
 
 	// getOneHistDisp

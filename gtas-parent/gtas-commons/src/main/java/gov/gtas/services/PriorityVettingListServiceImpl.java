@@ -115,6 +115,11 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			caseVo.setFlightId(passenger.getFlight().getId());
 			caseVo.setPaxId(passenger.getId());
 			caseVo.setFlightNumber(passenger.getFlight().getFullFlightNumber());
+			caseVo.setFlightDirection(passenger.getFlight().getDirection());
+			caseVo.setFlightETADate(passenger.getFlight().getMutableFlightDetails().getEta());
+			caseVo.setFlightETDDate(passenger.getFlight().getMutableFlightDetails().getEtd());
+			caseVo.setFlightOrigin(passenger.getFlight().getOrigin());
+			caseVo.setFlightDestination(passenger.getFlight().getDestination());
 			caseVOS.add(caseVo);
 		}
 		return new PriorityVettingListDTO(caseVOS, count);
@@ -122,13 +127,14 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	@Override
 	@Transactional
-	public synchronized void update(ViewUpdateDTo viewUpdateDTo) {
+	public synchronized void update(ViewUpdateDTo viewUpdateDTo, String userId) {
 		Long paxId = viewUpdateDTo.getPassengerId();
 		Passenger p  = passengerRepository.findById(paxId).orElseThrow(RuntimeException::new);
 		Set<HitViewStatus> hitViewStatuses = hitViewStatusRepository.findAllByPassenger(p);
 		HitViewStatusEnum hitViewStatusEnum = HitViewStatusEnum.fromString(viewUpdateDTo.getStatus()).orElseThrow(RuntimeException::new);
 		for (HitViewStatus hvs : hitViewStatuses) {
 			hvs.setHitViewStatusEnum(hitViewStatusEnum);
+			hvs.setUpdatedBy(userId);
 		}
 		hitViewStatusRepository.saveAll(hitViewStatuses);
 	}
