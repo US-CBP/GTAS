@@ -412,7 +412,7 @@
                     name: 'lastName',
                     width: 300,
                     displayName: $translate.instant('pass.lastNameFirstName'),
-                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace bold"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
+                    cellTemplate: '<div style="font-family: \'Roboto Mono\', monospace"><md-button aria-label="type" ng-click="grid.appScope.showPassenger(row)" ' +
                         'class="case-grid md-primary md-button md-default-theme"><div><ul style="list-style-type: none;">' +
                         '<li>' +
                         '{{COL_FIELD}}, {{row.entity.firstName}}' +
