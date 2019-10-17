@@ -9,7 +9,7 @@
         function ($scope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -21,6 +21,7 @@
             $scope.showCountdownLabelFlag = false;
             $scope.trueFalseBoolean = "YES";
             $scope.model = caseModel;
+            $scope.enableEmailNotification= true;
 
             $scope.errorToast = function (error, toastPosition) {
                 $mdToast.show($mdToast.simple()
@@ -38,6 +39,17 @@
                     $scope.gridApi.exporter.pdfExport('all', 'all');
                 }
             };
+
+            $scope.isEmailNotificationEnabled = function() {
+                var data = '';
+                configService.enableEmailNotificationService().then(function(value) {
+                    data = value.data;
+                 });
+                 if (data.toLowerCase == 'false') {
+                    $scope.enableEmailNotification = false;
+                 }
+                 return $scope.enableEmailNotification;
+            }
 
 //            caseDispositionService.getAppConfigAPISFlag().then(function (response) {
 //                $timeout(function () {
@@ -181,33 +193,98 @@
                     $scope.casesDispGrid.data.splice(index, 1);
                 }
             };
+            $scope.notify = function(row) {
+                $scope.notificationData = row;
+               var notificationModalInstance = $uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: 'modal-title',
+                    ariaDescribedBy: 'modal-body',
+                    templateUrl:'cases/notificationTemplate.html',
+                    backdrop: true,
+                    controller: NotificationModalCtrl,
+                    scope: $scope
 
-            $scope.emailDto = {
-                to: '',
-                subject: '',
-                body: '',
+                });
+
+                notificationModalInstance.result.then(function() {
+                    $uibModalInstance.close();
+                })
+
             };
-            $scope.notify = function(row) {               
-                // $uibModal.open({
-                //     templateUrl:'notificationTemplate.html',
-                //     backdrop: true,
-                //     windowClass: 'modal',
-                //     controller: function ( $scope, $uibModalInstance, emailDto) {
-                //         $scope.emailDto = emailDto;
 
-                //         $scope.cancel = function () {
-                //             $uibModalInstance.dismiss('cancel'); 
-                //         };
+            var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
+                var loggedInUser = $rootScope.currentlyLoggedInUser;
+                $scope.noneGtasUser = {};
+                var setUserData = function (data) {
+                    $scope.allUsers= data;
+                    $scope.allUsers.forEach(function(user) {
+                        user.selected = false;
+                    })
+                };
+                userService.getAllUsers().then(setUserData);
 
-                //         $scope.submit = function () {
-                //             caseDispositionService.notify($scope.emailDto);
-                //             $uibModalInstance.dismiss('cancel'); 
-                //         }
-                //     }
-                // })
-                caseDispositionService.notify(row.entity);
-               
+                $scope.submit = function () {
+                    $scope.selectedEmails = [];
+                    $scope.allUsers.forEach(function(user){
+                        if (user.selected) {
+                            $scope.selectedEmails.push(user.email);
+                        }
+                    });
+                    if ($scope.noneGtasUser.email != null) {
+                        $scope.selectedEmails.push($scope.noneGtasUser.email);
+                    }
+                    var emailDto = {
+                        to: $scope.selectedEmails,
+                        subject: makeEmailSubjectText($scope.notificationData),
+                        body: makeEmailBodyText($scope.notificationData),
+                    };
+                    if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
+                        caseDispositionService.notify(emailDto);
+                    }
+
+                    $uibModalInstance.dismiss('cancel');
+
+                }
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+
+                $scope.toggleUser = function () {
+                    angular.forEach($scope.allUsers, function(user) {
+                        user.selected = event.target.checked;
+                    })
+                }
+
             };
+
+            var makeEmailBodyText = function(hitView) {
+                var emailText = 'Hit Status: ' + hitView.entity.status + '\n' +
+                'First Name: ' +  hitView.entity.firstName + '\n' +
+                'Last Name: ' + hitView.entity.lastName + '\n' +
+                'flight Number: ' + hitView.entity.flightNumber + '\n' +
+                'DOB : ' + hitView.entity.dob + '\n' +
+                'Gender : ' + hitView.entity.gender + '\n' +
+                'Document Type: ' + hitView.entity.docType + '\n' +
+                'Document Number: ' + hitView.entity.document + '\n' +
+                'Severity | Category | Rule (Type): \n';
+                angular.forEach(hitView.entity.hitNames, function(hitName) {
+                    emailText += '\t' + hitName + '\n';
+                });
+
+                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay;
+
+                return emailText;
+            }
+
+            var makeEmailSubjectText = function(hitView) {
+                var subject = '(GTAS): ' +
+                hitView.entity.lastName.toUpperCase() + ', ' +
+                hitView.entity.firstName +
+                ' Hit Status Notification';
+
+                return subject;
+            }
 
 
             $scope.showPassenger = function (row) {
@@ -371,8 +448,8 @@
                     name: 'action',
                     displayName: $translate.instant('case.action'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn primary" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' /*+
-                        '<button  class="btn primary" ng-click="grid.appScope.notify(row)" style="margin:5px;">Notify</button>'*/
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn primary" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' +
+                        '<button ng-if="isEmailNotificationEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 

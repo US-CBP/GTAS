@@ -1675,6 +1675,15 @@
       function handleSuccess(response) {
         return response.data;
       }
+      
+      function enableEmailNotificationService() {
+    	  var dfd = $q.defer();
+          dfd.resolve($http({
+            method: 'get',
+            url: CONFIG_URL + "/enableEmailNotification"
+        }));
+        return dfd.promise;
+      }
 
           return ({
               defaultHomePage: defaultHomePage,
@@ -1682,7 +1691,8 @@
               kibanaUrl: kibanaUrl,
               cypherUrl: cypherUrl,
               cypherAuth: cypherAuth,
-              agencyName: agencyName
+              agencyName: agencyName,
+              enableEmailNotificationService: enableEmailNotificationService
           });
         });
   }());
