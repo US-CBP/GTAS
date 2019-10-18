@@ -1,8 +1,9 @@
 package gov.gtas.vo.lookup;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class AirportVo {
+public class AirportVo  implements Serializable  {
 
 	private Long id;
 	private Long originId;
@@ -29,6 +30,9 @@ public class AirportVo {
 		this.longitude = longitude;
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
+	}
+
+	public AirportVo() {
 	}
 
 	public Long getId() {

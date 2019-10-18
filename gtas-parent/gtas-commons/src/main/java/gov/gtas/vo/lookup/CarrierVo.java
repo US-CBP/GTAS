@@ -1,6 +1,8 @@
 package gov.gtas.vo.lookup;
 
-public class CarrierVo {
+import java.io.Serializable;
+
+public class CarrierVo implements Serializable {
 
 	private Long id;
 	private Long originId;
@@ -14,6 +16,9 @@ public class CarrierVo {
 		this.name = name;
 		this.iata = iata;
 		this.icao = icao;
+	}
+
+	public CarrierVo() {
 	}
 
 	public Long getId() {

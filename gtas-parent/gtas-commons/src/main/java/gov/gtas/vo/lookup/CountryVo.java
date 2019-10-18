@@ -1,6 +1,8 @@
 package gov.gtas.vo.lookup;
 
-public class CountryVo {
+import java.io.Serializable;
+
+public class CountryVo implements Serializable {
 
 	private Long id;
 	private Long originId;
@@ -16,6 +18,9 @@ public class CountryVo {
 		this.iso3 = iso3;
 		this.name = name;
 		this.isoNumeric = isoNumeric;
+	}
+
+	public CountryVo() {
 	}
 
 	public Long getId() {
