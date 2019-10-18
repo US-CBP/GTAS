@@ -5,6 +5,8 @@ import java.io.File;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -17,6 +19,8 @@ import gov.gtas.services.dto.EmailDTO;
 
 @Component
 public class GtasEmailService {
+
+	private static Logger logger = LoggerFactory.getLogger(GtasEmailService.class);
 
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -68,8 +72,8 @@ public class GtasEmailService {
 			helper.addAttachment(fileName, file);
 
 			javaMailSender.send(message);
-		} catch (MessagingException e) {
-			e.printStackTrace();
+		} catch (MessagingException ignored) {
+			logger.error("Error!" , ignored);
 		}
 	}
 }

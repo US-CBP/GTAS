@@ -10,7 +10,6 @@ import gov.gtas.enumtype.Status;
 import gov.gtas.json.AuditActionData;
 import gov.gtas.json.AuditActionTarget;
 import gov.gtas.model.*;
-import gov.gtas.model.lookup.DispositionStatus;
 import gov.gtas.repository.*;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
