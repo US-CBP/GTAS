@@ -580,7 +580,7 @@ public class PassengerDetailsController {
 	/**
 	 * Segments PnrRaw String Required for Frontend to highlight segment
 	 * corresponding to pnr section
-	 * 
+	 *
 	 * @param targetVo
 	 */
 	protected void parseRawMessageToSegmentList(PnrVo targetVo) {
