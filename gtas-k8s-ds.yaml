@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: "paruff/gtas:latest"
+        image: "wcogtas/gtas:latest"
         lifecycle:
           preStop:
             exec:

@@ -17,9 +17,9 @@ volumes: [
         def shortGitCommit = "${gitCommit[0..10]}"
         def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
         def gitCommitCount = sh(script: "git rev-list --all --count", returnStdout: true)
-        def regURL = "dockerhub.com/paruff/gtas"
+        def regURL = "dockerhub.com/wcogtas/gtas"
 
-        def regNamespace = "paruff"
+        def regNamespace = "wcogtas"
         def artifactID = sh(script: "grep '<artifactId>' pom.xml | head -n 1 | sed -e 's/artifactId//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
         def POMversion = sh(script: "grep '<version>' pom.xml | head -n 1 | sed -e 's/version//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
  
@@ -70,11 +70,11 @@ volumes: [
             docker login -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
             echo ${regNamespace}/${artifactID}
             cd gtas-parent/gtas-job-scheduler-war/
-            docker build -t paruff/gtas .
+            docker build -t wcogtas/gtas .
             # docker build -t ${regNamespace}/${artifactID} .
-            docker tag paruff/gtas paruff/gtas:0.1.0.${shortGitCommit}
-            docker tag paruff/gtas paruff/gtas:0.1.0.${gitCommitCount}
-            docker push paruff/gtas
+            docker tag wcogtas/gtas wcogtas/gtas:0.1.0.${shortGitCommit}
+            docker tag wcogtas/gtas wcogtas/gtas:0.1.0.${gitCommitCount}
+            docker push wcogtas/gtas
             """
          }
       }
