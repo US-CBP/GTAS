@@ -13,18 +13,18 @@ import java.util.List;
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGE_ADMIN;
 
 public interface ApiAccessService {
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public List<ApiAccessVo> findAll();
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public List<ApiAccessVo> findAll();
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccessVo create(ApiAccessVo externalUser);
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public ApiAccessVo create(ApiAccessVo externalUser);
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccessVo update(ApiAccessVo externalUser);
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public ApiAccessVo update(ApiAccessVo externalUser);
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccessVo delete(Long id);
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public ApiAccessVo delete(Long id);
 
-    @PreAuthorize(PRIVILEGE_ADMIN)
-    public ApiAccessVo findById(Long id);
+	@PreAuthorize(PRIVILEGE_ADMIN)
+	public ApiAccessVo findById(Long id);
 }

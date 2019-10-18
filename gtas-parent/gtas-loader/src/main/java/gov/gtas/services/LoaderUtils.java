@@ -327,7 +327,7 @@ public class LoaderUtils {
 		BeanUtils.copyProperties(vo, a);
 		if (StringUtils.isNotBlank(vo.getCity())) {
 
-            AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
+			AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getCity());
 			if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
 				a.setCity(aPort.getCity());
 				a.setCountry(aPort.getCountry());
@@ -335,7 +335,7 @@ public class LoaderUtils {
 
 		}
 		if (StringUtils.isBlank(vo.getCity()) && StringUtils.isNotBlank(vo.getLocation())) {
-            AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getLocation());
+			AirportVo aPort = airportService.getAirportByThreeLetterCode(vo.getLocation());
 			if (aPort != null && StringUtils.isNotBlank(aPort.getCity())) {
 				a.setCity(aPort.getCity());
 				a.setCountry(aPort.getCountry());
@@ -350,9 +350,9 @@ public class LoaderUtils {
 		}
 
 		if (code.length() == 3) {
-            return AirportServiceImpl.buildAirport(airportService.getAirportByThreeLetterCode(code));
+			return AirportServiceImpl.buildAirport(airportService.getAirportByThreeLetterCode(code));
 		} else if (code.length() == 4) {
-            return AirportServiceImpl.buildAirport(airportService.getAirportByFourLetterCode(code));
+			return AirportServiceImpl.buildAirport(airportService.getAirportByFourLetterCode(code));
 		}
 
 		logger.warn("Unknown airport code: " + code);
@@ -502,12 +502,12 @@ public class LoaderUtils {
 		}
 
 		if (code.length() == 2) {
-            CountryVo c = countryService.getCountryByTwoLetterCode(code);
+			CountryVo c = countryService.getCountryByTwoLetterCode(code);
 			if (c != null) {
 				return c.getIso3();
 			}
 		} else if (code.length() == 3) {
-            CountryVo c = countryService.getCountryByThreeLetterCode(code);
+			CountryVo c = countryService.getCountryByThreeLetterCode(code);
 			if (c != null) {
 				return code;
 			}

@@ -16,5 +16,5 @@ import java.util.Set;
 
 public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, Long> {
 
-    Set<HitViewStatus> findAllByPassenger(Passenger p);
+	Set<HitViewStatus> findAllByPassenger(Passenger p);
 }

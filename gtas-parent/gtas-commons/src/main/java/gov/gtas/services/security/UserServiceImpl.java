@@ -69,7 +69,8 @@ public class UserServiceImpl implements UserService {
 			userEntity.setRoles(roleCollection);
 		}
 		User newUserEntity = userRepository.save(userEntity);
-		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId).orElseThrow(RuntimeException::new);
+		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
+				.orElseThrow(RuntimeException::new);
 		defaultUserGroup.getGroupMembers().add(newUserEntity);
 		userGroupRepository.save(defaultUserGroup);
 		return userServiceUtil.mapUserDataFromEntity(newUserEntity);

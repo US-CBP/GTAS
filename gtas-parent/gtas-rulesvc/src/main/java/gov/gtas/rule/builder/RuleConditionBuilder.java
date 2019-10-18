@@ -408,7 +408,8 @@ public class RuleConditionBuilder {
 		String cause = conditionDescriptionBuilder.toString().replace("\"", "'");
 		ruleStringBuilder.append("then\n");
 
-		HitTypeEnum hitType = (entity == EntityEnum.PASSENGER) ? HitTypeEnum.WATCHLIST_PASSENGER : HitTypeEnum.WATCHLIST_DOCUMENT;
+		HitTypeEnum hitType = (entity == EntityEnum.PASSENGER) ? HitTypeEnum.WATCHLIST_PASSENGER
+				: HitTypeEnum.WATCHLIST_DOCUMENT;
 
 		// the watch list item id id may not be available at
 		// this stage so we add defer adding it

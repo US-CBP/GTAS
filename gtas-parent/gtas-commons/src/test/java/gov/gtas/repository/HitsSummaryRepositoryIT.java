@@ -5,14 +5,12 @@
  */
 package gov.gtas.repository;
 
-
 import gov.gtas.config.CachingConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
 
 import java.util.*;
-
 
 import org.junit.After;
 import org.junit.Before;
@@ -46,8 +44,6 @@ public class HitsSummaryRepositoryIT {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-
 
 	protected Object[] createPassengerFlight() {
 		Passenger p = new Passenger();

@@ -63,7 +63,8 @@ public class WatchlistServiceImpl implements WatchlistService {
 	}
 
 	@Override
-	public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate, Long catId) {
+	public JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdate,
+			Long catId) {
 		WatchlistValidationAdapter.validateWatchlistSpec(wlToCreateUpdate);
 		WatchlistBuilder bldr = new WatchlistBuilder(wlToCreateUpdate);
 		bldr.buildPersistenceLists();
@@ -136,8 +137,8 @@ public class WatchlistServiceImpl implements WatchlistService {
 	public List<JsonLookupData> findWatchlistCategories() {
 		//
 		List<JsonLookupData> result = this.watchlistPersistenceService.findWatchlistCategories().stream()
-				.map(w ->
-						new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString())).collect(Collectors.toList());
+				.map(w -> new JsonLookupData(w.getId(), w.getName(), w.getDescription(), w.getSeverity().toString()))
+				.collect(Collectors.toList());
 
 		return result;
 	}

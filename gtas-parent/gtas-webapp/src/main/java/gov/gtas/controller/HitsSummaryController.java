@@ -42,7 +42,6 @@ public class HitsSummaryController {
 		return getHitDetailsMapped(hitDetailSet, user);
 	}
 
-
 	@RequestMapping(value = "/hit/flightpassenger", method = RequestMethod.GET)
 	@Transactional
 	public @ResponseBody LinkedHashSet<HitDetailVo> getRulesByPassengerAndFlight(

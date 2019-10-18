@@ -210,7 +210,7 @@ public class QueryBuilderService {
 				for (Object[] result : resultList.getResult()) {
 					Passenger passenger = (Passenger) result[1];
 					Flight flight = (Flight) result[2];
-				PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
+					PassengerGridItemVo vo = createPassengerGridItemVo(paxDocuments, passenger, flight);
 					passengerList.add(vo);
 				}
 			}

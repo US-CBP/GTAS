@@ -22,8 +22,8 @@ public class TargetDetailVo implements Serializable, Cloneable {
 	private Long lookoutId;
 
 	/*
-	 * either the engine rule id or the watch list item id or graph id
-	 * This is typically the same except for rules with multiple conditions.
+	 * either the engine rule id or the watch list item id or graph id This is
+	 * typically the same except for rules with multiple conditions.
 	 */
 	private Long ruleId;
 

@@ -390,8 +390,7 @@ public class PassengerDetailsController {
 		Set<PaxWatchlistLinkVo> paxWatchlistLinkVos = new HashSet<>();
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitTypeEnum hitTypeEnum = hitDetail.getHitEnum();
-			if (HitTypeEnum.WATCHLIST_PASSENGER == hitTypeEnum ||
-					HitTypeEnum.PARTIAL_WATCHLIST == hitTypeEnum) {
+			if (HitTypeEnum.WATCHLIST_PASSENGER == hitTypeEnum || HitTypeEnum.PARTIAL_WATCHLIST == hitTypeEnum) {
 				PaxWatchlistLinkVo paxWatchlistLinkVo = PaxWatchlistLinkVo.fromHitDetail(hitDetail);
 				paxWatchlistLinkVos.add(paxWatchlistLinkVo);
 			}

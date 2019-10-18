@@ -47,8 +47,8 @@ public class UserServiceUtil {
 					}
 
 				}).collect(Collectors.toSet());
-				UserData userData = new UserData(user.getUserId(), user.getPassword(), user.getFirstName(), user.getLastName(),
-						user.getActive(), roles);
+				UserData userData = new UserData(user.getUserId(), user.getPassword(), user.getFirstName(),
+						user.getLastName(), user.getActive(), roles);
 				userData.setEmail(user.getEmail());
 				return userData;
 			}

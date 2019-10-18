@@ -16,27 +16,27 @@ import static java.util.stream.Collectors.toMap;
 
 public enum NotificationSend {
 
-    IMMEDIATE("IMMEDIATE"),
+	IMMEDIATE("IMMEDIATE"),
 
-    TWO_HOURS_BEFORE("TWO_HOURS_BEFORE"),
+	TWO_HOURS_BEFORE("TWO_HOURS_BEFORE"),
 
-    ONE_HOUR_BEFORE("ONE_HOUR_BEFORE");
+	ONE_HOUR_BEFORE("ONE_HOUR_BEFORE");
 
-    private String notificationSend;
+	private String notificationSend;
 
-    NotificationSend(String notificationSend) {
-        this.notificationSend = notificationSend;
-    }
+	NotificationSend(String notificationSend) {
+		this.notificationSend = notificationSend;
+	}
 
-    private static final Map<String, NotificationSend> stringToEnum = Stream.of(values())
-            .collect(toMap(Object::toString, e -> e));
+	private static final Map<String, NotificationSend> stringToEnum = Stream.of(values())
+			.collect(toMap(Object::toString, e -> e));
 
-    public static Optional<NotificationSend> fromString(String entityName) {
-        return Optional.ofNullable(stringToEnum.get(entityName));
-    }
+	public static Optional<NotificationSend> fromString(String entityName) {
+		return Optional.ofNullable(stringToEnum.get(entityName));
+	}
 
-    @Override
-    public String toString() {
-        return notificationSend;
-    }
+	@Override
+	public String toString() {
+		return notificationSend;
+	}
 }

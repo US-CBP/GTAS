@@ -14,15 +14,15 @@ import javax.persistence.*;
 @Table(name = "user_notification")
 public class UserNotification extends Notification {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user", referencedColumnName = "user_id", nullable = false)
-    private User user;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user", referencedColumnName = "user_id", nullable = false)
+	private User user;
 
-    public User getUser() {
-        return user;
-    }
+	public User getUser() {
+		return user;
+	}
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+	public void setUser(User user) {
+		this.user = user;
+	}
 }

@@ -52,7 +52,8 @@ public class NotificationServiceIT {
 		AmazonSNS amazonSNS = AmazonSNSClientBuilder.standard().build();
 		HitsSummary s = new HitsSummary();
 		s.setId(1L);
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(new Passenger()), arn, "test", 4L);
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(new Passenger()), arn,
+				"test", 4L);
 
 		Set<String> messageIDs = this.notificatonService.sendHitNotifications(config);
 

@@ -18,8 +18,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AuditLogPersistenceServiceIT.class, RulePersistenceServiceIT.class,
-		UserServiceIT.class, PnrServiceIT.class, WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class,
+@SuiteClasses({ AuditLogPersistenceServiceIT.class, RulePersistenceServiceIT.class, UserServiceIT.class,
+		PnrServiceIT.class, WatchlistPersistenceServiceIT.class, FlightRepositoryIT.class,
 		WhitelistPersistenceServiceIT.class })
 public class RunAllCommonIT {
 }

@@ -20,45 +20,43 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Comment extends BaseEntityAudit {
 
-    @Column(name = "cmt_plain_text", length = 10000, nullable = false)
-    private String plainTextComment;
+	@Column(name = "cmt_plain_text", length = 10000, nullable = false)
+	private String plainTextComment;
 
-    @Column(name = "cmt_rtf_text", length = 10000, nullable = false)
-    private String rtfComment;
+	@Column(name = "cmt_rtf_text", length = 10000, nullable = false)
+	private String rtfComment;
 
-    @Column(name = "cmt_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CommentType commentType;
+	@Column(name = "cmt_type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private CommentType commentType;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "comment_attachment",
-            joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "attachment_id"))
-    private Set<Attachment> attachments = new HashSet<>();
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "comment_attachment", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "attachment_id"))
+	private Set<Attachment> attachments = new HashSet<>();
 
-    public String getPlainTextComment() {
-        return plainTextComment;
-    }
+	public String getPlainTextComment() {
+		return plainTextComment;
+	}
 
-    public void setPlainTextComment(String plainTextComment) {
-        this.plainTextComment = plainTextComment;
-    }
+	public void setPlainTextComment(String plainTextComment) {
+		this.plainTextComment = plainTextComment;
+	}
 
-    public String getRtfComment() {
-        return rtfComment;
-    }
+	public String getRtfComment() {
+		return rtfComment;
+	}
 
-    public void setRtfComment(String rtfComment) {
-        this.rtfComment = rtfComment;
-    }
+	public void setRtfComment(String rtfComment) {
+		this.rtfComment = rtfComment;
+	}
 
-    public Set<Attachment> getAttachments() {
-        return attachments;
-    }
+	public Set<Attachment> getAttachments() {
+		return attachments;
+	}
 
-    public void setAttachments(Set<Attachment> attachments) {
-        this.attachments = attachments;
-    }
+	public void setAttachments(Set<Attachment> attachments) {
+		this.attachments = attachments;
+	}
 
 }

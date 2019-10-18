@@ -20,5 +20,5 @@ public interface UserRepository extends CrudRepository<User, String> {
 	}
 
 	@Query("select u from User u left join fetch u.userGroups where u.userId = :userId")
-    Optional<User> userAndGroups(@Param("userId") String userId);
+	Optional<User> userAndGroups(@Param("userId") String userId);
 }

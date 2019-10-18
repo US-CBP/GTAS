@@ -17,7 +17,6 @@ import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.Watchlist;
 import gov.gtas.model.watchlist.WatchlistItem;
 
-
 import org.springframework.security.access.prepost.PreAuthorize;
 
 /**

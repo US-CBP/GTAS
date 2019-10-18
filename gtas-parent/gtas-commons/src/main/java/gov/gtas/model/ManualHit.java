@@ -17,18 +17,17 @@ import javax.persistence.Table;
 @Table(name = "manual_lookout")
 public class ManualHit extends HitMaker {
 
-    private String description;
+	private String description;
 
-    public ManualHit() {
-        setHitTypeEnum(HitTypeEnum.MANUAL_HIT);
-    }
+	public ManualHit() {
+		setHitTypeEnum(HitTypeEnum.MANUAL_HIT);
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }
-

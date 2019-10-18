@@ -78,22 +78,22 @@ public class LocalToUTCServiceImpl implements GtasLocalToUTCService {
 	}
 
 	protected Airport getAirport(String airportCode) {
-        AirportVo airportVo;
+		AirportVo airportVo;
 		int IATA_LENGTH = 3;
 		int IACO_LENGTH = 4;
 		if (airportCode == null || !(airportCode.length() == IACO_LENGTH || airportCode.length() == IATA_LENGTH)) {
 			logger.warn("No valid airport in database!!");
-            airportVo = null;
+			airportVo = null;
 		} else if (airportCode.length() == IACO_LENGTH) {
-            airportVo = airportService.getAirportByFourLetterCode(airportCode);
+			airportVo = airportService.getAirportByFourLetterCode(airportCode);
 		} else {
-            airportVo = airportService.getAirportByThreeLetterCode(airportCode);
+			airportVo = airportService.getAirportByThreeLetterCode(airportCode);
 		}
 
-        if (airportVo == null) {
-            return null;
-        }
+		if (airportVo == null) {
+			return null;
+		}
 
-        return AirportServiceImpl.buildAirport(airportVo);
+		return AirportServiceImpl.buildAirport(airportVo);
 	}
 }

@@ -20,7 +20,7 @@ import java.util.Set;
 public class GtasSchemaFilter implements SchemaFilter {
 
 	static final GtasSchemaFilter INSTANCE = new GtasSchemaFilter();
-	private final Set<String>  whiteList = new HashSet<>();
+	private final Set<String> whiteList = new HashSet<>();
 
 	private GtasSchemaFilter() {
 		whiteList.add("flight_countdown_view");

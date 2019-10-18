@@ -53,7 +53,6 @@ public class QueryBuilderController {
 	@Autowired
 	QueryBuilderService queryService;
 
-
 	/**
 	 * This method generates the Entity and Field mappings for the Rule and Query UI
 	 * 

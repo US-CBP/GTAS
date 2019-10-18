@@ -112,7 +112,8 @@ public class WatchlistManagementController {
 		HitCategory hitCategory = new HitCategory();
 		hitCategory.setDescription(wlCategory.getDescription());
 		hitCategory.setName(wlCategory.getLabel());
-		HitSeverityEnum hitSeverityEnum = HitSeverityEnum.fromString(wlCategory.getSeverity()).orElseThrow(RuntimeException::new);
+		HitSeverityEnum hitSeverityEnum = HitSeverityEnum.fromString(wlCategory.getSeverity())
+				.orElseThrow(RuntimeException::new);
 		hitCategory.setSeverity(hitSeverityEnum);
 		hitCategoryService.create(hitCategory);
 
@@ -252,7 +253,8 @@ public class WatchlistManagementController {
 
 				validateInput(_spec);
 
-				JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec, categoryId);
+				JsonServiceResponse result = watchlistService.createUpdateDeleteWatchlistItems(userId, _spec,
+						categoryId);
 
 				if (categoryId > 0) {
 					List<Long> ids = (List<Long>) result.getResult();

@@ -13,6 +13,5 @@ public interface HitCategoryService {
 
 	Iterable<HitCategory> findAll();
 
-
 	void create(HitCategory hitCategory);
 }

@@ -45,7 +45,8 @@ public interface WatchlistService {
 	 * @return the service response JSON format.
 	 */
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_MANAGE_WATCH_LIST)
-	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdateDelete, Long categoryId );
+	JsonServiceResponse createUpdateDeleteWatchlistItems(String userId, WatchlistSpec wlToCreateUpdateDelete,
+			Long categoryId);
 
 	/**
 	 * Creates/Updates watch list items from the specified watch list.

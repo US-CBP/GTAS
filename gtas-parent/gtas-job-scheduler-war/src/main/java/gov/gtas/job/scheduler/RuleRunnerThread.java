@@ -52,17 +52,15 @@ public class RuleRunnerThread implements Callable<Boolean> {
 
 	private List<MessageStatus> messageStatuses = new ArrayList<>();
 
-    private NotificatonService notificationSerivce;
-
+	private NotificatonService notificationSerivce;
 
 	public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
-                            AppConfigurationService appConfigurationService,
-                            ApplicationContext applicationContext,
-                            NotificatonService notificationSerivce) {
+			AppConfigurationService appConfigurationService, ApplicationContext applicationContext,
+			NotificatonService notificationSerivce) {
 		this.errorPersistenceService = errorPersistenceService;
 		this.appConfigurationService = appConfigurationService;
 		this.applicationContext = applicationContext;
-        this.notificationSerivce = notificationSerivce;
+		this.notificationSerivce = notificationSerivce;
 	}
 
 	public Boolean call() {
@@ -106,11 +104,12 @@ public class RuleRunnerThread implements Callable<Boolean> {
 					}
 					count++;
 				}
-                logger.info("Rules and Watchlist ran in {} m/s.", (System.nanoTime() - start) / 1000000);
+				logger.info("Rules and Watchlist ran in {} m/s.", (System.nanoTime() - start) / 1000000);
 
 				if (!firstTimeHits.isEmpty()) {
 					// Send hit notifications using AWS SNS topic
-					Set<Passenger> passengersWithFirstTimeHits = firstTimeHits.stream().map(HitDetail::getPassenger).collect(Collectors.toSet());
+					Set<Passenger> passengersWithFirstTimeHits = firstTimeHits.stream().map(HitDetail::getPassenger)
+							.collect(Collectors.toSet());
 					sendNotifications(passengersWithFirstTimeHits);
 				}
 			}
@@ -152,7 +151,6 @@ public class RuleRunnerThread implements Callable<Boolean> {
 		return success;
 	}
 
-
 	private void sendNotifications(Set<Passenger> passengersWithNewHits) {
 		boolean hitNotificationEnabled;
 		String topicArn;
@@ -182,7 +180,6 @@ public class RuleRunnerThread implements Callable<Boolean> {
 					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");
 		}
 	}
-
 
 	void setMessageStatuses(List<MessageStatus> messageStatuses) {
 		this.messageStatuses = messageStatuses;

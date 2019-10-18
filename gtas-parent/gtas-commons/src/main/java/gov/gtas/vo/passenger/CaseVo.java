@@ -281,18 +281,18 @@ public class CaseVo {
 		this.generalCaseCommentVos = generalCaseCommentVos;
 	}
 
-    public void setHitNames(ArrayList<String> hitNames) {
+	public void setHitNames(ArrayList<String> hitNames) {
 		this.hitNames = hitNames;
-    }
+	}
 
-    public ArrayList<String> getHitNames() {
+	public ArrayList<String> getHitNames() {
 		return this.hitNames;
 	}
 
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	
+
 	public String getGender() {
 		return gender;
 	}
@@ -300,7 +300,7 @@ public class CaseVo {
 	public void setDocType(String docType) {
 		this.docType = docType;
 	}
-	
+
 	public String getDocType() {
 		return this.docType;
 	}

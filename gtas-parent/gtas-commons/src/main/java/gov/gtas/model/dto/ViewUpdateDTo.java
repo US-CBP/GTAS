@@ -9,34 +9,35 @@
 package gov.gtas.model.dto;
 
 public class ViewUpdateDTo {
-    private Long flightId;
-    private Long passengerId;
-    private String status;
+	private Long flightId;
+	private Long passengerId;
+	private String status;
 
-    public ViewUpdateDTo() {
-    }
+	public ViewUpdateDTo() {
+	}
 
-    public Long getPassengerId() {
-        return passengerId;
-    }
+	public Long getPassengerId() {
+		return passengerId;
+	}
 
-    public void setPassengerId(Long passengerId) {
-        this.passengerId = passengerId;
-    }
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
 
-    public Long getFlightId() {
-        return flightId;
-    }
+	public Long getFlightId() {
+		return flightId;
+	}
 
-    public void setFlightId(Long flightId) {
-        this.flightId = flightId;
-    }
-    public String getStatus() {
-        return status;
-    }
+	public void setFlightId(Long flightId) {
+		this.flightId = flightId;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 }

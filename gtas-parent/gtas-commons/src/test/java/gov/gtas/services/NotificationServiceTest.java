@@ -88,7 +88,7 @@ public class NotificationServiceTest {
 		HitDetail hitDetail = createTestHitDetail();
 		p.getHitDetails().add(hitDetail);
 
-		HitNotificationConfig config = new HitNotificationConfig(amazonSNS,Collections.singleton(p), arn, subject,
+		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
 		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
@@ -99,7 +99,7 @@ public class NotificationServiceTest {
 	public void testSendNotification_PassengerDobNOTJanuaryFirstWithValidWatchlistId_returnsOneMessageId() {
 
 		// Create test hits summary
-		Passenger p  = createFakePassenger(java.sql.Date.valueOf(LocalDate.of(1998, 10, 4)));
+		Passenger p = createFakePassenger(java.sql.Date.valueOf(LocalDate.of(1998, 10, 4)));
 
 		// Set hit details
 		HitDetail hitDetail = createTestHitDetail();

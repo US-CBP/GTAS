@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "attachment")
-public class Attachment extends BaseEntityAudit implements Serializable  {
+public class Attachment extends BaseEntityAudit implements Serializable {
 
 	/**
 	 * 

@@ -20,121 +20,115 @@ import java.util.List;
 @Service
 public class AirportServiceImpl implements AirportService {
 
-    @Resource
-    private AirportRepository airportRepo;
-    @Resource
-    private AirportRepositoryCustom airportRepoCust;
+	@Resource
+	private AirportRepository airportRepo;
+	@Resource
+	private AirportRepositoryCustom airportRepoCust;
 
-    @Override
-    @Transactional
-    public AirportVo create(AirportVo port) {
-        Airport savedAirport = airportRepo.save(buildAirport(port));
+	@Override
+	@Transactional
+	public AirportVo create(AirportVo port) {
+		Airport savedAirport = airportRepo.save(buildAirport(port));
 
-        return buildAirportVo(savedAirport);
-    }
+		return buildAirportVo(savedAirport);
+	}
 
-    @Override
-    @Transactional
-    public AirportVo delete(Long id) {
-        AirportVo airportVo = this.findById(id);
+	@Override
+	@Transactional
+	public AirportVo delete(Long id) {
+		AirportVo airportVo = this.findById(id);
 
-        if (airportVo != null) {
-            airportRepo.delete(buildAirport(airportVo));
-        }
+		if (airportVo != null) {
+			airportRepo.delete(buildAirport(airportVo));
+		}
 
-        return airportVo;
-    }
+		return airportVo;
+	}
 
-    @Override
-    @Transactional
-    public List<AirportVo> findAll() {
-        List<Airport> allAirports = (List<Airport>) airportRepo.findAll();
+	@Override
+	@Transactional
+	public List<AirportVo> findAll() {
+		List<Airport> allAirports = (List<Airport>) airportRepo.findAll();
 
-        List<AirportVo> allAirportVos = new ArrayList<>();
+		List<AirportVo> allAirportVos = new ArrayList<>();
 
-        for (Airport airport : allAirports) {
-            allAirportVos.add(buildAirportVo(airport));
-        }
+		for (Airport airport : allAirports) {
+			allAirportVos.add(buildAirportVo(airport));
+		}
 
-        return allAirportVos;
-    }
+		return allAirportVos;
+	}
 
-    @Override
-    @Transactional
-    public AirportVo update(AirportVo port) {
-        Airport savedAirport = airportRepo.save(buildAirport(port));
+	@Override
+	@Transactional
+	public AirportVo update(AirportVo port) {
+		Airport savedAirport = airportRepo.save(buildAirport(port));
 
-        return buildAirportVo(savedAirport);
-    }
+		return buildAirportVo(savedAirport);
+	}
 
-    @Override
-    @Transactional
-    public AirportVo findById(Long id) {
-        Airport airport = airportRepo.findOne(id);
+	@Override
+	@Transactional
+	public AirportVo findById(Long id) {
+		Airport airport = airportRepo.findOne(id);
 
-        if (airport == null) {
-            return null;
-        }
+		if (airport == null) {
+			return null;
+		}
 
-        return buildAirportVo(airport);
-    }
+		return buildAirportVo(airport);
+	}
 
-    @Override
-    @Transactional
-    public AirportVo restore(AirportVo airport) {
-        Airport restoredAirport = airportRepoCust.restore(buildAirport(airport));
+	@Override
+	@Transactional
+	public AirportVo restore(AirportVo airport) {
+		Airport restoredAirport = airportRepoCust.restore(buildAirport(airport));
 
-        return buildAirportVo(restoredAirport);
-    }
+		return buildAirportVo(restoredAirport);
+	}
 
-    @Override
-    @Transactional
-    public int restoreAll() {
-        return airportRepoCust.restoreAll();
-    }
+	@Override
+	@Transactional
+	public int restoreAll() {
+		return airportRepoCust.restoreAll();
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "airportCache", key = "#airportCode")
-    public AirportVo getAirportByThreeLetterCode(String airportCode) {
-        List<Airport> airports = airportRepo.getAirportByThreeLetterCode(airportCode);
+	@Override
+	@Transactional
+	@Cacheable(value = "airportCache", key = "#airportCode")
+	public AirportVo getAirportByThreeLetterCode(String airportCode) {
+		List<Airport> airports = airportRepo.getAirportByThreeLetterCode(airportCode);
 
-        if (airports != null && airports.size() > 0) {
-            return buildAirportVo(airports.get(0));
-        }
+		if (airports != null && airports.size() > 0) {
+			return buildAirportVo(airports.get(0));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    @Transactional
-    @Cacheable(value = "airportCache", key = "#airportCode")
-    public AirportVo getAirportByFourLetterCode(String airportCode) {
-        List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);
+	@Override
+	@Transactional
+	@Cacheable(value = "airportCache", key = "#airportCode")
+	public AirportVo getAirportByFourLetterCode(String airportCode) {
+		List<Airport> airports = airportRepo.getAirportByFourLetterCode(airportCode);
 
-        if (airports != null && airports.size() > 0) {
-            return buildAirportVo(airports.get(0));
-        }
+		if (airports != null && airports.size() > 0) {
+			return buildAirportVo(airports.get(0));
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    static AirportVo buildAirportVo(Airport airport) {
-        return new AirportVo(
-                airport.getId(), airport.getOriginId(),
-                airport.getName(), airport.getIata(), airport.getIcao(),
-                airport.getCountry(), airport.getCity(),
-                airport.getLatitude(), airport.getLongitude(),
-                airport.getUtcOffset(), airport.getTimezone());
-    }
+	static AirportVo buildAirportVo(Airport airport) {
+		return new AirportVo(airport.getId(), airport.getOriginId(), airport.getName(), airport.getIata(),
+				airport.getIcao(), airport.getCountry(), airport.getCity(), airport.getLatitude(),
+				airport.getLongitude(), airport.getUtcOffset(), airport.getTimezone());
+	}
 
-    public static Airport buildAirport(AirportVo airportVo) {
-        return new Airport(
-                airportVo.getId(), airportVo.getOriginId(),
-                airportVo.getName(), airportVo.getIata(), airportVo.getIcao(),
-                airportVo.getCountry(), airportVo.getCity(),
-                airportVo.getLatitude(), airportVo.getLongitude(),
-                airportVo.getUtcOffset(), airportVo.getTimezone());
-    }
+	public static Airport buildAirport(AirportVo airportVo) {
+		return new Airport(airportVo.getId(), airportVo.getOriginId(), airportVo.getName(), airportVo.getIata(),
+				airportVo.getIcao(), airportVo.getCountry(), airportVo.getCity(), airportVo.getLatitude(),
+				airportVo.getLongitude(), airportVo.getUtcOffset(), airportVo.getTimezone());
+	}
 
 }

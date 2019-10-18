@@ -276,14 +276,13 @@ public class QueryBuilderServiceTest {
 		flight.setMutableFlightDetails(mfd);
 
 		passenger.setDocuments(docSet);
-//		passenger.setHits(hitsSummary);
+		// passenger.setHits(hitsSummary);
 		passenger.setFlight(flight);
 
 		Map<Long, Set<Document>> docMap = new HashMap<>();
 		docMap.put(PAX_ID, docSet);
 
-		PassengerGridItemVo passengerGridItemVo = queryService.createPassengerGridItemVo(docMap,
-				passenger, flight);
+		PassengerGridItemVo passengerGridItemVo = queryService.createPassengerGridItemVo(docMap, passenger, flight);
 		Assert.assertEquals(passengerGridItemVo.getFirstName(), "boz");
 		Assert.assertEquals(passengerGridItemVo.getNationality(), "foo");
 		Assert.assertEquals(passengerGridItemVo.getLastName(), "bar");

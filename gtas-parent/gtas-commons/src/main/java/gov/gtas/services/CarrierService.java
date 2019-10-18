@@ -13,18 +13,26 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface CarrierService {
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public CarrierVo create(CarrierVo carrier);
+	public CarrierVo create(CarrierVo carrier);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public CarrierVo delete(Long id);
+	public CarrierVo delete(Long id);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public CarrierVo restore(CarrierVo carrier);
+	public CarrierVo restore(CarrierVo carrier);
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
 	public int restoreAll();
-    public List<CarrierVo> findAll();
+
+	public List<CarrierVo> findAll();
+
 	@PreAuthorize(PRIVILEGE_ADMIN)
-    public CarrierVo update(CarrierVo carrier);
-    public CarrierVo findById(Long id);
-    public CarrierVo getCarrierByTwoLetterCode(String carrierCode);
-    public CarrierVo getCarrierByThreeLetterCode(String carrierCode);
+	public CarrierVo update(CarrierVo carrier);
+
+	public CarrierVo findById(Long id);
+
+	public CarrierVo getCarrierByTwoLetterCode(String carrierCode);
+
+	public CarrierVo getCarrierByThreeLetterCode(String carrierCode);
 
 }

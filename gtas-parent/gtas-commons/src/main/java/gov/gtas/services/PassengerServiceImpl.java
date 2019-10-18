@@ -100,23 +100,23 @@ public class PassengerServiceImpl implements PassengerService {
 			}
 
 			for (HitDetail hd : passenger.getHitDetails()) {
-				switch(hd.getHitEnum()) {
-					case WATCHLIST_PASSENGER:
-						vo.setOnWatchList(true);
-						break;
-					case WATCHLIST_DOCUMENT:
-						vo.setOnWatchList(true);
-						vo.setOnWatchListDoc(true);
-						break;
-					case PARTIAL_WATCHLIST:
-						vo.setOnWatchListLink(true);
-						break;
-					case USER_DEFINED_RULE:
-					case GRAPH_HIT:
-						vo.setOnRuleHitList(true);
-						break;
-					case MANUAL_HIT:
-						break;
+				switch (hd.getHitEnum()) {
+				case WATCHLIST_PASSENGER:
+					vo.setOnWatchList(true);
+					break;
+				case WATCHLIST_DOCUMENT:
+					vo.setOnWatchList(true);
+					vo.setOnWatchListDoc(true);
+					break;
+				case PARTIAL_WATCHLIST:
+					vo.setOnWatchListLink(true);
+					break;
+				case USER_DEFINED_RULE:
+				case GRAPH_HIT:
+					vo.setOnRuleHitList(true);
+					break;
+				case MANUAL_HIT:
+					break;
 				}
 			}
 

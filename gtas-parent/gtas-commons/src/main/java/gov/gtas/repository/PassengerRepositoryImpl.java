@@ -86,14 +86,14 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 		// **** PREDICATES ****
 		List<Predicate> queryPredicates = new ArrayList<>();
 		// TIME UP TO -30 MINUTE PREDICATE
-/*		if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) {
-			LocalDateTime ldt = LocalDateTime.now(ZoneOffset.UTC);
-			ldt = ldt.minusMinutes(30L);
-			Date oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC));
-			Predicate countDownPredicate = cb
-					.and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"), oneHourAgo));
-			queryPredicates.add(countDownPredicate);
-		}*/
+		/*
+		 * if (dto.getWithTimeLeft() != null && dto.getWithTimeLeft()) { LocalDateTime
+		 * ldt = LocalDateTime.now(ZoneOffset.UTC); ldt = ldt.minusMinutes(30L); Date
+		 * oneHourAgo = Date.from(ldt.toInstant(ZoneOffset.UTC)); Predicate
+		 * countDownPredicate = cb
+		 * .and(cb.greaterThanOrEqualTo(flightCountDownViewJoin.get("countDownTimer"),
+		 * oneHourAgo)); queryPredicates.add(countDownPredicate); }
+		 */
 
 		Set<HitViewStatusEnum> hitViewStatusEnumSet = new HashSet<>();
 		if (dto.getDisplayStatusCheckBoxes() != null) {
@@ -177,10 +177,8 @@ public class PassengerRepositoryImpl implements PassengerRepositoryCustom {
 			throw new RuntimeException("Flight dates required!");
 		} else {
 			Expression<Date> relevantDate = cb.selectCase(flight.get("direction"))
-					.when("O", mutableFlightDetailsJoin.get("etd"))
-					.when("I", mutableFlightDetailsJoin.get("eta"))
-					.otherwise(mutableFlightDetailsJoin.get("eta"))
-					.as(Date.class);
+					.when("O", mutableFlightDetailsJoin.get("etd")).when("I", mutableFlightDetailsJoin.get("eta"))
+					.otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
 			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
 			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
 			Predicate relevantDateExpression = cb.and(startPredicate, endPredicate);

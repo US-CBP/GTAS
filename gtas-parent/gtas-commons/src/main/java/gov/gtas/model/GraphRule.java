@@ -32,9 +32,8 @@ public class GraphRule extends HitMaker {
 		this.displayCondition = displayCondition;
 	}
 
-	@Column(name="displayCondition")
+	@Column(name = "displayCondition")
 	private String displayCondition;
-
 
 	@OneToMany(mappedBy = "graphRule")
 	private Set<GraphRuleParameter> graphParameter = new HashSet<>();
