@@ -11,16 +11,13 @@
 .query-builder .group-conditions .btn-primary,
 .qb-interface .btn-primary,
 .query-builder .btn-primary {
-  color: #fff;
-  background-color: #888;
-  border-color: #777;
 }
 
 .query-builder .group-conditions .btn-primary.active,
 .qb-interface .btn-primary:hover,
 .query-builder .btn-primary:hover {
-  background-color: #666;
-  border-color: #555;
+  background-color: #306665;
+  border-color: rgba(84, 78, 85, 0.35);
 }
 
 .query-builder .rules-group-container, .query-builder .rule-container, .query-builder .rule-placeholder {
@@ -80,6 +77,10 @@
 .query-builder .has-error {
   background-color: #FDD;
   border-color: #F99;
+}
+
+.query-builder .item {
+  width: 90%;
 }
 .query-builder .has-error .error-container {
   display: inline-block !important;
