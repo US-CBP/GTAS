@@ -109,7 +109,8 @@ public class RuleUtils {
 		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		final GZIPOutputStream gzipOutStream = new GZIPOutputStream(bos);
 		final ObjectOutputStream out = new ObjectOutputStream(gzipOutStream);
-		out.writeObject(kieBase);
+		KieBaseWrapper kieBaseWrapper = new KieBaseWrapper(kieBase);
+		out.writeObject(kieBaseWrapper);
 		out.close();
 		return bos.toByteArray();
 	}
@@ -150,9 +151,9 @@ public class RuleUtils {
 		final ByteArrayInputStream bis = new ByteArrayInputStream(kiebaseBytes);
 		final GZIPInputStream gzipInStream = new GZIPInputStream(bis);
 		final ObjectInputStream in = new ObjectInputStream(gzipInStream);
-		KieBase kieBase = (KieBase) in.readObject();
+		KieBaseWrapper kieBase = (KieBaseWrapper) in.readObject();
 		in.close();
-		return kieBase;
+		return kieBase.getKieBase();
 	}
 
 	/**
@@ -184,7 +185,6 @@ public class RuleUtils {
 	 *            the in memory KieFileSystem name
 	 * @param is
 	 *            the input stream for DRL data
-	 * @param errorHandler
 	 *            error handler
 	 * @return the created KieBase
 	 */
