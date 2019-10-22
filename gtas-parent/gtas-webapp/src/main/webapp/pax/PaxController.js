@@ -30,7 +30,7 @@
     paxNotesService,
     eventNotes
   ) {
-	$scope.eventNotes = eventNotes;
+	$scope.eventNotes = eventNotes.data.paxNotes;
 	$scope.historicalNotes = "";
 	$scope.currentNoteText = "";
     $scope.disableLinks = disableLinks;
@@ -1176,7 +1176,7 @@
 	
 	$scope.getEventNotes = function(){
 		paxNotesService.getEventNotes($scope.passenger.paxId).then(function(response){
-			$scope.eventNotes = response.data;
+			$scope.eventNotes = response.data.paxNotes;
 		});
 	};
 	

@@ -126,16 +126,32 @@
                                     <div class="cbp-card cbp-card-shadow">
                                         <h4 class="h-label no-margin-top" >Event Notes History</h4>
                                         <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                                        	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes">
+                                        	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes | orderBy : createdAt">
 												<label class="static-label" style="font-size:12px">
 													Note Type: <i>{{note.noteType}}</i></br>
 													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
 												</label>
-	                                    		<textarea ng-readonly="true" style="width:100%">{{note.text}}</textarea>
+	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
                                     		</span>
                                     	</div>
-                                        </div>
-                                    </div>
+                                 	</div>
+                                 </div>
+                                 <!-- FULL HISTORICAL NOTES DISPLAY -->
+                                 <div class="full-width cbp-card-container">
+                                    <div class="cbp-card cbp-card-shadow">
+                                        <h4 class="h-label no-margin-top" >Complete Notes History</h4>
+                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
+												<label class="static-label" style="font-size:12px">
+													Note Type: <i>{{note.noteType}}</i></br>
+													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+												</label>
+	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
+                                    		</span>
+                                    	</div>
+                                 	</div>
+                                 </div>
+                                 
 							</div>
 							
                             <div class="flex flex-vert ie-fix-md half-width align-items-center">

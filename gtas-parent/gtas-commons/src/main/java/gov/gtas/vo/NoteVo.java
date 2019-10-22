@@ -1,5 +1,7 @@
 package gov.gtas.vo;
 
+import java.util.Date;
+
 import gov.gtas.enumtype.NoteType;
 import gov.gtas.model.PassengerNote;
 
@@ -8,6 +10,8 @@ public class NoteVo  {
 	private String plainTextNote;
 	private String rtfNote;
 	private NoteType noteType;
+	private String createdBy;
+	private Date createdAt;
 
 	public static NoteVo from(PassengerNote pNote) {
 		NoteVo noteVo = new NoteVo();
@@ -15,6 +19,8 @@ public class NoteVo  {
 		noteVo.setNoteType(pNote.getNoteType());
 		noteVo.setPlainTextNote(pNote.getPlainTextNote());
 		noteVo.setRtfNote(pNote.getRtfNote());
+		noteVo.setCreatedBy(pNote.getCreatedBy());
+		noteVo.setCreatedAt(pNote.getCreatedAt());
 		return noteVo;
 	}
 
@@ -41,6 +47,22 @@ public class NoteVo  {
 	}
 	public void setNoteType(NoteType noteType) {
 		this.noteType = noteType;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 	
 }
