@@ -47,7 +47,7 @@ public class UserServiceUtil {
 					}
 
 				}).collect(Collectors.toSet());
-				UserData userData = new UserData(user.getUserId(), user.getPassword(), user.getFirstName(),
+				UserData userData = new UserData(user.getUserId().toUpperCase(), user.getPassword(), user.getFirstName(),
 						user.getLastName(), user.getActive(), roles);
 				userData.setEmail(user.getEmail());
 				return userData;
@@ -67,7 +67,7 @@ public class UserServiceUtil {
 	public UserData mapUserDataFromEntity(User entity) {
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
-		return new UserData(entity.getUserId(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
+		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
 				entity.getActive(), roles);
 	}
 
@@ -80,15 +80,9 @@ public class UserServiceUtil {
 	 */
 	public User mapUserEntityFromUserData(UserData userData) {
 
-		Set<Role> roles = userData.getRoles().stream().map(new Function<RoleData, Role>() {
-			@Override
-			public Role apply(RoleData roleData) {
-				return new Role(roleData.getRoleId(), roleData.getRoleDescription());
-			}
+		Set<Role> roles = userData.getRoles().stream().map(roleData -> new Role(roleData.getRoleId(), roleData.getRoleDescription())).collect(Collectors.toSet());
 
-		}).collect(Collectors.toSet());
-
-		return new User(userData.getUserId(), userData.getPassword(), userData.getFirstName(), userData.getLastName(),
+		return new User(userData.getUserId().toUpperCase(), userData.getPassword(), userData.getFirstName(), userData.getLastName(),
 				userData.getActive(), roles);
 	}
 }

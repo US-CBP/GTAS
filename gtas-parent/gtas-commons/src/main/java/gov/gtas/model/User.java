@@ -129,7 +129,7 @@ public class User implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.userId, this.password, this.firstName, this.lastName, this.active);
+		return Objects.hash(this.userId.toUpperCase(), this.password, this.firstName, this.lastName, this.active);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class User implements Serializable {
 
 		User dataTarget = ((User) target);
 
-		return new EqualsBuilder().append(this.userId, dataTarget.getUserId())
+		return new EqualsBuilder().append(this.userId.toUpperCase(), dataTarget.getUserId().toUpperCase())
 				.append(this.firstName, dataTarget.getFirstName()).append(this.lastName, dataTarget.getLastName())
 				.append(this.password, dataTarget.getPassword()).append(this.active, dataTarget.getActive())
 				.append(this.roles, dataTarget.getRoles()).isEquals();

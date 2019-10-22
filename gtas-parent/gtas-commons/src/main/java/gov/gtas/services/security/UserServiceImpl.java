@@ -95,7 +95,8 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public UserData update(UserData data) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		User entity = userRepository.findOne(data.getUserId());
+
+		User entity = userRepository.findOne(data.getUserId().toUpperCase());
 		User mappedEnity = userServiceUtil.mapUserEntityFromUserData(data);
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
@@ -123,7 +124,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserData findById(String id) {
-		User userEntity = userRepository.findOne(id);
+		String allCapsName = id.toUpperCase();
+		User userEntity = userRepository.findOne(allCapsName);
 		UserData userData = null;
 		if (userEntity != null) {
 			userData = userServiceUtil.mapUserDataFromEntity(userEntity);
