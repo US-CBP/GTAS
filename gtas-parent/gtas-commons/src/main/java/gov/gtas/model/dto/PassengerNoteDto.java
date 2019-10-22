@@ -21,6 +21,10 @@ public class PassengerNoteDto {
     private Long passengerId;
 
     private String user;
+    
+    private String createdBy;
+    
+    private String createdAt;
 
     public PassengerNoteDto() {
     }
@@ -63,4 +67,20 @@ public class PassengerNoteDto {
     public void setPassengerId(Long passengerId) {
         this.passengerId = passengerId;
     }
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
 }

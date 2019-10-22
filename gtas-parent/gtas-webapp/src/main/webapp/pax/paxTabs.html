@@ -83,7 +83,77 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                
+					         <!--   NOTES   -->
+								<div class="full-width cbp-card-container">
+									<div class="cbp-card cbp-card-shadow">
+										<h4 class="h-label no-margin-top">Event Notes</h4>
+										<form name="hitForm" ng-submit="">
+											<md-content layout-padding>
+											<h4 class="md-toolbar-tools">
+												Leave a Note
+												<div class="small">(Drag or paste a file into the editor
+													to include an attachment)</div>
+											</h4>
+											<div class="flex justify-around flex-wrap">
+												<div
+													class="mdl-selectfield mdl-js-selectfield mdl-selectfield--full-width">
+													<span ng-show="!dispStatus.hitStatusShow">{{hitDispStatus}}</span>
+													<select ng-show="dispStatus.hitStatusShow"
+														class="mdl-selectfield__select" id="disp-status"
+														ng-model="hitDispStatus">
+														<option ng-repeat="item in hitDispositionStatuses"
+															value="{{item.name}}">{{item.name}}</option>
+													</select> <label class="mdl-textfield__label static-label" style="font-size:16px"
+														for="disp-status">Type Of Note</label>
+												</div>
+											</div>
+											<trix-editor angular-trix ng-model="currentNoteText"
+												placeholder="Write something.."
+												trix-attachment-add="trixAttachmentAdd(e, editor);"
+												trix-attachment-remove="trixAttachmentRemove(e, editor);">
+											</trix-editor>
+											<div class="flex justify-around">
+												<button type="submit" class="btn btn-primary"
+													ng-click="saveNote(currentNoteText)">Save</button>
+											</div>
+									</div>
+								</div>
+							</md-content>
+								</form>
+								<!-- CURRENT EVENT NOTES DISPLAY -->
+								 <div class="full-width cbp-card-container">
+                                    <div class="cbp-card cbp-card-shadow">
+                                        <h4 class="h-label no-margin-top" >Event Notes History</h4>
+                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                        	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes | orderBy : createdAt">
+												<label class="static-label" style="font-size:12px">
+													Note Type: <i>{{note.noteType}}</i></br>
+													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+												</label>
+	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
+                                    		</span>
+                                    	</div>
+                                 	</div>
+                                 </div>
+                                 <!-- FULL HISTORICAL NOTES DISPLAY -->
+                                 <div class="full-width cbp-card-container">
+                                    <div class="cbp-card cbp-card-shadow">
+                                        <h4 class="h-label no-margin-top" >Complete Notes History</h4>
+                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
+												<label class="static-label" style="font-size:12px">
+													Note Type: <i>{{note.noteType}}</i></br>
+													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+												</label>
+	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
+                                    		</span>
+                                    	</div>
+                                 	</div>
+                                 </div>
+                                 
+							</div>
+							
                             <div class="flex flex-vert ie-fix-md half-width align-items-center">
 
                                 <!------  DOCUMENTS   ------>
@@ -187,7 +257,7 @@
                                 </div>
                             </div>
                         </div>
-                    </md-tab>
+			</md-tab>
 
 
                     <!-- APIs Tab -->

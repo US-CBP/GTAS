@@ -34,6 +34,7 @@ public class PassengerNote extends Note {
 		passengerNote.setPlainTextComment(note.getPlainTextNote());
 		passengerNote.setRtfComment(note.getRtfNote());
 		passengerNote.setCreatedBy(userId);
+		passengerNote.setNoteType(note.getNoteType());
 		return passengerNote;
 	}
 
