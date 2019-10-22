@@ -1,6 +1,6 @@
 /*
  * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
+ *
  * Please see LICENSE.txt for details.
  */
 package gov.gtas.model.lookup;
@@ -18,8 +18,6 @@ import org.springframework.cache.annotation.Cacheable;
 @Entity
 @Table(name = "carrier", indexes = { @Index(columnList = "iata", name = "carrier_iata_index") })
 public class Carrier extends BaseEntity {
-	public Carrier() {
-	}
 
 	private Long originId;
 	private String name;
@@ -29,6 +27,17 @@ public class Carrier extends BaseEntity {
 
 	@Column(length = 3)
 	private String icao;
+
+	public Carrier() {
+	}
+
+	public Carrier(Long id, Long originId, String name, String iata, String icao) {
+		this.id = id;
+		this.originId = originId;
+		this.name = name;
+		this.iata = iata;
+		this.icao = icao;
+	}
 
 	public Long getOriginId() {
 		return originId;

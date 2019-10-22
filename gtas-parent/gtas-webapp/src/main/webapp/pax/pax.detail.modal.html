@@ -14,17 +14,17 @@
     <!-- BEGIN SIDEBAR -->
     <div layout="row">
       <span flex></span>
-      <md-button ng-click="addToWatchlist()" >
+      <md-button  class="btn-danger"  ng-click="addToWatchlist()" >
         Add to Watchlist
       </md-button>
-      <md-button ng-click="answer('fullPax')" >
-        Load Full Details
+      <md-button class="btn-info" ng-click="answer('reviewed')" >
+        Set Status to Reviewed
       </md-button>
-      <md-button ng-click="answer('reviewed')" >
-        Reviewed
+      <md-button class="btn-primary" ng-click="answer('fullPax')" >
+        Load Full Passenger Details
       </md-button>
-      <md-button ng-click="answer('viewed')" style="margin-right:20px;" >
-        Return
+      <md-button class="btn-primary" ng-click="answer('viewed')" style="margin-right:20px;" >
+        Return To PVL
       </md-button>
     </div>
     <div class="cbp-sidebar sidebar margin-0" ng-include="'pax/pax.detail.sidebar.html'">

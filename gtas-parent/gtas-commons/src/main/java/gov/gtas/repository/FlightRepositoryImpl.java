@@ -212,15 +212,13 @@ public class FlightRepositoryImpl implements FlightRepositoryCustom {
 		return countResult.isPresent() ? (Long) countResult.get() : 0L;
 	}
 
-	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb,
-									  Root<Flight> flightRoot, Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
+	private Predicate getETAPredicate(FlightsRequestDto dto, CriteriaBuilder cb, Root<Flight> flightRoot,
+			Join<Flight, MutableFlightDetails> mutableFlightDetailsJoin) {
 		Predicate relevantDateExpression = null;
 		if (dto.getEtaStart() != null && dto.getEtaEnd() != null) {
 			Expression<Date> relevantDate = cb.selectCase(flightRoot.get("direction"))
-					.when("O", mutableFlightDetailsJoin.get("etd"))
-					.when("I", mutableFlightDetailsJoin.get("eta"))
-					.otherwise(mutableFlightDetailsJoin.get("eta"))
-					.as(Date.class);
+					.when("O", mutableFlightDetailsJoin.get("etd")).when("I", mutableFlightDetailsJoin.get("eta"))
+					.otherwise(mutableFlightDetailsJoin.get("eta")).as(Date.class);
 			Predicate startPredicate = cb.greaterThanOrEqualTo(relevantDate, dto.getEtaStart());
 			Predicate endPredicate = cb.lessThanOrEqualTo(relevantDate, dto.getEtaEnd());
 			relevantDateExpression = cb.and(startPredicate, endPredicate);

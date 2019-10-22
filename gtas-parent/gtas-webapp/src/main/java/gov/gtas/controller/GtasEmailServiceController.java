@@ -11,14 +11,14 @@ import gov.gtas.services.dto.EmailDTO;
 
 @RestController
 public class GtasEmailServiceController {
-	
+
 	@Autowired
 	private GtasEmailService emailService;
-	
+
 	@RequestMapping(value = "/notify", method = RequestMethod.POST)
 	public void sendEmail(@RequestBody EmailDTO request) {
 		emailService.send(request);
-		
+
 	}
 
 }

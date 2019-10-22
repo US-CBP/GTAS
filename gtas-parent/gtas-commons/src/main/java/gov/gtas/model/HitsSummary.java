@@ -5,7 +5,6 @@
  */
 package gov.gtas.model;
 
-
 import java.util.*;
 
 import javax.persistence.*;
@@ -57,7 +56,6 @@ public class HitsSummary extends BaseEntity {
 	public void setManualHitCount(int manualHitCount) {
 		this.manualHitCount = manualHitCount;
 	}
-
 
 	public boolean isUpdated() {
 		return updated;

@@ -17,9 +17,9 @@ volumes: [
         def shortGitCommit = "${gitCommit[0..10]}"
         def previousGitCommit = sh(script: "git rev-parse ${gitCommit}~", returnStdout: true)
         def gitCommitCount = sh(script: "git rev-list --all --count", returnStdout: true)
-        def regURL = "registry.gitlab.com/unisys-fed/appserv-demos/ice18-tc"
+        def regURL = "dockerhub.com/wcogtas/gtas"
 
-        def regNamespace = "registry.gitlab.com/unisys-fed/appserv-demos/ice18-tc"
+        def regNamespace = "wcogtas"
         def artifactID = sh(script: "grep '<artifactId>' pom.xml | head -n 1 | sed -e 's/artifactId//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
         def POMversion = sh(script: "grep '<version>' pom.xml | head -n 1 | sed -e 's/version//g' | sed -e 's/\\s*[<>/]*//g' | tr -d '\\r\\n'", returnStdout: true)
  
@@ -29,73 +29,57 @@ volumes: [
         stage('Maven project') {
             container('maven') {
 
-                stage('Validate project') {
-                    sh 'mvn -B  validate'        
+                stage('Validate') {
+                    sh 'mvn -f gtas-parent/ -B  validate'        
                 }
                 
-                stage('Compile project') {
-                    sh 'mvn -B  compile package'
+                stage('Compile') {
+                    sh 'mvn -B  -f gtas-parent/ compile  -Dmaven.test.failure.ignore=true'
                 }
                 
-                stage('Unit Test and coverage project') {
-                    sh 'mvn -B  test'
+                stage('Unit Test') {
+                    sh 'mvn -B -f gtas-parent/ test -Dmaven.test.failure.ignore=true'
                 }
-                
-               stage('Security Scan components') {
-                   sh 'mvn -B dependency-check:check -DfailBuildOnCVSS=10'
-               }
-            
-                stage ('Package and Code Analysis') {
+                            
+                stage ('Code Analysis') {
                     withSonarQubeEnv {
-                        sh "mvn jdepend:generate pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar"
+                        sh "mvn -f gtas-parent/ jacoco:report test pmd:pmd findbugs:findbugs checkstyle:checkstyle   package sonar:sonar -Dmaven.test.failure.ignore=true"
                     }
+                 //   junit 'gtas-parent/target/surefire-reports/*.xml'
                 }
                 
-                stage('Publish test results') {
-                    junit 'target/surefire-reports/*.xml'
-                } 
                 
+             //   stage('Publish test results') {
+             //       junit 'gtas-parent/target/surefire-reports/*.xml'
+             //   } 
+                
+                
+                stage('Security Scan components') {
+                   sh 'mvn -B -f gtas-parent/ install org.owasp:dependency-check-maven:check  -Dmaven.test.failure.ignore=true'
+               }
                 
             }
         }
         stage('Create Docker images') {
           container('docker') {
          withCredentials([[$class: 'UsernamePasswordMultiBinding',
-           credentialsId: 'dockerCredentials',
+           credentialsId: 'registry',
            usernameVariable: 'DOCKER_REG_USER',
            passwordVariable: 'DOCKER_REG_PASSWORD']]) {
           sh """
-            docker login registry.gitlab.com -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
-            docker build -t ${regNamespace}/${artifactID} .
-            docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${shortGitCommit}
-            echo $gitBranch
-            echo $branchName
-        //    if [ ${gitBranch} == "origin/master" ] ; then
-        //        docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}
-        //        docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:${POMversion}.${BUILD_NUMBER}
-        //    fi
-        //    if [ ${gitBranch} == "origin/develop" ] ; then
-        //        docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${gitCommitCount}
-        //        docker tag ${regNamespace}/${artifactID} ${regNamespace}/${artifactID}:develop.${POMversion}.${BUILD_NUMBER}
-        //    fi
-            docker push ${regNamespace}/${artifactID}
+            docker login -u ${DOCKER_REG_USER}  -p ${DOCKER_REG_PASSWORD}
+            echo ${regNamespace}/${artifactID}
+            cd gtas-parent/gtas-job-scheduler-war/
+            docker build -t wcogtas/gtas .
+            # docker build -t ${regNamespace}/${artifactID} .
+            docker tag wcogtas/gtas wcogtas/gtas:0.1.0.${shortGitCommit}
+            docker tag wcogtas/gtas wcogtas/gtas:0.1.0.${gitCommitCount}
+            docker push wcogtas/gtas
             """
          }
       }
     }
-    stage('deploy 2 k8s') {
-      container('kubectl') {
-        sh "kubectl get pods"
-
-// first time                        sh "kubectl create deployment ${artifactID} --image=${regNamespace}/${artifactID}"
-// first time                        sh "kubectl expose deployment ${artifactID} --type=LoadBalancer --port=8080"
-
-
-        sh "kubectl set image deployments/${artifactID} ${artifactID}=${regNamespace}/${artifactID}:${POMversion}.${gitCommitCount}"
-
-      }
-    }
-
+ 
     
     } catch (e) {
         currentBuild.result = 'FAILURE'
@@ -124,5 +108,5 @@ def notifySlack(String buildStatus = 'STARTED') {
 
     def msg = "${buildStatus}: `${env.JOB_NAME}` #${env.BUILD_NUMBER}"
 
-    slackSend(color: color, message: msg)
+  //  slackSend(color: color, message: msg)
  }

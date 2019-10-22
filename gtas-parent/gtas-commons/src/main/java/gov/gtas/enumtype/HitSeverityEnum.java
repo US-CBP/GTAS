@@ -14,31 +14,31 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
 
-public enum  HitSeverityEnum {
+public enum HitSeverityEnum {
 
-    // Using ordinal to sort.
+	// Using ordinal to sort.
 
-    TOP("Top"),
+	TOP("Top"),
 
-    HIGH("High"),
+	HIGH("High"),
 
-    NORMAL("Normal");
+	NORMAL("Normal");
 
-    private final String hitSeverity;
+	private final String hitSeverity;
 
-    HitSeverityEnum(String hitSeverity) {
-        this.hitSeverity = hitSeverity;
-    }
+	HitSeverityEnum(String hitSeverity) {
+		this.hitSeverity = hitSeverity;
+	}
 
-    private static final Map<String, HitSeverityEnum> stringToEnum = Stream.of(values())
-            .collect(toMap(o -> o.toString().toUpperCase(), e -> e));
+	private static final Map<String, HitSeverityEnum> stringToEnum = Stream.of(values())
+			.collect(toMap(o -> o.toString().toUpperCase(), e -> e));
 
-    public static Optional<HitSeverityEnum> fromString(String entityName) {
-        return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase().trim()));
-    }
+	public static Optional<HitSeverityEnum> fromString(String entityName) {
+		return Optional.ofNullable(stringToEnum.get(entityName.toUpperCase().trim()));
+	}
 
-    @Override
-    public String toString() {
-        return hitSeverity;
-    }
+	@Override
+	public String toString() {
+		return hitSeverity;
+	}
 }

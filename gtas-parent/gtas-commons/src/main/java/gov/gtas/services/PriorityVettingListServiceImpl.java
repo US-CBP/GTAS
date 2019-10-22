@@ -34,7 +34,8 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 
 	private final HitViewStatusRepository hitViewStatusRepository;
 
-	public PriorityVettingListServiceImpl(UserService userService, PassengerRepository passengerRepository, HitViewStatusRepository hitViewStatusRepository) {
+	public PriorityVettingListServiceImpl(UserService userService, PassengerRepository passengerRepository,
+			HitViewStatusRepository hitViewStatusRepository) {
 		this.userService = userService;
 		this.passengerRepository = passengerRepository;
 		this.hitViewStatusRepository = hitViewStatusRepository;
@@ -49,7 +50,8 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			return new PriorityVettingListDTO(new ArrayList<>(), 0L);
 		}
 
-		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups, userId);
+		Pair<Long, List<Passenger>> immutablePair = passengerRepository.priorityVettingListQuery(request, userGroups,
+				userId);
 		long count = immutablePair.getLeft();
 		List<CaseVo> caseVOS = new ArrayList<>();
 
@@ -73,12 +75,12 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 				if (!Collections.disjoint(hitUserGroups, userGroups)) {
 					String title;
 					if (hd.getTitle().length() > 8) {
-						title = hd.getTitle().substring(0,8) + "...";
+						title = hd.getTitle().substring(0, 8) + "...";
 					} else {
 						title = hd.getTitle();
 					}
-					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | "
-							+ title + "(" + hd.getHitEnum().getDisplayName() +")");
+					hitDetailsTitles.add(severity + " | " + hd.getHitMaker().getHitCategory().getName() + " | " + title
+							+ "(" + hd.getHitEnum().getDisplayName() + ")");
 					for (HitViewStatus hvs : hd.getHitViewStatus()) {
 						if (userGroups.contains(hvs.getUserGroup())) {
 							hvsEnums.add(hvs.getHitViewStatusEnum());
@@ -90,8 +92,8 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 			String docNum = "";
 			String docType = "";
 			for (Document doc : passenger.getDocuments()) {
-					docNum = doc.getDocumentNumber();
-					docType = doc.getDocumentType();
+				docNum = doc.getDocumentNumber();
+				docType = doc.getDocumentType();
 				if ("P".equalsIgnoreCase(doc.getDocumentType())) {
 					break;
 				}
@@ -129,9 +131,10 @@ public class PriorityVettingListServiceImpl implements PriorityVettingListServic
 	@Transactional
 	public synchronized void update(ViewUpdateDTo viewUpdateDTo, String userId) {
 		Long paxId = viewUpdateDTo.getPassengerId();
-		Passenger p  = passengerRepository.findById(paxId).orElseThrow(RuntimeException::new);
+		Passenger p = passengerRepository.findById(paxId).orElseThrow(RuntimeException::new);
 		Set<HitViewStatus> hitViewStatuses = hitViewStatusRepository.findAllByPassenger(p);
-		HitViewStatusEnum hitViewStatusEnum = HitViewStatusEnum.fromString(viewUpdateDTo.getStatus()).orElseThrow(RuntimeException::new);
+		HitViewStatusEnum hitViewStatusEnum = HitViewStatusEnum.fromString(viewUpdateDTo.getStatus())
+				.orElseThrow(RuntimeException::new);
 		for (HitViewStatus hvs : hitViewStatuses) {
 			hvs.setHitViewStatusEnum(hitViewStatusEnum);
 			hvs.setUpdatedBy(userId);

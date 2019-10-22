@@ -25,6 +25,7 @@ public interface PassengerRepositoryCustom {
 	 */
 	Pair<Long, List<Passenger>> findByCriteria(Long flightId, PassengersRequestDto request);
 
-	Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest request, Set<UserGroup> userGroups, String userId);
+	Pair<Long, List<Passenger>> priorityVettingListQuery(PriorityVettingListRequest request, Set<UserGroup> userGroups,
+			String userId);
 
 }

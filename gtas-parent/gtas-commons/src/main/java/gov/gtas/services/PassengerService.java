@@ -5,18 +5,18 @@
  */
 package gov.gtas.services;
 
-import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
-
-import gov.gtas.constant.GtasSecurityConstants;
 import gov.gtas.model.*;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
+import gov.gtas.vo.passenger.CaseVo;
+import gov.gtas.vo.passenger.DispositionStatusVo;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import static gov.gtas.constant.GtasSecurityConstants.*;
 
 public interface PassengerService {
 
@@ -39,7 +39,7 @@ public interface PassengerService {
 	 *            the request
 	 * @return the passengers by criteria
 	 */
-	@PreAuthorize(GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER_AND_MANAGE_QUERIES)
 	PassengersPageDto getPassengersByCriteria(Long flightId, PassengersRequestDto request);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)

@@ -389,8 +389,7 @@ public class PassengerDetailsController {
 		Set<PaxWatchlistLinkVo> paxWatchlistLinkVos = new HashSet<>();
 		for (HitDetail hitDetail : hitDetailSet) {
 			HitTypeEnum hitTypeEnum = hitDetail.getHitEnum();
-			if (HitTypeEnum.WATCHLIST_PASSENGER == hitTypeEnum ||
-					HitTypeEnum.PARTIAL_WATCHLIST == hitTypeEnum) {
+			if (HitTypeEnum.WATCHLIST_PASSENGER == hitTypeEnum || HitTypeEnum.PARTIAL_WATCHLIST == hitTypeEnum) {
 				PaxWatchlistLinkVo paxWatchlistLinkVo = PaxWatchlistLinkVo.fromHitDetail(hitDetail);
 				paxWatchlistLinkVos.add(paxWatchlistLinkVo);
 			}
@@ -598,7 +597,7 @@ public class PassengerDetailsController {
 	/**
 	 * Segments PnrRaw String Required for Frontend to highlight segment
 	 * corresponding to pnr section
-	 * 
+	 *
 	 * @param targetVo
 	 */
 	protected void parseRawMessageToSegmentList(PnrVo targetVo) {

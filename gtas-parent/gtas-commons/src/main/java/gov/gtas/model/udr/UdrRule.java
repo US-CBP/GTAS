@@ -44,7 +44,7 @@ public class UdrRule extends HitMaker {
 	/**
 	 * serial version UID
 	 */
-//	private static final long serialVersionUID = 2089171064855746507L;
+	// private static final long serialVersionUID = 2089171064855746507L;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DEL_FLAG", nullable = false, length = 1)
@@ -102,7 +102,6 @@ public class UdrRule extends HitMaker {
 		this.editedBy = editedBy;
 		this.editDt = editDt;
 	}
-
 
 	/**
 	 * @return the title

@@ -59,7 +59,6 @@ public class TargetingServiceImpl implements TargetingService {
 
 	private final MessageStatusRepository messageStatusRepository;
 
-
 	private final FlightHitsRuleRepository flightHitsRuleRepository;
 
 	private final FlightHitsWatchlistRepository flightHitsWatchlistRepository;
@@ -68,7 +67,8 @@ public class TargetingServiceImpl implements TargetingService {
 
 	/**
 	 * Constructor obtained from the spring context by auto-wiring.
-	 *  @param rulesvc
+	 * 
+	 * @param rulesvc
 	 *            the auto-wired rule engine instance. \
 	 * @param hitsSummaryRepository
 	 * @param flightHitsRuleRepository
@@ -76,9 +76,10 @@ public class TargetingServiceImpl implements TargetingService {
 	 */
 	@Autowired
 	public TargetingServiceImpl(final RuleService rulesvc, AppConfigurationService appConfigurationService,
-								HitDetailRepository hitDetailRepository, HitsSummaryRepository hitsSummaryRepository,
-								PassengerService passengerService, MessageStatusRepository messageStatusRepository,
-								RuleMetaRepository ruleMetaRepository, FlightHitsRuleRepository flightHitsRuleRepository, FlightHitsWatchlistRepository flightHitsWatchlistRepository, ApplicationContext applicationContext) {
+			HitDetailRepository hitDetailRepository, HitsSummaryRepository hitsSummaryRepository,
+			PassengerService passengerService, MessageStatusRepository messageStatusRepository,
+			RuleMetaRepository ruleMetaRepository, FlightHitsRuleRepository flightHitsRuleRepository,
+			FlightHitsWatchlistRepository flightHitsWatchlistRepository, ApplicationContext applicationContext) {
 		ruleService = rulesvc;
 		this.appConfigurationService = appConfigurationService;
 		this.hitDetailRepository = hitDetailRepository;

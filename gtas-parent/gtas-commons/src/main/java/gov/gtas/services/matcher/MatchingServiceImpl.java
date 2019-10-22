@@ -183,7 +183,8 @@ public class MatchingServiceImpl implements MatchingService {
 						hitDetail.setCreatedDate(new Date());
 						hitDetail.setTitle("Partial Name Match");
 						hitDetail.setPercentage(hit.getPercent());
-						hitDetail.setDescription("Jaro-Winkler or Double Metaphone match on WL Item #" + hit.getDerogId());
+						hitDetail.setDescription(
+								"Jaro-Winkler or Double Metaphone match on WL Item #" + hit.getDerogId());
 						hitDetailSet.add(hitDetail);
 					}
 				}

@@ -50,7 +50,8 @@ public class RuleCatServiceImpl implements HitCategoryService {
 	@Override
 	@Transactional
 	public void create(HitCategory hitCategory) {
-		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId).orElseThrow(RuntimeException::new);
+		UserGroup defaultUserGroup = userGroupRepository.findById(defaultUserGroupId)
+				.orElseThrow(RuntimeException::new);
 		hitCategory.setCreatedAt(new Date());
 		hitCategory = hitCategoryRepository.save(hitCategory);
 		defaultUserGroup.getHitCategories().add(hitCategory);

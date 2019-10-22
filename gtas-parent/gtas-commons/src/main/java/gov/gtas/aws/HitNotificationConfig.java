@@ -24,7 +24,7 @@ public class HitNotificationConfig {
 	}
 
 	public HitNotificationConfig(AmazonSNS amazonSNS, Set<Passenger> hits, String topicArn, String topicSubject,
-								 Long targetwatchlistId) {
+			Long targetwatchlistId) {
 		this.amazonSNS = amazonSNS;
 		this.hits = hits;
 		this.topicArn = topicArn;

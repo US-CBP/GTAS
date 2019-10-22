@@ -14,15 +14,15 @@ import javax.persistence.*;
 @Table(name = "user_group_notifications")
 public class UserGroupNotification extends Notification {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hm_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private UserGroup userGroup;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "hm_id", referencedColumnName = "id", insertable = false, updatable = false)
+	private UserGroup userGroup;
 
-    public UserGroup getUserGroup() {
-        return userGroup;
-    }
+	public UserGroup getUserGroup() {
+		return userGroup;
+	}
 
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
-    }
+	public void setUserGroup(UserGroup userGroup) {
+		this.userGroup = userGroup;
+	}
 }

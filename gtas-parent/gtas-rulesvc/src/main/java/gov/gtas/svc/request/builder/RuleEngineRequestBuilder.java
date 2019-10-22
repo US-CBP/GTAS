@@ -84,9 +84,9 @@ public class RuleEngineRequestBuilder {
 
 	@Autowired
 	public RuleEngineRequestBuilder(PnrRepository pnrRepository, PassengerTripRepository passengerTripRepository,
-									PassengerDetailRepository passengerDetailRepository, SeatRepository seatRepository,
-									BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
-									ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
+			PassengerDetailRepository passengerDetailRepository, SeatRepository seatRepository,
+			BagRepository bagRepository, FlightPaxRepository flightPaxRepository, DocumentRepository documentRepository,
+			ApisMessageRepository apisMessageRepository, PassengerRepository passengerRepository) {
 		this.passengerRepository = passengerRepository;
 		this.requestObjectList = new ArrayList<>(300000);
 		this.addressIdSet = new HashSet<>();
@@ -245,14 +245,16 @@ public class RuleEngineRequestBuilder {
 	}
 
 	private void addPassengesInformationFacts(Set<Passenger> passengerSet) {
-        logger.debug("pax info");
-        logger.debug("paxMap");
-        Set<PassengerDetails> passengerDetails = passengerSet.stream().map(Passenger::getPassengerDetails).collect(Collectors.toSet());
-        logger.debug("trip detail map");
-        Set<PassengerTripDetails> passengerTripDetails = passengerSet.stream().map(Passenger::getPassengerTripDetails).collect(Collectors.toSet());
+		logger.debug("pax info");
+		logger.debug("paxMap");
+		Set<PassengerDetails> passengerDetails = passengerSet.stream().map(Passenger::getPassengerDetails)
+				.collect(Collectors.toSet());
+		logger.debug("trip detail map");
+		Set<PassengerTripDetails> passengerTripDetails = passengerSet.stream().map(Passenger::getPassengerTripDetails)
+				.collect(Collectors.toSet());
 
-        Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
-        logger.debug("seatMap");
+		Set<Long> paxIds = passengerSet.stream().map(Passenger::getId).collect(Collectors.toSet());
+		logger.debug("seatMap");
 		Set<Seat> paxSeats = seatRepository.getByPaxId(paxIds);
 		logger.debug("bags map");
 		Set<Bag> bags = bagRepository.getAllByPaxId(paxIds);

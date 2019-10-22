@@ -12,13 +12,9 @@ import java.util.*;
 import javax.persistence.*;
 
 @Entity
-@NamedEntityGraph(name = "passengerGraph",  attributeNodes = {
-		@NamedAttributeNode("id"),
-		@NamedAttributeNode("uuid"),
-		@NamedAttributeNode("flight"),
-		@NamedAttributeNode("hitDetails"),
- 		@NamedAttributeNode("passengerDetails"),
-		@NamedAttributeNode(("documents"))})
+@NamedEntityGraph(name = "passengerGraph", attributeNodes = { @NamedAttributeNode("id"), @NamedAttributeNode("uuid"),
+		@NamedAttributeNode("flight"), @NamedAttributeNode("hitDetails"), @NamedAttributeNode("passengerDetails"),
+		@NamedAttributeNode(("documents")) })
 @Table(name = "passenger")
 public class Passenger extends BaseEntityAudit {
 	private static final long serialVersionUID = 1L;

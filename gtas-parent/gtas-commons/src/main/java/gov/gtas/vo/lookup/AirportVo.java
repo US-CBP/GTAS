@@ -1,54 +1,23 @@
-/*
- * All GTAS code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
- * 
- * Please see LICENSE.txt for details.
- */
-package gov.gtas.model.lookup;
+package gov.gtas.vo.lookup;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+public class AirportVo  implements Serializable  {
 
-import org.springframework.cache.annotation.Cacheable;
-
-import gov.gtas.model.BaseEntity;
-
-@Cacheable
-@Entity
-@Table(name = "airport", indexes = { @Index(columnList = "iata", name = "airport_iata_index") })
-public class Airport extends BaseEntity {
-
+	private Long id;
 	private Long originId;
 	private String name;
-	@Column(length = 3)
 	private String iata;
-
-	@Column(length = 4)
 	private String icao;
-
 	private String country;
-
 	private String city;
-
-	@Column(precision = 9, scale = 6)
 	private BigDecimal latitude;
-
-	@Column(precision = 9, scale = 6)
 	private BigDecimal longitude;
-
-	@Column(name = "utc_offset")
 	private Integer utcOffset;
-
 	private String timezone;
 
-	public Airport() {
-	}
-
-	public Airport(Long id, Long originId, String name, String iata, String icao, String country, String city,
+	public AirportVo(Long id, Long originId, String name, String iata, String icao, String country, String city,
 			BigDecimal latitude, BigDecimal longitude, Integer utcOffset, String timezone) {
 		this.id = id;
 		this.originId = originId;
@@ -61,6 +30,17 @@ public class Airport extends BaseEntity {
 		this.longitude = longitude;
 		this.utcOffset = utcOffset;
 		this.timezone = timezone;
+	}
+
+	public AirportVo() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getOriginId() {
@@ -143,25 +123,4 @@ public class Airport extends BaseEntity {
 		timezone = data;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.iata, this.icao);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Airport other = (Airport) obj;
-		return Objects.equals(this.iata, other.iata) && Objects.equals(this.icao, other.icao);
-	}
-
-	@Override
-	public String toString() {
-		return this.iata;
-	}
 }

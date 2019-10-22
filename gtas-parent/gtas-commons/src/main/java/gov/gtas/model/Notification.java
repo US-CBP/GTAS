@@ -19,62 +19,62 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Notification extends BaseEntityAudit {
 
-    @Column(name = "n_passenger", columnDefinition = "bigint unsigned", nullable = false)
-    private Passenger passenger;
+	@Column(name = "n_passenger", columnDefinition = "bigint unsigned", nullable = false)
+	private Passenger passenger;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "n_type", nullable = false)
-    private NotificationType notificationType;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "n_type", nullable = false)
+	private NotificationType notificationType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "n_status", nullable = false)
-    private NotificationStatus notificationStatus;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "n_status", nullable = false)
+	private NotificationStatus notificationStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "n_user", referencedColumnName = "user_id", nullable = false)
-    private User notificationOwner;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "n_user", referencedColumnName = "user_id", nullable = false)
+	private User notificationOwner;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "n_send_when", nullable = false)
-    private NotificationSend notificationSend;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "n_send_when", nullable = false)
+	private NotificationSend notificationSend;
 
-    public Passenger getPassenger() {
-        return passenger;
-    }
+	public Passenger getPassenger() {
+		return passenger;
+	}
 
-    public void setPassenger(Passenger passenger) {
-        this.passenger = passenger;
-    }
+	public void setPassenger(Passenger passenger) {
+		this.passenger = passenger;
+	}
 
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
+	public NotificationType getNotificationType() {
+		return notificationType;
+	}
 
-    public void setNotificationType(NotificationType notificationType) {
-        this.notificationType = notificationType;
-    }
+	public void setNotificationType(NotificationType notificationType) {
+		this.notificationType = notificationType;
+	}
 
-    public NotificationStatus getNotificationStatus() {
-        return notificationStatus;
-    }
+	public NotificationStatus getNotificationStatus() {
+		return notificationStatus;
+	}
 
-    public void setNotificationStatus(NotificationStatus notificationStatus) {
-        this.notificationStatus = notificationStatus;
-    }
+	public void setNotificationStatus(NotificationStatus notificationStatus) {
+		this.notificationStatus = notificationStatus;
+	}
 
-    public NotificationSend getNotificationSend() {
-        return notificationSend;
-    }
+	public NotificationSend getNotificationSend() {
+		return notificationSend;
+	}
 
-    public void setNotificationSend(NotificationSend notificationSend) {
-        this.notificationSend = notificationSend;
-    }
+	public void setNotificationSend(NotificationSend notificationSend) {
+		this.notificationSend = notificationSend;
+	}
 
-    public User getNotificationOwner() {
-        return notificationOwner;
-    }
+	public User getNotificationOwner() {
+		return notificationOwner;
+	}
 
-    public void setNotificationOwner(User notificationOwner) {
-        this.notificationOwner = notificationOwner;
-    }
+	public void setNotificationOwner(User notificationOwner) {
+		this.notificationOwner = notificationOwner;
+	}
 }

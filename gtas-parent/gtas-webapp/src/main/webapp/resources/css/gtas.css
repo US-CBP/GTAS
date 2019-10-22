@@ -904,8 +904,8 @@ div[ui-grid] {
 
 /*Override query builder */
 .group-conditions .btn-primary.active {
-  background-color: #F09511 !important;
-  color: black !important;
+  background-color: #85a3f0 !important;
+  color: white !important;
 }
 
 /* BEGIN IE css patches */

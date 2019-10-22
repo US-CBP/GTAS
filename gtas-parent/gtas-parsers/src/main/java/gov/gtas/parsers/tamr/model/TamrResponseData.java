@@ -10,13 +10,13 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class TamrResponseData {
-	public String tamrId;
-	public Long gtasId;
-	public double version;
-	public double score;
+	private String tamrId;
+	private Long gtasId;
+	private double version;
+	private double score;
 
 	@JsonIgnore
-	public List<Object> derogIds;
+	private List<Object> derogIds;
 
 	public TamrResponseData() {
 

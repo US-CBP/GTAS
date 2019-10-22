@@ -167,7 +167,6 @@ public class WatchlistPersistenceServiceIT {
 		assertTrue(!item.getItemData().equalsIgnoreCase(deldata1) || !item.getItemData().equalsIgnoreCase(deldata2));
 	}
 
-
 	private String addDeleteItem(List<WatchlistItem> delList, WatchlistItem item) {
 		String deldata = item.getItemData();
 		WatchlistItem delItem = new WatchlistItem();

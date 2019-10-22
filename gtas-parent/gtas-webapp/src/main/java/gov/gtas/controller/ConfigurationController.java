@@ -42,7 +42,7 @@ public class ConfigurationController {
 
 	@Value("${agency.name}")
 	String agencyName;
-	
+
 	@Value("${enable.email.notification.service}")
 	String enableEmailNotification;
 
@@ -86,7 +86,7 @@ public class ConfigurationController {
 	public String getAgencyName() {
 		return agencyName;
 	}
-	
+
 	@GetMapping(value = "/api/config/enableEmailNotification", produces = "text/plain")
 	public String isEmailNotificationEnabled() {
 		return enableEmailNotification;

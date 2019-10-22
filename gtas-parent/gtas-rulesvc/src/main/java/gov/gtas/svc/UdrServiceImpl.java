@@ -129,7 +129,7 @@ public class UdrServiceImpl implements UdrService {
 	 * @return summary list.
 	 */
 	private List<JsonUdrListElement> convertSummaryList(List<UdrRule> fetchedRuleList) {
-		 Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
+		Map<Long, Long> udrHitCountMap = createUdrHitCountMap();
 		List<JsonUdrListElement> ret = new LinkedList<>();
 		if (fetchedRuleList != null && !fetchedRuleList.isEmpty()) {
 			for (UdrRule udrRule : fetchedRuleList) {
@@ -160,8 +160,8 @@ public class UdrServiceImpl implements UdrService {
 		Map<Long, Long> hitCountMap = new HashMap<>();
 		if (!CollectionUtils.isEmpty(udrCounts)) {
 			for (Object[] data : udrCounts) {
-				Long udrId = (Long)data[0];
-				Long udrHitCount = (Long)data[1];
+				Long udrId = (Long) data[0];
+				Long udrHitCount = (Long) data[1];
 				hitCountMap.put(udrId, udrHitCount);
 			}
 		}

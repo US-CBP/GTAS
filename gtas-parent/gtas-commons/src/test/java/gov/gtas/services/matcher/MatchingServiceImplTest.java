@@ -44,7 +44,6 @@ public class MatchingServiceImplTest {
 
 	private MatchingServiceImpl matchingService;
 
-
 	@Before
 	public void before() {
 		initMocks(this);

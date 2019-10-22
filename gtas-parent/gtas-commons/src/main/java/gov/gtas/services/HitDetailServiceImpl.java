@@ -41,20 +41,20 @@ public class HitDetailServiceImpl implements HitDetailService {
 		}
 		List<HitDetailVo> hitDetails = new ArrayList<>(hitDetailVoSet);
 		if (!hitDetails.isEmpty()) {
-            hitDetails.sort((hd1, hd2) -> {
-                Date createDate = hd1.getCreateDate();
-                Date otherDate = hd2.getCreateDate();
-                if (createDate == null || otherDate == null) {
-                    return 0;
-                } else if (createDate.after(otherDate)) {
-                    return -1;
-                } else if (otherDate.after(createDate)) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            });
-        }
+			hitDetails.sort((hd1, hd2) -> {
+				Date createDate = hd1.getCreateDate();
+				Date otherDate = hd2.getCreateDate();
+				if (createDate == null || otherDate == null) {
+					return 0;
+				} else if (createDate.after(otherDate)) {
+					return -1;
+				} else if (otherDate.after(createDate)) {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+		}
 		return hitDetails;
 	}
 

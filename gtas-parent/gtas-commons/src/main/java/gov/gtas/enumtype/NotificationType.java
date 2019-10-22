@@ -16,27 +16,27 @@ import static java.util.stream.Collectors.toMap;
 
 public enum NotificationType {
 
-    EMAIL("EMAIL"),
+	EMAIL("EMAIL"),
 
-    SMS("SMS"),
+	SMS("SMS"),
 
-    WEB_APP("WEB_APP");
+	WEB_APP("WEB_APP");
 
-    private String notificationType;
+	private String notificationType;
 
-    NotificationType(String notificationType) {
-        this.notificationType = notificationType;
-    }
+	NotificationType(String notificationType) {
+		this.notificationType = notificationType;
+	}
 
-    private static final Map<String, NotificationType> stringToEnum = Stream.of(values())
-            .collect(toMap(Object::toString, e -> e));
+	private static final Map<String, NotificationType> stringToEnum = Stream.of(values())
+			.collect(toMap(Object::toString, e -> e));
 
-    public static Optional<NotificationType> fromString(String entityName) {
-        return Optional.ofNullable(stringToEnum.get(entityName));
-    }
+	public static Optional<NotificationType> fromString(String entityName) {
+		return Optional.ofNullable(stringToEnum.get(entityName));
+	}
 
-    @Override
-    public String toString() {
-        return notificationType;
-    }
+	@Override
+	public String toString() {
+		return notificationType;
+	}
 }

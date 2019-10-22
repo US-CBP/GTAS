@@ -9,64 +9,54 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import gov.gtas.enumtype.NoteType;
+import gov.gtas.enumtype.CommentType;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "notes")
+@Table(name = "comment")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Note extends BaseEntityAudit {
+public abstract class Comment extends BaseEntityAudit {
 
-    @Column(name = "note_plain_text", length = 10000, nullable = false)
-    private String plainTextNote;
+	@Column(name = "cmt_plain_text", length = 10000, nullable = false)
+	private String plainTextComment;
 
-    @Column(name = "note_rtf_text", length = 10000, nullable = false)
-    private String rtfNote;
+	@Column(name = "cmt_rtf_text", length = 10000, nullable = false)
+	private String rtfComment;
 
-    @Column(name = "note_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private NoteType noteType;
+	@Column(name = "cmt_type", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private CommentType commentType;
 
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "note_attachment",
-            joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "attachment_id"))
-    private Set<Attachment> attachments = new HashSet<>();
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "comment_attachment", joinColumns = @JoinColumn(name = "comment_id"), inverseJoinColumns = @JoinColumn(name = "attachment_id"))
+	private Set<Attachment> attachments = new HashSet<>();
 
-    public String getPlainTextNote() {
-        return plainTextNote;
-    }
+	public String getPlainTextComment() {
+		return plainTextComment;
+	}
 
-    public void setPlainTextComment(String plainTextNote) {
-        this.plainTextNote = plainTextNote;
-    }
+	public void setPlainTextComment(String plainTextComment) {
+		this.plainTextComment = plainTextComment;
+	}
 
-    public String getRtfNote() {
-        return rtfNote;
-    }
+	public String getRtfComment() {
+		return rtfComment;
+	}
 
-    public void setRtfComment(String rtfNote) {
-        this.rtfNote = rtfNote;
-    }
+	public void setRtfComment(String rtfComment) {
+		this.rtfComment = rtfComment;
+	}
 
-    public Set<Attachment> getAttachments() {
-        return attachments;
-    }
+	public Set<Attachment> getAttachments() {
+		return attachments;
+	}
 
-    public void setAttachments(Set<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    public NoteType getNoteType() {
-        return noteType;
-    }
-
-    public void setNoteType(NoteType noteType) {
-        this.noteType = noteType;
-    }
+	public void setAttachments(Set<Attachment> attachments) {
+		this.attachments = attachments;
+	}
 
 }

@@ -6,13 +6,10 @@ import javax.validation.constraints.Email;
 
 public class EmailDTO {
 	@Email
-    private String [] to;
+	private String[] to;
 	private String subject;
-    private String body;
-    private String pathToAttachment;
-
-    
-    
+	private String body;
+	private String pathToAttachment;
 
 	public String[] getTo() {
 		return to;
@@ -28,15 +25,15 @@ public class EmailDTO {
 
 	public void setPathToAttachment(String pathToAttachment) {
 		this.pathToAttachment = pathToAttachment;
-	}	
+	}
 
-    public String getSubject() {
-        return subject;
-    }
+	public String getSubject() {
+		return subject;
+	}
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
 
 	public String getBody() {
 		return body;
@@ -45,10 +42,9 @@ public class EmailDTO {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
+
 	public boolean hasAttachment() {
 		return pathToAttachment != null;
 	}
 
 }
-

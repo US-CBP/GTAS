@@ -47,7 +47,6 @@ public class OneDayLookoutController {
 	public @ResponseBody boolean removeFromonedaylookout(
 			@RequestParam(value = "caseId", required = true) String caseId) {
 
-
 		return true;
 	}
 

@@ -19,7 +19,6 @@ public interface HitCategoryRepository extends CrudRepository<HitCategory, Long>
 		return findById(hitCatId).orElse(null);
 	}
 
-
 	@Query("SELECT wl FROM Watchlist wl WHERE wl.watchlistName = :name")
 	public Watchlist getWatchlistByName(@Param("name") String name);
 

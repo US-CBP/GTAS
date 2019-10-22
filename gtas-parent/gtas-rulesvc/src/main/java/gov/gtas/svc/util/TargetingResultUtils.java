@@ -25,7 +25,7 @@ public class TargetingResultUtils {
 	private static final Logger logger = LoggerFactory.getLogger(TargetingResultUtils.class);
 
 	private static Map<Long, List<Long>> createPassengerFlightMap(List<RuleHitDetail> ruleHitDetailList,
-																  PassengerService passengerService) {
+			PassengerService passengerService) {
 		List<Long> ruleHitDetailPassengerIdList = new ArrayList<>();
 		Map<Long, List<Long>> passengerFlightMap = new HashMap<>();
 
@@ -111,17 +111,16 @@ public class TargetingResultUtils {
 		return new BasicRuleServiceResult(new LinkedList<>(resultMap.values()), result.getExecutionStatistics());
 	}
 
-	public static List<Set<HitDetail>> batchResults(Set<HitDetail> hitDetailSet,
-			int BATCH_SIZE) {
+	public static List<Set<HitDetail>> batchResults(Set<HitDetail> hitDetailSet, int BATCH_SIZE) {
 
 		List<Set<HitDetail>> batchedResults = new ArrayList<>();
 		Set<HitDetail> hitDetails = new HashSet<>();
 		for (HitDetail hitDetail : hitDetailSet) {
-				hitDetails.add(hitDetail);
-				if (hitDetails.size() >= BATCH_SIZE) {
-					batchedResults.add(hitDetails);
-					hitDetails = new HashSet<>();
-				}
+			hitDetails.add(hitDetail);
+			if (hitDetails.size() >= BATCH_SIZE) {
+				batchedResults.add(hitDetails);
+				hitDetails = new HashSet<>();
+			}
 		}
 		// after loop put the remaining hits being processed in the batched result.
 		if (!hitDetails.isEmpty()) {

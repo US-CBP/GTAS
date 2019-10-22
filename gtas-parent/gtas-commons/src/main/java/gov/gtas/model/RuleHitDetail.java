@@ -87,7 +87,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	 *            the reason for the match.
 	 */
 	public RuleHitDetail(final Long hitMakerId, final Long ruleId, final String ruleTitle, final Passenger passenger,
-						 final Flight flight, final String cause) {
+			final Flight flight, final String cause) {
 
 		// THIS IS GENERATED FOR RULE HITS BY RULE ENGINE - SEE HOW RULES ARE MADE.
 		// DO NOT CHANGE UNLESS UPDATING THE RULE GENERATION AS WELL
@@ -253,7 +253,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 	}
 
 	/**
-	 *             the hitCount to set
+	 * the hitCount to set
 	 */
 	public void incrementHitCount() {
 		this.hitCount++;
@@ -266,7 +266,8 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 		return ruleHitCount;
 	}
 
-	/***            the ruleHitCount to set
+	/***
+	 * the ruleHitCount to set
 	 */
 	public void incrementRuleHitCount() {
 		this.ruleHitCount++;
@@ -351,8 +352,7 @@ public final class RuleHitDetail implements Serializable, Cloneable {
 		if (!(o instanceof RuleHitDetail))
 			return false;
 		RuleHitDetail hitDetail = (RuleHitDetail) o;
-		return getPassengerId() == hitDetail.getPassengerId()
-				&& getHitMakerId().equals(hitDetail.getHitMakerId());
+		return getPassengerId() == hitDetail.getPassengerId() && getHitMakerId().equals(hitDetail.getHitMakerId());
 	}
 
 	@Override

@@ -160,22 +160,23 @@ public class HitDetailVo {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		HitDetailVo that = (HitDetailVo) o;
-		return Objects.equals(getPaxId(), that.getPaxId()) &&
-				Objects.equals(getFlightId(), that.getFlightId()) &&
-				Objects.equals(getRuleConditions(), that.getRuleConditions()) &&
-				Objects.equals(getCreateDate(), that.getCreateDate()) &&
-				Objects.equals(getRuleId(), that.getRuleId()) &&
-				Objects.equals(getRuleTitle(), that.getRuleTitle()) &&
-				Objects.equals(getRuleDesc(), that.getRuleDesc()) &&
-				Objects.equals(getCategory(), that.getCategory());
+		return Objects.equals(getPaxId(), that.getPaxId()) && Objects.equals(getFlightId(), that.getFlightId())
+				&& Objects.equals(getRuleConditions(), that.getRuleConditions())
+				&& Objects.equals(getCreateDate(), that.getCreateDate())
+				&& Objects.equals(getRuleId(), that.getRuleId()) && Objects.equals(getRuleTitle(), that.getRuleTitle())
+				&& Objects.equals(getRuleDesc(), that.getRuleDesc())
+				&& Objects.equals(getCategory(), that.getCategory());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getPaxId(), getFlightId(), getRuleConditions(), getCreateDate(), getRuleId(), getRuleTitle(), getRuleDesc(), getCategory());
+		return Objects.hash(getPaxId(), getFlightId(), getRuleConditions(), getCreateDate(), getRuleId(),
+				getRuleTitle(), getRuleDesc(), getCategory());
 	}
 
 	public Date getFlightDate() {
@@ -186,19 +187,19 @@ public class HitDetailVo {
 		this.flightDate = flightDate;
 	}
 
-
 	public void setSeverity(String severity) {
-        this.severity = severity;
-    }
+		this.severity = severity;
+	}
 
-    public String getSeverity() {
-        return severity;
-    }
+	public String getSeverity() {
+		return severity;
+	}
 
-    public void setRuleAuthor(String userId) {
+	public void setRuleAuthor(String userId) {
 		this.ruleAuthor = userId;
-    }
-    public String getAuthor() {
+	}
+
+	public String getAuthor() {
 		return ruleAuthor;
 	}
 

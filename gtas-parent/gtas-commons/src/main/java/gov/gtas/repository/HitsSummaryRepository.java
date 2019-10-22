@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface HitsSummaryRepository extends CrudRepository<HitsSummary, Long> {
 
-
 	/**
 	 * @param id
 	 *            pax id
@@ -30,7 +29,6 @@ public interface HitsSummaryRepository extends CrudRepository<HitsSummary, Long>
 
 	@Query("SELECT s FROM HitsSummary s")
 	public Iterable<HitsSummary> findAll();
-
 
 	@Query("SELECT hits FROM HitsSummary hits WHERE hits.paxId in :pidList")
 	Set<HitsSummary> findHitsByPassengerIdList(@Param("pidList") List<Long> passengerIdList);

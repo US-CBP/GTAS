@@ -27,4 +27,4 @@ public interface TargetingService {
 
 	Set<HitDetail> generateHitDetails(RuleResults ruleRunningResult);
 
-	}
+}

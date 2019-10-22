@@ -19,7 +19,8 @@ import java.util.Objects;
 		@UniqueConstraint(columnNames = { "hv_hit_detail", "hv_user_group" }, name = "hvs_unique_constraint") })
 public class HitViewStatus extends BaseEntityAudit {
 
-	HitViewStatus(){}
+	HitViewStatus() {
+	}
 
 	public HitViewStatus(HitDetail hitDetail, UserGroup userGroup, HitViewStatusEnum hvse, Passenger passenger) {
 		this.hitDetail = hitDetail;
