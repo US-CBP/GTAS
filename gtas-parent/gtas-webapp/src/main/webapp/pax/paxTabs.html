@@ -121,39 +121,56 @@
 								</div>
 							</md-content>
 								</form>
+							<!-- BEGIN PANEL ACCORDION -->
+							<div class="panel-group full-width" id="accordion" role="tablist">
 								<!-- CURRENT EVENT NOTES DISPLAY -->
 								 <div class="full-width cbp-card-container">
                                     <div class="cbp-card cbp-card-shadow">
-                                        <h4 class="h-label no-margin-top" >Event Notes History</h4>
-                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                                        	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes | orderBy : createdAt">
-												<label class="static-label" style="font-size:12px">
-													Note Type: <i>{{note.noteType}}</i></br>
-													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
-												</label>
-	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
-                                    		</span>
+                                        <h4 class="h-label no-margin-top" >
+	                                        <a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" 
+	                                        	aria-expanded="true" aria-controls="collapseOne"><i class="fa fa-angle-right fa-fw"></i>
+	        									Event Notes History
+	        								</a>
+        								</h4>
+        								<div id="collapseOne" class="panel-collapse collapse in">
+	                                       	<div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+		                                       	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes | orderBy : createdAt">
+													<label class="static-label" style="font-size:12px">
+														Note Type: <i>{{note.noteType}}</i></br>
+														Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+													</label>
+			                                   		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar"> </trix-editor>
+		                                   		</span>
+                                    		</div>
                                     	</div>
                                  	</div>
                                  </div>
                                  <!-- FULL HISTORICAL NOTES DISPLAY -->
                                  <div class="full-width cbp-card-container">
                                     <div class="cbp-card cbp-card-shadow">
-                                        <h4 class="h-label no-margin-top" >Complete Notes History</h4>
-                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
-                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
-												<label class="static-label" style="font-size:12px">
-													Note Type: <i>{{note.noteType}}</i></br>
-													Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
-												</label>
-	                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" disabled toolbar=""> </trix-editor>
-                                    		</span>
-                                    	</div>
+                                        <h4 class="h-label no-margin-top" >
+	                                        	<a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" 
+	                                        	aria-expanded="true" aria-controls="collapseTwo"><i class="fa fa-angle-right fa-fw"></i>
+	        									Complete Notes History
+	        									</a>
+        								</h4>
+        								<div id="collapseTwo" class="panel-collapse collapse in">
+	                                        <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+	                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
+													<label class="static-label" style="font-size:12px">
+														Note Type: <i>{{note.noteType}}</i></br>
+														Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+													</label>
+		                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar" > </trix-editor>
+	                                    		</span>
+	                                    	</div>
+	                                    </div>
                                  	</div>
                                  </div>
-                                 
+                                 <trix-toolbar id="hidden_toolbar" style="display:none"></trix-toolbar>
 							</div>
-							
+							<!-- END PANEL ACCORDION -->
+							</div>
                             <div class="flex flex-vert ie-fix-md half-width align-items-center">
 
                                 <!------  DOCUMENTS   ------>

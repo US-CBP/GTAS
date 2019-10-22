@@ -306,6 +306,9 @@
                         },
                         disableLinks: function() {
                             return true;
+                        },
+                        eventNotes: function(paxNotesService){
+                        	return paxNotesService.getEventNotes($scope.paxId);
                         }
                     }
                 }).then(function(answer) {
