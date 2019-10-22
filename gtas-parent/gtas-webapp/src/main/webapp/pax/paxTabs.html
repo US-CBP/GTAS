@@ -137,7 +137,7 @@
 		                                       	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes | orderBy : createdAt">
 													<label class="static-label" style="font-size:12px">
 														Note Type: <i>{{note.noteType}}</i></br>
-														Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt}}</i>
+														Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt | date:'yyyy-MM-dd HH:mm'}}</i>
 													</label>
 			                                   		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar"> </trix-editor>
 		                                   		</span>
