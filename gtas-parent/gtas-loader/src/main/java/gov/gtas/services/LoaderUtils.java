@@ -350,9 +350,15 @@ public class LoaderUtils {
 		}
 
 		if (code.length() == 3) {
-			return AirportServiceImpl.buildAirport(airportService.getAirportByThreeLetterCode(code));
+			AirportVo airportVo = airportService.getAirportByThreeLetterCode(code);
+			if (airportVo != null) {
+				return AirportServiceImpl.buildAirport(airportVo);
+			}
 		} else if (code.length() == 4) {
-			return AirportServiceImpl.buildAirport(airportService.getAirportByFourLetterCode(code));
+			AirportVo airportVo = airportService.getAirportByThreeLetterCode(code);
+			if (airportVo != null) {
+				return AirportServiceImpl.buildAirport(airportVo);
+			}
 		}
 
 		logger.warn("Unknown airport code: " + code);

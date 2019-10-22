@@ -34,7 +34,7 @@ public class LocalToUTCServiceImpl implements GtasLocalToUTCService {
 		Airport airport = getAirport(airportCode);
 		Date utcDate = date;
 		if (airport == null) {
-			logger.warn("No airport found; date not processed");
+			logger.warn("No airport found; date not processed; airport not found is " + airportCode);
 			return utcDate;
 		} else if (utcDate == null) {
 			logger.warn("Unable to process; date is null!");
