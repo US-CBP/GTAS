@@ -26,8 +26,13 @@
     disableLinks,
     watchListService,
     codeTooltipService,
-    configService
+    configService,
+    paxNotesService,
+    eventNotes
   ) {
+	$scope.eventNotes = eventNotes;
+	$scope.historicalNotes = "";
+	$scope.currentNoteText = "";
     $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
@@ -1148,6 +1153,37 @@
         clickOutsideToClose: true
       });
     };
+    
+	$scope.saveNote = function(text){
+		//if wanted to save note from other place than normal comment section
+		if(text == null){
+			text = $scope.currentNoteText; 
+		}
+		var element = document.querySelector("trix-editor");
+		var plainTextNote = element.editor.getDocument().toString();
+		var rtfNote = text;
+		
+		var note = {
+				plainTextNote:plainTextNote,
+				rtfNote:rtfNote,
+				passengerId:$scope.passenger.paxId,
+				noteType:'GENERAL_PASSENGER'
+		};
+		paxNotesService.saveNote(note).then(function(){
+			$scope.getEventNotes(); // reload current event notes after adding new one
+		});
+	};
+	
+	$scope.getEventNotes = function(){
+		paxNotesService.getEventNotes($scope.passenger.paxId).then(function(response){
+			$scope.eventNotes = response.data;
+		});
+	};
+	
+	$scope.getHistoricalNotes = function(){
+		paxNotesService.getHistoricalNotes($scope.passenger.paxId);
+	};
+	
   });
 
   ////     PAX CONTROLLER     //////////////

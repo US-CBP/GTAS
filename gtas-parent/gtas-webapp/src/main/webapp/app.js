@@ -615,6 +615,9 @@ var app;
                         },
                         disableLinks: function() {
                             return false;
+                        },
+                        eventNotes: function(paxNotesService, $stateParams){
+                        	return paxNotesService.getEventNotes($stateParams.paxId);
                         }
                     }
                 })
