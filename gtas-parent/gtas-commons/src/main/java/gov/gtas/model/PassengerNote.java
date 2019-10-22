@@ -24,7 +24,7 @@ public class PassengerNote extends Note {
 	private Passenger passenger;
 
 	@JsonIgnore
-	@Column(name = "cmt_passenger_id")
+	@Column(name = "cmt_passenger_id", columnDefinition = "bigint unsigned")
 	private Long passengerId;
 
 	public static PassengerNote from(PassengerNoteDto note, String userId) {
