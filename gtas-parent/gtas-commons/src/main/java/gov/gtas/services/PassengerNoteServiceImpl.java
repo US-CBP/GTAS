@@ -32,7 +32,7 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 	@Override
 	@Transactional
 	public PassengerNoteSetDto getAllEventNotes(Long paxId) {
-		List<PassengerNote> notes = passengerNoteRepository.findAllByPassengerIdOrderByCreatedAt(paxId);
+		List<PassengerNote> notes = passengerNoteRepository.findAllByPassengerIdOrderByCreatedAtDesc(paxId);
 		return PassengerNoteSetDto.fromNotes(notes);
 	}
 

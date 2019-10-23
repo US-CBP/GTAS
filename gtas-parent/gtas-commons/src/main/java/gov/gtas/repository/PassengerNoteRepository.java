@@ -14,7 +14,7 @@ public interface PassengerNoteRepository extends CrudRepository<PassengerNote, L
 		return findById(noteId).orElse(null);
 	}
 	
-	List<PassengerNote> findAllByPassengerIdOrderByCreatedAt(Long passengerId);
+	List<PassengerNote> findAllByPassengerIdOrderByCreatedAtDesc(Long passengerId);
 
 	List<PassengerNote> findFirst10ByPassengerInOrderByCreatedAtDesc(Set<Passenger> passenger);
 
