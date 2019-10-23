@@ -7,12 +7,15 @@ import gov.gtas.model.dto.PassengerNoteDto;
 import gov.gtas.repository.NoteTypeRepository;
 import gov.gtas.repository.PassengerNoteRepository;
 import gov.gtas.services.dto.PassengerNoteSetDto;
+import gov.gtas.vo.NoteTypeVo;
+import gov.gtas.vo.NoteVo;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class PassengerNoteServiceImpl implements PassengerNoteService {
@@ -49,10 +52,14 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 
 	@Override
 	@Transactional
-	public void saveNote(PassengerNoteDto note, String userId) {
-		String noteType = note.getNoteType();
-		NoteType type = noteTypeRepository.findByType(noteType).orElseThrow(RuntimeException::new);
-		note.getNoteTypeSet().add(type);
+	public void saveNote(NoteVo note, String userId) {
+		Set<NoteTypeVo> noteTypeVos = note.getNoteTypeVoSet();
+		Set<Long> noteTypesIds = noteTypeVos.stream().map(NoteTypeVo::getId).collect(Collectors.toSet());
+		Set<NoteType> types = noteTypeRepository.findAllById(noteTypesIds);
+		if (types.isEmpty()) {
+			throw new RuntimeException("Notes must have a type!");
+		}
+		note.setNoteTypeSet(types);
 		PassengerNote paxNote = PassengerNote.from(note, userId);
 		passengerNoteRepository.save(paxNote);
 	}

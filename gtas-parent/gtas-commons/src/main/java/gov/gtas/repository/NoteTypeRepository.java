@@ -15,12 +15,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Component
 public interface NoteTypeRepository extends CrudRepository<NoteType, Long> {
 
     Optional<NoteType> findByType(String type);
+
+    Set<NoteType> findAllById(Set<Long> ids);
     
     List<NoteType> findAll();
 }

@@ -21,6 +21,7 @@ import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.vo.HitDetailVo;
 import gov.gtas.vo.NoteTypeVo;
+import gov.gtas.vo.NoteVo;
 import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -423,7 +424,7 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@PostMapping(value = "/passengers/passenger/note", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void savePassengerNote (@RequestBody PassengerNoteDto note) {
+	public void savePassengerNote (@RequestBody NoteVo note) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		paxNoteService.saveNote(note, userId);
 	}

@@ -3,6 +3,7 @@ package gov.gtas.services;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -22,14 +23,13 @@ public class NoteTypeServiceImpl implements NoteTypeService {
 	@Override
 	public Set<NoteTypeVo> getAllNoteTypes() {
 		List<NoteType> noteTypeList = noteTypeRepository.findAll();
-		Set<NoteTypeVo> noteTypeVoSet = new HashSet<NoteTypeVo>();
-		
+		Set<NoteTypeVo> noteTypeVoSet = new HashSet<>();
 		for(NoteType n: noteTypeList) {
 			noteTypeVoSet.add(NoteTypeVo.from(n));
 		}
-		
 		return noteTypeVoSet;
 	}
+
 
 	@Override
 	public void saveNoteType(NoteTypeVo noteTypeVo) {

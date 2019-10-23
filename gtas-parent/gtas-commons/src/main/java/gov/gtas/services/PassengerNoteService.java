@@ -1,7 +1,7 @@
 package gov.gtas.services;
 
-import gov.gtas.model.dto.PassengerNoteDto;
 import gov.gtas.services.dto.PassengerNoteSetDto;
+import gov.gtas.vo.NoteVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import static gov.gtas.constant.GtasSecurityConstants.PRIVILEGES_ADMIN_AND_VIEW_PASSENGER;
@@ -16,6 +16,6 @@ public interface PassengerNoteService {
 	PassengerNoteSetDto getAllHistoricalNotes(Long paxId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	void saveNote(PassengerNoteDto note, String userId);
+	void saveNote(NoteVo note, String userId);
 
 }
