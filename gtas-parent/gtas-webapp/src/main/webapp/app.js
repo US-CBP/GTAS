@@ -786,6 +786,12 @@ var app;
                 });
             });
 
+            $rootScope.$on('hitCountChange', function () {
+                notificationService.getWatchlistCount().then(function(value) {
+                    $scope.hitCount = value;
+                 });
+            });
+
             $rootScope.$on('unauthorizedEvent', function () {
                 $sessionStorage.remove(APP_CONSTANTS.CURRENT_USER);
                 window.location = APP_CONSTANTS.LOGIN_PAGE;
