@@ -17,7 +17,6 @@
     spinnerService,
     user,
     paxService,
-    caseHistory,
     ruleCats,
     ruleHits,
     watchlistLinks,
@@ -43,7 +42,6 @@
     $scope.watchlistCategoryId;
     $scope.isLoadingHistoricalHits = true;
     $scope.hitHistory;
-    $scope.caseHistory = caseHistory.data;
     $scope.ruleCats = ruleCats.data;
     $scope.slides = [];
     $scope.jsonData =
@@ -847,14 +845,6 @@
             stripCharacters();
           }
       );
-    };
-
-    $scope.refreshCasesHistory = function() {
-      paxDetailService
-        .getPaxCaseHistory($scope.passenger.paxId)
-        .then(function(cases) {
-          $scope.caseHistory = cases.data;
-        });
     };
 
     $scope.saveWatchListMatchByPaxId = function() {

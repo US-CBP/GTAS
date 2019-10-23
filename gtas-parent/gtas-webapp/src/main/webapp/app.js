@@ -273,12 +273,6 @@ var app;
                     resolve: {
                         sampleData: function(){
                             return false;
-                        },
-                        ytdRuleHits: function(dashboardService){
-                            return dashboardService.getYtdRulesCount();
-                        },
-                        ytdAirportStats: function (dashboardService) {
-                            return dashboardService.getYtdAirportStats();
                         }
                     }
                 })
@@ -600,9 +594,6 @@ var app;
                         },
                         user: function (userService) {
                             return userService.getUserData();
-                        },
-                        caseHistory : function (paxDetailService, $stateParams) {
-                        	return paxDetailService.getPaxCaseHistory($stateParams.paxId);
                         },
                         ruleCats: function(caseDispositionService){
                             return caseDispositionService.getRuleCats();
