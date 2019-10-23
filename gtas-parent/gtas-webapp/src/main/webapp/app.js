@@ -609,7 +609,11 @@ var app;
                         },
                         eventNotes: function(paxNotesService, $stateParams){
                         	return paxNotesService.getEventNotes($stateParams.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                        	return paxNotesService.getNoteTypes();
                         }
+                        
                     }
                 })
                 .state('build', {

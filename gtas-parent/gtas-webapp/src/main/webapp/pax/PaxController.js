@@ -14,6 +14,7 @@
     $translate,
     passenger,
     $mdToast,
+    $rootScope,
     spinnerService,
     user,
     paxService,
@@ -27,11 +28,14 @@
     codeTooltipService,
     configService,
     paxNotesService,
-    eventNotes
+    eventNotes,
+    noteTypesList
   ) {
+	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
 	$scope.historicalNotes = "";
 	$scope.currentNoteText = "";
+	$scope.currentNoteTypes = "";
     $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
@@ -1090,6 +1094,7 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
           .then(function (response) {
             $scope.refreshHitDetailsList();
+            $rootScope.$broadcast('hitCountChange');
           });
     };
 
@@ -1157,11 +1162,12 @@
 				plainTextNote:plainTextNote,
 				rtfNote:rtfNote,
 				passengerId:$scope.passenger.paxId,
-				noteType:'GENERAL_PASSENGER'
+				noteType: $scope.currentNoteTypes
 		};
 		paxNotesService.saveNote(note).then(function(){
 			$scope.getEventNotes(); // reload current event notes after adding new one
 		});
+		$scope.currentNoteText = "";
 	};
 	
 	$scope.getEventNotes = function(){
@@ -1171,8 +1177,12 @@
 	};
 	
 	$scope.getHistoricalNotes = function(){
-		paxNotesService.getHistoricalNotes($scope.passenger.paxId);
+		return paxNotesService.getHistoricalNotes($scope.passenger.paxId);
 	};
+	
+	$scope.getNoteTypes = function(){
+		return paxNotesService.getNoteTypes();
+	}
 	
   });
 

@@ -10,6 +10,8 @@ package gov.gtas.model;
 
 import org.hibernate.annotations.NaturalId;
 
+import gov.gtas.vo.NoteTypeVo;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,5 +43,12 @@ public class NoteType extends BaseEntityAudit {
 
     public void setNoteSet(Set<Note> noteSet) {
         this.noteSet = noteSet;
+    }
+    
+    public static NoteType from(NoteTypeVo noteTypeVo) {
+        NoteType noteType = new NoteType();
+        noteType.setId(noteTypeVo.getId());
+        noteType.setType(noteTypeVo.getNoteType());
+        return noteType;
     }
 }

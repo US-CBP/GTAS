@@ -20,6 +20,7 @@ import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.NoteTypeVo;
 import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -92,6 +93,9 @@ public class PassengerDetailsController {
 	
 	@Autowired
 	private PassengerNoteService paxNoteService;
+	
+	@Autowired
+	private NoteTypeService noteTypeService;
 
 	static final String EMPTY_STRING = "";
 
@@ -407,6 +411,13 @@ public class PassengerDetailsController {
 		} else {
 			return paxNoteService.getAllEventNotes(paxId);
 		}
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/passengers/passenger/notetypes")
+	public Set<NoteTypeVo> getAllNoteTypes() {
+		return noteTypeService.getAllNoteTypes();
 	}
 	
 	@ResponseBody

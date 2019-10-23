@@ -9,9 +9,11 @@
 package gov.gtas.repository;
 
 import gov.gtas.model.NoteType;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -19,4 +21,6 @@ import java.util.Optional;
 public interface NoteTypeRepository extends CrudRepository<NoteType, Long> {
 
     Optional<NoteType> findByType(String type);
+    
+    List<NoteType> findAll();
 }

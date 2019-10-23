@@ -1735,10 +1735,20 @@
         		return dfd.promise;
         	}
         	
+        	function getNoteTypes(){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			url: PAX_URL + "/notetypes"			
+        		}));
+        		return dfd.promise;
+        	}
+        	
         return({
           saveNote:saveNote,
           getEventNotes:getEventNotes,
-          getHistoricalNotes:getHistoricalNotes
+          getHistoricalNotes:getHistoricalNotes,
+          getNoteTypes:getNoteTypes
         });
       });
   }());
