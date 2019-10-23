@@ -1163,6 +1163,7 @@
 		};
 		paxNotesService.saveNote(note).then(function(){
 			$scope.getEventNotes(); // reload current event notes after adding new one
+            $scope.getHistoricalNotes();
 		});
 	};
 	
@@ -1173,9 +1174,11 @@
 	};
 	
 	$scope.getHistoricalNotes = function(){
-		paxNotesService.getHistoricalNotes($scope.passenger.paxId);
+		paxNotesService.getHistoricalNotes($scope.passenger.paxId).then(function(response) {
+		  $scope.historicalNotes = response.data.paxNotes;
+        });
 	};
-	
+    $scope.getHistoricalNotes();
   });
 
   ////     PAX CONTROLLER     //////////////
