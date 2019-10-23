@@ -201,6 +201,7 @@
             var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
                 var loggedInUser = $rootScope.currentlyLoggedInUser;
                 $scope.noneGtasUser = {};
+                $scope.notesForEmailNotification='';
                 var setUserData = function (data) {
                     $scope.allUsers= data;
                     $scope.allUsers.forEach(function(user) {
@@ -212,7 +213,7 @@
                 $scope.submit = function () {
                     $scope.selectedEmails = [];
                     $scope.allUsers.forEach(function(user){
-                        if (user.selected) {
+                        if (user.selected && user.email != null) {
                             $scope.selectedEmails.push(user.email);
                         }
                     });
@@ -222,7 +223,7 @@
                     var emailDto = {
                         to: $scope.selectedEmails,
                         subject: makeEmailSubjectText($scope.notificationData),
-                        body: makeEmailBodyText($scope.notificationData),
+                        body: makeEmailBodyText($scope.notificationData, $scope.notesForEmailNotification),
                     };
                     if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
                         caseDispositionService.notify(emailDto);
@@ -244,7 +245,7 @@
 
             };
 
-            var makeEmailBodyText = function(hitView) {
+            var makeEmailBodyText = function(hitView, notes) {
                 var emailText = 'Hit Status: ' + hitView.entity.status + '\n' +
                 'First Name: ' +  hitView.entity.firstName + '\n' +
                 'Last Name: ' + hitView.entity.lastName + '\n' +
@@ -258,7 +259,10 @@
                     emailText += '\t' + hitName + '\n';
                 });
 
-                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay;
+                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay + '\n\n';
+
+                emailText += 'NOTES: \n';
+                emailText += notes;
 
                 return emailText;
             }
