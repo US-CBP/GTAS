@@ -9,11 +9,13 @@ import gov.gtas.model.PassengerNote;
 
 public class NoteVo  {
 	private Long id;
+	private Long passengerId;
 	private String plainTextNote;
 	private String rtfNote;
 	private Set<NoteTypeVo> noteTypeVoSet = new HashSet<>();
 	private String createdBy;
 	private Date createdAt;
+	private transient Set<NoteType> noteTypeSet = new HashSet<>();
 
 	public static NoteVo from(PassengerNote pNote) {
 		NoteVo noteVo = new NoteVo();
@@ -70,5 +72,21 @@ public class NoteVo  {
 
 	public void setNoteTypeVoSet(Set<NoteTypeVo> noteTypeVoSet) {
 		this.noteTypeVoSet = noteTypeVoSet;
+	}
+
+	public Long getPassengerId() {
+		return passengerId;
+	}
+
+	public void setPassengerId(Long passengerId) {
+		this.passengerId = passengerId;
+	}
+
+	public Set<NoteType> getNoteTypeSet() {
+		return noteTypeSet;
+	}
+
+	public void setNoteTypeSet(Set<NoteType> noteTypeSet) {
+		this.noteTypeSet = noteTypeSet;
 	}
 }

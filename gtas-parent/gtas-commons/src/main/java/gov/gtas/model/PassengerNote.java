@@ -10,6 +10,7 @@ package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gov.gtas.model.dto.PassengerNoteDto;
+import gov.gtas.vo.NoteVo;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class PassengerNote extends Note {
 	@Column(name = "cmt_passenger_id", columnDefinition = "bigint unsigned")
 	private Long passengerId;
 
-	public static PassengerNote from(PassengerNoteDto note, String userId) {
+	public static PassengerNote from(NoteVo note, String userId) {
 		PassengerNote passengerNote = new PassengerNote();
 		passengerNote.setPassengerId(note.getPassengerId());
 		passengerNote.setCreatedAt(new Date());
