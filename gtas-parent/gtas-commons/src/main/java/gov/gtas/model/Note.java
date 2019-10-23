@@ -9,7 +9,6 @@
 package gov.gtas.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import gov.gtas.enumtype.NoteType;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,9 +25,9 @@ public abstract class Note extends BaseEntityAudit {
     @Column(name = "note_rtf_text", length = 10000, nullable = false)
     private String rtfNote;
 
-    @Column(name = "note_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private NoteType noteType;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "note_type_join", joinColumns = @JoinColumn(name = "nt_id"), inverseJoinColumns = @JoinColumn(name = "n_id"))
+    private Set<NoteType> noteType = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
@@ -61,11 +60,11 @@ public abstract class Note extends BaseEntityAudit {
 		this.attachments = attachments;
 	}
 
-    public NoteType getNoteType() {
+    public Set<NoteType> getNoteType() {
         return noteType;
     }
 
-    public void setNoteType(NoteType noteType) {
+    public void setNoteType(Set<NoteType> noteType) {
         this.noteType = noteType;
     }
 }

@@ -1,22 +1,27 @@
 package gov.gtas.vo;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import gov.gtas.enumtype.NoteType;
+import gov.gtas.model.NoteType;
 import gov.gtas.model.PassengerNote;
 
 public class NoteVo  {
 	private Long id;
 	private String plainTextNote;
 	private String rtfNote;
-	private NoteType noteType;
+	private Set<NoteTypeVo> noteTypeVoSet = new HashSet<>();
 	private String createdBy;
 	private Date createdAt;
 
 	public static NoteVo from(PassengerNote pNote) {
 		NoteVo noteVo = new NoteVo();
 		noteVo.setId(pNote.getId());
-		noteVo.setNoteType(pNote.getNoteType());
+		for (NoteType noteType : pNote.getNoteType()) {
+			NoteTypeVo noteTypeVo = NoteTypeVo.from(noteType);
+			noteVo.getNoteTypeVoSet().add(noteTypeVo);
+		}
 		noteVo.setPlainTextNote(pNote.getPlainTextNote());
 		noteVo.setRtfNote(pNote.getRtfNote());
 		noteVo.setCreatedBy(pNote.getCreatedBy());
@@ -42,12 +47,6 @@ public class NoteVo  {
 	public void setRtfNote(String rtfNote) {
 		this.rtfNote = rtfNote;
 	}
-	public NoteType getNoteType() {
-		return noteType;
-	}
-	public void setNoteType(NoteType noteType) {
-		this.noteType = noteType;
-	}
 
 	public String getCreatedBy() {
 		return createdBy;
@@ -64,5 +63,12 @@ public class NoteVo  {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	
+
+	public Set<NoteTypeVo> getNoteTypeVoSet() {
+		return noteTypeVoSet;
+	}
+
+	public void setNoteTypeVoSet(Set<NoteTypeVo> noteTypeVoSet) {
+		this.noteTypeVoSet = noteTypeVoSet;
+	}
 }

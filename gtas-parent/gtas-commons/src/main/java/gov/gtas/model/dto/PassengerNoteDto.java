@@ -8,7 +8,10 @@
 
 package gov.gtas.model.dto;
 
-import gov.gtas.enumtype.NoteType;
+import gov.gtas.model.NoteType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class PassengerNoteDto {
 
@@ -16,7 +19,7 @@ public class PassengerNoteDto {
 
     private String rtfNote;
 
-    private NoteType noteType;
+    private String noteType;
 
     private Long passengerId;
 
@@ -25,6 +28,8 @@ public class PassengerNoteDto {
     private String createdBy;
     
     private String createdAt;
+
+    transient private Set<NoteType> noteTypeSet = new HashSet<>();
 
     public PassengerNoteDto() {
     }
@@ -52,11 +57,11 @@ public class PassengerNoteDto {
         this.rtfNote = rtfNote;
     }
 
-    public NoteType getNoteType() {
+    public String getNoteType() {
         return noteType;
     }
 
-    public void setNoteType(NoteType noteType) {
+    public void setNoteType(String noteType) {
         this.noteType = noteType;
     }
 
@@ -83,4 +88,12 @@ public class PassengerNoteDto {
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
+
+    public Set<NoteType> getNoteTypeSet() {
+        return noteTypeSet;
+    }
+
+    public void setNoteTypeSet(Set<NoteType> noteTypeSet) {
+        this.noteTypeSet = noteTypeSet;
+    }
 }
