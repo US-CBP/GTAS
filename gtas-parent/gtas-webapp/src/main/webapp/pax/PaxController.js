@@ -28,11 +28,14 @@
     codeTooltipService,
     configService,
     paxNotesService,
-    eventNotes
+    eventNotes,
+    noteTypesList
   ) {
+	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
 	$scope.historicalNotes = "";
 	$scope.currentNoteText = "";
+	$scope.currentNoteTypes = "";
     $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
@@ -1159,12 +1162,13 @@
 				plainTextNote:plainTextNote,
 				rtfNote:rtfNote,
 				passengerId:$scope.passenger.paxId,
-				noteType:'GENERAL_PASSENGER'
+				noteType: $scope.currentNoteTypes
 		};
 		paxNotesService.saveNote(note).then(function(){
 			$scope.getEventNotes(); // reload current event notes after adding new one
             $scope.getHistoricalNotes();
 		});
+		$scope.currentNoteText = "";
 	};
 	
 	$scope.getEventNotes = function(){
@@ -1179,6 +1183,10 @@
         });
 	};
     $scope.getHistoricalNotes();
+
+      $scope.getNoteTypes = function(){
+          return paxNotesService.getNoteTypes();
+      }
   });
 
   ////     PAX CONTROLLER     //////////////
