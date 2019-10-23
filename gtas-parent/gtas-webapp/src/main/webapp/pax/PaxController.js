@@ -14,6 +14,7 @@
     $translate,
     passenger,
     $mdToast,
+    $rootScope,
     spinnerService,
     user,
     paxService,
@@ -1090,6 +1091,7 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
           .then(function (response) {
             $scope.refreshHitDetailsList();
+            $rootScope.$broadcast('hitCountChange');
           });
     };
 
