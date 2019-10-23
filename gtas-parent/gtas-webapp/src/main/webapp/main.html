@@ -87,7 +87,7 @@
           <li ng-if="userHasRole(9) || userHasRole(1)"  class="dropdown notification mobile-hide">
             <a ng-if="userHasRole(9) || userHasRole(1)" class="dropdown-toggle" data-toggle="dropdown" role="button" href="#/casedisposition">
               <i class="fa fa-inverse fa-bell notif-icon" aria-hidden="true"></i>
-              <span class="notif-icon-cnt">{{getHitCount()}}</span>
+              <span class="notif-icon-cnt">{{hitCount}}</span>
             </a>
           </li>
           <li ng-if="!userHasRole(9) && !userHasRole(1)"  class="dropdown notification mobile-hide disabled">

@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionCtrl',
-        function ($scope, $http, $mdToast, $filter,
+        function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
@@ -161,6 +161,7 @@
             $scope.deleteRow = function(row) {
                 row.entity.status = 'Reviewed';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'REVIEWED').then(function(result) {
+                    $rootScope.$broadcast('hitCountChange');
                 }
             );
                 if (! $scope.model.displayStatusCheckBoxes.REVIEWED) {
@@ -472,6 +473,7 @@
                         $scope.casesDispGrid.data = data.data.cases;
                         $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
+                        $rootScope.$broadcast('hitCountChange');
                             }
                             else{
                             $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition)
