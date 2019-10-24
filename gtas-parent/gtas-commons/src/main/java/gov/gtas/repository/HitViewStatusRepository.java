@@ -24,7 +24,7 @@ public interface HitViewStatusRepository extends CrudRepository<HitViewStatus, L
 
     Set<HitViewStatus> findAllByPassenger(Passenger p);
     
-    @Query("select count(hvs.hitViewStatusEnum) from HitViewStatus hvs "
+    @Query("select count(distinct hvs.passenger) from HitViewStatus hvs "
     		+ "left join hvs.passenger p left join p.flight f "
     		+ "where hvs.userGroup in :userGroups AND hvs.hitViewStatusEnum = 'NEW' "
     		+ "and f.mutableFlightDetails.etd > :etdDate and f.mutableFlightDetails.eta < :etaDate")
