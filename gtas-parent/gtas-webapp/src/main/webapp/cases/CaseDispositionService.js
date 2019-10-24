@@ -379,20 +379,19 @@
                 return currentServerTimeMillis;
              }
 
-             function notify(hitView) {
-                let emailDto = {
-                    to: hitView.to,
-                    subject: hitView.subject,
-                    body: hitView.body,
-                    pathToAttachment: null
-                };
-
+             function notify(to, paxId, note, hitViewStatus) {
+                
                  const dfq = $q.defer();
                  dfq.resolve(
                      $http({
                          method: 'post',
                          url: "/gtas/notify",
-                         data: emailDto
+                         params: {
+                             to: to,
+                             paxId: paxId,
+                             note: note, 
+                             hitViewStatus: hitViewStatus
+                         }
                      })
                  );
                  return dfq.promise;

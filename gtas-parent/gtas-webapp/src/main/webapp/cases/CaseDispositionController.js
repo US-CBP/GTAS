@@ -220,13 +220,12 @@
                     if ($scope.noneGtasUser.email != null) {
                         $scope.selectedEmails.push($scope.noneGtasUser.email);
                     }
-                    var emailDto = {
-                        to: $scope.selectedEmails,
-                        subject: makeEmailSubjectText($scope.notificationData),
-                        body: makeEmailBodyText($scope.notificationData, $scope.notesForEmailNotification),
-                    };
+                    
                     if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
-                        caseDispositionService.notify(emailDto);
+                        caseDispositionService.notify($scope.selectedEmails, 
+                            $scope.notificationData.entity.paxId, 
+                            $scope.notesForEmailNotification, 
+                            $scope.notificationData.entity.status);
                     }
 
                     $uibModalInstance.dismiss('cancel');
@@ -245,36 +244,6 @@
 
             };
 
-            var makeEmailBodyText = function(hitView, notes) {
-                var emailText = 'Hit Status: ' + hitView.entity.status + '\n' +
-                'First Name: ' +  hitView.entity.firstName + '\n' +
-                'Last Name: ' + hitView.entity.lastName + '\n' +
-                'flight Number: ' + hitView.entity.flightNumber + '\n' +
-                'DOB : ' + hitView.entity.dob + '\n' +
-                'Gender : ' + hitView.entity.gender + '\n' +
-                'Document Type: ' + hitView.entity.docType + '\n' +
-                'Document Number: ' + hitView.entity.document + '\n' +
-                'Severity | Category | Rule (Type): \n';
-                angular.forEach(hitView.entity.hitNames, function(hitName) {
-                    emailText += '\t' + hitName + '\n';
-                });
-
-                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay + '\n\n';
-
-                emailText += 'NOTES: \n';
-                emailText += notes;
-
-                return emailText;
-            }
-
-            var makeEmailSubjectText = function(hitView) {
-                var subject = '(GTAS): ' +
-                hitView.entity.lastName.toUpperCase() + ', ' +
-                hitView.entity.firstName +
-                ' Hit Status Notification';
-
-                return subject;
-            }
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
                 $scope.paxId = pax.paxId;
