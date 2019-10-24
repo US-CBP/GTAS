@@ -83,7 +83,7 @@ public class NotificatonServiceImpl implements NotificatonService {
 	 * 
 	 */
 	@Override
-	public Set<String> sendHitSnsNotifications(HitNotificationConfig config) {
+	public Set<String> sendHitNotifications(HitNotificationConfig config) {
 
 		this.amazonSNS = config.getAmazonSNS();
 		this.topicArn = config.getTopicArn();

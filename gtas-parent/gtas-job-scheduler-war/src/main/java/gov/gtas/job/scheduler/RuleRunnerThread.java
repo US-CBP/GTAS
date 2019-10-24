@@ -168,7 +168,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
 			if (hitNotificationEnabled) {
 				long notificationStart = System.nanoTime();
 				HitNotificationConfig hitNotificationConfig = generateSnsHitNotificationConfig(passengersWithNewHits);
-				notificationSerivce.sendHitSnsNotifications(hitNotificationConfig);
+				notificationSerivce.sendHitNotifications(hitNotificationConfig);
 				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
 			}
 

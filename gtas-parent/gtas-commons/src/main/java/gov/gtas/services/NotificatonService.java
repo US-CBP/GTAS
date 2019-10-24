@@ -14,6 +14,6 @@ import gov.gtas.model.Passenger;
 
 public interface NotificatonService {
 
-	Set<String> sendHitSnsNotifications(HitNotificationConfig config);
+	Set<String> sendHitNotifications(HitNotificationConfig config);
 	void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException;
 }

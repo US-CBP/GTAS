@@ -75,7 +75,7 @@ public class NotificationServiceTest {
 		Long WRONG_TARGET_WATCHLIST_ID = Long.MAX_VALUE;
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				WRONG_TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
 		assertEquals(0, messageIds.size());
 	}
@@ -92,7 +92,7 @@ public class NotificationServiceTest {
 
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
 		assertEquals(0, messageIds.size());
 	}
@@ -109,7 +109,7 @@ public class NotificationServiceTest {
 
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
 
 		assertEquals(1, messageIds.size());
 	}
