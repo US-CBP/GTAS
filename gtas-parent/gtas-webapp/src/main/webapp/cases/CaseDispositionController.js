@@ -294,6 +294,61 @@
                 });;
             };
 
+            $scope.review = function(row) {
+                const pax = row.entity;
+                $scope.paxId = pax.paxId;
+                $scope.flightId = pax.flightId;
+                $mdDialog.show({
+                    controller: 'PassengerDetailCtrl',
+                    templateUrl: 'pax/pax.detail.comment.html',
+                    clickOutsideToClose: true,
+                    fullscreen: true,
+                    resolve: {
+                        passenger: function (paxDetailService) {
+                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
+                        }
+                        ,
+                        user: function (userService) {
+                            return userService.getUserData();
+                        }
+                        ,
+                        eventNotes: function(paxNotesService){
+                            return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
+                        }
+                        ,
+                        ruleCats: function (caseDispositionService) {
+                            return caseDispositionService.getRuleCats();
+                        }
+                        ,
+                        ruleHits: function (paxService) {
+                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
+                        }
+                        ,
+                        watchlistLinks: function (paxDetailService) {
+                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        },
+                        disableLinks: function() {
+                            return true;
+                        },
+                        eventNotes: function(paxNotesService){
+                        	return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
+                        }
+                    }
+                }).then(function(answer) {
+                    if (answer === 'reviewed') {
+                        $scope.deleteRow(row);
+                    } else if (answer === 'fullPax') {
+                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    }
+                });;
+            };
+
 
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
