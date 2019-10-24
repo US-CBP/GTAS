@@ -6,7 +6,7 @@
 (function () {
     'use strict';
     app.controller('CaseDispositionCtrl',
-        function ($scope, $http, $mdToast, $filter,
+        function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
                   ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
@@ -161,6 +161,7 @@
             $scope.deleteRow = function(row) {
                 row.entity.status = 'Reviewed';
                 caseDispositionService.updatePassengerHitViews(row.entity, 'REVIEWED').then(function(result) {
+                    $rootScope.$broadcast('hitCountChange');
                 }
             );
                 if (! $scope.model.displayStatusCheckBoxes.REVIEWED) {
@@ -244,6 +245,56 @@
 
             };
 
+            $scope.review = function(row) {
+                const pax = row.entity;
+                $scope.paxId = pax.paxId;
+                $scope.flightId = pax.flightId;
+                $mdDialog.show({
+                    controller: 'PassengerDetailCtrl',
+                    templateUrl: 'pax/pax.detail.comment.html',
+                    clickOutsideToClose: true,
+                    fullscreen: true,
+                    resolve: {
+                        passenger: function (paxDetailService) {
+                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
+                        }
+                        ,
+                        user: function (userService) {
+                            return userService.getUserData();
+                        }
+                        ,
+                        eventNotes: function(paxNotesService){
+                            return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
+                        }
+                        ,
+                        ruleCats: function (caseDispositionService) {
+                            return caseDispositionService.getRuleCats();
+                        }
+                        ,
+                        ruleHits: function (paxService) {
+                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
+                        }
+                        ,
+                        watchlistLinks: function (paxDetailService) {
+                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        },
+                        disableLinks: function() {
+                            return true;
+                        }
+                    }
+                }).then(function(answer) {
+                    if (answer === 'reviewed') {
+                        $scope.deleteRow(row);
+                    } else if (answer === 'fullPax') {
+                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    }
+                });;
+            };
+
+
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
                 $scope.paxId = pax.paxId;
@@ -262,10 +313,6 @@
                             return userService.getUserData();
                         }
                         ,
-                        caseHistory: function (paxDetailService) {
-                            return paxDetailService.getPaxCaseHistory($scope.paxId);
-                        }
-                        ,
                         ruleCats: function (caseDispositionService) {
                             return caseDispositionService.getRuleCats();
                         }
@@ -279,6 +326,12 @@
                         },
                         disableLinks: function() {
                             return true;
+                        },
+                        eventNotes: function(paxNotesService){
+                        	return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
                         }
                     }
                 }).then(function(answer) {
@@ -406,7 +459,7 @@
                     name: 'action',
                     displayName: $translate.instant('case.action'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
-                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.deleteRow(row)" style="margin:5px;">Review</button>' +
+                        '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
                         '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
@@ -445,6 +498,7 @@
                         $scope.casesDispGrid.data = data.data.cases;
                         $scope.casesList = data.data.cases;
                         $scope.casesDispGrid.totalItems = data.data.totalCases;
+                        $rootScope.$broadcast('hitCountChange');
                             }
                             else{
                             $scope.errorToast($translate.instant('msg.noresultsfound'), toastPosition)

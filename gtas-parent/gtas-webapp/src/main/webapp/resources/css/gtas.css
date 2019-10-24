@@ -1049,3 +1049,11 @@ div[ui-grid] {
       display: none !important;
     }
 }
+
+.trix-button-group--file-tools{
+	display:none !important;
+}
+
+.trix-button-group--history-tools{
+	display:none !important;
+}

@@ -1694,5 +1694,61 @@
               agencyName: agencyName,
               enableEmailNotificationService: enableEmailNotificationService
           });
+        })
+        .service("paxNotesService", function($http, $q){
+        	
+        	const PAX_URL = "/gtas/passengers/passenger";
+        	
+        	function saveNote(note){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'post',
+        			data: note,
+        			url: PAX_URL + "/note"
+        		}));
+        		return dfd.promise;
+        	}
+        	
+        	function getEventNotes(paxId){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			params: {
+        				paxId: paxId,
+        				historicalNotes: false
+        			},
+        			url: PAX_URL + "/notes"
+        		}));
+        		return dfd.promise;
+        	}
+        	
+        	function getHistoricalNotes(paxId){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			params: {
+        				paxId: paxId,
+        				historicalNotes: true
+        			},
+        			url: PAX_URL + "/notes"			
+        		}));
+        		return dfd.promise;
+        	}
+        	
+        	function getNoteTypes(){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			url: PAX_URL + "/notetypes"			
+        		}));
+        		return dfd.promise;
+        	}
+        	
+        return({
+          saveNote:saveNote,
+          getEventNotes:getEventNotes,
+          getHistoricalNotes:getHistoricalNotes,
+          getNoteTypes:getNoteTypes
         });
+      });
   }());

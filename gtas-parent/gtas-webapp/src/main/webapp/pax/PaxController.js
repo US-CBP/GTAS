@@ -14,10 +14,10 @@
     $translate,
     passenger,
     $mdToast,
+    $rootScope,
     spinnerService,
     user,
     paxService,
-    caseHistory,
     ruleCats,
     ruleHits,
     watchlistLinks,
@@ -26,8 +26,16 @@
     disableLinks,
     watchListService,
     codeTooltipService,
-    configService
+    configService,
+    paxNotesService,
+    eventNotes,
+    noteTypesList
   ) {
+	$scope.noteTypesList = noteTypesList.data;
+	$scope.eventNotes = eventNotes.data.paxNotes;
+	$scope.historicalNotes = "";
+	$scope.currentNoteText = "";
+	$scope.currentNoteTypes = "";
     $scope.disableLinks = disableLinks;
     $scope.passenger = passenger.data;
     $scope.watchlistLinks = watchlistLinks.data;
@@ -38,7 +46,6 @@
     $scope.watchlistCategoryId;
     $scope.isLoadingHistoricalHits = true;
     $scope.hitHistory;
-    $scope.caseHistory = caseHistory.data;
     $scope.ruleCats = ruleCats.data;
     $scope.slides = [];
     $scope.jsonData =
@@ -844,14 +851,6 @@
       );
     };
 
-    $scope.refreshCasesHistory = function() {
-      paxDetailService
-        .getPaxCaseHistory($scope.passenger.paxId)
-        .then(function(cases) {
-          $scope.caseHistory = cases.data;
-        });
-    };
-
     $scope.saveWatchListMatchByPaxId = function() {
       paxDetailService
         .savePaxWatchlistLink($scope.passenger.paxId)
@@ -1095,6 +1094,7 @@
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
           .then(function (response) {
             $scope.refreshHitDetailsList();
+            $rootScope.$broadcast('hitCountChange');
           });
     };
 
@@ -1148,6 +1148,50 @@
         clickOutsideToClose: true
       });
     };
+    
+	$scope.saveNote = function(text){
+		//if wanted to save note from other place than normal comment section
+		if(text == null){
+			text = $scope.currentNoteText; 
+		}
+		var element = document.querySelector("trix-editor");
+		var plainTextNote = element.editor.getDocument().toString();
+		var rtfNote = text.valueOf();
+		
+		var note = {
+				plainTextNote:plainTextNote,
+				rtfNote:rtfNote,
+				passengerId:$scope.passenger.paxId,
+				noteType: $scope.currentNoteTypes
+		};
+		paxNotesService.saveNote(note).then(function(){
+			$scope.getEventNotes(); // reload current event notes after adding new one
+            $scope.getHistoricalNotes();
+		});
+		$scope.currentNoteText = "";
+		text = "";
+	};
+
+	$scope.getListOfNoteTypes = function (arrayOfNoteType) {
+	  return arrayOfNoteType.map(nType => nType.noteType).toString();
+    };
+	
+	$scope.getEventNotes = function(){
+		paxNotesService.getEventNotes($scope.passenger.paxId).then(function(response){
+			$scope.eventNotes = response.data.paxNotes;
+		});
+	};
+	
+	$scope.getHistoricalNotes = function(){
+		paxNotesService.getHistoricalNotes($scope.passenger.paxId).then(function(response) {
+		  $scope.historicalNotes = response.data.paxNotes;
+        });
+	};
+    $scope.getHistoricalNotes();
+
+      $scope.getNoteTypes = function(){
+          return paxNotesService.getNoteTypes();
+      }
   });
 
   ////     PAX CONTROLLER     //////////////

@@ -1,0 +1,103 @@
+<!--
+  ~ /*
+  ~  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+  ~  *
+  ~  * Please see LICENSE.txt for details.
+  ~  */
+  -->
+
+<md-dialog style="height: 100%; width:100%; top:1%">
+    <div layout="row">
+        <span flex></span>
+        <md-button  class="btn-info" ng-click="answer('fullPax')" >
+            Load Full Details
+        </md-button>
+        <md-button  class="btn-info" ng-click="answer('viewed')"  >
+            Cancel
+        </md-button>
+        <md-button class="btn-info" ng-click="answer('reviewed')" style="margin-right:20px;">
+            Set Status To Reviewed
+        </md-button>
+    </div>
+    <!--   NOTES   -->
+    <div class="full-width cbp-card-container">
+        <div class="cbp-card cbp-card-shadow">
+            <h4 class="h-label no-margin-top">Event Notes</h4>
+            <form name="noteForm" ng-submit="noteForm.reset()">
+                <md-content layout-padding>
+                    <h4 class="md-toolbar-tools">
+                        Leave a Note
+                    </h4>
+                    <div class="flex justify-around flex-wrap">
+                        <div class="mdl-selectfield--full-width" style="position:relative;padding:20px 0">
+                            <md-select multiple ng-model="currentNoteTypes">
+                                <md-option ng-selected="$index == 0" ng-repeat="type in noteTypesList track by $index"
+                                           value="{{type}}">{{type.noteType}}</md-option>
+                            </md-select> <label class="mdl-textfield__label static-label" style="font-size:16px"
+                                                for="disp-status">Type Of Note</label>
+                        </div>
+                    </div>
+                    <trix-editor angular-trix ng-model="currentNoteText"
+                                 placeholder="Write something.."
+                                 trix-attachment-add="trixAttachmentAdd(e, editor);"
+                                 trix-attachment-remove="trixAttachmentRemove(e, editor);">
+                    </trix-editor>
+                    <div class="flex justify-around">
+                        <button type="submit" class="btn btn-primary"
+                                ng-click="saveNote(currentNoteText)">Save</button>
+                    </div>
+        </div>
+    </div>
+    </md-content>
+    </form>
+    <!-- BEGIN PANEL ACCORDION -->
+    <div class="panel-group full-width" id="accordion" role="tablist">
+        <!-- CURRENT EVENT NOTES DISPLAY -->
+        <div class="full-width cbp-card-container">
+            <div class="cbp-card cbp-card-shadow">
+                <h4 class="panel-heading h-label no-margin-top" >
+                    <a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="{{passenger.id}}/{{passenger.flight.id}}/#collapseOne"
+                       aria-expanded="true" aria-controls="collapseOne"><i class="fa fa-angle-right fa-fw"></i>
+                        Event Notes History
+                    </a>
+                </h4>
+                <div id="collapseOne" class="panel-collapse collapse in">
+                    <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+		                                       	<span class="panel-body no-pad-top" ng-repeat="note in eventNotes">
+													<label class="static-label" style="font-size:12px">
+														Note Type: <i>{{getListOfNoteTypes(note.noteType)}}</i></br>
+                                                        Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt | date:'yyyy-MM-dd HH:mm'}}</i>
+													</label>
+			                                   		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar"> </trix-editor>
+		                                   		</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FULL HISTORICAL NOTES DISPLAY -->
+        <div class="full-width cbp-card-container">
+            <div class="cbp-card cbp-card-shadow">
+                <h4 class="panel-heading h-label no-margin-top" >
+                    <a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="{{passenger.id}}/{{passenger.flight.id}}/#collapseTwo"
+                       aria-expanded="true" aria-controls="collapseTwo"><i class="fa fa-angle-right fa-fw"></i>
+                        Complete Notes History
+                    </a>
+                </h4>
+                <div id="collapseTwo" class="panel-collapse collapse in">
+                    <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
+	                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
+													<label class="static-label" style="font-size:12px">
+														Note Type: <i>{{getListOfNoteTypes(note.noteType)}}</i></br>
+                                                        Created By: <i>{{note.createdBy}}</i> Created At: <i>{{note.createdAt | date:'yyyy-MM-dd HH:mm'}}</i>
+													</label>
+		                                    		<trix-editor angular-trix trix-initialize="trixInitialize(e, editor);" ng-model="note.rtfNote" toolbar="hidden_toolbar" > </trix-editor>
+	                                    		</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <trix-toolbar id="hidden_toolbar" style="display:none"></trix-toolbar>
+    </div>
+    <!-- END PANEL ACCORDION -->
+    </div>
+</md-dialog>

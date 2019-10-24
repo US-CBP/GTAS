@@ -41,8 +41,8 @@ public class Attachment extends BaseEntityAudit implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Passenger passenger;
 
-	@ManyToMany(mappedBy = "attachments", targetEntity = Comment.class)
-	private Set<Comment> comments = new HashSet<>();
+	@ManyToMany(mappedBy = "attachments", targetEntity = Note.class)
+	private Set<Note> notes = new HashSet<>();
 
 	public String getName() {
 		return name;
@@ -125,11 +125,11 @@ public class Attachment extends BaseEntityAudit implements Serializable {
 		return true;
 	}
 
-	public Set<Comment> getComments() {
-		return comments;
+	public Set<Note> getNotes() {
+		return notes;
 	}
 
-	public void setComments(Set<Comment> comments) {
-		this.comments = comments;
+	public void setComments(Set<Note> notes) {
+		this.notes = notes;
 	}
 }
