@@ -1,0 +1,32 @@
+
+
+
+
+<!--
+  ~ /*
+  ~  * All Application code is Copyright 2016, The Department of Homeland Security (DHS), U.S. Customs and Border Protection (CBP).
+  ~  *
+  ~  * Please see LICENSE.txt for details.
+  ~  */
+  -->
+
+<div class="manage">
+    <div ui-grid="noteTypeGrid" ui-grid-pagination ui-grid-exporter class="grid"></div>
+</div>
+
+<div class="actions md-pad">
+
+    <button ng-click="addNoteTypeCategory()" class="btn btn-default pull-right">
+        <md-tooltip>Add Note Type</md-tooltip>
+        <i class="fa fa-plus"></i> Add Note Type Category
+    </button>
+</div>
+
+<spinner name="html5spinner" ng-cloak="">
+    <div class="overlay"></div>
+    <div class="spinner">
+        <button class="btn btn-default" disabled>
+            <i class="fa fa-spinner fa-spin"></i> Please Wait...
+        </button>
+    </div>
+</spinner>

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.model.NoteType;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class NoteTypeVo {
 
@@ -55,5 +56,19 @@ public class NoteTypeVo {
         NoteTypeVo noteTypeVo = null;
         noteTypeVo = mapper.readValue(jsonString, NoteTypeVo.class);
         return noteTypeVo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NoteTypeVo that = (NoteTypeVo) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getNoteType(), that.getNoteType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getNoteType());
     }
 }
