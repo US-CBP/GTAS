@@ -44,7 +44,7 @@
                     </trix-editor>
                     <div class="flex justify-around">
                         <button type="submit" class="btn btn-primary"
-                                ng-click="saveNote(currentNoteText)">Save</button>
+                                ng-click="saveNote(currentNoteText)" ng-disabled="currentNoteText == ''">Save</button>
                     </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
                         Complete Notes History
                     </a>
                 </h4>
-                <div id="collapseTwo" class="panel-collapse collapse in">
+                <div id="collapseTwo" class="panel-collapse collapse">
                     <div class="no-pad-top panel-body flex flex-vert ie-fix-md">
 	                                        	<span class="panel-body no-pad-top" ng-repeat="note in historicalNotes | orderBy : createdAt">
 													<label class="static-label" style="font-size:12px">
