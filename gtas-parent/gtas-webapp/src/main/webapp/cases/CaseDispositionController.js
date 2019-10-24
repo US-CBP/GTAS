@@ -294,6 +294,9 @@
                         ,
                         eventNotes: function(paxNotesService){
                             return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
                         }
                         ,
                         ruleCats: function (caseDispositionService) {
@@ -355,6 +358,9 @@
                         },
                         eventNotes: function(paxNotesService){
                         	return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
                         }
                     }
                 }).then(function(answer) {

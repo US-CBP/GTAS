@@ -1156,7 +1156,7 @@
 		}
 		var element = document.querySelector("trix-editor");
 		var plainTextNote = element.editor.getDocument().toString();
-		var rtfNote = text;
+		var rtfNote = text.valueOf();
 		
 		var note = {
 				plainTextNote:plainTextNote,
@@ -1169,7 +1169,12 @@
             $scope.getHistoricalNotes();
 		});
 		$scope.currentNoteText = "";
+		text = "";
 	};
+
+	$scope.getListOfNoteTypes = function (arrayOfNoteType) {
+	  return arrayOfNoteType.map(nType => nType.noteType).toString();
+    };
 	
 	$scope.getEventNotes = function(){
 		paxNotesService.getEventNotes($scope.passenger.paxId).then(function(response){

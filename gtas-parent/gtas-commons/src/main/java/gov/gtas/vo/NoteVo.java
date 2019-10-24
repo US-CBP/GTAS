@@ -4,14 +4,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import gov.gtas.model.NoteType;
 import gov.gtas.model.PassengerNote;
 
-public class NoteVo  {
+public class NoteVo {
 	private Long id;
 	private Long passengerId;
 	private String plainTextNote;
 	private String rtfNote;
+	@JsonProperty("noteType")
 	private Set<NoteTypeVo> noteTypeVoSet = new HashSet<>();
 	private String createdBy;
 	private Date createdAt;

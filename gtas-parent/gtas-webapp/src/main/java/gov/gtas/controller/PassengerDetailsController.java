@@ -417,7 +417,7 @@ public class PassengerDetailsController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(value = "/passengers/passenger/notetypes")
-	public Set<NoteTypeVo> getAllNoteTypes() {
+	public List<NoteTypeVo> getAllNoteTypes() {
 		return noteTypeService.getAllNoteTypes();
 	}
 	

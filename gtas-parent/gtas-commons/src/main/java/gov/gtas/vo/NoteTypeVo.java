@@ -8,13 +8,22 @@
 
 package gov.gtas.vo;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.gtas.model.NoteType;
+
+import java.io.IOException;
 
 public class NoteTypeVo {
 
+    @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("noteType")
     private String noteType;
+
+    public NoteTypeVo(){}
 
     public String getNoteType() {
         return noteType;
@@ -40,4 +49,11 @@ public class NoteTypeVo {
         return noteTypeVo;
     }
 
+    @JsonCreator
+    public static NoteTypeVo create(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        NoteTypeVo noteTypeVo = null;
+        noteTypeVo = mapper.readValue(jsonString, NoteTypeVo.class);
+        return noteTypeVo;
+    }
 }
