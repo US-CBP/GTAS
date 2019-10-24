@@ -202,6 +202,7 @@
             var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
                 var loggedInUser = $rootScope.currentlyLoggedInUser;
                 $scope.noneGtasUser = {};
+                $scope.notesForEmailNotification='';
                 var setUserData = function (data) {
                     $scope.allUsers= data;
                     $scope.allUsers.forEach(function(user) {
@@ -213,20 +214,19 @@
                 $scope.submit = function () {
                     $scope.selectedEmails = [];
                     $scope.allUsers.forEach(function(user){
-                        if (user.selected) {
+                        if (user.selected && user.email != null) {
                             $scope.selectedEmails.push(user.email);
                         }
                     });
                     if ($scope.noneGtasUser.email != null) {
                         $scope.selectedEmails.push($scope.noneGtasUser.email);
                     }
-                    var emailDto = {
-                        to: $scope.selectedEmails,
-                        subject: makeEmailSubjectText($scope.notificationData),
-                        body: makeEmailBodyText($scope.notificationData),
-                    };
+                    
                     if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
-                        caseDispositionService.notify(emailDto);
+                        caseDispositionService.notify($scope.selectedEmails, 
+                            $scope.notificationData.entity.paxId, 
+                            $scope.notesForEmailNotification, 
+                            $scope.notificationData.entity.status);
                     }
 
                     $uibModalInstance.dismiss('cancel');
@@ -244,35 +244,6 @@
                 }
 
             };
-
-            var makeEmailBodyText = function(hitView) {
-                var emailText = 'Hit Status: ' + hitView.entity.status + '\n' +
-                'First Name: ' +  hitView.entity.firstName + '\n' +
-                'Last Name: ' + hitView.entity.lastName + '\n' +
-                'flight Number: ' + hitView.entity.flightNumber + '\n' +
-                'DOB : ' + hitView.entity.dob + '\n' +
-                'Gender : ' + hitView.entity.gender + '\n' +
-                'Document Type: ' + hitView.entity.docType + '\n' +
-                'Document Number: ' + hitView.entity.document + '\n' +
-                'Severity | Category | Rule (Type): \n';
-                angular.forEach(hitView.entity.hitNames, function(hitName) {
-                    emailText += '\t' + hitName + '\n';
-                });
-
-                emailText += 'Time Remaining: ' + hitView.entity.countDownTimeDisplay;
-
-                return emailText;
-            }
-
-            var makeEmailSubjectText = function(hitView) {
-                var subject = '(GTAS): ' +
-                hitView.entity.lastName.toUpperCase() + ', ' +
-                hitView.entity.firstName +
-                ' Hit Status Notification';
-
-                return subject;
-            };
-
 
             $scope.review = function(row) {
                 const pax = row.entity;
@@ -312,6 +283,61 @@
                         },
                         disableLinks: function() {
                             return true;
+                        }
+                    }
+                }).then(function(answer) {
+                    if (answer === 'reviewed') {
+                        $scope.deleteRow(row);
+                    } else if (answer === 'fullPax') {
+                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    }
+                });;
+            };
+
+            $scope.review = function(row) {
+                const pax = row.entity;
+                $scope.paxId = pax.paxId;
+                $scope.flightId = pax.flightId;
+                $mdDialog.show({
+                    controller: 'PassengerDetailCtrl',
+                    templateUrl: 'pax/pax.detail.comment.html',
+                    clickOutsideToClose: true,
+                    fullscreen: true,
+                    resolve: {
+                        passenger: function (paxDetailService) {
+                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
+                        }
+                        ,
+                        user: function (userService) {
+                            return userService.getUserData();
+                        }
+                        ,
+                        eventNotes: function(paxNotesService){
+                            return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
+                        }
+                        ,
+                        ruleCats: function (caseDispositionService) {
+                            return caseDispositionService.getRuleCats();
+                        }
+                        ,
+                        ruleHits: function (paxService) {
+                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
+                        }
+                        ,
+                        watchlistLinks: function (paxDetailService) {
+                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
+                        },
+                        disableLinks: function() {
+                            return true;
+                        },
+                        eventNotes: function(paxNotesService){
+                        	return paxNotesService.getEventNotes($scope.paxId);
+                        },
+                        noteTypesList: function(paxNotesService){
+                            return paxNotesService.getNoteTypes();
                         }
                     }
                 }).then(function(answer) {

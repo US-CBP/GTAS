@@ -29,6 +29,9 @@ public interface PassengerService {
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	Passenger findByIdWithFlightPaxAndDocuments(Long paxId);
+	
+	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
+	Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(Long paxId);
 
 	/**
 	 * Gets the passengers by criteria.
