@@ -5,11 +5,15 @@
  */
 package gov.gtas.services;
 
+import java.io.IOException;
 import java.util.Set;
 
+import freemarker.template.TemplateException;
 import gov.gtas.aws.HitNotificationConfig;
+import gov.gtas.model.Passenger;
 
 public interface NotificatonService {
 
-	Set<String> sendHitNotifications(HitNotificationConfig config);
+	Set<String> sendHitSnsNotifications(HitNotificationConfig config);
+	void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException;
 }

@@ -35,6 +35,8 @@ public class NotificationServiceTest {
 
 	private NotificatonService notificationService;
 	@Mock
+	private GtasEmailService emailService;
+	@Mock
 	private SnsService snsService;
 	@Mock
 	private HitCategoryService watchlistCatService;
@@ -49,7 +51,7 @@ public class NotificationServiceTest {
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		notificationService = new NotificatonServiceImpl(snsService, watchlistCatService);
+		notificationService = new NotificatonServiceImpl(snsService, watchlistCatService, emailService);
 
 		String messageId = "FcdR4553DF";
 		String message = "this is a test message";
@@ -73,7 +75,7 @@ public class NotificationServiceTest {
 		Long WRONG_TARGET_WATCHLIST_ID = Long.MAX_VALUE;
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				WRONG_TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
 
 		assertEquals(0, messageIds.size());
 	}
@@ -90,7 +92,7 @@ public class NotificationServiceTest {
 
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
 
 		assertEquals(0, messageIds.size());
 	}
@@ -107,7 +109,7 @@ public class NotificationServiceTest {
 
 		HitNotificationConfig config = new HitNotificationConfig(amazonSNS, Collections.singleton(p), arn, subject,
 				TARGET_WATCHLIST_ID);
-		Set<String> messageIds = this.notificationService.sendHitNotifications(config);
+		Set<String> messageIds = this.notificationService.sendHitSnsNotifications(config);
 
 		assertEquals(1, messageIds.size());
 	}
