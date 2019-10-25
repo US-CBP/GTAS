@@ -1,12 +1,12 @@
 
-CREATE VIEW neo4j_hit_vw AS
+CREATE OR REPLACE VIEW neo4j_hit_vw AS
 SELECT
-	hs.id as gtas_hit_summary_id,
-	hs.created_date as hit_summary_create_date,
-	hs.hit_type,
-	hs.rule_hit_count,
-	hs.wl_hit_count,
-	hd.id as gtas_hit_detail_id,
+    hs.id as gtas_hit_summary_id,
+    hd.created_date as hit_summary_create_date,
+    hd.hit_type as hit_type,
+    hs.hs_rule_count as rule_hit_count,
+    hs.hs_wl_count as wl_hit_count,
+    hd.id as gtas_hit_detail_id,
 	hd.description,
 	hd.title,
 	hd.cond_text,
@@ -37,21 +37,21 @@ INNER JOIN gtas.passenger p ON ppr.passenger_id = p.id
 INNER JOIN gtas.passenger_id_tag pit ON pit.pax_id = p.id
 INNER JOIN gtas.flight f ON pfl.flight_id = f.id
 INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id
-INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
-INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
+INNER JOIN gtas.hits_summary hs ON p.id = hs.hs_passenger_id
+INNER JOIN gtas.hit_detail hd ON hd.passenger = p.id
 WHERE mst.ms_status = 'ANALYZED'
-AND f.id_tag IS NOT NULL 
+AND f.id_tag IS NOT NULL
 AND pit.idTag IS NOT NULL
 
 UNION
 
 SELECT
-	hs.id as gtas_hit_summary_id,
-	hs.created_date as hit_summary_create_date,
-	hs.hit_type,
-	hs.rule_hit_count,
-	hs.wl_hit_count,
-	hd.id as gtas_hit_detail_id,
+    hs.id as gtas_hit_summary_id,
+    hd.created_date as hit_summary_create_date,
+    hd.hit_type as hit_type,
+    hs.hs_rule_count as rule_hit_count,
+    hs.hs_wl_count as wl_hit_count,
+    hd.id as gtas_hit_detail_id,
 	hd.description,
 	hd.title,
 	hd.cond_text,
@@ -72,7 +72,7 @@ SELECT
 	msg.id as gtas_message_id,
 	p.id as gtas_passenger_id,
 	f.id_tag as flight_id_tag
-	
+
  FROM gtas.message msg
  INNER JOIN gtas.message_status mst ON msg.id = mst.ms_message_id
  INNER JOIN gtas.apis_message apm ON msg.id = apm.id
@@ -82,9 +82,9 @@ SELECT
  INNER JOIN gtas.passenger p ON flpx.passenger_id = p.id
  INNER JOIN gtas.passenger_id_tag pit ON pit.pax_id = p.id
  INNER JOIN gtas.mutable_flight_details mfd ON f.id = mfd.flight_id
- INNER JOIN gtas.hits_summary hs ON p.id = hs.passenger_id 
-INNER JOIN gtas.hit_detail hd ON hs.id = hd.hits_summary_id
+ INNER JOIN gtas.hits_summary hs ON p.id = hs.hs_passenger_id
+ INNER JOIN gtas.hit_detail hd ON hd.passenger = p.id
 WHERE mst.ms_status = 'ANALYZED'
-AND f.id_tag IS NOT NULL 
+AND f.id_tag IS NOT NULL
 AND pit.idTag IS NOT NULL
 ORDER BY gtas_message_id,flight_id,gtas_passenger_id, gtas_hit_detail_id

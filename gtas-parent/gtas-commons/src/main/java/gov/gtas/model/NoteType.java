@@ -47,7 +47,6 @@ public class NoteType extends BaseEntityAudit {
     
     public static NoteType from(NoteTypeVo noteTypeVo) {
         NoteType noteType = new NoteType();
-        noteType.setId(noteTypeVo.getId());
         noteType.setType(noteTypeVo.getNoteType());
         return noteType;
     }

@@ -198,7 +198,7 @@
     function getTidyName(name) {
       return name.split("(")[0];
     }
-    
+
     return {
       getAllCodes: function(type) {
         var request = $http({
@@ -216,7 +216,7 @@
         });
         return (request.then(handleSuccess, handleError));
       },
-      
+
       createCode : function(type, code) {
         var request = $http({
           method: "post",
@@ -344,7 +344,7 @@
               });
               return (request.then(handleSuccess, handleError));
           }
-          
+
           function manageUser(user) {
               var request = $http({
                   method: "put",
@@ -521,6 +521,7 @@
                 enableVerticalScrollbar: 2
               }),
               watchlist: defaultOptions,
+              noteType: defaultOptions,
               zipLogs: {
                 enableRowSelection: true,
                 enableRowHeaderSelection: false,
@@ -1056,7 +1057,21 @@
                     displayName: "Description",
                     type: "string"
                   }
-                ]
+                ],
+                  NOTE_TYPE: [
+                      {
+                          field: "id",
+                          name: "id",
+                          displayName: "ID",
+                          type: "string"
+                      },
+                      {
+                          field: "noteType",
+                          name: "noteType",
+                          displayName: "Note Type",
+                          type: "string"
+                      }
+                  ]
               }
             };
           return {
@@ -1543,12 +1558,12 @@
           };
 
           //Used for countries/airports/carriers, pass in code + code list, return full name
-          //APB - REFAC. Angular ng-repeat is causing this method to called repeatedly for all 
-          //grid cells on each digest cycle, which can be dozens of repeat calls on every 
+          //APB - REFAC. Angular ng-repeat is causing this method to called repeatedly for all
+          //grid cells on each digest cycle, which can be dozens of repeat calls on every
           //mouseover/out even for small datasets. Probably not a huge perf hit, but it's messy.
           function getFullNameByCodeAndCodeList(code, codeList){
             if (!codeList) return '';
-            
+
             if(codeList == $rootScope.dictionary) {
             	let result = codeList.find(x => x.id == code);
             	return result == undefined ? code:result.definition;
@@ -1561,14 +1576,14 @@
       })
       .service('fileDownloadService', function ($http, $q) {
         var LOGS_URL = "/gtas/api/logs/";
-    
+
         function handleError(response) {
           if (response.data.message === undefined) {
             return $q.reject("An unknown error occurred.");
           }
           return $q.reject(response.data.message);
         }
-    
+
         function handleSuccess(response) {
           return response.data;
         }
@@ -1581,7 +1596,7 @@
               headers: 'Accept:application/json'});
             return request.then(handleSuccess, handleError);
           },
-    
+
           getLogZipList: function(type) {
             var request = $http({
               method: "get",
@@ -1589,11 +1604,11 @@
               headers: 'Accept:application/json'});
             return request.then(handleSuccess, handleError);
           },
-    
+
           getLogZip: function(type, file) {
             window.open(LOGS_URL + type + '/' + file, '_self');
           }
-    
+
           };    // return codeService
         })
       .service('statisticService', function ($http, $q) {
@@ -1658,7 +1673,7 @@
         });
         return response.then(handleSuccess, handleError);
       }
-        
+
        function agencyName() {
         	var dfd = $q.defer();
             dfd.resolve($http({
@@ -1671,11 +1686,11 @@
       function handleError(response) {
         return $q.reject(response.data.message);
       }
-  
+
       function handleSuccess(response) {
         return response.data;
       }
-      
+
       function enableEmailNotificationService() {
     	  var dfd = $q.defer();
           dfd.resolve($http({
@@ -1696,9 +1711,9 @@
           });
         })
         .service("paxNotesService", function($http, $q){
-        	
+
         	const PAX_URL = "/gtas/passengers/passenger";
-        	
+
         	function saveNote(note){
         		var dfd = $q.defer();
         		dfd.resolve($http({
@@ -1708,7 +1723,17 @@
         		}));
         		return dfd.promise;
         	}
-        	
+
+            function saveNoteType(noteType){
+                var dfd = $q.defer();
+                dfd.resolve($http({
+                    method: 'post',
+                    data: noteType,
+                    url: "/gtas/api/noteType"
+                }));
+                return dfd.promise;
+            }
+
         	function getEventNotes(paxId){
         		var dfd = $q.defer();
         		dfd.resolve($http({
@@ -1721,7 +1746,7 @@
         		}));
         		return dfd.promise;
         	}
-        	
+
         	function getHistoricalNotes(paxId){
         		var dfd = $q.defer();
         		dfd.resolve($http({
@@ -1730,11 +1755,11 @@
         				paxId: paxId,
         				historicalNotes: true
         			},
-        			url: PAX_URL + "/notes"			
+        			url: PAX_URL + "/notes"
         		}));
         		return dfd.promise;
         	}
-        	
+
         	function getNoteTypes(){
         		var dfd = $q.defer();
         		dfd.resolve($http({
@@ -1743,9 +1768,11 @@
         		}));
         		return dfd.promise;
         	}
-        	
+
+
         return({
           saveNote:saveNote,
+          saveNoteType: saveNoteType,
           getEventNotes:getEventNotes,
           getHistoricalNotes:getHistoricalNotes,
           getNoteTypes:getNoteTypes

@@ -13,10 +13,7 @@ import gov.gtas.model.lookup.AppConfiguration;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.ApplicationStatisticsDTO;
 import gov.gtas.util.DateCalendarUtils;
-import gov.gtas.vo.ApiAccessVo;
-import gov.gtas.vo.AuditRecordVo;
-import gov.gtas.vo.LogFileVo;
-import gov.gtas.vo.SettingsVo;
+import gov.gtas.vo.*;
 import gov.gtas.vo.lookup.AirportVo;
 import gov.gtas.vo.lookup.CarrierVo;
 import gov.gtas.vo.lookup.CountryVo;
@@ -80,11 +77,13 @@ public class AdminController {
 
 	private final FileService fileService;
 
+	private final NoteTypeService noteTypeService;
+
 	@Autowired
 	public AdminController(AppConfigurationService appConfigurationService, AuditLogPersistenceService auditService,
-			ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
-			CarrierService carrierService, CountryService countryService, AirportService airportService,
-			FileService fileService) {
+						   ErrorPersistenceService errorService, AdminService adminService, ApiAccessService apiAccessService,
+						   CarrierService carrierService, CountryService countryService, AirportService airportService,
+						   FileService fileService, NoteTypeService noteTypeService) {
 		this.appConfigurationService = appConfigurationService;
 		this.auditService = auditService;
 		this.errorService = errorService;
@@ -94,6 +93,7 @@ public class AdminController {
 		this.countryService = countryService;
 		this.airportService = airportService;
 		this.fileService = fileService;
+		this.noteTypeService = noteTypeService;
 	}
 
 	// ------------------------------------------------- //
@@ -109,6 +109,13 @@ public class AdminController {
 	@RequestMapping(method = RequestMethod.GET, value = "/api/logs")
 	public String[] getLogTypeList() throws IOException {
 		return fileService.getLogTypeList();
+	}
+
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/api/noteType", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void saveNoteType (@RequestBody NoteTypeVo noteTypeVo) {
+		noteTypeService.saveNoteType(noteTypeVo);
 	}
 
 	// GET LIST OF AVAILABLE LOG FILES BY LOG TYPE. SHOW ZIP FILES ONLY
