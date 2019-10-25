@@ -15,9 +15,9 @@ public class EmailTemplateLoader {
     @Resource
     private Configuration configuration;
 
-    public String generateHtmlString(String templateName, List<HitEmailDTO> hitEmailDTOS) throws IOException, TemplateException {
+    public String generateHtmlString(String templateName, List<HitEmailDTO> hitEmailDTOs) throws IOException, TemplateException {
         Template template = configuration.getTemplate(templateName);
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, hitEmailDTOS);
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, hitEmailDTOs);
     }
 
 }
