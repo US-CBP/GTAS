@@ -10,7 +10,6 @@ package gov.gtas.repository;
 
 import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.Passenger;
-import gov.gtas.model.User;
 import gov.gtas.model.UserGroup;
 
 import org.springframework.data.jpa.repository.Query;
