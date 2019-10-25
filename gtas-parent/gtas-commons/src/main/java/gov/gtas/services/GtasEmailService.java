@@ -110,7 +110,7 @@ public class GtasEmailService {
 		
 		String timeRemaining = "";
 		
-		if (flight.getDirection() == "I") {
+		if ("I".equalsIgnoreCase(flight.getDirection())) {
 			timeRemaining = "Arrival Time Remaining: " + getTimeRemaining(countDownToDate);
 		}
 		else {
