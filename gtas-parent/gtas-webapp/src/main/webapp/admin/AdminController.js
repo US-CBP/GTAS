@@ -5,7 +5,7 @@
  */
 app.controller('AdminCtrl', function ($scope, $mdDialog, $mdSidenav, gridOptionsLookupService, userService, settingsInfo, defaultSettingsService, auditService, codeService, caseService,
   errorService, $location, $mdToast, $document, $http, $rootScope, fileDownloadService, $translate, watchListService
-, statisticService) {
+    , statisticService, paxNotesService) {
   'use strict';
   var CARRIER = 'carrier';
   var COUNTRY = 'country';
@@ -519,37 +519,57 @@ $scope.formatBytes = function(bytes, decimals = 2) {
  $scope.categories = {};
  $scope.watchListModel = {};
  $scope.severity = {};
- 
+    $scope.noteType = {};
+
  var watchListModel = {
           WatchlistCategory: function (entity) {
               this.label = entity ? entity.name : null;
               this.description = entity ? entity.description : null;
               this.severity = entity ? entity.severity : null;
           }
-      },
-      resetModels = function (m) {
+    };
+
+    var noteTypeModel = {
+        noteTypeModel: function (entity) {
+            this.noteType = entity ? entity.name : null;
+        }
+    };
+
+
+    $scope.resetModels = function (m) {
           //resets watchlist model
           m.wlCategoryModel = new watchListModel.WatchlistCategory();
+        m.noteTypeModel = {
+            noteType: ""
+        }
       };
      
   $scope.wlCategoryModel = new watchListModel.WatchlistCategory();   
-  
+    $scope.noteTypeModel = new noteTypeModel.noteTypeModel();
+
   watchListService.getWatchlistCategories().then(function(res){
       $scope.watchlistCategories =  res.data;
       $scope.wlCatagoryGrid.data =  res.data;
   	$scope.watchlistCategories.forEach(function(item){
-  		
   		$scope.categories[item.id]=item.label;
-  		
+        });
   	});
+
+    paxNotesService.getNoteTypes().then(function(res){
+        $scope.noteTypeGrid.data =  res.data;
   });
   
   $scope.addWlCategory = function () {
-      resetModels($scope);
+        $scope.resetModels($scope);
       $scope.watchlistCategory = new watchListModel.WatchlistCategory();
       $mdSidenav('wlCatSave').open();
   };
-  
+    $scope.addNoteTypeCategory = function () {
+        $scope.resetModels($scope);
+        $scope.noteTypeModel = new noteTypeModel.noteTypeModel();
+        $mdSidenav('noteTypeSave').open();
+    };
+
   
   $scope.wlCatagoryGrid = {
           paginationPageSizes: [10, 15, 20],
@@ -567,26 +587,58 @@ $scope.formatBytes = function(bytes, decimals = 2) {
           exporterExcelFilename: 'watch-list-types.xlsx',
           exporterExcelSheetName: 'Data'
 
-      };
-  
-  $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
-      $scope.wlGridApi = gridApi;
-  }
-  
-  $scope.saveWlCategory = function () {
-      watchListService.saveCategory($scope.wlCategoryModel).then(function () {
-          watchListService.getWatchlistCategories().then(function(res){
-              $scope.watchlistCategories =  res.data;
-              $scope.wlCatagoryGrid.data =  res.data;
-              $scope.severity.data = res.data;
-              $scope.watchlistCategories.forEach(function(item){
-                  $scope.categories[item.id]=item.label;
-              });
-          });
-          resetModels($scope);
-          $mdSidenav('wlCatSave').close();
-      });
-  };
-  
-  
+    };
+
+    $scope.noteTypeGrid = {
+        paginationPageSizes: [10, 15, 20],
+        paginationPageSize: 10,
+        columnDefs: gridOptionsLookupService.getLookupColumnDefs('watchlist').NOTE_TYPE,
+        enableGridMenu: true,
+        exporterPdfDefaultStyle: {fontSize: 9},
+        exporterPdfTableHeaderStyle: {fontSize: 10, bold: true, italics: true, color: 'red'},
+        exporterPdfFooter: function ( currentPage, pageCount ) {
+            return { text: currentPage.toString() + ' of ' + pageCount.toString(), style: 'footerStyle' };
+        },
+        exporterPdfPageSize: 'LETTER',
+        exporterPdfMaxGridWidth: 500,
+        exporterCsvFilename: 'note-list-types.csv',
+        exporterExcelFilename: 'note-list-types.xlsx',
+        exporterExcelSheetName: 'Data'
+    };
+
+    $scope.wlCatagoryGrid.onRegisterApi = function (gridApi) {
+        $scope.wlGridApi = gridApi;
+    };
+
+    $scope.noteTypeGrid.onRegisterApi = function (gridApi) {
+        $scope.noteTypeGridApi = gridApi;
+    };
+
+
+    $scope.saveWlCategory = function () {
+        watchListService.saveCategory($scope.wlCategoryModel).then(function () {
+            watchListService.getWatchlistCategories().then(function(res){
+                $scope.watchlistCategories =  res.data;
+                $scope.wlCatagoryGrid.data =  res.data;
+                $scope.severity.data = res.data;
+                $scope.watchlistCategories.forEach(function(item){
+                    $scope.categories[item.id]=item.label;
+                });
+            });
+            $scope.resetModels($scope);
+            $mdSidenav('wlCatSave').close();
+        });
+    };
+
+    $scope.saveNoteType  = function () {
+        paxNotesService.saveNoteType($scope.noteTypeModel).then(function () {
+            paxNotesService.getNoteTypes().then(function(res){
+                $scope.noteTypeGrid.data =  res.data;
+            });
+            $scope.resetModels($scope);
+            $mdSidenav('noteTypeSave').close();
+        });
+    }
+
+
 });

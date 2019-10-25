@@ -14,20 +14,24 @@
           <label for="select-all">Notify all users in this group</label>
         </div>
         <div class="checkbox" ng-repeat="user in allUsers">
-          <input type="checkbox" name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
-          <label>{{user.firstName}} {{user.lastName}}</label>
+          <input type="checkbox" id = {{user.userId}} name={{user.email}} ng-click="clearParent()" ng-model="user.selected">
+          <label for={{user.userId}}>{{user.firstName}} {{user.lastName}}</label>
         </div>
       </uib-tab>
       <uib-tab index="1" >
           <uib-tab-heading>
               <span class="glyphicon glyphicon-bullhorn"></span> Notify External User
             </uib-tab-heading>
-        <div class="modal-body from-group">
+        <div class="modal-body form-group">
           <label>Email address:</label>
           <input type="email" class="form-control" ng-model="noneGtasUser.email" placeholder="email@example.com"/>
         </div>
       </uib-tab>
     </uib-tabset>
+    <div class="form-group">
+      <label for="notes">Notes:</label>
+      <textarea name="notes" class="form-control col-xs-12" rows="7" cols="50" ng-model="notesForEmailNotification"></textarea>
+    </div>
   </div>
 
   <div class="modal-footer">

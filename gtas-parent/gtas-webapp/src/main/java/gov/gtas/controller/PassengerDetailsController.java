@@ -15,8 +15,13 @@ import javax.annotation.Resource;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
+import gov.gtas.model.dto.PassengerNoteDto;
+import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
+import gov.gtas.services.dto.PassengerNoteSetDto;
 import gov.gtas.vo.HitDetailVo;
+import gov.gtas.vo.NoteTypeVo;
+import gov.gtas.vo.NoteVo;
 import gov.gtas.vo.passenger.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,13 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import gov.gtas.enumtype.Status;
 import gov.gtas.json.JsonServiceResponse;
@@ -92,6 +91,12 @@ public class PassengerDetailsController {
 
 	@Autowired
 	private HitDetailService hitDetailService;
+	
+	@Autowired
+	private PassengerNoteService paxNoteService;
+	
+	@Autowired
+	private NoteTypeService noteTypeService;
 
 	static final String EMPTY_STRING = "";
 
@@ -369,7 +374,6 @@ public class PassengerDetailsController {
 		Passenger p = pService.findById(paxId);
 		passengerSet.remove(p);
 		return hitDetailService.getLast10RecentHits(passengerSet);
-
 	}
 
 	@ResponseBody
@@ -397,6 +401,32 @@ public class PassengerDetailsController {
 		}
 
 		return paxWatchlistLinkVos;
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/passengers/passenger/notes")
+	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam Long paxId, @RequestParam Boolean historicalNotes) {
+		if (historicalNotes != null && historicalNotes) {
+			return paxNoteService.getAllHistoricalNotes(paxId);
+		} else {
+			return paxNoteService.getAllEventNotes(paxId);
+		}
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@GetMapping(value = "/passengers/passenger/notetypes")
+	public List<NoteTypeVo> getAllNoteTypes() {
+		return noteTypeService.getAllNoteTypes();
+	}
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	@PostMapping(value = "/passengers/passenger/note", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void savePassengerNote (@RequestBody NoteVo note) {
+		String userId = GtasSecurityUtils.fetchLoggedInUserId();
+		paxNoteService.saveNote(note, userId);
 	}
 
 	@RequestMapping(value = "/dispositionstatuses", method = RequestMethod.GET)

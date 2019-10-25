@@ -198,6 +198,12 @@ public class PassengerServiceImpl implements PassengerService {
 	public Passenger findByIdWithFlightPaxAndDocuments(Long paxId) {
 		return passengerRepository.findByIdWithFlightPaxAndDocuments(paxId);
 	}
+	
+	@Override
+	@Transactional
+	public Passenger findByIdWithFlightPaxAndDocumentsAndHitDetails(Long paxId) {
+		return passengerRepository.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
+	}
 
 	@Override
 	@Transactional

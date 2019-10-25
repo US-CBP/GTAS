@@ -7,7 +7,7 @@
 (function () {
     'use strict';
     app.controller('DashboardController',
-        function ($state, $scope, $rootScope, $q, $sce, $stateParams, dashboardService, $mdToast, sampleData, ytdRuleHits, ytdAirportStats, configService) {
+        function ($state, $scope, $rootScope, $q, $sce, $stateParams, dashboardService, $mdToast, sampleData, configService) {
             var stubChartData = [[], []];
             $scope.colors = ['#337ab7', '#5cb85c', '#dfdfdf'];
             $scope.data = [[], []];
@@ -57,8 +57,6 @@
             $scope.flightsList = [];
             $scope.flightsListInbound = [];
             $scope.flightsListOutbound = [];
-            $scope.rulesList = ytdRuleHits;
-            $scope.airportStats = ytdAirportStats;
             $scope.credentials = {
                 beforeDate: '',
                 startDate: '',
