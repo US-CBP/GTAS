@@ -1,5 +1,5 @@
 
-CREATE VIEW neo4j_hit_vw AS
+CREATE OR REPLACE VIEW neo4j_hit_vw AS
 SELECT
     hs.id as gtas_hit_summary_id,
     hd.created_date as hit_summary_create_date,
