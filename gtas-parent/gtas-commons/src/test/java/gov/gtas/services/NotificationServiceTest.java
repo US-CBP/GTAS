@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import gov.gtas.email.HighPriorityHitEmailNotificationService;
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.lookup.HitCategory;
 import org.junit.Before;
@@ -37,6 +38,8 @@ public class NotificationServiceTest {
 	@Mock
 	private GtasEmailService emailService;
 	@Mock
+	private HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
+	@Mock
 	private SnsService snsService;
 	@Mock
 	private HitCategoryService watchlistCatService;
@@ -51,7 +54,7 @@ public class NotificationServiceTest {
 	@Before
 	public void before() {
 		MockitoAnnotations.initMocks(this);
-		notificationService = new NotificatonServiceImpl(snsService, watchlistCatService, emailService);
+		notificationService = new NotificatonServiceImpl(snsService, watchlistCatService, emailService, highPriorityHitEmailNotificationService);
 
 		String messageId = "FcdR4553DF";
 		String message = "this is a test message";

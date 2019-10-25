@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toList;
 public class HighPriorityHitEmailNotificationService {
 
     private static final String HIGH_PROFILE_NOTIFICATION_FTL = "highProfileHitNotification.ftl";
-    private static final String SUBJECT = "Generated Hits";
+    private static final String SUBJECT = "(GTAS): Hit Status Notification";
 
     @Resource
     private EmailTemplateLoader emailTemplateLoader;

@@ -12,8 +12,10 @@ import freemarker.template.TemplateException;
 import gov.gtas.aws.HitNotificationConfig;
 import gov.gtas.model.Passenger;
 
+import javax.mail.MessagingException;
+
 public interface NotificatonService {
 
 	Set<String> sendHitNotifications(HitNotificationConfig config);
-	void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException;
+	void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException, MessagingException;
 }

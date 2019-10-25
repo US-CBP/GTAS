@@ -6,12 +6,12 @@
 package gov.gtas.services;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import freemarker.template.TemplateException;
@@ -119,9 +119,13 @@ public class NotificatonServiceImpl implements NotificatonService {
 		return messageIds;
 	}
 
-	public void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException {
+	@Override
+	public void sendHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException, MessagingException {
 		List<EmailDTO> emailDTOS = highPriorityHitEmailNotificationService.generateEmailDTOs(passengers);
-		emailDTOS.forEach(emailService::send);
+
+		for(EmailDTO emailDTO: emailDTOS) {
+			emailService.sendHTMLEmail(emailDTO);
+		}
 	}
 
 	/**
