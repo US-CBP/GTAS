@@ -173,7 +173,6 @@ public class RuleRunnerThread implements Callable<Boolean> {
 			}
 
 			notificationSerivce.sendHitEmailNotifications(passengersWithNewHits);
-			List<EmailDTO> emailDTOS = highPriorityHitEmailNotificationService.generateEmailDTOs(passengersWithNewHits);
 
 		} catch (Exception e) {
 			logger.warn(

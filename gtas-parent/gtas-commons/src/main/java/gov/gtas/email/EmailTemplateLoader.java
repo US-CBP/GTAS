@@ -1,7 +1,7 @@
 package gov.gtas.email;
 
 import freemarker.template.*;
-import gov.gtas.email.dto.HitEmailDto;
+import gov.gtas.email.dto.HitEmailDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -15,9 +15,9 @@ public class EmailTemplateLoader {
     @Resource
     private Configuration configuration;
 
-    public String generateHtmlString(String templateName, List<HitEmailDto> hitEmailDtos) throws IOException, TemplateException {
+    public String generateHtmlString(String templateName, List<HitEmailDTO> hitEmailDTOS) throws IOException, TemplateException {
         Template template = configuration.getTemplate(templateName);
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, hitEmailDtos);
+        return FreeMarkerTemplateUtils.processTemplateIntoString(template, hitEmailDTOS);
     }
 
 }
