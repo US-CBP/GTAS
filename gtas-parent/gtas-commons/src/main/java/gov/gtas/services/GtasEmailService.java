@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
+import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,20 @@ public class GtasEmailService {
 
 	@Value("${path-to-attachment}")
 	private String pathToAttachment;
+
+	public void send(EmailDTO email) {
+		String [] to =  email.getTo();
+		String subject = email.getSubject();
+		String body = email.getBody();
+		String pathToAttachment = email.getPathToAttachment();
+
+		if (pathToAttachment == null) {
+			sendSimpleEmail(from, to, subject, body);
+		}
+		else {
+			sendEmailWithAttachment(from, to, subject, body, pathToAttachment);
+		}
+	}
 
 	@Transactional
 	public void send(String[] to, Long paxId, String note, String hitViewStatus) {
