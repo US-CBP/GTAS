@@ -2,6 +2,7 @@ package gov.gtas.email;
 
 import freemarker.template.TemplateException;
 import gov.gtas.email.dto.HitEmailDTO;
+import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,12 +73,21 @@ public class HighPriorityHitEmailNotificationService {
 
     }
 
-    private boolean hasHighPriorityHitCategory(Passenger passenger) {
-       return passenger.getHitDetails()
-               .stream()
-               .anyMatch(hitDetail ->
-                       priorityHitCategory.equals(hitDetail.getHitMaker().getHitCategory().getId()));
-    }
+	private boolean hasHighPriorityHitCategory(Passenger passenger) {
+		boolean hasHighPriorityHitCategory = false;
+		Date dob = passenger.getPassengerDetails().getDob();
+		if (dob != null) {
+			LocalDateTime localDateTimeDOB = Instant.ofEpochMilli(dob.getTime()).atZone(ZoneOffset.UTC)
+					.toLocalDateTime();
+			if (!(localDateTimeDOB.getDayOfMonth() == 1 && localDateTimeDOB.getMonth() == Month.JANUARY)) {
+				hasHighPriorityHitCategory = passenger.getHitDetails().stream()
+						.filter(hd -> HitTypeEnum.PARTIAL_WATCHLIST != hd.getHitEnum())
+						.anyMatch(hitDetail -> priorityHitCategory
+								.equals(hitDetail.getHitMaker().getHitCategory().getId()));
+			}
+		}
+		return hasHighPriorityHitCategory;
+	}
 
     public HitEmailDTO generateHitEmailDTO(Passenger passenger) {
         HitEmailDTO hitEmailDto = new HitEmailDTO();
