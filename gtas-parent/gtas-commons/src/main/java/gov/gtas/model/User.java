@@ -34,6 +34,19 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification) {
+
+		this.userId = userId;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.active = active;
+		this.roles = roles;
+		this.email = email;
+		this.isEmailEnabled = isEmailEnabled;
+		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+	}
+
 	@Id
 	@Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
 	private String userId;
