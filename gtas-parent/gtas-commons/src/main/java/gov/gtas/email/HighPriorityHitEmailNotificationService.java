@@ -10,12 +10,16 @@ import gov.gtas.model.Passenger;
 import gov.gtas.model.PassengerDetails;
 import gov.gtas.model.User;
 import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.services.CountDownCalculator;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.EmailDTO;
-import org.apache.commons.lang3.time.DurationFormatUtils;
+import gov.gtas.vo.passenger.CountDownVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.*;
 import java.util.ArrayList;
@@ -39,11 +43,17 @@ public class HighPriorityHitEmailNotificationService {
     @Resource
     private EmailTemplateLoader emailTemplateLoader;
 
+    @Resource
+    private PassengerService passengerService;
+
     @Value("${hit.priority.category}")
     private Long priorityHitCategory;
 
-    public List<EmailDTO> generateEmailDTOs(Set<Passenger> passengers) throws IOException, TemplateException {
+    @Transactional
+    public List<EmailDTO> generateAutomatedHitEmailDTOs(Set<Passenger> passengers) throws IOException, TemplateException {
         List<EmailDTO> emailDTOs = new ArrayList<>();
+        passengers = passengerService.getPassengersForEmailMatching(passengers);
+
         Map<String, List<HitEmailDTO>> emailRecipientToDTOs = generateEmailRecipientDTOMap(passengers);
         for(Map.Entry<String, List<HitEmailDTO>> emailToDto: emailRecipientToDTOs.entrySet()) {
             EmailDTO emailDTO = new EmailDTO();
@@ -120,19 +130,21 @@ public class HighPriorityHitEmailNotificationService {
     }
 
     private String getTimeRemaining(Date date) {
-        LocalDateTime localDateTime = Instant.ofEpochMilli(date.getTime())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-
-        Duration duration = Duration.between(LocalDateTime.now(), localDateTime);
-        return DurationFormatUtils.formatDuration(duration.toMillis(), "dd:HH:mm", true);
+        CountDownCalculator countDownCalculator = new CountDownCalculator(new Date());
+        CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(date);
+        return countDownVo.getCountDownTimer();
     }
 
     private static List<String> generateRecipientEmailList(Passenger passenger) {
        return passenger.getHitDetails().stream()
                .flatMap(details -> details.getHitMaker().getHitCategory().getUserGroups().stream())
                .flatMap(userGroup -> userGroup.getGroupMembers().stream())
+               .filter(HighPriorityHitEmailNotificationService::isRegisteredForHighPriorityHitNotifications)
                .map(User::getEmail)
                .collect(Collectors.toList());
+    }
+
+    private static boolean isRegisteredForHighPriorityHitNotifications(User u) {
+        return u.getEmailEnabled() != null && u.getHighPriorityHitsEmailNotification() != null && u.getHighPriorityHitsEmailNotification() && u.getEmailEnabled() && StringUtils.isNotBlank(u.getEmail());
     }
 }

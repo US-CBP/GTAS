@@ -27,7 +27,6 @@ import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.NotificatonService;
 import gov.gtas.services.RuleHitPersistenceService;
-import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -170,7 +169,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
 	private void sendNotifications(Set<Passenger> passengersWithNewHits) {
 		if (emailHitNotificationEnabled) {
 			try {
-				notificationSerivce.sendHitEmailNotifications(passengersWithNewHits);
+				notificationSerivce.sendAutomatedHitEmailNotifications(passengersWithNewHits);
 			} catch (IOException | TemplateException | MessagingException ignored) {
 				//TODO: Add error handling. Do not propagate error up as partial matching still needs to happen.
 				logger.error("There was an error within the email notification sender! ", ignored);

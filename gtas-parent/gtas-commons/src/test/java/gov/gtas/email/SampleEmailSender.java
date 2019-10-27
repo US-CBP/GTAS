@@ -44,7 +44,7 @@ public class SampleEmailSender {
     @Test
     public void sendSampleHitEmailNotification() throws IOException, TemplateException, MessagingException {
         Passenger testPassenger = generateSamplePassenger();
-        notificationService.sendHitEmailNotifications(Collections.singleton(testPassenger));
+        notificationService.sendAutomatedHitEmailNotifications(Collections.singleton(testPassenger));
 
     }
 

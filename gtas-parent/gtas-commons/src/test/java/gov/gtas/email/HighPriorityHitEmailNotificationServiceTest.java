@@ -13,6 +13,7 @@ import gov.gtas.enumtype.HitSeverityEnum;
 import gov.gtas.model.*;
 import gov.gtas.model.lookup.HitCategory;
 import gov.gtas.model.watchlist.WatchlistItem;
+import gov.gtas.services.PassengerService;
 import gov.gtas.services.dto.EmailDTO;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,6 +39,9 @@ public class HighPriorityHitEmailNotificationServiceTest {
     @Mock
     private EmailTemplateLoader emailTemplateLoader;
 
+    @Mock
+    private PassengerService passengerService;
+
     @InjectMocks
     private HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
 
@@ -52,7 +56,7 @@ public class HighPriorityHitEmailNotificationServiceTest {
 
     @Test
     public void testEmptySet() throws IOException, TemplateException {
-        List<EmailDTO> emails = highPriorityHitEmailNotificationService.generateEmailDTOs(new HashSet<>());
+        List<EmailDTO> emails = highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(new HashSet<>());
         Assert.assertEquals(0L, emails.size());
     }
 
@@ -64,7 +68,8 @@ public class HighPriorityHitEmailNotificationServiceTest {
         for (HitDetail hd : p.getHitDetails()) {
             hd.setHitEnum(WATCHLIST);
         }
-        List<EmailDTO> emails = highPriorityHitEmailNotificationService.generateEmailDTOs(Collections.singleton(p));
+        Mockito.when(passengerService.getPassengersForEmailMatching(Mockito.anySet())).thenReturn(Collections.singleton(p));
+        List<EmailDTO> emails = highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(Collections.singleton(p));
         Assert.assertEquals(1L, emails.size());
     }
 
@@ -75,7 +80,8 @@ public class HighPriorityHitEmailNotificationServiceTest {
         for (HitDetail hd : p.getHitDetails()) {
             hd.setHitEnum(PARTIAL_WATCHLIST);
         }
-       List<EmailDTO> emails =  highPriorityHitEmailNotificationService.generateEmailDTOs(Collections.singleton(p));
+        Mockito.when(passengerService.getPassengersForEmailMatching(Mockito.anySet())).thenReturn(Collections.singleton(p));
+        List<EmailDTO> emails =  highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(Collections.singleton(p));
         Assert.assertEquals(0, emails.size());
     }
 
@@ -87,7 +93,8 @@ public class HighPriorityHitEmailNotificationServiceTest {
             hd.setHitEnum(WATCHLIST);
         }
         p.getPassengerDetails().setDob(java.sql.Date.valueOf(LocalDate.of(2000,1,1)));
-        List<EmailDTO> emails =  highPriorityHitEmailNotificationService.generateEmailDTOs(Collections.singleton(p));
+        Mockito.when(passengerService.getPassengersForEmailMatching(Mockito.anySet())).thenReturn(Collections.singleton(p));
+        List<EmailDTO> emails =  highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(Collections.singleton(p));
         Assert.assertEquals(0, emails.size());
     }
 
@@ -118,6 +125,8 @@ public class HighPriorityHitEmailNotificationServiceTest {
         UserGroup userGroup = new UserGroup();
         User user = new User();
         user.setEmail(RECIPIENT_EMAIL);
+        user.setEmailEnabled(true);
+        user.setHighPriorityHitsEmailNotification(true);
         userGroup.setGroupMembers(Collections.singleton(user));
         hitCategory.setUserGroups(Collections.singleton(userGroup));
         passenger.setHitDetails(Collections.singleton(hitDetail));

@@ -25,13 +25,14 @@ import java.util.Properties;
  */
 @Configuration
 @ComponentScan("gov.gtas")
-@PropertySource({ "classpath:default.application.properties", "classpath:test.application.properties" })
+@PropertySource({ "classpath:default.application.properties"})
 @EnableJpaRepositories("gov.gtas")
 @EnableTransactionManagement
 @Import({ AsyncConfig.class, CommonServicesConfig.class })
 public class TestCommonServicesConfig {
 
-    @Value("${email.sender.username}")
+ /*
+   @Value("${email.sender.username}")
     private String mailSenderUserName;
 
     @Value("${email.sender.password}")
@@ -69,5 +70,5 @@ public class TestCommonServicesConfig {
         return mailSender;
     }
 
-
+*/
 }
