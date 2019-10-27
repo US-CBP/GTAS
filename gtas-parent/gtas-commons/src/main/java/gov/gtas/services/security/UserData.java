@@ -117,7 +117,7 @@ public class UserData implements Serializable {
 	}
 
 	public void setEmailEnabled(Boolean emailEnabled) {
-		emailEnabled = emailEnabled;
+		this.emailEnabled = emailEnabled;
 	}
 
 	public Boolean getHighPriorityEmail() {
