@@ -34,6 +34,19 @@ public class User implements Serializable {
 		this.roles = roles;
 	}
 
+	public User(String userId, String password, String firstName, String lastName, int active, Set<Role> roles, String email, Boolean isEmailEnabled, Boolean highPriorityHitsEmailNotification) {
+
+		this.userId = userId;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.active = active;
+		this.roles = roles;
+		this.email = email;
+		this.isEmailEnabled = isEmailEnabled;
+		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+	}
+
 	@Id
 	@Column(name = "user_id", length = DomainModelConstants.GTAS_USERID_COLUMN_SIZE)
 	private String userId;
@@ -53,6 +66,12 @@ public class User implements Serializable {
 	@Column(name = "email")
 	private String email;
 
+	@Column(name = "email_enabled")
+	private Boolean isEmailEnabled;
+
+	@Column(name = "high_priority_hits_email")
+	private Boolean highPriorityHitsEmailNotification;
+
 	@ManyToMany(targetEntity = UserGroup.class, fetch = FetchType.LAZY, mappedBy = "groupMembers")
 	private Set<UserGroup> userGroups = new HashSet<>();
 
@@ -68,6 +87,17 @@ public class User implements Serializable {
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
+	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public Boolean getHighPriorityHitsEmailNotification() {
+		return highPriorityHitsEmailNotification;
+	}
+
+	public void setHighPriorityHitsEmailNotification(Boolean highPriorityHitsEmailNotification) {
+		this.highPriorityHitsEmailNotification = highPriorityHitsEmailNotification;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -76,8 +106,14 @@ public class User implements Serializable {
 		this.email = email;
 	}
 
-	@OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-	private Set<HitMaker> hitMakers = new HashSet<>();
+
+	public Boolean getEmailEnabled() {
+		return isEmailEnabled;
+	}
+
+	public void setEmailEnabled(Boolean emailEnabled) {
+		isEmailEnabled = emailEnabled;
+	}
 
 	public int getActive() {
 		return active;

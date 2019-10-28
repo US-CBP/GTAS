@@ -13,8 +13,6 @@ import gov.gtas.model.*;
 import gov.gtas.repository.*;
 import gov.gtas.services.dto.PassengersPageDto;
 import gov.gtas.services.dto.PassengersRequestDto;
-import gov.gtas.vo.passenger.CaseVo;
-import gov.gtas.vo.passenger.DispositionStatusVo;
 import gov.gtas.vo.passenger.DocumentVo;
 import gov.gtas.vo.passenger.PassengerGridItemVo;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,10 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
@@ -264,6 +258,12 @@ public class PassengerServiceImpl implements PassengerService {
 	@Override
 	public Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds) {
 		return passengerRepository.getPassengersWithHitDetails(passengerIds);
+	}
+
+	@Override
+	public Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers) {
+		Set<Long> paxIds = passengers.stream().map(Passenger::getId).collect(toSet());
+		return passengerRepository.getPassengersForEmailDto(paxIds);
 	}
 
 }

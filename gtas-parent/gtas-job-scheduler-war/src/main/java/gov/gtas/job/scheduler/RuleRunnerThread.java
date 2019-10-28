@@ -10,11 +10,13 @@ package gov.gtas.job.scheduler;
 
 import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import freemarker.template.TemplateException;
 import gov.gtas.aws.HitNotificationConfig;
 import gov.gtas.email.HighPriorityHitEmailNotificationService;
 import gov.gtas.model.HitDetail;
@@ -25,9 +27,9 @@ import gov.gtas.services.AppConfigurationService;
 import gov.gtas.services.ErrorPersistenceService;
 import gov.gtas.services.NotificatonService;
 import gov.gtas.services.RuleHitPersistenceService;
-import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -40,6 +42,8 @@ import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import gov.gtas.svc.util.TargetingResultUtils;
+
+import javax.mail.MessagingException;
 
 @Component
 @Scope("prototype")
@@ -60,6 +64,9 @@ public class RuleRunnerThread implements Callable<Boolean> {
 	private NotificatonService notificationSerivce;
 
 	private HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
+
+	@Value("${email.hit.notification.enabled}")
+	private Boolean emailHitNotificationEnabled;
 
 	public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
 							AppConfigurationService appConfigurationService, ApplicationContext applicationContext,
@@ -160,6 +167,15 @@ public class RuleRunnerThread implements Callable<Boolean> {
 	}
 
 	private void sendNotifications(Set<Passenger> passengersWithNewHits) {
+		if (emailHitNotificationEnabled) {
+			try {
+				notificationSerivce.sendAutomatedHitEmailNotifications(passengersWithNewHits);
+			} catch (IOException | TemplateException | MessagingException ignored) {
+				//TODO: Add error handling. Do not propagate error up as partial matching still needs to happen.
+				logger.error("There was an error within the email notification sender! ", ignored);
+			}
+		}
+
 		boolean hitNotificationEnabled;
 		try {
 			hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
@@ -171,9 +187,6 @@ public class RuleRunnerThread implements Callable<Boolean> {
 				notificationSerivce.sendHitNotifications(hitNotificationConfig);
 				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
 			}
-
-			notificationSerivce.sendHitEmailNotifications(passengersWithNewHits);
-
 		} catch (Exception e) {
 			logger.warn(
 					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");

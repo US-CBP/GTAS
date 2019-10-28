@@ -456,7 +456,7 @@ public class UdrServiceIT {
 		Set<RoleData> roles = new HashSet<RoleData>();
 		roles.add(new RoleData(1, "ADMIN"));
 
-		UserData usr = new UserData(USER_ID, "password", USER_FNAME, USER_LASTNAME, 1, roles);
+		UserData usr = new UserData(USER_ID, "password", USER_FNAME, USER_LASTNAME, 1, roles, "", false, false);
 		Role role = new Role();
 		role.setRoleDescription(ROLE_NAME);
 

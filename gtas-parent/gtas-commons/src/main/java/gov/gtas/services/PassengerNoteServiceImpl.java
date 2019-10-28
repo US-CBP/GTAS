@@ -41,7 +41,7 @@ public class PassengerNoteServiceImpl implements PassengerNoteService {
 
 	@Override
 	@Transactional
-	public PassengerNoteSetDto getAllHistoricalNotes(Long paxId) {
+	public PassengerNoteSetDto getPrevious10PassengerNotes(Long paxId) {
 		List<Passenger> passengersWithSamePassengerIdTag = passengerService.getBookingDetailHistoryByPaxID(paxId);
 		Set<Passenger> passengerSet = new HashSet<>(passengersWithSamePassengerIdTag);
 		Passenger p = passengerService.findById(paxId);

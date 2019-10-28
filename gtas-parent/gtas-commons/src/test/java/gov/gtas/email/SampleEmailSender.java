@@ -18,6 +18,7 @@ import gov.gtas.services.NotificatonService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -32,7 +33,10 @@ import static gov.gtas.enumtype.HitTypeEnum.WATCHLIST_PASSENGER;
 @ContextConfiguration(classes = { TestCommonServicesConfig.class })
 public class SampleEmailSender {
 
-    private static final String RECIPIENT_EMAIL = "simbamarufu1@gmail.com";
+    private static final String RECIPIENT_EMAIL =  "simbamarufu1@gmail.com";
+
+    @Value("${hit.priority.category}")
+    private Long testHitPriorityCategory;
 
     @Autowired
     private NotificatonService notificationService;
@@ -40,7 +44,7 @@ public class SampleEmailSender {
     @Test
     public void sendSampleHitEmailNotification() throws IOException, TemplateException, MessagingException {
         Passenger testPassenger = generateSamplePassenger();
-        notificationService.sendHitEmailNotifications(Collections.singleton(testPassenger));
+        notificationService.sendAutomatedHitEmailNotifications(Collections.singleton(testPassenger));
 
     }
 
@@ -64,7 +68,7 @@ public class SampleEmailSender {
         hitMaker.setHitCategory(hitCategory);
         hitCategory.setName("Terrorism");
         hitCategory.setSeverity(HitSeverityEnum.TOP);
-        // hitCategory.setId(2L); needs updating
+        hitCategory.setId(testHitPriorityCategory);
 
         UserGroup userGroup = new UserGroup();
         User user = new User();
