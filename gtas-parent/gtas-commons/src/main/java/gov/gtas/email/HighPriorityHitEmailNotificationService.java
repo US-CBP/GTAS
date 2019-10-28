@@ -55,8 +55,8 @@ public class HighPriorityHitEmailNotificationService {
         List<EmailDTO> emailDTOs = new ArrayList<>();
         passengers = passengerService.getPassengersForEmailMatching(passengers);
 
-        Map<String, List<HitEmailDTO>> emailRecipientToDTOs = generateEmailRecipientDTOMap(passengers);
-        for(Map.Entry<String, List<HitEmailDTO>> emailToDto: emailRecipientToDTOs.entrySet()) {
+        Map<String, Set<HitEmailDTO>> emailRecipientToDTOs = generateEmailRecipientDTOMap(passengers);
+        for(Map.Entry<String, Set<HitEmailDTO>> emailToDto: emailRecipientToDTOs.entrySet()) {
             EmailDTO emailDTO = new EmailDTO();
 
             emailDTO.setTo(new String[] { emailToDto.getKey() });
