@@ -126,10 +126,10 @@ public class NotificatonServiceImpl implements NotificatonService {
 		for(EmailDTO emailDTO: emailDTOS) {
 			try {
 				emailService.sendHTMLEmail(emailDTO);
+				logger.info("Sent Email Notification to " + Arrays.toString(emailDTO.getTo()));
 			} catch(Exception ex) {
 				logger.warn(String.format("Automated hit email notification failed for email: %s, with the exception: %s", emailDTO.getTo()[0], ex));
 			}
-			logger.info("Sent Email Notification to " + Arrays.toString(emailDTO.getTo()));
 		}
 	}
 
