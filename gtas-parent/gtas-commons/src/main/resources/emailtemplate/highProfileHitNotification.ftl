@@ -2,6 +2,9 @@
     <title>Generated Hits</title>
 </head>
 <body>
+    <br/>
+    <p>This is a system generated email caused by elevated risk categories for the following passengers:</p>
+    <br/>
     <table border="1" align="center">
         <thead>
             <tr>

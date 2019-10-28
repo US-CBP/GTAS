@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class HitEmailDTO {
 
@@ -12,6 +13,7 @@ public class HitEmailDTO {
     private String flightNumber;
     private Date dob;
     private String gender;
+    private UUID passengerUUID;
     private List<DocumentDTO> documentDTOs = new ArrayList<>();
     private List<CategoryDTO> categoryDTOs = new ArrayList<>();
     private String timeRemaining;
@@ -64,6 +66,14 @@ public class HitEmailDTO {
         return categoryDTOs;
     }
 
+    public UUID getPassengerUUID() {
+        return passengerUUID;
+    }
+
+    public void setPassengerUUID(UUID passengerUUID) {
+        this.passengerUUID = passengerUUID;
+    }
+
     public void addCategory(String severity, String category, String rule) {
         CategoryDTO categoryDTO = new CategoryDTO();
 
@@ -109,17 +119,14 @@ public class HitEmailDTO {
             return false;
         }
 
-        HitEmailDTO that = (HitEmailDTO) o;
-        return Objects.equals(firstName, that.firstName) &&
-                Objects.equals(lastName, that.lastName) &&
-                Objects.equals(flightNumber, that.flightNumber) &&
-                Objects.equals(dob, that.dob) &&
-                Objects.equals(gender, that.gender);
+        HitEmailDTO otherDTO = (HitEmailDTO) o;
+        return Objects.equals(passengerUUID, otherDTO.getPassengerUUID()) &&
+                Objects.equals(flightNumber, otherDTO.getFlightNumber());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, flightNumber, dob, gender);
+        return Objects.hash(passengerUUID, flightNumber);
     }
 
 }
