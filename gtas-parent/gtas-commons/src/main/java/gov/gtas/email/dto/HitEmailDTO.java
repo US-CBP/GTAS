@@ -1,10 +1,9 @@
 package gov.gtas.email.dto;
 
-import gov.gtas.enumtype.HitViewStatusEnum;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class HitEmailDTO {
 
@@ -98,6 +97,29 @@ public class HitEmailDTO {
 
     public void setTimeRemaining(String timeRemaining) {
         this.timeRemaining = timeRemaining;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        HitEmailDTO that = (HitEmailDTO) o;
+        return Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(flightNumber, that.flightNumber) &&
+                Objects.equals(dob, that.dob) &&
+                Objects.equals(gender, that.gender);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, flightNumber, dob, gender);
     }
 
 }
