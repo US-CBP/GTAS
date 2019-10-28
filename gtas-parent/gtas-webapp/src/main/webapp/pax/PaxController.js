@@ -29,7 +29,8 @@
     configService,
     paxNotesService,
     eventNotes,
-    noteTypesList
+    noteTypesList,
+    $uibModal
   ) {
 	$scope.noteTypesList = noteTypesList.data;
 	$scope.eventNotes = eventNotes.data.paxNotes;
@@ -1092,10 +1093,29 @@
     $scope.review = function () {
       let paxId = $scope.passenger.paxId;
       paxDetailService.updatePassengerHitDetails(paxId, 'REVIEWED')
-          .then(function (response) {
-            $scope.refreshHitDetailsList();
-            $rootScope.$broadcast('hitCountChange');
-          });
+        .then(function (response) {
+          $scope.refreshHitDetailsList();
+          $rootScope.$broadcast('hitCountChange');
+        });
+    };
+
+    $scope.notify = function () {
+      $scope.paxId = $scope.passenger.paxId;
+      var notificationModalInstance = $uibModal.open({
+        animation: true,
+        ariaLabelledBy: 'modal-title',
+        ariaDescribedBy: 'modal-body',
+        templateUrl: 'common/notificationTemplate.html',
+        backdrop: true,
+        controller: 'EmailNotificationModalCtrl',
+        scope: $scope
+
+      });
+
+      notificationModalInstance.result.then(function () {
+        $uibModalInstance.close();
+      })
+
     };
 
     $scope.addToWatchlist = function() {
@@ -1148,29 +1168,6 @@
         clickOutsideToClose: true
       });
     };
-    
-	$scope.saveNote = function(text){
-		//if wanted to save note from other place than normal comment section
-		if(text == null){
-			text = $scope.currentNoteText; 
-		}
-		var element = document.querySelector("trix-editor");
-		var plainTextNote = element.editor.getDocument().toString();
-		var rtfNote = text.valueOf();
-		
-		var note = {
-				plainTextNote:plainTextNote,
-				rtfNote:rtfNote,
-				passengerId:$scope.passenger.paxId,
-				noteType: $scope.currentNoteTypes
-		};
-		paxNotesService.saveNote(note).then(function(){
-			$scope.getEventNotes(); // reload current event notes after adding new one
-            $scope.getHistoricalNotes();
-		});
-		$scope.currentNoteText = "";
-		text = "";
-	};
 
 	$scope.getListOfNoteTypes = function (arrayOfNoteType) {
 	  return arrayOfNoteType.map(nType => nType.noteType).toString();

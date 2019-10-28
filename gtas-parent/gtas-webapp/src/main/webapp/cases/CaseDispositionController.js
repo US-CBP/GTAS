@@ -9,7 +9,7 @@
         function ($scope, $rootScope, $http, $mdToast, $filter,
                   gridService, $translate,
                   spinnerService, caseDispositionService, caseModel,
-                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, userService, configService) {
+                  ruleCats, caseService, $state, uiGridConstants, $timeout, $interval,$uibModal, $mdDialog, APP_CONSTANTS, configService) {
 
             spinnerService.hide('html5spinner');
             $scope.casesList;
@@ -181,14 +181,14 @@
                 }
             };
             $scope.notify = function(paxId) {
-                $scope.notificationPaxId = paxId;
+                $scope.paxId = paxId;
                var notificationModalInstance = $uibModal.open({
                     animation: true,
                     ariaLabelledBy: 'modal-title',
                     ariaDescribedBy: 'modal-body',
-                    templateUrl:'cases/notificationTemplate.html',
+                    templateUrl:'common/notificationTemplate.html',
                     backdrop: true,
-                    controller: NotificationModalCtrl,
+                    controller: 'EmailNotificationModalCtrl',
                     scope: $scope
 
                 });
@@ -199,50 +199,7 @@
 
             };
 
-            var NotificationModalCtrl = function($scope, $uibModalInstance, $rootScope) {
-                var loggedInUser = $rootScope.currentlyLoggedInUser;
-                $scope.noneGtasUser = {};
-                $scope.notesForEmailNotification='';
-                var setUserData = function (data) {
-                    $scope.allUsers= data;
-                    $scope.allUsers.forEach(function(user) {
-                        user.selected = false;
-                    })
-                };
-                userService.getAllUsers().then(setUserData);
-
-                $scope.submit = function () {
-                    $scope.selectedEmails = [];
-                    $scope.allUsers.forEach(function(user){
-                        if (user.selected && user.email != null) {
-                            $scope.selectedEmails.push(user.email);
-                        }
-                    });
-                    if ($scope.noneGtasUser.email != null) {
-                        $scope.selectedEmails.push($scope.noneGtasUser.email);
-                    }
-                    
-                    if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
-                        caseDispositionService.notify($scope.selectedEmails, 
-                            $scope.notificationPaxId, 
-                            $scope.notesForEmailNotification);
-                    }
-
-                    $uibModalInstance.dismiss('cancel');
-
-                }
-
-                $scope.cancel = function () {
-                    $uibModalInstance.dismiss('cancel');
-                };
-
-                $scope.toggleUser = function () {
-                    angular.forEach($scope.allUsers, function(user) {
-                        user.selected = event.target.checked;
-                    })
-                }
-
-            };
+            
 
             $scope.review = function(row) {
                 const pax = row.entity;

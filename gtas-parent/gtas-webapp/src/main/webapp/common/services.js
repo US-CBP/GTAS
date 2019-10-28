@@ -33,6 +33,22 @@
                     url: GET_NOTIFICATION_HITS
                 });
                 return (request.then(handleSuccess, handleError));
+            },
+            notifyByEmail: function(to, paxId, note) {
+              const dfq = $q.defer();
+              dfq.resolve(
+                $http({
+                  method: 'post',
+                  url: "/gtas/notify",
+                  params: {
+                    to: to,
+                    paxId, paxId,
+                    note, note
+                  }
+                })
+              )
+              
+              return dfq.promise;
             }
         }
       })
