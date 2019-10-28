@@ -1010,6 +1010,9 @@
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
                     </button>
+                    <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning">
+                        &nbsp;{{'btn.notify' | translate}}
+                    </button>
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-info" ng-click="review()">
                         &nbsp;{{'btn.reviewed' | translate}}
                     </button>

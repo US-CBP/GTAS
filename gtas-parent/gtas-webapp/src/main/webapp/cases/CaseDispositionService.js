@@ -379,7 +379,7 @@
                 return currentServerTimeMillis;
              }
 
-             function notify(to, paxId, note, hitViewStatus) {
+             function notify(to, paxId, note) {
                 
                  const dfq = $q.defer();
                  dfq.resolve(
@@ -389,8 +389,7 @@
                          params: {
                              to: to,
                              paxId: paxId,
-                             note: note, 
-                             hitViewStatus: hitViewStatus
+                             note: note
                          }
                      })
                  );

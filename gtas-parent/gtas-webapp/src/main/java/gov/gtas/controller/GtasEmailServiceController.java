@@ -21,10 +21,10 @@ public class GtasEmailServiceController {
 	UserRepository userRepository;
 
 	@RequestMapping(value = "/notify", method = RequestMethod.POST)
-	public void sendEmail(@RequestParam String [] to, @RequestParam String paxId, @RequestParam String note, @RequestParam String hitViewStatus) {
+	public void sendEmail(@RequestParam String [] to, @RequestParam String paxId, @RequestParam String note) {
 		String userId = GtasSecurityUtils.fetchLoggedInUserId();
 		User loggedInUser = userRepository.userAndGroups(userId).orElseThrow(RuntimeException::new);
-		emailService.send(to, Long.parseLong(paxId), note, hitViewStatus, loggedInUser);
+		emailService.send(to, Long.parseLong(paxId), note, loggedInUser);
 
 	}
 

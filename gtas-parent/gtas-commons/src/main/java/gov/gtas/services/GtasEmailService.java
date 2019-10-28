@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import gov.gtas.model.Document;
 import gov.gtas.model.Flight;
 import gov.gtas.model.HitDetail;
+import gov.gtas.model.HitViewStatus;
 import gov.gtas.model.Passenger;
 import gov.gtas.model.User;
 
@@ -39,18 +40,22 @@ public class GtasEmailService {
 
 	@Value("${path-to-attachment}")
 	private String pathToAttachment;
+	
+	@Value("${login.page.url}")
+	private String urlToLoginPage;
 
 	@Transactional
-	public void send(String[] to, Long paxId, String note, String hitViewStatus, User sentBy) {
+	public void send(String[] to, Long paxId, String note, User sentBy) {
 		Passenger passenger = passengerService.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
 
 		String subject = createEmailSubject(passenger);
-		String body = createEmailBodyText(passenger, note, hitViewStatus);
+		String body = createEmailBodyText(passenger, note);
 		String senderInfo = sentBy.getFirstName() + 
 				" " + sentBy.getLastName() + 
 				" (" + sentBy.getUserId() + ")";
 
 		body += simpleHtmlFormater("Sent By", "<font color=red>" + senderInfo + "</font>");
+		body += getGTASLoginUrl();
 
 		if (pathToAttachment == null || pathToAttachment.isEmpty()) {
 			sendSimpleEmail(from, to, subject, body);
@@ -98,9 +103,8 @@ public class GtasEmailService {
 		}
 	}
 
-	private String createEmailBodyText(Passenger passenger, String note, String hitViewStatus) {
+	private String createEmailBodyText(Passenger passenger, String note) {
 		return  simpleHtmlFormater("<font color=red>NOTES</font>", "<i>" + note + "</i>") + "<br>"
-				+ simpleHtmlFormater("Hit Status", "<font color=red>" + hitViewStatus + "</font>") 
 				+ getPassengerInfo(passenger)
 				+ getFlightInfo(passenger.getFlight())
 				+ getHitCategoryInfo(passenger.getHitDetails());
@@ -135,6 +139,7 @@ public class GtasEmailService {
 				+ timeRemaining;
 	}
 	
+
 	private String getHitCategoryInfo(Set<HitDetail> hitDetails) {
 		
 		StringBuilder builder = new StringBuilder();
@@ -144,15 +149,16 @@ public class GtasEmailService {
 		}
 		else {
 			builder.append("<table border ='1'>");
-			builder.append(createHtmlTableRow(new String[]{"Severity", "Category", "Rule", "Type"}, true));
+			builder.append(createHtmlTableRow(new String[]{"Severity", "Category", "Rule", "Type", "Status"}, true));
 
 			for (HitDetail hd : hitDetails) {
 				String severity = hd.getHitMaker().getHitCategory().getSeverity().toString();
 				String category = hd.getHitMaker().getHitCategory().getName();
 				String title = hd.getTitle();
 				String type = hd.getHitType();
+				String status = hd.getHitViewStatus().toArray()[0].toString();
 
-				builder.append(createHtmlTableRow(new String[] {severity, category, title, type}, false));
+				builder.append(createHtmlTableRow(new String[] {severity, category, title, type, status}, false));
 			}
 			builder.append("</table><br>");
 		}
@@ -217,6 +223,10 @@ public class GtasEmailService {
 		result += "</tr>";
 		
 		return result;
+	}
+	
+	private String getGTASLoginUrl() {
+		return "<a href=" + urlToLoginPage + ">GTAS Login</a>";
 	}
 	
 

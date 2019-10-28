@@ -180,8 +180,8 @@
                     $scope.casesDispGrid.data.splice(index, 1);
                 }
             };
-            $scope.notify = function(row) {
-                $scope.notificationData = row;
+            $scope.notify = function(paxId) {
+                $scope.notificationPaxId = paxId;
                var notificationModalInstance = $uibModal.open({
                     animation: true,
                     ariaLabelledBy: 'modal-title',
@@ -224,9 +224,8 @@
                     
                     if ($scope.selectedEmails.length > 0)  {//if selectedEmail is not empty send notification
                         caseDispositionService.notify($scope.selectedEmails, 
-                            $scope.notificationData.entity.paxId, 
-                            $scope.notesForEmailNotification, 
-                            $scope.notificationData.entity.status);
+                            $scope.notificationPaxId, 
+                            $scope.notesForEmailNotification);
                     }
 
                     $uibModalInstance.dismiss('cancel');
@@ -290,65 +289,11 @@
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    } else if (answer === 'notify') {
+                        $scope.notify(pax.paxId);
                     }
                 });;
             };
-
-            $scope.review = function(row) {
-                const pax = row.entity;
-                $scope.paxId = pax.paxId;
-                $scope.flightId = pax.flightId;
-                $mdDialog.show({
-                    controller: 'PassengerDetailCtrl',
-                    templateUrl: 'pax/pax.detail.comment.html',
-                    clickOutsideToClose: true,
-                    fullscreen: true,
-                    resolve: {
-                        passenger: function (paxDetailService) {
-                            return paxDetailService.getPaxDetail($scope.paxId, $scope.flightId);
-                        }
-                        ,
-                        user: function (userService) {
-                            return userService.getUserData();
-                        }
-                        ,
-                        eventNotes: function(paxNotesService){
-                            return paxNotesService.getEventNotes($scope.paxId);
-                        },
-                        noteTypesList: function(paxNotesService){
-                            return paxNotesService.getNoteTypes();
-                        }
-                        ,
-                        ruleCats: function (caseDispositionService) {
-                            return caseDispositionService.getRuleCats();
-                        }
-                        ,
-                        ruleHits: function (paxService) {
-                            return paxService.getRuleHitsByFlightAndPax($scope.paxId, $scope.paxId);
-                        }
-                        ,
-                        watchlistLinks: function (paxDetailService) {
-                            return paxDetailService.getPaxWatchlistLink($scope.paxId)
-                        },
-                        disableLinks: function() {
-                            return true;
-                        },
-                        eventNotes: function(paxNotesService){
-                        	return paxNotesService.getEventNotes($scope.paxId);
-                        },
-                        noteTypesList: function(paxNotesService){
-                            return paxNotesService.getNoteTypes();
-                        }
-                    }
-                }).then(function(answer) {
-                    if (answer === 'reviewed') {
-                        $scope.deleteRow(row);
-                    } else if (answer === 'fullPax') {
-                        window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
-                    }
-                });;
-            };
-
 
             $scope.showPassenger = function (row) {
                 const pax = row.entity;
@@ -394,7 +339,10 @@
                         $scope.deleteRow(row);
                     } else if (answer === 'fullPax') {
                         window.location.href = APP_CONSTANTS.HOME_PAGE + "#/paxdetail/" + pax.paxId + "/" + pax.flightId;
+                    } else if (answer === 'notify') {
+                        $scope.notify(pax.paxId);
                     }
+
                 });
             };
             $scope.casesDispGrid = {
@@ -515,7 +463,7 @@
                     displayName: $translate.instant('case.action'),
                     cellTemplate: '<button ng-if="row.entity.status === \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.reOpen(row)" style="margin:5px;">Re-Open</button>' +
                         '<button ng-if="row.entity.status !== \'Reviewed\'" class="btn btn-info" ng-click="grid.appScope.review(row)" style="margin:5px;">Review</button>' +
-                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
+                        '<button ng-if="grid.appScope.isEmailEnabled()" class="btn btn-warning" ng-click="grid.appScope.notify(row.entity.paxId)" style="margin:5px;"><span class="glyphicon glyphicon-envelope" area-hidden="true"></span> Notify</button>'
                 }
                 
 
