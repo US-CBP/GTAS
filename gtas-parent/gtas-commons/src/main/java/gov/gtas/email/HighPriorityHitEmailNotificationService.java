@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 public class HighPriorityHitEmailNotificationService {
@@ -54,8 +55,8 @@ public class HighPriorityHitEmailNotificationService {
         List<EmailDTO> emailDTOs = new ArrayList<>();
         passengers = passengerService.getPassengersForEmailMatching(passengers);
 
-        Map<String, List<HitEmailDTO>> emailRecipientToDTOs = generateEmailRecipientDTOMap(passengers);
-        for(Map.Entry<String, List<HitEmailDTO>> emailToDto: emailRecipientToDTOs.entrySet()) {
+        Map<String, Set<HitEmailDTO>> emailRecipientToDTOs = generateEmailRecipientDTOMap(passengers);
+        for(Map.Entry<String, Set<HitEmailDTO>> emailToDto: emailRecipientToDTOs.entrySet()) {
             EmailDTO emailDTO = new EmailDTO();
 
             emailDTO.setTo(new String[] { emailToDto.getKey() });
@@ -70,14 +71,14 @@ public class HighPriorityHitEmailNotificationService {
         return emailDTOs;
     }
 
-    public Map<String, List<HitEmailDTO>> generateEmailRecipientDTOMap(Set<Passenger> passengers) {
-        Map<String, List<HitEmailDTO>> emailRecipientToDTOs =
+    public Map<String, Set<HitEmailDTO>> generateEmailRecipientDTOMap(Set<Passenger> passengers) {
+        Map<String, Set<HitEmailDTO>> emailRecipientToDTOs =
                 passengers.stream()
                         .filter(this::hasHighPriorityHitCategory)
                         .flatMap(passenger ->
                                 generateRecipientEmailList(passenger).stream()
                                         .map(email -> new HashMap.SimpleEntry<>(email, generateHitEmailDTO(passenger))))
-                        .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toList())));
+                        .collect(groupingBy(Map.Entry::getKey, mapping(Map.Entry::getValue, toSet())));
 
         return emailRecipientToDTOs;
 

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class EmailTemplateLoader {
@@ -20,7 +21,7 @@ public class EmailTemplateLoader {
     @Resource
     private Configuration configuration;
 
-    public String generateHtmlString(String templateName, List<HitEmailDTO> hitEmailDTOs) throws IOException, TemplateException {
+    public String generateHtmlString(String templateName, Set<HitEmailDTO> hitEmailDTOs) throws IOException, TemplateException {
         Template template = configuration.getTemplate(templateName);
         Map<String, Object> model = new HashMap<>();
         model.put("hits", hitEmailDTOs);

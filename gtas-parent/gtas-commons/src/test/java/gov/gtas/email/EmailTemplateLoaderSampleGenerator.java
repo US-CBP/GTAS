@@ -29,7 +29,7 @@ public class EmailTemplateLoaderSampleGenerator {
         HitEmailDTO hitEmailDTO = generateSampleHitEmailDTO();
 
         String templateName = "highProfileHitNotification.ftl";
-        String htmlContent = emailTemplateLoader.generateHtmlString(templateName, Collections.singletonList(hitEmailDTO));
+        String htmlContent = emailTemplateLoader.generateHtmlString(templateName, Collections.singleton(hitEmailDTO));
         writeToFile(htmlContent);
     }
 
