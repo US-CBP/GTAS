@@ -170,7 +170,7 @@ public class RuleRunnerThread implements Callable<Boolean> {
 		if (emailHitNotificationEnabled) {
 			try {
 				notificationSerivce.sendAutomatedHitEmailNotifications(passengersWithNewHits);
-			} catch (IOException | TemplateException | MessagingException ignored) {
+			} catch (IOException | TemplateException ignored) {
 				//TODO: Add error handling. Do not propagate error up as partial matching still needs to happen.
 				logger.error("There was an error within the email notification sender! ", ignored);
 			}
