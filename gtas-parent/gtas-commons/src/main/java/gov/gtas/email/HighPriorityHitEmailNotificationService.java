@@ -32,14 +32,13 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 @Service
 public class HighPriorityHitEmailNotificationService {
 
     private static final String HIGH_PROFILE_NOTIFICATION_FTL = "highProfileHitNotification.ftl";
-    private static final String SUBJECT = "(GTAS): Hit Status Notification";
+    private static final String SUBJECT = "GTAS Automated Email Notification";
 
     @Resource
     private EmailTemplateLoader emailTemplateLoader;
@@ -102,6 +101,7 @@ public class HighPriorityHitEmailNotificationService {
 
     public HitEmailDTO generateHitEmailDTO(Passenger passenger) {
         HitEmailDTO hitEmailDto = new HitEmailDTO();
+        hitEmailDto.setPassengerUUID(passenger.getUuid());
 
         PassengerDetails passengerDetails = passenger.getPassengerDetails();
         hitEmailDto.setFirstName(passengerDetails.getFirstName());
