@@ -89,4 +89,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long>, Pas
 	@Query("select p from Passenger p inner join fetch p.flight inner join fetch p.documents inner join fetch p.hitDetails hd inner join fetch"
 			+ " hd.hitMaker hm inner join fetch  hm.hitCategory hc inner join fetch hc.userGroups inner join fetch p.hits where p.id in :paxIds")
 	Set<Passenger> getPassengersForVettingPage(@Param("paxIds") Set<Long> paxIds);
+
+	@Query("SELECT p from Passenger p where p.id in :paxIds")
+    Set<Passenger> getPassengersForEmailDto(@Param("paxIds") Set<Long> paxIds);
 }

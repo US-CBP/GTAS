@@ -15,7 +15,6 @@ import javax.annotation.Resource;
 
 import gov.gtas.enumtype.HitTypeEnum;
 import gov.gtas.model.*;
-import gov.gtas.model.dto.PassengerNoteDto;
 import gov.gtas.security.service.GtasSecurityUtils;
 import gov.gtas.services.*;
 import gov.gtas.services.dto.PassengerNoteSetDto;
@@ -27,7 +26,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -47,7 +45,6 @@ import gov.gtas.repository.SeatRepository;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.services.matching.PaxWatchlistLinkVo;
 import gov.gtas.services.search.FlightPassengerVo;
-import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.UserService;
 import gov.gtas.util.DateCalendarUtils;
 import gov.gtas.util.LobUtils;
@@ -408,7 +405,7 @@ public class PassengerDetailsController {
 	@GetMapping(value = "/passengers/passenger/notes")
 	public PassengerNoteSetDto getAllPassengerHistoricalNotes(@RequestParam Long paxId, @RequestParam Boolean historicalNotes) {
 		if (historicalNotes != null && historicalNotes) {
-			return paxNoteService.getAllHistoricalNotes(paxId);
+			return paxNoteService.getPrevious10PassengerNotes(paxId);
 		} else {
 			return paxNoteService.getAllEventNotes(paxId);
 		}

@@ -6,7 +6,7 @@
 app.controller('UserCtrl', function ($scope, $stateParams, userService, $mdToast, $location, $timeout, $rootScope) {
     'use strict';
     var backToAdmin = function () { $location.path('/admin'); },
-        newUser = { password: '', userId: '', firstName: '', lastName: '', active: 1},
+        newUser = { password: '', userId: '', firstName: '', lastName: '', email: '', emailEnabled: false, highPriorityEmail: false, active: 1},
         adminIndex,
         ADMIN = 'Admin',
         setUser = function () {

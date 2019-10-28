@@ -13,7 +13,7 @@ public interface PassengerNoteService {
 	PassengerNoteSetDto getAllEventNotes(Long paxId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
-	PassengerNoteSetDto getAllHistoricalNotes(Long paxId);
+	PassengerNoteSetDto getPrevious10PassengerNotes(Long paxId);
 
 	@PreAuthorize(PRIVILEGES_ADMIN_AND_VIEW_PASSENGER)
 	void saveNote(NoteVo note, String userId);

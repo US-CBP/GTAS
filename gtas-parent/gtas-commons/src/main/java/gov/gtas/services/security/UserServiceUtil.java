@@ -34,24 +34,20 @@ public class UserServiceUtil {
 
 		Stream<User> aStream = StreamSupport.stream(userEntities.spliterator(), false);
 
-		List<UserData> users = (List<UserData>) aStream.map(new Function<User, UserData>() {
+		List<UserData> users = aStream.map(user -> {
 
-			@Override
-			public UserData apply(User user) {
+			Set<RoleData> roles = user.getRoles().stream().map(new Function<Role, RoleData>() {
 
-				Set<RoleData> roles = user.getRoles().stream().map(new Function<Role, RoleData>() {
+				@Override
+				public RoleData apply(Role role) {
+					return new RoleData(role.getRoleId(), role.getRoleDescription());
+				}
 
-					@Override
-					public RoleData apply(Role role) {
-						return new RoleData(role.getRoleId(), role.getRoleDescription());
-					}
-
-				}).collect(Collectors.toSet());
-				UserData userData = new UserData(user.getUserId().toUpperCase(), user.getPassword(), user.getFirstName(),
-						user.getLastName(), user.getActive(), roles);
-				userData.setEmail(user.getEmail());
-				return userData;
-			}
+			}).collect(Collectors.toSet());
+			UserData userData = new UserData(user.getUserId().toUpperCase(), user.getPassword(), user.getFirstName(),
+					user.getLastName(), user.getActive(), roles, user.getEmail(), user.getEmailEnabled(), user.getHighPriorityHitsEmailNotification());
+			userData.setEmail(user.getEmail());
+			return userData;
 		}).collect(Collectors.toList());
 		aStream.close();
 		return users;
@@ -68,7 +64,7 @@ public class UserServiceUtil {
 		Set<RoleData> roles = entity.getRoles().stream()
 				.map(role -> new RoleData(role.getRoleId(), role.getRoleDescription())).collect(Collectors.toSet());
 		return new UserData(entity.getUserId().toUpperCase(), entity.getPassword(), entity.getFirstName(), entity.getLastName(),
-				entity.getActive(), roles);
+				entity.getActive(), roles, entity.getEmail(), entity.getEmailEnabled(), entity.getHighPriorityHitsEmailNotification());
 	}
 
 	/**
@@ -83,6 +79,6 @@ public class UserServiceUtil {
 		Set<Role> roles = userData.getRoles().stream().map(roleData -> new Role(roleData.getRoleId(), roleData.getRoleDescription())).collect(Collectors.toSet());
 
 		return new User(userData.getUserId().toUpperCase(), userData.getPassword(), userData.getFirstName(), userData.getLastName(),
-				userData.getActive(), roles);
+				userData.getActive(), roles, userData.getEmail(), userData.getEmailEnabled(), userData.getHighPriorityEmail());
 	}
 }
