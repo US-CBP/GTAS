@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import freemarker.template.TemplateException;
@@ -121,11 +120,15 @@ public class NotificatonServiceImpl implements NotificatonService {
 
 	@Override
 	@Transactional
-	public void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException, MessagingException {
+	public void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException {
 		List<EmailDTO> emailDTOS = highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(passengers);
 
 		for(EmailDTO emailDTO: emailDTOS) {
-			emailService.sendHTMLEmail(emailDTO);
+			try {
+				emailService.sendHTMLEmail(emailDTO);
+			} catch(Exception ex) {
+				logger.warn(String.format("Automated hit email notification failed for email: %s, with the exception: %s", emailDTO.getTo()[0], ex));
+			}
 			logger.info("Sent Email Notification to " + Arrays.toString(emailDTO.getTo()));
 		}
 	}
