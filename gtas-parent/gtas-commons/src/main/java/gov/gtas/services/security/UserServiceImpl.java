@@ -198,6 +198,9 @@ public class UserServiceImpl implements UserService {
 		if (entity != null) {
 			entity.setFirstName(mappedEnity.getFirstName());
 			entity.setLastName(mappedEnity.getLastName());
+			entity.setEmail(mappedEnity.getEmail());
+			entity.setEmailEnabled(mappedEnity.getEmailEnabled());
+			entity.setHighPriorityHitsEmailNotification(mappedEnity.getHighPriorityHitsEmailNotification());
 
 			if (data.getPassword() != null && !data.getPassword().isEmpty()) {
 				if (!BCRYPT_PATTERN.matcher(mappedEnity.getPassword()).matches()) {

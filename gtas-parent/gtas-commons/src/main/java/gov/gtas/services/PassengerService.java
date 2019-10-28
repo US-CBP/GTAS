@@ -63,4 +63,6 @@ public interface PassengerService {
 	Map<Long, Set<Document>> getDocumentMappedToPassengerIds(Set<Long> passengerIds);
 
 	Set<Passenger> getPassengersWithHitDetails(Set<Long> passengerIds);
+
+    Set<Passenger> getPassengersForEmailMatching(Set<Passenger> passengers);
 }

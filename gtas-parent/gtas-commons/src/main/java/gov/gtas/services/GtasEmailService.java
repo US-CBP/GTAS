@@ -2,12 +2,14 @@ package gov.gtas.services;
 
 import java.io.File;
 import java.util.Date;
+import java.util.MissingFormatArgumentException;
 import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
+import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,15 @@ public class GtasEmailService {
 	@Value("${path-to-attachment}")
 	private String pathToAttachment;
 
+	public void sendHTMLEmail(EmailDTO email) throws MessagingException {
+
+		String [] to =  email.getTo();
+		String subject = email.getSubject();
+		String content = email.getBody();
+
+		sendHTMLEmail(from, to, subject, content);
+	}
+
 	@Transactional
 	public void send(String[] to, Long paxId, String note, String hitViewStatus) {
 		Passenger passenger = passengerService.findByIdWithFlightPaxAndDocumentsAndHitDetails(paxId);
@@ -53,6 +64,18 @@ public class GtasEmailService {
 			sendEmailWithAttachment(from, to, subject, body, pathToAttachment);
 		}
 	}
+
+	private void sendHTMLEmail(String from, String[] to, String subject, String htmlContent) throws MessagingException {
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message, true);
+		helper.setFrom(from);
+		helper.setSubject(subject);
+		helper.setTo(to);
+		helper.setText(htmlContent, true);
+
+		javaMailSender.send(message);
+	}
+
 
 	private void sendSimpleEmail(String from, String[] to, String subject, String body) {
 		SimpleMailMessage message = new SimpleMailMessage();
