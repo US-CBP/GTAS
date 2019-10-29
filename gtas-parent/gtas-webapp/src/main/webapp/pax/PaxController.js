@@ -852,6 +852,13 @@
       );
     };
 
+    $scope.enableEmailNotification =  configService.enableEmailNotificationService().then(function(value) {
+      $scope.enableEmailNotification = value.data;
+    });
+    $scope.isEmailEnabled = function() {
+      return $scope.enableEmailNotification === 'true';
+    };
+
     $scope.saveWatchListMatchByPaxId = function() {
       paxDetailService
         .savePaxWatchlistLink($scope.passenger.paxId)
