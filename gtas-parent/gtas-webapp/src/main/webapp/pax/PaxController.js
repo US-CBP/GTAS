@@ -1299,18 +1299,6 @@
               field: 'hitsDetailsList[0]',
               cellFilter: 'hitsConditionDisplayFilter'
           }],
-          setSubGridOptions = function (data, appScopeProvider) {
-              data.passengers.forEach(function (entity_row) {
-                  if (!entity_row.flightId) {
-                      entity_row.flightId = $stateParams.id;
-                  }
-                  entity_row.subGridOptions = {
-                      appScopeProvider: appScopeProvider,
-                      columnDefs: ruleGridColumns,
-                      data: []
-                  };
-              });
-          },
           //TODO There is probably a better location to put this
           //Parses Passengers object for front-end in flightpax
           paxPassParser = function(passengers){
@@ -1344,7 +1332,6 @@
           },
           setPassengersGrid = function (grid, response) {
               var data = stateName === 'queryPassengers' ? response.data.result : response.data;
-              setSubGridOptions(data, $scope);
               grid.totalItems = data.totalPassengers === -1 ? 0 : data.totalPassengers;
               grid.data = data.passengers;
               //Add specific passenger info to scope for paxDetail
@@ -1457,22 +1444,12 @@
       exporterCsvFilename: 'PassengerGrid.csv',
       exporterExcelFilename: 'PassengerGrid.xlsx',
       exporterExcelSheetName: 'Data',
-      enableExpandableRowHeader: false,
 
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
       exporterFieldCallback: function ( grid, row, col, value ){
         return fixGridData (grid, row, col, value);
       },
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;
-
-          gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-              if (row.isExpanded) {
-                  paxService.getRuleHits(row.entity.id).then(function (data) {
-                      row.entity.subGridOptions.data = data;
-                  });
-              }
-          });
       }
   };
 
@@ -1502,7 +1479,6 @@
       multiSelect: false,
       enableExpandableRowHeader: false,
       minRowsToShow: 10,
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
       exporterFieldCallback: function ( grid, row, col, value ){
         return fixGridData (grid, row, col, value);
       },
@@ -1515,14 +1491,6 @@
           pageSize
         ) {
           $scope.model.pageSize = pageSize;
-        });
-
-        gridApi.expandable.on.rowExpandedStateChanged($scope, function(row) {
-          if (row.isExpanded) {
-            paxService.getRuleHits(row.entity.id).then(function(data) {
-              row.entity.subGridOptions.data = data;
-            });
-          }
         });
       }
     };

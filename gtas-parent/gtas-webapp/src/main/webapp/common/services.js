@@ -526,9 +526,6 @@
                 useExternalSorting: true,
                 useExternalFiltering: true,
                 exporterMenuPdf: false,
-
-                expandableRowTemplate:
-                  '<div ui-grid="row.entity.subGridOptions"></div>'
               },
               query: $.extend({}, defaultOptions, {
                 enableVerticalScrollbar: 2
