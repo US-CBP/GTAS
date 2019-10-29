@@ -10,6 +10,8 @@ import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
 import gov.gtas.services.dto.EmailDTO;
+import gov.gtas.vo.passenger.CountDownVo;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +44,13 @@ public class GtasEmailService {
 
 	@Value("${path-to-attachment}")
 	private String pathToAttachment;
-	
+
 	@Value("${login.page.url}")
 	private String urlToLoginPage;
 
 	public void sendHTMLEmail(EmailDTO email) throws MessagingException {
 
-		String [] to =  email.getTo();
+		String[] to = email.getTo();
 		String subject = email.getSubject();
 		String content = email.getBody();
 
@@ -61,9 +63,7 @@ public class GtasEmailService {
 
 		String subject = createEmailSubject(passenger);
 		String body = createEmailBodyText(passenger, note);
-		String senderInfo = sentBy.getFirstName() + 
-				" " + sentBy.getLastName() + 
-				" (" + sentBy.getUserId() + ")";
+		String senderInfo = sentBy.getFirstName() + " " + sentBy.getLastName() + " (" + sentBy.getUserId() + ")";
 
 		body += simpleHtmlFormater("Sent By", "<font color=red>" + senderInfo + "</font>");
 		body += getGTASLoginUrl();
@@ -85,7 +85,6 @@ public class GtasEmailService {
 
 		javaMailSender.send(message);
 	}
-
 
 	private void sendSimpleEmail(String from, String[] to, String subject, String body) {
 		try {
@@ -127,130 +126,113 @@ public class GtasEmailService {
 	}
 
 	private String createEmailBodyText(Passenger passenger, String note) {
-		return  simpleHtmlFormater("<font color=red>NOTES</font>", "<i>" + note + "</i>") + "<br>"
-				+ getPassengerInfo(passenger)
-				+ getFlightInfo(passenger.getFlight())
+		return simpleHtmlFormater("<font color=red>NOTES</font>", "<i>" + note + "</i>") + "<br>"
+				+ getPassengerInfo(passenger) + getFlightInfo(passenger.getFlight())
 				+ getHitCategoryInfo(passenger.getHitDetails());
-							
 
 	}
-	
+
 	private String getPassengerInfo(Passenger passenger) {
-		return  simpleHtmlFormater("First Name", passenger.getPassengerDetails().getFirstName())
+		return simpleHtmlFormater("First Name", passenger.getPassengerDetails().getFirstName())
 				+ simpleHtmlFormater("Last Name", passenger.getPassengerDetails().getLastName())
 				+ simpleHtmlFormater("DOB", passenger.getPassengerDetails().getDob().toString())
 				+ simpleHtmlFormater("Gender", passenger.getPassengerDetails().getGender())
 				+ getDocumentInfo(passenger.getDocuments());
 	}
-	
+
 	private String getFlightInfo(Flight flight) {
-		Date countDownToDate = flight.getFlightCountDownView().getCountDownTimer();	
-		
+		Date countDownToDate = flight.getFlightCountDownView().getCountDownTimer();
+		CountDownCalculator countDownCalculator = new CountDownCalculator();
+		CountDownVo countDownVo = countDownCalculator.getCountDownFromDate(countDownToDate, 30, 30);
+
 		String timeRemaining = "";
-		
+
 		if ("I".equals(flight.getDirection())) {
-			timeRemaining = simpleHtmlFormater("Time Remaining before Arrival", getTimeRemaining(countDownToDate));
+			timeRemaining = simpleHtmlFormater("Time Remaining before Arrival", countDownVo.getCountDownTimer());
+		} else {
+			timeRemaining = simpleHtmlFormater("Time Remaining before Departure", countDownVo.getCountDownTimer());
 		}
-		else {
-			timeRemaining = simpleHtmlFormater("Time Remaining before Departure", getTimeRemaining(countDownToDate));
-		}
-		
-		return  simpleHtmlFormater("Flight Number", flight.getFlightNumber()) 
+
+		return simpleHtmlFormater("Flight Number", flight.getFlightNumber())
 				+ simpleHtmlFormater("Flight Origin", flight.getOrigin())
 				+ simpleHtmlFormater("Flight Destination", flight.getDestination())
-				+ simpleHtmlFormater("Carrier", flight.getCarrier())
-				+ timeRemaining;
+				+ simpleHtmlFormater("Carrier", flight.getCarrier()) + timeRemaining;
 	}
-	
 
 	private String getHitCategoryInfo(Set<HitDetail> hitDetails) {
-		
+
 		StringBuilder builder = new StringBuilder();
 		builder.append("<b>Hit Details: </b><br>");
-		if (hitDetails == null || hitDetails.size() == 1) {
+		if (hitDetails == null || hitDetails.size() == 0) {
 			builder.append("<br><font color=red>There is no hit related to this passenger!</font><br>");
-		}
-		else {
+		} else {
 			builder.append("<table border ='1'>");
-			builder.append(createHtmlTableRow(new String[]{"Severity", "Category", "Rule", "Type", "Status"}, true));
+			builder.append(createHtmlTableRow(new String[] { "Severity", "Category", "Rule", "Type", "Status" }, true));
 
 			for (HitDetail hd : hitDetails) {
 				String severity = hd.getHitMaker().getHitCategory().getSeverity().toString();
 				String category = hd.getHitMaker().getHitCategory().getName();
 				String title = hd.getTitle();
 				String type = hd.getHitType();
-				String status = hd.getHitViewStatus().toArray()[0].toString();
+				String status = "";
+				if (!hd.getHitViewStatus().isEmpty()) {
+					status = hd.getHitViewStatus().iterator().next().getHitViewStatusEnum().toString();
+				}
+				
 
-				builder.append(createHtmlTableRow(new String[] {severity, category, title, type, status}, false));
+				builder.append(createHtmlTableRow(new String[] { severity, category, title, type, status }, false));
 			}
 			builder.append("</table><br>");
 		}
 		return builder.toString();
-		
+
 	}
-	
+
 	private String getDocumentInfo(Set<Document> documents) {
 		StringBuilder builder = new StringBuilder();
 
 		if (documents == null || documents.size() == 0) {
 			builder.append("<br><font color=red>Passenger does not have documents! </font><br>");
-		}
-		else {
+		} else {
 			builder.append("<b>Documents:</b><br>");
 			builder.append("<table border ='1'>");
-			builder.append(createHtmlTableRow(new String[] {"Type", "Number"}, true));
+			builder.append(createHtmlTableRow(new String[] { "Type", "Number" }, true));
 
-			for(Document doc : documents) {
-				builder.append(createHtmlTableRow(new String[] {doc.getDocumentType(), doc.getDocumentNumber()}, false));
+			for (Document doc : documents) {
+				builder.append(
+						createHtmlTableRow(new String[] { doc.getDocumentType(), doc.getDocumentNumber() }, false));
 			}
 
 			builder.append("</table><br>");
 		}
 		return builder.toString();
 	}
-	
+
 	private String createEmailSubject(Passenger passenger) {
-		return "GTAS Passenger Hit Status Notification: " 
-				+ passenger.getPassengerDetails().getLastName().toUpperCase() + ", "
-				+ passenger.getPassengerDetails().getFirstName();
-			
-				
+		return "GTAS Passenger Notification: " + passenger.getPassengerDetails().getLastName().toUpperCase()
+				+ ", " + passenger.getPassengerDetails().getFirstName();
+
 	}
-	
-	private String getTimeRemaining(Date date) {
-		Date now = new Date();
-		Long timeRemainingInMilliSeconds = date.getTime() - now.getTime();
-		Long seconds = timeRemainingInMilliSeconds / 1000;
-		Long days = seconds / 86400;
-		seconds = seconds % 86400;
-		Long hours = seconds / 3600;
-		seconds = seconds % 3600;
-		Long minutes = seconds % 60;
-		
-		return Math.abs(days) + "d " + Math.abs(hours) + "h " + Math.abs(minutes) + "m";
-		
-	}
-	
+
 	private String simpleHtmlFormater(String label, String value) {
 		return "<b>" + label + ":  </b>" + value + "<br>";
 	}
-	
-	private String createHtmlTableRow(String [] data, boolean isHeader) {
+
+	private String createHtmlTableRow(String[] data, boolean isHeader) {
 		String result = "<tr>";
 		String openingTag = isHeader ? "<th>" : "<td>";
 		String closingTag = isHeader ? "</th>" : "</td>";
-		
+
 		for (int i = 0; i < data.length; i++) {
 			result += openingTag + data[i] + closingTag;
 		}
 		result += "</tr>";
-		
+
 		return result;
 	}
-	
+
 	private String getGTASLoginUrl() {
 		return "<a href=" + urlToLoginPage + ">GTAS Login</a>";
 	}
-	
 
 }
