@@ -42,11 +42,11 @@
                   url: "/gtas/notify",
                   params: {
                     to: to,
-                    paxId, paxId,
-                    note, note
+                    paxId: paxId,
+                    note: note
                   }
                 })
-              )
+              );
               
               return dfq.promise;
             }

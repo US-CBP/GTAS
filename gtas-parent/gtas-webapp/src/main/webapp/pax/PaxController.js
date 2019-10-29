@@ -1169,6 +1169,28 @@
       });
     };
 
+    $scope.saveNote = function(text){
+      //if wanted to save note from other place than normal comment section
+      if(text == null){
+        text = $scope.currentNoteText;
+      }
+      var element = document.querySelector("trix-editor");
+      var plainTextNote = element.editor.getDocument().toString();
+      var rtfNote = text.valueOf();
+
+      var note = {
+        plainTextNote:plainTextNote,
+        rtfNote:rtfNote,
+        passengerId:$scope.passenger.paxId,
+        noteType: $scope.currentNoteTypes
+      };
+      paxNotesService.saveNote(note).then(function(){
+        $scope.getEventNotes(); // reload current event notes after adding new one
+        $scope.getHistoricalNotes();
+      });
+      $scope.currentNoteText = "";
+      text = "";
+    };
 	$scope.getListOfNoteTypes = function (arrayOfNoteType) {
 	  return arrayOfNoteType.map(nType => nType.noteType).toString();
     };
