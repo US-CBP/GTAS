@@ -17,8 +17,8 @@ INSERT INTO `role` VALUES ('9', 'Manage Cases');
 -- Users
 -- ----------------------------
 -- password is 'password'
-INSERT INTO `user` VALUES ('GTAS',1,'Email', 'GTAS', 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
-INSERT INTO `user` VALUES ('ADMIN',1,'Email', 'Admin', 'Admin', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('GTAS', 1, 'Email', 'GTAS', false, false, 'Application User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
+INSERT INTO gtas.user (user_id, active, email, first_name, high_priority_hits_email, email_enabled, last_name, password) VALUES ('ADMIN', 1, 'Email', 'Admin', false, false, 'Admin User', '$2a$10$0rGc.QzA0MH7MM7OXqynJ.2Cnbdf9PiNk4ffi4ih6LSW3y21OkspG');
 
 -- ----------------------------
 -- Records of user_role
