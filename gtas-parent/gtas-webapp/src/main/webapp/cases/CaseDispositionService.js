@@ -379,23 +379,6 @@
                 return currentServerTimeMillis;
              }
 
-             function notify(to, paxId, note, hitViewStatus) {
-                
-                 const dfq = $q.defer();
-                 dfq.resolve(
-                     $http({
-                         method: 'post',
-                         url: "/gtas/notify",
-                         params: {
-                             to: to,
-                             paxId: paxId,
-                             note: note, 
-                             hitViewStatus: hitViewStatus
-                         }
-                     })
-                 );
-                 return dfq.promise;
-             }
             function getDefaultCats() {
                 let ruleList = [];
                 getRuleCats().then(function(result){
@@ -427,8 +410,7 @@
                 updateGeneralComments : updateGeneralComments,
                 getDefaultSort: getDefaultSort,
                 getDefaultTimeLeft: getDefaultTimeLeft,
-                getDefaultModel: getDefaultModel,
-                notify: notify
+                getDefaultModel: getDefaultModel
                 //getAppConfigAPISFlag: getAppConfigAPISFlag
             });
         })
