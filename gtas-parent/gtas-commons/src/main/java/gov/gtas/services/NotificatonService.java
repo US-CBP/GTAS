@@ -17,5 +17,5 @@ import javax.mail.MessagingException;
 public interface NotificatonService {
 
 	Set<String> sendHitNotifications(HitNotificationConfig config);
-	void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException, MessagingException;
+	void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException;
 }
