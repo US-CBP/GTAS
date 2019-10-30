@@ -174,9 +174,9 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     $scope.getToolbarText = function () {
         switch ($scope.buttonMode) {
             case 'query':
-                return $scope.mode === 'query' && $scope.ruleId !== null ? 'Update Query' : 'Save Query';
+                return $scope.mode === 'query' && $scope.ruleId !== null ? 'qry.updatequery' : 'qry.savequery';
             case 'rule':
-                return $scope.mode === 'rule' && ($scope.ruleId !== null && !$scope.isCopy) ? 'Update Rule' : 'Save Rule';
+                return $scope.mode === 'rule' && ($scope.ruleId !== null && !$scope.isCopy) ? 'qry.updaterule' : 'qry.saverule';
         }
     };
 
