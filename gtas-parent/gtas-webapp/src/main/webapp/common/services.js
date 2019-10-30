@@ -1710,6 +1710,31 @@
               enableEmailNotificationService: enableEmailNotificationService
           });
         })
+   .service("paxReportService", function($http, $q){
+
+        	const PAX_DETAIL_REPORT_URL = "/gtas/paxdetailreport";
+
+        	function getPaxDetailReport(paxId, flightId){
+        		var dfd = $q.defer();
+        		dfd.resolve($http({
+        			method: 'get',
+        			params: {
+        				paxId: paxId,
+        				flightId: flightId
+        			},
+        			url: PAX_DETAIL_REPORT_URL
+        
+                   
+        		}));
+        		return dfd.promise;
+        	}
+
+
+        return({
+        	
+        	getPaxDetailReport:getPaxDetailReport
+        });
+      })
         .service("paxNotesService", function($http, $q){
 
         	const PAX_URL = "/gtas/passengers/passenger";
