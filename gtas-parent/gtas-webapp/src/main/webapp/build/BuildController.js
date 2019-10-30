@@ -3,7 +3,7 @@
  *
  * Please see LICENSE.txt for details.
  */
-app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilderWidget, gridOptionsLookupService, jqueryQueryBuilderService, spinnerService, $mdSidenav, $stateParams, $interval, $timeout, $mdDialog, codeTooltipService) {
+app.controller('BuildController', function ($scope, $injector, $translate, jqueryQueryBuilderWidget, gridOptionsLookupService, jqueryQueryBuilderService, spinnerService, $mdSidenav, $stateParams, $interval, $timeout, $mdDialog, codeTooltipService) {
     'use strict';
     var todayDate = moment().toDate(),
         queryFlightsLink = document.querySelector('a[href="#/query/flights"]'),
@@ -174,9 +174,9 @@ app.controller('BuildController', function ($scope, $injector, jqueryQueryBuilde
     $scope.getToolbarText = function () {
         switch ($scope.buttonMode) {
             case 'query':
-                return $scope.mode === 'query' && $scope.ruleId !== null ? 'qry.updatequery' : 'qry.savequery';
+                return $scope.mode === 'query' && $scope.ruleId !== null ? $translate.instant('qry.updatequery') : $translate.instant('qry.savequery');
             case 'rule':
-                return $scope.mode === 'rule' && ($scope.ruleId !== null && !$scope.isCopy) ? 'qry.updaterule' : 'qry.saverule';
+                return $scope.mode === 'rule' && ($scope.ruleId !== null && !$scope.isCopy) ? $translate.instant('qry.updaterule') : $translate.instant('qry.saverule');
         }
     };
 
