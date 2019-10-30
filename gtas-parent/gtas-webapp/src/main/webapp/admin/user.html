@@ -17,15 +17,31 @@
                         <input ng-model="confirmUpdatedPassword" type="password" name="confirmUpdatedPassword"><br/>
                        
           </md-input-container>
-            
-            
-            
+
         </div>
         <div layout layout-sm="column">
             <md-input-container flex><label>{{'user.firstname' | translate}}</label> <input required ng-model="user.firstName" autocomplete="off" required style="width: 300px;">
             </md-input-container>
             <md-input-container flex><label>{{'user.lastname' | translate}}</label> <input required ng-model="user.lastName" required style="width: 300px;">
             </md-input-container>
+        </div>
+
+        <div layout="column">
+            <code style="font-weight: bold; font-size: 17px;">Email Settings</code>
+            <div layout layout-sm="column">
+                <md-input-container flex><label>Email Address</label> <input required ng-model="user.email" autocomplete="off" required style="width: 300px;">
+                </md-input-container>
+            </div>
+            <md-switch ng-model="user.emailEnabled" ng-true-value="true" ng-false-value="false"
+                       class="md-primary" aria-label="userEmail">
+                Enable User Email Notification
+                <p translate> {{ user.emailEnabled ? 'user.status.enabled' : 'user.status.disabled' }}</p>
+            </md-switch>
+            <md-switch ng-model="user.highPriorityEmail" ng-true-value="true" ng-false-value="false"
+                       class="md-primary" aria-label="userAutoEmail">
+                Automated Email Notification
+                <p translate> {{ user.highPriorityEmail ? 'user.status.enabled' : 'user.status.disabled' }}</p>
+            </md-switch>
         </div>
 
         <div layout="column">

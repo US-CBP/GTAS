@@ -6,7 +6,6 @@
 package gov.gtas.services;
 
 import gov.gtas.config.CachingConfig;
-import gov.gtas.config.CommonServicesConfig;
 import gov.gtas.config.TestCommonServicesConfig;
 import gov.gtas.services.security.RoleData;
 import gov.gtas.services.security.RoleService;
@@ -85,7 +84,7 @@ public class UserServiceIT {
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		logger.info(authRoles.toString());
-		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles, "", false, false);
 
 		UserData actualUser = null;
 		// Act
@@ -119,7 +118,7 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles,"", false, false);
 
 		UserData actualUser = null;
 		// Act
@@ -144,7 +143,7 @@ public class UserServiceIT {
 		Set<RoleData> authRoles = streamRoles.collect(Collectors.toSet());
 
 		logger.info(authRoles.toString());
-		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles, "", false, false);
 
 		try {
 			userService.create(expectedUser);
@@ -152,7 +151,7 @@ public class UserServiceIT {
 			logger.error("error!", e);
 		}
 		// update lastname
-		UserData expectedUserU = new UserData("iTest99", "password", "test", "100", 1, authRoles);
+		UserData expectedUserU = new UserData("iTest99", "password", "test", "100", 1, authRoles, "", false, false);
 
 		UserData actualUserU = null;
 		// Act
@@ -184,7 +183,7 @@ public class UserServiceIT {
 		int etaStart = -2;
 		int etaEnd = 2;
 
-		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles);
+		UserData expectedUser = new UserData("iTest99", "password", "test", "99", 1, authRoles, "", false, false);
 
 		// Act
 		try {
@@ -204,7 +203,7 @@ public class UserServiceIT {
 		etaEnd = 3;
 
 		logger.info(authRoles.toString());
-		UserData expectedUserU = new UserData("iTest99", "password", "test", "99", 1, authRolesU);
+		UserData expectedUserU = new UserData("iTest99", "password", "test", "99", 1, authRolesU, "", false, false);
 
 		UserData actualUserU = null;
 		// Act

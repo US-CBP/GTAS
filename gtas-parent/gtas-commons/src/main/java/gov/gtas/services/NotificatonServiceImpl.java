@@ -5,18 +5,18 @@
  */
 package gov.gtas.services;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import freemarker.template.TemplateException;
+import gov.gtas.email.HighPriorityHitEmailNotificationService;
 import gov.gtas.model.lookup.HitCategory;
+import gov.gtas.services.dto.EmailDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -51,10 +51,17 @@ public class NotificatonServiceImpl implements NotificatonService {
 	private String topicSubject;
 
 	private final HitCategoryService watchlistCatService;
+	private final GtasEmailService emailService;
+	private final HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
 
-	public NotificatonServiceImpl(SnsService snsService, HitCategoryService watchlistCatService) {
+	public NotificatonServiceImpl(SnsService snsService,
+								  HitCategoryService watchlistCatService,
+								  GtasEmailService emailService,
+								  HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService) {
 		this.snsService = snsService;
 		this.watchlistCatService = watchlistCatService;
+		this.emailService = emailService;
+		this.highPriorityHitEmailNotificationService = highPriorityHitEmailNotificationService;
 	}
 
 	/**
@@ -109,6 +116,21 @@ public class NotificatonServiceImpl implements NotificatonService {
 		}
 
 		return messageIds;
+	}
+
+	@Override
+	@Transactional
+	public void sendAutomatedHitEmailNotifications(Set<Passenger> passengers) throws IOException, TemplateException {
+		List<EmailDTO> emailDTOS = highPriorityHitEmailNotificationService.generateAutomatedHitEmailDTOs(passengers);
+
+		for(EmailDTO emailDTO: emailDTOS) {
+			try {
+				emailService.sendHTMLEmail(emailDTO);
+				logger.info("Sent Email Notification to " + Arrays.toString(emailDTO.getTo()));
+			} catch(Exception ex) {
+				logger.warn(String.format("Automated hit email notification failed for email: %s, with the exception: %s", emailDTO.getTo()[0], ex));
+			}
+		}
 	}
 
 	/**

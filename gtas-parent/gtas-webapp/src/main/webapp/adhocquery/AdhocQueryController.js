@@ -32,8 +32,6 @@ app.controller('AdhocQueryCtrl', function ($scope, $rootScope, $mdToast, $mdDial
       enableColumnMenus: false,
       multiSelect: false,
       minRowsToShow: 10,
-      enableExpandableRowHeader: false,
-      expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions"></div>',
 
       onRegisterApi: function (gridApi) {
           $scope.gridApi = gridApi;

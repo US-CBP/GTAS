@@ -14,6 +14,9 @@
     <!-- BEGIN SIDEBAR -->
     <div layout="row">
       <span flex></span>
+      <md-button ng-if="isEmailEnabled()" class="btn-warning"  ng-click="answer('notify')" >
+       Notify
+      </md-button>
       <md-button  class="btn-danger"  ng-click="addToWatchlist()" >
         Add to Watchlist
       </md-button>

@@ -145,7 +145,7 @@
                                         <h4 class="panel-heading h-label no-margin-top" >
 	                                        	<a class="h-label" role="button" data-toggle="collapse" data-parent="#accordion" href="{{passenger.id}}/{{passenger.flight.id}}/#collapseTwo"
 	                                        	aria-expanded="true" aria-controls="collapseTwo"><i class="fa fa-angle-right fa-fw"></i>
-	        									Complete Notes History
+                                                    Previous Notes History (Up to 10)
 	        									</a>
         								</h4>
         								<div id="collapseTwo" class="panel-collapse collapse">
@@ -1026,6 +1026,9 @@
                 <div class="flex justify-around action-buttons" ng-show="!disableLinks">
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-danger" ng-click="addToWatchlist() ">
                         &nbsp;{{'btn.addtowatchlist' | translate}}
+                    </button>
+                    <button ng-if="isEmailEnabled()" ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-warning" ng-click="notify()">
+                        &nbsp;{{'btn.notify' | translate}}
                     </button>
                     <button ng-disabled = "!userHasRole(4) && !userHasRole(1)" type="submit" class="btn btn-info" ng-click="review()">
                         &nbsp;{{'btn.reviewed' | translate}}

@@ -10,16 +10,26 @@ package gov.gtas.job.scheduler;
 
 import static gov.gtas.repository.AppConfigurationRepository.FUZZY_MATCHING;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
+import freemarker.template.TemplateException;
 import gov.gtas.aws.HitNotificationConfig;
-import gov.gtas.model.*;
+import gov.gtas.email.HighPriorityHitEmailNotificationService;
+import gov.gtas.model.HitDetail;
+import gov.gtas.model.MessageStatus;
+import gov.gtas.model.MessageStatusEnum;
+import gov.gtas.model.Passenger;
+import gov.gtas.services.AppConfigurationService;
+import gov.gtas.services.ErrorPersistenceService;
+import gov.gtas.services.NotificatonService;
 import gov.gtas.services.RuleHitPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,13 +38,12 @@ import gov.gtas.constant.RuleServiceConstants;
 import gov.gtas.error.ErrorDetailInfo;
 import gov.gtas.error.ErrorHandlerFactory;
 import gov.gtas.repository.AppConfigurationRepository;
-import gov.gtas.services.AppConfigurationService;
-import gov.gtas.services.ErrorPersistenceService;
-import gov.gtas.services.NotificatonService;
 import gov.gtas.services.matcher.MatchingService;
 import gov.gtas.svc.TargetingService;
 import gov.gtas.svc.util.RuleResultsWithMessageStatus;
 import gov.gtas.svc.util.TargetingResultUtils;
+
+import javax.mail.MessagingException;
 
 @Component
 @Scope("prototype")
@@ -54,13 +63,19 @@ public class RuleRunnerThread implements Callable<Boolean> {
 
 	private NotificatonService notificationSerivce;
 
+	private HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService;
+
+	@Value("${email.hit.notification.enabled}")
+	private Boolean emailHitNotificationEnabled;
+
 	public RuleRunnerThread(ErrorPersistenceService errorPersistenceService,
-			AppConfigurationService appConfigurationService, ApplicationContext applicationContext,
-			NotificatonService notificationSerivce) {
+							AppConfigurationService appConfigurationService, ApplicationContext applicationContext,
+							NotificatonService notificationSerivce, HighPriorityHitEmailNotificationService highPriorityHitEmailNotificationService) {
 		this.errorPersistenceService = errorPersistenceService;
 		this.appConfigurationService = appConfigurationService;
 		this.applicationContext = applicationContext;
 		this.notificationSerivce = notificationSerivce;
+		this.highPriorityHitEmailNotificationService = highPriorityHitEmailNotificationService;
 	}
 
 	public Boolean call() {
@@ -152,26 +167,23 @@ public class RuleRunnerThread implements Callable<Boolean> {
 	}
 
 	private void sendNotifications(Set<Passenger> passengersWithNewHits) {
+		if (emailHitNotificationEnabled) {
+			try {
+				notificationSerivce.sendAutomatedHitEmailNotifications(passengersWithNewHits);
+			} catch (IOException | TemplateException ignored) {
+				//TODO: Add error handling. Do not propagate error up as partial matching still needs to happen.
+				logger.error("There was an error within the email notification sender! ", ignored);
+			}
+		}
+
 		boolean hitNotificationEnabled;
-		String topicArn;
-		String topicSubject;
-		Long interpolRedNoticesId;
 		try {
 			hitNotificationEnabled = Boolean.parseBoolean(appConfigurationService
 					.findByOption(AppConfigurationRepository.ENABLE_INTERPOL_HIT_NOTIFICATION).getValue());
 
 			if (hitNotificationEnabled) {
 				long notificationStart = System.nanoTime();
-				topicArn = appConfigurationService
-						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_ARN).getValue();
-				topicSubject = appConfigurationService
-						.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_SUBJECT).getValue();
-				// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
-				interpolRedNoticesId = Long.parseLong(appConfigurationService
-						.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
-				HitNotificationConfig hitNotificationConfig = new HitNotificationConfig(
-						AmazonSNSClientBuilder.standard().build(), passengersWithNewHits, topicArn, topicSubject,
-						interpolRedNoticesId);
+				HitNotificationConfig hitNotificationConfig = generateSnsHitNotificationConfig(passengersWithNewHits);
 				notificationSerivce.sendHitNotifications(hitNotificationConfig);
 				logger.info("Hit Notification sent, it took {} m/s", (System.nanoTime() - notificationStart) / 1000000);
 			}
@@ -179,6 +191,21 @@ public class RuleRunnerThread implements Callable<Boolean> {
 			logger.warn(
 					"WATCHLIST HIT NOTIFICATION IS NOT CONFIGURED. SET NOTIFICATION IN DATABASE APP_CONFIGURATION TABLE.");
 		}
+	}
+
+	private HitNotificationConfig generateSnsHitNotificationConfig(Set<Passenger> passengersWithNewHits) {
+		String topicArn = appConfigurationService
+				.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_ARN).getValue();
+		String topicSubject = appConfigurationService
+				.findByOption(AppConfigurationRepository.INTERPOL_SNS_NOTIFICATION_SUBJECT).getValue();
+		// SET TO WATCH LIST CATEGORY ID FOR INTERPOL RED NOTICES
+		Long interpolRedNoticesId = Long.parseLong(appConfigurationService
+				.findByOption(AppConfigurationRepository.INTERPOL_WATCHLIST_ID).getValue());
+		HitNotificationConfig hitNotificationConfig = new HitNotificationConfig(
+				AmazonSNSClientBuilder.standard().build(), passengersWithNewHits, topicArn, topicSubject,
+				interpolRedNoticesId);
+
+		return hitNotificationConfig;
 	}
 
 	void setMessageStatuses(List<MessageStatus> messageStatuses) {
