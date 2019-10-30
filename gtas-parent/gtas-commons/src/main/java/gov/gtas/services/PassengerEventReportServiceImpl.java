@@ -190,7 +190,7 @@ public class PassengerEventReportServiceImpl implements PassengerEventReportServ
 		paxDetailPdfDocRequest.setEventNotesSet(passengerNoteSetDto.getPaxNotes());
 		
 		//Historical Notes
-		PassengerNoteSetDto passengerNoteHistorySetDto = passengerNoteService.getAllHistoricalNotes(paxId);	
+		PassengerNoteSetDto passengerNoteHistorySetDto = passengerNoteService.getPrevious10PassengerNotes(paxId);
 		paxDetailPdfDocRequest.setEventHistoricalNotesSet(passengerNoteHistorySetDto.getPaxNotes());
 		
 		try {
