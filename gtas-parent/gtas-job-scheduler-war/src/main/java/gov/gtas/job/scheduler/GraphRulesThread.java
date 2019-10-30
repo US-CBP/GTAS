@@ -75,10 +75,12 @@ public class GraphRulesThread implements Callable<Boolean> {
 		}
 
 		try {
-			Set<Long> messageId = processedMessages.stream().map(MessageStatus::getMessageId)
+			Set<Long> messageIds = processedMessages.stream().map(MessageStatus::getMessageId)
+					.collect(Collectors.toSet());
+			Set<Long> flightIds =  processedMessages.stream().map(MessageStatus::getFlightId)
 					.collect(Collectors.toSet());
 			processedMessages.forEach(ms -> ms.setMessageStatusEnum(MessageStatusEnum.NEO_ANALYZED));
-			Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageId);
+			Set<Passenger> passengers = passengerRepository.getPassengerWithIdInformation(messageIds, flightIds);
 			Set<RuleHitDetail> graphHitDetailSet = graphRulesService.graphResults(passengers);
 			TargetingResultServices targetingResultServices = getTargetingResultOptions();
 			List<RuleHitDetail> filteredList = TargetingResultUtils
